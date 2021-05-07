@@ -3,7 +3,10 @@ import { FC, useCallback, useContext, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useSpectacleCommand } from '<src>/spectacle-implementations/spectacle-provider';
 import { AddContribution } from '<src>/lib/command-factory';
-import { useStateWithSideEffect } from '<src>/optic-components/hooks/util';
+import {
+  useDebouncedFn,
+  useStateWithSideEffect,
+} from '<src>/optic-components/hooks/util';
 
 export const ContributionEditContext = React.createContext({});
 
@@ -12,7 +15,7 @@ type ContributionEditContextValue = {
   setEditing: React.Dispatch<React.SetStateAction<boolean>>;
   commitModalOpen: boolean;
   setCommitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  save: (commitMessage: string) => void;
+  save: (commitMessage: string) => Promise<void>;
   pendingCount: number;
   stagePendingContribution: (
     id: string,
@@ -38,11 +41,20 @@ export const useValueWithStagedContributions = (
   initialValue: string
 ) => {
   const { stagePendingContribution } = useContributionEditing();
+  const debouncedStagePendingContribution = useDebouncedFn(
+    stagePendingContribution,
+    200
+  );
 
   const { value, setValue } = useStateWithSideEffect({
     initialValue,
     sideEffect: (newValue: string) =>
-      stagePendingContribution(id, contributionKey, newValue, initialValue),
+      debouncedStagePendingContribution(
+        id,
+        contributionKey,
+        newValue,
+        initialValue
+      ),
   });
 
   return {
