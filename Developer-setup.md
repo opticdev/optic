@@ -1,8 +1,8 @@
 # Developer Setup
 
-The Optic project is written in Scala, Typescript (which is transpiled to ECMAScript) and ECMAScript. Dependencies are managed with Yarn Workspaces, and the NodeJS portions are split into subprojects for organization. Workspaces make it easier to contribute to a component of the Optic project, and we welcome participation
+The Optic project is written in Rust, Typescript (which is transpiled to ECMAScript) and ECMAScript. Dependencies are managed with Yarn Workspaces, and the NodeJS portions are split into subprojects for organization. Workspaces make it easier to contribute to a component of the Optic project, and we welcome participation
 
-Any IDE you use that supports the languages in which your working is fine. There are plenty of options, and we won't go into details on IDEs. For reference, we use a variety of tools across the Optic team: IntelliJ IDEA, Visual Studio Code, and Sublime for examples. You should already have Git installed, and you may need to install Yarn and SBT as well depending on how you are set up.
+Any IDE you use that supports the languages in which you're working is fine. There are plenty of options, and we won't go into details on IDEs. For reference, we use a variety of tools across the Optic team: IntelliJ IDEA, Visual Studio Code, and Sublime for examples. You should already have Git installed, and you may need to install Yarn and Task as well depending on how you are set up.
 
 This guide will let you know what to expect when contributing to Optic, and how to get started in general.
 
@@ -16,8 +16,10 @@ It's a good idea to have a design in place beforehand. It doesn't have to be fan
 
 - [Optic repository](https://github.com/opticdev/optic)
 - [IntelliJ IDEA](https://www.jetbrains.com/idea/) or your development environment of choice.
+- [Rustup](https://www.rust-lang.org/tools/install) for Rust.
+- [NVM](https://github.com/nvm-sh/nvm) for managing Node.js versions
 - [Yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable) for managing dependencies.
-- [SBT](https://www.scala-sbt.org/index.html) for building Scala components
+- [Task](https://taskfile.dev/) for running tasks.
 - [Git](https://git-scm.com/) to manage the code repository.
 
 ## Setup
@@ -25,15 +27,14 @@ It's a good idea to have a design in place beforehand. It doesn't have to be fan
 If you're using an IDE (like IntelliJ), some of these steps may be handled by your tool. For example, installing dependencies is common behavior from a language-aware IDE. You may want to open your IDE after cloning the Optic project and walk through it. If you don't have that capability, or want to install everything by hand, the instructions below should work.
 
 - Clone the [Optic repository](https://github.com/opticdev/optic) to your development environment with Git.
-- If necessary, install Yarn and SBT. On MacOS, this can be done via Homebrew `brew install yarn sbt`. Otherwise, check out the **Resources** section for more information.
+- If necessary, install Yarn and Task. On MacOS, this can be done via Homebrew `brew install yarn`. Otherwise, check out the **Resources** section for more information.
 - Navigate to the Optic repository. You should be on the `develop` branch by default.
-- Install dependencies with `yarn install`. Yarn will install dependencies for all of the workspaces present in the project.
-- Navigate to the project root, and run `source sourceme.sh`. This provides aliases for managing the development lifecycle of Optic. Note, this must be run for every terminal instance, and you may find it convenient to add this to your `.profile` or equivalent so future terminal invocations will be ready to go.
-- Run `optic-build`. This will take care of the build process and get your environment ready for contributions.
+- Navigate to the project root, and run `task`. This provides aliases for managing the development lifecycle of Optic. Note, this must be run for every terminal instance, and you may find it convenient to add this to your `.profile` or equivalent so future terminal invocations will be ready to go.
+- Install dependencies and build the code with `task workspaces:build`. Yarn will install dependencies for all of the workspaces present in the project.
 
 ## Validate Setup to Contribute to Optic's User Interface
 
-- Navigate to a workspace to validate it can be built. For example, try `workspaces/ui`.
+- Navigate to a workspace to validate it can be built. For example, try `workspaces/ui-v2`.
 - Run `watch-optic`.
 - Run `yarn start-local` to start the workspace. For the UI, this should automatically launch a browser instance to view the started server. Your browser will land on the splash page at [http://localhost:3000](http://localhost:3000/development/diff-test-cases/documentation).
 - Validate you can load a mocked test route from one of the example sessions under `public/example-sessions` such as [http://localhost:3000/development/diff-test-cases](http://localhost:3000/development/diff-test-cases/documentation).

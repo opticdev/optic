@@ -14,6 +14,7 @@
     "workspaces/saas-types",
     "workspaces/graph-lib",
     "workspaces/spectacle",
+    "workspaces/spectacle-shared",
     "workspaces/changelog",
     "workspaces/cli-config",
     "workspaces/cli-shared",

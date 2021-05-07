@@ -1,4 +1,4 @@
-# Releases the latest version of Optic on NPM/Brew/Debian
+# Releases the latest version of Optic on NPM/Brew
 # Assumes the version has been updated
 # Triggers on all changes to the release branch
 
@@ -32,6 +32,8 @@ jobs:
       - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
         with:
           node-version: 12
+      - name: Install Task
+        run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
       - name: Set version output
         id: version
         run: |
@@ -57,7 +59,7 @@ jobs:
       - name: Set prerelease_tag output
         id: prerelease_tag
         run: |
-          task workspaces:build:ci
+          task workspaces:setup
           PRERELEASE_TAG=$(node workspaces/scripts/prerelease-tag $OPTIC_VERSION)
           echo "::set-output name=prerelease_tag::$PRERELEASE_TAG"
       - name: Set should_publish output
