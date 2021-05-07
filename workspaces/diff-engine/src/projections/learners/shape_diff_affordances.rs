@@ -172,20 +172,24 @@ impl From<JsonTrail> for ShapeDiffAffordances {
 }
 
 impl ShapeDiffAffordances {
-  pub fn push(&mut self, (trail_values, pointers): (TrailValues, InteractionPointers)) {
+  pub fn push(&mut self, (mut trail_values, pointers): (TrailValues, InteractionPointers)) {
     let new_trail = &trail_values.trail;
-    if new_trail.normalized() == self.root_trail.normalized() {
-      // track the interaction pointers only by the root trail
+    let new_trail_normalized = new_trail.normalized();
+    if new_trail_normalized == self.root_trail.normalized() {
+      // track the interaction pointers only by the normalized root trail,
+      // but per interaction denormalized (so per interaction we can identify which array
+      // item the diff occurred in)
       self.interactions.push((&trail_values, pointers));
     }
 
     if let Some(current_affordances) = self
       .affordances
       .iter_mut()
-      .find(|trail_affordances| trail_affordances.trail == *new_trail)
+      .find(|trail_affordances| trail_affordances.trail == new_trail_normalized)
     {
       current_affordances.union(trail_values);
     } else {
+      trail_values.normalize();
       self.affordances.push(trail_values);
     }
   }

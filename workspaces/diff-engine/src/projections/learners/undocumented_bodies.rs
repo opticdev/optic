@@ -20,7 +20,7 @@ impl LearnedUndocumentedBodiesProjection {
       .entry(analysis.body_location)
       .or_insert_with(|| TrailObservationsResult::default());
 
-    existing_observations.union(analysis.trail_observations);
+    existing_observations.union(analysis.trail_observations.normalized());
   }
 
   pub fn into_endpoint_bodies(

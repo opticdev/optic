@@ -24,6 +24,26 @@ impl TrailObservationsResult {
     }
   }
 
+  pub fn normalized(mut self) -> Self {
+    self.values_by_trail = self.values_by_trail.into_iter().fold(
+      HashMap::new(),
+      |mut values_by_trail, (_, mut trail_values)| {
+        trail_values.normalize();
+        let normalized_trail = trail_values.trail.clone();
+
+        let existing_trail_values = values_by_trail
+          .entry(normalized_trail)
+          .or_insert_with_key(|json_trail| TrailValues::new(json_trail));
+
+        existing_trail_values.union(trail_values);
+
+        values_by_trail
+      },
+    );
+
+    self
+  }
+
   pub fn trails(&self) -> impl Iterator<Item = &JsonTrail> {
     self.values_by_trail.keys()
   }
@@ -292,6 +312,10 @@ impl TrailValues {
     for new_field_set in new_values.field_sets {
       self.insert_field_set(new_field_set);
     }
+  }
+
+  pub fn normalize(&mut self) {
+    self.trail = self.trail.normalized();
   }
 
   pub fn was_unknown(&self) -> bool {
