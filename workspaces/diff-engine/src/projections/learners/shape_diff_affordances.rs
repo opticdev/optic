@@ -34,11 +34,14 @@ impl LearnedShapeDiffAffordancesProjection {
 
     for diff in diffs {
       let diff_json_trail = diff.json_trail().unwrap();
+      let normalized_diff_trail = diff_json_trail.normalized();
       let all_observations = &analysis.trail_observations;
       let trail_results = all_observations
         .trails()
         .filter(|observed_trail| {
-          **observed_trail == *diff_json_trail || observed_trail.is_child_of(diff_json_trail)
+          let normalized_observed = observed_trail.normalized();
+          normalized_observed == normalized_diff_trail
+            || normalized_observed.is_child_of(&normalized_diff_trail)
         })
         .map(|relevant_trail| {
           all_observations
@@ -171,7 +174,7 @@ impl From<JsonTrail> for ShapeDiffAffordances {
 impl ShapeDiffAffordances {
   pub fn push(&mut self, (trail_values, pointers): (TrailValues, InteractionPointers)) {
     let new_trail = &trail_values.trail;
-    if *new_trail == self.root_trail {
+    if new_trail.normalized() == self.root_trail.normalized() {
       // track the interaction pointers only by the root trail
       self.interactions.push((&trail_values, pointers));
     }
