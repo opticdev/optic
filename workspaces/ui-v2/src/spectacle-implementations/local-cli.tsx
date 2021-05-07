@@ -34,6 +34,7 @@ import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory
 import { InMemorySpectacle } from './public-examples';
 import { ConfigRepositoryStore } from '<src>/optic-components/hooks/useConfigHook';
 import { useOpticEngine } from '../optic-components/hooks/useOpticEngine';
+import { AnalyticsStore } from '<src>/analytics';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -42,6 +43,12 @@ const appConfig: OpticAppConfig = {
       showChangelog: true,
       showDiff: true,
       showDocs: true,
+    },
+    analytics: {
+      enabled: Boolean(process.env.REACT_APP_ENABLE_ANALYTICS === 'yes'),
+      segmentToken: process.env.REACT_APP_SEGMENT_LOCAL_UI,
+      fullStoryOrgId: process.env.REACT_APP_FULLSTORY_ORG,
+      sentryUrl: process.env.REACT_APP_SENTRY_URL,
     },
     documentation: {
       allowDescriptionEditing: true,
@@ -65,21 +72,23 @@ export default function LocalCli() {
 
   return (
     <AppConfigurationStore config={appConfig}>
-      <SpectacleStore spectacle={data.spectacle}>
-        <ConfigRepositoryStore config={data.configRepository}>
-          <CapturesServiceStore capturesService={data.capturesService}>
-            <BaseUrlProvider value={{ url: match.url }}>
-              <Switch>
-                <>
-                  <DocumentationPages />
-                  <DiffReviewEnvironments />
-                  <ChangelogPages />
-                </>
-              </Switch>
-            </BaseUrlProvider>
-          </CapturesServiceStore>
-        </ConfigRepositoryStore>
-      </SpectacleStore>
+      <AnalyticsStore>
+        <SpectacleStore spectacle={data.spectacle}>
+          <ConfigRepositoryStore config={data.configRepository}>
+            <CapturesServiceStore capturesService={data.capturesService}>
+              <BaseUrlProvider value={{ url: match.url }}>
+                <Switch>
+                  <>
+                    <DocumentationPages />
+                    <DiffReviewEnvironments />
+                    <ChangelogPages />
+                  </>
+                </Switch>
+              </BaseUrlProvider>
+            </CapturesServiceStore>
+          </ConfigRepositoryStore>
+        </SpectacleStore>
+      </AnalyticsStore>
     </AppConfigurationStore>
   );
 }

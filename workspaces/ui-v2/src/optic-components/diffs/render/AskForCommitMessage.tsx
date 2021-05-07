@@ -8,10 +8,10 @@ import { useSpectacleCommand } from '../../../spectacle-implementations/spectacl
 import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
 import { useChangelogPages } from '../../navigation/Routes';
 import { v4 as uuidv4 } from 'uuid';
+import { useAnalytics } from '<src>/analytics';
 
 const useStagedChangesCount = () => {
   const { pendingEndpoints, context } = useSharedDiffContext();
-
   const pendingEndpointsCount = pendingEndpoints.filter((i) => i.staged).length;
   const diffHashToEndpoint = context.results.diffsGroupedByEndpoint.reduce(
     (acc: { [diffHash: string]: string }, endpoint) => {
@@ -44,6 +44,7 @@ export default function AskForCommitMessageDiffPage(props: {
 }) {
   const spectacleMutator = useSpectacleCommand();
   const history = useHistory();
+  const analytics = useAnalytics();
   const lastBatchCommitId = useLastBatchCommitId();
   const changelogPageRoute = useChangelogPages();
 
@@ -60,6 +61,7 @@ export default function AskForCommitMessageDiffPage(props: {
   } = useStagedChangesCount();
 
   const handleSave = async (commitMessage: string) => {
+    analytics.userSavedChanges(pendingEndpointsCount, changedEndpointsCount);
     const commands = context.simulatedCommands;
     try {
       const {

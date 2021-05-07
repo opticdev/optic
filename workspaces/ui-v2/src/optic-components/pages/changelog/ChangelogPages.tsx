@@ -33,7 +33,6 @@ export function ChangelogPages(props: any) {
             const validBatchId = allBatchCommits.batchCommits.some(
               (i) => i.batchId === batchId
             );
-
             if (validBatchId && !allBatchCommits.loading) {
               return (
                 <DocumentationRootPage

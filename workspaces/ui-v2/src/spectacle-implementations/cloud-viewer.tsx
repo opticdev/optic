@@ -19,6 +19,7 @@ import {
 import { AsyncStatus } from '<src>/types';
 import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
 import { useEffect, useState } from 'react';
+import { AnalyticsStore } from '<src>/analytics';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -27,6 +28,12 @@ const appConfig: OpticAppConfig = {
       showChangelog: true,
       showDiff: false,
       showDocs: true,
+    },
+    analytics: {
+      enabled: Boolean(process.env.REACT_APP_ENABLE_ANALYTICS === 'yes'),
+      segmentToken: process.env.REACT_APP_SEGMENT_CLOUD_UI,
+      fullStoryOrgId: process.env.REACT_APP_FULLSTORY_ORG,
+      sentryUrl: process.env.REACT_APP_SENTRY_URL,
     },
     documentation: {
       allowDescriptionEditing: false,
@@ -90,21 +97,23 @@ export default function CloudViewer() {
 
   return (
     <AppConfigurationStore config={appConfig}>
-      <SpectacleStore spectacle={data}>
-        <CapturesServiceStore
-          capturesService={data.opticContext.capturesService}
-        >
-          <BaseUrlProvider value={{ url: match.url }}>
-            <Switch>
-              <>
-                <DiffReviewEnvironments />
-                <DocumentationPages />
-                <ChangelogPages />
-              </>
-            </Switch>
-          </BaseUrlProvider>
-        </CapturesServiceStore>
-      </SpectacleStore>
+      <AnalyticsStore>
+        <SpectacleStore spectacle={data}>
+          <CapturesServiceStore
+            capturesService={data.opticContext.capturesService}
+          >
+            <BaseUrlProvider value={{ url: match.url }}>
+              <Switch>
+                <>
+                  <DiffReviewEnvironments />
+                  <DocumentationPages />
+                  <ChangelogPages />
+                </>
+              </Switch>
+            </BaseUrlProvider>
+          </CapturesServiceStore>
+        </SpectacleStore>
+      </AnalyticsStore>
     </AppConfigurationStore>
   );
 }

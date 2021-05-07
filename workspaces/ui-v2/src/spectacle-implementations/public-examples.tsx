@@ -22,6 +22,7 @@ import {
 import { useOpticEngine } from '../optic-components/hooks/useOpticEngine';
 import { AsyncStatus } from '../types';
 import { ConfigRepositoryStore } from '<src>/optic-components/hooks/useConfigHook';
+import { AnalyticsStore } from '<src>/analytics';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -30,6 +31,9 @@ const appConfig: OpticAppConfig = {
       showChangelog: true,
       showDiff: true,
       showDocs: true,
+    },
+    analytics: {
+      enabled: false,
     },
     documentation: {
       allowDescriptionEditing: true,
@@ -77,23 +81,25 @@ export default function PublicExamples(props: { lookupDir: string }) {
 
   return (
     <AppConfigurationStore config={appConfig}>
-      <SpectacleStore spectacle={data}>
-        <ConfigRepositoryStore config={data.opticContext.configRepository}>
-          <CapturesServiceStore
-            capturesService={data.opticContext.capturesService}
-          >
-            <BaseUrlProvider value={{ url: match.url }}>
-              <Switch>
-                <>
-                  <DocumentationPages />
-                  <DiffReviewEnvironments />
-                  <ChangelogPages />
-                </>
-              </Switch>
-            </BaseUrlProvider>
-          </CapturesServiceStore>
-        </ConfigRepositoryStore>
-      </SpectacleStore>
+      <AnalyticsStore>
+        <SpectacleStore spectacle={data}>
+          <ConfigRepositoryStore config={data.opticContext.configRepository}>
+            <CapturesServiceStore
+              capturesService={data.opticContext.capturesService}
+            >
+              <BaseUrlProvider value={{ url: match.url }}>
+                <Switch>
+                  <>
+                    <DocumentationPages />
+                    <DiffReviewEnvironments />
+                    <ChangelogPages />
+                  </>
+                </Switch>
+              </BaseUrlProvider>
+            </CapturesServiceStore>
+          </ConfigRepositoryStore>
+        </SpectacleStore>
+      </AnalyticsStore>
     </AppConfigurationStore>
   );
 }
