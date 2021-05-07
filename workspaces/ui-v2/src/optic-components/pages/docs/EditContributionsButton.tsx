@@ -53,7 +53,7 @@ export function EditContributionsButton() {
       <CommitMessageModal
         open={commitModalOpen}
         onClose={() => setCommitModalOpen(false)}
-        onSave={(commitMessage: string) => {
+        onSave={async (commitMessage: string) => {
           save(commitMessage);
           setCommitModalOpen(false);
         }}
