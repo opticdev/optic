@@ -92,11 +92,14 @@ export function AnalyticsStore({ children }: { children: ReactNode }) {
 
   const opticUITrackingEvents: React.MutableRefObject<OpticUIEvents> = useRef(
     new OpticUIEvents(async (event) => {
-      console.log('event', JSON.stringify(event));
       if (appConfig.analytics.enabled) {
         if (analytics.current) {
-          analytics.current.track(event.name, { properties: event.properties });
-          FullStory.event(event.name, event.properties);
+          analytics.current.track(event.name, {
+            properties: { ...event.properties, clientId },
+          });
+          try {
+            FullStory.event(event.name, event.properties);
+          } catch (e) {}
         }
       }
     })

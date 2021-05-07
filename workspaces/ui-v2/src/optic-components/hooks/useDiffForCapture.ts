@@ -52,8 +52,8 @@ export function useDiffsForCapture(
       const urls = await diffsService.listUnrecognizedUrls();
 
       analytics.reviewPageLoaded(
-        diffs.length,
-        urls.length,
+        diffs.diffs.length,
+        urls.urls.length,
         endTime - startTime,
         endpoint.endpoints.length
       );
@@ -70,6 +70,6 @@ export function useDiffsForCapture(
     }
 
     task();
-  }, [capturesService, captureId, diffId]);
+  }, [capturesService, captureId, diffId, analytics, endpoint.endpoints]);
   return diffState;
 }

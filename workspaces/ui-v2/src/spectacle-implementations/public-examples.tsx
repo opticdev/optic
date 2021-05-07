@@ -27,13 +27,13 @@ import { AnalyticsStore } from '<src>/analytics';
 const appConfig: OpticAppConfig = {
   featureFlags: {},
   config: {
-    analytics: {
-      enabled: false,
-    },
     navigation: {
       showChangelog: true,
       showDiff: true,
       showDocs: true,
+    },
+    analytics: {
+      enabled: false,
     },
     documentation: {
       allowDescriptionEditing: true,

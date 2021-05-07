@@ -17,14 +17,14 @@ export class OpticUIEvents {
   reviewPageLoaded(
     diffs: number,
     undocumentedUrls: number,
-    diffEngineDurationSeconds: number,
+    diffEngineDurationMilliseconds: number,
     endpointsInSpec: number
   ) {
     this.dispatch({
       name: 'review_page_loaded',
       properties: {
         undocumentedUrls,
-        diffEngineDurationSeconds,
+        diffEngineDurationMilliseconds,
         endpointsInSpec,
       },
     });
