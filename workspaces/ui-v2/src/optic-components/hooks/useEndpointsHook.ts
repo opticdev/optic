@@ -97,7 +97,7 @@ export function endpointQueryResultsToJson(
             ? hasChangelog.change.category === 'added'
             : false,
           changed: hasChangelog
-            ? hasChangelog.change.category === 'changed'
+            ? hasChangelog.change.category === 'updated'
             : false,
           removed: hasChangelog
             ? hasChangelog.change.category === 'removed'
