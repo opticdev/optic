@@ -18,7 +18,8 @@ import {
 } from '../optic-components/hooks/config/AppConfiguration';
 import { AsyncStatus } from '<src>/types';
 import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { ConfigRepositoryStore } from '<src>/optic-components/hooks/useConfigHook';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -38,18 +39,20 @@ export default function CloudViewer() {
   const match = useRouteMatch();
   const params = useParams<{ specId: string }>();
   const { specId } = params;
-  const task: CloudInMemorySpectacleDependenciesLoader = async () => {
-    const loadExample = async () => {
-      let apiBase = process.env.REACT_APP_API_BASE;
-
-      if (!apiBase) {
-        if (window.location.hostname.indexOf('useoptic.com')) {
-          apiBase = process.env.REACT_APP_PROD_API_BASE;
-        } else {
-          apiBase = process.env.REACT_APP_STAGING_API_BASE;
-        }
+  const task: CloudInMemorySpectacleDependenciesLoader = useCallback(async () => {
+    const loadUploadedSpec = async () => {
+      if (process.env.NODE_ENV === 'development') {
+        const response = await fetch('/cloud-examples/example-1.json');
+        const body = await response.json();
+        return body;
       }
-
+      const apiBase = (function () {
+        if (window.location.hostname.indexOf('useoptic.com')) {
+          return process.env.REACT_APP_PROD_API_BASE;
+        } else {
+          return process.env.REACT_APP_STAGING_API_BASE;
+        }
+      })();
       const response = await fetch(`${apiBase}/api/specs/${specId}`, {
         headers: { accept: 'application/json' },
       });
@@ -71,12 +74,12 @@ export default function CloudViewer() {
       let spec = await contentReq.json();
       return spec;
     };
-    const [events] = await Promise.all([loadExample()]);
+    const [events] = await Promise.all([loadUploadedSpec()]);
     return {
       events,
       samples: [],
     };
-  };
+  }, [specId]);
   const { loading, error, data } = useCloudInMemorySpectacle(task);
   if (loading) {
     return <Loading />;
@@ -88,22 +91,25 @@ export default function CloudViewer() {
     return <div>something went wrong</div>;
   }
 
+  //@SYNC public-examples.tsx cloud-viewer.tsx local-cli.tsx
   return (
     <AppConfigurationStore config={appConfig}>
       <SpectacleStore spectacle={data}>
-        <CapturesServiceStore
-          capturesService={data.opticContext.capturesService}
-        >
-          <BaseUrlProvider value={{ url: match.url }}>
-            <Switch>
-              <>
-                <DiffReviewEnvironments />
-                <DocumentationPages />
-                <ChangelogPages />
-              </>
-            </Switch>
-          </BaseUrlProvider>
-        </CapturesServiceStore>
+        <ConfigRepositoryStore config={data.opticContext.configRepository}>
+          <CapturesServiceStore
+            capturesService={data.opticContext.capturesService}
+          >
+            <BaseUrlProvider value={{ url: match.url }}>
+              <Switch>
+                <>
+                  <DocumentationPages />
+                  <DiffReviewEnvironments />
+                  <ChangelogPages />
+                </>
+              </Switch>
+            </BaseUrlProvider>
+          </CapturesServiceStore>
+        </ConfigRepositoryStore>
       </SpectacleStore>
     </AppConfigurationStore>
   );
@@ -151,7 +157,7 @@ export interface CloudInMemorySpectacleDependencies {
 
 export type CloudInMemorySpectacleDependenciesLoader = () => Promise<CloudInMemorySpectacleDependencies>;
 
-//@SYNC: useInMemorySpectacle
+//@SYNC: useInMemorySpectacle useCloudInMemorySpectacle
 export function useCloudInMemorySpectacle(
   loadDependencies: CloudInMemorySpectacleDependenciesLoader
 ): AsyncStatus<CloudInMemoryBaseSpectacle> {

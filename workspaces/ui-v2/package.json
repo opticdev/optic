@@ -15,10 +15,12 @@
     "start": "node scripts/start.js",
     "build:local": "env OPTIC_WEBPACK_ENTRYPOINT=local node scripts/build.js",
     "build:cloud": "env OPTIC_WEBPACK_ENTRYPOINT=cloud node scripts/build.js",
+    "start:local": "env OPTIC_WEBPACK_ENTRYPOINT=local node scripts/start.js",
+    "start:cloud": "env OPTIC_WEBPACK_ENTRYPOINT=cloud node scripts/start.js",
     "build": "yarn run build:local",
     "test": "node scripts/test.js",
     "ws:clean": "echo 'cleaning' ",
-    "ws:build": "echo 'build'"
+    "ws:build": "yarn build:local"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
