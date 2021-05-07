@@ -55,15 +55,15 @@ export function useShapeDescriptor(
 ): IShapeRenderer[] {
   const spectacle = useContext(SpectacleContext)!;
 
-  async function accumulateShapes(rootShapeId: string, idLookups: string[]) {
+  async function accumulateShapes(rootShapeId: string, seenSet: Set<string>) {
     //@todo figure out why some shapes loop recursively and remove those events / fix these specs
-    if (idLookups.includes(rootShapeId)) {
+    if (seenSet.has(rootShapeId)) {
       console.warn(
         'trying to lookup shape w/ a circular reference ' + rootShapeId
       );
       return [];
     } else {
-      idLookups.push(rootShapeId);
+      seenSet.add(rootShapeId);
     }
     const input =
       typeof renderChangesSinceBatchCommitId !== 'undefined'
@@ -99,7 +99,7 @@ export function useShapeDescriptor(
               choice.asObject.fields.map(async (field: any) => {
                 const shapeChoices = await accumulateShapes(
                   field.shapeId,
-                  idLookups
+                  seenSet
                 );
                 field.required = !shapeChoices.some(
                   (i: any) => i.jsonType === JsonLike.UNDEFINED
@@ -121,7 +121,7 @@ export function useShapeDescriptor(
           case 'Array':
             const results = await accumulateShapes(
               choice.asArray.shapeId,
-              idLookups
+              seenSet
             );
             const shapeChoices = await Promise.all(results);
             choice.asArray.shapeChoices = shapeChoices;
@@ -136,8 +136,8 @@ export function useShapeDescriptor(
   const [x, setX] = useState<any[]>([]);
   useEffect(() => {
     async function task() {
-      const idLookups: string[] = [];
-      const result = await accumulateShapes(rootShapeId, idLookups);
+      const seenSet: Set<string> = new Set();
+      const result = await accumulateShapes(rootShapeId, seenSet);
       setX(result);
     }
 
