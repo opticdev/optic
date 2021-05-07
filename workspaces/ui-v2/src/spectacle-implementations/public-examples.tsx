@@ -37,13 +37,14 @@ const appConfig: OpticAppConfig = {
   },
 };
 
-export default function PublicExamples() {
+export default function PublicExamples(props: { lookupDir: string }) {
   const match = useRouteMatch();
   const params = useParams<{ exampleId: string }>();
+
   const { exampleId } = params;
   const task: InMemorySpectacleDependenciesLoader = useCallback(async () => {
     const loadExample = async () => {
-      const response = await fetch(`/example-sessions/${exampleId}.json`, {
+      const response = await fetch(`/${props.lookupDir}/${exampleId}.json`, {
         headers: { accept: 'application/json' },
       });
       if (!response.ok) {
