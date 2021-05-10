@@ -342,6 +342,7 @@ dependencies = [
  "chrono",
  "clap",
  "cqrs-core",
+ "log",
  "num_cpus",
  "petgraph",
  "protobuf",
