@@ -1,4 +1,5 @@
 src
 binaries
+support
 tests
 **/*.rs
