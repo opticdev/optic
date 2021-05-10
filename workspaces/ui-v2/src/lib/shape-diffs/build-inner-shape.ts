@@ -40,23 +40,25 @@ export function builderInnerShapeFromChoices(
     if (foundShapeId) {
       return foundShapeId[0];
     } else {
-      const filterToTarget = actual.trailAffordances.map((affordance) => {
-        if (equals(affordance.trail, actual.jsonTrail)) {
-          return {
-            ...affordance,
-            wasString: i === ICoreShapeKinds.StringKind,
-            wasNumber: i === ICoreShapeKinds.NumberKind,
-            wasBoolean: i === ICoreShapeKinds.BooleanKind,
-            wasNull: i === ICoreShapeKinds.NullableKind,
-            wasArray: i === ICoreShapeKinds.ListKind,
-            wasObject: i === ICoreShapeKinds.ObjectKind,
-            fieldSet:
-              i === ICoreShapeKinds.ObjectKind ? affordance.fieldSet : [],
-          };
-        } else {
-          return affordance;
+      const filterToTarget = actual.learnedTrails.affordances.map(
+        (affordance) => {
+          if (equals(affordance.trail, actual.jsonTrail)) {
+            return {
+              ...affordance,
+              wasString: i === ICoreShapeKinds.StringKind,
+              wasNumber: i === ICoreShapeKinds.NumberKind,
+              wasBoolean: i === ICoreShapeKinds.BooleanKind,
+              wasNull: i === ICoreShapeKinds.NullableKind,
+              wasArray: i === ICoreShapeKinds.ListKind,
+              wasObject: i === ICoreShapeKinds.ObjectKind,
+              fieldSet:
+                i === ICoreShapeKinds.ObjectKind ? affordance.fieldSet : [],
+            };
+          } else {
+            return affordance;
+          }
         }
-      });
+      );
 
       const [commands, newShapeId] = JSON.parse(
         currentSpecContext.opticEngine.affordances_to_commands(
