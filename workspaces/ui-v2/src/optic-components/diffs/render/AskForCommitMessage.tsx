@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
-import Button from '@material-ui/core/Button';
+import { Button, Tooltip } from '@material-ui/core';
 import { v4 as uuidv4 } from 'uuid';
 import { CommitMessageModal } from '../../common';
 
@@ -40,6 +40,21 @@ const useStagedChangesCount = () => {
   };
 };
 
+const ButtonWrapper: FC<{ isLearning: boolean }> = ({
+  isLearning,
+  children,
+}) => {
+  if (isLearning) {
+    return (
+      <Tooltip title="Currently learning endpoints" placement="bottom">
+        <span>{children}</span>
+      </Tooltip>
+    );
+  } else {
+    return <>{children}</>;
+  }
+};
+
 export default function AskForCommitMessageDiffPage(props: {
   hasChanges: boolean;
 }) {
@@ -54,6 +69,7 @@ export default function AskForCommitMessageDiffPage(props: {
     startedFinalizing,
     commitModalOpen,
     setCommitModalOpen,
+    isCurrentlyLearningPendingEndpoints,
   } = useSharedDiffContext();
 
   const {
@@ -94,18 +110,20 @@ export default function AskForCommitMessageDiffPage(props: {
 
   return (
     <>
-      <Button
-        disabled={!props.hasChanges}
-        onClick={() => {
-          setCommitModalOpen(true);
-          startedFinalizing();
-        }}
-        size="small"
-        variant="contained"
-        color="primary"
-      >
-        Save Changes
-      </Button>
+      <ButtonWrapper isLearning={isCurrentlyLearningPendingEndpoints()}>
+        <Button
+          disabled={!props.hasChanges || isCurrentlyLearningPendingEndpoints()}
+          onClick={() => {
+            setCommitModalOpen(true);
+            startedFinalizing();
+          }}
+          size="small"
+          variant="contained"
+          color="primary"
+        >
+          Save Changes
+        </Button>
+      </ButtonWrapper>
       {commitModalOpen ? (
         <CommitMessageModal
           open={commitModalOpen}

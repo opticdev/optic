@@ -1,4 +1,4 @@
-import React, { FC, useContext, useMemo, useState } from 'react';
+import React, { FC, useCallback, useContext, useMemo, useState } from 'react';
 import {
   IPendingEndpoint,
   newSharedDiffMachine,
@@ -56,6 +56,8 @@ type ISharedDiffContext = {
   commitModalOpen: boolean;
   setCommitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   hasDiffChanges: () => boolean;
+  forceRerender: () => void;
+  isCurrentlyLearningPendingEndpoints: () => boolean;
 };
 
 type SharedDiffStoreProps = {
@@ -129,6 +131,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   }>({});
 
   const [commitModalOpen, setCommitModalOpen] = useState(false);
+  const [, setInternalState] = useState(false);
 
   const value: ISharedDiffContext = {
     context,
@@ -216,6 +219,11 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       Object.keys(context.choices.existingEndpointNameContributions).length >
         0 ||
       Object.keys(context.choices.existingEndpointPathContributions).length > 0,
+    forceRerender: useCallback(() => setInternalState((x) => !x), []),
+    isCurrentlyLearningPendingEndpoints: () =>
+      context.pendingEndpoints.some(
+        (endpoint) => !endpoint.ref.state.matches('ready')
+      ),
   };
 
   return (

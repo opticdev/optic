@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import {
   useDiffReviewPagePendingEndpoint,
   useEndpointPageLink,
@@ -13,6 +13,7 @@ import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../../diffs/DiffHeader';
 import {
   Box,
+  CircularProgress,
   Divider,
   List,
   ListItem,
@@ -41,6 +42,7 @@ import {
   PendingEndpointNameField,
 } from './EndpointNameEditFields';
 import { useAnalytics } from '<src>/analytics';
+import { useActor } from '@xstate/react';
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();
@@ -158,6 +160,54 @@ export function DiffUrlsPage(props: any) {
   );
 }
 
+const PendingEndpointItem: FC<{
+  endpoint: IPendingEndpoint;
+}> = ({ endpoint }) => {
+  const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
+  const changelogStyles = useChangelogStyles();
+  const classes = useStyles();
+  const history = useHistory();
+  const { forceRerender } = useSharedDiffContext();
+
+  const [state]: any = useActor(endpoint.ref);
+  // This is a hack to trigger a state refresh on the shared diff context
+  // The endpoint ref state is stored in an actor, and the loading state that
+  // resolves does not trigger a rerender in the sharedDiff.pendingEndpoint ref
+  useEffect(() => {
+    forceRerender();
+  }, [state, forceRerender]);
+
+  return (
+    <ListItem
+      button
+      disableRipple
+      disableGutters
+      style={{ display: 'flex' }}
+      onClick={() =>
+        history.push(diffReviewPagePendingEndpoint.linkTo(endpoint.id))
+      }
+      className={classNames(changelogStyles.added, classes.endpointRow)}
+    >
+      <div className={classes.endpointNameContainer}>
+        <EndpointName
+          method={endpoint.method}
+          fullPath={endpoint.pathPattern}
+          leftPad={6}
+        />
+        {!state.matches('ready') && (
+          <CircularProgress style={{ marginLeft: 12 }} size={14} />
+        )}
+      </div>
+      <div
+        className={classes.endpointContributionContainer}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <PendingEndpointNameField endpoint={endpoint} />
+      </div>
+    </ListItem>
+  );
+};
+
 export function DocumentationRootPageWithPendingEndpoints(props: any) {
   const { endpoints, loading } = useEndpoints();
 
@@ -169,10 +219,8 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
   const pendingEndpointsToRender = pendingEndpoints.filter((i) => i.staged);
   const classes = useStyles();
 
-  const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
-  const changelogStyles = useChangelogStyles();
 
   const history = useHistory();
   const endpointPageLink = useEndpointPageLink();
@@ -203,42 +251,9 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
             >
               Recently Added
             </Typography>
-            {pendingEndpointsToRender.map(
-              (endpoint: IPendingEndpoint, index: number) => {
-                return (
-                  <ListItem
-                    key={index}
-                    button
-                    disableRipple
-                    disableGutters
-                    style={{ display: 'flex' }}
-                    onClick={() =>
-                      history.push(
-                        diffReviewPagePendingEndpoint.linkTo(endpoint.id)
-                      )
-                    }
-                    className={classNames(
-                      changelogStyles.added,
-                      classes.endpointRow
-                    )}
-                  >
-                    <div className={classes.endpointNameContainer}>
-                      <EndpointName
-                        method={endpoint.method}
-                        fullPath={endpoint.pathPattern}
-                        leftPad={6}
-                      />
-                    </div>
-                    <div
-                      className={classes.endpointContributionContainer}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <PendingEndpointNameField endpoint={endpoint} />
-                    </div>
-                  </ListItem>
-                );
-              }
-            )}
+            {pendingEndpointsToRender.map((endpoint, index) => (
+              <PendingEndpointItem key={endpoint.id} endpoint={endpoint} />
+            ))}
             <Divider style={{ marginTop: 15 }} />
           </div>
         )}
@@ -332,6 +347,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   endpointNameContainer: {
+    display: 'flex',
     overflowX: 'scroll',
     flexGrow: 1,
   },
