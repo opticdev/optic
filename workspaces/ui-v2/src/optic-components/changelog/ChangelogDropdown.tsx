@@ -4,18 +4,15 @@ import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import { ToggleButton } from '@material-ui/lab';
 import { Box, Typography } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, useLocation } from 'react-router-dom';
 import MenuItem from '@material-ui/core/MenuItem';
 import { BatchCommit, useBatchCommits } from '../hooks/useBatchCommits';
+import { useBaseUrl } from '../hooks/useBaseUrl';
 import { OpticBlue, OpticBlueReadable } from '../theme';
 // @ts-ignore
 import TimeAgo from 'javascript-time-ago';
 // @ts-ignore
 import en from 'javascript-time-ago/locale/en';
-import {
-  useChangelogPages,
-  useDocumentationPageLink,
-} from '../navigation/Routes';
 
 TimeAgo.addLocale(en);
 const timeAgo = new TimeAgo('en-US');
@@ -23,9 +20,9 @@ const timeAgo = new TimeAgo('en-US');
 export function ChangesSinceDropdown(props: any) {
   const classes = useStyles();
   const history = useHistory();
-  const changelogPageRoute = useChangelogPages();
-  const documentationPageLink = useDocumentationPageLink();
   const batchCommits = useBatchCommits();
+  const baseUrl = useBaseUrl();
+  const { pathname } = useLocation();
   const allBatchCommits = batchCommits.batchCommits;
   const { batchId } = useParams<{ batchId?: string }>();
 
@@ -79,10 +76,19 @@ export function ChangesSinceDropdown(props: any) {
           <MenuItem
             key={i.batchId}
             onClick={() => {
+              const pathMatch = pathname.match(
+                /(changes-since\/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}|documentation)(.*)/
+              );
+              if (!pathMatch) {
+                return console.error('ERROR');
+              }
+              const currentRelativePath = pathMatch[2];
               if (index === 0) {
-                history.push(documentationPageLink.linkTo());
+                history.push(`${baseUrl}/documentation${currentRelativePath}`);
               } else {
-                history.push(changelogPageRoute.linkTo(i.batchId));
+                history.push(
+                  `${baseUrl}/changes-since/${i.batchId}${currentRelativePath}`
+                );
               }
             }}
           >
