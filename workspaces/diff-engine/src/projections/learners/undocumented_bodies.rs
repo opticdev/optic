@@ -246,3 +246,63 @@ impl EndpointBody {
     };
   }
 }
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use crate::interactions::InteractionDiffResult;
+  use crate::learn_shape::observe_body_trails;
+  use crate::state::body::BodyDescriptor;
+  use insta::assert_debug_snapshot;
+  use serde_json::json;
+
+  #[test]
+  fn undocumented_bodies_can_aggregate_analysis_results_with_array_items() {
+    let body = BodyDescriptor::from(json!({
+      "items": [132, "string-array-item"],
+      "other-field": true
+    }));
+
+    let analysis_result = BodyAnalysisResult {
+      body_location: BodyAnalysisLocation::MatchedResponse {
+        response_id: String::from("test-response-1"),
+        content_type: Some(String::from("application/json")),
+        status_code: 200,
+      },
+      trail_observations: observe_body_trails(body),
+    };
+
+    let mut projection = LearnedUndocumentedBodiesProjection::default();
+
+    projection.apply(analysis_result.clone());
+
+    // dbg!(&projection);
+    let aggregated_result = projection
+      .observations_by_body_location
+      .get(&analysis_result.body_location)
+      .unwrap();
+
+    let array_trail = JsonTrail::empty().with_object_key(String::from("items"));
+
+    let items_values = aggregated_result
+      .values_by_trail
+      .get(&array_trail.with_array_item(0))
+      .expect("should have learned values for items array");
+    assert!(items_values.was_number && items_values.was_string);
+    assert!(
+      aggregated_result
+        .values_by_trail
+        .get(&array_trail.with_array_item(1))
+        .is_none(),
+      "undocumented endpoints projection aggregates normalized body results",
+    );
+
+    let mut aggregated_trails: Vec<_> = aggregated_result.trails().collect();
+    aggregated_trails.sort();
+
+    assert_debug_snapshot!(
+      "undocumented_bodies_can_aggregate_analysis_results_with_array_items__aggregated_trails",
+      aggregated_trails
+    );
+  }
+}
