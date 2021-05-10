@@ -79,10 +79,8 @@ export function ChangesSinceDropdown(props: any) {
               const pathMatch = pathname.match(
                 /(changes-since\/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}|documentation)(.*)/
               );
-              if (!pathMatch) {
-                return console.error('ERROR');
-              }
-              const currentRelativePath = pathMatch[2];
+              const currentRelativePath =
+                pathMatch && pathMatch[2] ? pathMatch[2] : '';
               if (index === 0) {
                 history.push(`${baseUrl}/documentation${currentRelativePath}`);
               } else {
