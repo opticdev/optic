@@ -591,7 +591,7 @@ mod test {
 
     let primitive_array_observations = observe_body_trails(primitive_array_body);
     let empty_array_observations = observe_body_trails(empty_array_body);
-    let polymorphic_array_observations = observe_body_trails(polymorphic_array_body);
+    let polymorphic_array_observations = observe_body_trails(polymorphic_array_body).normalized();
 
     let mut test_id_generator = TestIdGenerator::default();
 
@@ -756,7 +756,7 @@ mod test {
 
     let nullable_array_item_observations = {
       let body = BodyDescriptor::from(json!(["string-value", null]));
-      observe_body_trails(body)
+      observe_body_trails(body).normalized()
     };
 
     let nullable_one_off_observations = {
