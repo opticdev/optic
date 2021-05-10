@@ -83,7 +83,7 @@ export function DiffUrlsPage(props: any) {
             setBulkMode(bulkMode);
           } else {
             const link = diffReviewPagePendingEndpoint.linkTo(pendingId);
-            setTimeout(() => history.push(link), 500);
+            history.push(link);
           }
         }}
       />
