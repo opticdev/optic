@@ -3,6 +3,7 @@ import Tap from 'tap';
 import { makeSpectacle } from '../src';
 import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
 import { InMemoryOpticContextBuilder } from '../src/in-memory';
+import { loadEvents } from './utils';
 
 // Getting the previous batch commit ID is manual and error prone
 // This function automates that step
@@ -29,10 +30,6 @@ function fromPreviousBatchCommitId(
     events,
     sinceBatchCommitId: previousBatchCommitId,
   };
-}
-
-function loadEvents(file: string) {
-  return JSON.parse(fs.readFileSync(file).toString('utf-8'));
 }
 
 // TODO: make this clear there are two sets of specs
