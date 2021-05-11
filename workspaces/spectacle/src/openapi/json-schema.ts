@@ -1,57 +1,4 @@
-import * as fs from 'fs';
-// @ts-ignore
-import Tap from 'tap';
-import { makeSpectacle } from '../src';
-import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
-import { InMemoryOpticContextBuilder } from '../src/in-memory';
-
-// TODO: add to test utils
-function loadEvents(file: string) {
-  return JSON.parse(fs.readFileSync(file).toString('utf-8'));
-}
-
-Tap.test('generate JSON schemas for objects', async (test) => {
-  const events = loadEvents('./test/specs/mark-req-nested-field-optional.json');
-  const shapeId = 'shape_Uepabr07Dx';
-  const opticContext = await InMemoryOpticContextBuilder.fromEvents(
-    OpticEngine,
-    events
-  );
-  const spectacle = await makeSpectacle(opticContext);
-  const results = await jsonSchemaFromShapeId(spectacle, shapeId);
-  test.matchSnapshot(results);
-});
-
-Tap.test('generate JSON schemas for arrays', async (test) => {
-  const events = loadEvents('./test/specs/add-res-as-array-with-object.json');
-  const shapeId = 'shape_oCUwskX7xA';
-  const opticContext = await InMemoryOpticContextBuilder.fromEvents(
-    OpticEngine,
-    events
-  );
-  const spectacle = await makeSpectacle(opticContext);
-  const results = await jsonSchemaFromShapeId(spectacle, shapeId);
-  test.matchSnapshot(results);
-});
-
-Tap.test(
-  'generate JSON schemas for arrays with multiple types',
-  async (test) => {
-    const events = loadEvents('./test/specs/update-res-as-array.json');
-    const shapeId = 'shape_Sn2bnZvvoM';
-    const opticContext = await InMemoryOpticContextBuilder.fromEvents(
-      OpticEngine,
-      events
-    );
-    const spectacle = await makeSpectacle(opticContext);
-    const results = await jsonSchemaFromShapeId(spectacle, shapeId);
-    test.matchSnapshot(results);
-  }
-);
-
-//-----------------------------
-
-async function jsonSchemaFromShapeId(
+export async function jsonSchemaFromShapeId(
   spectacle: any,
   shapeId: string
 ): Promise<JsonSchema> {
@@ -75,7 +22,7 @@ async function jsonSchemaFromShapeId(
   return { oneOf: results };
 }
 
-async function jsonSchemaFromShapeChoice(
+export async function jsonSchemaFromShapeChoice(
   spectacle: any,
   shapeChoice: any
 ): Promise<JsonSchema> {
@@ -104,8 +51,10 @@ async function jsonSchemaFromShapeChoice(
         }
       }
 
-      if (isRequired) result.required.push(field.name);
+      if (isRequired) result.required?.push(field.name);
     }
+
+    if (!result.required?.length) delete result.required;
 
     return result;
   }
@@ -147,7 +96,7 @@ async function jsonSchemaFromShapeChoice(
   throw new TypeError(`Unknown JSON type ${shapeChoice.jsonType}`);
 }
 
-async function queryForShape(spectacle: any, shapeId: string) {
+export async function queryForShape(spectacle: any, shapeId: string) {
   return await spectacle.queryWrapper({
     query: `query GetShape($shapeId: ID!) {
       shapeChoices(shapeId: $shapeId) {
@@ -167,30 +116,30 @@ async function queryForShape(spectacle: any, shapeId: string) {
   });
 }
 
-type JsonSchema =
+export type JsonSchema =
   | JsonSchemaObject
   | JsonSchemaArray
   | JsonSchemaValue
   | JsonSchemaOneOf;
 
-type JsonSchemaObject = {
+export type JsonSchemaObject = {
   type: 'object';
   properties: {
     [property: string]: JsonSchema;
   };
-  required: string[];
+  required?: string[];
 };
 
-type JsonSchemaArray = {
+export type JsonSchemaArray = {
   type: 'array';
   items: JsonSchema[];
 };
 
-type JsonSchemaValue =
+export type JsonSchemaValue =
   | { type: 'string' }
   | { type: 'number' }
   | { type: 'boolean' };
 
-type JsonSchemaOneOf = {
+export type JsonSchemaOneOf = {
   oneOf: JsonSchema[];
 };
