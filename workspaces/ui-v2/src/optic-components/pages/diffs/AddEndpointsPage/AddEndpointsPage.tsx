@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   useDiffReviewPagePendingEndpoint,
   useEndpointPageLink,
@@ -21,11 +21,9 @@ import {
   Typography,
 } from '@material-ui/core';
 import { useUndocumentedUrls } from '../../../hooks/diffs/useUndocumentedUrls';
-import { UndocumentedUrl } from '../../../diffs/UndocumentedUrl';
 import { useSharedDiffContext } from '../../../hooks/diffs/SharedDiffContext';
 import { AuthorIgnoreRules } from '../../../diffs/AuthorIgnoreRule';
-import { useDebounce } from '../../../hooks/ui/useDebounceHook';
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
+import { FixedSizeList } from 'react-window';
 // @ts-ignore
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { IEndpoint, useEndpoints } from '../../../hooks/useEndpointsHook';
@@ -39,56 +37,27 @@ import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 import {
   ExistingEndpointNameField,
   PendingEndpointNameField,
-} from './EndpointNameEditFields';
+} from './components/EndpointNameEditFields';
+import { UndocumentedUrl } from './components/UndocumentedUrl';
+
 import { useAnalytics } from '<src>/analytics';
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();
   const history = useHistory();
-  const {
-    documentEndpoint,
-    stageEndpoint,
-    pendingEndpoints,
-  } = useSharedDiffContext();
+  const { documentEndpoint, stageEndpoint } = useSharedDiffContext();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const classes = useStyles();
   const analytics = useAnalytics();
 
-  const [filteredUrls, setFilteredUrls] = useState(urls);
-
-  useEffect(() => {
-    setFilteredUrls(urls);
-  }, [pendingEndpoints.length, urls]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [bulkMode, setBulkMode] = useState<boolean>(false);
   const unmatchedUrlLengths = urls.filter((i) => !i.hide).length;
 
-  const shownUrls = filteredUrls.filter((i) => !i.hide);
-
-  function renderRow(props: ListChildComponentProps) {
-    const { index, style } = props;
-    const data = shownUrls[index];
-
-    return (
-      <UndocumentedUrl
-        style={style}
-        bulkMode={bulkMode}
-        {...data}
-        key={data.method + data.path}
-        onFinish={(pattern, method, autolearn) => {
-          const pendingId = documentEndpoint(pattern, method);
-          analytics.userDocumentedEndpoint(autolearn);
-          if (autolearn) {
-            stageEndpoint(pendingId);
-            setBulkMode(bulkMode);
-          } else {
-            const link = diffReviewPagePendingEndpoint.linkTo(pendingId);
-            history.push(link);
-          }
-        }}
-      />
-    );
-  }
+  const shownUrls = urls
+    .filter((url) => url.path.startsWith(searchQuery))
+    .filter((i) => !i.hide);
 
   const name = `${unmatchedUrlLengths} unmatched URLs observed${
     shownUrls.length !== urls.length ? `. Showing ${shownUrls.length}` : ''
@@ -100,9 +69,18 @@ export function DiffUrlsPage(props: any) {
         <>
           <DiffHeader name={name}>
             <Box display="flex" flexDirection="row">
-              <UrlFilterInput
-                onDebouncedChange={(query) => {
-                  setFilteredUrls(urls.filter((i) => i.path.startsWith(query)));
+              <TextField
+                size="small"
+                value={searchQuery}
+                inputProps={{ style: { fontSize: 10, width: 140 } }}
+                placeholder="filter urls"
+                onChange={(e) => {
+                  const newValue = e.target.value.replace(/\s+/g, '');
+                  if (!newValue.startsWith('/')) {
+                    setSearchQuery('/' + newValue);
+                  } else {
+                    setSearchQuery(newValue);
+                  }
                 }}
               />
               <div style={{ marginLeft: 13 }}>
@@ -134,8 +112,25 @@ export function DiffUrlsPage(props: any) {
                     width={width}
                     itemSize={47}
                     itemCount={shownUrls.length}
+                    itemData={{
+                      handleSelection: (pattern: string, method: string) => {
+                        const pendingId = documentEndpoint(pattern, method);
+                        analytics.userDocumentedEndpoint(bulkMode);
+                        if (bulkMode) {
+                          // TODO change to selection
+                          stageEndpoint(pendingId);
+                        } else {
+                          const link = diffReviewPagePendingEndpoint.linkTo(
+                            pendingId
+                          );
+                          history.push(link);
+                        }
+                      },
+                      undocumentedUrls: shownUrls,
+                      isBulkMode: bulkMode,
+                    }}
                   >
-                    {renderRow}
+                    {UndocumentedUrl}
                   </FixedSizeList>
                 )}
               </AutoSizer>
@@ -290,36 +285,6 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
         })}
       </List>
     </CenteredColumn>
-  );
-}
-
-function UrlFilterInput(props: { onDebouncedChange: (value: string) => void }) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const { onDebouncedChange } = props;
-  const debouncedSearchQuery = useDebounce(searchQuery, 600);
-
-  useEffect(() => {
-    if (debouncedSearchQuery) {
-      onDebouncedChange(debouncedSearchQuery);
-    }
-    // eslint-disable-next-line
-  }, [debouncedSearchQuery]);
-
-  return (
-    <TextField
-      size="small"
-      value={searchQuery}
-      inputProps={{ style: { fontSize: 10, width: 140 } }}
-      placeholder="filter urls"
-      onChange={(e: any) => {
-        const newValue = e.target.value.replace(/\s+/g, '');
-        if (!newValue.startsWith('/')) {
-          setSearchQuery('/' + newValue);
-        } else {
-          setSearchQuery(newValue);
-        }
-      }}
-    />
   );
 }
 

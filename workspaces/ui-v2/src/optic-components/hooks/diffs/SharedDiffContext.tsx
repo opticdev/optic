@@ -7,7 +7,7 @@ import {
 // @ts-ignore
 import * as shortId from 'shortid';
 import { useMachine } from '@xstate/react';
-import { PathComponentAuthoring } from '../../diffs/UndocumentedUrl';
+import { PathComponentAuthoring } from '<src>/optic-components/pages/diffs/AddEndpointsPage/components/UndocumentedUrl';
 import { IEndpoint } from '../useEndpointsHook';
 import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
 import { CurrentSpecContext } from '../../../lib/Interfaces';

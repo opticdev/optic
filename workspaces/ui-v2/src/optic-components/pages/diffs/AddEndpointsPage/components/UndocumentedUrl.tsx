@@ -1,35 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { IconButton, ListItem } from '@material-ui/core';
-import { methodColorsDark, primary } from '../theme';
+import { methodColorsDark, primary } from '<src>/optic-components/theme';
 import AddIcon from '@material-ui/icons/Add';
 import padLeft from 'pad-left';
-import { LightTooltip } from '../navigation/LightToolTip';
+import { LightTooltip } from '<src>/optic-components/navigation/LightToolTip';
 import classNames from 'classnames';
 import ClearIcon from '@material-ui/icons/Clear';
 import isEqual from 'lodash.isequal';
 // @ts-ignore
 import equals from 'deep-equal';
-import { useDebounce } from '../hooks/ui/useDebounceHook';
-import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
+import { useDebounce } from '<src>/optic-components/hooks/ui/useDebounceHook';
+import { useSharedDiffContext } from '<src>/optic-components/hooks/diffs/SharedDiffContext';
+import { IUndocumentedUrl } from '<src>/optic-components/hooks/diffs/SharedDiffState';
 
 export type UndocumentedUrlProps = {
-  method: string;
-  path: string;
-  hide?: boolean;
-  style: any;
-  bulkMode: boolean;
-  onFinish: (pattern: string, method: string, autolearn: boolean) => void;
+  style: Record<string, any>;
+  index: number;
+  data: {
+    handleSelection: (path: string, method: string) => void;
+    undocumentedUrls: IUndocumentedUrl[];
+    isBulkMode: boolean;
+  };
 };
 
 export function UndocumentedUrl({
-  method,
-  path,
-  onFinish,
-  hide,
-  bulkMode,
+  index,
   style,
+  data: { handleSelection, undocumentedUrls, isBulkMode },
 }: UndocumentedUrlProps) {
+  const undocumentedUrl = undocumentedUrls[index];
+  const { method, path, hide } = undocumentedUrl;
   const classes = useStyles();
   const { persistWIPPattern, wipPatterns } = useSharedDiffContext();
 
@@ -108,7 +109,7 @@ export function UndocumentedUrl({
       disableGutters
       style={{ display: 'flex', ...style }}
       button
-      onClick={() => onFinish(makePattern(components), method, bulkMode)}
+      onClick={() => handleSelection(makePattern(components), method)}
     >
       <div style={{ flex: 1 }}>
         <div className={classes.wrapper}>
@@ -144,7 +145,7 @@ export function UndocumentedUrl({
       <div style={{ paddingRight: 5 }}>
         <LightTooltip
           title={
-            bulkMode
+            isBulkMode
               ? 'Review Endpoint and add to API Documentation'
               : 'Add to API Documentation'
           }
