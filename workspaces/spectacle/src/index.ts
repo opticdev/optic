@@ -367,9 +367,11 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return Promise.resolve(parent.bodies().results);
       },
       contributions: (parent: any, args: any, context: any) => {
+        const pathId = parent.path().value.pathId;
+        const { httpMethod, httpStatusCode } = parent.value;
         return Promise.resolve(
           context.spectacleContext().contributionsProjection[
-            parent.result.data.responseId
+            `${pathId}.${httpMethod}_${httpStatusCode}_response`
           ] || {}
         );
       },

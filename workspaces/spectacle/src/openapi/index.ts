@@ -115,7 +115,11 @@ async function buildOperation(
   }
   for (const response of request.responses || []) {
     if (!operation.responses) operation.responses = {};
-    operation.responses[response.statusCode] = { description: '', content: {} };
+    const description =
+      'description' in response.contributions
+        ? response.contributions.description
+        : '';
+    operation.responses[response.statusCode] = { description, content: {} };
     for (const responseBody of response.bodies || []) {
       const schema = await jsonSchemaFromShapeId(
         spectacle,
