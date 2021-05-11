@@ -66,8 +66,14 @@ export async function shapeTrailParserLastId(
       );
 
       const choices = await getChoices(fieldTrail.fieldShapeId, spectacle);
+
+      const lastObjectOption = Object.entries(
+        choices.allowedCoreShapeKindsByShapeId
+      ).find(([key, value]) => value === ICoreShapeKinds.ObjectKind);
       return {
-        lastObject: field.parentObjectId,
+        lastObject: lastObjectOption
+          ? lastObjectOption[0]
+          : field.parentObjectId,
         lastField: fieldTrail.fieldId,
         lastFieldShapeId: fieldTrail.fieldShapeId,
         lastFieldKey: field.name,

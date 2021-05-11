@@ -161,3 +161,191 @@ Object {
   },
 }
 `;
+
+exports[`a new field is provided in a required nested object.managed 1`] = `
+Object {
+  "commands": Array [],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_8": "$object",
+    },
+    "allowedCoreShapes": Array [
+      "$object",
+    ],
+    "fieldIsOptional": false,
+    "lastField": "field_6",
+    "lastFieldKey": "principality",
+    "lastFieldShapeId": "shape_8",
+    "lastObject": "shape_8",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 1,
+          "text": "undocumented field",
+        },
+      ],
+      "changeType": 0,
+      "diffHash": "6b018ce3b01e79d0",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_2",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented field",
+        },
+        Object {
+          "style": 1,
+          "text": "motto",
+        },
+        Object {
+          "style": 0,
+          "text": "observed",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "6b018ce3b01e79d0",
+          "examplesOfCoreShapeKinds": "$string",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "location",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "principality",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "motto",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "string",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [],
+      "isField": true,
+      "isOptional": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$string",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "location",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "principality",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "motto",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [
+        "id",
+      ],
+      "wasStringTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "location",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "principality",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "motto",
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+}
+`;

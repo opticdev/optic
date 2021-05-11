@@ -28,7 +28,7 @@ export async function getExpectationsForShapeTrail(
 }
 
 export class Expectation {
-  private expectationsFromSpec: IExpectationHelper;
+  public expectationsFromSpec: IExpectationHelper;
   private currentSpecContext: CurrentSpecContext;
 
   constructor(

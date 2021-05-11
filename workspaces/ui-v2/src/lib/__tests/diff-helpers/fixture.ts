@@ -16,6 +16,8 @@ import { IChangeType, IInterpretation } from '<src>/lib/Interfaces';
 import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { newRegionInterpreters } from '<src>/lib/new-regions-interpreter';
 import { IOpticDiffService } from '@useoptic/spectacle';
+import { getExpectationsForShapeTrail } from '<src>/lib/shape-diff-dsl-rust';
+import { IExpectationHelper } from '<src>/lib/shape-trail-parser';
 
 export const testCase = (basePath: string) => async (
   name: string
@@ -105,7 +107,12 @@ export async function shapeDiffPreview(
     diffs: ParsedDiff[];
   },
   universe: ITestUniverse
-): Promise<IShapeDiffTestSnapshot> {
+): Promise<{
+  preview: IInterpretation;
+  trailValues: IValueAffordanceSerializationWithCounter;
+  expectations: IExpectationHelper;
+  commands: any[];
+}> {
   const { pathId, method } = input.diffs[0].location(
     universe.currentSpecContext
   );
@@ -124,8 +131,15 @@ export async function shapeDiffPreview(
     universe.currentSpecContext
   );
 
+  const expected = await getExpectationsForShapeTrail(
+    input.diffs[0].asShapeDiff(universe.currentSpecContext)?.shapeTrail!,
+    universe.spectacleQuery,
+    universe.currentSpecContext
+  );
+
   return {
     preview,
+    expectations: expected.expectationsFromSpec,
     trailValues,
     commands: [], //preview.toCommands(preview.updateSpecChoices!),
   };

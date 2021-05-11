@@ -72,6 +72,7 @@ test('a new field is provided in a required nested object.managed', async () => 
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
+  expect(result).toMatchSnapshot();
   await logResult(result.preview);
 });
 
