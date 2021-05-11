@@ -6,44 +6,44 @@
  */
 'use strict';
 exports[
-  `test/json-schema.ts TAP generate JSON schemas for arrays > must match snapshot 1`
+  `test/openapi/json-schema.ts TAP generate JSON schemas for arrays > must match snapshot 1`
 ] = `
 Object {
-  "items": Array [
-    Object {
-      "properties": Object {
-        "arrayWithObject": Object {
-          "type": "boolean",
-        },
+  "items": Object {
+    "properties": Object {
+      "arrayWithObject": Object {
+        "type": "boolean",
       },
-      "required": Array [
-        "arrayWithObject",
-      ],
-      "type": "object",
     },
-  ],
+    "required": Array [
+      "arrayWithObject",
+    ],
+    "type": "object",
+  },
   "type": "array",
 }
 `;
 
 exports[
-  `test/json-schema.ts TAP generate JSON schemas for arrays with multiple types > must match snapshot 1`
+  `test/openapi/json-schema.ts TAP generate JSON schemas for arrays with multiple types > must match snapshot 1`
 ] = `
 Object {
-  "items": Array [
-    Object {
-      "type": "string",
-    },
-    Object {
-      "type": "number",
-    },
-  ],
+  "items": Object {
+    "oneOf": Array [
+      Object {
+        "type": "string",
+      },
+      Object {
+        "type": "number",
+      },
+    ],
+  },
   "type": "array",
 }
 `;
 
 exports[
-  `test/json-schema.ts TAP generate JSON schemas for objects > must match snapshot 1`
+  `test/openapi/json-schema.ts TAP generate JSON schemas for objects > must match snapshot 1`
 ] = `
 Object {
   "properties": Object {
@@ -53,7 +53,6 @@ Object {
           "type": "string",
         },
       },
-      "required": Array [],
       "type": "object",
     },
     "age": Object {

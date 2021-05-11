@@ -1,3 +1,6 @@
+import { IJsonObject } from '@useoptic/cli-shared/build/diffs/json-trail';
+import { isNull } from 'util';
+
 export async function jsonSchemaFromShapeId(
   spectacle: any,
   shapeId: string
@@ -9,23 +12,59 @@ export async function jsonSchemaFromShapeId(
     (shapeChoice: any) => shapeChoice.jsonType !== 'Undefined'
   );
 
-  const results: JsonSchema[] = await Promise.all(
+  const schemas: JsonSchemaType[] = await Promise.all(
     shapeChoices.map(async (shapeChoice: any) => {
       return await jsonSchemaFromShapeChoice(spectacle, shapeChoice);
     })
   );
 
-  if (results.length === 1) return results[0];
+  // jsonSchemaFromShapeChoice can return `{ type: 'null' }`, but OpenAPI 3.0.3 cannot handle this type
+  // Instead, it requires using a `nullable` property.
+  let isNullable = false;
+
+  // This is how we find out if the schemas are nullable while removing any `{ type: 'null' }`
+  // from the final results.
+  const openApiSchemas: JsonSchemaType[] = schemas.filter((schema) => {
+    if (schema.type === 'null') {
+      isNullable = true;
+      return false;
+    }
+    return true;
+  });
+
+  // This happens when there is only a null type
+  // We are taking liberties here to set the type as string, which may not be correct.
+  if (isNullable && openApiSchemas.length === 0) {
+    return {
+      type: 'string',
+      nullable: true,
+    };
+  }
+
+  // TODO: investigate why this scenario happens
+  // This can happen if there are no shapeChoices
+  if (openApiSchemas.length === 0) {
+    return { type: 'string' };
+  }
+
+  // This means it's nullable with additional types to for setting `nullable: true`.
+  if (isNullable) {
+    for (const schema of openApiSchemas) {
+      if (schema.type !== 'null') schema.nullable = true;
+    }
+  }
+
+  if (openApiSchemas.length === 1) return openApiSchemas[0];
 
   // In some cases, it might be nicer to do { type: [string, number] }, but this
   // isn't supported in OpenAPI. Leaving it as oneOf for now.
-  return { oneOf: results };
+  return { oneOf: openApiSchemas };
 }
 
 export async function jsonSchemaFromShapeChoice(
   spectacle: any,
   shapeChoice: any
-): Promise<JsonSchema> {
+): Promise<JsonSchemaType> {
   if (shapeChoice.jsonType === 'Object') {
     const result: JsonSchemaObject = {
       type: 'object',
@@ -65,19 +104,9 @@ export async function jsonSchemaFromShapeChoice(
       shapeChoice.asArray.shapeId
     );
 
-    let items;
-
-    // Instead of having a single oneOf in the items array, this flattens it to
-    // make it an array for each type in the oneOf.
-    if ('oneOf' in itemSchema) {
-      items = itemSchema.oneOf;
-    } else {
-      items = [itemSchema];
-    }
-
     return {
       type: 'array',
-      items,
+      items: itemSchema,
     };
   }
 
@@ -91,6 +120,10 @@ export async function jsonSchemaFromShapeChoice(
 
   if (shapeChoice.jsonType === 'Boolean') {
     return { type: 'boolean' };
+  }
+
+  if (shapeChoice.jsonType === 'Null') {
+    return { type: 'null' };
   }
 
   throw new TypeError(`Unknown JSON type ${shapeChoice.jsonType}`);
@@ -116,11 +149,12 @@ export async function queryForShape(spectacle: any, shapeId: string) {
   });
 }
 
-export type JsonSchema =
+export type JsonSchema = JsonSchemaType | JsonSchemaOneOf;
+
+export type JsonSchemaType =
   | JsonSchemaObject
   | JsonSchemaArray
-  | JsonSchemaValue
-  | JsonSchemaOneOf;
+  | JsonSchemaValue;
 
 export type JsonSchemaObject = {
   type: 'object';
@@ -128,17 +162,21 @@ export type JsonSchemaObject = {
     [property: string]: JsonSchema;
   };
   required?: string[];
+  nullable?: boolean;
 };
 
 export type JsonSchemaArray = {
   type: 'array';
-  items: JsonSchema[];
+  items: JsonSchema;
+  nullable?: boolean;
 };
 
 export type JsonSchemaValue =
-  | { type: 'string' }
-  | { type: 'number' }
-  | { type: 'boolean' };
+  | {
+      type: 'string' | 'number' | 'boolean';
+      nullable?: boolean;
+    }
+  | { type: 'null' };
 
 export type JsonSchemaOneOf = {
   oneOf: JsonSchema[];
