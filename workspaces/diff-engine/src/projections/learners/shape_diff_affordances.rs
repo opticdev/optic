@@ -34,11 +34,14 @@ impl LearnedShapeDiffAffordancesProjection {
 
     for diff in diffs {
       let diff_json_trail = diff.json_trail().unwrap();
+      let normalized_diff_trail = diff_json_trail.normalized();
       let all_observations = &analysis.trail_observations;
       let trail_results = all_observations
         .trails()
         .filter(|observed_trail| {
-          **observed_trail == *diff_json_trail || observed_trail.is_child_of(diff_json_trail)
+          let normalized_observed = observed_trail.normalized();
+          normalized_observed == normalized_diff_trail
+            || normalized_observed.is_child_of(&normalized_diff_trail)
         })
         .map(|relevant_trail| {
           all_observations
@@ -53,8 +56,15 @@ impl LearnedShapeDiffAffordancesProjection {
         .entry(fingerprint)
         .or_insert_with(|| ShapeDiffAffordances::from(diff_json_trail.clone()));
 
+      let mut counter = 0;
       for trail_result in trail_results {
         affordances.push((trail_result, interaction_pointers.clone()));
+        counter += 1;
+      }
+
+      if counter == 0 {
+        let unknown_trail = TrailValues::from(diff_json_trail.clone());
+        affordances.push((unknown_trail, interaction_pointers.clone()));
       }
     }
   }
@@ -169,20 +179,24 @@ impl From<JsonTrail> for ShapeDiffAffordances {
 }
 
 impl ShapeDiffAffordances {
-  pub fn push(&mut self, (trail_values, pointers): (TrailValues, InteractionPointers)) {
+  pub fn push(&mut self, (mut trail_values, pointers): (TrailValues, InteractionPointers)) {
     let new_trail = &trail_values.trail;
-    if *new_trail == self.root_trail {
-      // track the interaction pointers only by the root trail
+    let new_trail_normalized = new_trail.normalized();
+    if new_trail_normalized == self.root_trail.normalized() {
+      // track the interaction pointers only by the normalized root trail,
+      // but per interaction denormalized (so per interaction we can identify which array
+      // item the diff occurred in)
       self.interactions.push((&trail_values, pointers));
     }
 
     if let Some(current_affordances) = self
       .affordances
       .iter_mut()
-      .find(|trail_affordances| trail_affordances.trail == *new_trail)
+      .find(|trail_affordances| trail_affordances.trail == new_trail_normalized)
     {
       current_affordances.union(trail_values);
     } else {
+      trail_values.normalize();
       self.affordances.push(trail_values);
     }
   }
@@ -222,5 +236,84 @@ impl InteractionsAffordances {
         .was_missing_trails
         .extend(json_trails_by_pointer_iter());
     }
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use crate::interactions::InteractionDiffResult;
+  use crate::learn_shape::observe_body_trails;
+  use crate::state::body::BodyDescriptor;
+  use insta::assert_debug_snapshot;
+  use serde_json::json;
+
+  #[test]
+  fn shape_diff_affordances_can_aggregate_affordances_for_array_item_diffs() {
+    let body = BodyDescriptor::from(json!({
+      "items": [132, "string-array-item"],
+      "other-field": true
+    }));
+    let interaction_pointer = String::from("test-interaction-0");
+
+    // shape diff for items[1] being a string
+    let array_item_shape_diff : InteractionDiffResult = serde_json::from_value(json!({
+      "UnmatchedResponseBodyShape":{
+        "interactionTrail":{"path":[{"ResponseBody":{"contentType":"application/json","statusCode":200}}]},
+        "requestsTrail":{"SpecResponseBody":{"responseId":"test-response-1"}},
+        "shapeDiffResult":{"UnmatchedShape":{
+          "jsonTrail":{"path":[{"JsonObjectKey":{"key":"items"}},{"JsonArrayItem":{"index":1}}] },
+          "shapeTrail":{"rootShapeId":"some_shape_id","path":[{"ObjectFieldTrail":{"fieldId":"field_1","fieldShapeId":"shape_L3dn1UwIbE"}},{"ListItemTrail":{"listShapeId":"shape_2","itemShapeId":"item_shape_id_2"}}]}
+        }}
+      }
+    })).unwrap();
+    let diff_fingerprint = array_item_shape_diff.fingerprint();
+
+    let analysis_result = BodyAnalysisResult {
+      body_location: BodyAnalysisLocation::MatchedResponse {
+        response_id: String::from("test-response-1"),
+        content_type: Some(String::from("application/json")),
+        status_code: 200,
+      },
+      trail_observations: observe_body_trails(body),
+    };
+
+    let interaction_pointers: Tags = vec![interaction_pointer.clone()].into_iter().collect();
+    let tagged_analysis = TaggedInput(analysis_result, interaction_pointers);
+
+    let mut projection = LearnedShapeDiffAffordancesProjection::from(vec![array_item_shape_diff]);
+
+    projection.apply(tagged_analysis);
+
+    let mut results: Vec<_> = projection.into_iter().collect();
+    assert_eq!(results.len(), 1); // one diff, one result per diff
+
+    let (aggregate_key, shape_diff_affordances) = results.pop().unwrap();
+    assert_eq!(aggregate_key, diff_fingerprint); // per diff fingerprint
+
+    // affordances
+    assert_eq!(
+      &shape_diff_affordances.affordances[0].trail,
+      &JsonTrail::empty()
+        .with_object_key(String::from("items"))
+        .with_array_item(0),
+      "affordance trail is normalized"
+    );
+    assert!(
+      shape_diff_affordances.affordances[0].was_string
+        && shape_diff_affordances.affordances[0].was_number
+    );
+
+    // interactions
+    let was_string_trails = &shape_diff_affordances.interactions.was_string_trails;
+    assert_eq!(
+      &was_string_trails.get(&interaction_pointer).unwrap()[0],
+      &JsonTrail::empty()
+        .with_object_key(String::from("items"))
+        .with_array_item(1),
+      "interaction affordance trails are denormalized"
+    );
+
+    assert_debug_snapshot!("shape_diff_affordances_can_aggregate_affordances_for_array_item_diffs__shape_diff_affordances", shape_diff_affordances);
   }
 }

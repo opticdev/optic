@@ -571,6 +571,7 @@ dependencies = [
  "cqrs-core",
  "futures",
  "insta",
+ "log",
  "num_cpus",
  "petgraph",
  "petgraph-evcxr",

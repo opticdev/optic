@@ -102,7 +102,13 @@ export const newSharedDiffMachine = (
                     end: true,
                   });
                   return [
-                    ...ctx.pendingEndpoints,
+                    ...ctx.pendingEndpoints.filter(
+                      (pendingEndpoint) =>
+                        !(
+                          pendingEndpoint.method === event.method &&
+                          pendingEndpoint.pathPattern === event.pattern
+                        )
+                    ),
                     {
                       pathPattern: event.pattern,
                       method: event.method,
@@ -319,10 +325,8 @@ function updateUrlResults(
 ): SharedDiffStateContext['results'] {
   return {
     undocumentedUrls: ctx.results.undocumentedUrls,
-    knownPathUndocumented: ctx.results.knownPathUndocumented,
     displayedUndocumentedUrls: filterDisplayedUndocumentedUrls(
       ctx.results.undocumentedUrls,
-      ctx.results.knownPathUndocumented,
       ctx.pendingEndpoints,
       ctx.browserAppliedIgnoreRules
     ),
@@ -338,28 +342,6 @@ export interface EndpointDiffGrouping {
   fullPath: string;
   newRegionDiffs: ParsedDiff[];
   shapeDiffs: BodyShapeDiff[];
-}
-
-export function includeUndocumented(
-  parsedDiffs: ParsedDiff[],
-  currentSpecContext: CurrentSpecContext
-): IKnownPathUndocumented[] {
-  const undocumented = new DiffSet(parsedDiffs, currentSpecContext)
-    .forUndocumented()
-    .iterator();
-
-  const knownPaths: IKnownPathUndocumented[] = undocumented.map((i) => {
-    const { pathId, method } = i.location(currentSpecContext);
-    return {
-      pathId,
-      method,
-      fullPath: currentSpecContext.currentSpecPaths.find(
-        (i) => i.pathId === pathId
-      )!.absolutePathPatternWithParameterNames,
-    };
-  });
-
-  return uniqby(knownPaths, (i) => i.pathId + i.method);
 }
 
 function groupDiffsByTheirEndpoints(
@@ -493,7 +475,6 @@ export interface SharedDiffStateContext {
   };
   results: {
     undocumentedUrls: IUndocumentedUrl[];
-    knownPathUndocumented: IKnownPathUndocumented[];
     displayedUndocumentedUrls: IUndocumentedUrl[];
     parsedDiffs: ParsedDiff[];
     trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash;

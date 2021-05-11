@@ -24,6 +24,26 @@ impl TrailObservationsResult {
     }
   }
 
+  pub fn normalized(mut self) -> Self {
+    self.values_by_trail = self.values_by_trail.into_iter().fold(
+      HashMap::new(),
+      |mut values_by_trail, (_, mut trail_values)| {
+        trail_values.normalize();
+        let normalized_trail = trail_values.trail.clone();
+
+        let existing_trail_values = values_by_trail
+          .entry(normalized_trail)
+          .or_insert_with_key(|json_trail| TrailValues::new(json_trail));
+
+        existing_trail_values.union(trail_values);
+
+        values_by_trail
+      },
+    );
+
+    self
+  }
+
   pub fn trails(&self) -> impl Iterator<Item = &JsonTrail> {
     self.values_by_trail.keys()
   }
@@ -292,6 +312,10 @@ impl TrailValues {
     for new_field_set in new_values.field_sets {
       self.insert_field_set(new_field_set);
     }
+  }
+
+  pub fn normalize(&mut self) {
+    self.trail = self.trail.normalized();
   }
 
   pub fn was_unknown(&self) -> bool {
@@ -567,7 +591,7 @@ mod test {
 
     let primitive_array_observations = observe_body_trails(primitive_array_body);
     let empty_array_observations = observe_body_trails(empty_array_body);
-    let polymorphic_array_observations = observe_body_trails(polymorphic_array_body);
+    let polymorphic_array_observations = observe_body_trails(polymorphic_array_body).normalized();
 
     let mut test_id_generator = TestIdGenerator::default();
 
@@ -732,7 +756,7 @@ mod test {
 
     let nullable_array_item_observations = {
       let body = BodyDescriptor::from(json!(["string-value", null]));
-      observe_body_trails(body)
+      observe_body_trails(body).normalized()
     };
 
     let nullable_one_off_observations = {

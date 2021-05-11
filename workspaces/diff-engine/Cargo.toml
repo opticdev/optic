@@ -7,6 +7,7 @@ edition = "2018"
 
 [lib]
 crate-type = ["lib"]
+edition = "2018"
 
 [features]
 default = ["streams"]
@@ -20,6 +21,7 @@ chrono = { version = "0.4.19", features = ["serde", "wasmbind"] }
 clap = "~2.33.3"
 cqrs-core = "0.2.2"
 futures = { version = "0.3.12", optional = true }
+log = "0.4.6"
 num_cpus = "1.13.0"
 petgraph = "0.5.1"
 protobuf = "2.23.0"
