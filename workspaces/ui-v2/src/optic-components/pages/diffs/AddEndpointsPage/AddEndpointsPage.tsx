@@ -8,6 +8,7 @@ import groupBy from 'lodash.groupby';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/styles';
 import { Check } from '@material-ui/icons';
+import { pathToRegexp } from 'path-to-regexp';
 
 import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../../diffs/DiffHeader';
@@ -39,28 +40,47 @@ import {
   PendingEndpointNameField,
 } from './components/EndpointNameEditFields';
 import { UndocumentedUrl } from './components/UndocumentedUrl';
+import { makePattern } from './utils';
 
 import { useAnalytics } from '<src>/analytics';
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();
   const history = useHistory();
-  const { documentEndpoint, stageEndpoint } = useSharedDiffContext();
+  const { documentEndpoint, wipPatterns } = useSharedDiffContext();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const classes = useStyles();
   const analytics = useAnalytics();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const matchers = Object.entries(wipPatterns)
+    .filter(([, { isParameterized }]) => isParameterized)
+    .map(([pathMethod, { components, method }]) => ({
+      pathMethod,
+      matcher:
+        (console.log(makePattern(components)),
+        pathToRegexp(makePattern(components))),
+      method,
+    }));
 
+  const dedupedUrls = urls.filter((url) => {
+    return matchers.every(
+      ({ pathMethod, matcher, method }) =>
+        pathMethod === url.path + url.method ||
+        !(matcher.test(url.path) && method === url.method)
+    );
+  });
   const [bulkMode, setBulkMode] = useState<boolean>(false);
-  const unmatchedUrlLengths = urls.filter((i) => !i.hide).length;
+  const unmatchedUrlLengths = dedupedUrls.filter((i) => !i.hide).length;
 
-  const shownUrls = urls
+  const shownUrls = dedupedUrls
     .filter((url) => url.path.startsWith(searchQuery))
     .filter((i) => !i.hide);
 
   const name = `${unmatchedUrlLengths} unmatched URLs observed${
-    shownUrls.length !== urls.length ? `. Showing ${shownUrls.length}` : ''
+    shownUrls.length !== dedupedUrls.length
+      ? `. Showing ${shownUrls.length}`
+      : ''
   }`;
 
   return (
@@ -114,12 +134,13 @@ export function DiffUrlsPage(props: any) {
                     itemCount={shownUrls.length}
                     itemData={{
                       handleSelection: (pattern: string, method: string) => {
-                        const pendingId = documentEndpoint(pattern, method);
-                        analytics.userDocumentedEndpoint(bulkMode);
                         if (bulkMode) {
+                          // TODO document, and add analytics
                           // TODO change to selection
-                          stageEndpoint(pendingId);
+                          // stageEndpoint(pendingId);
                         } else {
+                          const pendingId = documentEndpoint(pattern, method);
+                          analytics.userDocumentedEndpoint(bulkMode);
                           const link = diffReviewPagePendingEndpoint.linkTo(
                             pendingId
                           );

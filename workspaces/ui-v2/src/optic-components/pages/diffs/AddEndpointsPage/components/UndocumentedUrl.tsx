@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { IconButton, ListItem } from '@material-ui/core';
+import { IconButton, ListItem, Checkbox } from '@material-ui/core';
 import { methodColorsDark, primary } from '<src>/optic-components/theme';
 import AddIcon from '@material-ui/icons/Add';
 import padLeft from 'pad-left';
@@ -8,9 +8,13 @@ import { LightTooltip } from '<src>/optic-components/navigation/LightToolTip';
 import classNames from 'classnames';
 import ClearIcon from '@material-ui/icons/Clear';
 import isEqual from 'lodash.isequal';
-import { useDebounce } from '<src>/optic-components/hooks/ui/useDebounceHook';
 import { useSharedDiffContext } from '<src>/optic-components/hooks/diffs/SharedDiffContext';
 import { IUndocumentedUrl } from '<src>/optic-components/hooks/diffs/SharedDiffState';
+import {
+  PathComponentAuthoring,
+  urlStringToPathComponents,
+  makePattern,
+} from '../utils';
 
 export type UndocumentedUrlProps = {
   style: Record<string, any>;
@@ -35,29 +39,32 @@ export function UndocumentedUrl({
   const paddedMethod = padLeft(method, 6, ' ');
   const methodColor = methodColorsDark[method.toUpperCase()];
 
-  const [isEditing, setIsEditing] = useState(false);
   const [components, setComponents] = useState<PathComponentAuthoring[]>(
     wipPatterns[path + method]
-      ? wipPatterns[path + method]
+      ? wipPatterns[path + method].components
       : urlStringToPathComponents(path)
   );
 
   function initialNameForComponent(newIndex: number): string {
-    const otherPathComponents = Object.values(wipPatterns).filter((i) => {
-      const a = i
-        .slice(0, newIndex - 1)
-        .map((c) => ({ name: c.name, isParameter: c.isParameter }));
-      const b = components
-        .slice(0, newIndex - 1)
-        .map((c) => ({ name: c.name, isParameter: c.isParameter }));
+    const otherPathComponents = Object.values(wipPatterns).filter(
+      ({ components: wipComponents }) => {
+        const a = wipComponents
+          .slice(0, newIndex - 1)
+          .map((c) => ({ name: c.name, isParameter: c.isParameter }));
+        const b = components
+          .slice(0, newIndex - 1)
+          .map((c) => ({ name: c.name, isParameter: c.isParameter }));
 
-      return isEqual(a, b);
-    });
+        return isEqual(a, b);
+      }
+    );
     if (otherPathComponents.length === 0) {
       return '';
     } else {
       const firstMatchingParamName = otherPathComponents
-        .map((i) => i.find((param) => param.index === newIndex))
+        .map(({ components: wipComponents }) =>
+          wipComponents.find((param) => param.index === newIndex)
+        )
         .filter((param) => {
           if (param && param.isParameter) {
             return true;
@@ -67,9 +74,6 @@ export function UndocumentedUrl({
       return firstMatchingParamName ? firstMatchingParamName.name : '';
     }
   }
-
-  const debouncedComponents = useDebounce(components, 300);
-  const debouncedIsEditing = useDebounce(isEditing, 300);
 
   const onChange = (index: number) => (parameter: PathComponentAuthoring) => {
     setComponents((com) => {
@@ -83,18 +87,10 @@ export function UndocumentedUrl({
       } else {
         newSet[index] = parameter;
       }
+      persistWIPPattern(path, method, newSet);
       return newSet;
     });
   };
-
-  useEffect(() => {
-    const isDifferent = !isEqual(wipPatterns[path + method], components);
-
-    if (components && isDifferent && !isEditing) {
-      persistWIPPattern(path, method, components);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(debouncedComponents), debouncedIsEditing]);
 
   if (hide) {
     return null;
@@ -128,7 +124,6 @@ export function UndocumentedUrl({
                     <span className={classes.pathComponent}>/</span>
                   )}
                   <PathComponentRender
-                    parentSetIsEditing={setIsEditing}
                     pathComponent={i}
                     key={index}
                     initialNameForComponent={initialNameForComponent}
@@ -141,11 +136,17 @@ export function UndocumentedUrl({
         </div>
       </div>
       <div style={{ paddingRight: 5 }}>
-        <LightTooltip title="Review Endpoint" enterDelay={1000}>
-          <IconButton size="small" color="primary">
-            <AddIcon />
-          </IconButton>
-        </LightTooltip>
+        {isBulkMode ? (
+          <Checkbox
+            checked={false} // TODO change
+          />
+        ) : (
+          <LightTooltip title="Review Endpoint" enterDelay={1000}>
+            <IconButton size="small" color="primary">
+              <AddIcon />
+            </IconButton>
+          </LightTooltip>
+        )}
       </div>
     </ListItem>
   );
@@ -153,32 +154,17 @@ export function UndocumentedUrl({
 
 export type PathComponentProps = {
   pathComponent: PathComponentAuthoring;
-  parentSetIsEditing: (bool: boolean) => void;
   initialNameForComponent: (index: number) => string;
   onChange: (pathParameter: PathComponentAuthoring) => void;
 };
 
-function makePattern(components: PathComponentAuthoring[]) {
-  return (
-    '/' +
-    components
-      .map((i) => {
-        return i.isParameter ? `:${i.name}` : i.originalName;
-      })
-      .join('/')
-  );
-}
-
 function PathComponentRender({
   onChange,
-  parentSetIsEditing,
   pathComponent,
   initialNameForComponent,
 }: PathComponentProps) {
   const classes = useStyles();
   const [name, setName] = useState(pathComponent.name);
-
-  // const originalName = pathComponent.originalName;
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -194,12 +180,6 @@ function PathComponentRender({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathComponent.isParameter]);
 
-  //share edit state with parent
-  useEffect(() => {
-    parentSetIsEditing(isEditing);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEditing]);
-
   useEffect(() => {
     if (!isEditing && pathComponent.isParameter) {
       setIsEditing(true);
@@ -213,8 +193,6 @@ function PathComponentRender({
 
   useEffect(() => {
     setIsEditing(false);
-    // should only run once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (pathComponent.isParameter && !isEditing) {
@@ -374,27 +352,3 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'flex-start',
   },
 }));
-
-////////////////////////////////////////////
-
-export type PathComponentAuthoring = {
-  index: number;
-  name: string;
-  originalName: string;
-  isParameter: boolean;
-};
-
-export function urlStringToPathComponents(
-  url: string
-): PathComponentAuthoring[] {
-  const components: PathComponentAuthoring[] = url
-    .split('/')
-    .map((name, index) => {
-      return { index, name, originalName: name, isParameter: false };
-    });
-  const [root, ...rest] = components;
-  if (root.name === '') {
-    return rest;
-  }
-  return components;
-}

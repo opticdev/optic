@@ -7,7 +7,7 @@ import {
 // @ts-ignore
 import * as shortId from 'shortid';
 import { useMachine } from '@xstate/react';
-import { PathComponentAuthoring } from '<src>/optic-components/pages/diffs/AddEndpointsPage/components/UndocumentedUrl';
+import { PathComponentAuthoring } from '<src>/optic-components/pages/diffs/AddEndpointsPage/utils';
 import { IEndpoint } from '../useEndpointsHook';
 import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
@@ -33,7 +33,13 @@ type ISharedDiffContext = {
     components: PathComponentAuthoring[]
   ) => void;
   getPendingEndpointById: (id: string) => IPendingEndpoint | undefined;
-  wipPatterns: { [key: string]: PathComponentAuthoring[] };
+  wipPatterns: {
+    [key: string]: {
+      components: PathComponentAuthoring[];
+      isParameterized: boolean;
+      method: string;
+    };
+  };
   stageEndpoint: (id: string) => void;
   discardEndpoint: (id: string) => void;
   approveCommandsForDiff: (diffHash: string, commands: CQRSCommand[]) => void;
@@ -125,7 +131,11 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   /* eslint-enable react-hooks/exhaustive-deps */
 
   const [wipPatterns, setWIPPatterns] = useState<{
-    [key: string]: PathComponentAuthoring[];
+    [key: string]: {
+      components: PathComponentAuthoring[];
+      isParameterized: boolean;
+      method: string;
+    };
   }>({});
 
   const [commitModalOpen, setCommitModalOpen] = useState(false);
@@ -161,7 +171,11 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     ) =>
       setWIPPatterns((obj) => ({
         ...obj,
-        [path + method]: components,
+        [path + method]: {
+          components,
+          isParameterized: components.some((c) => c.isParameter),
+          method,
+        },
       })),
     wipPatterns,
     currentSpecContext,
