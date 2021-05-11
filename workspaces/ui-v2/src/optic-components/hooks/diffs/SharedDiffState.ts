@@ -413,7 +413,10 @@ function filterDisplayedUndocumentedUrls(
               known.method === value.method
           )
         );
-        return i.matchesPattern(value.path, value.method) || matchedKnown;
+        return (
+          (i.matchesPattern(value.path, value.method) || matchedKnown) &&
+          i.staged
+        );
       }) ||
       allIgnores.shouldIgnore(value.method, value.path)
     ) {
