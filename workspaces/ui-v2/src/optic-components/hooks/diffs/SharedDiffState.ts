@@ -6,8 +6,8 @@ import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
 import { AddContributionType, CQRSCommand } from '<src>/lib/command-factory';
 import { BodyShapeDiff, ParsedDiff } from '../../../lib/parse-diff';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
-import uniqueBy from 'lodash.uniqby';
 import { DiffSet } from '../../../lib/diff-set';
+import uniqby from 'lodash.uniqby';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { AssembleCommands } from '../../../lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
@@ -21,6 +21,26 @@ export const newSharedDiffMachine = (
   diffService: IOpticDiffService,
   configRepository: IOpticConfigRepository
 ) => {
+  const knownUndocumented = includeUndocumented(
+    parsedDiffs,
+    currentSpecContext
+  );
+
+  const additionalUndocumentedUrls = knownUndocumented.map((i) => {
+    const asUndocumentedUrl: IUndocumentedUrl = {
+      path: i.fullPath,
+      method: i.method,
+      isKnownPath: true,
+      count: 1,
+    };
+    return asUndocumentedUrl;
+  });
+
+  const initialDisplayUndocumented = [
+    ...additionalUndocumentedUrls,
+    ...undocumentedUrls,
+  ];
+
   return Machine<
     SharedDiffStateContext,
     SharedDiffStateSchema,
@@ -39,12 +59,9 @@ export const newSharedDiffMachine = (
         existingEndpointPathContributions: {},
       },
       results: {
-        undocumentedUrls: includeUndocumented(
-          undocumentedUrls,
-          parsedDiffs,
-          currentSpecContext
-        ),
-        displayedUndocumentedUrls: undocumentedUrls,
+        undocumentedUrls: initialDisplayUndocumented,
+        knownPathUndocumented: knownUndocumented,
+        displayedUndocumentedUrls: initialDisplayUndocumented,
         parsedDiffs: parsedDiffs,
         trailValues,
         diffsGroupedByEndpoint: groupDiffsByTheirEndpoints(
@@ -302,8 +319,10 @@ function updateUrlResults(
 ): SharedDiffStateContext['results'] {
   return {
     undocumentedUrls: ctx.results.undocumentedUrls,
+    knownPathUndocumented: ctx.results.knownPathUndocumented,
     displayedUndocumentedUrls: filterDisplayedUndocumentedUrls(
       ctx.results.undocumentedUrls,
+      ctx.results.knownPathUndocumented,
       ctx.pendingEndpoints,
       ctx.browserAppliedIgnoreRules
     ),
@@ -322,10 +341,9 @@ export interface EndpointDiffGrouping {
 }
 
 export function includeUndocumented(
-  undocumentedUrls: IUndocumentedUrl[],
   parsedDiffs: ParsedDiff[],
   currentSpecContext: CurrentSpecContext
-) {
+): IKnownPathUndocumented[] {
   const undocumented = new DiffSet(parsedDiffs, currentSpecContext)
     .forUndocumented()
     .iterator();
@@ -341,13 +359,7 @@ export function includeUndocumented(
     };
   });
 
-  const uniqueKnownPaths = uniqueBy(
-    knownPaths,
-    (path: IKnownPathUndocumented) => path.pathId + path.method
-  );
-
-  debugger;
-  return undocumentedUrls;
+  return uniqby(knownPaths, (i) => i.pathId + i.method);
 }
 
 function groupDiffsByTheirEndpoints(
@@ -383,6 +395,7 @@ function groupDiffsByTheirEndpoints(
 
 function filterDisplayedUndocumentedUrls(
   all: IUndocumentedUrl[],
+  knownPathsUndocumented: IKnownPathUndocumented[],
   pending: IPendingEndpoint[],
   ignoreRules: string[]
 ): IUndocumentedUrl[] {
@@ -390,7 +403,18 @@ function filterDisplayedUndocumentedUrls(
 
   return all.map((value) => {
     if (
-      pending.some((i) => i.matchesPattern(value.path, value.method)) ||
+      pending.some((i) => {
+        const matchedKnown = Boolean(
+          knownPathsUndocumented.find(
+            (known) =>
+              known.fullPath === i.pathPattern &&
+              known.method === i.method &&
+              known.fullPath === value.path &&
+              known.method === value.method
+          )
+        );
+        return i.matchesPattern(value.path, value.method) || matchedKnown;
+      }) ||
       allIgnores.shouldIgnore(value.method, value.path)
     ) {
       return { ...value, hide: true };
@@ -466,6 +490,7 @@ export interface SharedDiffStateContext {
   };
   results: {
     undocumentedUrls: IUndocumentedUrl[];
+    knownPathUndocumented: IKnownPathUndocumented[];
     displayedUndocumentedUrls: IUndocumentedUrl[];
     parsedDiffs: ParsedDiff[];
     trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
@@ -503,9 +528,11 @@ export interface IUndocumentedUrl {
   method: string;
   count: number;
   hide?: boolean;
+  isKnownPath?: boolean;
 }
 
 export interface IKnownPathUndocumented {
   pathId: string;
   method: string;
+  fullPath: string;
 }

@@ -16,6 +16,7 @@ import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
 export type UndocumentedUrlProps = {
   method: string;
   path: string;
+  isKnownPath?: boolean;
   hide?: boolean;
   style: any;
   bulkMode: boolean;
@@ -25,6 +26,7 @@ export type UndocumentedUrlProps = {
 export function UndocumentedUrl({
   method,
   path,
+  isKnownPath,
   onFinish,
   hide,
   bulkMode,
@@ -116,28 +118,48 @@ export function UndocumentedUrl({
             <div className={classes.method} style={{ color: methodColor }}>
               {paddedMethod.toUpperCase()}
             </div>
-            <div className={classes.componentsWrapper}>
-              {components.map((i, index) => (
-                <div
-                  key={index}
-                  style={{ display: 'flex', flexDirection: 'row' }}
-                >
-                  {components.length > index && (
-                    <span className={classes.pathComponent}>/</span>
-                  )}
-                  <PathComponentRender
-                    parentSetIsEditing={setIsEditing}
-                    pathComponent={i}
+
+            {isKnownPath && (
+              <div
+                className={classes.pathComponent}
+                style={{ fontWeight: 600 }}
+              >
+                {path}
+              </div>
+            )}
+
+            {!isKnownPath && (
+              <div className={classes.componentsWrapper}>
+                {components.map((i, index) => (
+                  <div
                     key={index}
-                    initialNameForComponent={initialNameForComponent}
-                    onChange={onChange(index)}
-                  />
-                </div>
-              ))}
-            </div>
+                    style={{ display: 'flex', flexDirection: 'row' }}
+                  >
+                    {components.length > index && (
+                      <span className={classes.pathComponent}>/</span>
+                    )}
+                    <PathComponentRender
+                      parentSetIsEditing={setIsEditing}
+                      pathComponent={i}
+                      key={index}
+                      initialNameForComponent={initialNameForComponent}
+                      onChange={onChange(index)}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
+      {isKnownPath && (
+        <div
+          className={classes.pathComponent}
+          style={{ paddingLeft: 10, fontSize: 12 }}
+        >
+          known path
+        </div>
+      )}
       <div style={{ paddingRight: 5 }}>
         <LightTooltip
           title={
@@ -150,7 +172,13 @@ export function UndocumentedUrl({
           <IconButton
             size="small"
             color="primary"
-            onClick={() => onFinish(makePattern(components), method, bulkMode)}
+            onClick={() =>
+              onFinish(
+                isKnownPath ? path : makePattern(components),
+                method,
+                bulkMode
+              )
+            }
           >
             <AddIcon />
           </IconButton>

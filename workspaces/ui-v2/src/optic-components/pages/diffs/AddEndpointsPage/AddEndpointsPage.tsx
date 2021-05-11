@@ -49,6 +49,7 @@ export function DiffUrlsPage(props: any) {
     documentEndpoint,
     stageEndpoint,
     pendingEndpoints,
+    context,
   } = useSharedDiffContext();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const classes = useStyles();
@@ -68,11 +69,11 @@ export function DiffUrlsPage(props: any) {
   function renderRow(props: ListChildComponentProps) {
     const { index, style } = props;
     const data = shownUrls[index];
-
     return (
       <UndocumentedUrl
         style={style}
         bulkMode={bulkMode}
+        isKnownPath={data.isKnownPath}
         {...data}
         key={data.method + data.path}
         onFinish={(pattern, method, autolearn) => {
