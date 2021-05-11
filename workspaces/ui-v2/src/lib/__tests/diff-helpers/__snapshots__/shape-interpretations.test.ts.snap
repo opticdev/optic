@@ -2,77 +2,162 @@
 
 exports[`a known field is missing.managed 1`] = `
 Object {
-  "diffDescription": Object {
-    "assertion": Array [
-      Object {
-        "style": 0,
-        "text": "expected",
+  "commands": Array [],
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "2579fe9e29b0dd7e",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "baseline-response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "baseline-path_3",
       },
-      Object {
-        "style": 1,
-        "text": "String",
-      },
-    ],
-    "changeType": 1,
-    "diffHash": "2579fe9e29b0dd7e",
-    "getJsonBodyToPreview": [Function],
-    "location": Object {
-      "inRequest": undefined,
-      "inResponse": Object {
-        "contentType": "application/json",
-        "responseId": "baseline-response_1",
-        "statusCode": 200,
-      },
-      "method": "GET",
-      "pathId": "baseline-path_3",
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "values of ",
+        },
+        Object {
+          "style": 1,
+          "text": "firstName",
+        },
+        Object {
+          "style": 0,
+          "text": "did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
     },
-    "title": Array [
+    "previewTabs": Array [
       Object {
-        "style": 0,
-        "text": "values of ",
-      },
-      Object {
-        "style": 1,
-        "text": "firstName",
-      },
-      Object {
-        "style": 0,
-        "text": "did not match",
-      },
-      Object {
-        "style": 1,
-        "text": "String",
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "2579fe9e29b0dd7e",
+          "examplesOfCoreShapeKinds": "$optional",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "firstName",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "missing",
       },
     ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 0,
+          "text": "what values are allowed for",
+        },
+        Object {
+          "style": 1,
+          "text": "firstName",
+        },
+      ],
+      "isField": true,
+      "isOptional": true,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$string",
+          "isValid": true,
+        },
+      ],
+    },
   },
-  "previewTabs": Array [],
-  "toCommands": [Function],
-  "updateSpecChoices": Object {
-    "copy": Array [],
-    "isField": true,
-    "shapes": Array [],
-  },
-}
-`;
-
-exports[`a known field is missing.managed 2`] = `
-Object {
-  "affordances": Array [],
-  "interactions": Object {
-    "wasArray": Array [],
-    "wasArrayTrails": Object {},
-    "wasBoolean": Array [],
-    "wasBooleanTrails": Object {},
-    "wasMissing": Array [],
-    "wasMissingTrails": Object {},
-    "wasNull": Array [],
-    "wasNullTrails": Object {},
-    "wasNumber": Array [],
-    "wasNumberTrails": Object {},
-    "wasObject": Array [],
-    "wasObjectTrails": Object {},
-    "wasString": Array [],
-    "wasStringTrails": Object {},
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "firstName",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": false,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [
+        "id",
+      ],
+      "wasMissingTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "firstName",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
   },
 }
 `;
