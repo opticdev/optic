@@ -1,6 +1,3 @@
-import { IJsonObject } from '@useoptic/cli-shared/build/diffs/json-trail';
-import { isNull } from 'util';
-
 export async function jsonSchemaFromShapeId(
   spectacle: any,
   shapeId: string
@@ -44,7 +41,7 @@ export async function jsonSchemaFromShapeId(
   // TODO: investigate why this scenario happens
   // This can happen if there are no shapeChoices
   if (openApiSchemas.length === 0) {
-    return { type: 'string' };
+    return {};
   }
 
   // This means it's nullable with additional types to for setting `nullable: true`.
@@ -173,7 +170,7 @@ export type JsonSchemaArray = {
 
 export type JsonSchemaValue =
   | {
-      type: 'string' | 'number' | 'boolean';
+      type?: 'string' | 'number' | 'boolean';
       nullable?: boolean;
     }
   | { type: 'null' };
