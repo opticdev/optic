@@ -11,9 +11,7 @@ tasks:
       API_PROJECT_DIR: '{{default "optic-snapshots" .API_PROJECT_DIR}}'
       NUM_INTERACTIONS: '{{default 10000 .NUM_INTERACTIONS}}'
       OUTPUT_DIR: '{{default "output" .OUTPUT_DIR}}'
-      OPTIC_RUST_DIFF_ENGINE: '{{default "true" .OPTIC_RUST_DIFF_ENGINE}}'
     env:
-      OPTIC_RUST_DIFF_ENGINE: '{{.OPTIC_RUST_DIFF_ENGINE}}'
       DEBUG: optic*
     cmds:
       - >
