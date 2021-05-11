@@ -21,6 +21,8 @@ import {
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 
+let throttlerPromiseSingleton = Promise.resolve();
+
 export class LocalCliSpectacle implements IForkableSpectacle {
   constructor(private baseUrl: string, private opticEngine: IOpticEngine) {}
   async fork(): Promise<IBaseSpectacle> {
@@ -126,12 +128,19 @@ export class LocalCliDiffService implements IOpticDiffService {
     method: string,
     newPathCommands: any[]
   ): Promise<ILearnedBodies> {
-    const result = await JsonHttpClient.postJson(
+    // The local CLI instance will run learns sequentially - since we run this in parallel, there
+    // is contention between learner workers reading arvo files
+    // This forces this to run sequentially
+    await throttlerPromiseSingleton;
+    const promiseToReturn = JsonHttpClient.postJson(
       `${this.dependencies.baseUrl}/captures/${this.dependencies.captureId}/initial-bodies`,
       { pathId, method, additionalCommands: newPathCommands }
     );
-    debugger;
-    return result;
+    throttlerPromiseSingleton = promiseToReturn.catch(() => {
+      // We need to catch any errors the promise _could_ return so that a single failure does
+      // not break the rest of these calls
+    });
+    return promiseToReturn;
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
