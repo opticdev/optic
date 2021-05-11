@@ -53,6 +53,10 @@ export async function generateOpenApi(spectacle: any) {
         openapi.paths[path].parameters?.push({
           name: pathComponent.name,
           in: 'path',
+          schema: {
+            type: 'string',
+          },
+          required: true,
         });
       }
     }
@@ -131,6 +135,10 @@ type PathItem = {
 type Parameter = {
   name: string;
   in: string;
+  schema: {
+    type: 'string';
+  };
+  required: true;
 };
 
 type Operation = {
