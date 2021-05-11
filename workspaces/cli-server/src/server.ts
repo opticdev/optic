@@ -38,7 +38,6 @@ export interface IOpticExpressRequestAdditions {
   exampleRequestsHelpers: ExampleRequestsHelpers;
   session: Session;
   specLoader(): Promise<any[]>;
-  fileReadBottleneck: Bottleneck;
 }
 
 declare global {
@@ -92,6 +91,9 @@ class CliServer {
     app.use(cors(this.corsOptions));
     app.set('etag', false);
     const sessions = new SessionsManager();
+    const fileReadBottleneck = new Bottleneck({
+      maxConcurrent: 1,
+    });
     let user: object | null;
 
     const anonIdPromise = getOrCreateAnonId();
@@ -204,7 +206,7 @@ class CliServer {
     );
 
     // specRouter
-    const specRouter = await makeRouter(sessions);
+    const specRouter = await makeRouter(sessions, fileReadBottleneck);
     app.use('/api/specs/:specId', specRouter);
 
     // ui
