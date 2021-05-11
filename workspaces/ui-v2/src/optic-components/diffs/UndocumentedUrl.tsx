@@ -108,7 +108,7 @@ export function UndocumentedUrl({
       disableGutters
       style={{ display: 'flex', ...style }}
       button
-      // onClick={onClick}
+      onClick={() => onFinish(makePattern(components), method, bulkMode)}
     >
       <div style={{ flex: 1 }}>
         <div className={classes.wrapper}>
@@ -116,7 +116,10 @@ export function UndocumentedUrl({
             <div className={classes.method} style={{ color: methodColor }}>
               {paddedMethod.toUpperCase()}
             </div>
-            <div className={classes.componentsWrapper}>
+            <div
+              className={classes.componentsWrapper}
+              onClick={(e) => e.stopPropagation()}
+            >
               {components.map((i, index) => (
                 <div
                   key={index}
@@ -147,11 +150,7 @@ export function UndocumentedUrl({
           }
           enterDelay={1000}
         >
-          <IconButton
-            size="small"
-            color="primary"
-            onClick={() => onFinish(makePattern(components), method, bulkMode)}
-          >
+          <IconButton size="small" color="primary">
             <AddIcon />
           </IconButton>
         </LightTooltip>
