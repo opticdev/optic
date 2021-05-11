@@ -7,8 +7,12 @@ import {
   useDebouncedFn,
   useStateWithSideEffect,
 } from '<src>/optic-components/hooks/util';
+import { useClientAgent } from '<src>/analytics';
+import { useSessionId } from '<src>/optic-components/hooks/useSessionId';
 
-export const ContributionEditContext = React.createContext({});
+export const ContributionEditContext = React.createContext<ContributionEditContextValue | null>(
+  null
+);
 
 type ContributionEditContextValue = {
   isEditing: boolean;
@@ -67,6 +71,8 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
   props
 ) => {
   const spectacleMutator = useSpectacleCommand();
+  const clientId = useClientAgent();
+  const clientSessionId = useSessionId();
   const [commitModalOpen, setCommitModalOpen] = useState(false);
 
   const [isEditing, setIsEditing] = useState(
@@ -145,8 +151,8 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
               commands,
               commitMessage,
               batchCommitId: uuidv4(),
-              clientId: uuidv4(), //@dev: fill this in
-              clientSessionId: uuidv4(), //@dev: fill this in
+              clientId,
+              clientSessionId,
             },
           });
 
@@ -173,5 +179,5 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
 };
 
 export function useContributionEditing() {
-  return useContext(ContributionEditContext) as ContributionEditContextValue;
+  return useContext(ContributionEditContext)!;
 }
