@@ -27,6 +27,7 @@
     "tar": "^6.0.5"
   },
   "devDependencies": {
+    "meow": "^9.0.0",
     "stream-chain": "^2.2.3",
     "stream-fork": "^1.0.3",
     "stream-json": "^1.7.1",
