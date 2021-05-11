@@ -28,6 +28,7 @@ export interface IPatchChoices {
   shouldRemoveField?: boolean;
   isField?: boolean;
   isShape?: boolean;
+  includeNewBody?: boolean;
 }
 
 export interface IInteractionPreviewTab {

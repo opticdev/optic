@@ -14,6 +14,8 @@ import {
 } from '<src>/optic-components/diffs/render/ICopyRender';
 import { IChangeType, IInterpretation } from '<src>/lib/Interfaces';
 import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { newRegionInterpreters } from '<src>/lib/new-regions-interpreter';
+import { IOpticDiffService } from '@useoptic/spectacle';
 
 export const testCase = (basePath: string) => async (
   name: string
@@ -81,6 +83,20 @@ export type IShapeDiffTestSnapshot = {
   commands: any[];
   trailValues: IValueAffordanceSerializationWithCounter;
 };
+
+export async function newRegionPreview(
+  diff: ParsedDiff,
+  diffService: IOpticDiffService,
+  universe: ITestUniverse
+) {
+  const newRegion = await newRegionInterpreters(
+    diff,
+    diffService,
+    universe.currentSpecContext
+  );
+
+  return newRegion;
+}
 
 export async function shapeDiffPreview(
   input: {
