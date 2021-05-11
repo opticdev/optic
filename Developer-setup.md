@@ -43,7 +43,7 @@ Each workspace should have a package.json file with a name field like `@useoptic
 
 - Navigate to a workspace to validate it can be built. For example, try `workspaces/ui-v2`.
 - Run `yarn start:local` to start the workspace. For the UI, this should automatically launch a browser instance to view the started server. Your browser will land on the splash page at [http://localhost:3000](http://localhost:3000).
-- Validate you can load a mocked test route from one of the example sessions under `public/example-sessions` such as [http://localhost:3000/example-sessions/diff-test-cases](http://localhost:3000/example-sessions/diff-test-cases).
+- Validate you can load a mocked test route from one of the example sessions under `public/example-sessions` such as [http://localhost:3000/examples/diff-use-cases-with-events](http://localhost:3000/examples/diff-use-cases-with-events).
 
 ## Validate Setup to contribute to Optic’s Local CLI
 
