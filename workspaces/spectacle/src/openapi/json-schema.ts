@@ -32,10 +32,7 @@ export async function jsonSchemaFromShapeId(
   // This happens when there is only a null type
   // We are taking liberties here to set the type as string, which may not be correct.
   if (isNullable && openApiSchemas.length === 0) {
-    return {
-      type: 'string',
-      nullable: true,
-    };
+    return { nullable: true };
   }
 
   // TODO: investigate why this scenario happens
