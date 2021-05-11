@@ -26,7 +26,9 @@ export interface IOpticEngine {
     commandsJson: string,
     eventsJson: string,
     batchId: string,
-    commitMessage: string
+    commitMessage: string,
+    clientId: string,
+    clientSessionId: string
   ): any;
 
   affordances_to_commands(
@@ -41,10 +43,15 @@ export interface IOpticEngine {
   learn_shape_diff_affordances(
     spec: any,
     diff_results_json: string,
-    tagged_interactions_jsonl: string
+    tagged_interactions_jsonl: string,
+    id_generator_strategy: string
   ): string;
 
-  learn_undocumented_bodies(spec: any, interactions_jsonl: string): string;
+  learn_undocumented_bodies(
+    spec: any,
+    interactions_jsonl: string,
+    id_generator_strategy: string
+  ): string;
 
   spec_from_events(eventsJson: string): any;
 }
@@ -80,7 +87,9 @@ export interface StartDiffResult {
 
 export interface IOpticCapturesService {
   listCaptures(): Promise<ICapture[]>;
+
   loadInteraction(captureId: string, pointer: string): Promise<any | undefined>;
+
   startDiff(diffId: string, captureId: string): Promise<StartDiffResult>;
 }
 
@@ -124,6 +133,7 @@ export interface IOpticDiffRepository {
 ////////////////////////////////////////////////////////////////////////////////
 export interface IOpticConfigRepository {
   addIgnoreRule(rule: string): Promise<void>;
+
   listIgnoreRules(): Promise<string[]>;
 }
 

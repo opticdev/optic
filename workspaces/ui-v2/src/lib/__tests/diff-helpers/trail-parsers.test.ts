@@ -1,11 +1,5 @@
-import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
-import * as opticEngine from '../../../../../diff-engine-wasm/engine/build';
 import { ParsedDiff } from '<src>/lib/parse-diff';
-import { makeCurrentSpecContext } from '<src>/lib/__tests/diff-helpers/universes/makeCurrentSpecContext';
-import { makeSpectacle } from '@useoptic/spectacle';
 import { buildUniverse } from '<src>/lib/__tests/diff-helpers/universes/buildUniverse';
-
-const universe_raw = require('./universes/simple-todo/universe.json');
 
 test('accurate spec trail for all diffs', async () => {
   const { opticContext, currentSpecContext } = await buildUniverse(

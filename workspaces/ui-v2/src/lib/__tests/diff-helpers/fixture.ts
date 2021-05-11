@@ -141,7 +141,7 @@ export async function shapeDiffPreview(
     preview,
     expectations: expected.expectationsFromSpec,
     trailValues,
-    commands: [], //preview.toCommands(preview.updateSpecChoices!),
+    commands: preview.toCommands(preview.updateSpecChoices!),
   };
 }
 

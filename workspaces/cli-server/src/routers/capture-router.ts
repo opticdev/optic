@@ -75,8 +75,10 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
       const newEventsString = opticEngine.try_apply_commands(
         JSON.stringify(additionalCommands),
         JSON.stringify(events),
-        'simulated',
-        'simulated-batch'
+        'simulated-batch',
+        'simulated changes',
+        'simulated-client',
+        'simulated-session'
       );
 
       const initialBodyGenerator = new OnDemandInitialBodyRust({
