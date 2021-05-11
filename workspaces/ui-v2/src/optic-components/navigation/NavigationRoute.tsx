@@ -16,7 +16,7 @@ export function NavigationRoute(props: NavigationRouteProps) {
     <Route
       path={path}
       exact
-      component={(props: { match: any }) => {
+      render={(props: { match: any }) => {
         const { match } = props;
         return (
           <div className={classes.root}>
