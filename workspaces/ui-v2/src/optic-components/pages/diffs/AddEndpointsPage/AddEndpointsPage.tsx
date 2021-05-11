@@ -49,7 +49,6 @@ export function DiffUrlsPage(props: any) {
     documentEndpoint,
     stageEndpoint,
     pendingEndpoints,
-    context,
   } = useSharedDiffContext();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const classes = useStyles();
