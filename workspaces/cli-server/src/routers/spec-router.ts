@@ -8,6 +8,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 import fs from 'fs-extra';
+import Bottleneck from 'bottleneck';
 
 import sortBy from 'lodash.sortby';
 import { DefaultIdGenerator, developerDebugLogger } from '@useoptic/cli-shared';
@@ -192,6 +193,9 @@ export async function makeRouter(sessions: SessionsManager) {
       const exampleRequestsHelpers = new ExampleRequestsHelpers(
         exampleRequestsPath
       );
+      const fileReadBottleneck = new Bottleneck({
+        maxConcurrent: 1,
+      });
 
       async function specLoader(): Promise<any[]> {
         const events = await getSpecEventsFrom(paths.specStorePath);
@@ -205,6 +209,7 @@ export async function makeRouter(sessions: SessionsManager) {
         exampleRequestsHelpers,
         session,
         specLoader,
+        fileReadBottleneck,
       };
       next();
     } catch (e) {

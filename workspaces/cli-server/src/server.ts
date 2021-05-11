@@ -15,6 +15,7 @@ import {
   ExampleRequestsHelpers,
   makeRouter,
 } from './routers/spec-router';
+import Bottleneck from 'bottleneck';
 import { basePath } from '@useoptic/ui-v2';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
 import { analyticsEvents, trackWithApiName } from './analytics';
@@ -37,6 +38,7 @@ export interface IOpticExpressRequestAdditions {
   exampleRequestsHelpers: ExampleRequestsHelpers;
   session: Session;
   specLoader(): Promise<any[]>;
+  fileReadBottleneck: Bottleneck;
 }
 
 declare global {

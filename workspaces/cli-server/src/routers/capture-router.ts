@@ -69,6 +69,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     async (req, res) => {
       const { captureId } = req.params;
       const { pathId, method, additionalCommands } = req.body;
+      const { fileReadBottleneck } = req.optic;
 
       const events = await req.optic.specLoader();
 
@@ -89,7 +90,9 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
       console.time('learn ' + pathId + method);
       // TODO: pass results stream straight through instead of buffering into memory
-      const result = initialBodyGenerator.run();
+      const result = fileReadBottleneck.schedule(() =>
+        initialBodyGenerator.run()
+      );
       result.then((learnedBodies: ILearnedBodies) => {
         console.timeEnd('learn ' + pathId + method);
         res.json(learnedBodies);
