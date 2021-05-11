@@ -73,6 +73,4 @@ jobs:
       with:
         node-version: "12.x"
     - name: "install dependencies"
-      run: yarn install
-    - name: "build workspaces"
-      run: yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
+      run: task workspaces:build
