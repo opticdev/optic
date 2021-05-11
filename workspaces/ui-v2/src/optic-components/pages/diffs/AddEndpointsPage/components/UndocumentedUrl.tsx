@@ -8,8 +8,6 @@ import { LightTooltip } from '<src>/optic-components/navigation/LightToolTip';
 import classNames from 'classnames';
 import ClearIcon from '@material-ui/icons/Clear';
 import isEqual from 'lodash.isequal';
-// @ts-ignore
-import equals from 'deep-equal';
 import { useDebounce } from '<src>/optic-components/hooks/ui/useDebounceHook';
 import { useSharedDiffContext } from '<src>/optic-components/hooks/diffs/SharedDiffContext';
 import { IUndocumentedUrl } from '<src>/optic-components/hooks/diffs/SharedDiffState';
@@ -90,7 +88,7 @@ export function UndocumentedUrl({
   };
 
   useEffect(() => {
-    const isDifferent = !equals(wipPatterns[path + method], components);
+    const isDifferent = !isEqual(wipPatterns[path + method], components);
 
     if (components && isDifferent && !isEditing) {
       persistWIPPattern(path, method, components);
@@ -143,14 +141,7 @@ export function UndocumentedUrl({
         </div>
       </div>
       <div style={{ paddingRight: 5 }}>
-        <LightTooltip
-          title={
-            isBulkMode
-              ? 'Review Endpoint and add to API Documentation'
-              : 'Add to API Documentation'
-          }
-          enterDelay={1000}
-        >
+        <LightTooltip title="Review Endpoint" enterDelay={1000}>
           <IconButton size="small" color="primary">
             <AddIcon />
           </IconButton>
