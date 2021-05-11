@@ -17,7 +17,9 @@
   "files": [
     ".env",
     "scripts",
-    "lib"
+    "lib",
+    "Cargo.toml",
+    "cli/Cargo.toml"
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
