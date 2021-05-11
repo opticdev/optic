@@ -10,8 +10,11 @@ export async function generateOpenApi(spectacle: any) {
         pathComponents {
           name
           isParameterized
+          contributions
         }
         absolutePathPatternWithParameterNames
+        pathContributions
+        requestContributions
         method
         bodies {
           contentType
@@ -20,6 +23,7 @@ export async function generateOpenApi(spectacle: any) {
         responses {
           id
           statusCode
+          contributions
           bodies {
             contentType
             rootShapeId
@@ -50,14 +54,21 @@ export async function generateOpenApi(spectacle: any) {
       if (pathComponent.isParameterized) {
         if (!('parameters' in openapi.paths[path]))
           openapi.paths[path].parameters = [];
-        openapi.paths[path].parameters?.push({
+
+        const pathParam: Parameter = {
           name: pathComponent.name,
           in: 'path',
           schema: {
             type: 'string',
           },
           required: true,
-        });
+        };
+
+        if ('description' in pathComponent.contributions) {
+          pathParam.description = pathComponent.contributions.description;
+        }
+
+        openapi.paths[path].parameters?.push(pathParam);
       }
     }
 
@@ -88,6 +99,12 @@ async function buildOperation(
   request: any
 ): Promise<Operation> {
   const operation: Operation = {};
+  if ('summary' in request.pathContributions) {
+    operation.summary = request.pathContributions.purpose;
+  }
+  if ('description' in request.pathContributions) {
+    operation.description = request.pathContributions.description;
+  }
   for (const requestBody of request.bodies || []) {
     if (!operation.requestBody) operation.requestBody = { content: {} };
     const schema = await jsonSchemaFromShapeId(
@@ -133,6 +150,7 @@ type PathItem = {
 };
 
 type Parameter = {
+  description?: string;
   name: string;
   in: string;
   schema: {
@@ -142,6 +160,8 @@ type Parameter = {
 };
 
 type Operation = {
+  summary?: string;
+  description?: string;
   requestBody?: {
     content: {
       [property: string]: MediaType;
