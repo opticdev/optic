@@ -6,7 +6,6 @@ import path from 'path';
 import yaml from 'js-yaml';
 import { fromOptic } from '@useoptic/cli-shared';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
-
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
 import { generateOpenApi, makeSpectacle } from '@useoptic/spectacle';
