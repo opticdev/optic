@@ -166,7 +166,10 @@ export class ExampleRequestsHelpers {
   }
 }
 
-export async function makeRouter(sessions: SessionsManager) {
+export async function makeRouter(
+  sessions: SessionsManager,
+  fileReadBottleneck: Bottleneck
+) {
   async function ensureValidSpecId(
     req: express.Request,
     res: express.Response,
@@ -193,9 +196,6 @@ export async function makeRouter(sessions: SessionsManager) {
       const exampleRequestsHelpers = new ExampleRequestsHelpers(
         exampleRequestsPath
       );
-      const fileReadBottleneck = new Bottleneck({
-        maxConcurrent: 1,
-      });
 
       async function specLoader(): Promise<any[]> {
         const events = await getSpecEventsFrom(paths.specStorePath);
@@ -209,7 +209,6 @@ export async function makeRouter(sessions: SessionsManager) {
         exampleRequestsHelpers,
         session,
         specLoader,
-        fileReadBottleneck,
       };
       next();
     } catch (e) {
@@ -357,6 +356,7 @@ export async function makeRouter(sessions: SessionsManager) {
       captureId: CaptureId;
       captureBaseDirectory: string;
     }) => new LocalCaptureInteractionPointerConverter(config),
+    fileReadBottleneck: fileReadBottleneck,
   });
 
   router.use('/captures/:captureId', captureRouter);

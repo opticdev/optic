@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import Bottleneck from 'bottleneck';
 import { IdGenerator } from '@useoptic/cli-shared';
 import { CaptureId } from '@useoptic/saas-types';
 import {
@@ -17,6 +18,7 @@ export interface ICaptureRouterDependencies {
     captureId: CaptureId;
     captureBaseDirectory: string;
   }) => IInteractionPointerConverter<LocalCaptureInteractionContext>;
+  fileReadBottleneck: Bottleneck;
 }
 
 export function makeRouter(dependencies: ICaptureRouterDependencies) {
@@ -69,7 +71,6 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     async (req, res) => {
       const { captureId } = req.params;
       const { pathId, method, additionalCommands } = req.body;
-      const { fileReadBottleneck } = req.optic;
 
       const events = await req.optic.specLoader();
 
@@ -90,7 +91,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
       console.time('learn ' + pathId + method);
       // TODO: pass results stream straight through instead of buffering into memory
-      const result = fileReadBottleneck.schedule(() =>
+      const result = dependencies.fileReadBottleneck.schedule(() =>
         initialBodyGenerator.run()
       );
       result.then((learnedBodies: ILearnedBodies) => {
