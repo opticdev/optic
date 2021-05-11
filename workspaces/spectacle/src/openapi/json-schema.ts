@@ -72,6 +72,11 @@ export async function jsonSchemaFromShapeChoice(
         field.shapeId
       )) as any;
 
+      if ('description' in field.contributions) {
+        result.properties[field.name].description =
+          field.contributions.description;
+      }
+
       let isRequired = true;
 
       // We look down into the field shape choices to see if Undefined shows up
@@ -135,6 +140,7 @@ export async function queryForShape(spectacle: any, shapeId: string) {
           fields {
             shapeId
             name
+            contributions
           }
         }
       }
@@ -152,6 +158,7 @@ export type JsonSchemaType =
 
 export type JsonSchemaObject = {
   type: 'object';
+  description?: string;
   properties: {
     [property: string]: JsonSchema;
   };
@@ -161,6 +168,7 @@ export type JsonSchemaObject = {
 
 export type JsonSchemaArray = {
   type: 'array';
+  description?: string;
   items: JsonSchema;
   nullable?: boolean;
 };
@@ -168,10 +176,12 @@ export type JsonSchemaArray = {
 export type JsonSchemaValue =
   | {
       type?: 'string' | 'number' | 'boolean';
+      description?: string;
       nullable?: boolean;
     }
-  | { type: 'null' };
+  | { type: 'null'; description?: string };
 
 export type JsonSchemaOneOf = {
   oneOf: JsonSchema[];
+  description?: string;
 };
