@@ -32,7 +32,7 @@ If you're using an IDE (like IntelliJ), some of these steps may be handled by yo
 - Navigate to the project root, and run `task`. This provides aliases for managing the development lifecycle of Optic. Note, this must be run for every terminal instance, and you may find it convenient to add this to your `.profile` or equivalent so future terminal invocations will be ready to go.
 - Install dependencies and build the code with `task workspaces:build`. Yarn will install dependencies for all of the workspaces present in the project.
 
-## Evironment Variables
+## Environment Variables
 Each workspace may rely on environment variables. You can create a `.env` file in the project root and it will be exposed automatically as `OPTIC_DEBUG_ENV_FILE` when you run `source sourceme.sh`, which most of the workspaces will look for automatically, OR you can run `optic_export_env $OPTIC_DEBUG_ENV_FILE` to export all the variables from the .env file into your shell. 
 
 
