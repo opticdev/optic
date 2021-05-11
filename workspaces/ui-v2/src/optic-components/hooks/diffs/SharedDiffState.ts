@@ -80,7 +80,13 @@ export const newSharedDiffMachine = (
                     end: true,
                   });
                   return [
-                    ...ctx.pendingEndpoints,
+                    ...ctx.pendingEndpoints.filter(
+                      (pendingEndpoint) =>
+                        !(
+                          pendingEndpoint.method === event.method &&
+                          pendingEndpoint.pathPattern === event.pattern
+                        )
+                    ),
                     {
                       pathPattern: event.pattern,
                       method: event.method,
@@ -356,7 +362,9 @@ function filterDisplayedUndocumentedUrls(
 
   return all.map((value) => {
     if (
-      pending.some((i) => i.matchesPattern(value.path, value.method)) ||
+      pending.some(
+        (i) => i.matchesPattern(value.path, value.method) && i.staged
+      ) ||
       allIgnores.shouldIgnore(value.method, value.path)
     ) {
       return { ...value, hide: true };
