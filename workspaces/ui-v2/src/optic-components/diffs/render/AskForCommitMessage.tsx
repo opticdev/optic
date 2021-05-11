@@ -2,14 +2,15 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { v4 as uuidv4 } from 'uuid';
-import { CommitMessageModal } from '../../common';
+import { CommitMessageModal } from '<src>/optic-components/common';
 
-import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
-import { useSpectacleCommand } from '../../../spectacle-implementations/spectacle-provider';
-import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
-import { useChangelogPages } from '../../navigation/Routes';
+import { useSharedDiffContext } from '<src>/optic-components/hooks/diffs/SharedDiffContext';
+import { useSpectacleCommand } from '<src>/spectacle-implementations/spectacle-provider';
+import { useLastBatchCommitId } from '<src>/optic-components/hooks/useBatchCommits';
+import { useChangelogPages } from '<src>/optic-components/navigation/Routes';
 import { PromptNavigateAway } from '<src>/optic-components/common';
-import { useAnalytics } from '<src>/analytics';
+import { useAnalytics, useClientAgent } from '<src>/analytics';
+import { useSessionId } from '<src>/optic-components/hooks/useSessionId';
 
 const useStagedChangesCount = () => {
   const { pendingEndpoints, context } = useSharedDiffContext();
@@ -46,6 +47,8 @@ export default function AskForCommitMessageDiffPage(props: {
   const spectacleMutator = useSpectacleCommand();
   const history = useHistory();
   const analytics = useAnalytics();
+  const clientSessionId = useSessionId();
+  const clientId = useClientAgent();
   const lastBatchCommitId = useLastBatchCommitId();
   const changelogPageRoute = useChangelogPages();
 
@@ -78,8 +81,8 @@ export default function AskForCommitMessageDiffPage(props: {
           commands,
           batchCommitId: uuidv4(),
           commitMessage: commitMessage,
-          clientId: uuidv4(), //@dev: fill this in
-          clientSessionId: uuidv4(), //@dev: fill this in
+          clientId,
+          clientSessionId,
         },
       });
       // If there are no batch commits (first commit) - link to the just created commit
