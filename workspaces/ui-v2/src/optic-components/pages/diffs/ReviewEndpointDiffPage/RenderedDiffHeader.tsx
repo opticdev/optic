@@ -12,14 +12,14 @@ import { DiffLinks } from './DiffLinks';
 
 export type RenderedDiffHeaderProps = {
   endpoint: IEndpoint;
-  shapeDiffs: IInterpretation[];
+  allDiffs: IInterpretation[];
   currentIndex: number;
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export const RenderedDiffHeader: FC<RenderedDiffHeaderProps> = ({
   endpoint,
-  shapeDiffs,
+  allDiffs,
   currentIndex,
   setCurrentIndex,
 }) => {
@@ -37,9 +37,9 @@ export const RenderedDiffHeader: FC<RenderedDiffHeaderProps> = ({
       secondary={
         <Collapse in={showToc}>
           <DiffLinks
-            shapeDiffs={shapeDiffs}
+            allDiffs={allDiffs}
             setSelectedDiffHash={(hash: string) => {
-              const hashIndex = shapeDiffs.findIndex(
+              const hashIndex = allDiffs.findIndex(
                 (i) => i.diffDescription?.diffHash === hash
               );
               // findIndex possibly returns -1
@@ -59,13 +59,13 @@ export const RenderedDiffHeader: FC<RenderedDiffHeaderProps> = ({
         <ArrowLeft />
       </IconButton>
       <Typography variant="caption" color="textPrimary">
-        ({currentIndex + 1}/{shapeDiffs.length})
+        ({currentIndex + 1}/{allDiffs.length})
       </Typography>
       <IconButton
         size="small"
         color="primary"
         onClick={() => setCurrentIndex((prevIndex) => prevIndex + 1)}
-        disabled={shapeDiffs.length - 1 === currentIndex}
+        disabled={allDiffs.length - 1 === currentIndex}
       >
         <ArrowRight />
       </IconButton>

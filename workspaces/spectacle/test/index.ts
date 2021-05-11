@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import Tap from 'tap';
 import { makeSpectacle } from '../src';
 import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
@@ -217,6 +216,21 @@ specs.forEach(async (spec) => {
         }
       }
     }`;
+    const results = await spectacle.queryWrapper({ query, variables: {} });
+    test.matchSnapshot(results);
+  });
+
+  Tap.test(`spectacle paths query ${spec.name}`, async (test) => {
+    const query = `{
+      paths {
+        absolutePathPattern
+        absolutePathPatternWithParameterNames
+        isParameterized
+        name
+        pathId
+      }
+    }`;
+
     const results = await spectacle.queryWrapper({ query, variables: {} });
     test.matchSnapshot(results);
   });

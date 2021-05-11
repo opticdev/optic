@@ -178,9 +178,10 @@ function DiffCaptureResults() {
           {diffsGroupedByEndpoints.length > 0 ? (
             diffsGroupedByEndpoints.map((i, index) => {
               const diffCount = i.newRegionDiffs.length + i.shapeDiffs.length;
-              const diffCompletedCount = i.shapeDiffs.filter((i) =>
-                isDiffHandled(i.diffHash())
-              ).length;
+              const diffCompletedCount =
+                i.shapeDiffs.filter((i) => isDiffHandled(i.diffHash())).length +
+                i.newRegionDiffs.filter((i) => isDiffHandled(i.diffHash))
+                  .length;
 
               const remaining = diffCount - diffCompletedCount;
               const done = remaining === 0;

@@ -19,6 +19,7 @@ import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useo
 import { useOpticEngine } from '../useOpticEngine';
 import { useConfigRepository } from '<src>/optic-components/hooks/useConfigHook';
 import { useAnalytics } from '<src>/analytics';
+import { IPath } from '<src>/optic-components/hooks/usePathsHook';
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -56,6 +57,7 @@ type ISharedDiffContext = {
   commitModalOpen: boolean;
   setCommitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   hasDiffChanges: () => boolean;
+  diffService: IOpticDiffService;
 };
 
 type SharedDiffStoreProps = {
@@ -63,6 +65,7 @@ type SharedDiffStoreProps = {
   captureId: string;
   requests: IRequestBody[];
   responses: IResponseBody[];
+  allPaths: IPath[];
   diffs: ParsedDiff[];
   diffService: IOpticDiffService;
   diffTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
@@ -75,6 +78,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const { config } = useConfigRepository();
 
   const currentSpecContext: CurrentSpecContext = {
+    currentSpecPaths: props.allPaths,
     currentSpecEndpoints: props.endpoints,
     currentSpecRequests: props.requests,
     currentSpecResponses: props.responses,
@@ -208,6 +212,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       return context.choices.existingEndpointPathContributions[pathId]?.command
         .AddContribution.value;
     },
+    diffService: props.diffService,
     commitModalOpen,
     setCommitModalOpen,
     hasDiffChanges: () =>

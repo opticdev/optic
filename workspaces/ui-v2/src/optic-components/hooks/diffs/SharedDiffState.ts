@@ -6,6 +6,7 @@ import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
 import { AddContributionType, CQRSCommand } from '<src>/lib/command-factory';
 import { BodyShapeDiff, ParsedDiff } from '../../../lib/parse-diff';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
+import uniqueBy from 'lodash.uniqby';
 import { DiffSet } from '../../../lib/diff-set';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { AssembleCommands } from '../../../lib/assemble-commands';
@@ -38,7 +39,11 @@ export const newSharedDiffMachine = (
         existingEndpointPathContributions: {},
       },
       results: {
-        undocumentedUrls: undocumentedUrls,
+        undocumentedUrls: includeUndocumented(
+          undocumentedUrls,
+          parsedDiffs,
+          currentSpecContext
+        ),
         displayedUndocumentedUrls: undocumentedUrls,
         parsedDiffs: parsedDiffs,
         trailValues,
@@ -316,6 +321,35 @@ export interface EndpointDiffGrouping {
   shapeDiffs: BodyShapeDiff[];
 }
 
+export function includeUndocumented(
+  undocumentedUrls: IUndocumentedUrl[],
+  parsedDiffs: ParsedDiff[],
+  currentSpecContext: CurrentSpecContext
+) {
+  const undocumented = new DiffSet(parsedDiffs, currentSpecContext)
+    .forUndocumented()
+    .iterator();
+
+  const knownPaths: IKnownPathUndocumented[] = undocumented.map((i) => {
+    const { pathId, method } = i.location(currentSpecContext);
+    return {
+      pathId,
+      method,
+      fullPath: currentSpecContext.currentSpecPaths.find(
+        (i) => i.pathId === pathId
+      )!.absolutePathPatternWithParameterNames,
+    };
+  });
+
+  const uniqueKnownPaths = uniqueBy(
+    knownPaths,
+    (path: IKnownPathUndocumented) => path.pathId + path.method
+  );
+
+  debugger;
+  return undocumentedUrls;
+}
+
 function groupDiffsByTheirEndpoints(
   currentSpecContext: CurrentSpecContext,
   parsedDiffs: ParsedDiff[]
@@ -469,4 +503,9 @@ export interface IUndocumentedUrl {
   method: string;
   count: number;
   hide?: boolean;
+}
+
+export interface IKnownPathUndocumented {
+  pathId: string;
+  method: string;
 }

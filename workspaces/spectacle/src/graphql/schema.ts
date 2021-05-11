@@ -18,6 +18,7 @@ type StartDiffResult {
 }
 type Query {
   requests: [HttpRequest]
+  paths: [Path]
   shapeChoices(shapeId: ID): [OpticShape]
   endpointChanges(sinceBatchCommitId: String): EndpointChanges
   batchCommits: [BatchCommit]
@@ -26,6 +27,13 @@ type Query {
 type DiffState {
   diffs: JSON
   unrecognizedUrls: JSON
+}
+type Path {
+  absolutePathPattern: String
+  absolutePathPatternWithParameterNames: String
+  isParameterized: Boolean
+  name: String
+  pathId: String
 }
 type HttpBody {
   contentType: String

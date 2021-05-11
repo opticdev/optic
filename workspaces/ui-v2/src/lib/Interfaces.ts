@@ -29,6 +29,7 @@ export interface IPatchChoices {
   isField?: boolean;
   isShape?: boolean;
   includeNewBody?: boolean;
+  isNewRegionDiff?: boolean;
 }
 
 export interface IInteractionPreviewTab {
@@ -201,6 +202,7 @@ export interface IToDocument {
 }
 
 export type CurrentSpecContext = {
+  currentSpecPaths: any[];
   currentSpecEndpoints: IEndpoint[];
   currentSpecRequests: IRequestBody[];
   currentSpecResponses: IResponseBody[];

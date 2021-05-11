@@ -1,6 +1,5 @@
 import {
   CurrentSpecContext,
-  IInteractionPreviewTab,
   IInterpretation,
   IParsedLocation,
   IPatchChoices,
@@ -10,6 +9,7 @@ import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { DiffTypes } from '@useoptic/cli-shared/build/diffs/diffs';
 import { IOpticDiffService } from '@useoptic/spectacle';
 import { code, plain } from '<src>/optic-components/diffs/render/ICopyRender';
+import { descriptionForNewRegions } from '<src>/lib/diff-description-interpreter';
 
 //only ever take 1 diff at a time
 export async function newRegionInterpreters(
@@ -58,8 +58,10 @@ function newContentType(
           title: `${location.inRequest?.contentType || 'No Body'} Request`,
         },
       ],
+      diffDescription: descriptionForNewRegions(udiff, location),
       updateSpecChoices: {
         includeNewBody: true,
+        isNewRegionDiff: true,
         shapes: [],
         copy: [
           plain('Document'),
@@ -98,8 +100,10 @@ function newContentType(
           } Response`,
         },
       ],
+      diffDescription: descriptionForNewRegions(udiff, location),
       updateSpecChoices: {
         includeNewBody: true,
+        isNewRegionDiff: true,
         shapes: [],
         copy: [
           plain('Document'),

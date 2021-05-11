@@ -47,6 +47,7 @@ export async function makeCurrentSpecContext(
   );
 
   return {
+    currentSpecPaths: [],
     currentSpecEndpoints: endpoints,
     currentSpecResponses: responses,
     currentSpecRequests: requests,

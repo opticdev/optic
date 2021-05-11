@@ -9,6 +9,7 @@ import invariant from 'invariant';
 const cases = testCase('shape-diff-engine');
 
 function commonAssertions(result: IShapeDiffTestSnapshot) {
+  console.log(result.trailValues);
   invariant(
     result.preview.previewTabs.length > 0,
     'all diffs should have a preview'

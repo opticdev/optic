@@ -1,4 +1,4 @@
-import { graphql, ExecutionResult } from 'graphql';
+import { ExecutionResult, graphql } from 'graphql';
 import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { EventEmitter } from 'events';
@@ -7,10 +7,10 @@ import {
   buildEndpointChanges,
   buildEndpointsGraph,
   buildShapesGraph,
-  getFieldChanges,
+  ContributionsProjection,
   getArrayChanges,
   getContributionsProjection,
-  ContributionsProjection,
+  getFieldChanges,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
 import { IOpticCommandContext } from './in-memory';
@@ -252,6 +252,13 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     Query: {
+      paths: (parent: any, args: any, context: any, info: any) => {
+        return Promise.resolve(
+          context
+            .spectacleContext()
+            .endpointsQueries.listNodesByType(endpoints.NodeType.Path).results
+        );
+      },
       requests: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(
           context
@@ -355,6 +362,26 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             parent.value.requestId
           ] || {}
         );
+      },
+    },
+    Path: {
+      absolutePathPattern: (parent: any) => {
+        return Promise.resolve(parent.result.data.absolutePathPattern);
+      },
+      isParameterized: (parent: any) => {
+        return Promise.resolve(parent.result.data.isParameterized);
+      },
+      name: (parent: any) => {
+        return Promise.resolve(parent.result.data.name);
+      },
+      pathId: (parent: any) => {
+        return Promise.resolve(parent.result.data.pathId);
+      },
+      absolutePathPatternWithParameterNames: (
+        parent: endpoints.PathNodeWrapper
+      ) => {
+        console.log(parent);
+        return Promise.resolve(parent.absolutePathPatternWithParameterNames);
       },
     },
     HttpResponse: {
