@@ -104,7 +104,7 @@ function interactions() {
   return chain([
     Pick.withParser({ filter: 'session.samples' }),
     streamArray(),
-    ({ key, value }) => value,
+    ({ key, value }) => [[value, [`0-${key}`]]],
     new JsonlStringer(),
   ]);
 }
