@@ -209,8 +209,7 @@ export class InMemoryDiffService implements IOpticDiffService {
       this.dependencies.opticEngine.learn_shape_diff_affordances(
         spec,
         JSON.stringify(diffs.diffs.map((x) => x[0])),
-        taggedInteractionsJsonl,
-        'sequential'
+        taggedInteractionsJsonl
       )
     );
     const affordancesByFingerprint = allAffordances.reduce(

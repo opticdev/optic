@@ -39,6 +39,7 @@ export async function makeCurrentSpecContext(
     currentSpecResponses: responses,
     currentSpecRequests: requests,
     domainIds: newDeterministicIdGenerator(),
+    idGeneratorStrategy: 'sequential',
     opticEngine,
   };
 }

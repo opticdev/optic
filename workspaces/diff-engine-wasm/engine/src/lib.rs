@@ -93,6 +93,7 @@ pub fn try_apply_commands(
 pub fn affordances_to_commands(
   json_affordances_json: String,
   json_trail_json: String,
+  id_generator_strategy: String,
 ) -> Result<String, JsValue> {
   let values_by_trail_vec: Vec<TrailValues> = serde_json::from_str(&json_affordances_json).unwrap();
   let json_trail: JsonTrail = serde_json::from_str(&json_trail_json).unwrap();
@@ -103,10 +104,19 @@ pub fn affordances_to_commands(
   let trail_observation_results: TrailObservationsResult = TrailObservationsResult {
     values_by_trail: values_by_trail_map,
   };
-  let mut id_generator = SequentialIdGenerator { next_id: 9999 };
-  let (root_shape_id_option, commands_iter) =
-    trail_observation_results.into_commands(&mut id_generator, &json_trail);
-  let result: (Vec<SpecCommand>, String) = (commands_iter.collect(), root_shape_id_option.unwrap());
+
+  let result: (Vec<SpecCommand>, String) = if id_generator_strategy == "sequential" {
+    let mut sequential_id_generator = SequentialIdGenerator { next_id: 9999 };
+    let (root_shape_id_option, commands_iter) =
+      trail_observation_results.into_commands(&mut sequential_id_generator, &json_trail);
+    (commands_iter.collect(), root_shape_id_option.unwrap())
+  } else {
+    let mut nano_id_generator = NanoIdGenerator::default();
+    let (root_shape_id_option, commands_iter) =
+      trail_observation_results.into_commands(&mut nano_id_generator, &json_trail);
+    (commands_iter.collect(), root_shape_id_option.unwrap())
+  };
+
   serde_json::to_string(&result)
     .map_err(|err| JsValue::from(format!("new commands could not be serialized: {:?}", err)))
 }
@@ -115,6 +125,7 @@ pub fn affordances_to_commands(
 pub fn learn_undocumented_bodies(
   spec: &WasmSpecProjection,
   interactions_json: String,
+  id_generator_strategy: String,
 ) -> Result<String, JsValue> {
   let interactions = serde_json::Deserializer::from_str(&interactions_json).into_iter();
 
@@ -130,10 +141,17 @@ pub fn learn_undocumented_bodies(
     }
   }
 
-  let mut id_generator = SequentialIdGenerator { next_id: 6666 };
-  let endpoint_bodies = learned_undocumented_bodies
-    .into_endpoint_bodies(&mut id_generator)
-    .collect::<Vec<_>>();
+  let mut sequential_id_generator = SequentialIdGenerator { next_id: 6666 };
+  let mut nano_id_generator = NanoIdGenerator::default();
+  let endpoint_bodies = if id_generator_strategy == "sequential" {
+    learned_undocumented_bodies
+      .into_endpoint_bodies(&mut sequential_id_generator)
+      .collect::<Vec<_>>()
+  } else {
+    learned_undocumented_bodies
+      .into_endpoint_bodies(&mut nano_id_generator)
+      .collect::<Vec<_>>()
+  };
 
   serde_json::to_string(&endpoint_bodies).map_err(|err| {
     JsValue::from(format!(

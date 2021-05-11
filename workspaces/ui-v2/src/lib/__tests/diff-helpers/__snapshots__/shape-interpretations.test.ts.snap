@@ -215,7 +215,7 @@ Object {
       "AddShape": Object {
         "baseShapeId": "$string",
         "name": "",
-        "shapeId": "shape_11",
+        "shapeId": "shape_10000",
       },
     },
     Object {
@@ -225,7 +225,7 @@ Object {
         "shapeDescriptor": Object {
           "FieldShapeFromShape": Object {
             "fieldId": "field_0",
-            "shapeId": "shape_11",
+            "shapeId": "shape_10000",
           },
         },
         "shapeId": "shape_8",

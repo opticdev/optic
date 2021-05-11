@@ -60,7 +60,8 @@ export function builderInnerShapeFromChoices(
       const [commands, newShapeId] = JSON.parse(
         currentSpecContext.opticEngine.affordances_to_commands(
           JSON.stringify(filterToTarget),
-          JSON.stringify(actual.jsonTrail)
+          JSON.stringify(actual.jsonTrail),
+          currentSpecContext.idGeneratorStrategy
         )
       );
 

@@ -83,6 +83,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     currentSpecRequests: props.requests,
     currentSpecResponses: props.responses,
     domainIds: newRandomIdGenerator(),
+    idGeneratorStrategy: 'random',
     opticEngine,
   };
 

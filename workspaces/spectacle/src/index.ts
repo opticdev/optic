@@ -33,7 +33,8 @@ export interface IOpticEngine {
 
   affordances_to_commands(
     json_affordances_json: string,
-    json_trail_json: string
+    json_trail_json: string,
+    id_generator_strategy: string
   ): string;
 
   get_shape_viewer_projection(spec: any): string;
@@ -43,8 +44,7 @@ export interface IOpticEngine {
   learn_shape_diff_affordances(
     spec: any,
     diff_results_json: string,
-    tagged_interactions_jsonl: string,
-    id_generator_strategy: string
+    tagged_interactions_jsonl: string
   ): string;
 
   learn_undocumented_bodies(
