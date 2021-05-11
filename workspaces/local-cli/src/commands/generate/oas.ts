@@ -11,7 +11,7 @@ import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
 import { generateOpenApi, makeSpectacle } from '@useoptic/spectacle';
 
 export default class GenerateOas extends Command {
-  static description = 'export an OpenAPI 3.0.1 spec';
+  static description = 'export an OpenAPI 3.0.3 spec';
 
   static flags = {
     json: flags.boolean({}),
