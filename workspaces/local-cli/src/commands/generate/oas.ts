@@ -1,12 +1,15 @@
 import Command, { flags } from '@oclif/command';
 import { getPathsRelativeToConfig } from '@useoptic/cli-config';
 import { IPathMapping } from '@useoptic/cli-config';
-import { OasProjectionHelper } from '@useoptic/domain';
 import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
 import { fromOptic } from '@useoptic/cli-shared';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
+
+import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
+import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import { generateOpenApi, makeSpectacle } from '@useoptic/spectacle';
 
 export default class GenerateOas extends Command {
   static description = 'export an OpenAPI 3.0.1 spec';
@@ -35,7 +38,7 @@ export async function generateOas(
     try {
       const events = await getSpecEventsFrom(specStorePath);
 
-      const parsedOas = OasProjectionHelper.fromEventString(JSON.stringify(events))
+      const parsedOas = await generateOpenApiFromEvents(events);
 
       const outputFiles = await emit(paths, parsedOas, flagYaml, flagJson);
       const filePaths = Object.values(outputFiles);
@@ -94,4 +97,13 @@ async function getStream(stream: any) {
     chunks.push(chunk); // should already be a Buffer
   }
   return Buffer.concat(chunks).toString();
+}
+
+async function generateOpenApiFromEvents(events: any) {
+  const opticContext = await InMemoryOpticContextBuilder.fromEvents(
+    OpticEngine,
+    events
+  );
+  const spectacle = await makeSpectacle(opticContext);
+  return await generateOpenApi(spectacle);
 }
