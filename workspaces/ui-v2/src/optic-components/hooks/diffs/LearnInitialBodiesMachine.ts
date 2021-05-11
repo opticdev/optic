@@ -99,7 +99,14 @@ export const newInitialBodiesMachine = (
               );
 
               return {
-                learnedBodies: learner as ILearnedBodies,
+                learnedBodies: {
+                  pathId: learner.pathId,
+                  method: learner.method,
+                  requests: learner.requests,
+                  responses: [...learner.responses].sort(
+                    (a, b) => (a.statusCode || 0) - (b.statusCode || 0)
+                  ),
+                },
                 pathCommands: commands,
                 pathId,
               };
