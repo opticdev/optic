@@ -60,7 +60,10 @@ export function BuildSpecPatch({
     }
   };
 
-  console.log(selectedChoices);
+  const disabledWhenNoShapeSelected =
+    patchChoices &&
+    patchChoices.isField &&
+    selectedChoices?.shapes.every((i) => !i.isValid);
 
   return (
     <FormControl component="fieldset" style={{ width: '100%', paddingLeft: 5 }}>
@@ -164,6 +167,7 @@ export function BuildSpecPatch({
                 size="small"
                 style={{ marginRight: 15 }}
                 onClick={approved}
+                disabled={disabledWhenNoShapeSelected}
               >
                 Save Changes
               </Button>

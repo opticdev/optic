@@ -154,6 +154,7 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
           spectacle={spectacle}
           previewCommands={previewCommands}
         >
+          <pre>{JSON.stringify(previewCommands, null, 4)}</pre>
           <EndpointDocumentationPane
             method={method}
             pathId={pathId}

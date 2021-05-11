@@ -380,7 +380,6 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       absolutePathPatternWithParameterNames: (
         parent: endpoints.PathNodeWrapper
       ) => {
-        console.log(parent);
         return Promise.resolve(parent.absolutePathPatternWithParameterNames);
       },
     },

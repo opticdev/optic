@@ -62,7 +62,7 @@ export function fieldShapeDiffInterpreter(
         expected.unionWithActual(actual).map((i) => {
           return {
             coreShapeKind: i,
-            isValid: expected.expectedShapes().has(i),
+            isValid: true,
           };
         }),
         'isValid'
@@ -96,10 +96,11 @@ export function fieldShapeDiffInterpreter(
       }),
       'isValid'
     );
+    updateSpecChoices.isOptional = actual.wasMissing();
   }
 
   return {
-    previewTabs: present.createPreviews().reverse(),
+    previewTabs: present.createPreviews(isUnspecified),
     diffDescription,
     toCommands(choices?: IPatchChoices): any[] {
       if (!choices) {
@@ -162,7 +163,7 @@ class FieldShapeInterpretationHelper {
 
   ///////////////////////////////////////////////////////////////////
 
-  public createPreviews(): IInteractionPreviewTab[] {
+  public createPreviews(isUnspecified: boolean): IInteractionPreviewTab[] {
     const previews: IInteractionPreviewTab[] = [];
     const expected = this.expected.expectedShapes();
 
@@ -174,7 +175,7 @@ class FieldShapeInterpretationHelper {
     this.actual.interactionsGroupedByCoreShapeKind().forEach((i) => {
       previews.push({
         title: i.label,
-        invalid: !expected.has(i.kind),
+        invalid: isUnspecified ? true : !expected.has(i.kind),
         allowsExpand: true,
         interactionPointers: i.interactions,
         ignoreRule: {
@@ -189,7 +190,7 @@ class FieldShapeInterpretationHelper {
       });
     });
 
-    return orderTabs(false, previews);
+    return orderTabs(isUnspecified, previews);
   }
 }
 

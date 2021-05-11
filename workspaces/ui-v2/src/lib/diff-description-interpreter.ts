@@ -130,11 +130,7 @@ export async function descriptionForShapeDiff(
   //root handler
   if (jsonTrailPath.length === 0) {
     return {
-      title: [
-        plain('root shape'),
-        plain('did not match'),
-        code(expected.shapeName()),
-      ],
+      title: [plain('root shape did not match'), code(expected.shapeName())],
       location,
       changeType: IChangeType.Changed,
       assertion: [plain('expected'), code(expected.shapeName())],
