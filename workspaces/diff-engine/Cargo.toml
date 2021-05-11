@@ -7,6 +7,7 @@ edition = "2018"
 
 [lib]
 crate-type = ["lib"]
+edition = "2018"
 
 [features]
 default = ["streams"]

@@ -12,7 +12,7 @@ use std::iter::FromIterator;
 
 // TODO: consider whether these aren't actually Events and the Traverser not an Aggregator
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct HttpInteraction {
   pub uuid: String,
   pub request: Request,
@@ -20,13 +20,13 @@ pub struct HttpInteraction {
   pub tags: Vec<HttpInteractionTag>,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct HttpInteractionTag {
   name: String,
   value: String,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct Request {
   pub host: String,
   pub method: String,
@@ -37,7 +37,7 @@ pub struct Request {
   pub body: Body,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Response {
   pub status_code: u16,
@@ -46,7 +46,7 @@ pub struct Response {
   pub body: Body,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Body {
   pub content_type: Option<String>,
@@ -54,7 +54,7 @@ pub struct Body {
   pub value: ArbitraryData,
 }
 
-#[derive(Deserialize, Serialize, Debug, Default)]
+#[derive(Clone, Deserialize, Serialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ArbitraryData {
   pub shape_hash_v1_base64: Option<String>,

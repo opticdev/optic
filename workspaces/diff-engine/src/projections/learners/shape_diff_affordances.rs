@@ -56,8 +56,15 @@ impl LearnedShapeDiffAffordancesProjection {
         .entry(fingerprint)
         .or_insert_with(|| ShapeDiffAffordances::from(diff_json_trail.clone()));
 
+      let mut counter = 0;
       for trail_result in trail_results {
         affordances.push((trail_result, interaction_pointers.clone()));
+        counter += 1;
+      }
+
+      if counter == 0 {
+        let unknown_trail = TrailValues::from(diff_json_trail.clone());
+        affordances.push((unknown_trail, interaction_pointers.clone()));
       }
     }
   }
