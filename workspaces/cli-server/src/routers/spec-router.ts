@@ -8,6 +8,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 import fs from 'fs-extra';
+import Bottleneck from 'bottleneck';
 
 import sortBy from 'lodash.sortby';
 import { DefaultIdGenerator, developerDebugLogger } from '@useoptic/cli-shared';
@@ -165,7 +166,10 @@ export class ExampleRequestsHelpers {
   }
 }
 
-export async function makeRouter(sessions: SessionsManager) {
+export async function makeRouter(
+  sessions: SessionsManager,
+  fileReadBottleneck: Bottleneck
+) {
   async function ensureValidSpecId(
     req: express.Request,
     res: express.Response,
@@ -352,6 +356,7 @@ export async function makeRouter(sessions: SessionsManager) {
       captureId: CaptureId;
       captureBaseDirectory: string;
     }) => new LocalCaptureInteractionPointerConverter(config),
+    fileReadBottleneck: fileReadBottleneck,
   });
 
   router.use('/captures/:captureId', captureRouter);
