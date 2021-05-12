@@ -43,6 +43,7 @@ import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
 import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
 import { IUnrecognizedUrl } from '@useoptic/spectacle';
 import { StatusRun } from '@useoptic/analytics/lib/events/status';
+import { cli } from 'cli-ux';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
@@ -95,9 +96,9 @@ export default class Status extends Command {
       captureId
     );
 
-    // start a loading state
+    cli.action.start('Looking for diffs');
     const diffService = await startDiffResult.onComplete;
-    //end our loading state
+    cli.action.stop('Done!');
 
     const { diffs } = await diffService.listDiffs();
     const { urls } = await diffService.listUnrecognizedUrls();
