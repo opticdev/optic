@@ -90,7 +90,11 @@ export function UndocumentedUrl({
       } else {
         newSet[index] = parameter;
       }
-      persistWIPPattern(path, method, newSet);
+      // This needs to be deferred since setComponent triggers an update
+      // and persistWIPPattern triggers an update on a parent
+      setTimeout(() => {
+        persistWIPPattern(path, method, newSet);
+      }, 0);
       return newSet;
     });
   };
