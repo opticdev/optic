@@ -8,7 +8,15 @@ module.exports = {
     ],
     'Get Started': [
       'get-started/quickstart',
-      'get-started/config',
+      {
+        type: 'category',
+        label: 'Configuring API Tasks',
+        items: [
+          'get-started/config/intercept',
+          'get-started/config/basic-task',
+          'get-started/config/proxy',
+        ],
+      },
       'get-started/testing',
     ],
     'Using Optic': [
