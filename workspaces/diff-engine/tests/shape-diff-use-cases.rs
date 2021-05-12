@@ -59,7 +59,8 @@ async fn deeply_nested_fields_inside_of_arrays() {
   let tagged_analysis = TaggedInput(analysis, interaction_pointers);
   learned_shape_diff_affordances.apply(tagged_analysis);
 
-  todo!("assert correct normalisation of json trails generated");
+  // TODO: add snapshot, once we figure out how to make the results order stable in a way
+  // that fits our performance budget.
 }
 
 #[derive(Deserialize, Debug)]
