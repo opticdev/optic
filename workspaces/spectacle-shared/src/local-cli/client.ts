@@ -126,12 +126,10 @@ export class LocalCliDiffService implements IOpticDiffService {
     method: string,
     newPathCommands: any[]
   ): Promise<ILearnedBodies> {
-    const result = await JsonHttpClient.postJson(
+    return JsonHttpClient.postJson(
       `${this.dependencies.baseUrl}/captures/${this.dependencies.captureId}/initial-bodies`,
       { pathId, method, additionalCommands: newPathCommands }
     );
-    debugger;
-    return result;
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {

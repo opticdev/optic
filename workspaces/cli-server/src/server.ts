@@ -15,6 +15,7 @@ import {
   ExampleRequestsHelpers,
   makeRouter,
 } from './routers/spec-router';
+import Bottleneck from 'bottleneck';
 import { basePath } from '@useoptic/ui-v2';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
 import { analyticsEvents, trackWithApiName } from './analytics';
@@ -90,6 +91,9 @@ class CliServer {
     app.use(cors(this.corsOptions));
     app.set('etag', false);
     const sessions = new SessionsManager();
+    const fileReadBottleneck = new Bottleneck({
+      maxConcurrent: 1,
+    });
     let user: object | null;
 
     const anonIdPromise = getOrCreateAnonId();
@@ -202,7 +206,7 @@ class CliServer {
     );
 
     // specRouter
-    const specRouter = await makeRouter(sessions);
+    const specRouter = await makeRouter(sessions, fileReadBottleneck);
     app.use('/api/specs/:specId', specRouter);
 
     // ui
