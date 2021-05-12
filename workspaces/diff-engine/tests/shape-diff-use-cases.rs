@@ -37,6 +37,32 @@ async fn a_known_field_is_missing() {
   );
 }
 
+#[tokio::main]
+#[test]
+async fn deeply_nested_fields_inside_of_arrays() {
+  let mut capture = DebugCapture::from_name("deeply nested fields inside of arrays.json").await;
+
+  let spec = SpecProjection::from(capture.events);
+  let interaction = capture.session.samples.remove(0);
+  let interaction_pointers: HashSet<_> =
+    std::iter::once(String::from("test-interaction-1")).collect();
+  let diff_results = diff_interaction(&spec, interaction.clone());
+
+  let mut learned_shape_diff_affordances =
+    LearnedShapeDiffAffordancesProjection::from(diff_results);
+
+  let analysis = analyze_documented_bodies(&spec, interaction)
+    .collect::<Vec<_>>()
+    .pop()
+    .unwrap();
+
+  let tagged_analysis = TaggedInput(analysis, interaction_pointers);
+  learned_shape_diff_affordances.apply(tagged_analysis);
+
+  // TODO: add snapshot, once we figure out how to make the results order stable in a way
+  // that fits our performance budget.
+}
+
 #[derive(Deserialize, Debug)]
 struct DebugCapture {
   events: Vec<SpecEvent>,

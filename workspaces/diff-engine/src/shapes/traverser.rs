@@ -343,13 +343,21 @@ impl JsonTrail {
     }
   }
 
-  pub fn is_child_of(&self, parent_trail: &JsonTrail) -> bool {
-    self.path.len() > parent_trail.path.len()
+  pub fn is_descendant_of(&self, ancestor_trail: &JsonTrail) -> bool {
+    self.path.len() > ancestor_trail.path.len()
       && self
         .path
         .iter()
-        .take(parent_trail.path.len())
-        .eq(parent_trail.path.iter())
+        .take(ancestor_trail.path.len())
+        .eq(ancestor_trail.path.iter())
+  }
+
+  pub fn is_child_of(&self, parent_trail: &JsonTrail) -> bool {
+    self.path.len() == (parent_trail.path.len() + 1) && self.is_descendant_of(parent_trail)
+  }
+
+  pub fn last_component(&self) -> Option<&JsonTrailPathComponent> {
+    self.path.last()
   }
 }
 
@@ -428,6 +436,43 @@ mod test {
   }
 
   #[test]
+  pub fn json_trails_is_descendant_of() {
+    let root_trail = JsonTrail::empty().with_object_key(String::from("a"));
+    let child_trail = JsonTrail::empty()
+      .with_object_key(String::from("a"))
+      .with_object_key(String::from("aa"));
+    let other_child_trail = JsonTrail::empty()
+      .with_object_key(String::from("c"))
+      .with_object_key(String::from("aa"));
+
+    let array_trail = JsonTrail::empty().with_array_item(0);
+    let object_in_array_trail = JsonTrail::empty()
+      .with_array_item(0)
+      .with_object_key(String::from("a"));
+    let object_in_other_array_trail = JsonTrail::empty()
+      .with_array_item(1)
+      .with_object_key(String::from("a"));
+
+    let descendant_trail = JsonTrail::empty()
+      .with_object_key(String::from("a"))
+      .with_object_key(String::from("aa"))
+      .with_object_key(String::from("aaa"));
+    let descendant_array_trail = JsonTrail::empty()
+      .with_array_item(0)
+      .with_object_key(String::from("a"))
+      .with_object_key(String::from("aa"));
+
+    assert!(child_trail.is_descendant_of(&root_trail));
+    assert!(!root_trail.is_descendant_of(&child_trail));
+    assert!(!root_trail.is_descendant_of(&root_trail));
+    assert!(!other_child_trail.is_descendant_of(&root_trail));
+    assert!(object_in_array_trail.is_descendant_of(&array_trail));
+    assert!(!object_in_other_array_trail.is_descendant_of(&array_trail));
+    assert!(descendant_trail.is_descendant_of(&root_trail));
+    assert!(descendant_array_trail.is_descendant_of(&array_trail));
+  }
+
+  #[test]
   pub fn json_trails_is_child_of() {
     let root_trail = JsonTrail::empty().with_object_key(String::from("a"));
     let child_trail = JsonTrail::empty()
@@ -445,11 +490,22 @@ mod test {
       .with_array_item(1)
       .with_object_key(String::from("a"));
 
+    let descendant_trail = JsonTrail::empty()
+      .with_object_key(String::from("a"))
+      .with_object_key(String::from("aa"))
+      .with_object_key(String::from("aaa"));
+    let descendant_array_trail = JsonTrail::empty()
+      .with_array_item(0)
+      .with_object_key(String::from("a"))
+      .with_object_key(String::from("aa"));
+
     assert!(child_trail.is_child_of(&root_trail));
     assert!(!root_trail.is_child_of(&child_trail));
     assert!(!root_trail.is_child_of(&root_trail));
     assert!(!other_child_trail.is_child_of(&root_trail));
     assert!(object_in_array_trail.is_child_of(&array_trail));
     assert!(!object_in_other_array_trail.is_child_of(&array_trail));
+    assert!(!descendant_trail.is_child_of(&root_trail));
+    assert!(!descendant_array_trail.is_child_of(&array_trail));
   }
 }
