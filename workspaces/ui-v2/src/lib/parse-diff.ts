@@ -28,7 +28,7 @@ import {
   IParsedLocation,
   isBodyShapeDiff,
 } from './Interfaces';
-import { locationForTrails } from './trail-parsers';
+import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
 
 export class ParsedDiff {
   diffType: string;
@@ -75,7 +75,8 @@ export class ParsedDiff {
     const location = locationForTrails(
       this.requestsTrail(),
       this.interactionTrail(),
-      currentSpecContext
+      currentSpecContext.currentSpecRequests,
+      currentSpecContext.currentSpecResponses
     );
 
     const allEndpoints = currentSpecContext.currentSpecEndpoints;
@@ -90,7 +91,8 @@ export class ParsedDiff {
     const location = locationForTrails(
       this.requestsTrail(),
       this.interactionTrail(),
-      currentSpecContext
+      currentSpecContext.currentSpecRequests,
+      currentSpecContext.currentSpecResponses
     );
 
     invariant(
