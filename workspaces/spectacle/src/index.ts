@@ -389,7 +389,11 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
 
       parentPathId: (parent: endpoints.PathNodeWrapper) => {
-        return Promise.resolve(parent.parentPath);
+        const parentPath = parent.parentPath();
+        if (parentPath) {
+          return Promise.resolve(parentPath.result.id);
+        }
+        return Promise.resolve(null);
       },
       absolutePathPatternWithParameterNames: (
         parent: endpoints.PathNodeWrapper

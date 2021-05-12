@@ -208,6 +208,519 @@ Object {
 }
 `;
 
+exports[`a known field is provided the wrong shape.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$oneOf",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_0",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "baseline-shape_2",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10000",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetFieldShape": Object {
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_1",
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "baseline-shape_2": "$number",
+    },
+    "allowedCoreShapes": Array [
+      "$number",
+    ],
+    "fieldIsOptional": false,
+    "lastField": "baseline-field_1",
+    "lastFieldKey": "age",
+    "lastFieldShapeId": "baseline-shape_2",
+    "lastObject": "baseline-shape_8",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Number",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "6174ab7a6ac1b939",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "baseline-response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "baseline-path_3",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "values of ",
+        },
+        Object {
+          "style": 1,
+          "text": "age",
+        },
+        Object {
+          "style": 0,
+          "text": "did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "Number",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "6174ab7a6ac1b939",
+          "examplesOfCoreShapeKinds": "$string",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "age",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "string",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 1,
+          "text": "age",
+        },
+        Object {
+          "style": 0,
+          "text": "can be a",
+        },
+      ],
+      "isField": true,
+      "isOptional": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$number",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$string",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "age",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [
+        "id",
+      ],
+      "wasStringTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "age",
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`a new field is provided as an array with any contents.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$number",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$list",
+        "name": "",
+        "shapeId": "shape_10001",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10000",
+              },
+            },
+            "shapeId": "shape_10001",
+          },
+        },
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_0",
+        "name": "array",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_0",
+            "shapeId": "shape_10001",
+          },
+        },
+        "shapeId": "shape_8",
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_8": "$object",
+    },
+    "allowedCoreShapes": Array [
+      "$object",
+    ],
+    "fieldIsOptional": false,
+    "lastField": "field_6",
+    "lastFieldKey": "principality",
+    "lastFieldShapeId": "shape_8",
+    "lastObject": "shape_8",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 1,
+          "text": "undocumented field",
+        },
+      ],
+      "changeType": 0,
+      "diffHash": "e9bb6f335e042448",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_2",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented field",
+        },
+        Object {
+          "style": 1,
+          "text": "array",
+        },
+        Object {
+          "style": 0,
+          "text": "observed",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "e9bb6f335e042448",
+          "examplesOfCoreShapeKinds": "$list",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "location",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "principality",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "array",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "list",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [],
+      "isField": true,
+      "isOptional": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$list",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "location",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "principality",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "array",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": true,
+        "wasObject": false,
+        "wasString": false,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "location",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "principality",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "array",
+              },
+            },
+          ],
+        },
+        "wasArray": true,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": false,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [
+        "id",
+      ],
+      "wasArrayTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "location",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "principality",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "array",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
+  },
+}
+`;
+
 exports[`a new field is provided in a required nested object.managed 1`] = `
 Object {
   "commands": Array [
@@ -412,6 +925,5607 @@ Object {
           },
         ],
       },
+    },
+  },
+}
+`;
+
+exports[`a new field is provided in an optional nested object.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_0",
+        "name": "format",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_0",
+            "shapeId": "shape_10000",
+          },
+        },
+        "shapeId": "shape_5",
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_5": "$object",
+      "shape_6": "$optional",
+    },
+    "allowedCoreShapes": Array [
+      "$optional",
+      "$object",
+    ],
+    "fieldIsOptional": true,
+    "lastField": "field_4",
+    "lastFieldKey": "coordinates",
+    "lastFieldShapeId": "shape_6",
+    "lastObject": "shape_5",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 1,
+          "text": "undocumented field",
+        },
+      ],
+      "changeType": 0,
+      "diffHash": "165bd4831f88a18a",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_2",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented field",
+        },
+        Object {
+          "style": 1,
+          "text": "format",
+        },
+        Object {
+          "style": 0,
+          "text": "observed",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "Object (optional)",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "165bd4831f88a18a",
+          "examplesOfCoreShapeKinds": "$string",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "location",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "principality",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "coordinates",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "format",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "string",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [],
+      "isField": true,
+      "isOptional": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$string",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "location",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "principality",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "coordinates",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "format",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [
+        "id",
+      ],
+      "wasStringTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "location",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "principality",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "coordinates",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "format",
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`a primitive type is provided to an optional object.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$oneOf",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_0",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_5",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10000",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetFieldShape": Object {
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_4",
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_5": "$object",
+      "shape_6": "$optional",
+    },
+    "allowedCoreShapes": Array [
+      "$optional",
+      "$object",
+    ],
+    "lastField": "field_4",
+    "lastFieldKey": "coordinates",
+    "lastFieldShapeId": "shape_6",
+    "lastObject": "shape_5",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (optional)",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "24e3235eef7e6a4e",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_2",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "values of ",
+        },
+        Object {
+          "style": 1,
+          "text": "coordinates",
+        },
+        Object {
+          "style": 0,
+          "text": "did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (optional)",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "Object (optional)",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "24e3235eef7e6a4e",
+          "examplesOfCoreShapeKinds": "$string",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "location",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "principality",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "coordinates",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "string",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 1,
+          "text": "coordinates",
+        },
+        Object {
+          "style": 0,
+          "text": "can be a",
+        },
+      ],
+      "isField": true,
+      "isOptional": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$object",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$string",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "location",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "principality",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "coordinates",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [
+        "id",
+      ],
+      "wasStringTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "location",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "principality",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "coordinates",
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`a required array field is an object.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$object",
+        "name": "",
+        "shapeId": "shape_10002",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_10001",
+        "name": "nemesis",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_10001",
+            "shapeId": "shape_10000",
+          },
+        },
+        "shapeId": "shape_10002",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$oneOf",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_0",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_7",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10002",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$optional",
+        "name": "",
+        "shapeId": "shape_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$optionalInner",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_0",
+              },
+            },
+            "shapeId": "shape_1",
+          },
+        },
+      },
+    },
+    Object {
+      "SetFieldShape": Object {
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_4",
+            "shapeId": "shape_1",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_7": "$list",
+    },
+    "allowedCoreShapes": Array [
+      "$list",
+    ],
+    "fieldIsOptional": false,
+    "lastField": "field_4",
+    "lastFieldKey": "rivals",
+    "lastFieldShapeId": "shape_7",
+    "lastObject": "shape_10",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "List",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "1d5e1b2f9af24670",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_3",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "values of ",
+        },
+        Object {
+          "style": 1,
+          "text": "rivals",
+        },
+        Object {
+          "style": 0,
+          "text": "did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "List",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "1d5e1b2f9af24670",
+          "examplesOfCoreShapeKinds": "$object",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "rivals",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "object",
+      },
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "1d5e1b2f9af24670",
+          "examplesOfCoreShapeKinds": "$optional",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "rivals",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "missing",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 0,
+          "text": "what values are allowed for",
+        },
+        Object {
+          "style": 1,
+          "text": "rivals",
+        },
+      ],
+      "isField": true,
+      "isOptional": true,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$list",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$object",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "rivals",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "nemesis",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+      Object {
+        "fieldSet": Array [
+          Array [
+            "nemesis",
+          ],
+        ],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "rivals",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": true,
+        "wasString": false,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [
+        "id",
+      ],
+      "wasMissingTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "rivals",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [
+        "id",
+      ],
+      "wasObjectTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "rivals",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
+  },
+}
+`;
+
+exports[`a required array field of strings provided with an object.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$object",
+        "name": "",
+        "shapeId": "shape_10002",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_10001",
+        "name": "food",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_10001",
+            "shapeId": "shape_10000",
+          },
+        },
+        "shapeId": "shape_10002",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$oneOf",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_0",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_6",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10002",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_0",
+              },
+            },
+            "shapeId": "shape_7",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_6": "$string",
+    },
+    "allowedCoreShapes": Array [
+      "$string",
+    ],
+    "lastList": "shape_7",
+    "lastListItem": "shape_6",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "9c78456ebccc9424",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_3",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "list items did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "9c78456ebccc9424",
+          "examplesOfCoreShapeKinds": "$object",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "rivals",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 0,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "object",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [],
+      "isField": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$string",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$object",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [
+          Array [
+            "food",
+          ],
+        ],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "rivals",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": true,
+        "wasString": false,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "rivals",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "food",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [
+        "id",
+      ],
+      "wasMissingTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "rivals",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [
+        "id",
+      ],
+      "wasObjectTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "rivals",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
+  },
+}
+`;
+
+exports[`an array type is provided to an optional object.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$number",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$list",
+        "name": "",
+        "shapeId": "shape_10001",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10000",
+              },
+            },
+            "shapeId": "shape_10001",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$oneOf",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_0",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_5",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10001",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetFieldShape": Object {
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_4",
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_5": "$object",
+      "shape_6": "$optional",
+    },
+    "allowedCoreShapes": Array [
+      "$optional",
+      "$object",
+    ],
+    "lastField": "field_4",
+    "lastFieldKey": "coordinates",
+    "lastFieldShapeId": "shape_6",
+    "lastObject": "shape_5",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (optional)",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "24e3235eef7e6a4e",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_2",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "values of ",
+        },
+        Object {
+          "style": 1,
+          "text": "coordinates",
+        },
+        Object {
+          "style": 0,
+          "text": "did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (optional)",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "Object (optional)",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "24e3235eef7e6a4e",
+          "examplesOfCoreShapeKinds": "$list",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "location",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "principality",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "coordinates",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "list",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 1,
+          "text": "coordinates",
+        },
+        Object {
+          "style": 0,
+          "text": "can be a",
+        },
+      ],
+      "isField": true,
+      "isOptional": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$object",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$list",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "location",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "principality",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "coordinates",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": true,
+        "wasObject": false,
+        "wasString": false,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "location",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "principality",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "coordinates",
+              },
+            },
+          ],
+        },
+        "wasArray": true,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": false,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [
+        "id",
+      ],
+      "wasArrayTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "location",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "principality",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "coordinates",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
+  },
+}
+`;
+
+exports[`an extra field is provided.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_0",
+        "name": "favoriteColor",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_0",
+            "shapeId": "shape_10000",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "baseline-shape_8": "$object",
+    },
+    "allowedCoreShapes": Array [
+      "$object",
+    ],
+    "lastObject": "baseline-shape_8",
+    "rootShapeId": "baseline-shape_8",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 1,
+          "text": "undocumented field",
+        },
+      ],
+      "changeType": 0,
+      "diffHash": "cceaa499479bcca5",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "baseline-response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "baseline-path_3",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented field",
+        },
+        Object {
+          "style": 1,
+          "text": "favoriteColor",
+        },
+        Object {
+          "style": 0,
+          "text": "observed",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "cceaa499479bcca5",
+          "examplesOfCoreShapeKinds": "$string",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "favoriteColor",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "string",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [],
+      "isField": true,
+      "isOptional": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$string",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "favoriteColor",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [
+        "id",
+      ],
+      "wasStringTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "favoriteColor",
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`an required object field is null, suggests nullable.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$nullable",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$nullableInner",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_9",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetFieldShape": Object {
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6",
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_9": "$object",
+    },
+    "allowedCoreShapes": Array [
+      "$object",
+    ],
+    "fieldIsOptional": false,
+    "lastField": "field_6",
+    "lastFieldKey": "stats",
+    "lastFieldShapeId": "shape_9",
+    "lastObject": "shape_9",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "effcd47df19cb2a3",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_3",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "values of ",
+        },
+        Object {
+          "style": 1,
+          "text": "stats",
+        },
+        Object {
+          "style": 0,
+          "text": "did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "effcd47df19cb2a3",
+          "examplesOfCoreShapeKinds": "$nullable",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "stats",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "null",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 1,
+          "text": "stats",
+        },
+        Object {
+          "style": 0,
+          "text": "can be a",
+        },
+      ],
+      "isField": true,
+      "isOptional": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$object",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$nullable",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "stats",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": true,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": false,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [
+        "id",
+      ],
+      "wasNullTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "stats",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
+  },
+}
+`;
+
+exports[`an required object field is ommitted.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$optional",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$optionalInner",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_9",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetFieldShape": Object {
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6",
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_9": "$object",
+    },
+    "allowedCoreShapes": Array [
+      "$object",
+    ],
+    "fieldIsOptional": false,
+    "lastField": "field_6",
+    "lastFieldKey": "stats",
+    "lastFieldShapeId": "shape_9",
+    "lastObject": "shape_9",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "effcd47df19cb2a3",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_3",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "values of ",
+        },
+        Object {
+          "style": 1,
+          "text": "stats",
+        },
+        Object {
+          "style": 0,
+          "text": "did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "effcd47df19cb2a3",
+          "examplesOfCoreShapeKinds": "$optional",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "stats",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "missing",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 0,
+          "text": "what values are allowed for",
+        },
+        Object {
+          "style": 1,
+          "text": "stats",
+        },
+      ],
+      "isField": true,
+      "isOptional": true,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$object",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "stats",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": false,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [
+        "id",
+      ],
+      "wasMissingTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "stats",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
+  },
+}
+`;
+
+exports[`an required object field is provided with a missing required field.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$optional",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$optionalInner",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_8",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetFieldShape": Object {
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_5",
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_8": "$number",
+    },
+    "allowedCoreShapes": Array [
+      "$number",
+    ],
+    "fieldIsOptional": false,
+    "lastField": "field_5",
+    "lastFieldKey": "rank",
+    "lastFieldShapeId": "shape_8",
+    "lastObject": "shape_9",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Number",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "8671722c53f7fb01",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_3",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "values of ",
+        },
+        Object {
+          "style": 1,
+          "text": "rank",
+        },
+        Object {
+          "style": 0,
+          "text": "did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "Number",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "8671722c53f7fb01",
+          "examplesOfCoreShapeKinds": "$optional",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "stats",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "rank",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "missing",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 0,
+          "text": "what values are allowed for",
+        },
+        Object {
+          "style": 1,
+          "text": "rank",
+        },
+      ],
+      "isField": true,
+      "isOptional": true,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$number",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "stats",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "rank",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": false,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [
+        "id",
+      ],
+      "wasMissingTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "stats",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "rank",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
+  },
+}
+`;
+
+exports[`an required object field is provided with an array.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$number",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$list",
+        "name": "",
+        "shapeId": "shape_10001",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10000",
+              },
+            },
+            "shapeId": "shape_10001",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$oneOf",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_0",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_9",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10001",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetFieldShape": Object {
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6",
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_9": "$object",
+    },
+    "allowedCoreShapes": Array [
+      "$object",
+    ],
+    "fieldIsOptional": false,
+    "lastField": "field_6",
+    "lastFieldKey": "stats",
+    "lastFieldShapeId": "shape_9",
+    "lastObject": "shape_9",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "effcd47df19cb2a3",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_3",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "values of ",
+        },
+        Object {
+          "style": 1,
+          "text": "stats",
+        },
+        Object {
+          "style": 0,
+          "text": "did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "effcd47df19cb2a3",
+          "examplesOfCoreShapeKinds": "$list",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "stats",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "list",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 1,
+          "text": "stats",
+        },
+        Object {
+          "style": 0,
+          "text": "can be a",
+        },
+      ],
+      "isField": true,
+      "isOptional": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$object",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$list",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "stats",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": true,
+        "wasObject": false,
+        "wasString": false,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "stats",
+              },
+            },
+          ],
+        },
+        "wasArray": true,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": false,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [
+        "id",
+      ],
+      "wasArrayTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "stats",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
+  },
+}
+`;
+
+exports[`array with object listitem is provided an empty sub array.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$list",
+        "name": "",
+        "shapeId": "shape_10001",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$unknown",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10000",
+              },
+            },
+            "shapeId": "shape_10001",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$oneOf",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_0",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_12",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10001",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_0",
+              },
+            },
+            "shapeId": "shape_13",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_12": "$object",
+    },
+    "allowedCoreShapes": Array [
+      "$object",
+    ],
+    "lastList": "shape_13",
+    "lastListItem": "shape_12",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "ea01571ff4a432a1",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_1",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "list items did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "ea01571ff4a432a1",
+          "examplesOfCoreShapeKinds": "$list",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 0,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "list",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [],
+      "isField": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$object",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$list",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+          ],
+        },
+        "wasArray": true,
+        "wasBoolean": false,
+        "wasEmptyArray": true,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": false,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [
+        "id",
+      ],
+      "wasArrayTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
+  },
+}
+`;
+
+exports[`array with object listitem is provided an sub array of numbers.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$number",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$list",
+        "name": "",
+        "shapeId": "shape_10001",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10000",
+              },
+            },
+            "shapeId": "shape_10001",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$oneOf",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_0",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_12",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10001",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_0",
+              },
+            },
+            "shapeId": "shape_13",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_12": "$object",
+    },
+    "allowedCoreShapes": Array [
+      "$object",
+    ],
+    "lastList": "shape_13",
+    "lastListItem": "shape_12",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "ea01571ff4a432a1",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_1",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "list items did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "ea01571ff4a432a1",
+          "examplesOfCoreShapeKinds": "$list",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 0,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "list",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [],
+      "isField": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$object",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$list",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+          ],
+        },
+        "wasArray": true,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": false,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": true,
+        "wasObject": false,
+        "wasString": false,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [
+        "id",
+      ],
+      "wasArrayTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
+  },
+}
+`;
+
+exports[`array with object listitem is provided with one matching and one primitive.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_10001",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$list",
+        "name": "",
+        "shapeId": "shape_10002",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10001",
+              },
+            },
+            "shapeId": "shape_10002",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_10003",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_10004",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$oneOf",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_0",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_12",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10004",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_0",
+              },
+            },
+            "shapeId": "shape_13",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_12": "$object",
+    },
+    "allowedCoreShapes": Array [
+      "$object",
+    ],
+    "lastList": "shape_13",
+    "lastListItem": "shape_12",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "ea01571ff4a432a1",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_1",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "list items did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "ea01571ff4a432a1",
+          "examplesOfCoreShapeKinds": "$string",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 1,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "string",
+      },
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "ea01571ff4a432a1",
+          "examplesOfCoreShapeKinds": "$object",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": false,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 0,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "object",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [],
+      "isField": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$object",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$string",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [
+          Array [
+            "age",
+            "colors",
+            "name",
+          ],
+        ],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": true,
+        "wasString": true,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "age",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "colors",
+              },
+            },
+          ],
+        },
+        "wasArray": true,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": false,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "name",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "colors",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [
+        "id",
+      ],
+      "wasMissingTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [
+        "id",
+      ],
+      "wasObjectTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasString": Array [
+        "id",
+      ],
+      "wasStringTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`deeply nested fields inside of arrays.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$optional",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$optionalInner",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_DTHG1XLMPV",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetFieldShape": Object {
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_lKkPHZp1kM",
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_DTHG1XLMPV": "$object",
+    },
+    "allowedCoreShapes": Array [
+      "$object",
+    ],
+    "fieldIsOptional": false,
+    "lastField": "field_lKkPHZp1kM",
+    "lastFieldKey": "FastestLap",
+    "lastFieldShapeId": "shape_DTHG1XLMPV",
+    "lastObject": "shape_DTHG1XLMPV",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "8d74c69726c10c30",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_KBRwJqndED",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_SYRwhqD1XN",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "values of ",
+        },
+        Object {
+          "style": 1,
+          "text": "FastestLap",
+        },
+        Object {
+          "style": 0,
+          "text": "did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "8d74c69726c10c30",
+          "examplesOfCoreShapeKinds": "$object",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": false,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "MRData",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "RaceTable",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "Races",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 0,
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "Results",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 0,
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "FastestLap",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "object",
+      },
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "8d74c69726c10c30",
+          "examplesOfCoreShapeKinds": "$optional",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "MRData",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "RaceTable",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "Races",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 0,
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "Results",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 0,
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "FastestLap",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "missing",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 0,
+          "text": "what values are allowed for",
+        },
+        Object {
+          "style": 1,
+          "text": "FastestLap",
+        },
+      ],
+      "isField": true,
+      "isOptional": true,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$object",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [
+          Array [
+            "units",
+            "speed",
+          ],
+        ],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "MRData",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "RaceTable",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Races",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Results",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "FastestLap",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "AverageSpeed",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": true,
+        "wasString": false,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "MRData",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "RaceTable",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Races",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Results",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "FastestLap",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "AverageSpeed",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "units",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+      Object {
+        "fieldSet": Array [
+          Array [
+            "AverageSpeed",
+            "lap",
+            "Time",
+            "rank",
+          ],
+        ],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "MRData",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "RaceTable",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Races",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Results",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "FastestLap",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": true,
+        "wasString": false,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "MRData",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "RaceTable",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Races",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Results",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "FastestLap",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "lap",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "MRData",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "RaceTable",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Races",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Results",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "FastestLap",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "AverageSpeed",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "speed",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+      Object {
+        "fieldSet": Array [
+          Array [
+            "time",
+          ],
+        ],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "MRData",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "RaceTable",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Races",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Results",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "FastestLap",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Time",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": true,
+        "wasString": false,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "MRData",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "RaceTable",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Races",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Results",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "FastestLap",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "rank",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "MRData",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "RaceTable",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Races",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Results",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "FastestLap",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "Time",
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "time",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [
+        "id",
+      ],
+      "wasMissingTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "MRData",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "RaceTable",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Races",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Results",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "FastestLap",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [
+        "id",
+      ],
+      "wasObjectTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "MRData",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "RaceTable",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Races",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Results",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "FastestLap",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
+  },
+}
+`;
+
+exports[`field is array of strings, and 1 item does not match expected type.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$number",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$oneOf",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_0",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "baseline-shape_4",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10000",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_0",
+              },
+            },
+            "shapeId": "baseline-shape_5",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "baseline-shape_4": "$string",
+    },
+    "allowedCoreShapes": Array [
+      "$string",
+    ],
+    "lastList": "baseline-shape_5",
+    "lastListItem": "baseline-shape_4",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "74a387b9f22c62f3",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "baseline-response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "baseline-path_3",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "list items did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "74a387b9f22c62f3",
+          "examplesOfCoreShapeKinds": "$number",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "cities",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 1,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "number",
+      },
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "74a387b9f22c62f3",
+          "examplesOfCoreShapeKinds": "$string",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": false,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "cities",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 0,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "string",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [],
+      "isField": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$string",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$number",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "cities",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": true,
+        "wasObject": false,
+        "wasString": true,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [
+        "id",
+      ],
+      "wasNumberTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "cities",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [
+        "id",
+      ],
+      "wasStringTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "cities",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`field is array of strings, and more than 1 items does not match expected type.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$number",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$boolean",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$oneOf",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_0",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "baseline-shape_4",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10000",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_2",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_2",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10000",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_0",
+              },
+            },
+            "shapeId": "baseline-shape_5",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "baseline-shape_4": "$string",
+    },
+    "allowedCoreShapes": Array [
+      "$string",
+    ],
+    "lastList": "baseline-shape_5",
+    "lastListItem": "baseline-shape_4",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "74a387b9f22c62f3",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "baseline-response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "baseline-path_3",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "list items did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "74a387b9f22c62f3",
+          "examplesOfCoreShapeKinds": "$number",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "cities",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 1,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "number",
+      },
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "74a387b9f22c62f3",
+          "examplesOfCoreShapeKinds": "$string",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": false,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "cities",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 0,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "string",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [],
+      "isField": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$string",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$number",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$boolean",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "cities",
+              },
+            },
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": true,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": true,
+        "wasObject": false,
+        "wasString": true,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [
+        "id",
+      ],
+      "wasNumberTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "cities",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [
+        "id",
+      ],
+      "wasStringTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "cities",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`root array is provided with object.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$object",
+        "name": "",
+        "shapeId": "shape_10002",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_10001",
+        "name": "foo",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_10001",
+            "shapeId": "shape_10000",
+          },
+        },
+        "shapeId": "shape_10002",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$oneOf",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_0",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_3",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "AddShapeParameter": Object {
+        "name": "",
+        "shapeId": "shape_0",
+        "shapeParameterId": "shape-parameter_1",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10002",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetResponseBodyShape": Object {
+        "bodyDescriptor": Object {
+          "ShapedBodyDescriptor": Object {
+            "httpContentType": "application/json",
+            "isRemoved": false,
+            "shapeId": "shape_0",
+          },
+        },
+        "responseId": "response_1",
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "shape_3": "$list",
+    },
+    "allowedCoreShapes": Array [
+      "$list",
+    ],
+    "lastObject": undefined,
+    "rootShapeId": "shape_3",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "List",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "7f26e44f77372a97",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_1",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "root shape did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "List",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "7f26e44f77372a97",
+          "examplesOfCoreShapeKinds": "$object",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [],
+            },
+          ],
+        },
+        "title": "object",
+      },
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "7f26e44f77372a97",
+          "examplesOfCoreShapeKinds": "$optional",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [],
+            },
+          ],
+        },
+        "title": "missing",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [],
+      "isField": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$list",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$object",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [
+          Array [
+            "foo",
+          ],
+        ],
+        "trail": Object {
+          "path": Array [],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": true,
+        "wasString": false,
+      },
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonObjectKey": Object {
+                "key": "foo",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": false,
+        "wasObject": false,
+        "wasString": true,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [
+        "id",
+      ],
+      "wasMissingTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [],
+          },
+        ],
+      },
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [],
+      "wasNumberTrails": Object {},
+      "wasObject": Array [
+        "id",
+      ],
+      "wasObjectTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [],
+          },
+        ],
+      },
+      "wasString": Array [],
+      "wasStringTrails": Object {},
+    },
+  },
+}
+`;
+
+exports[`when a nullable is provided with a concrete type.managed 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$number",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$nullable",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$nullableInner",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_10000",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetFieldShape": Object {
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_4",
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "baseline-shape_7": "$nullable",
+    },
+    "allowedCoreShapes": Array [
+      "$nullable",
+    ],
+    "lastField": "baseline-field_4",
+    "lastFieldKey": "price",
+    "lastFieldShapeId": "baseline-shape_7",
+    "lastObject": "baseline-shape_8",
+  },
+  "preview": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Unknown (nullable)",
+        },
+      ],
+      "changeType": 1,
+      "diffHash": "fbc9cebc31e778c1",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": "baseline-response_1",
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "baseline-path_1",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "values of ",
+        },
+        Object {
+          "style": 1,
+          "text": "price",
+        },
+        Object {
+          "style": 0,
+          "text": "did not match",
+        },
+        Object {
+          "style": 1,
+          "text": "Unknown (nullable)",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": true,
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected required",
+          },
+          Object {
+            "style": 1,
+            "text": "Unknown (nullable)",
+          },
+        ],
+        "ignoreRule": Object {
+          "diffHash": "fbc9cebc31e778c1",
+          "examplesOfCoreShapeKinds": "$number",
+        },
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 0,
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "price",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "number",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 1,
+          "text": "price",
+        },
+        Object {
+          "style": 0,
+          "text": "can be a",
+        },
+      ],
+      "isField": true,
+      "isOptional": false,
+      "shapes": Array [
+        Object {
+          "coreShapeKind": "$nullable",
+          "isValid": true,
+        },
+        Object {
+          "coreShapeKind": "$number",
+          "isValid": true,
+        },
+      ],
+    },
+  },
+  "trailValues": Object {
+    "affordances": Array [
+      Object {
+        "fieldSet": Array [],
+        "trail": Object {
+          "path": Array [
+            Object {
+              "JsonArrayItem": Object {
+                "index": 0,
+              },
+            },
+            Object {
+              "JsonObjectKey": Object {
+                "key": "price",
+              },
+            },
+          ],
+        },
+        "wasArray": false,
+        "wasBoolean": false,
+        "wasEmptyArray": false,
+        "wasNull": false,
+        "wasNumber": true,
+        "wasObject": false,
+        "wasString": false,
+      },
+    ],
+    "interactions": Object {
+      "wasArray": Array [],
+      "wasArrayTrails": Object {},
+      "wasBoolean": Array [],
+      "wasBooleanTrails": Object {},
+      "wasMissing": Array [],
+      "wasMissingTrails": Object {},
+      "wasNull": Array [],
+      "wasNullTrails": Object {},
+      "wasNumber": Array [
+        "id",
+      ],
+      "wasNumberTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "price",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "wasObject": Array [],
+      "wasObjectTrails": Object {},
+      "wasString": Array [],
+      "wasStringTrails": Object {},
     },
   },
 }

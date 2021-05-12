@@ -188,7 +188,5 @@ export async function logResult(preview: any) {
       .join('  ')
   );
 
-  console.log(preview.updateSpecChoices!.isField);
-
   console.log(toLog.join('\n'));
 }

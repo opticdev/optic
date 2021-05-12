@@ -59,12 +59,17 @@ export function fieldShapeDiffInterpreter(
       ];
       updateSpecChoices.isOptional = true;
       updateSpecChoices.shapes = sortBy(
-        expected.unionWithActual(actual).map((i) => {
-          return {
-            coreShapeKind: i,
-            isValid: true,
-          };
-        }),
+        expected
+          .unionWithActual(actual)
+          .filter((i) => {
+            return i !== ICoreShapeKinds.OptionalKind;
+          })
+          .map((i) => {
+            return {
+              coreShapeKind: i,
+              isValid: true,
+            };
+          }),
         'isValid'
       );
       // present.askMakeOptional();
@@ -73,12 +78,17 @@ export function fieldShapeDiffInterpreter(
       updateSpecChoices.copy = [code(actual.fieldKey()!), plain('can be a')];
       updateSpecChoices.isOptional = !expected.aRequiredField();
       updateSpecChoices.shapes = sortBy(
-        expected.unionWithActual(actual).map((i) => {
-          return {
-            coreShapeKind: i,
-            isValid: true,
-          };
-        }),
+        expected
+          .unionWithActual(actual)
+          .filter((i) => {
+            return i !== ICoreShapeKinds.OptionalKind;
+          })
+          .map((i) => {
+            return {
+              coreShapeKind: i,
+              isValid: true,
+            };
+          }),
         'isValid'
       );
 

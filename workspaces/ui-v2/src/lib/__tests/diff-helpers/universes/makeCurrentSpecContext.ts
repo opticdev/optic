@@ -10,6 +10,7 @@ import {
 } from '<src>/optic-components/hooks/diffs/useAllRequestsAndResponses';
 import { newDeterministicIdGenerator } from '<src>/lib/domain-id-generator';
 import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import { AllPathsQuery } from '<src>/optic-components/hooks/usePathsHook';
 
 export async function makeCurrentSpecContext(
   events: any[],
@@ -33,8 +34,15 @@ export async function makeCurrentSpecContext(
     ).data
   );
 
+  const { paths } = (
+    await query({
+      query: AllPathsQuery,
+      variables: {},
+    })
+  ).data;
+
   return {
-    currentSpecPaths: [],
+    currentSpecPaths: paths,
     currentSpecEndpoints: endpoints,
     currentSpecResponses: responses,
     currentSpecRequests: requests,
