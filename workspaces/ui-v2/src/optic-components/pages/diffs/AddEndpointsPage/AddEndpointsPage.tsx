@@ -11,16 +11,7 @@ import { Check } from '@material-ui/icons';
 import { pathToRegexp } from 'path-to-regexp';
 
 import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
-import { DiffHeader } from '../../../diffs/DiffHeader';
-import {
-  Box,
-  Divider,
-  List,
-  ListItem,
-  Switch,
-  TextField,
-  Typography,
-} from '@material-ui/core';
+import { Divider, List, ListItem, Typography } from '@material-ui/core';
 import { useUndocumentedUrls } from '../../../hooks/diffs/useUndocumentedUrls';
 import { useSharedDiffContext } from '../../../hooks/diffs/SharedDiffContext';
 import { AuthorIgnoreRules } from '../../../diffs/AuthorIgnoreRule';
@@ -35,6 +26,7 @@ import { IPendingEndpoint } from '../../../hooks/diffs/SharedDiffState';
 import { useChangelogStyles } from '../../../changelog/ChangelogBackground';
 import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
+import { AddEndpointDiffHeader } from './components/AddEndpointDiffHeader';
 import {
   ExistingEndpointNameField,
   PendingEndpointNameField,
@@ -44,111 +36,121 @@ import { makePattern } from './utils';
 
 import { useAnalytics } from '<src>/analytics';
 
-export function DiffUrlsPage(props: any) {
+export function DiffUrlsPage() {
   const urls = useUndocumentedUrls();
   const history = useHistory();
   const { documentEndpoint, wipPatterns } = useSharedDiffContext();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const classes = useStyles();
   const analytics = useAnalytics();
+  const [selectedUrls, setSelectedUrls] = useState<Set<string>>(new Set());
 
   const [searchQuery, setSearchQuery] = useState('');
   const matchers = Object.entries(wipPatterns)
     .filter(([, { isParameterized }]) => isParameterized)
     .map(([pathMethod, { components, method }]) => ({
       pathMethod,
-      matcher:
-        (console.log(makePattern(components)),
-        pathToRegexp(makePattern(components))),
+      matcher: pathToRegexp(makePattern(components)),
       method,
     }));
 
-  const dedupedUrls = urls.filter((url) => {
-    return matchers.every(
-      ({ pathMethod, matcher, method }) =>
-        pathMethod === url.path + url.method ||
-        !(matcher.test(url.path) && method === url.method)
-    );
-  });
-  const [bulkMode, setBulkMode] = useState<boolean>(false);
-  const unmatchedUrlLengths = dedupedUrls.filter((i) => !i.hide).length;
-
-  const shownUrls = dedupedUrls
-    .filter((url) => url.path.startsWith(searchQuery))
+  // TODO move this to shared diff context - this needs to be shared between
+  const dedupedUrls = urls
+    .filter((url) => {
+      return matchers.every(
+        ({ pathMethod, matcher, method }) =>
+          pathMethod === url.path + url.method ||
+          !(matcher.test(url.path) && method === url.method)
+      );
+    })
     .filter((i) => !i.hide);
+  const [bulkMode, setBulkMode] = useState<boolean>(false);
+  const unmatchedUrlLengths = dedupedUrls.length;
+  const visibleUrls = dedupedUrls.filter((url) =>
+    url.path.startsWith(searchQuery)
+  );
+  const bulkSelectedUrls = dedupedUrls.filter((url) =>
+    selectedUrls.has(url.path + url.method)
+  );
 
-  const name = `${unmatchedUrlLengths} unmatched URLs observed${
-    shownUrls.length !== dedupedUrls.length
-      ? `. Showing ${shownUrls.length}`
-      : ''
-  }`;
+  // TODO pull out into hook + use enum for checked and unchecked
+  const checkboxState = visibleUrls.every((url) =>
+    selectedUrls.has(url.path + url.method)
+  )
+    ? 'checked'
+    : visibleUrls.every((url) => !selectedUrls.has(url.path + url.method))
+    ? 'not_checked'
+    : 'indeterminate';
+
+  const toggleSelectAllCheckbox = () => {
+    setSelectedUrls((previousState) => {
+      const newState = new Set(previousState);
+      for (const { path, method } of visibleUrls) {
+        if (checkboxState === 'not_checked') {
+          newState.add(path + method);
+        } else {
+          newState.delete(path + method);
+        }
+      }
+
+      return newState;
+    });
+  };
 
   return (
     <TwoColumnFullWidth
       left={
         <>
-          <DiffHeader name={name}>
-            <Box display="flex" flexDirection="row">
-              <TextField
-                size="small"
-                value={searchQuery}
-                inputProps={{ style: { fontSize: 10, width: 140 } }}
-                placeholder="filter urls"
-                onChange={(e) => {
-                  const newValue = e.target.value.replace(/\s+/g, '');
-                  if (!newValue.startsWith('/')) {
-                    setSearchQuery('/' + newValue);
-                  } else {
-                    setSearchQuery(newValue);
-                  }
-                }}
-              />
-              <div style={{ marginLeft: 13 }}>
-                <Typography
-                  variant="subtitle2"
-                  component="span"
-                  color="primary"
-                  style={{ fontWeight: 600, fontSize: 11 }}
-                >
-                  {' '}
-                  bulk mode
-                </Typography>
-                <Switch
-                  value={bulkMode}
-                  onChange={(e: any) => setBulkMode(e.target.checked)}
-                  color="primary"
-                  size="small"
-                />{' '}
-              </div>
-            </Box>
-          </DiffHeader>
-
+          <AddEndpointDiffHeader
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            bulkMode={bulkMode}
+            setBulkMode={setBulkMode}
+            numberOfUnmatchedUrl={unmatchedUrlLengths}
+            numberOfVisibleUrls={visibleUrls.length}
+            numberOfSelectedUrls={bulkSelectedUrls.length}
+            checkboxState={checkboxState}
+            toggleSelectAllCheckbox={toggleSelectAllCheckbox}
+          />
           <div style={{ flex: 1 }}>
-            {shownUrls.length > 0 ? (
+            {visibleUrls.length > 0 ? (
               <AutoSizer>
                 {({ height, width }: any) => (
                   <FixedSizeList
                     height={height}
                     width={width}
                     itemSize={47}
-                    itemCount={shownUrls.length}
+                    itemCount={visibleUrls.length}
+                    itemKey={(index, data) => {
+                      const item = data.undocumentedUrls[index];
+                      return item.method + item.path;
+                    }}
                     itemData={{
-                      handleSelection: (pattern: string, method: string) => {
-                        if (bulkMode) {
-                          // TODO document, and add analytics
-                          // TODO change to selection
-                          // stageEndpoint(pendingId);
-                        } else {
-                          const pendingId = documentEndpoint(pattern, method);
-                          analytics.userDocumentedEndpoint(bulkMode);
-                          const link = diffReviewPagePendingEndpoint.linkTo(
-                            pendingId
-                          );
-                          history.push(link);
-                        }
+                      handleBulkModeSelection: (
+                        path: string,
+                        method: string
+                      ) => {
+                        setSelectedUrls((previousState) => {
+                          const key = path + method;
+                          const newState = new Set(previousState);
+                          newState.has(key)
+                            ? newState.delete(key)
+                            : newState.add(key);
+                          return newState;
+                        });
                       },
-                      undocumentedUrls: shownUrls,
+                      handleSelection: (pattern: string, method: string) => {
+                        const pendingId = documentEndpoint(pattern, method);
+                        analytics.userDocumentedEndpoint(bulkMode);
+                        const link = diffReviewPagePendingEndpoint.linkTo(
+                          pendingId
+                        );
+                        history.push(link);
+                      },
+                      undocumentedUrls: visibleUrls,
                       isBulkMode: bulkMode,
+                      isSelected: (path: string, method: string) =>
+                        selectedUrls.has(`${path}${method}`),
                     }}
                   >
                     {UndocumentedUrl}
@@ -174,7 +176,7 @@ export function DiffUrlsPage(props: any) {
   );
 }
 
-export function DocumentationRootPageWithPendingEndpoints(props: any) {
+export function DocumentationRootPageWithPendingEndpoints() {
   const { endpoints, loading } = useEndpoints();
 
   const {

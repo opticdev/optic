@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { IconButton, ListItem, Checkbox } from '@material-ui/core';
 import { methodColorsDark, primary } from '<src>/optic-components/theme';
@@ -20,16 +20,24 @@ export type UndocumentedUrlProps = {
   style: Record<string, any>;
   index: number;
   data: {
+    handleBulkModeSelection: (path: string, method: string) => void;
     handleSelection: (path: string, method: string) => void;
     undocumentedUrls: IUndocumentedUrl[];
     isBulkMode: boolean;
+    isSelected: (path: string, method: string) => boolean;
   };
 };
 
 export function UndocumentedUrl({
   index,
   style,
-  data: { handleSelection, undocumentedUrls, isBulkMode },
+  data: {
+    handleSelection,
+    undocumentedUrls,
+    isBulkMode,
+    handleBulkModeSelection,
+    isSelected,
+  },
 }: UndocumentedUrlProps) {
   const undocumentedUrl = undocumentedUrls[index];
   const { method, path, hide } = undocumentedUrl;
@@ -65,12 +73,7 @@ export function UndocumentedUrl({
         .map(({ components: wipComponents }) =>
           wipComponents.find((param) => param.index === newIndex)
         )
-        .filter((param) => {
-          if (param && param.isParameter) {
-            return true;
-          }
-          return false;
-        })[0];
+        .filter((param) => param && param.isParameter)[0];
       return firstMatchingParamName ? firstMatchingParamName.name : '';
     }
   }
@@ -103,7 +106,11 @@ export function UndocumentedUrl({
       disableGutters
       style={{ display: 'flex', ...style }}
       button
-      onClick={() => handleSelection(makePattern(components), method)}
+      onClick={() =>
+        isBulkMode
+          ? handleBulkModeSelection(path, method)
+          : handleSelection(makePattern(components), method)
+      }
     >
       <div style={{ flex: 1 }}>
         <div className={classes.wrapper}>
@@ -117,7 +124,7 @@ export function UndocumentedUrl({
             >
               {components.map((i, index) => (
                 <div
-                  key={index}
+                  key={i.originalName}
                   style={{ display: 'flex', flexDirection: 'row' }}
                 >
                   {components.length > index && (
@@ -125,7 +132,6 @@ export function UndocumentedUrl({
                   )}
                   <PathComponentRender
                     pathComponent={i}
-                    key={index}
                     initialNameForComponent={initialNameForComponent}
                     onChange={onChange(index)}
                   />
@@ -135,11 +141,9 @@ export function UndocumentedUrl({
           </div>
         </div>
       </div>
-      <div style={{ paddingRight: 5 }}>
+      <div style={{ paddingRight: 8 }}>
         {isBulkMode ? (
-          <Checkbox
-            checked={false} // TODO change
-          />
+          <Checkbox checked={isSelected(path, method)} />
         ) : (
           <LightTooltip title="Review Endpoint" enterDelay={1000}>
             <IconButton size="small" color="primary">
@@ -168,32 +172,21 @@ function PathComponentRender({
 
   const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(() => {
-    if (name === '' && pathComponent.isParameter) {
-      const defaultValue = initialNameForComponent(pathComponent.index);
+  const onStartEdit = () => {
+    const defaultValue = initialNameForComponent(pathComponent.index);
+    if (defaultValue.length) {
       setName(defaultValue);
-      if (defaultValue.length) {
-        setIsEditing(false);
-        onChange({ ...pathComponent, isParameter: true, name: defaultValue });
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathComponent.isParameter]);
-
-  useEffect(() => {
-    if (!isEditing && pathComponent.isParameter) {
+      onChange({ ...pathComponent, isParameter: true, name: defaultValue });
       setIsEditing(true);
-    } else if (!pathComponent.isParameter) {
+    } else {
       setName('');
-      setIsEditing(false);
+      onChange({
+        ...pathComponent,
+        isParameter: true,
+      });
+      setIsEditing(true);
     }
-    // should only run once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathComponent.isParameter]);
-
-  useEffect(() => {
-    setIsEditing(false);
-  }, []);
+  };
 
   if (pathComponent.isParameter && !isEditing) {
     return (
@@ -229,7 +222,7 @@ function PathComponentRender({
             setIsEditing(false);
             onChange({ ...pathComponent, name });
           }}
-          onKeyDown={(e: any) => {
+          onKeyDown={(e) => {
             // stop editing on enter, on escape or on backspace when empty
             if (
               e.keyCode === 13 ||
@@ -240,7 +233,7 @@ function PathComponentRender({
               setIsEditing(false);
             }
           }}
-          onChange={(e: any) => {
+          onChange={(e) => {
             setName(e.target.value.replace(/\s/g, ''));
             onChange({
               ...pathComponent,
@@ -249,7 +242,7 @@ function PathComponentRender({
           }}
           style={{
             width: name
-              ? `${name.length * 8 + 1}px`
+              ? `${name.length * 7 + 8}px`
               : `${placeholder.length * 8}px`,
           }}
           className={classNames(
@@ -278,12 +271,7 @@ function PathComponentRender({
   } else {
     return (
       <div
-        onClick={() =>
-          onChange({
-            ...pathComponent,
-            isParameter: true,
-          })
-        }
+        onClick={() => onStartEdit()}
         className={classNames(
           classes.pathComponent,
           classes.pathComponentButton
