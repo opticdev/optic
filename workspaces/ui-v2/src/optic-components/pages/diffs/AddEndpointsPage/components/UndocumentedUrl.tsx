@@ -79,24 +79,18 @@ export function UndocumentedUrl({
   }
 
   const onChange = (index: number) => (parameter: PathComponentAuthoring) => {
-    setComponents((com) => {
-      const newSet = [...com];
-      if (parameter.isParameter && !parameter.name) {
-        newSet[index] = {
-          ...parameter,
-          isParameter: false,
-          name: parameter.originalName,
-        };
-      } else {
-        newSet[index] = parameter;
-      }
-      // This needs to be deferred since setComponent triggers an update
-      // and persistWIPPattern triggers an update on a parent
-      setTimeout(() => {
-        persistWIPPattern(path, method, newSet);
-      }, 0);
-      return newSet;
-    });
+    const newSet = [...components];
+    if (parameter.isParameter && !parameter.name) {
+      newSet[index] = {
+        ...parameter,
+        isParameter: false,
+        name: parameter.originalName,
+      };
+    } else {
+      newSet[index] = parameter;
+    }
+    setComponents(newSet);
+    persistWIPPattern(path, method, newSet);
   };
 
   if (hide) {
