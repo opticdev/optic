@@ -33,7 +33,6 @@ import {
   IResponseBodyForTrailParser,
 } from '@useoptic/cli-shared/src/diffs/trail-parsers';
 import sortBy from 'lodash.sortby';
-import { KnownEndpoint } from '../shared/coverage';
 import openBrowser from 'react-dev-utils/openBrowser';
 import { linkToCapture } from '../shared/ui-links';
 import {
@@ -42,8 +41,8 @@ import {
   LocalCliSpectacle,
 } from '@useoptic/spectacle-shared';
 import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
-import { response } from 'express';
 import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
+import { IUnrecognizedUrl } from '@useoptic/spectacle';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
@@ -88,7 +87,6 @@ export default class Status extends Command {
     const cliSession = await cliClient.findSession(paths.cwd, null, null);
 
     const sessionApiBaseUrl = `http://localhost:${daemonState.port}/api/specs/${cliSession.session.id}`;
-    console.log(sessionApiBaseUrl);
     const spectacle = new LocalCliSpectacle(sessionApiBaseUrl, opticEngine);
     const capturesService = new LocalCliCapturesService({
       baseUrl: sessionApiBaseUrl,
@@ -110,7 +108,7 @@ export default class Status extends Command {
     //end our loading state
 
     const { diffs } = await diffService.listDiffs();
-    const urls = await diffService.listUnrecognizedUrls();
+    const { urls } = await diffService.listUnrecognizedUrls();
 
     const requests: any = await spectacle.query({
       query: `{
@@ -136,17 +134,16 @@ export default class Status extends Command {
       variables: {},
     });
 
-    const endpoints = new Map();
+    const endpoints: Endpoint[] = [];
     const requestBodies: IRequestBodyForTrailParser[] = [];
     const responseBodies: IResponseBodyForTrailParser[] = [];
 
     for (const request of requests.data.requests) {
-      const endpoint = new Map();
-      endpoint.set(
-        request.method,
-        request.absolutePathPatternWithParameterNames
-      );
-      endpoints.set(request.pathId, endpoint);
+      endpoints.push({
+        pathId: request.pathId,
+        method: request.method,
+        fullPath: request.absolutePathPatternWithParameterNames,
+      });
 
       for (const requestBody of request.bodies) {
         requestBodies.push({
@@ -172,36 +169,25 @@ export default class Status extends Command {
       }
     }
 
-    // To get the absolute path pattern, use something like:
-    // console.log(endpoints.get('path_giU9lpUDNH').get('GET'));
+    const diffsGroupedByPathIdAndMethod = groupBy(
+      diffs
+        .map((i) => {
+          const diff = i[0];
+          const location = locationForTrails(
+            extractRequestsTrail(diff),
+            extractInteractionTrail(diff),
+            requestBodies,
+            responseBodies
+          );
+          if (location) {
+            return { pathId: location.pathId, method: location.method, diff };
+          }
+        })
+        .filter((i) => Boolean(i)),
+      (i: any) => `${i.method}.${i.pathId}`
+    );
 
-    // console.log(requestBodies);
-    // console.log(responseBodies);
-
-    // list all the endpoints from Spectacle ^
-    // console.log(diffs); // {pathId, method, diff}[]
-    //group by pathId, method -- get the actual absolutePath from Spectacle by looking up pathId and method
-    //print out the name of all endpoints with diffs
-    // console.log(urls);
-
-    const diffsGroupedByPathIdAndMethod = diffs
-      .map((i) => {
-        const diff = i[0];
-        const location = locationForTrails(
-          extractRequestsTrail(diff),
-          extractInteractionTrail(diff),
-          requestBodies,
-          responseBodies
-        );
-        if (location) {
-          return { pathId: location.pathId, method: location.method, diff };
-        }
-      })
-      .filter((i) => Boolean(i));
-
-    console.log(diffsGroupedByPathIdAndMethod);
-
-    this.printStatus([], {}, [{ method: 'GET', path: '/abc', count: 1 }]);
+    this.printStatus(endpoints, diffsGroupedByPathIdAndMethod, urls);
 
     //   await trackUserEvent(
     //     config.name,
@@ -319,11 +305,11 @@ export default class Status extends Command {
   }
 
   private printStatus(
-    endpointsWithDiffs: KnownEndpoint[],
+    endpointsWithDiffs: Endpoint[],
     diffsGroupedByPathAndMethod: { [key: string]: any[] },
-    undocumentedUrls: { path: string; method: string; count: number }[]
+    undocumentedUrls: IUnrecognizedUrl[]
   ) {
-    const diffCount = (i: KnownEndpoint) =>
+    const diffCount = (i: Endpoint) =>
       (diffsGroupedByPathAndMethod[`${i.method}.${i.pathId}`] || []).length;
 
     const sorted = sortBy(endpointsWithDiffs, (i) => -diffCount(i));
@@ -403,3 +389,9 @@ function extractRequestsTrail(i: IDiff): IRequestSpecTrail {
   // @ts-ignore
   return i[kind]!.requestsTrail;
 }
+
+type Endpoint = {
+  pathId: string;
+  method: string;
+  fullPath: string;
+};
