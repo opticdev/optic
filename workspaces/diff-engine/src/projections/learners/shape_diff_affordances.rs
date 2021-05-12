@@ -1,6 +1,6 @@
 use cqrs_core::{Aggregate, AggregateEvent, Event};
 use serde::Serialize;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::iter::FromIterator;
 
 use crate::interactions::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
@@ -36,13 +36,35 @@ impl LearnedShapeDiffAffordancesProjection {
       let diff_json_trail = diff.json_trail().unwrap();
       let normalized_diff_trail = diff_json_trail.normalized();
       let all_observations = &analysis.trail_observations;
-      let trail_results = all_observations
+
+      let observed_relevant_trails: HashSet<_> = all_observations
         .trails()
         .filter(|observed_trail| {
           let normalized_observed = observed_trail.normalized();
           normalized_observed == normalized_diff_trail
-            || normalized_observed.is_child_of(&normalized_diff_trail)
+            || normalized_observed.is_descendant_of(&normalized_diff_trail)
         })
+        .cloned()
+        .collect();
+
+      let expected_trails: HashSet<_> = all_observations
+        .trails()
+        .filter(|observed_trail| {
+          let normalized_observed = observed_trail.normalized();
+          normalized_diff_trail.is_child_of(&normalized_observed)
+        })
+        .map(|parent_trail| {
+          parent_trail.with_component(
+            diff_json_trail
+              .last_component()
+              .expect("for a json trail to be a child of another, it must have a last component")
+              .clone(),
+          )
+        })
+        .collect();
+
+      let trail_results = observed_relevant_trails
+        .union(&expected_trails)
         .map(|relevant_trail| {
           all_observations
             .get(relevant_trail)
@@ -56,15 +78,8 @@ impl LearnedShapeDiffAffordancesProjection {
         .entry(fingerprint)
         .or_insert_with(|| ShapeDiffAffordances::from(diff_json_trail.clone()));
 
-      let mut counter = 0;
       for trail_result in trail_results {
-        affordances.push((trail_result, interaction_pointers.clone()));
-        counter += 1;
-      }
-
-      if counter == 0 {
-        let unknown_trail = TrailValues::from(diff_json_trail.clone());
-        affordances.push((unknown_trail, interaction_pointers.clone()));
+        affordances.push((trail_result.clone(), interaction_pointers.clone()));
       }
     }
   }
@@ -315,5 +330,68 @@ mod test {
     );
 
     assert_debug_snapshot!("shape_diff_affordances_can_aggregate_affordances_for_array_item_diffs__shape_diff_affordances", shape_diff_affordances);
+  }
+  #[test]
+  fn shape_diff_affordances_can_aggregate_affordances_for_deeply_nested_missing_fields() {
+    let body = BodyDescriptor::from(json!({
+      "races": [{
+        "results": [{ "time": "1:03:04" }, { "time": "1:03:12" }],
+      }, {
+        "results": [{ "time": "1:48:53" }, {}]
+      }],
+    }));
+
+    let interaction_pointer = String::from("test-interaction-0");
+
+    // shape diff for races[1].results[1].time being missing
+    let shape_diff : InteractionDiffResult = serde_json::from_value(json!({
+        "UnmatchedResponseBodyShape":{
+          "interactionTrail":{"path":[{"ResponseBody":{"contentType":"application/json","statusCode":200}}]},
+          "requestsTrail":{"SpecResponseBody":{"responseId":"test-response-1"}},
+          "shapeDiffResult":{"UnmatchedShape":{
+            "jsonTrail":{"path":[{"JsonObjectKey":{"key":"races"}},{"JsonArrayItem":{"index":1}},{"JsonObjectKey":{"key":"results"}},{"JsonArrayItem":{"index":1}},{"JsonObjectKey":{"key":"time"}}] },
+            "shapeTrail":{"rootShapeId":"some_shape_id","path":[]}
+          }}
+        }
+      })).unwrap();
+
+    let diff_fingerprint = shape_diff.fingerprint();
+
+    let analysis_result = BodyAnalysisResult {
+      body_location: BodyAnalysisLocation::MatchedResponse {
+        response_id: String::from("test-response-1"),
+        content_type: Some(String::from("application/json")),
+        status_code: 200,
+      },
+      trail_observations: observe_body_trails(body),
+    };
+
+    let interaction_pointers: Tags = vec![interaction_pointer.clone()].into_iter().collect();
+    let tagged_analysis = TaggedInput(analysis_result, interaction_pointers);
+
+    let mut projection = LearnedShapeDiffAffordancesProjection::from(vec![shape_diff]);
+
+    projection.apply(tagged_analysis);
+
+    let mut results: Vec<_> = projection.into_iter().collect();
+    assert_eq!(results.len(), 1); // one diff, one result per diff
+
+    let (aggregate_key, shape_diff_affordances) = results.pop().unwrap();
+    assert_eq!(aggregate_key, diff_fingerprint); // per diff fingerprint
+
+    let was_missing = &shape_diff_affordances.interactions.was_missing;
+    assert!(was_missing.contains(&interaction_pointer));
+
+    let was_missing_trails = &shape_diff_affordances.interactions.was_missing_trails;
+    assert_eq!(
+      &was_missing_trails.get(&interaction_pointer).unwrap()[0],
+      &JsonTrail::empty()
+        .with_object_key(String::from("races"))
+        .with_array_item(1)
+        .with_object_key(String::from("results"))
+        .with_array_item(1)
+        .with_object_key(String::from("time")),
+      "trails where expected shapes were missing are recorded"
+    );
   }
 }
