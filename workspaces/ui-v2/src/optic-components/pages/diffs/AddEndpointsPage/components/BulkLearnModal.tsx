@@ -58,7 +58,8 @@ const LearningProgress: FC<{
         <SpinningOpticLogo />
       </Box>
       <Box width="100%" paddingRight="16px">
-        Learning endpoint ({completedCount}/{totalCount}):{' '}
+        Learning endpoint ({Math.min(completedCount + 1, totalCount)}/
+        {totalCount}):{' '}
         <EndpointName
           method={currentlyProcessingEndpoint.method}
           leftPad={0}
