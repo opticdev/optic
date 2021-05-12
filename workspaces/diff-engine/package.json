@@ -14,13 +14,6 @@
     "url": "ssh://git@github.com/useoptic/optic-package.git",
     "directory": "workspaces/diff-engine"
   },
-  "files": [
-    ".env",
-    "scripts",
-    "lib",
-    "Cargo.toml",
-    "cli/Cargo.toml"
-  ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
