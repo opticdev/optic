@@ -9,7 +9,7 @@ pub mod spectacle;
 
 pub use conflicts::ConflictsProjection;
 pub use contributions::ContributionsProjection;
-pub use endpoint::EndpointProjection;
+pub use endpoint::{EndpointProjection, ResponseBodyDescriptor};
 pub use history::{CommitId, HistoryProjection};
 pub use learners::{
   shape_diff_affordances::LearnedShapeDiffAffordancesProjection,

@@ -7,6 +7,7 @@ use optic_diff_engine::{
   EndpointQueries, HttpInteraction, InteractionDiffResult, JsonTrail,
   LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection, SpecCommand,
   SpecEvent, SpecIdGenerator, SpecProjection, TaggedInput, TrailObservationsResult, TrailValues,
+  ResponseBodyDescriptor, ResponseId
 };
 use std::collections::HashMap;
 use uuid::Uuid;
@@ -289,6 +290,39 @@ pub fn spec_resolve_path_id(spec: &WasmSpecProjection, path: String) -> Option<S
   endpoint_queries.resolve_path(&path).map(String::from)
 }
 
+#[wasm_bindgen]
+pub fn spec_resolve_requests(
+  spec: &WasmSpecProjection,
+  path_id: String,
+  method: String,
+) -> Result<String, JsValue> {
+  let endpoint_queries = spec.endpoint_queries();
+
+  let requests = endpoint_queries
+    .resolve_requests(&path_id, &method)
+    .map(|it| it.collect())
+    .unwrap_or(vec![]);
+  
+  serde_json::to_string(&requests)
+    .map_err(|err| JsValue::from(format!("requests could not be serialized: {:?}", err)))
+}
+
+#[wasm_bindgen]
+pub fn spec_resolve_responses(
+  spec: &WasmSpecProjection,
+  method: String,
+  status_code: u16,
+  path_id: String,
+) -> Result<String, JsValue> {
+  let endpoint_queries = spec.endpoint_queries();
+
+  let responses: Vec<(&ResponseId, &ResponseBodyDescriptor)> = endpoint_queries
+    .resolve_responses_by_method_and_status_code(&method, status_code, &path_id)
+    .collect();
+
+  serde_json::to_string(&responses)
+    .map_err(|err| JsValue::from(format!("responses could not be serialized: {:?}", err)))
+}
 #[derive(Debug, Default)]
 struct IdGenerator;
 
