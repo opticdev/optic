@@ -1,17 +1,21 @@
 import { CliServer } from './server';
 import { Client } from '@useoptic/cli-client';
-async function main() {
+
+async function main(inputs: { opticProjectDirectory: string }) {
   const apiServer = new CliServer({
     cloudApiBaseUrl: 'fixme',
   });
   const serverState = await apiServer.start();
-  console.log({ serverState });
-  const cliClient = new Client(`http://localhost:${serverState.port}/api`);
-  await cliClient.findSession(
-    '/Users/dev/work/optic-testing/blank', //@jaap: put a valid path here, or change how it works, etc.
+  const baseUrl = `http://localhost:${serverState.port}/api`;
+  console.log(`server started on ${baseUrl}`);
+  const cliClient = new Client(baseUrl);
+  const x = await cliClient.findSession(
+    inputs.opticProjectDirectory,
     null,
     null
   );
+  console.log(`navigate to http://localhost:3000/apis/${x.session.id}`);
 }
 
-main();
+const [, , opticProjectDirectory] = process.argv;
+main({ opticProjectDirectory });

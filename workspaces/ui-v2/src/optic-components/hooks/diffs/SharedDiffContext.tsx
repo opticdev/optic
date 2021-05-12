@@ -8,19 +8,24 @@ import {
 import * as shortId from 'shortid';
 import { useMachine } from '@xstate/react';
 import { PathComponentAuthoring } from '<src>/optic-components/pages/diffs/AddEndpointsPage/utils';
-import { IEndpoint } from '../useEndpointsHook';
-import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
-import { CurrentSpecContext } from '../../../lib/Interfaces';
+import { IEndpoint } from '<src>/optic-components/hooks/useEndpointsHook';
+import {
+  IRequestBody,
+  IResponseBody,
+} from '<src>/optic-components/hooks/useEndpointBodyHook';
+import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
-import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
-import { ParsedDiff } from '../../../lib/parse-diff';
+import { newRandomIdGenerator } from '<src>/lib/domain-id-generator';
+import { ParsedDiff } from '<src>/lib/parse-diff';
 import { AddContribution, CQRSCommand } from '<src>/lib/command-factory';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { useOpticEngine } from '../useOpticEngine';
+import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
 import { useConfigRepository } from '<src>/optic-components/hooks/useConfigHook';
 import { useAnalytics } from '<src>/analytics';
 
-export const SharedDiffReactContext = React.createContext({});
+export const SharedDiffReactContext = React.createContext<ISharedDiffContext | null>(
+  null
+);
 
 type ISharedDiffContext = {
   context: SharedDiffStateContext;
@@ -240,5 +245,5 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
 };
 
 export function useSharedDiffContext() {
-  return useContext(SharedDiffReactContext) as ISharedDiffContext;
+  return useContext(SharedDiffReactContext)!;
 }
