@@ -306,6 +306,11 @@ pub fn spec_resolve_path_id(spec: &WasmSpecProjection, path: String) -> Option<S
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
+#[wasm_bindgen]
+pub fn next_nano_id(prefix: String) -> String {
+  let mut nano_id_generator = NanoIdGenerator::default();
+  nano_id_generator.generate_id(&prefix)
+}
 #[derive(Debug, Default)]
 struct NanoIdGenerator {}
 impl SpecIdGenerator for NanoIdGenerator {

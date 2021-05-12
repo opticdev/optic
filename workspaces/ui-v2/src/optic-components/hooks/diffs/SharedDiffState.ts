@@ -3,13 +3,13 @@ import { assign, Machine, spawn } from 'xstate';
 import * as niceTry from 'nice-try';
 import { pathToRegexp } from 'path-to-regexp';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
-import { AddContributionType, CQRSCommand } from '<src>/lib/command-factory';
-import { BodyShapeDiff, ParsedDiff } from '../../../lib/parse-diff';
-import { CurrentSpecContext } from '../../../lib/Interfaces';
-import { DiffSet } from '../../../lib/diff-set';
+import { AddContributionType, CQRSCommand } from '@useoptic/spectacle';
+import { BodyShapeDiff, ParsedDiff } from '<src>/lib/parse-diff';
+import { CurrentSpecContext } from '<src>/lib/Interfaces';
+import { DiffSet } from '<src>/lib/diff-set';
 import uniqby from 'lodash.uniqby';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { AssembleCommands } from '../../../lib/assemble-commands';
+import { AssembleCommands } from '<src>/lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
 import { IOpticConfigRepository, IOpticDiffService } from '@useoptic/spectacle';
 

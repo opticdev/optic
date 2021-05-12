@@ -4,7 +4,7 @@ import {
 } from '<src>/optic-components/hooks/diffs/LearnInitialBodiesMachine';
 import { IPendingEndpoint } from '<src>/optic-components/hooks/diffs/SharedDiffState';
 import { IPath } from '<src>/optic-components/hooks/usePathsHook';
-import { AddPathComponent, AddPathParameter } from '<src>/lib/command-factory';
+import { AddPathComponent, AddPathParameter } from '@useoptic/spectacle';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 
 export function generatePathCommands(

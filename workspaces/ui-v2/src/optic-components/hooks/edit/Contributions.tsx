@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FC, useCallback, useContext, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useSpectacleCommand } from '<src>/spectacle-implementations/spectacle-provider';
-import { AddContribution } from '<src>/lib/command-factory';
+import { AddContribution } from '@useoptic/spectacle';
 import {
   useDebouncedFn,
   useStateWithSideEffect,

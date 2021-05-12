@@ -17,7 +17,7 @@ import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '<src>/lib/domain-id-generator';
 import { ParsedDiff } from '<src>/lib/parse-diff';
-import { AddContribution, CQRSCommand } from '<src>/lib/command-factory';
+import { AddContribution, CQRSCommand } from '@useoptic/spectacle';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
 import { useConfigRepository } from '<src>/optic-components/hooks/useConfigHook';

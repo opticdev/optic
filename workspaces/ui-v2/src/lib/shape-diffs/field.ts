@@ -18,7 +18,7 @@ import {
   AddField,
   FieldShapeFromShape,
   SetFieldShape,
-} from '../command-factory';
+} from '@useoptic/spectacle';
 
 export function fieldShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,

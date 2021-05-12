@@ -16,7 +16,7 @@ import {
   ProviderInShape,
   SetParameterShape,
   ShapeProvider,
-} from '../command-factory';
+} from '@useoptic/spectacle';
 
 export function listItemShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,

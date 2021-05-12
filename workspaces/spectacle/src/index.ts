@@ -20,6 +20,7 @@ import {
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 
 export * from './openapi';
+export * from './commands';
 
 ////////////////////////////////////////////////////////////////////////////////
 

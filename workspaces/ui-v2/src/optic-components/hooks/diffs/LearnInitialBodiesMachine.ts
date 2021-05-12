@@ -9,7 +9,7 @@ import {
   AddPathComponent,
   AddPathParameter,
   AddRequest,
-} from '../../../lib/command-factory';
+} from '@useoptic/spectacle';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { IOpticDiffService } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';

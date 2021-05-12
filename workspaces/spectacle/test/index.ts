@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import Tap from 'tap';
 import { makeSpectacle } from '../src';
 import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';

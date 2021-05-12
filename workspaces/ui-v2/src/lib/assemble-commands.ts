@@ -1,4 +1,4 @@
-import { CQRSCommand } from '<src>/lib/command-factory';
+import { CQRSCommand } from '@useoptic/spectacle';
 import { IPendingEndpoint } from '../optic-components/hooks/diffs/SharedDiffState';
 
 export function AssembleCommands(
