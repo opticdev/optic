@@ -58,7 +58,6 @@ export default class Status extends Command {
 
     const timeStated = Date.now();
 
-    let diffFound = false;
     const exitOnDiff = Boolean(flags['pre-commit']);
     const openReviewPage = Boolean(flags['review']);
 
@@ -91,13 +90,15 @@ export default class Status extends Command {
       spectacle,
     });
 
+    cli.action.start('Computing API diffs');
+
     const startDiffResult = await capturesService.startDiff(
       'status1', // some random ID
       captureId
     );
 
-    cli.action.start('Looking for diffs');
     const diffService = await startDiffResult.onComplete;
+
     cli.action.stop('Done!');
 
     const { diffs } = await diffService.listDiffs();
@@ -162,27 +163,34 @@ export default class Status extends Command {
       }
     }
 
+    const locations = diffs
+      .map((i) => {
+        const diff = i[0];
+        const location = locationForTrails(
+          extractRequestsTrail(diff),
+          extractInteractionTrail(diff),
+          requestBodies,
+          responseBodies
+        );
+        if (location) {
+          return { pathId: location.pathId, method: location.method, diff };
+        }
+      })
+      .filter((i) => Boolean(i));
+
     const diffsGroupedByPathIdAndMethod = groupBy(
-      diffs
-        .map((i) => {
-          const diff = i[0];
-          const location = locationForTrails(
-            extractRequestsTrail(diff),
-            extractInteractionTrail(diff),
-            requestBodies,
-            responseBodies
-          );
-          if (location) {
-            return { pathId: location.pathId, method: location.method, diff };
-          }
-        })
-        .filter((i) => Boolean(i)),
+      locations,
       (i: any) => `${i.method}.${i.pathId}`
     );
 
-    this.printStatus(endpoints, diffsGroupedByPathIdAndMethod, urls);
+    const endpointsWithDiff = endpoints.filter((i) =>
+      locations.find(
+        (withDiff) =>
+          withDiff?.pathId === i.pathId && withDiff.method === i.method
+      )
+    );
 
-    diffFound = diffs.length > 0 || urls.length > 0;
+    this.printStatus(endpointsWithDiff, diffsGroupedByPathIdAndMethod, urls);
 
     await trackUserEvent(
       config.name,
@@ -193,6 +201,8 @@ export default class Status extends Command {
         timeMs: Date.now() - timeStated,
       })
     );
+
+    const diffFound = diffs.length > 0 || urls.length > 0;
 
     if (diffFound && exitOnDiff) {
       console.error(
