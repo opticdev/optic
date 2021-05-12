@@ -22,9 +22,9 @@ import {
   IPathMapping,
   readApiConfig,
 } from '@useoptic/cli-config';
-import { isInRepo } from '../shared/git/git-context-capture';
+import { getCaptureId, isInRepo } from '../shared/git/git-context-capture';
 import colors from 'colors';
-import { getUser } from '../shared/analytics';
+import { getUser, trackUserEvent } from '../shared/analytics';
 import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 import { IInteractionTrail } from '@useoptic/cli-shared/build/diffs/interaction-trail';
 import { IRequestSpecTrail } from '@useoptic/cli-shared/build/diffs/request-spec-trail';
@@ -37,12 +37,12 @@ import openBrowser from 'react-dev-utils/openBrowser';
 import { linkToCapture } from '../shared/ui-links';
 import {
   LocalCliCapturesService,
-  LocalCliConfigRepository,
   LocalCliSpectacle,
 } from '@useoptic/spectacle-shared';
 import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
 import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
 import { IUnrecognizedUrl } from '@useoptic/spectacle';
+import { StatusRun } from '@useoptic/analytics/lib/events/status';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
@@ -65,15 +65,12 @@ export default class Status extends Command {
 
     await this.requiresInGit(paths.basePath);
 
-    const captureId = 'ccc'; ///await getCaptureId(paths);
+    const captureId = await getCaptureId(paths);
     developerDebugLogger('using capture id ', captureId);
 
     if (openReviewPage) {
       return this.openDiffPage(paths.cwd, captureId);
     }
-
-    /// ^ setting everything up.
-    // captureId
 
     const daemonState = await ensureDaemonStarted(
       lockFilePath,
@@ -89,11 +86,6 @@ export default class Status extends Command {
     const sessionApiBaseUrl = `http://localhost:${daemonState.port}/api/specs/${cliSession.session.id}`;
     const spectacle = new LocalCliSpectacle(sessionApiBaseUrl, opticEngine);
     const capturesService = new LocalCliCapturesService({
-      baseUrl: sessionApiBaseUrl,
-      spectacle,
-    });
-
-    const configRepository = new LocalCliConfigRepository({
       baseUrl: sessionApiBaseUrl,
       spectacle,
     });
@@ -189,80 +181,25 @@ export default class Status extends Command {
 
     this.printStatus(endpoints, diffsGroupedByPathIdAndMethod, urls);
 
-    //   await trackUserEvent(
-    //     config.name,
-    //     StatusRun.withProps({
-    //       captureId,
-    //       diffCount: diffs.length,
-    //       undocumentedCount: undocumentedUrls.length,
-    //       timeMs: Date.now() - timeStated,
-    //     })
-    //   );
-    // });
+    diffFound = diffs.length > 0 || urls.length > 0;
 
-    // trail-parsers and move to cli-shared
+    await trackUserEvent(
+      config.name,
+      StatusRun.withProps({
+        captureId,
+        diffCount: diffs.length,
+        undocumentedCount: urls.length,
+        timeMs: Date.now() - timeStated,
+      })
+    );
 
-    // const diffsPromise = this.getDiffsAndEvents(paths, captureId);
-    // diffsPromise.catch((e) => {
-    //   console.error(e);
-    //   this.printStatus([], [], []);
-    // });
-    // diffsPromise.then(async ({ diffs, undocumentedUrls, events }) => {
-    //   const rfcBaseState = makeDiffRfcBaseStateFromEvents(events);
-    //   const diffsRaw: IDiff[] = diffs.map((i: any) => i[0]);
-    //
-    //   const locations = diffsRaw
-    //     .map((i) => {
-    //       return locationForTrails(
-    //         extractRequestsTrail(i),
-    //         extractInteractionTrail(i),
-    //         rfcBaseState
-    //       )!;
-    //     })
-    //     .filter(Boolean);
-    //
-    //   const diffsGroupedByPathAndMethod = groupBy(
-    //     locations,
-    //     (i: any) => `${i.method}.${i.pathId}`
-    //   );
-    //
-    //   const endpointsWithDiffs = getSpecEndpoints(
-    //     rfcBaseState.queries
-    //   ).filter((i) =>
-    //     locations.find(
-    //       (withDiff) =>
-    //         withDiff.pathId === i.pathId && withDiff.method === i.method
-    //     )
-    //   );
-    //
-    //   this.printStatus(
-    //     endpointsWithDiffs,
-    //     diffsGroupedByPathAndMethod,
-    //     undocumentedUrls
-    //   );
-    //
-    //   diffFound = diffs.length > 0 || undocumentedUrls.length > 0;
-    //
-    //   await trackUserEvent(
-    //     config.name,
-    //     StatusRun.withProps({
-    //       captureId,
-    //       diffCount: diffs.length,
-    //       undocumentedCount: undocumentedUrls.length,
-    //       timeMs: Date.now() - timeStated,
-    //     })
-    //   );
-    // });
-    //
-    // diffsPromise.finally(() => {
-    //   if (diffFound && exitOnDiff) {
-    //     console.error(
-    //       colors.red('Optic detected an API diff. Run "api status --review"')
-    //     );
-    //     process.exit(1);
-    //   }
-    //   cleanupAndExit();
-    // });
+    if (diffFound && exitOnDiff) {
+      console.error(
+        colors.red('Optic detected an API diff. Run "api status --review"')
+      );
+      process.exit(1);
+    }
+    cleanupAndExit();
   }
 
   async exitWithError(error: string) {
@@ -370,7 +307,7 @@ export default class Status extends Command {
     developerDebugLogger({ cliSession });
     const uiBaseUrl = makeUiBaseUrl(daemonState);
     const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
-    openBrowser(linkToCapture(uiBaseUrl, cliSession.session.id, captureId));
+    openBrowser(linkToCapture(uiUrl, cliSession.session.id, captureId));
     cleanupAndExit();
   }
 }
