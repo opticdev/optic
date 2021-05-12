@@ -308,6 +308,22 @@ pub fn spec_resolve_requests(
 }
 
 #[wasm_bindgen]
+pub fn spec_resolve_request(
+  spec: &WasmSpecProjection,
+  path_id: String,
+  method: String,
+  content_type: Option<String>
+) -> Result<String, JsValue> {
+  let endpoint_queries = spec.endpoint_queries();
+
+  let response = endpoint_queries
+    .resolve_request_by_method_and_content_type(&path_id, &method, content_type.as_ref());
+
+  serde_json::to_string(&response)
+    .map_err(|err| JsValue::from(format!("responses could not be serialized: {:?}", err)))
+}
+
+#[wasm_bindgen]
 pub fn spec_resolve_responses(
   spec: &WasmSpecProjection,
   method: String,
@@ -323,6 +339,24 @@ pub fn spec_resolve_responses(
   serde_json::to_string(&responses)
     .map_err(|err| JsValue::from(format!("responses could not be serialized: {:?}", err)))
 }
+
+#[wasm_bindgen]
+pub fn spec_resolve_response(
+  spec: &WasmSpecProjection,
+  method: String,
+  status_code: u16,
+  path_id: String,
+  content_type: Option<String>
+) -> Result<String, JsValue> {
+  let endpoint_queries = spec.endpoint_queries();
+
+  let response = endpoint_queries
+    .resolve_response_by_method_status_code_and_content_type(&path_id, &method, status_code, content_type.as_ref());
+
+  serde_json::to_string(&response)
+    .map_err(|err| JsValue::from(format!("responses could not be serialized: {:?}", err)))
+}
+
 #[derive(Debug, Default)]
 struct IdGenerator;
 

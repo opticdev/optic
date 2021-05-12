@@ -84,13 +84,16 @@ function interactionToCoverage(spec: DiffEngine.WasmSpecProjection, interaction:
 
   if(path_id){
     recordEvent(TotalForPath(path_id), is_diff, coverage_map);
-    const requests = JSON.parse(DiffEngine.spec_resolve_requests(spec, path_id, interaction.request.method)) as Array<[string,BodyDescriptor]>;
-    if(requests.length === 0) {
-      // Undocumented method
-    } else if(requests.length === 1) {
-      // Proceed
+    const request_data = JSON.parse(DiffEngine.spec_resolve_request(spec, path_id, interaction.request.method, interaction.request.body?.contentType ?? undefined)) as [string,BodyDescriptor] | null;
+    if(!request_data) {
+      // Since we got a `path_id`, there should never be 0 requests here
+      // Error
+    } else {
       recordEvent(TotalForPathAndMethod(path_id,interaction.request.method), is_diff, coverage_map);
-      const [request_id, request] = requests[0];
+
+      // Look up the appropriate request by its content type
+      const [request_id, request] = request_data;
+
       recordEvent(TotalForRequest(request_id), is_diff, coverage_map);
 
       if(request.body){
@@ -99,14 +102,13 @@ function interactionToCoverage(spec: DiffEngine.WasmSpecProjection, interaction:
         recordEvent(TotalForPathAndMethodWithoutBody(path_id, interaction.request.method), is_diff, coverage_map);
       }
 
-      const responses = JSON.parse(DiffEngine.spec_resolve_responses(spec, interaction.request.method, interaction.response.statusCode,path_id)) as Array<[string, BodyDescriptor]>;
+      const response_data = JSON.parse(DiffEngine.spec_resolve_response(spec, interaction.request.method, interaction.response.statusCode,path_id, interaction.response.body?.contentType??undefined)) as [string, BodyDescriptor] | null;
 
-      if(responses.length === 0){
+      if(!response_data){
         // Undocumented response
-      } else if(responses.length === 1) {
-        // Proceed
+      } else {
         recordEvent(TotalForPathAndMethodAndStatusCode(path_id,interaction.request.method, interaction.response.statusCode), is_diff, coverage_map);
-        const [response_id, response] = responses[0];
+        const [response_id, response] = response_data;
         recordEvent(TotalForResponse(response_id), is_diff, coverage_map);
 
         if(response.body){
@@ -114,12 +116,7 @@ function interactionToCoverage(spec: DiffEngine.WasmSpecProjection, interaction:
         } else {
           recordEvent(TotalForPathAndMethodAndStatusCodeWithoutBody(path_id, interaction.request.method, interaction.response.statusCode), is_diff, coverage_map)
         }
-      } else {
-        // More than 1 response... Same as case below. Shouldn't happen I don't think?
       }
-    } else {
-      // More than 1 method... but "There should only ever be one request per method and content type"
-      // https://www.notion.so/useoptic/Optic-in-CI-01e647cc49504835a0e2750764d097b6#c2fd9f671b554f8ead8586b7de5b4cb6
     }
   } else {
     recordEvent(TotalUnmatchedPath(), is_diff, coverage_map);

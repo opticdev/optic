@@ -149,6 +149,23 @@ impl<'a> EndpointQueries<'a> {
     Some(matching_method)
   }
 
+  pub fn resolve_request_by_method_and_content_type(
+    &self,
+    path_id: PathComponentIdRef,
+    method: &'a String,
+    content_type: Option<&'a String>,
+  ) -> Option<(&RequestId, &RequestBodyDescriptor)> {
+    self.resolve_requests(path_id, method).and_then(|mut it| {
+      it.find(|(id, body)| match content_type {
+        Some(content_type) => match body.body {
+          Some(ref body) => body.http_content_type.eq(content_type),
+          None => false,
+        },
+        None => body.body.is_none(),
+      })
+    })
+  }
+
   pub fn resolve_responses(
     &self,
     interaction: &'a HttpInteraction,
@@ -159,6 +176,24 @@ impl<'a> EndpointQueries<'a> {
       interaction.response.status_code,
       path_id,
     )
+  }
+
+  pub fn resolve_response_by_method_status_code_and_content_type(
+    &self,
+    path_id: PathComponentIdRef,
+    method: &'a str,
+    status_code: u16,
+    content_type: Option<&'a String>,
+  ) -> Option<(&ResponseId, &ResponseBodyDescriptor)> {
+    self
+      .resolve_responses_by_method_and_status_code(method, status_code, path_id)
+      .find(|(id, body)| match content_type {
+        Some(content_type) => match body.body {
+          Some(ref body) => body.http_content_type.eq(content_type),
+          None => false,
+        },
+        None => body.body.is_none(),
+      })
   }
 
   pub fn resolve_responses_by_method_and_status_code(
