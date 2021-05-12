@@ -28,6 +28,10 @@ import { getUser } from '../shared/analytics';
 import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 import { IInteractionTrail } from '@useoptic/cli-shared/build/diffs/interaction-trail';
 import { IRequestSpecTrail } from '@useoptic/cli-shared/build/diffs/request-spec-trail';
+import {
+  IRequestBodyForTrailParser,
+  IResponseBodyForTrailParser,
+} from '@useoptic/cli-shared/src/diffs/trail-parsers';
 import sortBy from 'lodash.sortby';
 import { KnownEndpoint } from '../shared/coverage';
 import openBrowser from 'react-dev-utils/openBrowser';
@@ -38,6 +42,7 @@ import {
   LocalCliSpectacle,
 } from '@useoptic/spectacle-shared';
 import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import { response } from 'express';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
@@ -106,9 +111,71 @@ export default class Status extends Command {
     const { diffs } = await diffService.listDiffs();
     const urls = await diffService.listUnrecognizedUrls();
 
-    // const endpoints = spectacle.query(`
+    const requests: any = await spectacle.query({
+      query: `{
+        requests {
+          id
+          pathId
+          method
+          absolutePathPatternWithParameterNames
+          bodies {
+            contentType
+            rootShapeId
+          }
+          responses {
+            id
+            statusCode
+            bodies {
+              contentType
+              rootShapeId
+            }
+          }
+        }
+      }`,
+      variables: {},
+    });
 
-    // `)
+    const endpoints = new Map();
+    const requestBodies: IRequestBodyForTrailParser[] = [];
+    const responseBodies: IResponseBodyForTrailParser[] = [];
+
+    for (const request of requests.data.requests) {
+      const endpoint = new Map();
+      endpoint.set(
+        request.method,
+        request.absolutePathPatternWithParameterNames
+      );
+      endpoints.set(request.pathId, endpoint);
+
+      for (const requestBody of request.bodies) {
+        requestBodies.push({
+          requestId: request.id,
+          pathId: request.pathId,
+          method: request.method,
+          contentType: requestBody.contentType,
+          rootShapeId: requestBody.rootShapeId,
+        });
+      }
+
+      for (const response of request.responses) {
+        for (const responseBody of response.bodies) {
+          responseBodies.push({
+            responseId: response.id,
+            pathId: request.pathId,
+            method: request.method,
+            contentType: responseBody.contentType,
+            rootShapeId: responseBody.rootShapeId,
+            statusCode: response.statusCode,
+          });
+        }
+      }
+    }
+
+    // To get the absolute path pattern, use something like:
+    // console.log(endpoints.get('path_giU9lpUDNH').get('GET'));
+
+    // console.log(requestBodies);
+    // console.log(responseBodies);
 
     // list all the endpoints from Spectacle ^
     console.log(diffs); // {pathId, method, diff}[]
