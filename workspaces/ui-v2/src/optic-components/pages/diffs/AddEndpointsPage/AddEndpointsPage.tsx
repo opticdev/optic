@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   useDiffReviewPagePendingEndpoint,
   useEndpointPageLink,
@@ -44,6 +44,7 @@ export function DiffUrlsPage() {
   const classes = useStyles();
   const analytics = useAnalytics();
   const [showBulkModal, setShowBulkModal] = useState(false);
+  const closeBulkModal = useCallback(() => setShowBulkModal(false), []);
   const [selectedUrls, setSelectedUrls] = useState<Set<string>>(new Set());
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -143,7 +144,7 @@ export function DiffUrlsPage() {
       {showBulkModal && (
         <BulkLearnModal
           undocumentedEndpointsToLearn={bulkSelectedUrls}
-          closeModal={() => setShowBulkModal(false)}
+          closeModal={closeBulkModal}
         />
       )}
     </>
