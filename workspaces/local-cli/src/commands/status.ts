@@ -92,12 +92,21 @@ export default class Status extends Command {
 
     cli.action.start('Computing API diffs');
 
-    const startDiffResult = await capturesService.startDiff(
-      'status1', // some random ID
-      captureId
-    );
+    let diffService;
 
-    const diffService = await startDiffResult.onComplete;
+    try {
+      const startDiffResult = await capturesService.startDiff(
+        'status1', // some random ID
+        captureId
+      );
+
+      diffService = await startDiffResult.onComplete;
+    } catch (error) {
+      console.error(
+        colors.red('Encountered errors computing diffs:') + `\n${error.message}`
+      );
+      process.exit(1);
+    }
 
     cli.action.stop('Done!');
 
