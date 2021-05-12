@@ -1,5 +1,190 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`can match pending endpoints to pathIds for empty spec 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddPathComponent": Object {
+        "name": "users",
+        "parentPathId": "root",
+        "pathId": "path_0",
+      },
+    },
+    Object {
+      "AddPathParameter": Object {
+        "name": "username",
+        "parentPathId": "path_0",
+        "pathId": "path_1",
+      },
+    },
+    Object {
+      "AddPathComponent": Object {
+        "name": "orgs",
+        "parentPathId": "path_1",
+        "pathId": "path_2",
+      },
+    },
+    Object {
+      "AddPathComponent": Object {
+        "name": "recieved_events",
+        "parentPathId": "path_1",
+        "pathId": "path_3",
+      },
+    },
+    Object {
+      "AddPathComponent": Object {
+        "name": "repos",
+        "parentPathId": "root",
+        "pathId": "path_4",
+      },
+    },
+    Object {
+      "AddPathParameter": Object {
+        "name": "orgOrUser",
+        "parentPathId": "path_4",
+        "pathId": "path_5",
+      },
+    },
+    Object {
+      "AddPathParameter": Object {
+        "name": "repo",
+        "parentPathId": "path_5",
+        "pathId": "path_6",
+      },
+    },
+    Object {
+      "AddPathComponent": Object {
+        "name": "deployments",
+        "parentPathId": "path_6",
+        "pathId": "path_7",
+      },
+    },
+    Object {
+      "AddPathParameter": Object {
+        "name": "deploymentId",
+        "parentPathId": "path_7",
+        "pathId": "path_8",
+      },
+    },
+    Object {
+      "AddPathComponent": Object {
+        "name": "license",
+        "parentPathId": "root",
+        "pathId": "path_9",
+      },
+    },
+    Object {
+      "AddPathParameter": Object {
+        "name": "licence",
+        "parentPathId": "path_9",
+        "pathId": "path_10",
+      },
+    },
+  ],
+  "endpointPathIdMap": Object {
+    "pending_0": "path_2",
+    "pending_1": "path_3",
+    "pending_2": "path_6",
+    "pending_3": "path_8",
+    "pending_4": "path_1",
+    "pending_5": "path_10",
+    "pending_6": "path_8",
+    "pending_7": "path_1",
+    "pending_8": "path_10",
+  },
+  "stagedPaths": Array [
+    Object {
+      "absolutePathPattern": "",
+      "absolutePathPatternWithParameterNames": "",
+      "isParameterized": false,
+      "name": "users",
+      "parentPathId": "root",
+      "pathId": "path_0",
+    },
+    Object {
+      "absolutePathPattern": "",
+      "absolutePathPatternWithParameterNames": "",
+      "isParameterized": true,
+      "name": "username",
+      "parentPathId": "path_0",
+      "pathId": "path_1",
+    },
+    Object {
+      "absolutePathPattern": "",
+      "absolutePathPatternWithParameterNames": "",
+      "isParameterized": false,
+      "name": "orgs",
+      "parentPathId": "path_1",
+      "pathId": "path_2",
+    },
+    Object {
+      "absolutePathPattern": "",
+      "absolutePathPatternWithParameterNames": "",
+      "isParameterized": false,
+      "name": "recieved_events",
+      "parentPathId": "path_1",
+      "pathId": "path_3",
+    },
+    Object {
+      "absolutePathPattern": "",
+      "absolutePathPatternWithParameterNames": "",
+      "isParameterized": false,
+      "name": "repos",
+      "parentPathId": "root",
+      "pathId": "path_4",
+    },
+    Object {
+      "absolutePathPattern": "",
+      "absolutePathPatternWithParameterNames": "",
+      "isParameterized": true,
+      "name": "orgOrUser",
+      "parentPathId": "path_4",
+      "pathId": "path_5",
+    },
+    Object {
+      "absolutePathPattern": "",
+      "absolutePathPatternWithParameterNames": "",
+      "isParameterized": true,
+      "name": "repo",
+      "parentPathId": "path_5",
+      "pathId": "path_6",
+    },
+    Object {
+      "absolutePathPattern": "",
+      "absolutePathPatternWithParameterNames": "",
+      "isParameterized": false,
+      "name": "deployments",
+      "parentPathId": "path_6",
+      "pathId": "path_7",
+    },
+    Object {
+      "absolutePathPattern": "",
+      "absolutePathPatternWithParameterNames": "",
+      "isParameterized": true,
+      "name": "deploymentId",
+      "parentPathId": "path_7",
+      "pathId": "path_8",
+    },
+    Object {
+      "absolutePathPattern": "",
+      "absolutePathPatternWithParameterNames": "",
+      "isParameterized": false,
+      "name": "license",
+      "parentPathId": "root",
+      "pathId": "path_9",
+    },
+    Object {
+      "absolutePathPattern": "",
+      "absolutePathPatternWithParameterNames": "",
+      "isParameterized": true,
+      "name": "licence",
+      "parentPathId": "path_9",
+      "pathId": "path_10",
+    },
+  ],
+}
+`;
+
 exports[`can match pending endpoints to pathIds in existing spec 1`] = `
 Object {
   "commands": Array [

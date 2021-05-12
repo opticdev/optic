@@ -8,6 +8,8 @@ import { DiffSet } from '<src>/lib/diff-set';
 import { interpretShapeDiffs } from '<src>/lib/shape-diffs/shape-diffs';
 import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
 import colors from 'colors';
+import sortby from 'lodash.sortby';
+import stringify from 'json-stable-stringify';
 import {
   ICopy,
   ICopyStyle,
@@ -124,6 +126,26 @@ export async function shapeDiffPreview(
 
   const trailValues = shapeAffordances[input.diffs[0]!.diffHash];
 
+  //rust engine guarantees no ordering. make them snapshot friendly
+  const sortedTrailValues: IValueAffordanceSerializationWithCounter = {
+    affordances: sortby(
+      trailValues.affordances.map((i) => ({
+        ...i,
+        fieldSet: sortby(i.fieldSet, (e) => e.sort()),
+      })),
+      (e) => stringify(e)
+    ),
+    interactions: {
+      ...trailValues.interactions,
+      wasObject: trailValues.interactions.wasObject.sort(),
+      wasNumber: trailValues.interactions.wasNumber.sort(),
+      wasNull: trailValues.interactions.wasNull.sort(),
+      wasBoolean: trailValues.interactions.wasBoolean.sort(),
+      wasMissing: trailValues.interactions.wasMissing.sort(),
+      wasString: trailValues.interactions.wasString.sort(),
+    },
+  };
+
   const preview = await interpretShapeDiffs(
     input.diffs[0].asShapeDiff(universe.currentSpecContext)!,
     trailValues,
@@ -138,9 +160,12 @@ export async function shapeDiffPreview(
   );
 
   return {
-    preview,
+    preview: {
+      ...preview,
+      previewTabs: sortby(preview.previewTabs, (e) => stringify(e)),
+    },
     expectations: expected.expectationsFromSpec,
-    trailValues,
+    trailValues: sortedTrailValues,
     commands: preview.toCommands(preview.updateSpecChoices!),
   };
 }
