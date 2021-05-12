@@ -42,6 +42,8 @@ import {
   LocalCliSpectacle,
 } from '@useoptic/spectacle-shared';
 import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import { response } from 'express';
+import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
@@ -177,12 +179,41 @@ export default class Status extends Command {
     // console.log(responseBodies);
 
     // list all the endpoints from Spectacle ^
-    console.log(diffs); // {pathId, method, diff}[]
+    // console.log(diffs); // {pathId, method, diff}[]
     //group by pathId, method -- get the actual absolutePath from Spectacle by looking up pathId and method
     //print out the name of all endpoints with diffs
-    console.log(urls);
+    // console.log(urls);
+
+    const diffsGroupedByPathIdAndMethod = diffs
+      .map((i) => {
+        const diff = i[0];
+        const location = locationForTrails(
+          extractRequestsTrail(diff),
+          extractInteractionTrail(diff),
+          requestBodies,
+          responseBodies
+        );
+        if (location) {
+          return { pathId: location.pathId, method: location.method, diff };
+        }
+      })
+      .filter((i) => Boolean(i));
+
+    console.log(diffsGroupedByPathIdAndMethod);
 
     this.printStatus([], {}, [{ method: 'GET', path: '/abc', count: 1 }]);
+
+    //   await trackUserEvent(
+    //     config.name,
+    //     StatusRun.withProps({
+    //       captureId,
+    //       diffCount: diffs.length,
+    //       undocumentedCount: undocumentedUrls.length,
+    //       timeMs: Date.now() - timeStated,
+    //     })
+    //   );
+    // });
+
     // trail-parsers and move to cli-shared
 
     // const diffsPromise = this.getDiffsAndEvents(paths, captureId);
