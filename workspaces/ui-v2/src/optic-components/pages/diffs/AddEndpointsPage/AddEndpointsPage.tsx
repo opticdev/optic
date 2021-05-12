@@ -8,7 +8,6 @@ import groupBy from 'lodash.groupby';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/styles';
 import { Check } from '@material-ui/icons';
-import { pathToRegexp } from 'path-to-regexp';
 
 import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
 import { Divider, List, ListItem, Typography } from '@material-ui/core';
@@ -34,14 +33,13 @@ import {
   UndocumentedUrl,
 } from './components';
 import { useCheckboxState } from './hooks';
-import { makePattern } from './utils';
 
 import { useAnalytics } from '<src>/analytics';
 
 export function DiffUrlsPage() {
-  const urls = useUndocumentedUrls();
+  const undocumentedUrls = useUndocumentedUrls();
   const history = useHistory();
-  const { documentEndpoint, wipPatterns } = useSharedDiffContext();
+  const { documentEndpoint } = useSharedDiffContext();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const classes = useStyles();
   const analytics = useAnalytics();
@@ -49,30 +47,12 @@ export function DiffUrlsPage() {
   const [selectedUrls, setSelectedUrls] = useState<Set<string>>(new Set());
 
   const [searchQuery, setSearchQuery] = useState('');
-  const matchers = Object.entries(wipPatterns)
-    .filter(([, { isParameterized }]) => isParameterized)
-    .map(([pathMethod, { components, method }]) => ({
-      pathMethod,
-      matcher: pathToRegexp(makePattern(components)),
-      method,
-    }));
-
-  // TODO move this to shared diff context - this needs to be shared between
-  const dedupedUrls = urls
-    .filter((url) => {
-      return matchers.every(
-        ({ pathMethod, matcher, method }) =>
-          pathMethod === url.path + url.method ||
-          !(matcher.test(url.path) && method === url.method)
-      );
-    })
-    .filter((i) => !i.hide);
   const [bulkMode, setBulkMode] = useState<boolean>(false);
-  const unmatchedUrlLengths = dedupedUrls.length;
-  const visibleUrls = dedupedUrls.filter((url) =>
+  const unmatchedUrlLengths = undocumentedUrls.length;
+  const visibleUrls = undocumentedUrls.filter((url) =>
     url.path.startsWith(searchQuery)
   );
-  const bulkSelectedUrls = dedupedUrls.filter((url) =>
+  const bulkSelectedUrls = undocumentedUrls.filter((url) =>
     selectedUrls.has(url.path + url.method)
   );
 

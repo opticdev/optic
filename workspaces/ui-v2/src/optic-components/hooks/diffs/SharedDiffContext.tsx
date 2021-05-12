@@ -1,6 +1,8 @@
 import React, { FC, useContext, useMemo, useState } from 'react';
+import { pathToRegexp } from 'path-to-regexp';
 import {
   IPendingEndpoint,
+  IUndocumentedUrl,
   newSharedDiffMachine,
   SharedDiffStateContext,
 } from './SharedDiffState';
@@ -22,6 +24,7 @@ import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useo
 import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
 import { useConfigRepository } from '<src>/optic-components/hooks/useConfigHook';
 import { useAnalytics } from '<src>/analytics';
+import { makePattern } from '<src>/optic-components/pages/diffs/AddEndpointsPage/utils';
 
 export const SharedDiffReactContext = React.createContext<ISharedDiffContext | null>(
   null
@@ -67,6 +70,7 @@ type ISharedDiffContext = {
   commitModalOpen: boolean;
   setCommitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   hasDiffChanges: () => boolean;
+  getUndocumentedUrls: () => IUndocumentedUrl[];
 };
 
 type SharedDiffStoreProps = {
@@ -142,6 +146,14 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       method: string;
     };
   }>({});
+
+  const wipPatternMatchers = Object.entries(wipPatterns)
+    .filter(([, { isParameterized }]) => isParameterized)
+    .map(([pathMethod, { components, method }]) => ({
+      pathMethod,
+      matcher: pathToRegexp(makePattern(components)),
+      method,
+    }));
 
   const [commitModalOpen, setCommitModalOpen] = useState(false);
 
@@ -227,6 +239,16 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       return context.choices.existingEndpointPathContributions[pathId]?.command
         .AddContribution.value;
     },
+    getUndocumentedUrls: () =>
+      context.results.displayedUndocumentedUrls
+        .filter((url) => {
+          return wipPatternMatchers.every(
+            ({ pathMethod, matcher, method }) =>
+              pathMethod === url.path + url.method ||
+              !(matcher.test(url.path) && method === url.method)
+          );
+        })
+        .filter((i) => !i.hide),
     commitModalOpen,
     setCommitModalOpen,
     hasDiffChanges: () =>
