@@ -98,6 +98,7 @@ export function DiffUrlsPage() {
                           path: string,
                           method: string
                         ) => {
+                          analytics.userDocumentedEndpoint(false);
                           setSelectedUrls((previousState) => {
                             const key = path + method;
                             const newState = new Set(previousState);
@@ -109,7 +110,7 @@ export function DiffUrlsPage() {
                         },
                         handleSelection: (pattern: string, method: string) => {
                           const pendingId = documentEndpoint(pattern, method);
-                          analytics.userDocumentedEndpoint(bulkMode);
+                          analytics.userDocumentedEndpoint(true);
                           const link = diffReviewPagePendingEndpoint.linkTo(
                             pendingId
                           );
