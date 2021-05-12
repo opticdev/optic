@@ -326,8 +326,7 @@ export default class Status extends Command {
     const cliSession = await cliClient.findSession(basePath, null, null);
     developerDebugLogger({ cliSession });
     const uiBaseUrl = makeUiBaseUrl(daemonState);
-    const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
-    openBrowser(linkToCapture(uiUrl, cliSession.session.id, captureId));
+    openBrowser(linkToCapture(uiBaseUrl, cliSession.session.id, captureId));
     cleanupAndExit();
   }
 }
