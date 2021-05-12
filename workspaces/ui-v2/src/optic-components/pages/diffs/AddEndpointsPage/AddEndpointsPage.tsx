@@ -26,13 +26,14 @@ import { IPendingEndpoint } from '../../../hooks/diffs/SharedDiffState';
 import { useChangelogStyles } from '../../../changelog/ChangelogBackground';
 import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
-import { AddEndpointDiffHeader } from './components/AddEndpointDiffHeader';
-import { BulkLearnModal } from './components/BulkLearnModal';
 import {
+  AddEndpointDiffHeader,
+  BulkLearnModal,
   ExistingEndpointNameField,
   PendingEndpointNameField,
-} from './components/EndpointNameEditFields';
-import { UndocumentedUrl } from './components/UndocumentedUrl';
+  UndocumentedUrl,
+} from './components';
+import { useCheckboxState } from './hooks';
 import { makePattern } from './utils';
 
 import { useAnalytics } from '<src>/analytics';
@@ -75,29 +76,11 @@ export function DiffUrlsPage() {
     selectedUrls.has(url.path + url.method)
   );
 
-  // TODO pull out into hook + use enum for checked and unchecked
-  const checkboxState = visibleUrls.every((url) =>
-    selectedUrls.has(url.path + url.method)
-  )
-    ? 'checked'
-    : visibleUrls.every((url) => !selectedUrls.has(url.path + url.method))
-    ? 'not_checked'
-    : 'indeterminate';
-
-  const toggleSelectAllCheckbox = () => {
-    setSelectedUrls((previousState) => {
-      const newState = new Set(previousState);
-      for (const { path, method } of visibleUrls) {
-        if (checkboxState === 'not_checked') {
-          newState.add(path + method);
-        } else {
-          newState.delete(path + method);
-        }
-      }
-
-      return newState;
-    });
-  };
+  const { checkboxState, toggleSelectAllCheckbox } = useCheckboxState(
+    visibleUrls,
+    selectedUrls,
+    setSelectedUrls
+  );
 
   return (
     <>

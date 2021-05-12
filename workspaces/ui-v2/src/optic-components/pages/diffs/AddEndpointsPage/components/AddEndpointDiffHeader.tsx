@@ -8,6 +8,7 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
+import { CheckboxState } from '../hooks';
 
 type AddEndpointDiffHeaderProps = {
   searchQuery: string;
@@ -17,7 +18,7 @@ type AddEndpointDiffHeaderProps = {
   numberOfUnmatchedUrl: number;
   numberOfVisibleUrls: number;
   numberOfSelectedUrls: number;
-  checkboxState: 'checked' | 'not_checked' | 'indeterminate';
+  checkboxState: CheckboxState;
   toggleSelectAllCheckbox: () => void;
   setShowBulkModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -67,8 +68,8 @@ export const AddEndpointDiffHeader: FC<AddEndpointDiffHeaderProps> = ({
           {numberOfSelectedUrls} selected urls
         </Typography>
         <Checkbox
-          checked={checkboxState !== 'not_checked'}
-          indeterminate={checkboxState === 'indeterminate'}
+          checked={checkboxState !== CheckboxState.NotChecked}
+          indeterminate={checkboxState === CheckboxState.Indeterminate}
           onChange={toggleSelectAllCheckbox}
         />
       </Box>
