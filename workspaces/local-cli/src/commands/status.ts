@@ -42,7 +42,6 @@ import {
   LocalCliSpectacle,
 } from '@useoptic/spectacle-shared';
 import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
-import { response } from 'express';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
