@@ -2,6 +2,7 @@ import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-pro
 
 export const AllPathsQuery = `{
     paths {
+      parentPathId
       absolutePathPattern
       absolutePathPatternWithParameterNames
       isParameterized
@@ -32,6 +33,7 @@ export function usePaths(): { paths: IPath[]; loading?: boolean } {
 
 export interface IPath {
   absolutePathPattern: string;
+  parentPathId: string | null;
   absolutePathPatternWithParameterNames: string;
   isParameterized: boolean;
   name: string;

@@ -32,6 +32,7 @@ type Path {
   absolutePathPattern: String
   absolutePathPatternWithParameterNames: String
   isParameterized: Boolean
+  parentPathId: String
   name: String
   pathId: String
 }
