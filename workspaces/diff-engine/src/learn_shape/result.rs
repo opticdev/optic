@@ -325,6 +325,7 @@ impl TrailValues {
       && !self.was_null
       && !self.was_array
       && !self.was_empty_array
+      && !self.was_object
   }
 
   pub fn insert_field_set(&mut self, field_set: FieldSet) {

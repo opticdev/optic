@@ -394,4 +394,65 @@ mod test {
       "trails where expected shapes were missing are recorded"
     );
   }
+
+  #[test]
+  fn shape_diff_affordances_can_aggregate_affordances_for_observed_object_bodies() {
+    let body = BodyDescriptor::from(json!({
+      "some-field": "a-string-value",
+    }));
+
+    let interaction_pointer = String::from("test-interaction-0");
+
+    // shape diff for races[1].results[1].time being missing
+    let shape_diff : InteractionDiffResult = serde_json::from_value(json!({
+        "UnmatchedResponseBodyShape":{
+          "interactionTrail":{"path":[{"ResponseBody":{"contentType":"application/json","statusCode":200}}]},
+          "requestsTrail":{"SpecResponseBody":{"responseId":"test-response-1"}},
+          "shapeDiffResult":{"UnmatchedShape":{
+            "jsonTrail":{"path":[] },
+            "shapeTrail":{"rootShapeId":"some_shape_id","path":[]}
+          }}
+        }
+      })).unwrap();
+
+    let diff_fingerprint = shape_diff.fingerprint();
+
+    let analysis_result = BodyAnalysisResult {
+      body_location: BodyAnalysisLocation::MatchedResponse {
+        response_id: String::from("test-response-1"),
+        content_type: Some(String::from("application/json")),
+        status_code: 200,
+      },
+      trail_observations: observe_body_trails(body),
+    };
+
+    let interaction_pointers: Tags = vec![interaction_pointer.clone()].into_iter().collect();
+    let tagged_analysis = TaggedInput(analysis_result, interaction_pointers);
+
+    let mut projection = LearnedShapeDiffAffordancesProjection::from(vec![shape_diff]);
+
+    projection.apply(tagged_analysis);
+
+    let mut results: Vec<_> = projection.into_iter().collect();
+    assert_eq!(results.len(), 1); // one diff, one result per diff
+
+    let (aggregate_key, shape_diff_affordances) = results.pop().unwrap();
+    assert_eq!(aggregate_key, diff_fingerprint); // per diff fingerprint
+
+    assert!(&shape_diff_affordances.interactions.was_string.is_empty());
+    assert!(&shape_diff_affordances.interactions.was_number.is_empty());
+    assert!(&shape_diff_affordances.interactions.was_boolean.is_empty());
+    assert!(&shape_diff_affordances.interactions.was_null.is_empty());
+    assert!(&shape_diff_affordances.interactions.was_array.is_empty());
+    assert!(&shape_diff_affordances.interactions.was_missing.is_empty());
+
+    let was_object = &shape_diff_affordances.interactions.was_object;
+
+    let was_object_trails = &shape_diff_affordances.interactions.was_object_trails;
+    assert_eq!(
+      &was_object_trails.get(&interaction_pointer).unwrap()[0],
+      &JsonTrail::empty(),
+      "trails where expected shapes were objects are recorded"
+    );
+  }
 }
