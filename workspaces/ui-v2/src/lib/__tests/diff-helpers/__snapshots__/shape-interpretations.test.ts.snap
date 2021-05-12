@@ -2,7 +2,53 @@
 
 exports[`a known field is missing.managed 1`] = `
 Object {
-  "commands": Array [],
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$optional",
+        "name": "",
+        "shapeId": "shape_0",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$optionalInner",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "baseline-shape_6",
+              },
+            },
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+    Object {
+      "SetFieldShape": Object {
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_3",
+            "shapeId": "shape_0",
+          },
+        },
+      },
+    },
+  ],
+  "expectations": Object {
+    "allowedCoreShapeKindsByShapeId": Object {
+      "baseline-shape_6": "$string",
+    },
+    "allowedCoreShapes": Array [
+      "$string",
+    ],
+    "fieldIsOptional": false,
+    "lastField": "baseline-field_3",
+    "lastFieldKey": "firstName",
+    "lastFieldShapeId": "baseline-shape_6",
+    "lastObject": "baseline-shape_8",
+  },
   "preview": Object {
     "diffDescription": Object {
       "assertion": Array [
@@ -164,7 +210,28 @@ Object {
 
 exports[`a new field is provided in a required nested object.managed 1`] = `
 Object {
-  "commands": Array [],
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_10000",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_0",
+        "name": "motto",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_0",
+            "shapeId": "shape_10000",
+          },
+        },
+        "shapeId": "shape_8",
+      },
+    },
+  ],
   "expectations": Object {
     "allowedCoreShapeKindsByShapeId": Object {
       "shape_8": "$object",

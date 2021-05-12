@@ -74,7 +74,9 @@ export class InMemorySpecRepository implements IOpticSpecReadWriteRepository {
       JSON.stringify(commands),
       JSON.stringify(this.events),
       batchCommitId,
-      commitMessage
+      commitMessage,
+      commandContext.clientId,
+      commandContext.clientSessionId
     );
     const newEvents = JSON.parse(newEventsString);
     this.events.push(...newEvents);
@@ -237,8 +239,10 @@ export class InMemoryDiffService implements IOpticDiffService {
       const newEventsString = this.dependencies.opticEngine.try_apply_commands(
         JSON.stringify(newPathCommands),
         JSON.stringify(events),
-        'simulated',
-        'simulated-batch'
+        'simulated-batch',
+        'simulated changes',
+        'simulated-client',
+        'simulated-session'
       );
 
       //@aidan check if this returns all events or just the new events
@@ -256,7 +260,8 @@ export class InMemoryDiffService implements IOpticDiffService {
       const learnedBodies = JSON.parse(
         this.dependencies.opticEngine.learn_undocumented_bodies(
           spec,
-          interactionsJsonl
+          interactionsJsonl,
+          'sequential'
         )
       );
       const learnedBodiesForPathIdAndMethod = learnedBodies.find(

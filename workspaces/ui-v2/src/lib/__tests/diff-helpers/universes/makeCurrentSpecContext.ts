@@ -1,33 +1,20 @@
-import { CurrentSpecContext } from '../../../Interfaces';
+import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import {
   AllEndpointsQuery,
   endpointQueryResultsToJson,
-} from '../../../../optic-components/hooks/useEndpointsHook';
+} from '<src>/optic-components/hooks/useEndpointsHook';
 import { SpectacleInput } from '@useoptic/spectacle/build';
 import {
   AllRequestsAndResponsesQuery,
   queryResultToAllRequestsResponses,
-} from '../../../../optic-components/hooks/diffs/useAllRequestsAndResponses';
-import { newDeterministicIdGenerator } from '../../../domain-id-generator';
-import { makeSpectacle } from '@useoptic/spectacle';
+} from '<src>/optic-components/hooks/diffs/useAllRequestsAndResponses';
+import { newDeterministicIdGenerator } from '<src>/lib/domain-id-generator';
 import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
-import {
-  InMemoryOpticContextBuilder,
-  InMemorySpectacle,
-} from '@useoptic/spectacle/build/in-memory';
 
 export async function makeCurrentSpecContext(
   events: any[],
   query: (spectacleInput: SpectacleInput<any>) => Promise<any>
 ): Promise<CurrentSpecContext> {
-  const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
-    opticEngine,
-    events,
-    [],
-    'example-session'
-  );
-  const inMemorySpectacle = new InMemorySpectacle(opticContext, []);
-
   const endpoints = endpointQueryResultsToJson(
     (
       await query({
@@ -52,6 +39,7 @@ export async function makeCurrentSpecContext(
     currentSpecResponses: responses,
     currentSpecRequests: requests,
     domainIds: newDeterministicIdGenerator(),
+    idGeneratorStrategy: 'sequential',
     opticEngine,
   };
 }

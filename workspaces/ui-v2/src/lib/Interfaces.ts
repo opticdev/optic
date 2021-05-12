@@ -207,5 +207,6 @@ export type CurrentSpecContext = {
   currentSpecRequests: IRequestBody[];
   currentSpecResponses: IResponseBody[];
   domainIds: DomainIdGenerator;
+  idGeneratorStrategy: 'sequential' | 'random';
   opticEngine: IOpticEngine;
 };

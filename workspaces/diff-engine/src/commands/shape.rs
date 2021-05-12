@@ -8,7 +8,6 @@ use crate::state::shape::{
 };
 use cqrs_core::AggregateCommand;
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
 pub enum ShapeCommand {
