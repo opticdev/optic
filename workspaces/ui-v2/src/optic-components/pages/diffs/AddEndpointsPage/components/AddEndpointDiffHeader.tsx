@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@material-ui/core';
 
-export const AddEndpointDiffHeader: FC<{
+type AddEndpointDiffHeaderProps = {
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   bulkMode: boolean;
@@ -19,7 +19,10 @@ export const AddEndpointDiffHeader: FC<{
   numberOfSelectedUrls: number;
   checkboxState: 'checked' | 'not_checked' | 'indeterminate';
   toggleSelectAllCheckbox: () => void;
-}> = ({
+  setShowBulkModal: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export const AddEndpointDiffHeader: FC<AddEndpointDiffHeaderProps> = ({
   searchQuery,
   setSearchQuery,
   bulkMode,
@@ -29,6 +32,7 @@ export const AddEndpointDiffHeader: FC<{
   numberOfSelectedUrls,
   checkboxState,
   toggleSelectAllCheckbox,
+  setShowBulkModal,
 }) => {
   const secondary = bulkMode && (
     <Box
@@ -44,10 +48,10 @@ export const AddEndpointDiffHeader: FC<{
         size="small"
         disabled={numberOfSelectedUrls === 0}
         onClick={() => {
-          // TODO
+          setShowBulkModal(true);
         }}
       >
-        Learn Endpoints
+        Learn {numberOfSelectedUrls} Endpoints
       </Button>
       <Box display="flex" flexDirection="row" alignItems="center">
         <Typography

@@ -27,6 +27,7 @@ import { useChangelogStyles } from '../../../changelog/ChangelogBackground';
 import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
 import { AddEndpointDiffHeader } from './components/AddEndpointDiffHeader';
+import { BulkLearnModal } from './components/BulkLearnModal';
 import {
   ExistingEndpointNameField,
   PendingEndpointNameField,
@@ -43,6 +44,7 @@ export function DiffUrlsPage() {
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const classes = useStyles();
   const analytics = useAnalytics();
+  const [showBulkModal, setShowBulkModal] = useState(false);
   const [selectedUrls, setSelectedUrls] = useState<Set<string>>(new Set());
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -98,81 +100,90 @@ export function DiffUrlsPage() {
   };
 
   return (
-    <TwoColumnFullWidth
-      left={
-        <>
-          <AddEndpointDiffHeader
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            bulkMode={bulkMode}
-            setBulkMode={setBulkMode}
-            numberOfUnmatchedUrl={unmatchedUrlLengths}
-            numberOfVisibleUrls={visibleUrls.length}
-            numberOfSelectedUrls={bulkSelectedUrls.length}
-            checkboxState={checkboxState}
-            toggleSelectAllCheckbox={toggleSelectAllCheckbox}
-          />
-          <div style={{ flex: 1 }}>
-            {visibleUrls.length > 0 ? (
-              <AutoSizer>
-                {({ height, width }: any) => (
-                  <FixedSizeList
-                    height={height}
-                    width={width}
-                    itemSize={47}
-                    itemCount={visibleUrls.length}
-                    itemKey={(index, data) => {
-                      const item = data.undocumentedUrls[index];
-                      return item.method + item.path;
-                    }}
-                    itemData={{
-                      handleBulkModeSelection: (
-                        path: string,
-                        method: string
-                      ) => {
-                        setSelectedUrls((previousState) => {
-                          const key = path + method;
-                          const newState = new Set(previousState);
-                          newState.has(key)
-                            ? newState.delete(key)
-                            : newState.add(key);
-                          return newState;
-                        });
-                      },
-                      handleSelection: (pattern: string, method: string) => {
-                        const pendingId = documentEndpoint(pattern, method);
-                        analytics.userDocumentedEndpoint(bulkMode);
-                        const link = diffReviewPagePendingEndpoint.linkTo(
-                          pendingId
-                        );
-                        history.push(link);
-                      },
-                      undocumentedUrls: visibleUrls,
-                      isBulkMode: bulkMode,
-                      isSelected: (path: string, method: string) =>
-                        selectedUrls.has(`${path}${method}`),
-                    }}
-                  >
-                    {UndocumentedUrl}
-                  </FixedSizeList>
-                )}
-              </AutoSizer>
-            ) : unmatchedUrlLengths === 0 ? (
-              <div className={classes.noResultsContainer}>
-                <Check fontSize="large" />
-                All observed endpoints have been documented
-              </div>
-            ) : (
-              <div className={classes.noResultsContainer}>
-                No urls match the current filter
-              </div>
-            )}
-          </div>
-          <AuthorIgnoreRules />
-        </>
-      }
-      right={<DocumentationRootPageWithPendingEndpoints />}
-    />
+    <>
+      <TwoColumnFullWidth
+        left={
+          <>
+            <AddEndpointDiffHeader
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              bulkMode={bulkMode}
+              setBulkMode={setBulkMode}
+              numberOfUnmatchedUrl={unmatchedUrlLengths}
+              numberOfVisibleUrls={visibleUrls.length}
+              numberOfSelectedUrls={bulkSelectedUrls.length}
+              checkboxState={checkboxState}
+              toggleSelectAllCheckbox={toggleSelectAllCheckbox}
+              setShowBulkModal={setShowBulkModal}
+            />
+            <div style={{ flex: 1 }}>
+              {visibleUrls.length > 0 ? (
+                <AutoSizer>
+                  {({ height, width }: any) => (
+                    <FixedSizeList
+                      height={height}
+                      width={width}
+                      itemSize={47}
+                      itemCount={visibleUrls.length}
+                      itemKey={(index, data) => {
+                        const item = data.undocumentedUrls[index];
+                        return item.method + item.path;
+                      }}
+                      itemData={{
+                        handleBulkModeSelection: (
+                          path: string,
+                          method: string
+                        ) => {
+                          setSelectedUrls((previousState) => {
+                            const key = path + method;
+                            const newState = new Set(previousState);
+                            newState.has(key)
+                              ? newState.delete(key)
+                              : newState.add(key);
+                            return newState;
+                          });
+                        },
+                        handleSelection: (pattern: string, method: string) => {
+                          const pendingId = documentEndpoint(pattern, method);
+                          analytics.userDocumentedEndpoint(bulkMode);
+                          const link = diffReviewPagePendingEndpoint.linkTo(
+                            pendingId
+                          );
+                          history.push(link);
+                        },
+                        undocumentedUrls: visibleUrls,
+                        isBulkMode: bulkMode,
+                        isSelected: (path: string, method: string) =>
+                          selectedUrls.has(`${path}${method}`),
+                      }}
+                    >
+                      {UndocumentedUrl}
+                    </FixedSizeList>
+                  )}
+                </AutoSizer>
+              ) : unmatchedUrlLengths === 0 ? (
+                <div className={classes.noResultsContainer}>
+                  <Check fontSize="large" />
+                  All observed endpoints have been documented
+                </div>
+              ) : (
+                <div className={classes.noResultsContainer}>
+                  No urls match the current filter
+                </div>
+              )}
+            </div>
+            <AuthorIgnoreRules />
+          </>
+        }
+        right={<DocumentationRootPageWithPendingEndpoints />}
+      />
+      {showBulkModal && (
+        <BulkLearnModal
+          undocumentedEndpointsToLearn={bulkSelectedUrls}
+          closeModal={() => setShowBulkModal(false)}
+        />
+      )}
+    </>
   );
 }
 

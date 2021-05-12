@@ -1,4 +1,4 @@
-import { assign, Machine } from 'xstate';
+import { assign, Machine, sendUpdate } from 'xstate';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
 import {
   ILearnedBodies,
@@ -121,6 +121,7 @@ export const newInitialBodiesMachine = (
                 assign({
                   allCommands: (ctx) => recomputeCommands(ctx),
                 }),
+                sendUpdate(),
               ],
               target: 'ready',
             },
