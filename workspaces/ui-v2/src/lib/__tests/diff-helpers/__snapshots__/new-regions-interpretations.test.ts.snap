@@ -2,504 +2,435 @@
 
 exports[`new request body has correct commands 1`] = `
 Object {
-  "diffDescription": Object {
-    "assertion": Array [
-      Object {
-        "style": 0,
-        "text": "Undocumented Body Observed",
-      },
-    ],
-    "changeType": 0,
-    "getJsonBodyToPreview": [Function],
-    "location": Object {
-      "inRequest": Object {
-        "contentType": "application/json",
-        "requestId": undefined,
-      },
-      "inResponse": false,
-      "method": "GET",
-      "pathId": "path_it2OyjUysW",
-    },
-    "title": Array [
-      Object {
-        "style": 0,
-        "text": "undocumented",
-      },
-      Object {
-        "style": 1,
-        "text": "application/json",
-      },
-      Object {
-        "style": 0,
-        "text": "request observed",
-      },
-    ],
-  },
-  "for": "region",
-  "suggestions": Array [
+  "commands": Array [
     Object {
-      "action": Object {
-        "activeTense": Array [
-          Object {
-            "style": 0,
-            "text": "document request body",
-          },
-          Object {
-            "style": 1,
-            "text": "application/json",
-          },
-        ],
-        "pastTense": Array [
-          Object {
-            "style": 0,
-            "text": "Documented",
-          },
-          Object {
-            "style": 1,
-            "text": "application/json",
-          },
-          Object {
-            "style": 0,
-            "text": "request",
-          },
-        ],
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6699",
       },
-      "changeType": 0,
-      "commands": Array [
-        Object {
-          "AddRequest": Object {
-            "httpMethod": "GET",
-            "pathId": "path_it2OyjUysW",
-            "requestId": "incrementing-id-request_1",
-          },
-        },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$object",
-            "name": "",
-            "shapeId": "incrementing-id-shape_12",
-          },
-        },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$string",
-            "name": "",
-            "shapeId": "incrementing-id-shape_7",
-          },
-        },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$optional",
-            "name": "",
-            "shapeId": "incrementing-id-shape_8",
-          },
-        },
-        Object {
-          "AddField": Object {
-            "fieldId": "incrementing-id-field_5",
-            "name": "dueDate",
-            "shapeDescriptor": Object {
-              "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_5",
-                "shapeId": "incrementing-id-shape_8",
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$boolean",
+        "name": "",
+        "shapeId": "shape_6700",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6701",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6702",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$object",
+        "name": "",
+        "shapeId": "shape_6708",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$optional",
+        "name": "",
+        "shapeId": "shape_6704",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$optionalInner",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_6702",
               },
             },
-            "shapeId": "incrementing-id-shape_12",
+            "shapeId": "shape_6704",
           },
         },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$string",
-            "name": "",
-            "shapeId": "incrementing-id-shape_9",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6703",
+        "name": "dueDate",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6703",
+            "shapeId": "shape_6704",
           },
         },
-        Object {
-          "AddField": Object {
-            "fieldId": "incrementing-id-field_6",
-            "name": "id",
-            "shapeDescriptor": Object {
-              "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_6",
-                "shapeId": "incrementing-id-shape_9",
+        "shapeId": "shape_6708",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6705",
+        "name": "id",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6705",
+            "shapeId": "shape_6701",
+          },
+        },
+        "shapeId": "shape_6708",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6706",
+        "name": "isDone",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6706",
+            "shapeId": "shape_6700",
+          },
+        },
+        "shapeId": "shape_6708",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6707",
+        "name": "task",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6707",
+            "shapeId": "shape_6699",
+          },
+        },
+        "shapeId": "shape_6708",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$list",
+        "name": "",
+        "shapeId": "shape_6709",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_6708",
               },
             },
-            "shapeId": "incrementing-id-shape_12",
+            "shapeId": "shape_6709",
           },
         },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$boolean",
-            "name": "",
-            "shapeId": "incrementing-id-shape_10",
-          },
+      },
+    },
+    Object {
+      "AddRequest": Object {
+        "httpMethod": "GET",
+        "pathId": "path_it2OyjUysW",
+        "requestId": "request_6710",
+      },
+    },
+    Object {
+      "SetRequestBodyShape": Object {
+        "bodyDescriptor": Object {
+          "httpContentType": "application/json",
+          "isRemoved": false,
+          "shapeId": "shape_6709",
         },
-        Object {
-          "AddField": Object {
-            "fieldId": "incrementing-id-field_7",
-            "name": "isDone",
-            "shapeDescriptor": Object {
-              "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_7",
-                "shapeId": "incrementing-id-shape_10",
-              },
-            },
-            "shapeId": "incrementing-id-shape_12",
-          },
-        },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$string",
-            "name": "",
-            "shapeId": "incrementing-id-shape_11",
-          },
-        },
-        Object {
-          "AddField": Object {
-            "fieldId": "incrementing-id-field_8",
-            "name": "task",
-            "shapeDescriptor": Object {
-              "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_8",
-                "shapeId": "incrementing-id-shape_11",
-              },
-            },
-            "shapeId": "incrementing-id-shape_12",
-          },
-        },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$list",
-            "name": "",
-            "shapeId": "incrementing-id-shape_13",
-          },
-        },
-        Object {
-          "SetParameterShape": Object {
-            "shapeDescriptor": Object {
-              "ProviderInShape": Object {
-                "consumingParameterId": "$optionalInner",
-                "providerDescriptor": Object {
-                  "ShapeProvider": Object {
-                    "shapeId": "incrementing-id-shape_7",
-                  },
-                },
-                "shapeId": "incrementing-id-shape_8",
-              },
-            },
-          },
-        },
-        Object {
-          "SetParameterShape": Object {
-            "shapeDescriptor": Object {
-              "ProviderInShape": Object {
-                "consumingParameterId": "$listItem",
-                "providerDescriptor": Object {
-                  "ShapeProvider": Object {
-                    "shapeId": "incrementing-id-shape_12",
-                  },
-                },
-                "shapeId": "incrementing-id-shape_13",
-              },
-            },
-          },
-        },
-        Object {
-          "SetRequestBodyShape": Object {
-            "bodyDescriptor": Object {
-              "httpContentType": "application/json",
-              "isRemoved": false,
-              "shapeId": "incrementing-id-shape_13",
-            },
-            "requestId": "incrementing-id-request_1",
-          },
-        },
-      ],
+        "requestId": "request_6710",
+      },
     },
   ],
-  "tabs": Array [
-    Object {
-      "allowsExpand": true,
-      "assertion": Array [],
-      "ignoreRule": Object {
-        "diffHash": "48b9c0094ee8694e07f49d37a48c28650cb82029",
-        "newBodyInRequest": Object {
+  "newRegion": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "Undocumented Body Observed",
+        },
+      ],
+      "changeType": 0,
+      "diffHash": "41bb570841f9d23b",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": Object {
           "contentType": "application/json",
           "requestId": undefined,
         },
-        "newBodyInResponse": false,
+        "inResponse": undefined,
+        "method": "GET",
+        "pathId": "path_it2OyjUysW",
       },
-      "interactionPointers": Array [
-        "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented",
+        },
+        Object {
+          "style": 1,
+          "text": "application/json",
+        },
+        Object {
+          "style": 0,
+          "text": "request observed",
+        },
       ],
-      "invalid": true,
-      "jsonTrailsByInteractions": Object {},
-      "title": "application/json",
     },
-  ],
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": false,
+        "assertion": Array [],
+        "ignoreRule": Object {
+          "diffHash": "41bb570841f9d23b",
+          "newBodyInRequest": Object {
+            "contentType": "application/json",
+            "requestId": undefined,
+          },
+        },
+        "interactionPointers": Array [
+          "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+          "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {},
+        "title": "application/json Request",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 0,
+          "text": "Document",
+        },
+        Object {
+          "style": 1,
+          "text": "application/json",
+        },
+        Object {
+          "style": 0,
+          "text": "Request",
+        },
+      ],
+      "includeNewBody": true,
+      "isNewRegionDiff": true,
+      "shapes": Array [],
+    },
+  },
 }
 `;
 
 exports[`new response body has correct commands 1`] = `
 Object {
-  "diffDescription": Object {
-    "assertion": Array [
-      Object {
-        "style": 0,
-        "text": "Undocumented Body Observed",
-      },
-    ],
-    "changeType": 0,
-    "getJsonBodyToPreview": [Function],
-    "location": Object {
-      "inRequest": false,
-      "inResponse": Object {
-        "contentType": "application/json",
-        "responseId": undefined,
-        "statusCode": 200,
-      },
-      "method": "GET",
-      "pathId": "path_it2OyjUysW",
-    },
-    "title": Array [
-      Object {
-        "style": 0,
-        "text": "undocumented",
-      },
-      Object {
-        "style": 1,
-        "text": "200",
-      },
-      Object {
-        "style": 0,
-        "text": "response with",
-      },
-      Object {
-        "style": 1,
-        "text": "application/json",
-      },
-      Object {
-        "style": 0,
-        "text": "observed",
-      },
-    ],
-  },
-  "for": "region",
-  "suggestions": Array [
+  "commands": Array [
     Object {
-      "action": Object {
-        "activeTense": Array [
-          Object {
-            "style": 0,
-            "text": "document",
-          },
-          Object {
-            "style": 1,
-            "text": "200",
-          },
-          Object {
-            "style": 0,
-            "text": "response with",
-          },
-          Object {
-            "style": 1,
-            "text": "application/json",
-          },
-        ],
-        "pastTense": Array [
-          Object {
-            "style": 0,
-            "text": "Documented",
-          },
-          Object {
-            "style": 1,
-            "text": "200",
-          },
-          Object {
-            "style": 0,
-            "text": "response with",
-          },
-          Object {
-            "style": 1,
-            "text": "application/json",
-          },
-        ],
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6719",
       },
-      "changeType": 0,
-      "commands": Array [
-        Object {
-          "AddResponseByPathAndMethod": Object {
-            "httpMethod": "GET",
-            "httpStatusCode": 200,
-            "pathId": "path_it2OyjUysW",
-            "responseId": "incrementing-id-response_1",
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$boolean",
+        "name": "",
+        "shapeId": "shape_6720",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6721",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6722",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$object",
+        "name": "",
+        "shapeId": "shape_6726",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6723",
+        "name": "id",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6723",
+            "shapeId": "shape_6721",
           },
         },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$object",
-            "name": "",
-            "shapeId": "incrementing-id-shape_25",
+        "shapeId": "shape_6726",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6724",
+        "name": "isDone",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6724",
+            "shapeId": "shape_6720",
           },
         },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$string",
-            "name": "",
-            "shapeId": "incrementing-id-shape_20",
+        "shapeId": "shape_6726",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6725",
+        "name": "task",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6725",
+            "shapeId": "shape_6719",
           },
         },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$optional",
-            "name": "",
-            "shapeId": "incrementing-id-shape_21",
-          },
-        },
-        Object {
-          "AddField": Object {
-            "fieldId": "incrementing-id-field_13",
-            "name": "dueDate",
-            "shapeDescriptor": Object {
-              "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_13",
-                "shapeId": "incrementing-id-shape_21",
+        "shapeId": "shape_6726",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$list",
+        "name": "",
+        "shapeId": "shape_6727",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_6726",
               },
             },
-            "shapeId": "incrementing-id-shape_25",
+            "shapeId": "shape_6727",
           },
         },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$string",
-            "name": "",
-            "shapeId": "incrementing-id-shape_22",
-          },
+      },
+    },
+    Object {
+      "AddResponseByPathAndMethod": Object {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "pathId": "path_it2OyjUysW",
+        "responseId": "response_6728",
+      },
+    },
+    Object {
+      "SetResponseBodyShape": Object {
+        "bodyDescriptor": Object {
+          "httpContentType": "application/json",
+          "isRemoved": false,
+          "shapeId": "shape_6727",
         },
-        Object {
-          "AddField": Object {
-            "fieldId": "incrementing-id-field_14",
-            "name": "id",
-            "shapeDescriptor": Object {
-              "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_14",
-                "shapeId": "incrementing-id-shape_22",
-              },
-            },
-            "shapeId": "incrementing-id-shape_25",
-          },
-        },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$boolean",
-            "name": "",
-            "shapeId": "incrementing-id-shape_23",
-          },
-        },
-        Object {
-          "AddField": Object {
-            "fieldId": "incrementing-id-field_15",
-            "name": "isDone",
-            "shapeDescriptor": Object {
-              "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_15",
-                "shapeId": "incrementing-id-shape_23",
-              },
-            },
-            "shapeId": "incrementing-id-shape_25",
-          },
-        },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$string",
-            "name": "",
-            "shapeId": "incrementing-id-shape_24",
-          },
-        },
-        Object {
-          "AddField": Object {
-            "fieldId": "incrementing-id-field_16",
-            "name": "task",
-            "shapeDescriptor": Object {
-              "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_16",
-                "shapeId": "incrementing-id-shape_24",
-              },
-            },
-            "shapeId": "incrementing-id-shape_25",
-          },
-        },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$list",
-            "name": "",
-            "shapeId": "incrementing-id-shape_26",
-          },
-        },
-        Object {
-          "SetParameterShape": Object {
-            "shapeDescriptor": Object {
-              "ProviderInShape": Object {
-                "consumingParameterId": "$optionalInner",
-                "providerDescriptor": Object {
-                  "ShapeProvider": Object {
-                    "shapeId": "incrementing-id-shape_20",
-                  },
-                },
-                "shapeId": "incrementing-id-shape_21",
-              },
-            },
-          },
-        },
-        Object {
-          "SetParameterShape": Object {
-            "shapeDescriptor": Object {
-              "ProviderInShape": Object {
-                "consumingParameterId": "$listItem",
-                "providerDescriptor": Object {
-                  "ShapeProvider": Object {
-                    "shapeId": "incrementing-id-shape_25",
-                  },
-                },
-                "shapeId": "incrementing-id-shape_26",
-              },
-            },
-          },
-        },
-        Object {
-          "SetResponseBodyShape": Object {
-            "bodyDescriptor": Object {
-              "httpContentType": "application/json",
-              "isRemoved": false,
-              "shapeId": "incrementing-id-shape_26",
-            },
-            "responseId": "incrementing-id-response_1",
-          },
-        },
-      ],
+        "responseId": "response_6728",
+      },
     },
   ],
-  "tabs": Array [
-    Object {
-      "allowsExpand": true,
-      "assertion": Array [],
-      "ignoreRule": Object {
-        "diffHash": "a39bbdce2d74b25e1815653cb4fa6282f6c7b0f3",
-        "newBodyInRequest": false,
-        "newBodyInResponse": Object {
+  "newRegion": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "Undocumented Body Observed",
+        },
+      ],
+      "changeType": 0,
+      "diffHash": "2d42a681976a8151",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
           "contentType": "application/json",
           "responseId": undefined,
           "statusCode": 200,
         },
+        "method": "GET",
+        "pathId": "path_it2OyjUysW",
       },
-      "interactionPointers": Array [
-        "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented",
+        },
+        Object {
+          "style": 1,
+          "text": "200",
+        },
+        Object {
+          "style": 0,
+          "text": "response with",
+        },
+        Object {
+          "style": 1,
+          "text": "application/json",
+        },
+        Object {
+          "style": 0,
+          "text": "observed",
+        },
       ],
-      "invalid": true,
-      "jsonTrailsByInteractions": Object {},
-      "title": "200 with application/json",
     },
-  ],
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": false,
+        "assertion": Array [],
+        "ignoreRule": Object {
+          "diffHash": "2d42a681976a8151",
+          "newBodyInRequest": undefined,
+        },
+        "interactionPointers": Array [
+          "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+          "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {},
+        "title": "200 application/json Response",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 0,
+          "text": "Document",
+        },
+        Object {
+          "style": 1,
+          "text": "200",
+        },
+        Object {
+          "style": 0,
+          "text": "Response",
+        },
+      ],
+      "includeNewBody": true,
+      "isNewRegionDiff": true,
+      "shapes": Array [],
+    },
+  },
 }
 `;
 

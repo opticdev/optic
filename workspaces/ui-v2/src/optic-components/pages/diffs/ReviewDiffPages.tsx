@@ -22,6 +22,7 @@ import { useEndpoints } from '../../hooks/useEndpointsHook';
 import { CapturePage } from './CapturePage';
 import { LoadingPage } from '../../loaders/Loading';
 import { LoadingDiffReview } from '../../diffs/LoadingDiffReview';
+import { usePaths } from '<src>/optic-components/hooks/usePathsHook';
 
 export function DiffReviewPages(props: any) {
   const { match } = props;
@@ -32,6 +33,7 @@ export function DiffReviewPages(props: any) {
   const diff = useDiffsForCapture(boundaryId, diffId);
   const allRequestsAndResponsesOfBaseSpec = useAllRequestsAndResponses();
   const allEndpointsOfBaseSpec = useEndpoints();
+  const allPaths = usePaths();
 
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
   const diffReviewCapturePageLink = useDiffReviewCapturePageLink();
@@ -41,6 +43,7 @@ export function DiffReviewPages(props: any) {
   const isLoading =
     diff.loading ||
     allEndpointsOfBaseSpec.loading ||
+    allPaths.loading ||
     allRequestsAndResponsesOfBaseSpec.loading;
 
   if (isLoading) {
@@ -59,6 +62,7 @@ export function DiffReviewPages(props: any) {
       urls={diff.data!.urls}
       captureId={boundaryId}
       endpoints={allEndpointsOfBaseSpec.endpoints}
+      allPaths={allPaths.paths}
       requests={allRequestsAndResponsesOfBaseSpec.data?.requests!}
       responses={allRequestsAndResponsesOfBaseSpec.data?.responses!}
     >

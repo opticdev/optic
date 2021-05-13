@@ -89,7 +89,7 @@ export function useShapeDescriptor(
     }
 
     if (!result.data.shapeChoices) {
-      debugger;
+      return [];
     }
     return await Promise.all(
       result.data.shapeChoices.map(async (choice: any) => {

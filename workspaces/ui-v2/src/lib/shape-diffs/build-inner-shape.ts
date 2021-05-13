@@ -12,8 +12,7 @@ import {
   ProviderInShape,
   SetParameterShape,
   ShapeProvider,
-} from '../command-factory';
-import { newRandomIdGenerator } from '../domain-id-generator';
+} from '@useoptic/spectacle';
 
 export function builderInnerShapeFromChoices(
   choices: IPatchChoices,
@@ -21,8 +20,6 @@ export function builderInnerShapeFromChoices(
   actual: Actual,
   currentSpecContext: CurrentSpecContext
 ): { rootShapeId: string; commands: any[] } {
-  const randomIds = newRandomIdGenerator();
-
   const targetKinds = new Set([
     ...choices.shapes.filter((i) => i.isValid).map((i) => i.coreShapeKind),
   ]);
@@ -40,28 +37,31 @@ export function builderInnerShapeFromChoices(
     if (foundShapeId) {
       return foundShapeId[0];
     } else {
-      const filterToTarget = actual.trailAffordances.map((affordance) => {
-        if (equals(affordance.trail, actual.jsonTrail)) {
-          return {
-            ...affordance,
-            wasString: i === ICoreShapeKinds.StringKind,
-            wasNumber: i === ICoreShapeKinds.NumberKind,
-            wasBoolean: i === ICoreShapeKinds.BooleanKind,
-            wasNull: i === ICoreShapeKinds.NullableKind,
-            wasArray: i === ICoreShapeKinds.ListKind,
-            wasObject: i === ICoreShapeKinds.ObjectKind,
-            fieldSet:
-              i === ICoreShapeKinds.ObjectKind ? affordance.fieldSet : [],
-          };
-        } else {
-          return affordance;
+      const filterToTarget = actual.learnedTrails.affordances.map(
+        (affordance) => {
+          if (equals(affordance.trail, actual.jsonTrail)) {
+            return {
+              ...affordance,
+              wasString: i === ICoreShapeKinds.StringKind,
+              wasNumber: i === ICoreShapeKinds.NumberKind,
+              wasBoolean: i === ICoreShapeKinds.BooleanKind,
+              wasNull: i === ICoreShapeKinds.NullableKind,
+              wasArray: i === ICoreShapeKinds.ListKind,
+              wasObject: i === ICoreShapeKinds.ObjectKind,
+              fieldSet:
+                i === ICoreShapeKinds.ObjectKind ? affordance.fieldSet : [],
+            };
+          } else {
+            return affordance;
+          }
         }
-      });
+      );
 
       const [commands, newShapeId] = JSON.parse(
         currentSpecContext.opticEngine.affordances_to_commands(
           JSON.stringify(filterToTarget),
-          JSON.stringify(actual.jsonTrail)
+          JSON.stringify(actual.jsonTrail),
+          currentSpecContext.idGeneratorStrategy
         )
       );
 
@@ -74,16 +74,16 @@ export function builderInnerShapeFromChoices(
     if (innerShapeIds.length === 1) {
       return innerShapeIds[0];
     } else if (innerShapeIds.length === 0) {
-      const unknownId = randomIds.newShapeId();
+      const unknownId = currentSpecContext.domainIds.newShapeId();
       newCommands.push(AddShape(unknownId, ICoreShapeKinds.UnknownKind));
       return unknownId;
     } else {
-      const oneOfWrapperShape = randomIds.newShapeId();
+      const oneOfWrapperShape = currentSpecContext.domainIds.newShapeId();
       newCommands.push(
         AddShape(oneOfWrapperShape, ICoreShapeKinds.OneOfKind.toString(), '')
       );
       innerShapeIds.forEach((i) => {
-        const newParamId = randomIds.newShapeParameterId();
+        const newParamId = currentSpecContext.domainIds.newShapeParameterId();
         newCommands.push(
           ...[
             AddShapeParameter(newParamId, oneOfWrapperShape, ''),
@@ -105,7 +105,7 @@ export function builderInnerShapeFromChoices(
   );
 
   if (shouldMakeNullable) {
-    const wrapperShapeId = randomIds.newShapeId();
+    const wrapperShapeId = currentSpecContext.domainIds.newShapeId();
 
     newCommands.push(
       ...[
@@ -123,7 +123,7 @@ export function builderInnerShapeFromChoices(
     rootShapeId = wrapperShapeId;
   }
   if (choices.isField && choices.isOptional) {
-    const wrapperShapeId = randomIds.newShapeId();
+    const wrapperShapeId = currentSpecContext.domainIds.newShapeId();
     newCommands.push(
       ...[
         AddShape(wrapperShapeId, ICoreShapeKinds.OptionalKind.toString(), ''),

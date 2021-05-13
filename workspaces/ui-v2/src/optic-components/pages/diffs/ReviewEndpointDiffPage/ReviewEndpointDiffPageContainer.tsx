@@ -3,7 +3,10 @@ import { RouteComponentProps } from 'react-router';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 
 import { useEndpointDiffs } from '<src>/optic-components/hooks/diffs/useEndpointDiffs';
-import { useShapeDiffInterpretations } from '<src>/optic-components/hooks/diffs/useDiffInterpretations';
+import {
+  useNewBodyDiffInterpretations,
+  useShapeDiffInterpretations,
+} from '<src>/optic-components/hooks/diffs/useDiffInterpretations';
 import { useSharedDiffContext } from '<src>/optic-components/hooks/diffs/SharedDiffContext';
 import { useEndpoint } from '<src>/optic-components/hooks/useEndpointsHook';
 import { SpectacleContext } from '<src>/spectacle-implementations/spectacle-provider';
@@ -30,12 +33,16 @@ export const ReviewEndpointDiffContainer: FC<
     context.results.trailValues
   );
 
+  const newRegionDiffs = useNewBodyDiffInterpretations(
+    endpointDiffs.newRegionDiffs
+  );
+
   return !endpoint || shapeDiffs.loading ? (
     <Loading />
   ) : (
     <ReviewEndpointDiffPage
       endpoint={endpoint}
-      shapeDiffs={shapeDiffs.results}
+      allDiffs={[...newRegionDiffs.results, ...shapeDiffs.results]}
       spectacle={spectacle as IForkableSpectacle}
       method={method}
       pathId={pathId}

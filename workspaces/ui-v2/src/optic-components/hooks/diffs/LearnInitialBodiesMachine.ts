@@ -9,7 +9,7 @@ import {
   AddPathComponent,
   AddPathParameter,
   AddRequest,
-} from '../../../lib/command-factory';
+} from '@useoptic/spectacle';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { IOpticDiffService } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
@@ -247,9 +247,11 @@ function pathToCommands(
 
   return { pathId: lastId, commands };
 }
+
+export type IPathStringComponent = { name: string; isParameter: boolean };
 export function pathStringToPathComponents(
   pathString: string
-): { name: string; isParameter: boolean }[] {
+): IPathStringComponent[] {
   const components = pathString.split('/').map((name) => {
     const isParameter = name.charAt(0) === ':' || name.charAt(0) === '{';
     return { name, isParameter };

@@ -1,5 +1,4 @@
 import React, { FC, useContext, useMemo, useState } from 'react';
-import { pathToRegexp } from 'path-to-regexp';
 import {
   IPendingEndpoint,
   IUndocumentedUrl,
@@ -11,20 +10,26 @@ import * as shortId from 'shortid';
 import { useMachine } from '@xstate/react';
 import { PathComponentAuthoring } from '<src>/optic-components/pages/diffs/AddEndpointsPage/utils';
 import { IEndpoint } from '<src>/optic-components/hooks/useEndpointsHook';
+import { pathToRegexp } from 'path-to-regexp';
 import {
   IRequestBody,
   IResponseBody,
 } from '<src>/optic-components/hooks/useEndpointBodyHook';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
-import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
+import {
+  AddContribution,
+  CQRSCommand,
+  IOpticDiffService,
+  IUnrecognizedUrl,
+} from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '<src>/lib/domain-id-generator';
 import { ParsedDiff } from '<src>/lib/parse-diff';
-import { AddContribution, CQRSCommand } from '<src>/lib/command-factory';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
 import { useConfigRepository } from '<src>/optic-components/hooks/useConfigHook';
 import { useAnalytics } from '<src>/analytics';
 import { makePattern } from '<src>/optic-components/pages/diffs/AddEndpointsPage/utils';
+import { IPath } from '<src>/optic-components/hooks/usePathsHook';
 
 export const SharedDiffReactContext = React.createContext<ISharedDiffContext | null>(
   null
@@ -70,6 +75,7 @@ type ISharedDiffContext = {
   commitModalOpen: boolean;
   setCommitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   hasDiffChanges: () => boolean;
+  diffService: IOpticDiffService;
   getUndocumentedUrls: () => IUndocumentedUrl[];
 };
 
@@ -78,6 +84,7 @@ type SharedDiffStoreProps = {
   captureId: string;
   requests: IRequestBody[];
   responses: IResponseBody[];
+  allPaths: IPath[];
   diffs: ParsedDiff[];
   diffService: IOpticDiffService;
   diffTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
@@ -90,10 +97,12 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const { config } = useConfigRepository();
 
   const currentSpecContext: CurrentSpecContext = {
+    currentSpecPaths: props.allPaths,
     currentSpecEndpoints: props.endpoints,
     currentSpecRequests: props.requests,
     currentSpecResponses: props.responses,
     domainIds: newRandomIdGenerator(),
+    idGeneratorStrategy: 'random',
     opticEngine,
   };
 
@@ -159,6 +168,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
 
   const value: ISharedDiffContext = {
     context,
+    diffService: props.diffService,
     documentEndpoint: (pattern: string, method: string) => {
       const uuid = shortId.generate();
       send({ type: 'DOCUMENT_ENDPOINT', pattern, method, pendingId: uuid });

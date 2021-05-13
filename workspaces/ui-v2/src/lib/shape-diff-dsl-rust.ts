@@ -1,8 +1,10 @@
 import {
   IJsonObjectKey,
   IJsonTrail,
+  normalize,
 } from '@useoptic/cli-shared/build/diffs/json-trail';
 import sortBy from 'lodash.sortby';
+import equals from 'lodash.isequal';
 import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
 import { CurrentSpecContext, ICoreShapeKinds } from './Interfaces';
 import {
@@ -27,7 +29,7 @@ export async function getExpectationsForShapeTrail(
 }
 
 export class Expectation {
-  private expectationsFromSpec: IExpectationHelper;
+  public expectationsFromSpec: IExpectationHelper;
   private currentSpecContext: CurrentSpecContext;
 
   constructor(
@@ -136,7 +138,10 @@ export class Actual {
     private shapeTrail: IShapeTrail,
     public jsonTrail: IJsonTrail
   ) {
-    this.trailAffordances = learnedTrails.affordances;
+    this.trailAffordances = learnedTrails.affordances.filter((i) => {
+      const compared = equals(normalize(i.trail), normalize(jsonTrail));
+      return compared;
+    });
   }
 
   isField(): boolean {
@@ -230,7 +235,7 @@ export class Actual {
 
       debugger;
       results.push({
-        label: 'array',
+        label: 'list',
         kind: ICoreShapeKinds.ListKind,
         interactions:
           wasArrayWithItems.size > 0 ? Array.from(wasArrayWithItems) : wasArray,

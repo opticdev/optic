@@ -143,7 +143,6 @@ export class LocalCliDiffService implements IOpticDiffService {
         diffId: this.dependencies.diffId,
       },
     });
-    console.log(result.data!.diff.diffs);
     return result.data!.diff.diffs;
   }
 
@@ -158,7 +157,6 @@ export class LocalCliDiffService implements IOpticDiffService {
         diffId: this.dependencies.diffId,
       },
     });
-    console.log(result.data!.diff.unrecognizedUrls);
     return result.data!.diff.unrecognizedUrls;
   }
 }
