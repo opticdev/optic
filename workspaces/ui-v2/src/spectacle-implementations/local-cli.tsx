@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRouteMatch, useParams, Switch } from 'react-router-dom';
 import { AsyncStatus } from '<src>/types';
 import { Provider as BaseUrlProvider } from '<src>/optic-components/hooks/useBaseUrl';
-import { DocumentationPages } from '<src>/optic-components/pages/docs/DocumentationPage';
+import { DocumentationPages } from '<src>/optic-components/pages/docs';
 import { SpectacleStore } from './spectacle-provider';
 import { DiffReviewEnvironments } from '<src>/optic-components/pages/diffs/ReviewDiffPages';
 import { CapturesServiceStore } from '<src>/optic-components/hooks/useCapturesHook';

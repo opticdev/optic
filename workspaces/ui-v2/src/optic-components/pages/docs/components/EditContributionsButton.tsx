@@ -3,8 +3,8 @@ import { ToggleButton } from '@material-ui/lab';
 import { Typography, makeStyles } from '@material-ui/core';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import EditIcon from '@material-ui/icons/Edit';
-import { useContributionEditing } from '../../hooks/edit/Contributions';
-import { CommitMessageModal } from '../../common';
+import { useContributionEditing } from '<src>/optic-components/hooks/edit/Contributions';
+import { CommitMessageModal } from '<src>/optic-components/common';
 
 export function EditContributionsButton() {
   const classes = useStyles();
