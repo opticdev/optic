@@ -243,7 +243,7 @@ export default class Status extends Command {
           );
           if (!data.hasMoreInteractions) {
             cli.action.stop('done');
-            resolve();
+            resolve(undefined);
           }
         } else if (type === 'error') {
           cli.action.stop('done');

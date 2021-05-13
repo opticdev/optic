@@ -65,7 +65,7 @@ class CredentialsServer {
         if (err) {
           return reject(err);
         }
-        resolve();
+        resolve(undefined);
       });
     });
   }
