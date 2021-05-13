@@ -2,6 +2,7 @@ import React from 'react';
 import { CenteredColumn } from '../layouts/CenteredColumn';
 import { makeStyles } from '@material-ui/styles';
 import { Box, Typography } from '@material-ui/core';
+import { SpinningOpticLogo } from './SpinningOpticLogo';
 
 interface ILoaderProps {
   title: string;
@@ -31,13 +32,7 @@ export function LoaderWithOpticLogo({ title }: ILoaderProps) {
   const classes = useStyles();
   return (
     <Box display="flex">
-      <img
-        className={classes.spinningImg}
-        src={'/optic-logo-loader.svg'}
-        width={30}
-        height={30}
-        alt="loader"
-      />
+      <SpinningOpticLogo />
       <Typography variant="h6" color="textSecondary" className={classes.text}>
         {title}...
       </Typography>
@@ -57,17 +52,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: -1,
     fontFamily: 'Ubuntu Mono',
   },
-  spinningImg: {
-    animation: '$spin 5s infinite linear',
-  },
   padded: {
     padding: 30,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  '@keyframes spin': {
-    '0%': { transform: 'rotate(0deg)' },
-    '100%': { transform: 'rotate(360deg)' },
   },
 }));
