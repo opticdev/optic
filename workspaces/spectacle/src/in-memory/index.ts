@@ -220,10 +220,10 @@ export class InMemoryDiffService implements IOpticDiffService {
       },
       {}
     );
-    if (Object.keys(affordancesByFingerprint).length === 0) {
-      //@GOTCHA: this should only ever be empty if there are no Shape Diffs. use invariant?
-      debugger;
-    }
+    // if (Object.keys(affordancesByFingerprint).length === 0) {
+    //   //@GOTCHA: this should only ever be empty if there are no Shape Diffs. use invariant?
+    //   debugger;
+    // }
     //@jaap @TODO: use asynctools affordancesByFingerprint ?
     return affordancesByFingerprint;
   }
@@ -261,7 +261,7 @@ export class InMemoryDiffService implements IOpticDiffService {
         this.dependencies.opticEngine.learn_undocumented_bodies(
           spec,
           interactionsJsonl,
-          'sequential'
+          'random'
         )
       );
       const learnedBodiesForPathIdAndMethod = learnedBodies.find(

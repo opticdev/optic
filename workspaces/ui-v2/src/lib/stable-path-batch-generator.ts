@@ -1,16 +1,20 @@
-import {
-  IPathStringComponent,
-  pathStringToPathComponents,
-} from '<src>/optic-components/hooks/diffs/LearnInitialBodiesMachine';
 import { IPendingEndpoint } from '<src>/optic-components/hooks/diffs/SharedDiffState';
 import { IPath } from '<src>/optic-components/hooks/usePathsHook';
-import { AddPathComponent, AddPathParameter } from '@useoptic/spectacle';
+import {
+  AddPathComponent,
+  AddPathParameter,
+  CQRSCommand,
+} from '@useoptic/spectacle';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 
 export function generatePathCommands(
   pendingEndpoints: IPendingEndpoint[],
   currentSpecContext: CurrentSpecContext
-) {
+): {
+  commands: CQRSCommand[];
+  endpointPathIdMap: { [key: string]: string };
+  stagedPaths: IPath[];
+} {
   const currentPaths: IPath[] = currentSpecContext.currentSpecPaths;
 
   const commands: any[] = [];
@@ -86,4 +90,28 @@ export function generatePathCommands(
 
 function cleanupPathComponentName(name: string) {
   return name.replace(/[{}:]/gi, '');
+}
+
+export type IPathStringComponent = { name: string; isParameter: boolean };
+export function pathStringToPathComponents(
+  pathString: string
+): IPathStringComponent[] {
+  const components = pathString.split('/').map((name) => {
+    const isParameter = name.charAt(0) === ':' || name.charAt(0) === '{';
+    return { name, isParameter };
+  });
+  const [root, ...rest] = components;
+  if (root.name === '') {
+    return trimTrailingEmptyPath(rest);
+  }
+  return trimTrailingEmptyPath(components);
+}
+
+export function trimTrailingEmptyPath(components: any) {
+  if (components.length > 0) {
+    if (components[components.length - 1].name === '') {
+      return components.slice(0, -1);
+    }
+  }
+  return components;
 }

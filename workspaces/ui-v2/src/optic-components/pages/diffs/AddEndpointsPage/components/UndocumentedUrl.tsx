@@ -42,7 +42,6 @@ export function UndocumentedUrl({
 }: UndocumentedUrlProps) {
   const undocumentedUrl = undocumentedUrls[index];
   const { method, path, hide, isKnownPath } = undocumentedUrl;
-  debugger;
   const classes = useStyles();
   const { persistWIPPattern, wipPatterns } = useSharedDiffContext();
 
