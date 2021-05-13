@@ -136,6 +136,7 @@ function DiffCaptureResults() {
     isDiffHandled,
     reset,
     handledCount,
+    getUndocumentedUrls,
   } = useSharedDiffContext();
   const history = useHistory();
   const diffsGroupedByEndpoints = context.results.diffsGroupedByEndpoint;
@@ -255,10 +256,7 @@ function DiffCaptureResults() {
                   primary={
                     <>
                       Optic observed{' '}
-                      <b>
-                        {context.results.displayedUndocumentedUrls.length}{' '}
-                        undocumented urls.
-                      </b>{' '}
+                      <b>{getUndocumentedUrls().length} undocumented urls.</b>{' '}
                       Click here to document new endpoints
                     </>
                   }

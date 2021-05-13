@@ -35,10 +35,11 @@ ShapeDiffAffordances {
         was_boolean: {},
         was_null: {},
         was_array: {},
+        was_empty_array: {},
         was_object: {},
         was_missing: {},
         was_string_trails: {
-            "test-interaction-0": [
+            "test-interaction-0": {
                 JsonTrail {
                     path: [
                         JsonObjectKey {
@@ -49,10 +50,10 @@ ShapeDiffAffordances {
                         },
                     ],
                 },
-            ],
+            },
         },
         was_number_trails: {
-            "test-interaction-0": [
+            "test-interaction-0": {
                 JsonTrail {
                     path: [
                         JsonObjectKey {
@@ -63,11 +64,12 @@ ShapeDiffAffordances {
                         },
                     ],
                 },
-            ],
+            },
         },
         was_boolean_trails: {},
         was_null_trails: {},
         was_array_trails: {},
+        was_empty_array_trails: {},
         was_object_trails: {},
         was_missing_trails: {},
     },

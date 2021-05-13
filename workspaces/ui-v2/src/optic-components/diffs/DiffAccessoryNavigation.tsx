@@ -14,15 +14,18 @@ import AskForCommitMessage from './render/AskForCommitMessage';
 export function DiffAccessoryNavigation() {
   const classes = useStyles();
 
-  const { context, handledCount, hasDiffChanges } = useSharedDiffContext();
+  const {
+    handledCount,
+    hasDiffChanges,
+    getUndocumentedUrls,
+  } = useSharedDiffContext();
   const diffReviewCapturePage = useDiffReviewCapturePageLink();
   const undocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
   const history = useHistory();
   const [handled, total] = handledCount;
 
-  const numberOfUndocumented = context.results?.displayedUndocumentedUrls.filter(
-    (i) => !i.hide
-  ).length;
+  const numberOfUndocumented = getUndocumentedUrls().filter((i) => !i.hide)
+    .length;
 
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
