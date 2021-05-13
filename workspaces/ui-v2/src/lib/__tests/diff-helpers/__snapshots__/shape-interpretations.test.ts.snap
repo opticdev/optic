@@ -4808,7 +4808,7 @@ Object {
                 },
                 Object {
                   "JsonArrayItem": Object {
-                    "index": 16,
+                    "index": 0,
                   },
                 },
                 Object {
@@ -5460,7 +5460,7 @@ Object {
               },
               Object {
                 "JsonArrayItem": Object {
-                  "index": 16,
+                  "index": 0,
                 },
               },
               Object {

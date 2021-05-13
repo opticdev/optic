@@ -1,0 +1,437 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`new request body has correct commands 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6699",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$boolean",
+        "name": "",
+        "shapeId": "shape_6700",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6701",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6702",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$object",
+        "name": "",
+        "shapeId": "shape_6708",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$optional",
+        "name": "",
+        "shapeId": "shape_6704",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$optionalInner",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_6702",
+              },
+            },
+            "shapeId": "shape_6704",
+          },
+        },
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6703",
+        "name": "dueDate",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6703",
+            "shapeId": "shape_6704",
+          },
+        },
+        "shapeId": "shape_6708",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6705",
+        "name": "id",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6705",
+            "shapeId": "shape_6701",
+          },
+        },
+        "shapeId": "shape_6708",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6706",
+        "name": "isDone",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6706",
+            "shapeId": "shape_6700",
+          },
+        },
+        "shapeId": "shape_6708",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6707",
+        "name": "task",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6707",
+            "shapeId": "shape_6699",
+          },
+        },
+        "shapeId": "shape_6708",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$list",
+        "name": "",
+        "shapeId": "shape_6709",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_6708",
+              },
+            },
+            "shapeId": "shape_6709",
+          },
+        },
+      },
+    },
+    Object {
+      "AddRequest": Object {
+        "httpMethod": "GET",
+        "pathId": "path_it2OyjUysW",
+        "requestId": "request_6710",
+      },
+    },
+    Object {
+      "SetRequestBodyShape": Object {
+        "bodyDescriptor": Object {
+          "httpContentType": "application/json",
+          "isRemoved": false,
+          "shapeId": "shape_6709",
+        },
+        "requestId": "request_6710",
+      },
+    },
+  ],
+  "newRegion": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "Undocumented Body Observed",
+        },
+      ],
+      "changeType": 0,
+      "diffHash": "41bb570841f9d23b",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": Object {
+          "contentType": "application/json",
+          "requestId": undefined,
+        },
+        "inResponse": undefined,
+        "method": "GET",
+        "pathId": "path_it2OyjUysW",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented",
+        },
+        Object {
+          "style": 1,
+          "text": "application/json",
+        },
+        Object {
+          "style": 0,
+          "text": "request observed",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": false,
+        "assertion": Array [],
+        "ignoreRule": Object {
+          "diffHash": "41bb570841f9d23b",
+          "newBodyInRequest": Object {
+            "contentType": "application/json",
+            "requestId": undefined,
+          },
+        },
+        "interactionPointers": Array [
+          "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+          "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {},
+        "title": "application/json Request",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 0,
+          "text": "Document",
+        },
+        Object {
+          "style": 1,
+          "text": "application/json",
+        },
+        Object {
+          "style": 0,
+          "text": "Request",
+        },
+      ],
+      "includeNewBody": true,
+      "isNewRegionDiff": true,
+      "shapes": Array [],
+    },
+  },
+}
+`;
+
+exports[`new response body has correct commands 1`] = `
+Object {
+  "commands": Array [
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6719",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$boolean",
+        "name": "",
+        "shapeId": "shape_6720",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6721",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6722",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$object",
+        "name": "",
+        "shapeId": "shape_6726",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6723",
+        "name": "id",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6723",
+            "shapeId": "shape_6721",
+          },
+        },
+        "shapeId": "shape_6726",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6724",
+        "name": "isDone",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6724",
+            "shapeId": "shape_6720",
+          },
+        },
+        "shapeId": "shape_6726",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6725",
+        "name": "task",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6725",
+            "shapeId": "shape_6719",
+          },
+        },
+        "shapeId": "shape_6726",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$list",
+        "name": "",
+        "shapeId": "shape_6727",
+      },
+    },
+    Object {
+      "SetParameterShape": Object {
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_6726",
+              },
+            },
+            "shapeId": "shape_6727",
+          },
+        },
+      },
+    },
+    Object {
+      "AddResponseByPathAndMethod": Object {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "pathId": "path_it2OyjUysW",
+        "responseId": "response_6728",
+      },
+    },
+    Object {
+      "SetResponseBodyShape": Object {
+        "bodyDescriptor": Object {
+          "httpContentType": "application/json",
+          "isRemoved": false,
+          "shapeId": "shape_6727",
+        },
+        "responseId": "response_6728",
+      },
+    },
+  ],
+  "newRegion": Object {
+    "diffDescription": Object {
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "Undocumented Body Observed",
+        },
+      ],
+      "changeType": 0,
+      "diffHash": "2d42a681976a8151",
+      "getJsonBodyToPreview": [Function],
+      "location": Object {
+        "inRequest": undefined,
+        "inResponse": Object {
+          "contentType": "application/json",
+          "responseId": undefined,
+          "statusCode": 200,
+        },
+        "method": "GET",
+        "pathId": "path_it2OyjUysW",
+      },
+      "title": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented",
+        },
+        Object {
+          "style": 1,
+          "text": "200",
+        },
+        Object {
+          "style": 0,
+          "text": "response with",
+        },
+        Object {
+          "style": 1,
+          "text": "application/json",
+        },
+        Object {
+          "style": 0,
+          "text": "observed",
+        },
+      ],
+    },
+    "previewTabs": Array [
+      Object {
+        "allowsExpand": false,
+        "assertion": Array [],
+        "ignoreRule": Object {
+          "diffHash": "2d42a681976a8151",
+          "newBodyInRequest": undefined,
+        },
+        "interactionPointers": Array [
+          "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+          "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {},
+        "title": "200 application/json Response",
+      },
+    ],
+    "toCommands": [Function],
+    "updateSpecChoices": Object {
+      "copy": Array [
+        Object {
+          "style": 0,
+          "text": "Document",
+        },
+        Object {
+          "style": 1,
+          "text": "200",
+        },
+        Object {
+          "style": 0,
+          "text": "Response",
+        },
+      ],
+      "includeNewBody": true,
+      "isNewRegionDiff": true,
+      "shapes": Array [],
+    },
+  },
+}
+`;
+
+exports[`spec with paths, and new bodies 1`] = `Array []`;

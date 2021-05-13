@@ -29,9 +29,7 @@ function commonAssertions(result: IShapeDiffTestSnapshot) {
 
   invariant(totalResults > 0, 'all diffs should have interactions attached');
 
-  // pipeline creating commands
-  // result.preview.toCommands(result.preview.updateSpecChoices!)
-  // re-running diff
+  result.preview.toCommands(result.preview.updateSpecChoices!);
 }
 
 test('a known field is missing.managed', async () => {

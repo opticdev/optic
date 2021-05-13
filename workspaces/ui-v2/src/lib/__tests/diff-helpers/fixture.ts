@@ -99,7 +99,9 @@ export async function newRegionPreview(
     universe.currentSpecContext
   );
 
-  return newRegion;
+  const commands = newRegion?.toCommands(newRegion?.updateSpecChoices);
+  universe.forkSpectacleWithCommands(commands);
+  return { newRegion, commands };
 }
 
 export async function shapeDiffPreview(
@@ -159,6 +161,10 @@ export async function shapeDiffPreview(
     universe.currentSpecContext
   );
 
+  const commands = preview.toCommands(preview.updateSpecChoices!);
+
+  const canApplyCommands = universe.forkSpectacleWithCommands(commands);
+
   return {
     preview: {
       ...preview,
@@ -166,7 +172,7 @@ export async function shapeDiffPreview(
     },
     expectations: expected.expectationsFromSpec,
     trailValues: sortedTrailValues,
-    commands: preview.toCommands(preview.updateSpecChoices!),
+    commands,
   };
 }
 

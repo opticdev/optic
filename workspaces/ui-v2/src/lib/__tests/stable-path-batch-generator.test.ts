@@ -1,6 +1,7 @@
 import { generatePathCommands } from '<src>/lib/stable-path-batch-generator';
 import { IPendingEndpoint } from '<src>/optic-components/hooks/diffs/SharedDiffState';
 import { buildUniverse } from '<src>/lib/__tests/diff-helpers/universes/buildUniverse';
+import { AllPathsQuery } from '<src>/optic-components/hooks/usePathsHook';
 
 const gitHubExample = [
   '/users/:username/orgs',
@@ -37,9 +38,10 @@ test('can match pending endpoints to pathIds for empty spec', async () => {
     universe.currentSpecContext
   );
 
-  // universe.forkSpectacleWithCommands(results.commands);
+  const spectacle = await universe.forkSpectacleWithCommands(results.commands);
 
   expect(results).toMatchSnapshot();
+  expect(await getPathsInSpec(spectacle)).toMatchSnapshot();
 });
 
 test('can match pending endpoints to pathIds in existing spec', async () => {
@@ -137,7 +139,17 @@ test('can match pending endpoints to pathIds in existing spec', async () => {
     universe.currentSpecContext
   );
 
-  // universe.forkSpectacleWithCommands(results.commands);
+  const spectacle = await universe.forkSpectacleWithCommands(results.commands);
 
   expect(results).toMatchSnapshot();
+  expect(await getPathsInSpec(spectacle)).toMatchSnapshot();
 });
+
+async function getPathsInSpec(spectacle: any) {
+  const results = await spectacle.queryWrapper({
+    query: AllPathsQuery,
+    variables: {},
+  });
+
+  return results.data;
+}
