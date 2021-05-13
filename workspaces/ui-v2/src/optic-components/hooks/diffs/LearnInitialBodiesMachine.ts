@@ -160,7 +160,10 @@ export function recomputeCommands(ctx: InitialBodiesContext): any[] {
       isIgnored(i, true)
     );
 
-    if (allRequestBodiesIgnored && ctx.learnedBodies.responses.length > 0) {
+    if (
+      (allRequestBodiesIgnored && ctx.learnedBodies.responses.length > 0) ||
+      ctx.learnedBodies.responses.length === 0
+    ) {
       commands.push(AddRequest(ctx.method, ctx.pathId, ids.newRequestId()));
     }
 
