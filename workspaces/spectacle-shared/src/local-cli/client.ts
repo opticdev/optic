@@ -114,9 +114,6 @@ export class LocalCliDiffService implements IOpticDiffService {
         diffId: this.dependencies.diffId,
       }
     );
-    if (Object.keys(result).length === 0) {
-      debugger;
-    }
     //@aidan fixme
     return result;
   }
