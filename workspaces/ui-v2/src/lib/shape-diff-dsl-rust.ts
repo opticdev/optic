@@ -15,6 +15,7 @@ import {
 } from '../../../cli-shared/build/diffs/initial-types';
 import invariant from 'invariant';
 import { namer } from './quick-namer';
+import { setDifference } from '<src>/lib/set-ops';
 
 export async function getExpectationsForShapeTrail(
   shapeTrail: IShapeTrail,
@@ -177,6 +178,7 @@ export class Actual {
       wasArray,
       wasObject,
       wasString,
+      wasEmptyArray,
       wasMissingTrails,
       wasNumberTrails,
       wasBooleanTrails,
@@ -221,13 +223,20 @@ export class Actual {
         interactions: wasNull,
         jsonTrailsByInteractions: wasNullTrails,
       });
-    if (wasArray.length)
+    if (wasArray.length || wasEmptyArray.length) {
+      const wasArraySet = new Set([...wasArray]);
+      const wasEmptyArraySet = new Set([...wasEmptyArray]);
+      const wasArrayWithItems = setDifference(wasArraySet, wasEmptyArraySet);
+
+      debugger;
       results.push({
         label: 'array',
         kind: ICoreShapeKinds.ListKind,
-        interactions: wasArray,
+        interactions:
+          wasArrayWithItems.size > 0 ? Array.from(wasArrayWithItems) : wasArray,
         jsonTrailsByInteractions: wasArrayTrails,
       });
+    }
     if (wasObject.length)
       results.push({
         label: 'object',
