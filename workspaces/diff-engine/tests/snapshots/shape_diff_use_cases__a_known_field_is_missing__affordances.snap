@@ -31,6 +31,7 @@ expression: learned_shape_diff_affordances.into_iter()
                 was_boolean: {},
                 was_null: {},
                 was_array: {},
+                was_empty_array: {},
                 was_object: {},
                 was_missing: {
                     "test-interaction-1",
@@ -40,9 +41,10 @@ expression: learned_shape_diff_affordances.into_iter()
                 was_boolean_trails: {},
                 was_null_trails: {},
                 was_array_trails: {},
+                was_empty_array_trails: {},
                 was_object_trails: {},
                 was_missing_trails: {
-                    "test-interaction-1": [
+                    "test-interaction-1": {
                         JsonTrail {
                             path: [
                                 JsonObjectKey {
@@ -50,7 +52,7 @@ expression: learned_shape_diff_affordances.into_iter()
                                 },
                             ],
                         },
-                    ],
+                    },
                 },
             },
             root_trail: JsonTrail {
