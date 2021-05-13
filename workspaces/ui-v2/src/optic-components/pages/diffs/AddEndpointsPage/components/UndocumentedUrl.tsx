@@ -109,7 +109,10 @@ export function UndocumentedUrl({
       onClick={() =>
         isBulkMode
           ? handleBulkModeSelection(path, method)
-          : handleSelection(makePattern(components), method)
+          : handleSelection(
+              isKnownPath ? path : makePattern(components),
+              method
+            )
       }
     >
       <div style={{ flex: 1 }}>
@@ -118,29 +121,46 @@ export function UndocumentedUrl({
             <div className={classes.method} style={{ color: methodColor }}>
               {paddedMethod.toUpperCase()}
             </div>
-            <div
-              className={classes.componentsWrapper}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {components.map((i, index) => (
-                <div
-                  key={i.originalName}
-                  style={{ display: 'flex', flexDirection: 'row' }}
-                >
-                  {components.length > index && (
-                    <span className={classes.pathComponent}>/</span>
-                  )}
-                  <PathComponentRender
-                    pathComponent={i}
-                    initialNameForComponent={initialNameForComponent}
-                    onChange={onChange(index)}
-                  />
-                </div>
-              ))}
-            </div>
+            {isKnownPath ? (
+              <div
+                className={classes.pathComponent}
+                style={{ fontWeight: 800 }}
+              >
+                {path}
+              </div>
+            ) : (
+              <div
+                className={classes.componentsWrapper}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {components.map((i, index) => (
+                  <div
+                    key={i.originalName}
+                    style={{ display: 'flex', flexDirection: 'row' }}
+                  >
+                    {components.length > index && (
+                      <span className={classes.pathComponent}>/</span>
+                    )}
+                    <PathComponentRender
+                      pathComponent={i}
+                      initialNameForComponent={initialNameForComponent}
+                      onChange={onChange(index)}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
+      {isKnownPath && (
+        <div
+          className={classes.pathComponent}
+          style={{ paddingLeft: 10, fontSize: 12 }}
+        >
+          known path
+        </div>
+      )}
       <div style={{ paddingRight: 8 }}>
         {isBulkMode ? (
           <Checkbox checked={isSelected(path, method)} />
