@@ -14,9 +14,8 @@ import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
 
 export const coverageFilePrefix = 'coverage-';
 
-interface IFileSystemCaptureLoaderWithDiffsAndCoverageConfig
+interface IFileSystemCaptureLoaderWithDiffsConfig
   extends IFileSystemCaptureLoaderConfig {
-  shouldCollectCoverage: boolean;
   shouldCollectDiffs: boolean;
 }
 
@@ -26,7 +25,7 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
   private shapesResolvers!: any;
 
   constructor(
-    private _config: IFileSystemCaptureLoaderWithDiffsAndCoverageConfig,
+    private _config: IFileSystemCaptureLoaderWithDiffsConfig,
     private cliConfig: IApiCliConfig,
     private specServiceClient: ISpecService
   ) {
@@ -100,25 +99,6 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
       await fs.writeJson(
         path.join(outputDirectory, `diffs-${batchId}.json`),
         diffs
-      );
-    }
-
-    if (this._config.shouldCollectCoverage) {
-      const report = opticEngine.com.useoptic.diff.helpers
-        .CoverageHelpers()
-        .getCoverage(
-          this.shapesResolvers,
-          this.rfcState,
-          JsonHelper.jsArrayToSeq(
-            items.map((x) => JsonHelper.fromInteraction(x))
-          )
-        );
-
-      const asJs = opticEngine.CoverageReportJsonSerializer.toJs(report);
-
-      await fs.writeJson(
-        path.join(outputDirectory, `${coverageFilePrefix}${batchId}.json`),
-        asJs
       );
     }
 
