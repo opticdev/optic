@@ -4,7 +4,7 @@ import groupBy from 'lodash.groupby';
 import classNames from 'classnames';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
-import { List, ListItem, Typography } from '@material-ui/core';
+import { Box, List, ListItem, Typography } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { EndpointName } from '../../common';
 import { EndpointNameMiniContribution } from '../../documentation/Contributions';
@@ -46,6 +46,24 @@ export function DocumentationRootPage(props: {
 
   if (loading) {
     return <Loading />;
+  }
+
+  if (tocKeys.length === 0) {
+    return (
+      <Box
+        display="flex"
+        height="100%"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Typography
+          variant="h6"
+          style={{ fontFamily: 'Ubuntu Mono', marginBottom: '25%' }}
+        >
+          No endpoints have been documented yet
+        </Typography>
+      </Box>
+    );
   }
 
   return (
