@@ -172,6 +172,7 @@ pub struct InteractionsAffordances {
   was_boolean: InteractionPointers,
   was_null: InteractionPointers,
   was_array: InteractionPointers,
+  was_empty_array: InteractionPointers,
   was_object: InteractionPointers,
   was_missing: InteractionPointers,
   was_string_trails: HashMap<String, HashSet<JsonTrail>>,
@@ -179,6 +180,7 @@ pub struct InteractionsAffordances {
   was_boolean_trails: HashMap<String, HashSet<JsonTrail>>,
   was_null_trails: HashMap<String, HashSet<JsonTrail>>,
   was_array_trails: HashMap<String, HashSet<JsonTrail>>,
+  was_empty_array_trails: HashMap<String, HashSet<JsonTrail>>,
   was_object_trails: HashMap<String, HashSet<JsonTrail>>,
   was_missing_trails: HashMap<String, HashSet<JsonTrail>>,
 }
@@ -245,6 +247,10 @@ impl InteractionsAffordances {
     if trail_values.was_array {
       self.was_array.extend(pointers.clone());
       add_trail(&mut self.was_array_trails);
+    }
+    if trail_values.was_empty_array {
+      self.was_empty_array.extend(pointers.clone());
+      add_trail(&mut self.was_empty_array_trails);
     }
     if trail_values.was_object {
       self.was_object.extend(pointers.clone());
@@ -467,6 +473,94 @@ mod test {
         .unwrap()
         .contains(&JsonTrail::empty()),
       "trails where expected shapes were objects are recorded"
+    );
+  }
+
+  #[test]
+  fn shape_diff_affordances_records_which_arrays_were_empty() {
+    let body = BodyDescriptor::from(json!([[1, 2, 3], []]));
+
+    let interaction_pointer = String::from("test-interaction-0");
+
+    // shape diff for root array items
+    let shape_diff : InteractionDiffResult = serde_json::from_value(json!({
+        "UnmatchedResponseBodyShape":{
+          "interactionTrail":{"path":[{"ResponseBody":{"contentType":"application/json","statusCode":200}}]},
+          "requestsTrail":{"SpecResponseBody":{"responseId":"test-response-1"}},
+          "shapeDiffResult":{"UnmatchedShape":{
+            "jsonTrail":{"path":[{"JsonArrayItem":{"index":0}}] },
+            "shapeTrail":{"rootShapeId":"some_shape_id","path":[]}
+          }}
+        }
+      })).unwrap();
+
+    let diff_fingerprint = shape_diff.fingerprint();
+
+    let analysis_result = BodyAnalysisResult {
+      body_location: BodyAnalysisLocation::MatchedResponse {
+        response_id: String::from("test-response-1"),
+        content_type: Some(String::from("application/json")),
+        status_code: 200,
+      },
+      trail_observations: observe_body_trails(body),
+    };
+
+    let interaction_pointers: Tags = vec![interaction_pointer.clone()].into_iter().collect();
+    let tagged_analysis = TaggedInput(analysis_result, interaction_pointers);
+
+    let mut projection = LearnedShapeDiffAffordancesProjection::from(vec![shape_diff]);
+
+    projection.apply(tagged_analysis);
+
+    let mut results: Vec<_> = projection.into_iter().collect();
+    assert_eq!(results.len(), 1); // one diff, one result per diff
+
+    let (aggregate_key, shape_diff_affordances) = results.pop().unwrap();
+    assert_eq!(aggregate_key, diff_fingerprint); // per diff fingerprint
+
+    assert!(&shape_diff_affordances.interactions.was_string.is_empty());
+    assert!(&shape_diff_affordances.interactions.was_number.is_empty());
+    assert!(&shape_diff_affordances.interactions.was_boolean.is_empty());
+    assert!(&shape_diff_affordances.interactions.was_null.is_empty());
+    assert!(&shape_diff_affordances.interactions.was_object.is_empty());
+    assert!(&shape_diff_affordances.interactions.was_missing.is_empty());
+
+    let was_array = &shape_diff_affordances.interactions.was_array;
+    let was_empty_array = &shape_diff_affordances.interactions.was_empty_array;
+
+    assert!(was_array.contains(&interaction_pointer));
+    assert!(was_empty_array.contains(&interaction_pointer));
+
+    let was_array_trails = &shape_diff_affordances.interactions.was_array_trails;
+    let was_empty_array_trails = &shape_diff_affordances.interactions.was_empty_array_trails;
+
+    assert!(
+      &was_array_trails
+        .get(&interaction_pointer)
+        .unwrap()
+        .contains(&JsonTrail::empty().with_array_item(0)),
+      "non-empty arrays are recorded as array trails"
+    );
+    assert!(
+      &was_array_trails
+        .get(&interaction_pointer)
+        .unwrap()
+        .contains(&JsonTrail::empty().with_array_item(1)),
+      "empty arrays are recorded as array trails"
+    );
+    assert!(
+      !&was_empty_array_trails
+        .get(&interaction_pointer)
+        .unwrap()
+        .contains(&JsonTrail::empty().with_array_item(0)),
+      "non-empty arrays are not recorded as array trails"
+    );
+    assert!(
+      &was_empty_array_trails
+        .get(&interaction_pointer)
+        .unwrap()
+        .contains(&JsonTrail::empty().with_array_item(1)),
+      "empty arrays are recorded as array trails"
     );
   }
 }
