@@ -45,22 +45,6 @@ import { IUnrecognizedUrl } from '@useoptic/spectacle';
 import { StatusRun } from '@useoptic/analytics/lib/events/status';
 import { cli } from 'cli-ux';
 
-interface SpecEndpointDescriptor {
-  httpMethod: string;
-  method: string;
-  pathId: string;
-  requestBodies: any[];
-  responses: any[];
-  isEmpty: boolean;
-}
-
-export interface KnownEndpoint {
-  method: string;
-  pathId: string;
-  fullPath: string;
-  descriptor: SpecEndpointDescriptor;
-}
-
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
 
