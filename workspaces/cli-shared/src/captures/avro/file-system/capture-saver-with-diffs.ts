@@ -5,14 +5,10 @@ import {
 import { IGroupingIdentifiers, IHttpInteraction } from '@useoptic/domain-types';
 import { IFileSystemCaptureLoaderConfig } from './capture-loader';
 import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
-import { universeFromEvents } from '@useoptic/domain-utilities';
-import { JsonHelper, opticEngine, Queries } from '@useoptic/domain';
 import fs from 'fs-extra';
 import path from 'path';
 import { IApiCliConfig, parseIgnore } from '@useoptic/cli-config';
 import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
-
-export const coverageFilePrefix = 'coverage-';
 
 interface IFileSystemCaptureLoaderWithDiffsConfig
   extends IFileSystemCaptureLoaderConfig {
@@ -21,8 +17,6 @@ interface IFileSystemCaptureLoaderWithDiffsConfig
 
 export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
   private spec!: any;
-  private rfcState!: any;
-  private shapesResolvers!: any;
 
   constructor(
     private _config: IFileSystemCaptureLoaderWithDiffsConfig,
@@ -37,15 +31,7 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
     const eventsString = await this.specServiceClient.listEvents();
     const spec = DiffEngine.spec_from_events(eventsString);
     this.spec = spec;
-    const events = JSON.parse(eventsString);
-    const { eventStore, rfcState, rfcService, rfcId } = universeFromEvents(
-      events
-    );
 
-    const queries = Queries(eventStore, rfcService, rfcId);
-    const shapesResolvers = queries.shapesResolvers();
-    this.rfcState = rfcState;
-    this.shapesResolvers = shapesResolvers;
     developerDebugLogger('built initial spec for diffing on the fly');
     await super.init();
   }
