@@ -162,18 +162,20 @@ export async function getAssertionsFromCommandSession(
   const expected = `${serviceConfig.host}:${serviceConfig.port}`;
   const shouldNotTake = `${startConfig.proxyConfig.host}:${startConfig.proxyConfig.port}`;
 
-  const inboundPortIsOpenAtStart:boolean = await new Promise(async (resolve) => {
-    waitOn({
-      resources: [`tcp:${shouldNotTake}`],
-      delay: 0,
-      tcpTimeout: 500,
-      timeout: 500,
-    })
-      .then(() => {
-        resolve(false);
-      }) //if service resolves we assume it's up.
-      .catch(() => resolve(true));
-  });
+  const inboundPortIsOpenAtStart: boolean = await new Promise(
+    async (resolve) => {
+      waitOn({
+        resources: [`tcp:${shouldNotTake}`],
+        delay: 0,
+        tcpTimeout: 500,
+        timeout: 500,
+      })
+        .then(() => {
+          resolve(false);
+        }) //if service resolves we assume it's up.
+        .catch(() => resolve(true));
+    }
+  );
 
   await commandSession.start(
     {
@@ -194,7 +196,7 @@ export async function getAssertionsFromCommandSession(
   const commandStoppedPromise = new Promise((resolve) => {
     commandSession.events.on('stopped', ({ state }) => {
       status = state;
-      resolve();
+      resolve(undefined);
     });
   });
 

@@ -1,392 +1,548 @@
-import { IApiCliConfig, IPathMapping } from '@useoptic/cli-config';
-import { developerDebugLogger, fromOptic } from '@useoptic/cli-shared';
-import { cli } from 'cli-ux';
-import path from 'path';
-import fs from 'fs-extra';
-import { opticEngine, Queries } from '@useoptic/domain';
-import { StableHasher, universeFromEvents } from '@useoptic/domain-utilities';
-const CoverageConcerns = opticEngine.com.useoptic.coverage;
-import Table from 'cli-table3';
-import sortBy from 'lodash.sortby';
+//TODO: Figure out where this logic should go
+
+import { IPathMapping } from '@useoptic/cli-config';
+import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
+import { CaptureInteractionIterator } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
+import { IHttpInteraction } from '@useoptic/domain-types';
+import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import {
+  InMemoryOpticContextBuilder,
+  InMemorySpectacle,
+} from '@useoptic/spectacle/build/in-memory';
+
 import colors from 'colors';
-import { coverageFilePrefix } from '@useoptic/cli-shared/build/captures/avro/file-system/capture-saver-with-diffs';
-import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
+import Table from 'cli-table3';
+
+// This concept came from the Scala codebase's "Concern" concept
+// https://github.com/opticdev/optic-core/blob/master/core/optic/shared/src/main/scala/com/useoptic/coverage/CoverageConcerns.scala
+// JS/TS doesn't have the kind of value-types or case-classes that scala does,
+// but we can emulate them like this. I think...
+
+const createDataClass = <P extends { [key: string]: any }>(
+  func: (args: P) => void
+): ((args?: P) => string) => {
+  return (args?: P) => `${func.name}${args && `-${JSON.stringify(args)}`}`;
+};
+
+const TotalInteractions = createDataClass(function TotalInteractions() {});
+const TotalUnmatchedPath = createDataClass(function TotalUnmatchedPath() {});
+const TotalForPath = createDataClass(function TotalForPath(args: {
+  path_id: String;
+}) {});
+const TotalForPathAndMethod = createDataClass(
+  function TotalForPathAndMethod(args: {
+    path_id: String;
+    http_method: String;
+  }) {}
+);
+const TotalForPathAndMethodAndStatusCode = createDataClass(
+  function TotalForPathAndMethodAndStatusCode(args: {
+    path_id: String;
+    http_method: String;
+    http_status_code: number;
+  }) {}
+);
+const TotalForPathAndMethodWithoutBody = createDataClass(
+  function TotalForPathAndMethodWithoutBody(args: {
+    path_id: String;
+    http_method: String;
+  }) {}
+);
+const TotalForPathAndMethodAndContentType = createDataClass(
+  function TotalForPathAndMethodAndContentType(args: {
+    path_id: String;
+    http_method: String;
+    request_content_type: String;
+  }) {}
+);
+const TotalForPathAndMethodAndStatusCodeWithoutBody = createDataClass(
+  function TotalForPathAndMethodAndStatusCodeWithoutBody(args: {
+    path_id: String;
+    http_method: String;
+    http_status_code: number;
+  }) {}
+);
+const TotalForPathAndMethodAndStatusCodeAndContentType = createDataClass(
+  function TotalForPathAndMethodAndStatusCodeAndContentType(args: {
+    path_id: String;
+    http_method: String;
+    http_status_code: number;
+    response_content_type: String;
+  }) {}
+);
+const TotalForRequest = createDataClass(function TotalForRequest(args: {
+  request_id: string;
+}) {});
+const TotalForResponse = createDataClass(function TotalForResponse(args: {
+  response_id: string;
+}) {});
+
+type ICoverageMap = { [key: string]: number };
+
+const recordEvent = (evt: string, coverage_map: ICoverageMap) => {
+  coverage_map[evt] = (coverage_map[evt] ?? 0) + 1;
+};
+
+const countFormatter = (
+  key: string,
+  value: string,
+  diffs: ICoverageMap,
+  noDiffs: ICoverageMap
+) => {
+  const diffs_count = diffs[key] ?? 0;
+  const no_diffs_count = noDiffs[key] ?? 0;
+
+  const color_func =
+    diffs_count > 0
+      ? colors.yellow
+      : no_diffs_count > 0
+      ? colors.green
+      : colors.red;
+
+  return color_func(
+    `${value}: ${no_diffs_count > 0 ? no_diffs_count : `No Coverage`}${
+      diffs_count > 0 ? ` | ${diffs_count} with diffs` : ''
+    }`
+  );
+};
 
 export async function printCoverage(
   paths: IPathMapping,
-  taskName: string,
-  captureId: string
+  map_with_diffs: ICoverageMap,
+  map_without_diffs: ICoverageMap
 ) {
-  cli.action.start(fromOptic('Calculating Coverage...'));
-
-  const input = await Promise.all([
-    getSpecEndpoints(paths),
-    getReport(paths, captureId),
-  ]);
-
-  const spec: KnownEndpoint[] = input[0];
-  const report = input[1];
-
-  let table = new Table({
-    head: [
-      colors.cyan.underline('Endpoint'),
-      colors.cyan.underline('Coverage'),
-    ],
-  });
-
-  let totalN = 0;
-  let totalD = 0;
-
-  let totalEndpointN = 0;
-  let totalEndpointD = spec.length;
-
-  spec.forEach((i) => {
-    const endpointName = colors.bold(`${i.method.toUpperCase()} ${i.fullPath}`);
-
-    const totalCount = report.coverageCounts.getCount(
-      CoverageConcerns.TotalForPathAndMethod(i.pathId, i.method)
-    );
-
-    if (totalCount > 0) {
-      totalEndpointN = totalEndpointN + 1;
-    }
-
-    const responseStats = i.descriptor.responses.map((res) => {
-      const count = report.coverageCounts.getCount(
-        CoverageConcerns.TotalForResponse(res.responseId)
-      );
-
-      return {
-        statusCode: res.statusCode,
-        responseId: res.responseId,
-        count,
-        copy:
-          count > 0
-            ? colors.green(res.statusCode + ' ✔')
-            : colors.white.bgRed(res.statusCode),
-        isCovered: count > 0,
-      };
-    });
-
-    const requestStats = i.descriptor.requestBodies.map((req) => {
-      const count = report.coverageCounts.getCount(
-        CoverageConcerns.TotalForRequest(req.requestId)
-      );
-
-      const contentType = req.requestBody.httpContentType || 'No Body';
-      return {
-        requestId: req.requestId,
-        contentType: contentType,
-        count,
-        copy:
-          count > 0
-            ? colors.green(contentType + ' ✔')
-            : colors.white.bgRed(contentType),
-        isCovered: count > 0,
-      };
-    });
-
-    const requests = `${colors.grey(
-      `Requests (${requestStats.filter((i) => i.isCovered).length}/${
-        requestStats.length
-      }) ${requestStats.map((i) => i.copy).join('  ')}`
-    )}`;
-
-    const responses = `${colors.grey(
-      `Responses (${responseStats.filter((i) => i.isCovered).length}/${
-        responseStats.length
-      }) ${responseStats.map((i) => i.copy).join('  ')}`
-    )}`;
-
-    const denominator = requestStats.length + responseStats.length;
-    const numerator =
-      requestStats.filter((i) => i.isCovered).length +
-      responseStats.filter((i) => i.isCovered).length;
-
-    totalN = totalN + numerator;
-    totalD = totalD + denominator;
-
-    const coverageCopy = (() => {
-      const percent = (numerator / (denominator || 1)) * 100;
-      if (numerator == denominator) {
-        return colors.bold.green(`${percent}% Full Coverage ✔`);
-      } else if (numerator < denominator && numerator > 0) {
-        return colors.bold.yellow(`${percent}% Partial Coverage`);
-      }
-      return colors.bold.red(`0% No Coverage`);
-    })();
-
-    const coverage = colors.grey(`${coverageCopy}      ${totalCount} Examples`);
-
-    // @ts-ignore
-    table.push([
-      `${endpointName}\n\n${coverage}`,
-      `${requests}\n\n${responses}`,
-    ]);
-  });
-
-  //print it out
-  cli.action.stop();
-
-  console.log(colors.bold(`\n\n API Coverage Report:`));
-
-  console.log(table.toString());
-
-  console.log('\n\n');
-
-  const totals = report.coverageCounts.getCount(
-    CoverageConcerns.TotalInteractions()
-  );
-
-  console.log(
-    colors.grey(`Based on ${totals} samples from task: ${colors.bold('start')}`)
-  );
-
-  let resultTable = new Table({
-    head: [
-      colors.grey.underline(''),
-      colors.grey.underline('Observed'),
-      colors.grey.underline('Expected'),
-      colors.grey.underline('Percent Coverage'),
-    ],
-  });
-
-  function colorProperly(full: boolean, partial: boolean, none: boolean) {
-    return (string: string): string => {
-      if (full) {
-        return string;
-      } else if (none) {
-        return makeRed(string);
-      } else if (partial) {
-        return makeYellow(string);
-      }
-      return string;
-    };
-  }
-
-  const bodyCoverageColorer = colorProperly(
-    totalN === totalD,
-    totalN < totalD,
-    totalN === 0
-  );
-
-  const endpointCoverageColorer = colorProperly(
-    totalEndpointN === totalEndpointD,
-    totalEndpointN < totalEndpointD,
-    totalEndpointN === 0
-  );
-
-  resultTable.push(
-    // @ts-ignore
-    [
-      'Documented Body Coverage',
-      totalN.toString(),
-      totalD.toString(),
-      Math.round((totalN / (totalD || 1)) * 100).toString() + '%',
-    ].map(bodyCoverageColorer),
-    [
-      'Documented Endpoint Coverage',
-      totalEndpointN.toString(),
-      totalEndpointD.toString(),
-      Math.round((totalEndpointN / (totalEndpointD || 1)) * 100).toString() +
-        '%',
-    ].map(endpointCoverageColorer)
-  );
-
-  console.log(resultTable.toString());
-}
-
-export interface KnownEndpoint {
-  method: string;
-  pathId: string;
-  fullPath: string;
-  descriptor: SpecEndpointDescriptor;
-}
-
-async function getSpecEndpoints(paths: IPathMapping): Promise<KnownEndpoint[]> {
-  const events = await getSpecEventsFrom(paths.specStorePath)
-  const { eventStore, rfcState, rfcService, rfcId } = universeFromEvents(
+  const events = await getSpecEventsFrom(paths.specStorePath);
+  const opticContext = await InMemoryOpticContextBuilder.fromEvents(
+    OpticEngine,
     events
   );
 
-  const queries = Queries(eventStore, rfcService, rfcId);
-  const cachedQueryResults = getCachedQueryResults(queries);
-  const shapesResolvers = queries.shapesResolvers();
-  const endpoints = queries.endpoints();
-  const allEndpoints = endpoints.map((i: any) => ({
-    ...i,
-    fullPath: queries.absolutePath(i.pathId),
-    descriptor: createEndpointDescriptor(i, cachedQueryResults),
-  }));
+  const inMemorySpectacle = new InMemorySpectacle(opticContext, []);
 
-  return sortBy(allEndpoints, (i) => i.fullPath);
-}
+  const query = `query {
+    requests {
+      id
+      absolutePathPatternWithParameterNames
+      pathId
+      method
+      bodies {
+        contentType
+        rootShapeId
+      }
+      responses {
+        id
+        statusCode
+        bodies {
+          contentType
+          rootShapeId
+        }
+      }
+    }
+    endpointChanges {
+      endpoints {
+        pathId
+        path
+        method
+      }
+    }
+  }`;
 
-async function getReport(paths: IPathMapping, captureId: string): Promise<any> {
-  const capturesDirectory = path.join(paths.capturesPath, captureId);
+  const response = await inMemorySpectacle.query<{
+    requests: Array<{
+      id: string;
+      absolutePathPatternWithParameterNames: string;
+      pathId: string;
+      method: String;
+      bodies: Array<{
+        contentType: string;
+        rootShapeId: string;
+      }>;
+      responses: Array<{
+        id: string;
+        statusCode: number;
+        bodies: Array<{
+          contentType: string;
+          rootShapeId: string;
+        }>;
+      }>;
+    }>;
+    endpointChanges: {
+      endpoints: Array<{
+        pathId: string;
+        path: string;
+        method: string;
+      }>;
+    };
+  }>({ query, variables: {} });
 
-  const entries = await fs.readdir(capturesDirectory);
+  if (response.data) {
+    let table = new Table({
+      head: [
+        colors.cyan.underline('Endpoint'),
+        colors.cyan.underline('Requests'),
+        colors.cyan.underline('Responses'),
+      ],
+    });
 
-  const coverageFiles = entries
-    .filter((x) => x.startsWith(coverageFilePrefix))
-    .map((x) => path.join(capturesDirectory, x));
+    let total_requests = 0;
+    let covered_requests = 0;
 
-  const reportsToMerge = await Promise.all(
-    coverageFiles.map(async (i) => {
-      const coverageJSON = await fs.readJSON(i);
-      const asScala = opticEngine.CoverageReportJsonDeserializer.fromJs(
-        coverageJSON
+    let total_repsonses = 0;
+    let covered_responses = 0;
+
+    let covered_endpoints = 0;
+
+    for (const endpoint of response.data.endpointChanges.endpoints) {
+      const total_count =
+        map_without_diffs[
+          TotalForPathAndMethod({
+            path_id: endpoint.pathId,
+            http_method: endpoint.method,
+          })
+        ];
+
+      if (total_count > 0) {
+        covered_endpoints++;
+      }
+
+      const requests = response.data.requests.filter(
+        (r) => r.pathId === endpoint.pathId
       );
-      return asScala;
-    })
-  );
 
-  const report = opticEngine.CoverageReportBuilder.emptyReport();
-  //merge in all the reports
-  reportsToMerge.forEach((i) => report.merge(i));
+      let total_endpoint_requests = 0;
+      let covered_endpoint_requests = 0;
 
-  // const finalReport = opticEngine.CoverageReportJsonSerializer.toJs(report);
+      const request_contents = [];
+      const response_keys = new Map<string, string>();
 
-  return report;
-}
+      if (requests.length > 0) {
+        for (const request of requests) {
+          total_endpoint_requests++;
+          if (request.bodies.length > 0) {
+            const key = TotalForPathAndMethodAndContentType({
+              path_id: request.pathId,
+              http_method: endpoint.method,
+              request_content_type: request.bodies[0].contentType,
+            });
 
-export function getCachedQueryResults(queries: any) {
-  const contributions = queries.contributions();
+            if (map_without_diffs[key] > 0) {
+              covered_endpoint_requests++;
+            }
 
-  const {
-    requests,
-    pathComponents,
-    responses,
-    requestParameters,
-  } = queries.requestsState();
-  const pathIdsByRequestId = queries.pathsWithRequests();
-  const pathsById = pathComponents;
-  // const absolutePaths = Object.keys(pathsById).map(pathId => ({ [pathId]: queries.absolutePath(pathId) })).reduce((acc, value) => Object.assign(acc, value), {})
-  // console.log({ absolutePaths })
-  const pathIdsWithRequests = new Set(Object.values(pathIdsByRequestId));
+            request_contents.push(
+              countFormatter(
+                key,
+                request.bodies[0].contentType,
+                map_with_diffs,
+                map_without_diffs
+              )
+            );
+          } else {
+            const key = TotalForPathAndMethodWithoutBody({
+              path_id: endpoint.pathId,
+              http_method: endpoint.method,
+            });
 
-  const endpoints = queries.endpoints();
-  const shapesState = queries.shapesState();
-  const shapesResolvers = queries.shapesResolvers();
-  const requestIdsByPathId = Object.entries(pathIdsByRequestId).reduce(
-    (acc, entry: any) => {
-      const [requestId, pathId] = entry;
-      //@ts-ignore
-      const value = acc[pathId] || [];
-      value.push(requestId);
-      //@ts-ignore
-      acc[pathId] = value;
-      return acc;
-    },
-    {}
-  );
-  const cachedQueryResults = {
-    contributions,
-    requests,
-    requestParameters,
-    responses,
-    responsesArray: Object.values(responses),
-    pathIdsByRequestId,
-    requestIdsByPathId,
-    pathsById,
-    endpoints,
-    pathIdsWithRequests,
-    shapesState,
-    shapesResolvers,
-  };
-  return cachedQueryResults;
-}
+            if (map_without_diffs[key] > 0) {
+              covered_endpoint_requests++;
+            }
 
-interface SpecEndpointDescriptor {
-  httpMethod: string;
-  method: string;
-  pathId: string;
-  requestBodies: any[];
-  responses: any[];
-  isEmpty: boolean;
-}
+            request_contents.push(
+              countFormatter(key, 'No Body', map_with_diffs, map_without_diffs)
+            );
+          }
 
-export function createEndpointDescriptor(
-  { method, pathId }: { method: string; pathId: string },
-  cachedQueryResults: {
-    requests: any[];
-    pathsById: { [id: string]: any };
-    requestIdsByPathId: { [id: string]: any };
-    responsesArray: any[];
-    contributions: any;
+          for (const response of request.responses) {
+            if (response.bodies.length > 0) {
+              response_keys.set(
+                TotalForPathAndMethodAndStatusCodeAndContentType({
+                  path_id: endpoint.pathId,
+                  http_method: endpoint.method,
+                  http_status_code: response.statusCode,
+                  response_content_type: response.bodies[0].contentType,
+                }),
+                `${response.statusCode}: ${response.bodies[0].contentType}`
+              );
+            } else {
+              response_keys.set(
+                TotalForPathAndMethodAndStatusCodeWithoutBody({
+                  path_id: endpoint.pathId,
+                  http_method: endpoint.method,
+                  http_status_code: response.statusCode,
+                }),
+                `${response.statusCode}: No Body`
+              );
+            }
+          }
+        }
+      }
+
+      const total_endpoint_responses = response_keys.size;
+
+      const covered_endpoint_responses = Array.from(
+        response_keys.keys()
+      ).filter((key) => map_without_diffs[key] !== undefined).length;
+
+      const response_contents = Array.from(
+        response_keys.entries()
+      ).map(([k, v]) =>
+        countFormatter(k, v, map_with_diffs, map_without_diffs)
+      );
+
+      total_requests += total_endpoint_requests;
+      total_repsonses += total_endpoint_responses;
+      covered_requests += covered_endpoint_requests;
+      covered_responses += covered_endpoint_responses;
+
+      const denominator = total_endpoint_requests + total_endpoint_responses;
+      const numerator = covered_endpoint_requests + covered_endpoint_responses;
+
+      let pct_coverage = (numerator / (denominator || 0)) * 100;
+
+      let color_func =
+        pct_coverage === 100
+          ? colors.green
+          : pct_coverage > 0
+          ? colors.yellow
+          : colors.red;
+
+      const endpoint_contents = color_func(
+        `${endpoint.method} ${colors.bold(
+          endpoint.path || endpoint.pathId
+        )} -> ${pct_coverage}% covered`
+      );
+
+      table.push([
+        endpoint_contents,
+        request_contents.join('\n'),
+        response_contents.join('\n'),
+      ]);
+    }
+
+    console.log(colors.bold(`\n\n API Coverage Report:`));
+
+    console.log(table.toString());
+
+    let resultTable = new Table({
+      head: [
+        colors.grey.underline(''),
+        colors.grey.underline('Observed'),
+        colors.grey.underline('Expected'),
+        colors.grey.underline('Percent Coverage'),
+      ],
+    });
+
+    const total_interactions = map_without_diffs[TotalInteractions()] ?? 0;
+
+    const body_pct =
+      ((covered_requests + covered_responses) /
+        (total_requests + total_repsonses ?? 1)) *
+      100;
+    const body_color_func =
+      body_pct === 100
+        ? colors.green
+        : body_pct > 0
+        ? colors.yellow
+        : colors.red;
+
+    const total_endpoints = response.data.endpointChanges.endpoints.length;
+
+    const endpoints_pct = (covered_endpoints / (total_endpoints ?? 1)) * 100;
+    const endpoint_color_func =
+      endpoints_pct === 100
+        ? colors.green
+        : endpoints_pct > 0
+        ? colors.yellow
+        : colors.red;
+
+    resultTable.push(
+      [
+        'Documented Body Coverage',
+        (covered_requests + covered_responses).toString(),
+        (total_requests + total_repsonses).toString(),
+        `${body_pct.toFixed(3)}%`,
+      ].map((s) => body_color_func(s)),
+      [
+        'Documented Endpoint Coverage',
+        covered_endpoints.toString(),
+        total_endpoints.toString(),
+        `${endpoints_pct.toFixed(3)}%`,
+      ].map((s) => endpoint_color_func(s))
+    );
+
+    console.log(
+      colors.cyan(
+        `\nBased on ${colors.bold(total_interactions.toString())} samples`
+      )
+    );
+
+    console.log(resultTable.toString());
   }
-): SpecEndpointDescriptor {
-  const {
-    requests,
-    pathsById,
-    requestIdsByPathId,
-    responsesArray,
-    contributions,
-  } = cachedQueryResults;
+}
 
-  const requestIdsOnPath = (requestIdsByPathId[pathId] || []).map(
-    (requestId: any) => requests[requestId]
-  );
-  const requestsOnPathAndMethod = requestIdsOnPath.filter(
-    (request: any) =>
-      request.requestDescriptor.httpMethod === method.toUpperCase()
+export async function computeCoverage(paths: IPathMapping, captureId: string) {
+  const events = await getSpecEventsFrom(paths.specStorePath);
+  // Will this be laggy? Specs might get big :thinking_face:
+  const spec = OpticEngine.spec_from_events(JSON.stringify(events));
+
+  const captureIterator = CaptureInteractionIterator(
+    {
+      captureId,
+      captureBaseDirectory: paths.capturesPath,
+    },
+    (_) => true
   );
 
-  const requestBodies = requestsOnPathAndMethod.map(
-    //@ts-ignore
-    ({ requestId, requestDescriptor }) => {
-      const requestBody = getNormalizedBodyDescriptor(
-        requestDescriptor.bodyDescriptor
+  const coverages = (async function* (interactionItems) {
+    for await (let item of interactionItems) {
+      if (!item.hasMoreInteractions) break;
+      if (!item.interaction) continue;
+
+      const diff_str = OpticEngine.diff_interaction(
+        JSON.stringify(item.interaction.value),
+        spec
       );
-      return {
-        requestId,
-        requestBody,
+      // Maybe we could be more clever here later
+      // Would also love to get real types in here
+      const diff: Array<any> = JSON.parse(diff_str);
+
+      let is_diff = diff.length > 0;
+
+      yield {
+        coverage: interactionToCoverage(spec, item.interaction.value),
+        is_diff,
       };
     }
-  );
+  })(captureIterator);
 
-  const responsesForPathAndMethod = sortBy(
-    responsesArray
-      .filter(
-        (response) =>
-          response.responseDescriptor.httpMethod === method.toUpperCase() &&
-          response.responseDescriptor.pathId === pathId
-      )
-      .map(({ responseId, responseDescriptor }) => {
-        const responseBody = getNormalizedBodyDescriptor(
-          responseDescriptor.bodyDescriptor
-        );
-        return {
-          responseId,
-          responseBody,
-          statusCode: responseDescriptor.httpStatusCode,
-        };
-      }),
-    ['statusCode']
-  );
+  let combined_diff_map: ICoverageMap = {};
+  let combined_non_diff_map: ICoverageMap = {};
+
+  for await (let { coverage: individual_coverage, is_diff } of coverages) {
+    let chosen_map = is_diff ? combined_diff_map : combined_non_diff_map;
+    for (const [k, v] of Object.entries(individual_coverage)) {
+      chosen_map[k] = (chosen_map[k] ?? 0) + v;
+    }
+  }
 
   return {
-    httpMethod: method,
-    method,
-    pathId,
-    requestBodies,
-    responses: responsesForPathAndMethod,
-    isEmpty:
-      requestBodies.length === 0 && responsesForPathAndMethod.length === 0,
+    with_diffs: combined_diff_map,
+    without_diffs: combined_non_diff_map,
   };
 }
 
-function getNormalizedBodyDescriptor(value: any) {
-  if (value && value.ShapedBodyDescriptor) {
-    return value.ShapedBodyDescriptor;
+type BodyDescriptor = {
+  body?: { http_content_type: string; root_shape_id: string };
+};
+
+function interactionToCoverage(
+  spec: OpticEngine.WasmSpecProjection,
+  interaction: IHttpInteraction
+) {
+  let coverage_map: ICoverageMap = {};
+
+  recordEvent(TotalInteractions(), coverage_map);
+
+  const path_id = OpticEngine.spec_resolve_path_id(
+    spec,
+    interaction.request.path
+  );
+
+  if (path_id) {
+    recordEvent(TotalForPath({ path_id }), coverage_map);
+    const request_data = JSON.parse(
+      OpticEngine.spec_resolve_request(
+        spec,
+        path_id,
+        interaction.request.method,
+        interaction.request.body?.contentType ?? undefined
+      )
+    ) as [string, BodyDescriptor] | null;
+    if (!request_data) {
+      // Since we got a `path_id`, there should never be 0 requests here
+      // Error
+    } else {
+      recordEvent(
+        TotalForPathAndMethod({
+          path_id,
+          http_method: interaction.request.method,
+        }),
+        coverage_map
+      );
+
+      // Look up the appropriate request by its content type
+      const [request_id, request] = request_data;
+
+      recordEvent(TotalForRequest({ request_id }), coverage_map);
+
+      if (request.body) {
+        recordEvent(
+          TotalForPathAndMethodAndContentType({
+            path_id,
+            http_method: interaction.request.method,
+            request_content_type: request.body.http_content_type,
+          }),
+          coverage_map
+        );
+      } else {
+        recordEvent(
+          TotalForPathAndMethodWithoutBody({
+            path_id,
+            http_method: interaction.request.method,
+          }),
+          coverage_map
+        );
+      }
+
+      const response_data = JSON.parse(
+        OpticEngine.spec_resolve_response(
+          spec,
+          interaction.request.method,
+          interaction.response.statusCode,
+          path_id,
+          interaction.response.body?.contentType ?? undefined
+        )
+      ) as [string, BodyDescriptor] | null;
+
+      if (!response_data) {
+        // Undocumented response
+      } else {
+        recordEvent(
+          TotalForPathAndMethodAndStatusCode({
+            path_id,
+            http_method: interaction.request.method,
+            http_status_code: interaction.response.statusCode,
+          }),
+          coverage_map
+        );
+        const [response_id, response] = response_data;
+        recordEvent(TotalForResponse({ response_id }), coverage_map);
+
+        if (response.body) {
+          recordEvent(
+            TotalForPathAndMethodAndStatusCodeAndContentType({
+              path_id,
+              http_method: interaction.request.method,
+              http_status_code: interaction.response.statusCode,
+              response_content_type: response.body.http_content_type,
+            }),
+            coverage_map
+          );
+        } else {
+          recordEvent(
+            TotalForPathAndMethodAndStatusCodeWithoutBody({
+              path_id,
+              http_method: interaction.request.method,
+              http_status_code: interaction.response.statusCode,
+            }),
+            coverage_map
+          );
+        }
+      }
+    }
+  } else {
+    recordEvent(TotalUnmatchedPath(), coverage_map);
   }
-  return {};
-}
 
-function makeYellow(string: string): string {
-  return colors.yellow(string);
-}
-
-function makeRed(string: string): string {
-  return colors.red(string);
+  return coverage_map;
 }

@@ -41,7 +41,7 @@ import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
 import { CaptureSaverWithDiffs } from '@useoptic/cli-shared/build/captures/avro/file-system/capture-saver-with-diffs';
 import { EventEmitter } from 'events';
 import { Config } from '../config';
-import { printCoverage } from './coverage';
+import { computeCoverage, printCoverage } from './coverage';
 import { spawnProcess, spawnProcessReturnExitCode } from './spawn-process';
 import { command } from '@oclif/test';
 import { getCaptureId } from './git/git-context-capture';
@@ -49,7 +49,7 @@ import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-speci
 import { linkToCapture, linkToDiffs } from './ui-links';
 
 export const runCommandFlags = {
-  'collect-coverage': flags.boolean({
+  'print-coverage': flags.boolean({
     char: 'c',
     default: false,
     required: false,
@@ -75,13 +75,19 @@ export const runCommandFlags = {
     description:
       'Passes through the exit code from your task (or dependent task). exit-on-diff overrides this when a diff is detected.',
   }),
+  ci: flags.boolean({
+    default: false,
+    required: false,
+    description: 'Enables CI-specific behavior',
+  }),
 };
 interface LocalCliTaskFlags {
-  'collect-coverage'?: boolean;
+  'print-coverage'?: boolean;
   'collect-diffs'?: boolean;
   'exit-on-diff'?: boolean;
   'transparent-proxy'?: boolean;
   'pass-exit-code'?: boolean;
+  ci?: boolean;
 }
 
 export async function LocalTaskSessionWrapper(
@@ -100,8 +106,14 @@ export async function LocalTaskSessionWrapper(
   };
   deprecationLogger.enabled = true;
 
-  const usesTaskSpecificBoundary =
-    flags['collect-coverage'] || flags['exit-on-diff'];
+  if (flags['ci']) {
+    // Change the defaults to true. You can still manually turn them off.
+    flags['print-coverage'] ??= true;
+    flags['pass-exit-code'] ??= true;
+    flags['collect-diffs'] ??= true;
+  }
+
+  const usesTaskSpecificBoundary = flags['ci'] || flags['exit-on-diff'];
 
   const { paths, config } = await loadPathsAndConfig(cli);
 
@@ -112,11 +124,11 @@ export async function LocalTaskSessionWrapper(
     : await getCaptureId(paths);
 
   const runner = new LocalCliTaskRunner(captureId, paths, taskName, {
-    shouldCollectCoverage: flags['collect-coverage'] !== false,
     shouldCollectDiffs: flags['collect-diffs'] !== false,
     shouldExitOnDiff: flags['exit-on-diff'] !== false,
     shouldTransparentProxy: flags['transparent-proxy'] !== false,
     shouldPassThroughExitCode: flags['pass-exit-code'] !== false,
+    isRunningInCI: flags['ci'] !== false,
   });
   const session = new CliTaskSession(runner);
   const task = config.tasks[taskName];
@@ -148,8 +160,9 @@ export async function LocalTaskSessionWrapper(
     await session.start(cli, config, taskName);
   }
 
-  if (flags['collect-coverage']) {
-    await printCoverage(paths, taskName, captureId);
+  if (flags['print-coverage']) {
+    const diff_maps = await computeCoverage(paths, captureId);
+    await printCoverage(paths, diff_maps.with_diffs, diff_maps.without_diffs);
   }
 
   if (runner.foundDiff && flags['exit-on-diff']) {
@@ -170,11 +183,11 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     private paths: IPathMapping,
     private taskName: string,
     private options: {
-      shouldCollectCoverage: boolean;
       shouldCollectDiffs: boolean;
       shouldExitOnDiff: boolean;
       shouldTransparentProxy: boolean;
       shouldPassThroughExitCode: boolean;
+      isRunningInCI: boolean;
     }
   ) {}
 
@@ -240,8 +253,10 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     const uiBaseUrl = makeUiBaseUrl(daemonState);
 
-    const uiUrl = linkToDiffs(uiBaseUrl, cliSession.session.id);
-    cli.log(fromOptic(`Review the API Diff at ${uiUrl}`));
+    if (!this.options.isRunningInCI) {
+      const uiUrl = linkToDiffs(uiBaseUrl, cliSession.session.id);
+      cli.log(fromOptic(`Review the API Diff at ${uiUrl}`));
+    }
 
     ////////////////////////////////////////////////////////////////////////////////
     const { capturesPath } = this.paths;
@@ -256,7 +271,6 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       {
         captureBaseDirectory: capturesPath,
         captureId,
-        shouldCollectCoverage: this.options.shouldCollectCoverage,
         shouldCollectDiffs: this.options.shouldCollectDiffs,
       },
       config,
@@ -323,10 +337,12 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     if (hasDiff) {
       const uiUrl = linkToCapture(uiBaseUrl, cliSession.session.id, captureId);
 
-      const usesTaskSpecificCapture =
-        this.options.shouldExitOnDiff || this.options.shouldCollectCoverage;
+      const usesTaskSpecificCapture = this.options.shouldExitOnDiff;
 
-      if (usesTaskSpecificCapture) {
+      if (this.options.isRunningInCI) {
+        cli.log(`Observed Unexpected API Behavior.`);
+        // print output for `api status` here
+      } else if (usesTaskSpecificCapture) {
         cli.log(
           fromOptic(`Observed Unexpected API Behavior. Review at ${uiUrl}`)
         );

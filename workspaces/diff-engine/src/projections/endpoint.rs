@@ -1,5 +1,6 @@
 use crate::events::endpoint as endpoint_events;
 use crate::events::{EndpointEvent, SpecEvent};
+use serde::Serialize;
 use crate::state::endpoint::*;
 use crate::{
   commands::{endpoint, EndpointCommand, SpecCommand, SpecCommandError},
@@ -17,18 +18,18 @@ pub struct PathComponentDescriptor {
   pub name: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct BodyDescriptor {
   pub http_content_type: HttpContentType,
   pub root_shape_id: ShapeId,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct RequestBodyDescriptor {
   pub body: Option<BodyDescriptor>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ResponseBodyDescriptor {
   pub body: Option<BodyDescriptor>,
 }

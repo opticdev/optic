@@ -95,14 +95,22 @@ impl<'a> EndpointQueries<'a> {
     last_resolved_path_id
   }
 
+  pub fn resolve_operations_by_request_method(
+    &self,
+    method: &'a String,
+    path_id: PathComponentIdRef,
+  ) -> impl Iterator<Item = (&RequestId, &RequestBodyDescriptor)> {
+    self
+      .resolve_requests(path_id, method)
+      .expect("expected a operations to exist")
+  }
+
   pub fn resolve_operations(
     &self,
     interaction: &'a HttpInteraction,
     path_id: PathComponentIdRef,
   ) -> impl Iterator<Item = (&RequestId, &RequestBodyDescriptor)> {
-    self
-      .resolve_requests(path_id, &interaction.request.method)
-      .expect("expected a operations to exist")
+    self.resolve_operations_by_request_method(&interaction.request.method, path_id)
   }
 
   pub fn resolve_requests(
@@ -141,9 +149,57 @@ impl<'a> EndpointQueries<'a> {
     Some(matching_method)
   }
 
+  pub fn resolve_request_by_method_and_content_type(
+    &self,
+    path_id: PathComponentIdRef,
+    method: &'a String,
+    content_type: Option<&'a String>,
+  ) -> Option<(&RequestId, &RequestBodyDescriptor)> {
+    self.resolve_requests(path_id, method).and_then(|mut it| {
+      it.find(|(id, body)| match content_type {
+        Some(content_type) => match body.body {
+          Some(ref body) => body.http_content_type.eq(content_type),
+          None => false,
+        },
+        None => body.body.is_none(),
+      })
+    })
+  }
+
   pub fn resolve_responses(
     &self,
     interaction: &'a HttpInteraction,
+    path_id: PathComponentIdRef,
+  ) -> impl Iterator<Item = (&ResponseId, &ResponseBodyDescriptor)> {
+    self.resolve_responses_by_method_and_status_code(
+      &interaction.request.method,
+      interaction.response.status_code,
+      path_id,
+    )
+  }
+
+  pub fn resolve_response_by_method_status_code_and_content_type(
+    &self,
+    path_id: PathComponentIdRef,
+    method: &'a str,
+    status_code: u16,
+    content_type: Option<&'a String>,
+  ) -> Option<(&ResponseId, &ResponseBodyDescriptor)> {
+    self
+      .resolve_responses_by_method_and_status_code(method, status_code, path_id)
+      .find(|(id, body)| match content_type {
+        Some(content_type) => match body.body {
+          Some(ref body) => body.http_content_type.eq(content_type),
+          None => false,
+        },
+        None => body.body.is_none(),
+      })
+  }
+
+  pub fn resolve_responses_by_method_and_status_code(
+    &self,
+    method: &'a str,
+    status_code: u16,
     path_id: PathComponentIdRef,
   ) -> impl Iterator<Item = (&ResponseId, &ResponseBodyDescriptor)> {
     let path_node_index = self
@@ -158,7 +214,7 @@ impl<'a> EndpointQueries<'a> {
         let node = self.endpoint_projection.graph.node_weight(*i).unwrap();
         // eprintln!("method node {:?}", node);
         match node {
-          Node::HttpMethod(http_method) => interaction.request.method == *http_method,
+          Node::HttpMethod(http_method) => method == *http_method,
           _ => false,
         }
       })
@@ -174,7 +230,7 @@ impl<'a> EndpointQueries<'a> {
           match node {
             Node::HttpStatusCode(http_status_code) => {
               // eprintln!("status code {:?}", http_status_code);
-              if interaction.response.status_code == *http_status_code {
+              if status_code == *http_status_code {
                 Some(i)
               } else {
                 None
