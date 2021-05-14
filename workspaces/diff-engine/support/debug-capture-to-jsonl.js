@@ -59,6 +59,10 @@ async function run(flags) {
     ? fs.createReadStream(inputFilePath)
     : process.stdin;
 
+  if (!inputFilePath) {
+    console.error('accepting debug capture over stdin');
+  }
+
   let processors = [];
 
   if (flags.events) {
