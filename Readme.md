@@ -56,7 +56,7 @@ tasks:
     inboundUrl: http://localhost:4000
   postman-tests:
     command: newman run mycollection.json
-    usesTask: http://localhost:4000
+    usesTask: start
 ```
 
 **How does Optic monitor local traffic?** Whenever you start your API or run tests using Optic's CLI, it will observe your traffic and surface API diffs. All of this processing is done locally, in the background, by a Rust binary built from the open source code in this repository.
