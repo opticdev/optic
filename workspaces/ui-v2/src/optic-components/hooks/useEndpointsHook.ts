@@ -63,7 +63,7 @@ export function endpointQueryResultsToJson(
   endpointsChangelog: any[] = []
 ): IEndpoint[] {
   const commonStart = sharedStart(
-    data.requests.map((req: any) => req.absolutePathPattern)
+    data.requests.map((req: any) => req.absolutePathPatternWithParameterNames)
   );
 
   const endpoints = data.requests.map(
