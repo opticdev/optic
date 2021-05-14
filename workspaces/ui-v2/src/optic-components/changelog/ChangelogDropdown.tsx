@@ -72,29 +72,49 @@ export function ChangesSinceDropdown(props: any) {
         onClose={handleClose}
         style={{ marginTop: 20 }}
       >
-        {allBatchCommits.map((i, index) => (
-          <MenuItem
-            key={i.batchId}
-            onClick={() => {
-              const pathMatch = pathname.match(
-                /(changes-since\/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}|documentation)(.*)/
-              );
-              const currentRelativePath =
-                pathMatch && pathMatch[2] ? pathMatch[2] : '';
-              if (index === 0) {
-                history.push(`${baseUrl}/documentation${currentRelativePath}`);
-              } else {
-                history.push(
-                  `${baseUrl}/changes-since/${i.batchId}${currentRelativePath}`
+        {allBatchCommits.length > 0 ? (
+          allBatchCommits.map((i, index) => (
+            <MenuItem
+              key={i.batchId}
+              onClick={() => {
+                const pathMatch = pathname.match(
+                  /(changes-since\/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}|documentation)(.*)/
                 );
-              }
-            }}
-          >
-            <BatchCommitMenuItem
-              batch={index === 0 ? { ...i, commitMessage: 'Latest' } : i}
-            />
+                const currentRelativePath =
+                  pathMatch && pathMatch[2] ? pathMatch[2] : '';
+                if (index === 0) {
+                  history.push(
+                    `${baseUrl}/documentation${currentRelativePath}`
+                  );
+                } else {
+                  history.push(
+                    `${baseUrl}/changes-since/${i.batchId}${currentRelativePath}`
+                  );
+                }
+              }}
+            >
+              <BatchCommitMenuItem
+                batch={index === 0 ? { ...i, commitMessage: 'Latest' } : i}
+              />
+            </MenuItem>
+          ))
+        ) : (
+          <MenuItem>
+            <Box>
+              <Typography
+                component="span"
+                variant="subtitle1"
+                style={{
+                  fontFamily: 'Ubuntu Mono',
+                  fontSize: 14,
+                  color: OpticBlueReadable,
+                }}
+              >
+                No versions were found
+              </Typography>
+            </Box>
           </MenuItem>
-        ))}
+        )}
       </Menu>
     </>
   );

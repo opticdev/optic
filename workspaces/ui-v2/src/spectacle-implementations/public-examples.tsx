@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '<src>/optic-components/hooks/useBaseUrl';
-import { DocumentationPages } from '<src>/optic-components/pages/docs/DocumentationPage';
+import { DocumentationPages } from '<src>/optic-components/pages/docs';
 import { SpectacleStore } from './spectacle-provider';
 import { Loading } from '<src>/optic-components/loaders/Loading';
 import { DiffReviewEnvironments } from '<src>/optic-components/pages/diffs/ReviewDiffPages';
