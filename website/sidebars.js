@@ -12,6 +12,7 @@ module.exports = {
         type: 'category',
         label: 'Configuring API Tasks',
         items: [
+          'get-started/config',
           'get-started/config/intercept',
           'get-started/config/basic-task',
           'get-started/config/proxy',
