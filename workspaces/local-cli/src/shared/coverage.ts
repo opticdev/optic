@@ -10,12 +10,14 @@ import {
   InMemorySpectacle,
 } from '@useoptic/spectacle/build/in-memory';
 
+import colors from 'colors';
+import Table from 'cli-table3';
+
 // This concept came from the Scala codebase's "Concern" concept
 // https://github.com/opticdev/optic-core/blob/master/core/optic/shared/src/main/scala/com/useoptic/coverage/CoverageConcerns.scala
 // JS/TS doesn't have the kind of value-types or case-classes that scala does,
 // but we can emulate them like this. I think...
 
-// o.O
 const createDataClass = <P extends { [key: string]: any }>(
   func: (args: P) => void
 ): ((args?: P) => string) => {
@@ -83,15 +85,25 @@ const recordEvent = (evt: string, coverage_map: ICoverageMap) => {
 
 const countFormatter = (
   key: string,
+  value: string,
   diffs: ICoverageMap,
   noDiffs: ICoverageMap
 ) => {
   const diffs_count = diffs[key] ?? 0;
   const no_diffs_count = noDiffs[key] ?? 0;
 
-  return `${no_diffs_count > 0 ? no_diffs_count : `No Coverage`}${
-    diffs_count > 0 ? ` | ${diffs_count} with diffs` : ''
-  }`;
+  const color_func =
+    diffs_count > 0
+      ? colors.yellow
+      : no_diffs_count > 0
+      ? colors.green
+      : colors.red;
+
+  return color_func(
+    `${value}: ${no_diffs_count > 0 ? no_diffs_count : `No Coverage`}${
+      diffs_count > 0 ? ` | ${diffs_count} with diffs` : ''
+    }`
+  );
 };
 
 export async function printCoverage(
@@ -164,48 +176,79 @@ export async function printCoverage(
   }>({ query, variables: {} });
 
   if (response.data) {
+    let table = new Table({
+      head: [
+        colors.cyan.underline('Endpoint'),
+        colors.cyan.underline('Requests'),
+        colors.cyan.underline('Responses'),
+      ],
+    });
+
+    let total_requests = 0;
+    let covered_requests = 0;
+
+    let total_repsonses = 0;
+    let covered_responses = 0;
+
+    let covered_endpoints = 0;
+
     for (const endpoint of response.data.endpointChanges.endpoints) {
-      console.log(
-        `Endpoint: ${endpoint.method} ${endpoint.path} -> ${countFormatter(
+      const total_count =
+        map_without_diffs[
           TotalForPathAndMethod({
             path_id: endpoint.pathId,
             http_method: endpoint.method,
-          }),
-          map_with_diffs,
-          map_without_diffs
-        )}`
-      );
+          })
+        ];
+
+      if (total_count > 0) {
+        covered_endpoints++;
+      }
 
       const requests = response.data.requests.filter(
         (r) => r.pathId === endpoint.pathId
       );
 
+      let total_endpoint_requests = 0;
+      let covered_endpoint_requests = 0;
+
+      const request_contents = [];
       const response_keys = new Map<string, string>();
 
       if (requests.length > 0) {
         for (const request of requests) {
+          total_endpoint_requests++;
           if (request.bodies.length > 0) {
-            console.log(
-              `\t Request: ${request.bodies[0].contentType} -> ${countFormatter(
-                TotalForPathAndMethodAndContentType({
-                  path_id: request.pathId,
-                  http_method: endpoint.method,
-                  request_content_type: request.bodies[0].contentType,
-                }),
+            const key = TotalForPathAndMethodAndContentType({
+              path_id: request.pathId,
+              http_method: endpoint.method,
+              request_content_type: request.bodies[0].contentType,
+            });
+
+            if (map_without_diffs[key] > 0) {
+              covered_endpoint_requests++;
+            }
+
+            request_contents.push(
+              countFormatter(
+                key,
+                request.bodies[0].contentType,
                 map_with_diffs,
                 map_without_diffs
-              )}`
+              )
             );
           } else {
-            console.log(
-              `\t Request: No Body -> ${countFormatter(
-                TotalForPathAndMethodWithoutBody({
-                  path_id: endpoint.pathId,
-                  http_method: endpoint.method,
-                }),
-                map_with_diffs,
-                map_without_diffs
-              )}`
+            const key = TotalForPathAndMethodWithoutBody({
+              path_id: endpoint.pathId,
+              http_method: endpoint.method,
+            });
+
+            if (map_without_diffs[key] > 0) {
+              covered_endpoint_requests++;
+            }
+
+            request_contents.push(
+              countFormatter(key, 'No Body', map_with_diffs, map_without_diffs)
             );
           }
 
@@ -218,7 +261,7 @@ export async function printCoverage(
                   http_status_code: response.statusCode,
                   response_content_type: response.bodies[0].contentType,
                 }),
-                `Response: ${response.statusCode}: ${response.bodies[0].contentType}`
+                `${response.statusCode}: ${response.bodies[0].contentType}`
               );
             } else {
               response_keys.set(
@@ -227,22 +270,113 @@ export async function printCoverage(
                   http_method: endpoint.method,
                   http_status_code: response.statusCode,
                 }),
-                `Response: ${response.statusCode}: No Body`
+                `${response.statusCode}: No Body`
               );
             }
           }
         }
       }
 
-      if (response_keys.size > 0) {
-        console.log(`\t ------`);
-        for (const [k, v] of response_keys) {
-          console.log(
-            `\t ${v} -> ${countFormatter(k, map_with_diffs, map_without_diffs)}`
-          );
-        }
-      }
+      const total_endpoint_responses = response_keys.size;
+
+      const covered_endpoint_responses = Array.from(
+        response_keys.keys()
+      ).filter((key) => map_without_diffs[key] !== undefined).length;
+
+      const response_contents = Array.from(
+        response_keys.entries()
+      ).map(([k, v]) =>
+        countFormatter(k, v, map_with_diffs, map_without_diffs)
+      );
+
+      total_requests += total_endpoint_requests;
+      total_repsonses += total_endpoint_responses;
+      covered_requests += covered_endpoint_requests;
+      covered_responses += covered_endpoint_responses;
+
+      const denominator = total_endpoint_requests + total_endpoint_responses;
+      const numerator = covered_endpoint_requests + covered_endpoint_responses;
+
+      let pct_coverage = (numerator / (denominator || 0)) * 100;
+
+      let color_func =
+        pct_coverage === 100
+          ? colors.green
+          : pct_coverage > 0
+          ? colors.yellow
+          : colors.red;
+
+      const endpoint_contents = color_func(
+        `${endpoint.method} ${colors.bold(
+          endpoint.path || endpoint.pathId
+        )} -> ${pct_coverage}% covered`
+      );
+
+      table.push([
+        endpoint_contents,
+        request_contents.join('\n'),
+        response_contents.join('\n'),
+      ]);
     }
+
+    console.log(colors.bold(`\n\n API Coverage Report:`));
+
+    console.log(table.toString());
+
+    let resultTable = new Table({
+      head: [
+        colors.grey.underline(''),
+        colors.grey.underline('Observed'),
+        colors.grey.underline('Expected'),
+        colors.grey.underline('Percent Coverage'),
+      ],
+    });
+
+    const total_interactions = map_without_diffs[TotalInteractions()] ?? 0;
+
+    const body_pct =
+      ((covered_requests + covered_responses) /
+        (total_requests + total_repsonses ?? 1)) *
+      100;
+    const body_color_func =
+      body_pct === 100
+        ? colors.green
+        : body_pct > 0
+        ? colors.yellow
+        : colors.red;
+
+    const total_endpoints = response.data.endpointChanges.endpoints.length;
+
+    const endpoints_pct = (covered_endpoints / (total_endpoints ?? 1)) * 100;
+    const endpoint_color_func =
+      endpoints_pct === 100
+        ? colors.green
+        : endpoints_pct > 0
+        ? colors.yellow
+        : colors.red;
+
+    resultTable.push(
+      [
+        'Documented Body Coverage',
+        (covered_requests + covered_responses).toString(),
+        (total_requests + total_repsonses).toString(),
+        `${body_pct.toFixed(3)}%`,
+      ].map((s) => body_color_func(s)),
+      [
+        'Documented Endpoint Coverage',
+        covered_endpoints.toString(),
+        total_endpoints.toString(),
+        `${endpoints_pct.toFixed(3)}%`,
+      ].map((s) => endpoint_color_func(s))
+    );
+
+    console.log(
+      colors.cyan(
+        `\nBased on ${colors.bold(total_interactions.toString())} samples`
+      )
+    );
+
+    console.log(resultTable.toString());
   }
 }
 
