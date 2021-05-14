@@ -20,6 +20,7 @@ import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IApiCliConfig } from '@useoptic/cli-config';
 
 export class LocalCliSpectacle implements IForkableSpectacle {
   constructor(private baseUrl: string, private opticEngine: IOpticEngine) {}
@@ -174,5 +175,13 @@ export class LocalCliConfigRepository implements IOpticConfigRepository {
 
   async listIgnoreRules(): Promise<string[]> {
     throw new Error('should never be called');
+  }
+
+  async getApiName(): Promise<string> {
+    const result = await JsonHttpClient.getJson(
+      `${this.dependencies.baseUrl}/config`
+    );
+    const config: IApiCliConfig = result.config;
+    return config.name;
   }
 }

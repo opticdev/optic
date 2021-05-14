@@ -136,7 +136,7 @@ export interface IOpticDiffRepository {
 ////////////////////////////////////////////////////////////////////////////////
 export interface IOpticConfigRepository {
   addIgnoreRule(rule: string): Promise<void>;
-
+  getApiName(): Promise<string>;
   listIgnoreRules(): Promise<string[]>;
 }
 
