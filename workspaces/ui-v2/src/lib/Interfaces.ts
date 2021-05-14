@@ -28,6 +28,8 @@ export interface IPatchChoices {
   shouldRemoveField?: boolean;
   isField?: boolean;
   isShape?: boolean;
+  includeNewBody?: boolean;
+  isNewRegionDiff?: boolean;
 }
 
 export interface IInteractionPreviewTab {
@@ -200,9 +202,11 @@ export interface IToDocument {
 }
 
 export type CurrentSpecContext = {
+  currentSpecPaths: any[];
   currentSpecEndpoints: IEndpoint[];
   currentSpecRequests: IRequestBody[];
   currentSpecResponses: IResponseBody[];
   domainIds: DomainIdGenerator;
+  idGeneratorStrategy: 'sequential' | 'random';
   opticEngine: IOpticEngine;
 };

@@ -45,13 +45,13 @@ export function useNewBodyDiffInterpretations(
   diffs: ParsedDiff[]
 ): { loading: boolean; results: IInterpretation[] } {
   // const spectacle = useContext(SpectacleContext)!;
-  const { currentSpecContext } = useSharedDiffContext();
+  const { currentSpecContext, diffService } = useSharedDiffContext();
 
   const [results, setResults] = useState<IInterpretation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   async function computeDiffInterpretation(diff: ParsedDiff) {
-    return await newRegionInterpreters(diff, currentSpecContext);
+    return await newRegionInterpreters(diff, diffService, currentSpecContext);
   }
 
   useEffect(() => {

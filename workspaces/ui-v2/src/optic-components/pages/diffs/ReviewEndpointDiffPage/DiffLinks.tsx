@@ -19,17 +19,17 @@ type Section = {
 };
 
 export function DiffLinks({
-  shapeDiffs,
+  allDiffs,
   setSelectedDiffHash,
 }: {
-  shapeDiffs: IInterpretation[];
+  allDiffs: IInterpretation[];
   setSelectedDiffHash: (hash: string) => void;
 }) {
   const classes = useStyles();
   const sections = useMemo<Section[]>(() => {
     const sections: Section[] = [];
     const inRequests: IRequestBodyLocation[] = sortBy(
-      shapeDiffs
+      allDiffs
         .filter((i) => i.diffDescription?.location!.inRequest)
         .map((i) => i.diffDescription?.location.inRequest!),
       'contentType'
@@ -48,7 +48,7 @@ export function DiffLinks({
     });
 
     const inResponses: IResponseBodyLocation[] = sortBy(
-      shapeDiffs
+      allDiffs
         .filter((i) => i.diffDescription?.location!.inResponse)
         .map((i) => i.diffDescription?.location.inResponse!),
       'statusCode'
@@ -67,7 +67,7 @@ export function DiffLinks({
       }
     });
     return sections;
-  }, [shapeDiffs]);
+  }, [allDiffs]);
 
   return (
     <List>
@@ -78,7 +78,7 @@ export function DiffLinks({
               <ListSubheader className={classes.locationHeader}>
                 {'Request Body ' + section.contentType}
               </ListSubheader>
-              {shapeDiffs.map((i, index) => {
+              {allDiffs.map((i, index) => {
                 if (
                   i.diffDescription?.location!.inRequest?.requestId ===
                   section.requestId
@@ -105,7 +105,7 @@ export function DiffLinks({
               <ListSubheader
                 className={classes.locationHeader}
               >{`${section.statusCode} Response ${section.contentType}`}</ListSubheader>
-              {shapeDiffs.map((i, index) => {
+              {allDiffs.map((i, index) => {
                 if (
                   i.diffDescription?.location!.inResponse?.responseId ===
                   section.responseId

@@ -42,6 +42,7 @@ export interface IAffordanceInteractionPointers {
   wasArray: string[];
   wasObject: string[];
   wasMissing: string[];
+  wasEmptyArray: string[];
   wasStringTrails: { [key: string]: IJsonTrail[] };
   wasNumberTrails: { [key: string]: IJsonTrail[] };
   wasBooleanTrails: { [key: string]: IJsonTrail[] };
@@ -49,4 +50,5 @@ export interface IAffordanceInteractionPointers {
   wasArrayTrails: { [key: string]: IJsonTrail[] };
   wasObjectTrails: { [key: string]: IJsonTrail[] };
   wasMissingTrails: { [key: string]: IJsonTrail[] };
+  wasEmptyArrayTrails: { [key: string]: IJsonTrail[] };
 }

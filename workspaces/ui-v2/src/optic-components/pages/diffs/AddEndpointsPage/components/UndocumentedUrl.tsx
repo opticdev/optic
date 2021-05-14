@@ -1,101 +1,98 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { IconButton, ListItem } from '@material-ui/core';
-import { methodColorsDark, primary } from '../theme';
+import { IconButton, ListItem, Checkbox } from '@material-ui/core';
+import { methodColorsDark, primary } from '<src>/optic-components/theme';
 import AddIcon from '@material-ui/icons/Add';
 import padLeft from 'pad-left';
-import { LightTooltip } from '../navigation/LightToolTip';
+import { LightTooltip } from '<src>/optic-components/navigation/LightToolTip';
 import classNames from 'classnames';
 import ClearIcon from '@material-ui/icons/Clear';
 import isEqual from 'lodash.isequal';
-// @ts-ignore
-import equals from 'deep-equal';
-import { useDebounce } from '../hooks/ui/useDebounceHook';
-import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
+import { useSharedDiffContext } from '<src>/optic-components/hooks/diffs/SharedDiffContext';
+import { IUndocumentedUrl } from '<src>/optic-components/hooks/diffs/SharedDiffState';
+import {
+  PathComponentAuthoring,
+  urlStringToPathComponents,
+  makePattern,
+} from '../utils';
 
 export type UndocumentedUrlProps = {
-  method: string;
-  path: string;
-  hide?: boolean;
-  style: any;
-  bulkMode: boolean;
-  onFinish: (pattern: string, method: string, autolearn: boolean) => void;
+  style: Record<string, any>;
+  index: number;
+  data: {
+    handleBulkModeSelection: (path: string, method: string) => void;
+    handleSelection: (path: string, method: string) => void;
+    undocumentedUrls: IUndocumentedUrl[];
+    isBulkMode: boolean;
+    isKnownPath: boolean;
+    isSelected: (path: string, method: string) => boolean;
+  };
 };
 
 export function UndocumentedUrl({
-  method,
-  path,
-  onFinish,
-  hide,
-  bulkMode,
+  index,
   style,
+  data: {
+    handleSelection,
+    undocumentedUrls,
+    isBulkMode,
+    handleBulkModeSelection,
+    isSelected,
+  },
 }: UndocumentedUrlProps) {
+  const undocumentedUrl = undocumentedUrls[index];
+  const { method, path, hide, isKnownPath } = undocumentedUrl;
   const classes = useStyles();
   const { persistWIPPattern, wipPatterns } = useSharedDiffContext();
 
   const paddedMethod = padLeft(method, 6, ' ');
   const methodColor = methodColorsDark[method.toUpperCase()];
 
-  const [isEditing, setIsEditing] = useState(false);
   const [components, setComponents] = useState<PathComponentAuthoring[]>(
     wipPatterns[path + method]
-      ? wipPatterns[path + method]
+      ? wipPatterns[path + method].components
       : urlStringToPathComponents(path)
   );
 
   function initialNameForComponent(newIndex: number): string {
-    const otherPathComponents = Object.values(wipPatterns).filter((i) => {
-      const a = i
-        .slice(0, newIndex - 1)
-        .map((c) => ({ name: c.name, isParameter: c.isParameter }));
-      const b = components
-        .slice(0, newIndex - 1)
-        .map((c) => ({ name: c.name, isParameter: c.isParameter }));
+    const otherPathComponents = Object.values(wipPatterns).filter(
+      ({ components: wipComponents }) => {
+        const a = wipComponents
+          .slice(0, newIndex - 1)
+          .map((c) => ({ name: c.name, isParameter: c.isParameter }));
+        const b = components
+          .slice(0, newIndex - 1)
+          .map((c) => ({ name: c.name, isParameter: c.isParameter }));
 
-      return isEqual(a, b);
-    });
+        return isEqual(a, b);
+      }
+    );
     if (otherPathComponents.length === 0) {
       return '';
     } else {
       const firstMatchingParamName = otherPathComponents
-        .map((i) => i.find((param) => param.index === newIndex))
-        .filter((param) => {
-          if (param && param.isParameter) {
-            return true;
-          }
-          return false;
-        })[0];
+        .map(({ components: wipComponents }) =>
+          wipComponents.find((param) => param.index === newIndex)
+        )
+        .filter((param) => param && param.isParameter)[0];
       return firstMatchingParamName ? firstMatchingParamName.name : '';
     }
   }
 
-  const debouncedComponents = useDebounce(components, 300);
-  const debouncedIsEditing = useDebounce(isEditing, 300);
-
   const onChange = (index: number) => (parameter: PathComponentAuthoring) => {
-    setComponents((com) => {
-      const newSet = [...com];
-      if (parameter.isParameter && !parameter.name) {
-        newSet[index] = {
-          ...parameter,
-          isParameter: false,
-          name: parameter.originalName,
-        };
-      } else {
-        newSet[index] = parameter;
-      }
-      return newSet;
-    });
-  };
-
-  useEffect(() => {
-    const isDifferent = !equals(wipPatterns[path + method], components);
-
-    if (components && isDifferent && !isEditing) {
-      persistWIPPattern(path, method, components);
+    const newSet = [...components];
+    if (parameter.isParameter && !parameter.name) {
+      newSet[index] = {
+        ...parameter,
+        isParameter: false,
+        name: parameter.originalName,
+      };
+    } else {
+      newSet[index] = parameter;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(debouncedComponents), debouncedIsEditing]);
+    setComponents(newSet);
+    persistWIPPattern(path, method, newSet);
+  };
 
   if (hide) {
     return null;
@@ -108,7 +105,14 @@ export function UndocumentedUrl({
       disableGutters
       style={{ display: 'flex', ...style }}
       button
-      // onClick={onClick}
+      onClick={() =>
+        isBulkMode
+          ? handleBulkModeSelection(path, method)
+          : handleSelection(
+              isKnownPath ? path : makePattern(components),
+              method
+            )
+      }
     >
       <div style={{ flex: 1 }}>
         <div className={classes.wrapper}>
@@ -116,45 +120,56 @@ export function UndocumentedUrl({
             <div className={classes.method} style={{ color: methodColor }}>
               {paddedMethod.toUpperCase()}
             </div>
-            <div className={classes.componentsWrapper}>
-              {components.map((i, index) => (
-                <div
-                  key={index}
-                  style={{ display: 'flex', flexDirection: 'row' }}
-                >
-                  {components.length > index && (
-                    <span className={classes.pathComponent}>/</span>
-                  )}
-                  <PathComponentRender
-                    parentSetIsEditing={setIsEditing}
-                    pathComponent={i}
-                    key={index}
-                    initialNameForComponent={initialNameForComponent}
-                    onChange={onChange(index)}
-                  />
-                </div>
-              ))}
-            </div>
+            {isKnownPath ? (
+              <div
+                className={classes.pathComponent}
+                style={{ fontWeight: 800 }}
+              >
+                {path}
+              </div>
+            ) : (
+              <div
+                className={classes.componentsWrapper}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {components.map((i, index) => (
+                  <div
+                    key={i.originalName}
+                    style={{ display: 'flex', flexDirection: 'row' }}
+                  >
+                    {components.length > index && (
+                      <span className={classes.pathComponent}>/</span>
+                    )}
+                    <PathComponentRender
+                      pathComponent={i}
+                      initialNameForComponent={initialNameForComponent}
+                      onChange={onChange(index)}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
-      <div style={{ paddingRight: 5 }}>
-        <LightTooltip
-          title={
-            bulkMode
-              ? 'Review Endpoint and add to API Documentation'
-              : 'Add to API Documentation'
-          }
-          enterDelay={1000}
+      {isKnownPath && (
+        <div
+          className={classes.pathComponent}
+          style={{ paddingLeft: 10, fontSize: 12 }}
         >
-          <IconButton
-            size="small"
-            color="primary"
-            onClick={() => onFinish(makePattern(components), method, bulkMode)}
-          >
-            <AddIcon />
-          </IconButton>
-        </LightTooltip>
+          known path
+        </div>
+      )}
+      <div style={{ paddingRight: 8 }}>
+        {isBulkMode ? (
+          <Checkbox checked={isSelected(path, method)} />
+        ) : (
+          <LightTooltip title="Review Endpoint" enterDelay={1000}>
+            <IconButton size="small" color="primary">
+              <AddIcon />
+            </IconButton>
+          </LightTooltip>
+        )}
       </div>
     </ListItem>
   );
@@ -162,69 +177,35 @@ export function UndocumentedUrl({
 
 export type PathComponentProps = {
   pathComponent: PathComponentAuthoring;
-  parentSetIsEditing: (bool: boolean) => void;
   initialNameForComponent: (index: number) => string;
   onChange: (pathParameter: PathComponentAuthoring) => void;
 };
 
-function makePattern(components: PathComponentAuthoring[]) {
-  return (
-    '/' +
-    components
-      .map((i) => {
-        return i.isParameter ? `:${i.name}` : i.originalName;
-      })
-      .join('/')
-  );
-}
-
 function PathComponentRender({
   onChange,
-  parentSetIsEditing,
   pathComponent,
   initialNameForComponent,
 }: PathComponentProps) {
   const classes = useStyles();
   const [name, setName] = useState(pathComponent.name);
 
-  // const originalName = pathComponent.originalName;
-
   const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(() => {
-    if (name === '' && pathComponent.isParameter) {
-      const defaultValue = initialNameForComponent(pathComponent.index);
+  const onStartEdit = () => {
+    const defaultValue = initialNameForComponent(pathComponent.index);
+    if (defaultValue.length) {
       setName(defaultValue);
-      if (defaultValue.length) {
-        setIsEditing(false);
-        onChange({ ...pathComponent, isParameter: true, name: defaultValue });
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathComponent.isParameter]);
-
-  //share edit state with parent
-  useEffect(() => {
-    parentSetIsEditing(isEditing);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEditing]);
-
-  useEffect(() => {
-    if (!isEditing && pathComponent.isParameter) {
+      onChange({ ...pathComponent, isParameter: true, name: defaultValue });
       setIsEditing(true);
-    } else if (!pathComponent.isParameter) {
+    } else {
       setName('');
-      setIsEditing(false);
+      onChange({
+        ...pathComponent,
+        isParameter: true,
+      });
+      setIsEditing(true);
     }
-    // should only run once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathComponent.isParameter]);
-
-  useEffect(() => {
-    setIsEditing(false);
-    // should only run once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
   if (pathComponent.isParameter && !isEditing) {
     return (
@@ -260,7 +241,7 @@ function PathComponentRender({
             setIsEditing(false);
             onChange({ ...pathComponent, name });
           }}
-          onKeyDown={(e: any) => {
+          onKeyDown={(e) => {
             // stop editing on enter, on escape or on backspace when empty
             if (
               e.keyCode === 13 ||
@@ -271,7 +252,7 @@ function PathComponentRender({
               setIsEditing(false);
             }
           }}
-          onChange={(e: any) => {
+          onChange={(e) => {
             setName(e.target.value.replace(/\s/g, ''));
             onChange({
               ...pathComponent,
@@ -280,7 +261,7 @@ function PathComponentRender({
           }}
           style={{
             width: name
-              ? `${name.length * 8 + 1}px`
+              ? `${name.length * 7 + 8}px`
               : `${placeholder.length * 8}px`,
           }}
           className={classNames(
@@ -309,12 +290,7 @@ function PathComponentRender({
   } else {
     return (
       <div
-        onClick={() =>
-          onChange({
-            ...pathComponent,
-            isParameter: true,
-          })
-        }
+        onClick={() => onStartEdit()}
         className={classNames(
           classes.pathComponent,
           classes.pathComponentButton
@@ -383,27 +359,3 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'flex-start',
   },
 }));
-
-////////////////////////////////////////////
-
-export type PathComponentAuthoring = {
-  index: number;
-  name: string;
-  originalName: string;
-  isParameter: boolean;
-};
-
-export function urlStringToPathComponents(
-  url: string
-): PathComponentAuthoring[] {
-  const components: PathComponentAuthoring[] = url
-    .split('/')
-    .map((name, index) => {
-      return { index, name, originalName: name, isParameter: false };
-    });
-  const [root, ...rest] = components;
-  if (root.name === '') {
-    return rest;
-  }
-  return components;
-}

@@ -28,7 +28,6 @@ type IBuildSpecPatch = {
 export function BuildSpecPatch({
   patchChoices,
   onPathChoicesUpdated,
-  diffHash,
   approved,
   ignore,
 }: IBuildSpecPatch) {
@@ -53,6 +52,19 @@ export function BuildSpecPatch({
     }
   };
 
+  const updateNewBodyChoice = (include: boolean) => {
+    if (selectedChoices) {
+      const copied = deepCopy(selectedChoices);
+      copied.includeNewBody = include;
+      setSelectedChoices(copied);
+    }
+  };
+
+  const disabledWhenNoShapeSelected =
+    patchChoices &&
+    patchChoices.isField &&
+    selectedChoices?.shapes.every((i) => !i.isValid);
+
   return (
     <FormControl component="fieldset" style={{ width: '100%', paddingLeft: 5 }}>
       {patchChoices && (
@@ -63,6 +75,28 @@ export function BuildSpecPatch({
             copy={patchChoices.copy}
           />
         </Typography>
+      )}
+
+      {patchChoices && patchChoices.isNewRegionDiff && (
+        <FormControlLabel
+          key={'new-regions'}
+          labelPlacement="end"
+          control={
+            <Checkbox
+              size="small"
+              checked={selectedChoices && selectedChoices.includeNewBody}
+              onChange={(event, checked) => {
+                console.log(checked);
+                updateNewBodyChoice(checked);
+              }}
+            />
+          }
+          label={
+            <Typography variant="body1" className={classes.checkboxLabel}>
+              {'Document body'}
+            </Typography>
+          }
+        />
       )}
 
       {selectedChoices && (
@@ -133,6 +167,7 @@ export function BuildSpecPatch({
                 size="small"
                 style={{ marginRight: 15 }}
                 onClick={approved}
+                disabled={disabledWhenNoShapeSelected}
               >
                 Save Changes
               </Button>

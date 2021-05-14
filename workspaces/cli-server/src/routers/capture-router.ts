@@ -77,8 +77,10 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
       const newEventsString = opticEngine.try_apply_commands(
         JSON.stringify(additionalCommands),
         JSON.stringify(events),
-        'simulated',
-        'simulated-batch'
+        'simulated-batch',
+        'simulated changes',
+        'simulated-client',
+        'simulated-session'
       );
 
       const initialBodyGenerator = new OnDemandInitialBodyRust({
@@ -89,13 +91,15 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
         method,
       });
 
-      console.time('learn ' + pathId + method);
+      console.time('scheduling ' + pathId + method);
       // TODO: pass results stream straight through instead of buffering into memory
-      const result = dependencies.fileReadBottleneck.schedule(() =>
-        initialBodyGenerator.run()
-      );
+      const result = dependencies.fileReadBottleneck.schedule(() => {
+        console.timeEnd('scheduling ' + pathId + method);
+        console.time('executing learning ' + pathId + method);
+        return initialBodyGenerator.run();
+      });
       result.then((learnedBodies: ILearnedBodies) => {
-        console.timeEnd('learn ' + pathId + method);
+        console.timeEnd('executing learning ' + pathId + method);
         res.json(learnedBodies);
       });
       result.catch((e) => {

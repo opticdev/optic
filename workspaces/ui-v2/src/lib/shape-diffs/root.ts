@@ -16,7 +16,7 @@ import {
   SetRequestBodyShape,
   SetResponseBodyShape,
   ShapedBodyDescriptor,
-} from '../command-factory';
+} from '@useoptic/spectacle';
 
 export function rootShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,

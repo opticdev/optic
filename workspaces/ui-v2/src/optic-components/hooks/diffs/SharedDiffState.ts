@@ -3,14 +3,20 @@ import { assign, Machine, spawn } from 'xstate';
 import * as niceTry from 'nice-try';
 import { pathToRegexp } from 'path-to-regexp';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
-import { AddContributionType, CQRSCommand } from '<src>/lib/command-factory';
-import { BodyShapeDiff, ParsedDiff } from '../../../lib/parse-diff';
-import { CurrentSpecContext } from '../../../lib/Interfaces';
-import { DiffSet } from '../../../lib/diff-set';
+import {
+  AddContributionType,
+  CQRSCommand,
+  IOpticConfigRepository,
+  IOpticDiffService,
+} from '@useoptic/spectacle';
+import { BodyShapeDiff, ParsedDiff } from '<src>/lib/parse-diff';
+import { CurrentSpecContext } from '<src>/lib/Interfaces';
+import { DiffSet } from '<src>/lib/diff-set';
+import uniqby from 'lodash.uniqby';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { AssembleCommands } from '../../../lib/assemble-commands';
+import { AssembleCommands } from '<src>/lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
-import { IOpticConfigRepository, IOpticDiffService } from '@useoptic/spectacle';
+import { generatePathCommands } from '<src>/lib/stable-path-batch-generator';
 
 export const newSharedDiffMachine = (
   currentSpecContext: CurrentSpecContext,
@@ -20,6 +26,26 @@ export const newSharedDiffMachine = (
   diffService: IOpticDiffService,
   configRepository: IOpticConfigRepository
 ) => {
+  const knownUndocumented = includeUndocumented(
+    parsedDiffs,
+    currentSpecContext
+  );
+
+  const additionalUndocumentedUrls = knownUndocumented.map((i) => {
+    const asUndocumentedUrl: IUndocumentedUrl = {
+      path: i.fullPath,
+      method: i.method,
+      isKnownPath: true,
+      count: 1,
+    };
+    return asUndocumentedUrl;
+  });
+
+  const initialDisplayUndocumented = [
+    ...additionalUndocumentedUrls,
+    ...undocumentedUrls,
+  ];
+
   return Machine<
     SharedDiffStateContext,
     SharedDiffStateSchema,
@@ -31,6 +57,7 @@ export const newSharedDiffMachine = (
         count: 0,
         total: 0,
       },
+      newPaths: { commands: [], pendingEndpointMap: {} },
       simulatedCommands: [],
       choices: {
         approvedSuggestions: {},
@@ -38,8 +65,9 @@ export const newSharedDiffMachine = (
         existingEndpointPathContributions: {},
       },
       results: {
-        undocumentedUrls: undocumentedUrls,
-        displayedUndocumentedUrls: undocumentedUrls,
+        undocumentedUrls: initialDisplayUndocumented,
+        knownPathUndocumented: knownUndocumented,
+        displayedUndocumentedUrls: initialDisplayUndocumented,
         parsedDiffs: parsedDiffs,
         trailValues,
         diffsGroupedByEndpoint: groupDiffsByTheirEndpoints(
@@ -62,6 +90,7 @@ export const newSharedDiffMachine = (
                 simulatedCommands: (ctx) => {
                   console.log('flushing commands before saving');
                   return AssembleCommands(
+                    ctx.newPaths,
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
                     ctx.choices.existingEndpointNameContributions,
@@ -74,11 +103,48 @@ export const newSharedDiffMachine = (
           DOCUMENT_ENDPOINT: {
             actions: [
               assign({
+                newPaths: (ctx, event) => {
+                  const regeneratePathCommands = generatePathCommands(
+                    [
+                      ...ctx.pendingEndpoints,
+                      {
+                        pathPattern: event.pattern,
+                        id: event.pendingId,
+                        matchesPattern: (a, b) => true,
+                        method: event.method,
+                        ref: undefined,
+                      },
+                    ],
+                    currentSpecContext
+                  );
+                  console.log(regeneratePathCommands);
+                  return {
+                    commands: regeneratePathCommands.commands,
+                    pendingEndpointMap:
+                      regeneratePathCommands.endpointPathIdMap,
+                  };
+                },
+              }),
+              assign({
                 pendingEndpoints: (ctx, event) => {
                   const regex = pathToRegexp(event.pattern, [], {
                     start: true,
                     end: true,
                   });
+
+                  const { commands, endpointPathIdMap } = generatePathCommands(
+                    [
+                      {
+                        pathPattern: event.pattern,
+                        id: event.pendingId,
+                        matchesPattern: (a, b) => true,
+                        method: event.method,
+                        ref: undefined,
+                      },
+                    ],
+                    currentSpecContext
+                  );
+
                   return [
                     ...ctx.pendingEndpoints.filter(
                       (pendingEndpoint) =>
@@ -96,7 +162,8 @@ export const newSharedDiffMachine = (
                           currentSpecContext,
                           event.pattern,
                           event.method,
-                          () => {},
+                          endpointPathIdMap[event.pendingId],
+                          commands,
                           diffService
                         )
                       ),
@@ -128,6 +195,7 @@ export const newSharedDiffMachine = (
                 results: (ctx) => updateUrlResults(ctx),
                 simulatedCommands: (ctx) =>
                   AssembleCommands(
+                    ctx.newPaths,
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
                     ctx.choices.existingEndpointNameContributions,
@@ -146,9 +214,24 @@ export const newSharedDiffMachine = (
                 },
               }),
               assign({
+                newPaths: (ctx, event) => {
+                  const regeneratePathCommands = generatePathCommands(
+                    ctx.pendingEndpoints,
+                    currentSpecContext
+                  );
+                  console.log(regeneratePathCommands);
+                  return {
+                    commands: regeneratePathCommands.commands,
+                    pendingEndpointMap:
+                      regeneratePathCommands.endpointPathIdMap,
+                  };
+                },
+              }),
+              assign({
                 results: (ctx) => updateUrlResults(ctx),
                 simulatedCommands: (ctx) =>
                   AssembleCommands(
+                    ctx.newPaths,
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
                     ctx.choices.existingEndpointNameContributions,
@@ -196,6 +279,7 @@ export const newSharedDiffMachine = (
                 results: (ctx) => updateUrlResults(ctx),
                 simulatedCommands: (ctx) =>
                   AssembleCommands(
+                    ctx.newPaths,
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
                     ctx.choices.existingEndpointNameContributions,
@@ -219,6 +303,7 @@ export const newSharedDiffMachine = (
               assign({
                 simulatedCommands: (ctx) => {
                   return AssembleCommands(
+                    ctx.newPaths,
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
                     ctx.choices.existingEndpointNameContributions,
@@ -242,6 +327,7 @@ export const newSharedDiffMachine = (
               assign({
                 simulatedCommands: (ctx) => {
                   return AssembleCommands(
+                    ctx.newPaths,
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
                     ctx.choices.existingEndpointNameContributions,
@@ -268,6 +354,7 @@ export const newSharedDiffMachine = (
               assign({
                 simulatedCommands: (ctx) => {
                   return AssembleCommands(
+                    ctx.newPaths,
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
                     ctx.choices.existingEndpointNameContributions,
@@ -282,6 +369,7 @@ export const newSharedDiffMachine = (
               assign({
                 simulatedCommands: (ctx) => {
                   return AssembleCommands(
+                    ctx.newPaths,
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
                     ctx.choices.existingEndpointNameContributions,
@@ -303,8 +391,10 @@ function updateUrlResults(
 ): SharedDiffStateContext['results'] {
   return {
     undocumentedUrls: ctx.results.undocumentedUrls,
+    knownPathUndocumented: ctx.results.knownPathUndocumented,
     displayedUndocumentedUrls: filterDisplayedUndocumentedUrls(
       ctx.results.undocumentedUrls,
+      ctx.results.knownPathUndocumented,
       ctx.pendingEndpoints,
       ctx.browserAppliedIgnoreRules
     ),
@@ -320,6 +410,28 @@ export interface EndpointDiffGrouping {
   fullPath: string;
   newRegionDiffs: ParsedDiff[];
   shapeDiffs: BodyShapeDiff[];
+}
+
+export function includeUndocumented(
+  parsedDiffs: ParsedDiff[],
+  currentSpecContext: CurrentSpecContext
+): IKnownPathUndocumented[] {
+  const undocumented = new DiffSet(parsedDiffs, currentSpecContext)
+    .forUndocumented()
+    .iterator();
+
+  const knownPaths: IKnownPathUndocumented[] = undocumented.map((i) => {
+    const { pathId, method } = i.location(currentSpecContext);
+    return {
+      pathId,
+      method,
+      fullPath: currentSpecContext.currentSpecPaths.find(
+        (i) => i.pathId === pathId
+      )!.absolutePathPatternWithParameterNames,
+    };
+  });
+
+  return uniqby(knownPaths, (i) => i.pathId + i.method);
 }
 
 function groupDiffsByTheirEndpoints(
@@ -355,6 +467,7 @@ function groupDiffsByTheirEndpoints(
 
 function filterDisplayedUndocumentedUrls(
   all: IUndocumentedUrl[],
+  knownPathsUndocumented: IKnownPathUndocumented[],
   pending: IPendingEndpoint[],
   ignoreRules: string[]
 ): IUndocumentedUrl[] {
@@ -362,9 +475,21 @@ function filterDisplayedUndocumentedUrls(
 
   return all.map((value) => {
     if (
-      pending.some(
-        (i) => i.matchesPattern(value.path, value.method) && i.staged
-      ) ||
+      pending.some((i) => {
+        const matchedKnown = Boolean(
+          knownPathsUndocumented.find(
+            (known) =>
+              known.fullPath === i.pathPattern &&
+              known.method === i.method &&
+              known.fullPath === value.path &&
+              known.method === value.method
+          )
+        );
+        return (
+          (i.matchesPattern(value.path, value.method) || matchedKnown) &&
+          i.staged
+        );
+      }) ||
       allIgnores.shouldIgnore(value.method, value.path)
     ) {
       return { ...value, hide: true };
@@ -440,6 +565,7 @@ export interface SharedDiffStateContext {
   };
   results: {
     undocumentedUrls: IUndocumentedUrl[];
+    knownPathUndocumented: IKnownPathUndocumented[];
     displayedUndocumentedUrls: IUndocumentedUrl[];
     parsedDiffs: ParsedDiff[];
     trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
@@ -454,6 +580,10 @@ export interface SharedDiffStateContext {
         endpointId: string;
       };
     };
+  };
+  newPaths: {
+    commands: CQRSCommand[];
+    pendingEndpointMap: { [key: string]: string };
   };
   simulatedCommands: CQRSCommand[];
   pendingEndpoints: IPendingEndpoint[];
@@ -477,4 +607,11 @@ export interface IUndocumentedUrl {
   method: string;
   count: number;
   hide?: boolean;
+  isKnownPath?: boolean;
+}
+
+export interface IKnownPathUndocumented {
+  pathId: string;
+  method: string;
+  fullPath: string;
 }

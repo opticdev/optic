@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '<src>/optic-components/hooks/useBaseUrl';
-import { DocumentationPages } from '<src>/optic-components/pages/docs/DocumentationPage';
+import { DocumentationPages } from '<src>/optic-components/pages/docs';
 import { SpectacleStore } from './spectacle-provider';
 import { Loading } from '<src>/optic-components/loaders/Loading';
 import { DiffReviewEnvironments } from '<src>/optic-components/pages/diffs/ReviewDiffPages';
@@ -59,6 +59,7 @@ export default function PublicExamples(props: { lookupDir: string }) {
     return {
       events: example.events,
       samples: example.session.samples,
+      apiName: exampleId,
     };
   }, [exampleId, props.lookupDir]);
 
@@ -76,13 +77,13 @@ export default function PublicExamples(props: { lookupDir: string }) {
   //@SYNC public-examples.tsx cloud-viewer.tsx local-cli.tsx
   return (
     <AppConfigurationStore config={appConfig}>
-      <AnalyticsStore>
-        <SpectacleStore spectacle={data}>
-          <ConfigRepositoryStore config={data.opticContext.configRepository}>
-            <CapturesServiceStore
-              capturesService={data.opticContext.capturesService}
-            >
-              <BaseUrlProvider value={{ url: match.url }}>
+      <SpectacleStore spectacle={data}>
+        <ConfigRepositoryStore config={data.opticContext.configRepository}>
+          <CapturesServiceStore
+            capturesService={data.opticContext.capturesService}
+          >
+            <BaseUrlProvider value={{ url: match.url }}>
+              <AnalyticsStore>
                 <Switch>
                   <>
                     <DocumentationPages />
@@ -90,11 +91,11 @@ export default function PublicExamples(props: { lookupDir: string }) {
                     <ChangelogPages />
                   </>
                 </Switch>
-              </BaseUrlProvider>
-            </CapturesServiceStore>
-          </ConfigRepositoryStore>
-        </SpectacleStore>
-      </AnalyticsStore>
+              </AnalyticsStore>
+            </BaseUrlProvider>
+          </CapturesServiceStore>
+        </ConfigRepositoryStore>
+      </SpectacleStore>
     </AppConfigurationStore>
   );
 }
@@ -102,6 +103,7 @@ export default function PublicExamples(props: { lookupDir: string }) {
 export interface InMemorySpectacleDependencies {
   events: any[];
   samples: any[];
+  apiName: string;
 }
 
 export type InMemorySpectacleDependenciesLoader = () => Promise<InMemorySpectacleDependencies>;
@@ -115,6 +117,7 @@ export function useInMemorySpectacle(
   const [inputs, setInputs] = useState<{
     events: any[];
     samples: any[];
+    apiName: string;
   } | null>(null);
 
   useEffect(() => {
@@ -123,6 +126,7 @@ export function useInMemorySpectacle(
       setInputs({
         events: result.events,
         samples: result.samples,
+        apiName: result.apiName,
       });
     }
 
@@ -138,7 +142,8 @@ export function useInMemorySpectacle(
         opticEngine,
         inputs.events,
         inputs.samples,
-        'example-session'
+        'example-session',
+        { name: inputs.apiName, tasks: {} }
       );
       const inMemorySpectacle = new InMemorySpectacle(
         opticContext,
@@ -148,7 +153,11 @@ export function useInMemorySpectacle(
         'change',
         async () => {
           const newEvents = await inMemorySpectacle.opticContext.specRepository.listEvents();
-          setInputs({ events: newEvents, samples: inputs.samples });
+          setInputs({
+            events: newEvents,
+            samples: inputs.samples,
+            apiName: inputs.apiName,
+          });
         }
       );
       console.count('setSpectacle');

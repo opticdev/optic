@@ -66,16 +66,14 @@ pub fn try_apply_commands(
   events_json: String,
   batch_id: String,
   commit_message: String,
+  client_id: String,
+  client_session_id: String,
 ) -> Result<String, JsValue> {
   let spec_commands: Vec<SpecCommand> = serde_json::from_str(&commands_json).unwrap();
   let spec_events: Vec<SpecEvent> = serde_json::from_str(&events_json).unwrap();
   let spec_projection = SpecProjection::from(spec_events);
-  let batch_command_context = CommandContext::new(
-    batch_id.clone(),
-    String::from("diff-engine-wasm-user"),
-    String::from("diff-engine-wasm-session"),
-    Utc::now(),
-  );
+  let batch_command_context =
+    CommandContext::new(batch_id.clone(), client_id, client_session_id, Utc::now());
 
   let mut batch =
     optic_diff_engine::append_batch_to_spec(spec_projection, commit_message, batch_command_context);
@@ -96,6 +94,7 @@ pub fn try_apply_commands(
 pub fn affordances_to_commands(
   json_affordances_json: String,
   json_trail_json: String,
+  id_generator_strategy: String,
 ) -> Result<String, JsValue> {
   let values_by_trail_vec: Vec<TrailValues> = serde_json::from_str(&json_affordances_json).unwrap();
   let json_trail: JsonTrail = serde_json::from_str(&json_trail_json).unwrap();
@@ -106,10 +105,19 @@ pub fn affordances_to_commands(
   let trail_observation_results: TrailObservationsResult = TrailObservationsResult {
     values_by_trail: values_by_trail_map,
   };
-  let mut id_generator = IdGenerator::default();
-  let (root_shape_id_option, commands_iter) =
-    trail_observation_results.into_commands(&mut id_generator, &json_trail);
-  let result: (Vec<SpecCommand>, String) = (commands_iter.collect(), root_shape_id_option.unwrap());
+
+  let result: (Vec<SpecCommand>, String) = if id_generator_strategy == "sequential" {
+    let mut sequential_id_generator = SequentialIdGenerator { next_id: 9999 };
+    let (root_shape_id_option, commands_iter) =
+      trail_observation_results.into_commands(&mut sequential_id_generator, &json_trail);
+    (commands_iter.collect(), root_shape_id_option.unwrap())
+  } else {
+    let mut nano_id_generator = NanoIdGenerator::default();
+    let (root_shape_id_option, commands_iter) =
+      trail_observation_results.into_commands(&mut nano_id_generator, &json_trail);
+    (commands_iter.collect(), root_shape_id_option.unwrap())
+  };
+
   serde_json::to_string(&result)
     .map_err(|err| JsValue::from(format!("new commands could not be serialized: {:?}", err)))
 }
@@ -118,6 +126,7 @@ pub fn affordances_to_commands(
 pub fn learn_undocumented_bodies(
   spec: &WasmSpecProjection,
   interactions_json: String,
+  id_generator_strategy: String,
 ) -> Result<String, JsValue> {
   let interactions = serde_json::Deserializer::from_str(&interactions_json).into_iter();
 
@@ -133,10 +142,17 @@ pub fn learn_undocumented_bodies(
     }
   }
 
-  let mut id_generator = IdGenerator::default();
-  let endpoint_bodies = learned_undocumented_bodies
-    .into_endpoint_bodies(&mut id_generator)
-    .collect::<Vec<_>>();
+  let mut sequential_id_generator = SequentialIdGenerator { next_id: 6666 };
+  let mut nano_id_generator = NanoIdGenerator::default();
+  let endpoint_bodies = if id_generator_strategy == "sequential" {
+    learned_undocumented_bodies
+      .into_endpoint_bodies(&mut sequential_id_generator)
+      .collect::<Vec<_>>()
+  } else {
+    learned_undocumented_bodies
+      .into_endpoint_bodies(&mut nano_id_generator)
+      .collect::<Vec<_>>()
+  };
 
   serde_json::to_string(&endpoint_bodies).map_err(|err| {
     JsValue::from(format!(
@@ -357,15 +373,32 @@ pub fn spec_resolve_response(
     .map_err(|err| JsValue::from(format!("responses could not be serialized: {:?}", err)))
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+#[wasm_bindgen]
+pub fn next_nano_id(prefix: String) -> String {
+  let mut nano_id_generator = NanoIdGenerator::default();
+  nano_id_generator.generate_id(&prefix)
+}
 #[derive(Debug, Default)]
-struct IdGenerator;
-
-impl SpecIdGenerator for IdGenerator {
+struct NanoIdGenerator {}
+impl SpecIdGenerator for NanoIdGenerator {
   fn generate_id(&mut self, prefix: &str) -> String {
     // NanoID @ 10 chars:
     // - URL-safe,
     // - 17 years for a 1% chance of at least one global collision assuming
     //   writing 1000 ids per hour (https://zelark.github.io/nano-id-cc/)
     format!("{}{}", prefix, nanoid!(10))
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+#[derive(Debug, Default)]
+struct SequentialIdGenerator {
+  next_id: u32,
+}
+impl SpecIdGenerator for SequentialIdGenerator {
+  fn generate_id(&mut self, prefix: &str) -> String {
+    self.next_id += 1;
+    format!("{}{}", prefix, self.next_id.to_string())
   }
 }

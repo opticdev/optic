@@ -143,13 +143,16 @@ export function PendingEndpointPage(props: any) {
                 onKeyPress={onKeyPress}
               />
 
-              <Typography
-                component="div"
-                variant="subtitle2"
-                style={{ color: AddedDarkGreen, marginBottom: 8 }}
-              >
-                Document the bodies for this endpoint:
-              </Typography>
+              {requestCheckboxes.length > 0 ||
+              learnedBodies!.responses.length > 0 ? (
+                <Typography
+                  component="div"
+                  variant="subtitle2"
+                  style={{ color: AddedDarkGreen, marginBottom: 8 }}
+                >
+                  Document the bodies for this endpoint:
+                </Typography>
+              ) : null}
 
               <FormControl component="fieldset" onKeyPress={onKeyPress}>
                 {requestCheckboxes.map((i, index) => {
@@ -223,7 +226,6 @@ export function PendingEndpointPage(props: any) {
             previewCommands={newEndpointCommands}
           >
             <EndpointDocumentationPane
-              // lastBatchCommit={lastBatchId}
               method={stagedCommandsIds.method}
               pathId={stagedCommandsIds.pathId}
               renderHeader={() => (

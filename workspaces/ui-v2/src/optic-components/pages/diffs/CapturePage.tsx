@@ -136,6 +136,7 @@ function DiffCaptureResults() {
     isDiffHandled,
     reset,
     handledCount,
+    getUndocumentedUrls,
   } = useSharedDiffContext();
   const history = useHistory();
   const diffsGroupedByEndpoints = context.results.diffsGroupedByEndpoint;
@@ -178,9 +179,10 @@ function DiffCaptureResults() {
           {diffsGroupedByEndpoints.length > 0 ? (
             diffsGroupedByEndpoints.map((i, index) => {
               const diffCount = i.newRegionDiffs.length + i.shapeDiffs.length;
-              const diffCompletedCount = i.shapeDiffs.filter((i) =>
-                isDiffHandled(i.diffHash())
-              ).length;
+              const diffCompletedCount =
+                i.shapeDiffs.filter((i) => isDiffHandled(i.diffHash())).length +
+                i.newRegionDiffs.filter((i) => isDiffHandled(i.diffHash))
+                  .length;
 
               const remaining = diffCount - diffCompletedCount;
               const done = remaining === 0;
@@ -254,10 +256,7 @@ function DiffCaptureResults() {
                   primary={
                     <>
                       Optic observed{' '}
-                      <b>
-                        {context.results.displayedUndocumentedUrls.length}{' '}
-                        undocumented urls.
-                      </b>{' '}
+                      <b>{getUndocumentedUrls().length} undocumented urls.</b>{' '}
                       Click here to document new endpoints
                     </>
                   }

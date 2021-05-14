@@ -1,11 +1,17 @@
 import React, { FC } from 'react';
 
-import { getEndpointId } from '../../../utilities/endpoint-utilities';
-import { useDebouncedFn, useStateWithSideEffect } from '../../../hooks/util';
-import { IEndpoint } from '../../../hooks/useEndpointsHook';
-import { IPendingEndpoint } from '../../../hooks/diffs/SharedDiffState';
-import { useSharedDiffContext } from '../../../hooks/diffs/SharedDiffContext';
-import { EditableTextField, TextFieldVariant } from '../../../common';
+import { getEndpointId } from '<src>/optic-components/utilities/endpoint-utilities';
+import {
+  useDebouncedFn,
+  useStateWithSideEffect,
+} from '<src>/optic-components/hooks/util';
+import { IEndpoint } from '<src>/optic-components/hooks/useEndpointsHook';
+import { IPendingEndpoint } from '<src>/optic-components/hooks/diffs/SharedDiffState';
+import { useSharedDiffContext } from '<src>/optic-components/hooks/diffs/SharedDiffContext';
+import {
+  EditableTextField,
+  TextFieldVariant,
+} from '<src>/optic-components/common';
 
 export const PendingEndpointNameField: FC<{
   endpoint: IPendingEndpoint;
