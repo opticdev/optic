@@ -163,7 +163,7 @@ export async function shapeDiffPreview(
 
   const commands = preview.toCommands(preview.updateSpecChoices!);
 
-  const canApplyCommands = universe.forkSpectacleWithCommands(commands);
+  await universe.forkSpectacleWithCommands(commands);
 
   return {
     preview: {

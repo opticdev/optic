@@ -179,6 +179,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [
         "id",
       ],
@@ -427,6 +429,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -706,6 +710,8 @@ Object {
       },
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -937,6 +943,32 @@ Object {
       },
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [
+        "id",
+      ],
+      "wasEmptyArrayTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "location",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "principality",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "array",
+                },
+              },
+            ],
+          },
+        ],
+      },
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -1122,6 +1154,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -1343,6 +1377,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -1627,6 +1663,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -1933,6 +1971,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -2228,6 +2268,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -2582,6 +2624,8 @@ Object {
       },
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -2744,6 +2788,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -2956,6 +3002,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [
@@ -3164,6 +3212,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [
         "id",
       ],
@@ -3382,6 +3432,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [
         "id",
       ],
@@ -3695,6 +3747,8 @@ Object {
       },
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -3949,6 +4003,22 @@ Object {
       },
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [
+        "id",
+      ],
+      "wasEmptyArrayTrails": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -4227,6 +4297,8 @@ Object {
       },
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -4630,6 +4702,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -4789,6 +4863,45 @@ Object {
         "invalid": false,
         "jsonTrailsByInteractions": Object {
           "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "MRData",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "RaceTable",
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "Races",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 16,
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "Results",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 0,
+                  },
+                },
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "FastestLap",
+                  },
+                },
+              ],
+            },
             Object {
               "path": Array [
                 Object {
@@ -5386,6 +5499,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [
         "id",
       ],
@@ -5441,6 +5556,45 @@ Object {
       ],
       "wasObjectTrails": Object {
         "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "MRData",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "RaceTable",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Races",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 16,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Results",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "FastestLap",
+                },
+              },
+            ],
+          },
           Object {
             "path": Array [
               Object {
@@ -5742,6 +5896,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -6081,6 +6237,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -6365,6 +6523,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],
@@ -6587,6 +6747,8 @@ Object {
       "wasArrayTrails": Object {},
       "wasBoolean": Array [],
       "wasBooleanTrails": Object {},
+      "wasEmptyArray": Array [],
+      "wasEmptyArrayTrails": Object {},
       "wasMissing": Array [],
       "wasMissingTrails": Object {},
       "wasNull": Array [],

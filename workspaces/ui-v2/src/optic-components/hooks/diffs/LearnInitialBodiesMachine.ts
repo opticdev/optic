@@ -6,19 +6,19 @@ import {
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import {
   AddContribution,
-  AddPathComponent,
-  AddPathParameter,
   AddRequest,
+  CQRSCommand,
+  IOpticDiffService,
 } from '@useoptic/spectacle';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
-import { IOpticDiffService } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 
 export const newInitialBodiesMachine = (
   currentSpecContext: CurrentSpecContext,
   pathPattern: string,
   method: string,
-  onCommandsChanged: (commands: any[]) => void,
+  learningPathId: string,
+  learningPathCommands: CQRSCommand[],
   diffService: IOpticDiffService
 ) => {
   return Machine<InitialBodiesContext, InitialBodiesSchema, InitialBodiesEvent>(
@@ -43,7 +43,12 @@ export const newInitialBodiesMachine = (
                   stagedEndpointName: (ctx, event) => event.name,
                 }),
                 assign({
-                  allCommands: (ctx) => recomputeCommands(ctx),
+                  allCommands: (ctx) =>
+                    recomputePendingEndpointCommands(
+                      learningPathCommands,
+                      learningPathId,
+                      ctx
+                    ),
                 }),
               ],
             },
@@ -56,9 +61,13 @@ export const newInitialBodiesMachine = (
                   ],
                 }),
                 assign({
-                  allCommands: (ctx) => recomputeCommands(ctx),
+                  allCommands: (ctx) =>
+                    recomputePendingEndpointCommands(
+                      learningPathCommands,
+                      learningPathId,
+                      ctx
+                    ),
                 }),
-                (ctx) => onCommandsChanged(ctx.allCommands),
               ],
             },
             USER_INCLUDED_BODY: {
@@ -76,7 +85,12 @@ export const newInitialBodiesMachine = (
                   ],
                 }),
                 assign({
-                  allCommands: (ctx) => recomputeCommands(ctx),
+                  allCommands: (ctx) =>
+                    recomputePendingEndpointCommands(
+                      learningPathCommands,
+                      learningPathId,
+                      ctx
+                    ),
                 }),
                 (ctx) => ctx.allCommands,
               ],
@@ -87,39 +101,37 @@ export const newInitialBodiesMachine = (
           invoke: {
             id: 'load-endpoint-bodies',
             src: async (context, event) => {
-              const { commands, pathId } = pathToCommands(
-                pathPattern,
-                currentSpecContext
-              );
-
               const learner = await diffService.learnUndocumentedBodies(
-                pathId,
+                learningPathId,
                 method,
-                commands
+                learningPathCommands
               );
 
               return {
                 learnedBodies: {
-                  pathId: learner.pathId,
+                  pathId: learningPathId,
                   method: learner.method,
                   requests: learner.requests,
                   responses: [...learner.responses].sort(
                     (a, b) => (a.statusCode || 0) - (b.statusCode || 0)
                   ),
                 },
-                pathCommands: commands,
-                pathId,
               };
             },
             onDone: {
               actions: [
                 assign({
+                  pathId: (ctx, event) => learningPathId,
+                  pathCommands: (ctx, event) => learningPathCommands,
                   learnedBodies: (ctx, event) => event.data.learnedBodies,
-                  pathCommands: (ctx, event) => event.data.pathCommands,
-                  pathId: (ctx, event) => event.data.pathId,
                 }),
                 assign({
-                  allCommands: (ctx) => recomputeCommands(ctx),
+                  allCommands: (ctx) =>
+                    recomputePendingEndpointCommands(
+                      learningPathCommands,
+                      learningPathId,
+                      ctx
+                    ),
                 }),
                 sendUpdate(),
               ],
@@ -132,8 +144,12 @@ export const newInitialBodiesMachine = (
   );
 };
 
-export function recomputeCommands(ctx: InitialBodiesContext): any[] {
-  const commands = [...ctx.pathCommands];
+export function recomputePendingEndpointCommands(
+  pathCommands: CQRSCommand[],
+  pathId: string,
+  ctx: InitialBodiesContext
+): any[] {
+  const commands = [...pathCommands];
   const ids = newRandomIdGenerator();
 
   function isIgnored(body: ILearnedBody, isRequest: boolean) {
@@ -164,7 +180,7 @@ export function recomputeCommands(ctx: InitialBodiesContext): any[] {
       (allRequestBodiesIgnored && ctx.learnedBodies.responses.length > 0) ||
       ctx.learnedBodies.responses.length === 0
     ) {
-      commands.push(AddRequest(ctx.method, ctx.pathId, ids.newRequestId()));
+      commands.push(AddRequest(ctx.method, pathId, ids.newRequestId()));
     }
 
     ctx.learnedBodies.responses.forEach((i) => {
@@ -177,14 +193,31 @@ export function recomputeCommands(ctx: InitialBodiesContext): any[] {
   if (ctx.stagedEndpointName) {
     commands.push(
       AddContribution(
-        getEndpointId({ method: ctx.method, pathId: ctx.pathId }),
+        getEndpointId({ method: ctx.method, pathId }),
         'purpose',
         ctx.stagedEndpointName
       )
     );
   }
 
-  return commands;
+  return commands.map((i) => {
+    //if pathId has changed, update to match
+    //@ts-ignore
+    if (i.AddRequest) {
+      console.log('overwriting request pathId');
+      //@ts-ignore
+      return { AddRequest: { ...i.AddRequest, pathId } };
+    }
+    //@ts-ignore
+    if (i.AddResponseByPathAndMethod) {
+      console.log('overwriting response pathId');
+      return {
+        //@ts-ignore
+        AddResponseByPathAndMethod: { ...i.AddResponseByPathAndMethod, pathId },
+      };
+    }
+    return i;
+  });
 }
 
 ////////////////////////////////Machine Types
@@ -219,64 +252,6 @@ export interface InitialBodiesContext {
   pathId: string;
   method: string;
   stagedEndpointName: string;
-}
-
-function pathToCommands(
-  pathPattern: string,
-  currentSpecContext: CurrentSpecContext
-): { pathId: string; commands: any[] } {
-  const components = pathStringToPathComponents(pathPattern);
-
-  let parentPathId = 'root';
-  let lastId = parentPathId;
-  const commands = components.map((i) => {
-    lastId = currentSpecContext.domainIds.newPathId();
-    const thisParentId = parentPathId;
-    parentPathId = lastId;
-    if (i.isParameter) {
-      return AddPathParameter(
-        lastId,
-        thisParentId,
-        cleanupPathComponentName(i.name)
-      );
-    } else {
-      return AddPathComponent(
-        lastId,
-        thisParentId,
-        cleanupPathComponentName(i.name)
-      );
-    }
-  });
-
-  return { pathId: lastId, commands };
-}
-
-export type IPathStringComponent = { name: string; isParameter: boolean };
-export function pathStringToPathComponents(
-  pathString: string
-): IPathStringComponent[] {
-  const components = pathString.split('/').map((name) => {
-    const isParameter = name.charAt(0) === ':' || name.charAt(0) === '{';
-    return { name, isParameter };
-  });
-  const [root, ...rest] = components;
-  if (root.name === '') {
-    return trimTrailingEmptyPath(rest);
-  }
-  return trimTrailingEmptyPath(components);
-}
-
-function cleanupPathComponentName(name: string) {
-  return name.replace(/[{}:]/gi, '');
-}
-
-export function trimTrailingEmptyPath(components: any) {
-  if (components.length > 0) {
-    if (components[components.length - 1].name === '') {
-      return components.slice(0, -1);
-    }
-  }
-  return components;
 }
 
 export type IIgnoreBody = {
