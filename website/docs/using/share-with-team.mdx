@@ -39,20 +39,19 @@ optic.yml
 └── ignore
 ```
 
-### Install the Optic GitBot
+### Configure the [`optic-changelog` GitHub Action](https://github.com/opticdev/optic-changelog)
 
-Once you've checked-in Optic, the GitBot will start commenting on API PRs that include changes to the API's contract. It's like adding a "API Changes" tab next to "Files Changed".
+Once you've checked-in Optic, the `optic-changelog` will start commenting on API PRs that include changes to the API's contract. It's like adding a "API Changes" tab next to "Files Changed".
 
-import Paper from '@material-ui/core/Paper';
+import GhaExample from '@site/static/img/docs/github-actions-example.png'
 
 <Paper elevation={2}>
 
-![alt](../../static/img/gitbot-large.png)
+  <img src={GhaExample} alt="Example of a changelog automatically added to a PR with Optic's GitHub Action" />
 
 </Paper>
 
 [Setup instructions here](/docs/apiops/pull-requests)
-
 
 ---
 

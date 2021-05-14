@@ -128,7 +128,7 @@ Optic was built to give teams a developer-friendly workflow for keeping an accur
 - the `optic.yml` file to share your `api run <task>` aliases with your teammates.
 - the `.optic` folder which contains a complete history of every API change since `api init`. You'll be able to come back months from now and play your API history forward / backwards, see which endpoints are most stable/changing, and plan future changes.
 
-**Install the Optic GitBot** -- it makes API changes explicit during Code Review, so your team understands how the API will change when the PR is merged.
+**Configure the [`optic-changelog` GitHub Action](https://github.com/opticdev/optic-changelog)** -- it makes API changes explicit during Code Review, so your team understands how the API will change when the PR is merged.
 
 
 - **🚦 Prevent Breaking Changes** -- Discover breaking changes before they're merged. Request compatible changes in code review, or coordinate the breaking changes with consumers.
@@ -137,9 +137,14 @@ Optic was built to give teams a developer-friendly workflow for keeping an accur
 
 - **✅ Updated Docs** -- No more doc drift. When you approve an API change Optic also updates the specification.
 
+import Paper from '@material-ui/core/Paper';
+import GhaExample from '@site/static/img/docs/github-actions-example.png'
 
-<img height={400} src="/img/gitbot-large.png" style={{marginBottom: 40}}/>
+<Paper elevation={2}>
 
+  <img src={GhaExample} alt="Example of a changelog automatically added to a PR with Optic's GitHub Action" />
+
+</Paper>
 
 ---
 

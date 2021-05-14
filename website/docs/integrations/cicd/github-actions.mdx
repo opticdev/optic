@@ -63,11 +63,18 @@ Your team lead reviews your pull request. They're pretty confident that the code
 
 ![The successful test result is reported in the pull request](/img/docs/cm-oci-check-pass.png)
 
-## Putting it together with GitBot
+## Putting it together with API Changelogs
 
-Your team lead has context that your work is done in accordance with the documented behavior. However, your team lead has 7 direct reports and a raft of weekly meetings to attend. They've also given everyone on their team several work items. Which ones were assigned to you, and of those, which one is completed in this pull request? Running tests works best with the [Optic GitBot](https://github.com/marketplace/optic-gitbot), which tells your team what behavior has changed as well. Together, you get the context of what behavior has changed and whether or not the code is behaving as documented:
+Your team lead has context that your work is done in accordance with the documented behavior. However, your team lead has 7 direct reports and a raft of weekly meetings to attend. They've also given everyone on their team several work items. Which ones were assigned to you, and of those, which one is completed in this pull request? Running tests works best with the [`optic-changelog` GitHub Action](https://github.com/opticdev/optic-changelog), which tells your team what behavior has changed as well. Together, you get the context of what behavior has changed and whether or not the code is behaving as documented:
 
-![Test report in a pull request alongside a GitBot change report](/img/docs/cm-oci-gitbot.png)
+import Paper from '@material-ui/core/Paper';
+import GhaExample from '@site/static/img/docs/github-actions-example.png'
+
+<Paper elevation={2}>
+
+  <img src={GhaExample} alt="Example of a changelog automatically added to a PR with Optic's GitHub Action" />
+
+</Paper>
 
 ## Adapting Optic to Run in Your Environment
 
