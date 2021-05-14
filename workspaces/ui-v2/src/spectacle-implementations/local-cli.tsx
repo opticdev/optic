@@ -58,11 +58,11 @@ export default function LocalCli() {
 
   return (
     <AppConfigurationStore config={appConfig}>
-      <AnalyticsStore>
-        <SpectacleStore spectacle={data.spectacle}>
-          <ConfigRepositoryStore config={data.configRepository}>
-            <CapturesServiceStore capturesService={data.capturesService}>
-              <BaseUrlProvider value={{ url: match.url }}>
+      <SpectacleStore spectacle={data.spectacle}>
+        <ConfigRepositoryStore config={data.configRepository}>
+          <CapturesServiceStore capturesService={data.capturesService}>
+            <BaseUrlProvider value={{ url: match.url }}>
+              <AnalyticsStore>
                 <Switch>
                   <>
                     <DocumentationPages />
@@ -70,11 +70,11 @@ export default function LocalCli() {
                     <ChangelogPages />
                   </>
                 </Switch>
-              </BaseUrlProvider>
-            </CapturesServiceStore>
-          </ConfigRepositoryStore>
-        </SpectacleStore>
-      </AnalyticsStore>
+              </AnalyticsStore>
+            </BaseUrlProvider>
+          </CapturesServiceStore>
+        </ConfigRepositoryStore>
+      </SpectacleStore>
     </AppConfigurationStore>
   );
 }

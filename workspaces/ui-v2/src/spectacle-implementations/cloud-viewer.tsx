@@ -101,13 +101,13 @@ export default function CloudViewer() {
   //@SYNC public-examples.tsx cloud-viewer.tsx local-cli.tsx
   return (
     <AppConfigurationStore config={appConfig}>
-      <AnalyticsStore>
-        <SpectacleStore spectacle={data}>
-          <ConfigRepositoryStore config={data.opticContext.configRepository}>
-            <CapturesServiceStore
-              capturesService={data.opticContext.capturesService}
-            >
-              <BaseUrlProvider value={{ url: match.url }}>
+      <SpectacleStore spectacle={data}>
+        <ConfigRepositoryStore config={data.opticContext.configRepository}>
+          <CapturesServiceStore
+            capturesService={data.opticContext.capturesService}
+          >
+            <BaseUrlProvider value={{ url: match.url }}>
+              <AnalyticsStore>
                 <Switch>
                   <>
                     <DiffReviewEnvironments />
@@ -115,11 +115,11 @@ export default function CloudViewer() {
                     <ChangelogPages />
                   </>
                 </Switch>
-              </BaseUrlProvider>
-            </CapturesServiceStore>
-          </ConfigRepositoryStore>
-        </SpectacleStore>
-      </AnalyticsStore>
+              </AnalyticsStore>
+            </BaseUrlProvider>
+          </CapturesServiceStore>
+        </ConfigRepositoryStore>
+      </SpectacleStore>
     </AppConfigurationStore>
   );
 }
