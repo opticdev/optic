@@ -17,6 +17,7 @@ import { Client } from '@useoptic/cli-client';
 import * as Sentry from '@sentry/react';
 import * as FullStory from '@fullstory/browser';
 import { LogLevel } from '@sentry/types';
+import { useApiName } from '<src>/optic-components/hooks/useApiNameHook';
 
 const packageJson = require('../../package.json');
 const clientId = `local_cli_${packageJson.version}`;
@@ -50,6 +51,7 @@ export function useClientAgent() {
 
 export function AnalyticsStore({ children }: { children: ReactNode }) {
   const appConfig = useAppConfig();
+  const apiName = useApiName();
   //@ts-ignore
   const analytics = useRef(new Analytics());
   const clientAgent = useClientAgent();
@@ -96,7 +98,7 @@ export function AnalyticsStore({ children }: { children: ReactNode }) {
       if (appConfig.analytics.enabled) {
         if (analytics.current) {
           analytics.current.track(event.name, {
-            properties: { ...event.properties, clientId },
+            properties: { ...event.properties, clientId, apiName },
           });
           try {
             FullStory.event(event.name, event.properties);

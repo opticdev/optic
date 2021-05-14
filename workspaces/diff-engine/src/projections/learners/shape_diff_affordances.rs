@@ -88,8 +88,13 @@ impl LearnedShapeDiffAffordancesProjection {
 // allows iterator.collect() right into this projection
 impl FromIterator<InteractionDiffResult> for LearnedShapeDiffAffordancesProjection {
   fn from_iter<I: IntoIterator<Item = InteractionDiffResult>>(diff_results: I) -> Self {
+    let unique_diffs: HashMap<String, _> = diff_results
+      .into_iter()
+      .map(|diff_result| (diff_result.fingerprint(), diff_result))
+      .collect();
+
     let mut diffs_by_spec_id = HashMap::new();
-    for diff_result in diff_results {
+    for (fingerprint, diff_result) in unique_diffs {
       let spec_id = match &diff_result {
         InteractionDiffResult::UnmatchedRequestBodyShape(diff) => diff
           .requests_trail

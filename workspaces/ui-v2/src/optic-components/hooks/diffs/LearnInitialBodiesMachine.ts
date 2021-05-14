@@ -176,7 +176,10 @@ export function recomputePendingEndpointCommands(
       isIgnored(i, true)
     );
 
-    if (allRequestBodiesIgnored && ctx.learnedBodies.responses.length > 0) {
+    if (
+      (allRequestBodiesIgnored && ctx.learnedBodies.responses.length > 0) ||
+      ctx.learnedBodies.responses.length === 0
+    ) {
       commands.push(AddRequest(ctx.method, pathId, ids.newRequestId()));
     }
 

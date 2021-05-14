@@ -8,10 +8,8 @@ import {
 } from '../../navigation/Routes';
 import { ContributionEditingStore } from '../../hooks/edit/Contributions';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
-import {
-  DocumentationRootPage,
-  EndpointRootPage,
-} from '../docs/DocumentationPage';
+import { DocumentationRootPage } from '../docs/DocumentationRootPage';
+import { EndpointRootPage } from '../docs/EndpointRootPage';
 import { useBatchCommits } from '../../hooks/useBatchCommits';
 
 export function ChangelogPages(props: any) {

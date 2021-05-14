@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRouteMatch, useParams, Switch } from 'react-router-dom';
 import { AsyncStatus } from '<src>/types';
 import { Provider as BaseUrlProvider } from '<src>/optic-components/hooks/useBaseUrl';
-import { DocumentationPages } from '<src>/optic-components/pages/docs/DocumentationPage';
+import { DocumentationPages } from '<src>/optic-components/pages/docs';
 import { SpectacleStore } from './spectacle-provider';
 import { DiffReviewEnvironments } from '<src>/optic-components/pages/diffs/ReviewDiffPages';
 import { CapturesServiceStore } from '<src>/optic-components/hooks/useCapturesHook';
@@ -58,11 +58,11 @@ export default function LocalCli() {
 
   return (
     <AppConfigurationStore config={appConfig}>
-      <AnalyticsStore>
-        <SpectacleStore spectacle={data.spectacle}>
-          <ConfigRepositoryStore config={data.configRepository}>
-            <CapturesServiceStore capturesService={data.capturesService}>
-              <BaseUrlProvider value={{ url: match.url }}>
+      <SpectacleStore spectacle={data.spectacle}>
+        <ConfigRepositoryStore config={data.configRepository}>
+          <CapturesServiceStore capturesService={data.capturesService}>
+            <BaseUrlProvider value={{ url: match.url }}>
+              <AnalyticsStore>
                 <Switch>
                   <>
                     <DocumentationPages />
@@ -70,11 +70,11 @@ export default function LocalCli() {
                     <ChangelogPages />
                   </>
                 </Switch>
-              </BaseUrlProvider>
-            </CapturesServiceStore>
-          </ConfigRepositoryStore>
-        </SpectacleStore>
-      </AnalyticsStore>
+              </AnalyticsStore>
+            </BaseUrlProvider>
+          </CapturesServiceStore>
+        </ConfigRepositoryStore>
+      </SpectacleStore>
     </AppConfigurationStore>
   );
 }

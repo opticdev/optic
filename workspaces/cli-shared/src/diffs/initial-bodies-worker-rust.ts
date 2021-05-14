@@ -81,7 +81,13 @@ export class InitialBodiesWorkerRust {
       return result;
     }
 
-    throw new Error('expected to receive a learning result');
+    // If there are no learningResults, we should return empty requests / responses
+    return {
+      pathId: this.config.pathId,
+      method: this.config.method,
+      requests: [],
+      responses: [],
+    };
   }
 }
 

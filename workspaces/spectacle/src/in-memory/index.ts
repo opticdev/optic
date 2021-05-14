@@ -25,6 +25,7 @@ import {
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { HttpInteraction } from '@useoptic/diff-engine-wasm/lib/streams/http-interactions';
 import { defaultIgnoreRules } from '@useoptic/cli-config/build/helpers/default-ignore-rules';
+import { IApiCliConfig, IOpticScript, IOpticTask } from '@useoptic/cli-config';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -109,7 +110,7 @@ interface InMemoryCapturesServiceDependencies {
   opticEngine: IOpticEngine;
   interactionsRepository: InMemoryInteractionsRepository;
   specRepository: IOpticSpecRepository;
-  configRepository: IOpticConfigRepository;
+  configRepository: InMemoryConfigRepository;
 }
 
 export class InMemoryCapturesService implements IOpticCapturesService {
@@ -169,13 +170,22 @@ export class InMemoryCapturesService implements IOpticCapturesService {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+interface IOpticInMemoryConfigDependencies {
+  config: IApiCliConfig;
+}
+
 export class InMemoryConfigRepository implements IOpticConfigRepository {
+  constructor(private dependencies: IOpticInMemoryConfigDependencies) {}
   addIgnoreRule(rule: string): Promise<void> {
     return Promise.resolve(undefined);
   }
 
   listIgnoreRules(): Promise<string[]> {
     return Promise.resolve(defaultIgnoreRules);
+  }
+
+  getApiName(): Promise<string> {
+    return Promise.resolve(this.dependencies.config.name);
   }
 }
 
@@ -399,15 +409,21 @@ export class InMemoryDiffRepository implements IOpticDiffRepository {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+const defaultConfig: IApiCliConfig = {
+  name: 'optic',
+  tasks: {},
+};
+
 export class InMemoryOpticContextBuilder {
   static async fromEvents(
     opticEngine: IOpticEngine,
-    events: any[]
+    events: any[],
+    config: IApiCliConfig = defaultConfig
   ): Promise<IOpticContext> {
     const notifications = new EventEmitter();
     const diffRepository = new InMemoryDiffRepository();
     const interactionsRepository = new InMemoryInteractionsRepository();
-    const configRepository = new InMemoryConfigRepository();
+    const configRepository = new InMemoryConfigRepository({ config });
     const specRepository = new InMemorySpecRepository({
       notifications,
       initialState: {
@@ -437,13 +453,14 @@ export class InMemoryOpticContextBuilder {
     opticEngine: IOpticEngine,
     events: any[],
     interactions: any[],
-    captureId: string
+    captureId: string,
+    config: IApiCliConfig = defaultConfig
   ): Promise<IOpticContext> {
     const notifications = new EventEmitter();
     const diffRepository = new InMemoryDiffRepository();
     const interactionsRepository = new InMemoryInteractionsRepository();
     await interactionsRepository.set(captureId, interactions);
-    const configRepository = new InMemoryConfigRepository();
+    const configRepository = new InMemoryConfigRepository({ config });
     const specRepository = new InMemorySpecRepository({
       notifications,
       initialState: {
