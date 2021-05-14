@@ -41,10 +41,7 @@ import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
 import { CaptureSaverWithDiffs } from '@useoptic/cli-shared/build/captures/avro/file-system/capture-saver-with-diffs';
 import { EventEmitter } from 'events';
 import { Config } from '../config';
-import {
-  computeCoverage,
-  printCoverage,
-} from '@useoptic/cli-shared/src/coverage';
+import { computeCoverage, printCoverage } from './coverage';
 import { spawnProcess, spawnProcessReturnExitCode } from './spawn-process';
 import { command } from '@oclif/test';
 import { getCaptureId } from './git/git-context-capture';

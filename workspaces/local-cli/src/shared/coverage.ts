@@ -180,6 +180,8 @@ export async function printCoverage(
         (r) => r.pathId === endpoint.pathId
       );
 
+      const response_keys = new Map<string, string>();
+
       if (requests.length > 0) {
         for (const request of requests) {
           if (request.bodies.length > 0) {
@@ -209,36 +211,35 @@ export async function printCoverage(
 
           for (const response of request.responses) {
             if (response.bodies.length > 0) {
-              console.log(
-                `\t\t Response: ${response.statusCode}: ${
-                  response.bodies[0].contentType
-                } -> ${countFormatter(
-                  TotalForPathAndMethodAndStatusCodeAndContentType({
-                    path_id: endpoint.pathId,
-                    http_method: endpoint.method,
-                    http_status_code: response.statusCode,
-                    response_content_type: response.bodies[0].contentType,
-                  }),
-                  map_with_diffs,
-                  map_without_diffs
-                )}`
+              response_keys.set(
+                TotalForPathAndMethodAndStatusCodeAndContentType({
+                  path_id: endpoint.pathId,
+                  http_method: endpoint.method,
+                  http_status_code: response.statusCode,
+                  response_content_type: response.bodies[0].contentType,
+                }),
+                `Response: ${response.statusCode}: ${response.bodies[0].contentType}`
               );
             } else {
-              console.log(
-                `\t\t Response: ${
-                  response.statusCode
-                }: No Body -> ${countFormatter(
-                  TotalForPathAndMethodAndStatusCodeWithoutBody({
-                    path_id: endpoint.pathId,
-                    http_method: endpoint.method,
-                    http_status_code: response.statusCode,
-                  }),
-                  map_with_diffs,
-                  map_without_diffs
-                )}`
+              response_keys.set(
+                TotalForPathAndMethodAndStatusCodeWithoutBody({
+                  path_id: endpoint.pathId,
+                  http_method: endpoint.method,
+                  http_status_code: response.statusCode,
+                }),
+                `Response: ${response.statusCode}: No Body`
               );
             }
           }
+        }
+      }
+
+      if (response_keys.size > 0) {
+        console.log(`\t ------`);
+        for (const [k, v] of response_keys) {
+          console.log(
+            `\t ${v} -> ${countFormatter(k, map_with_diffs, map_without_diffs)}`
+          );
         }
       }
     }

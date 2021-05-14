@@ -37,16 +37,27 @@ import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parser
 import { IInteractionTrail } from '@useoptic/cli-shared/build/diffs/interaction-trail';
 import { IRequestSpecTrail } from '@useoptic/cli-shared/build/diffs/request-spec-trail';
 import sortBy from 'lodash.sortby';
-import {
-  createEndpointDescriptor,
-  getCachedQueryResults,
-  KnownEndpoint,
-} from '../shared/coverage';
 import openBrowser from 'react-dev-utils/openBrowser';
 import { StatusRun } from '@useoptic/analytics/lib/events/status';
 import * as uuid from 'uuid';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 import { linkToCapture } from '../shared/ui-links';
+
+interface SpecEndpointDescriptor {
+  httpMethod: string;
+  method: string;
+  pathId: string;
+  requestBodies: any[];
+  responses: any[];
+  isEmpty: boolean;
+}
+
+export interface KnownEndpoint {
+  method: string;
+  pathId: string;
+  fullPath: string;
+  descriptor: SpecEndpointDescriptor;
+}
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
@@ -353,6 +364,130 @@ function extractRequestsTrail(i: IDiff): IRequestSpecTrail {
   const kind: string = Object.keys(i)[0];
   // @ts-ignore
   return i[kind]!.requestsTrail;
+}
+
+export function createEndpointDescriptor(
+  { method, pathId }: { method: string; pathId: string },
+  cachedQueryResults: {
+    requests: any[];
+    pathsById: { [id: string]: any };
+    requestIdsByPathId: { [id: string]: any };
+    responsesArray: any[];
+    contributions: any;
+  }
+): SpecEndpointDescriptor {
+  const {
+    requests,
+    pathsById,
+    requestIdsByPathId,
+    responsesArray,
+    contributions,
+  } = cachedQueryResults;
+
+  const requestIdsOnPath = (requestIdsByPathId[pathId] || []).map(
+    (requestId: any) => requests[requestId]
+  );
+  const requestsOnPathAndMethod = requestIdsOnPath.filter(
+    (request: any) =>
+      request.requestDescriptor.httpMethod === method.toUpperCase()
+  );
+
+  const requestBodies = requestsOnPathAndMethod.map(
+    //@ts-ignore
+    ({ requestId, requestDescriptor }) => {
+      const requestBody = getNormalizedBodyDescriptor(
+        requestDescriptor.bodyDescriptor
+      );
+      return {
+        requestId,
+        requestBody,
+      };
+    }
+  );
+
+  const responsesForPathAndMethod = sortBy(
+    responsesArray
+      .filter(
+        (response) =>
+          response.responseDescriptor.httpMethod === method.toUpperCase() &&
+          response.responseDescriptor.pathId === pathId
+      )
+      .map(({ responseId, responseDescriptor }) => {
+        const responseBody = getNormalizedBodyDescriptor(
+          responseDescriptor.bodyDescriptor
+        );
+        return {
+          responseId,
+          responseBody,
+          statusCode: responseDescriptor.httpStatusCode,
+        };
+      }),
+    ['statusCode']
+  );
+
+  return {
+    httpMethod: method,
+    method,
+    pathId,
+    requestBodies,
+    responses: responsesForPathAndMethod,
+    isEmpty:
+      requestBodies.length === 0 && responsesForPathAndMethod.length === 0,
+  };
+}
+
+function getNormalizedBodyDescriptor(value: any) {
+  if (value && value.ShapedBodyDescriptor) {
+    return value.ShapedBodyDescriptor;
+  }
+  return {};
+}
+
+function getCachedQueryResults(queries: any) {
+  const contributions = queries.contributions();
+
+  const {
+    requests,
+    pathComponents,
+    responses,
+    requestParameters,
+  } = queries.requestsState();
+  const pathIdsByRequestId = queries.pathsWithRequests();
+  const pathsById = pathComponents;
+  // const absolutePaths = Object.keys(pathsById).map(pathId => ({ [pathId]: queries.absolutePath(pathId) })).reduce((acc, value) => Object.assign(acc, value), {})
+  // console.log({ absolutePaths })
+  const pathIdsWithRequests = new Set(Object.values(pathIdsByRequestId));
+
+  const endpoints = queries.endpoints();
+  const shapesState = queries.shapesState();
+  const shapesResolvers = queries.shapesResolvers();
+  const requestIdsByPathId = Object.entries(pathIdsByRequestId).reduce(
+    (acc, entry: any) => {
+      const [requestId, pathId] = entry;
+      //@ts-ignore
+      const value = acc[pathId] || [];
+      value.push(requestId);
+      //@ts-ignore
+      acc[pathId] = value;
+      return acc;
+    },
+    {}
+  );
+  const cachedQueryResults = {
+    contributions,
+    requests,
+    requestParameters,
+    responses,
+    responsesArray: Object.values(responses),
+    pathIdsByRequestId,
+    requestIdsByPathId,
+    pathsById,
+    endpoints,
+    pathIdsWithRequests,
+    shapesState,
+    shapesResolvers,
+  };
+  return cachedQueryResults;
 }
 
 function getSpecEndpoints(queries: any): KnownEndpoint[] {
