@@ -51,7 +51,7 @@ mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clien
       },
     });
 
-    return await simulated;
+    return simulated;
   }
 
   return {
