@@ -1,5 +1,5 @@
 import { Command, flags } from '@oclif/command';
-import { ensureDaemonStarted } from '@useoptic/cli-server';
+import { ensureDaemonStarted, ensureDaemonStopped } from '@useoptic/cli-server';
 import path from 'path';
 import colors from 'colors';
 import {
@@ -168,6 +168,8 @@ export async function LocalTaskSessionWrapper(
   if (runner.foundDiff && flags['exit-on-diff']) {
     return await cleanupAndExit(1);
   }
+
+  await ensureDaemonStopped(lockFilePath);
 
   return await cleanupAndExit(
     flags['pass-exit-code'] !== false ? runner.exitWithCode : 0
