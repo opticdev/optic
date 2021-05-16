@@ -1,4 +1,4 @@
-import React, { FC, useContext, useMemo, useState } from 'react';
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
 import {
   IPendingEndpoint,
   IUndocumentedUrl,
@@ -116,6 +116,20 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       config
     )
   );
+
+  useEffect(() => {
+    send({ type: 'RESET' });
+    send({
+      type: 'REFRESH',
+      currentSpecContext: currentSpecContext,
+      parsedDiffs: props.diffs,
+      undocumentedUrls: props.urls,
+      trailValues: props.diffTrails,
+    });
+    // TODO: currentSpecContext dependency is ignored for now.
+    // this could lead to some bugs in future, so we should wrap it in useMemo
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.diffTrails, props.diffs, props.urls, send]);
 
   const context: SharedDiffStateContext = state.context;
 
