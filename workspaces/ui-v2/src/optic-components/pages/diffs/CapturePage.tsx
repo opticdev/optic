@@ -129,6 +129,10 @@ export function CapturePage(props: { showDiff?: boolean }) {
   );
 }
 
+export const CapturePageWithDiff = (props: any) => (
+  <CapturePage {...props} showDiff={true} />
+);
+
 function DiffCaptureResults() {
   const classes = useStyles();
   const {

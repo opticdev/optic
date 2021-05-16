@@ -81,6 +81,7 @@ export function CaptureSelectDropdown(props: any) {
                 diffEnvironmentsRoot.linkTo('local', capture.captureId) +
                   '/review'
               );
+              handleClose();
             }}
           >
             <CaptureMenuItem capture={capture} />
