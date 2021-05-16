@@ -1,9 +1,9 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { IHttpInteraction } from '@useoptic/domain-types';
 //@ts-ignore
 import oboe from 'oboe';
 import { CaptureSaver } from './capture-saver';
+import { IHttpInteraction } from '../../../optic-types';
 
 async function main(
   inputFilePaths: {

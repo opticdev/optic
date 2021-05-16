@@ -3358,24 +3358,6 @@
     "@typescript-eslint/types" "4.22.0"
     eslint-visitor-keys "^2.0.0"
 
-"@useoptic/domain-types@10.0.67":
-  version "10.0.67"
-  resolved "https://registry.npmjs.org/@useoptic/domain-types/-/domain-types-10.0.67.tgz#7f62a1c03dcd57446329b2edfd09b40adbd09cb9"
-  integrity sha512-2zLTWK6GhtbdoeTJUotD/0r2BlwJbp6sGVagJ7pQxbp/jOVAjcvtfoWNhkJKoCjio9GxyJqIEBgI1w3gUqbQvQ==
-
-"@useoptic/domain-utilities@10.0.67":
-  version "10.0.67"
-  resolved "https://registry.npmjs.org/@useoptic/domain-utilities/-/domain-utilities-10.0.67.tgz#f90d3dd01aeb80af0b8d7c466e67d770f15f0c29"
-  integrity sha512-XgP9r5LVbYh+HM6wPoW6+AOyN5dDaJe9Uzv40/DAxDdqBa+3yc6F/vqrji2XQ97N9lXEiar+sL6m8OaRpA8CgQ==
-  dependencies:
-    "@useoptic/domain" "10.0.67"
-    "@useoptic/domain-types" "10.0.67"
-
-"@useoptic/domain@10.0.67":
-  version "10.0.67"
-  resolved "https://registry.npmjs.org/@useoptic/domain/-/domain-10.0.67.tgz#2ff0036a79610da0a1ce1a5e8a1caf9024c50d0e"
-  integrity sha512-G52WSRxxGr6H5wFv3tdiKGRtAQgUrQbv4jJiHD4Ca8/RWjbfbOKJ7Byw4ExUmhBArGivPkdVpiyJDz9BVnHs4w==
-
 "@wasm-tool/wasm-pack-plugin@^1.3.1":
   version "1.4.0"
   resolved "https://registry.npmjs.org/@wasm-tool/wasm-pack-plugin/-/wasm-pack-plugin-1.4.0.tgz#752e4a6d8fe35477a3c6cafd2ac6b0351f692848"

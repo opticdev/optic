@@ -7,7 +7,6 @@ import {
   OpticConfigurationLocationFailure,
   readApiConfig,
 } from '@useoptic/cli-config';
-import { IHttpInteraction } from '@useoptic/domain-types';
 ////////////////////////////////////////////////////////////////////////////////
 import { Command } from '@oclif/command';
 
@@ -121,6 +120,7 @@ export async function delay(milliseconds: number) {
 ////////////////////////////////////////////////////////////////////////////////
 
 import * as uuid from 'uuid';
+import { IHttpInteraction } from './optic-types';
 
 export interface IdGenerator<T> {
   nextId(): T;

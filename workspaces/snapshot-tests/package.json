@@ -15,7 +15,6 @@
     "@useoptic/cli-shared": "10.0.1-alpha.1",
     "@useoptic/client-utilities": "10.0.1-alpha.1",
     "@useoptic/diff-engine-wasm": "10.0.1-alpha.1",
-    "@useoptic/domain-types": "10.0.67",
     "@useoptic/spectacle-shared": "10.0.1-alpha.1",
     "dataloader": "^2.0.0",
     "eventsource": "^1.0.7",
