@@ -96,15 +96,24 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
 
   const { config } = useConfigRepository();
 
-  const currentSpecContext: CurrentSpecContext = {
-    currentSpecPaths: props.allPaths,
-    currentSpecEndpoints: props.endpoints,
-    currentSpecRequests: props.requests,
-    currentSpecResponses: props.responses,
-    domainIds: newRandomIdGenerator(),
-    idGeneratorStrategy: 'random',
-    opticEngine,
-  };
+  const currentSpecContext: CurrentSpecContext = useMemo(
+    () => ({
+      currentSpecPaths: props.allPaths,
+      currentSpecEndpoints: props.endpoints,
+      currentSpecRequests: props.requests,
+      currentSpecResponses: props.responses,
+      domainIds: newRandomIdGenerator(),
+      idGeneratorStrategy: 'random',
+      opticEngine,
+    }),
+    [
+      opticEngine,
+      props.allPaths,
+      props.endpoints,
+      props.requests,
+      props.responses,
+    ]
+  );
 
   const [state, send]: any = useMachine(() =>
     newSharedDiffMachine(
@@ -126,10 +135,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       undocumentedUrls: props.urls,
       trailValues: props.diffTrails,
     });
-    // TODO: currentSpecContext dependency is ignored for now.
-    // this could lead to some bugs in future, so we should wrap it in useMemo
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.diffTrails, props.diffs, props.urls, send]);
+  }, [currentSpecContext, props.diffTrails, props.diffs, props.urls, send]);
 
   const context: SharedDiffStateContext = state.context;
 
