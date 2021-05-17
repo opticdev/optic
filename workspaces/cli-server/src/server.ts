@@ -22,10 +22,7 @@ import { analyticsEvents, track, trackWithApiName } from './analytics';
 import cors from 'cors';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { Session, SessionsManager } from './sessions';
-import {
-  getOrCreateAnonId,
-  getOrCreateSource,
-} from '@useoptic/cli-config/build/opticrc/optic-rc';
+import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
 
 const pJson = require('../package.json');
 
