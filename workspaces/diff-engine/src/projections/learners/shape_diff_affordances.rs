@@ -63,14 +63,24 @@ impl LearnedShapeDiffAffordancesProjection {
         })
         .collect();
 
-      let trail_results = observed_relevant_trails
-        .union(&expected_trails)
-        .map(|relevant_trail| {
-          all_observations
-            .get(relevant_trail)
-            .cloned()
-            .unwrap_or_else(|| TrailValues::new(relevant_trail))
-        });
+      let trail_results =
+        observed_relevant_trails
+          .union(&expected_trails)
+          .filter_map(|relevant_trail| {
+            all_observations.get(relevant_trail).cloned().or_else(|| {
+              // only generate empty observations for trails with object parents
+              let parent_trail = {
+                let mut trail = relevant_trail.clone();
+                trail.pop();
+                trail
+              };
+
+              all_observations
+                .get(&parent_trail)
+                .filter(|parent_observation| parent_observation.was_object)
+                .map(|_| TrailValues::from(relevant_trail.clone()))
+            })
+          });
 
       let fingerprint = diff.fingerprint();
 
@@ -351,7 +361,7 @@ mod test {
   }
   #[test]
   fn shape_diff_affordances_can_aggregate_affordances_for_deeply_nested_missing_fields() {
-    let body = BodyDescriptor::from(json!({
+    let body_with_object_parent = BodyDescriptor::from(json!({
       "races": [{
         "results": [{ "time": "1:03:04" }, { "time": "1:03:12" }],
       }, {
@@ -359,7 +369,16 @@ mod test {
       }],
     }));
 
-    let interaction_pointer = String::from("test-interaction-0");
+    let body_with_string_parent = BodyDescriptor::from(json!({
+      "races": [{
+        "results": [{ "time": "1:03:04" }, { "time": "1:03:12" }],
+      }, {
+        "results": [{ "time": "1:48:53" }, "1:40:22" ]
+      }],
+    }));
+
+    let with_object_parent_interaction_pointer = String::from("test-interaction-0");
+    let with_string_parent_interaction_pointer = String::from("test-interaction-1");
 
     // shape diff for races[1].results[1].time being missing
     let shape_diff : InteractionDiffResult = serde_json::from_value(json!({
@@ -375,21 +394,40 @@ mod test {
 
     let diff_fingerprint = shape_diff.fingerprint();
 
-    let analysis_result = BodyAnalysisResult {
-      body_location: BodyAnalysisLocation::MatchedResponse {
-        response_id: String::from("test-response-1"),
-        content_type: Some(String::from("application/json")),
-        status_code: 200,
-      },
-      trail_observations: observe_body_trails(body),
+    let analysis_with_object_parent = {
+      let analysis_result = BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::MatchedResponse {
+          response_id: String::from("test-response-1"),
+          content_type: Some(String::from("application/json")),
+          status_code: 200,
+        },
+        trail_observations: observe_body_trails(body_with_object_parent),
+      };
+      let interaction_pointers: Tags = vec![with_object_parent_interaction_pointer.clone()]
+        .into_iter()
+        .collect();
+      TaggedInput(analysis_result, interaction_pointers)
     };
 
-    let interaction_pointers: Tags = vec![interaction_pointer.clone()].into_iter().collect();
-    let tagged_analysis = TaggedInput(analysis_result, interaction_pointers);
+    let analysis_with_string_parent = {
+      let analysis_result = BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::MatchedResponse {
+          response_id: String::from("test-response-1"),
+          content_type: Some(String::from("application/json")),
+          status_code: 200,
+        },
+        trail_observations: observe_body_trails(body_with_string_parent),
+      };
+      let interaction_pointers: Tags = vec![with_string_parent_interaction_pointer.clone()]
+        .into_iter()
+        .collect();
+      TaggedInput(analysis_result, interaction_pointers)
+    };
 
     let mut projection = LearnedShapeDiffAffordancesProjection::from(vec![shape_diff]);
 
-    projection.apply(tagged_analysis);
+    projection.apply(analysis_with_object_parent);
+    projection.apply(analysis_with_string_parent);
 
     let mut results: Vec<_> = projection.into_iter().collect();
     assert_eq!(results.len(), 1); // one diff, one result per diff
@@ -398,12 +436,12 @@ mod test {
     assert_eq!(aggregate_key, diff_fingerprint); // per diff fingerprint
 
     let was_missing = &shape_diff_affordances.interactions.was_missing;
-    assert!(was_missing.contains(&interaction_pointer));
+    assert!(was_missing.contains(&with_object_parent_interaction_pointer));
 
     let was_missing_trails = &shape_diff_affordances.interactions.was_missing_trails;
     assert!(
       &was_missing_trails
-        .get(&interaction_pointer)
+        .get(&with_object_parent_interaction_pointer)
         .unwrap()
         .contains(
           &JsonTrail::empty()
@@ -415,6 +453,14 @@ mod test {
         ),
       "trails where expected shapes were missing are recorded"
     );
+
+    assert!(
+      !was_missing.contains(&with_string_parent_interaction_pointer),
+      "non-object parent bodies do not have children registered as missing"
+    );
+    assert!(&was_missing_trails
+      .get(&with_string_parent_interaction_pointer)
+      .is_none());
   }
 
   #[test]

@@ -343,6 +343,10 @@ impl JsonTrail {
     }
   }
 
+  pub fn pop(&mut self) -> Option<JsonTrailPathComponent> {
+    self.path.pop()
+  }
+
   pub fn is_descendant_of(&self, ancestor_trail: &JsonTrail) -> bool {
     self.path.len() > ancestor_trail.path.len()
       && self
