@@ -111,7 +111,6 @@ export default function AskForCommitMessageDiffPage(props: {
       </Button>
       {commitModalOpen ? (
         <CommitMessageModal
-          open={commitModalOpen}
           onClose={() => setCommitModalOpen(false)}
           onSave={handleSave}
           dialogText={`You have added ${pendingEndpointsCount} new ${

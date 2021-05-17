@@ -13,14 +13,12 @@ import {
 import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
 type CommitMessageModalProps = {
-  open: boolean;
   onClose: () => void;
   onSave: (commitMessage: string) => Promise<void>;
   dialogText: string;
 };
 
 export const CommitMessageModal: FC<CommitMessageModalProps> = ({
-  open,
   onClose,
   onSave,
   dialogText,
@@ -44,7 +42,7 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
 
   return (
     <Dialog
-      open={open}
+      open={true}
       onClose={onClose}
       aria-labelledby="form-dialog-title"
       PaperProps={{

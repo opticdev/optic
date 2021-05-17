@@ -104,7 +104,7 @@ export function useEndpointBody(
               pathId: request.pathId,
               method: request.method,
               changes: response.changes,
-              description: request.requestContributions.description || '',
+              description: response.contributions.description || '',
             };
           }
         );
