@@ -309,7 +309,7 @@ export async function printCoverage(
       const endpoint_contents = color_func(
         `${endpoint.method} ${colors.bold(
           endpoint.path || endpoint.pathId
-        )} -> ${pct_coverage}% covered`
+        )} -> ${pct_coverage.toFixed(1)}% covered`
       );
 
       table.push([
@@ -360,13 +360,13 @@ export async function printCoverage(
         'Documented Body Coverage',
         (covered_requests + covered_responses).toString(),
         (total_requests + total_repsonses).toString(),
-        `${body_pct.toFixed(3)}%`,
+        `${body_pct.toFixed(1)}%`,
       ].map((s) => body_color_func(s)),
       [
         'Documented Endpoint Coverage',
         covered_endpoints.toString(),
         total_endpoints.toString(),
-        `${endpoints_pct.toFixed(3)}%`,
+        `${endpoints_pct.toFixed(1)}%`,
       ].map((s) => endpoint_color_func(s))
     );
 
