@@ -399,6 +399,16 @@ Object {
 
 exports[`can shape hash a json object 2`] = `"CAAS8AEKCGdsb3NzYXJ5EuMBCAASCwoFdGl0bGUSAggCEtEBCghHbG9zc0RpdhLEAQgAEgsKBXRpdGxlEgIIAhKyAQoJR2xvc3NMaXN0EqQBCAASnwEKCkdsb3NzRW50cnkSkAEIABIICgJJRBICCAUSDAoGU29ydEFzEgIIAhIPCglHbG9zc1Rlcm0SAggCEg0KB0Fjcm9ueW0SAggCEgwKBkFiYnJldhICCAISNgoIR2xvc3NEZWYSKggAEgoKBHBhcmESAggCEhoKDEdsb3NzU2VlQWxzbxIKCAEaAggCGgIIAhIOCghHbG9zc1NlZRICCAI="`;
 
+exports[`correctly encode "{}" 1`] = `
+Object {
+  "data": Array [
+    8,
+    0,
+  ],
+  "type": "Buffer",
+}
+`;
+
 exports[`shape hashes of string are secure 1`] = `
 Object {
   "data": Array [
