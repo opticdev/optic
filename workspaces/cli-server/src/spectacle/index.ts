@@ -59,13 +59,15 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
     commandContext: IOpticCommandContext
   ): Promise<void> {
     const commandsStream = AT.from<Streams.Commands.Command>(commands);
-    const events = OpticEngine.commit(commandsStream, {
+    const output = OpticEngine.commit(commandsStream, {
       specDirPath: this.dependencies.specDirPath,
       commitMessage: commitMessage,
       clientSessionId: commandContext.clientSessionId || 'unknown-session',
       clientId: commandContext.clientId,
       appendToRoot: !isEnvTrue(process.env.OPTIC_SPLIT_SPEC_EVENTS),
     });
+    for await (const chunk of output) {
+    }
   }
 
   async listEvents(): Promise<any[]> {
