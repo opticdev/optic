@@ -42,3 +42,7 @@ test('can create a sanitized example from the hash', async () => {
 test('shape hashes of string are secure', async () => {
   expect(toBytes('123,456,789')).toMatchSnapshot();
 });
+
+test('correctly encode "{}"', async () => {
+  expect(toBytes({})).toMatchSnapshot();
+});
