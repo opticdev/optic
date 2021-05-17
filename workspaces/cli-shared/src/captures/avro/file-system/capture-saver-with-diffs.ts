@@ -2,13 +2,13 @@ import {
   developerDebugLogger,
   FileSystemAvroCaptureSaver,
 } from '../../../index';
-import { IGroupingIdentifiers, IHttpInteraction } from '@useoptic/domain-types';
 import { IFileSystemCaptureLoaderConfig } from './capture-loader';
 import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
 import fs from 'fs-extra';
 import path from 'path';
 import { IApiCliConfig, parseIgnore } from '@useoptic/cli-config';
 import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
+import { IGroupingIdentifiers, IHttpInteraction } from '../../../optic-types';
 
 interface IFileSystemCaptureLoaderWithDiffsConfig
   extends IFileSystemCaptureLoaderConfig {
