@@ -241,6 +241,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         } catch (e) {
           console.error(e);
           debugger;
+          throw e;
         }
 
         await reload(context.spectacleContext().opticContext);
