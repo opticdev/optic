@@ -107,10 +107,9 @@ export async function LocalTaskSessionWrapper(
   deprecationLogger.enabled = true;
 
   if (flags['ci']) {
-    // Change the defaults to true. You can still manually turn them off.
-    flags['print-coverage'] ??= true;
-    flags['pass-exit-code'] ??= true;
-    flags['collect-diffs'] ??= true;
+    flags['print-coverage'] = true;
+    flags['pass-exit-code'] = true;
+    flags['collect-diffs'] = true;
   }
 
   const usesTaskSpecificBoundary = flags['ci'] || flags['exit-on-diff'];
