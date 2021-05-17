@@ -233,7 +233,6 @@ export class Actual {
       const wasEmptyArraySet = new Set([...wasEmptyArray]);
       const wasArrayWithItems = setDifference(wasArraySet, wasEmptyArraySet);
 
-      debugger;
       results.push({
         label: 'list',
         kind: ICoreShapeKinds.ListKind,
