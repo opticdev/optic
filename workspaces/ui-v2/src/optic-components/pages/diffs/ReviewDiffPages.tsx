@@ -46,9 +46,6 @@ export function DiffReviewPages(props: any) {
     allPaths.loading ||
     allRequestsAndResponsesOfBaseSpec.loading;
 
-  // TODO: we have a problem here because isLoading is false on mount,
-  // then true on next render and after that it becomes false upon loadin
-  // this results in a page content flash before it starts loading data
   if (isLoading) {
     return (
       <LoadingPage>
