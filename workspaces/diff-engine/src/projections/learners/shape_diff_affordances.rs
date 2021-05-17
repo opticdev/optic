@@ -63,14 +63,24 @@ impl LearnedShapeDiffAffordancesProjection {
         })
         .collect();
 
-      let trail_results = observed_relevant_trails
-        .union(&expected_trails)
-        .map(|relevant_trail| {
-          all_observations
-            .get(relevant_trail)
-            .cloned()
-            .unwrap_or_else(|| TrailValues::new(relevant_trail))
-        });
+      let trail_results =
+        observed_relevant_trails
+          .union(&expected_trails)
+          .filter_map(|relevant_trail| {
+            all_observations.get(relevant_trail).cloned().or_else(|| {
+              // only generate empty observations for trails with object parents
+              let parent_trail = {
+                let mut trail = relevant_trail.clone();
+                trail.pop();
+                trail
+              };
+
+              all_observations
+                .get(&parent_trail)
+                .filter(|parent_observation| parent_observation.was_object)
+                .map(|_| TrailValues::from(relevant_trail.clone()))
+            })
+          });
 
       let fingerprint = diff.fingerprint();
 
