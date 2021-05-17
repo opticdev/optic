@@ -371,11 +371,12 @@ impl TrailValues {
       },
       if self.was_array {
         let item_trail = self.trail.with_array_item(0);
-        let (item_shape_id, item_is_unknown) = if self.was_empty_array {
-          (id_generator.shape(), true) // will be used for an $unknown shape
+        let item_prototype = existing_prototypes.get(&item_trail);
+
+        let (item_shape_id, item_is_unknown) = if self.was_empty_array && item_prototype.is_none() {
+          (id_generator.shape(), true) // wi ll be used for an $unknown shape
         } else {
-          let item_prototype = existing_prototypes
-            .get(&item_trail)
+          let item_prototype = item_prototype
             .expect("item shape prototype should have been generated before its parent list");
           (item_prototype.id.clone(), false)
         };
@@ -593,6 +594,11 @@ mod test {
     let primitive_array_observations = observe_body_trails(primitive_array_body);
     let empty_array_observations = observe_body_trails(empty_array_body);
     let polymorphic_array_observations = observe_body_trails(polymorphic_array_body).normalized();
+    let empty_and_primitive_array_observations = {
+      let mut result = primitive_array_observations.clone();
+      result.union(empty_array_observations.clone());
+      result
+    };
 
     let mut test_id_generator = TestIdGenerator::default();
 
@@ -624,6 +630,17 @@ mod test {
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_array_bodies__polymorphic_array_results",
       &polymorphic_array_results
+    );
+
+    let empty_and_primitive_array_results = collect_commands(
+      empty_and_primitive_array_observations
+        .into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
+    assert!(empty_and_primitive_array_results.0.is_some());
+    assert_valid_commands(empty_and_primitive_array_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_array_bodies__empty_and_primitive_array_results",
+      &empty_and_primitive_array_results
     );
   }
   #[test]
