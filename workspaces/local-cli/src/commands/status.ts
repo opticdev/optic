@@ -24,7 +24,7 @@ import {
 } from '@useoptic/cli-config';
 import { getCaptureId, isInRepo } from '../shared/git/git-context-capture';
 import colors from 'colors';
-import { getUser, trackUserEvent } from '../shared/analytics';
+import { trackUserEvent } from '../shared/analytics';
 import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 import { IInteractionTrail } from '@useoptic/cli-shared/build/diffs/interaction-trail';
 import { IRequestSpecTrail } from '@useoptic/cli-shared/build/diffs/request-spec-trail';
@@ -322,7 +322,6 @@ export default class Status extends Command {
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
-    cliClient.setIdentity(await getUser());
     const cliSession = await cliClient.findSession(basePath, null, null);
     developerDebugLogger({ cliSession });
     const uiBaseUrl = makeUiBaseUrl(daemonState);

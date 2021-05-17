@@ -17,7 +17,6 @@ import {
   makeUiBaseUrl,
   userDebugLogger,
 } from '@useoptic/cli-shared';
-import { getUser } from '../shared/analytics';
 import { Config } from '../config';
 import { linkToDocumentation } from '../shared/ui-links';
 export default class Spec extends Command {
@@ -53,7 +52,6 @@ export default class Spec extends Command {
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
-    cliClient.setIdentity(await getUser());
     const cliSession = await cliClient.findSession(basePath, null, null);
     developerDebugLogger({ cliSession });
     const uiBaseUrl = makeUiBaseUrl(daemonState);

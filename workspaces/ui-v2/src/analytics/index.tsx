@@ -10,8 +10,6 @@ import Analytics from '@segment/analytics.js-core/build/analytics';
 import SegmentIntegration from '@segment/analytics.js-integration-segmentio';
 import { OpticUIEvents } from '@useoptic/analytics/lib/optic-ui/OpticUIEvents';
 import invariant from 'invariant';
-//@ts-ignore
-import niceTry from 'nice-try';
 import { useAppConfig } from '../optic-components/hooks/config/AppConfiguration';
 import { Client } from '@useoptic/cli-client';
 import * as Sentry from '@sentry/react';
@@ -30,22 +28,37 @@ const AnalyticsContext = React.createContext<
 >(undefined);
 
 export function useClientAgent() {
-  const [clientAgent, setClientAgent] = useState<string | null>(null);
+  const [clientAgent, setClientAgent] = useState<{
+    id: string;
+    source: string;
+  } | null>(null);
   useEffect(() => {
     async function loadIdentity() {
-      await niceTry(async () => {
-        const client = new Client('/api');
-        const response = await client.getIdentity();
-        if (response.ok) {
-          const { anonymousId } = await response.json();
-          setClientAgent(anonymousId);
+      const client = new Client('/api');
+      try {
+        const [identityResponse, sourceResponse] = await Promise.all([
+          client.getIdentity(),
+          client.getSource(),
+        ]);
+        if (identityResponse.ok && sourceResponse.ok) {
+          const { anonymousId } = await identityResponse.json();
+          const { source } = await sourceResponse.json();
+          setClientAgent({
+            id: anonymousId,
+            source,
+          });
         } else {
-          setClientAgent('anon_id');
+          throw new Error();
         }
-      });
+      } catch (e) {
+        setClientAgent({
+          id: 'anon_id',
+          source: 'user',
+        });
+      }
     }
     loadIdentity();
-  }, [setClientAgent]);
+  }, []);
   return clientAgent;
 }
 
@@ -70,7 +83,7 @@ export function AnalyticsStore({ children }: { children: ReactNode }) {
         };
 
         analytics.current.initialize(integrationSettings);
-        analytics.current.identify(clientAgent);
+        analytics.current.identify(clientAgent.id);
       }
       //fullstory
       if (appConfig.analytics.fullStoryOrgId) {
@@ -83,7 +96,7 @@ export function AnalyticsStore({ children }: { children: ReactNode }) {
           release: clientId,
           logLevel: LogLevel.Debug,
         });
-        Sentry.setUser({ id: clientAgent });
+        Sentry.setUser({ id: clientAgent.id });
       }
     }
   }, [
@@ -98,7 +111,12 @@ export function AnalyticsStore({ children }: { children: ReactNode }) {
       if (appConfig.analytics.enabled) {
         if (analytics.current) {
           analytics.current.track(event.name, {
-            properties: { ...event.properties, clientId, apiName },
+            properties: {
+              ...event.properties,
+              clientId,
+              apiName,
+              source: clientAgent?.source || 'user',
+            },
           });
           try {
             FullStory.event(event.name, event.properties);

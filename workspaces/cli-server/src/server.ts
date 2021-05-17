@@ -18,11 +18,14 @@ import {
 import Bottleneck from 'bottleneck';
 import { basePath } from '@useoptic/ui-v2';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
-import { analyticsEvents, trackWithApiName } from './analytics';
+import { analyticsEvents, track, trackWithApiName } from './analytics';
 import cors from 'cors';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { Session, SessionsManager } from './sessions';
-import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
+import {
+  getOrCreateAnonId,
+  getOrCreateSource,
+} from '@useoptic/cli-config/build/opticrc/optic-rc';
 
 const pJson = require('../package.json');
 
@@ -97,30 +100,32 @@ class CliServer {
     let user: object | null;
 
     const anonIdPromise = getOrCreateAnonId();
+    const sourcePromise = getOrCreateSource();
 
     app.get('/api/identity', async (req, res: express.Response) => {
       res.json({ user, anonymousId: await anonIdPromise });
+    });
+
+    app.get('/api/source', async (req, res: express.Response) => {
+      res.json({ user, anonymousId: await sourcePromise });
     });
 
     app.get('/api/daemon/status', async (req, res: express.Response) => {
       res.json({ isRunning: true, version: pJson.version });
     });
 
-    app.put(
-      '/api/identity',
-      bodyParser.json({ limit: '5kb' }),
+    app.post(
+      '/api/tracking/events',
+      bodyParser.json({ limit: '100kb' }),
       async (req, res: express.Response) => {
-        if (req.body.user) {
-          user = req.body.user;
-          res.status(202).json({});
-        } else {
-          res.sendStatus(400);
-        }
+        const events: TrackingEventBase<any>[] = req.body.events;
+        track(events);
+        res.status(200).json({});
       }
     );
 
     app.post(
-      '/api/tracking/events',
+      '/api/tracking/events/apiname',
       bodyParser.json({ limit: '100kb' }),
       async (req, res: express.Response) => {
         const events: TrackingEventBase<any>[] = req.body.events;
@@ -257,7 +262,7 @@ class CliServer {
           if (err) {
             console.error(err);
           }
-          resolve();
+          resolve(null);
         });
       });
     }

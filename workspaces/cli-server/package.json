@@ -16,6 +16,7 @@
   "dependencies": {
     "@sentry/node": "^5.28.0",
     "@sentry/tracing": "^5.28.0",
+    "@types/analytics-node": "^3.1.4",
     "@useoptic/analytics": "10.0.1-alpha.1",
     "@useoptic/cli-client": "10.0.1-alpha.1",
     "@useoptic/cli-config": "10.0.1-alpha.1",
