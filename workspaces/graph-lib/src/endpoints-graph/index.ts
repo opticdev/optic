@@ -260,7 +260,13 @@ export class PathNodeWrapper implements NodeWrapper {
   get absolutePathPatternWithParameterNames(): string {
     let path = '';
 
-    for (const component of this.components()) {
+    const components = this.components();
+
+    if (components.length === 1 && components[0].value.pathId === 'root') {
+      return '/';
+    }
+
+    for (const component of components) {
       if (component.value.pathId === 'root') continue;
       if (component.value.isParameterized) {
         path = `${path}/{${component.value.name}}`;
