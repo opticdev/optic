@@ -50,8 +50,6 @@ export function AnalyticsStore({ children }: { children: ReactNode }) {
   const appConfig = useAppConfig();
   const apiName = useApiName();
   const cliClient = new Client('/api');
-  //@ts-ignore
-  // const analytics = useRef(new Analytics());
   const clientAgent = useClientAgent();
   //initialize
   useEffect(() => {

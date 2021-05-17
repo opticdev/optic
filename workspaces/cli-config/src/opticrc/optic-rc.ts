@@ -5,8 +5,7 @@ import { hri } from 'human-readable-ids';
 
 export const opticrcPath = path.resolve(os.homedir(), '.opticrc');
 
-// TODO change env variable name
-const getSourceFromEnv = () => process.env._OPTIC_SOURCE || 'user';
+const getSourceFromEnv = () => process.env.__OPTIC_SOURCE || 'user';
 
 export function defaultStorage(): IUserStorage {
   return {

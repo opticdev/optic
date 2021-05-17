@@ -10,11 +10,6 @@ class Client {
     return JsonHttpClient.getJsonWithoutHandlingResponse(url);
   }
 
-  getSource() {
-    const url = `${this.baseUrl}/source`;
-    return JsonHttpClient.getJsonWithoutHandlingResponse(url);
-  }
-
   postTrackingEvents(events: TrackingEventBase<any>[]) {
     const url = `${this.baseUrl}/tracking/events/apiname`;
     return JsonHttpClient.postJson(url, { events });

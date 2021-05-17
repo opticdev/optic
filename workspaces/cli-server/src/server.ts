@@ -100,14 +100,9 @@ class CliServer {
     let user: object | null;
 
     const anonIdPromise = getOrCreateAnonId();
-    const sourcePromise = getOrCreateSource();
 
     app.get('/api/identity', async (req, res: express.Response) => {
       res.json({ user, anonymousId: await anonIdPromise });
-    });
-
-    app.get('/api/source', async (req, res: express.Response) => {
-      res.json({ user, anonymousId: await sourcePromise });
     });
 
     app.get('/api/daemon/status', async (req, res: express.Response) => {
