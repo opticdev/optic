@@ -1845,6 +1845,34 @@
   dependencies:
     fancy-test "^1.4.3"
 
+"@peculiar/asn1-schema@^2.0.27", "@peculiar/asn1-schema@^2.0.32":
+  version "2.0.32"
+  resolved "https://registry.npmjs.org/@peculiar/asn1-schema/-/asn1-schema-2.0.32.tgz#8711214df06859dbea5491ca0b400602adfbfc45"
+  integrity sha512-JzGUVxOFN+RKslJrGAxcq4l6tEmmLY1XuALHINVxc8BJsB4bXOdZzTvxbN9dCPk65Vbulno0B6DmImZ7I6SO8w==
+  dependencies:
+    "@types/asn1js" "^2.0.0"
+    asn1js "^2.1.1"
+    pvtsutils "^1.1.2"
+    tslib "^2.2.0"
+
+"@peculiar/json-schema@^1.1.12":
+  version "1.1.12"
+  resolved "https://registry.npmjs.org/@peculiar/json-schema/-/json-schema-1.1.12.tgz#fe61e85259e3b5ba5ad566cb62ca75b3d3cd5339"
+  integrity sha512-coUfuoMeIB7B8/NMekxaDzLhaYmp0HZNPEjYRm9goRou8UZIC3z21s0sL9AWoCw4EG876QyO3kYrc61WNF9B/w==
+  dependencies:
+    tslib "^2.0.0"
+
+"@peculiar/webcrypto@^1.1.7":
+  version "1.1.7"
+  resolved "https://registry.npmjs.org/@peculiar/webcrypto/-/webcrypto-1.1.7.tgz#ff02008612e67ab7cc2a92fce04a7f0e2a04b71c"
+  integrity sha512-aCNLYdHZkvGH+T8/YBOY33jrVGVuLIa3bpizeHXqwN+P4ZtixhA+kxEEWM1amZwUY2nY/iuj+5jdZn/zB7EPPQ==
+  dependencies:
+    "@peculiar/asn1-schema" "^2.0.32"
+    "@peculiar/json-schema" "^1.1.12"
+    pvtsutils "^1.1.6"
+    tslib "^2.2.0"
+    webcrypto-core "^1.2.0"
+
 "@pmmmwh/react-refresh-webpack-plugin@0.4.3":
   version "0.4.3"
   resolved "https://registry.npmjs.org/@pmmmwh/react-refresh-webpack-plugin/-/react-refresh-webpack-plugin-0.4.3.tgz#1eec460596d200c0236bf195b078a5d1df89b766"
@@ -2496,6 +2524,11 @@
   version "4.2.1"
   resolved "https://registry.npmjs.org/@types/aria-query/-/aria-query-4.2.1.tgz#78b5433344e2f92e8b306c06a5622c50c245bf6b"
   integrity sha512-S6oPal772qJZHoRZLFc/XoZW2gFvwXusYUmXPXkgxJLuEk2vOt7jc4Yo6z/vtI0EBkbPBVrJJ0B+prLIKiWqHg==
+
+"@types/asn1js@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/@types/asn1js/-/asn1js-2.0.0.tgz#10ca75692575744d0117098148a8dc84cbee6682"
+  integrity sha512-Jjzp5EqU0hNpADctc/UqhiFbY1y2MqIxBVa2S4dBlbnZHTLPMuggoL5q43X63LpsOIINRDirBjP56DUUKIUWIA==
 
 "@types/babel__core@^7.0.0", "@types/babel__core@^7.1.7":
   version "7.1.14"
@@ -3934,6 +3967,13 @@ asn1@~0.2.3:
   integrity sha512-jxwzQpLQjSmWXgwaCZE9Nz+glAG01yF1QnWgbhGwHI5A6FRIEY6IVqtHhIepHqI7/kyEyQEagBC5mBEFlIYvdg==
   dependencies:
     safer-buffer "~2.1.0"
+
+asn1js@^2.0.26, asn1js@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.npmjs.org/asn1js/-/asn1js-2.1.1.tgz#bb3896191ebb5fb1caeda73436a6c6e20a2eedff"
+  integrity sha512-t9u0dU0rJN4ML+uxgN6VM2Z4H5jWIYm0w8LsZLzMJaQsgL3IJNbxHgmbWDvJAwspyHpDFuzUaUFh4c05UB4+6g==
+  dependencies:
+    pvutils latest
 
 assert-plus@1.0.0, assert-plus@^1.0.0:
   version "1.0.0"
@@ -13475,6 +13515,18 @@ pupa@^2.1.1:
   dependencies:
     escape-goat "^2.0.0"
 
+pvtsutils@^1.1.2, pvtsutils@^1.1.6:
+  version "1.1.7"
+  resolved "https://registry.npmjs.org/pvtsutils/-/pvtsutils-1.1.7.tgz#39a65ccb3b7448c974f6a6141ce2aad037b3f13c"
+  integrity sha512-faOiD/XpB/cIebRzYwzYjCmYgiDd53YEBni+Mt1+8/HlrARHYBpsU2OHOt3EZ1ZhfRNxPL0dH3K/vKaMgNWVGA==
+  dependencies:
+    tslib "^2.2.0"
+
+pvutils@latest:
+  version "1.0.17"
+  resolved "https://registry.npmjs.org/pvutils/-/pvutils-1.0.17.tgz#ade3c74dfe7178944fe44806626bd2e249d996bf"
+  integrity sha512-wLHYUQxWaXVQvKnwIDWFVKDJku9XDCvyhhxoq8dc5MFdIlRenyPI9eSfEtcvgHgD7FlvCyGAlWgOzRnZD99GZQ==
+
 q@^1.1.2:
   version "1.5.1"
   resolved "https://registry.npmjs.org/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
@@ -16012,7 +16064,7 @@ tslib@^1, tslib@^1.10.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
   resolved "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.0.0, tslib@^2.0.3, tslib@^2.1.0, tslib@~2.2.0:
+tslib@^2.0.0, tslib@^2.0.3, tslib@^2.1.0, tslib@^2.2.0, tslib@~2.2.0:
   version "2.2.0"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.2.0.tgz#fb2c475977e35e241311ede2693cee1ec6698f5c"
   integrity sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==
@@ -16677,6 +16729,17 @@ web-vitals@^1.0.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/web-vitals/-/web-vitals-1.1.1.tgz#2df535e3355fb7fbe34787b44b736e270e539377"
   integrity sha512-jYOaqu01Ny1NvMwJ3dBJDUOJ2PGWknZWH4AUnvFOscvbdHMERIKT2TlgiAey5rVyfOePG7so2JcXXZdSnBvioQ==
+
+webcrypto-core@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.npmjs.org/webcrypto-core/-/webcrypto-core-1.2.0.tgz#44fda3f9315ed6effe9a1e47466e0935327733b5"
+  integrity sha512-p76Z/YLuE4CHCRdc49FB/ETaM4bzM3roqWNJeGs+QNY1fOTzKTOVnhmudW1fuO+5EZg6/4LG9NJ6gaAyxTk9XQ==
+  dependencies:
+    "@peculiar/asn1-schema" "^2.0.27"
+    "@peculiar/json-schema" "^1.1.12"
+    asn1js "^2.0.26"
+    pvtsutils "^1.1.2"
+    tslib "^2.1.0"
 
 webidl-conversions@^4.0.2:
   version "4.0.2"
