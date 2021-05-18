@@ -18,14 +18,12 @@ import { AssembleCommands } from '<src>/lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
 import { generatePathCommands } from '<src>/lib/stable-path-batch-generator';
 
-export const newSharedDiffMachine = (
+function transformDiffs(
   currentSpecContext: CurrentSpecContext,
-  parsedDiffs: ParsedDiff[],
-  undocumentedUrls: IUndocumentedUrl[],
-  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash,
-  diffService: IOpticDiffService,
-  configRepository: IOpticConfigRepository
-) => {
+  parsedDiffs: ParsedDiff[] = [],
+  undocumentedUrls: IUndocumentedUrl[] = [],
+  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash
+) {
   const knownUndocumented = includeUndocumented(
     parsedDiffs,
     currentSpecContext
@@ -46,6 +44,27 @@ export const newSharedDiffMachine = (
     ...undocumentedUrls,
   ];
 
+  return {
+    undocumentedUrls: initialDisplayUndocumented,
+    knownPathUndocumented: knownUndocumented,
+    displayedUndocumentedUrls: initialDisplayUndocumented,
+    parsedDiffs: parsedDiffs,
+    trailValues,
+    diffsGroupedByEndpoint: groupDiffsByTheirEndpoints(
+      currentSpecContext,
+      parsedDiffs
+    ),
+  };
+}
+
+export const newSharedDiffMachine = (
+  currentSpecContext: CurrentSpecContext,
+  parsedDiffs: ParsedDiff[],
+  undocumentedUrls: IUndocumentedUrl[],
+  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+  diffService: IOpticDiffService,
+  configRepository: IOpticConfigRepository
+) => {
   return Machine<
     SharedDiffStateContext,
     SharedDiffStateSchema,
@@ -64,17 +83,12 @@ export const newSharedDiffMachine = (
         existingEndpointNameContributions: {},
         existingEndpointPathContributions: {},
       },
-      results: {
-        undocumentedUrls: initialDisplayUndocumented,
-        knownPathUndocumented: knownUndocumented,
-        displayedUndocumentedUrls: initialDisplayUndocumented,
-        parsedDiffs: parsedDiffs,
-        trailValues,
-        diffsGroupedByEndpoint: groupDiffsByTheirEndpoints(
-          currentSpecContext,
-          parsedDiffs
-        ),
-      },
+      results: transformDiffs(
+        currentSpecContext,
+        parsedDiffs,
+        undocumentedUrls,
+        trailValues
+      ),
       pendingEndpoints: [],
       browserAppliedIgnoreRules: [],
       browserDiffHashIgnoreRules: [],
@@ -285,6 +299,20 @@ export const newSharedDiffMachine = (
                     ctx.choices.existingEndpointNameContributions,
                     ctx.choices.existingEndpointPathContributions
                   ),
+              }),
+            ],
+          },
+          REFRESH: {
+            actions: [
+              assign({
+                results: (ctx, event) => {
+                  return transformDiffs(
+                    event.currentSpecContext,
+                    event.parsedDiffs,
+                    event.undocumentedUrls,
+                    event.trailValues
+                  );
+                },
               }),
             ],
           },
@@ -538,6 +566,13 @@ export type SharedDiffStateEvent =
     }
   | {
       type: 'RESET';
+    }
+  | {
+      type: 'REFRESH';
+      currentSpecContext: CurrentSpecContext;
+      parsedDiffs: ParsedDiff[];
+      undocumentedUrls: IUndocumentedUrl[];
+      trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
     }
   | {
       type: 'USER_FINISHED_REVIEW';

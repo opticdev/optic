@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { NavigationRoute } from '../../navigation/NavigationRoute';
 import {
   useDiffEnvironmentsRoot,
@@ -19,7 +19,7 @@ import { useDiffsForCapture } from '../../hooks/useDiffForCapture';
 import { v4 as uuidv4 } from 'uuid';
 import { useAllRequestsAndResponses } from '../../hooks/diffs/useAllRequestsAndResponses';
 import { useEndpoints } from '../../hooks/useEndpointsHook';
-import { CapturePage } from './CapturePage';
+import { CapturePage, CapturePageWithDiff } from './CapturePage';
 import { LoadingPage } from '../../loaders/Loading';
 import { LoadingDiffReview } from '../../diffs/LoadingDiffReview';
 import { usePaths } from '<src>/optic-components/hooks/usePathsHook';
@@ -27,7 +27,7 @@ import { usePaths } from '<src>/optic-components/hooks/usePathsHook';
 export function DiffReviewPages(props: any) {
   const { match } = props;
   const { boundaryId } = match.params;
-  const [diffId] = useState(uuidv4());
+  const diffId = useMemo(() => uuidv4(), []);
 
   //dependencies
   const diff = useDiffsForCapture(boundaryId, diffId);
@@ -68,7 +68,7 @@ export function DiffReviewPages(props: any) {
     >
       <NavigationRoute
         path={diffReviewCapturePageLink.path}
-        Component={() => <CapturePage showDiff={true} />}
+        Component={CapturePageWithDiff}
         AccessoryNavigation={() => <DiffAccessoryNavigation />}
       />
       <NavigationRoute
