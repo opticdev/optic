@@ -18,6 +18,7 @@ module.exports = {
       'using/advanced-configuration',
       'using/troubleshooting',
       'using/cli-commands',
+      'using/spectacle',
     ],
     'Optic in Real Environments': [
       'deploy/live',

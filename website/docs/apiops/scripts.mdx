@@ -29,7 +29,9 @@ A script is invoked by name with `api scripts <name>`. Once invoked, it:
 - [optional] checks for any defined dependencies in `dependsOn`.
 - [optional] If defined dependencies are not present and an `install` parameter is supplied, the installation command is run. In this example, `install` is not defined as there are no dependencies defined.
 - generates OAS files in both YAML and JSON format.
-- provides environment variables to the script command: `OPENAPI_JSON` and `OPENAPI_YAML`. These contain the paths to the OAS files.
+- provides environment variables to the script command
+    - `OPENAPI_JSON` and `OPENAPI_YAML` - Contain the paths to the OAS files.
+    - `SPECTACLE_URL` - Contains the URL to the running Spectacle server
 - run the `command`
 
 Running the `publish-readme` script defined above will look like:
