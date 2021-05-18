@@ -16,6 +16,7 @@ import {
 } from '@material-ui/core';
 import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '../../theme';
 import { CaptureSelectDropdown } from '../../diffs/contexts/CaptureSelectDropdown';
+import { LoadingDiffReview } from '../../diffs/LoadingDiffReview';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import {
   useDiffEnvironmentsRoot,
@@ -34,13 +35,11 @@ export function CapturePage(props: { showDiff?: boolean }) {
 
   const noCaptures =
     !capturesState.loading && capturesState.captures.length === 0;
+  const shouldRedirect =
+    !capturesState.loading && !props.showDiff && !!capturesState.captures[0];
 
   useEffect(() => {
-    if (
-      !capturesState.loading &&
-      !props.showDiff &&
-      capturesState.captures[0]
-    ) {
+    if (shouldRedirect) {
       history.push(
         diffEnvironmentsRoot.linkTo(
           'local',
@@ -48,7 +47,15 @@ export function CapturePage(props: { showDiff?: boolean }) {
         )
       );
     }
-  }, [capturesState, history, diffEnvironmentsRoot, props.showDiff]);
+  }, [history, diffEnvironmentsRoot, shouldRedirect, capturesState.captures]);
+
+  if (capturesState.loading) {
+    return <LoadingDiffReview />;
+  }
+
+  if (shouldRedirect) {
+    return null;
+  }
 
   return (
     <CenteredColumn maxWidth="md" style={{ paddingTop: 50, paddingBottom: 50 }}>
