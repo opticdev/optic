@@ -44,12 +44,14 @@ import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parser
 import { IUnrecognizedUrl } from '@useoptic/spectacle';
 import { StatusRun } from '@useoptic/analytics/lib/events/status';
 import { cli } from 'cli-ux';
+import { computeCoverage, printCoverage } from '../shared/coverage';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
 
   static flags = {
     'pre-commit': flags.boolean(),
+    'print-coverage': flags.boolean(),
     review: flags.boolean(),
   };
 
@@ -60,6 +62,7 @@ export default class Status extends Command {
 
     const exitOnDiff = Boolean(flags['pre-commit']);
     const openReviewPage = Boolean(flags['review']);
+    const shoultPrintCoverage = Boolean(flags['print-coverage']);
 
     let { paths, config } = (await this.requiresSpec())!;
 
@@ -200,6 +203,11 @@ export default class Status extends Command {
     );
 
     this.printStatus(endpointsWithDiff, diffsGroupedByPathIdAndMethod, urls);
+
+    if (shoultPrintCoverage) {
+      const coverage = await computeCoverage(paths, captureId);
+      await printCoverage(paths, coverage.with_diffs, coverage.without_diffs);
+    }
 
     await trackUserEvent(
       config.name,
