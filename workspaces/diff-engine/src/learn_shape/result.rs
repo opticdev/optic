@@ -606,8 +606,9 @@ mod test {
     let empty_array_body = BodyDescriptor::from(json!([]));
     let polymorphic_array_body = BodyDescriptor::from(json!(["a", "b", 1, 2]));
 
-    let primitive_array_observations = observe_body_trails(primitive_array_body.clone());
-    let empty_array_observations = observe_body_trails(empty_array_body.clone());
+    let primitive_array_observations =
+      observe_body_trails(primitive_array_body.clone()).normalized();
+    let empty_array_observations = observe_body_trails(empty_array_body.clone()).normalized();
     let polymorphic_array_observations =
       observe_body_trails(polymorphic_array_body.clone()).normalized();
     let empty_and_primitive_array_observations = {
@@ -669,12 +670,11 @@ mod test {
     );
     assert!(empty_and_primitive_array_results.0.is_some());
     let spec_projection = assert_valid_commands(empty_and_primitive_array_results.1.clone());
-    // TODO: debug this
-    // assert_no_shape_diffs(
-    //   &spec_projection,
-    //   empty_and_primitive_array_results.0.as_ref().unwrap(),
-    //   vec![primitive_array_body, polymorphic_array_body],
-    // );
+    assert_no_shape_diffs(
+      &spec_projection,
+      empty_and_primitive_array_results.0.as_ref().unwrap(),
+      vec![primitive_array_body],
+    );
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_array_bodies__empty_and_primitive_array_results",
       &empty_and_primitive_array_results
