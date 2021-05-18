@@ -32,6 +32,14 @@ export const testCase = (basePath: string) => async (
     require(path.join(__dirname + '/universes', basePath, name + '.json'))
   );
 
+  // Overwrite the learn_undocumented_bodies to ensure deterministic id generation
+  const oldLearnBodies =
+    universe.opticContext.opticEngine.learn_undocumented_bodies;
+  universe.opticContext.opticEngine.learn_undocumented_bodies = (
+    spec,
+    interactions_jsonl
+  ) => oldLearnBodies(spec, interactions_jsonl, 'sequential');
+
   const started = await universe.opticContext.capturesService.startDiff(
     '123',
     'example-session'
