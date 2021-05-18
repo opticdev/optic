@@ -527,6 +527,7 @@ mod test {
   use super::*;
   use crate::learn_shape::observe_body_trails;
   use crate::projections::SpecProjection;
+  use crate::shapes::diff as diff_shapes;
   use crate::state::body::BodyDescriptor;
   use cqrs_core::Aggregate;
   use insta::assert_debug_snapshot;
@@ -657,10 +658,33 @@ mod test {
       },
       "other-field": true
     }));
+    let missing_nested_field_bodies = vec![
+      BodyDescriptor::from(json!({
+        "some-object": {
+          "required-field": 2,
+          "optional-field": "optional-nested-value"
+        },
+        "other-field": true
+      })),
+      BodyDescriptor::from(json!({
+        "some-object": {
+          "required-field": 1,
+          "another-optional-field": "another-optional-nested-value"
+        },
+        "other-field": true
+      })),
+    ];
 
-    let primitive_object_observations = observe_body_trails(primitive_object_body);
-    let empty_object_observations = observe_body_trails(empty_object_body);
-    let nested_object_observations = observe_body_trails(nested_object_body);
+    let primitive_object_observations = observe_body_trails(primitive_object_body.clone());
+    let empty_object_observations = observe_body_trails(empty_object_body.clone());
+    let nested_object_observations = observe_body_trails(nested_object_body.clone());
+    let missing_nested_field_observations = missing_nested_field_bodies.iter().cloned().fold(
+      TrailObservationsResult::default(),
+      |mut observations, body| {
+        observations.union(observe_body_trails(body));
+        observations
+      },
+    );
 
     let mut test_id_generator = TestIdGenerator::default();
 
@@ -668,7 +692,12 @@ mod test {
       primitive_object_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
     );
     assert!(primitive_object_results.0.is_some());
-    assert_valid_commands(primitive_object_results.1.clone());
+    let spec_projection = assert_valid_commands(primitive_object_results.1.clone());
+    assert_no_shape_diffs(
+      &spec_projection,
+      primitive_object_results.0.as_ref().unwrap(),
+      std::iter::once(primitive_object_body),
+    );
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_object_bodies__primitive_object_results",
       &primitive_object_results
@@ -678,7 +707,12 @@ mod test {
       empty_object_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
     );
     assert!(empty_object_results.0.is_some());
-    assert_valid_commands(empty_object_results.1.clone());
+    let spec_projection = assert_valid_commands(empty_object_results.1.clone());
+    assert_no_shape_diffs(
+      &spec_projection,
+      empty_object_results.0.as_ref().unwrap(),
+      std::iter::once(empty_object_body),
+    );
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_object_bodies__empty_object_results",
       &empty_object_results
@@ -688,7 +722,12 @@ mod test {
       nested_object_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
     );
     assert!(nested_object_results.0.is_some());
-    assert_valid_commands(nested_object_results.1.clone());
+    let spec_projection = assert_valid_commands(nested_object_results.1.clone());
+    assert_no_shape_diffs(
+      &spec_projection,
+      nested_object_results.0.as_ref().unwrap(),
+      std::iter::once(nested_object_body),
+    );
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_object_bodies__nested_object_results",
       &nested_object_results
@@ -717,6 +756,23 @@ mod test {
       "other-field": true
     }));
 
+    let missing_nested_field_bodies = vec![
+      BodyDescriptor::from(json!({
+        "some-object": {
+          "required-field": 2,
+          "optional-field": "optional-nested-value"
+        },
+        "other-field": true
+      })),
+      BodyDescriptor::from(json!({
+        "some-object": {
+          "required-field": 1,
+          "another-optional-field": "another-optional-nested-value"
+        },
+        "other-field": true
+      })),
+    ];
+
     let primitive_object_observations = {
       let mut result = observe_body_trails(complete_object_body);
       result.union(observe_body_trails(partial_object_body));
@@ -728,6 +784,14 @@ mod test {
       result.union(observe_body_trails(partial_nested_optional_body));
       result
     };
+
+    let missing_nested_field_observations = missing_nested_field_bodies.iter().cloned().fold(
+      TrailObservationsResult::default(),
+      |mut observations, body| {
+        observations.union(observe_body_trails(body));
+        observations
+      },
+    );
 
     let mut test_id_generator = TestIdGenerator::default();
 
@@ -749,6 +813,22 @@ mod test {
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_object_with_optional_fields__nested_optional_results",
       &nested_optional_results
+    );
+
+    let missing_nested_field_results = collect_commands(
+      missing_nested_field_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
+
+    assert!(missing_nested_field_results.0.is_some());
+    let spec_projection = assert_valid_commands(missing_nested_field_results.1.clone());
+    assert_no_shape_diffs(
+      &spec_projection,
+      missing_nested_field_results.0.as_ref().unwrap(),
+      missing_nested_field_bodies,
+    );
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_object_with_optional_fields__missing_nested_field_results",
+      &missing_nested_field_results
     );
   }
 
@@ -936,7 +1016,7 @@ mod test {
     (root_shape_id, commands.collect::<Vec<_>>())
   }
 
-  fn assert_valid_commands(commands: impl IntoIterator<Item = SpecCommand>) {
+  fn assert_valid_commands(commands: impl IntoIterator<Item = SpecCommand>) -> SpecProjection {
     let mut spec_projection = SpecProjection::default();
     for command in commands {
       let events = spec_projection
@@ -946,6 +1026,20 @@ mod test {
       for event in events {
         spec_projection.apply(event)
       }
+    }
+
+    spec_projection
+  }
+
+  fn assert_no_shape_diffs(
+    spec_projection: &SpecProjection,
+    root_shape_id: &String,
+    bodies: impl IntoIterator<Item = BodyDescriptor>,
+  ) {
+    for body in bodies {
+      let results = diff_shapes(spec_projection.shape(), Some(body), root_shape_id);
+
+      assert_eq!(results.len(), 0, "there should be no more shape diffs");
     }
   }
 
