@@ -6,12 +6,12 @@ import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file
 import path from 'path';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { map as streamMap, flatMap } from 'axax';
-import { IHttpInteraction } from '@useoptic/domain-types';
 import AWS from 'aws-sdk';
 import { CaptureSaver } from './capture-saver';
 import { Token as ContinuationToken } from 'aws-sdk/clients/s3';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
 import { pipe } from '@useoptic/diff-engine-wasm/lib/async-tools';
+import { IHttpInteraction } from '../../../optic-types';
 
 async function* fromReadable<T>(r: Readable): AsyncIterable<T> {
   for await (const chunk of r) {

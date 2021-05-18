@@ -7,8 +7,8 @@ import { IIgnoreRunnable } from '@useoptic/cli-config';
 import { captureFileSuffix } from './index';
 import path from 'path';
 import fs from 'fs-extra';
-import { IInteractionBatch, IHttpInteraction } from '@useoptic/domain-types';
 import avro from 'avsc';
+import { IHttpInteraction, IInteractionBatch } from '../../../optic-types';
 
 export interface IFileSystemCaptureLoaderConfig {
   captureBaseDirectory: string;

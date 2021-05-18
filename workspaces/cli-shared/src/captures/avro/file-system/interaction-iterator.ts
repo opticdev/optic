@@ -1,10 +1,10 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { IHttpInteraction, IInteractionBatch } from '@useoptic/domain-types';
 import { IFileSystemCaptureLoaderConfig } from './capture-loader';
 import { captureFileSuffix } from './index';
 import avro from 'avsc';
 import { CaptureId } from '@useoptic/saas-types';
+import { IHttpInteraction, IInteractionBatch } from '../../../optic-types';
 
 export interface FilterPredicate<T> {
   (item: T): boolean;

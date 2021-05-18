@@ -76,3 +76,5 @@ jobs:
       run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
     - name: "install dependencies"
       run: task workspaces:build
+    - name: "run ui-v2 tests"
+      run: yarn workspace @useoptic/ui-v2 test

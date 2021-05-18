@@ -10,6 +10,7 @@ import { Redirect, useHistory } from 'react-router-dom';
 import { Box, Button, Divider, TextField, Typography } from '@material-ui/core';
 import { EndpointName } from '../../common';
 import { Loader } from '../../loaders/FullPageLoader';
+import { Loading } from '<src>/optic-components/loaders/Loading';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -225,15 +226,19 @@ export function PendingEndpointPage(props: any) {
             spectacle={spectacle as IForkableSpectacle}
             previewCommands={newEndpointCommands}
           >
-            <EndpointDocumentationPane
-              method={stagedCommandsIds.method}
-              pathId={stagedCommandsIds.pathId}
-              renderHeader={() => (
-                <Typography className={classes.nameDisplay}>
-                  {name === '' ? 'Unnamed Endpoint' : name}
-                </Typography>
-              )}
-            />
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <EndpointDocumentationPane
+                method={stagedCommandsIds.method}
+                pathId={stagedCommandsIds.pathId}
+                renderHeader={() => (
+                  <Typography className={classes.nameDisplay}>
+                    {name === '' ? 'Unnamed Endpoint' : name}
+                  </Typography>
+                )}
+              />
+            )}
           </SimulatedCommandStore>
         </>
       }

@@ -75,11 +75,12 @@ export function toJsonExample(hash: string): any {
 function toJson(item: any) {
   switch (item.type) {
     case types.OBJECT:
-      const newObj = {};
-      item.fields.forEach(({ key, hash }: any) => {
-        //@ts-ignore
-        newObj[key] = toJson(hash);
-      });
+      const newObj: Record<string, any> = {};
+      if (item.hasOwnProperty('fields')) { 
+        item.fields.forEach(({ key, hash }: any) => {
+          newObj[key] = toJson(hash);
+        });
+      }
       return newObj;
     case types.ARRAY:
       return [...item.items.map(toJson)];

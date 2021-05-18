@@ -1,4 +1,4 @@
-import React, { FC, useContext, useMemo, useState } from 'react';
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
 import {
   IPendingEndpoint,
   IUndocumentedUrl,
@@ -96,15 +96,24 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
 
   const { config } = useConfigRepository();
 
-  const currentSpecContext: CurrentSpecContext = {
-    currentSpecPaths: props.allPaths,
-    currentSpecEndpoints: props.endpoints,
-    currentSpecRequests: props.requests,
-    currentSpecResponses: props.responses,
-    domainIds: newRandomIdGenerator(),
-    idGeneratorStrategy: 'random',
-    opticEngine,
-  };
+  const currentSpecContext: CurrentSpecContext = useMemo(
+    () => ({
+      currentSpecPaths: props.allPaths,
+      currentSpecEndpoints: props.endpoints,
+      currentSpecRequests: props.requests,
+      currentSpecResponses: props.responses,
+      domainIds: newRandomIdGenerator(),
+      idGeneratorStrategy: 'random',
+      opticEngine,
+    }),
+    [
+      opticEngine,
+      props.allPaths,
+      props.endpoints,
+      props.requests,
+      props.responses,
+    ]
+  );
 
   const [state, send]: any = useMachine(() =>
     newSharedDiffMachine(
@@ -116,6 +125,17 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       config
     )
   );
+
+  useEffect(() => {
+    send({ type: 'RESET' });
+    send({
+      type: 'REFRESH',
+      currentSpecContext: currentSpecContext,
+      parsedDiffs: props.diffs,
+      undocumentedUrls: props.urls,
+      trailValues: props.diffTrails,
+    });
+  }, [currentSpecContext, props.diffTrails, props.diffs, props.urls, send]);
 
   const context: SharedDiffStateContext = state.context;
 

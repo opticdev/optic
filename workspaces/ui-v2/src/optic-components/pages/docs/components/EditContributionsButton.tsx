@@ -50,17 +50,18 @@ export function EditContributionsButton() {
       >
         {contents}
       </ToggleButton>
-      <CommitMessageModal
-        open={commitModalOpen}
-        onClose={() => setCommitModalOpen(false)}
-        onSave={async (commitMessage: string) => {
-          save(commitMessage);
-          setCommitModalOpen(false);
-        }}
-        dialogText={`You have ${pendingCount} ${
-          pendingCount === 1 ? 'change' : 'changes'
-        }.`}
-      />
+      {commitModalOpen && (
+        <CommitMessageModal
+          onClose={() => setCommitModalOpen(false)}
+          onSave={async (commitMessage: string) => {
+            save(commitMessage);
+            setCommitModalOpen(false);
+          }}
+          dialogText={`You have ${pendingCount} ${
+            pendingCount === 1 ? 'change' : 'changes'
+          }.`}
+        />
+      )}
     </>
   );
 }

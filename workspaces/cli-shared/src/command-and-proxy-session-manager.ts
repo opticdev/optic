@@ -1,5 +1,4 @@
 import { IOpticTaskRunnerConfig, Modes } from '@useoptic/cli-config';
-import { IHttpInteraction } from '@useoptic/domain-types';
 import { CommandSession } from './command-session';
 import { HttpToolkitCapturingProxy } from './httptoolkit-capturing-proxy';
 import {
@@ -11,6 +10,7 @@ import {
 import url from 'url';
 import { buildQueryStringParser } from './query/build-query-string-parser';
 import { awaitTaskUp } from './tasks/await-up';
+import { IHttpInteraction } from './optic-types';
 
 class CommandAndProxySessionManager {
   constructor(
@@ -18,17 +18,17 @@ class CommandAndProxySessionManager {
     private onStarted?: () => void
   ) {}
 
-  private commandSession: CommandSession | undefined
+  private commandSession: CommandSession | undefined;
 
   public getExitCodeOfProcess(): number | undefined {
     if (this.commandSession) {
-      return this.commandSession?.exitCode || undefined
+      return this.commandSession?.exitCode || undefined;
     }
   }
 
   async run(persistenceManager: ICaptureSaver) {
     this.commandSession = new CommandSession();
-    const commandSession = this.commandSession!
+    const commandSession = this.commandSession!;
     const inboundProxy = new HttpToolkitCapturingProxy();
     const servicePort = this.config.serviceConfig.port;
     const serviceHost = this.config.serviceConfig.host;

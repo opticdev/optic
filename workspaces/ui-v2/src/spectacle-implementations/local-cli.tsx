@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { useRouteMatch, useParams, Switch } from 'react-router-dom';
 import { AsyncStatus } from '<src>/types';
 import { Provider as BaseUrlProvider } from '<src>/optic-components/hooks/useBaseUrl';
@@ -84,11 +85,18 @@ export function useLocalCliServices(
 ): AsyncStatus<LocalCliServices> {
   const opticEngine = useOpticEngine();
   const apiBaseUrl = `/api/specs/${specId}`;
-  const spectacle = new LocalCliSpectacle(apiBaseUrl, opticEngine);
-  const capturesService = new LocalCliCapturesService({
-    baseUrl: apiBaseUrl,
-    spectacle,
-  });
+  const spectacle = useMemo(
+    () => new LocalCliSpectacle(apiBaseUrl, opticEngine),
+    [apiBaseUrl, opticEngine]
+  );
+  const capturesService = React.useMemo(
+    () =>
+      new LocalCliCapturesService({
+        baseUrl: apiBaseUrl,
+        spectacle,
+      }),
+    [apiBaseUrl, spectacle]
+  );
   const configRepository = new LocalCliConfigRepository({
     baseUrl: apiBaseUrl,
     spectacle,
