@@ -57,6 +57,8 @@ export interface IOpticEngine {
   ): string;
 
   spec_from_events(eventsJson: string): any;
+
+  spec_hash(spec: any): string;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -197,6 +199,7 @@ async function buildProjections(opticContext: IOpticContext) {
     shapesQueries,
     shapeViewerProjection,
     contributionsProjection,
+    specHash: () => opticContext.opticEngine.spec_hash(spec),
   };
 }
 
@@ -204,7 +207,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
   let endpointsQueries: endpoints.GraphQueries,
     shapeQueries: shapes.GraphQueries,
     shapeViewerProjection: any,
-    contributionsProjection: ContributionsProjection;
+    contributionsProjection: ContributionsProjection,
+    specHash: () => string;
 
   async function reload(opticContext: IOpticContext) {
     const projections = await buildProjections(opticContext);
@@ -212,6 +216,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     shapeQueries = projections.shapesQueries;
     shapeViewerProjection = projections.shapeViewerProjection;
     contributionsProjection = projections.contributionsProjection;
+    specHash = projections.specHash;
     return projections;
   }
 
@@ -310,6 +315,9 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return context
           .spectacleContext()
           .opticContext.diffRepository.findById(diffId);
+      },
+      hash: async (parent: any, args: any, context: any, info: any) => {
+        return context.spectacleContext().specHash();
       },
     },
     DiffState: {
@@ -557,6 +565,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       shapeViewerProjection,
       // @ts-ignore
       contributionsProjection,
+      specHash,
     };
   };
   const queryWrapper = function <Result, Input = {}>(

@@ -137,7 +137,7 @@ Object {
                 },
               },
             },
-            "description": "This is the 200 response description",
+            "description": "",
           },
         },
       },

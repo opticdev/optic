@@ -1,6 +1,5 @@
 use crate::events::endpoint as endpoint_events;
 use crate::events::{EndpointEvent, SpecEvent};
-use serde::Serialize;
 use crate::state::endpoint::*;
 use crate::{
   commands::{endpoint, EndpointCommand, SpecCommand, SpecCommandError},
@@ -8,6 +7,7 @@ use crate::{
 };
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, Event};
 use petgraph::graph::{Graph, NodeIndex};
+use serde::Serialize;
 use std::collections::HashMap;
 
 pub const ROOT_PATH_ID: &str = "root";

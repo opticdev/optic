@@ -23,6 +23,7 @@ type Query {
   endpointChanges(sinceBatchCommitId: String): EndpointChanges
   batchCommits: [BatchCommit]
   diff(diffId: ID): DiffState
+  hash: String
 }
 type DiffState {
   diffs: JSON

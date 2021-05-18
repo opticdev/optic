@@ -1,6 +1,7 @@
 pub mod conflicts;
 pub mod contributions;
 pub mod endpoint;
+pub mod hash;
 pub mod history;
 pub mod learners;
 pub mod shape;
@@ -23,6 +24,8 @@ use crate::events::{EndpointEvent, RfcEvent, ShapeEvent, SpecEvent};
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, CommandError};
 use std::error::Error;
 
+use self::hash::SpecHashProjection;
+
 #[derive(Debug)]
 pub struct SpecProjection {
   endpoint: endpoint::EndpointProjection,
@@ -31,6 +34,7 @@ pub struct SpecProjection {
   conflicts: conflicts::ConflictsProjection,
   spectacle_endpoints: spectacle::endpoints::EndpointsProjection,
   contributions: contributions::ContributionsProjection,
+  hash: hash::SpecHashProjection,
 }
 
 impl Default for SpecProjection {
@@ -42,6 +46,7 @@ impl Default for SpecProjection {
       conflicts: ConflictsProjection::default(),
       spectacle_endpoints: EndpointsProjection::default(),
       contributions: ContributionsProjection::default(),
+      hash: SpecHashProjection::default(),
     }
   }
 }
@@ -67,6 +72,9 @@ impl SpecProjection {
   pub fn spectacle_endpoints(&self) -> &EndpointsProjection {
     &self.spectacle_endpoints
   }
+  pub fn hash(&self) -> &SpecHashProjection {
+    &self.hash
+  }
   pub fn shapes_serializable(&self) -> crate::projections::shape::SerializableGraph {
     self.shape.to_serializable_graph()
   }
@@ -88,6 +96,8 @@ impl Aggregate for SpecProjection {
 
 impl AggregateEvent<SpecProjection> for SpecEvent {
   fn apply_to(self, projection: &mut SpecProjection) {
+    projection.hash.apply(self.clone());
+
     match self {
       SpecEvent::EndpointEvent(event) => {
         projection.endpoint.apply(event.clone());

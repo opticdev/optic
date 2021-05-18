@@ -230,4 +230,13 @@ specs.forEach(async (spec) => {
     const results = await spectacle.queryWrapper({ query, variables: {} });
     test.matchSnapshot(results);
   });
+
+  Tap.test(`spec hash query ${spec.name}`, async (test) => {
+    const query = `{
+      hash
+    }`;
+
+    const results = await spectacle.queryWrapper({ query, variables: {} });
+    test.matchSnapshot(results);
+  });
 });
