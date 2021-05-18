@@ -35,8 +35,6 @@ tokio-stream = { version= "0.1.2", features = ["fs", "io-util"], optional = true
 uuid = { version = "0.8.2", features = ["v4", "wasm-bindgen"] }
 
 [dependencies.getrandom]
-git = "https://github.com/rust-random/getrandom"
-branch = "detect"
 features = ["js"]
 
 [dev-dependencies]
