@@ -7,116 +7,60 @@ Object {
       "AddShape": Object {
         "baseShapeId": "$string",
         "name": "",
-        "shapeId": "shape_6699",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$boolean",
         "name": "",
-        "shapeId": "shape_6700",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$string",
         "name": "",
-        "shapeId": "shape_6701",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$string",
         "name": "",
-        "shapeId": "shape_6702",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$object",
         "name": "",
-        "shapeId": "shape_6708",
-      },
-    },
-    Object {
-      "AddShape": Object {
-        "baseShapeId": "$optional",
-        "name": "",
-        "shapeId": "shape_6704",
-      },
-    },
-    Object {
-      "SetParameterShape": Object {
-        "shapeDescriptor": Object {
-          "ProviderInShape": Object {
-            "consumingParameterId": "$optionalInner",
-            "providerDescriptor": Object {
-              "ShapeProvider": Object {
-                "shapeId": "shape_6702",
-              },
-            },
-            "shapeId": "shape_6704",
-          },
-        },
       },
     },
     Object {
       "AddField": Object {
-        "fieldId": "field_6703",
-        "name": "dueDate",
-        "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "field_6703",
-            "shapeId": "shape_6704",
-          },
-        },
-        "shapeId": "shape_6708",
-      },
-    },
-    Object {
-      "AddField": Object {
-        "fieldId": "field_6705",
         "name": "id",
         "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "field_6705",
-            "shapeId": "shape_6701",
-          },
+          "FieldShapeFromShape": Object {},
         },
-        "shapeId": "shape_6708",
       },
     },
     Object {
       "AddField": Object {
-        "fieldId": "field_6706",
         "name": "isDone",
         "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "field_6706",
-            "shapeId": "shape_6700",
-          },
+          "FieldShapeFromShape": Object {},
         },
-        "shapeId": "shape_6708",
       },
     },
     Object {
       "AddField": Object {
-        "fieldId": "field_6707",
         "name": "task",
         "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "field_6707",
-            "shapeId": "shape_6699",
-          },
+          "FieldShapeFromShape": Object {},
         },
-        "shapeId": "shape_6708",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$list",
         "name": "",
-        "shapeId": "shape_6709",
       },
     },
     Object {
@@ -125,11 +69,8 @@ Object {
           "ProviderInShape": Object {
             "consumingParameterId": "$listItem",
             "providerDescriptor": Object {
-              "ShapeProvider": Object {
-                "shapeId": "shape_6708",
-              },
+              "ShapeProvider": Object {},
             },
-            "shapeId": "shape_6709",
           },
         },
       },
@@ -138,7 +79,6 @@ Object {
       "AddRequest": Object {
         "httpMethod": "GET",
         "pathId": "path_it2OyjUysW",
-        "requestId": "request_6710",
       },
     },
     Object {
@@ -146,9 +86,7 @@ Object {
         "bodyDescriptor": Object {
           "httpContentType": "application/json",
           "isRemoved": false,
-          "shapeId": "shape_6709",
         },
-        "requestId": "request_6710",
       },
     },
   ],
@@ -166,7 +104,6 @@ Object {
       "location": Object {
         "inRequest": Object {
           "contentType": "application/json",
-          "requestId": undefined,
         },
         "inResponse": undefined,
         "method": "GET",
@@ -195,12 +132,87 @@ Object {
           "diffHash": "41bb570841f9d23b",
           "newBodyInRequest": Object {
             "contentType": "application/json",
-            "requestId": undefined,
           },
         },
         "interactionPointers": Array [
-          "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
-          "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+          Object {
+            "0": "8",
+            "1": "e",
+            "10": "f",
+            "11": "6",
+            "12": "d",
+            "13": "-",
+            "14": "4",
+            "15": "d",
+            "16": "3",
+            "17": "c",
+            "18": "-",
+            "19": "b",
+            "2": "f",
+            "20": "a",
+            "21": "7",
+            "22": "1",
+            "23": "-",
+            "24": "5",
+            "25": "e",
+            "26": "3",
+            "27": "7",
+            "28": "9",
+            "29": "2",
+            "3": "f",
+            "30": "3",
+            "31": "7",
+            "32": "8",
+            "33": "0",
+            "34": "c",
+            "35": "e",
+            "36": "4",
+            "4": "9",
+            "5": "5",
+            "6": "b",
+            "7": "1",
+            "8": "-",
+            "9": "4",
+          },
+          Object {
+            "0": "8",
+            "1": "e",
+            "10": "f",
+            "11": "6",
+            "12": "d",
+            "13": "-",
+            "14": "4",
+            "15": "d",
+            "16": "3",
+            "17": "c",
+            "18": "-",
+            "19": "b",
+            "2": "f",
+            "20": "a",
+            "21": "7",
+            "22": "1",
+            "23": "-",
+            "24": "5",
+            "25": "e",
+            "26": "3",
+            "27": "7",
+            "28": "9",
+            "29": "2",
+            "3": "f",
+            "30": "3",
+            "31": "7",
+            "32": "8",
+            "33": "0",
+            "34": "c",
+            "35": "e",
+            "36": "4",
+            "4": "9",
+            "5": "5",
+            "6": "b",
+            "7": "1",
+            "8": "-",
+            "9": "4",
+          },
         ],
         "invalid": true,
         "jsonTrailsByInteractions": Object {},
@@ -238,81 +250,60 @@ Object {
       "AddShape": Object {
         "baseShapeId": "$string",
         "name": "",
-        "shapeId": "shape_6719",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$boolean",
         "name": "",
-        "shapeId": "shape_6720",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$string",
         "name": "",
-        "shapeId": "shape_6721",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$string",
         "name": "",
-        "shapeId": "shape_6722",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$object",
         "name": "",
-        "shapeId": "shape_6726",
       },
     },
     Object {
       "AddField": Object {
-        "fieldId": "field_6723",
         "name": "id",
         "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "field_6723",
-            "shapeId": "shape_6721",
-          },
+          "FieldShapeFromShape": Object {},
         },
-        "shapeId": "shape_6726",
       },
     },
     Object {
       "AddField": Object {
-        "fieldId": "field_6724",
         "name": "isDone",
         "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "field_6724",
-            "shapeId": "shape_6720",
-          },
+          "FieldShapeFromShape": Object {},
         },
-        "shapeId": "shape_6726",
       },
     },
     Object {
       "AddField": Object {
-        "fieldId": "field_6725",
         "name": "task",
         "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "field_6725",
-            "shapeId": "shape_6719",
-          },
+          "FieldShapeFromShape": Object {},
         },
-        "shapeId": "shape_6726",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$list",
         "name": "",
-        "shapeId": "shape_6727",
       },
     },
     Object {
@@ -321,11 +312,8 @@ Object {
           "ProviderInShape": Object {
             "consumingParameterId": "$listItem",
             "providerDescriptor": Object {
-              "ShapeProvider": Object {
-                "shapeId": "shape_6726",
-              },
+              "ShapeProvider": Object {},
             },
-            "shapeId": "shape_6727",
           },
         },
       },
@@ -335,7 +323,6 @@ Object {
         "httpMethod": "GET",
         "httpStatusCode": 200,
         "pathId": "path_it2OyjUysW",
-        "responseId": "response_6728",
       },
     },
     Object {
@@ -343,9 +330,7 @@ Object {
         "bodyDescriptor": Object {
           "httpContentType": "application/json",
           "isRemoved": false,
-          "shapeId": "shape_6727",
         },
-        "responseId": "response_6728",
       },
     },
   ],
@@ -364,7 +349,6 @@ Object {
         "inRequest": undefined,
         "inResponse": Object {
           "contentType": "application/json",
-          "responseId": undefined,
           "statusCode": 200,
         },
         "method": "GET",
@@ -402,8 +386,84 @@ Object {
           "newBodyInRequest": undefined,
         },
         "interactionPointers": Array [
-          "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
-          "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+          Object {
+            "0": "8",
+            "1": "e",
+            "10": "f",
+            "11": "6",
+            "12": "d",
+            "13": "-",
+            "14": "4",
+            "15": "d",
+            "16": "3",
+            "17": "c",
+            "18": "-",
+            "19": "b",
+            "2": "f",
+            "20": "a",
+            "21": "7",
+            "22": "1",
+            "23": "-",
+            "24": "5",
+            "25": "e",
+            "26": "3",
+            "27": "7",
+            "28": "9",
+            "29": "2",
+            "3": "f",
+            "30": "3",
+            "31": "7",
+            "32": "8",
+            "33": "0",
+            "34": "c",
+            "35": "e",
+            "36": "4",
+            "4": "9",
+            "5": "5",
+            "6": "b",
+            "7": "1",
+            "8": "-",
+            "9": "4",
+          },
+          Object {
+            "0": "8",
+            "1": "e",
+            "10": "f",
+            "11": "6",
+            "12": "d",
+            "13": "-",
+            "14": "4",
+            "15": "d",
+            "16": "3",
+            "17": "c",
+            "18": "-",
+            "19": "b",
+            "2": "f",
+            "20": "a",
+            "21": "7",
+            "22": "1",
+            "23": "-",
+            "24": "5",
+            "25": "e",
+            "26": "3",
+            "27": "7",
+            "28": "9",
+            "29": "2",
+            "3": "f",
+            "30": "3",
+            "31": "7",
+            "32": "8",
+            "33": "0",
+            "34": "c",
+            "35": "e",
+            "36": "4",
+            "4": "9",
+            "5": "5",
+            "6": "b",
+            "7": "1",
+            "8": "-",
+            "9": "4",
+          },
         ],
         "invalid": true,
         "jsonTrailsByInteractions": Object {},
