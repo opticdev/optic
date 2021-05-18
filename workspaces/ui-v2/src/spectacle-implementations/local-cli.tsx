@@ -22,6 +22,11 @@ import {
   LocalCliSpectacle,
 } from '@useoptic/spectacle-shared';
 import { AnalyticsStore } from '<src>/analytics';
+import {
+  getMetadata,
+  initialize,
+  track,
+} from '<src>/analytics/implementations/localCliAnalytics';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -63,7 +68,13 @@ export default function LocalCli() {
         <ConfigRepositoryStore config={data.configRepository}>
           <CapturesServiceStore capturesService={data.capturesService}>
             <BaseUrlProvider value={{ url: match.url }}>
-              <AnalyticsStore>
+              <AnalyticsStore
+                getMetadata={getMetadata(() =>
+                  data.configRepository.getApiName()
+                )}
+                initialize={initialize}
+                track={track}
+              >
                 <Switch>
                   <>
                     <DocumentationPages />

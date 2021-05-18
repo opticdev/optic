@@ -21,6 +21,11 @@ import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
 import { useCallback, useEffect, useState } from 'react';
 import { ConfigRepositoryStore } from '<src>/optic-components/hooks/useConfigHook';
 import { AnalyticsStore } from '<src>/analytics';
+import {
+  getMetadata,
+  initialize,
+  track,
+} from '<src>/analytics/implementations/cloudViewerAnalytics';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -107,7 +112,13 @@ export default function CloudViewer() {
             capturesService={data.opticContext.capturesService}
           >
             <BaseUrlProvider value={{ url: match.url }}>
-              <AnalyticsStore>
+              <AnalyticsStore
+                getMetadata={getMetadata(() =>
+                  data.opticContext.configRepository.getApiName()
+                )}
+                initialize={initialize}
+                track={track}
+              >
                 <Switch>
                   <>
                     <DiffReviewEnvironments />

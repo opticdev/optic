@@ -71,6 +71,7 @@ getOrCreateAnonId().then((anonymousId) =>
 analyticsEvents.listen((event) => {
   if (inDevelopment) return;
   const properties = {
+    uiVariant: 'localCli',
     ...event.context,
     ...event.data,
   };
