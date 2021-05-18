@@ -19,13 +19,6 @@ import {
   ExitedTaskWithLocalCli,
   StartedTaskWithLocalCli,
 } from '@useoptic/analytics/lib/events/tasks';
-// @ts-ignore
-import niceTry from 'nice-try';
-import {
-  getCredentials,
-  getUserFromCredentials,
-} from './authentication-server';
-import { runScriptByName } from '@useoptic/cli-scripts';
 import {
   cleanupAndExit,
   CommandAndProxySessionManager,
@@ -42,8 +35,7 @@ import { CaptureSaverWithDiffs } from '@useoptic/cli-shared/build/captures/avro/
 import { EventEmitter } from 'events';
 import { Config } from '../config';
 import { computeCoverage, printCoverage } from './coverage';
-import { spawnProcess, spawnProcessReturnExitCode } from './spawn-process';
-import { command } from '@oclif/test';
+import { spawnProcessReturnExitCode } from './spawn-process';
 import { getCaptureId } from './git/git-context-capture';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 import { linkToCapture, linkToDiffs } from './ui-links';
@@ -228,14 +220,6 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
-
-    ////////////////////////////////////////////////////////////////////////////////
-    developerDebugLogger('checking credentials');
-    const credentials = await getCredentials();
-    if (credentials) {
-      const user = await getUserFromCredentials(credentials);
-      await cliClient.setIdentity(user);
-    }
 
     ////////////////////////////////////////////////////////////////////////////////
     developerDebugLogger('finding matching daemon session');

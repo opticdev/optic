@@ -20,6 +20,7 @@ function RegisterEvent<T>(
           release: '',
           clientSessionInstanceId: '',
           clientTimestamp: '',
+          source: '',
         },
         data: properties,
       };
