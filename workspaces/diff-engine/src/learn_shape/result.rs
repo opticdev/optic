@@ -330,7 +330,7 @@ impl TrailValues {
 
   pub fn insert_field_set(&mut self, field_set: FieldSet) {
     let exists = self.field_sets.iter().any(|existing_set| {
-      if let None = existing_set.difference(&field_set).next() {
+      if let None = existing_set.symmetric_difference(&field_set).next() {
         true
       } else {
         false
@@ -390,15 +390,21 @@ impl TrailValues {
       },
       if self.was_object {
         let (field_keys, optional_keys) = {
-          let (all_keys_set, optional_keys_set) = self.field_sets.iter().fold(
-            (HashSet::new(), HashSet::new()),
-            |(all_keys, optional_keys): (HashSet<String>, HashSet<String>), field_set| {
-              let updated_all_keys: HashSet<String> = all_keys.union(&field_set).cloned().collect();
-              let missing_keys = updated_all_keys.difference(&field_set).cloned().collect();
-              let updated_optional_keys = optional_keys.union(&missing_keys).cloned().collect();
-              (updated_all_keys, updated_optional_keys)
-            },
-          );
+          let all_keys_set = self
+            .field_sets
+            .iter()
+            .fold(HashSet::new(), |all_keys: HashSet<String>, field_set| {
+              all_keys.union(&field_set).cloned().collect()
+            });
+
+          let optional_keys_set =
+            self
+              .field_sets
+              .iter()
+              .fold(HashSet::new(), |optional_keys, field_set| {
+                let missing_keys = all_keys_set.difference(&field_set).cloned().collect();
+                optional_keys.union(&missing_keys).cloned().collect()
+              });
 
           let mut all_keys = all_keys_set.into_iter().collect::<Vec<_>>();
           all_keys.sort();
