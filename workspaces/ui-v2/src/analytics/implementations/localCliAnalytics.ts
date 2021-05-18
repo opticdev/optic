@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/react';
 import * as FullStory from '@fullstory/browser';
 import { LogLevel } from '@sentry/types';
 import { AnalyticsStoreProps } from '../AnalyticsStore';
+import { getOrSetAgentFromLocalStorage } from '../utils';
 
 const packageJson = require('../../../package.json');
 const clientId = `local_cli_${packageJson.version}`;
@@ -18,7 +19,7 @@ const fetchIdentity = async () => {
       throw new Error();
     }
   } catch (e) {
-    return 'anon_id';
+    return getOrSetAgentFromLocalStorage('anon_id');
   }
 };
 

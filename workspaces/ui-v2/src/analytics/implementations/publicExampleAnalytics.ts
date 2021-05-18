@@ -3,6 +3,8 @@ import * as Sentry from '@sentry/react';
 import * as FullStory from '@fullstory/browser';
 import { LogLevel } from '@sentry/types';
 import { AnalyticsStoreProps } from '../AnalyticsStore';
+import { getOrSetAgentFromLocalStorage } from '../utils';
+
 import Analytics from '@segment/analytics.js-core/build/analytics';
 // @ts-ignore
 import SegmentIntegration from '@segment/analytics.js-integration-segmentio';
@@ -26,7 +28,7 @@ const fetchIdentity = async () => {
       throw new Error();
     }
   } catch (e) {
-    return 'public_example_anon_id';
+    return getOrSetAgentFromLocalStorage('public_example_anon_id');
   }
 };
 

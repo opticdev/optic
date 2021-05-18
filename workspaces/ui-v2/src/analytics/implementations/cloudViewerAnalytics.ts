@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/react';
 import * as FullStory from '@fullstory/browser';
 import { LogLevel } from '@sentry/types';
 import { AnalyticsStoreProps } from '../AnalyticsStore';
+import { getOrSetAgentFromLocalStorage } from '../utils';
 import Analytics from '@segment/analytics.js-core/build/analytics';
 // @ts-ignore
 import SegmentIntegration from '@segment/analytics.js-integration-segmentio';
@@ -18,7 +19,7 @@ export const getMetadata: (
 
   return {
     clientId,
-    clientAgent: 'cloud_viewer_anon_id',
+    clientAgent: getOrSetAgentFromLocalStorage('cloud_viewer_anon_id'),
     apiName,
   };
 };
