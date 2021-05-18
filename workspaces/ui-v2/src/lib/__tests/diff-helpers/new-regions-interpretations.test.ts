@@ -2,9 +2,7 @@ import { newRegionPreview, testCase } from './fixture';
 
 // TODO remove this and figure out how to deterministically set the seed in rust id generation
 // This means we aren't checking for IDs in our snapshots
-const removeIdsFromSnapshot = <T extends Record<string, any>>(
-  unprocessed: T
-): T => {
+const removeIdsFromSnapshot = <T extends any>(unprocessed: T): T => {
   const keysToRemove = new Set([
     'requestId',
     'responseId',
@@ -12,20 +10,23 @@ const removeIdsFromSnapshot = <T extends Record<string, any>>(
     'fieldId',
   ]);
 
-  const processed: any = {};
-  for (const [key, value] of Object.entries(unprocessed)) {
-    if (!keysToRemove.has(key)) {
-      if (Array.isArray(value)) {
-        processed[key] = value.map(removeIdsFromSnapshot);
-      } else if (typeof value === 'object') {
-        processed[key] = removeIdsFromSnapshot(value);
-      } else {
-        processed[key] = value;
+  const processValue = (innerValue: any): any => {
+    if (Array.isArray(innerValue)) {
+      return innerValue.map((v) => processValue(v));
+    } else if (typeof innerValue === 'object') {
+      const processed: any = {};
+      for (const [key, v] of Object.entries(innerValue)) {
+        if (!keysToRemove.has(key)) {
+          processed[key] = processValue(v);
+        }
       }
+      return processed;
+    } else {
+      return innerValue;
     }
-  }
+  };
 
-  return processed;
+  return processValue(unprocessed);
 };
 
 test('empty spec produced no body diffs', async () => {
