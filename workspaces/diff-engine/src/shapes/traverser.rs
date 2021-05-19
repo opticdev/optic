@@ -191,6 +191,7 @@ impl<'a> Traverser<'a> {
                     .with_component(ShapeTrailPathComponent::ObjectFieldTrail {
                       field_id: field_id.clone(),
                       field_shape_id: field_shape_id,
+                      parent_object_shape_id: choice.shape_id.clone(),
                     });
                 self.shape_queries.list_trail_choices(&field_trail)
               } else {
@@ -232,6 +233,7 @@ pub enum ShapeTrailPathComponent {
   ObjectFieldTrail {
     field_id: FieldId,
     field_shape_id: ShapeId,
+    parent_object_shape_id: ShapeId,
   },
   #[serde(rename_all = "camelCase")]
   ListTrail { shape_id: ShapeId },

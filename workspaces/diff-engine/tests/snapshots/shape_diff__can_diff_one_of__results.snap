@@ -24,6 +24,7 @@ expression: results
                 ObjectFieldTrail {
                     field_id: "field_1",
                     field_shape_id: "oneof_shape_1",
+                    parent_object_shape_id: "object_1",
                 },
                 OneOfTrail {
                     shape_id: "oneof_shape_1",
@@ -57,6 +58,7 @@ expression: results
                 ObjectFieldTrail {
                     field_id: "field_1",
                     field_shape_id: "oneof_shape_1",
+                    parent_object_shape_id: "object_1",
                 },
                 OneOfTrail {
                     shape_id: "oneof_shape_1",
@@ -90,6 +92,7 @@ expression: results
                 ObjectFieldTrail {
                     field_id: "field_1",
                     field_shape_id: "oneof_shape_1",
+                    parent_object_shape_id: "object_1",
                 },
             ],
         },
