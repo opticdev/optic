@@ -19,8 +19,8 @@ import getPort from 'get-port';
 import url from 'url';
 import { BrowserLaunchers } from '../shared/intercept/browser-launchers';
 import { cli } from 'cli-ux';
-import { IHttpInteraction } from '@useoptic/domain-types';
 import openBrowser from 'react-dev-utils/openBrowser';
+import { IHttpInteraction } from '@useoptic/cli-shared/build/optic-types';
 
 export default class Intercept extends Command {
   static description =
@@ -76,7 +76,6 @@ export default class Intercept extends Command {
       {
         captureBaseDirectory: paths.capturesPath,
         captureId,
-        shouldCollectCoverage: false,
         shouldCollectDiffs: false,
       },
       config,
