@@ -20,6 +20,11 @@ import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
 import { AsyncStatus } from '<src>/types';
 import { ConfigRepositoryStore } from '<src>/optic-components/hooks/useConfigHook';
 import { AnalyticsStore } from '<src>/analytics';
+import {
+  getMetadata,
+  initialize,
+  track,
+} from '<src>/analytics/implementations/publicExampleAnalytics';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -73,7 +78,6 @@ export default function PublicExamples(props: { lookupDir: string }) {
   if (!data) {
     return <div>something went wrong</div>;
   }
-
   //@SYNC public-examples.tsx cloud-viewer.tsx local-cli.tsx
   return (
     <AppConfigurationStore config={appConfig}>
@@ -83,7 +87,13 @@ export default function PublicExamples(props: { lookupDir: string }) {
             capturesService={data.opticContext.capturesService}
           >
             <BaseUrlProvider value={{ url: match.url }}>
-              <AnalyticsStore>
+              <AnalyticsStore
+                getMetadata={getMetadata(() =>
+                  data.opticContext.configRepository.getApiName()
+                )}
+                initialize={initialize}
+                track={track}
+              >
                 <Switch>
                   <>
                     <DocumentationPages />

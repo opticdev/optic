@@ -9,7 +9,8 @@ import { useSpectacleCommand } from '<src>/spectacle-implementations/spectacle-p
 import { useLastBatchCommitId } from '<src>/optic-components/hooks/useBatchCommits';
 import { useChangelogPages } from '<src>/optic-components/navigation/Routes';
 import { PromptNavigateAway } from '<src>/optic-components/common';
-import { useAnalytics, useClientAgent } from '<src>/analytics';
+import { useAnalytics } from '<src>/analytics';
+import { useClientAgent } from '<src>/optic-components/hooks/useClientAgent';
 import { useSessionId } from '<src>/optic-components/hooks/useSessionId';
 
 const useStagedChangesCount = () => {
