@@ -1,24 +1,33 @@
 import { IRequestSpecTrail, RequestTrailConstants } from './request-spec-trail';
 import {
   IInteractionTrail,
-  IMethod,
   IRequestBody,
   IResponseBody,
   IResponseStatusCode,
 } from './interaction-trail';
-import { DiffRfcBaseState } from './diff-rfc-base-state';
 
-function getNormalizedBodyDescriptor(value: any) {
-  if (value && value.ShapedBodyDescriptor) {
-    return value.ShapedBodyDescriptor;
-  }
-  return {};
+export interface IRequestBodyForTrailParser {
+  requestId: string;
+  contentType: string;
+  rootShapeId: string;
+  pathId: string;
+  method: string;
+}
+
+export interface IResponseBodyForTrailParser {
+  responseId: string;
+  statusCode: number;
+  contentType: string;
+  rootShapeId: string;
+  pathId: string;
+  method: string;
 }
 
 export function locationForTrails(
   trail: IRequestSpecTrail,
   interactionTrail: IInteractionTrail,
-  diffRfcBaseState: DiffRfcBaseState
+  requests: IRequestBodyForTrailParser[],
+  responses: IResponseBodyForTrailParser[]
 ):
   | {
       pathId: string;
@@ -31,7 +40,13 @@ export function locationForTrails(
       contentType?: string;
     }
   | undefined {
-  const { requests, responses } = diffRfcBaseState.queries.requestsState();
+  function requestById(id: string) {
+    return requests.find((i) => i.requestId === id)!;
+  }
+
+  function responseById(id: string) {
+    return responses.find((i) => i.responseId === id)!;
+  }
 
   if ((trail as any)[RequestTrailConstants.SpecRoot]) {
     return undefined;
@@ -39,16 +54,11 @@ export function locationForTrails(
 
   if ((trail as any)[RequestTrailConstants.SpecRequestBody]) {
     const { requestId } = (trail as any)[RequestTrailConstants.SpecRequestBody];
-    const { pathComponentId, httpMethod, bodyDescriptor } = requests[
-      requestId
-    ].requestDescriptor;
-
-    const contentType = getNormalizedBodyDescriptor(bodyDescriptor)
-      ?.httpContentType;
+    const { method, pathId, contentType } = requestById(requestId);
 
     return {
-      pathId: pathComponentId,
-      method: httpMethod,
+      pathId: pathId,
+      method: method,
       requestId,
       contentType,
       inRequest: true,
@@ -57,16 +67,12 @@ export function locationForTrails(
 
   if ((trail as any)[RequestTrailConstants.SpecRequestRoot]) {
     const { requestId } = (trail as any)[RequestTrailConstants.SpecRequestRoot];
-    const { pathComponentId, httpMethod, bodyDescriptor } = requests[
-      requestId
-    ].requestDescriptor;
-    const contentType = getNormalizedBodyDescriptor(bodyDescriptor)
-      ?.httpContentType;
+    const { method, pathId, contentType } = requestById(requestId);
 
     return {
-      pathId: pathComponentId,
+      pathId: pathId,
       requestId,
-      method: httpMethod,
+      method: method,
       contentType,
       inRequest: true,
     };
@@ -76,16 +82,13 @@ export function locationForTrails(
     const { responseId } = (trail as any)[
       RequestTrailConstants.SpecResponseBody
     ];
-    const { pathId, httpMethod, httpStatusCode, bodyDescriptor } = responses[
+    const { pathId, method, statusCode, contentType } = responseById(
       responseId
-    ].responseDescriptor;
-    const contentType = getNormalizedBodyDescriptor(bodyDescriptor)
-      ?.httpContentType;
-
+    );
     return {
       pathId: pathId,
-      method: httpMethod,
-      statusCode: httpStatusCode,
+      method: method,
+      statusCode: statusCode,
       responseId,
       contentType,
       inResponse: true,
@@ -96,19 +99,16 @@ export function locationForTrails(
     const { responseId } = (trail as any)[
       RequestTrailConstants.SpecResponseRoot
     ];
-    const { pathId, httpMethod, httpStatusCode, bodyDescriptor } = responses[
+    const { pathId, method, statusCode, contentType } = responseById(
       responseId
-    ].responseDescriptor;
-
-    const contentType = getNormalizedBodyDescriptor(bodyDescriptor)
-      ?.httpContentType;
+    );
 
     return {
       pathId: pathId,
-      method: httpMethod,
-      statusCode: httpStatusCode,
+      method: method,
+      statusCode: statusCode,
       responseId,
-      contentType,
+      contentType: contentType,
       inResponse: true,
     };
   }

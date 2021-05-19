@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { IForkableSpectacle } from '@useoptic/spectacle';
-import { SpectacleStore } from '../../../spectacle-implementations/spectacle-provider';
+import { SpectacleStore } from '<src>/spectacle-implementations/spectacle-provider';
 import { v4 as uuidv4 } from 'uuid';
+import { useSessionId } from '<src>/optic-components/hooks/useSessionId';
+import { Loading } from '<src>/optic-components/loaders/Loading';
+
 type SimulatedCommandStoreProps = {
   spectacle: IForkableSpectacle;
   previewCommands: any[];
@@ -22,6 +25,7 @@ export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
   const [simulated, setSimulated] = useState<IForkableSpectacle | undefined>(
     undefined
   );
+  const clientSessionId = useSessionId();
   useEffect(() => {
     async function task() {
       const simulated = await props.spectacle.fork();
@@ -37,8 +41,8 @@ mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clien
           commands: props.previewCommands,
           batchCommitId: uuidv4(),
           commitMessage: 'proposed changes',
-          clientId: 'dev', //@dev: fill this in
-          clientSessionId: 'ccc', //@dev: fill this in
+          clientId: 'simulation-agent', //@TODO: in the future, for features based on the clientId to make sense in the simulated ui, we may need to provide a real id here
+          clientSessionId,
         },
       });
       //@ts-ignore
@@ -54,7 +58,7 @@ mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clien
   }, [JSON.stringify(props.previewCommands)]);
 
   if (isProcessing) {
-    return <div>working...</div>;
+    return <Loading />;
   }
 
   const spectacleToUse = simulated ? simulated : props.spectacle;

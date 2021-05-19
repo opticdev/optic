@@ -26,6 +26,8 @@ includes:
     dir: docker/private-npm-registry
 
 tasks:
+  postpull:
+    deps: ["workspaces:clean", "workspaces:build"]
   workspaces:setup:
     env:
       OPTIC_SKIP_PREBUILT_INSTALLS: "true"

@@ -1,25 +1,39 @@
-import React, { FC, useContext, useMemo, useState } from 'react';
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
 import {
   IPendingEndpoint,
+  IUndocumentedUrl,
   newSharedDiffMachine,
   SharedDiffStateContext,
 } from './SharedDiffState';
 // @ts-ignore
 import * as shortId from 'shortid';
 import { useMachine } from '@xstate/react';
-import { PathComponentAuthoring } from '../../diffs/UndocumentedUrl';
-import { IEndpoint } from '../useEndpointsHook';
-import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
-import { CurrentSpecContext } from '../../../lib/Interfaces';
-import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
-import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
-import { ParsedDiff } from '../../../lib/parse-diff';
-import { AddContribution } from '../../../lib/command-factory';
+import { PathComponentAuthoring } from '<src>/optic-components/pages/diffs/AddEndpointsPage/utils';
+import { IEndpoint } from '<src>/optic-components/hooks/useEndpointsHook';
+import { pathToRegexp } from 'path-to-regexp';
+import {
+  IRequestBody,
+  IResponseBody,
+} from '<src>/optic-components/hooks/useEndpointBodyHook';
+import { CurrentSpecContext } from '<src>/lib/Interfaces';
+import {
+  AddContribution,
+  CQRSCommand,
+  IOpticDiffService,
+  IUnrecognizedUrl,
+} from '@useoptic/spectacle';
+import { newRandomIdGenerator } from '<src>/lib/domain-id-generator';
+import { ParsedDiff } from '<src>/lib/parse-diff';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { useOpticEngine } from '../useOpticEngine';
+import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
 import { useConfigRepository } from '<src>/optic-components/hooks/useConfigHook';
+import { useAnalytics } from '<src>/analytics';
+import { makePattern } from '<src>/optic-components/pages/diffs/AddEndpointsPage/utils';
+import { IPath } from '<src>/optic-components/hooks/usePathsHook';
 
-export const SharedDiffReactContext = React.createContext({});
+export const SharedDiffReactContext = React.createContext<ISharedDiffContext | null>(
+  null
+);
 
 type ISharedDiffContext = {
   context: SharedDiffStateContext;
@@ -32,10 +46,16 @@ type ISharedDiffContext = {
     components: PathComponentAuthoring[]
   ) => void;
   getPendingEndpointById: (id: string) => IPendingEndpoint | undefined;
-  wipPatterns: { [key: string]: PathComponentAuthoring[] };
+  wipPatterns: {
+    [key: string]: {
+      components: PathComponentAuthoring[];
+      isParameterized: boolean;
+      method: string;
+    };
+  };
   stageEndpoint: (id: string) => void;
   discardEndpoint: (id: string) => void;
-  approveCommandsForDiff: (diffHash: string, commands: any[]) => void;
+  approveCommandsForDiff: (diffHash: string, commands: CQRSCommand[]) => void;
   pendingEndpoints: IPendingEndpoint[];
   isDiffHandled: (diffHash: string) => boolean;
   currentSpecContext: CurrentSpecContext;
@@ -55,6 +75,8 @@ type ISharedDiffContext = {
   commitModalOpen: boolean;
   setCommitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   hasDiffChanges: () => boolean;
+  diffService: IOpticDiffService;
+  getUndocumentedUrls: () => IUndocumentedUrl[];
 };
 
 type SharedDiffStoreProps = {
@@ -62,6 +84,7 @@ type SharedDiffStoreProps = {
   captureId: string;
   requests: IRequestBody[];
   responses: IResponseBody[];
+  allPaths: IPath[];
   diffs: ParsedDiff[];
   diffService: IOpticDiffService;
   diffTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
@@ -73,13 +96,24 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
 
   const { config } = useConfigRepository();
 
-  const currentSpecContext: CurrentSpecContext = {
-    currentSpecEndpoints: props.endpoints,
-    currentSpecRequests: props.requests,
-    currentSpecResponses: props.responses,
-    domainIds: newRandomIdGenerator(),
-    opticEngine,
-  };
+  const currentSpecContext: CurrentSpecContext = useMemo(
+    () => ({
+      currentSpecPaths: props.allPaths,
+      currentSpecEndpoints: props.endpoints,
+      currentSpecRequests: props.requests,
+      currentSpecResponses: props.responses,
+      domainIds: newRandomIdGenerator(),
+      idGeneratorStrategy: 'random',
+      opticEngine,
+    }),
+    [
+      opticEngine,
+      props.allPaths,
+      props.endpoints,
+      props.requests,
+      props.responses,
+    ]
+  );
 
   const [state, send]: any = useMachine(() =>
     newSharedDiffMachine(
@@ -92,6 +126,17 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     )
   );
 
+  useEffect(() => {
+    send({ type: 'RESET' });
+    send({
+      type: 'REFRESH',
+      currentSpecContext: currentSpecContext,
+      parsedDiffs: props.diffs,
+      undocumentedUrls: props.urls,
+      trailValues: props.diffTrails,
+    });
+  }, [currentSpecContext, props.diffTrails, props.diffs, props.urls, send]);
+
   const context: SharedDiffStateContext = state.context;
 
   const isDiffHandled = (diffHash: string) => {
@@ -100,6 +145,8 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       context.browserDiffHashIgnoreRules.includes(diffHash)
     );
   };
+
+  const analytics = useAnalytics();
 
   const [handled, total] = useMemo(() => {
     return context.results.diffsGroupedByEndpoint.reduce(
@@ -122,13 +169,26 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   /* eslint-enable react-hooks/exhaustive-deps */
 
   const [wipPatterns, setWIPPatterns] = useState<{
-    [key: string]: PathComponentAuthoring[];
+    [key: string]: {
+      components: PathComponentAuthoring[];
+      isParameterized: boolean;
+      method: string;
+    };
   }>({});
+
+  const wipPatternMatchers = Object.entries(wipPatterns)
+    .filter(([, { isParameterized }]) => isParameterized)
+    .map(([pathMethod, { components, method }]) => ({
+      pathMethod,
+      matcher: pathToRegexp(makePattern(components)),
+      method,
+    }));
 
   const [commitModalOpen, setCommitModalOpen] = useState(false);
 
   const value: ISharedDiffContext = {
     context,
+    diffService: props.diffService,
     documentEndpoint: (pattern: string, method: string) => {
       const uuid = shortId.generate();
       send({ type: 'DOCUMENT_ENDPOINT', pattern, method, pendingId: uuid });
@@ -146,7 +206,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     },
     pendingEndpoints: context.pendingEndpoints,
     isDiffHandled,
-    approveCommandsForDiff: (diffHash: string, commands: any[]) => {
+    approveCommandsForDiff: (diffHash: string, commands: CQRSCommand[]) => {
       send({ type: 'COMMANDS_APPROVED_FOR_DIFF', diffHash, commands });
     },
     addDiffHashIgnore: (diffHash: string) =>
@@ -158,11 +218,18 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     ) =>
       setWIPPatterns((obj) => ({
         ...obj,
-        [path + method]: components,
+        [path + method]: {
+          components,
+          isParameterized: components.some((c) => c.isParameter),
+          method,
+        },
       })),
     wipPatterns,
     currentSpecContext,
-    reset: () => send({ type: 'RESET' }),
+    reset: () => {
+      analytics.userResetDiff(handled, total);
+      send({ type: 'RESET' });
+    },
     handledCount: [handled, total],
     startedFinalizing: () => send({ type: 'USER_FINISHED_REVIEW' }),
     setEndpointName: (id: string, name: string) =>
@@ -202,6 +269,16 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       return context.choices.existingEndpointPathContributions[pathId]?.command
         .AddContribution.value;
     },
+    getUndocumentedUrls: () =>
+      context.results.displayedUndocumentedUrls
+        .filter((url) => {
+          return wipPatternMatchers.every(
+            ({ pathMethod, matcher, method }) =>
+              pathMethod === url.path + url.method ||
+              !(matcher.test(url.path) && method === url.method)
+          );
+        })
+        .filter((i) => !i.hide),
     commitModalOpen,
     setCommitModalOpen,
     hasDiffChanges: () =>
@@ -220,5 +297,5 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
 };
 
 export function useSharedDiffContext() {
-  return useContext(SharedDiffReactContext) as ISharedDiffContext;
+  return useContext(SharedDiffReactContext)!;
 }

@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FC, useState } from 'react';
 import {
   Button,
+  CircularProgress,
   TextField,
   Dialog,
   DialogActions,
@@ -12,19 +13,18 @@ import {
 import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
 type CommitMessageModalProps = {
-  open: boolean;
   onClose: () => void;
-  onSave: (commitMessage: string) => void;
+  onSave: (commitMessage: string) => Promise<void>;
   dialogText: string;
 };
 
 export const CommitMessageModal: FC<CommitMessageModalProps> = ({
-  open,
   onClose,
   onSave,
   dialogText,
 }) => {
   const [commitMessage, setCommitMessage] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   const classes = useStyles();
   const canSubmit = commitMessage.length > 0;
   const onKeyPress = useRunOnKeypress(
@@ -42,7 +42,7 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
 
   return (
     <Dialog
-      open={open}
+      open={true}
       onClose={onClose}
       aria-labelledby="form-dialog-title"
       PaperProps={{
@@ -72,14 +72,18 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
           Cancel
         </Button>
         <Button
-          disabled={!canSubmit}
-          onClick={() => {
-            onSave(commitMessage);
-            onClose();
+          disabled={!canSubmit || isSaving}
+          onClick={async () => {
+            setIsSaving(true);
+            await onSave(commitMessage);
           }}
           color="primary"
         >
-          Save
+          {isSaving ? (
+            <CircularProgress style={{ marginLeft: 5 }} size={20} />
+          ) : (
+            'Save'
+          )}
         </Button>
       </DialogActions>
     </Dialog>

@@ -6,6 +6,9 @@ import path from 'path';
 import Config from './config';
 import * as Errors from './errors';
 
+if (process.env.OPTIC_DEBUG_ENV_FILE) {
+  console.log(`using overridden env ${process.env.OPTIC_DEBUG_ENV_FILE}`);
+}
 const envPath =
   process.env.OPTIC_DEBUG_ENV_FILE || path.join(__dirname, '..', '.env');
 

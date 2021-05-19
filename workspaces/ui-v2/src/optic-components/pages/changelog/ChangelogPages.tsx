@@ -8,10 +8,8 @@ import {
 } from '../../navigation/Routes';
 import { ContributionEditingStore } from '../../hooks/edit/Contributions';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
-import {
-  DocumentationRootPage,
-  EndpointRootPage,
-} from '../docs/DocumentationPage';
+import { DocumentationRootPage } from '../docs/DocumentationRootPage';
+import { EndpointRootPage } from '../docs/EndpointRootPage';
 import { useBatchCommits } from '../../hooks/useBatchCommits';
 
 export function ChangelogPages(props: any) {
@@ -33,7 +31,6 @@ export function ChangelogPages(props: any) {
             const validBatchId = allBatchCommits.batchCommits.some(
               (i) => i.batchId === batchId
             );
-
             if (validBatchId && !allBatchCommits.loading) {
               return (
                 <DocumentationRootPage
@@ -55,9 +52,26 @@ export function ChangelogPages(props: any) {
         />
         <NavigationRoute
           path={changelogPagesEndpointLink.path}
-          Component={(props: any) => (
-            <EndpointRootPage {...props} isChangelogPage={true} />
-          )}
+          Component={(props: any) => {
+            const { match } = props;
+            const { params } = match;
+            const { batchId } = params;
+            const validBatchId = allBatchCommits.batchCommits.some(
+              (i) => i.batchId === batchId
+            );
+
+            if (validBatchId && !allBatchCommits.loading) {
+              return (
+                <EndpointRootPage
+                  {...props}
+                  isChangelogPage={true}
+                  changelogBatchId={batchId}
+                />
+              );
+            } else {
+              return null;
+            }
+          }}
           AccessoryNavigation={ChangelogPageAccessoryNavigation}
         />
       </>

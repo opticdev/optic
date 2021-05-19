@@ -2,14 +2,14 @@ import Bottleneck from 'bottleneck';
 import fs from 'fs-extra';
 import path from 'path';
 import avro from 'avsc';
+import { developerDebugLogger, ICaptureSaver } from '../../../index';
+import { captureFileSuffix } from './index';
+import { schema } from '../index';
 import {
   IInteractionBatch,
   IGroupingIdentifiers,
   IHttpInteraction,
-} from '@useoptic/domain-types';
-import { developerDebugLogger, ICaptureSaver } from '../../../index';
-import { captureFileSuffix } from './index';
-import { schema } from '../index';
+} from '../../../optic-types';
 
 interface IFileSystemCaptureSaverConfig {
   captureBaseDirectory: string;

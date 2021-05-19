@@ -27,16 +27,12 @@ import {
 } from '@useoptic/spectacle/build/in-memory';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 import {
-  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
   ILearnedBodies,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InteractionDiffWorkerRust } from '@useoptic/cli-shared/build/diffs/interaction-diff-worker-rust';
-import { getPathsRelativeToCwd, IPathMapping } from '@useoptic/cli-config';
-import {
-  CapturesHelpers,
-  isValidCaptureState,
-  ValidCaptureState,
-} from '../routers/spec-router';
+import { IPathMapping, readApiConfig } from '@useoptic/cli-config';
+import { CapturesHelpers } from '../routers/spec-router';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,13 +59,15 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
     commandContext: IOpticCommandContext
   ): Promise<void> {
     const commandsStream = AT.from<Streams.Commands.Command>(commands);
-    const events = OpticEngine.commit(commandsStream, {
+    const output = OpticEngine.commit(commandsStream, {
       specDirPath: this.dependencies.specDirPath,
       commitMessage: commitMessage,
       clientSessionId: commandContext.clientSessionId || 'unknown-session',
       clientId: commandContext.clientId,
       appendToRoot: !isEnvTrue(process.env.OPTIC_SPLIT_SPEC_EVENTS),
     });
+    for await (const chunk of output) {
+    }
   }
 
   async listEvents(): Promise<any[]> {
@@ -251,6 +249,11 @@ export class LocalCliConfigRepository implements IOpticConfigRepository {
   async listIgnoreRules(): Promise<string[]> {
     const rules = await this.ignoreFileHelper.getCurrentIgnoreRules();
     return rules.allRules;
+  }
+
+  async getApiName(): Promise<string> {
+    const apiConfig = await readApiConfig(this.dependencies.opticYmlPath);
+    return Promise.resolve(apiConfig.name);
   }
 }
 

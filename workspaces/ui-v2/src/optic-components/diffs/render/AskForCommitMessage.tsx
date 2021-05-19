@@ -1,17 +1,19 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
-import { CommitMessageModal } from '../../common';
-
-import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
-import { useSpectacleCommand } from '../../../spectacle-implementations/spectacle-provider';
-import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
-import { useChangelogPages } from '../../navigation/Routes';
 import { v4 as uuidv4 } from 'uuid';
+import { CommitMessageModal } from '<src>/optic-components/common';
+
+import { useSharedDiffContext } from '<src>/optic-components/hooks/diffs/SharedDiffContext';
+import { useSpectacleCommand } from '<src>/spectacle-implementations/spectacle-provider';
+import { useLastBatchCommitId } from '<src>/optic-components/hooks/useBatchCommits';
+import { useChangelogPages } from '<src>/optic-components/navigation/Routes';
+import { PromptNavigateAway } from '<src>/optic-components/common';
+import { useAnalytics, useClientAgent } from '<src>/analytics';
+import { useSessionId } from '<src>/optic-components/hooks/useSessionId';
 
 const useStagedChangesCount = () => {
   const { pendingEndpoints, context } = useSharedDiffContext();
-
   const pendingEndpointsCount = pendingEndpoints.filter((i) => i.staged).length;
   const diffHashToEndpoint = context.results.diffsGroupedByEndpoint.reduce(
     (acc: { [diffHash: string]: string }, endpoint) => {
@@ -44,6 +46,9 @@ export default function AskForCommitMessageDiffPage(props: {
 }) {
   const spectacleMutator = useSpectacleCommand();
   const history = useHistory();
+  const analytics = useAnalytics();
+  const clientSessionId = useSessionId();
+  const clientId = useClientAgent();
   const lastBatchCommitId = useLastBatchCommitId();
   const changelogPageRoute = useChangelogPages();
 
@@ -60,6 +65,7 @@ export default function AskForCommitMessageDiffPage(props: {
   } = useStagedChangesCount();
 
   const handleSave = async (commitMessage: string) => {
+    analytics.userSavedChanges(pendingEndpointsCount, changedEndpointsCount);
     const commands = context.simulatedCommands;
     try {
       const {
@@ -75,8 +81,8 @@ export default function AskForCommitMessageDiffPage(props: {
           commands,
           batchCommitId: uuidv4(),
           commitMessage: commitMessage,
-          clientId: uuidv4(), //@dev: fill this in
-          clientSessionId: uuidv4(), //@dev: fill this in
+          clientId,
+          clientSessionId,
         },
       });
       // If there are no batch commits (first commit) - link to the just created commit
@@ -103,16 +109,19 @@ export default function AskForCommitMessageDiffPage(props: {
       >
         Save Changes
       </Button>
-      <CommitMessageModal
-        open={commitModalOpen}
-        onClose={() => setCommitModalOpen(false)}
-        onSave={handleSave}
-        dialogText={`You have added ${pendingEndpointsCount} new ${
-          pendingEndpointsCount === 1 ? 'endpoint' : 'endpoints'
-        } and updated ${changedEndpointsCount} existing ${
-          changedEndpointsCount === 1 ? 'endpoint' : 'endpoints'
-        }.`}
-      />
+      {commitModalOpen ? (
+        <CommitMessageModal
+          onClose={() => setCommitModalOpen(false)}
+          onSave={handleSave}
+          dialogText={`You have added ${pendingEndpointsCount} new ${
+            pendingEndpointsCount === 1 ? 'endpoint' : 'endpoints'
+          } and updated ${changedEndpointsCount} existing ${
+            changedEndpointsCount === 1 ? 'endpoint' : 'endpoints'
+          }.`}
+        />
+      ) : (
+        <PromptNavigateAway shouldPrompt={props.hasChanges} />
+      )}
     </>
   );
 }

@@ -3,6 +3,7 @@ import { IPendingEndpoint } from './SharedDiffState';
 import { useActor } from '@xstate/react';
 import equals from 'lodash.isequal';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { CQRSCommand } from '@useoptic/spectacle';
 import { IIgnoreBody, InitialBodiesContext } from './LearnInitialBodiesMachine';
 
 export const LearnedPendingEndpointContext = React.createContext<ILearnedPendingEndpointContextValue | null>(
@@ -19,7 +20,7 @@ type ILearnedPendingEndpointContextValue = {
   includeBody: (ignoreBody: IIgnoreBody) => void;
   stageEndpoint: () => void;
   discardEndpoint: () => void;
-  newEndpointCommands: any[];
+  newEndpointCommands: CQRSCommand[];
   stagedCommandsIds: {
     pathId: string;
     method: string;

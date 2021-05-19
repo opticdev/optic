@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   useDiffReviewPagePendingEndpoint,
   useEndpointPageLink,
@@ -10,22 +10,11 @@ import { makeStyles } from '@material-ui/styles';
 import { Check } from '@material-ui/icons';
 
 import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
-import { DiffHeader } from '../../../diffs/DiffHeader';
-import {
-  Box,
-  Divider,
-  List,
-  ListItem,
-  Switch,
-  TextField,
-  Typography,
-} from '@material-ui/core';
+import { Divider, List, ListItem, Typography } from '@material-ui/core';
 import { useUndocumentedUrls } from '../../../hooks/diffs/useUndocumentedUrls';
-import { UndocumentedUrl } from '../../../diffs/UndocumentedUrl';
 import { useSharedDiffContext } from '../../../hooks/diffs/SharedDiffContext';
 import { AuthorIgnoreRules } from '../../../diffs/AuthorIgnoreRule';
-import { useDebounce } from '../../../hooks/ui/useDebounceHook';
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
+import { FixedSizeList } from 'react-window';
 // @ts-ignore
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { IEndpoint, useEndpoints } from '../../../hooks/useEndpointsHook';
@@ -37,125 +26,133 @@ import { useChangelogStyles } from '../../../changelog/ChangelogBackground';
 import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
 import {
+  AddEndpointDiffHeader,
+  BulkLearnModal,
   ExistingEndpointNameField,
   PendingEndpointNameField,
-} from './EndpointNameEditFields';
+  UndocumentedUrl,
+} from './components';
+import { useCheckboxState } from './hooks';
 
-export function DiffUrlsPage(props: any) {
-  const urls = useUndocumentedUrls();
+import { useAnalytics } from '<src>/analytics';
+
+export function DiffUrlsPage() {
+  const undocumentedUrls = useUndocumentedUrls();
   const history = useHistory();
-  const {
-    documentEndpoint,
-    stageEndpoint,
-    pendingEndpoints,
-  } = useSharedDiffContext();
+  const { documentEndpoint } = useSharedDiffContext();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const classes = useStyles();
+  const analytics = useAnalytics();
+  const [showBulkModal, setShowBulkModal] = useState(false);
+  const closeBulkModal = useCallback(() => setShowBulkModal(false), []);
+  const [selectedUrls, setSelectedUrls] = useState<Set<string>>(new Set());
 
-  const [filteredUrls, setFilteredUrls] = useState(urls);
-
-  useEffect(() => {
-    setFilteredUrls(urls);
-  }, [pendingEndpoints.length, urls]);
-
+  const [searchQuery, setSearchQuery] = useState('');
   const [bulkMode, setBulkMode] = useState<boolean>(false);
-  const unmatchedUrlLengths = urls.filter((i) => !i.hide).length;
+  const unmatchedUrlLengths = undocumentedUrls.length;
+  const visibleUrls = undocumentedUrls.filter((url) =>
+    url.path.startsWith(searchQuery)
+  );
+  const bulkSelectedUrls = undocumentedUrls.filter((url) =>
+    selectedUrls.has(url.path + url.method)
+  );
 
-  const shownUrls = filteredUrls.filter((i) => !i.hide);
-
-  function renderRow(props: ListChildComponentProps) {
-    const { index, style } = props;
-    const data = shownUrls[index];
-
-    return (
-      <UndocumentedUrl
-        style={style}
-        bulkMode={bulkMode}
-        {...data}
-        key={data.method + data.path}
-        onFinish={(pattern, method, autolearn) => {
-          const pendingId = documentEndpoint(pattern, method);
-          if (autolearn) {
-            stageEndpoint(pendingId);
-            setBulkMode(bulkMode);
-          } else {
-            const link = diffReviewPagePendingEndpoint.linkTo(pendingId);
-            setTimeout(() => history.push(link), 500);
-          }
-        }}
-      />
-    );
-  }
-
-  const name = `${unmatchedUrlLengths} unmatched URLs observed${
-    shownUrls.length !== urls.length ? `. Showing ${shownUrls.length}` : ''
-  }`;
+  const { checkboxState, toggleSelectAllCheckbox } = useCheckboxState(
+    visibleUrls,
+    selectedUrls,
+    setSelectedUrls
+  );
 
   return (
-    <TwoColumnFullWidth
-      left={
-        <>
-          <DiffHeader name={name}>
-            <Box display="flex" flexDirection="row">
-              <UrlFilterInput
-                onDebouncedChange={(query) => {
-                  setFilteredUrls(urls.filter((i) => i.path.startsWith(query)));
-                }}
-              />
-              <div style={{ marginLeft: 13 }}>
-                <Typography
-                  variant="subtitle2"
-                  component="span"
-                  color="primary"
-                  style={{ fontWeight: 600, fontSize: 11 }}
-                >
-                  {' '}
-                  bulk mode
-                </Typography>
-                <Switch
-                  value={bulkMode}
-                  onChange={(e: any) => setBulkMode(e.target.checked)}
-                  color="primary"
-                  size="small"
-                />{' '}
-              </div>
-            </Box>
-          </DiffHeader>
-
-          <div style={{ flex: 1 }}>
-            {shownUrls.length > 0 ? (
-              <AutoSizer>
-                {({ height, width }: any) => (
-                  <FixedSizeList
-                    height={height}
-                    width={width}
-                    itemSize={47}
-                    itemCount={shownUrls.length}
-                  >
-                    {renderRow}
-                  </FixedSizeList>
-                )}
-              </AutoSizer>
-            ) : unmatchedUrlLengths === 0 ? (
-              <div className={classes.noResultsContainer}>
-                <Check fontSize="large" />
-                All observed endpoints have been documented
-              </div>
-            ) : (
-              <div className={classes.noResultsContainer}>
-                No urls match the current filter
-              </div>
-            )}
-          </div>
-          <AuthorIgnoreRules />
-        </>
-      }
-      right={<DocumentationRootPageWithPendingEndpoints />}
-    />
+    <>
+      <TwoColumnFullWidth
+        left={
+          <>
+            <AddEndpointDiffHeader
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              bulkMode={bulkMode}
+              setBulkMode={setBulkMode}
+              numberOfUnmatchedUrl={unmatchedUrlLengths}
+              numberOfVisibleUrls={visibleUrls.length}
+              numberOfSelectedUrls={bulkSelectedUrls.length}
+              checkboxState={checkboxState}
+              toggleSelectAllCheckbox={toggleSelectAllCheckbox}
+              setShowBulkModal={setShowBulkModal}
+            />
+            <div style={{ flex: 1 }}>
+              {visibleUrls.length > 0 ? (
+                <AutoSizer>
+                  {({ height, width }: any) => (
+                    <FixedSizeList
+                      height={height}
+                      width={width}
+                      itemSize={47}
+                      itemCount={visibleUrls.length}
+                      itemKey={(index, data) => {
+                        const item = data.undocumentedUrls[index];
+                        return item.method + item.path;
+                      }}
+                      itemData={{
+                        handleBulkModeSelection: (
+                          path: string,
+                          method: string
+                        ) => {
+                          analytics.userDocumentedEndpoint(false);
+                          setSelectedUrls((previousState) => {
+                            const key = path + method;
+                            const newState = new Set(previousState);
+                            newState.has(key)
+                              ? newState.delete(key)
+                              : newState.add(key);
+                            return newState;
+                          });
+                        },
+                        handleSelection: (pattern: string, method: string) => {
+                          const pendingId = documentEndpoint(pattern, method);
+                          analytics.userDocumentedEndpoint(true);
+                          const link = diffReviewPagePendingEndpoint.linkTo(
+                            pendingId
+                          );
+                          history.push(link);
+                        },
+                        undocumentedUrls: visibleUrls,
+                        isBulkMode: bulkMode,
+                        isSelected: (path: string, method: string) =>
+                          selectedUrls.has(`${path}${method}`),
+                      }}
+                    >
+                      {UndocumentedUrl}
+                    </FixedSizeList>
+                  )}
+                </AutoSizer>
+              ) : unmatchedUrlLengths === 0 ? (
+                <div className={classes.noResultsContainer}>
+                  <Check fontSize="large" />
+                  All observed endpoints have been documented
+                </div>
+              ) : (
+                <div className={classes.noResultsContainer}>
+                  No urls match the current filter
+                </div>
+              )}
+            </div>
+            <AuthorIgnoreRules />
+          </>
+        }
+        right={<DocumentationRootPageWithPendingEndpoints />}
+      />
+      {showBulkModal && (
+        <BulkLearnModal
+          undocumentedEndpointsToLearn={bulkSelectedUrls}
+          closeModal={closeBulkModal}
+        />
+      )}
+    </>
   );
 }
 
-export function DocumentationRootPageWithPendingEndpoints(props: any) {
+export function DocumentationRootPageWithPendingEndpoints() {
   const { endpoints, loading } = useEndpoints();
 
   const {
@@ -287,36 +284,6 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
         })}
       </List>
     </CenteredColumn>
-  );
-}
-
-function UrlFilterInput(props: { onDebouncedChange: (value: string) => void }) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const { onDebouncedChange } = props;
-  const debouncedSearchQuery = useDebounce(searchQuery, 600);
-
-  useEffect(() => {
-    if (debouncedSearchQuery) {
-      onDebouncedChange(debouncedSearchQuery);
-    }
-    // eslint-disable-next-line
-  }, [debouncedSearchQuery]);
-
-  return (
-    <TextField
-      size="small"
-      value={searchQuery}
-      inputProps={{ style: { fontSize: 10, width: 140 } }}
-      placeholder="filter urls"
-      onChange={(e: any) => {
-        const newValue = e.target.value.replace(/\s+/g, '');
-        if (!newValue.startsWith('/')) {
-          setSearchQuery('/' + newValue);
-        } else {
-          setSearchQuery(newValue);
-        }
-      }}
-    />
   );
 }
 

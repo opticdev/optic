@@ -2,31 +2,24 @@ import {
   developerDebugLogger,
   FileSystemAvroCaptureSaver,
 } from '../../../index';
-import { IGroupingIdentifiers, IHttpInteraction } from '@useoptic/domain-types';
 import { IFileSystemCaptureLoaderConfig } from './capture-loader';
 import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
-import { universeFromEvents } from '@useoptic/domain-utilities';
-import { JsonHelper, opticEngine, Queries } from '@useoptic/domain';
 import fs from 'fs-extra';
 import path from 'path';
 import { IApiCliConfig, parseIgnore } from '@useoptic/cli-config';
 import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
+import { IGroupingIdentifiers, IHttpInteraction } from '../../../optic-types';
 
-export const coverageFilePrefix = 'coverage-';
-
-interface IFileSystemCaptureLoaderWithDiffsAndCoverageConfig
+interface IFileSystemCaptureLoaderWithDiffsConfig
   extends IFileSystemCaptureLoaderConfig {
-  shouldCollectCoverage: boolean;
   shouldCollectDiffs: boolean;
 }
 
 export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
   private spec!: any;
-  private rfcState!: any;
-  private shapesResolvers!: any;
 
   constructor(
-    private _config: IFileSystemCaptureLoaderWithDiffsAndCoverageConfig,
+    private _config: IFileSystemCaptureLoaderWithDiffsConfig,
     private cliConfig: IApiCliConfig,
     private specServiceClient: ISpecService
   ) {
@@ -38,15 +31,7 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
     const eventsString = await this.specServiceClient.listEvents();
     const spec = DiffEngine.spec_from_events(eventsString);
     this.spec = spec;
-    const events = JSON.parse(eventsString);
-    const { eventStore, rfcState, rfcService, rfcId } = universeFromEvents(
-      events
-    );
 
-    const queries = Queries(eventStore, rfcService, rfcId);
-    const shapesResolvers = queries.shapesResolvers();
-    this.rfcState = rfcState;
-    this.shapesResolvers = shapesResolvers;
     developerDebugLogger('built initial spec for diffing on the fly');
     await super.init();
   }
@@ -100,25 +85,6 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
       await fs.writeJson(
         path.join(outputDirectory, `diffs-${batchId}.json`),
         diffs
-      );
-    }
-
-    if (this._config.shouldCollectCoverage) {
-      const report = opticEngine.com.useoptic.diff.helpers
-        .CoverageHelpers()
-        .getCoverage(
-          this.shapesResolvers,
-          this.rfcState,
-          JsonHelper.jsArrayToSeq(
-            items.map((x) => JsonHelper.fromInteraction(x))
-          )
-        );
-
-      const asJs = opticEngine.CoverageReportJsonSerializer.toJs(report);
-
-      await fs.writeJson(
-        path.join(outputDirectory, `${coverageFilePrefix}${batchId}.json`),
-        asJs
       );
     }
 

@@ -1,17 +1,23 @@
+import { CQRSCommand } from '@useoptic/spectacle';
 import { IPendingEndpoint } from '../optic-components/hooks/diffs/SharedDiffState';
+import { recomputePendingEndpointCommands } from '<src>/optic-components/hooks/diffs/LearnInitialBodiesMachine';
 
 export function AssembleCommands(
-  approvedSuggestions: { [key: string]: any[] },
+  newPaths: {
+    commands: CQRSCommand[];
+    pendingEndpointMap: { [key: string]: string };
+  },
+  approvedSuggestions: { [key: string]: CQRSCommand[] },
   pendingEndpoints: IPendingEndpoint[],
-  existingEndpointNameContributions: { [id: string]: string },
+  existingEndpointNameContributions: { [id: string]: CQRSCommand },
   existingEndpointPathContributions: {
     [id: string]: {
-      command: any;
+      command: CQRSCommand;
       endpointId: string;
     };
   }
-): any[] {
-  const commands: any[] = [];
+): CQRSCommand[] {
+  const commands: CQRSCommand[] = [...newPaths.commands];
 
   Object.keys(approvedSuggestions)
     .sort()
@@ -21,7 +27,11 @@ export function AssembleCommands(
 
   pendingEndpoints.forEach((i) => {
     if (i.staged) {
-      const commandsForThisEndpoint = i.ref.state.context.allCommands;
+      const commandsForThisEndpoint = recomputePendingEndpointCommands(
+        [],
+        newPaths.pendingEndpointMap[i.id],
+        i.ref.state.context
+      );
       commands.push(...commandsForThisEndpoint);
     }
   });

@@ -8,7 +8,7 @@
     "outDir": "lib",
     "rootDir": "src",
     "strict": true,
-    "target": "es2017"
+    "target": "es2019"
   },
   "include": ["src/**/*"]
 }

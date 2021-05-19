@@ -1,4 +1,4 @@
-import { graphql, ExecutionResult } from 'graphql';
+import { ExecutionResult, graphql } from 'graphql';
 import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { EventEmitter } from 'events';
@@ -7,10 +7,10 @@ import {
   buildEndpointChanges,
   buildEndpointsGraph,
   buildShapesGraph,
-  getFieldChanges,
+  ContributionsProjection,
   getArrayChanges,
   getContributionsProjection,
-  ContributionsProjection,
+  getFieldChanges,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
 import { IOpticCommandContext } from './in-memory';
@@ -19,6 +19,9 @@ import {
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 
+export * from './openapi';
+export * from './commands';
+
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface IOpticEngine {
@@ -26,12 +29,15 @@ export interface IOpticEngine {
     commandsJson: string,
     eventsJson: string,
     batchId: string,
-    commitMessage: string
+    commitMessage: string,
+    clientId: string,
+    clientSessionId: string
   ): any;
 
   affordances_to_commands(
     json_affordances_json: string,
-    json_trail_json: string
+    json_trail_json: string,
+    id_generator_strategy: string
   ): string;
 
   get_shape_viewer_projection(spec: any): string;
@@ -44,7 +50,11 @@ export interface IOpticEngine {
     tagged_interactions_jsonl: string
   ): string;
 
-  learn_undocumented_bodies(spec: any, interactions_jsonl: string): string;
+  learn_undocumented_bodies(
+    spec: any,
+    interactions_jsonl: string,
+    id_generator_strategy: string
+  ): string;
 
   spec_from_events(eventsJson: string): any;
 }
@@ -80,7 +90,9 @@ export interface StartDiffResult {
 
 export interface IOpticCapturesService {
   listCaptures(): Promise<ICapture[]>;
+
   loadInteraction(captureId: string, pointer: string): Promise<any | undefined>;
+
   startDiff(diffId: string, captureId: string): Promise<StartDiffResult>;
 }
 
@@ -124,6 +136,7 @@ export interface IOpticDiffRepository {
 ////////////////////////////////////////////////////////////////////////////////
 export interface IOpticConfigRepository {
   addIgnoreRule(rule: string): Promise<void>;
+  getApiName(): Promise<string>;
   listIgnoreRules(): Promise<string[]>;
 }
 
@@ -228,6 +241,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         } catch (e) {
           console.error(e);
           debugger;
+          throw e;
         }
 
         await reload(context.spectacleContext().opticContext);
@@ -252,6 +266,13 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     Query: {
+      paths: (parent: any, args: any, context: any, info: any) => {
+        return Promise.resolve(
+          context
+            .spectacleContext()
+            .endpointsQueries.listNodesByType(endpoints.NodeType.Path).results
+        );
+      },
       requests: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(
           context
@@ -355,6 +376,33 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             parent.value.requestId
           ] || {}
         );
+      },
+    },
+    Path: {
+      absolutePathPattern: (parent: any) => {
+        return Promise.resolve(parent.result.data.absolutePathPattern);
+      },
+      isParameterized: (parent: any) => {
+        return Promise.resolve(parent.result.data.isParameterized);
+      },
+      name: (parent: any) => {
+        return Promise.resolve(parent.result.data.name);
+      },
+      pathId: (parent: any) => {
+        return Promise.resolve(parent.result.data.pathId);
+      },
+
+      parentPathId: (parent: endpoints.PathNodeWrapper) => {
+        const parentPath = parent.parentPath();
+        if (parentPath) {
+          return Promise.resolve(parentPath.result.id);
+        }
+        return Promise.resolve(null);
+      },
+      absolutePathPatternWithParameterNames: (
+        parent: endpoints.PathNodeWrapper
+      ) => {
+        return Promise.resolve(parent.absolutePathPatternWithParameterNames);
       },
     },
     HttpResponse: {

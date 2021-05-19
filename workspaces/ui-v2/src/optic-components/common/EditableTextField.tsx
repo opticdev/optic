@@ -63,7 +63,6 @@ export const EditableTextField: FC<EditableTextFieldProps> = ({
         className: variants[variant].className,
         ...variants[variant].inputProps,
       }}
-      error={isEmpty}
       helperText={isEmpty ? helperText : undefined}
       fullWidth
       style={variants[variant].textFieldStyle}

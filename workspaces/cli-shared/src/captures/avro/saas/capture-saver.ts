@@ -1,4 +1,3 @@
-import { IInteractionBatch, IHttpInteraction } from '@useoptic/domain-types';
 import Bottleneck from 'bottleneck';
 import {
   developerDebugLogger,
@@ -6,6 +5,7 @@ import {
   SaasClient,
 } from '../../../index';
 import { serdes } from '../index';
+import { IHttpInteraction, IInteractionBatch } from '../../../optic-types';
 
 export interface ISaasCaptureSaverConfig {
   orgId: string;

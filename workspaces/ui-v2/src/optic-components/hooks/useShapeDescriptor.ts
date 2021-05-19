@@ -55,7 +55,16 @@ export function useShapeDescriptor(
 ): IShapeRenderer[] {
   const spectacle = useContext(SpectacleContext)!;
 
-  async function accumulateShapes(rootShapeId: string) {
+  async function accumulateShapes(rootShapeId: string, seenSet: Set<string>) {
+    //@todo figure out why some shapes loop recursively and remove those events / fix these specs
+    if (seenSet.has(rootShapeId)) {
+      console.warn(
+        'trying to lookup shape w/ a circular reference ' + rootShapeId
+      );
+      return [];
+    } else {
+      seenSet.add(rootShapeId);
+    }
     const input =
       typeof renderChangesSinceBatchCommitId !== 'undefined'
         ? {
@@ -80,7 +89,7 @@ export function useShapeDescriptor(
     }
 
     if (!result.data.shapeChoices) {
-      debugger;
+      return [];
     }
     return await Promise.all(
       result.data.shapeChoices.map(async (choice: any) => {
@@ -88,7 +97,10 @@ export function useShapeDescriptor(
           case 'Object':
             const newFields = await Promise.all(
               choice.asObject.fields.map(async (field: any) => {
-                const shapeChoices = await accumulateShapes(field.shapeId);
+                const shapeChoices = await accumulateShapes(
+                  field.shapeId,
+                  seenSet
+                );
                 field.required = !shapeChoices.some(
                   (i: any) => i.jsonType === JsonLike.UNDEFINED
                 ); // is required
@@ -107,7 +119,10 @@ export function useShapeDescriptor(
             return choice;
 
           case 'Array':
-            const results = await accumulateShapes(choice.asArray.shapeId);
+            const results = await accumulateShapes(
+              choice.asArray.shapeId,
+              seenSet
+            );
             const shapeChoices = await Promise.all(results);
             choice.asArray.shapeChoices = shapeChoices;
             return choice;
@@ -121,7 +136,8 @@ export function useShapeDescriptor(
   const [x, setX] = useState<any[]>([]);
   useEffect(() => {
     async function task() {
-      const result = await accumulateShapes(rootShapeId);
+      const seenSet: Set<string> = new Set();
+      const result = await accumulateShapes(rootShapeId, seenSet);
       setX(result);
     }
 

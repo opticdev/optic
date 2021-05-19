@@ -27,25 +27,25 @@ import {
 } from './RenderedDiffHeader';
 import { EndpointDocumentationPane } from '../EndpointDocumentationPane';
 
-const useRedirectForDiffCompleted = (shapeDiffs: IInterpretation[]) => {
+const useRedirectForDiffCompleted = (allDiffs: IInterpretation[]) => {
   const history = useHistory();
   const diffReviewPage = useDiffReviewCapturePageLink();
   const { isDiffHandled } = useSharedDiffContext();
 
   useEffect(() => {
     if (
-      shapeDiffs.length > 0 &&
-      shapeDiffs.every((i) => isDiffHandled(i.diffDescription?.diffHash!))
+      allDiffs.length > 0 &&
+      allDiffs.every((i) => isDiffHandled(i.diffDescription?.diffHash!))
     ) {
       history.push(diffReviewPage.linkTo());
     }
-  }, [shapeDiffs, diffReviewPage, history, isDiffHandled]);
+  }, [allDiffs, diffReviewPage, history, isDiffHandled]);
 };
 
 type ReviewEndpointDiffPageProps = {
   endpoint: RenderedDiffHeaderProps['endpoint'];
   spectacle: IForkableSpectacle;
-  shapeDiffs: RenderedDiffHeaderProps['shapeDiffs'];
+  allDiffs: RenderedDiffHeaderProps['allDiffs'];
   method: string;
   pathId: string;
 };
@@ -53,11 +53,11 @@ type ReviewEndpointDiffPageProps = {
 export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
   endpoint,
   spectacle,
-  shapeDiffs,
+  allDiffs,
   method,
   pathId,
 }) => {
-  useRedirectForDiffCompleted(shapeDiffs);
+  useRedirectForDiffCompleted(allDiffs);
   const {
     approveCommandsForDiff,
     isDiffHandled,
@@ -78,8 +78,8 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
   const endpointId = getEndpointId({ method, pathId });
 
   const getNextIncompleteDiff = (recentlyCompletedDiff?: string): number => {
-    for (let i = 0; i < shapeDiffs.length; i++) {
-      const shapeDiff = shapeDiffs[i];
+    for (let i = 0; i < allDiffs.length; i++) {
+      const shapeDiff = allDiffs[i];
       if (!shapeDiff.diffDescription) {
         continue;
       }
@@ -94,12 +94,12 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
     }
 
     // If all diffs are complete we should stick on the last rendered diff
-    return shapeDiffs.length - 1;
+    return allDiffs.length - 1;
   };
 
   const [currentIndex, setCurrentIndex] = useState(getNextIncompleteDiff());
   const [previewCommands, setPreviewCommands] = useState<any[]>([]);
-  const renderedDiff = shapeDiffs[currentIndex];
+  const renderedDiff = allDiffs[currentIndex];
   const onKeyPress = useRunOnKeypress(
     () => {
       if (hasDiffChanges()) {
@@ -118,7 +118,7 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
         <>
           <RenderedDiffHeader
             endpoint={endpoint}
-            shapeDiffs={shapeDiffs}
+            allDiffs={allDiffs}
             currentIndex={currentIndex}
             setCurrentIndex={setCurrentIndex}
           />
@@ -154,11 +154,12 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
           spectacle={spectacle}
           previewCommands={previewCommands}
         >
+          <pre>{JSON.stringify(previewCommands, null, 4)}</pre>
           <EndpointDocumentationPane
             method={method}
             pathId={pathId}
             highlightedLocation={
-              shapeDiffs[currentIndex].diffDescription?.location
+              allDiffs[currentIndex].diffDescription?.location
             }
             renderHeader={() => (
               <>

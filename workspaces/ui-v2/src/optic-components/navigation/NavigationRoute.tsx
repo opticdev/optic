@@ -16,7 +16,7 @@ export function NavigationRoute(props: NavigationRouteProps) {
     <Route
       path={path}
       exact
-      component={(props: { match: any }) => {
+      render={(props: { match: any }) => {
         const { match } = props;
         return (
           <div className={classes.root}>
@@ -46,9 +46,11 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
+    height: '100%',
   },
   scroll: {
     paddingTop: 40,
     flex: 1,
+    height: '100%',
   },
 }));

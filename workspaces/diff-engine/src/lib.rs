@@ -26,10 +26,11 @@ pub use interactions::{analyze_documented_bodies, analyze_undocumented_bodies};
 pub use learn_shape::{TrailObservationsResult, TrailValues};
 pub use projections::{
   EndpointProjection, LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection,
-  ShapeProjection, SpecAssemblerProjection, SpecProjection,
+  ShapeProjection, SpecAssemblerProjection, SpecProjection, ResponseBodyDescriptor
 };
 pub use protos::shapehash;
 pub use queries::endpoint::EndpointQueries;
+pub use state::endpoint::ResponseId;
 pub use shapes::{diff as diff_shape, JsonTrail};
 pub use spec::append_batch as append_batch_to_spec;
 pub use state::{body::BodyDescriptor, SpecIdGenerator, TaggedInput, Tags};

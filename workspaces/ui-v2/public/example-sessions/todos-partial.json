@@ -2308,6 +2308,49 @@
         "tags": []
       },
       {
+        "uuid": "a5eaf726-5548-4e37-8bc8-dsadas",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/api/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 404,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": "{\n\t\"error\": \"error message\",\n\t\"code\": 2\n}",
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
         "uuid": "e930e3f5-a006-46d8-85ae-447ce3150906",
         "request": {
           "host": "localhost",

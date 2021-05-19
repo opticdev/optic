@@ -5,11 +5,6 @@ import * as mockttp from 'mockttp';
 import fs from 'fs-extra';
 import { CompletedRequest, MockRuleData } from 'mockttp';
 import mime from 'whatwg-mimetype';
-import {
-  IArbitraryData,
-  IBody,
-  IHttpInteraction,
-} from '@useoptic/domain-types';
 //@ts-ignore
 import { toBytes } from '@useoptic/shape-hash';
 import { developerDebugLogger } from './index';
@@ -17,6 +12,7 @@ import url from 'url';
 import { IQueryParser } from './query/query-parser-interfaces';
 import util from 'util';
 import { CallbackResponseResult } from 'mockttp/dist/rules/requests/request-handlers';
+import { IArbitraryData, IBody, IHttpInteraction } from './optic-types';
 
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string;

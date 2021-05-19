@@ -1,6 +1,8 @@
 import { EventEmitter } from 'events';
 import {
+  IBaseSpectacle,
   ICapture,
+  IForkableSpectacle,
   IListDiffsResponse,
   IListUnrecognizedUrlsResponse,
   IOpticCapturesService,
@@ -12,6 +14,8 @@ import {
   IOpticInteractionsRepository,
   IOpticSpecReadWriteRepository,
   IOpticSpecRepository,
+  makeSpectacle,
+  SpectacleInput,
   StartDiffResult,
 } from '../index';
 import { AsyncTools, Streams } from '@useoptic/diff-engine-wasm';
@@ -21,6 +25,7 @@ import {
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { HttpInteraction } from '@useoptic/diff-engine-wasm/lib/streams/http-interactions';
 import { defaultIgnoreRules } from '@useoptic/cli-config/build/helpers/default-ignore-rules';
+import { IApiCliConfig, IOpticScript, IOpticTask } from '@useoptic/cli-config';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +75,9 @@ export class InMemorySpecRepository implements IOpticSpecReadWriteRepository {
       JSON.stringify(commands),
       JSON.stringify(this.events),
       batchCommitId,
-      commitMessage
+      commitMessage,
+      commandContext.clientId,
+      commandContext.clientSessionId
     );
     const newEvents = JSON.parse(newEventsString);
     this.events.push(...newEvents);
@@ -103,7 +110,7 @@ interface InMemoryCapturesServiceDependencies {
   opticEngine: IOpticEngine;
   interactionsRepository: InMemoryInteractionsRepository;
   specRepository: IOpticSpecRepository;
-  configRepository: IOpticConfigRepository;
+  configRepository: InMemoryConfigRepository;
 }
 
 export class InMemoryCapturesService implements IOpticCapturesService {
@@ -163,13 +170,22 @@ export class InMemoryCapturesService implements IOpticCapturesService {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+interface IOpticInMemoryConfigDependencies {
+  config: IApiCliConfig;
+}
+
 export class InMemoryConfigRepository implements IOpticConfigRepository {
+  constructor(private dependencies: IOpticInMemoryConfigDependencies) {}
   addIgnoreRule(rule: string): Promise<void> {
     return Promise.resolve(undefined);
   }
 
   listIgnoreRules(): Promise<string[]> {
     return Promise.resolve(defaultIgnoreRules);
+  }
+
+  getApiName(): Promise<string> {
+    return Promise.resolve(this.dependencies.config.name);
   }
 }
 
@@ -185,6 +201,7 @@ interface InMemoryDiffServiceDependencies {
 //@jaap: we need to make sure this and InMemoryDiff are up-to-date relative to the latest changes
 export class InMemoryDiffService implements IOpticDiffService {
   constructor(private dependencies: InMemoryDiffServiceDependencies) {}
+
   async learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
     const events = await this.dependencies.specRepository.listEvents();
     const spec = this.dependencies.opticEngine.spec_from_events(
@@ -213,10 +230,10 @@ export class InMemoryDiffService implements IOpticDiffService {
       },
       {}
     );
-    if (Object.keys(affordancesByFingerprint).length === 0) {
-      //@GOTCHA: this should only ever be empty if there are no Shape Diffs. use invariant?
-      debugger;
-    }
+    // if (Object.keys(affordancesByFingerprint).length === 0) {
+    //   //@GOTCHA: this should only ever be empty if there are no Shape Diffs. use invariant?
+    //   debugger;
+    // }
     //@jaap @TODO: use asynctools affordancesByFingerprint ?
     return affordancesByFingerprint;
   }
@@ -232,8 +249,10 @@ export class InMemoryDiffService implements IOpticDiffService {
       const newEventsString = this.dependencies.opticEngine.try_apply_commands(
         JSON.stringify(newPathCommands),
         JSON.stringify(events),
-        'simulated',
-        'simulated-batch'
+        'simulated-batch',
+        'simulated changes',
+        'simulated-client',
+        'simulated-session'
       );
 
       //@aidan check if this returns all events or just the new events
@@ -251,7 +270,8 @@ export class InMemoryDiffService implements IOpticDiffService {
       const learnedBodies = JSON.parse(
         this.dependencies.opticEngine.learn_undocumented_bodies(
           spec,
-          interactionsJsonl
+          interactionsJsonl,
+          'random'
         )
       );
       const learnedBodiesForPathIdAndMethod = learnedBodies.find(
@@ -387,15 +407,23 @@ export class InMemoryDiffRepository implements IOpticDiffRepository {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+const defaultConfig: IApiCliConfig = {
+  name: 'optic',
+  tasks: {},
+};
+
 export class InMemoryOpticContextBuilder {
   static async fromEvents(
     opticEngine: IOpticEngine,
-    events: any[]
+    events: any[],
+    config: IApiCliConfig = defaultConfig
   ): Promise<IOpticContext> {
     const notifications = new EventEmitter();
     const diffRepository = new InMemoryDiffRepository();
     const interactionsRepository = new InMemoryInteractionsRepository();
-    const configRepository = new InMemoryConfigRepository();
+    const configRepository = new InMemoryConfigRepository({ config });
     const specRepository = new InMemorySpecRepository({
       notifications,
       initialState: {
@@ -425,13 +453,14 @@ export class InMemoryOpticContextBuilder {
     opticEngine: IOpticEngine,
     events: any[],
     interactions: any[],
-    captureId: string
+    captureId: string,
+    config: IApiCliConfig = defaultConfig
   ): Promise<IOpticContext> {
     const notifications = new EventEmitter();
     const diffRepository = new InMemoryDiffRepository();
     const interactionsRepository = new InMemoryInteractionsRepository();
     await interactionsRepository.set(captureId, interactions);
-    const configRepository = new InMemoryConfigRepository();
+    const configRepository = new InMemoryConfigRepository({ config });
     const specRepository = new InMemorySpecRepository({
       notifications,
       initialState: {
@@ -455,5 +484,44 @@ export class InMemoryOpticContextBuilder {
       configRepository,
       specRepository,
     };
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export interface InMemoryBaseSpectacle extends IBaseSpectacle {
+  samples: any[];
+  opticContext: IOpticContext;
+}
+
+export class InMemorySpectacle
+  implements IForkableSpectacle, InMemoryBaseSpectacle {
+  private spectaclePromise: ReturnType<typeof makeSpectacle>;
+
+  constructor(
+    public readonly opticContext: IOpticContext,
+    public samples: any[]
+  ) {
+    this.spectaclePromise = makeSpectacle(opticContext);
+  }
+
+  async fork(): Promise<IBaseSpectacle> {
+    const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
+      this.opticContext.opticEngine,
+      [...(await this.opticContext.specRepository.listEvents())],
+      this.samples,
+      'example-session'
+    );
+    return new InMemorySpectacle(opticContext, [...this.samples]);
+  }
+
+  async mutate<Result, Input = {}>(options: SpectacleInput<Input>) {
+    const spectacle = await this.spectaclePromise;
+    return spectacle.queryWrapper<Result, Input>(options);
+  }
+
+  async query<Result, Input = {}>(options: SpectacleInput<Input>) {
+    const spectacle = await this.spectaclePromise;
+    return spectacle.queryWrapper<Result, Input>(options);
   }
 }

@@ -1,8 +1,10 @@
 import {
   IJsonObjectKey,
   IJsonTrail,
+  normalize,
 } from '@useoptic/cli-shared/build/diffs/json-trail';
 import sortBy from 'lodash.sortby';
+import equals from 'lodash.isequal';
 import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
 import { CurrentSpecContext, ICoreShapeKinds } from './Interfaces';
 import {
@@ -15,6 +17,7 @@ import {
 } from '../../../cli-shared/build/diffs/initial-types';
 import invariant from 'invariant';
 import { namer } from './quick-namer';
+import { setDifference } from '<src>/lib/set-ops';
 
 export async function getExpectationsForShapeTrail(
   shapeTrail: IShapeTrail,
@@ -26,7 +29,7 @@ export async function getExpectationsForShapeTrail(
 }
 
 export class Expectation {
-  private expectationsFromSpec: IExpectationHelper;
+  public expectationsFromSpec: IExpectationHelper;
   private currentSpecContext: CurrentSpecContext;
 
   constructor(
@@ -135,7 +138,10 @@ export class Actual {
     private shapeTrail: IShapeTrail,
     public jsonTrail: IJsonTrail
   ) {
-    this.trailAffordances = learnedTrails.affordances;
+    this.trailAffordances = learnedTrails.affordances.filter((i) => {
+      const compared = equals(normalize(i.trail), normalize(jsonTrail));
+      return compared;
+    });
   }
 
   isField(): boolean {
@@ -177,6 +183,7 @@ export class Actual {
       wasArray,
       wasObject,
       wasString,
+      wasEmptyArray,
       wasMissingTrails,
       wasNumberTrails,
       wasBooleanTrails,
@@ -221,13 +228,19 @@ export class Actual {
         interactions: wasNull,
         jsonTrailsByInteractions: wasNullTrails,
       });
-    if (wasArray.length)
+    if (wasArray.length || wasEmptyArray.length) {
+      const wasArraySet = new Set([...wasArray]);
+      const wasEmptyArraySet = new Set([...wasEmptyArray]);
+      const wasArrayWithItems = setDifference(wasArraySet, wasEmptyArraySet);
+
       results.push({
-        label: 'array',
+        label: 'list',
         kind: ICoreShapeKinds.ListKind,
-        interactions: wasArray,
+        interactions:
+          wasArrayWithItems.size > 0 ? Array.from(wasArrayWithItems) : wasArray,
         jsonTrailsByInteractions: wasArrayTrails,
       });
+    }
     if (wasObject.length)
       results.push({
         label: 'object',

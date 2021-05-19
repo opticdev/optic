@@ -15,9 +15,10 @@ import {
   ExampleRequestsHelpers,
   makeRouter,
 } from './routers/spec-router';
+import Bottleneck from 'bottleneck';
 import { basePath } from '@useoptic/ui-v2';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
-import { analyticsEvents, trackWithApiName } from './analytics';
+import { analyticsEvents, track, trackWithApiName } from './analytics';
 import cors from 'cors';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { Session, SessionsManager } from './sessions';
@@ -90,6 +91,9 @@ class CliServer {
     app.use(cors(this.corsOptions));
     app.set('etag', false);
     const sessions = new SessionsManager();
+    const fileReadBottleneck = new Bottleneck({
+      maxConcurrent: 1,
+    });
     let user: object | null;
 
     const anonIdPromise = getOrCreateAnonId();
@@ -102,21 +106,18 @@ class CliServer {
       res.json({ isRunning: true, version: pJson.version });
     });
 
-    app.put(
-      '/api/identity',
-      bodyParser.json({ limit: '5kb' }),
+    app.post(
+      '/api/tracking/events',
+      bodyParser.json({ limit: '100kb' }),
       async (req, res: express.Response) => {
-        if (req.body.user) {
-          user = req.body.user;
-          res.status(202).json({});
-        } else {
-          res.sendStatus(400);
-        }
+        const events: TrackingEventBase<any>[] = req.body.events;
+        track(events);
+        res.status(200).json({});
       }
     );
 
     app.post(
-      '/api/tracking/events',
+      '/api/tracking/events/apiname',
       bodyParser.json({ limit: '100kb' }),
       async (req, res: express.Response) => {
         const events: TrackingEventBase<any>[] = req.body.events;
@@ -202,7 +203,7 @@ class CliServer {
     );
 
     // specRouter
-    const specRouter = await makeRouter(sessions);
+    const specRouter = await makeRouter(sessions, fileReadBottleneck);
     app.use('/api/specs/:specId', specRouter);
 
     // ui
@@ -253,7 +254,7 @@ class CliServer {
           if (err) {
             console.error(err);
           }
-          resolve();
+          resolve(null);
         });
       });
     }

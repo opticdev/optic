@@ -13,4 +13,5 @@ export interface ClientContext {
   clientSessionInstanceId: string;
   clientTimestamp: string;
   clientAgent: string;
+  source: string;
 }

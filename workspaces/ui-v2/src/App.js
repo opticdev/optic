@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
-import './App.css';
+import React, { useCallback } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { appTheme } from './optic-components/theme';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -18,11 +17,11 @@ class App extends React.Component {
       <React.Fragment>
         <CssBaseline />
         <ThemeProvider theme={appTheme}>
-            <BrowserRouter>
-              <>
-                <Route path="/" component={this.props.topLevelRoutes} />
-              </>
-            </BrowserRouter>
+          <BrowserRouter>
+            <>
+              <Route path="/" component={this.props.topLevelRoutes} />
+            </>
+          </BrowserRouter>
         </ThemeProvider>
       </React.Fragment>
     );
@@ -40,15 +39,6 @@ function AppError(props) {
     e.preventDefault();
     window && window.location && window.location.reload(true);
   }, []);
-
-  useEffect(() => {
-    // trackUserEvent(
-    //   JavascriptErrorDetectedInFrontend.withProps({
-    //     message: props.error.message,
-    //     stack: props.error.stack,
-    //   })
-    // );
-  });
 
   // we have to be as conservative as possible here and only use styles from App.css, as we're not sure what subsystems this error has touched
   return (
@@ -87,10 +77,8 @@ function AppError(props) {
             </ul>
           </li>
           <li>
-            <button onClick={onClickRefresh}>
-              Refresh the page
-            </button>{' '}
-            in your browser.
+            <button onClick={onClickRefresh}>Refresh the page</button> in your
+            browser.
           </li>
           <li>
             Try <a href="https://browsehappy.com/">a different browser</a>, if

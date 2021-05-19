@@ -10,6 +10,7 @@ import { Redirect, useHistory } from 'react-router-dom';
 import { Box, Button, Divider, TextField, Typography } from '@material-ui/core';
 import { EndpointName } from '../../common';
 import { Loader } from '../../loaders/FullPageLoader';
+import { Loading } from '<src>/optic-components/loaders/Loading';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -24,11 +25,13 @@ import { SpectacleContext } from '../../../spectacle-implementations/spectacle-p
 import { IIgnoreBody } from '../../hooks/diffs/LearnInitialBodiesMachine';
 import { useDebouncedFn, useStateWithSideEffect } from '../../hooks/util';
 import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
+import { useAnalytics } from '<src>/analytics';
 
 export function PendingEndpointPageSession(props: any) {
   const { match } = props;
   const { endpointId } = match.params;
 
+  const analytics = useAnalytics();
   const history = useHistory();
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
 
@@ -57,6 +60,7 @@ export function PendingEndpointPageSession(props: any) {
       }}
       onEndpointDiscarded={() => {
         discardEndpoint(endpoint.id);
+        analytics.userDiscardedEndpoint();
         goToDiffPage();
       }}
     >
@@ -89,6 +93,8 @@ export function PendingEndpointPage(props: any) {
     initialValue: endpointName,
     sideEffect: debouncedSetName,
   });
+  const history = useHistory();
+  const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
 
   const requestCheckboxes = (learnedBodies?.requests || []).filter((i) =>
     Boolean(i.contentType)
@@ -140,13 +146,16 @@ export function PendingEndpointPage(props: any) {
                 onKeyPress={onKeyPress}
               />
 
-              <Typography
-                component="div"
-                variant="subtitle2"
-                style={{ color: AddedDarkGreen, marginBottom: 8 }}
-              >
-                Document the bodies for this endpoint:
-              </Typography>
+              {requestCheckboxes.length > 0 ||
+              learnedBodies!.responses.length > 0 ? (
+                <Typography
+                  component="div"
+                  variant="subtitle2"
+                  style={{ color: AddedDarkGreen, marginBottom: 8 }}
+                >
+                  Document the bodies for this endpoint:
+                </Typography>
+              ) : null}
 
               <FormControl component="fieldset" onKeyPress={onKeyPress}>
                 {requestCheckboxes.map((i, index) => {
@@ -195,18 +204,35 @@ export function PendingEndpointPage(props: any) {
               </FormControl>
 
               <div className={classes.buttons}>
-                <Button size="small" color="default" onClick={discardEndpoint}>
-                  Discard Endpoint
-                </Button>
-                <Button
-                  size="small"
-                  variant="contained"
-                  color="primary"
-                  style={{ marginLeft: 10 }}
-                  onClick={stageEndpoint}
-                >
-                  Add Endpoint
-                </Button>
+                <div>
+                  <Button
+                    size="small"
+                    color="default"
+                    onClick={() =>
+                      history.push(diffUndocumentedUrlsPageLink.linkTo())
+                    }
+                  >
+                    Cancel
+                  </Button>
+                </div>
+                <div>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    onClick={discardEndpoint}
+                  >
+                    Discard Endpoint
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    style={{ marginLeft: 10 }}
+                    onClick={stageEndpoint}
+                  >
+                    Add Endpoint
+                  </Button>
+                </div>
               </div>
             </div>
           )}
@@ -219,16 +245,19 @@ export function PendingEndpointPage(props: any) {
             spectacle={spectacle as IForkableSpectacle}
             previewCommands={newEndpointCommands}
           >
-            <EndpointDocumentationPane
-              // lastBatchCommit={lastBatchId}
-              method={stagedCommandsIds.method}
-              pathId={stagedCommandsIds.pathId}
-              renderHeader={() => (
-                <Typography className={classes.nameDisplay}>
-                  {name === '' ? 'Unnamed Endpoint' : name}
-                </Typography>
-              )}
-            />
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <EndpointDocumentationPane
+                method={stagedCommandsIds.method}
+                pathId={stagedCommandsIds.pathId}
+                renderHeader={() => (
+                  <Typography className={classes.nameDisplay}>
+                    {name === '' ? 'Unnamed Endpoint' : name}
+                  </Typography>
+                )}
+              />
+            )}
           </SimulatedCommandStore>
         </>
       }
@@ -290,8 +319,7 @@ const useStyles = makeStyles((theme) => ({
   buttons: {
     marginTop: 25,
     display: 'flex',
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between;',
   },
   nameDisplay: {
     fontSize: '1.25rem',

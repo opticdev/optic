@@ -3,9 +3,12 @@ import { CapturesServiceContext } from './useCapturesHook';
 import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
 import { ParsedDiff } from '../../lib/parse-diff';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { useAnalytics } from '<src>/analytics';
+import { useEndpoints } from '<src>/optic-components/hooks/useEndpointsHook';
 
 interface DiffState {
   data?: {
+    durationMillis: number;
     diffs: ParsedDiff[];
     urls: IUnrecognizedUrl[];
     trails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
@@ -20,6 +23,8 @@ export function useDiffsForCapture(
   diffId: string
 ): DiffState {
   const capturesService = useContext(CapturesServiceContext)!;
+  const analytics = useAnalytics();
+  const endpoint = useEndpoints();
 
   const [diffState, setDiffState] = useState<DiffState>({
     loading: true,
@@ -27,6 +32,7 @@ export function useDiffsForCapture(
 
   useEffect(() => {
     async function task() {
+      const startTime = Date.now();
       console.count('startDiff');
       const startDiffResult = await capturesService.startDiff(
         diffId,
@@ -42,10 +48,14 @@ export function useDiffsForCapture(
 
       const learnedTrailsForEndpoints = await diffsService.learnShapeDiffAffordances();
 
+      const endTime = Date.now();
+
       const urls = await diffsService.listUnrecognizedUrls();
+
       setDiffState({
         loading: false,
         data: {
+          durationMillis: endTime - startTime,
           diffs: parsedDiffs,
           urls: urls.urls,
           trails: learnedTrailsForEndpoints,
@@ -56,5 +66,17 @@ export function useDiffsForCapture(
 
     task();
   }, [capturesService, captureId, diffId]);
+
+  useEffect(() => {
+    if (diffState.data) {
+      analytics.reviewPageLoaded(
+        diffState.data.diffs.length,
+        diffState.data.urls.length,
+        diffState.data.durationMillis,
+        endpoint.endpoints.length
+      );
+    }
+  }, [diffState, endpoint.endpoints.length, analytics]);
+
   return diffState;
 }

@@ -54,7 +54,6 @@ let entrypoints = {
   cloud: 'src/entry-points/cloud/index',
   local: 'src/entry-points/local/index',
 };
-
 // config after eject: we're in ./config/
 module.exports = {
   dotenv: resolveApp('.env'),

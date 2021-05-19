@@ -37,9 +37,7 @@ export const EndpointDocumentationPane: FC<
   ...props
 }) => {
   const { endpoints, loading } = useEndpoints();
-  // const previewCommands = useSimulatedCommands();
   const bodies = useEndpointBody(pathId, method, lastBatchCommit);
-
   const thisEndpoint = endpoints.find(
     (i) => i.pathId === pathId && i.method === method
   );

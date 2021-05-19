@@ -47,7 +47,7 @@ mod test {
 
     let body: Option<BodyDescriptor> = Some(BodyDescriptor::from(object_body));
 
-    let result = observe_body_trails(body);
+    let result = observe_body_trails(body).normalized();
 
     let root_shape_trail = JsonTrail::empty();
     let root_shape_result = result
