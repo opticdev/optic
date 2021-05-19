@@ -13,7 +13,7 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
-        "absolutePathPatternWithParameterNames": "",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
