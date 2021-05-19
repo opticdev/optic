@@ -68,7 +68,7 @@ export function BuildSpecPatch({
   return (
     <FormControl component="fieldset" style={{ width: '100%', paddingLeft: 5 }}>
       {patchChoices && (
-        <Typography variant="body1" className={classes.heading}>
+        <Typography component="div" variant="body1" className={classes.heading}>
           <ICopyRender
             variant="body1"
             style={{ fontFamily: 'Ubuntu Mono', color: OpticBlueReadable }}
