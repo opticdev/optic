@@ -7,116 +7,81 @@ Object {
       "AddShape": Object {
         "baseShapeId": "$string",
         "name": "",
-        "shapeId": "shape_6699",
+        "shapeId": "shape_6697",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$boolean",
         "name": "",
+        "shapeId": "shape_6698",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
+        "shapeId": "shape_6699",
+      },
+    },
+    Object {
+      "AddShape": Object {
+        "baseShapeId": "$string",
+        "name": "",
         "shapeId": "shape_6700",
-      },
-    },
-    Object {
-      "AddShape": Object {
-        "baseShapeId": "$string",
-        "name": "",
-        "shapeId": "shape_6701",
-      },
-    },
-    Object {
-      "AddShape": Object {
-        "baseShapeId": "$string",
-        "name": "",
-        "shapeId": "shape_6702",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$object",
         "name": "",
-        "shapeId": "shape_6708",
-      },
-    },
-    Object {
-      "AddShape": Object {
-        "baseShapeId": "$optional",
-        "name": "",
         "shapeId": "shape_6704",
       },
     },
     Object {
-      "SetParameterShape": Object {
+      "AddField": Object {
+        "fieldId": "field_6701",
+        "name": "id",
         "shapeDescriptor": Object {
-          "ProviderInShape": Object {
-            "consumingParameterId": "$optionalInner",
-            "providerDescriptor": Object {
-              "ShapeProvider": Object {
-                "shapeId": "shape_6702",
-              },
-            },
-            "shapeId": "shape_6704",
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6701",
+            "shapeId": "shape_6699",
           },
         },
+        "shapeId": "shape_6704",
+      },
+    },
+    Object {
+      "AddField": Object {
+        "fieldId": "field_6702",
+        "name": "isDone",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "field_6702",
+            "shapeId": "shape_6698",
+          },
+        },
+        "shapeId": "shape_6704",
       },
     },
     Object {
       "AddField": Object {
         "fieldId": "field_6703",
-        "name": "dueDate",
-        "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "field_6703",
-            "shapeId": "shape_6704",
-          },
-        },
-        "shapeId": "shape_6708",
-      },
-    },
-    Object {
-      "AddField": Object {
-        "fieldId": "field_6705",
-        "name": "id",
-        "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "field_6705",
-            "shapeId": "shape_6701",
-          },
-        },
-        "shapeId": "shape_6708",
-      },
-    },
-    Object {
-      "AddField": Object {
-        "fieldId": "field_6706",
-        "name": "isDone",
-        "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "field_6706",
-            "shapeId": "shape_6700",
-          },
-        },
-        "shapeId": "shape_6708",
-      },
-    },
-    Object {
-      "AddField": Object {
-        "fieldId": "field_6707",
         "name": "task",
         "shapeDescriptor": Object {
           "FieldShapeFromShape": Object {
-            "fieldId": "field_6707",
-            "shapeId": "shape_6699",
+            "fieldId": "field_6703",
+            "shapeId": "shape_6697",
           },
         },
-        "shapeId": "shape_6708",
+        "shapeId": "shape_6704",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$list",
         "name": "",
-        "shapeId": "shape_6709",
+        "shapeId": "shape_6705",
       },
     },
     Object {
@@ -126,10 +91,10 @@ Object {
             "consumingParameterId": "$listItem",
             "providerDescriptor": Object {
               "ShapeProvider": Object {
-                "shapeId": "shape_6708",
+                "shapeId": "shape_6704",
               },
             },
-            "shapeId": "shape_6709",
+            "shapeId": "shape_6705",
           },
         },
       },
@@ -138,7 +103,7 @@ Object {
       "AddRequest": Object {
         "httpMethod": "GET",
         "pathId": "path_it2OyjUysW",
-        "requestId": "request_6710",
+        "requestId": "request_6706",
       },
     },
     Object {
@@ -146,9 +111,9 @@ Object {
         "bodyDescriptor": Object {
           "httpContentType": "application/json",
           "isRemoved": false,
-          "shapeId": "shape_6709",
+          "shapeId": "shape_6705",
         },
-        "requestId": "request_6710",
+        "requestId": "request_6706",
       },
     },
   ],
@@ -238,116 +203,81 @@ Object {
       "AddShape": Object {
         "baseShapeId": "$string",
         "name": "",
-        "shapeId": "shape_6713",
+        "shapeId": "shape_6719",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$boolean",
         "name": "",
-        "shapeId": "shape_6714",
+        "shapeId": "shape_6720",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$string",
         "name": "",
-        "shapeId": "shape_6715",
+        "shapeId": "shape_6721",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$string",
         "name": "",
-        "shapeId": "shape_6716",
+        "shapeId": "shape_6722",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$object",
         "name": "",
-        "shapeId": "shape_6722",
-      },
-    },
-    Object {
-      "AddShape": Object {
-        "baseShapeId": "$optional",
-        "name": "",
-        "shapeId": "shape_6718",
-      },
-    },
-    Object {
-      "SetParameterShape": Object {
-        "shapeDescriptor": Object {
-          "ProviderInShape": Object {
-            "consumingParameterId": "$optionalInner",
-            "providerDescriptor": Object {
-              "ShapeProvider": Object {
-                "shapeId": "shape_6716",
-              },
-            },
-            "shapeId": "shape_6718",
-          },
-        },
+        "shapeId": "shape_6726",
       },
     },
     Object {
       "AddField": Object {
-        "fieldId": "field_6717",
-        "name": "dueDate",
-        "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "field_6717",
-            "shapeId": "shape_6718",
-          },
-        },
-        "shapeId": "shape_6722",
-      },
-    },
-    Object {
-      "AddField": Object {
-        "fieldId": "field_6719",
+        "fieldId": "field_6723",
         "name": "id",
         "shapeDescriptor": Object {
           "FieldShapeFromShape": Object {
-            "fieldId": "field_6719",
-            "shapeId": "shape_6715",
+            "fieldId": "field_6723",
+            "shapeId": "shape_6721",
           },
         },
-        "shapeId": "shape_6722",
+        "shapeId": "shape_6726",
       },
     },
     Object {
       "AddField": Object {
-        "fieldId": "field_6720",
+        "fieldId": "field_6724",
         "name": "isDone",
         "shapeDescriptor": Object {
           "FieldShapeFromShape": Object {
-            "fieldId": "field_6720",
-            "shapeId": "shape_6714",
+            "fieldId": "field_6724",
+            "shapeId": "shape_6720",
           },
         },
-        "shapeId": "shape_6722",
+        "shapeId": "shape_6726",
       },
     },
     Object {
       "AddField": Object {
-        "fieldId": "field_6721",
+        "fieldId": "field_6725",
         "name": "task",
         "shapeDescriptor": Object {
           "FieldShapeFromShape": Object {
-            "fieldId": "field_6721",
-            "shapeId": "shape_6713",
+            "fieldId": "field_6725",
+            "shapeId": "shape_6719",
           },
         },
-        "shapeId": "shape_6722",
+        "shapeId": "shape_6726",
       },
     },
     Object {
       "AddShape": Object {
         "baseShapeId": "$list",
         "name": "",
-        "shapeId": "shape_6723",
+        "shapeId": "shape_6727",
       },
     },
     Object {
@@ -357,10 +287,10 @@ Object {
             "consumingParameterId": "$listItem",
             "providerDescriptor": Object {
               "ShapeProvider": Object {
-                "shapeId": "shape_6722",
+                "shapeId": "shape_6726",
               },
             },
-            "shapeId": "shape_6723",
+            "shapeId": "shape_6727",
           },
         },
       },
@@ -370,7 +300,7 @@ Object {
         "httpMethod": "GET",
         "httpStatusCode": 200,
         "pathId": "path_it2OyjUysW",
-        "responseId": "response_6724",
+        "responseId": "response_6728",
       },
     },
     Object {
@@ -378,9 +308,9 @@ Object {
         "bodyDescriptor": Object {
           "httpContentType": "application/json",
           "isRemoved": false,
-          "shapeId": "shape_6723",
+          "shapeId": "shape_6727",
         },
-        "responseId": "response_6724",
+        "responseId": "response_6728",
       },
     },
   ],

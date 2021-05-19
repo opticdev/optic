@@ -6376,9 +6376,11 @@ Object {
     Object {
       "SetResponseBodyShape": Object {
         "bodyDescriptor": Object {
-          "httpContentType": "application/json",
-          "isRemoved": false,
-          "shapeId": "shape_0",
+          "ShapedBodyDescriptor": Object {
+            "httpContentType": "application/json",
+            "isRemoved": false,
+            "shapeId": "shape_0",
+          },
         },
         "responseId": "response_1",
       },
