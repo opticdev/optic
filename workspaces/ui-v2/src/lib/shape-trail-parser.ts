@@ -59,12 +59,6 @@ export async function shapeTrailParserLastId(
     if (lastTrail.hasOwnProperty('ObjectFieldTrail')) {
       const fieldTrail = (lastTrail as IObjectFieldTrail).ObjectFieldTrail;
 
-      const field = await getFieldFromRootShapeId(
-        shapeTrail.rootShapeId,
-        fieldTrail.fieldId,
-        spectacle
-      );
-
       const choices = await getChoices(fieldTrail.fieldShapeId, spectacle);
 
       const lastObjectOption = Object.entries(
@@ -73,10 +67,10 @@ export async function shapeTrailParserLastId(
       return {
         lastObject: lastObjectOption
           ? lastObjectOption[0]
-          : field.parentObjectId,
+          : fieldTrail.parentObjectShapeId,
         lastField: fieldTrail.fieldId,
         lastFieldShapeId: fieldTrail.fieldShapeId,
-        lastFieldKey: field.name,
+        lastFieldKey: 'AIDANFIXME',
         fieldIsOptional: choices.allowedCoreShapes.includes(
           ICoreShapeKinds.OptionalKind
         ),
@@ -205,105 +199,6 @@ async function getChoices(
   } else {
     return { allowedCoreShapeKindsByShapeId: {}, allowedCoreShapes: [] };
   }
-}
-
-// @todo this should be changed to use a field query
-async function getFieldFromRootShapeId(
-  rootShapeId: string,
-  fieldId: string,
-  spectacle: any
-): Promise<{
-  fieldId: string;
-  shapeId: string;
-  parentObjectId: string;
-  name: string;
-}> {
-  const query = `
-  query X($shapeId: ID) {
-    shapeChoices(shapeId: $shapeId) {
-      id
-      jsonType
-      asObject {
-        fields {
-          name
-          fieldId
-          shapeId
-        }
-      }
-      asArray {
-        shapeId
-      }
-    }
-}`;
-
-  const fields: {
-    [key: string]: {
-      fieldId: string;
-      shapeId: string;
-      parentObjectId: string;
-      name: string;
-    };
-  } = {};
-
-  async function accumulateShapes(rootShapeId: string) {
-    const result = await spectacle.query({
-      variables: {
-        shapeId: rootShapeId,
-      },
-      query,
-    });
-
-    if (result.errors) {
-      console.error(result.errors);
-      debugger;
-    }
-
-    if (!result.data.shapeChoices) {
-      debugger;
-    }
-    return await Promise.all(
-      result.data.shapeChoices.map(async (choice: any) => {
-        switch (choice.jsonType) {
-          case 'Object':
-            const newFields: {
-              fieldId: string;
-              name: string;
-              shapeId: string;
-              parentObjectId: string;
-            }[] = await Promise.all(
-              choice.asObject.fields.map(async (field: any) => {
-                const shapeChoices = await accumulateShapes(field.shapeId);
-                field.parentObjectId = choice.id;
-                field.required = !shapeChoices.some(
-                  (i: any) => i.jsonType === JsonLike.UNDEFINED
-                ); // is required
-                field.shapeChoices = shapeChoices.filter(
-                  (i: any) => i.jsonType !== JsonLike.UNDEFINED
-                ); // don't include optional
-                return field;
-              })
-            );
-            choice.asObject.fields = newFields;
-            //store fields in dictionary
-            newFields.forEach((i) => (fields[i.fieldId] = i));
-
-            return choice;
-
-          case 'Array':
-            const results = await accumulateShapes(choice.asArray.shapeId);
-            const shapeChoices = await Promise.all(results);
-            choice.asArray.shapeChoices = shapeChoices;
-            return choice;
-          default:
-            return choice;
-        }
-      })
-    );
-  }
-
-  await accumulateShapes(rootShapeId);
-
-  return fields[fieldId]!;
 }
 
 export function JsonLikeToCoreShapeKinds(
