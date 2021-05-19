@@ -6,8 +6,9 @@ use crate::state::body::BodyDescriptor;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
 use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
-use std::cmp::Ordering;
+use std::fmt;
 use std::hash::{Hash, Hasher};
+use std::{cmp::Ordering, fmt::Write};
 
 pub struct Traverser<'a> {
   shape_queries: &'a ShapeQueries<'a>,
@@ -388,6 +389,22 @@ impl PartialOrd for JsonTrail {
 impl Hash for JsonTrail {
   fn hash<H: Hasher>(&self, hash_state: &mut H) {
     self.path.hash(hash_state);
+  }
+}
+
+impl fmt::Display for JsonTrail {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    let identifiers = self
+      .path
+      .iter()
+      .filter_map(|component| match component {
+        JsonTrailPathComponent::JsonArrayItem { index } => Some(format!("{}", index)),
+        JsonTrailPathComponent::JsonObjectKey { key } => Some(key.clone()),
+        JsonTrailPathComponent::JsonArray {} => None,
+        JsonTrailPathComponent::JsonObject {} => None,
+      })
+      .collect::<Vec<_>>();
+    write!(f, "{}", identifiers.join("."))
   }
 }
 

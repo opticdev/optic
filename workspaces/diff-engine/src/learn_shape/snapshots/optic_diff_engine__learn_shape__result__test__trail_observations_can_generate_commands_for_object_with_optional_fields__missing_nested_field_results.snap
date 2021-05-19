@@ -1,0 +1,192 @@
+---
+source: workspaces/diff-engine/src/learn_shape/result.rs
+expression: "&missing_nested_field_results"
+---
+(
+    Some(
+        "test-id-28",
+    ),
+    [
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-16",
+                    base_shape_id: "$number",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-17",
+                    base_shape_id: "$string",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-18",
+                    base_shape_id: "$string",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-24",
+                    base_shape_id: "$object",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-20",
+                    base_shape_id: "$optional",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            SetParameterShape(
+                SetParameterShape {
+                    shape_descriptor: ProviderInShape(
+                        ProviderInShape {
+                            shape_id: "test-id-20",
+                            provider_descriptor: ShapeProvider(
+                                ShapeProvider {
+                                    shape_id: "test-id-18",
+                                },
+                            ),
+                            consuming_parameter_id: "$optionalInner",
+                        },
+                    ),
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddField(
+                AddField {
+                    field_id: "test-id-19",
+                    shape_id: "test-id-24",
+                    name: "another-optional-field",
+                    shape_descriptor: FieldShapeFromShape(
+                        FieldShapeFromShape {
+                            field_id: "test-id-19",
+                            shape_id: "test-id-20",
+                        },
+                    ),
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-22",
+                    base_shape_id: "$optional",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            SetParameterShape(
+                SetParameterShape {
+                    shape_descriptor: ProviderInShape(
+                        ProviderInShape {
+                            shape_id: "test-id-22",
+                            provider_descriptor: ShapeProvider(
+                                ShapeProvider {
+                                    shape_id: "test-id-17",
+                                },
+                            ),
+                            consuming_parameter_id: "$optionalInner",
+                        },
+                    ),
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddField(
+                AddField {
+                    field_id: "test-id-21",
+                    shape_id: "test-id-24",
+                    name: "optional-field",
+                    shape_descriptor: FieldShapeFromShape(
+                        FieldShapeFromShape {
+                            field_id: "test-id-21",
+                            shape_id: "test-id-22",
+                        },
+                    ),
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddField(
+                AddField {
+                    field_id: "test-id-23",
+                    shape_id: "test-id-24",
+                    name: "required-field",
+                    shape_descriptor: FieldShapeFromShape(
+                        FieldShapeFromShape {
+                            field_id: "test-id-23",
+                            shape_id: "test-id-16",
+                        },
+                    ),
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-25",
+                    base_shape_id: "$boolean",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-28",
+                    base_shape_id: "$object",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddField(
+                AddField {
+                    field_id: "test-id-26",
+                    shape_id: "test-id-28",
+                    name: "other-field",
+                    shape_descriptor: FieldShapeFromShape(
+                        FieldShapeFromShape {
+                            field_id: "test-id-26",
+                            shape_id: "test-id-25",
+                        },
+                    ),
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddField(
+                AddField {
+                    field_id: "test-id-27",
+                    shape_id: "test-id-28",
+                    name: "some-object",
+                    shape_descriptor: FieldShapeFromShape(
+                        FieldShapeFromShape {
+                            field_id: "test-id-27",
+                            shape_id: "test-id-24",
+                        },
+                    ),
+                },
+            ),
+        ),
+    ],
+)
