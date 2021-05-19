@@ -93,6 +93,8 @@ export function PendingEndpointPage(props: any) {
     initialValue: endpointName,
     sideEffect: debouncedSetName,
   });
+  const history = useHistory();
+  const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
 
   const requestCheckboxes = (learnedBodies?.requests || []).filter((i) =>
     Boolean(i.contentType)
@@ -202,18 +204,35 @@ export function PendingEndpointPage(props: any) {
               </FormControl>
 
               <div className={classes.buttons}>
-                <Button size="small" color="default" onClick={discardEndpoint}>
-                  Discard Endpoint
-                </Button>
-                <Button
-                  size="small"
-                  variant="contained"
-                  color="primary"
-                  style={{ marginLeft: 10 }}
-                  onClick={stageEndpoint}
-                >
-                  Add Endpoint
-                </Button>
+                <div>
+                  <Button
+                    size="small"
+                    color="default"
+                    onClick={() =>
+                      history.push(diffUndocumentedUrlsPageLink.linkTo())
+                    }
+                  >
+                    Cancel
+                  </Button>
+                </div>
+                <div>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    onClick={discardEndpoint}
+                  >
+                    Discard Endpoint
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    style={{ marginLeft: 10 }}
+                    onClick={stageEndpoint}
+                  >
+                    Add Endpoint
+                  </Button>
+                </div>
               </div>
             </div>
           )}
@@ -300,8 +319,7 @@ const useStyles = makeStyles((theme) => ({
   buttons: {
     marginTop: 25,
     display: 'flex',
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between;',
   },
   nameDisplay: {
     fontSize: '1.25rem',
