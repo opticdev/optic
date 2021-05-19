@@ -14,6 +14,7 @@ export function newAnalyticsEventBus(
     emit: async (...events: TrackingEventBase<any>[]) => {
       const batchId = uuidv4();
       const context = await getContext(batchId);
+      // TODO - don't overwrite context
       events.forEach((event) => {
         eventEmitter.emit('event', { ...event, context });
       });

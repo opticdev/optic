@@ -497,48 +497,56 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/healthcheck",
+        "absolutePathPatternWithParameterNames": "/healthcheck",
         "isParameterized": false,
         "name": "healthcheck",
         "pathId": "path_to6GIY7tL3",
       },
       Null Object {
         "absolutePathPattern": "/api",
+        "absolutePathPatternWithParameterNames": "/api",
         "isParameterized": false,
         "name": "api",
         "pathId": "path_inB9snEwIX",
       },
       Null Object {
         "absolutePathPattern": "/api/account",
+        "absolutePathPatternWithParameterNames": "/api/account",
         "isParameterized": false,
         "name": "account",
         "pathId": "path_UGayMWEUve",
       },
       Null Object {
         "absolutePathPattern": "/api/account/tokens",
+        "absolutePathPatternWithParameterNames": "/api/account/tokens",
         "isParameterized": false,
         "name": "tokens",
         "pathId": "path_Zbx2qte52s",
       },
       Null Object {
         "absolutePathPattern": "/api/account/specs",
+        "absolutePathPatternWithParameterNames": "/api/account/specs",
         "isParameterized": false,
         "name": "specs",
         "pathId": "path_jleYfnE1Ru",
       },
       Null Object {
         "absolutePathPattern": "/api/specs",
+        "absolutePathPatternWithParameterNames": "/api/specs",
         "isParameterized": false,
         "name": "specs",
         "pathId": "path_g0KKrcDA4C",
       },
       Null Object {
         "absolutePathPattern": "/api/specs/{}",
+        "absolutePathPatternWithParameterNames": "/api/specs/{specId}",
         "isParameterized": true,
         "name": "specId",
         "pathId": "path_td6dXtR2C5",
@@ -556,12 +564,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_Rbkw7kMyjT",
@@ -579,12 +589,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_jhNaeRecHD",
@@ -602,12 +614,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_Rbkw7kMyjT",
@@ -625,12 +639,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_Rbkw7kMyjT",
@@ -648,12 +664,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_jhNaeRecHD",
@@ -671,12 +689,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_jhNaeRecHD",
@@ -694,12 +714,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_jhNaeRecHD",
@@ -717,12 +739,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_Rbkw7kMyjT",
@@ -740,12 +764,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_jhNaeRecHD",
@@ -763,18 +789,21 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_jhNaeRecHD",
       },
       Null Object {
         "absolutePathPattern": "/items",
+        "absolutePathPatternWithParameterNames": "/items",
         "isParameterized": false,
         "name": "items",
         "pathId": "path_H8I4tQ9R0s",
@@ -792,24 +821,28 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_jhNaeRecHD",
       },
       Null Object {
         "absolutePathPattern": "/items",
+        "absolutePathPatternWithParameterNames": "/items",
         "isParameterized": false,
         "name": "items",
         "pathId": "path_H8I4tQ9R0s",
       },
       Null Object {
         "absolutePathPattern": "/items2",
+        "absolutePathPatternWithParameterNames": "/items2",
         "isParameterized": false,
         "name": "items2",
         "pathId": "path_cvQ3CMEF5h",
@@ -827,12 +860,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_Rbkw7kMyjT",
@@ -850,30 +885,35 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_Rbkw7kMyjT",
       },
       Null Object {
         "absolutePathPattern": "/test2",
+        "absolutePathPatternWithParameterNames": "/test2",
         "isParameterized": false,
         "name": "test2",
         "pathId": "path_UTBFhSCjRy",
       },
       Null Object {
         "absolutePathPattern": "/test1",
+        "absolutePathPatternWithParameterNames": "/test1",
         "isParameterized": false,
         "name": "test1",
         "pathId": "path_OC3glljopB",
       },
       Null Object {
         "absolutePathPattern": "/test1/{}",
+        "absolutePathPatternWithParameterNames": "/test1/{id}",
         "isParameterized": true,
         "name": "id",
         "pathId": "path_NbM6PpK4t8",
@@ -891,12 +931,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_jhNaeRecHD",
@@ -914,12 +956,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_jhNaeRecHD",
@@ -937,12 +981,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_Rbkw7kMyjT",
@@ -960,12 +1006,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_jhNaeRecHD",
@@ -983,12 +1031,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_Rbkw7kMyjT",
@@ -1006,12 +1056,14 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_jhNaeRecHD",
@@ -1029,18 +1081,21 @@ Object {
     "paths": Array [
       Null Object {
         "absolutePathPattern": "/",
+        "absolutePathPatternWithParameterNames": "/",
         "isParameterized": false,
         "name": "",
         "pathId": "root",
       },
       Null Object {
         "absolutePathPattern": "/user",
+        "absolutePathPatternWithParameterNames": "/user",
         "isParameterized": false,
         "name": "user",
         "pathId": "path_jhNaeRecHD",
       },
       Null Object {
         "absolutePathPattern": "/items",
+        "absolutePathPatternWithParameterNames": "/items",
         "isParameterized": false,
         "name": "items",
         "pathId": "path_H8I4tQ9R0s",
