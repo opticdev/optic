@@ -47,12 +47,23 @@ Each workspace should have a package.json file with a name field like `@useoptic
 
 ## Validate Setup to contribute to Optic’s Local CLI
 
-- If you haven't added the `[sourceme.sh](http://sourceme.sh)` to your `.profile` or equivalent yet and invoked a new terminal, you may want to navigate to the project root and run `source sourceme.sh` to assure you have the local development aliases created. Amongst other aliases it creates  `apidev`, which takes the place of `api` against your local development build.
+- You may want to navigate to the project root and run `source sourceme.sh` to ensure you have the local development aliases created. 
+  - It creates `apidev` and `uidev`, which takes the place of `api` against your local development build.
+  - If you are iterating on the UI and `api` CLI, use `uidev`, which expects the UI to be started on port 3000 and proxy api requests to the `cli-server`; otherwise use `apidev` 
+  ```
+  terminal 1:
+  $ cd workspaces/ui-v2
+  $ yarn start:local
+  
+  terminal 2:
+  $ source sourceme.sh
+  $ uidev start
+  ```
 - Determine a visible change to make to the workspace. For example, when `api start` is run in a directory without an `optic.yml` file, you'll get an error message telling you the project is not found.
 - Confirm the current behavior of the code by running the `apidev` command (in this case, `apidev start`).
 - Run `task workspaces:build --watch` to watch and rebuild your workspace as you make changes.
 - Navigate to the target workspace, and make a visible change.
-    - For example, in `workspaces\cli-shared\index.ts`, you can change the start failure messages.
+    - For example, in `workspaces/cli-shared/src/index.ts`, you can change the start failure messages.
     - Search for "*No Optic project found in this directory.*" which is the start of the error message you get when no `optic.yml` file is present.
     - Make a small change to the string, such as "***Success!*** *No Optic project found in this directory.*"
 - Re-run the `apidev` command to verify the change is made (in this case, `apidev start`).
