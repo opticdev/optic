@@ -193,10 +193,10 @@ export async function verifyTask(
               )
             )
         );
+        const runCommand =
+          taskName === 'start' ? 'api start' : 'api run ' + taskName;
         cli.log(
-          fromOptic(
-            `To start this task, run: ${colors.bold('api start ' + taskName)}`
-          )
+          fromOptic(`To start this task, run: ${colors.bold(runCommand)}`)
         );
       } else {
         cli.log(
