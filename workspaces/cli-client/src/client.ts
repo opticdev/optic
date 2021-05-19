@@ -1,4 +1,4 @@
-import { IOpticTaskRunnerConfig, IUser } from '@useoptic/cli-config';
+import { IOpticTaskRunnerConfig } from '@useoptic/cli-config';
 import { JsonHttpClient } from '@useoptic/client-utilities';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
 
@@ -10,15 +10,13 @@ class Client {
     return JsonHttpClient.getJsonWithoutHandlingResponse(url);
   }
 
-  setIdentity(user: IUser | null) {
-    if (user) {
-      const url = `${this.baseUrl}/identity`;
-      return JsonHttpClient.putJson(url, { user });
-    }
+  postTrackingEvents(events: TrackingEventBase<any>[]) {
+    const url = `${this.baseUrl}/tracking/events/apiname`;
+    return JsonHttpClient.postJson(url, { events });
   }
 
-  postTrackingEvents(apiName: string, events: TrackingEventBase<any>[]) {
-    const url = `${this.baseUrl}/tracking/events`;
+  postTrackingEventsWithApi(apiName: string, events: TrackingEventBase<any>[]) {
+    const url = `${this.baseUrl}/tracking/events/apiname`;
     return JsonHttpClient.postJson(url, { apiName, events });
   }
 

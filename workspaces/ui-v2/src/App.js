@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { appTheme } from './optic-components/theme';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -39,15 +39,6 @@ function AppError(props) {
     e.preventDefault();
     window && window.location && window.location.reload(true);
   }, []);
-
-  useEffect(() => {
-    // trackUserEvent(
-    //   JavascriptErrorDetectedInFrontend.withProps({
-    //     message: props.error.message,
-    //     stack: props.error.stack,
-    //   })
-    // );
-  });
 
   // we have to be as conservative as possible here and only use styles from App.css, as we're not sure what subsystems this error has touched
   return (
