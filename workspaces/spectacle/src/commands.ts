@@ -144,11 +144,9 @@ export function ShapedBodyDescriptor(
   isRemoved: boolean = false
 ) {
   return {
-    ShapedBodyDescriptor: {
-      httpContentType,
-      shapeId,
-      isRemoved,
-    },
+    httpContentType,
+    shapeId,
+    isRemoved,
   };
 }
 export function SetResponseBodyShape(responseId: string, bodyDescriptor: any) {
