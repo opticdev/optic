@@ -75,10 +75,6 @@ export function DiffCard({
       <div className={classes.preview}>
         {previewTabs.length && (
           <div className={classes.previewHeader}>
-            <Typography
-              variant="caption"
-              style={{ color: OpticBlueReadable, marginRight: 5 }}
-            ></Typography>
             {previewTab && (
               <DiffTabs
                 value={previewTab}
