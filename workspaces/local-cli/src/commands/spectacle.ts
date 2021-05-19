@@ -16,7 +16,6 @@ import {
   fromOptic,
   userDebugLogger,
 } from '@useoptic/cli-shared';
-import { getUser } from '../shared/analytics';
 import { Config } from '../config';
 export default class Spectacle extends Command {
   static description = 'open GraphiQL for Spectacle';
@@ -50,7 +49,6 @@ export default class Spectacle extends Command {
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
-    cliClient.setIdentity(await getUser());
     const cliSession = await cliClient.findSession(basePath, null, null);
     developerDebugLogger({ cliSession });
     const spectacleUrl = `${apiBaseUrl}/specs/${cliSession.session.id}/spectacle`;
