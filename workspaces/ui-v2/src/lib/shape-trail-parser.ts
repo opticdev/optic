@@ -17,7 +17,6 @@ export interface IExpectationHelper {
   allowedCoreShapes: string[];
   allowedCoreShapeKindsByShapeId: { [key: string]: ICoreShapeKinds };
   lastField?: string;
-  lastFieldKey?: string;
   lastFieldShapeId?: string;
   fieldIsOptional?: boolean;
   lastObject?: string;
@@ -70,7 +69,6 @@ export async function shapeTrailParserLastId(
           : fieldTrail.parentObjectShapeId,
         lastField: fieldTrail.fieldId,
         lastFieldShapeId: fieldTrail.fieldShapeId,
-        lastFieldKey: 'AIDANFIXME',
         fieldIsOptional: choices.allowedCoreShapes.includes(
           ICoreShapeKinds.OptionalKind
         ),
@@ -111,7 +109,6 @@ export async function shapeTrailParserLastId(
       return {
         lastObject: lastItems.lastObject,
         lastField: lastItems.lastField,
-        lastFieldKey: lastItems.lastFieldKey,
         lastFieldShapeId: lastItems.lastFieldShapeId,
         ...choices,
       };
@@ -129,7 +126,6 @@ export async function shapeTrailParserLastId(
       return {
         lastObject: lastItems.lastObject,
         lastField: lastItems.lastField,
-        lastFieldKey: lastItems.lastFieldKey,
         lastFieldShapeId: lastItems.lastFieldShapeId,
         ...choices,
       };

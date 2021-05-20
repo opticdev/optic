@@ -123,6 +123,7 @@ export async function descriptionForShapeDiff(
 
   const expected = await getExpectationsForShapeTrail(
     asShapeDiff.shapeTrail,
+    asShapeDiff.jsonTrail,
     query,
     currentSpecContext
   );
