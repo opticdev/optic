@@ -31,7 +31,7 @@ export default class Scripts extends Command {
   static args = [
     {
       name: 'scriptName',
-      required: false,
+      required: true,
     },
   ];
 
@@ -44,11 +44,7 @@ export default class Scripts extends Command {
 
   async run() {
     const { args, flags } = this.parse(Scripts);
-    const scriptName: string | undefined = args.scriptName;
-
-    if (!scriptName) {
-      return console.log('list all scripts...');
-    }
+    const scriptName: string = args.scriptName;
 
     const script: IOpticScript | undefined = await niceTry(async () => {
       const paths = await getPathsRelativeToConfig();
@@ -56,6 +52,22 @@ export default class Scripts extends Command {
       const foundScript = config.scripts?.[scriptName!];
       if (foundScript) {
         return normalizeScript(foundScript);
+      } else {
+        cli.log(
+          fromOptic(
+            `Script ${colors.grey.bold(
+              scriptName
+            )} does not exist. Try one of these ${colors.grey.bold(
+              'api scripts <scriptname>'
+            )}`
+          )
+        );
+        return cli.log(
+          Object.keys(config.scripts || [])
+            .map((i) => '- ' + i)
+            .sort()
+            .join('\n')
+        );
       }
     });
 
