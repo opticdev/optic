@@ -23,6 +23,9 @@ Options
                   for multiple streams, single streams default to stdout.
   --events        specification events log (JSON) directly to stdout
   --interactions  interactions tagged by an interaction pointer (JSONL) directly to stdout
+  
+  Interactions filtering
+  --statuscode <code> filter interactions for only responses with a certain status code
 `,
   {
     flags: {
@@ -36,6 +39,13 @@ Options
       interactions: {
         type: 'boolean',
       },
+
+      // interaction filters
+      statusCode: {
+        type: 'string',
+        alias: 'statuscode',
+      },
+
       output: {
         type: 'string',
         alias: 'o',
@@ -69,7 +79,12 @@ async function run(flags) {
     processors.push({ stream: events(), fileName: 'specification.json' });
   }
   if (flags.interactions) {
-    processors.push({ stream: interactions(), fileName: 'interactions.jsonl' });
+    processors.push({
+      stream: interactions({
+        statusCode: flags.statusCode && parseInt(flags.statusCode),
+      }),
+      fileName: 'interactions.jsonl',
+    });
   }
 
   let outputDir = flags.output;
@@ -104,11 +119,22 @@ function events() {
   return chain([Pick.withParser({ filter: 'events' }), new JsonStringer()]);
 }
 
-function interactions() {
+function interactions(options = {}) {
   return chain([
     Pick.withParser({ filter: 'session.samples' }),
     streamArray(),
-    ({ key, value }) => [[value, [`0-${key}`]]],
+    ({ key, value }) => [value],
+    (interaction) => {
+      if (
+        !options.statusCode ||
+        options.statusCode === interaction.response.statusCode
+      ) {
+        return [interaction];
+      } else {
+        return;
+      }
+    },
+    (interaction) => [[interaction, [`id-${interaction.uuid}`]]],
     new JsonlStringer(),
   ]);
 }
