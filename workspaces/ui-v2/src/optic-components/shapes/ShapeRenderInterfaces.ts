@@ -15,12 +15,13 @@ export interface IShapeRenderer {
   jsonType: JsonLike;
   asArray?: IArrayRender;
   asObject?: IObjectRender;
-  value: any;
+  value?: any;
   changes?: IChanges;
 }
 
 export interface IArrayRender {
   shapeChoices: IShapeRenderer[];
+  shapeId: string;
 }
 
 export interface IObjectRender {
