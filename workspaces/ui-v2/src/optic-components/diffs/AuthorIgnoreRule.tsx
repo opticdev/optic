@@ -7,11 +7,7 @@ import { useUndocumentedUrls } from '../hooks/diffs/useUndocumentedUrls';
 import { IUndocumentedUrl } from '../hooks/diffs/SharedDiffState';
 import { EndpointName } from '../common';
 import { Button, Typography } from '@material-ui/core';
-import {
-  IIgnoreRunnable,
-  parseRule,
-} from '@useoptic/cli-config/build/helpers/ignore-parser';
-import { useDebounce } from '../hooks/ui/useDebounceHook';
+import { parseRule } from '@useoptic/cli-config/build/helpers/ignore-parser';
 import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
 
 export function AuthorIgnoreRules(props: any) {
@@ -31,13 +27,8 @@ export function AuthorIgnoreRules(props: any) {
   const [hasFocus, setHasFocus] = useState(false);
   const ignoreRuleParsed = parseRule(pendingIgnore);
 
-  const validRule = Boolean(pendingIgnore) && Boolean(ignoreRuleParsed);
-  const invalidRegex = Boolean(pendingIgnore) && !Boolean(ignoreRuleParsed);
-
-  const debouncedRuleEval: IIgnoreRunnable | undefined = useDebounce(
-    ignoreRuleParsed,
-    500
-  );
+  const validRule = pendingIgnore !== '' && !!ignoreRuleParsed;
+  const invalidRegex = pendingIgnore !== '' && !ignoreRuleParsed;
 
   const reset = () => {
     setPendingIgnore('');
@@ -54,23 +45,23 @@ export function AuthorIgnoreRules(props: any) {
     reset();
   }, [urlOptions.length]);
 
-  useEffect(() => {
-    if (debouncedRuleEval) {
-      setMatchingPreview(() =>
-        urlOptions.filter((i) => {
-          return debouncedRuleEval.shouldIgnore(i.method, i.path);
-        })
-      );
-    }
-  }, [debouncedRuleEval, urlOptions]);
-
   return (
     <div className={classes.toolbar}>
       <div className={classes.top}>
         <Autocomplete
           options={urlOptions}
           size="small"
-          onInputChange={(event, value) => setPendingIgnore(value)}
+          onInputChange={(event, value) => {
+            setPendingIgnore(value);
+            const parsedRule = parseRule(value);
+            if (parsedRule) {
+              setMatchingPreview(
+                urlOptions.filter(({ method, path }) =>
+                  parsedRule.shouldIgnore(method, path)
+                )
+              );
+            }
+          }}
           freeSolo={true}
           fullWidth={true}
           inputValue={pendingIgnore}
@@ -79,6 +70,7 @@ export function AuthorIgnoreRules(props: any) {
           getOptionLabel={(option) => `${option.method} ${option.path}`}
           renderOption={(option) => (
             <EndpointName
+              key={`${option.path}${option.method}`}
               leftPad={0}
               method={option.method}
               fullPath={option.path}
