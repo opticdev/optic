@@ -395,7 +395,10 @@ impl InteractionTrail {
   pub fn get_response_status_code(&self) -> Option<u16> {
     self.path.iter().find_map(|component| match component {
       InteractionTrailPathComponent::ResponseBody { status_code, .. } => Some(*status_code),
-      _ => None,
+      InteractionTrailPathComponent::ResponseStatusCode { status_code } => Some(*status_code),
+      InteractionTrailPathComponent::Method { .. }
+      | InteractionTrailPathComponent::RequestBody { .. }
+      | InteractionTrailPathComponent::Url { .. } => None,
     })
   }
 

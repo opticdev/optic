@@ -305,4 +305,44 @@ mod test {
       aggregated_trails
     );
   }
+
+  #[test]
+  fn undocumented_bodies_generates_commands_for_responses_without_bodies() {
+    let analysis_result = BodyAnalysisResult {
+      body_location: BodyAnalysisLocation::UnmatchedResponse {
+        content_type: None,
+        path_id: String::from("path-1"),
+        method: String::from("DELETE"),
+        status_code: 204,
+      },
+      trail_observations: observe_body_trails(None),
+    };
+
+    let mut test_id_generator = TestIdGenerator::default();
+    let mut projection = LearnedUndocumentedBodiesProjection::default();
+
+    projection.apply(analysis_result);
+
+    let endpoint_bodies = projection
+      .into_endpoint_bodies(&mut test_id_generator)
+      .collect::<Vec<_>>();
+
+    assert_debug_snapshot!(
+      "undocumented_bodies_generates_commands_for_responses_without_bodies__endpoint_bodies",
+      endpoint_bodies
+    );
+  }
+
+  #[derive(Debug, Default)]
+  struct TestIdGenerator {
+    counter: usize,
+  }
+
+  impl SpecIdGenerator for TestIdGenerator {
+    fn generate_id(&mut self, _prefix: &str) -> String {
+      let id = format!("test-id-{}", self.counter);
+      self.counter += 1;
+      id
+    }
+  }
 }
