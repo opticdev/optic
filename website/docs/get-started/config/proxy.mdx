@@ -1,5 +1,5 @@
 ---
-title: Configure a Manual Proxy Task
+title: Configure a Manual Proxy
 ---
 
 :::tip Try Intercept mode instead
@@ -8,9 +8,9 @@ Proxy mode remains a part of Optic, though Intercept mode contains all the power
 
 Optic documents your APIs as you build them by observing development traffic and learning your API's behavior. The CLI is constantly diffing your API’s behavior against its specification; ensuring every change to the API gets detected, documented and code reviewed by your team.
 
-**How does Optic monitor local traffic with a proxy task?** Optic sets up a proxy to relay requests to your application. Unlike a basic task, a proxy task does not manage the lifecycle of your application. You will need to assure that the application is running to observe traffic. You use your API through Optic, and Optic observes the requests and responses. These are presented to you in the Optic Dashboard to create an API specification.
+**How does Optic monitor local traffic with a proxy task?** Optic sets up a proxy to relay requests to your application. Unlike running your API with Optic, manually setting up a proxy does not manage the lifecycle of your application. You will need to assure that the application is running to observe traffic. You use your API through Optic, and Optic observes the requests and responses. These are presented to you in the Optic Dashboard to create an API specification.
 
-**When would I use a proxy task?** When running a project locally, we'd recommend managing the application lifecycle with a [basic task](/docs/get-started/config/basic-task). If the project lifecycle is not easily managed with a single command, or the project is located on a remote system (such as behind an Amazon API Gateway), we'd recommend using an [intercept environment](/docs/get-started/config/intercept) as it is more feature-rich. Only use a proxy task for new projects if these other options are not feasible.
+**When would I use a manual proxy?** When running a project locally, we'd recommend [running your API with Optic](/docs/get-started/config/run-with-optic). If the project lifecycle is not easily managed with a single command, or the project is located on a remote system (such as behind an Amazon API Gateway), we'd recommend using an [intercept environment](/docs/get-started/config/intercept) as it is more feature-rich. Only use a proxy task for new projects if these other options are not feasible.
 
 ## Configure a Proxy API Task
 

@@ -1,14 +1,14 @@
 ---
-title: Configure a Basic API Task
+title: Configure your API to run with Optic
 ---
 
 Optic documents your APIs as you build them by observing development traffic and learning your API's behavior. The CLI is constantly diffing your API’s behavior against its specification; ensuring every change to the API gets detected, documented and code reviewed by your team.
 
-**How does Optic monitor local traffic with a basic task?** Optic starts your API project locally. It provides the project a port, and then creates a local proxy to observe traffic to your application. You use your API through Optic, and Optic observes the requests and responses. These are presented to you in the Optic Dashboard to create an API specification.
+**How does Optic monitor local traffic?** Optic starts your API project locally. It provides the project a port, and then creates a local proxy to observe traffic to your application. You use your API through Optic, and Optic observes the requests and responses. These are presented to you in the Optic Dashboard to create an API specification.
 
-**When would I use a basic task?** Basic tasks are ideal when running a project locally, as it manages not only the Optic proxy but the application lifecycle. It allows for Optic to step in on the port your project usually starts on, making integration with existing tests and workflows seamless. If the project lifecycle is not easily managed with a single command, or the project is located on a remote system (such as behind an Amazon API Gateway), we'd recommend using an [intercept environment](/docs/get-started/config/intercept) as it is more feature-rich. Only use a [proxy task](/docs/get-started/config/proxy) for new projects if these other options are not feasible.
+**When would I run my API with Optic?** This is ideal when running a project locally, as it manages not only the Optic proxy but the application lifecycle. It allows for Optic to step in on the port your project usually starts on, making integration with existing tests and workflows seamless. If the project lifecycle is not easily managed with a single command, or the project is located on a remote system (such as behind an Amazon API Gateway), we'd recommend using an [intercept environment](/docs/get-started/config/intercept) as it is more feature-rich. Only use a [proxy task](/docs/get-started/config/proxy) for new projects if these other options are not feasible.
 
-## Configure a Basic API Task
+## Configure your API to run with Optic
 
 Optic tasks are configured in the `optic.yml` file. This file is created in your API project's root directory when you run [`api init`](/docs/). Tasks each require a name, and take the following configurations:
 

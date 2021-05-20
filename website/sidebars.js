@@ -10,11 +10,11 @@ module.exports = {
       'get-started/quickstart',
       {
         type: 'category',
-        label: 'Configuring API Tasks',
+        label: 'Capturing API Traffic',
         items: [
           'get-started/config',
           'get-started/config/intercept',
-          'get-started/config/basic-task',
+          'get-started/config/run-with-optic',
           'get-started/config/proxy',
         ],
       },

@@ -9,7 +9,8 @@ Before configuring a task, you'll need to [install and initialize Optic](/docs) 
 ## Configure your API task
 
 - **Recommended for remote API projects** [Have Optic intercept your API traffic seamlessly](/docs/get-started/config/intercept)
-- **Recommended for local development** [Have Optic start your API for you and intercept traffic](/docs/get-started/config/basic-task)
+- **Recommended for local development** [Have Optic start your API for you and intercept traffic](/docs/get-started/config/run-with-optic)
+- **To see your API as it behaves today** [Monitor your Live API with Optic](http://localhost:4000/docs/deploy/live)
 - [Set up Optic as a proxy for your environment](/docs/get-started/config/proxy)
 
 You may also explore our docs to learn more about [running your tests with Optic](/docs/get-started/testing), [getting API changelogs in your pull requests](/docs/apiops/pull-requests), and [sharing Optic with your team](docs/using/share-with-team).
@@ -22,33 +23,47 @@ import TabItem from '@theme/TabItem';
 <Tabs
   defaultValue="intercept"
   values={[
-    {label: 'Intercept Environment (Recommended)', value: 'intercept'},
-    {label: 'Basic Task', value: 'basic'},
+    {label: 'Intercept Environment', value: 'intercept'},
+    {label: 'Run with Optic', value: 'run-with-optic'},
+    {label: 'Monitor your Live API', value: 'monitor-live'},
     {label: 'Manual Proxy', value: 'proxy'},
   ]}>
   <TabItem value="intercept">
 
+[Have Optic intercept your API traffic seamlessly](/docs/get-started/config/intercept)
+
 **When would I use intercept mode?** Intercept mode is ideal when the project lifecycle is not easily managed with a single command, or the project is located on a remote system (such as behind an Amazon API Gateway). Intercept mode will assist in launching your tools with the proper proxy configurations to make the process as seamless as possible. 
 
-**When the intercept mode may be counter-indicated:** If your application runs locally and you'd like to test against it, we'd recommend using a [basic task](/docs/get-started/config/basic-task) as it helps manage your project lifecycle and sets up the proxy to be friendly to local tests and workflows.
+**When the intercept mode may be counter-indicated:** If your application runs locally and you'd like to test against it, we'd recommend [running your API with Optic]](/docs/get-started/config/run-with-optic) as it helps manage your project lifecycle and sets up the proxy to be friendly to local tests and workflows.
 
 Only use a [proxy task](/docs/get-started/config/proxy) for new projects if these other options are not feasible.
 
   </TabItem>
-  <TabItem value="basic">
+  <TabItem value="run-with-optic">
 
-**When would I use a basic task?** Basic tasks are ideal when running a project locally, as it manages not only the Optic proxy but the application lifecycle. It allows for Optic to step in on the port your project usually starts on, making integration with existing tests and workflows seamless. 
+[Have Optic start your API for you and intercept traffic](/docs/get-started/config/run-with-optic)
 
-**When a basic task may be counter-indicated:** If the project lifecycle is not easily managed with a single command, or the project is located on a remote system (such as behind an Amazon API Gateway), we'd recommend using an [intercept environment](/docs/get-started/config/intercept) as it is more feature-rich. 
+**When would I configure my API to run with Optic?** This is ideal when running a project locally, as it manages not only the Optic proxy but the application lifecycle. It allows for Optic to step in on the port your project usually starts on, making integration with existing tests and workflows seamless. 
+
+**When running your API with Optic may be counter-indicated:** If the project lifecycle is not easily managed with a single command, or the project is located on a remote system (such as behind an Amazon API Gateway), we'd recommend using an [intercept environment](/docs/get-started/config/intercept) as it is more feature-rich. 
 
 Only use a [proxy task](/docs/get-started/config/proxy) for new projects if these other options are not feasible.
+
+  </TabItem>
+  <TabItem value="monitor-live">
+
+[Monitor your Live API with Optic](http://localhost:4000/docs/deploy/live)
+
+**When would I monitor my live API?** Monitoring live traffic helps establish the baseline behavior of your API today by sampling existing traffic (such as from tests or users). This traffic establishes how your API is working today, as deployed.
+
+**When monitoring live traffic may be counter-indicated:** For new applications, or for applications that have extensive testing/QA programs, you may choose to build your specification as you develop and test.
 
   </TabItem>
   <TabItem value="proxy">
 
 **When would I use a proxy task?** Only use a proxy task for new projects if these other options are not feasible:
 
-**Instead of a proxy task:** When running a project locally, we'd recommend managing the application lifecycle with a [basic task](/docs/get-started/config/basic-task).
+**Instead of a proxy task:** When running a project locally, we'd recommend [running your API with Optic](/docs/get-started/config/run-with-optic).
 
 If the project lifecycle is not easily managed with a single command, or the project is located on a remote system (such as behind an Amazon API Gateway), we'd recommend using an [intercept environment](/docs/get-started/config/intercept) as it is more feature-rich. 
 
