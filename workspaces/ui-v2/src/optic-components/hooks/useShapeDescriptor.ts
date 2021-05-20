@@ -1,4 +1,9 @@
-import { IShapeRenderer, JsonLike } from '../shapes/ShapeRenderInterfaces';
+import {
+  IShapeRenderer,
+  JsonLike,
+  IArrayRender,
+  IObjectRender,
+} from '../shapes/ShapeRenderInterfaces';
 import { SpectacleContext } from '../../spectacle-implementations/spectacle-provider';
 import { useContext, useEffect, useState } from 'react';
 import sortBy from 'lodash.sortby';
@@ -49,6 +54,30 @@ const changesSinceShapeQuery = `
     }
 }`;
 
+type ShapeChoice =
+  | {
+      id: string;
+      jsonType: JsonLike.OBJECT;
+      asArray?: undefined;
+      asObject: IObjectRender;
+    }
+  | {
+      id: string;
+      jsonType: JsonLike.ARRAY;
+      asArray: IArrayRender;
+      asObject?: undefined;
+    }
+  | {
+      id: string;
+      jsonType: Exclude<JsonLike, JsonLike.OBJECT | JsonLike.ARRAY>;
+      asArray?: undefined;
+      asObject?: undefined;
+    };
+
+type ShapeChoicesResult = {
+  shapeChoices: ShapeChoice[];
+};
+
 export function useShapeDescriptor(
   rootShapeId: string,
   renderChangesSinceBatchCommitId: string | undefined
@@ -81,32 +110,32 @@ export function useShapeDescriptor(
             },
           };
 
-    const result = await spectacle.query<any, any>(input);
+    const result = await spectacle.query<ShapeChoicesResult>(input);
 
     if (result.errors) {
       console.error(result.errors);
       debugger;
     }
 
-    if (!result.data.shapeChoices) {
+    if (!result.data) {
       return [];
     }
     return await Promise.all(
-      result.data.shapeChoices.map(async (choice: any) => {
+      result.data.shapeChoices.map(async (choice) => {
         switch (choice.jsonType) {
           case 'Object':
             const newFields = await Promise.all(
-              choice.asObject.fields.map(async (field: any) => {
+              choice.asObject.fields.map(async (field) => {
                 const shapeChoices = await accumulateShapes(
                   field.shapeId,
                   seenSet
                 );
                 field.required = !shapeChoices.some(
-                  (i: any) => i.jsonType === JsonLike.UNDEFINED
+                  (i) => i.jsonType === JsonLike.UNDEFINED
                 ); // is required
                 field.shapeChoices = shapeChoices
-                  .filter((i: any) => i.jsonType !== JsonLike.UNDEFINED)
-                  .map((i: any) => ({ ...i, shapeId: i.id })); // don't include optional
+                  .filter((i) => i.jsonType !== JsonLike.UNDEFINED)
+                  .map((i) => ({ ...i, shapeId: i.id })); // don't include optional
 
                 field.shapeChoices = sortBy(
                   field.shapeChoices,
@@ -124,7 +153,10 @@ export function useShapeDescriptor(
               seenSet
             );
             const shapeChoices = await Promise.all(results);
-            choice.asArray.shapeChoices = shapeChoices;
+            choice.asArray.shapeChoices = shapeChoices.map((i) => ({
+              ...i,
+              shapeId: i.id,
+            }));
             return choice;
           default:
             return choice;
