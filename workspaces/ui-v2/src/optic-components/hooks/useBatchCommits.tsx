@@ -9,11 +9,21 @@ export const BatchCommitsQuery = `{
     }
 }`;
 
+export interface BatchCommit {
+  commitMessage: string;
+  batchId: string;
+  createdAt: string;
+}
+
+type BatchCommitResult = {
+  batchCommits: BatchCommit[];
+};
+
 export function useBatchCommits(): {
   loading: boolean;
   batchCommits: BatchCommit[];
 } {
-  const { data, loading, error } = useSpectacleQuery<any, any>({
+  const { data, loading, error } = useSpectacleQuery<BatchCommitResult>({
     query: BatchCommitsQuery,
     variables: {},
   });
@@ -51,10 +61,4 @@ export function useLastBatchCommitId(): string | undefined {
   } else {
     return undefined;
   }
-}
-
-export interface BatchCommit {
-  commitMessage: string;
-  batchId: string;
-  createdAt: string;
 }

@@ -19,6 +19,25 @@ export const AllEndpointsQuery = `{
     }
     }`;
 
+type Endpoints = {
+  id: string;
+  pathId: string;
+  absolutePathPattern: string;
+  absolutePathPatternWithParameterNames: string;
+  pathComponents: {
+    id: string;
+    name: string;
+    isParameterized: boolean;
+    contributions: Record<string, string>;
+  }[];
+  method: string;
+  pathContributions: Record<string, string>;
+};
+
+export type EndpointQueryResults = {
+  requests: Endpoints[];
+};
+
 export function useEndpoints(
   renderChangesSince?: string
 ): { endpoints: IEndpoint[]; loading?: boolean } {
@@ -29,7 +48,9 @@ export function useEndpoints(
     variables: {},
   };
 
-  const { data, loading, error } = useSpectacleQuery(queryInput);
+  const { data, loading, error } = useSpectacleQuery<EndpointQueryResults>(
+    queryInput
+  );
 
   if (error) {
     console.error(error);
@@ -59,15 +80,15 @@ export function useEndpoint(
 }
 
 export function endpointQueryResultsToJson(
-  data: any,
-  endpointsChangelog: any[] = []
+  data: EndpointQueryResults,
+  endpointsChangelog: ReturnType<typeof useEndpointsChangelog>
 ): IEndpoint[] {
   const commonStart = sharedStart(
-    data.requests.map((req: any) => req.absolutePathPatternWithParameterNames)
+    data.requests.map((req) => req.absolutePathPatternWithParameterNames)
   );
 
   const endpoints = data.requests.map(
-    (request: any): IEndpoint => {
+    (request): IEndpoint => {
       const hasChangelog = endpointsChangelog.find(
         (i) => i.pathId === request.pathId && i.method === request.method
       );
@@ -80,7 +101,7 @@ export function endpointQueryResultsToJson(
           .substring(commonStart.length)
           .split('/')[0],
         pathParameters: request.pathComponents.map(
-          (path: any): IPathParameter => {
+          (path): IPathParameter => {
             return {
               id: path.id,
               name: path.name,

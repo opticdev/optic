@@ -13,11 +13,19 @@ export const endpointChangeQuery = `query X($sinceBatchCommitId: String) {
     }
 }`;
 
-type Endpoints = any[];
+type ChangelogCategory = 'added' | 'updated' | 'removed';
+
+type EndpointChangelog = {
+  change: {
+    category: ChangelogCategory;
+  };
+  pathId: string;
+  method: string;
+};
 
 type EndpointChangeQueryResults = {
   endpointChanges: {
-    endpoints: Endpoints;
+    endpoints: EndpointChangelog[];
   };
 };
 
@@ -25,7 +33,9 @@ type EndpointChangeQueryInput = {
   sinceBatchCommitId?: string;
 };
 
-export function useEndpointsChangelog(sinceBatchCommitId?: string): Endpoints {
+export function useEndpointsChangelog(
+  sinceBatchCommitId?: string
+): EndpointChangelog[] {
   const queryResults = useSpectacleQuery<
     EndpointChangeQueryResults,
     EndpointChangeQueryInput
