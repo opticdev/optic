@@ -243,6 +243,7 @@ impl<'a> ShapeQueries<'a> {
         ShapeTrailPathComponent::ObjectFieldTrail {
           field_id,
           field_shape_id,
+          parent_object_shape_id,
         } => ResolvedTrail {
           shape_id: field_shape_id.clone(),
           core_shape_kind: self.resolve_to_core_shape(&field_shape_id),

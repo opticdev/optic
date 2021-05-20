@@ -302,7 +302,7 @@ mod test {
         "requestsTrail":{"SpecResponseBody":{"responseId":"test-response-1"}},
         "shapeDiffResult":{"UnmatchedShape":{
           "jsonTrail":{"path":[{"JsonObjectKey":{"key":"items"}},{"JsonArrayItem":{"index":1}}] },
-          "shapeTrail":{"rootShapeId":"some_shape_id","path":[{"ObjectFieldTrail":{"fieldId":"field_1","fieldShapeId":"shape_L3dn1UwIbE"}},{"ListItemTrail":{"listShapeId":"shape_2","itemShapeId":"item_shape_id_2"}}]}
+          "shapeTrail":{"rootShapeId":"some_shape_id","path":[{"ObjectFieldTrail":{"fieldId":"field_1","fieldShapeId":"shape_L3dn1UwIbE","parentObjectShapeId":"some_shape_id"}},{"ListItemTrail":{"listShapeId":"shape_2","itemShapeId":"item_shape_id_2"}}]}
         }}
       }
     })).unwrap();

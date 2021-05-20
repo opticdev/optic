@@ -38,10 +38,12 @@ expression: results
                         ObjectFieldTrail {
                             field_id: "field_7",
                             field_shape_id: "shape_9",
+                            parent_object_shape_id: "shape_10",
                         },
                         ObjectFieldTrail {
                             field_id: "field_6",
                             field_shape_id: "shape_8",
+                            parent_object_shape_id: "shape_9",
                         },
                     ],
                 },

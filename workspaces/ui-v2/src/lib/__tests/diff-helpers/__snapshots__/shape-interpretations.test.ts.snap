@@ -45,7 +45,6 @@ Object {
     ],
     "fieldIsOptional": false,
     "lastField": "baseline-field_3",
-    "lastFieldKey": "firstName",
     "lastFieldShapeId": "baseline-shape_6",
     "lastObject": "baseline-shape_8",
   },
@@ -62,7 +61,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "2579fe9e29b0dd7e",
+      "diffHash": "97d3bc5473457860",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -107,7 +106,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "2579fe9e29b0dd7e",
+          "diffHash": "97d3bc5473457860",
           "examplesOfCoreShapeKinds": "$optional",
         },
         "interactionPointers": Array [
@@ -291,7 +290,6 @@ Object {
     ],
     "fieldIsOptional": false,
     "lastField": "baseline-field_1",
-    "lastFieldKey": "age",
     "lastFieldShapeId": "baseline-shape_2",
     "lastObject": "baseline-shape_8",
   },
@@ -308,7 +306,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "6174ab7a6ac1b939",
+      "diffHash": "b4694d65180eb2ea",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -353,7 +351,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "6174ab7a6ac1b939",
+          "diffHash": "b4694d65180eb2ea",
           "examplesOfCoreShapeKinds": "$string",
         },
         "interactionPointers": Array [
@@ -515,7 +513,6 @@ Object {
     ],
     "fieldIsOptional": false,
     "lastField": "field_6",
-    "lastFieldKey": "principality",
     "lastFieldShapeId": "shape_8",
     "lastObject": "shape_8",
   },
@@ -528,7 +525,7 @@ Object {
         },
       ],
       "changeType": 0,
-      "diffHash": "e9bb6f335e042448",
+      "diffHash": "456b5b34273b8985",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -569,7 +566,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "e9bb6f335e042448",
+          "diffHash": "456b5b34273b8985",
           "examplesOfCoreShapeKinds": "$list",
         },
         "interactionPointers": Array [
@@ -782,7 +779,6 @@ Object {
     ],
     "fieldIsOptional": false,
     "lastField": "field_6",
-    "lastFieldKey": "principality",
     "lastFieldShapeId": "shape_8",
     "lastObject": "shape_8",
   },
@@ -795,7 +791,7 @@ Object {
         },
       ],
       "changeType": 0,
-      "diffHash": "e9bb6f335e042448",
+      "diffHash": "456b5b34273b8985",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -836,7 +832,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "e9bb6f335e042448",
+          "diffHash": "456b5b34273b8985",
           "examplesOfCoreShapeKinds": "$list",
         },
         "interactionPointers": Array [
@@ -1017,7 +1013,6 @@ Object {
     ],
     "fieldIsOptional": false,
     "lastField": "field_6",
-    "lastFieldKey": "principality",
     "lastFieldShapeId": "shape_8",
     "lastObject": "shape_8",
   },
@@ -1030,7 +1025,7 @@ Object {
         },
       ],
       "changeType": 0,
-      "diffHash": "6b018ce3b01e79d0",
+      "diffHash": "ee13806cad9e3372",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -1071,7 +1066,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "6b018ce3b01e79d0",
+          "diffHash": "ee13806cad9e3372",
           "examplesOfCoreShapeKinds": "$string",
         },
         "interactionPointers": Array [
@@ -1230,7 +1225,6 @@ Object {
     ],
     "fieldIsOptional": true,
     "lastField": "field_4",
-    "lastFieldKey": "coordinates",
     "lastFieldShapeId": "shape_6",
     "lastObject": "shape_5",
   },
@@ -1243,7 +1237,7 @@ Object {
         },
       ],
       "changeType": 0,
-      "diffHash": "165bd4831f88a18a",
+      "diffHash": "fc98d2edb44a013b",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -1284,7 +1278,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "165bd4831f88a18a",
+          "diffHash": "fc98d2edb44a013b",
           "examplesOfCoreShapeKinds": "$string",
         },
         "interactionPointers": Array [
@@ -1505,7 +1499,6 @@ Object {
       "$object",
     ],
     "lastField": "field_4",
-    "lastFieldKey": "coordinates",
     "lastFieldShapeId": "shape_6",
     "lastObject": "shape_5",
   },
@@ -1522,7 +1515,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "24e3235eef7e6a4e",
+      "diffHash": "18d630ac1f5b030e",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -1567,7 +1560,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "24e3235eef7e6a4e",
+          "diffHash": "18d630ac1f5b030e",
           "examplesOfCoreShapeKinds": "$string",
         },
         "interactionPointers": Array [
@@ -1805,7 +1798,6 @@ Object {
     ],
     "fieldIsOptional": false,
     "lastField": "field_4",
-    "lastFieldKey": "rivals",
     "lastFieldShapeId": "shape_7",
     "lastObject": "shape_10",
   },
@@ -1822,7 +1814,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "1d5e1b2f9af24670",
+      "diffHash": "9affc1fd0bc6760e",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -1867,7 +1859,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "1d5e1b2f9af24670",
+          "diffHash": "9affc1fd0bc6760e",
           "examplesOfCoreShapeKinds": "$object",
         },
         "interactionPointers": Array [
@@ -2122,7 +2114,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "9c78456ebccc9424",
+      "diffHash": "5b6d412c6500a4b9",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -2159,7 +2151,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "9c78456ebccc9424",
+          "diffHash": "5b6d412c6500a4b9",
           "examplesOfCoreShapeKinds": "$object",
         },
         "interactionPointers": Array [
@@ -2408,7 +2400,6 @@ Object {
       "$object",
     ],
     "lastField": "field_4",
-    "lastFieldKey": "coordinates",
     "lastFieldShapeId": "shape_6",
     "lastObject": "shape_5",
   },
@@ -2425,7 +2416,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "24e3235eef7e6a4e",
+      "diffHash": "18d630ac1f5b030e",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -2470,7 +2461,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "24e3235eef7e6a4e",
+          "diffHash": "18d630ac1f5b030e",
           "examplesOfCoreShapeKinds": "$list",
         },
         "interactionPointers": Array [
@@ -2864,7 +2855,6 @@ Object {
     ],
     "fieldIsOptional": false,
     "lastField": "field_6",
-    "lastFieldKey": "stats",
     "lastFieldShapeId": "shape_9",
     "lastObject": "shape_9",
   },
@@ -2881,7 +2871,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "effcd47df19cb2a3",
+      "diffHash": "167bd31e9b75e114",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -2926,7 +2916,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "effcd47df19cb2a3",
+          "diffHash": "167bd31e9b75e114",
           "examplesOfCoreShapeKinds": "$nullable",
         },
         "interactionPointers": Array [
@@ -3078,7 +3068,6 @@ Object {
     ],
     "fieldIsOptional": false,
     "lastField": "field_6",
-    "lastFieldKey": "stats",
     "lastFieldShapeId": "shape_9",
     "lastObject": "shape_9",
   },
@@ -3095,7 +3084,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "effcd47df19cb2a3",
+      "diffHash": "167bd31e9b75e114",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -3140,7 +3129,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "effcd47df19cb2a3",
+          "diffHash": "167bd31e9b75e114",
           "examplesOfCoreShapeKinds": "$optional",
         },
         "interactionPointers": Array [
@@ -3288,7 +3277,6 @@ Object {
     ],
     "fieldIsOptional": false,
     "lastField": "field_5",
-    "lastFieldKey": "rank",
     "lastFieldShapeId": "shape_8",
     "lastObject": "shape_9",
   },
@@ -3305,7 +3293,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "8671722c53f7fb01",
+      "diffHash": "fb20a762bdaceeec",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -3350,7 +3338,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "8671722c53f7fb01",
+          "diffHash": "fb20a762bdaceeec",
           "examplesOfCoreShapeKinds": "$optional",
         },
         "interactionPointers": Array [
@@ -3571,7 +3559,6 @@ Object {
     ],
     "fieldIsOptional": false,
     "lastField": "field_6",
-    "lastFieldKey": "stats",
     "lastFieldShapeId": "shape_9",
     "lastObject": "shape_9",
   },
@@ -3588,7 +3575,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "effcd47df19cb2a3",
+      "diffHash": "167bd31e9b75e114",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -3633,7 +3620,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "effcd47df19cb2a3",
+          "diffHash": "167bd31e9b75e114",
           "examplesOfCoreShapeKinds": "$list",
         },
         "interactionPointers": Array [
@@ -4792,7 +4779,6 @@ Object {
     ],
     "fieldIsOptional": false,
     "lastField": "field_lKkPHZp1kM",
-    "lastFieldKey": "FastestLap",
     "lastFieldShapeId": "shape_DTHG1XLMPV",
     "lastObject": "shape_DTHG1XLMPV",
   },
@@ -4809,7 +4795,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "8d74c69726c10c30",
+      "diffHash": "6d53c87f8b652947",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -4854,7 +4840,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "8d74c69726c10c30",
+          "diffHash": "6d53c87f8b652947",
           "examplesOfCoreShapeKinds": "$object",
         },
         "interactionPointers": Array [
@@ -4958,7 +4944,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "8d74c69726c10c30",
+          "diffHash": "6d53c87f8b652947",
           "examplesOfCoreShapeKinds": "$optional",
         },
         "interactionPointers": Array [
@@ -5743,7 +5729,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "74a387b9f22c62f3",
+      "diffHash": "692db732cf54e409",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -5780,7 +5766,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "74a387b9f22c62f3",
+          "diffHash": "692db732cf54e409",
           "examplesOfCoreShapeKinds": "$number",
         },
         "interactionPointers": Array [
@@ -5820,7 +5806,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "74a387b9f22c62f3",
+          "diffHash": "692db732cf54e409",
           "examplesOfCoreShapeKinds": "$string",
         },
         "interactionPointers": Array [
@@ -6080,7 +6066,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "74a387b9f22c62f3",
+      "diffHash": "692db732cf54e409",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -6117,7 +6103,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "74a387b9f22c62f3",
+          "diffHash": "692db732cf54e409",
           "examplesOfCoreShapeKinds": "$number",
         },
         "interactionPointers": Array [
@@ -6157,7 +6143,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "74a387b9f22c62f3",
+          "diffHash": "692db732cf54e409",
           "examplesOfCoreShapeKinds": "$string",
         },
         "interactionPointers": Array [
@@ -6597,7 +6583,6 @@ Object {
       "$nullable",
     ],
     "lastField": "baseline-field_4",
-    "lastFieldKey": "price",
     "lastFieldShapeId": "baseline-shape_7",
     "lastObject": "baseline-shape_8",
   },
@@ -6614,7 +6599,7 @@ Object {
         },
       ],
       "changeType": 1,
-      "diffHash": "fbc9cebc31e778c1",
+      "diffHash": "3b1e5329f7933b5a",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -6659,7 +6644,7 @@ Object {
           },
         ],
         "ignoreRule": Object {
-          "diffHash": "fbc9cebc31e778c1",
+          "diffHash": "3b1e5329f7933b5a",
           "examplesOfCoreShapeKinds": "$number",
         },
         "interactionPointers": Array [
