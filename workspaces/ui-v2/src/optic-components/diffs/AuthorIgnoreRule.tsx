@@ -10,7 +10,7 @@ import { Button, Typography } from '@material-ui/core';
 import { parseRule } from '@useoptic/cli-config/build/helpers/ignore-parser';
 import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
 
-export function AuthorIgnoreRules(props: any) {
+export function AuthorIgnoreRules() {
   const classes = useStyles();
   const observedUrls = useUndocumentedUrls();
 
@@ -52,6 +52,11 @@ export function AuthorIgnoreRules(props: any) {
           options={urlOptions}
           size="small"
           onInputChange={(event, value) => {
+            // Because we are going "freeSolo", the pressing enter with
+            // no valid inputs will return us `undefined undefined`
+            if (value === 'undefined undefined') {
+              return;
+            }
             setPendingIgnore(value);
             const parsedRule = parseRule(value);
             if (parsedRule) {
@@ -70,7 +75,7 @@ export function AuthorIgnoreRules(props: any) {
           getOptionLabel={(option) => `${option.method} ${option.path}`}
           renderOption={(option) => (
             <EndpointName
-              key={`${option.path}${option.method}`}
+              key={`${option.method} ${option.path}`}
               leftPad={0}
               method={option.method}
               fullPath={option.path}
