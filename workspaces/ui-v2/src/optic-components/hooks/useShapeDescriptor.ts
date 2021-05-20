@@ -125,17 +125,17 @@ export function useShapeDescriptor(
         switch (choice.jsonType) {
           case 'Object':
             const newFields = await Promise.all(
-              choice.asObject.fields.map(async (field: any) => {
+              choice.asObject.fields.map(async (field) => {
                 const shapeChoices = await accumulateShapes(
                   field.shapeId,
                   seenSet
                 );
                 field.required = !shapeChoices.some(
-                  (i: any) => i.jsonType === JsonLike.UNDEFINED
+                  (i) => i.jsonType === JsonLike.UNDEFINED
                 ); // is required
                 field.shapeChoices = shapeChoices
-                  .filter((i: any) => i.jsonType !== JsonLike.UNDEFINED)
-                  .map((i: any) => ({ ...i, shapeId: i.id })); // don't include optional
+                  .filter((i) => i.jsonType !== JsonLike.UNDEFINED)
+                  .map((i) => ({ ...i, shapeId: i.id })); // don't include optional
 
                 field.shapeChoices = sortBy(
                   field.shapeChoices,
@@ -153,7 +153,7 @@ export function useShapeDescriptor(
               seenSet
             );
             const shapeChoices = await Promise.all(results);
-            choice.asArray.shapeChoices = shapeChoices.map((i: any) => ({
+            choice.asArray.shapeChoices = shapeChoices.map((i) => ({
               ...i,
               shapeId: i.id,
             }));

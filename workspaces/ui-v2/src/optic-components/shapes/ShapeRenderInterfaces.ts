@@ -4,6 +4,7 @@ export interface IFieldRenderer {
   fieldId: string;
   name: string;
   parentId: string;
+  shapeId: string;
   shapeChoices: IShapeRenderer[];
   required: boolean;
   changes?: IChanges;
