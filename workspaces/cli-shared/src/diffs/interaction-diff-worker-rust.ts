@@ -55,7 +55,7 @@ export class InteractionDiffWorkerRust {
     const ignoreFilter = parseIgnore(this.config.ignoreRules);
 
     const interactionFilter = (i: any) => {
-      return !ignoreFilter.shouldIgnore(i.request.path, i.request.method);
+      return !ignoreFilter.shouldIgnore(i.request.method, i.request.path);
     };
 
     const interactionIterator = CaptureInteractionIterator(
