@@ -40,7 +40,10 @@ jobs:
         run: npm install @useoptic/cli
 
       - name: Run tests
-        run: npx api run run-tests --collect-coverage --exit-on-diff
+        run: npx api run run-tests --exit-on-diff
+      
+      - name: Print coverage report
+        run: npx api status --print-coverage
 ```
 
 ## Catching Undocumented Behavior

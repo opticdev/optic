@@ -48,7 +48,8 @@ commands:
         name: Run Optic CI
         command: |-
           npm install @useoptic/cli
-          npx api run test-cci --collect-coverage --exit-on-diff
+          npx api run test-cci --exit-on-diff
+          npx api status --print-coverage
 ```
 
 ## Catching Undocumented Behavior
