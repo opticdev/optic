@@ -7,7 +7,7 @@ import {
   useDebouncedFn,
   useStateWithSideEffect,
 } from '<src>/optic-components/hooks/util';
-import { useClientAgent } from '<src>/analytics';
+import { useClientAgent } from '<src>/optic-components/hooks/useClientAgent';
 import { useSessionId } from '<src>/optic-components/hooks/useSessionId';
 
 export const ContributionEditContext = React.createContext<ContributionEditContextValue | null>(

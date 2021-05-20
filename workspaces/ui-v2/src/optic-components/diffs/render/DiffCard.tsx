@@ -73,15 +73,8 @@ export function DiffCard({
         <ICopyRender variant="caption" copy={diffDescription.title} />
       </div>
       <div className={classes.preview}>
-        {/*{isLoading && <LoadingExample lines={3} />}*/}
         {previewTabs.length && (
           <div className={classes.previewHeader}>
-            <Typography
-              variant="caption"
-              style={{ color: OpticBlueReadable, marginRight: 5 }}
-            >
-              {/*{isNewRegion ? 'new body: ' : 'observed as: '}*/}
-            </Typography>
             {previewTab && (
               <DiffTabs
                 value={previewTab}
@@ -90,7 +83,7 @@ export function DiffCard({
               >
                 {previewTabs.map((tab, index) => (
                   <DiffTab
-                    key={index}
+                    key={tab.title}
                     label={tab.title}
                     value={tab.title}
                     invalid={tab.invalid}
@@ -107,6 +100,7 @@ export function DiffCard({
             if (tab.title === previewTab) {
               return (
                 <RenderExampleBody
+                  key={tab.title}
                   description={diffDescription}
                   assertion={diffDescription.assertion}
                   trailsAreCorrect={!tab.invalid}
@@ -125,12 +119,6 @@ export function DiffCard({
             }
           })}
         </div>
-
-        {/*<InteractionBodyViewerAllJS*/}
-        {/*  body={{*/}
-        {/*    asJson: exampleGitHub,*/}
-        {/*  }}*/}
-        {/*/>*/}
       </div>
 
       <div className={classes.suggestionRegion}>

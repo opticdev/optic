@@ -96,6 +96,11 @@ export async function verifyTask(
 
     if (mode === null) {
       cli.log(fromOptic(colors.red(`Invalid task configuration. `)));
+      cli.log(
+        fromOptic(
+          `Task configuration help is available at https://useoptic.com/docs/using/advanced-configuration`
+        )
+      );
       return false;
     }
 
@@ -187,6 +192,11 @@ export async function verifyTask(
                 `All Passed! This task is setup properly. Nice work!`
               )
             )
+        );
+        const runCommand =
+          taskName === 'start' ? 'api start' : 'api run ' + taskName;
+        cli.log(
+          fromOptic(`To start this task, run: ${colors.bold(runCommand)}`)
         );
       } else {
         cli.log(

@@ -190,7 +190,7 @@ Object {
   "paths": Array [
     Object {
       "absolutePathPattern": "/",
-      "absolutePathPatternWithParameterNames": "",
+      "absolutePathPatternWithParameterNames": "/",
       "isParameterized": false,
       "name": "",
       "parentPathId": null,
@@ -418,7 +418,7 @@ Object {
   "paths": Array [
     Object {
       "absolutePathPattern": "/",
-      "absolutePathPatternWithParameterNames": "",
+      "absolutePathPatternWithParameterNames": "/",
       "isParameterized": false,
       "name": "",
       "parentPathId": null,

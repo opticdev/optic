@@ -74,7 +74,7 @@ export function DiffLinks({
       {sections.map((section) => {
         if (section.requestId) {
           return (
-            <div>
+            <div key={section.requestId}>
               <ListSubheader className={classes.locationHeader}>
                 {'Request Body ' + section.contentType}
               </ListSubheader>
@@ -101,7 +101,7 @@ export function DiffLinks({
           );
         } else if (section.responseId) {
           return (
-            <div>
+            <div key={section.responseId}>
               <ListSubheader
                 className={classes.locationHeader}
               >{`${section.statusCode} Response ${section.contentType}`}</ListSubheader>

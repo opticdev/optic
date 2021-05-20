@@ -1,0 +1,84 @@
+---
+title: Using Spectacle
+---
+
+Optic provides you with the ability to build [scripts](/docs/apiops/scripts/) around your API Ops process. Sometimes you may want to access data that Optic gathers as it's documenting your APIs in your scripts. This might include the spec itself or changes to the spec. Optic provides a tool called Spectacle to make this possible.
+
+Spectacle is a GraphQL API that enables you to interact with Optic's data, either through exploring it in your browser with GraphiQL or querying in your code using Optic scripts.
+
+## Accessing Spectacle through GraphiQL
+
+To open GraphiQL for your locally-running instance of Spectacle, run the CLI command:
+
+```sh
+api spectacle
+```
+
+This will ensure Spectacle is running and open your browser to the Spectacle URL where you can explore the API and its documentation.
+
+## Building scripts around Spectacle
+
+The Optic scripts expose an environment variable `SPECTACLE_URL` for querying Spectacle. You can use this in your scripts to query the locally-running API.
+
+We'll look at an example using a Node.js script. The one below is using the `requests` query to get information about requests and responses in the spec. It's using `node-fetch` as the library to query Spectacle.
+
+```javascript
+const fetch = require("node-fetch");
+
+main();
+
+async function main() {
+  const result = await querySpectacle({
+    query: `{
+      requests {
+        method
+        absolutePathPatternWithParameterNames
+        bodies {
+          contentType
+          rootShapeId
+        }
+        responses {
+          statusCode
+          bodies {
+            contentType
+            rootShapeId
+          }
+        }
+      }
+    }`,
+    variables: {},
+  });
+  console.log(JSON.stringify(result, null, 2));
+}
+
+async function querySpectacle(body) {
+  // Fetch uses the SPECTACLE_URL environment as the URL
+  const result = await fetch(process.env.SPECTACLE_URL, {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: { "Content-Type": "application/json" },
+  });
+  return await result.json();
+}
+```
+
+1. Install [Node.js](https://nodejs.org/en/) if you haven't already
+1. Save this code above as `spectacle.js`
+1. Install `node-fetch` with `npm install node-fetch`
+
+Next we need to define an Optic script to run our code.
+
+```yaml
+# ... add this to your existing optic.yml file
+scripts:
+  get-spec-data:
+    command: node spectacle.js
+```
+
+Now run the script using:
+
+```sh
+api scripts get-spec-data
+```
+
+After running this, you should see the data printed in the terminal.
