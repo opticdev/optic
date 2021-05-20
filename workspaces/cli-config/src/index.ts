@@ -56,7 +56,15 @@ export interface IApiCliConfig {
   scripts?: {
     [key: string]: string | IOpticScript;
   };
+  environments?: IEnvironmentsConfig;
   ignoreRequests?: string[];
+}
+
+export interface IEnvironmentsConfig {
+  [key: string]: {
+    host: string;
+    webUI?: string;
+  };
 }
 
 export async function readApiConfig(
@@ -147,7 +155,7 @@ export interface IOpticTaskRunnerConfig {
   };
 }
 
-function randomLowerBound(): number {
+export function randomLowerBound(): number {
   const max = 3500;
   const min = 3300;
   return Math.floor(Math.random() * (max - min + 1)) + min;
