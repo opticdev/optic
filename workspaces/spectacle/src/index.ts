@@ -340,7 +340,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             );
           await reload(context.spectacleContext().opticContext);
         }
-        return specId;
+        return { id: specId };
       },
     },
     DiffState: {
