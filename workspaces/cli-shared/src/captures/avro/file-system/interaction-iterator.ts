@@ -5,7 +5,6 @@ import { captureFileSuffix } from './index';
 import avro from 'avsc';
 import { CaptureId } from '@useoptic/saas-types';
 import { IHttpInteraction, IInteractionBatch } from '../../../optic-types';
-import { developerDebugLogger } from '../../../index';
 
 export interface FilterPredicate<T> {
   (item: T): boolean;
@@ -48,7 +47,7 @@ export async function* CaptureInteractionIterator(
       //@TODO: determine if we should wait
       return;
     }
-    developerDebugLogger(batchFilePath + '\n\nxxx\n\n');
+    // console.log(batchFilePath + '\n\nxxx\n\n');
     let index = 0;
     const items = BatchInteractionIterator(batchFilePath);
     for await (const x of items) {
@@ -107,8 +106,7 @@ export async function* BatchInteractionIterator(batchFilePath: string) {
 }
 
 export async function loadBatchFile(batchFilePath: string) {
-  developerDebugLogger(`loadBatchFile-${batchFilePath}`);
-  const start = process.hrtime();
+  // console.time(`loadBatchFile-${batchFilePath}`);
   const decoder = avro.createFileDecoder(batchFilePath);
   const contents = await new Promise<IInteractionBatch>((resolve, reject) => {
     decoder.once('data', (contents: IInteractionBatch) => {
@@ -116,11 +114,7 @@ export async function loadBatchFile(batchFilePath: string) {
     });
     decoder.once('error', (err) => reject(err));
   });
-  const elapsed = process.hrtime(start);
-  const elapsedMillis = elapsed[0] * 1000 + elapsed[1] / 1000000;
-  developerDebugLogger(
-    `loadBatchFile-${batchFilePath}: ${elapsedMillis.toFixed(3)}ms`
-  );
+  // console.timeEnd(`loadBatchFile-${batchFilePath}`);
   return contents;
 }
 
