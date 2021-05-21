@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC } from 'react';
 import { useContext } from 'react';
 import { IOpticConfigRepository } from '@useoptic/spectacle';
 
@@ -13,17 +13,16 @@ export function useConfigRepository(): {
 
 interface ConfigServiceStoreProps {
   config: IOpticConfigRepository;
-  children: any;
 }
 
 export const ConfigRepositoryContext = React.createContext<IOpticConfigRepository | null>(
   null
 );
 
-export function ConfigRepositoryStore(props: ConfigServiceStoreProps) {
+export const ConfigRepositoryStore: FC<ConfigServiceStoreProps> = (props) => {
   return (
     <ConfigRepositoryContext.Provider value={props.config}>
       {props.children}
     </ConfigRepositoryContext.Provider>
   );
-}
+};

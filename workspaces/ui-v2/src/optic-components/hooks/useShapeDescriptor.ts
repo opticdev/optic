@@ -145,7 +145,7 @@ export function useShapeDescriptor(
               })
             );
             choice.asObject.fields = newFields;
-            return choice;
+            return { ...choice, shapeId: choice.id };
 
           case 'Array':
             const results = await accumulateShapes(
@@ -157,15 +157,15 @@ export function useShapeDescriptor(
               ...i,
               shapeId: i.id,
             }));
-            return choice;
+            return { ...choice, shapeId: choice.id };
           default:
-            return choice;
+            return { ...choice, shapeId: choice.id };
         }
       })
     );
   }
 
-  const [x, setX] = useState<any[]>([]);
+  const [x, setX] = useState<IShapeRenderer[]>([]);
   useEffect(() => {
     async function task() {
       const seenSet: Set<string> = new Set();

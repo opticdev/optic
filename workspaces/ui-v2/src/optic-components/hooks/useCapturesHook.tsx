@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC } from 'react';
 import { IOpticCapturesService, ICapture } from '@useoptic/spectacle';
 import { useContext, useEffect, useState } from 'react';
 
@@ -34,17 +34,16 @@ export function useCaptures(): {
 
 interface CapturesServiceStoreProps {
   capturesService: IOpticCapturesService;
-  children: any;
 }
 
 export const CapturesServiceContext = React.createContext<IOpticCapturesService | null>(
   null
 );
 
-export function CapturesServiceStore(props: CapturesServiceStoreProps) {
+export const CapturesServiceStore: FC<CapturesServiceStoreProps> = (props) => {
   return (
     <CapturesServiceContext.Provider value={props.capturesService}>
       {props.children}
     </CapturesServiceContext.Provider>
   );
-}
+};

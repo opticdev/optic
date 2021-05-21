@@ -1,10 +1,6 @@
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
-import {
-  IForkableSpectacle,
-  IOpticContext,
-  makeSpectacle,
-} from '@useoptic/spectacle';
+import { IOpticContext, makeSpectacle } from '@useoptic/spectacle';
 import { makeCurrentSpecContext } from '<src>/lib/__tests/diff-helpers/universes/makeCurrentSpecContext';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import { v4 as uuidv4 } from 'uuid';
