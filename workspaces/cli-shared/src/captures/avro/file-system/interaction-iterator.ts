@@ -47,7 +47,7 @@ export async function* CaptureInteractionIterator(
       //@TODO: determine if we should wait
       return;
     }
-    console.log(batchFilePath + '\n\nxxx\n\n');
+    // console.log(batchFilePath + '\n\nxxx\n\n');
     let index = 0;
     const items = BatchInteractionIterator(batchFilePath);
     for await (const x of items) {
@@ -106,7 +106,7 @@ export async function* BatchInteractionIterator(batchFilePath: string) {
 }
 
 export async function loadBatchFile(batchFilePath: string) {
-  console.time(`loadBatchFile-${batchFilePath}`);
+  // console.time(`loadBatchFile-${batchFilePath}`);
   const decoder = avro.createFileDecoder(batchFilePath);
   const contents = await new Promise<IInteractionBatch>((resolve, reject) => {
     decoder.once('data', (contents: IInteractionBatch) => {
@@ -114,7 +114,7 @@ export async function loadBatchFile(batchFilePath: string) {
     });
     decoder.once('error', (err) => reject(err));
   });
-  console.timeEnd(`loadBatchFile-${batchFilePath}`);
+  // console.timeEnd(`loadBatchFile-${batchFilePath}`);
   return contents;
 }
 
