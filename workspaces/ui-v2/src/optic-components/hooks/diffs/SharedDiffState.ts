@@ -198,6 +198,7 @@ export const newSharedDiffMachine = (
             actions: [
               assign({
                 pendingEndpoints: (ctx, event) => {
+                  console.log(ctx.pendingEndpoints);
                   return [...ctx.pendingEndpoints].map((i) => {
                     if (i.id === event.id) {
                       return { ...i, staged: true };

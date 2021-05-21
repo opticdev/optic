@@ -7,7 +7,10 @@ import { CommitMessageModal } from '<src>/optic-components/common';
 import { useSharedDiffContext } from '<src>/optic-components/hooks/diffs/SharedDiffContext';
 import { useSpectacleCommand } from '<src>/spectacle-implementations/spectacle-provider';
 import { useLastBatchCommitId } from '<src>/optic-components/hooks/useBatchCommits';
-import { useChangelogPages } from '<src>/optic-components/navigation/Routes';
+import {
+  useChangelogPages,
+  useDocumentationPageLink,
+} from '<src>/optic-components/navigation/Routes';
 import { PromptNavigateAway } from '<src>/optic-components/common';
 import { useAnalytics } from '<src>/analytics';
 import { useClientAgent } from '<src>/optic-components/hooks/useClientAgent';
@@ -54,6 +57,8 @@ export default function AskForCommitMessageDiffPage(props: {
   const lastBatchCommitId = useLastBatchCommitId();
   const changelogPageRoute = useChangelogPages();
   const { id: specId } = useSpecMetadata();
+  const documentationPageRoute = useDocumentationPageLink();
+
   const {
     context,
     startedFinalizing,
@@ -69,9 +74,7 @@ export default function AskForCommitMessageDiffPage(props: {
   const handleSave = async (commitMessage: string) => {
     const commands = context.simulatedCommands;
     try {
-      const {
-        applyCommands: { batchCommitId },
-      } = await spectacleMutator<any, any>({
+      await spectacleMutator<any, any>({
         query: `
         mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
     applyCommands(commands: $commands, batchCommitId: $batchCommitId, commitMessage: $commitMessage, clientId: $clientId, clientSessionId: $clientSessionId) {
@@ -93,10 +96,12 @@ export default function AskForCommitMessageDiffPage(props: {
         isFirstUpdate,
         specId
       );
-      // If there are no batch commits (first commit) - link to the just created commit
-      history.push(
-        changelogPageRoute.linkTo(lastBatchCommitId || batchCommitId)
-      );
+
+      if (lastBatchCommitId) {
+        history.push(changelogPageRoute.linkTo(lastBatchCommitId));
+      } else {
+        history.push(documentationPageRoute.linkTo());
+      }
     } catch (e) {
       console.error(e);
       debugger;

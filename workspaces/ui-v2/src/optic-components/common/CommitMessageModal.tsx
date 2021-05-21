@@ -31,7 +31,6 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
     () => {
       if (canSubmit) {
         onSave(commitMessage);
-        onClose();
       }
     },
     {

@@ -48,91 +48,12 @@ Object {
 }
 `;
 
-exports[`accurate spec trail for all diffs: 6fbd5654cf210fac-parsed 1`] = `
+exports[`accurate spec trail for all diffs: 7c7c80e327fde4dd-parsed 1`] = `
 ParsedDiff {
-  "diffHash": "6fbd5654cf210fac",
-  "diffType": "UnmatchedRequestBodyShape",
-  "interactions": Array [
-    "8eff95b1-4f6d-4d3c-ba71-5e3792780ce4",
-    "1c0b722f-107c-4082-abe7-f3cdd1d92475",
-    "1c47baf2-0b1d-43a1-a5c5-64f9249801a5",
-    "e930e3f5-a006-46d8-85ae-447ce3150906",
-    "a3af782f-8e44-4e17-806d-025c8fb0a4fd",
-  ],
-  "serialized_diff": Object {
-    "UnmatchedRequestBodyShape": Object {
-      "interactionTrail": Object {
-        "path": Array [
-          Object {
-            "RequestBody": Object {
-              "contentType": "application/json",
-            },
-          },
-        ],
-      },
-      "requestsTrail": Object {
-        "SpecRequestBody": Object {
-          "requestId": "request_gwQEFrHpO0",
-        },
-      },
-      "shapeDiffResult": Object {
-        "UnmatchedShape": Object {
-          "jsonTrail": Object {
-            "path": Array [
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 1,
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "dueDate",
-                },
-              },
-            ],
-          },
-          "shapeTrail": Object {
-            "path": Array [
-              Object {
-                "ListItemTrail": Object {
-                  "itemShapeId": "shape_f7gQgQ8p7G",
-                  "listShapeId": "shape_cEkQAVQ3ib",
-                },
-              },
-              Object {
-                "ObjectFieldTrail": Object {
-                  "fieldId": "field_5GCvc8KB2p",
-                  "fieldShapeId": "shape_owJFnZQJeS",
-                },
-              },
-            ],
-            "rootShapeId": "shape_cEkQAVQ3ib",
-          },
-        },
-      },
-    },
-  },
-}
-`;
-
-exports[`accurate spec trail for all diffs: 6fbd5654cf210fac-parsed-location 1`] = `
-Object {
-  "inRequest": Object {
-    "contentType": "application/json",
-    "requestId": "request_gwQEFrHpO0",
-  },
-  "inResponse": undefined,
-  "method": "GET",
-  "pathId": "path_UOIsxzICu5",
-}
-`;
-
-exports[`accurate spec trail for all diffs: 20a8281c065f89cb-parsed 1`] = `
-ParsedDiff {
-  "diffHash": "20a8281c065f89cb",
+  "diffHash": "7c7c80e327fde4dd",
   "diffType": "UnmatchedResponseBodyShape",
   "interactions": Array [
-    "fa0def9226-abf8-41a7-ba1f-7fd09c509090",
+    "a3af782f-8e44-4e1327-806d-032323fb0a4fd",
   ],
   "serialized_diff": Object {
     "UnmatchedResponseBodyShape": Object {
@@ -148,7 +69,7 @@ ParsedDiff {
       },
       "requestsTrail": Object {
         "SpecResponseBody": Object {
-          "responseId": "response_dE2gzm1TWj",
+          "responseId": "response_RkkvxIt2RG",
         },
       },
       "shapeDiffResult": Object {
@@ -171,18 +92,19 @@ ParsedDiff {
             "path": Array [
               Object {
                 "ListItemTrail": Object {
-                  "itemShapeId": "shape_w9f5rUduX2",
-                  "listShapeId": "shape_atTrTmH6j9",
+                  "itemShapeId": "shape_ohd8yFyzEg",
+                  "listShapeId": "shape_ToF242uYVA",
                 },
               },
               Object {
                 "ObjectFieldTrail": Object {
-                  "fieldId": "field_MxN4prqQaf",
-                  "fieldShapeId": "shape_5Htez4BFKO",
+                  "fieldId": "field_TxVlnhtLaa",
+                  "fieldShapeId": "shape_3Xt9wp5UxL",
+                  "parentObjectShapeId": "shape_ohd8yFyzEg",
                 },
               },
             ],
-            "rootShapeId": "shape_atTrTmH6j9",
+            "rootShapeId": "shape_ToF242uYVA",
           },
         },
       },
@@ -191,14 +113,172 @@ ParsedDiff {
 }
 `;
 
-exports[`accurate spec trail for all diffs: 20a8281c065f89cb-parsed-location 1`] = `
+exports[`accurate spec trail for all diffs: 7c7c80e327fde4dd-parsed-location 1`] = `
 Object {
   "inRequest": undefined,
   "inResponse": Object {
     "contentType": "application/json",
-    "responseId": "response_dE2gzm1TWj",
+    "responseId": "response_RkkvxIt2RG",
     "statusCode": 200,
   },
+  "method": "GET",
+  "pathId": "path_xhUZ8irdJO",
+}
+`;
+
+exports[`accurate spec trail for all diffs: 7f914b7cf209ab-parsed 1`] = `
+ParsedDiff {
+  "diffHash": "7f914b7cf209ab",
+  "diffType": "UnmatchedResponseBodyShape",
+  "interactions": Array [
+    "8eff95b1-4f6d-4d3c-ba71-5e3792780ce4",
+    "1c0b722f-107c-4082-abe7-f3cdd1d92475",
+    "1c47baf2-0b1d-43a1-a5c5-64f9249801a5",
+    "e930e3f5-a006-46d8-85ae-447ce3150906",
+    "a3af782f-8e44-4e17-806d-025c8fb0a4fd",
+  ],
+  "serialized_diff": Object {
+    "UnmatchedResponseBodyShape": Object {
+      "interactionTrail": Object {
+        "path": Array [
+          Object {
+            "ResponseBody": Object {
+              "contentType": "application/json",
+              "statusCode": 200,
+            },
+          },
+        ],
+      },
+      "requestsTrail": Object {
+        "SpecResponseBody": Object {
+          "responseId": "response_Zv48g7lL5e",
+        },
+      },
+      "shapeDiffResult": Object {
+        "UnmatchedShape": Object {
+          "jsonTrail": Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "dueDate",
+                },
+              },
+            ],
+          },
+          "shapeTrail": Object {
+            "path": Array [
+              Object {
+                "ListItemTrail": Object {
+                  "itemShapeId": "shape_Fr2jskGj0G",
+                  "listShapeId": "shape_0xeeapZ7UZ",
+                },
+              },
+              Object {
+                "ObjectFieldTrail": Object {
+                  "fieldId": "field_cOmYY7RoTV",
+                  "fieldShapeId": "shape_FVWIcOgFGF",
+                  "parentObjectShapeId": "shape_Fr2jskGj0G",
+                },
+              },
+            ],
+            "rootShapeId": "shape_0xeeapZ7UZ",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`accurate spec trail for all diffs: 7f914b7cf209ab-parsed-location 1`] = `
+Object {
+  "inRequest": undefined,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "responseId": "response_Zv48g7lL5e",
+    "statusCode": 200,
+  },
+  "method": "GET",
+  "pathId": "path_UOIsxzICu5",
+}
+`;
+
+exports[`accurate spec trail for all diffs: 8c904dbe5453a6be-parsed 1`] = `
+ParsedDiff {
+  "diffHash": "8c904dbe5453a6be",
+  "diffType": "UnmatchedRequestBodyShape",
+  "interactions": Array [
+    "fa0def9226-abf8-41a7-ba1f-7fd09c509090",
+  ],
+  "serialized_diff": Object {
+    "UnmatchedRequestBodyShape": Object {
+      "interactionTrail": Object {
+        "path": Array [
+          Object {
+            "RequestBody": Object {
+              "contentType": "application/json",
+            },
+          },
+        ],
+      },
+      "requestsTrail": Object {
+        "SpecRequestBody": Object {
+          "requestId": "request_3kjV3YMXdP",
+        },
+      },
+      "shapeDiffResult": Object {
+        "UnmatchedShape": Object {
+          "jsonTrail": Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "dueDate",
+                },
+              },
+            ],
+          },
+          "shapeTrail": Object {
+            "path": Array [
+              Object {
+                "ListItemTrail": Object {
+                  "itemShapeId": "shape_M3jePX8HMF",
+                  "listShapeId": "shape_FMLvgzBZRK",
+                },
+              },
+              Object {
+                "ObjectFieldTrail": Object {
+                  "fieldId": "field_oQxruSbdCD",
+                  "fieldShapeId": "shape_YtXLm2ULc3",
+                  "parentObjectShapeId": "shape_M3jePX8HMF",
+                },
+              },
+            ],
+            "rootShapeId": "shape_FMLvgzBZRK",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`accurate spec trail for all diffs: 8c904dbe5453a6be-parsed-location 1`] = `
+Object {
+  "inRequest": Object {
+    "contentType": "application/json",
+    "requestId": "request_3kjV3YMXdP",
+  },
+  "inResponse": undefined,
   "method": "GET",
   "pathId": "path_wPHNu8BDab",
 }
@@ -252,6 +332,82 @@ Object {
   "inResponse": undefined,
   "method": "GET",
   "pathId": "path_it2OyjUysW",
+}
+`;
+
+exports[`accurate spec trail for all diffs: 58b5f513366cbc0e-parsed 1`] = `
+ParsedDiff {
+  "diffHash": "58b5f513366cbc0e",
+  "diffType": "UnmatchedRequestBodyShape",
+  "interactions": Array [
+    "a3af782f-8e44-4e1327-806d-032323fb0a4fd",
+  ],
+  "serialized_diff": Object {
+    "UnmatchedRequestBodyShape": Object {
+      "interactionTrail": Object {
+        "path": Array [
+          Object {
+            "RequestBody": Object {
+              "contentType": "application/json",
+            },
+          },
+        ],
+      },
+      "requestsTrail": Object {
+        "SpecRequestBody": Object {
+          "requestId": "request_SqY61Qc9Mi",
+        },
+      },
+      "shapeDiffResult": Object {
+        "UnmatchedShape": Object {
+          "jsonTrail": Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "dueDate",
+                },
+              },
+            ],
+          },
+          "shapeTrail": Object {
+            "path": Array [
+              Object {
+                "ListItemTrail": Object {
+                  "itemShapeId": "shape_QU1rtECeM2",
+                  "listShapeId": "shape_Lx1MrhWlFb",
+                },
+              },
+              Object {
+                "ObjectFieldTrail": Object {
+                  "fieldId": "field_eHl286agXw",
+                  "fieldShapeId": "shape_PTjiKnpFzQ",
+                  "parentObjectShapeId": "shape_QU1rtECeM2",
+                },
+              },
+            ],
+            "rootShapeId": "shape_Lx1MrhWlFb",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`accurate spec trail for all diffs: 58b5f513366cbc0e-parsed-location 1`] = `
+Object {
+  "inRequest": Object {
+    "contentType": "application/json",
+    "requestId": "request_SqY61Qc9Mi",
+  },
+  "inResponse": undefined,
+  "method": "GET",
+  "pathId": "path_xhUZ8irdJO",
 }
 `;
 
@@ -403,233 +559,6 @@ Object {
 }
 `;
 
-exports[`accurate spec trail for all diffs: 560c91bdd0aebb46-parsed 1`] = `
-ParsedDiff {
-  "diffHash": "560c91bdd0aebb46",
-  "diffType": "UnmatchedResponseBodyShape",
-  "interactions": Array [
-    "a3af782f-8e44-4e1327-806d-032323fb0a4fd",
-  ],
-  "serialized_diff": Object {
-    "UnmatchedResponseBodyShape": Object {
-      "interactionTrail": Object {
-        "path": Array [
-          Object {
-            "ResponseBody": Object {
-              "contentType": "application/json",
-              "statusCode": 200,
-            },
-          },
-        ],
-      },
-      "requestsTrail": Object {
-        "SpecResponseBody": Object {
-          "responseId": "response_RkkvxIt2RG",
-        },
-      },
-      "shapeDiffResult": Object {
-        "UnmatchedShape": Object {
-          "jsonTrail": Object {
-            "path": Array [
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 1,
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "dueDate",
-                },
-              },
-            ],
-          },
-          "shapeTrail": Object {
-            "path": Array [
-              Object {
-                "ListItemTrail": Object {
-                  "itemShapeId": "shape_ohd8yFyzEg",
-                  "listShapeId": "shape_ToF242uYVA",
-                },
-              },
-              Object {
-                "ObjectFieldTrail": Object {
-                  "fieldId": "field_TxVlnhtLaa",
-                  "fieldShapeId": "shape_3Xt9wp5UxL",
-                },
-              },
-            ],
-            "rootShapeId": "shape_ToF242uYVA",
-          },
-        },
-      },
-    },
-  },
-}
-`;
-
-exports[`accurate spec trail for all diffs: 560c91bdd0aebb46-parsed-location 1`] = `
-Object {
-  "inRequest": undefined,
-  "inResponse": Object {
-    "contentType": "application/json",
-    "responseId": "response_RkkvxIt2RG",
-    "statusCode": 200,
-  },
-  "method": "GET",
-  "pathId": "path_xhUZ8irdJO",
-}
-`;
-
-exports[`accurate spec trail for all diffs: 788adde1a9c733b8-parsed 1`] = `
-ParsedDiff {
-  "diffHash": "788adde1a9c733b8",
-  "diffType": "UnmatchedRequestBodyShape",
-  "interactions": Array [
-    "a3af782f-8e44-4e1327-806d-032323fb0a4fd",
-  ],
-  "serialized_diff": Object {
-    "UnmatchedRequestBodyShape": Object {
-      "interactionTrail": Object {
-        "path": Array [
-          Object {
-            "RequestBody": Object {
-              "contentType": "application/json",
-            },
-          },
-        ],
-      },
-      "requestsTrail": Object {
-        "SpecRequestBody": Object {
-          "requestId": "request_SqY61Qc9Mi",
-        },
-      },
-      "shapeDiffResult": Object {
-        "UnmatchedShape": Object {
-          "jsonTrail": Object {
-            "path": Array [
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 1,
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "dueDate",
-                },
-              },
-            ],
-          },
-          "shapeTrail": Object {
-            "path": Array [
-              Object {
-                "ListItemTrail": Object {
-                  "itemShapeId": "shape_QU1rtECeM2",
-                  "listShapeId": "shape_Lx1MrhWlFb",
-                },
-              },
-              Object {
-                "ObjectFieldTrail": Object {
-                  "fieldId": "field_eHl286agXw",
-                  "fieldShapeId": "shape_PTjiKnpFzQ",
-                },
-              },
-            ],
-            "rootShapeId": "shape_Lx1MrhWlFb",
-          },
-        },
-      },
-    },
-  },
-}
-`;
-
-exports[`accurate spec trail for all diffs: 788adde1a9c733b8-parsed-location 1`] = `
-Object {
-  "inRequest": Object {
-    "contentType": "application/json",
-    "requestId": "request_SqY61Qc9Mi",
-  },
-  "inResponse": undefined,
-  "method": "GET",
-  "pathId": "path_xhUZ8irdJO",
-}
-`;
-
-exports[`accurate spec trail for all diffs: 2019cd0366b308c9-parsed 1`] = `
-ParsedDiff {
-  "diffHash": "2019cd0366b308c9",
-  "diffType": "UnmatchedRequestBodyShape",
-  "interactions": Array [
-    "fa0def9226-abf8-41a7-ba1f-7fd09c509090",
-  ],
-  "serialized_diff": Object {
-    "UnmatchedRequestBodyShape": Object {
-      "interactionTrail": Object {
-        "path": Array [
-          Object {
-            "RequestBody": Object {
-              "contentType": "application/json",
-            },
-          },
-        ],
-      },
-      "requestsTrail": Object {
-        "SpecRequestBody": Object {
-          "requestId": "request_3kjV3YMXdP",
-        },
-      },
-      "shapeDiffResult": Object {
-        "UnmatchedShape": Object {
-          "jsonTrail": Object {
-            "path": Array [
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 1,
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "dueDate",
-                },
-              },
-            ],
-          },
-          "shapeTrail": Object {
-            "path": Array [
-              Object {
-                "ListItemTrail": Object {
-                  "itemShapeId": "shape_M3jePX8HMF",
-                  "listShapeId": "shape_FMLvgzBZRK",
-                },
-              },
-              Object {
-                "ObjectFieldTrail": Object {
-                  "fieldId": "field_oQxruSbdCD",
-                  "fieldShapeId": "shape_YtXLm2ULc3",
-                },
-              },
-            ],
-            "rootShapeId": "shape_FMLvgzBZRK",
-          },
-        },
-      },
-    },
-  },
-}
-`;
-
-exports[`accurate spec trail for all diffs: 2019cd0366b308c9-parsed-location 1`] = `
-Object {
-  "inRequest": Object {
-    "contentType": "application/json",
-    "requestId": "request_3kjV3YMXdP",
-  },
-  "inResponse": undefined,
-  "method": "GET",
-  "pathId": "path_wPHNu8BDab",
-}
-`;
-
 exports[`accurate spec trail for all diffs: a24799a8ee3f67b8-parsed 1`] = `
 ParsedDiff {
   "diffHash": "a24799a8ee3f67b8",
@@ -727,16 +656,12 @@ Object {
 }
 `;
 
-exports[`accurate spec trail for all diffs: c87e8bf5e24c3790-parsed 1`] = `
+exports[`accurate spec trail for all diffs: debd8d541536fbbe-parsed 1`] = `
 ParsedDiff {
-  "diffHash": "c87e8bf5e24c3790",
+  "diffHash": "debd8d541536fbbe",
   "diffType": "UnmatchedResponseBodyShape",
   "interactions": Array [
-    "8eff95b1-4f6d-4d3c-ba71-5e3792780ce4",
-    "1c0b722f-107c-4082-abe7-f3cdd1d92475",
-    "1c47baf2-0b1d-43a1-a5c5-64f9249801a5",
-    "e930e3f5-a006-46d8-85ae-447ce3150906",
-    "a3af782f-8e44-4e17-806d-025c8fb0a4fd",
+    "fa0def9226-abf8-41a7-ba1f-7fd09c509090",
   ],
   "serialized_diff": Object {
     "UnmatchedResponseBodyShape": Object {
@@ -752,7 +677,7 @@ ParsedDiff {
       },
       "requestsTrail": Object {
         "SpecResponseBody": Object {
-          "responseId": "response_Zv48g7lL5e",
+          "responseId": "response_dE2gzm1TWj",
         },
       },
       "shapeDiffResult": Object {
@@ -775,18 +700,19 @@ ParsedDiff {
             "path": Array [
               Object {
                 "ListItemTrail": Object {
-                  "itemShapeId": "shape_Fr2jskGj0G",
-                  "listShapeId": "shape_0xeeapZ7UZ",
+                  "itemShapeId": "shape_w9f5rUduX2",
+                  "listShapeId": "shape_atTrTmH6j9",
                 },
               },
               Object {
                 "ObjectFieldTrail": Object {
-                  "fieldId": "field_cOmYY7RoTV",
-                  "fieldShapeId": "shape_FVWIcOgFGF",
+                  "fieldId": "field_MxN4prqQaf",
+                  "fieldShapeId": "shape_5Htez4BFKO",
+                  "parentObjectShapeId": "shape_w9f5rUduX2",
                 },
               },
             ],
-            "rootShapeId": "shape_0xeeapZ7UZ",
+            "rootShapeId": "shape_atTrTmH6j9",
           },
         },
       },
@@ -795,14 +721,94 @@ ParsedDiff {
 }
 `;
 
-exports[`accurate spec trail for all diffs: c87e8bf5e24c3790-parsed-location 1`] = `
+exports[`accurate spec trail for all diffs: debd8d541536fbbe-parsed-location 1`] = `
 Object {
   "inRequest": undefined,
   "inResponse": Object {
     "contentType": "application/json",
-    "responseId": "response_Zv48g7lL5e",
+    "responseId": "response_dE2gzm1TWj",
     "statusCode": 200,
   },
+  "method": "GET",
+  "pathId": "path_wPHNu8BDab",
+}
+`;
+
+exports[`accurate spec trail for all diffs: e7d1ec697be249c8-parsed 1`] = `
+ParsedDiff {
+  "diffHash": "e7d1ec697be249c8",
+  "diffType": "UnmatchedRequestBodyShape",
+  "interactions": Array [
+    "8eff95b1-4f6d-4d3c-ba71-5e3792780ce4",
+    "1c0b722f-107c-4082-abe7-f3cdd1d92475",
+    "1c47baf2-0b1d-43a1-a5c5-64f9249801a5",
+    "e930e3f5-a006-46d8-85ae-447ce3150906",
+    "a3af782f-8e44-4e17-806d-025c8fb0a4fd",
+  ],
+  "serialized_diff": Object {
+    "UnmatchedRequestBodyShape": Object {
+      "interactionTrail": Object {
+        "path": Array [
+          Object {
+            "RequestBody": Object {
+              "contentType": "application/json",
+            },
+          },
+        ],
+      },
+      "requestsTrail": Object {
+        "SpecRequestBody": Object {
+          "requestId": "request_gwQEFrHpO0",
+        },
+      },
+      "shapeDiffResult": Object {
+        "UnmatchedShape": Object {
+          "jsonTrail": Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "dueDate",
+                },
+              },
+            ],
+          },
+          "shapeTrail": Object {
+            "path": Array [
+              Object {
+                "ListItemTrail": Object {
+                  "itemShapeId": "shape_f7gQgQ8p7G",
+                  "listShapeId": "shape_cEkQAVQ3ib",
+                },
+              },
+              Object {
+                "ObjectFieldTrail": Object {
+                  "fieldId": "field_5GCvc8KB2p",
+                  "fieldShapeId": "shape_owJFnZQJeS",
+                  "parentObjectShapeId": "shape_f7gQgQ8p7G",
+                },
+              },
+            ],
+            "rootShapeId": "shape_cEkQAVQ3ib",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`accurate spec trail for all diffs: e7d1ec697be249c8-parsed-location 1`] = `
+Object {
+  "inRequest": Object {
+    "contentType": "application/json",
+    "requestId": "request_gwQEFrHpO0",
+  },
+  "inResponse": undefined,
   "method": "GET",
   "pathId": "path_UOIsxzICu5",
 }

@@ -36,6 +36,7 @@ export interface IObjectFieldTrail {
   ObjectFieldTrail: {
     fieldId: string;
     fieldShapeId: string;
+    parentObjectShapeId: string;
   };
 }
 

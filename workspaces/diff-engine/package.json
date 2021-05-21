@@ -5,7 +5,7 @@
     "postinstall": "node scripts/install",
     "preuninstall": "node scripts/uninstall",
     "test": "cd tests && tap ./lib",
-    "ws:build-binaries": "scripts/build-binaries.sh",
+    "ws:build": "cargo build",
     "ws:clean": "rm -rf build target",
     "ws:test": "scripts/test.sh"
   },

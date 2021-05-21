@@ -59,6 +59,7 @@ export class HttpToolkitCapturingProxy {
   private proxy!: mockttp.Mockttp;
   private requests: Map<string, mockttp.CompletedRequest> = new Map();
   private config!: IHttpToolkitCapturingProxyConfig;
+  public fingerprint: string | undefined = undefined;
   public readonly events: EventEmitter = new EventEmitter();
 
   async start(config: IHttpToolkitCapturingProxyConfig) {
@@ -76,6 +77,11 @@ export class HttpToolkitCapturingProxy {
     const keyPath = path.join(certificatePath, 'ca.key');
     await fs.writeFile(certPath, certificateInfo.cert);
     await fs.writeFile(keyPath, certificateInfo.key);
+
+    this.fingerprint = await mockttp.generateSPKIFingerprint(
+      certificateInfo.cert
+    );
+
     const https = {
       certPath,
       keyPath,

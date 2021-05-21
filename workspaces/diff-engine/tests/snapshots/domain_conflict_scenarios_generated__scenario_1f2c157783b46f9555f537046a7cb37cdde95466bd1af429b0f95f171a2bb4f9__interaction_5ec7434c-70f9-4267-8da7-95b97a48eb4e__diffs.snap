@@ -32,6 +32,7 @@ expression: diffs
                         ObjectFieldTrail {
                             field_id: "field_0Gsxw9zhsc",
                             field_shape_id: "shape_UmdGwe9ZXw",
+                            parent_object_shape_id: "shape_UzxFqwGJ8h",
                         },
                     ],
                 },
@@ -67,6 +68,7 @@ expression: diffs
                         ObjectFieldTrail {
                             field_id: "field_9JoXLW4PMX",
                             field_shape_id: "shape_m0tBaSSxY5",
+                            parent_object_shape_id: "shape_UzxFqwGJ8h",
                         },
                     ],
                 },
@@ -102,6 +104,7 @@ expression: diffs
                         ObjectFieldTrail {
                             field_id: "field_vgnTR30nGU",
                             field_shape_id: "shape_oXDbLBSNB3",
+                            parent_object_shape_id: "shape_UzxFqwGJ8h",
                         },
                     ],
                 },
@@ -137,6 +140,7 @@ expression: diffs
                         ObjectFieldTrail {
                             field_id: "field_eMDZZdHr0p",
                             field_shape_id: "shape_N0zGjTOmjb",
+                            parent_object_shape_id: "shape_UzxFqwGJ8h",
                         },
                     ],
                 },
@@ -172,6 +176,7 @@ expression: diffs
                         ObjectFieldTrail {
                             field_id: "field_agNCpLfAQW",
                             field_shape_id: "shape_vjc8zOCKL7",
+                            parent_object_shape_id: "shape_UzxFqwGJ8h",
                         },
                     ],
                 },
@@ -207,6 +212,7 @@ expression: diffs
                         ObjectFieldTrail {
                             field_id: "field_BbqlNm0IrO",
                             field_shape_id: "shape_MuzY5JgqlX",
+                            parent_object_shape_id: "shape_UzxFqwGJ8h",
                         },
                     ],
                 },

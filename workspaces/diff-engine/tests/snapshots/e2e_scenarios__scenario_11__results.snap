@@ -35,6 +35,7 @@ expression: results
                         ObjectFieldTrail {
                             field_id: "baseline-field_2",
                             field_shape_id: "baseline-shape_5",
+                            parent_object_shape_id: "baseline-shape_8",
                         },
                         ListItemTrail {
                             list_shape_id: "baseline-shape_5",

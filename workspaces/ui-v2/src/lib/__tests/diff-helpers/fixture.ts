@@ -165,6 +165,7 @@ export async function shapeDiffPreview(
 
   const expected = await getExpectationsForShapeTrail(
     input.diffs[0].asShapeDiff(universe.currentSpecContext)?.shapeTrail!,
+    input.diffs[0].asShapeDiff(universe.currentSpecContext)?.jsonTrail!,
     universe.spectacleQuery,
     universe.currentSpecContext
   );

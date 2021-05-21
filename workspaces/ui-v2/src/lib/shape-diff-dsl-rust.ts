@@ -21,11 +21,17 @@ import { setDifference } from '<src>/lib/set-ops';
 
 export async function getExpectationsForShapeTrail(
   shapeTrail: IShapeTrail,
+  jsonTrail: IJsonTrail,
   spectacle: any,
   currentSpecContext: CurrentSpecContext
 ): Promise<Expectation> {
   const expectations = await shapeTrailParserLastId(shapeTrail, spectacle);
-  return new Expectation(expectations, currentSpecContext, shapeTrail);
+  return new Expectation(
+    expectations,
+    currentSpecContext,
+    shapeTrail,
+    jsonTrail
+  );
 }
 
 export class Expectation {
@@ -35,7 +41,8 @@ export class Expectation {
   constructor(
     expectationsFromSpec: IExpectationHelper,
     currentSpecContext: CurrentSpecContext,
-    private shapeTrail: IShapeTrail
+    private shapeTrail: IShapeTrail,
+    private jsonTrail: IJsonTrail
   ) {
     this.expectationsFromSpec = expectationsFromSpec;
     this.currentSpecContext = currentSpecContext;
@@ -80,7 +87,13 @@ export class Expectation {
 
   fieldKey(): string {
     invariant(this.isField(), 'shape trail is not a field.');
-    return this.expectationsFromSpec.lastFieldKey!;
+    const lastJsonTrail = this.jsonTrail.path[this.jsonTrail.path.length - 1];
+    invariant(
+      lastJsonTrail.hasOwnProperty('JsonObjectKey'),
+      'expected a json trail for a field'
+    );
+    const name = (lastJsonTrail as IJsonObjectKey).JsonObjectKey.key;
+    return name;
   }
 
   fieldShapeId(): string {

@@ -41,14 +41,17 @@ expression: results
                         ObjectFieldTrail {
                             field_id: "field_7",
                             field_shape_id: "shape_9",
+                            parent_object_shape_id: "shape_10",
                         },
                         ObjectFieldTrail {
                             field_id: "field_6",
                             field_shape_id: "shape_8",
+                            parent_object_shape_id: "shape_9",
                         },
                         ObjectFieldTrail {
                             field_id: "field_4",
                             field_shape_id: "shape_6",
+                            parent_object_shape_id: "shape_8",
                         },
                         OptionalTrail {
                             shape_id: "shape_6",
@@ -60,6 +63,7 @@ expression: results
                         ObjectFieldTrail {
                             field_id: "field_3",
                             field_shape_id: "shape_4",
+                            parent_object_shape_id: "shape_5",
                         },
                     ],
                 },
@@ -104,14 +108,17 @@ expression: results
                         ObjectFieldTrail {
                             field_id: "field_7",
                             field_shape_id: "shape_9",
+                            parent_object_shape_id: "shape_10",
                         },
                         ObjectFieldTrail {
                             field_id: "field_6",
                             field_shape_id: "shape_8",
+                            parent_object_shape_id: "shape_9",
                         },
                         ObjectFieldTrail {
                             field_id: "field_4",
                             field_shape_id: "shape_6",
+                            parent_object_shape_id: "shape_8",
                         },
                         OptionalTrail {
                             shape_id: "shape_6",
@@ -123,6 +130,7 @@ expression: results
                         ObjectFieldTrail {
                             field_id: "field_2",
                             field_shape_id: "shape_3",
+                            parent_object_shape_id: "shape_5",
                         },
                     ],
                 },

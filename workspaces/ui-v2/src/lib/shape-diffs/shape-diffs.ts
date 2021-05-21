@@ -27,6 +27,7 @@ export async function interpretShapeDiffs(
   const actual = new Actual(learnedTrails, normalizedShapeTrail, jsonTrail);
   const expected = await getExpectationsForShapeTrail(
     diff.shapeTrail,
+    diff.jsonTrail,
     spectacle,
     currentSpecContext
   );
