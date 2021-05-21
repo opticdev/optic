@@ -75,7 +75,7 @@ type ShapeChoice =
     };
 
 type ShapeChoicesResult = {
-  shapeChoices: ShapeChoice[];
+  shapeChoices?: ShapeChoice[];
 };
 
 export function useShapeDescriptor(
@@ -117,7 +117,7 @@ export function useShapeDescriptor(
       debugger;
     }
 
-    if (!result.data) {
+    if (!result.data || !result.data.shapeChoices) {
       return [];
     }
     return await Promise.all(
