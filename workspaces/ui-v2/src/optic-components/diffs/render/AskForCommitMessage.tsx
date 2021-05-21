@@ -12,6 +12,7 @@ import { PromptNavigateAway } from '<src>/optic-components/common';
 import { useAnalytics } from '<src>/analytics';
 import { useClientAgent } from '<src>/optic-components/hooks/useClientAgent';
 import { useSessionId } from '<src>/optic-components/hooks/useSessionId';
+import { useSpecMetadata } from '<src>/store';
 
 const useStagedChangesCount = () => {
   const { pendingEndpoints, context } = useSharedDiffContext();
@@ -52,7 +53,7 @@ export default function AskForCommitMessageDiffPage(props: {
   const clientId = useClientAgent();
   const lastBatchCommitId = useLastBatchCommitId();
   const changelogPageRoute = useChangelogPages();
-
+  const { id: specId } = useSpecMetadata();
   const {
     context,
     startedFinalizing,
@@ -66,7 +67,6 @@ export default function AskForCommitMessageDiffPage(props: {
   } = useStagedChangesCount();
 
   const handleSave = async (commitMessage: string) => {
-    analytics.userSavedChanges(pendingEndpointsCount, changedEndpointsCount);
     const commands = context.simulatedCommands;
     try {
       const {
@@ -86,6 +86,13 @@ export default function AskForCommitMessageDiffPage(props: {
           clientSessionId,
         },
       });
+      const isFirstUpdate = !!lastBatchCommitId;
+      analytics.userSavedChanges(
+        pendingEndpointsCount,
+        changedEndpointsCount,
+        isFirstUpdate,
+        specId
+      );
       // If there are no batch commits (first commit) - link to the just created commit
       history.push(
         changelogPageRoute.linkTo(lastBatchCommitId || batchCommitId)

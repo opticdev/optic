@@ -62,12 +62,19 @@ export class OpticUIEvents {
   //   });
   // }
 
-  userSavedChanges(undocumentedUrls: number, endpointsChangedCount: number) {
+  userSavedChanges(
+    undocumentedUrls: number,
+    endpointsChangedCount: number,
+    isFirstChange: boolean,
+    specId: string
+  ) {
     this.dispatch({
       name: 'user_saved_changes',
       properties: {
         undocumentedUrls,
         endpointsChangedCount,
+        isFirstChange,
+        specId,
       },
     });
   }

@@ -1,6 +1,6 @@
 import { DescribeEvent } from '../interfaces/RegisterEvent';
 import { Events } from '../interfaces/Events';
-import * as Joi from 'joi';
+import Joi from 'joi';
 import 'joi-extract-type';
 
 // Sent whenever an API is created
@@ -13,9 +13,7 @@ const UserChangedCaptureOverviewTabSchema = Joi.object({
 type UserChangedCaptureOverviewTabProperties = Joi.extractType<
   typeof UserChangedCaptureOverviewTabSchema
 >;
-export const UserChangedCaptureOverviewTab = DescribeEvent<
-  UserChangedCaptureOverviewTabProperties
->(
+export const UserChangedCaptureOverviewTab = DescribeEvent<UserChangedCaptureOverviewTabProperties>(
   Events.UserChangedCaptureOverviewTab,
   UserChangedCaptureOverviewTabSchema,
   (props) =>
@@ -45,9 +43,7 @@ const InferPolymorphismEnabledSchema = Joi.object({
 type InferPolymorphismEnabledProperties = Joi.extractType<
   typeof InferPolymorphismEnabledSchema
 >;
-export const UserEnabledInferPolymorphism = DescribeEvent<
-  InferPolymorphismEnabledProperties
->(
+export const UserEnabledInferPolymorphism = DescribeEvent<InferPolymorphismEnabledProperties>(
   Events.UserEnabledInferPolymorphism,
   InferPolymorphismEnabledSchema,
   (props) =>
@@ -64,9 +60,7 @@ const UserBeganAddingNewUrlSchema = Joi.object({
 type UserBeganAddingNewUrlProperties = Joi.extractType<
   typeof UserBeganAddingNewUrlSchema
 >;
-export const UserBeganAddingNewUrl = DescribeEvent<
-  UserBeganAddingNewUrlProperties
->(
+export const UserBeganAddingNewUrl = DescribeEvent<UserBeganAddingNewUrlProperties>(
   Events.UserBeganAddingNewUrl,
   UserBeganAddingNewUrlSchema,
   (props) =>
@@ -83,9 +77,7 @@ const UserFinishedAddingNewUrlSchema = Joi.object({
 type UserFinishedAddingNewUrlProperties = Joi.extractType<
   typeof UserFinishedAddingNewUrlSchema
 >;
-export const UserFinishedAddingNewUrl = DescribeEvent<
-  UserFinishedAddingNewUrlProperties
->(
+export const UserFinishedAddingNewUrl = DescribeEvent<UserFinishedAddingNewUrlProperties>(
   Events.UserFinishedAddingNewUrl,
   UserFinishedAddingNewUrlSchema,
   (props) =>
@@ -113,9 +105,7 @@ const SuggestionAcceptedSchema = Joi.object({
 type SuggestionAcceptedProperties = Joi.extractType<
   typeof SuggestionAcceptedSchema
 >;
-export const UserAcceptedSuggestion = DescribeEvent<
-  SuggestionAcceptedProperties
->(
+export const UserAcceptedSuggestion = DescribeEvent<SuggestionAcceptedProperties>(
   Events.UserAcceptedSuggestion,
   SuggestionAcceptedSchema,
   (props) => `Suggestion to '${props.suggestion}' was accepted`
@@ -131,9 +121,7 @@ const UserPreviewedSuggestionSchema = Joi.object({
 type UserPreviewedSuggestionProperties = Joi.extractType<
   typeof UserPreviewedSuggestionSchema
 >;
-export const UserPreviewedSuggestion = DescribeEvent<
-  UserPreviewedSuggestionProperties
->(
+export const UserPreviewedSuggestion = DescribeEvent<UserPreviewedSuggestionProperties>(
   Events.UserPreviewedSuggestion,
   UserPreviewedSuggestionSchema,
   (props) =>
@@ -171,9 +159,7 @@ const UserCommittedChangesSchema = Joi.object({
 type UserCommittedChangesProperties = Joi.extractType<
   typeof UserCommittedChangesSchema
 >;
-export const UserCommittedChanges = DescribeEvent<
-  UserCommittedChangesProperties
->(
+export const UserCommittedChanges = DescribeEvent<UserCommittedChangesProperties>(
   Events.UserCommittedChanges,
   UserCommittedChangesSchema,
   (props) => `The Diff Was Reset`
@@ -201,9 +187,7 @@ const AddUrlModalIdentifyingPathComponentsSchema = Joi.object({
 type AddUrlModalIdentifyingPathComponentsProperties = Joi.extractType<
   typeof AddUrlModalIdentifyingPathComponentsSchema
 >;
-export const AddUrlModalIdentifyingPathComponents = DescribeEvent<
-  AddUrlModalIdentifyingPathComponentsProperties
->(
+export const AddUrlModalIdentifyingPathComponents = DescribeEvent<AddUrlModalIdentifyingPathComponentsProperties>(
   Events.AddUrlModalIdentifyingPathComponents,
   AddUrlModalIdentifyingPathComponentsSchema,
   (props) =>
@@ -215,9 +199,7 @@ const ShowInitialDocumentingViewSchema = Joi.object({});
 type ShowInitialDocumentingViewProperties = Joi.extractType<
   typeof ShowInitialDocumentingViewSchema
 >;
-export const ShowInitialDocumentingView = DescribeEvent<
-  ShowInitialDocumentingViewProperties
->(
+export const ShowInitialDocumentingView = DescribeEvent<ShowInitialDocumentingViewProperties>(
   Events.ShowInitialDocumentingView,
   ShowInitialDocumentingViewSchema,
   () => `Showing initial documenting view`

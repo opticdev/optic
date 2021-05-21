@@ -25,6 +25,7 @@ import {
   initialize,
   track,
 } from '<src>/analytics/implementations/publicExampleAnalytics';
+import { SpecMetadataProvider } from '<src>/store';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -94,13 +95,15 @@ export default function PublicExamples(props: { lookupDir: string }) {
                 initialize={initialize}
                 track={track}
               >
-                <Switch>
-                  <>
-                    <DocumentationPages />
-                    <DiffReviewEnvironments />
-                    <ChangelogPages />
-                  </>
-                </Switch>
+                <SpecMetadataProvider>
+                  <Switch>
+                    <>
+                      <DocumentationPages />
+                      <DiffReviewEnvironments />
+                      <ChangelogPages />
+                    </>
+                  </Switch>
+                </SpecMetadataProvider>
               </AnalyticsStore>
             </BaseUrlProvider>
           </CapturesServiceStore>
