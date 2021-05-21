@@ -8,7 +8,16 @@ module.exports = {
     ],
     'Get Started': [
       'get-started/quickstart',
-      'get-started/config',
+      {
+        type: 'category',
+        label: 'Capturing API Traffic',
+        items: [
+          'get-started/config',
+          'get-started/config/intercept',
+          'get-started/config/run-with-optic',
+          'get-started/config/proxy',
+        ],
+      },
       'get-started/testing',
     ],
     'Using Optic': [

@@ -48,7 +48,8 @@ commands:
         name: Run Optic CI
         command: |-
           npm install @useoptic/cli
-          npx api run test-cci --collect-coverage --exit-on-diff
+          npx api run test-cci --exit-on-diff
+          npx api status --print-coverage
 ```
 
 ## Catching Undocumented Behavior
@@ -63,7 +64,7 @@ This bubbles up to your central repository, where the check reports failure. Who
 
 ## Documenting the Behavior
 
-The good news is, [documenting an API](/docs/get-started/config/) is quick with Optic. Run the tests through Optic to generate traffic, check the dashboard, and update what's missing. The new documentation is committed to the repository and pushed to your central repository. This time, all endpoints are documented and the test traffic doesn't differ from the documentation. Success!
+The good news is, [documenting an API](/docs) is quick with Optic. Run the tests through Optic to generate traffic, check the dashboard, and update what's missing. The new documentation is committed to the repository and pushed to your central repository. This time, all endpoints are documented and the test traffic doesn't differ from the documentation. Success!
 
 ![Test passes](/img/docs/cm-oci-test-pass.gif)
 

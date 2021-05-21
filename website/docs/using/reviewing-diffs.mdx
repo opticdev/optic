@@ -25,9 +25,9 @@ The first thing you must decide is whether you intended to make a change to the 
 
 If this is indeed a change you had intended to make, document, and get reviewed by your team, you can use Optic to update your API specification by approving one of Optic's suggestions.
 
-You can "Approve" the suggestion to stage these spec changes -- when you finish handling all the diffs, Optic will update the spec for you.
+You can save the suggestions to stage these spec changes -- when you finish handling all the diffs, Optic will update the spec for you.
 
-If Optic found a bug/regression in the API's behavior, you'll want to press "Mark as Incorrect". This will not change your API spec, and hides the diff. If the incorrect behavior is still present in future batches of traffic, Optic will reveal the diff again to make sure you don't forget to fix the behavior.
+If Optic found something in error, such as a bad request that was made during testing, the diff may be safely ignored. Should Optic find a bug/regression in the API's behavior, you'll be able to create a bug report from the from the observation to hand off to the area expert. Neither ignoring a diff nor creating a bug report will change your API spec. If the incorrect behavior is still present in future batches of traffic, Optic will reveal the diff again to make sure you don't forget to fix the behavior.
 
 
 ### `api status`
@@ -35,7 +35,6 @@ If Optic found a bug/regression in the API's behavior, you'll want to press "Mar
 We're still testing the status command on the @beta channel
 `yarn global add @useoptic/cli@beta`
 :::
-
 
 Optic has been designed to fit into familiar Git workflows and to stay out of the way until it's needed. Just like you run `git status` to see what code you've changed since last commit, Optic lets you run `api status` to see if Optic has detected any diffs in your API's behavior:
 

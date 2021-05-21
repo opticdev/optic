@@ -12,56 +12,56 @@ Optic integrates with Envoy as a HTTP filter.
 
 1. Add Optic as a HTTP filter in your `envoy.yaml` and update the lines setting the Optic Token, Source ID and Source Tags.
 
-    ```
+    ``` yaml
     http_filters:
     - name: envoy.filters.http.lua
-    typed_config:
+      typed_config:
         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
         inline_code: |
-        local optic = require("optic-envoy")
-
-        optic.set_optic_token("Your Optic Token")
-        optic.set_source_id("A unique identifier for this source of data")
-        optic.set_optic_token("A comma separated list of other labels to send to Optic")
-
-        function envoy_on_request(request_handle)
+          local optic = require("optic-envoy")
+  
+          optic.set_optic_token("Your Optic Token")
+          optic.set_source_id("A unique identifier for this source of data")
+          optic.set_optic_token("A comma separated list of other labels to send to Optic")
+  
+          function envoy_on_request(request_handle)
             optic.process_request(request_handle)
-        end
-
-        function envoy_on_response(response_handle)
+          end
+  
+          function envoy_on_response(response_handle)
             optic.process_response(response_handle)
-        end
+          end
     ```
 
 1. Add the Optic API in a `clusters` config:
 
     ```yaml
     clusters:
-        - name: optic-api
-        connect_timeout: 0.25s
-        type: logical_dns
-        http2_protocol_options: {}
-        lb_policy: round_robin
-        load_assignment:
-            cluster_name: optic-api
-            endpoints:
-            - lb_endpoints:
-            - endpoint:
-                address:
-                    socket_address:
-                    address: api.useoptic.com
-                    port_value: 443
-        transport_socket:
-            name: envoy.transport_sockets.tls
-            typed_config:
-            "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-            sni: api.useoptic.com
-            common_tls_context: 
-                validation_context:
-                match_subject_alt_names:
-                - exact: "api.useoptic.com"
-                trusted_ca:
-                    filename: /etc/ssl/certs/ca-certificates.crt
+      - name: optic-api
+      connect_timeout: 0.25s
+      type: logical_dns
+      http2_protocol_options: {}
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: optic-api
+        endpoints:
+        - lb_endpoints:
+        - endpoint:
+          address:
+            socket_address:
+            address: api.useoptic.com
+            port_value: 443
+      transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+        sni: api.useoptic.com
+        common_tls_context: 
+          validation_context:
+          match_subject_alt_names:
+          - exact: "api.useoptic.com"
+          trusted_ca:
+            filename: /etc/ssl/certs/ca-certificates.crt
     ```
 
 1. Restart Envoy.

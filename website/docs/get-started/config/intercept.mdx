@@ -1,0 +1,55 @@
+---
+title: Configure an API Intercept Environment
+---
+
+Optic documents your APIs as you build them by observing development traffic and learning your API's behavior. The CLI is constantly diffing your API’s behavior against its specification; ensuring every change to the API gets detected, documented and code reviewed by your team.
+
+**How does Optic monitor local traffic in Intercept mode?** Optic creates a local proxy for your traffic targeting an application. This is often a remote application, such as one deployed behind an Amazon API Gateway, though it can work with any web service. Intercept mode includes flags to set up common tools, such as Chrome, to start using the Optic proxy. When the Optic Intercept session is run with `api intercept <environment> --chrome`, for example, Optic will spin up a local proxy and start a new Chrome session that uses the Optic proxy. Traffic to the defined API host is observed and presented to you in the Optic dashboard for documentation.
+
+**When would I use intercept mode?** Intercept mode is ideal when the project lifecycle is not easily managed with a single command, or the project is located on a remote system (such as behind an Amazon API Gateway). Intercept mode will assist in launching your tools with the proper proxy configurations to make the process as seamless as possible. If your application runs locally and you'd like to test against it, we'd recommend [running your API with Optic](/docs/get-started/config/run-with-optic) as it helps manage your project lifecycle and sets up the proxy to be friendly to local tests and workflows. Only use a [proxy task](/docs/get-started/config/proxy) for new projects if these other options are not feasible.
+
+## Configuring an Intercept environment
+
+Optic environments are configured in the `optic.yml` file. This file is created in your API project's root directory when you run [`api init`](/docs/). Environments each require a name, and take the following configurations:
+
+- **host** The API URL. Traffic to this host is observed by Optic and presented to you in the Optic Dashboard to build your documentation.
+- **webUI** The URL which will open in tools such as Chrome. This is the host that provides interactive browsing, such as a web UI. The `host` field does not determine which traffic will be intercepted.
+
+For example, if you ran `api init` and then wanted to set up a **production** environment to document **https://api.github.com** and have Chrome start you at **https://api.github.com/repos/opticdev/optic**, your `optic.yml` would look like this:
+
+``` yaml
+name: "todo-js"
+tasks:
+  start:
+     command: "echo \"Setup A Valid Command to Start your API!\""
+     inboundUrl: http://localhost:4000
+
+environments:
+  production:
+    host: https://api.github.com # the hostname of the API we should record traffic from
+    webUI: https://api.github.com/repos/opticdev/optic # the url that should open when a browser flag is passed
+```
+
+## Running an Intercept Session
+
+To start an intercept session, run `api intercept <environment>` with your UI as a flag. Currently we recommend Chrome. For example, if you document the GitHub API in the production environment defined above using Chrome, you would see the following:
+
+```bash
+$ apidev intercept production --chrome
+...
+[optic] Transparent proxy is running on https://localhost:3700
+[optic] Monitoring Traffic to https://api.github.com
+[optic] Optic is observing requests made to https://localhost:3700
+Waiting for traffic...... ⢿ 7 requests collected
+GET /repos/opticdev/optic/contributors | 200
+...
+```
+
+Optic will show you the most recent request made, and the status code. It keeps a running tally of requests collected. When you're finished, terminate the Optic session with `ctrl+c`. The session will end. When using Chrome as in this example, it will close the browser window that is set to use the Optic proxy as well to avoid any confusion. Continue on to [create your initial API specification](/docs/using/baseline) with the data collected from `api intercept`
+
+---
+
+**Next Steps**
+1. [Use Optic to write the initial API Specification](/docs/using/baseline)
+2. [Run your tests through Optic](/docs/get-started/testing)
+3. [Share Optic with your Team](/docs/using/share-with-team)

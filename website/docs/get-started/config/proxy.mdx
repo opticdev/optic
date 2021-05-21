@@ -1,0 +1,58 @@
+---
+title: Configure a Manual Proxy
+---
+
+:::tip Try Intercept mode instead
+Proxy mode remains a part of Optic, though Intercept mode contains all the power of proxy tasks and more. When setting up a new API, we recommend [Intercept mode](/docs/get-started/config/intercept).
+:::
+
+Optic documents your APIs as you build them by observing development traffic and learning your API's behavior. The CLI is constantly diffing your API’s behavior against its specification; ensuring every change to the API gets detected, documented and code reviewed by your team.
+
+**How does Optic monitor local traffic with a proxy task?** Optic sets up a proxy to relay requests to your application. Unlike running your API with Optic, manually setting up a proxy does not manage the lifecycle of your application. You will need to assure that the application is running to observe traffic. You use your API through Optic, and Optic observes the requests and responses. These are presented to you in the Optic Dashboard to create an API specification.
+
+**When would I use a manual proxy?** When running a project locally, we'd recommend [running your API with Optic](/docs/get-started/config/run-with-optic). If the project lifecycle is not easily managed with a single command, or the project is located on a remote system (such as behind an Amazon API Gateway), we'd recommend using an [intercept environment](/docs/get-started/config/intercept) as it is more feature-rich. Only use a proxy task for new projects if these other options are not feasible.
+
+## Configure a Proxy API Task
+
+Optic tasks are configured in the `optic.yml` file. This file is created in your API project's root directory when you run [`api init`](/docs/). Tasks each require a name, and take the following configurations:
+
+- **targetUrl** The URL at which your project lives. This is commonly at a remote URL, though it can be on localhost.
+- **inboundUrl** The URL at which Optic will listen for traffic and proxy it to your API project. Your API traffic will need to be sent here for Optic to observe it.
+
+For example, if you ran `api init` and then wanted to set up a task to document a local service on port 8080, your `optic.yml` would look like this:
+
+``` yaml
+name: "stack-overflow-project"
+  start:
+    targetUrl: https://localhost:8080
+    inboundUrl: http://localhost:4000
+```
+
+There are several [advanced configurations](/docs/using/advanced-configuration) for proxy mode tasks that you may need, depending on how your project is served. For new projects, we recommend trying an [Intercept environment](/docs/get-started/config/intercept) first before going to deep on a proxy configuration. It will handle most anything that can be handled by proxy task configurations with less setup.
+
+## Running an Capture Session
+
+To start an capture session, run `api start`. In the example above, this starts a proxy to localhost port 8080 on localhost port 4000. Optic will observe any requests sent to port 4000, which are relayed to port 8080. The project must be started separately, as Optic has no control over its lifecycle:
+
+```bash
+$ api start
+...
+[optic] Review the API Diff at http://localhost:34444/apis/1/diffs
+[optic] Optic is observing requests made to http://localhost:4000
+JSON Server is running
+GET /todos 200 7.785 ms - -
+GET /todos/0fe639b6 200 3.739 ms - 143
+PATCH /todos/0fe639b6 200 21.253 ms - 143
+POST /todos 201 4.818 ms - 150
+GET /notyetimplemented 404 1.683 ms - 2
+...
+```
+
+Optic provides a running list of URLs seen during a capture session. When you're finished, terminate the Optic session with `ctrl+c`. The session will end, bringing down both the proxy. Your application will still run, as Optic has no control over its lifecycle. Continue on to [create your initial API specification](/docs/using/baseline) with the data collected from `api start`
+
+---
+
+**Next Steps**
+1. [Use Optic to write the initial API Specification](/docs/using/baseline)
+2. [Run your tests through Optic](/docs/get-started/testing)
+3. [Share Optic with your Team](/docs/using/share-with-team)
