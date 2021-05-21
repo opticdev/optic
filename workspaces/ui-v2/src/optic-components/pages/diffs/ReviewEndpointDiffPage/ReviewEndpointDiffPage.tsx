@@ -26,6 +26,7 @@ import {
   RenderedDiffHeader,
 } from './RenderedDiffHeader';
 import { EndpointDocumentationPane } from '../EndpointDocumentationPane';
+import { useLastBatchCommitId } from '<src>/optic-components/hooks/useBatchCommits';
 
 const useRedirectForDiffCompleted = (allDiffs: IInterpretation[]) => {
   const history = useHistory();
@@ -66,6 +67,8 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
     setCommitModalOpen,
     hasDiffChanges,
   } = useSharedDiffContext();
+
+  const batchCommit = useLastBatchCommitId();
 
   const debouncedSetName = useDebouncedFn(setGlobalDiffEndpointName, 200);
   const {
@@ -157,6 +160,7 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
           <EndpointDocumentationPane
             method={method}
             pathId={pathId}
+            lastBatchCommit={batchCommit}
             highlightedLocation={
               allDiffs[currentIndex].diffDescription?.location
             }
