@@ -26,6 +26,7 @@ import {
   initialize,
   track,
 } from '<src>/analytics/implementations/cloudViewerAnalytics';
+import { SpecMetadataProvider } from '<src>/store';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -119,13 +120,15 @@ export default function CloudViewer() {
                 initialize={initialize}
                 track={track}
               >
-                <Switch>
-                  <>
-                    <DiffReviewEnvironments />
-                    <DocumentationPages />
-                    <ChangelogPages />
-                  </>
-                </Switch>
+                <SpecMetadataProvider>
+                  <Switch>
+                    <>
+                      <DiffReviewEnvironments />
+                      <DocumentationPages />
+                      <ChangelogPages />
+                    </>
+                  </Switch>
+                </SpecMetadataProvider>
               </AnalyticsStore>
             </BaseUrlProvider>
           </CapturesServiceStore>

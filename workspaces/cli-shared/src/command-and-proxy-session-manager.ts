@@ -17,7 +17,7 @@ class CommandAndProxySessionManager {
     private config: IOpticTaskRunnerConfig,
     private onStarted?: (fingerPrint: string) => void,
     private onSample?: (sample: IHttpInteraction) => void
-) {}
+  ) {}
 
   private commandSession: CommandSession | undefined;
 
@@ -48,7 +48,7 @@ class CommandAndProxySessionManager {
       );
       persistenceManager.save(sample);
       if (this.onSample) {
-        this.onSample(sample)
+        this.onSample(sample);
       }
     });
 

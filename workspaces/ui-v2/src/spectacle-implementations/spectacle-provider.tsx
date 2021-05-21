@@ -23,14 +23,14 @@ export function useSpectacleQuery<Result, Input = {}>(
 ): AsyncStatus<Result> {
   const spectacle = useContext(SpectacleContext)!;
 
-  const [result, setResult] = useState<AsyncStatus<any>>({
+  const [result, setResult] = useState<AsyncStatus<Result>>({
     loading: true,
   });
 
   const stringInput = JSON.stringify(input);
   useEffect(() => {
     async function task() {
-      const result = await spectacle.query(input);
+      const result = await spectacle.query<Result, Input>(input);
       if (result.errors) {
         console.error(result.errors);
         debugger;

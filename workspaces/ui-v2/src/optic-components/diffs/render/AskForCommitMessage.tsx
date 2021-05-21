@@ -15,6 +15,7 @@ import { PromptNavigateAway } from '<src>/optic-components/common';
 import { useAnalytics } from '<src>/analytics';
 import { useClientAgent } from '<src>/optic-components/hooks/useClientAgent';
 import { useSessionId } from '<src>/optic-components/hooks/useSessionId';
+import { useSpecMetadata } from '<src>/store';
 
 const useStagedChangesCount = () => {
   const { pendingEndpoints, context } = useSharedDiffContext();
@@ -55,6 +56,7 @@ export default function AskForCommitMessageDiffPage(props: {
   const clientId = useClientAgent();
   const lastBatchCommitId = useLastBatchCommitId();
   const changelogPageRoute = useChangelogPages();
+  const { id: specId } = useSpecMetadata();
   const documentationPageRoute = useDocumentationPageLink();
 
   const {
@@ -70,7 +72,6 @@ export default function AskForCommitMessageDiffPage(props: {
   } = useStagedChangesCount();
 
   const handleSave = async (commitMessage: string) => {
-    analytics.userSavedChanges(pendingEndpointsCount, changedEndpointsCount);
     const commands = context.simulatedCommands;
     try {
       await spectacleMutator<any, any>({
@@ -88,6 +89,11 @@ export default function AskForCommitMessageDiffPage(props: {
           clientSessionId,
         },
       });
+      analytics.userSavedChanges(
+        pendingEndpointsCount,
+        changedEndpointsCount,
+        specId
+      );
 
       if (lastBatchCommitId) {
         history.push(changelogPageRoute.linkTo(lastBatchCommitId));

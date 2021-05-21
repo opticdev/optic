@@ -38,7 +38,18 @@ type Query {
   
   # Diffs for existing endpoints and unrecognized URLs
   diff(diffId: ID): DiffState
+
+  # Metadata about the current spec
+  metadata: SpecMetadata
 }
+
+"""
+SpecMetadata - misc data about the spec
+"""
+type SpecMetadata {
+  id: String
+}
+
 type DiffState {
   diffs: JSON
   unrecognizedUrls: JSON

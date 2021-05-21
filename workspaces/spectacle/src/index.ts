@@ -2,6 +2,7 @@ import { ExecutionResult, graphql } from 'graphql';
 import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { EventEmitter } from 'events';
+import { v4 as uuidv4 } from 'uuid';
 import GraphQLJSON from 'graphql-type-json';
 import {
   buildEndpointChanges,
@@ -310,6 +311,35 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return context
           .spectacleContext()
           .opticContext.diffRepository.findById(diffId);
+      },
+      metadata: async (parent: any, args: any, context: any, info: any) => {
+        const metadataKey = 'metadata';
+        const specIdKey = 'id';
+        const metadata =
+          context.spectacleContext().contributionsProjection[metadataKey] || {};
+        let specId = metadata[specIdKey];
+
+        if (!specId) {
+          specId = uuidv4();
+          await context
+            .spectacleContext()
+            .opticContext.specRepository.applyCommands(
+              [
+                {
+                  AddContribution: {
+                    id: metadataKey,
+                    key: specIdKey,
+                    value: specId,
+                  },
+                },
+              ],
+              uuidv4(),
+              'Initialize specification attributes',
+              { clientId: '', clientSessionId: '' }
+            );
+          await reload(context.spectacleContext().opticContext);
+        }
+        return { id: specId };
       },
     },
     DiffState: {

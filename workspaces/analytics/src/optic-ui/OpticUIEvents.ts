@@ -62,12 +62,17 @@ export class OpticUIEvents {
   //   });
   // }
 
-  userSavedChanges(undocumentedUrls: number, endpointsChangedCount: number) {
+  userSavedChanges(
+    undocumentedUrls: number,
+    endpointsChangedCount: number,
+    specId: string
+  ) {
     this.dispatch({
       name: 'user_saved_changes',
       properties: {
         undocumentedUrls,
         endpointsChangedCount,
+        specId,
       },
     });
   }
