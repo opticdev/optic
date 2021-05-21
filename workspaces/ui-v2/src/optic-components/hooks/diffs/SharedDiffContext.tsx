@@ -151,9 +151,11 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const [handled, total] = useMemo(() => {
     return context.results.diffsGroupedByEndpoint.reduce(
       (current, grouping) => {
-        const handledCount = grouping.shapeDiffs.filter((i) =>
-          isDiffHandled(i.diffHash())
-        ).length;
+        const handledCount =
+          grouping.shapeDiffs.filter((i) => isDiffHandled(i.diffHash()))
+            .length +
+          grouping.newRegionDiffs.filter((diff) => isDiffHandled(diff.diffHash))
+            .length;
         const total =
           grouping.shapeDiffs.length + grouping.newRegionDiffs.length;
 
