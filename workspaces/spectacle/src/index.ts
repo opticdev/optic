@@ -335,7 +335,6 @@ export async function makeSpectacle(opticContext: IOpticContext) {
               ],
               uuidv4(),
               'Set spec metadata ID',
-              // TODO
               { clientId: '', clientSessionId: '' }
             );
           await reload(context.spectacleContext().opticContext);

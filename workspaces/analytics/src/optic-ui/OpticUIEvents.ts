@@ -65,7 +65,6 @@ export class OpticUIEvents {
   userSavedChanges(
     undocumentedUrls: number,
     endpointsChangedCount: number,
-    isFirstChange: boolean,
     specId: string
   ) {
     this.dispatch({
@@ -73,7 +72,6 @@ export class OpticUIEvents {
       properties: {
         undocumentedUrls,
         endpointsChangedCount,
-        isFirstChange,
         specId,
       },
     });

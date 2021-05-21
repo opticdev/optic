@@ -89,11 +89,9 @@ export default function AskForCommitMessageDiffPage(props: {
           clientSessionId,
         },
       });
-      const isFirstUpdate = !!lastBatchCommitId;
       analytics.userSavedChanges(
         pendingEndpointsCount,
         changedEndpointsCount,
-        isFirstUpdate,
         specId
       );
 

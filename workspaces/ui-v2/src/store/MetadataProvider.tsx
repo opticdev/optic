@@ -30,7 +30,6 @@ export const SpecMetadataProvider: FC = ({ children }) => {
     return <FullPageLoader title="loading" />;
   }
   if (spectacleResult.error) {
-    // TODO have error renderer
     return <>error</>;
   }
 
