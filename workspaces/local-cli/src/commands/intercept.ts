@@ -21,6 +21,7 @@ import { BrowserLaunchers } from '../shared/intercept/browser-launchers';
 import { cli } from 'cli-ux';
 import openBrowser from 'react-dev-utils/openBrowser';
 import { IHttpInteraction } from '@useoptic/cli-shared/build/optic-types';
+import { linkToCapture } from '../shared/ui-links';
 
 export default class Intercept extends Command {
   static description =
@@ -158,7 +159,8 @@ export default class Intercept extends Command {
       browsers!.cleanup();
     }
     const uiBaseUrl = makeUiBaseUrl(daemonState);
-    const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
+
+    const uiUrl = linkToCapture(uiBaseUrl, cliSession.session.id, captureId);
     openBrowser(uiUrl);
 
     cleanupAndExit(0);
