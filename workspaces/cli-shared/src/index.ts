@@ -95,7 +95,7 @@ export async function loadPathsAndConfig(cli: Command) {
       cli.log(
         fromOptic(
           `No Optic project found in this directory. Learn to add Optic to your project here ${colors.underline(
-            'https://www.useoptic.com/docs/'
+            'https://www.useoptic.com/docs/get-started/config'
           )}`
         )
       );
