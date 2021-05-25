@@ -1,14 +1,14 @@
 import React, { FC } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useBatchCommits } from '<src>/optic-components/hooks/useBatchCommits';
-import { useBaseUrl } from '<src>/optic-components/hooks/useBaseUrl';
+import { useDocumentationPageLink } from '<src>/optic-components/navigation/Routes';
 
 export const ValidateBatchId: FC<{ batchId: string }> = ({
   children,
   batchId,
 }) => {
   const allBatchCommits = useBatchCommits();
-  const baseUrl = useBaseUrl();
+  const documentationPageLink = useDocumentationPageLink();
   const validBatchId = allBatchCommits.batchCommits.some(
     (i) => i.batchId === batchId
   );
@@ -18,7 +18,7 @@ export const ValidateBatchId: FC<{ batchId: string }> = ({
   }
 
   if (!validBatchId) {
-    return <Redirect to={`${baseUrl}/documentation`} />;
+    return <Redirect to={documentationPageLink.path} />;
   }
 
   return <>{children}</>;
