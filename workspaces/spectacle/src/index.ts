@@ -216,6 +216,11 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     return projections;
   }
 
+  opticContext.specRepository.notifications.on('change', () => {
+    console.count('reloading because of specRepository change');
+    reload(opticContext);
+  });
+
   await reload(opticContext);
 
   const resolvers = {
@@ -264,6 +269,9 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return {
           notificationsUrl: '',
         };
+      },
+      invalidateCaches: async (parent: any, args: any, context: any) => {
+        await reload(context.spectacleContext().opticContext);
       },
     },
     Query: {
