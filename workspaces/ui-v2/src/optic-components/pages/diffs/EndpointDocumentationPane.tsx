@@ -112,7 +112,8 @@ export const EndpointDocumentationPane: FC<
                 changesSinceBatchCommitId={lastBatchCommit}
                 rootShapeId={i.rootShapeId}
                 bodyId={i.requestId}
-                location={'Request Body Parameters'}
+                location={'Request Body'}
+                contentType={i.contentType}
               />
             </HighlightedLocation>
             <div style={{ height: 50 }} />
@@ -133,7 +134,8 @@ export const EndpointDocumentationPane: FC<
                 changesSinceBatchCommitId={lastBatchCommit}
                 rootShapeId={i.rootShapeId}
                 bodyId={i.responseId}
-                location={`${i.statusCode} Response`}
+                location={`${i.statusCode} response`}
+                contentType={i.contentType}
               />
             </HighlightedLocation>
             <div style={{ height: 50 }} />

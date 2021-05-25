@@ -161,7 +161,8 @@ export const EndpointRootPage: FC<
             changesSinceBatchCommitId={changelogBatchId}
             rootShapeId={i.rootShapeId}
             bodyId={i.requestId}
-            location={'Request Body Parameters'}
+            location={'Request Body'}
+            contentType={i.contentType}
             description={i.description}
           />
         );
@@ -174,6 +175,7 @@ export const EndpointRootPage: FC<
             rootShapeId={i.rootShapeId}
             bodyId={i.responseId}
             location={`${i.statusCode} Response`}
+            contentType={i.contentType}
             description={i.description}
           />
         );

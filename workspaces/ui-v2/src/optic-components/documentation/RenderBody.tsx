@@ -10,6 +10,7 @@ import { ChangeLogBG } from '../changelog/ChangeLogBG';
 
 type SharedProps = {
   location: string;
+  contentType: string;
   changes?: IChanges;
   changesSinceBatchCommitId?: string;
   bodyId: string; //@aidan make sure this name/value makes sense
@@ -47,7 +48,7 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
       }
       right={
         <BodyRender
-          location="application/json"
+          location={props.contentType}
           shape={shapeChoices}
           style={{ marginTop: 35 }}
         />
@@ -67,7 +68,7 @@ export function OneColumnBody(props: OneColumnBodyProps) {
       <ChangeLogBG changes={props.changes}>
         <Typography variant="h6">{props.location}</Typography>
         <BodyRender
-          location="application/json"
+          location={props.location + ' ' + props.contentType}
           shape={shapeChoices}
           style={{ marginTop: 20 }}
         />
