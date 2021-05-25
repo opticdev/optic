@@ -52578,6 +52578,19 @@
           "createdAt": "2021-04-27T14:12:58.467Z"
         }
       }
+    },
+    {
+      "ContributionAdded": {
+        "id": "metadata",
+        "key": "id",
+        "value": "fe49e0c5-51a7-482c-b404-09eb6e6c523e",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bade46c4-86f6-4692-be22-07caca8f6f05",
+          "clientCommandBatchId": "524f5418-59a0-493a-9c19-89f9abcefb58",
+          "createdAt": "2021-04-27T14:12:58.467Z"
+        }
+      }
     }
   ],
   "session": {
