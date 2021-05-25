@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
+import OpenInBrowserIcon from '@material-ui/icons/OpenInBrowser';
 import { makeStyles } from '@material-ui/styles';
 
 import {
   Box,
   Button,
+  Card,
   Divider,
   Grid,
   List,
@@ -27,11 +29,19 @@ import { EndpointName } from '../../common';
 import { useHistory } from 'react-router-dom';
 import ApproveAll from '../../diffs/render/ApproveAll';
 import { useCaptures } from '../../hooks/useCapturesHook';
+import { Code } from '<src>/optic-components/diffs/render/ICopyRender';
+import {
+  LiveTrafficLink,
+  RunOpticLink,
+  RunTestsLink,
+} from '<src>/optic-components/SupportLinks';
+import { useAnalytics } from '<src>/analytics';
 
 export function CapturePage(props: { showDiff?: boolean }) {
   const capturesState = useCaptures();
   const history = useHistory();
   const diffEnvironmentsRoot = useDiffEnvironmentsRoot();
+  const analytics = useAnalytics();
 
   const noCaptures =
     !capturesState.loading && capturesState.captures.length === 0;
@@ -73,9 +83,41 @@ export function CapturePage(props: { showDiff?: boolean }) {
         Capture Traffic From Local Environments
       </Typography>
 
-      <Typography variant="body2">
-        links to all the options....tasks, sdks, etc
-      </Typography>
+      <Grid
+        container
+        xs={12}
+        spacing={3}
+        alignContent="space-between"
+        style={{ marginTop: 10 }}
+      >
+        <Grid xs={4} item>
+          <TrafficSource
+            slug="start"
+            name="Run your API with Optic"
+            link={RunOpticLink}
+          >
+            <Code>api start</Code>
+          </TrafficSource>
+        </Grid>
+        <Grid xs={4} item>
+          <TrafficSource
+            slug="tests"
+            name="Capture Traffic from API Tests"
+            link={RunTestsLink}
+          >
+            <Code>api run test</Code>
+          </TrafficSource>
+        </Grid>
+        <Grid xs={4} item>
+          <TrafficSource
+            slug="chrome"
+            name="Capture Traffic from Chrome"
+            link={RunOpticLink}
+          >
+            <Code>api intercept --chrome</Code>
+          </TrafficSource>
+        </Grid>
+      </Grid>
 
       <Divider style={{ marginTop: 30, marginBottom: 20 }} />
 
@@ -85,7 +127,7 @@ export function CapturePage(props: { showDiff?: boolean }) {
 
       <Typography variant="body2">
         Optic can securely monitor your API in real environments. Once deployed,
-        Optic verifies your API meets its contract, alert you when it behaves
+        Optic verifies your API meets its contract, alerts you when it behaves
         unexpectedly, and help you understand what parts of your API each
         consumer relies upon.
       </Typography>
@@ -127,7 +169,14 @@ export function CapturePage(props: { showDiff?: boolean }) {
           >
             Ready to put Optic into a real environment?
           </Typography>
-          <Button color="secondary" variant="contained">
+          <Button
+            color="primary"
+            variant="contained"
+            href={LiveTrafficLink}
+            onClick={() => {
+              analytics.userChoseACaptureMethod('live-traffic');
+            }}
+          >
             Join Beta
           </Button>
         </Grid>
@@ -335,9 +384,47 @@ function ExampleLiveRow({ buildN, requests, diffs }: LiveRowProps) {
   );
 }
 
+function TrafficSource(props: {
+  name: string;
+  children: React.ReactNode;
+  slug: string;
+  link: string;
+}) {
+  const classes = useStyles();
+
+  const analytics = useAnalytics();
+
+  return (
+    <Card elevation={2} className={classes.trafficSource}>
+      <Typography variant="subtitle2" style={{ fontSize: 15, fontWeight: 600 }}>
+        {props.name}
+      </Typography>
+      <div style={{ marginTop: 10, textAlign: 'center' }}>{props.children}</div>
+      <Button
+        style={{ marginTop: 10 }}
+        color="primary"
+        href={props.link}
+        onClick={() => {
+          analytics.userChoseACaptureMethod(props.slug);
+        }}
+        endIcon={<OpenInBrowserIcon />}
+      >
+        Read Docs
+      </Button>
+    </Card>
+  );
+}
+
 const useStyles = makeStyles((theme) => ({
   scroll: {
     overflow: 'scroll',
+  },
+  trafficSource: {
+    padding: 7,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
   },
   locationHeader: {
     fontSize: 10,

@@ -51,6 +51,13 @@ export class OpticUIEvents {
     });
   }
 
+  userChoseACaptureMethod(captureSource: string) {
+    this.dispatch({
+      name: 'user_chose_capture_method',
+      properties: { captureSource },
+    });
+  }
+
   // userDocumentedDiff(
   //   valuesPresented: [],
   //   isIgnored: boolean,
