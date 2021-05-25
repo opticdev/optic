@@ -4308,49 +4308,6 @@ Object {
       "AddShape": Object {
         "baseShapeId": "$string",
         "name": "",
-        "shapeId": "shape_10000",
-      },
-    },
-    Object {
-      "AddShape": Object {
-        "baseShapeId": "$string",
-        "name": "",
-        "shapeId": "shape_10001",
-      },
-    },
-    Object {
-      "AddShape": Object {
-        "baseShapeId": "$list",
-        "name": "",
-        "shapeId": "shape_10002",
-      },
-    },
-    Object {
-      "SetParameterShape": Object {
-        "shapeDescriptor": Object {
-          "ProviderInShape": Object {
-            "consumingParameterId": "$listItem",
-            "providerDescriptor": Object {
-              "ShapeProvider": Object {
-                "shapeId": "shape_10001",
-              },
-            },
-            "shapeId": "shape_10002",
-          },
-        },
-      },
-    },
-    Object {
-      "AddShape": Object {
-        "baseShapeId": "$string",
-        "name": "",
-        "shapeId": "shape_10003",
-      },
-    },
-    Object {
-      "AddShape": Object {
-        "baseShapeId": "$string",
-        "name": "",
         "shapeId": "shape_10004",
       },
     },

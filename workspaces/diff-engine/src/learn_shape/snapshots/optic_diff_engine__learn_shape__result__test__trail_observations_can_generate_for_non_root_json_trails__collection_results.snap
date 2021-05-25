@@ -10,15 +10,6 @@ expression: "&collections_results"
         ShapeCommand(
             AddShape(
                 AddShape {
-                    shape_id: "test-id-0",
-                    base_shape_id: "$boolean",
-                    name: "",
-                },
-            ),
-        ),
-        ShapeCommand(
-            AddShape(
-                AddShape {
                     shape_id: "test-id-1",
                     base_shape_id: "$number",
                     name: "",
@@ -118,69 +109,6 @@ expression: "&collections_results"
                         FieldShapeFromShape {
                             field_id: "test-id-7",
                             shape_id: "test-id-2",
-                        },
-                    ),
-                },
-            ),
-        ),
-        ShapeCommand(
-            AddShape(
-                AddShape {
-                    shape_id: "test-id-10",
-                    base_shape_id: "$object",
-                    name: "",
-                },
-            ),
-        ),
-        ShapeCommand(
-            AddField(
-                AddField {
-                    field_id: "test-id-9",
-                    shape_id: "test-id-10",
-                    name: "nested-object",
-                    shape_descriptor: FieldShapeFromShape(
-                        FieldShapeFromShape {
-                            field_id: "test-id-9",
-                            shape_id: "test-id-8",
-                        },
-                    ),
-                },
-            ),
-        ),
-        ShapeCommand(
-            AddShape(
-                AddShape {
-                    shape_id: "test-id-13",
-                    base_shape_id: "$object",
-                    name: "",
-                },
-            ),
-        ),
-        ShapeCommand(
-            AddField(
-                AddField {
-                    field_id: "test-id-11",
-                    shape_id: "test-id-13",
-                    name: "nested",
-                    shape_descriptor: FieldShapeFromShape(
-                        FieldShapeFromShape {
-                            field_id: "test-id-11",
-                            shape_id: "test-id-10",
-                        },
-                    ),
-                },
-            ),
-        ),
-        ShapeCommand(
-            AddField(
-                AddField {
-                    field_id: "test-id-12",
-                    shape_id: "test-id-13",
-                    name: "other-field",
-                    shape_descriptor: FieldShapeFromShape(
-                        FieldShapeFromShape {
-                            field_id: "test-id-12",
-                            shape_id: "test-id-0",
                         },
                     ),
                 },
