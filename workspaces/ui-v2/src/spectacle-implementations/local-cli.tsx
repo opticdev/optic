@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { useRouteMatch, useParams, Switch } from 'react-router-dom';
+import {
+  useRouteMatch,
+  useParams,
+  Route,
+  Redirect,
+  Switch,
+} from 'react-router-dom';
 import { AsyncStatus } from '<src>/types';
 import { Provider as BaseUrlProvider } from '<src>/optic-components/hooks/useBaseUrl';
 import { DocumentationPages } from '<src>/optic-components/pages/docs';
@@ -78,11 +84,19 @@ export default function LocalCli() {
               >
                 <SpecMetadataProvider>
                   <Switch>
-                    <>
-                      <DocumentationPages />
-                      <DiffReviewEnvironments />
-                      <ChangelogPages />
-                    </>
+                    <Route
+                      path={`${match.path}/changes-since/:batchId`}
+                      component={ChangelogPages}
+                    />
+                    <Route
+                      path={`${match.path}/documentation`}
+                      component={DocumentationPages}
+                    />
+                    <Route
+                      path={`${match.path}/diffs`}
+                      component={DiffReviewEnvironments}
+                    />
+                    <Redirect to={`${match.path}/documentation`} />
                   </Switch>
                 </SpecMetadataProvider>
               </AnalyticsStore>

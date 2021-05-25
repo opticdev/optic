@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-
+import React, { FC, useMemo } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import groupBy from 'lodash.groupby';
 import classNames from 'classnames';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
@@ -13,14 +13,23 @@ import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { Loading } from '../../loaders/Loading';
 import { useChangelogStyles } from '../../changelog/ChangelogBackground';
 import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
+import { PageLayout } from '<src>/optic-components/layouts/PageLayout';
+import { DocsPageAccessoryNavigation } from './components';
 
-export function DocumentationRootPage(props: {
-  onEndpointClicked: (pathId: string, method: string) => void;
-  changelogBatchId?: string;
-}) {
+export const DocumentationRootPageWithDocsNav: FC<
+  React.ComponentProps<typeof DocumentationRootPage>
+> = (props) => (
+  <PageLayout AccessoryNavigation={DocsPageAccessoryNavigation}>
+    <DocumentationRootPage {...props} />
+  </PageLayout>
+);
+
+export function DocumentationRootPage(props: { changelogBatchId?: string }) {
   const { endpoints, loading } = useEndpoints(props.changelogBatchId);
   //@nic TODO fork changelog from documentation page
   const isChangelogPage = props.changelogBatchId !== undefined;
+  const history = useHistory();
+  const match = useRouteMatch();
 
   const {
     isEditing,
@@ -87,7 +96,9 @@ export function DocumentationRootPage(props: {
                     disableGutters
                     style={{ display: 'flex' }}
                     onClick={() =>
-                      props.onEndpointClicked(endpoint.pathId, endpoint.method)
+                      history.push(
+                        `${match.url}/paths/${endpoint.pathId}/methods/${endpoint.method}`
+                      )
                     }
                     className={classNames({
                       [changelogStyles.added]:

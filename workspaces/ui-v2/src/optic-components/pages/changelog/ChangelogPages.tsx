@@ -1,88 +1,30 @@
-import * as React from 'react';
-import { Redirect, useHistory } from 'react-router-dom';
-import { NavigationRoute } from '../../navigation/NavigationRoute';
+import React from 'react';
+import { Switch, Redirect, Route } from 'react-router-dom';
+import { ContributionEditingStore } from '<src>/optic-components/hooks/edit/Contributions';
 import {
-  useChangelogEndpointPageLink,
   useChangelogPages,
-  useDocumentationPageLink,
-} from '../../navigation/Routes';
-import { ContributionEditingStore } from '../../hooks/edit/Contributions';
-import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
-import { DocumentationRootPage } from '../docs/DocumentationRootPage';
-import { EndpointRootPage } from '../docs/EndpointRootPage';
-import { useBatchCommits } from '../../hooks/useBatchCommits';
+  useChangelogEndpointPageLink,
+} from '<src>/optic-components/navigation/Routes';
 
-export function ChangelogPages(props: any) {
+import { ChangelogListPage } from './ChangelogListPage';
+import { ChangelogEndpointRootPage } from './ChangelogEndpointRootPage';
+
+export function ChangelogPages() {
   const changelogPages = useChangelogPages();
-  const changelogPagesEndpointLink = useChangelogEndpointPageLink();
-  const documentationPageLink = useDocumentationPageLink();
-  const allBatchCommits = useBatchCommits();
-  const history = useHistory();
+  const changelogEndpointPageLink = useChangelogEndpointPageLink();
+
   return (
     // @nic TODO fork changelog from documentation page and remove contribution editing store
     <ContributionEditingStore initialIsEditingState={false}>
-      <>
-        <NavigationRoute
-          path={changelogPages.path}
-          Component={(props: any) => {
-            const { match } = props;
-            const { params } = match;
-            const { batchId } = params;
-            const validBatchId = allBatchCommits.batchCommits.some(
-              (i) => i.batchId === batchId
-            );
-            if (validBatchId && !allBatchCommits.loading) {
-              return (
-                <DocumentationRootPage
-                  onEndpointClicked={(pathId, method) => {
-                    history.push(
-                      changelogPagesEndpointLink.linkTo(batchId, pathId, method)
-                    );
-                  }}
-                  changelogBatchId={batchId}
-                />
-              );
-            } else if (!allBatchCommits.loading) {
-              return <Redirect to={documentationPageLink.linkTo()} />;
-            } else {
-              return null;
-            }
-          }}
-          AccessoryNavigation={ChangelogPageAccessoryNavigation}
+      <Switch>
+        <Route
+          exact
+          path={changelogEndpointPageLink.path}
+          component={ChangelogEndpointRootPage}
         />
-        <NavigationRoute
-          path={changelogPagesEndpointLink.path}
-          Component={(props: any) => {
-            const { match } = props;
-            const { params } = match;
-            const { batchId } = params;
-            const validBatchId = allBatchCommits.batchCommits.some(
-              (i) => i.batchId === batchId
-            );
-
-            if (validBatchId && !allBatchCommits.loading) {
-              return (
-                <EndpointRootPage
-                  {...props}
-                  isChangelogPage={true}
-                  changelogBatchId={batchId}
-                />
-              );
-            } else {
-              return null;
-            }
-          }}
-          AccessoryNavigation={ChangelogPageAccessoryNavigation}
-        />
-      </>
+        <Route exact path={changelogPages.path} component={ChangelogListPage} />
+        <Redirect to={changelogPages.path} />
+      </Switch>
     </ContributionEditingStore>
-  );
-}
-
-function ChangelogPageAccessoryNavigation(props: any) {
-  return (
-    <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
-      <ChangesSinceDropdown />
-    </div>
   );
 }

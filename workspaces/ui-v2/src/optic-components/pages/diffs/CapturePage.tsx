@@ -15,6 +15,9 @@ import {
   Typography,
 } from '@material-ui/core';
 import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '../../theme';
+import { PageLayout } from '<src>/optic-components/layouts/PageLayout';
+import { DiffAccessoryNavigation } from '<src>/optic-components/diffs/DiffAccessoryNavigation';
+
 import { CaptureSelectDropdown } from '../../diffs/contexts/CaptureSelectDropdown';
 import { LoadingDiffReview } from '../../diffs/LoadingDiffReview';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
@@ -28,7 +31,7 @@ import { useHistory } from 'react-router-dom';
 import ApproveAll from '../../diffs/render/ApproveAll';
 import { useCaptures } from '../../hooks/useCapturesHook';
 
-export function CapturePage(props: { showDiff?: boolean }) {
+function CapturePage(props: { showDiff?: boolean }) {
   const capturesState = useCaptures();
   const history = useHistory();
   const diffEnvironmentsRoot = useDiffEnvironmentsRoot();
@@ -136,8 +139,16 @@ export function CapturePage(props: { showDiff?: boolean }) {
   );
 }
 
+export const CapturePageWithoutDiffOrRedirect = (props: any) => (
+  <PageLayout AccessoryNavigation={null}>
+    <CapturePage {...props} />
+  </PageLayout>
+);
+
 export const CapturePageWithDiff = (props: any) => (
-  <CapturePage {...props} showDiff={true} />
+  <PageLayout AccessoryNavigation={DiffAccessoryNavigation}>
+    <CapturePage {...props} showDiff={true} />
+  </PageLayout>
 );
 
 function DiffCaptureResults() {

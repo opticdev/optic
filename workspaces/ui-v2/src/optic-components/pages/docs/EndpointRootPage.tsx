@@ -23,6 +23,16 @@ import {
   JsonLike,
 } from '<src>/optic-components/shapes/ShapeRenderInterfaces';
 import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
+import { PageLayout } from '<src>/optic-components/layouts/PageLayout';
+import { DocsPageAccessoryNavigation } from '<src>/optic-components/pages/docs/components';
+
+export const EndpointRootPageWithDocsNav: FC<
+  React.ComponentProps<typeof EndpointRootPage>
+> = (props) => (
+  <PageLayout AccessoryNavigation={DocsPageAccessoryNavigation}>
+    <EndpointRootPage {...props} isChangelogPage={false} />
+  </PageLayout>
+);
 
 export const EndpointRootPage: FC<
   RouteComponentProps<{

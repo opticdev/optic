@@ -11,6 +11,8 @@ import { useSharedDiffContext } from '<src>/optic-components/hooks/diffs/SharedD
 import { useEndpoint } from '<src>/optic-components/hooks/useEndpointsHook';
 import { SpectacleContext } from '<src>/spectacle-implementations/spectacle-provider';
 import { Loading } from '<src>/optic-components/loaders/Loading';
+import { PageLayout } from '<src>/optic-components/layouts/PageLayout';
+import { DiffAccessoryNavigation } from '<src>/optic-components/diffs/DiffAccessoryNavigation';
 
 import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
 
@@ -37,15 +39,19 @@ export const ReviewEndpointDiffContainer: FC<
     endpointDiffs.newRegionDiffs
   );
 
-  return !endpoint || shapeDiffs.loading ? (
-    <Loading />
-  ) : (
-    <ReviewEndpointDiffPage
-      endpoint={endpoint}
-      allDiffs={[...newRegionDiffs.results, ...shapeDiffs.results]}
-      spectacle={spectacle as IForkableSpectacle}
-      method={method}
-      pathId={pathId}
-    />
+  return (
+    <PageLayout AccessoryNavigation={DiffAccessoryNavigation}>
+      {!endpoint || shapeDiffs.loading ? (
+        <Loading />
+      ) : (
+        <ReviewEndpointDiffPage
+          endpoint={endpoint}
+          allDiffs={[...newRegionDiffs.results, ...shapeDiffs.results]}
+          spectacle={spectacle as IForkableSpectacle}
+          method={method}
+          pathId={pathId}
+        />
+      )}
+    </PageLayout>
   );
 };
