@@ -7,6 +7,10 @@ schema {
 type Mutation {
   applyCommands(commands: [JSON], batchCommitId: ID, commitMessage: String, clientId: ID, clientSessionId: ID): AppliedCommandsResult
   startDiff(diffId: ID, captureId: ID): StartDiffResult
+  invalidateCaches: InvalidateCachesResult
+}
+type InvalidateCachesResult {
+  batchCommitId: ID
 }
 type AppliedCommandsResult {
   batchCommitId: ID
