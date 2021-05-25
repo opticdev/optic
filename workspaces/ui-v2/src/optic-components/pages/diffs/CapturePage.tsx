@@ -173,6 +173,7 @@ export function CapturePage(props: { showDiff?: boolean }) {
             color="primary"
             variant="contained"
             href={LiveTrafficLink}
+            target="_blank"
             onClick={() => {
               analytics.userChoseACaptureMethod('live-traffic');
             }}
@@ -404,6 +405,7 @@ function TrafficSource(props: {
         style={{ marginTop: 10 }}
         color="primary"
         href={props.link}
+        target="_blank"
         onClick={() => {
           analytics.userChoseACaptureMethod(props.slug);
         }}
