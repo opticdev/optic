@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { makeStyles } from '@material-ui/styles';
 
@@ -27,19 +28,29 @@ import {
   useDiffUndocumentedUrlsPageLink,
 } from '../../navigation/Routes';
 import { EndpointName } from '../../common';
-import { useHistory } from 'react-router-dom';
 import ApproveAll from '../../diffs/render/ApproveAll';
 import { useCaptures } from '../../hooks/useCapturesHook';
 
 function CapturePage(props: { showDiff?: boolean }) {
+  const { boundaryId, environment } = useParams<{
+    boundaryId?: string;
+    environment?: string;
+  }>();
   const capturesState = useCaptures();
   const history = useHistory();
   const diffEnvironmentsRoot = useDiffEnvironmentsRoot();
 
-  const noCaptures =
-    !capturesState.loading && capturesState.captures.length === 0;
+  const noCaptures = capturesState.captures.length === 0;
+  // The only current environment supported is local
+  const isValidEnvironment = environment === 'local';
+  // TODO this currently does not get reached if we have an invalid boundary,
+  // the startDiff hook errors out before we render this component
+  const isValidBoundary = !!capturesState.captures.find(
+    (capture) => capture.captureId === boundaryId
+  );
+  const canRedirect = !capturesState.loading && !!capturesState.captures[0];
   const shouldRedirect =
-    !capturesState.loading && !props.showDiff && !!capturesState.captures[0];
+    canRedirect && (!isValidBoundary || !isValidEnvironment || !props.showDiff);
 
   useEffect(() => {
     if (shouldRedirect) {
