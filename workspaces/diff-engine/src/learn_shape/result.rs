@@ -94,8 +94,12 @@ impl TrailObservationsResult {
     let included_trails: HashSet<_> =
       shape_prototypes_trails(root_shape, &shape_prototypes_by_trail).collect();
 
-    let commands =
-      shape_prototypes_to_commands(shape_prototypes).map(|command| SpecCommand::from(command));
+    let commands = shape_prototypes_to_commands(
+      shape_prototypes
+        .into_iter()
+        .filter(move |prototype| included_trails.contains(&prototype.trail)),
+    )
+    .map(|command| SpecCommand::from(command));
 
     (root_shape_id, commands)
   }
@@ -125,12 +129,15 @@ fn shape_prototypes_trails<'a>(
           ref item_shape_id, ..
         } => {
           let item_prototype = prototypes_by_trail.get(&shape_prototype.trail.with_array_item(0));
+          let nested_trails = shape_prototypes_trails(item_prototype, prototypes_by_trail);
 
-          shape_prototypes_trails(item_prototype, prototypes_by_trail).collect()
+          let mut trails = vec![shape_prototype.trail.clone()];
+          trails.extend(nested_trails);
+
+          trails
         }
-        ShapePrototypeDescriptor::ObjectWithFields { ref fields } => fields
-          .iter()
-          .flat_map(|field_prototype_descriptor| {
+        ShapePrototypeDescriptor::ObjectWithFields { ref fields } => {
+          let nested_trails = fields.iter().flat_map(|field_prototype_descriptor| {
             let field_prototype = prototypes_by_trail.get(
               &shape_prototype
                 .trail
@@ -138,8 +145,13 @@ fn shape_prototypes_trails<'a>(
             );
 
             shape_prototypes_trails(field_prototype, prototypes_by_trail)
-          })
-          .collect(),
+          });
+
+          let mut trails = vec![shape_prototype.trail.clone()];
+          trails.extend(nested_trails);
+
+          trails
+        }
         ShapePrototypeDescriptor::Unknown => {
           vec![shape_prototype.trail.clone()]
         }
@@ -1156,7 +1168,7 @@ mod test {
 
   #[test]
   fn trail_observations_does_not_generate_commands_for_orphaned_shapes() {
-    let mut observations = {
+    let mut root_observations = {
       let object_body = BodyDescriptor::from(json!({
         "a-field": 3,
         "another-field": true,
@@ -1168,9 +1180,12 @@ mod test {
       observations.union(observe_body_trails(string_body));
       observations
     };
+    // TODO: add nested trail case
+    // TODO: add array case
+    // TODO: add unobserved root trail case
 
     let root_trail = JsonTrail::empty();
-    let root_affordances = observations
+    let root_affordances = root_observations
       .values_by_trail
       .get_mut(&root_trail)
       .expect("should have observed values for the root");
@@ -1180,13 +1195,14 @@ mod test {
 
     let mut test_id_generator = TestIdGenerator::default();
 
-    let results = collect_commands(observations.into_commands(&mut test_id_generator, &root_trail));
-    assert!(results.0.is_some());
-    assert_valid_commands(results.1.clone());
-    assert_eq!(results.1.len(), 1);
+    let root_results =
+      collect_commands(root_observations.into_commands(&mut test_id_generator, &root_trail));
+    assert!(root_results.0.is_some());
+    assert_valid_commands(root_results.1.clone());
+    assert_eq!(root_results.1.len(), 1);
     assert_debug_snapshot!(
-      "trail_observations_does_not_generate_commands_for_orphaned_shapes__results",
-      &results
+      "trail_observations_does_not_generate_commands_for_orphaned_shapes__root_results",
+      &root_results
     );
   }
 
