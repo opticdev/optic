@@ -570,6 +570,7 @@ dependencies = [
  "clap",
  "cqrs-core",
  "futures",
+ "getrandom",
  "insta",
  "log",
  "num_cpus",

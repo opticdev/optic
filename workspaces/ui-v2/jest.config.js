@@ -1,7 +1,7 @@
 module.exports = {
   roots: ['<rootDir>/src'],
   collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts'],
-  setupFiles: ['react-app-polyfill/jsdom'],
+  setupFiles: ['react-app-polyfill/jsdom', './config/jest/setup.js'],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',

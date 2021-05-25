@@ -342,6 +342,7 @@ dependencies = [
  "chrono",
  "clap",
  "cqrs-core",
+ "getrandom",
  "log",
  "num_cpus",
  "petgraph",
