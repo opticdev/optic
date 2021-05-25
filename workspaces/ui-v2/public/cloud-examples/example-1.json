@@ -2780,5 +2780,18 @@
         "createdAt": "2021-04-29T19:58:12.307Z"
       }
     }
+  },
+  {
+    "ContributionAdded": {
+      "id": "metadata",
+      "key": "id",
+      "value": "caed4cd9-b16b-4c6b-871b-1ce70f4d6fb2",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "bade46c4-86f6-4692-be22-07caca8f6f05",
+        "clientCommandBatchId": "524f5418-59a0-493a-9c19-89f9abcefb58",
+        "createdAt": "2021-04-27T14:12:58.467Z"
+      }
+    }
   }
 ]
