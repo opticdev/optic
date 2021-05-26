@@ -34,6 +34,7 @@ import {
   LiveTrafficLink,
   RunOpticLink,
   RunTestsLink,
+  InterceptWithChromeLink,
 } from '<src>/optic-components/SupportLinks';
 import { useAnalytics } from '<src>/analytics';
 
