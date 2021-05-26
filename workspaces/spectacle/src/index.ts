@@ -74,7 +74,7 @@ export interface IOpticSpecReadWriteRepository extends IOpticSpecRepository {
     commandContext: IOpticCommandContext
   ): Promise<void>;
 
-  changes: AsyncGenerator<void>;
+  changes: AsyncGenerator<number>;
 
   notifications: EventEmitter;
 }
@@ -220,16 +220,16 @@ export async function makeSpectacle(opticContext: IOpticContext) {
   }
 
   async function reloadFromSpecChange(
-    specChanges: AsyncGenerator<void>,
+    specChanges: AsyncGenerator<number>,
     opticContext: IOpticContext
   ) {
-    await reload(opticContext);
-
-    for await (let change of specChanges) {
-      console.count('reloading because of specRepository change');
+    for await (let generation of specChanges) {
+      console.log('reloading because of specRepository change', generation);
       await reload(opticContext);
     }
   }
+
+  await reload(opticContext);
 
   // TODO: make sure this Promise is consumed somewhere so errors are handled. Return from makeSpectacle perhaps?
   const reloadingSpecs = reloadFromSpecChange(
