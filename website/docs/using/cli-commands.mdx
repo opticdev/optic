@@ -23,7 +23,7 @@ For example, to learn more about the `init` command, run:
 
 ### `init`
 
-Integrates Optic with your API. API init [guides you through setup](/docs/get-started/config) so that you can get running as quickly as possible. There are no required parameters, and the CLI will take you directly to the Optic dashboard to complete and test the integration.
+Integrates Optic with your API. API init [guides you through setup](/docs/) so that you can get running as quickly as possible. There are no required parameters, and the CLI will take you directly to the Optic dashboard to complete and test the integration.
 
 The following optional parameters may be included to pre-populate configuration items:
 
@@ -47,7 +47,6 @@ Since start is the most common task run, Optic has a command `start` that is an 
 
 Run has a few flags that can modify the default behavior:
 
-- `--collect-coverage` will report the [coverage](/docs/get-started/testing#api-coverage) of observed traffic over the API specification when the process is stopped.
 - `--exit-on-diff` returns an exit code of `1` if unexpected API behavior is returned, such as an undocumented route or a change in behavior on a documented route. Normally, Optic returns `0` on successful termination regardless of the behavior observed. This is primarily used in CI/CD scenarios, such as in [GitHub Actions](/docs/github-actions), to fail builds when undocumented behavior is detected.
 - `--pass-exit-code` returns the exit code of your task. If you are using a [dependent task](/docs/get-started/testing), the exit code of the dependent command (not the base command) will be passed through. This flag is overridden by `--exit-on-diff` which will always exit a capture session with exit code 1 when a diff was detected. 
 - `--transparent-proxy` configures Optic to [transparently forward](/docs/using/advanced-configuration#transparent-proxy-mode) all traffic, which may be necessary for certain application configurations.
@@ -72,6 +71,7 @@ Lists API diffs observed since your last git commit. This is a quick way on the 
 
 - `--review` will open the Optic dashboard to review and document any new endpoints or differences in behavior on existing endpoints. This is a handy way to get into the review process.
 - `--pre-commit` returns an exit code of `1` if there are any diffs that need to be resolved in the behavior, such as undocumented endpoints or endpoints whose observed behavior doesn't match the specification. This allows developers to use git hooks such as pre-commit hooks to assure the specification is up to date as part of their normal workflow.
+- `--print-coverage` will report the [coverage](/docs/get-started/testing#api-coverage) of observed traffic over the API specification when the process is stopped.
 
 ## Integrating with other tools
 

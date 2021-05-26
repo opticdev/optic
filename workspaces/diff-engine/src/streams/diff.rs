@@ -1,4 +1,4 @@
-use super::{JsonLineEncoder, JsonLineReaderError, TaggedInput};
+use super::{JsonLineEncoder, JsonLineReaderError};
 use futures::{sink::Sink, Stream, StreamExt, TryStreamExt};
 use serde::Serialize;
 use serde_json;
@@ -8,6 +8,7 @@ use tokio::io::{AsyncWrite, BufWriter};
 use tokio_util::codec::FramedWrite;
 
 use crate::interactions::InteractionDiffResult;
+use crate::state::TaggedInput;
 
 // TODO: return a Stream instead of a Vec, so consumer can decide on allocation
 pub async fn tagged_from_json_line_file(

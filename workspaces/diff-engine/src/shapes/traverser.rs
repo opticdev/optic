@@ -6,8 +6,9 @@ use crate::state::body::BodyDescriptor;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
 use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
-use std::cmp::Ordering;
+use std::fmt;
 use std::hash::{Hash, Hasher};
+use std::{cmp::Ordering, fmt::Write};
 
 pub struct Traverser<'a> {
   shape_queries: &'a ShapeQueries<'a>,
@@ -190,6 +191,7 @@ impl<'a> Traverser<'a> {
                     .with_component(ShapeTrailPathComponent::ObjectFieldTrail {
                       field_id: field_id.clone(),
                       field_shape_id: field_shape_id,
+                      parent_object_shape_id: choice.shape_id.clone(),
                     });
                 self.shape_queries.list_trail_choices(&field_trail)
               } else {
@@ -231,6 +233,7 @@ pub enum ShapeTrailPathComponent {
   ObjectFieldTrail {
     field_id: FieldId,
     field_shape_id: ShapeId,
+    parent_object_shape_id: ShapeId,
   },
   #[serde(rename_all = "camelCase")]
   ListTrail { shape_id: ShapeId },
@@ -272,7 +275,7 @@ pub struct ShapeTrail {
   pub path: Vec<ShapeTrailPathComponent>,
 }
 impl ShapeTrail {
-  fn new(root_shape_id: ShapeId) -> Self {
+  pub(crate) fn new(root_shape_id: ShapeId) -> Self {
     ShapeTrail {
       root_shape_id,
       path: vec![],
@@ -342,6 +345,27 @@ impl JsonTrail {
         .collect(),
     }
   }
+
+  pub fn pop(&mut self) -> Option<JsonTrailPathComponent> {
+    self.path.pop()
+  }
+
+  pub fn is_descendant_of(&self, ancestor_trail: &JsonTrail) -> bool {
+    self.path.len() > ancestor_trail.path.len()
+      && self
+        .path
+        .iter()
+        .take(ancestor_trail.path.len())
+        .eq(ancestor_trail.path.iter())
+  }
+
+  pub fn is_child_of(&self, parent_trail: &JsonTrail) -> bool {
+    self.path.len() == (parent_trail.path.len() + 1) && self.is_descendant_of(parent_trail)
+  }
+
+  pub fn last_component(&self) -> Option<&JsonTrailPathComponent> {
+    self.path.last()
+  }
 }
 
 impl PartialEq for JsonTrail {
@@ -367,6 +391,22 @@ impl PartialOrd for JsonTrail {
 impl Hash for JsonTrail {
   fn hash<H: Hasher>(&self, hash_state: &mut H) {
     self.path.hash(hash_state);
+  }
+}
+
+impl fmt::Display for JsonTrail {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    let identifiers = self
+      .path
+      .iter()
+      .filter_map(|component| match component {
+        JsonTrailPathComponent::JsonArrayItem { index } => Some(format!("{}", index)),
+        JsonTrailPathComponent::JsonObjectKey { key } => Some(key.clone()),
+        JsonTrailPathComponent::JsonArray {} => None,
+        JsonTrailPathComponent::JsonObject {} => None,
+      })
+      .collect::<Vec<_>>();
+    write!(f, "{}", identifiers.join("."))
   }
 }
 
@@ -416,5 +456,79 @@ mod test {
     trails.sort();
 
     assert_json_snapshot!("json_trails_order_root_to_leaf__sorted", trails);
+  }
+
+  #[test]
+  pub fn json_trails_is_descendant_of() {
+    let root_trail = JsonTrail::empty().with_object_key(String::from("a"));
+    let child_trail = JsonTrail::empty()
+      .with_object_key(String::from("a"))
+      .with_object_key(String::from("aa"));
+    let other_child_trail = JsonTrail::empty()
+      .with_object_key(String::from("c"))
+      .with_object_key(String::from("aa"));
+
+    let array_trail = JsonTrail::empty().with_array_item(0);
+    let object_in_array_trail = JsonTrail::empty()
+      .with_array_item(0)
+      .with_object_key(String::from("a"));
+    let object_in_other_array_trail = JsonTrail::empty()
+      .with_array_item(1)
+      .with_object_key(String::from("a"));
+
+    let descendant_trail = JsonTrail::empty()
+      .with_object_key(String::from("a"))
+      .with_object_key(String::from("aa"))
+      .with_object_key(String::from("aaa"));
+    let descendant_array_trail = JsonTrail::empty()
+      .with_array_item(0)
+      .with_object_key(String::from("a"))
+      .with_object_key(String::from("aa"));
+
+    assert!(child_trail.is_descendant_of(&root_trail));
+    assert!(!root_trail.is_descendant_of(&child_trail));
+    assert!(!root_trail.is_descendant_of(&root_trail));
+    assert!(!other_child_trail.is_descendant_of(&root_trail));
+    assert!(object_in_array_trail.is_descendant_of(&array_trail));
+    assert!(!object_in_other_array_trail.is_descendant_of(&array_trail));
+    assert!(descendant_trail.is_descendant_of(&root_trail));
+    assert!(descendant_array_trail.is_descendant_of(&array_trail));
+  }
+
+  #[test]
+  pub fn json_trails_is_child_of() {
+    let root_trail = JsonTrail::empty().with_object_key(String::from("a"));
+    let child_trail = JsonTrail::empty()
+      .with_object_key(String::from("a"))
+      .with_object_key(String::from("aa"));
+    let other_child_trail = JsonTrail::empty()
+      .with_object_key(String::from("c"))
+      .with_object_key(String::from("aa"));
+
+    let array_trail = JsonTrail::empty().with_array_item(0);
+    let object_in_array_trail = JsonTrail::empty()
+      .with_array_item(0)
+      .with_object_key(String::from("a"));
+    let object_in_other_array_trail = JsonTrail::empty()
+      .with_array_item(1)
+      .with_object_key(String::from("a"));
+
+    let descendant_trail = JsonTrail::empty()
+      .with_object_key(String::from("a"))
+      .with_object_key(String::from("aa"))
+      .with_object_key(String::from("aaa"));
+    let descendant_array_trail = JsonTrail::empty()
+      .with_array_item(0)
+      .with_object_key(String::from("a"))
+      .with_object_key(String::from("aa"));
+
+    assert!(child_trail.is_child_of(&root_trail));
+    assert!(!root_trail.is_child_of(&child_trail));
+    assert!(!root_trail.is_child_of(&root_trail));
+    assert!(!other_child_trail.is_child_of(&root_trail));
+    assert!(object_in_array_trail.is_child_of(&array_trail));
+    assert!(!object_in_other_array_trail.is_child_of(&array_trail));
+    assert!(!descendant_trail.is_child_of(&root_trail));
+    assert!(!descendant_array_trail.is_child_of(&array_trail));
   }
 }

@@ -5,18 +5,14 @@ import * as mockttp from 'mockttp';
 import fs from 'fs-extra';
 import { CompletedRequest, MockRuleData } from 'mockttp';
 import mime from 'whatwg-mimetype';
-import {
-  IArbitraryData,
-  IBody,
-  IHttpInteraction,
-} from '@useoptic/domain-types';
 //@ts-ignore
-import { toBytes } from 'shape-hash';
+import { toBytes } from '@useoptic/shape-hash';
 import { developerDebugLogger } from './index';
 import url from 'url';
 import { IQueryParser } from './query/query-parser-interfaces';
 import util from 'util';
 import { CallbackResponseResult } from 'mockttp/dist/rules/requests/request-handlers';
+import { IArbitraryData, IBody, IHttpInteraction } from './optic-types';
 
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string;
@@ -63,6 +59,7 @@ export class HttpToolkitCapturingProxy {
   private proxy!: mockttp.Mockttp;
   private requests: Map<string, mockttp.CompletedRequest> = new Map();
   private config!: IHttpToolkitCapturingProxyConfig;
+  public fingerprint: string | undefined = undefined;
   public readonly events: EventEmitter = new EventEmitter();
 
   async start(config: IHttpToolkitCapturingProxyConfig) {
@@ -80,6 +77,11 @@ export class HttpToolkitCapturingProxy {
     const keyPath = path.join(certificatePath, 'ca.key');
     await fs.writeFile(certPath, certificateInfo.cert);
     await fs.writeFile(keyPath, certificateInfo.key);
+
+    this.fingerprint = await mockttp.generateSPKIFingerprint(
+      certificateInfo.cert
+    );
+
     const https = {
       certPath,
       keyPath,
@@ -270,7 +272,7 @@ export class HttpToolkitCapturingProxy {
       const contentType = mime.parse(req.headers['content-type'] || '');
       const json = req.body.json || null;
 
-      developerDebugLogger(json && toBytes(json).toString('base64'))
+      developerDebugLogger(json && toBytes(json).toString('base64'));
 
       return {
         contentType: (req.body.text && contentType?.essence) || null,

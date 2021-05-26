@@ -1,29 +1,27 @@
 ---
-title: API Changelogs in Pull Requests
-sidebar_label: Installing GitBot
+title: API Changelogs in Pull Requests with GitHub Actions
+sidebar_label: Changelogs in Pull Requests
 ---
 
 Optic makes API Changes a first-class concern during code review. Every time a Pull Request is opened, Optic comments on the PR with a detailed API Changelog:
 
 import Paper from '@material-ui/core/Paper';
+import GhaExample from '@site/static/img/docs/github-actions-example.png'
 
 <Paper elevation={2}>
 
-  ![alt](../../static/img/gitbot-large.png)
+  <img src={GhaExample} alt="Example of a changelog automatically added to a PR with Optic's GitHub Action" />
 
 </Paper>
 
-
 ## How it Works
-When a pull request is opened, the Optic GitBot compares the current specification to the specification in the base branch. The differences are summarized and posted in a comment. It's amazing how many second and third order benefits teams report just from having observability into how their APIs work, and having "API Changes" as an explicit, first-class concern in every Pull Request. Just shining a light on API changes during code review has a strong influence on how teams think about the work they’re doing.
 
-## Install the Bot
-The Optic GitBot is featured on the GitHub Marketplace. You'll need admin privileges to install it:
+When a pull request is opened, a GitHub Workflow triggers the [`optic-changelog`](https://github.com/opticdev/optic-changelog) GitHub Action. The Action compares the current specification in the source branch to the specification in the target branch. The differences are summarized and posted in a comment. It's amazing how many second and third order benefits teams report just from having observability into how their APIs work, and having "API Changes" as an explicit, first-class concern in every Pull Request. Just shining a light on API changes during code review has a strong influence on how teams think about the work they’re doing.
 
-**[GitBot Install Link](https://github.com/apps/optic-gitbot)**
+## Configure the Action
 
-Need help? Want a demo with the Optic Maintainers before installing the bot? [Pick some time on our calendar](https://calendly.com/opticlabs/optic-demo-with-the-maintainers)
+The Action documentation is available in the [`optic-changelog` repository](https://github.com/opticdev/optic-changelog). You'll be able to add the appropriate step to your existing workflows, or create a new workflow, to get the benefits of API changelogs in your PR comments with Optic. If you run into any problems, [please let us know](https://github.com/opticdev/optic/issues/new?title=optic-changelog%3A%20) or, for a demo with the Optic Maintainers before installing the Action, [pick some time on our calendar](https://calendly.com/opticlabs/optic-demo-with-the-maintainers)
 
+### Other Platforms
 
-### GitBot on Other Platforms
-Right now, the bot only supports GitHub and GitHub Enterprise. We have a bounty out to develop the BitBucket and GitLab versions. If you are interested in contributing reach out to aidan@useoptic.com
+Right now, as a GitHub Action, `optic-changelog` only supports GitHub and GitHub Enterprise. Are you using another tool and would like to see changelogs come to your workflows? [Let us know](https://github.com/opticdev/optic/issues/new?title=%3Ctool%3E%3A%20optic-changelog%20request) so we can know where to start.

@@ -246,6 +246,43 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "adrienbrault",
+      "name": "Adrien Brault",
+      "avatar_url": "https://avatars.githubusercontent.com/u/611271?v=4",
+      "profile": "https://twitter.com/adrienbrault",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "niclim",
+      "name": "Nicholas Lim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18374483?v=4",
+      "profile": "https://github.com/niclim",
+      "contributions": [
+        "doc",
+        "code"
+      ]
+    },
+    {
+      "login": "smizell",
+      "name": "Stephen Mizell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/130959?v=4",
+      "profile": "http://smizell.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "bojan88",
+      "name": "Bojan Đurđević",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1783133?v=4",
+      "profile": "https://github.com/bojan88",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7

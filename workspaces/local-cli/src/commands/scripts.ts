@@ -1,6 +1,11 @@
 import { Command, flags } from '@oclif/command';
 // @ts-ignore
-import { getPathsRelativeToConfig, readApiConfig } from '@useoptic/cli-config';
+import {
+  getPathsRelativeToConfig,
+  IApiCliConfig,
+  IPathMapping,
+  readApiConfig,
+} from '@useoptic/cli-config';
 //@ts-ignore
 import niceTry from 'nice-try';
 import { cli } from 'cli-ux';
@@ -8,9 +13,17 @@ import { cli } from 'cli-ux';
 import which from 'which';
 import colors from 'colors';
 import { IOpticScript } from '@useoptic/cli-config/build';
-import { fromOptic } from '@useoptic/cli-shared';
+import {
+  developerDebugLogger,
+  fromOptic,
+  userDebugLogger,
+} from '@useoptic/cli-shared';
 import { generateOas } from './generate/oas';
 import { spawnProcess } from '../shared/spawn-process';
+import { ensureDaemonStarted } from '@useoptic/cli-server';
+import { lockFilePath } from '../shared/paths';
+import { Config } from '../config';
+import { Client } from '@useoptic/cli-client';
 export default class Scripts extends Command {
   static description =
     'run one of the scripts in optic.yml with the current specification';
@@ -18,7 +31,7 @@ export default class Scripts extends Command {
   static args = [
     {
       name: 'scriptName',
-      required: false,
+      required: true,
     },
   ];
 
@@ -31,11 +44,7 @@ export default class Scripts extends Command {
 
   async run() {
     const { args, flags } = this.parse(Scripts);
-    const scriptName: string | undefined = args.scriptName;
-
-    if (!scriptName) {
-      return console.log('list all scripts...');
-    }
+    const scriptName: string = args.scriptName;
 
     const script: IOpticScript | undefined = await niceTry(async () => {
       const paths = await getPathsRelativeToConfig();
@@ -43,6 +52,22 @@ export default class Scripts extends Command {
       const foundScript = config.scripts?.[scriptName!];
       if (foundScript) {
         return normalizeScript(foundScript);
+      } else {
+        cli.log(
+          fromOptic(
+            `Script ${colors.grey.bold(
+              scriptName
+            )} does not exist. Try one of these ${colors.grey.bold(
+              'api scripts <scriptname>'
+            )}`
+          )
+        );
+        return cli.log(
+          Object.keys(config.scripts || [])
+            .map((i) => '- ' + i)
+            .sort()
+            .join('\n')
+        );
       }
     });
 
@@ -88,16 +113,56 @@ export default class Scripts extends Command {
   }
 
   async executeScript(script: IOpticScript) {
-    const paths: any = await generateOas(true, true)!;
+    const oasPaths: any = await generateOas(true, true)!;
+    let { paths } = (await this.requiresSpec())!;
+    const daemonState = await ensureDaemonStarted(
+      lockFilePath,
+      Config.apiBaseUrl
+    );
+    const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
+    const cliClient = new Client(apiBaseUrl);
+    const cliSession = await cliClient.findSession(paths.cwd, null, null);
+    const spectacleUrl = `${apiBaseUrl}/specs/${cliSession.session.id}/spectacle`;
+
     const env: any = {
-      //@ts-ignore
-      OPENAPI_JSON: paths.json,
-      //@ts-ignore
-      OPENAPI_YAML: paths.yaml,
+      OPENAPI_JSON: oasPaths.json,
+      OPENAPI_YAML: oasPaths.yaml,
+      SPECTACLE_URL: spectacleUrl,
     };
 
     console.log(`Running command: ${colors.grey(script.command)} `);
     await spawnProcess(script.command, env);
+  }
+
+  // TODO: this is copy/pasted from commands/status.ts
+  async requiresSpec(): Promise<
+    | {
+        paths: IPathMapping;
+        config: IApiCliConfig;
+      }
+    | undefined
+  > {
+    let paths: IPathMapping;
+    let config: IApiCliConfig;
+
+    try {
+      paths = await getPathsRelativeToConfig();
+      config = await readApiConfig(paths.configPath);
+      return { paths, config };
+    } catch (e) {
+      userDebugLogger(e);
+      await this.exitWithError(
+        `No optic.yml file found here. Add Optic to your API by running ${colors.bold(
+          'api init'
+        )}`
+      );
+    }
+  }
+
+  // TODO: this is copy/pasted from commands/status.ts
+  async exitWithError(error: string) {
+    this.log(fromOptic(error));
+    process.exit(0);
   }
 }
 

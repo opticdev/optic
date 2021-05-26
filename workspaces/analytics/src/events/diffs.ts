@@ -1,7 +1,6 @@
 import { DescribeEvent } from '../interfaces/RegisterEvent';
 import { Events } from '../interfaces/Events';
-// @ts-ignore
-import * as Joi from '@hapi/joi';
+import Joi from 'joi';
 import 'joi-extract-type';
 
 // Sent whenever an API is created
@@ -10,12 +9,11 @@ const UserChangedCaptureOverviewTabSchema = Joi.object({
   diffCount: Joi.number().required(),
   undocumentedUrlCount: Joi.number().required(),
 });
+// @ts-ignore
 type UserChangedCaptureOverviewTabProperties = Joi.extractType<
   typeof UserChangedCaptureOverviewTabSchema
 >;
-export const UserChangedCaptureOverviewTab = DescribeEvent<
-  UserChangedCaptureOverviewTabProperties
->(
+export const UserChangedCaptureOverviewTab = DescribeEvent<UserChangedCaptureOverviewTabProperties>(
   Events.UserChangedCaptureOverviewTab,
   UserChangedCaptureOverviewTabSchema,
   (props) =>
@@ -27,6 +25,7 @@ const NewBodyDiffRenderedSchema = Joi.object({
   responseCount: Joi.number().required(),
   regions: Joi.array().required().items(Joi.string()),
 });
+// @ts-ignore
 type NewBodyDiffRenderedProperties = Joi.extractType<
   typeof NewBodyDiffRenderedSchema
 >;
@@ -40,12 +39,11 @@ const InferPolymorphismEnabledSchema = Joi.object({
   captureId: Joi.string().required(),
   endpointId: Joi.string().required(),
 });
+// @ts-ignore
 type InferPolymorphismEnabledProperties = Joi.extractType<
   typeof InferPolymorphismEnabledSchema
 >;
-export const UserEnabledInferPolymorphism = DescribeEvent<
-  InferPolymorphismEnabledProperties
->(
+export const UserEnabledInferPolymorphism = DescribeEvent<InferPolymorphismEnabledProperties>(
   Events.UserEnabledInferPolymorphism,
   InferPolymorphismEnabledSchema,
   (props) =>
@@ -58,12 +56,11 @@ const UserBeganAddingNewUrlSchema = Joi.object({
   path: Joi.string().required(),
   knownPathId: Joi.string().optional(),
 });
+// @ts-ignore
 type UserBeganAddingNewUrlProperties = Joi.extractType<
   typeof UserBeganAddingNewUrlSchema
 >;
-export const UserBeganAddingNewUrl = DescribeEvent<
-  UserBeganAddingNewUrlProperties
->(
+export const UserBeganAddingNewUrl = DescribeEvent<UserBeganAddingNewUrlProperties>(
   Events.UserBeganAddingNewUrl,
   UserBeganAddingNewUrlSchema,
   (props) =>
@@ -76,12 +73,11 @@ const UserFinishedAddingNewUrlSchema = Joi.object({
   method: Joi.string().required(),
   pathExpression: Joi.string().optional(),
 });
+// @ts-ignore
 type UserFinishedAddingNewUrlProperties = Joi.extractType<
   typeof UserFinishedAddingNewUrlSchema
 >;
-export const UserFinishedAddingNewUrl = DescribeEvent<
-  UserFinishedAddingNewUrlProperties
->(
+export const UserFinishedAddingNewUrl = DescribeEvent<UserFinishedAddingNewUrlProperties>(
   Events.UserFinishedAddingNewUrl,
   UserFinishedAddingNewUrlSchema,
   (props) =>
@@ -91,6 +87,7 @@ export const UserFinishedAddingNewUrl = DescribeEvent<
 const SuggestionDisplayedSchema = Joi.object({
   suggestion: Joi.string().required(),
 });
+// @ts-ignore
 type SuggestionDisplayedProperties = Joi.extractType<
   typeof SuggestionDisplayedSchema
 >;
@@ -104,12 +101,11 @@ const SuggestionAcceptedSchema = Joi.object({
   captureId: Joi.string().required(),
   suggestion: Joi.string().required(),
 });
+// @ts-ignore
 type SuggestionAcceptedProperties = Joi.extractType<
   typeof SuggestionAcceptedSchema
 >;
-export const UserAcceptedSuggestion = DescribeEvent<
-  SuggestionAcceptedProperties
->(
+export const UserAcceptedSuggestion = DescribeEvent<SuggestionAcceptedProperties>(
   Events.UserAcceptedSuggestion,
   SuggestionAcceptedSchema,
   (props) => `Suggestion to '${props.suggestion}' was accepted`
@@ -121,12 +117,11 @@ const UserPreviewedSuggestionSchema = Joi.object({
   diffAssertion: Joi.string().required(),
   suggestion: Joi.string().required(),
 });
+// @ts-ignore
 type UserPreviewedSuggestionProperties = Joi.extractType<
   typeof UserPreviewedSuggestionSchema
 >;
-export const UserPreviewedSuggestion = DescribeEvent<
-  UserPreviewedSuggestionProperties
->(
+export const UserPreviewedSuggestion = DescribeEvent<UserPreviewedSuggestionProperties>(
   Events.UserPreviewedSuggestion,
   UserPreviewedSuggestionSchema,
   (props) =>
@@ -134,6 +129,7 @@ export const UserPreviewedSuggestion = DescribeEvent<
 );
 
 const UserResetDiffSchema = Joi.object({});
+// @ts-ignore
 type UserResetDiffProperties = Joi.extractType<typeof UserResetDiffSchema>;
 export const UserResetDiff = DescribeEvent<UserResetDiffProperties>(
   Events.UserResetDiff,
@@ -146,6 +142,7 @@ const ShowCommitCardSchema = Joi.object({
   captureId: Joi.string().required(),
   suggestions: Joi.number().required(),
 });
+// @ts-ignore
 type ShowCommitCardProperties = Joi.extractType<typeof ShowCommitCardSchema>;
 export const ShowCommitCard = DescribeEvent<ShowCommitCardProperties>(
   Events.ShowCommitCard,
@@ -158,12 +155,11 @@ const UserCommittedChangesSchema = Joi.object({
   captureId: Joi.string().required(),
   suggestions: Joi.number().required(),
 });
+// @ts-ignore
 type UserCommittedChangesProperties = Joi.extractType<
   typeof UserCommittedChangesSchema
 >;
-export const UserCommittedChanges = DescribeEvent<
-  UserCommittedChangesProperties
->(
+export const UserCommittedChanges = DescribeEvent<UserCommittedChangesProperties>(
   Events.UserCommittedChanges,
   UserCommittedChangesSchema,
   (props) => `The Diff Was Reset`
@@ -173,6 +169,7 @@ const AddUrlModalNamingSchema = Joi.object({
   method: Joi.string().required(),
   path: Joi.string().required(),
 });
+// @ts-ignore
 type AddUrlModalNamingProperties = Joi.extractType<
   typeof AddUrlModalNamingSchema
 >;
@@ -186,12 +183,11 @@ const AddUrlModalIdentifyingPathComponentsSchema = Joi.object({
   method: Joi.string().required(),
   path: Joi.string().required(),
 });
+// @ts-ignore
 type AddUrlModalIdentifyingPathComponentsProperties = Joi.extractType<
   typeof AddUrlModalIdentifyingPathComponentsSchema
 >;
-export const AddUrlModalIdentifyingPathComponents = DescribeEvent<
-  AddUrlModalIdentifyingPathComponentsProperties
->(
+export const AddUrlModalIdentifyingPathComponents = DescribeEvent<AddUrlModalIdentifyingPathComponentsProperties>(
   Events.AddUrlModalIdentifyingPathComponents,
   AddUrlModalIdentifyingPathComponentsSchema,
   (props) =>
@@ -199,12 +195,11 @@ export const AddUrlModalIdentifyingPathComponents = DescribeEvent<
 );
 
 const ShowInitialDocumentingViewSchema = Joi.object({});
+// @ts-ignore
 type ShowInitialDocumentingViewProperties = Joi.extractType<
   typeof ShowInitialDocumentingViewSchema
 >;
-export const ShowInitialDocumentingView = DescribeEvent<
-  ShowInitialDocumentingViewProperties
->(
+export const ShowInitialDocumentingView = DescribeEvent<ShowInitialDocumentingViewProperties>(
   Events.ShowInitialDocumentingView,
   ShowInitialDocumentingViewSchema,
   () => `Showing initial documenting view`
@@ -215,6 +210,7 @@ const UpdateContributionSchema = Joi.object({
   purpose: Joi.string().required(),
   value: Joi.string().required(),
 });
+// @ts-ignore
 type UpdateContributionProperties = Joi.extractType<
   typeof UpdateContributionSchema
 >;

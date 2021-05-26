@@ -23,7 +23,7 @@ There are other paths to test, and our goal is to have everything work as expect
 - - [ ] Pick a model project. This must have multiple endpoints to document, and must be runnable by both a Start command and with a Proxy integration. It should have tests available to cover the endpoints to make testing easy and repeatable.
 - [ ] Change directory to the root of the project.
 - [ ] Remove any existing Optic setup  `rm -rf optic.yml .optic`.
-- [ ] `git init` your project. If it is already a git repo, you can optionally make sure it is clean (other than removing the optic files, above), stage any changes necessary, and commit this state. This will make committing specification chaange tests easier.
+- [ ] `git init` your project. If it is already a git repo, you can optionally make sure it is clean (other than removing the optic files, above), stage any changes necessary, and commit this state. This will make committing specification change tests easier.
 
 ### Initialize a repository
 
@@ -32,75 +32,90 @@ There are other paths to test, and our goal is to have everything work as expect
 - [ ] Run `api init` for **Start Command**
 	- [ ] Enter `yes`
 	- [ ] Enter an API name
-	- [ ] Optic should launch a browser window to `http://localhost:34444/apis/1/setup`
-- [ ] On the `/apis/1/setup` page, set up a "Start Command" integration:
-	- [ ] For your project, select the appropriate framework. The optic.yml file should populate with a suggestion
+	- [ ] Optic advises that configuration is added to `optic.yml`
+- [ ] In `optic.yml`
 	- [ ] Add an incorrect command (`"false"` works on POSIX-y systems).
 	- [ ] Run `api check start`: Expect:
 		- [ ] a command line error, does not start a long-running process.
-		- [ ] a browser error, red highlighting on command and tool tips when hovering over **Resolve Issue** text.
 	- [ ] Resolve issue by entering a valid start command.
-	- [ ] Occupy the inboundUrl port (default 4000). `nc -kl 4000` should bind netcat.
+	- [ ] Occupy the inboundUrl port. For example, `nc -kl 4000` should bind `netcat` to port 4000.
 	- [ ] Run `api check start`: Expect:
 		- [ ] A command line error, Optic is not able to start its proxy
-		- [ ] UI errors update: command now passes/in green, inboundUrl is highlighted red and a tool tip shows up when hovering over the **Resolve Issue** text.
 	- [ ] Resolve issue by unbinding the inboundUrl port.
-	- [ ] Run `api check start`: Expect checks to pass, page to suggest running `api start`
-- [ ] On the `/apis/1/setup` page, set up a **Proxy** configuration --or-- skip to **Generate API baseline documentation**
-	- [ ] Select the **Proxy** integration. The optic.yml file should update the start configuration with targetUrl and inboundUrl parameters
+	- [ ] Run `api check start`: Expect checks to pass.
+- [ ] Set up a **Proxy** configuration --or-- skip to **Generate API baseline documentation**
 	- [ ] Run `api check start` without starting the service to test: Expect:
-		- [ ] a command line error after tiemout, is not resolvable.
-		- [ ] a browser error, red highlighting on targetUrl and tool tips when hovering over **Resolve Issue** text.
+		- [ ] a command line error after timeout, is not resolvable.
 	- [ ] Resolve issue by entering a valid start command.
-	- [ ] Occupy the inboundUrl port (default 4000). `nc -kl 4000` should bind netcat. *Note* if this was tested successfully earlier, this can be skipped.
+	- [ ] Occupy the inboundUrl port. For example, `nc -kl 4000` should bind `netcat` to port 4000.
+*Note* if this was tested successfully earlier, this can be skipped.
 	- [ ] Run `api check start`: Expect:
 		- [ ] A command line error, Optic is not able to start its proxy
-		- [ ] UI errors update: command now passes/in green, inboundUrl is highlighted red and a tool tip shows up when hovering over the **Resolve Issue** text.
 	- [ ] Resolve issue by unbinding the inboundUrl port.
 	- [ ] Set targetUrl to the URL of the service under test. (*e.g.* http://localhost:5000)
-	- [ ] Start the service to test and run `api check start`: Expect checks to pass, page to suggest running `api start`.
-
-### Generate API baseline documentation (starting at setup page).
-
+	- [ ] Start the service to test and run `api check start`: Expect checks to pass.
+### Generate API baseline documentation.
 
 - [ ] Run `api start` to start the project under test.
-- [ ] Send 5 requests to the application through Optic: Expect the counter to show 5/5 requests sent, and a link to "start documenting". Clicking this should take you to the review page.
+- [ ] Run traffic through the API project:
 	- [ ] One request must be to a default ignored endpoint (a root HEAD/OPTIONS request, or one to an asset (*e.g.* .html, .css) will work). The latest default rules are in `.optic/ignore`.
 	- [ ] One request must be to an endpoint that will be ignored, but is not ignored by the default rules. This lets us test the ignore feature.
-- [ ] The review page shows traffic for the endpoints under observation: Expect the request to the default ignored endpoint should not show up here.
+- [ ] `Ctrl+c` to end the Optic proxy. Optic should report unexpected behavior, prompt to run `api status`.
+- [ ] `api status` should report all traffic observed above as new, and suggest running `api status --review`.
+- [ ] `api status --review` should open the review page (/apis/1/diffs).
+- [ ] The review page shows a summary of diffs and undocumented URLs.
+	- [ ] Diffs handled is 0/0.
+	- [ ] Show remaining diffs is 0. Undocumented URLs depend on requests sent.
+	- [ ] Summary shows no diffs and a count of undocumented URLs.
 - [ ] Add endpoints to your specification.
-	- [ ] Check to document, then use the ignore button to ignore an endpoint: Expect the endpoint disappears from the review list, and will not be documented (*Note* there is a checklist item later).
-	- [ ] Check all remaining endpoints: Expect the "Undocuemtend Endpoints Detected" message on the left to show a circle filling up (including the ignored endpoint) and a green checkbox to appear once all endpoints are checked.
-	- [ ] Click **Document (x) Endpoints**, describe your changes, and click **Apply**: Expect the auto-learn process to proceed. Once complete, you are redirected to the documentation and the changes are noted in a modal dialog.
-
+	- [ ] Click through the **undocumented URLs** line to start documenting.
+	- [ ] Confirm request against ignore rule does not show up in the Unmatched URLs list.
+	- [ ] Identify the endpoint to be ignored: start typing its path in the **Add Ignore Rule** text box and accept the suggestion.
+		- [ ] An appropriate endpoint ignore rule is suggested (such as `GET /api/ignorethispath`)
+		- [ ] Click **Add rule**. The rule is added to `.optic/ignore` and removed form the unmatched URLs observed list.
+	- [ ] Add an endpoint to the specification by clicking the corresponding **+**
+		- [ ] Name the endpoint. This should show up in documentation later.
+		- [ ] Verify the preview shows correct information for the endpoint.
+		- [ ] Optionally, toggle responses. Confirm the previews are still correct.
+		- [ ] Click **Add endpoint** to stage this change and return to the undocumented URL list.
+	- [ ] Enable **bulk mode**. Parameterize any paths as necessary, and add them to the spec by clicking **+**.
+	- [ ] Name at least one endpoint that was bulk added. Verify this name shows up in the documentation later.
+	- [ ] Click **Save changes**, describe your changes, and click **Save**: 
+		- [ ] Expect you are redirected to the documentation.
 
 ### Review the API baseline documentation
 
 *Note* Always check that the documentation is updated, and that ignored endpoints don't show up in documentation. If no changes have been made to the documentation page itself, the annotation tests may be skipped.
 
-- [ ] Dismiss the modal dialog.
-- [ ] All documented endpoints should show up in the documentation.
-- [ ] The ignored endpoint should **not** show up in the documentation.
+- [ ] All documented endpoints MUST show up in the documentation.
+- [ ] The ignored endpoint MUST NOT show up in the documentation.
 - [ ] Review the full documentation for one endpoint. The Request and Response bodies should be correct.
-- [ ] Annotate an endpoint.
+- [ ] Annotate an endpoint by clicking **Edit Descriptions**:
 	- [ ] Add a brief description for **what does this endpoint do?**.
-	- [ ] Add a **detailed description** (2-3 sample sentences).
-	- [ ] Add a **request body description**.
-	- [ ] Add a **{{status code}} response description}}** for a response.
-	- [ ] Pick a field to annotate by clicking the **add a field description** icon when hovering over a field.
-	- [ ] Refresh the page: Expect all fields are properly documented.
-- [ ] Return to the documentation page by clicking the **Documentation** button in the left-hand navbar: Expect the documented API endpoint to show the **what does this endpoint do?**, **detailed description** text.
+	- [ ] Add a **detailed description** (2-3 sample sentences). This field accepts Markdown.
+	- [ ] If parameterized, add a **path parameters** description
+	- [ ] Add a **{{status code}} response description** for a response.
+	- [ ] Annotate a response field.
+	- [ ] Click **Save** which should show you the number of changes made. Add a description and click **Save** to commit.
+	- [ ] The page will refresh, and all fields are properly documented.
+- [ ] Return to the documentation page by clicking the **Documentation** button in the left-hand navbar: Expect the documented API endpoint to show the **what does this endpoint do?** text.
 
 ### Review and approve some behavior diffs
 
 - [ ] Generate traffic to provide a difference from existing documented behavior of the API.
 - [ ] Re-send traffic that matches the documented specification.
-- [ ] Navigate to the Review page (triangle "diff" icon): Expect changes to show up and no new undocumented routes.
-- [ ] Click through the options under the Accept button: Expect the behavior can be overridden.
+- [ ] Navigate to the **Diffs** page: Expect changes to show up and no new undocumented routes.
+- [ ] Click through a diff and verify:
+	- [ ] The observed diff makes sense.
+	- [ ] The example(s) are correct.
+	- [ ] Toggles are provided correctly and with sensible defaults.
+	- [ ] The preview is correctly updated.
+	- [ ] Click **Save changes**. The dashboard will move on to the next diff/return to the diff summary page as appropriate.
 - [ ] Ignore one change. A later step checks to make sure this isn't documented.
-- [ ] Accept all changes: Expect a commit modal to appear.
-- [ ] Commit the changes: Expect Optic to redirect you to the documentation page.
-- [ ] Review the documentation: Expect
+- [ ] Optional - click **Approve All** to handle remaining diffs.
+- [ ] Diffs should show as Done.
+- [ ] Accept all changes by clicking **Save changes** and adding a commit message, clicking **Save**.
+- [ ] You are redirected to the Documentation page. Review the documentation: Expect
 	- [ ] Behavior changes are properly documented.
 	- [ ] Detail added to endpoint under **Review the API baseline documentation** is still present.
 	- [ ] The ignored diff is not documented.
@@ -139,7 +154,7 @@ This requires an automated test suite to run, such as a Newman script.
 
 ### Check API Status
 
-At this point, all observed traffic should be documented. The status of the project should be clean, with no undocumented URLs or differences in behavior observed by Optic. If that is not the case, the observations will need to be resovled/ignored in the Optic review dashboard.
+At this point, all observed traffic should be documented. The status of the project should be clean, with no undocumented URLs or differences in behavior observed by Optic. If that is not the case, the observations will need to be resolved/ignored in the Optic review dashboard.
 
 - [ ] Run `api status --pre-commit && echo $?`: Expect
 	- No diffs observed for existing endpoints.
@@ -155,7 +170,7 @@ At this point, all observed traffic should be documented. The status of the proj
 
 ### Run a Script
 
-Scripts allow for users to export an OpenAPI specification to another system. For usability, we're testing to make sure that dependencies are respected and a specificaiton is generated that can be consumed by a command.
+Scripts allow for users to export an OpenAPI specification to another system. For usability, we're testing to make sure that dependencies are respected and a specification is generated that can be consumed by a command.
 
 - [ ] Set up a Script definition in `optic.yml`. Under dependencies, it should check for both a program that exists and one that doesn't. It should perform a trivial task under `install`, and `command` should either also be trivial or dump out the specification file that is generated for verification. Example:
 

@@ -286,6 +286,7 @@ impl BodyObjectKeyVisitor<ShapeDiffResult> for DiffObjectKeyVisitor {
                     ShapeTrailPathComponent::ObjectFieldTrail {
                       field_id: field_id.clone(),
                       field_shape_id: field_shape_id.clone(),
+                      parent_object_shape_id: choice.shape_id.clone(),
                     },
                   );
                   let json_trail = object_json_trail

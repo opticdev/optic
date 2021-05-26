@@ -1,5 +1,4 @@
 import { IOpticTaskRunnerConfig, Modes } from '@useoptic/cli-config';
-import { IHttpInteraction } from '@useoptic/domain-types';
 import { CommandSession } from './command-session';
 import { HttpToolkitCapturingProxy } from './httptoolkit-capturing-proxy';
 import {
@@ -11,24 +10,26 @@ import {
 import url from 'url';
 import { buildQueryStringParser } from './query/build-query-string-parser';
 import { awaitTaskUp } from './tasks/await-up';
+import { IHttpInteraction } from './optic-types';
 
 class CommandAndProxySessionManager {
   constructor(
     private config: IOpticTaskRunnerConfig,
-    private onStarted?: () => void
+    private onStarted?: (fingerPrint: string) => void,
+    private onSample?: (sample: IHttpInteraction) => void
   ) {}
 
-  private commandSession: CommandSession | undefined
+  private commandSession: CommandSession | undefined;
 
   public getExitCodeOfProcess(): number | undefined {
     if (this.commandSession) {
-      return this.commandSession?.exitCode || undefined
+      return this.commandSession?.exitCode || undefined;
     }
   }
 
   async run(persistenceManager: ICaptureSaver) {
     this.commandSession = new CommandSession();
-    const commandSession = this.commandSession!
+    const commandSession = this.commandSession!;
     const inboundProxy = new HttpToolkitCapturingProxy();
     const servicePort = this.config.serviceConfig.port;
     const serviceHost = this.config.serviceConfig.host;
@@ -46,6 +47,9 @@ class CommandAndProxySessionManager {
         `attempting to save sample ${sample.request.method} ${sample.request.path}`
       );
       persistenceManager.save(sample);
+      if (this.onSample) {
+        this.onSample(sample);
+      }
     });
 
     const target = url.format({
@@ -77,6 +81,7 @@ class CommandAndProxySessionManager {
     userDebugLogger(
       `started inbound proxy on port ${this.config.proxyConfig.port}`
     );
+
     userDebugLogger(
       `All traffic should go through the inbound proxy on port ${this.config.proxyConfig.port} and it will be forwarded to ${this.config.serviceConfig.host}:${this.config.serviceConfig.port}.`
     );
@@ -105,7 +110,7 @@ class CommandAndProxySessionManager {
       if (this.onStarted) {
         // run test task for manual mode
         await awaitTaskUp(Modes.Recommended, this.config);
-        await this.onStarted();
+        await this.onStarted(inboundProxy.fingerprint!);
         await commandSession.stop();
       }
 
@@ -119,7 +124,7 @@ class CommandAndProxySessionManager {
     } else {
       if (this.onStarted) {
         await awaitTaskUp(Modes.Manual, this.config);
-        await this.onStarted();
+        await this.onStarted(inboundProxy.fingerprint!);
       }
     }
 

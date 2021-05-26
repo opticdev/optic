@@ -17,6 +17,7 @@ expression: results
                 ObjectFieldTrail {
                     field_id: "field_3",
                     field_shape_id: "number_shape_1",
+                    parent_object_shape_id: "object_1",
                 },
             ],
         },

@@ -1,26 +1,16 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { IdGenerator, isEnvTrue } from '@useoptic/cli-shared';
+import Bottleneck from 'bottleneck';
+import { IdGenerator } from '@useoptic/cli-shared';
 import { CaptureId } from '@useoptic/saas-types';
 import {
   IInteractionPointerConverter,
   LocalCaptureInteractionContext,
 } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
-import { chain, final } from 'stream-chain';
-import { stringer as jsonStringer } from 'stream-json/Stringer';
-import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
-import {
-  ILearnedBodies,
-  IValueAffordanceSerializationWithCounter,
-  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
-} from '@useoptic/cli-shared/build/diffs/initial-types';
-import { replace as jsonReplace } from 'stream-json/filters/Replace';
-import { Duplex, Readable } from 'stream';
-import { OnDemandInitialBody } from '../tasks/on-demand-initial-body';
+import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { OnDemandInitialBodyRust } from '../tasks/on-demand-initial-body-rust';
-import { Diff } from '../diffs';
-import { OnDemandTrailValues } from '../tasks/on-demand-trail-values';
 import { OnDemandShapeDiffAffordancesRust } from '../tasks/on-demand-trail-values-rust';
+import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -28,11 +18,7 @@ export interface ICaptureRouterDependencies {
     captureId: CaptureId;
     captureBaseDirectory: string;
   }) => IInteractionPointerConverter<LocalCaptureInteractionContext>;
-}
-
-export interface ICaptureDiffMetadata {
-  id: string;
-  manager: Diff;
+  fileReadBottleneck: Bottleneck;
 }
 
 export function makeRouter(dependencies: ICaptureRouterDependencies) {
@@ -79,228 +65,81 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
   });
 
   ////////////////////////////////////////////////////////////////////////////////
-
   router.post(
-    '/diffs',
+    '/initial-bodies',
     bodyParser.json({ limit: '100mb' }),
     async (req, res) => {
       const { captureId } = req.params;
-      const { ignoreRequests, events, additionalCommands, filters } = req.body;
+      const { pathId, method, additionalCommands } = req.body;
 
-      let diffId;
-      try {
-        diffId = await req.optic.session.diffCapture(
-          captureId,
-          events,
-          filters
-        );
-      } catch (e) {
-        return res.status(500).json({ message: e.message });
-      }
+      const events = await req.optic.specLoader();
 
-      res.json({
-        diffId,
-        notificationsUrl: `${req.baseUrl}/diffs/${diffId}/notifications`,
+      const newEventsString = opticEngine.try_apply_commands(
+        JSON.stringify(additionalCommands),
+        JSON.stringify(events),
+        'simulated-batch',
+        'simulated changes',
+        'simulated-client',
+        'simulated-session'
+      );
+
+      const initialBodyGenerator = new OnDemandInitialBodyRust({
+        captureBaseDirectory: req.optic.paths.capturesPath,
+        events: [...events, ...JSON.parse(newEventsString)],
+        captureId,
+        pathId,
+        method,
+      });
+
+      console.time('scheduling ' + pathId + method);
+      // TODO: pass results stream straight through instead of buffering into memory
+      const result = dependencies.fileReadBottleneck.schedule(() => {
+        console.timeEnd('scheduling ' + pathId + method);
+        console.time('executing learning ' + pathId + method);
+        return initialBodyGenerator.run();
+      });
+      result.then((learnedBodies: ILearnedBodies) => {
+        console.timeEnd('executing learning ' + pathId + method);
+        res.json(learnedBodies);
+      });
+      result.catch((e) => {
+        res.status(500).json({
+          message: e.message,
+        });
       });
     }
   );
 
   ////////////////////////////////////////////////////////////////////////////////
-  if (isEnvTrue(process.env.OPTIC_RUST_INITIAL_BODY_LEARNER)) {
-    router.post(
-      '/initial-bodies',
-      bodyParser.json({ limit: '100mb' }),
-      async (req, res) => {
-        const { captureId } = req.params;
-        const { events, pathId, method } = req.body;
 
-        const initialBodyGenerator = new OnDemandInitialBodyRust({
-          captureBaseDirectory: req.optic.paths.capturesPath,
-          events: events,
-          captureId,
-          pathId,
-          method,
+  router.post(
+    '/trail-values',
+    bodyParser.json({ limit: '100mb' }),
+    async (req, res) => {
+      const { captureId } = req.params;
+      const { diffId } = req.body;
+      const events = await req.optic.specLoader();
+
+      const onDemandTrailValues = new OnDemandShapeDiffAffordancesRust({
+        captureBaseDirectory: req.optic.paths.capturesPath,
+        diffId,
+        events: events,
+        captureId,
+      });
+
+      const result = onDemandTrailValues.run();
+
+      result.then((shapeDiffAffordancesByFingerprint) => {
+        res.json(shapeDiffAffordancesByFingerprint);
+      });
+      result.catch((e) => {
+        res.status(500).json({
+          message: e.message,
         });
-
-        console.time('learn ' + pathId + method);
-        // TODO: pass results stream straight through instead of buffering into memory
-        const result = initialBodyGenerator.run();
-        result.then((learnedBodies: ILearnedBodies) => {
-          console.timeEnd('learn ' + pathId + method);
-          res.json(learnedBodies);
-        });
-        result.catch((e) => {
-          res.status(500).json({
-            message: e.message,
-          });
-        });
-      }
-    );
-  } else {
-    router.post(
-      '/initial-bodies',
-      bodyParser.json({ limit: '100mb' }),
-      async (req, res) => {
-        const { captureId } = req.params;
-        const { events, pathId, method } = req.body;
-
-        const initialBodyGenerator = new OnDemandInitialBody({
-          captureBaseDirectory: req.optic.paths.capturesPath,
-          events: events,
-          captureId,
-          pathId,
-          method,
-        });
-
-        console.time('learn ' + pathId + method);
-        const result = initialBodyGenerator.run();
-        result.then((learnedBodies: ILearnedBodies) => {
-          console.timeEnd('learn ' + pathId + method);
-          res.json(learnedBodies);
-        });
-        result.catch((e) => {
-          res.status(500).json({
-            message: e.message,
-          });
-        });
-      }
-    );
-  }
-
-  ////////////////////////////////////////////////////////////////////////////////
-
-  if (isEnvTrue(process.env.OPTIC_RUST_SHAPE_DIFF_AFFORDANCES_LEARNER)) {
-    router.post(
-      '/trail-values',
-      bodyParser.json({ limit: '100mb' }),
-      async (req, res) => {
-        const { captureId } = req.params;
-        const { events, pathId, method, diffId } = req.body;
-
-        const onDemandTrailValues = new OnDemandShapeDiffAffordancesRust({
-          captureBaseDirectory: req.optic.paths.capturesPath,
-          diffId,
-          events: events,
-          captureId,
-          pathId,
-          method,
-        });
-
-        const result = onDemandTrailValues.run();
-
-        result.then((shapeDiffAffordancesByFingerprint) => {
-          res.json(shapeDiffAffordancesByFingerprint);
-        });
-        result.catch((e) => {
-          res.status(500).json({
-            message: e.message,
-          });
-        });
-      }
-    );
-  } else {
-    router.post(
-      '/trail-values',
-      bodyParser.json({ limit: '100mb' }),
-      async (req, res) => {
-        const { captureId } = req.params;
-        const { events, pathId, method, serializedDiffs } = req.body;
-
-        const onDemandTrailValues = new OnDemandTrailValues({
-          captureBaseDirectory: req.optic.paths.capturesPath,
-          events: events,
-          captureId,
-          pathId,
-          serializedDiffs,
-          method,
-        });
-
-        const result = onDemandTrailValues.run();
-
-        result.then(
-          (
-            learnedTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash
-          ) => {
-            res.json(learnedTrails);
-          }
-        );
-        result.catch((e) => {
-          res.status(500).json({
-            message: e.message,
-          });
-        });
-      }
-    );
-  }
-
-  ////////////////////////////////////////////////////////////////////////////////
-
-  router.get('/diffs/:diffId/notifications', async (req, res) => {
-    const { diffId } = req.params;
-    const progress = req.optic.session.diffProgress(diffId);
-    if (!progress) {
-      return res.json(404);
+      });
     }
-    const notifications = chain([
-      progress,
-      ({ type, data }) => {
-        if (type === 'progress') type = 'message';
-        return [`data: ${JSON.stringify({ type, data })}\n\n`];
-      },
-    ]);
+  );
 
-    const headers = {
-      'Content-Type': 'text/event-stream',
-      Connection: 'keep-alive',
-      'Cache-Control': 'no-cache',
-    };
-    res.writeHead(200, headers);
-    notifications.pipe(res);
-  });
-
-  ////////////////////////////////////////////////////////////////////////////////
-
-  router.get('/diffs/:diffId/diffs', async (req, res) => {
-    const { diffId } = req.params;
-    const diffQueries = req.optic.session.diffQueries(diffId);
-
-    if (!diffQueries) {
-      return res.json(404);
-    }
-
-    let diffsStream = diffQueries.diffs();
-
-    toJSONArray(diffsStream).pipe(res).type('application/json');
-  });
-
-  router.get('/diffs/:diffId/undocumented-urls', async (req, res) => {
-    const { diffId } = req.params;
-    const diffQueries = req.optic.session.diffQueries(diffId);
-
-    if (!diffQueries) {
-      return res.json(404);
-    }
-
-    let undocumentedUrls = diffQueries.undocumentedUrls();
-    toJSONArray(undocumentedUrls, {
-      base: { urls: [] },
-      path: 'urls',
-    })
-      .pipe(res)
-      .type('application/json');
-  });
-
-  router.get('/diffs/:diffId/stats', async (req, res) => {
-    const { diffId } = req.params;
-    const diffQueries = req.optic.session.diffQueries(diffId);
-
-    if (!diffQueries) {
-      return res.json(404);
-    }
-
-    let stats = await diffQueries.stats();
-    res.json(stats);
-  });
   ////////////////////////////////////////////////////////////////////////////////
 
   router.get('/interactions/:interactionPointer', async (req, res) => {
@@ -322,55 +161,4 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
   ////////////////////////////////////////////////////////////////////////////////
 
   return router;
-}
-
-function toJSONArray(
-  itemsStream: Readable,
-  wrap?: {
-    base: { [key: string]: any };
-    path: string;
-  }
-): Duplex {
-  let tokenStream = chain([itemsStream, jsonDisassembler()]);
-  if (!wrap) return tokenStream.pipe(jsonStringer({ makeArray: true }));
-
-  let ARRAY_ITEM_MARKER = { name: 'array_insert_marker ' };
-  let objectTokenStream = chain([
-    Readable.from([wrap.base]),
-    jsonDisassembler(),
-    jsonReplace({
-      filter: wrap.path,
-      once: true,
-      allowEmptyReplacement: false,
-      replacement: () => [
-        { name: 'startArray' },
-        ARRAY_ITEM_MARKER,
-        { name: 'endArray' },
-      ],
-    }),
-  ]);
-
-  let outputGenerator = async function* (
-    wrapTokenStream: Readable,
-    arrayTokenStream: Readable,
-    marker: any
-  ) {
-    for await (let wrapToken of wrapTokenStream) {
-      if (wrapToken === marker) {
-        for await (let arrayToken of arrayTokenStream) {
-          yield arrayToken;
-        }
-      } else {
-        yield wrapToken;
-      }
-    }
-  };
-
-  return Readable.from(
-    outputGenerator(objectTokenStream, tokenStream, ARRAY_ITEM_MARKER)
-  ).pipe(jsonStringer());
-}
-
-function toJSONObject(): Duplex {
-  return chain([jsonDisassembler(), jsonStringer({ makeArray: true })]);
 }

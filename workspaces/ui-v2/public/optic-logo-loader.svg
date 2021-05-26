@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="90px" height="90px" viewBox="0 0 90 90" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group 4</title>
+    <defs>
+        <linearGradient x1="50%" y1="-14.33%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#F4F4F4" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard" transform="translate(-871.000000, -21.000000)">
+            <g id="Group-4" transform="translate(872.000000, 22.000000)">
+                <circle id="Oval" stroke="#9EA1EE" fill="url(#linearGradient-1)" fill-rule="nonzero" cx="44" cy="44" r="44"></circle>
+                <path d="M60.3625,23.1418 C55.83952,19.668 50.16308,17.6 43.99978,17.6 C37.83648,17.6 32.16004,19.668 27.63706,23.1418 M47.80402,70.4 C53.26354,69.6278 58.19198,67.2232 62.06926,63.6966 C67.40316,58.8456 70.7476,51.876 70.7476,44.1342 C70.7476,38.2118 68.7918,32.7448 65.4885,28.3316 M40.19576,70.4 C34.73624,69.6278 29.8078,67.2232 25.93052,63.6966 C20.59662,58.8456 17.2524,51.876 17.2524,44.1342 C17.2524,38.2118 19.2071,32.7448 22.51128,28.3316" id="Shape" stroke="#343BE5" stroke-width="3.308272" stroke-linecap="round"></path>
+                <path d="M32.7371,58.2714 C35.85032,60.6474 39.7573,62.062 43.99978,62.062 C48.24204,62.062 52.14924,60.6474 55.26224,58.2714 M41.38134,25.9358 C37.62352,26.4638 34.23112,28.1116 31.5623,30.5228 C27.89094,33.8426 25.58908,38.61 25.58908,43.9098 C25.58908,47.96 26.9346,51.7 29.20874,54.7206 M46.618,25.9358 C50.37604,26.4638 53.76844,28.1116 56.43704,30.5228 C60.1084,33.8426 62.41026,38.61 62.41026,43.9098 C62.41026,47.96 61.06474,51.7 58.7906,54.7206" id="Shape" stroke="#343BE5" stroke-width="3.308272" stroke-linecap="round"></path>
+            </g>
+        </g>
+    </g>
+</svg>

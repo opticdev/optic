@@ -14,32 +14,28 @@ const Config = require('./config');
 
 const fetchBinary = Bent(Config.prebuilt.baseUrl, 'GET', 200, 404);
 
-function spawn({ specPath }) {
-  const input = new PassThrough();
+function diffInteractions({ specPath, interactionsStream }) {
+  const input = Readable.from(HttpInteractions.intoJSONL(interactionsStream));
   const output = new PassThrough();
-  const error = new PassThrough();
 
   const binPath = getBinPath();
 
   const diffProcess = Execa(binPath, [specPath], {
     input,
-    stdio: 'pipe',
+    stdio: ['pipe', 'pipe', 'inherit'],
   });
 
-  if (!diffProcess.stdout || !diffProcess.stderr)
-    throw new Error('diff process should have stdout and stderr streams');
-
+  input.pipe(diffProcess.stdin);
   diffProcess.stdout.pipe(output);
-  diffProcess.stderr.pipe(error);
 
-  // get a clean result promise, so we stay in control of the exact API we're exposing
-  const result = diffProcess.then(
-    (childResult) => {},
+  diffProcess.then(
+    () => {},
     (childResult) => {
-      throw new DiffEngineError(childResult);
+      output.emit('error', new DiffEngineError(childResult));
     }
   );
-  return { input, output, error, result };
+
+  return output;
 }
 
 function readSpec({ specDirPath }) {
@@ -290,10 +286,12 @@ async function install(options) {
       cleanup();
       resolve();
     }
+
     function onError(err) {
       cleanup();
       reject(err);
     }
+
     function cleanup() {
       extract.removeListener('finish', onFinish);
       extract.removeListener('error', onError);
@@ -328,6 +326,7 @@ function uninstall(options) {
 
 class DiffEngineError extends Error {
   constructor(childResult) {
+    console.error(childResult);
     const {
       exitCode,
       failed,
@@ -340,7 +339,7 @@ class DiffEngineError extends Error {
 
     let failureMode;
     if (failed) {
-      failureMode = `process failed with exit code ${exitCode}.`;
+      failureMode = `process failed with exit code ${exitCode} or signal ${signal} ${signalDescription}.`;
     } else if (timedOut) {
       failureMode = `process became unresponsive and timed out`;
     } else if (killed) {
@@ -359,7 +358,7 @@ class DiffEngineError extends Error {
   }
 }
 
-exports.spawn = spawn;
+exports.diffInteractions = diffInteractions;
 exports.readSpec = readSpec;
 exports.commit = commit;
 exports.learnShapeDiffAffordances = learnShapeDiffAffordances;

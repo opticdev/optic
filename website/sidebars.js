@@ -8,7 +8,16 @@ module.exports = {
     ],
     'Get Started': [
       'get-started/quickstart',
-      'get-started/config',
+      {
+        type: 'category',
+        label: 'Capturing API Traffic',
+        items: [
+          'get-started/config',
+          'get-started/config/intercept',
+          'get-started/config/run-with-optic',
+          'get-started/config/proxy',
+        ],
+      },
       'get-started/testing',
     ],
     'Using Optic': [
@@ -18,6 +27,7 @@ module.exports = {
       'using/advanced-configuration',
       'using/troubleshooting',
       'using/cli-commands',
+      'using/spectacle',
     ],
     'Optic in Real Environments': [
       'deploy/live',
@@ -59,14 +69,15 @@ module.exports = {
       {
         type: 'category',
         label: 'IDEs',
-        items: [
-          'integrations/ides/intellij',
-        ],
+        items: ['integrations/ides/intellij'],
       },
       {
         type: 'category',
         label: 'CI/CD Pipelines',
-        items: [ 'integrations/cicd/circleci', 'integrations/cicd/github-actions' ],
+        items: [
+          'integrations/cicd/circleci',
+          'integrations/cicd/github-actions',
+        ],
       },
     ],
   },

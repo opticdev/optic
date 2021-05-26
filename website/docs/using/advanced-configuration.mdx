@@ -149,8 +149,8 @@ You can add ignore rules to your `.optic/ignore` file:
 ``` txt
 # Default Ignore Rules
 # Learn to configure your own at http://localhost:4000/docs/using/advanced-configuration#ignoring-api-paths
-OPTIONS *
-HEAD *
+OPTIONS (.*)
+HEAD (.*)
 GET (.*).htm
 GET (.*).html
 GET (.*).css

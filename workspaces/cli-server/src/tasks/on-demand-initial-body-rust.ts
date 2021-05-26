@@ -5,7 +5,6 @@ import {
 } from '@useoptic/cli-shared/build/diffs/initial-bodies-worker-rust';
 
 export { LearnedBodies };
-
 export class OnDemandInitialBodyRust {
   private worker: InitialBodiesWorkerRust;
 

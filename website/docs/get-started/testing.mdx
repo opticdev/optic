@@ -51,12 +51,12 @@ Coverage helps developers understand what they're testing, giving them more conf
 Code coverage reports on lines/files where code was executed, API coverage reports on the endpoints, body types, and status codes that were covered by traffic.
 :::
 
-Optic can report on API coverage for any of your test scripts, Postman collections, or even from using a webapp that talks to the API. Just run any task with the `--collect-coverage` flag, and like magic, when the task exits a coverage report is generated:
+Optic can report on API coverage for any of your test scripts, Postman collections, or even from using a webapp that talks to the API. After completing your session, the `api status` command will show you any diffs and undocumented URLs by default. Pass the `--print-coverage` flag to also print a coverage report:
 
 import Paper from '@material-ui/core/Paper'
 
 <Paper elevation={2}>
 
-![alt](../../static/img/run-tests-with-coverage.svg)
+![alt](../../static/img/print-coverage.svg)
 
 </Paper>

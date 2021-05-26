@@ -8,8 +8,6 @@ import {
 import colors from 'colors';
 import cli from 'cli-ux';
 import fs from 'fs-extra';
-//@ts-ignore
-import jsesc from 'jsesc';
 import path from 'path';
 // @ts-ignore
 import {
@@ -17,17 +15,15 @@ import {
   fromOptic,
   makeUiBaseUrl,
 } from '@useoptic/cli-shared';
-import { getUser, opticTaskToProps, trackUserEvent } from '../shared/analytics';
-import {
-  ApiCheckCompleted,
-  ApiInitializedInProject,
-} from '@useoptic/analytics/lib/events/onboarding';
+import { trackUserEvent } from '../shared/analytics';
+import { ApiInitializedInProject } from '@useoptic/analytics/lib/events/onboarding';
 import { buildTask } from '@useoptic/cli-config/build/helpers/initial-task';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
 import { Config } from '../config';
 import { Client } from '@useoptic/cli-client';
 import openBrowser from 'react-dev-utils/openBrowser';
+import { linkToSetup } from '../shared/ui-links';
 
 export default class Init extends Command {
   static description = 'add Optic to your API';
@@ -94,7 +90,6 @@ export default class Init extends Command {
 
     async function startInitFlow() {
       const paths = await getPathsRelativeToConfig();
-      const config = await readApiConfig(paths.configPath);
       const daemonState = await ensureDaemonStarted(
         lockFilePath,
         Config.apiBaseUrl
@@ -103,13 +98,9 @@ export default class Init extends Command {
       const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
       developerDebugLogger(`api base url: ${apiBaseUrl}`);
       const cliClient = new Client(apiBaseUrl);
-      cliClient.setIdentity(await getUser());
       const cliSession = await cliClient.findSession(paths.cwd, null, null);
       developerDebugLogger({ cliSession });
-      const uiBaseUrl = makeUiBaseUrl(daemonState);
-      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/setup`;
-      cli.log(`Finish setting up your API start task here: ${uiUrl}`);
-      openBrowser(uiUrl);
+      openBrowser(linkToSetup(cliSession.session.id));
     }
 
     await startInitFlow();

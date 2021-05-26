@@ -32,6 +32,7 @@ expression: results
                         ObjectFieldTrail {
                             field_id: "field_dcJtyX4lH0",
                             field_shape_id: "shape_lhl794TnL5",
+                            parent_object_shape_id: "shape_xjqKoYgnH6",
                         },
                         NullableTrail {
                             shape_id: "shape_lhl794TnL5",

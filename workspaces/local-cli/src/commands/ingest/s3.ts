@@ -7,8 +7,9 @@ import { Config } from '../../config';
 import { cleanupAndExit, makeUiBaseUrl } from '@useoptic/cli-shared';
 import { getPathsRelativeToConfig, readApiConfig } from '@useoptic/cli-config';
 import { Client } from '@useoptic/cli-client';
-import { getUser, trackUserEvent } from '../../shared/analytics';
+import { trackUserEvent } from '../../shared/analytics';
 import openBrowser from 'react-dev-utils/openBrowser';
+import { linkToCapture } from '../../shared/ui-links';
 export default class IngestS3 extends Command {
   static description = 'Ingest from S3';
   static hidden: boolean = true;
@@ -43,11 +44,9 @@ export default class IngestS3 extends Command {
       const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
       const paths = await getPathsRelativeToConfig();
       const cliClient = new Client(apiBaseUrl);
-      cliClient.setIdentity(await getUser());
       const cliSession = await cliClient.findSession(paths.cwd, null, null);
       const uiBaseUrl = makeUiBaseUrl(daemonState);
-      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
-      openBrowser(uiUrl);
+      openBrowser(linkToCapture(uiBaseUrl, cliSession.session.id, captureId));
 
       const apiCfg = await readApiConfig(paths.configPath);
 

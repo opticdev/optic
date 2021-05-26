@@ -1,6 +1,5 @@
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 import { DescribeEvent } from '../interfaces/RegisterEvent';
-import { Events } from '../interfaces/Events';
 
 const WildcardSchema = Joi.any();
 

@@ -92,7 +92,10 @@ impl HistoryProjection {
     let parent_node_index = *self
       .node_id_to_index
       .get(&parent_batch_id)
-      .expect("expected parent commit to have a corresponding node");
+      .expect(&*format!(
+        "expected parent commit to have a corresponding node {:?}",
+        parent_batch_id
+      ));
 
     self
       .graph

@@ -4,7 +4,7 @@ use crate::state::body::BodyDescriptor;
 use avro_rs;
 use base64;
 use cqrs_core::Event;
-use protobuf;
+use protobuf::Message;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::io;
@@ -12,7 +12,7 @@ use std::iter::FromIterator;
 
 // TODO: consider whether these aren't actually Events and the Traverser not an Aggregator
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct HttpInteraction {
   pub uuid: String,
   pub request: Request,
@@ -20,13 +20,13 @@ pub struct HttpInteraction {
   pub tags: Vec<HttpInteractionTag>,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct HttpInteractionTag {
   name: String,
   value: String,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct Request {
   pub host: String,
   pub method: String,
@@ -37,7 +37,7 @@ pub struct Request {
   pub body: Body,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Response {
   pub status_code: u16,
@@ -46,7 +46,7 @@ pub struct Response {
   pub body: Body,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Body {
   pub content_type: Option<String>,
@@ -54,7 +54,7 @@ pub struct Body {
   pub value: ArbitraryData,
 }
 
-#[derive(Deserialize, Serialize, Debug, Default)]
+#[derive(Clone, Deserialize, Serialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ArbitraryData {
   pub shape_hash_v1_base64: Option<String>,
@@ -74,7 +74,7 @@ impl From<&ArbitraryData> for Option<serde_json::value::Value> {
     } else if let Some(shape_hash) = &data.shape_hash_v1_base64 {
       let decoded_hash = base64::decode(shape_hash)
         .expect("shape_hash_v1_base64 of ArbitraryData should always be valid base64");
-      let shape_descriptor: shapehash::ShapeDescriptor = protobuf::parse_from_bytes(&decoded_hash)
+      let shape_descriptor: shapehash::ShapeDescriptor = Message::parse_from_bytes(&decoded_hash)
         .expect("shape hash should be validly encoded shapehash proto");
       Some(serde_json::Value::from(shape_descriptor))
     } else {
@@ -89,7 +89,7 @@ impl From<&ArbitraryData> for Option<BodyDescriptor> {
       let decoded_hash = base64::decode(shape_hash)
         .expect("shape_hash_v1_base64 of ArbitraryData should always be valid base64");
       let shape_hash_descriptor: shapehash::ShapeDescriptor =
-        protobuf::parse_from_bytes(&decoded_hash)
+        Message::parse_from_bytes(&decoded_hash)
           .expect("shape hash should be validly encoded shapehash proto");
       Some(BodyDescriptor::from(shape_hash_descriptor))
     } else if let Some(json_string) = &data.as_json_string {

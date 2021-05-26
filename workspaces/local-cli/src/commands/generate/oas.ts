@@ -1,16 +1,17 @@
 import Command, { flags } from '@oclif/command';
 import { getPathsRelativeToConfig } from '@useoptic/cli-config';
 import { IPathMapping } from '@useoptic/cli-config';
-import { OasProjectionHelper } from '@useoptic/domain';
 import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
 import { fromOptic } from '@useoptic/cli-shared';
-import * as DiffEngine from '@useoptic/diff-engine';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
+import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
+import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import { generateOpenApi, makeSpectacle } from '@useoptic/spectacle';
 
 export default class GenerateOas extends Command {
-  static description = 'export an OpenAPI 3.0.1 spec';
+  static description = 'export an OpenAPI 3.0.3 spec';
 
   static flags = {
     json: flags.boolean({}),
@@ -36,7 +37,7 @@ export async function generateOas(
     try {
       const events = await getSpecEventsFrom(specStorePath);
 
-      const parsedOas = OasProjectionHelper.fromEventString(JSON.stringify(events))
+      const parsedOas = await generateOpenApiFromEvents(events);
 
       const outputFiles = await emit(paths, parsedOas, flagYaml, flagJson);
       const filePaths = Object.values(outputFiles);
@@ -73,6 +74,7 @@ export async function emit(
   await fs.ensureDir(outputPath);
   if (shouldOutputYaml) {
     const outputFile = path.join(outputPath, 'openapi.yaml');
+    //@ts-ignore
     await fs.writeFile(outputFile, yaml.safeDump(parsedOas, { indent: 1 }));
     yamlPath = outputFile;
   }
@@ -94,4 +96,13 @@ async function getStream(stream: any) {
     chunks.push(chunk); // should already be a Buffer
   }
   return Buffer.concat(chunks).toString();
+}
+
+async function generateOpenApiFromEvents(events: any) {
+  const opticContext = await InMemoryOpticContextBuilder.fromEvents(
+    OpticEngine,
+    events
+  );
+  const spectacle = await makeSpectacle(opticContext);
+  return await generateOpenApi(spectacle);
 }

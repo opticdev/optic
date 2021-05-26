@@ -7,7 +7,6 @@ import {
   OpticConfigurationLocationFailure,
   readApiConfig,
 } from '@useoptic/cli-config';
-import { IHttpInteraction } from '@useoptic/domain-types';
 ////////////////////////////////////////////////////////////////////////////////
 import { Command } from '@oclif/command';
 
@@ -96,7 +95,7 @@ export async function loadPathsAndConfig(cli: Command) {
       cli.log(
         fromOptic(
           `No Optic project found in this directory. Learn to add Optic to your project here ${colors.underline(
-            'https://www.useoptic.com/docs/'
+            'https://www.useoptic.com/docs/get-started/config'
           )}`
         )
       );
@@ -121,6 +120,7 @@ export async function delay(milliseconds: number) {
 ////////////////////////////////////////////////////////////////////////////////
 
 import * as uuid from 'uuid';
+import { IHttpInteraction } from './optic-types';
 
 export interface IdGenerator<T> {
   nextId(): T;

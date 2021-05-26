@@ -1,0 +1,333 @@
+[
+  {
+    "BatchCommitStarted": {
+      "batchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+      "commitMessage": "Add test endpoint",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.971Z"
+      }
+    }
+  },
+  {
+    "PathComponentAdded": {
+      "pathId": "path_WjDYE8HKgh",
+      "parentPathId": "root",
+      "name": "test1",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.975Z"
+      }
+    }
+  },
+  {
+    "PathParameterAdded": {
+      "pathId": "path_0ThplvlujF",
+      "parentPathId": "path_WjDYE8HKgh",
+      "name": "id",
+      "eventContext": null
+    }
+  },
+  {
+    "ShapeAdded": {
+      "shapeId": "shape_TTR1oPcR4v",
+      "baseShapeId": "$string",
+      "parameters": { "DynamicParameterList": { "shapeParameterIds": [] } },
+      "name": "",
+      "eventContext": null
+    }
+  },
+  {
+    "PathParameterShapeSet": {
+      "pathId": "path_0ThplvlujF",
+      "shapeDescriptor": { "shapeId": "shape_TTR1oPcR4v", "isRemoved": false },
+      "eventContext": null
+    }
+  },
+  {
+    "RequestParameterAddedByPathAndMethod": {
+      "parameterId": "request-parameter_pQFrqP3u94",
+      "pathId": "path_0ThplvlujF",
+      "httpMethod": "GET",
+      "parameterLocation": "query",
+      "name": "queryString",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.977Z"
+      }
+    }
+  },
+  {
+    "ShapeAdded": {
+      "shapeId": "shape_XEqbdj8fkF",
+      "baseShapeId": "$object",
+      "parameters": { "DynamicParameterList": { "shapeParameterIds": [] } },
+      "name": "",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.977Z"
+      }
+    }
+  },
+  {
+    "RequestParameterShapeSet": {
+      "parameterId": "request-parameter_pQFrqP3u94",
+      "parameterDescriptor": {
+        "shapeId": "shape_XEqbdj8fkF",
+        "isRemoved": false
+      },
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.977Z"
+      }
+    }
+  },
+  {
+    "RequestAdded": {
+      "requestId": "request_X76e0Xzf2a",
+      "pathId": "path_0ThplvlujF",
+      "httpMethod": "GET",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.977Z"
+      }
+    }
+  },
+  {
+    "ResponseAddedByPathAndMethod": {
+      "responseId": "response_uBBNfFlLCr",
+      "pathId": "path_0ThplvlujF",
+      "httpMethod": "GET",
+      "httpStatusCode": 200,
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.977Z"
+      }
+    }
+  },
+  {
+    "ShapeAdded": {
+      "shapeId": "shape_ULaGbbHVCM",
+      "baseShapeId": "$object",
+      "parameters": { "DynamicParameterList": { "shapeParameterIds": [] } },
+      "name": "",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.978Z"
+      }
+    }
+  },
+  {
+    "ShapeAdded": {
+      "shapeId": "shape_VHoRbyF34f",
+      "baseShapeId": "$string",
+      "parameters": { "DynamicParameterList": { "shapeParameterIds": [] } },
+      "name": "",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.978Z"
+      }
+    }
+  },
+  {
+    "FieldAdded": {
+      "fieldId": "field_SLlhv8cYXo",
+      "shapeId": "shape_ULaGbbHVCM",
+      "name": "key1",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_SLlhv8cYXo",
+          "shapeId": "shape_VHoRbyF34f"
+        }
+      },
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.979Z"
+      }
+    }
+  },
+  {
+    "ShapeAdded": {
+      "shapeId": "shape_Alb05EpRp5",
+      "baseShapeId": "$string",
+      "parameters": { "DynamicParameterList": { "shapeParameterIds": [] } },
+      "name": "",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.980Z"
+      }
+    }
+  },
+  {
+    "FieldAdded": {
+      "fieldId": "field_eQdEjWtzvZ",
+      "shapeId": "shape_ULaGbbHVCM",
+      "name": "key2",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_eQdEjWtzvZ",
+          "shapeId": "shape_Alb05EpRp5"
+        }
+      },
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.980Z"
+      }
+    }
+  },
+  {
+    "ResponseBodySet": {
+      "responseId": "response_uBBNfFlLCr",
+      "bodyDescriptor": {
+        "httpContentType": "application/json",
+        "shapeId": "shape_ULaGbbHVCM",
+        "isRemoved": false
+      },
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.980Z"
+      }
+    }
+  },
+  {
+    "BatchCommitEnded": {
+      "batchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a7e0cc54-9440-4eac-830f-22b090ef33c3",
+        "createdAt": "2021-05-11T19:26:31.981Z"
+      }
+    }
+  },
+  {
+    "ContributionAdded": {
+      "id": "path_0ThplvlujF.GET",
+      "key": "purpose",
+      "value": "Test 1 Endpoint",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "a0c89682-1200-4db8-827f-9d2bfe5bdff5",
+        "createdAt": "2021-05-11T19:26:40.612Z"
+      }
+    }
+  },
+  {
+    "ContributionAdded": {
+      "id": "path_0ThplvlujF.GET",
+      "key": "description",
+      "value": "This is the description of the test1 endpoint.",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "290e17ec-979b-44ba-81c3-ebec0de1c000",
+        "createdAt": "2021-05-11T19:26:49.590Z"
+      }
+    }
+  },
+  {
+    "ContributionAdded": {
+      "id": "field_SLlhv8cYXo",
+      "key": "description",
+      "value": "key1 description",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "7d6008ec-c505-44ad-a757-85b21af419f0",
+        "createdAt": "2021-05-11T19:27:02.120Z"
+      }
+    }
+  },
+  {
+    "ContributionAdded": {
+      "id": "field_SLlhv8cYXo",
+      "key": "description",
+      "value": "key1 description",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "21546f3f-adf0-48af-94cd-d899abbb7e75",
+        "createdAt": "2021-05-11T19:27:02.139Z"
+      }
+    }
+  },
+  {
+    "ContributionAdded": {
+      "id": "field_eQdEjWtzvZ",
+      "key": "description",
+      "value": "key2 description",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "22701c09-0417-4ffb-b175-a19b3f6265f7",
+        "createdAt": "2021-05-11T19:27:08.162Z"
+      }
+    }
+  },
+  {
+    "ContributionAdded": {
+      "id": "field_eQdEjWtzvZ",
+      "key": "description",
+      "value": "key2 description",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "3a07bc11-e007-4d1a-b351-615445c8aafd",
+        "createdAt": "2021-05-11T19:27:08.172Z"
+      }
+    }
+  },
+  {
+    "ContributionAdded": {
+      "id": "path_0ThplvlujF.GET_200_response",
+      "key": "description",
+      "value": "This is the 200 response description",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "6d84ee64-b2aa-4de4-8e7b-b545275b4621",
+        "createdAt": "2021-05-11T19:27:18.781Z"
+      }
+    }
+  },
+  {
+    "ContributionAdded": {
+      "id": "path_0ThplvlujF",
+      "key": "description",
+      "value": "The id path param description",
+      "eventContext": {
+        "clientId": "anonymous",
+        "clientSessionId": "dbcf8759-f248-4f6b-85d7-85131d9cf69c",
+        "clientCommandBatchId": "24848b26-923d-4e84-90f7-aea89fde35b6",
+        "createdAt": "2021-05-11T19:27:29.310Z"
+      }
+    }
+  }
+]

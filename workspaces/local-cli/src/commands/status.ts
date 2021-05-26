@@ -6,7 +6,6 @@ import { lockFilePath } from '../shared/paths';
 import { Config } from '../config';
 //@ts-ignore
 import groupBy from 'lodash.groupby';
-import EventSource from 'eventsource';
 //@ts-ignore
 import padLeft from 'pad-left';
 import {
@@ -16,8 +15,7 @@ import {
   makeUiBaseUrl,
   userDebugLogger,
 } from '@useoptic/cli-shared';
-import { Client, SpecServiceClient } from '@useoptic/cli-client';
-import { EventEmitter } from 'events';
+import { Client } from '@useoptic/cli-client';
 import {
   getPathsRelativeToConfig,
   IApiCliConfig,
@@ -25,33 +23,35 @@ import {
   readApiConfig,
 } from '@useoptic/cli-config';
 import { getCaptureId, isInRepo } from '../shared/git/git-context-capture';
-import fs from 'fs-extra';
-import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
-import { JsonHttpClient } from '@useoptic/client-utilities';
 import colors from 'colors';
-import { getUser, opticTaskToProps, trackUserEvent } from '../shared/analytics';
-import { cli } from 'cli-ux';
-import { makeDiffRfcBaseStateFromEvents } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
+import { trackUserEvent } from '../shared/analytics';
 import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
-import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
 import { IInteractionTrail } from '@useoptic/cli-shared/build/diffs/interaction-trail';
 import { IRequestSpecTrail } from '@useoptic/cli-shared/build/diffs/request-spec-trail';
-import sortBy from 'lodash.sortby';
 import {
-  createEndpointDescriptor,
-  getCachedQueryResults,
-  KnownEndpoint,
-} from '../shared/coverage';
+  IRequestBodyForTrailParser,
+  IResponseBodyForTrailParser,
+} from '@useoptic/cli-shared/src/diffs/trail-parsers';
+import sortBy from 'lodash.sortby';
 import openBrowser from 'react-dev-utils/openBrowser';
+import { linkToCapture } from '../shared/ui-links';
+import {
+  LocalCliCapturesService,
+  LocalCliSpectacle,
+} from '@useoptic/spectacle-shared';
+import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
+import { IUnrecognizedUrl } from '@useoptic/spectacle';
 import { StatusRun } from '@useoptic/analytics/lib/events/status';
-import * as uuid from 'uuid';
-import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
+import { cli } from 'cli-ux';
+import { computeCoverage, printCoverage } from '../shared/coverage';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
 
   static flags = {
     'pre-commit': flags.boolean(),
+    'print-coverage': flags.boolean(),
     review: flags.boolean(),
   };
 
@@ -60,9 +60,9 @@ export default class Status extends Command {
 
     const timeStated = Date.now();
 
-    let diffFound = false;
     const exitOnDiff = Boolean(flags['pre-commit']);
     const openReviewPage = Boolean(flags['review']);
+    const shoultPrintCoverage = Boolean(flags['print-coverage']);
 
     let { paths, config } = (await this.requiresSpec())!;
 
@@ -75,67 +75,159 @@ export default class Status extends Command {
       return this.openDiffPage(paths.cwd, captureId);
     }
 
-    const diffsPromise = this.getDiffsAndEvents(paths, captureId);
-    diffsPromise.catch((e) => {
-      console.error(e);
-      this.printStatus([], [], []);
-    });
-    diffsPromise.then(async ({ diffs, undocumentedUrls, events }) => {
-      const rfcBaseState = makeDiffRfcBaseStateFromEvents(events);
-      const diffsRaw: IDiff[] = diffs.map((i: any) => i[0]);
+    const daemonState = await ensureDaemonStarted(
+      lockFilePath,
+      Config.apiBaseUrl
+    );
 
-      const locations = diffsRaw
-        .map((i) => {
-          return locationForTrails(
-            extractRequestsTrail(i),
-            extractInteractionTrail(i),
-            rfcBaseState
-          )!;
-        })
-        .filter(Boolean);
+    const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
+    developerDebugLogger(`api base url: ${apiBaseUrl}`);
+    const cliClient = new Client(apiBaseUrl);
 
-      const diffsGroupedByPathAndMethod = groupBy(
-        locations,
-        (i: any) => `${i.method}.${i.pathId}`
-      );
+    const cliSession = await cliClient.findSession(paths.cwd, null, null);
 
-      const endpointsWithDiffs = getSpecEndpoints(
-        rfcBaseState.queries
-      ).filter((i) =>
-        locations.find(
-          (withDiff) =>
-            withDiff.pathId === i.pathId && withDiff.method === i.method
-        )
-      );
-
-      this.printStatus(
-        endpointsWithDiffs,
-        diffsGroupedByPathAndMethod,
-        undocumentedUrls
-      );
-
-      diffFound = diffs.length > 0 || undocumentedUrls.length > 0;
-
-      await trackUserEvent(
-        config.name,
-        StatusRun.withProps({
-          captureId,
-          diffCount: diffs.length,
-          undocumentedCount: undocumentedUrls.length,
-          timeMs: Date.now() - timeStated,
-        })
-      );
+    const sessionApiBaseUrl = `http://localhost:${daemonState.port}/api/specs/${cliSession.session.id}`;
+    const spectacle = new LocalCliSpectacle(sessionApiBaseUrl, opticEngine);
+    const capturesService = new LocalCliCapturesService({
+      baseUrl: sessionApiBaseUrl,
+      spectacle,
     });
 
-    diffsPromise.finally(() => {
-      if (diffFound && exitOnDiff) {
-        console.error(
-          colors.red('Optic detected an API diff. Run "api status --review"')
-        );
-        process.exit(1);
+    cli.action.start('Computing API diffs');
+
+    let diffService;
+
+    try {
+      const startDiffResult = await capturesService.startDiff(
+        'status1', // some random ID
+        captureId
+      );
+
+      diffService = await startDiffResult.onComplete;
+    } catch (error) {
+      console.error(
+        colors.red('Encountered errors computing diffs:') + `\n${error.message}`
+      );
+      process.exit(1);
+    }
+
+    cli.action.stop('Done!');
+
+    const { diffs } = await diffService.listDiffs();
+    const { urls } = await diffService.listUnrecognizedUrls();
+
+    const requests: any = await spectacle.query({
+      query: `{
+        requests {
+          id
+          pathId
+          method
+          absolutePathPatternWithParameterNames
+          bodies {
+            contentType
+            rootShapeId
+          }
+          responses {
+            id
+            statusCode
+            bodies {
+              contentType
+              rootShapeId
+            }
+          }
+        }
+      }`,
+      variables: {},
+    });
+
+    const endpoints: Endpoint[] = [];
+    const requestBodies: IRequestBodyForTrailParser[] = [];
+    const responseBodies: IResponseBodyForTrailParser[] = [];
+
+    for (const request of requests.data.requests) {
+      endpoints.push({
+        pathId: request.pathId,
+        method: request.method,
+        fullPath: request.absolutePathPatternWithParameterNames,
+      });
+
+      for (const requestBody of request.bodies) {
+        requestBodies.push({
+          requestId: request.id,
+          pathId: request.pathId,
+          method: request.method,
+          contentType: requestBody.contentType,
+          rootShapeId: requestBody.rootShapeId,
+        });
       }
-      cleanupAndExit();
-    });
+
+      for (const response of request.responses) {
+        for (const responseBody of response.bodies) {
+          responseBodies.push({
+            responseId: response.id,
+            pathId: request.pathId,
+            method: request.method,
+            contentType: responseBody.contentType,
+            rootShapeId: responseBody.rootShapeId,
+            statusCode: response.statusCode,
+          });
+        }
+      }
+    }
+
+    const locations = diffs
+      .map((i) => {
+        const diff = i[0];
+        const location = locationForTrails(
+          extractRequestsTrail(diff),
+          extractInteractionTrail(diff),
+          requestBodies,
+          responseBodies
+        );
+        if (location) {
+          return { pathId: location.pathId, method: location.method, diff };
+        }
+      })
+      .filter((i) => Boolean(i));
+
+    const diffsGroupedByPathIdAndMethod = groupBy(
+      locations,
+      (i: any) => `${i.method}.${i.pathId}`
+    );
+
+    const endpointsWithDiff = endpoints.filter((i) =>
+      locations.find(
+        (withDiff) =>
+          withDiff?.pathId === i.pathId && withDiff.method === i.method
+      )
+    );
+
+    this.printStatus(endpointsWithDiff, diffsGroupedByPathIdAndMethod, urls);
+
+    if (shoultPrintCoverage) {
+      const coverage = await computeCoverage(paths, captureId);
+      await printCoverage(paths, coverage.with_diffs, coverage.without_diffs);
+    }
+
+    await trackUserEvent(
+      config.name,
+      StatusRun.withProps({
+        captureId,
+        diffCount: diffs.length,
+        undocumentedCount: urls.length,
+        timeMs: Date.now() - timeStated,
+      })
+    );
+
+    const diffFound = diffs.length > 0 || urls.length > 0;
+
+    if (diffFound && exitOnDiff) {
+      console.error(
+        colors.red('Optic detected an API diff. Run "api status --review"')
+      );
+      process.exit(1);
+    }
+    cleanupAndExit();
   }
 
   async exitWithError(error: string) {
@@ -177,103 +269,12 @@ export default class Status extends Command {
     }
   }
 
-  async getDiffsAndEvents(paths: IPathMapping, captureId: string) {
-    const daemonState = await ensureDaemonStarted(
-      lockFilePath,
-      Config.apiBaseUrl
-    );
-
-    const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
-    developerDebugLogger(`api base url: ${apiBaseUrl}`);
-    const cliClient = new Client(apiBaseUrl);
-    cliClient.setIdentity(await getUser());
-    const cliSession = await cliClient.findSession(paths.cwd, null, null);
-    developerDebugLogger({ cliSession });
-
-    const eventEmitter = new EventEmitter();
-    const specService = new SpecServiceClient(
-      cliSession.session.id,
-      eventEmitter,
-      apiBaseUrl
-    );
-
-    const ignoreHelper = new IgnoreFileHelper(
-      paths.opticIgnorePath,
-      paths.configPath
-    );
-    const ignoreRules = (await ignoreHelper.getCurrentIgnoreRules()).allRules;
-    const events = await getSpecEventsFrom(paths.specStorePath)
-
-    const startDiffUrl = `${apiBaseUrl}/specs/${cliSession.session.id}/captures/${captureId}/diffs`;
-
-    const { diffId, notificationsUrl } = await JsonHttpClient.postJson(
-      startDiffUrl,
-      {
-        ignoreRules,
-        additionalCommands: [],
-        events,
-        filters: [],
-      }
-    );
-
-    const getDiffsUrl = `${apiBaseUrl}/specs/${cliSession.session.id}/captures/${captureId}/diffs/${diffId}/diffs`;
-    const getUndocumentedUrlsUrl = `${apiBaseUrl}/specs/${cliSession.session.id}/captures/${captureId}/diffs/${diffId}/undocumented-urls`;
-
-    const notificationChannel = new EventSource(
-      `http://localhost:${daemonState.port}` + notificationsUrl
-    );
-
-    // let customBar: any | undefined;
-    let totalInteractions = 0;
-    cli.action.start('computing diffs for observations');
-    specService.getCaptureStatus(captureId).then(({ interactionsCount }) => {
-      totalInteractions = interactionsCount;
-    });
-
-    await new Promise((resolve, reject) => {
-      notificationChannel.onmessage = (event) => {
-        const { type, data } = JSON.parse(event.data);
-        if (type === 'message') {
-          cli.action.start(
-            `computing diffs for observations ${
-              parseInt(data.diffedInteractionsCounter) +
-              parseInt(data.skippedInteractionsCounter)
-            }${totalInteractions > 0 ? `/${totalInteractions.toString()}` : ''}`
-          );
-          if (!data.hasMoreInteractions) {
-            cli.action.stop('done');
-            resolve();
-          }
-        } else if (type === 'error') {
-          cli.action.stop('done');
-          reject();
-        }
-      };
-      notificationChannel.onerror = function (err) {
-        reject();
-      };
-    });
-
-    notificationChannel.close();
-
-    const diffs = await JsonHttpClient.getJson(getDiffsUrl);
-    const undocumentedUrls = await JsonHttpClient.getJson(
-      getUndocumentedUrlsUrl
-    );
-
-    return {
-      diffs,
-      events,
-      undocumentedUrls: undocumentedUrls.urls,
-    };
-  }
-
   private printStatus(
-    endpointsWithDiffs: KnownEndpoint[],
-    diffsGroupedByPathAndMethod: any,
-    undocumentedUrls: any[]
+    endpointsWithDiffs: Endpoint[],
+    diffsGroupedByPathAndMethod: { [key: string]: any[] },
+    undocumentedUrls: IUnrecognizedUrl[]
   ) {
-    const diffCount = (i: KnownEndpoint) =>
+    const diffCount = (i: Endpoint) =>
       (diffsGroupedByPathAndMethod[`${i.method}.${i.pathId}`] || []).length;
 
     const sorted = sortBy(endpointsWithDiffs, (i) => -diffCount(i));
@@ -329,12 +330,10 @@ export default class Status extends Command {
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
-    cliClient.setIdentity(await getUser());
     const cliSession = await cliClient.findSession(basePath, null, null);
     developerDebugLogger({ cliSession });
     const uiBaseUrl = makeUiBaseUrl(daemonState);
-    const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
-    openBrowser(uiUrl);
+    openBrowser(linkToCapture(uiBaseUrl, cliSession.session.id, captureId));
     cleanupAndExit();
   }
 }
@@ -354,14 +353,8 @@ function extractRequestsTrail(i: IDiff): IRequestSpecTrail {
   return i[kind]!.requestsTrail;
 }
 
-function getSpecEndpoints(queries: any): KnownEndpoint[] {
-  const endpoints = queries.endpoints();
-  const cachedQueryResults = getCachedQueryResults(queries);
-  const allEndpoints = endpoints.map((i: any) => ({
-    ...i,
-    fullPath: queries.absolutePath(i.pathId),
-    descriptor: createEndpointDescriptor(i, cachedQueryResults),
-  }));
-
-  return sortBy(allEndpoints, (i) => i.fullPath);
-}
+type Endpoint = {
+  pathId: string;
+  method: string;
+  fullPath: string;
+};

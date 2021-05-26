@@ -1,1 +1,143 @@
-RfcState(RequestsState(Map(root -> PathComponent(root,BasicPathComponentDescriptor(null,),false)),Map(),Map(),Map(),Map()),ShapesState(Map($list -> ShapeEntity($list,ShapeValue(false,$list,StaticParameterList(List($listItem)),List(),List),false), $unknown -> ShapeEntity($unknown,ShapeValue(false,$unknown,NoParameterList(),List(),unknown),false), $any -> ShapeEntity($any,ShapeValue(false,$any,NoParameterList(),List(),Any),false), $string -> ShapeEntity($string,ShapeValue(false,$string,NoParameterList(),List(),string),false), $number -> ShapeEntity($number,ShapeValue(false,$number,NoParameterList(),List(),number),false), $optional -> ShapeEntity($optional,ShapeValue(false,$optional,StaticParameterList(List($optionalInner)),List(),Optional),false), $boolean -> ShapeEntity($boolean,ShapeValue(false,$boolean,NoParameterList(),List(),bool),false), $nullable -> ShapeEntity($nullable,ShapeValue(false,$nullable,StaticParameterList(List($nullableInner)),List(),Nullable),false), $oneOf -> ShapeEntity($oneOf,ShapeValue(false,$oneOf,DynamicParameterList(List()),List(),OneOf),false), $identifier -> ShapeEntity($identifier,ShapeValue(false,$identifier,StaticParameterList(List($identifierInner)),List(),Identifier),false), $map -> ShapeEntity($map,ShapeValue(false,$map,StaticParameterList(List($mapKey, $mapValue)),List(),Map),false), $reference -> ShapeEntity($reference,ShapeValue(false,$reference,StaticParameterList(List($referenceInner)),List(),Reference),false), $object -> ShapeEntity($object,ShapeValue(false,$object,DynamicParameterList(List()),List(),Object),false)),Map(),Map($identifierInner -> ShapeParameterEntity($identifierInner,ShapeParameterValue($identifier,ProviderInShape($identifier,NoProvider(),$identifierInner),T),false), $optionalInner -> ShapeParameterEntity($optionalInner,ShapeParameterValue($optional,ProviderInShape($optional,NoProvider(),$optionalInner),T),false), $nullableInner -> ShapeParameterEntity($nullableInner,ShapeParameterValue($nullable,ProviderInShape($nullable,NoProvider(),$nullableInner),T),false), $referenceInner -> ShapeParameterEntity($referenceInner,ShapeParameterValue($reference,ProviderInShape($reference,NoProvider(),$referenceInner),T),false), $mapValue -> ShapeParameterEntity($mapValue,ShapeParameterValue($map,ProviderInShape($map,NoProvider(),$mapValue),V),false), $mapKey -> ShapeParameterEntity($mapKey,ShapeParameterValue($map,ProviderInShape($map,NoProvider(),$mapKey),K),false), $listItem -> ShapeParameterEntity($listItem,ShapeParameterValue($list,ProviderInShape($list,NoProvider(),$listItem),T),false)),ListMap(),Map()),ScmState(Map()))
+{
+  "nodes": [
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$string",
+        "descriptor": {
+          "kind": "StringKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$number",
+        "descriptor": {
+          "kind": "NumberKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$boolean",
+        "descriptor": {
+          "kind": "BooleanKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$list",
+        "descriptor": {
+          "kind": "ListKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$listItem",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$object",
+        "descriptor": {
+          "kind": "ObjectKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$nullable",
+        "descriptor": {
+          "kind": "NullableKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$nullableInner",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$unknown",
+        "descriptor": {
+          "kind": "UnknownKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$optional",
+        "descriptor": {
+          "kind": "OptionalKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$optionalInner",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$oneOf",
+        "descriptor": {
+          "kind": "OneOfKind"
+        }
+      }
+    }
+  ],
+  "edges": [
+    [
+      4,
+      3,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      7,
+      6,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      10,
+      9,
+      {
+        "type": "IsParameterOf"
+      }
+    ]
+  ],
+  "nodeIndexToId": {
+    "0": "$string",
+    "1": "$number",
+    "2": "$boolean",
+    "3": "$list",
+    "4": "$listItem",
+    "5": "$object",
+    "6": "$nullable",
+    "7": "$nullableInner",
+    "8": "$unknown",
+    "9": "$optional",
+    "10": "$optionalInner",
+    "11": "$oneOf"
+  }
+}

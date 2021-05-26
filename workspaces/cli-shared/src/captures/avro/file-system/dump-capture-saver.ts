@@ -1,19 +1,21 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { IHttpInteraction } from '@useoptic/domain-types';
 //@ts-ignore
 import oboe from 'oboe';
 import { CaptureSaver } from './capture-saver';
+import { IHttpInteraction } from '../../../optic-types';
 
 async function main(
   inputFilePath: string,
   outputBaseDirectory: string,
   repeatSampleTimes: string = '1',
-  captureId: string = 'ccc',
+  captureId: string = 'ccc'
 ) {
   console.log({ inputFilePath });
   const input = fs.createReadStream(inputFilePath);
-  const repeatSampleCount = isNaN(parseInt(repeatSampleTimes))? 1 : parseInt(repeatSampleTimes);
+  const repeatSampleCount = isNaN(parseInt(repeatSampleTimes))
+    ? 1
+    : parseInt(repeatSampleTimes);
   const events: any[] = [];
   const captureBaseDirectory = path.join(
     outputBaseDirectory,
@@ -95,5 +97,12 @@ async function main(
   );
 }
 
-const [, , inputFilePath, outputBaseDirectory, repeatSampleTimes, captureId] = process.argv;
+const [
+  ,
+  ,
+  inputFilePath,
+  outputBaseDirectory,
+  repeatSampleTimes,
+  captureId,
+] = process.argv;
 main(inputFilePath, outputBaseDirectory, repeatSampleTimes, captureId);

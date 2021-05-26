@@ -8,8 +8,17 @@ export function buildTask(
 ): string {
   const config = `
 name: ${escapeIt(apiName)}
+# Start your api with Optic by running 'api run <taskname>'
 tasks:
-${buildInitialTask(flags, taskName)}`.trimLeft();
+${buildInitialTask(flags, taskName)}
+
+# Capture traffic from a deployed api by running 'api intercept <environment-name>'
+# pass '--chrome' to capture from your browser's network tab
+environments:
+  production:
+    host: https://api.github.com # the hostname of the API we should record traffic from
+    webUI: https://api.github.com/repos/opticdev/optic # the url that should open when a browser flag is passed
+`.trimLeft();
 
   return config;
 }
