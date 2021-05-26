@@ -74,6 +74,8 @@ export interface IOpticSpecReadWriteRepository extends IOpticSpecRepository {
     commandContext: IOpticCommandContext
   ): Promise<void>;
 
+  changes: AsyncGenerator<void>;
+
   notifications: EventEmitter;
 }
 
@@ -207,6 +209,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     shapeViewerProjection: any,
     contributionsProjection: ContributionsProjection;
 
+  // TODO: consider debouncing reloads (head and tail?)
   async function reload(opticContext: IOpticContext) {
     const projections = await buildProjections(opticContext);
     endpointsQueries = projections.endpointsQueries;
@@ -216,12 +219,23 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     return projections;
   }
 
-  opticContext.specRepository.notifications.on('change', () => {
-    console.count('reloading because of specRepository change');
-    reload(opticContext);
-  });
+  async function reloadFromSpecChange(
+    specChanges: AsyncGenerator<void>,
+    opticContext: IOpticContext
+  ) {
+    await reload(opticContext);
 
-  await reload(opticContext);
+    for await (let change of specChanges) {
+      console.count('reloading because of specRepository change');
+      await reload(opticContext);
+    }
+  }
+
+  // TODO: make sure this Promise is consumed somewhere so errors are handled. Return from makeSpectacle perhaps?
+  const reloadingSpecs = reloadFromSpecChange(
+    opticContext.specRepository.changes,
+    opticContext
+  );
 
   const resolvers = {
     JSON: GraphQLJSON,
