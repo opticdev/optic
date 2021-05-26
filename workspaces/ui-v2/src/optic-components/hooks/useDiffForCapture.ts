@@ -40,8 +40,6 @@ export function useDiffsForCapture(
       );
       const diffsService = await startDiffResult.onComplete;
       const diffs = await diffsService.listDiffs();
-      console.log('startDiff', diffs);
-
       const parsedDiffs = diffs.diffs.map(
         (i: any) => new ParsedDiff(i[0], i[1], i[2])
       );
