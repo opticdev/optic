@@ -48,7 +48,6 @@ export function trackWithApiName(apiName: string) {
       ...events.map((i) => {
         return {
           ...i,
-          context: { ...i.context },
           data: { ...i.data, apiName },
         };
       })
@@ -68,15 +67,15 @@ getOrCreateAnonId().then((anonymousId) =>
   })
 );
 
-analyticsEvents.listen((event) => {
+analyticsEvents.listen(({ event, context }) => {
   if (inDevelopment) return;
   const properties = {
     uiVariant: 'localCli',
-    ...event.context,
+    ...context,
     ...event.data,
   };
   analytics.track({
-    userId: event.context.clientAgent,
+    userId: context.clientAgent,
     event: event.type,
     properties,
   });

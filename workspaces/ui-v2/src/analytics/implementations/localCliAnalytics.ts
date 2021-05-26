@@ -66,19 +66,6 @@ export const track: AnalyticsStoreProps['track'] = async (event, metadata) => {
     {
       type: event.name,
       data: event.properties,
-      // TODO update the context typing, this currently gets overriden in
-      // the event bus
-      context: {
-        clientId: clientId,
-        platform: '',
-        arch: '',
-        release: '',
-        apiName: metadata.apiName,
-        clientSessionInstanceId: '',
-        clientTimestamp: '',
-        clientAgent: metadata.clientAgent,
-        source: '',
-      },
     },
   ]);
   try {

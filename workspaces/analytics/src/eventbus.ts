@@ -14,20 +14,24 @@ export function newAnalyticsEventBus(
     emit: async (...events: TrackingEventBase<any>[]) => {
       const batchId = uuidv4();
       const context = await getContext(batchId);
-      // TODO - don't overwrite context
       events.forEach((event) => {
-        eventEmitter.emit('event', { ...event, context });
+        eventEmitter.emit('event', { event, context });
       });
     },
     eventEmitter,
-    listen: (callback: (e: TrackingEventBase<any>) => void): void => {
+    listen: (callback: ListenCallbackType): void => {
       eventEmitter.on('event', callback);
     },
   };
 }
 
+type ListenCallbackType = (e: {
+  event: TrackingEventBase<any>;
+  context: ClientContext;
+}) => void;
+
 export interface AnalyticsEventBus {
   eventEmitter: EventEmitter;
   emit: (...events: TrackingEventBase<any>[]) => void;
-  listen: (callback: (e: TrackingEventBase<any>) => void) => void;
+  listen: (callback: ListenCallbackType) => void;
 }

@@ -1,6 +1,4 @@
 import { TrackingEventBase } from './TrackingEventBase';
-import * as Joi from 'joi';
-import 'joi-extract-type';
 
 function RegisterEvent<T>(
   type: string,
@@ -11,17 +9,6 @@ function RegisterEvent<T>(
     withProps(properties: T): TrackingEventBase<T> {
       return {
         type: type,
-        context: {
-          apiName: '',
-          clientAgent: '',
-          clientId: '',
-          platform: '',
-          arch: '',
-          release: '',
-          clientSessionInstanceId: '',
-          clientTimestamp: '',
-          source: '',
-        },
         data: properties,
       };
     },
