@@ -61,7 +61,6 @@ export const initialize: AnalyticsStoreProps['initialize'] = async (
 export const track: AnalyticsStoreProps['track'] = async (event, metadata) => {
   const cliClient = new Client('/api');
 
-  // TODO consolidate UI and cli events types
   cliClient.postTrackingEvents([
     {
       type: event.type,
