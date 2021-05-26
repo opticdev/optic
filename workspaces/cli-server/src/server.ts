@@ -92,7 +92,7 @@ class CliServer {
     app.set('etag', false);
     const sessions = new SessionsManager();
     const fileReadBottleneck = new Bottleneck({
-      maxConcurrent: 1,
+      maxConcurrent: 3,
     });
     let user: object | null;
 
