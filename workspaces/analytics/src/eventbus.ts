@@ -2,12 +2,12 @@ import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-  ClientContext,
+  CliClientContext,
   TrackingEventBase,
 } from './interfaces/TrackingEventBase';
 
 export function newAnalyticsEventBus(
-  getContext: (batchId: string) => Promise<ClientContext>
+  getContext: (batchId: string) => Promise<CliClientContext>
 ): AnalyticsEventBus {
   const eventEmitter = new EventEmitter();
   return {
@@ -27,7 +27,7 @@ export function newAnalyticsEventBus(
 
 type ListenCallbackType = (e: {
   event: TrackingEventBase<any>;
-  context: ClientContext;
+  context: CliClientContext;
 }) => void;
 
 export interface AnalyticsEventBus {

@@ -1,29 +1,29 @@
 import { newAnalyticsEventBus } from '../src/eventbus';
-import { ClientContext } from '../src/interfaces/TrackingEventBase';
-const { ApiCreated } = require('../src/events/onboarding');
-
-const getContext: (batchId: string) => Promise<ClientContext> = async () => {
+import { CliClientContext } from '../src/interfaces/TrackingEventBase';
+import { UserLoggedInFromCLI } from '../src/cliEvents';
+const getContext: (batchId: string) => Promise<CliClientContext> = async () => {
   return {
     clientId: 'testing',
     platform: 'furby',
     arch: 'mips',
     release: '1998',
-    apiName: 'testing',
+    apiName: 'testingApiName',
     clientSessionInstanceId: 'testing',
-    clientTimestamp: 'testing',
-    clientAgent: 'testing',
+    clientTimestamp: 'testingTime',
+    clientAgent: 'testingAgent',
+    source: 'user',
   };
 };
 
 test('Event Bus can listen for analytics events', async (done) => {
   const bus = newAnalyticsEventBus(getContext);
 
-  const promise = new Promise((resolve) => {
+  new Promise((resolve) => {
     bus.listen((e) => {
       expect(e).toMatchSnapshot();
-      resolve();
+      resolve(null);
     });
   }).then(done);
 
-  bus.emit(ApiCreated.withProps({ apiName: 'Hello World API' }));
+  bus.emit(UserLoggedInFromCLI({ userId: 'hello' }));
 });

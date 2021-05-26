@@ -3,7 +3,7 @@ export interface TrackingEventBase<T> {
   data: T;
 }
 
-export interface ClientContext {
+export interface CliClientContext {
   clientId: string;
   platform: string;
   arch: string;

@@ -12,8 +12,8 @@ import {
   isManualTask,
   isRecommendedTask,
 } from '@useoptic/cli-config';
-import { opticTaskToProps, trackUserEvent } from '../analytics';
-import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
+import { trackUserEvent } from '../analytics';
+import { ApiCheckCompleted } from '@useoptic/analytics';
 import { fromOptic } from '@useoptic/cli-shared';
 import { verifyRecommended } from './recommended';
 import { verifyManual } from './manual';
@@ -140,7 +140,7 @@ export async function verifyTask(
 
       await trackUserEvent(
         config.name,
-        ApiCheckCompleted.withProps({
+        ApiCheckCompleted({
           passed: passedAll,
           mode: mode,
           taskName: taskName,
@@ -166,7 +166,7 @@ export async function verifyTask(
       passedAll = results.passedAll;
       await trackUserEvent(
         config.name,
-        ApiCheckCompleted.withProps({
+        ApiCheckCompleted({
           passed: passedAll,
           mode: mode,
           taskName: taskName,
