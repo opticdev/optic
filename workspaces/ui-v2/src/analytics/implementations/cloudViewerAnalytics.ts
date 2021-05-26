@@ -62,9 +62,9 @@ export const initialize: AnalyticsStoreProps['initialize'] = async (
 
 export const track: AnalyticsStoreProps['track'] = async (event, metadata) => {
   if (segmentAnalytics) {
-    segmentAnalytics.track(event.name, {
+    segmentAnalytics.track(event.type, {
       properties: {
-        ...event.properties,
+        ...event.data,
         clientId,
         apiName: metadata.apiName,
         uiVariant: 'cloudViewer',
@@ -73,6 +73,6 @@ export const track: AnalyticsStoreProps['track'] = async (event, metadata) => {
   }
 
   try {
-    FullStory.event(event.name, event.properties);
+    FullStory.event(event.type, event.data);
   } catch (e) {}
 };

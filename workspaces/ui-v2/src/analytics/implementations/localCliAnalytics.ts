@@ -64,11 +64,11 @@ export const track: AnalyticsStoreProps['track'] = async (event, metadata) => {
   // TODO consolidate UI and cli events types
   cliClient.postTrackingEvents([
     {
-      type: event.name,
-      data: event.properties,
+      type: event.type,
+      data: event.data,
     },
   ]);
   try {
-    FullStory.event(event.name, event.properties);
+    FullStory.event(event.type, event.data);
   } catch (e) {}
 };
