@@ -5,8 +5,7 @@ import {
   newSharedDiffMachine,
   SharedDiffStateContext,
 } from './SharedDiffState';
-// @ts-ignore
-import * as shortId from 'shortid';
+import shortId from 'shortid';
 import { useMachine } from '@xstate/react';
 import { PathComponentAuthoring } from '<src>/optic-components/pages/diffs/AddEndpointsPage/utils';
 import { IEndpoint } from '<src>/optic-components/hooks/useEndpointsHook';

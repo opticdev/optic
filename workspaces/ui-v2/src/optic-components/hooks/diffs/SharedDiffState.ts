@@ -102,7 +102,6 @@ export const newSharedDiffMachine = (
             actions: [
               assign({
                 simulatedCommands: (ctx) => {
-                  console.log('flushing commands before saving');
                   return AssembleCommands(
                     ctx.newPaths,
                     ctx.choices.approvedSuggestions,
@@ -131,7 +130,6 @@ export const newSharedDiffMachine = (
                     ],
                     currentSpecContext
                   );
-                  console.log(regeneratePathCommands);
                   return {
                     commands: regeneratePathCommands.commands,
                     pendingEndpointMap:
@@ -198,7 +196,6 @@ export const newSharedDiffMachine = (
             actions: [
               assign({
                 pendingEndpoints: (ctx, event) => {
-                  console.log(ctx.pendingEndpoints);
                   return [...ctx.pendingEndpoints].map((i) => {
                     if (i.id === event.id) {
                       return { ...i, staged: true };
@@ -234,7 +231,6 @@ export const newSharedDiffMachine = (
                     ctx.pendingEndpoints,
                     currentSpecContext
                   );
-                  console.log(regeneratePathCommands);
                   return {
                     commands: regeneratePathCommands.commands,
                     pendingEndpointMap:

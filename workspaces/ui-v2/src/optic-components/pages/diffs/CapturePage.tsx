@@ -85,7 +85,6 @@ export function CapturePage(props: { showDiff?: boolean }) {
 
       <Grid
         container
-        xs={12}
         spacing={3}
         alignContent="space-between"
         style={{ marginTop: 10 }}
