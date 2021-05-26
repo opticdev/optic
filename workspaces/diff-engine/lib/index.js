@@ -9,7 +9,7 @@ const Tar = require('tar');
 
 const {
   Streams: { Commands, HttpInteractions },
-} = require('@useoptic/diff-engine-wasm');
+} = require('@useoptic/optic-streams');
 const Config = require('./config');
 
 const fetchBinary = Bent(Config.prebuilt.baseUrl, 'GET', 200, 404);

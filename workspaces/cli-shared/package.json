@@ -22,6 +22,7 @@
     "@useoptic/client-utilities": "10.0.4",
     "@useoptic/diff-engine": "10.0.4",
     "@useoptic/diff-engine-wasm": "10.0.4",
+    "@useoptic/optic-streams": "10.0.4",
     "@useoptic/saas-types": "10.0.4",
     "avsc": "^5.4.21",
     "aws-sdk": "^2.889.0",

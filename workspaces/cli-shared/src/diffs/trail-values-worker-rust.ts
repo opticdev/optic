@@ -1,8 +1,8 @@
 import { CaptureInteractionIterator } from '../captures/avro/file-system/interaction-iterator';
 import fs from 'fs-extra';
 import { learnShapeDiffAffordances } from '@useoptic/diff-engine';
-import { Streams } from '@useoptic/diff-engine-wasm';
-import { ShapeDiffAffordances } from '@useoptic/diff-engine-wasm/lib/streams/learning-results/shape-diff-affordances';
+import { Streams } from '@useoptic/optic-streams';
+import { ShapeDiffAffordances } from '@useoptic/optic-streams/build/streams/learning-results/shape-diff-affordances';
 import { getDiffOutputPaths } from './interaction-diff-worker-rust';
 import path from 'path';
 

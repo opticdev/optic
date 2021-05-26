@@ -9,6 +9,7 @@
   "workspaces": [
     "workspaces/diff-engine",
     "workspaces/diff-engine-wasm",
+    "workspaces/optic-streams",
     "workspaces/analytics",
     "workspaces/shape-hash",
     "workspaces/saas-types",

@@ -13,11 +13,7 @@ import {
   StartDiffResult,
 } from '@useoptic/spectacle';
 import { EventEmitter } from 'events';
-import {
-  AsyncTools,
-  AsyncTools as AT,
-  Streams,
-} from '@useoptic/diff-engine-wasm';
+import { AsyncTools, AsyncTools as AT, Streams } from '@useoptic/optic-streams';
 import * as OpticEngine from '@useoptic/diff-engine';
 import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
 import { isEnvTrue } from '@useoptic/cli-shared';
