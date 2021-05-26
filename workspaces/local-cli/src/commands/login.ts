@@ -1,4 +1,4 @@
-import { Command, flags } from '@oclif/command';
+import { Command } from '@oclif/command';
 import {
   ensureCredentialsServerStarted,
   loginBaseUrl,
@@ -12,7 +12,7 @@ import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
 import { cli } from 'cli-ux';
 import { Config } from '../config';
-import { UserLoggedInFromCLI } from '@useoptic/analytics/lib/events/onboarding';
+import { UserLoggedInFromCLI } from '@useoptic/analytics';
 import { trackUserEvent } from '../shared/analytics';
 
 export default class Login extends Command {
@@ -57,7 +57,7 @@ export default class Login extends Command {
 
       await trackUserEvent(
         '',
-        UserLoggedInFromCLI.withProps({ userId: decodedToken.sub })
+        UserLoggedInFromCLI({ userId: decodedToken.sub })
       );
 
       await server.stop();

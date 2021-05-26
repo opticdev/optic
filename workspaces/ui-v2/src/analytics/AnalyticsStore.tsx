@@ -1,6 +1,5 @@
 import React, { FC, useContext, useEffect, useRef, useState } from 'react';
-import { OpticUIEvents } from '@useoptic/analytics/lib/optic-ui/OpticUIEvents';
-import { IOpticAnalyticsEvent } from '@useoptic/analytics/lib/interfaces';
+import { OpticUIEvents, TrackingEventBase } from '@useoptic/analytics';
 import invariant from 'invariant';
 import { useAppConfig } from '../optic-components/hooks/config/AppConfiguration';
 
@@ -32,7 +31,7 @@ export type AnalyticsStoreProps = {
     appConfig: ReturnType<typeof useAppConfig>
   ) => Promise<void>;
   track: (
-    event: IOpticAnalyticsEvent,
+    event: TrackingEventBase<any>,
     metadata: AnalyticsMetadata
   ) => Promise<void>;
 };

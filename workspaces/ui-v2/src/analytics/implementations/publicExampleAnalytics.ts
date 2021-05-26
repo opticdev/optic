@@ -84,9 +84,9 @@ export const track: AnalyticsStoreProps['track'] = async (event, metadata) => {
   // We could have access to the cli-server here, but not in every case
   // in which case we directly call segement
   if (segmentAnalytics) {
-    segmentAnalytics.track(event.name, {
+    segmentAnalytics.track(event.type, {
       properties: {
-        ...event.properties,
+        ...event.data,
         clientId,
         apiName: metadata.apiName,
         uiVariant: 'publicExample',
@@ -95,6 +95,6 @@ export const track: AnalyticsStoreProps['track'] = async (event, metadata) => {
   }
 
   try {
-    FullStory.event(event.name, event.properties);
+    FullStory.event(event.type, event.data);
   } catch (e) {}
 };
