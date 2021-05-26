@@ -18,7 +18,7 @@ export const ValidateBatchId: FC<{ batchId: string }> = ({
   }
 
   if (!validBatchId) {
-    return <Redirect to={documentationPageLink.path} />;
+    return <Redirect to={documentationPageLink.linkTo()} />;
   }
 
   return <>{children}</>;
