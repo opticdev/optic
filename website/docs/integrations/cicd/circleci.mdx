@@ -47,7 +47,7 @@ commands:
     - run:
         name: Run Optic CI
         command: |-
-          npm install @useoptic/cli
+          npm install --legacy-peer-deps @useoptic/cli
           npx api run test-cci --exit-on-diff
           npx api status --print-coverage
 ```
