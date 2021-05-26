@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-shared",
-  "version": "10.0.1-alpha.1",
+  "version": "10.0.1-beta.0",
   "scripts": {
     "test": "cd test && tap tests",
     "ws:build": "tsc -b --verbose",
@@ -16,13 +16,13 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@oclif/command": "^1.6.1",
-    "@useoptic/cli-client": "10.0.1-alpha.1",
-    "@useoptic/shape-hash": "10.0.1-alpha.1",
-    "@useoptic/cli-config": "10.0.1-alpha.1",
-    "@useoptic/client-utilities": "10.0.1-alpha.1",
-    "@useoptic/diff-engine": "10.0.1-alpha.1",
-    "@useoptic/diff-engine-wasm": "10.0.1-alpha.1",
-    "@useoptic/saas-types": "10.0.1-alpha.1",
+    "@useoptic/cli-client": "10.0.1-beta.0",
+    "@useoptic/shape-hash": "10.0.1-beta.0",
+    "@useoptic/cli-config": "10.0.1-beta.0",
+    "@useoptic/client-utilities": "10.0.1-beta.0",
+    "@useoptic/diff-engine": "10.0.1-beta.0",
+    "@useoptic/diff-engine-wasm": "10.0.1-beta.0",
+    "@useoptic/saas-types": "10.0.1-beta.0",
     "avsc": "^5.4.21",
     "aws-sdk": "^2.889.0",
     "axax": "^0.2.2",

@@ -1873,6 +1873,19 @@
           "createdAt": "2020-10-20T20:52:31.789Z"
         }
       }
+    },
+    {
+      "ContributionAdded": {
+        "id": "metadata",
+        "key": "id",
+        "value": "b47d8f6e-d0e4-4814-9db6-add26b96ddd2",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-10-20T20:52:31.789Z"
+        }
+      }
     }
   ],
   "session": {

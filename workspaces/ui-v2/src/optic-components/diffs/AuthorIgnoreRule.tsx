@@ -2,12 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { SubtleBlueBackground } from '../theme';
 import TextField from '@material-ui/core/TextField';
+import InfoIcon from '@material-ui/icons/Info';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useUndocumentedUrls } from '../hooks/diffs/useUndocumentedUrls';
 import { IUndocumentedUrl } from '../hooks/diffs/SharedDiffState';
 import { EndpointName } from '../common';
 import { Button, Typography } from '@material-ui/core';
 import { parseRule } from '@useoptic/cli-config/build/helpers/ignore-parser';
+import { LightTooltip } from '<src>/optic-components/navigation/LightToolTip';
 import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
 
 export function AuthorIgnoreRules() {
@@ -49,6 +51,7 @@ export function AuthorIgnoreRules() {
     <div className={classes.toolbar}>
       <div className={classes.top}>
         <Autocomplete
+          className={classes.textContainer}
           options={urlOptions}
           size="small"
           onInputChange={(event, value) => {
@@ -90,9 +93,29 @@ export function AuthorIgnoreRules() {
             />
           )}
         />
+        <div className={classes.infoIcon}>
+          <LightTooltip
+            interactive
+            title={
+              <div>
+                Want to match a pattern? See our{' '}
+                <a
+                  href="https://www.useoptic.com/docs/using/advanced-configuration/#ignoring-api-paths"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  ignore rules helper link
+                </a>
+                .
+              </div>
+            }
+          >
+            <InfoIcon />
+          </LightTooltip>
+        </div>
         <Button
           disabled={!validRule}
-          style={{ minWidth: 100, marginLeft: 10, marginTop: 2 }}
+          className={classes.addRule}
           color="primary"
           size="medium"
           onClick={finishAdding}
@@ -149,5 +172,15 @@ const useStyles = makeStyles((theme) => ({
   previewRegion: {
     minHeight: 60,
     paddingLeft: 5,
+  },
+  textContainer: {
+    padding: '0 8px',
+  },
+  infoIcon: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  addRule: {
+    minWidth: 100,
   },
 }));

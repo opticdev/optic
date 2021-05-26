@@ -34,6 +34,7 @@ import { InteractionDiffWorkerRust } from '@useoptic/cli-shared/build/diffs/inte
 import { IPathMapping, readApiConfig } from '@useoptic/cli-config';
 import { CapturesHelpers } from '../routers/spec-router';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
+import fs from 'fs-extra';
 
 ////////////////////////////////////////////////////////////////////////////////
 export interface LocalCliSpecState {}
@@ -50,8 +51,22 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
 
   constructor(private dependencies: LocalCliSpecRepositoryDependencies) {
     this.notifications = dependencies.notifications;
+    this.initialize();
   }
 
+  initialize() {
+    fs.watch(
+      this.dependencies.specStorePath,
+      {
+        encoding: 'utf8',
+        persistent: false,
+        recursive: false,
+      },
+      (event, filename) => {
+        this.notifications.emit('change');
+      }
+    );
+  }
   async applyCommands(
     commands: any[],
     batchCommitId: string,

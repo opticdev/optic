@@ -98,7 +98,7 @@ export async function verifyTask(
       cli.log(fromOptic(colors.red(`Invalid task configuration. `)));
       cli.log(
         fromOptic(
-          `Task configuration help is available at https://useoptic.com/docs/using/advanced-configuration`
+          `Task configuration help is available at https://useoptic.com/docs/get-started/config`
         )
       );
       return false;
