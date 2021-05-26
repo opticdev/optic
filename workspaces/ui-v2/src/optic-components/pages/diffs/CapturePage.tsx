@@ -34,6 +34,7 @@ import {
   LiveTrafficLink,
   RunOpticLink,
   RunTestsLink,
+  InterceptWithChromeLink,
 } from '<src>/optic-components/SupportLinks';
 import { useAnalytics } from '<src>/analytics';
 
@@ -111,7 +112,7 @@ export function CapturePage(props: { showDiff?: boolean }) {
           <TrafficSource
             slug="chrome"
             name="Capture Traffic from Chrome"
-            link={RunOpticLink}
+            link={InterceptWithChromeLink}
           >
             <Code>api intercept --chrome</Code>
           </TrafficSource>
