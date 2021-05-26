@@ -1300,7 +1300,7 @@
   resolved "https://registry.npmjs.org/@hapi/hoek/-/hoek-9.2.0.tgz#f3933a44e365864f4dad5db94158106d511e8131"
   integrity sha512-sqKVVVOe5ivCaXDWivIJYVSaEgdQK9ul7a4Kity5Iw7u9+wBAPbX1RMSnLLmp7O4Vzj0WOWwMAJsTL00xwaNug==
 
-"@hapi/joi@^15.1.0", "@hapi/joi@~15":
+"@hapi/joi@^15.1.0":
   version "15.1.1"
   resolved "https://registry.npmjs.org/@hapi/joi/-/joi-15.1.1.tgz#c675b8a71296f02833f8d6d243b34c57b8ce19d7"
   integrity sha512-entf8ZMOK8sc+8YfeOlM8pCfg3b5+WZIKBfUaaJT8UsjAAPjartzxIYm3TIbjvA4u+u++KbcXD38k682nVHDAQ==
@@ -2725,18 +2725,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/hapi__joi@*":
-  version "17.1.6"
-  resolved "https://registry.npmjs.org/@types/hapi__joi/-/hapi__joi-17.1.6.tgz#b84663676aa9753c17183718338dd40ddcbd3754"
-  integrity sha512-y3A1MzNC0FmzD5+ys59RziE1WqKrL13nxtJgrSzjoO7boue5B7zZD2nZLPwrSuUviFjpKFQtgHYSvhDGfIE4jA==
-
-"@types/hapi__joi@~15":
-  version "15.0.4"
-  resolved "https://registry.npmjs.org/@types/hapi__joi/-/hapi__joi-15.0.4.tgz#49e2e1e6da15ade0fdd6db4daf94aecb07bb391b"
-  integrity sha512-VSS6zc7AIOdHVXmqKaGNPYl8eGrMvWi0R5pt3evJL3UdxO8XS28/XAkBXNyLQoymHxhMd4bF3o1U9mZkWDeN8w==
-  dependencies:
-    "@types/hapi__joi" "*"
-
 "@types/history@*":
   version "4.7.8"
   resolved "https://registry.npmjs.org/@types/history/-/history-4.7.8.tgz#49348387983075705fe8f4e02fb67f7daaec4934"
@@ -2811,11 +2799,6 @@
   dependencies:
     jest-diff "^26.0.0"
     pretty-format "^26.0.0"
-
-"@types/joi@^14.3.4":
-  version "14.3.4"
-  resolved "https://registry.npmjs.org/@types/joi/-/joi-14.3.4.tgz#eed1e14cbb07716079c814138831a520a725a1e0"
-  integrity sha512-1TQNDJvIKlgYXGNIABfgFp9y0FziDpuGrd799Q5RcnsDu+krD+eeW/0Fs5PHARvWWFelOhIG2OPCo6KbadBM4A==
 
 "@types/js-yaml@^3.12.1":
   version "3.12.6"
@@ -10349,15 +10332,7 @@ jmespath@0.15.0:
   resolved "https://registry.npmjs.org/jmespath/-/jmespath-0.15.0.tgz#a3f222a9aae9f966f5d27c796510e28091764217"
   integrity sha1-o/Iiqarp+Wb10nx5ZRDigJF2Qhc=
 
-joi-extract-type@^15.0.8:
-  version "15.0.8"
-  resolved "https://registry.npmjs.org/joi-extract-type/-/joi-extract-type-15.0.8.tgz#29b42d79717b8fec6841b2bef76f97542e58e687"
-  integrity sha512-Or97aW6QN6YJq0B+x/vYs65+nmcPvYDE7xhlwRl7yHzY+7Z8pVaj0zxjdJlXmIA9zRcbbYQKCGvW+I4g0kUHgA==
-  dependencies:
-    "@hapi/joi" "~15"
-    "@types/hapi__joi" "~15"
-
-joi@^17.3.0, joi@^17.4.0:
+joi@^17.3.0:
   version "17.4.0"
   resolved "https://registry.npmjs.org/joi/-/joi-17.4.0.tgz#b5c2277c8519e016316e49ababd41a1908d9ef20"
   integrity sha512-F4WiW2xaV6wc1jxete70Rw4V/VuMd6IN+a5ilZsxG4uYtUXWu2kq9W5P2dz30e7Gmw8RCbY/u/uk+dMPma9tAg==
