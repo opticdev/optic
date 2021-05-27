@@ -19,7 +19,7 @@
     "/.env"
   ],
   "dependencies": {
-    "@useoptic/diff-engine-wasm": "10.0.4",
+    "@useoptic/optic-engine-wasm": "10.0.4",
     "@useoptic/graph-lib": "10.0.4",
     "@useoptic/spectacle": "10.0.4"
   },

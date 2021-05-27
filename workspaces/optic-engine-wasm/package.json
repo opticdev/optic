@@ -1,0 +1,30 @@
+{
+  "name": "@useoptic/optic-engine-wasm",
+  "version": "10.0.1",
+  "scripts": {
+    "build:node": "wasm-pack build --target nodejs --out-dir build --out-name index",
+    "build:browser": "wasm-pack build --target bundler --out-dir browser --out-name index",
+    "test": "cd test && tap tests",
+    "ws:build": "yarn run build:node && yarn run build:browser && rm -rf build/.gitignore",
+    "ws:clean": "cargo clean && rm -rf build browser target",
+    "ws:test": "echo No workspace tests specified for optic-engine-wasm"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/optic-engine-wasm"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "Cargo.toml",
+    "build/**/*",
+    "lib"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@wasm-tool/wasm-pack-plugin": "^1.3.1",
+    "wasm-pack": "^0.9.1",
+    "typescript": "3.9"
+  }
+}

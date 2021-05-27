@@ -5,9 +5,9 @@ use nanoid::nanoid;
 use optic_diff_engine::{
   analyze_undocumented_bodies, Aggregate, Body, BodyAnalysisResult, CommandContext,
   EndpointQueries, HttpInteraction, InteractionDiffResult, JsonTrail,
-  LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection, SpecCommand,
-  SpecEvent, SpecIdGenerator, SpecProjection, TaggedInput, TrailObservationsResult, TrailValues,
-  ResponseBodyDescriptor, ResponseId
+  LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection,
+  ResponseBodyDescriptor, ResponseId, SpecCommand, SpecEvent, SpecIdGenerator, SpecProjection,
+  TaggedInput, TrailObservationsResult, TrailValues,
 };
 use std::collections::HashMap;
 use uuid::Uuid;
@@ -318,7 +318,7 @@ pub fn spec_resolve_requests(
     .resolve_requests(&path_id, &method)
     .map(|it| it.collect())
     .unwrap_or(vec![]);
-  
+
   serde_json::to_string(&requests)
     .map_err(|err| JsValue::from(format!("requests could not be serialized: {:?}", err)))
 }
@@ -328,12 +328,15 @@ pub fn spec_resolve_request(
   spec: &WasmSpecProjection,
   path_id: String,
   method: String,
-  content_type: Option<String>
+  content_type: Option<String>,
 ) -> Result<String, JsValue> {
   let endpoint_queries = spec.endpoint_queries();
 
-  let response = endpoint_queries
-    .resolve_request_by_method_and_content_type(&path_id, &method, content_type.as_ref());
+  let response = endpoint_queries.resolve_request_by_method_and_content_type(
+    &path_id,
+    &method,
+    content_type.as_ref(),
+  );
 
   serde_json::to_string(&response)
     .map_err(|err| JsValue::from(format!("responses could not be serialized: {:?}", err)))
@@ -362,12 +365,16 @@ pub fn spec_resolve_response(
   method: String,
   status_code: u16,
   path_id: String,
-  content_type: Option<String>
+  content_type: Option<String>,
 ) -> Result<String, JsValue> {
   let endpoint_queries = spec.endpoint_queries();
 
-  let response = endpoint_queries
-    .resolve_response_by_method_status_code_and_content_type(&path_id, &method, status_code, content_type.as_ref());
+  let response = endpoint_queries.resolve_response_by_method_status_code_and_content_type(
+    &path_id,
+    &method,
+    status_code,
+    content_type.as_ref(),
+  );
 
   serde_json::to_string(&response)
     .map_err(|err| JsValue::from(format!("responses could not be serialized: {:?}", err)))

@@ -20,7 +20,7 @@
   "dependencies": {
     "@graphql-tools/schema": "^7.1.3",
     "@useoptic/cli-shared": "10.0.4",
-    "@useoptic/diff-engine-wasm": "10.0.4",
+    "@useoptic/optic-engine-wasm": "10.0.4",
     "@useoptic/graph-lib": "10.0.4",
     "@useoptic/optic-streams": "10.0.4",
     "graphql": "14",

@@ -8,8 +8,8 @@ node_modules
 /optic-snapshots
 /output
 /target
-/workspaces/diff-engine-wasm/engine/browser
-/workspaces/diff-engine-wasm/engine/build
+/workspaces/optic-engine-wasm/browser
+/workspaces/optic-engine-wasm/build
 *.log
 build/
 

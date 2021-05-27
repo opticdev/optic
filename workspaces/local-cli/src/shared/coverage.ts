@@ -3,7 +3,7 @@
 import { IPathMapping } from '@useoptic/cli-config';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 import { CaptureInteractionIterator } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
-import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as OpticEngine from '@useoptic/optic-engine-wasm';
 import {
   InMemoryOpticContextBuilder,
   InMemorySpectacle,

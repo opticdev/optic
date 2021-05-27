@@ -3,7 +3,7 @@ import { fromReadableJSONL } from '../async-tools';
 import { Readable } from 'stream';
 
 // TODO: more strictly type the interaction diff result. Move them over from
-// workspaces/cli-shared/diffs/diffs to the diff-engine-wasm
+// workspaces/cli-shared/diffs/diffs to optic-streams
 export type DiffResult = [any, string[], string];
 
 export function fromJSONL(): (source: Readable) => AsyncIterable<DiffResult> {

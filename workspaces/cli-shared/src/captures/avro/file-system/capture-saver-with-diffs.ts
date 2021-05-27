@@ -7,7 +7,7 @@ import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
 import fs from 'fs-extra';
 import path from 'path';
 import { IApiCliConfig, parseIgnore } from '@useoptic/cli-config';
-import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as OpticEngine from '@useoptic/optic-engine-wasm';
 import { IGroupingIdentifiers, IHttpInteraction } from '../../../optic-types';
 
 interface IFileSystemCaptureLoaderWithDiffsConfig
@@ -29,7 +29,7 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
   async init() {
     //@GOTCHA: if the user updates the spec while the capture is live, the diff data will potentially be inaccurate
     const eventsString = await this.specServiceClient.listEvents();
-    const spec = DiffEngine.spec_from_events(eventsString);
+    const spec = OpticEngine.spec_from_events(eventsString);
     this.spec = spec;
 
     developerDebugLogger('built initial spec for diffing on the fly');
@@ -58,7 +58,7 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
       const distinctDiffs = new Set<string>();
       const diffs = [];
       for (let interaction of filteredItems) {
-        const resultsString: string = DiffEngine.diff_interaction(
+        const resultsString: string = OpticEngine.diff_interaction(
           JSON.stringify(interaction),
           this.spec
         );

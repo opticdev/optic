@@ -3,11 +3,11 @@ const path = require('path');
 
 module.exports = function createDiffEnginePlugin() {
   return new WasmPackPlugin({
-    crateDirectory: path.resolve(__dirname, 'engine'),
+    crateDirectory: path.resolve(__dirname),
 
     watchDirectories: [path.resolve(__dirname, '..', 'diff-engine', 'src')],
 
-    outDir: path.resolve(__dirname, 'engine', 'browser'),
+    outDir: path.resolve(__dirname, 'browser'),
     outName: 'index',
   });
 };

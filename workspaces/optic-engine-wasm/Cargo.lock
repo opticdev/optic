@@ -354,7 +354,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "optic_diff_wasm"
+name = "optic_engine_wasm"
 version = "0.1.0"
 dependencies = [
  "chrono",
