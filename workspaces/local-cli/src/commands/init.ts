@@ -1,22 +1,12 @@
 import { Command, flags } from '@oclif/command';
-// @ts-ignore
-import {
-  createFileTree,
-  getPathsRelativeToConfig,
-  readApiConfig,
-} from '@useoptic/cli-config';
+import { createFileTree, getPathsRelativeToConfig } from '@useoptic/cli-config';
 import colors from 'colors';
 import cli from 'cli-ux';
 import fs from 'fs-extra';
 import path from 'path';
-// @ts-ignore
-import {
-  developerDebugLogger,
-  fromOptic,
-  makeUiBaseUrl,
-} from '@useoptic/cli-shared';
+import { developerDebugLogger, fromOptic } from '@useoptic/cli-shared';
 import { trackUserEvent } from '../shared/analytics';
-import { ApiInitializedInProject } from '@useoptic/analytics/lib/events/onboarding';
+import { ApiInitializedInProject } from '@useoptic/analytics';
 import { buildTask } from '@useoptic/cli-config/build/helpers/initial-task';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
@@ -107,7 +97,7 @@ export default class Init extends Command {
 
     await trackUserEvent(
       name,
-      ApiInitializedInProject.withProps({
+      ApiInitializedInProject({
         cwd: cwd,
         source:
           Object.entries(flags).length === 0

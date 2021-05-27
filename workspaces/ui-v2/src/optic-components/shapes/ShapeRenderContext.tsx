@@ -3,7 +3,15 @@ import { useContext, useState } from 'react';
 import { DepthStore } from './DepthContext';
 import { OneOfTabsProps } from './OneOfTabs';
 
-export const ShapeRenderContext = React.createContext({});
+type IShapeRenderContext = {
+  showExamples: boolean;
+  getChoice: (branch: OneOfTabsProps) => string;
+  updateChoice: (parentShapeId: string, branchId: string) => void;
+};
+
+export const ShapeRenderContext = React.createContext<IShapeRenderContext | null>(
+  null
+);
 
 type ShapeRenderContextProps = { children: any; showExamples: boolean };
 
@@ -40,14 +48,11 @@ export const ShapeRenderStore = ({
   );
 };
 
-type IShapeRenderContext = {
-  showExamples: boolean;
-  getChoice: (branch: OneOfTabsProps) => string;
-  updateChoice: (parentShapeId: string, branchId: string) => void;
-};
-
 export function useShapeRenderContext() {
-  // @ts-ignore
-  const value: IShapeRenderContext = useContext(ShapeRenderContext);
+  const value = useContext(ShapeRenderContext);
+  if (!value) {
+    throw new Error('Could not find ShapeRendererContext');
+  }
+
   return value;
 }

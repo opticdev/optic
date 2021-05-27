@@ -61,27 +61,13 @@ export const initialize: AnalyticsStoreProps['initialize'] = async (
 export const track: AnalyticsStoreProps['track'] = async (event, metadata) => {
   const cliClient = new Client('/api');
 
-  // TODO consolidate UI and cli events types
   cliClient.postTrackingEvents([
     {
-      type: event.name,
-      data: event.properties,
-      // TODO update the context typing, this currently gets overriden in
-      // the event bus
-      context: {
-        clientId: clientId,
-        platform: '',
-        arch: '',
-        release: '',
-        apiName: metadata.apiName,
-        clientSessionInstanceId: '',
-        clientTimestamp: '',
-        clientAgent: metadata.clientAgent,
-        source: '',
-      },
+      type: event.type,
+      data: event.data,
     },
   ]);
   try {
-    FullStory.event(event.name, event.properties);
+    FullStory.event(event.type, event.data);
   } catch (e) {}
 };

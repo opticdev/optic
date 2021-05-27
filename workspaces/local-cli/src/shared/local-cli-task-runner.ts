@@ -18,7 +18,7 @@ import stripAnsi from 'strip-ansi';
 import {
   ExitedTaskWithLocalCli,
   StartedTaskWithLocalCli,
-} from '@useoptic/analytics/lib/events/tasks';
+} from '@useoptic/analytics';
 import {
   cleanupAndExit,
   CommandAndProxySessionManager,
@@ -192,7 +192,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
 
     await trackUserEvent(
       config.name,
-      StartedTaskWithLocalCli.withProps({
+      StartedTaskWithLocalCli({
         inputs: opticTaskToProps(this.taskName, taskConfig),
         cwd: this.paths.cwd,
         captureId: this.captureId,
@@ -310,7 +310,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     await trackUserEvent(
       config.name,
-      ExitedTaskWithLocalCli.withProps({
+      ExitedTaskWithLocalCli({
         interactionCount: sampleCount,
         inputs: opticTaskToProps('', taskConfig),
         captureId: this.captureId,

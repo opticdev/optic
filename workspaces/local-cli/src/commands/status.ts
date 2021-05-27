@@ -1,6 +1,4 @@
 import { Command, flags } from '@oclif/command';
-//@ts-ignore
-import gitRev from '../shared/git/git-rev-sync-insourced.js';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
 import { Config } from '../config';
@@ -42,7 +40,7 @@ import {
 import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
 import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
 import { IUnrecognizedUrl } from '@useoptic/spectacle';
-import { StatusRun } from '@useoptic/analytics/lib/events/status';
+import { StatusRun } from '@useoptic/analytics';
 import { cli } from 'cli-ux';
 import { computeCoverage, printCoverage } from '../shared/coverage';
 
@@ -211,7 +209,7 @@ export default class Status extends Command {
 
     await trackUserEvent(
       config.name,
-      StatusRun.withProps({
+      StatusRun({
         captureId,
         diffCount: diffs.length,
         undocumentedCount: urls.length,

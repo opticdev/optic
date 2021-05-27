@@ -2,7 +2,7 @@ import os from 'os';
 import { newAnalyticsEventBus } from '@useoptic/analytics/lib/eventbus';
 import Analytics from 'analytics-node';
 import {
-  ClientContext,
+  CliClientContext,
   TrackingEventBase,
 } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
 import { AnalyticsEventBus } from '@useoptic/analytics/lib/eventbus';
@@ -23,7 +23,7 @@ export const analyticsEvents: AnalyticsEventBus = newAnalyticsEventBus(
   async (batchId: string) => {
     const clientAgent = await getOrCreateAnonId();
     const source = await getOrCreateSource();
-    const clientContext: ClientContext = {
+    const clientContext: CliClientContext = {
       clientAgent: clientAgent,
       clientId: clientId,
       platform: platform,
@@ -48,7 +48,6 @@ export function trackWithApiName(apiName: string) {
       ...events.map((i) => {
         return {
           ...i,
-          context: { ...i.context },
           data: { ...i.data, apiName },
         };
       })
@@ -68,15 +67,15 @@ getOrCreateAnonId().then((anonymousId) =>
   })
 );
 
-analyticsEvents.listen((event) => {
+analyticsEvents.listen(({ event, context }) => {
   if (inDevelopment) return;
   const properties = {
     uiVariant: 'localCli',
-    ...event.context,
+    ...context,
     ...event.data,
   };
   analytics.track({
-    userId: event.context.clientAgent,
+    userId: context.clientAgent,
     event: event.type,
     properties,
   });

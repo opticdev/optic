@@ -35,6 +35,8 @@ import { IPathMapping, readApiConfig } from '@useoptic/cli-config';
 import { CapturesHelpers } from '../routers/spec-router';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import fs from 'fs-extra';
+import Chokidar, { watch } from 'chokidar';
+import { Subject } from 'axax/esnext';
 
 ////////////////////////////////////////////////////////////////////////////////
 export interface LocalCliSpecState {}
@@ -47,26 +49,38 @@ export interface LocalCliSpecRepositoryDependencies {
 }
 
 export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
+  changes: AsyncGenerator<number>;
   notifications: EventEmitter;
 
   constructor(private dependencies: LocalCliSpecRepositoryDependencies) {
     this.notifications = dependencies.notifications;
-    this.initialize();
+
+    this.changes = this.watchSpec();
   }
 
-  initialize() {
-    fs.watch(
-      this.dependencies.specStorePath,
-      {
-        encoding: 'utf8',
-        persistent: false,
-        recursive: false,
-      },
-      (event, filename) => {
-        this.notifications.emit('change');
-      }
-    );
+  private async *watchSpec(): AsyncGenerator<number> {
+    const watcher = Chokidar.watch(this.dependencies.specStorePath, {
+      persistent: true,
+      awaitWriteFinish: true,
+    });
+
+    const changes = new AT.Subject<number>();
+
+    let generation = 0;
+    watcher.on('change', () => {
+      changes.onNext(generation);
+      generation += 1;
+    });
+
+    watcher.on('error', (err) => {
+      changes.onError(err);
+    });
+
+    for await (let generation of changes.iterator) {
+      yield generation;
+    }
   }
+
   async applyCommands(
     commands: any[],
     batchCommitId: string,

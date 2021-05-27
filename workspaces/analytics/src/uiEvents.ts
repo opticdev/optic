@@ -1,6 +1,6 @@
-import { IOpticAnalyticsEvent } from '../interfaces';
+import { TrackingEventBase } from './interfaces/TrackingEventBase';
 
-type AnalyticsDispatcher = (event: IOpticAnalyticsEvent) => void;
+type AnalyticsDispatcher = (event: TrackingEventBase<any>) => void;
 
 export class OpticUIEvents {
   constructor(private dispatch: AnalyticsDispatcher) {}
@@ -8,8 +8,8 @@ export class OpticUIEvents {
   // in-use
   userResetDiff(currentApproved: number, totalDiffs: number) {
     this.dispatch({
-      name: 'user_reset_diff',
-      properties: { currentApproved, totalDiffs },
+      type: 'user_reset_diff',
+      data: { currentApproved, totalDiffs },
     });
   }
 
@@ -21,8 +21,8 @@ export class OpticUIEvents {
     endpointsInSpec: number
   ) {
     this.dispatch({
-      name: 'review_page_loaded',
-      properties: {
+      type: 'review_page_loaded',
+      data: {
         undocumentedUrls,
         diffEngineDurationMilliseconds,
         endpointsInSpec,
@@ -32,42 +32,31 @@ export class OpticUIEvents {
 
   userApprovedAll(shapeDiffs: number, newBodyDiffs: number) {
     this.dispatch({
-      name: 'user_approved_all',
-      properties: { shapeDiffs, newBodyDiffs },
+      type: 'user_approved_all',
+      data: { shapeDiffs, newBodyDiffs },
     });
   }
 
   userDocumentedEndpoint(isBulkMode: boolean) {
     this.dispatch({
-      name: 'user_documented_endpoint',
-      properties: { isBulkMode },
+      type: 'user_documented_endpoint',
+      data: { isBulkMode },
     });
   }
 
   userDiscardedEndpoint() {
     this.dispatch({
-      name: 'user_discarded_endpoint',
-      properties: {},
+      type: 'user_discarded_endpoint',
+      data: {},
     });
   }
 
   userChoseACaptureMethod(captureSource: string) {
     this.dispatch({
-      name: 'user_chose_capture_method',
-      properties: { captureSource },
+      type: 'user_chose_capture_method',
+      data: { captureSource },
     });
   }
-
-  // userDocumentedDiff(
-  //   valuesPresented: [],
-  //   isIgnored: boolean,
-  //   bugReportCreated: boolean
-  // ) {
-  //   this.dispatch({
-  //     name: 'user_documented_diff',
-  //     properties: { valuesPresented, isIgnored, bugReportCreated },
-  //   });
-  // }
 
   userSavedChanges(
     undocumentedUrls: number,
@@ -75,8 +64,8 @@ export class OpticUIEvents {
     specId: string
   ) {
     this.dispatch({
-      name: 'user_saved_changes',
-      properties: {
+      type: 'user_saved_changes',
+      data: {
         undocumentedUrls,
         endpointsChangedCount,
         specId,

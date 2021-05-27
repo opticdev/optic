@@ -1,7 +1,7 @@
 import { Command, flags } from '@oclif/command';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { ingestS3 } from '@useoptic/cli-shared/build/captures/avro/file-system/ingest-s3-capture-saver';
-import { LiveTrafficIngestedWithLocalCli } from '@useoptic/analytics/lib/events/tasks';
+import { LiveTrafficIngestedWithLocalCli } from '@useoptic/analytics';
 import { lockFilePath } from '../../shared/paths';
 import { Config } from '../../config';
 import { cleanupAndExit, makeUiBaseUrl } from '@useoptic/cli-shared';
@@ -56,7 +56,7 @@ export default class IngestS3 extends Command {
       */
       await trackUserEvent(
         apiCfg.name,
-        LiveTrafficIngestedWithLocalCli.withProps({
+        LiveTrafficIngestedWithLocalCli({
           captureId,
           interactionCount,
         })

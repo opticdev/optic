@@ -3,18 +3,21 @@
 exports[`Event Bus can listen for analytics events 1`] = `
 Object {
   "context": Object {
-    "clientAgent": "testing",
-    "clientId": "testing",
-    "platform": "furby",
+    "apiName": "testingApiName",
     "arch": "mips",
-    "release": "1998",
-    "apiName": "testing",
+    "clientAgent": "testingAgent",
+    "clientId": "testing",
     "clientSessionInstanceId": "testing",
-    "clientTimestamp": "testing",
+    "clientTimestamp": "testingTime",
+    "platform": "furby",
+    "release": "1998",
+    "source": "user",
   },
-  "data": Object {
-    "apiName": "Hello World API",
+  "event": Object {
+    "data": Object {
+      "userId": "hello",
+    },
+    "type": "UserLoggedInFromCLI",
   },
-  "type": "ApiCreated",
 }
 `;

@@ -202,17 +202,11 @@ export function recomputePendingEndpointCommands(
 
   return commands.map((i) => {
     //if pathId has changed, update to match
-    //@ts-ignore
-    if (i.AddRequest) {
-      console.log('overwriting request pathId');
-      //@ts-ignore
+    if ('AddRequest' in i) {
       return { AddRequest: { ...i.AddRequest, pathId } };
     }
-    //@ts-ignore
-    if (i.AddResponseByPathAndMethod) {
-      console.log('overwriting response pathId');
+    if ('AddResponseByPathAndMethod' in i) {
       return {
-        //@ts-ignore
         AddResponseByPathAndMethod: { ...i.AddResponseByPathAndMethod, pathId },
       };
     }
