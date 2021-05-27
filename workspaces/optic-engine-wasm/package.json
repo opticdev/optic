@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/optic-engine-wasm",
-  "version": "10.0.1",
+  "version": "10.0.2",
   "scripts": {
     "build:node": "wasm-pack build --target nodejs --out-dir build --out-name index",
     "build:browser": "wasm-pack build --target bundler --out-dir browser --out-name index",
