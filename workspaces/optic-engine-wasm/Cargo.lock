@@ -333,7 +333,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "optic_diff_engine"
+name = "optic_engine"
 version = "0.1.0"
 dependencies = [
  "avro-rs",
@@ -362,7 +362,7 @@ dependencies = [
  "getrandom",
  "log",
  "nanoid",
- "optic_diff_engine",
+ "optic_engine",
  "serde",
  "serde_json",
  "uuid",

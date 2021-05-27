@@ -8,8 +8,8 @@ env:
   NODE_ENV: '{{default "development" .NODE_ENV}}'
 
 includes:
-  diff-engine:
-    taskfile: workspaces/diff-engine/Taskfile.yml
+  optic-engine-native:
+    taskfile: workspaces/optic-engine-native/Taskfile.yml
   ui-v2:
     taskfile: workspaces/ui-v2/Taskfile.yml
     dir: workspaces/ui-v2
@@ -55,7 +55,7 @@ tasks:
           cp $FLAGS_FILE workspaces/local-cli/.env
           cp $FLAGS_FILE workspaces/cli-server/.env
           cp $FLAGS_FILE workspaces/cli-scripts/.env
-          cp $FLAGS_FILE workspaces/diff-engine/.env
+          cp $FLAGS_FILE workspaces/optic-engine/.env
           cp $FLAGS_FILE workspaces/ui-v2/.env.production.local
         else
           echo "Please specify the FLAGS_FILE environment variable"

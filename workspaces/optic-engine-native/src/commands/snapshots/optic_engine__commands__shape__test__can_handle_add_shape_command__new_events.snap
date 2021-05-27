@@ -1,0 +1,19 @@
+---
+source: workspaces/optic-engine-native/src/commands/shape.rs
+expression: new_events
+---
+[
+    ShapeAdded(
+        ShapeAdded {
+            shape_id: "string_shape_2",
+            base_shape_id: "$string",
+            parameters: DynamicParameterList(
+                DynamicShapeParametersDescriptor {
+                    shape_parameter_ids: [],
+                },
+            ),
+            name: "test-name",
+            event_context: None,
+        },
+    ),
+]

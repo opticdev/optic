@@ -22,7 +22,7 @@
     "@useoptic/cli-config": "10.0.4",
     "@useoptic/cli-scripts": "10.0.4",
     "@useoptic/cli-shared": "10.0.4",
-    "@useoptic/diff-engine": "10.0.4",
+    "@useoptic/optic-engine-native": "10.0.4",
     "@useoptic/optic-engine-wasm": "10.0.4",
     "@useoptic/optic-streams": "10.0.4",
     "@useoptic/saas-types": "10.0.4",

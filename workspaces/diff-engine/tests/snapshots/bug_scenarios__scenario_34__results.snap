@@ -1,5 +1,0 @@
----
-source: workspaces/diff-engine/tests/bug-scenarios.rs
-expression: results
----
-[]

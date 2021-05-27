@@ -3,7 +3,7 @@ import {
   LocalCaptureInteractionPointerConverter,
 } from '../captures/avro/file-system/interaction-iterator';
 import { Streams } from '@useoptic/optic-streams';
-import { diffInteractions } from '@useoptic/diff-engine';
+import { diffInteractions } from '@useoptic/optic-engine-native';
 import fs from 'fs-extra';
 import { fork } from 'stream-fork';
 import { DiffResult } from '@useoptic/optic-streams/build/streams/diff-results';

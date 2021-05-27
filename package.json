@@ -7,7 +7,7 @@
     "bump-core-snapshot": "node ./workspaces/scripts/bump-core-local.js"
   },
   "workspaces": [
-    "workspaces/diff-engine",
+    "workspaces/optic-engine-native",
     "workspaces/optic-engine-wasm",
     "workspaces/optic-streams",
     "workspaces/analytics",

@@ -1,6 +1,6 @@
 [workspace]
 
 members = [
-  "workspaces/diff-engine",
-  "workspaces/diff-engine/cli"
+  "workspaces/optic-engine-native",
+  "workspaces/optic-engine-native/cli"
 ]

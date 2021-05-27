@@ -16,11 +16,11 @@ jobs:
       matrix:
         platform:
           - os: windows-latest
-            task: diff-engine:build-windows
+            task: optic-engine-native:build-windows
           - os: macos-latest
-            task: diff-engine:build-macos
+            task: optic-engine-native:build-macos
           - os: ubuntu-latest
-            task: diff-engine:build-linux
+            task: optic-engine-native:build-linux
         interaction-count: [10000]
         rust-diff-engine: [true]
     runs-on: ${{ matrix.platform.os }}
@@ -77,10 +77,10 @@ jobs:
             echo "MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx11.1 --show-sdk-platform-version)" >> $GITHUB_ENV
           fi
         shell: bash
-      - name: Prepare diff-engine
+      - name: Prepare optic-engine-native
         env:
           BUILD_ARGS: --all-features --workspace --release
-        run: task diff-engine:add-targets ${{ matrix.platform.task }} diff-engine:test
+        run: task optic-engine-native:add-targets ${{ matrix.platform.task }} optic-engine-native:test
       - name: Run scenario
         shell: bash
         timeout-minutes: 2

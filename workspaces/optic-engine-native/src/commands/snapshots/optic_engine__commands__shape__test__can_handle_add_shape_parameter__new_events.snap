@@ -1,0 +1,23 @@
+---
+source: workspaces/optic-engine-native/src/commands/shape.rs
+expression: new_events
+---
+[
+    ShapeParameterAdded(
+        ShapeParameterAdded {
+            shape_parameter_id: "shape_parameter_2",
+            shape_id: "one_off_shape_1",
+            name: "",
+            shape_descriptor: ProviderInShape(
+                ProviderInShape {
+                    shape_id: "one_off_shape_1",
+                    provider_descriptor: NoProvider(
+                        NoProvider,
+                    ),
+                    consuming_parameter_id: "shape_parameter_2",
+                },
+            ),
+            event_context: None,
+        },
+    ),
+]

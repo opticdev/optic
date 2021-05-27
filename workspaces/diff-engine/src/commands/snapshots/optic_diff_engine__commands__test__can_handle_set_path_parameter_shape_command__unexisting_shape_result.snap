@@ -1,7 +1,0 @@
----
-source: workspaces/diff-engine/src/commands/mod.rs
-expression: unexisting_shape_result.unwrap_err()
----
-Validation(
-    "Command failed validation: shape must exist to set the path parameter shape, \"SetPathParameterShape(SetPathParameterShape { path_id: \\\"path_2\\\", shaped_request_parameter_shape_descriptor: ShapedRequestParameterShapeDescriptor { shape_id: \\\"not_a_shape_id\\\", is_removed: false } })\"",
-)

@@ -14,7 +14,7 @@ import {
 } from '@useoptic/spectacle';
 import { EventEmitter } from 'events';
 import { AsyncTools, AsyncTools as AT, Streams } from '@useoptic/optic-streams';
-import * as OpticEngine from '@useoptic/diff-engine';
+import * as OpticEngine from '@useoptic/optic-engine-native';
 import * as opticEngine from '@useoptic/optic-engine-wasm';
 import { isEnvTrue } from '@useoptic/cli-shared';
 import {

@@ -1,0 +1,70 @@
+---
+source: workspaces/optic-engine-native/src/learn_shape/result.rs
+expression: "&nullable_object_field_results"
+---
+(
+    Some(
+        "test-id-5",
+    ),
+    [
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-2",
+                    base_shape_id: "$string",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-3",
+                    base_shape_id: "$nullable",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            SetParameterShape(
+                SetParameterShape {
+                    shape_descriptor: ProviderInShape(
+                        ProviderInShape {
+                            shape_id: "test-id-3",
+                            provider_descriptor: ShapeProvider(
+                                ShapeProvider {
+                                    shape_id: "test-id-2",
+                                },
+                            ),
+                            consuming_parameter_id: "$nullableInner",
+                        },
+                    ),
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-5",
+                    base_shape_id: "$object",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddField(
+                AddField {
+                    field_id: "test-id-4",
+                    shape_id: "test-id-5",
+                    name: "nullable-field",
+                    shape_descriptor: FieldShapeFromShape(
+                        FieldShapeFromShape {
+                            field_id: "test-id-4",
+                            shape_id: "test-id-3",
+                        },
+                    ),
+                },
+            ),
+        ),
+    ],
+)

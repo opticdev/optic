@@ -2,7 +2,7 @@
 
 use chrono::Utc;
 use nanoid::nanoid;
-use optic_diff_engine::{
+use optic_engine::{
   analyze_undocumented_bodies, Aggregate, Body, BodyAnalysisResult, CommandContext,
   EndpointQueries, HttpInteraction, InteractionDiffResult, JsonTrail,
   LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection,
@@ -76,7 +76,7 @@ pub fn try_apply_commands(
     CommandContext::new(batch_id.clone(), client_id, client_session_id, Utc::now());
 
   let mut batch =
-    optic_diff_engine::append_batch_to_spec(spec_projection, commit_message, batch_command_context);
+    optic_engine::append_batch_to_spec(spec_projection, commit_message, batch_command_context);
 
   for command in spec_commands {
     batch
@@ -210,20 +210,20 @@ pub struct WasmSpecProjection {
 
 impl WasmSpecProjection {
   pub fn diff_interaction(&self, interaction: HttpInteraction) -> Vec<InteractionDiffResult> {
-    optic_diff_engine::diff_interaction(&self.projection, interaction)
+    optic_engine::diff_interaction(&self.projection, interaction)
   }
   fn analyze_undocumented_bodies(
     &self,
     interaction: HttpInteraction,
   ) -> impl Iterator<Item = BodyAnalysisResult> {
-    optic_diff_engine::analyze_undocumented_bodies(&self.projection, interaction)
+    optic_engine::analyze_undocumented_bodies(&self.projection, interaction)
   }
 
   fn analyze_documented_bodies(
     &self,
     interaction: HttpInteraction,
   ) -> impl Iterator<Item = BodyAnalysisResult> {
-    optic_diff_engine::analyze_documented_bodies(&self.projection, interaction)
+    optic_engine::analyze_documented_bodies(&self.projection, interaction)
   }
 
   pub fn spectacle_endpoints_projection(&self) -> Result<String, JsValue> {
@@ -283,7 +283,7 @@ pub fn append_batch_to_spec(
   );
 
   let mut batch =
-    optic_diff_engine::append_batch_to_spec(spec.projection, commit_message, batch_command_context);
+    optic_engine::append_batch_to_spec(spec.projection, commit_message, batch_command_context);
 
   for command in commands {
     batch

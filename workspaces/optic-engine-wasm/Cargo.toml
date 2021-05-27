@@ -23,6 +23,6 @@ uuid = { version = "0.8.2", features = ["v4", "wasm-bindgen"] }
 [dependencies.getrandom]
 features = ["js"]
 
-[dependencies.optic_diff_engine]
-path = "../diff-engine" 
+[dependencies.optic_engine]
+path = "../optic-engine-native" 
 default-features = false

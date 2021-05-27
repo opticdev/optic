@@ -1,7 +1,0 @@
----
-source: workspaces/diff-engine/src/commands/shape.rs
-expression: unexisting_field_shape_result.unwrap_err()
----
-Validation(
-    "Command failed validation: shape of shape descriptor must exist to set field shape, \"SetFieldShape(SetFieldShape { shape_descriptor: FieldShapeFromShape(FieldShapeFromShape { field_id: \\\"field_1\\\", shape_id: \\\"not-a-shape\\\" }) })\"",
-)

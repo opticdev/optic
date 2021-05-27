@@ -1,0 +1,5 @@
+---
+source: workspaces/optic-engine-native/src/events/spec_chunk.rs
+expression: out_of_order_end_event_result.unwrap_err().0
+---
+"BatchCommitEnded event does not have matching parent_id"
