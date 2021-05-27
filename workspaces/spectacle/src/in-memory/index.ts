@@ -50,10 +50,14 @@ export interface InMemorySpecRepositoryDependencies {
 export class InMemorySpecRepository implements IOpticSpecReadWriteRepository {
   private events: any[] = [];
   public notifications: EventEmitter;
+  public changes: AsyncGenerator<number>;
 
   constructor(private dependencies: InMemorySpecRepositoryDependencies) {
     this.notifications = dependencies.notifications;
     this.events.push(...dependencies.initialState.events);
+    this.changes = (async function* () {
+      // purely in-memory specs are not expected to change from any other source than ourselves
+    })();
   }
 
   async appendEvents(events: any[]): Promise<void> {
