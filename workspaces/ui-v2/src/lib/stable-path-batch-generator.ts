@@ -1,5 +1,5 @@
-import { IPendingEndpoint } from '<src>/optic-components/hooks/diffs/SharedDiffState';
-import { IPath } from '<src>/optic-components/hooks/usePathsHook';
+import { IPendingEndpoint } from '<src>/pages/diffs/contexts/SharedDiffState';
+import { IPath } from '<src>/hooks/usePathsHook';
 import {
   AddPathComponent,
   AddPathParameter,

@@ -1,15 +1,11 @@
 import sortby from 'lodash.sortby';
-import {
-  code,
-  ICopy,
-  plain,
-} from '../optic-components/diffs/render/ICopyRender';
+import { code, ICopy, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { ICoreShapeKinds } from './Interfaces';
 
 export function namer(kinds: ICoreShapeKinds[]): string {
   const kindsFiltered = kinds.filter(
     (i) =>
-      ![ICoreShapeKinds.NullableKind, ICoreShapeKinds.OptionalKind].includes(i),
+      ![ICoreShapeKinds.NullableKind, ICoreShapeKinds.OptionalKind].includes(i)
   );
 
   const result = (() => {
@@ -32,7 +28,7 @@ export function namer(kinds: ICoreShapeKinds[]): string {
 export function namerForOptions(kinds: ICoreShapeKinds[]): string {
   const kindsFiltered = kinds.filter(
     (i) =>
-      ![ICoreShapeKinds.NullableKind, ICoreShapeKinds.OptionalKind].includes(i),
+      ![ICoreShapeKinds.NullableKind, ICoreShapeKinds.OptionalKind].includes(i)
   );
 
   return (() => {
@@ -77,12 +73,12 @@ export function namerForOneOf(kinds: ICoreShapeKinds[]): ICopy[] {
       before: ICopy[],
       value: ICoreShapeKinds,
       i: number,
-      array: ICoreShapeKinds[],
+      array: ICoreShapeKinds[]
     ) => [
       ...before,
       plain(before.length ? (i < array.length - 1 ? ',' : 'or') : ''),
       code(nameForCoreShapeKind(value)),
     ],
-    [],
+    []
   );
 }

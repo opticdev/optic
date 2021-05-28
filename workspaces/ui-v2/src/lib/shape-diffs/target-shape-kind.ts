@@ -1,6 +1,6 @@
 import { ICoreShapeKinds } from '../Interfaces';
 import { Actual, Expectation } from '../shape-diff-dsl-rust';
-import { code, ICopy } from '../../optic-components/diffs/render/ICopyRender';
+import { code, ICopy } from '<src>/pages/diffs/components/ICopyRender';
 import { nameForCoreShapeKind, namerForOneOf } from '../quick-namer';
 import { setDifference } from '../set-ops';
 
