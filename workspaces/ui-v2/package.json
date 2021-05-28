@@ -19,8 +19,8 @@
     "start:cloud": "env OPTIC_WEBPACK_ENTRYPOINT=cloud node scripts/start.js",
     "build": "yarn run build:local",
     "test": "jest",
-    "ws:clean": "echo 'cleaning' ",
-    "ws:build": "yarn build:local"
+    "ws:build": "yarn build:local",
+    "ws:test": "jest"
   },
   "dependencies": {
     "@babel/core": "7.12.3",
