@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { IShapeRenderer } from './shapes/ShapeRenderInterfaces';
+import { IShapeRenderer } from './ShapeRenderer/ShapeRenderInterfaces';
 import { EditableTextField, TextFieldVariant } from './EditableTextField';
 
 export type FieldOrParameterProps = {

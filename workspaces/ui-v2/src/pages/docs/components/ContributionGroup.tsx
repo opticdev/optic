@@ -1,7 +1,6 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { IShapeRenderer } from '<src>/components/shapes/ShapeRenderInterfaces';
-import { DepthStore } from '<src>/components/shapes/DepthContext';
+import { IShapeRenderer } from '<src>/components/ShapeRenderer/ShapeRenderInterfaces';
 import { DocsFieldOrParameterContribution } from './Contributions';
 
 type ContributionGroupProps = { rootShape: IShapeRenderer[] };
@@ -11,22 +10,20 @@ export const ContributionGroup = ({ rootShape }: ContributionGroupProps) => {
   const contributions = createFlatList(rootShape);
 
   return (
-    <DepthStore depth={0}>
-      <div className={classes.container}>
-        {contributions.map((i, index) => {
-          return (
-            <DocsFieldOrParameterContribution
-              depth={i.depth}
-              id={i.contributionId}
-              name={i.name}
-              shapes={i.shapes}
-              key={i.contributionId + i.name + index}
-              initialValue={i.description}
-            />
-          );
-        })}
-      </div>
-    </DepthStore>
+    <div className={classes.container}>
+      {contributions.map((i, index) => {
+        return (
+          <DocsFieldOrParameterContribution
+            depth={i.depth}
+            id={i.contributionId}
+            name={i.name}
+            shapes={i.shapes}
+            key={i.contributionId + i.name + index}
+            initialValue={i.description}
+          />
+        );
+      })}
+    </div>
   );
 };
 
