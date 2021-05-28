@@ -298,7 +298,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   endpointNameContainer: {
-    overflowX: 'scroll',
+    overflowX: 'auto',
     flexGrow: 1,
   },
   endpointContributionContainer: {
