@@ -25,6 +25,8 @@ import { SpectacleContext } from '../../../spectacle-implementations/spectacle-p
 import { IIgnoreBody } from '../../hooks/diffs/LearnInitialBodiesMachine';
 import { useDebouncedFn, useStateWithSideEffect } from '../../hooks/util';
 import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
+import { PageLayout } from '<src>/optic-components/layouts/PageLayout';
+import { DiffAccessoryNavigation } from '<src>/optic-components/diffs/DiffAccessoryNavigation';
 import { useAnalytics } from '<src>/analytics';
 
 export function PendingEndpointPageSession(props: any) {
@@ -51,21 +53,23 @@ export function PendingEndpointPageSession(props: any) {
   }
 
   return (
-    <ILearnedPendingEndpointStore
-      endpointMachine={endpoint.ref}
-      endpoint={endpoint}
-      onEndpointStaged={() => {
-        stageEndpoint(endpoint.id);
-        goToDiffPage();
-      }}
-      onEndpointDiscarded={() => {
-        discardEndpoint(endpoint.id);
-        analytics.userDiscardedEndpoint();
-        goToDiffPage();
-      }}
-    >
-      <PendingEndpointPage />
-    </ILearnedPendingEndpointStore>
+    <PageLayout AccessoryNavigation={DiffAccessoryNavigation}>
+      <ILearnedPendingEndpointStore
+        endpointMachine={endpoint.ref}
+        endpoint={endpoint}
+        onEndpointStaged={() => {
+          stageEndpoint(endpoint.id);
+          goToDiffPage();
+        }}
+        onEndpointDiscarded={() => {
+          discardEndpoint(endpoint.id);
+          analytics.userDiscardedEndpoint();
+          goToDiffPage();
+        }}
+      >
+        <PendingEndpointPage />
+      </ILearnedPendingEndpointStore>
+    </PageLayout>
   );
 }
 

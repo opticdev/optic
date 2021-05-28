@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React, { FC } from 'react';
 import { LinearProgress } from '@material-ui/core';
-import { NavigationWithChild } from '../navigation/NavigationRoute';
+import { PageLayout } from '../layouts/PageLayout';
 
-export function Loading(props: any) {
+export function Loading() {
   return <LinearProgress variant="indeterminate" />;
 }
 
-export function LoadingPage(props: any) {
-  return <NavigationWithChild>{props.children}</NavigationWithChild>;
-}
+export const LoadingPage: FC = ({ children }) => {
+  return <PageLayout AccessoryNavigation={null}>{children}</PageLayout>;
+};

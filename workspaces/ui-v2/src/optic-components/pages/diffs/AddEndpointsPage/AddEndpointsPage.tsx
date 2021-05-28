@@ -24,6 +24,8 @@ import { EndpointName } from '../../../common';
 import { IPendingEndpoint } from '../../../hooks/diffs/SharedDiffState';
 import { useChangelogStyles } from '../../../changelog/ChangelogBackground';
 import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
+import { PageLayout } from '<src>/optic-components/layouts/PageLayout';
+import { DiffAccessoryNavigation } from '<src>/optic-components/diffs/DiffAccessoryNavigation';
 
 import {
   AddEndpointDiffHeader,
@@ -64,7 +66,7 @@ export function DiffUrlsPage() {
   );
 
   return (
-    <>
+    <PageLayout AccessoryNavigation={DiffAccessoryNavigation}>
       <TwoColumnFullWidth
         left={
           <>
@@ -148,7 +150,7 @@ export function DiffUrlsPage() {
           closeModal={closeBulkModal}
         />
       )}
-    </>
+    </PageLayout>
   );
 }
 

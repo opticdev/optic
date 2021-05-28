@@ -1,6 +1,5 @@
-import * as React from 'react';
-import { useMemo } from 'react';
-import { NavigationRoute } from '../../navigation/NavigationRoute';
+import React, { useMemo } from 'react';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import {
   useDiffEnvironmentsRoot,
   useDiffForEndpointLink,
@@ -12,14 +11,15 @@ import {
 import { SharedDiffStore } from '../../hooks/diffs/SharedDiffContext';
 import { PendingEndpointPageSession } from './PendingEndpointPage';
 import { DiffUrlsPage } from './AddEndpointsPage';
-import { Redirect, Route, Switch } from 'react-router-dom';
 import { ReviewEndpointDiffContainer } from './ReviewEndpointDiffPage';
-import { DiffAccessoryNavigation } from '../../diffs/DiffAccessoryNavigation';
 import { useDiffsForCapture } from '../../hooks/useDiffForCapture';
 import { v4 as uuidv4 } from 'uuid';
 import { useAllRequestsAndResponses } from '../../hooks/diffs/useAllRequestsAndResponses';
 import { useEndpoints } from '../../hooks/useEndpointsHook';
-import { CapturePage, CapturePageWithDiff } from './CapturePage';
+import {
+  CapturePageWithoutDiffOrRedirect,
+  CapturePageWithDiff,
+} from './CapturePage';
 import { LoadingPage } from '../../loaders/Loading';
 import { LoadingDiffReview } from '../../diffs/LoadingDiffReview';
 import { usePaths } from '<src>/optic-components/hooks/usePathsHook';
@@ -66,27 +66,29 @@ export function DiffReviewPages(props: any) {
       requests={allRequestsAndResponsesOfBaseSpec.data?.requests!}
       responses={allRequestsAndResponsesOfBaseSpec.data?.responses!}
     >
-      <NavigationRoute
-        path={diffReviewCapturePageLink.path}
-        Component={CapturePageWithDiff}
-        AccessoryNavigation={() => <DiffAccessoryNavigation />}
-      />
-      <NavigationRoute
-        path={diffUndocumentedUrlsPageLink.path}
-        Component={DiffUrlsPage}
-        AccessoryNavigation={() => <DiffAccessoryNavigation />}
-      />
-      <NavigationRoute
-        path={diffForEndpointLink.path}
-        Component={ReviewEndpointDiffContainer}
-        AccessoryNavigation={() => <DiffAccessoryNavigation />}
-      />
-      <NavigationRoute
-        path={diffReviewPagePendingEndpoint.path}
-        Component={PendingEndpointPageSession}
-        AccessoryNavigation={() => <DiffAccessoryNavigation />}
-      />
-      <Redirect to={diffReviewCapturePageLink.linkTo()} />
+      <Switch>
+        <Route
+          exact
+          path={diffReviewCapturePageLink.path}
+          component={CapturePageWithDiff}
+        />
+        <Route
+          exact
+          path={diffUndocumentedUrlsPageLink.path}
+          component={DiffUrlsPage}
+        />
+        <Route
+          exact
+          path={diffForEndpointLink.path}
+          component={ReviewEndpointDiffContainer}
+        />
+        <Route
+          exact
+          path={diffReviewPagePendingEndpoint.path}
+          component={PendingEndpointPageSession}
+        />
+        <Redirect to={diffReviewCapturePageLink.linkTo()} />
+      </Switch>
     </SharedDiffStore>
   );
 }
@@ -97,20 +99,12 @@ export function DiffReviewEnvironments(props: any) {
 
   return (
     <Switch>
-      <>
-        <NavigationRoute
-          path={diffRoot.path}
-          Component={CapturePage}
-          AccessoryNavigation={() => null}
-        />
-        <Route path={diffEnvironmentsRoot.path} component={DiffReviewPages} />
-        {/*<Redirect*/}
-        {/*  to={diffEnvironmentsRoot.linkTo(*/}
-        {/*    'local',*/}
-        {/*    capturesState.captures[0].captureId*/}
-        {/*  )}*/}
-        {/*/>*/}
-      </>
+      <Route
+        path={diffRoot.path}
+        exact
+        component={CapturePageWithoutDiffOrRedirect}
+      />
+      <Route path={diffEnvironmentsRoot.path} component={DiffReviewPages} />
     </Switch>
   );
 }

@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Switch, useParams, useRouteMatch } from 'react-router-dom';
+import {
+  Redirect,
+  Route,
+  Switch,
+  useParams,
+  useRouteMatch,
+} from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '<src>/optic-components/hooks/useBaseUrl';
 import { DocumentationPages } from '<src>/optic-components/pages/docs';
 import { SpectacleStore } from './spectacle-provider';
@@ -97,11 +103,19 @@ export default function PublicExamples(props: { lookupDir: string }) {
               >
                 <SpecMetadataProvider>
                   <Switch>
-                    <>
-                      <DocumentationPages />
-                      <DiffReviewEnvironments />
-                      <ChangelogPages />
-                    </>
+                    <Route
+                      path={`${match.path}/changes-since/:batchId`}
+                      component={ChangelogPages}
+                    />
+                    <Route
+                      path={`${match.path}/documentation`}
+                      component={DocumentationPages}
+                    />
+                    <Route
+                      path={`${match.path}/diffs`}
+                      component={DiffReviewEnvironments}
+                    />
+                    <Redirect to={`${match.path}/documentation`} />
                   </Switch>
                 </SpecMetadataProvider>
               </AnalyticsStore>
