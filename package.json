@@ -1,10 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "postpull": "printf 'Run this command:\n$ task workspaces:build\n'",
-    "bump": "node ./workspaces/scripts/bump.js",
-    "bump-core": "node ./workspaces/scripts/bump-core.js",
-    "bump-core-snapshot": "node ./workspaces/scripts/bump-core-local.js"
+    "postpull": "printf 'Run this command:\n$ task workspaces:build\n' or 'task postpull'",
+    "bump": "node ./workspaces/scripts/bump.js"
   },
   "workspaces": [
     "workspaces/diff-engine",
