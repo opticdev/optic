@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "postpull": "printf 'Run this command:\n$ task workspaces:build\n' or 'task postpull'",
+    "postpull": "printf 'Run this command:\n$ task workspaces:build\n or:\n$ task postpull\n'",
     "bump": "node ./workspaces/scripts/bump.js"
   },
   "workspaces": [
