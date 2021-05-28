@@ -213,9 +213,7 @@ function getBinPath() {
   if (binPaths.length < 1) {
     // @TODO: consider more useful error message here, depending on platform being supported, versions missing, etc.
     throw new Error(
-      `Diff-engine binary could not be found (pre-built download for ${
-        supportedPlatform?.name ?? `${OS.arch()} ${OS.type()}`
-      } or local build ${debugBinPath}). Consider installing a pre-built version or building locally.`
+      `Diff-engine binary could not be found (pre-built download for ${OS.arch()} ${OS.type()} or local build ${debugBinPath}). Consider installing a pre-built version or building locally.`
     );
   }
 
