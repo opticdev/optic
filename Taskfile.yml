@@ -72,7 +72,7 @@ tasks:
   workspaces:test:
     desc: Test Yarn workspaces
     cmds:
-      - yarn wsrun --report --fast-exit --exclude-missing ws:test
+      - yarn wsrun --stages --report --fast-exit --exclude-missing ws:test
 
   workspaces:build:ci:
     desc: CI workflow
