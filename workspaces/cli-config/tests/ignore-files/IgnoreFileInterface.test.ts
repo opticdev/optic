@@ -24,6 +24,6 @@ test('can append new rule to file', async () => {
 
   await ignoreHelper.appendRule('POST /hello-world');
   const contents = (await fs.readFile(v2)).toString();
-  fs.unlink(v2);
+  await fs.unlink(v2);
   expect(contents).toMatchSnapshot();
 });

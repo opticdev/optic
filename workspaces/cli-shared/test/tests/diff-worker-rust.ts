@@ -4,11 +4,11 @@
 /// <reference types="../../typings/stream-json/index" />
 
 import Tap from 'tap';
-import { FileSystemAvroCaptureSaver as CaptureSaver } from '@useoptic/cli-shared';
-import { IHttpInteraction as Interaction } from '@useoptic/domain-types';
-import { exampleInteractions } from '../fixtures/interactions';
 import Path from 'path';
 import Fs from 'fs-extra';
+import { FileSystemAvroCaptureSaver as CaptureSaver } from '@useoptic/cli-shared';
+import { IHttpInteraction as Interaction } from '../../src/optic-types';
+import { exampleInteractions } from '../fixtures/interactions';
 import { Readable, Transform, TransformCallback } from 'stream';
 import { InteractionDiffWorkerRust } from '../../src/diffs/interaction-diff-worker-rust';
 
