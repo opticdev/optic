@@ -3,18 +3,15 @@ import {
   AllEndpointsQuery,
   endpointQueryResultsToJson,
   EndpointQueryResults,
-} from '<src>/optic-components/hooks/useEndpointsHook';
+} from '<src>/hooks/useEndpointsHook';
 import { IBaseSpectacle } from '@useoptic/spectacle';
 import {
   AllRequestsAndResponsesQuery,
   queryResultToAllRequestsResponses,
-} from '<src>/optic-components/hooks/diffs/useAllRequestsAndResponses';
+} from '<src>/pages/diffs/hooks/useAllRequestsAndResponses';
 import { newDeterministicIdGenerator } from '<src>/lib/domain-id-generator';
 import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
-import {
-  AllPathsQuery,
-  PathQueryResponse,
-} from '<src>/optic-components/hooks/usePathsHook';
+import { AllPathsQuery, PathQueryResponse } from '<src>/hooks/usePathsHook';
 
 //@GOTCHA: for some reason, probably because of jest, our wasm code thinks it is running in the browser even though it is running in node because of the presence of global.self:
 //@REF: https://github.com/rust-random/getrandom/issues/214

@@ -1,6 +1,6 @@
 import { CQRSCommand } from '@useoptic/spectacle';
-import { IPendingEndpoint } from '../optic-components/hooks/diffs/SharedDiffState';
-import { recomputePendingEndpointCommands } from '<src>/optic-components/hooks/diffs/LearnInitialBodiesMachine';
+import { IPendingEndpoint } from '<src>/pages/diffs/contexts/SharedDiffState';
+import { recomputePendingEndpointCommands } from '<src>/pages/diffs/contexts/LearnInitialBodiesMachine';
 
 export function AssembleCommands(
   newPaths: {

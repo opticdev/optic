@@ -10,7 +10,7 @@ import {
   IInterpretation,
   IPatchChoices,
 } from '../Interfaces';
-import { code, plain } from '../../optic-components/diffs/render/ICopyRender';
+import { code, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { builderInnerShapeFromChoices } from './build-inner-shape';
 import {
   ProviderInShape,

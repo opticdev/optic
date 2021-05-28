@@ -1,7 +1,7 @@
 import { generatePathCommands } from '<src>/lib/stable-path-batch-generator';
-import { IPendingEndpoint } from '<src>/optic-components/hooks/diffs/SharedDiffState';
+import { IPendingEndpoint } from '<src>/pages/diffs/contexts/SharedDiffState';
 import { buildUniverse } from '<src>/lib/__tests/diff-helpers/universes/buildUniverse';
-import { AllPathsQuery } from '<src>/optic-components/hooks/usePathsHook';
+import { AllPathsQuery } from '<src>/hooks/usePathsHook';
 
 const gitHubExample = [
   '/users/:username/orgs',

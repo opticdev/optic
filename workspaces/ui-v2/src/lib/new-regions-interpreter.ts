@@ -8,7 +8,7 @@ import { ParsedDiff } from './parse-diff';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { DiffTypes } from '@useoptic/cli-shared/build/diffs/diffs';
 import { IOpticDiffService } from '@useoptic/spectacle';
-import { code, plain } from '<src>/optic-components/diffs/render/ICopyRender';
+import { code, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { descriptionForNewRegions } from '<src>/lib/diff-description-interpreter';
 
 //only ever take 1 diff at a time

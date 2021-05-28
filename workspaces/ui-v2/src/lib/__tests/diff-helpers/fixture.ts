@@ -10,10 +10,7 @@ import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
 import colors from 'colors';
 import sortby from 'lodash.sortby';
 import stringify from 'json-stable-stringify';
-import {
-  ICopy,
-  ICopyStyle,
-} from '<src>/optic-components/diffs/render/ICopyRender';
+import { ICopy, ICopyStyle } from '<src>/pages/diffs/components/ICopyRender';
 import { IChangeType, IInterpretation } from '<src>/lib/Interfaces';
 import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { newRegionInterpreters } from '<src>/lib/new-regions-interpreter';

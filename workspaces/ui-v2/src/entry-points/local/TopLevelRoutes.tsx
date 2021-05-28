@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import PublicExamples from '../../spectacle-implementations/public-examples';
-import WelcomePage from '../../optic-components/onboarding/WelcomePage';
-import LocalCli from '../../spectacle-implementations/local-cli';
-import { OpticEngineStore } from '../../optic-components/hooks/useOpticEngine';
+import PublicExamples from './public-examples';
+import WelcomePage from '<src>/pages/onboarding/WelcomePage';
+import LocalCli from './local-cli';
+import { OpticEngineStore } from '<src>/hooks/useOpticEngine';
 
 export default function TopLevelRoutes() {
   return (

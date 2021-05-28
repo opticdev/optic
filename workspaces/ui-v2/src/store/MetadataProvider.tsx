@@ -1,6 +1,6 @@
 import React, { createContext, FC, useContext } from 'react';
-import { useSpectacleQuery } from '<src>/spectacle-implementations/spectacle-provider';
-import { FullPageLoader } from '<src>/optic-components/loaders';
+import { useSpectacleQuery } from '<src>/contexts/spectacle-provider';
+import { FullPageLoader } from '<src>/components';
 
 type MetadataContextValue = {
   id: string;

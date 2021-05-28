@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import CloudViewer from '../../spectacle-implementations/cloud-viewer';
-import WelcomePage from '../../optic-components/onboarding/WelcomePage';
-import { OpticEngineStore } from '../../optic-components/hooks/useOpticEngine';
+import WelcomePage from '<src>/pages/onboarding/WelcomePage';
+import { OpticEngineStore } from '<src>/hooks/useOpticEngine';
+import CloudViewer from './cloud-viewer';
 
 export default function TopLevelRoutes() {
   return (
