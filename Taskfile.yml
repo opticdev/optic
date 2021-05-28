@@ -80,6 +80,7 @@ tasks:
       - task: workspaces:setup
       - task: workspaces:clean
       - task: workspaces:build
+      - cargo build
       - task: workspaces:test
       - task: flush-to-disk
 
