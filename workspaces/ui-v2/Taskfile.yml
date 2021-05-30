@@ -8,6 +8,7 @@ tasks:
 
   ci:
     - task: cloud-spec-viewer:ci
+    - task: demo-spec-viewer:ci
 
   #
   # docker namespace
@@ -21,7 +22,7 @@ tasks:
       - |
         docker build . \
           -t $DOCKER_REGISTRY/{{.REPO}}:{{.TAG}} \
-          --build-arg APP={{.REPO}}
+          --build-arg BUILD_PATH={{.BUILD_PATH}}
 
   docker:push:
     vars:
@@ -47,19 +48,13 @@ tasks:
       - >
         BUILD_PATH=build-cloud-spec-viewer
         yarn build:cloud
-    sources:
-      - src/**
-      - package.json
-      - '**.ts'
-      - scripts/*spec*
-    generates:
-      - build-cloud-spec-viewer/**
 
   cloud-spec-viewer:docker:build:
     - task: cloud-spec-viewer:build
     - task: docker:build
       vars:
         REPO: cloud-spec-viewer
+        BUILD_PATH: build-cloud-spec-viewer
 
   cloud-spec-viewer:docker:push:
     vars:
@@ -82,3 +77,42 @@ tasks:
       - task: cloud-spec-viewer:docker:push
         vars:
           REPO: cloud-spec-viewer
+  #
+  # demo-spec-viewer namespace
+  #
+  demo-spec-viewer:build:
+    desc: Build demo-spec-viewer site
+    cmds:
+      - task: :workspaces:build
+      - >
+        BUILD_PATH=build-demo-spec-viewer
+        yarn build:demo
+
+  demo-spec-viewer:docker:build:
+    - task: demo-spec-viewer:build
+    - task: docker:build
+      vars:
+        REPO: demo
+        BUILD_PATH: build-demo-spec-viewer
+
+  demo-spec-viewer:docker:push:
+    vars:
+      TAG:
+        sh: echo $(../../bin/clean-docker-tag $TAG)
+    cmds:
+      - task: docker:push
+        vars:
+          REPO: demo
+      - task: :docker:slack-notifier
+        vars:
+          TAG: "{{.TAG}}"
+          REPO: demo
+
+  demo-spec-viewer:ci:
+    desc: CI workflow
+    deps: [":workspaces:setup"]
+    cmds:
+      - task: demo-spec-viewer:docker:build
+      - task: demo-spec-viewer:docker:push
+        vars:
+          REPO: demo
