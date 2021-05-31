@@ -3,4 +3,8 @@
 members = [
   "workspaces/optic-engine",
   "workspaces/optic-engine-native/cli"
+  # @GOTCHA:
+  # workspaces/optic-engine-wasm is intentionally not included here, so binaries 
+  # and wasm targets can be built separately. The wasm build occurs as part of 
+  # the ui-v2 build.
 ]
