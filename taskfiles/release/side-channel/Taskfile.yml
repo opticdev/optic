@@ -18,7 +18,7 @@ tasks:
       BUCKET: '{{default "optic-side-channel-staging" .SIDE_CHANNEL_BUCKET}}'
       FLAGS_FILE: '{{.FLAGS_FILE}}'
     deps:
-      - task: :workspaces:build
+      - task: :workspaces:build:ci
         env:
           FLAGS_FILE: '{{.FLAGS_FILE}}'
     cmds:
