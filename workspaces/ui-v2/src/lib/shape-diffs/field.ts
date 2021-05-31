@@ -9,10 +9,10 @@ import {
   IInterpretation,
   IPatchChoices,
 } from '../Interfaces';
-import { IShapeTrail } from '../../../../cli-shared/build/diffs/shape-trail';
-import { IJsonTrail } from '../../../../cli-shared/build/diffs/json-trail';
-import { IValueAffordanceSerializationWithCounter } from '../../../../cli-shared/build/diffs/initial-types';
-import { code, plain } from '../../optic-components/diffs/render/ICopyRender';
+import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
+import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
+import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { code, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { builderInnerShapeFromChoices } from './build-inner-shape';
 import {
   AddField,

@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { appTheme } from './optic-components/theme';
+import { appTheme } from './constants/theme';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core/styles';
-import * as SupportLinks from './optic-components/SupportLinks';
+import * as SupportLinks from './constants/SupportLinks';
 
 class App extends React.Component {
   state = { hasError: false };
@@ -70,9 +70,8 @@ function AppError(props) {
             or <a href={SupportLinks.GithubIssues}> open a GitHub issue</a>
             {': '}
             <ul>
-              <li>Open Developer Tools</li>
               <li>
-                Type <code>debugOptic()</code> in the console
+                share a debug capture <code>api debug:capture</code>
               </li>
             </ul>
           </li>

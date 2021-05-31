@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4 (or choose the latest version)
 
       - name: Install Optic # Or add to your development/build dependencies in your package management
-        run: npm install @useoptic/cli
+        run: npm install --legacy-peer-deps @useoptic/cli
 
       - name: Run tests
         run: npx api run run-tests --exit-on-diff

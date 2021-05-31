@@ -48,6 +48,8 @@ jobs:
       - name: Install test dependencies
         shell: bash
         run: task workspaces:build:ci
+        env:
+          FLAGS_FILE: '.env.latest'
       - name: Display yarn error log
         shell: bash
         run: cat yarn-error.log

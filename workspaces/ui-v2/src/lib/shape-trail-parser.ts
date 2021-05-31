@@ -9,7 +9,7 @@ import {
   IShapeTrail,
   IShapeTrailComponent,
 } from '@useoptic/cli-shared/build/diffs/shape-trail';
-import { JsonLike } from '../optic-components/shapes/ShapeRenderInterfaces';
+import { JsonLike } from '<src>/components';
 import invariant from 'invariant';
 import { ICoreShapeKinds } from './Interfaces';
 

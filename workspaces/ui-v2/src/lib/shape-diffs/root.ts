@@ -9,7 +9,7 @@ import {
   IPatchChoices,
 } from '../Interfaces';
 import sortBy from 'lodash.sortby';
-import { code, plain } from '../../optic-components/diffs/render/ICopyRender';
+import { code, plain } from '<src>/pages/diffs/components/ICopyRender';
 import invariant from 'invariant';
 import { builderInnerShapeFromChoices } from './build-inner-shape';
 import {

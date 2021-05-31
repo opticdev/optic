@@ -42,14 +42,14 @@ tasks:
       - package.json
       - yarn.lock
 
-  workspaces:build:
-    desc: Build Yarn workspaces
+  workspaces:setenv:
+    desc: Ensure workspace projects have .env files
     vars:
       FLAGS_FILE: '{{.FLAGS_FILE}}'
-    deps: ["workspaces:setup"]
     cmds:
       - |
-        if [[ -n "$FLAGS_FILE" ]]; then
+        if [[ -n "$FLAGS_FILE" ]]
+        then
           echo "Feature flags found ($FLAGS_FILE), copying to packages for build and runtime."
           cp $FLAGS_FILE .env
           cp $FLAGS_FILE workspaces/local-cli/.env
@@ -57,8 +57,16 @@ tasks:
           cp $FLAGS_FILE workspaces/cli-scripts/.env
           cp $FLAGS_FILE workspaces/diff-engine/.env
           cp $FLAGS_FILE workspaces/ui-v2/.env.production.local
+        else
+          echo "Please specify the FLAGS_FILE environment variable"
+          exit 1
         fi
-        yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
+
+  workspaces:build:
+    desc: Build Yarn workspaces
+    deps: ["workspaces:setup"]
+    cmds:
+      - yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
 
     sources:
       - !workspaces/*/build/**/*
@@ -66,14 +74,19 @@ tasks:
       - workspaces/diff-engine-wasm/lib/**/*
       - workspaces/diff-engine-wasm/engine/browser/**/*
       - workspaces/diff-engine-wasm/engine/build/**/*
-      - workspace/diff-engine-wasm/engine/target/**/*
+      - workspaces/diff-engine-wasm/engine/target/**/*
       - workspaces/*/build/**/*
 
   workspaces:build:ci:
     desc: CI workflow
+    vars:
+      FLAGS_FILE: '{{.FLAGS_FILE}}'
     cmds:
       - task: workspaces:setup
       - task: workspaces:clean
+      - task: workspaces:setenv
+        env:
+          FLAGS_FILE: '{{.FLAGS_FILE}}'
       - task: workspaces:build
       - task: flush-to-disk
 

@@ -1,9 +1,6 @@
-import { ICopy } from '../optic-components/diffs/render/ICopyRender';
-import { IEndpoint } from '../optic-components/hooks/useEndpointsHook';
-import {
-  IRequestBody,
-  IResponseBody,
-} from '../optic-components/hooks/useEndpointBodyHook';
+import { ICopy } from '<src>/pages/diffs/components/ICopyRender';
+import { IEndpoint } from '<src>/hooks/useEndpointsHook';
+import { IRequestBody, IResponseBody } from '<src>/hooks/useEndpointBodyHook';
 import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
 import { IgnoreRule } from './ignore-rule';
 import { DomainIdGenerator } from './domain-id-generator';
