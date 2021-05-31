@@ -14,7 +14,7 @@ const pJson = require('../../../package.json');
 
 export default class DebugCapture extends Command {
   static description =
-    'produce a debug file (with of sanitized interactions) that can be shared with Optic maintainers';
+    'produce a debug file (with sanitized interactions) that can be shared with Optic maintainers';
   static hidden: boolean = true;
 
   static args = [
