@@ -231,7 +231,7 @@ impl AggregateCommand<ShapeProjection> for ShapeCommand {
         )?;
 
         vec![ShapeEvent::from(shape_events::ShapeAdded::from(command))]
-      }
+      }      
 
       ShapeCommand::SetBaseShape(command) => {
         validation.require(
