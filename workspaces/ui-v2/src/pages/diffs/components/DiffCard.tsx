@@ -253,7 +253,7 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: 1,
   },
   previewScroll: {
-    overflow: 'scroll',
+    overflow: 'auto',
   },
   suggestionRegion: {
     backgroundColor: 'white',
