@@ -8,8 +8,8 @@ export type FieldOrParameterProps = {
   name: string;
   depth: number;
   value: string;
-  setValue: (newValue: string) => void;
-  isEditing: boolean;
+  setValue?: (newValue: string) => void;
+  isEditing?: boolean;
 };
 
 export const FieldOrParameter: FC<FieldOrParameterProps> = ({
@@ -17,8 +17,8 @@ export const FieldOrParameter: FC<FieldOrParameterProps> = ({
   shapes,
   depth,
   value,
-  setValue,
-  isEditing,
+  setValue = () => {},
+  isEditing = false,
 }) => {
   const classes = useStyles();
   return (
@@ -46,6 +46,44 @@ function summarizeTypes(shapes: IShapeRenderer[]) {
     const last = allShapes.pop();
     return allShapes.join(', ') + ' or ' + last;
   }
+}
+
+interface IContributions {
+  contributionId: string;
+  name: string;
+  shapes: IShapeRenderer[];
+  description: string;
+  depth: number;
+}
+
+export function createFlatList(
+  shapes: IShapeRenderer[],
+  depth: number = 0
+): IContributions[] {
+  const contributions: IContributions[] = [];
+
+  shapes.forEach((shape) => {
+    if (shape.asObject) {
+      shape.asObject.fields.forEach((field) => {
+        contributions.push({
+          name: field.name,
+          depth,
+          description: field.contributions.description || '',
+          shapes: field.shapeChoices,
+          contributionId: field.fieldId,
+        });
+
+        contributions.push(...createFlatList(field.shapeChoices, depth + 1));
+      });
+    }
+    if (shape.asArray) {
+      contributions.push(
+        ...createFlatList(shape.asArray.shapeChoices, depth + 1)
+      );
+    }
+  });
+
+  return contributions;
 }
 
 const useStyles = makeStyles((theme) => ({
