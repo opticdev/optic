@@ -286,16 +286,17 @@ mod test {
   #[tokio::main]
   #[test]
   async fn can_learn_shape_diffs_affordances_from_interactions() {
-    let spec_events_path = Path::new("../tests/fixtures/ergast-example-spec.json")
+    let spec_events_path = Path::new("../../optic-engine/tests/fixtures/ergast-example-spec.json")
       .absolutize()
       .unwrap()
       .to_path_buf();
-    let diffs_path = Path::new("../tests/fixtures/ergast-captures/diff-results.jsonl")
-      .absolutize()
-      .unwrap()
-      .to_path_buf();
+    let diffs_path =
+      Path::new("../../optic-engine/tests/fixtures/ergast-captures/diff-results.jsonl")
+        .absolutize()
+        .unwrap()
+        .to_path_buf();
     let interactions_path =
-      Path::new("../tests/fixtures/ergast-captures/ergast-simulated-traffic.jsonl")
+      Path::new("../../optic-engine/tests/fixtures/ergast-captures/ergast-simulated-traffic.jsonl")
         .absolutize()
         .unwrap()
         .to_path_buf();
