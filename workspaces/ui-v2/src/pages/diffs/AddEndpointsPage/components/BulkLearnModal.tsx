@@ -119,7 +119,7 @@ export const BulkLearnModal: FC<BulkLearnModalProps> = ({
               >
                 Endpoints to learn
               </Typography>
-              <Box overflow="scroll" maxHeight="50vh">
+              <Box overflow="auto" maxHeight="50vh">
                 {endpointsAsPatterns.map(({ pattern, method }) => (
                   <EndpointName
                     key={pattern}

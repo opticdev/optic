@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/snapshot-tests",
-  "version": "10.0.2",
+  "version": "10.0.4",
   "scripts": {
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build",
@@ -12,10 +12,10 @@
     "directory": "workspaces/snapshot-tests"
   },
   "dependencies": {
-    "@useoptic/cli-shared": "10.0.2",
-    "@useoptic/client-utilities": "10.0.2",
-    "@useoptic/diff-engine-wasm": "10.0.2",
-    "@useoptic/spectacle-shared": "10.0.2",
+    "@useoptic/cli-shared": "10.0.4",
+    "@useoptic/client-utilities": "10.0.4",
+    "@useoptic/diff-engine-wasm": "10.0.4",
+    "@useoptic/spectacle-shared": "10.0.4",
     "dataloader": "^2.0.0",
     "eventsource": "^1.0.7",
     "fs-extra": "^9.0.0"

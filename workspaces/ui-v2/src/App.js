@@ -70,9 +70,8 @@ function AppError(props) {
             or <a href={SupportLinks.GithubIssues}> open a GitHub issue</a>
             {': '}
             <ul>
-              <li>Open Developer Tools</li>
               <li>
-                Type <code>debugOptic()</code> in the console
+                share a debug capture <code>api debug:capture</code>
               </li>
             </ul>
           </li>

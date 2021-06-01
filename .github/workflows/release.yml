@@ -246,8 +246,7 @@ jobs:
           RELEASE_CHANNEL=latest
         fi
 
-        FLAGS_FILE=.env.$RELEASE_CHANNEL
-        task workspaces:build:ci
+        FLAGS_FILE=.env.$RELEASE_CHANNEL task workspaces:build:ci
     - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.PUBLISH_NPM_OPTIC_BOT }}" > ~/.npmrc
     - run: node ./workspaces/scripts/publish.js
       env:

@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 8,
     borderTop: 'none',
     maxHeight: '80vh',
-    overflowY: 'scroll',
+    overflowY: 'auto',
     borderLeft: '1px solid #e4e8ed',
     borderRight: '1px solid #e4e8ed',
     borderBottom: '1px solid #e4e8ed',
