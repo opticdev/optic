@@ -108,6 +108,8 @@ impl From<EventLoadingError> for SpecChunkLoaderError {
     match err {
       EventLoadingError::Io(err) => SpecChunkLoaderError::Io(err),
       EventLoadingError::Json(err) => SpecChunkLoaderError::Json(err),
+
+      #[cfg(feature = "avro")]
       EventLoadingError::Avro(err) => SpecChunkLoaderError::Other("unsupported encoding used"),
     }
   }

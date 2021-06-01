@@ -80,6 +80,7 @@ impl From<ShapeEvent> for SpecEvent {
 
 #[derive(Debug)]
 pub enum EventLoadingError {
+  #[cfg(feature = "avro")]
   Avro(avro_rs::Error),
   Io(io::Error),
   Json(serde_json::Error),
@@ -101,6 +102,7 @@ impl From<serde_json::Error> for EventLoadingError {
   }
 }
 
+#[cfg(feature = "avro")]
 impl From<avro_rs::Error> for EventLoadingError {
   fn from(err: avro_rs::Error) -> EventLoadingError {
     EventLoadingError::Avro(err)

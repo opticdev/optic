@@ -11,10 +11,11 @@ edition = "2018"
 
 [features]
 default = ["streams"]
+avro = ["avro-rs"]
 streams = ["futures", "tokio", "tokio-util", "tokio-stream"]
 
 [dependencies]
-avro-rs = "~0.11.0"
+avro-rs = { version = "~0.11.0", optional = true }
 base64 = "0.12.3"
 bytes = "1.0.1"
 chrono = { version = "0.4.19", features = ["serde", "wasmbind"] }

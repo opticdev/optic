@@ -11,6 +11,7 @@ use tokio_stream::StreamExt;
 //   // let fd = std::fs::File::open(fixture_path);
 // }
 
+#[cfg(feature = "avro")]
 #[test]
 #[should_panic] // avro deserializing doesn't work yet
 fn can_read_avro_serialized_interactions() {

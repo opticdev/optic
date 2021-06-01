@@ -1,7 +1,6 @@
 use super::EventLoadingError;
 use crate::shapehash;
 use crate::state::body::BodyDescriptor;
-use avro_rs;
 use base64;
 use cqrs_core::Event;
 use protobuf::Message;
@@ -162,35 +161,42 @@ impl HttpInteraction {
   pub fn from_json_str(json: &str) -> Result<Self, serde_json::Error> {
     serde_json::from_str(json)
   }
-
-  pub fn from_avro() -> HttpInteractionAvroDeserializer {
-    let deserializer = HttpInteractionAvroDeserializer::new(&INTERACTION_AVRO_SCHEMA)
-      .expect("interaction avro schema should be valid");
-
-    deserializer
-  }
 }
 
-pub struct HttpInteractionAvroDeserializer {
-  schema: avro_rs::Schema,
-}
+#[cfg(feature = "avro")]
+mod avro {
+  use super::*;
+  use avro_rs;
 
-impl HttpInteractionAvroDeserializer {
-  fn new(schema_str: &str) -> Result<Self, avro_rs::Error> {
-    let schema = avro_rs::Schema::parse_str(schema_str)?;
-    Ok(Self { schema })
+  impl HttpInteraction {
+    pub fn from_avro() -> HttpInteractionAvroDeserializer {
+      let deserializer = HttpInteractionAvroDeserializer::new(&INTERACTION_AVRO_SCHEMA)
+        .expect("interaction avro schema should be valid");
+
+      deserializer
+    }
   }
 
-  pub fn reader<'a, R>(&'a mut self, source: R) -> Result<avro_rs::Reader<'a, R>, avro_rs::Error>
-  where
-    R: io::Read,
-    R: 'a,
-  {
-    avro_rs::Reader::with_schema(&self.schema, source)
+  pub struct HttpInteractionAvroDeserializer {
+    schema: avro_rs::Schema,
   }
-}
 
-const INTERACTION_AVRO_SCHEMA: &str = r#"{
+  impl HttpInteractionAvroDeserializer {
+    fn new(schema_str: &str) -> Result<Self, avro_rs::Error> {
+      let schema = avro_rs::Schema::parse_str(schema_str)?;
+      Ok(Self { schema })
+    }
+
+    pub fn reader<'a, R>(&'a mut self, source: R) -> Result<avro_rs::Reader<'a, R>, avro_rs::Error>
+    where
+      R: io::Read,
+      R: 'a,
+    {
+      avro_rs::Reader::with_schema(&self.schema, source)
+    }
+  }
+
+  const INTERACTION_AVRO_SCHEMA: &str = r#"{
   "type": "record",
   "name": "InteractionBatch",
   "namespace": "com.useoptic.types.capture",
@@ -403,6 +409,7 @@ const INTERACTION_AVRO_SCHEMA: &str = r#"{
   ]
 }
 "#;
+}
 
 #[cfg(test)]
 mod test {
