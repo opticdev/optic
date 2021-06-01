@@ -1,1 +1,3 @@
 target
+src/protos/generated/*
+!src/protos/generated/mod.rs
