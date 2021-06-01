@@ -1,7 +1,6 @@
 import React, { FC, useMemo } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import groupBy from 'lodash.groupby';
-import classNames from 'classnames';
 import {
   CenteredColumn,
   EndpointName,
@@ -10,28 +9,22 @@ import {
 } from '<src>/components';
 import { IEndpoint, useEndpoints } from '<src>/hooks/useEndpointsHook';
 import { Box, List, ListItem, Typography } from '@material-ui/core';
-import makeStyles from '@material-ui/styles/makeStyles';
 import { useContributionEditing } from './contexts/Contributions';
 import { getEndpointId } from '<src>/utils';
-import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
   DocsPageAccessoryNavigation,
   EndpointNameMiniContribution,
 } from './components';
 
-export const DocumentationRootPageWithDocsNav: FC<
-  React.ComponentProps<typeof DocumentationRootPage>
-> = (props) => (
+export const DocumentationRootPageWithDocsNav: FC = () => (
   <PageLayout AccessoryNavigation={DocsPageAccessoryNavigation}>
-    <DocumentationRootPage {...props} />
+    <DocumentationRootPage />
   </PageLayout>
 );
 
-export function DocumentationRootPage(props: { changelogBatchId?: string }) {
-  const { endpoints, loading } = useEndpoints(props.changelogBatchId);
-  //@nic TODO fork changelog from documentation page
-  const isChangelogPage = props.changelogBatchId !== undefined;
+export function DocumentationRootPage() {
+  const { endpoints, loading } = useEndpoints();
   const history = useHistory();
   const match = useRouteMatch();
 
@@ -43,8 +36,6 @@ export function DocumentationRootPage(props: { changelogBatchId?: string }) {
 
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
-  const changelogStyles = useChangelogStyles();
-  const styles = useStyles();
   const onKeyPress = useRunOnKeypress(
     () => {
       if (isEditing && pendingCount > 0) {
@@ -104,12 +95,6 @@ export function DocumentationRootPage(props: { changelogBatchId?: string }) {
                         `${match.url}/paths/${endpoint.pathId}/methods/${endpoint.method}`
                       )
                     }
-                    className={classNames({
-                      [changelogStyles.added]:
-                        isChangelogPage && endpoint.changelog?.added,
-                      [changelogStyles.updated]:
-                        isChangelogPage && endpoint.changelog?.changed,
-                    })}
                   >
                     <div style={{ flex: 1 }}>
                       <EndpointName
@@ -122,21 +107,15 @@ export function DocumentationRootPage(props: { changelogBatchId?: string }) {
                       style={{ paddingRight: 15 }}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      {isChangelogPage ? (
-                        <Typography className={styles.smallField}>
-                          {endpoint.purpose || 'Unnamed Endpoint'}
-                        </Typography>
-                      ) : (
-                        <EndpointNameMiniContribution
-                          id={getEndpointId({
-                            method: endpoint.method,
-                            pathId: endpoint.pathId,
-                          })}
-                          defaultText="name for this endpoint"
-                          contributionKey="purpose"
-                          initialValue={endpoint.purpose}
-                        />
-                      )}
+                      <EndpointNameMiniContribution
+                        id={getEndpointId({
+                          method: endpoint.method,
+                          pathId: endpoint.pathId,
+                        })}
+                        defaultText="name for this endpoint"
+                        contributionKey="purpose"
+                        initialValue={endpoint.purpose}
+                      />
                     </div>
                   </ListItem>
                 );
@@ -148,13 +127,3 @@ export function DocumentationRootPage(props: { changelogBatchId?: string }) {
     </CenteredColumn>
   );
 }
-
-const useStyles = makeStyles((theme) => ({
-  smallField: {
-    fontSize: 12,
-    fontWeight: 400,
-    fontFamily: 'Ubuntu',
-    pointerEvents: 'none',
-    color: '#2a2f45',
-  },
-}));
