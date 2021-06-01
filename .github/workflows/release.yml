@@ -8,7 +8,7 @@ env:
   BUCKET_NAME: optic-packages
   PACKAGE_NAME: api
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  RELEASE_WORKFLOW_DRY_RUN: false
+  RELEASE_WORKFLOW_DRY_RUN: true # TODO: set this to false before merging
 
 on:
   push:
@@ -18,6 +18,9 @@ on:
     paths-ignore:
       - website/**
       - .github/**
+  pull_request: # TOOD: remove this before merging
+    branches:
+      - develop
 
 jobs:
   release_logic:
@@ -67,7 +70,7 @@ jobs:
         run: |
           echo Should we publish $OPTIC_VERSION from $GITHUB_REF?
           RELEASED_VERSION=$(npm view @useoptic/cli@$OPTIC_VERSION version)
-          if ! [[ -z $RELEASED_VERSION ]]; then
+          if ! [[ -z $RELEASED_VERSION ]] && [ $RELEASE_WORKFLOW_DRY_RUN = "false" ]; then
             echo "v$OPTIC_VERSION already published, should not publish again"
             echo "::set-output name=should_publish::false"
           elif [ "${{ steps.release_type.outputs.is_prerelease }}" = "false" ] && [ $GITHUB_REF != "refs/heads/release" ] && [ $RELEASE_WORKFLOW_DRY_RUN = "false" ]; then
