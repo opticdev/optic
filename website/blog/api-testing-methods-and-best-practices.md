@@ -7,11 +7,13 @@ category: Community
 social_image: social-api-testing-methods-and-best-practices.png
 ---
 
-![alt](/img/blog-content/social-api-testing-methods-and-best-practices.png)
+![A laboratory worker is running API tests with test tubes](/img/blog-content/social-api-testing-methods-and-best-practices.png)
 
 Application Programming Interface (API) testing is more complicated than testing a single-host application. Single-host applications can often be covered by unit and integration tests, but an API functions only if there is a both requester and a respondent. To fully test your API, you have to think about testing the application from both of these perspectives.
 
 Testing the API from the perspective of the requester means testing authentication, data accuracy, data formatting, overall consistency, and relevance of available documentation. The respondent needs unit tests for the components it uses and the data transformations it makes. It also needs to ensure it can both handle properly formulated requests and reject requests that are malformed or maliciously formed. You also need to test the connection to the data layer to ensure that whatever source the API draws from is accessible and understandable. This article will go into more detail about the tools and best methods for effectively testing your API.
+
+<!--truncate-->
 
 ## Application Testing
 
@@ -41,7 +43,7 @@ Part of the functionality of your API should test is its ability to handle eleva
 
 APIs are public facing and open to the internet, so it's also vital to test their security. There are many facets of security testing. If your API requires authentication, that's the best place to start. Ensure that unauthenticated individuals aren't able to access data, and authenticated individuals are. If you have tiers of authentication, check that each step up the authentication chain has access to the proper data, and isn't able to reach into other authentication levels.
 
-One of the test treatments APIs get that straddles the boundary of functionality testing and security testing is throwing a few weird requests at your API. As a public-facing entity, your API will receive all kinds of odd requests. Some of them will be plain wrong, and some of them will be malicious. Testing the edges of acceptable responses by throwing a wild brew of requests is known as [fuzz testing](https://owasp.org/www-community/Fuzzing “definition of fuzz testing at OWASP”). You're fuzzing the edges of expected request formats. Testing the API responds properly to requests with unusual headers and body contents will help make your API more stable, and enhance the security of your application.
+One of the test treatments APIs get that straddles the boundary of functionality testing and security testing is throwing a few weird requests at your API. As a public-facing entity, your API will receive all kinds of odd requests. Some of them will be plain wrong, and some of them will be malicious. Testing the edges of acceptable responses by throwing a wild brew of requests is known as [fuzz testing](https://owasp.org/www-community/Fuzzing). You're fuzzing the edges of expected request formats. Testing the API responds properly to requests with unusual headers and body contents will help make your API more stable, and enhance the security of your application.
 
 ## Automating Tests
 
@@ -51,7 +53,7 @@ Because an API requires a requester and a respondent, we often want to use a lib
 
 The easiest way to get started with API testing is in your browser’s inspector. For instance, Firefox offers the ability to edit and resend HTTP requests, which is perfect during test development or even performing basic tests.
 
-The easiest-to-use tool for most API testing is probably [Postman](https://www.postman.com/automated-testing/ “Postman automated tested for CI/CD pipeline”), which started as a Chrome extension. It handles mocking the requester and through a simple interface. It also allows you to integrate with a CI/CD tool such as Jenkins, so you can run tests automatically when you commit or deploy your changes. That's also true of the popular [SoapUI](https://www.soapui.org/ “SoapUI Open Source and ReadyAPI testing tools”) family of testing tools.
+The easiest-to-use tool for most API testing is probably [Postman](https://www.postman.com/automated-testing/), which started as a Chrome extension. It handles mocking the requester and through a simple interface. It also allows you to integrate with a CI/CD tool such as Jenkins, so you can run tests automatically when you commit or deploy your changes. That's also true of the popular [SoapUI](https://www.soapui.org/) family of testing tools.
 
 There are lots of framework options for running your API tests. It's likely you'll want to choose one that is built to fit your existing framework, language, and deployment toolset.
 
@@ -65,7 +67,7 @@ One of the real challenges of API development is maintaining a usable public-fac
 
 ## Optic
 
-[Optic](https://www.useoptic.com/ “Optic tool for API change tracking and documentation”)’s goal is to simplify and automate the process of writing about and monitoring the stability of your API endpoints. By integrating with your [tracked changes](https://www.useoptic.com/docs/using/reviewing-diffs/ “Optic documentation on reviewing changes), Optic carries your ability to document and track changes to your API endpoints a step further. It also integrates directly into your build process and maps and monitors your API's [endpoints](https://www.useoptic.com/docs/using/baseline “Optic documentation on building your baseline specification”/), allowing you access reports about changes, endpoint monitoring, and specification monitoring.
+[Optic](https://www.useoptic.com/)’s goal is to simplify and automate the process of writing about and monitoring the stability of your API endpoints. By integrating with your [tracked changes](https://www.useoptic.com/docs/using/reviewing-diffs/), Optic carries your ability to document and track changes to your API endpoints a step further. It also integrates directly into your build process and maps and monitors your API's [endpoints](https://www.useoptic.com/docs/using/baseline), allowing you access reports about changes, endpoint monitoring, and specification monitoring.
 
 Optic also helps you establish confidence in your API test coverage with its automatic code coverage feature. Using Optic, you can easily understand exactly what parts of your API are tested, and what parts change whenever you commit a modification. Optic can generate documentation for your API as problems are encountered, and you can import your test coverage to build automatic reports and maps of your application.
 
