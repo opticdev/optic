@@ -51,6 +51,7 @@ const resolveModule = (resolveFn, filePath) => {
 };
 
 let entrypoints = {
+  demo: 'src/entry-points/demo/index',
   cloud: 'src/entry-points/cloud/index',
   local: 'src/entry-points/local/index',
 };
