@@ -18,8 +18,7 @@
     "start:local": "env OPTIC_WEBPACK_ENTRYPOINT=local node scripts/start.js",
     "start:cloud": "env OPTIC_WEBPACK_ENTRYPOINT=cloud node scripts/start.js",
     "build": "yarn run build:local",
-    "test": "jest",
-    "ws:clean": "echo 'cleaning' ",
+    "ws:test": "jest",
     "ws:build": "yarn build:local"
   },
   "dependencies": {

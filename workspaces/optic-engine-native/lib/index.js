@@ -9,7 +9,7 @@ const Tar = require('tar');
 
 const {
   Streams: { Commands, HttpInteractions },
-} = require('@useoptic/optic-streams');
+} = require('@useoptic/optic-domain');
 const Config = require('./config');
 
 const fetchBinary = Bent(Config.prebuilt.baseUrl, 'GET', 200, 404);
@@ -211,9 +211,9 @@ function getBinPath() {
   }
 
   if (binPaths.length < 1) {
-    // @TODO: consider more useful error message here, depending on platorm being supported, versions missing, etc.
+    // @TODO: consider more useful error message here, depending on platform being supported, versions missing, etc.
     throw new Error(
-      'Optic-engine-native binary could not be found (downloaded or local). Consider installing a pre-built version or building locally.'
+      `optic-engine-native binary could not be found (pre-built download for ${OS.arch()} ${OS.type()} or local build ${debugBinPath}). Consider installing a pre-built version or building locally.`
     );
   }
 

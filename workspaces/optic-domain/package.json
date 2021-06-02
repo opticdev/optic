@@ -6,7 +6,7 @@
     "test": "cd test && tap tests",
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build",
-    "ws:test": "cd test && tap tests"
+    "ws:test": "tap tests"
   },
   "repository": {
     "type": "git",

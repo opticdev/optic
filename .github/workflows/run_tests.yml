@@ -71,10 +71,8 @@ jobs:
     - name: "set up node.js"
       uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # v1.4.4
       with:
-        node-version: "12.x"
+        node-version: "14.x"
     - name: Install Task
       run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
-    - name: "install dependencies"
-      run: task workspaces:build
-    - name: "run ui-v2 tests"
-      run: yarn workspace @useoptic/ui-v2 test
+    - name: "install dependencies, build, and test"
+      run: task workspaces:build:ci

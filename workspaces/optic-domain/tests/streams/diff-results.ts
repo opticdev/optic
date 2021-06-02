@@ -1,6 +1,6 @@
 import Tap from 'tap';
-import * as AT from '../../../src/async-tools';
-import { DiffResults } from '../../../src/streams';
+import * as AT from '../../src/async-tools';
+import { DiffResults } from '../../src/streams';
 
 Tap.test('DiffResults.normalize', async (test) => {
   await test.test(

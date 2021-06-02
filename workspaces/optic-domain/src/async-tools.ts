@@ -1,5 +1,5 @@
 export * from 'axax/esnext';
-import _ from 'axax/esnext';
+//@ts-ignore
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import StreamObject from 'stream-json/streamers/StreamObject';
 import { reduce } from 'axax/esnext/reduce';

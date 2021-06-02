@@ -62,6 +62,11 @@ tasks:
           exit 1
         fi
 
+  workspaces:test:
+    desc: Test Yarn workspaces
+    cmds:
+      - yarn wsrun --stages --report --fast-exit --exclude-missing ws:test
+
   workspaces:build:
     desc: Build Yarn workspaces
     deps: ['workspaces:setup']
@@ -87,6 +92,7 @@ tasks:
         env:
           FLAGS_FILE: '{{.FLAGS_FILE}}'
       - task: workspaces:build
+      - task: workspaces:test
       - task: flush-to-disk
 
   workspaces:clean:
