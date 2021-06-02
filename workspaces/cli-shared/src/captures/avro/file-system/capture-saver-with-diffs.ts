@@ -8,7 +8,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { IApiCliConfig, parseIgnore } from '@useoptic/cli-config';
 import * as OpticEngine from '@useoptic/optic-engine-wasm';
-import { IGroupingIdentifiers, IHttpInteraction } from '../../../optic-types';
+import { IGroupingIdentifiers, IHttpInteraction } from '@useoptic/optic-domain';
 
 interface IFileSystemCaptureLoaderWithDiffsConfig
   extends IFileSystemCaptureLoaderConfig {

@@ -6,7 +6,7 @@ import { Streams } from '@useoptic/optic-domain';
 import { LearnedBodies } from '@useoptic/optic-domain/build/streams/learning-results/undocumented-endpoint-bodies';
 import * as OpticEngine from '@useoptic/optic-engine-wasm';
 import * as path from 'path';
-import { IHttpInteraction } from '../optic-types';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 
 export interface InitialBodiesWorkerConfig {
   pathId: string;

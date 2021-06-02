@@ -11,7 +11,7 @@ import {
 
 import colors from 'colors';
 import Table from 'cli-table3';
-import { IHttpInteraction } from '@useoptic/cli-shared/build/optic-types';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 
 // This concept came from the Scala codebase's "Concern" concept
 // https://github.com/opticdev/optic-core/blob/master/core/optic/shared/src/main/scala/com/useoptic/coverage/CoverageConcerns.scala
