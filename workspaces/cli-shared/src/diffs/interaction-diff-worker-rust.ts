@@ -2,11 +2,11 @@ import {
   CaptureInteractionIterator,
   LocalCaptureInteractionPointerConverter,
 } from '../captures/avro/file-system/interaction-iterator';
-import { Streams } from '@useoptic/optic-streams';
+import { Streams } from '@useoptic/optic-domain';
 import { diffInteractions } from '@useoptic/optic-engine-native';
 import fs from 'fs-extra';
 import { fork } from 'stream-fork';
-import { DiffResult } from '@useoptic/optic-streams/build/streams/diff-results';
+import { DiffResult } from '@useoptic/optic-domain/build/streams/diff-results';
 import path from 'path';
 import { PassThrough } from 'stream';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';

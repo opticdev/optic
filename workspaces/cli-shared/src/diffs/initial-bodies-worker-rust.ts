@@ -2,8 +2,8 @@ import { CaptureInteractionIterator } from '../captures/avro/file-system/interac
 import fs from 'fs-extra';
 
 import { learnUndocumentedBodies } from '@useoptic/optic-engine-native';
-import { Streams } from '@useoptic/optic-streams';
-import { LearnedBodies } from '@useoptic/optic-streams/build/streams/learning-results/undocumented-endpoint-bodies';
+import { Streams } from '@useoptic/optic-domain';
+import { LearnedBodies } from '@useoptic/optic-domain/build/streams/learning-results/undocumented-endpoint-bodies';
 import * as OpticEngine from '@useoptic/optic-engine-wasm';
 import * as path from 'path';
 import { IHttpInteraction } from '../optic-types';

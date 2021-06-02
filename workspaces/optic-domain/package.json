@@ -1,5 +1,5 @@
 {
-  "name": "@useoptic/optic-streams",
+  "name": "@useoptic/optic-domain",
   "version": "10.0.4",
   "scripts": {
     "build": "tsc -b --verbose",
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/useoptic/optic-package.git",
-    "directory": "workspaces/optic-streams"
+    "directory": "workspaces/optic-domain"
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",

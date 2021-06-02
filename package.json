@@ -9,7 +9,7 @@
   "workspaces": [
     "workspaces/optic-engine-native",
     "workspaces/optic-engine-wasm",
-    "workspaces/optic-streams",
+    "workspaces/optic-domain",
     "workspaces/analytics",
     "workspaces/shape-hash",
     "workspaces/saas-types",

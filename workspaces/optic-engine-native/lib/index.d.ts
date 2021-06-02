@@ -1,7 +1,7 @@
 /// <reference types="node" />
 
 import { Readable } from 'stream';
-import { Streams } from '@useoptic/optic-streams';
+import { Streams } from '@useoptic/optic-domain';
 
 export function diffInteractions(input: {
   specPath: string;
