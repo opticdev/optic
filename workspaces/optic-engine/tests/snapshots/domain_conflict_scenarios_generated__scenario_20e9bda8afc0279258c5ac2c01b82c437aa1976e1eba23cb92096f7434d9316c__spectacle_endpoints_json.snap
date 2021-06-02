@@ -1,0 +1,495 @@
+---
+source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+expression: "&spec_projection.spectacle_endpoints_serializable()"
+---
+{
+  "nodes": [
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/",
+        "isParameterized": false,
+        "name": "",
+        "pathId": "root"
+      }
+    },
+    {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "2f5c2536-6500-495a-b0b1-947d55394009",
+        "createdAt": "2021-02-01T18:26:25.849Z",
+        "commitMessage": "initial spec"
+      }
+    },
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/posts",
+        "isParameterized": false,
+        "name": "posts",
+        "pathId": "path_rmPGKep5SW"
+      }
+    },
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/profile",
+        "isParameterized": false,
+        "name": "profile",
+        "pathId": "path_CmA4ZrhSXc"
+      }
+    },
+    {
+      "type": "Request",
+      "data": {
+        "httpMethod": "GET",
+        "requestId": "request_lUXaqigODI"
+      }
+    },
+    {
+      "type": "Response",
+      "data": {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "responseId": "response_zEjgh3n6Uq"
+      }
+    },
+    {
+      "type": "Body",
+      "data": {
+        "httpContentType": "application/json",
+        "rootShapeId": "shape_GsyFkrJzlL"
+      }
+    },
+    {
+      "type": "Request",
+      "data": {
+        "httpMethod": "GET",
+        "requestId": "request_ncEWlZU2g3"
+      }
+    },
+    {
+      "type": "Response",
+      "data": {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "responseId": "response_pan3yNmeiQ"
+      }
+    },
+    {
+      "type": "Body",
+      "data": {
+        "httpContentType": "application/json",
+        "rootShapeId": "shape_ApnstcbWQx"
+      }
+    },
+    {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "57630124-211a-440d-8bd3-2496ccc97f0c",
+        "createdAt": "2021-02-01T18:25:15.656Z",
+        "commitMessage": "initial spec"
+      }
+    },
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/posts",
+        "isParameterized": false,
+        "name": "posts",
+        "pathId": "path_9Wdr4kyshW"
+      }
+    },
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/comments",
+        "isParameterized": false,
+        "name": "comments",
+        "pathId": "path_8paa69fCfC"
+      }
+    },
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/profile",
+        "isParameterized": false,
+        "name": "profile",
+        "pathId": "path_osi3pD8diw"
+      }
+    },
+    {
+      "type": "Request",
+      "data": {
+        "httpMethod": "GET",
+        "requestId": "request_w0KmJ5kZIe"
+      }
+    },
+    {
+      "type": "Response",
+      "data": {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "responseId": "response_iQd5ISIZH9"
+      }
+    },
+    {
+      "type": "Body",
+      "data": {
+        "httpContentType": "application/json",
+        "rootShapeId": "shape_E9IzHThmZv"
+      }
+    },
+    {
+      "type": "Request",
+      "data": {
+        "httpMethod": "GET",
+        "requestId": "request_CEJzcYN3NN"
+      }
+    },
+    {
+      "type": "Response",
+      "data": {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "responseId": "response_ata4rM8zB1"
+      }
+    },
+    {
+      "type": "Body",
+      "data": {
+        "httpContentType": "application/json",
+        "rootShapeId": "shape_UlLNexyAzZ"
+      }
+    },
+    {
+      "type": "Request",
+      "data": {
+        "httpMethod": "GET",
+        "requestId": "request_AJISCmgnoU"
+      }
+    },
+    {
+      "type": "Response",
+      "data": {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "responseId": "response_HZFYN85Iui"
+      }
+    },
+    {
+      "type": "Body",
+      "data": {
+        "httpContentType": "application/json",
+        "rootShapeId": "shape_MiVhGwZrMY"
+      }
+    }
+  ],
+  "edges": [
+    [
+      2,
+      0,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      2,
+      1,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      3,
+      0,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      3,
+      1,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      4,
+      2,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      4,
+      1,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      5,
+      2,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      5,
+      1,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      6,
+      5,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      6,
+      1,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      7,
+      3,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      7,
+      1,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      8,
+      3,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      8,
+      1,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      9,
+      8,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      9,
+      1,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      11,
+      0,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      11,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      12,
+      0,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      12,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      13,
+      0,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      13,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      14,
+      11,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      14,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      15,
+      11,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      15,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      16,
+      15,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      16,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      17,
+      12,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      17,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      18,
+      12,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      18,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      19,
+      18,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      19,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      20,
+      13,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      20,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      21,
+      13,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      21,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      22,
+      21,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      22,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ]
+  ],
+  "nodeIndexToId": {
+    "0": "root",
+    "1": "2f5c2536-6500-495a-b0b1-947d55394009",
+    "10": "57630124-211a-440d-8bd3-2496ccc97f0c",
+    "11": "path_9Wdr4kyshW",
+    "12": "path_8paa69fCfC",
+    "13": "path_osi3pD8diw",
+    "14": "request_w0KmJ5kZIe",
+    "15": "response_iQd5ISIZH9",
+    "16": "shape_E9IzHThmZv",
+    "17": "request_CEJzcYN3NN",
+    "18": "response_ata4rM8zB1",
+    "19": "shape_UlLNexyAzZ",
+    "2": "path_rmPGKep5SW",
+    "20": "request_AJISCmgnoU",
+    "21": "response_HZFYN85Iui",
+    "22": "shape_MiVhGwZrMY",
+    "3": "path_CmA4ZrhSXc",
+    "4": "request_lUXaqigODI",
+    "5": "response_zEjgh3n6Uq",
+    "6": "shape_GsyFkrJzlL",
+    "7": "request_ncEWlZU2g3",
+    "8": "response_pan3yNmeiQ",
+    "9": "shape_ApnstcbWQx"
+  }
+}

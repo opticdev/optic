@@ -33,10 +33,11 @@ If you're using an IDE (like IntelliJ), some of these steps may be handled by yo
 - Install dependencies and build the code with `task workspaces:build`. Yarn will install dependencies for all of the workspaces present in the project.
 
 ## Environment Variables
-Each workspace may rely on environment variables. You can create a `.env` file in the project root and it will be exposed automatically as `OPTIC_DEBUG_ENV_FILE` when you run `source sourceme.sh`, which most of the workspaces will look for automatically, OR you can run `optic_export_env $OPTIC_DEBUG_ENV_FILE` to export all the variables from the .env file into your shell. 
 
+Each workspace may rely on environment variables. You can create a `.env` file in the project root and it will be exposed automatically as `OPTIC_DEBUG_ENV_FILE` when you run `source sourceme.sh`, which most of the workspaces will look for automatically, OR you can run `optic_export_env $OPTIC_DEBUG_ENV_FILE` to export all the variables from the .env file into your shell.
 
 ## Yarn workspaces
+
 Each workspace should have a package.json file with a name field like `@useoptic/cli`. To run package.json scripts for one particular workspace, run e.g. `yarn workspace @useoptic/cli ws:build`
 
 ## Validate Setup to Contribute to Optic's User Interface
@@ -47,42 +48,46 @@ Each workspace should have a package.json file with a name field like `@useoptic
 
 ## Validate Setup to contribute to Optic’s Local CLI
 
-- You may want to navigate to the project root and run `source sourceme.sh` to ensure you have the local development aliases created. 
+- You may want to navigate to the project root and run `source sourceme.sh` to ensure you have the local development aliases created.
+
   - It creates `apidev` and `uidev`, which takes the place of `api` against your local development build.
-  - If you are iterating on the UI and `api` CLI, use `uidev`, which expects the UI to be started on port 3000 and proxy api requests to the `cli-server`; otherwise use `apidev` 
+  - If you are iterating on the UI and `api` CLI, use `uidev`, which expects the UI to be started on port 3000 and proxy api requests to the `cli-server`; otherwise use `apidev`
+
   ```
   terminal 1:
   $ cd workspaces/ui-v2
   $ yarn start:local
-  
+
   terminal 2:
   $ source sourceme.sh
   $ uidev start
   ```
+
 - Determine a visible change to make to the workspace. For example, when `api start` is run in a directory without an `optic.yml` file, you'll get an error message telling you the project is not found.
 - Confirm the current behavior of the code by running the `apidev` command (in this case, `apidev start`).
 - Run `task workspaces:build --watch` to watch and rebuild your workspace as you make changes.
 - Navigate to the target workspace, and make a visible change.
-    - For example, in `workspaces/cli-shared/src/index.ts`, you can change the start failure messages.
-    - Search for "*No Optic project found in this directory.*" which is the start of the error message you get when no `optic.yml` file is present.
-    - Make a small change to the string, such as "***Success!*** *No Optic project found in this directory.*"
+  - For example, in `workspaces/cli-shared/src/index.ts`, you can change the start failure messages.
+  - Search for "_No Optic project found in this directory._" which is the start of the error message you get when no `optic.yml` file is present.
+  - Make a small change to the string, such as "**_Success!_** _No Optic project found in this directory._"
 - Re-run the `apidev` command to verify the change is made (in this case, `apidev start`).
 
 ## Validate Setup to contribute to Optic's Rust Domain codebase
 
-- After installing cargo with [rustup](https://rustup.rs/) you should be able to get `cargo test` working from inside `workspaces/diff-engine`
+- After installing cargo with [rustup](https://rustup.rs/) you should be able to get `cargo test` working from inside `workspaces/optic-engine-native`
 - `cargo doc --document-private-items --open` will generate and open the Rust type and function documentation for the project
-- For an IDE we recommend [Visual Studio Code](https://code.visualstudio.com/) with the rust-analyzer [extension](https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer) 
+- For an IDE we recommend [Visual Studio Code](https://code.visualstudio.com/) with the rust-analyzer [extension](https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer)
 - If you have `lldb` [debugging](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb) is straightforward to setup in Visual Studio Code
-- For a repl [evcxr](https://github.com/google/evcxr) can be used by interactively adding a dependency with `:dep optic_diff_engine = {path = "/your-full-path/optic/workspaces/diff-engine"}`
+- For a repl [evcxr](https://github.com/google/evcxr) can be used by interactively adding a dependency with `:dep optic_engine = {path = "/your-full-path/optic/workspaces/optic-engine-native"}`
 
 ## Troubleshooting and Additional Notes
+
 - Do not run `yarn install` from anywhere except the project root. If you have done this remove all the `node_modules` directories, or do a fresh clone.
 - Assure you have a proper build already set up:
-    - Navigate to the project root. 
-    - Re-run `task workspaces:clean`
-    - Re-run `task workspaces:build`
-    - Re-run `source sourceme.sh`
+  - Navigate to the project root.
+  - Re-run `task workspaces:clean`
+  - Re-run `task workspaces:build`
+  - Re-run `source sourceme.sh`
 - If you run into further problems, please let us know the tools you are using, and the errors you are seeing, for reference. While we can't support every environment, it can be helpful to know where problems exist. In the mean time...
 
 ### Additional Notes

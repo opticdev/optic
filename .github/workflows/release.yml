@@ -67,7 +67,7 @@ jobs:
         run: |
           echo Should we publish $OPTIC_VERSION from $GITHUB_REF?
           RELEASED_VERSION=$(npm view @useoptic/cli@$OPTIC_VERSION version)
-          if ! [[ -z $RELEASED_VERSION ]]; then
+          if ! [[ -z $RELEASED_VERSION ]] && [ $RELEASE_WORKFLOW_DRY_RUN = "false" ]; then
             echo "v$OPTIC_VERSION already published, should not publish again"
             echo "::set-output name=should_publish::false"
           elif [ "${{ steps.release_type.outputs.is_prerelease }}" = "false" ] && [ $GITHUB_REF != "refs/heads/release" ] && [ $RELEASE_WORKFLOW_DRY_RUN = "false" ]; then

@@ -1,6 +1,0 @@
-target
-binaries
-node_modules
-src/protos/generated/*
-!src/protos/generated/mod.rs
-.nyc_output

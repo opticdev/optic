@@ -10,8 +10,8 @@ import AWS from 'aws-sdk';
 import { CaptureSaver } from './capture-saver';
 import { Token as ContinuationToken } from 'aws-sdk/clients/s3';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
-import { pipe } from '@useoptic/diff-engine-wasm/lib/async-tools';
-import { IHttpInteraction } from '../../../optic-types';
+import { pipe } from '@useoptic/optic-domain/build/async-tools';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 
 async function* fromReadable<T>(r: Readable): AsyncIterable<T> {
   for await (const chunk of r) {

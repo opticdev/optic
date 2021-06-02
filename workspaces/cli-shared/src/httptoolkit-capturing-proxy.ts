@@ -12,7 +12,11 @@ import url from 'url';
 import { IQueryParser } from './query/query-parser-interfaces';
 import util from 'util';
 import { CallbackResponseResult } from 'mockttp/dist/rules/requests/request-handlers';
-import { IArbitraryData, IBody, IHttpInteraction } from './optic-types';
+import {
+  IArbitraryData,
+  IBody,
+  IHttpInteraction,
+} from '@useoptic/optic-domain';
 
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string;

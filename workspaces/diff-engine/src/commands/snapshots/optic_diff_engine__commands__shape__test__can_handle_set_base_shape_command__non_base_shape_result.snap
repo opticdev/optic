@@ -1,7 +1,0 @@
----
-source: workspaces/diff-engine/src/commands/shape.rs
-expression: non_base_shape_result.unwrap_err()
----
-Validation(
-    "Command failed validation: base shape must exist to set base shape, \"SetBaseShape(SetBaseShape { shape_id: \\\"shape_1\\\", base_shape_id: \\\"shape_2\\\" })\"",
-)

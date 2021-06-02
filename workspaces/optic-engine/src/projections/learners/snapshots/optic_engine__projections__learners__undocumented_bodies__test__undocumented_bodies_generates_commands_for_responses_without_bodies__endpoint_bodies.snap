@@ -1,0 +1,31 @@
+---
+source: workspaces/optic-engine-native/src/projections/learners/undocumented_bodies.rs
+expression: endpoint_bodies
+---
+[
+    EndpointBodies {
+        path_id: "path-1",
+        method: "DELETE",
+        requests: [],
+        responses: [
+            EndpointResponseBody {
+                commands: [
+                    EndpointCommand(
+                        AddResponseByPathAndMethod(
+                            AddResponseByPathAndMethod {
+                                response_id: "test-id-0",
+                                path_id: "path-1",
+                                http_method: "DELETE",
+                                http_status_code: 204,
+                            },
+                        ),
+                    ),
+                ],
+                status_code: 204,
+                path_id: "path-1",
+                method: "DELETE",
+                body_descriptor: None,
+            },
+        ],
+    },
+]

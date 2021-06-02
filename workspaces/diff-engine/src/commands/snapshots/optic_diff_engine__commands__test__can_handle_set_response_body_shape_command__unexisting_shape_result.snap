@@ -1,7 +1,0 @@
----
-source: workspaces/diff-engine/src/commands/mod.rs
-expression: unexisting_shape_result.unwrap_err()
----
-Validation(
-    "Command failed validation: shape must exist to set the request body shape, \"SetResponseBodyShape(SetResponseBodyShape { response_id: \\\"response_1\\\", body_descriptor: ShapedBodyDescriptor { http_content_type: \\\"application/json\\\", shape_id: \\\"not-a-shape-id\\\", is_removed: false } })\"",
-)

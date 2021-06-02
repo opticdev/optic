@@ -549,7 +549,7 @@ dependencies = [
  "futures",
  "nanoid",
  "num_cpus",
- "optic_diff_engine",
+ "optic_engine",
  "path-absolutize",
  "serde",
  "serde_json",
@@ -560,7 +560,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "optic_diff_engine"
+name = "optic_engine"
 version = "0.1.0"
 dependencies = [
  "avro-rs",

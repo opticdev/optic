@@ -14,7 +14,7 @@
   "dependencies": {
     "@useoptic/cli-shared": "10.0.4",
     "@useoptic/client-utilities": "10.0.4",
-    "@useoptic/diff-engine-wasm": "10.0.4",
+    "@useoptic/optic-engine-wasm": "10.0.4",
     "@useoptic/spectacle-shared": "10.0.4",
     "dataloader": "^2.0.0",
     "eventsource": "^1.0.7",

@@ -1,0 +1,7 @@
+---
+source: workspaces/optic-engine-native/src/commands/rfc.rs
+expression: unexisting_batch_result.unwrap_err()
+---
+Validation(
+    "Command failed validation: batch commit must exist to end batch commit, \"EndBatchCommit(EndBatchCommit { batch_id: \\\"not-a-batch\\\" })\"",
+)

@@ -1,4 +1,4 @@
-import { IHttpInteraction as Interaction } from '@useoptic/domain-types';
+import { IHttpInteraction as Interaction } from '@useoptic/optic-domain';
 import Fs from 'fs-extra';
 import Path from 'path';
 

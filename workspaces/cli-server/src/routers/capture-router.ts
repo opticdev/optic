@@ -10,7 +10,7 @@ import {
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { OnDemandInitialBodyRust } from '../tasks/on-demand-initial-body-rust';
 import { OnDemandShapeDiffAffordancesRust } from '../tasks/on-demand-trail-values-rust';
-import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as opticEngine from '@useoptic/optic-engine-wasm';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;

@@ -1,5 +1,0 @@
----
-source: workspaces/diff-engine/tests/domain-conflict-scenarios-generated.rs
-expression: "&spec_projection.contributions().to_json_string()"
----
-"{}"

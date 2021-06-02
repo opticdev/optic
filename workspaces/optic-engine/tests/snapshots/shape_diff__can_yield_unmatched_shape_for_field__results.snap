@@ -1,0 +1,25 @@
+---
+source: workspaces/optic-engine-native/tests/shape_diff.rs
+expression: results
+---
+[
+    UnmatchedShape {
+        json_trail: JsonTrail {
+            path: [
+                JsonObjectKey {
+                    key: "age",
+                },
+            ],
+        },
+        shape_trail: ShapeTrail {
+            root_shape_id: "object_1",
+            path: [
+                ObjectFieldTrail {
+                    field_id: "field_3",
+                    field_shape_id: "number_shape_1",
+                    parent_object_shape_id: "object_1",
+                },
+            ],
+        },
+    },
+]

@@ -1,5 +1,0 @@
----
-source: workspaces/diff-engine/src/events/spec_chunk.rs
-expression: missing_parent_id_result.unwrap_err().0
----
-"BatchCommitStarted does not have a parent_id"

@@ -1,0 +1,20 @@
+---
+source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+expression: "Dot::with_config(&spec_projection.endpoint().graph, &[])"
+---
+digraph {
+    0 [ label = "PathComponent(\l    \"root\",\l    PathComponentDescriptor {\l        is_parameter: false,\l        name: \"\",\l    },\l)\l" ]
+    1 [ label = "PathComponent(\l    \"path_1\",\l    PathComponentDescriptor {\l        is_parameter: false,\l        name: \"locations\",\l    },\l)\l" ]
+    2 [ label = "PathComponent(\l    \"path_2\",\l    PathComponentDescriptor {\l        is_parameter: true,\l        name: \":city\",\l    },\l)\l" ]
+    3 [ label = "HttpMethod(\l    \"GET\",\l)\l" ]
+    4 [ label = "Request(\l    \"request_1\",\l    RequestBodyDescriptor {\l        body: None,\l    },\l)\l" ]
+    5 [ label = "HttpStatusCode(\l    200,\l)\l" ]
+    6 [ label = "Response(\l    \"response_1\",\l    ResponseBodyDescriptor {\l        body: Some(\l            BodyDescriptor {\l                http_content_type: \"application/json\",\l                root_shape_id: \"shape_10\",\l            },\l        ),\l    },\l)\l" ]
+    1 -> 0 [ label = "IsChildOf\l" ]
+    2 -> 1 [ label = "IsChildOf\l" ]
+    3 -> 2 [ label = "IsChildOf\l" ]
+    4 -> 3 [ label = "IsChildOf\l" ]
+    5 -> 3 [ label = "IsChildOf\l" ]
+    6 -> 5 [ label = "IsChildOf\l" ]
+}
+

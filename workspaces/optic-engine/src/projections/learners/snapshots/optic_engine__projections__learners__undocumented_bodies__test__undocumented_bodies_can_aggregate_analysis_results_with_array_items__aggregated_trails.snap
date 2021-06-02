@@ -1,0 +1,33 @@
+---
+source: workspaces/optic-engine-native/src/projections/learners/undocumented_bodies.rs
+expression: aggregated_trails
+---
+[
+    JsonTrail {
+        path: [],
+    },
+    JsonTrail {
+        path: [
+            JsonObjectKey {
+                key: "items",
+            },
+        ],
+    },
+    JsonTrail {
+        path: [
+            JsonObjectKey {
+                key: "items",
+            },
+            JsonArrayItem {
+                index: 0,
+            },
+        ],
+    },
+    JsonTrail {
+        path: [
+            JsonObjectKey {
+                key: "other-field",
+            },
+        ],
+    },
+]

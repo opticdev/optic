@@ -1,0 +1,7 @@
+---
+source: workspaces/optic-engine-native/src/commands/endpoint.rs
+expression: unexisting_path_result.unwrap_err()
+---
+Validation(
+    "Command failed validation: path component must exist to remove path parameter, \"RemovePathParameter(RemovePathParameter { path_id: \\\"not-a-path-id\\\" })\"",
+)

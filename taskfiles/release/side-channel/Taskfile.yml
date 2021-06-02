@@ -90,8 +90,8 @@ tasks:
         echo $files | xargs git checkout
       fi
 
-  diff-engine:
-    desc: Publish the diff-engine tarballs in `build/dist` to S3
+  optic-engine-native:
+    desc: Publish the optic-engine-native tarballs in `build/dist` to S3
     vars:
       DRY_RUN: '{{default "true" .DRY_RUN}}'
       BASE_VERSION: $(cat workspaces/local-cli/package.json | jq -r .version | awk -F'-' '{print $1}')
@@ -99,7 +99,7 @@ tasks:
       VERSION: "{{.BASE_VERSION}}-alpha.{{.VERSION_TAG}}" # https://www.youtube.com/watch?v=Ct6BUPvE2sM
       BUCKET: '{{default "NO-BUCKET" .BUCKET}}'
     cmds:
-      - task: :diff-engine:package-tarballs
+      - task: :optic-engine-native:package-tarballs
         vars:
           VERSION: "{{.VERSION}}"
       - |

@@ -1,0 +1,86 @@
+---
+source: workspaces/optic-engine-native/src/projections/learners/shape_diff_affordances.rs
+expression: shape_diff_affordances
+---
+ShapeDiffAffordances {
+    affordances: [
+        TrailValues {
+            trail: JsonTrail {
+                path: [
+                    JsonObjectKey {
+                        key: "items",
+                    },
+                    JsonArrayItem {
+                        index: 0,
+                    },
+                ],
+            },
+            was_string: true,
+            was_number: true,
+            was_boolean: false,
+            was_null: false,
+            was_array: false,
+            was_object: false,
+            was_empty_array: false,
+            field_sets: [],
+        },
+    ],
+    interactions: InteractionsAffordances {
+        was_string: {
+            "test-interaction-0",
+        },
+        was_number: {
+            "test-interaction-0",
+        },
+        was_boolean: {},
+        was_null: {},
+        was_array: {},
+        was_empty_array: {},
+        was_object: {},
+        was_missing: {},
+        was_string_trails: {
+            "test-interaction-0": {
+                JsonTrail {
+                    path: [
+                        JsonObjectKey {
+                            key: "items",
+                        },
+                        JsonArrayItem {
+                            index: 1,
+                        },
+                    ],
+                },
+            },
+        },
+        was_number_trails: {
+            "test-interaction-0": {
+                JsonTrail {
+                    path: [
+                        JsonObjectKey {
+                            key: "items",
+                        },
+                        JsonArrayItem {
+                            index: 0,
+                        },
+                    ],
+                },
+            },
+        },
+        was_boolean_trails: {},
+        was_null_trails: {},
+        was_array_trails: {},
+        was_empty_array_trails: {},
+        was_object_trails: {},
+        was_missing_trails: {},
+    },
+    root_trail: JsonTrail {
+        path: [
+            JsonObjectKey {
+                key: "items",
+            },
+            JsonArrayItem {
+                index: 1,
+            },
+        ],
+    },
+}
