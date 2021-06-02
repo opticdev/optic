@@ -1,5 +1,5 @@
 ---
-date: "5/29/2021"
+date: "06/02/2021"
 title: "API Testing: Methods and Best Practices"
 author: John Gramila
 author_image_url: "/img/people/john-gramila.jpeg"
