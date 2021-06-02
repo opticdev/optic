@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { IShapeRenderer } from '<src>/components/shapes/ShapeRenderInterfaces';
-import { RenderRootShape } from '<src>/components/shapes/ShapeRowBase';
-import { ShapeRenderStore } from '<src>/components/shapes/ShapeRenderContext';
+import { IShapeRenderer, ShapeRenderer } from '<src>/components';
 
 export type BodyRenderProps = {
   shape: IShapeRenderer[];
@@ -34,9 +32,10 @@ export function BodyRender(props: BodyRenderProps) {
         {/*/>*/}
       </div>
       <div className={classes.content} ref={contentRef}>
-        <ShapeRenderStore showExamples={showExample === 'example'}>
-          <RenderRootShape shape={props.shape} />
-        </ShapeRenderStore>
+        <ShapeRenderer
+          showExamples={showExample === 'example'}
+          shape={props.shape}
+        />
       </div>
     </div>
   );
