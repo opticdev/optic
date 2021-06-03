@@ -1,11 +1,10 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import { Typography } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import ReactMarkdown from 'react-markdown';
 
-import { useEndpoints } from '<src>/hooks/useEndpointsHook';
 import {
   EndpointName,
   PathParameters,
@@ -19,6 +18,8 @@ import {
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import { SubtleBlueBackground } from '<src>/constants/theme';
 import { CodeBlock, EndpointTOC, TwoColumn } from '<src>/pages/docs/components';
+import { endpointActions, useAppSelector, useAppDispatch } from '<src>/store';
+import { useSpectacleContext } from '<src>/contexts/spectacle-provider';
 
 import {
   ChangelogPageAccessoryNavigation,
@@ -49,20 +50,31 @@ const ChangelogRootComponent: FC<
     batchId: string;
   }>
 > = ({ match }) => {
-  const { endpoints, loading } = useEndpoints();
+  const endpointsState = useAppSelector((state) => state.endpoints.data);
+
+  const dispatch = useAppDispatch();
+  const spectacle = useSpectacleContext();
+  useEffect(() => {
+    // the typing is correct, we just arent setting it correctly above
+    // TODO remove ts-ignore
+    // @ts-ignore
+    dispatch(endpointActions.fetchEndpoints({ spectacle }));
+  }, [dispatch, spectacle]);
 
   const { pathId, method, batchId } = match.params;
 
   const bodies = useEndpointBody(pathId, method, batchId);
   const styles = useStyles();
-  const thisEndpoint = useMemo(
-    () => endpoints.find((i) => i.pathId === pathId && i.method === method),
-    [pathId, method, endpoints]
-  );
 
-  if (loading) {
+  if (endpointsState.loading) {
     return <Loading />;
   }
+  if (endpointsState.error) {
+    return <>error</>;
+  }
+  const thisEndpoint = endpointsState.data.find(
+    (i) => i.pathId === pathId && i.method === method
+  );
 
   if (!thisEndpoint) {
     return <>no endpoint here</>;

@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 
 import { useDebouncedFn, useStateWithSideEffect } from '<src>/hooks/util';
-import { IEndpoint } from '<src>/hooks/useEndpointsHook';
 import { IPendingEndpoint } from '<src>/pages/diffs/contexts/SharedDiffState';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { EditableTextField, TextFieldVariant } from '<src>/components';
+import { IEndpoint } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
 export const PendingEndpointNameField: FC<{

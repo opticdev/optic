@@ -24,11 +24,12 @@ import { AuthorIgnoreRules } from '<src>/pages/diffs/components/AuthorIgnoreRule
 import { FixedSizeList } from 'react-window';
 // @ts-ignore
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { IEndpoint, useEndpoints } from '<src>/hooks/useEndpointsHook';
+import { useEndpoints } from '<src>/hooks/useEndpointsHook';
 import { IPendingEndpoint } from '<src>/pages/diffs/contexts/SharedDiffState';
 import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import { DiffAccessoryNavigation } from '<src>/pages/diffs/components/DiffAccessoryNavigation';
+import { IEndpoint } from '<src>/types';
 
 import {
   AddEndpointDiffHeader,

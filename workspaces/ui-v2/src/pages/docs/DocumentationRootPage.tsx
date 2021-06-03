@@ -7,11 +7,12 @@ import {
   Loading,
   PageLayout,
 } from '<src>/components';
-import { IEndpoint, useEndpoints } from '<src>/hooks/useEndpointsHook';
+import { useEndpoints } from '<src>/hooks/useEndpointsHook';
 import { Box, List, ListItem, Typography } from '@material-ui/core';
 import { useContributionEditing } from './contexts/Contributions';
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
+import { IEndpoint } from '<src>/types';
 import {
   DocsPageAccessoryNavigation,
   EndpointNameMiniContribution,

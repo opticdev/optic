@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react';
-import { useEndpoints, IPathParameter } from '<src>/hooks/useEndpointsHook';
+import { useEndpoints } from '<src>/hooks/useEndpointsHook';
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import {
   EndpointName,
@@ -18,6 +18,7 @@ import { IParsedLocation } from '<src>/lib/Interfaces';
 import { HighlightedLocation } from '<src>/pages/diffs/components/HighlightedLocation';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { useDebouncedFn, useStateWithSideEffect } from '<src>/hooks/util';
+import { IPathParameter } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
 type EndpointDocumentationPaneProps = {

@@ -8,7 +8,7 @@ import {
 import shortId from 'shortid';
 import { useMachine } from '@xstate/react';
 import { PathComponentAuthoring } from '<src>/pages/diffs/AddEndpointsPage/utils';
-import { IEndpoint } from '<src>/hooks/useEndpointsHook';
+import { IEndpoint } from '<src>/types';
 import { pathToRegexp } from 'path-to-regexp';
 import { IRequestBody, IResponseBody } from '<src>/hooks/useEndpointBodyHook';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';

@@ -13,10 +13,11 @@ import {
   Loading,
   PageLayout,
 } from '<src>/components';
-import { IEndpoint, useEndpoints } from '<src>/hooks/useEndpointsHook';
+import { useEndpoints } from '<src>/hooks/useEndpointsHook';
 import { Box, List, ListItem, Typography } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
+import { IEndpoint } from '<src>/types';
 
 import {
   ChangelogPageAccessoryNavigation,
@@ -97,6 +98,7 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
                         `${match.url}/paths/${endpoint.pathId}/methods/${endpoint.method}`
                       )
                     }
+                    // TODO fetch these changes differently
                     className={classNames({
                       [changelogStyles.added]: endpoint.changelog?.added,
                       [changelogStyles.updated]: endpoint.changelog?.changed,
