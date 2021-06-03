@@ -5,14 +5,14 @@ author: Karl Hughes
 author_url: "https://www.karllhughes.com"
 author_image_url: "/img/people/karl-hughes.png"
 category: Community
-# social_image: social-api-testing-methods-and-best-practices.png
 ---
 
-<!-- ![alt](/img/blog-content/social-api-testing-methods-and-best-practices.png) -->
 
 [Code reviews](https://smartbear.com/learn/code-review/what-is-code-review/) are an essential part of any high-quality software development process. A thorough code review can prevent bugs and regressions from slipping into production, improve code quality and consistency, and ensure your team knows about important changes before they go live.
 
 While looking at code can help you find flaws in your logic, **it's notoriously hard to trace changes through your application to see how they might actually affect your API.**
+
+<!--truncate-->
 
 For example, I remember a situation a few months ago where I unintentionally introduced a breaking change into one of our company's APIs. Our automated tests didn't catch it because the field I removed was optional and not thoroughly tested. The teammate who reviewed my code was focused on the core set of changes I made, so she missed the subtle breaking change as well.
 
