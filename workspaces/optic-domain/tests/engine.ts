@@ -1,8 +1,8 @@
 import Tap from 'tap';
-import * as DiffEngine from '../../engine/build';
+import * as OpticEngine from '@useoptic/optic-engine-wasm/build';
 
-Tap.test('DiffEngine', async (test) => {
-  let spec = DiffEngine.spec_from_events('[]');
+Tap.test('OpticEngine spec_from_events', async (test) => {
+  let spec = OpticEngine.spec_from_events('[]');
 
   test.ok(spec);
 });

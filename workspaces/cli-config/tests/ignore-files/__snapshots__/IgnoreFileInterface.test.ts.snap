@@ -21,7 +21,6 @@ Object {
     "OPTIONS (.*)",
     "GET /main/resource",
   ],
-  "filePath": "/Users/aidancunniffe/Developer/optic2020/optic/workspaces/cli-config/tests/ignore-files/examples/ignore1",
   "ruleLines": Array [
     Object {
       "line": 0,

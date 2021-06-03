@@ -1,7 +1,7 @@
 const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
 const path = require('path');
 
-module.exports = function createDiffEnginePlugin() {
+module.exports = function createOpticEnginePlugin() {
   return new WasmPackPlugin({
     crateDirectory: path.resolve(__dirname),
 

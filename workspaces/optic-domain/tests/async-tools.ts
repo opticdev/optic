@@ -1,7 +1,7 @@
 import Tap from 'tap';
 import { spy } from 'sinon';
 
-import * as AT from '../../src/async-tools';
+import * as AT from '../src/async-tools';
 
 Tap.test('AsyncTools.lastBy', async (t) => {
   await t.test(

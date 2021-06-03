@@ -30,6 +30,6 @@ I also spent some of my time working on the [marketing site](https://www.useopti
 
 The past ten weeks seem to have flown by, but I will always treasure my time here as I was able to be a fully integrated team member and got to be a part of the Optic team. If you haven't already, you should definitely try using Optic for your own personal project by installing it here, and you should also add the Optic GitBot to your project to maximize the value.
 
-Need convincing? Check out [that demo](http://demo.useoptic.com) 😉
+Need convincing? Check out [that demo](https://demo.useoptic.com) 😉
 
 ![the team](/img/blog-content/theteam.png)

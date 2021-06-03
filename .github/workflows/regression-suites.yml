@@ -49,7 +49,7 @@ jobs:
         shell: bash
         run: task workspaces:build:ci
         env:
-          FLAGS_FILE: '.env.latest'
+          FLAGS_FILE: '.env.test'
       - name: Display yarn error log
         shell: bash
         run: cat yarn-error.log

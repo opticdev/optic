@@ -1,6 +1,6 @@
 import Tap from 'tap';
-import * as AT from '../../../src/async-tools';
-import { DiffResults, UndocumentedUrls } from '../../../src/streams';
+import * as AT from '../../src/async-tools';
+import { DiffResults, UndocumentedUrls } from '../../src/streams';
 
 Tap.test('UndocumentedUrls.fromDiffResults', async (test) => {
   await test.test(
@@ -38,7 +38,7 @@ Tap.test('UndocumentedUrls.fromDiffResults', async (test) => {
 
 Tap.test('UndocumentedUrls.lastUnique', async (test) => {
   await test.test(
-    'will only emit the last occurence of each undocumented url by fingerprint, in order of last key occurence',
+    'will only emit the last occurrence of each undocumented url by fingerprint, in order of last key occurrence',
     async (t) => {
       const testDiffs: DiffResults.DiffResult[] = [
         [unmatchedRequestUrlDiff('/todos/1', 'GET'), ['interaction-1'], 'aaa'],

@@ -15,11 +15,12 @@
     "start": "node scripts/start.js",
     "build:local": "env OPTIC_WEBPACK_ENTRYPOINT=local node scripts/build.js",
     "build:cloud": "env OPTIC_WEBPACK_ENTRYPOINT=cloud node scripts/build.js",
+    "build:demo": "env OPTIC_WEBPACK_ENTRYPOINT=demo node scripts/build.js",
     "start:local": "env OPTIC_WEBPACK_ENTRYPOINT=local node scripts/start.js",
     "start:cloud": "env OPTIC_WEBPACK_ENTRYPOINT=cloud node scripts/start.js",
+    "start:demo": "env OPTIC_WEBPACK_ENTRYPOINT=demo node scripts/start.js",
     "build": "yarn run build:local",
-    "test": "jest",
-    "ws:clean": "echo 'cleaning' ",
+    "ws:test": "jest",
     "ws:build": "yarn build:local"
   },
   "dependencies": {
