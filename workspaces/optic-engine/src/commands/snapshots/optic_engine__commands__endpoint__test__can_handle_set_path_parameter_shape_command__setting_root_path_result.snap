@@ -1,0 +1,7 @@
+---
+source: workspaces/optic-engine-native/src/commands/endpoint.rs
+expression: setting_root_path_result.unwrap_err()
+---
+Validation(
+    "Command failed validation: path id can not be root to set path parameter shape, \"SetPathParameterShape(SetPathParameterShape { path_id: \\\"root\\\", shaped_request_parameter_shape_descriptor: ShapedRequestParameterShapeDescriptor { shape_id: \\\"string_shape_1\\\", is_removed: false } })\"",
+)

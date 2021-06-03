@@ -3,7 +3,7 @@ import path from 'path';
 //@ts-ignore
 import oboe from 'oboe';
 import { CaptureSaver } from './capture-saver';
-import { IHttpInteraction } from '../../../optic-types';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 
 async function main(
   inputFilePaths: {

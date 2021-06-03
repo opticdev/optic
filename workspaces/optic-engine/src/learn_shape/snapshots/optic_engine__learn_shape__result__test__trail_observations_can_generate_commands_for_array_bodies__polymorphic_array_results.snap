@@ -1,0 +1,116 @@
+---
+source: workspaces/optic-engine-native/src/learn_shape/result.rs
+expression: "&polymorphic_array_results"
+---
+(
+    Some(
+        "test-id-9",
+    ),
+    [
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-4",
+                    base_shape_id: "$oneOf",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-7",
+                    base_shape_id: "$string",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShapeParameter(
+                AddShapeParameter {
+                    shape_parameter_id: "test-id-5",
+                    shape_id: "test-id-4",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            SetParameterShape(
+                SetParameterShape {
+                    shape_descriptor: ProviderInShape(
+                        ProviderInShape {
+                            shape_id: "test-id-4",
+                            provider_descriptor: ShapeProvider(
+                                ShapeProvider {
+                                    shape_id: "test-id-7",
+                                },
+                            ),
+                            consuming_parameter_id: "test-id-5",
+                        },
+                    ),
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-8",
+                    base_shape_id: "$number",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShapeParameter(
+                AddShapeParameter {
+                    shape_parameter_id: "test-id-6",
+                    shape_id: "test-id-4",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            SetParameterShape(
+                SetParameterShape {
+                    shape_descriptor: ProviderInShape(
+                        ProviderInShape {
+                            shape_id: "test-id-4",
+                            provider_descriptor: ShapeProvider(
+                                ShapeProvider {
+                                    shape_id: "test-id-8",
+                                },
+                            ),
+                            consuming_parameter_id: "test-id-6",
+                        },
+                    ),
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-9",
+                    base_shape_id: "$list",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            SetParameterShape(
+                SetParameterShape {
+                    shape_descriptor: ProviderInShape(
+                        ProviderInShape {
+                            shape_id: "test-id-9",
+                            provider_descriptor: ShapeProvider(
+                                ShapeProvider {
+                                    shape_id: "test-id-4",
+                                },
+                            ),
+                            consuming_parameter_id: "$listItem",
+                        },
+                    ),
+                },
+            ),
+        ),
+    ],
+)

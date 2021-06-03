@@ -1,0 +1,92 @@
+---
+source: workspaces/optic-engine-native/src/learn_shape/result.rs
+expression: "&primitive_object_results"
+---
+(
+    Some(
+        "test-id-6",
+    ),
+    [
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-0",
+                    base_shape_id: "$number",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-1",
+                    base_shape_id: "$boolean",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-2",
+                    base_shape_id: "$string",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-6",
+                    base_shape_id: "$object",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddField(
+                AddField {
+                    field_id: "test-id-3",
+                    shape_id: "test-id-6",
+                    name: "a-str",
+                    shape_descriptor: FieldShapeFromShape(
+                        FieldShapeFromShape {
+                            field_id: "test-id-3",
+                            shape_id: "test-id-2",
+                        },
+                    ),
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddField(
+                AddField {
+                    field_id: "test-id-4",
+                    shape_id: "test-id-6",
+                    name: "b-field",
+                    shape_descriptor: FieldShapeFromShape(
+                        FieldShapeFromShape {
+                            field_id: "test-id-4",
+                            shape_id: "test-id-1",
+                        },
+                    ),
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddField(
+                AddField {
+                    field_id: "test-id-5",
+                    shape_id: "test-id-6",
+                    name: "c-field",
+                    shape_descriptor: FieldShapeFromShape(
+                        FieldShapeFromShape {
+                            field_id: "test-id-5",
+                            shape_id: "test-id-0",
+                        },
+                    ),
+                },
+            ),
+        ),
+    ],
+)

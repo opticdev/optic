@@ -12,22 +12,20 @@ type SharedProps = {
   location: string;
   contentType: string;
   changes?: IChanges;
-  changesSinceBatchCommitId?: string;
-  bodyId: string; //@aidan make sure this name/value makes sense
+  bodyId: string;
   rootShapeId: string;
 };
 
-type OneColumnBodyProps = SharedProps;
+type OneColumnBodyProps = SharedProps & {
+  changesSinceBatchCommitId?: string;
+};
 
 export type TwoColumnBodyProps = SharedProps & {
   description: string;
 };
 
-export function TwoColumnBody(props: TwoColumnBodyProps) {
-  const shapeChoices = useShapeDescriptor(
-    props.rootShapeId,
-    props.changesSinceBatchCommitId
-  );
+export function TwoColumnBodyEditable(props: TwoColumnBodyProps) {
+  const shapeChoices = useShapeDescriptor(props.rootShapeId, undefined);
   return (
     <TwoColumn
       id={props.bodyId}

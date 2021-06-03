@@ -5,7 +5,7 @@
 
 import Tap from 'tap';
 import { FileSystemAvroCaptureSaver as CaptureSaver } from '@useoptic/cli-shared';
-import { IHttpInteraction as Interaction } from '@useoptic/domain-types';
+import { IHttpInteraction as Interaction } from '@useoptic/optic-domain';
 import { exampleInteractions } from '../fixtures/interactions';
 import Path from 'path';
 import Fs from 'fs-extra';

@@ -1,5 +1,0 @@
----
-source: workspaces/diff-engine/src/events/spec_chunk.rs
-expression: empty_events_result.unwrap_err().0
----
-"Chunk does not have any events"

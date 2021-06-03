@@ -1,0 +1,31 @@
+---
+source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+expression: "Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])"
+---
+digraph {
+    0 [ label = "Path(\l    PathNode {\l        absolute_path_pattern: \"/\",\l        is_parameterized: false,\l        name: \"\",\l        path_id: \"root\",\l    },\l)\l" ]
+    1 [ label = "BatchCommit(\l    BatchCommitNode {\l        batch_id: \"a83be1f3-a56f-43c3-a711-cc90eee84601\",\l        created_at: \"2021-02-03T01:21:01.677Z\",\l        commit_message: \"added get todos\",\l    },\l)\l" ]
+    2 [ label = "Path(\l    PathNode {\l        absolute_path_pattern: \"/todos\",\l        is_parameterized: false,\l        name: \"todos\",\l        path_id: \"path_2r0poc4Efl\",\l    },\l)\l" ]
+    3 [ label = "BatchCommit(\l    BatchCommitNode {\l        batch_id: \"62b05d70-c86b-4df6-a243-946e21c35820\",\l        created_at: \"2021-02-03T01:21:55.644Z\",\l        commit_message: \"\",\l    },\l)\l" ]
+    4 [ label = "Request(\l    RequestNode {\l        http_method: \"GET\",\l        request_id: \"request_eaGDFPq9ha\",\l    },\l)\l" ]
+    5 [ label = "Response(\l    ResponseNode {\l        http_method: \"GET\",\l        http_status_code: 200,\l        response_id: \"response_7XA4cz1Jq4\",\l    },\l)\l" ]
+    6 [ label = "Body(\l    BodyNode {\l        http_content_type: \"application/json\",\l        root_shape_id: \"shape_KrxPAcTUDM\",\l    },\l)\l" ]
+    7 [ label = "Request(\l    RequestNode {\l        http_method: \"GET\",\l        request_id: \"request_p8FwHVQwXH\",\l    },\l)\l" ]
+    8 [ label = "Response(\l    ResponseNode {\l        http_method: \"GET\",\l        http_status_code: 200,\l        response_id: \"response_fr6lmtes1c\",\l    },\l)\l" ]
+    9 [ label = "Body(\l    BodyNode {\l        http_content_type: \"application/json\",\l        root_shape_id: \"shape_hcQz2zr63G\",\l    },\l)\l" ]
+    2 -> 0 [ label = "IsChildOf\l" ]
+    2 -> 1 [ label = "CreatedIn\l" ]
+    4 -> 2 [ label = "IsChildOf\l" ]
+    4 -> 3 [ label = "CreatedIn\l" ]
+    5 -> 2 [ label = "IsChildOf\l" ]
+    5 -> 3 [ label = "CreatedIn\l" ]
+    6 -> 5 [ label = "IsChildOf\l" ]
+    6 -> 3 [ label = "CreatedIn\l" ]
+    7 -> 2 [ label = "IsChildOf\l" ]
+    7 -> 1 [ label = "CreatedIn\l" ]
+    8 -> 2 [ label = "IsChildOf\l" ]
+    8 -> 1 [ label = "CreatedIn\l" ]
+    9 -> 8 [ label = "IsChildOf\l" ]
+    9 -> 1 [ label = "CreatedIn\l" ]
+}
+

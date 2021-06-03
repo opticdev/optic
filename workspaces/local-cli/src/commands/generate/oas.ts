@@ -7,7 +7,7 @@ import yaml from 'js-yaml';
 import { fromOptic } from '@useoptic/cli-shared';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
-import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as OpticEngine from '@useoptic/optic-engine-wasm';
 import { generateOpenApi, makeSpectacle } from '@useoptic/spectacle';
 
 export default class GenerateOas extends Command {

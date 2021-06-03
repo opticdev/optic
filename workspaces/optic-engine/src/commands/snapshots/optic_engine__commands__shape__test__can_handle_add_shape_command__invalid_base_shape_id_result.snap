@@ -1,0 +1,7 @@
+---
+source: workspaces/optic-engine-native/src/commands/shape.rs
+expression: invalid_base_shape_id_result.unwrap_err()
+---
+Validation(
+    "Command failed validation: base shape id must exist to add shape, \"AddShape(AddShape { shape_id: \\\"string_shape_2\\\", base_shape_id: \\\"string_shape_1\\\", name: \\\"test-name\\\" })\"",
+)

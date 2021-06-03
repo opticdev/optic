@@ -1,0 +1,24 @@
+---
+source: workspaces/optic-engine-native/tests/bug-scenarios.rs
+expression: "Dot::with_config(&spec_projection.endpoint().graph, &[])"
+---
+digraph {
+    0 [ label = "PathComponent(\l    \"root\",\l    PathComponentDescriptor {\l        is_parameter: false,\l        name: \"\",\l    },\l)\l" ]
+    1 [ label = "PathComponent(\l    \"path_U88jQ2isJy\",\l    PathComponentDescriptor {\l        is_parameter: false,\l        name: \"following\",\l    },\l)\l" ]
+    2 [ label = "PathComponent(\l    \"path_reFAf3Kwia\",\l    PathComponentDescriptor {\l        is_parameter: false,\l        name: \"drivers\",\l    },\l)\l" ]
+    3 [ label = "HttpMethod(\l    \"POST\",\l)\l" ]
+    4 [ label = "Request(\l    \"request_ItvwdwotUU\",\l    RequestBodyDescriptor {\l        body: Some(\l            BodyDescriptor {\l                http_content_type: \"application/json\",\l                root_shape_id: \"shape_eaAktz66rY\",\l            },\l        ),\l    },\l)\l" ]
+    5 [ label = "HttpStatusCode(\l    201,\l)\l" ]
+    6 [ label = "Response(\l    \"response_Oq3x4otca8\",\l    ResponseBodyDescriptor {\l        body: Some(\l            BodyDescriptor {\l                http_content_type: \"application/json\",\l                root_shape_id: \"shape_xjqKoYgnH6\",\l            },\l        ),\l    },\l)\l" ]
+    7 [ label = "HttpStatusCode(\l    400,\l)\l" ]
+    8 [ label = "Response(\l    \"response_np7lD9lfHq\",\l    ResponseBodyDescriptor {\l        body: Some(\l            BodyDescriptor {\l                http_content_type: \"application/json\",\l                root_shape_id: \"shape_GgIZ9GsJQm\",\l            },\l        ),\l    },\l)\l" ]
+    1 -> 0 [ label = "IsChildOf\l" ]
+    2 -> 1 [ label = "IsChildOf\l" ]
+    3 -> 2 [ label = "IsChildOf\l" ]
+    4 -> 3 [ label = "IsChildOf\l" ]
+    5 -> 3 [ label = "IsChildOf\l" ]
+    6 -> 5 [ label = "IsChildOf\l" ]
+    7 -> 3 [ label = "IsChildOf\l" ]
+    8 -> 7 [ label = "IsChildOf\l" ]
+}
+

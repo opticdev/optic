@@ -1,0 +1,172 @@
+version: "3"
+
+vars:
+  DEFAULT_BUILD_ARGS: --all-features --workspace
+  RELEASE_BUILD_ARGS: --all-features --workspace --release
+
+tasks:
+  build:
+    desc: Cross-compile optic-engine-native binaries for all target platforms
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    deps:
+      - add-targets
+    cmds:
+      - task: build-macos
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
+      - task: build-windows
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
+      - task: build-linux
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
+
+  build-macos:
+    desc: Build optic-engine-native binaries for Mac OS
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    deps:
+      - task: build-macos-x86-64
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
+      - task: build-macos-aarch64
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
+
+  build-macos-x86-64:
+    desc: Build optic-engine-native binaries for Mac OS x86-64
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    cmds:
+      - cargo build {{.BUILD_ARGS}} --target x86_64-apple-darwin
+
+  build-macos-aarch64:
+    desc: Build optic-engine-native binaries for Mac OS aarch64
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    cmds:
+      - cargo build {{.BUILD_ARGS}} --target aarch64-apple-darwin
+
+  build-linux:
+    desc: Build optic-engine-native binaries for Linux
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    deps:
+      - build-linux:macos-host-deps
+    cmds:
+      - |
+        if uname -a | grep -q Darwin
+        then
+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER=x86_64-linux-musl-gcc \
+            cargo build {{.BUILD_ARGS}} --target x86_64-unknown-linux-musl
+        else
+          cargo build {{.BUILD_ARGS}} --target x86_64-unknown-linux-musl
+        fi
+
+  build-windows:
+    desc: Build optic-engine-native binaries for Windows
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    deps:
+      - build-windows:macos-host-deps
+      - build-windows:debian-host-deps
+    cmds:
+      - cargo build {{.BUILD_ARGS}} --target x86_64-pc-windows-gnu
+
+  test:
+    - cargo test
+
+  add-targets:
+    cmds:
+      - rustup target add aarch64-apple-darwin
+      - rustup target add x86_64-apple-darwin
+      - rustup target add x86_64-unknown-linux-gnu  # glibc
+      - rustup target add x86_64-unknown-linux-musl # musl libc
+      - rustup target add x86_64-pc-windows-gnu
+
+  # Mac OS build host toolchain deps
+  build-windows:macos-host-deps:
+    desc: Install a Windows build toolchain on Mac OS hosts
+    cmds:
+      - brew install mingw-w64
+    status:
+      - uname -a | grep -qv "Darwin"
+
+  # Debian build host toolchain deps
+  build-windows:debian-host-deps:
+    cmds:
+      - sudo apt-get -y install gcc-mingw-w64
+    status:
+      - uname -a | grep -qv "GNU/Linux"
+      - |
+        if [ -f /etc/os-release ]
+        then
+          cat /etc/os-release | grep -qv "ID_LIKE=debian"
+        fi
+
+  build-linux:macos-host-deps:
+    desc: Install a Windows build toolchain on Mac OS hosts
+    cmds:
+      # - xcode-select --install
+      - brew tap SergioBenitez/osxct
+      - brew install x86_64-unknown-linux-gnu
+      - brew install filosottile/musl-cross/musl-cross
+    status:
+      - uname -a | grep -qv "Darwin"
+
+  locate-binaries:
+    cmds:
+      - |
+        if uname -a | grep -q Darwin
+        then
+          find ./target -type f -perm +111 -print | grep release/optic_diff
+        else
+          find ./target -executable -print -type f | grep release/optic_diff
+        fi
+
+  ci:build:
+    desc: The CI build workflow
+    cmds:
+      - task: build
+        vars:
+          BUILD_ARGS: "{{.RELEASE_BUILD_ARGS}}"
+      - task: :flush-to-disk
+      - task: locate-binaries
+
+  package-tarballs:
+    summary: |
+      Locates any previously built optic-engine-native binaries and creates a tgz archive
+      for each in ./build/dist. The structure of the tarball is expected to be:
+
+        tar tvf build/dist/optic_diff-v0.0.0-alpha.b00-macos.tar.gz
+        drwxr-xr-x  0 nate   staff       0 Feb 23 15:14 optic_diff-v0.0.0-alpha.b00-macos/
+        -rwxr-xr-x  0 nate   staff 12298919 Feb 23 15:14 optic_diff-v0.0.0-alpha.b00-macos/optic_diff
+    vars:
+      VERSION: '{{default "NO_VERSION" .VERSION}}'
+    cmds:
+      # kind of a hack job. but it mimics the existing tags we're appending to the binary tarballs
+      # in the main release flow.
+      - |
+        for binary in $(task optic-engine-native:locate-binaries)
+        do
+          if [[ $binary =~ "x86_64-apple" ]]; then
+            tag="macos"
+          elif [[ $binary =~ "aarch64-apple" ]]; then
+            tag="macos-aarch64"
+          elif [[ $binary =~ "windows" ]]; then
+            tag="win64"
+          elif [[ $binary =~ "linux" ]]; then
+            tag="linux"
+          else
+            echo "Could not identify the arch for file: $binary"
+            exit 1
+          fi
+
+          filename="optic_diff-v{{.VERSION}}-$tag"
+          chmod +x $binary
+          mkdir -p build/$filename build/dist
+          cp $binary build/$filename/
+          tar -C build -czvf build/dist/${filename}.tar.gz $filename
+        done
+      - ls -lh build/dist

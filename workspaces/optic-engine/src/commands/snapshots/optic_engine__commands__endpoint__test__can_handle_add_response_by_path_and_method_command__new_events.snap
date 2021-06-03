@@ -1,0 +1,15 @@
+---
+source: workspaces/optic-engine-native/src/commands/endpoint.rs
+expression: new_events
+---
+[
+    ResponseAddedByPathAndMethod(
+        ResponseAddedByPathAndMethod {
+            response_id: "response_2",
+            path_id: "path_1",
+            http_method: "POST",
+            http_status_code: 201,
+            event_context: None,
+        },
+    ),
+]

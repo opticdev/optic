@@ -10,8 +10,11 @@ import {
   InteractionsFileToJsTaskOutput,
   InteractionsFileToJsTaskSpecification,
 } from '../InteractionsFileToJs';
-import { EventsFileToJsTaskOutput, EventsFileToJsTaskSpecification } from '../EventsFileToJsTaskSpecification';
-import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import {
+  EventsFileToJsTaskOutput,
+  EventsFileToJsTaskSpecification,
+} from '../EventsFileToJsTaskSpecification';
+import * as opticEngine from '@useoptic/optic-engine-wasm';
 
 export const interactionsFromFileKey = 'interactionsFromFile';
 export const eventsFromFileKey = 'eventsFromFile';
@@ -49,14 +52,15 @@ export const buildDiffsFromRfcStateAndInteractions: ITaskExecutor<
   const rfcState = dependencies[eventsFromFileKey].events;
   const interactions = dependencies[interactionsFromFileKey].interactions;
   const events = dependencies[eventsFromFileKey].events;
-  const spec = opticEngine.spec_from_events(
-    JSON.stringify(events)
-  );
-  const diffs = interactions.flatMap(interaction => {
-    const interactionDiffs = opticEngine.diff_interaction(JSON.stringify(interaction), spec);
+  const spec = opticEngine.spec_from_events(JSON.stringify(events));
+  const diffs = interactions.flatMap((interaction) => {
+    const interactionDiffs = opticEngine.diff_interaction(
+      JSON.stringify(interaction),
+      spec
+    );
     return JSON.parse(interactionDiffs);
   });
   return {
-    diffs
-  }
+    diffs,
+  };
 };

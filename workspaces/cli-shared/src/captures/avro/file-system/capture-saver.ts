@@ -9,7 +9,7 @@ import {
   IInteractionBatch,
   IGroupingIdentifiers,
   IHttpInteraction,
-} from '../../../optic-types';
+} from '@useoptic/optic-domain';
 
 interface IFileSystemCaptureSaverConfig {
   captureBaseDirectory: string;

@@ -1,0 +1,5 @@
+---
+source: workspaces/optic-engine-native/tests/shape_diff.rs
+expression: fingerprints
+---
+[]

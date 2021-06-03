@@ -1,0 +1,5 @@
+---
+source: workspaces/optic-engine-native/src/events/spec_chunk.rs
+expression: nested_batch_event_result.unwrap_err().0
+---
+"Chunk cannot include nested BatchCommitStarted events"

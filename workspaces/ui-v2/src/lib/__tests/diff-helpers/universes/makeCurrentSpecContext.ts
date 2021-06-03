@@ -10,7 +10,7 @@ import {
   queryResultToAllRequestsResponses,
 } from '<src>/pages/diffs/hooks/useAllRequestsAndResponses';
 import { newDeterministicIdGenerator } from '<src>/lib/domain-id-generator';
-import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as opticEngine from '@useoptic/optic-engine-wasm';
 import { AllPathsQuery, PathQueryResponse } from '<src>/hooks/usePathsHook';
 
 //@GOTCHA: for some reason, probably because of jest, our wasm code thinks it is running in the browser even though it is running in node because of the presence of global.self:

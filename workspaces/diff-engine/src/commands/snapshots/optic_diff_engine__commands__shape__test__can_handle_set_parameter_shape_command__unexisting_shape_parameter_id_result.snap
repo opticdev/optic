@@ -1,7 +1,0 @@
----
-source: workspaces/diff-engine/src/commands/shape.rs
-expression: unexisting_shape_parameter_id_result.unwrap_err()
----
-Validation(
-    "Command failed validation: consuming parameter must exist to set shape parameter shape, \"SetParameterShape(SetParameterShape { shape_descriptor: ProviderInShape(ProviderInShape { shape_id: \\\"nullable_shape_1\\\", provider_descriptor: ShapeProvider(ShapeProvider { shape_id: \\\"string_shape_1\\\" }), consuming_parameter_id: \\\"not-a-shape-parameter-id\\\" }) })\"",
-)

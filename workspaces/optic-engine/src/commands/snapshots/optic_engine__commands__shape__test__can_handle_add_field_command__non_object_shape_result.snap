@@ -1,0 +1,7 @@
+---
+source: workspaces/optic-engine-native/src/commands/shape.rs
+expression: non_object_shape_result.unwrap_err()
+---
+Validation(
+    "Command failed validation: shape must support fields to add field, \"AddField(AddField { field_id: \\\"field_2\\\", shape_id: \\\"shape_2\\\", name: \\\"username\\\", shape_descriptor: FieldShapeFromShape(FieldShapeFromShape { field_id: \\\"field_2\\\", shape_id: \\\"shape_3\\\" }) })\"",
+)

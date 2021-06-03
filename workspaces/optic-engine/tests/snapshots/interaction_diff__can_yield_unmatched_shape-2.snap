@@ -1,0 +1,31 @@
+---
+source: workspaces/optic-engine-native/tests/interaction_diff.rs
+expression: results
+---
+[
+    UnmatchedRequestBodyShape(
+        UnmatchedRequestBodyShape {
+            interaction_trail: InteractionTrail {
+                path: [
+                    RequestBody {
+                        content_type: "application/json",
+                    },
+                ],
+            },
+            requests_trail: SpecRequestBody(
+                SpecRequestBody {
+                    request_id: "request_1",
+                },
+            ),
+            shape_diff_result: UnmatchedShape {
+                json_trail: JsonTrail {
+                    path: [],
+                },
+                shape_trail: ShapeTrail {
+                    root_shape_id: "shape_1",
+                    path: [],
+                },
+            },
+        },
+    ),
+]

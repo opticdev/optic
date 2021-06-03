@@ -1,0 +1,20 @@
+---
+source: workspaces/optic-engine-native/src/learn_shape/result.rs
+expression: boolean_results
+---
+(
+    Some(
+        "test-id-2",
+    ),
+    [
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-2",
+                    base_shape_id: "$boolean",
+                    name: "",
+                },
+            ),
+        ),
+    ],
+)

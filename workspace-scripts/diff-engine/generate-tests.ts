@@ -110,6 +110,11 @@ async function checksum(fileName: string): Promise<string> {
 
 const [, , inputBaseDir] = process.argv;
 main({
-  outputBaseDir: Path.join(process.cwd(), 'workspaces', 'diff-engine', 'tests'),
+  outputBaseDir: Path.join(
+    process.cwd(),
+    'workspaces',
+    'optic-engine-native',
+    'tests'
+  ),
   inputBaseDir,
 });

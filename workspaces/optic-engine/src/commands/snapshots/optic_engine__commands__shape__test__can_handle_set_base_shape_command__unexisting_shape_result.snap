@@ -1,0 +1,7 @@
+---
+source: workspaces/optic-engine-native/src/commands/shape.rs
+expression: unexisting_shape_result.unwrap_err()
+---
+Validation(
+    "Command failed validation: shape must exist to set base shape, \"SetBaseShape(SetBaseShape { shape_id: \\\"not-a-shape\\\", base_shape_id: \\\"$number\\\" })\"",
+)

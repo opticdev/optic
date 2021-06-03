@@ -1,0 +1,14 @@
+---
+source: workspaces/optic-engine-native/src/commands/rfc.rs
+expression: new_events
+---
+[
+    ContributionAdded(
+        ContributionAdded {
+            id: "path123.method",
+            key: "purpose",
+            value: "Name of Endpoint",
+            event_context: None,
+        },
+    ),
+]

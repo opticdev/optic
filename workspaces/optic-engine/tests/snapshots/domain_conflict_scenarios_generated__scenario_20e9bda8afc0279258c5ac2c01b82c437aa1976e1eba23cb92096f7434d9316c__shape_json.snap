@@ -1,0 +1,1059 @@
+---
+source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+expression: "&spec_projection.shapes_serializable()"
+---
+{
+  "nodes": [
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$string",
+        "descriptor": {
+          "kind": "StringKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$number",
+        "descriptor": {
+          "kind": "NumberKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$boolean",
+        "descriptor": {
+          "kind": "BooleanKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$list",
+        "descriptor": {
+          "kind": "ListKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$listItem",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$object",
+        "descriptor": {
+          "kind": "ObjectKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$nullable",
+        "descriptor": {
+          "kind": "NullableKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$nullableInner",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$unknown",
+        "descriptor": {
+          "kind": "UnknownKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$optional",
+        "descriptor": {
+          "kind": "OptionalKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$optionalInner",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$oneOf",
+        "descriptor": {
+          "kind": "OneOfKind"
+        }
+      }
+    },
+    {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "2f5c2536-6500-495a-b0b1-947d55394009",
+        "createdAt": "2021-02-01T18:26:25.849Z"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_PBYuBrTCLk"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_bGU4HicHkV"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_RvMMDY4eOD"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_jvGuxAjlRn",
+        "descriptor": {
+          "name": "author"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_u6waaccsqU"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_gGefUJrPwF",
+        "descriptor": {
+          "name": "id"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_Mh5lZMGWAO"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_iYJ7dR4ihV",
+        "descriptor": {
+          "name": "title"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_GsyFkrJzlL"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_jfIeomMZ5p"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_ApnstcbWQx"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_sgKygyPuZL"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_KhuvysQCWY",
+        "descriptor": {
+          "name": "name"
+        }
+      }
+    },
+    {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "57630124-211a-440d-8bd3-2496ccc97f0c",
+        "createdAt": "2021-02-01T18:25:15.656Z"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_1T8ZANWIcd"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_j1aiWREIbU"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_JH0cqjvNSd"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_OCXyZL2Lyp",
+        "descriptor": {
+          "name": "author"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_hnfXS9Vmns"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_CXHgTtjIPq",
+        "descriptor": {
+          "name": "id"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_FIaVxhxPUW"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_pb75z9dypc",
+        "descriptor": {
+          "name": "title"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_E9IzHThmZv"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_9t5hqnMMma"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_ZVgfHusbJW"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_6dDj0Z3HkT"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_tZbQYoQmxt",
+        "descriptor": {
+          "name": "body"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_If49etudqF"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_UMhLN288Z3",
+        "descriptor": {
+          "name": "id"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_VXfig63hnr"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_VMgg5gTvnO",
+        "descriptor": {
+          "name": "postId"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_UlLNexyAzZ"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_6TnsL6trq7"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_MiVhGwZrMY"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_iQB4J3IWzb"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_SXC48X1nmc",
+        "descriptor": {
+          "name": "name"
+        }
+      }
+    }
+  ],
+  "edges": [
+    [
+      4,
+      3,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      7,
+      6,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      10,
+      9,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      13,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      13,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      14,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      14,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      15,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      15,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      15,
+      16,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      16,
+      14,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      16,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      17,
+      1,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      17,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      17,
+      18,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      18,
+      14,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      18,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      19,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      19,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      19,
+      20,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      20,
+      14,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      20,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      21,
+      3,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      21,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      21,
+      4,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_bGU4HicHkV"
+        }
+      }
+    ],
+    [
+      21,
+      12,
+      {
+        "type": "UpdatedIn"
+      }
+    ],
+    [
+      22,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      22,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      23,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      23,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      24,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      24,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      24,
+      25,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      25,
+      23,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      25,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      27,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      27,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      28,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      28,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      29,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      29,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      29,
+      30,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      30,
+      28,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      30,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      31,
+      1,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      31,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      31,
+      32,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      32,
+      28,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      32,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      33,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      33,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      33,
+      34,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      34,
+      28,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      34,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      35,
+      3,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      35,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      35,
+      4,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_j1aiWREIbU"
+        }
+      }
+    ],
+    [
+      35,
+      26,
+      {
+        "type": "UpdatedIn"
+      }
+    ],
+    [
+      36,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      36,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      37,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      37,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      38,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      38,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      38,
+      39,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      39,
+      37,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      39,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      40,
+      1,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      40,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      40,
+      41,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      41,
+      37,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      41,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      42,
+      1,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      42,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      42,
+      43,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      43,
+      37,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      43,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      44,
+      3,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      44,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      44,
+      4,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_ZVgfHusbJW"
+        }
+      }
+    ],
+    [
+      44,
+      26,
+      {
+        "type": "UpdatedIn"
+      }
+    ],
+    [
+      45,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      45,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      46,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      46,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      47,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      47,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      47,
+      48,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      48,
+      46,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      48,
+      26,
+      {
+        "type": "CreatedIn"
+      }
+    ]
+  ],
+  "nodeIndexToId": {
+    "0": "$string",
+    "1": "$number",
+    "10": "$optionalInner",
+    "11": "$oneOf",
+    "12": "2f5c2536-6500-495a-b0b1-947d55394009",
+    "13": "shape_PBYuBrTCLk",
+    "14": "shape_bGU4HicHkV",
+    "15": "shape_RvMMDY4eOD",
+    "16": "field_jvGuxAjlRn",
+    "17": "shape_u6waaccsqU",
+    "18": "field_gGefUJrPwF",
+    "19": "shape_Mh5lZMGWAO",
+    "2": "$boolean",
+    "20": "field_iYJ7dR4ihV",
+    "21": "shape_GsyFkrJzlL",
+    "22": "shape_jfIeomMZ5p",
+    "23": "shape_ApnstcbWQx",
+    "24": "shape_sgKygyPuZL",
+    "25": "field_KhuvysQCWY",
+    "26": "57630124-211a-440d-8bd3-2496ccc97f0c",
+    "27": "shape_1T8ZANWIcd",
+    "28": "shape_j1aiWREIbU",
+    "29": "shape_JH0cqjvNSd",
+    "3": "$list",
+    "30": "field_OCXyZL2Lyp",
+    "31": "shape_hnfXS9Vmns",
+    "32": "field_CXHgTtjIPq",
+    "33": "shape_FIaVxhxPUW",
+    "34": "field_pb75z9dypc",
+    "35": "shape_E9IzHThmZv",
+    "36": "shape_9t5hqnMMma",
+    "37": "shape_ZVgfHusbJW",
+    "38": "shape_6dDj0Z3HkT",
+    "39": "field_tZbQYoQmxt",
+    "4": "$listItem",
+    "40": "shape_If49etudqF",
+    "41": "field_UMhLN288Z3",
+    "42": "shape_VXfig63hnr",
+    "43": "field_VMgg5gTvnO",
+    "44": "shape_UlLNexyAzZ",
+    "45": "shape_6TnsL6trq7",
+    "46": "shape_MiVhGwZrMY",
+    "47": "shape_iQB4J3IWzb",
+    "48": "field_SXC48X1nmc",
+    "5": "$object",
+    "6": "$nullable",
+    "7": "$nullableInner",
+    "8": "$unknown",
+    "9": "$optional"
+  }
+}

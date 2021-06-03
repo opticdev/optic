@@ -1,0 +1,20 @@
+---
+source: workspaces/optic-engine-native/src/learn_shape/result.rs
+expression: "&empty_object_results"
+---
+(
+    Some(
+        "test-id-7",
+    ),
+    [
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-7",
+                    base_shape_id: "$object",
+                    name: "",
+                },
+            ),
+        ),
+    ],
+)

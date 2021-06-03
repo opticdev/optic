@@ -1,0 +1,7 @@
+---
+source: workspaces/optic-engine-native/src/commands/endpoint.rs
+expression: unassignable_path_result.unwrap_err()
+---
+Validation(
+    "Command failed validation: path id must be assignable to add path parameter, \"AddPathParameter(AddPathParameter { path_id: \\\"path_1\\\", parent_path_id: \\\"path_1\\\", name: \\\"todoId\\\" })\"",
+)
