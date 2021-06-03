@@ -5,10 +5,10 @@ author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"
 author_image_url: "/img/team/aidan.jpg"
 category: Community
-social_image: social-its-ok-to-break-your-api.png
+social_image: its-ok-to-break-your-api.png
 ---
 
-![alt](/img/blog-content/social-its-ok-to-break-your-api.png)
+![alt](/img/blog-content/its-ok-to-break-your-api.png)
 
 Great APIs _can_ integrate with anything, but in practice they don’t integrate with everything. Yet, much of the industry approaches their APIs like a fragile, priceless vase: not to be altered for fear of ruining their value and perhaps breaking it.
 
