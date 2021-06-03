@@ -1,0 +1,302 @@
+---
+source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+expression: "&spec_projection.shape().to_choice_mapping()"
+---
+{
+    "shape_9eGPShaC6K": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_9eGPShaC6K",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "task",
+                        field_id: "field_RkcLaQrvWP",
+                        shape_id: "shape_QlChWMhENf",
+                    },
+                    ObjectFieldChoice {
+                        name: "isDone",
+                        field_id: "field_Wsvi8Mz3I8",
+                        shape_id: "shape_AJI1NUOcuk",
+                    },
+                    ObjectFieldChoice {
+                        name: "id",
+                        field_id: "field_GEBzgPSSgx",
+                        shape_id: "shape_ASYWWGZUXX",
+                    },
+                    ObjectFieldChoice {
+                        name: "hello",
+                        field_id: "field_MzT8sXrwIj",
+                        shape_id: "shape_PHlpFg1Im4",
+                    },
+                    ObjectFieldChoice {
+                        name: "dueDate",
+                        field_id: "field_V93LVuyg6y",
+                        shape_id: "shape_y3btjllmxs",
+                    },
+                    ObjectFieldChoice {
+                        name: "assignedBy",
+                        field_id: "field_QO5yNJDzl6",
+                        shape_id: "shape_sT8BeBcwG6",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_AJI1NUOcuk": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_AJI1NUOcuk",
+                json_type: Undefined,
+            },
+        ),
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_sKcXmXqnpW",
+                json_type: Boolean,
+            },
+        ),
+    ],
+    "shape_ASYWWGZUXX": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_ASYWWGZUXX",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_Fv4AnjuMfr": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_Fv4AnjuMfr",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "task",
+                        field_id: "field_GLsxCDU63N",
+                        shape_id: "shape_h6noJEJact",
+                    },
+                    ObjectFieldChoice {
+                        name: "isDone",
+                        field_id: "field_AbzpZ0m9nF",
+                        shape_id: "shape_iISbLxbnLI",
+                    },
+                    ObjectFieldChoice {
+                        name: "id",
+                        field_id: "field_mYQDOd3Y0i",
+                        shape_id: "shape_JxlNtOYsuU",
+                    },
+                    ObjectFieldChoice {
+                        name: "hello",
+                        field_id: "field_fXda473ILm",
+                        shape_id: "shape_QO3y8UJ0Lv",
+                    },
+                    ObjectFieldChoice {
+                        name: "dueDate",
+                        field_id: "field_30c9L6fbQ3",
+                        shape_id: "shape_GROMPaJig6",
+                    },
+                    ObjectFieldChoice {
+                        name: "assignedBy",
+                        field_id: "field_nDtKtB2KtJ",
+                        shape_id: "shape_O5w3VQAJmV",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_GROMPaJig6": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_GROMPaJig6",
+                json_type: Undefined,
+            },
+        ),
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_cvw6rvavN8",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_JxlNtOYsuU": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_JxlNtOYsuU",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_KrxPAcTUDM": [
+        Array(
+            ArrayChoice {
+                json_type: Array,
+                shape_id: "shape_KrxPAcTUDM",
+                item_shape_id: "shape_Fv4AnjuMfr",
+            },
+        ),
+    ],
+    "shape_MINPkyPjlU": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_MINPkyPjlU",
+                json_type: Object,
+                fields: [],
+            },
+        ),
+    ],
+    "shape_O5w3VQAJmV": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_O5w3VQAJmV",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_PHlpFg1Im4": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_PHlpFg1Im4",
+                json_type: Undefined,
+            },
+        ),
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_bASddE5AqG",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_QO3y8UJ0Lv": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_QO3y8UJ0Lv",
+                json_type: Undefined,
+            },
+        ),
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_gAv6yKZzFD",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_QlChWMhENf": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_QlChWMhENf",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_X1SkJOUfKT": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_X1SkJOUfKT",
+                json_type: Object,
+                fields: [],
+            },
+        ),
+    ],
+    "shape_bASddE5AqG": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_bASddE5AqG",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_cvw6rvavN8": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_cvw6rvavN8",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_gAv6yKZzFD": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_gAv6yKZzFD",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_h6noJEJact": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_h6noJEJact",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_hcQz2zr63G": [
+        Array(
+            ArrayChoice {
+                json_type: Array,
+                shape_id: "shape_hcQz2zr63G",
+                item_shape_id: "shape_9eGPShaC6K",
+            },
+        ),
+    ],
+    "shape_iISbLxbnLI": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_iISbLxbnLI",
+                json_type: Undefined,
+            },
+        ),
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_oZ77wP2E0G",
+                json_type: Boolean,
+            },
+        ),
+    ],
+    "shape_oZ77wP2E0G": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_oZ77wP2E0G",
+                json_type: Boolean,
+            },
+        ),
+    ],
+    "shape_sKcXmXqnpW": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_sKcXmXqnpW",
+                json_type: Boolean,
+            },
+        ),
+    ],
+    "shape_sT8BeBcwG6": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_sT8BeBcwG6",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_wYhKIM87RV": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_wYhKIM87RV",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_y3btjllmxs": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_y3btjllmxs",
+                json_type: Undefined,
+            },
+        ),
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_wYhKIM87RV",
+                json_type: String,
+            },
+        ),
+    ],
+}

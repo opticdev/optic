@@ -1,0 +1,32 @@
+{
+  "name": "@useoptic/optic-domain",
+  "version": "10.0.5-beta.1",
+  "scripts": {
+    "build": "tsc -b --verbose",
+    "test": "cd test && tap tests",
+    "ws:build": "tsc -b --verbose",
+    "ws:clean": "rm -rf build",
+    "ws:test": "tap tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/optic-domain"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "build"
+  ],
+  "dependencies": {
+    "axax": "^0.2.2",
+    "stream-json": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/stream-json": "^1.5.1",
+    "@types/tap": "^14.10.1",
+    "sinon": "^9.2.2",
+    "tap": "^14.11.0",
+    "typescript": "3.9"
+  }
+}

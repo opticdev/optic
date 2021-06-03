@@ -1,5 +1,0 @@
----
-source: workspaces/diff-engine/tests/e2e-scenarios.rs
-expression: results
----
-[]

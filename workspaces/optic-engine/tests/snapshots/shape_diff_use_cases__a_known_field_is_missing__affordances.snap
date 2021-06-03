@@ -1,0 +1,67 @@
+---
+source: workspaces/optic-engine-native/tests/shape-diff-use-cases.rs
+expression: learned_shape_diff_affordances.into_iter()
+---
+[
+    (
+        "fedffb083fbbda67",
+        ShapeDiffAffordances {
+            affordances: [
+                TrailValues {
+                    trail: JsonTrail {
+                        path: [
+                            JsonObjectKey {
+                                key: "firstName",
+                            },
+                        ],
+                    },
+                    was_string: false,
+                    was_number: false,
+                    was_boolean: false,
+                    was_null: false,
+                    was_array: false,
+                    was_object: false,
+                    was_empty_array: false,
+                    field_sets: [],
+                },
+            ],
+            interactions: InteractionsAffordances {
+                was_string: {},
+                was_number: {},
+                was_boolean: {},
+                was_null: {},
+                was_array: {},
+                was_empty_array: {},
+                was_object: {},
+                was_missing: {
+                    "test-interaction-1",
+                },
+                was_string_trails: {},
+                was_number_trails: {},
+                was_boolean_trails: {},
+                was_null_trails: {},
+                was_array_trails: {},
+                was_empty_array_trails: {},
+                was_object_trails: {},
+                was_missing_trails: {
+                    "test-interaction-1": {
+                        JsonTrail {
+                            path: [
+                                JsonObjectKey {
+                                    key: "firstName",
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+            root_trail: JsonTrail {
+                path: [
+                    JsonObjectKey {
+                        key: "firstName",
+                    },
+                ],
+            },
+        },
+    ),
+]

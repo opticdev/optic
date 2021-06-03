@@ -1,7 +1,0 @@
----
-source: workspaces/diff-engine/src/commands/shape.rs
-expression: unassignable_field_result.unwrap_err()
----
-Validation(
-    "Command failed validation: field id must be assignable to add field, \"AddField(AddField { field_id: \\\"field_1\\\", shape_id: \\\"shape_1\\\", name: \\\"username\\\", shape_descriptor: FieldShapeFromShape(FieldShapeFromShape { field_id: \\\"field_2\\\", shape_id: \\\"shape_3\\\" }) })\"",
-)

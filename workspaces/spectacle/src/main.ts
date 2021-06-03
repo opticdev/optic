@@ -1,5 +1,5 @@
 import { makeSpectacle } from './index';
-import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as OpticEngine from '@useoptic/optic-engine-wasm';
 import { InMemoryOpticContextBuilder } from './in-memory';
 
 import * as fs from 'fs';

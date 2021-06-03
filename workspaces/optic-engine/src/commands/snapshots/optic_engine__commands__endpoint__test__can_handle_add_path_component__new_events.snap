@@ -1,0 +1,14 @@
+---
+source: workspaces/optic-engine-native/src/commands/endpoint.rs
+expression: new_events
+---
+[
+    PathComponentAdded(
+        PathComponentAdded {
+            path_id: "path_2",
+            parent_path_id: "path_1",
+            name: "completed",
+            event_context: None,
+        },
+    ),
+]

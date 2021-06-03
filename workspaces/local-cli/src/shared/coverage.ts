@@ -3,7 +3,7 @@
 import { IPathMapping } from '@useoptic/cli-config';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 import { CaptureInteractionIterator } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
-import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as OpticEngine from '@useoptic/optic-engine-wasm';
 import {
   InMemoryOpticContextBuilder,
   InMemorySpectacle,
@@ -11,7 +11,7 @@ import {
 
 import colors from 'colors';
 import Table from 'cli-table3';
-import { IHttpInteraction } from '@useoptic/cli-shared/build/optic-types';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 
 // This concept came from the Scala codebase's "Concern" concept
 // https://github.com/opticdev/optic-core/blob/master/core/optic/shared/src/main/scala/com/useoptic/coverage/CoverageConcerns.scala

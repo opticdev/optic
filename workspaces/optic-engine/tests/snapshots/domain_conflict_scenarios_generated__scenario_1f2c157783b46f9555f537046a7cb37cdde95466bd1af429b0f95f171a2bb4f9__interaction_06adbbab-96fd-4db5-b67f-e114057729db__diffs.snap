@@ -1,0 +1,42 @@
+---
+source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+expression: diffs
+---
+[
+    UnmatchedResponseBodyShape(
+        UnmatchedResponseBodyShape {
+            interaction_trail: InteractionTrail {
+                path: [
+                    ResponseBody {
+                        content_type: "application/json",
+                        status_code: 200,
+                    },
+                ],
+            },
+            requests_trail: SpecResponseBody(
+                SpecResponseBody {
+                    response_id: "response_nHVA0oUt5j",
+                },
+            ),
+            shape_diff_result: UnmatchedShape {
+                json_trail: JsonTrail {
+                    path: [
+                        JsonObjectKey {
+                            key: "cars",
+                        },
+                    ],
+                },
+                shape_trail: ShapeTrail {
+                    root_shape_id: "shape_UzxFqwGJ8h",
+                    path: [
+                        ObjectFieldTrail {
+                            field_id: "field_9JoXLW4PMX",
+                            field_shape_id: "shape_m0tBaSSxY5",
+                            parent_object_shape_id: "shape_UzxFqwGJ8h",
+                        },
+                    ],
+                },
+            },
+        },
+    ),
+]

@@ -1,6 +1,6 @@
 import Tap from 'tap';
 import { makeSpectacle } from '../src';
-import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as OpticEngine from '@useoptic/optic-engine-wasm';
 import { InMemoryOpticContextBuilder } from '../src/in-memory';
 import { loadEvents } from './utils';
 

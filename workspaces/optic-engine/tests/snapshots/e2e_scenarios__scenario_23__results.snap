@@ -1,0 +1,120 @@
+---
+source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+expression: results
+---
+[
+    UnmatchedResponseBodyShape(
+        UnmatchedResponseBodyShape {
+            interaction_trail: InteractionTrail {
+                path: [
+                    ResponseBody {
+                        content_type: "application/json",
+                        status_code: 200,
+                    },
+                ],
+            },
+            requests_trail: SpecResponseBody(
+                SpecResponseBody {
+                    response_id: "response_1",
+                },
+            ),
+            shape_diff_result: UnmatchedShape {
+                json_trail: JsonTrail {
+                    path: [
+                        JsonObjectKey {
+                            key: "location",
+                        },
+                        JsonObjectKey {
+                            key: "principality",
+                        },
+                        JsonObjectKey {
+                            key: "coordinates",
+                        },
+                    ],
+                },
+                shape_trail: ShapeTrail {
+                    root_shape_id: "shape_10",
+                    path: [
+                        ObjectFieldTrail {
+                            field_id: "field_7",
+                            field_shape_id: "shape_9",
+                            parent_object_shape_id: "shape_10",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_6",
+                            field_shape_id: "shape_8",
+                            parent_object_shape_id: "shape_9",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_4",
+                            field_shape_id: "shape_6",
+                            parent_object_shape_id: "shape_8",
+                        },
+                        OptionalTrail {
+                            shape_id: "shape_6",
+                        },
+                    ],
+                },
+            },
+        },
+    ),
+    UnmatchedResponseBodyShape(
+        UnmatchedResponseBodyShape {
+            interaction_trail: InteractionTrail {
+                path: [
+                    ResponseBody {
+                        content_type: "application/json",
+                        status_code: 200,
+                    },
+                ],
+            },
+            requests_trail: SpecResponseBody(
+                SpecResponseBody {
+                    response_id: "response_1",
+                },
+            ),
+            shape_diff_result: UnmatchedShape {
+                json_trail: JsonTrail {
+                    path: [
+                        JsonObjectKey {
+                            key: "location",
+                        },
+                        JsonObjectKey {
+                            key: "principality",
+                        },
+                        JsonObjectKey {
+                            key: "coordinates",
+                        },
+                    ],
+                },
+                shape_trail: ShapeTrail {
+                    root_shape_id: "shape_10",
+                    path: [
+                        ObjectFieldTrail {
+                            field_id: "field_7",
+                            field_shape_id: "shape_9",
+                            parent_object_shape_id: "shape_10",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_6",
+                            field_shape_id: "shape_8",
+                            parent_object_shape_id: "shape_9",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_4",
+                            field_shape_id: "shape_6",
+                            parent_object_shape_id: "shape_8",
+                        },
+                        OptionalTrail {
+                            shape_id: "shape_6",
+                        },
+                        OptionalItemTrail {
+                            shape_id: "shape_6",
+                            inner_shape_id: "shape_5",
+                        },
+                    ],
+                },
+            },
+        },
+    ),
+]

@@ -1,7 +1,0 @@
----
-source: workspaces/diff-engine/src/commands/endpoint.rs
-expression: renaming_root_result.unwrap_err()
----
-Validation(
-    "Command failed validation: path id can not be root to rename path parameter, \"RenamePathParameter(RenamePathParameter { path_id: \\\"root\\\", name: \\\"taskId\\\" })\"",
-)

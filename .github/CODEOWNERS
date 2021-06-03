@@ -1,2 +1,3 @@
 * @devdoshi
-/workspaces/diff-engine/ @opticdev/rust-core
+/workspaces/optic-engine-native/ @opticdev/rust-core
+/workspaces/optic-engine-wasm/ @opticdev/rust-core

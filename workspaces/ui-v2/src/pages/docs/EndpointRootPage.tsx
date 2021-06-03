@@ -1,8 +1,6 @@
 import React, { FC, useMemo } from 'react';
 
 import { useEndpoints } from '<src>/hooks/useEndpointsHook';
-import { Typography } from '@material-ui/core';
-import makeStyles from '@material-ui/styles/makeStyles';
 import {
   EndpointName,
   PathParameters,
@@ -19,7 +17,7 @@ import { SubtleBlueBackground } from '<src>/constants/theme';
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
-  TwoColumnBody,
+  TwoColumnBodyEditable,
   CodeBlock,
   EndpointTOC,
   DocsFieldOrParameterContribution,
@@ -33,7 +31,7 @@ export const EndpointRootPageWithDocsNav: FC<
   React.ComponentProps<typeof EndpointRootPage>
 > = (props) => (
   <PageLayout AccessoryNavigation={DocsPageAccessoryNavigation}>
-    <EndpointRootPage {...props} isChangelogPage={false} />
+    <EndpointRootPage {...props} />
   </PageLayout>
 );
 
@@ -41,17 +39,13 @@ export const EndpointRootPage: FC<
   RouteComponentProps<{
     pathId: string;
     method: string;
-  }> & {
-    isChangelogPage?: boolean;
-    changelogBatchId: string | undefined;
-  }
-> = ({ isChangelogPage, match, changelogBatchId }) => {
+  }>
+> = ({ match }) => {
   const { endpoints, loading } = useEndpoints();
 
   const { pathId, method } = match.params;
 
-  const bodies = useEndpointBody(pathId, method, changelogBatchId);
-  const styles = useStyles();
+  const bodies = useEndpointBody(pathId, method);
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
     [pathId, method, endpoints]
@@ -91,19 +85,12 @@ export const EndpointRootPage: FC<
       style={{ paddingTop: 30, paddingBottom: 400 }}
       onKeyPress={onKeyPress}
     >
-      {/* @nic TODO fork documentation page from changelog page */}
-      {isChangelogPage ? (
-        <Typography className={styles.regularField}>
-          {thisEndpoint.purpose || 'Unnamed Endpoint'}
-        </Typography>
-      ) : (
-        <EndpointNameContribution
-          id={endpointId}
-          contributionKey="purpose"
-          defaultText="What does this endpoint do?"
-          initialValue={thisEndpoint.purpose}
-        />
-      )}
+      <EndpointNameContribution
+        id={endpointId}
+        contributionKey="purpose"
+        defaultText="What does this endpoint do?"
+        initialValue={thisEndpoint.purpose}
+      />
       <EndpointName
         fontSize={19}
         leftPad={0}
@@ -169,9 +156,8 @@ export const EndpointRootPage: FC<
 
       {bodies.requests.map((i, index) => {
         return (
-          <TwoColumnBody
+          <TwoColumnBodyEditable
             key={index}
-            changesSinceBatchCommitId={changelogBatchId}
             rootShapeId={i.rootShapeId}
             bodyId={i.requestId}
             location={'Request Body'}
@@ -182,9 +168,8 @@ export const EndpointRootPage: FC<
       })}
       {bodies.responses.map((i, index) => {
         return (
-          <TwoColumnBody
+          <TwoColumnBodyEditable
             key={index}
-            changesSinceBatchCommitId={changelogBatchId}
             rootShapeId={i.rootShapeId}
             bodyId={i.responseId}
             location={`${i.statusCode} Response`}
@@ -196,12 +181,3 @@ export const EndpointRootPage: FC<
     </FullWidth>
   );
 };
-
-const useStyles = makeStyles((theme) => ({
-  regularField: {
-    fontSize: '1.25rem',
-    fontFamily: 'Ubuntu, Inter',
-    fontWeight: 500,
-    lineHeight: 1.6,
-  },
-}));

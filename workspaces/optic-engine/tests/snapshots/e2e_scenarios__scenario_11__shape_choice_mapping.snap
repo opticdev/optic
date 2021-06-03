@@ -1,0 +1,94 @@
+---
+source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+expression: "&spec_projection.shape().to_choice_mapping()"
+---
+{
+    "baseline-shape_10": [
+        Object(
+            ObjectChoice {
+                shape_id: "baseline-shape_10",
+                json_type: Object,
+                fields: [],
+            },
+        ),
+    ],
+    "baseline-shape_2": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "baseline-shape_2",
+                json_type: Number,
+            },
+        ),
+    ],
+    "baseline-shape_4": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "baseline-shape_4",
+                json_type: String,
+            },
+        ),
+    ],
+    "baseline-shape_5": [
+        Array(
+            ArrayChoice {
+                json_type: Array,
+                shape_id: "baseline-shape_5",
+                item_shape_id: "baseline-shape_4",
+            },
+        ),
+    ],
+    "baseline-shape_6": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "baseline-shape_6",
+                json_type: String,
+            },
+        ),
+    ],
+    "baseline-shape_7": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "baseline-shape_7",
+                json_type: String,
+            },
+        ),
+    ],
+    "baseline-shape_8": [
+        Object(
+            ObjectChoice {
+                shape_id: "baseline-shape_8",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "lastName",
+                        field_id: "baseline-field_4",
+                        shape_id: "baseline-shape_7",
+                    },
+                    ObjectFieldChoice {
+                        name: "firstName",
+                        field_id: "baseline-field_3",
+                        shape_id: "baseline-shape_6",
+                    },
+                    ObjectFieldChoice {
+                        name: "cities",
+                        field_id: "baseline-field_2",
+                        shape_id: "baseline-shape_5",
+                    },
+                    ObjectFieldChoice {
+                        name: "age",
+                        field_id: "baseline-field_1",
+                        shape_id: "baseline-shape_2",
+                    },
+                ],
+            },
+        ),
+    ],
+    "baseline-shape_9": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "baseline-shape_9",
+                json_type: String,
+            },
+        ),
+    ],
+}

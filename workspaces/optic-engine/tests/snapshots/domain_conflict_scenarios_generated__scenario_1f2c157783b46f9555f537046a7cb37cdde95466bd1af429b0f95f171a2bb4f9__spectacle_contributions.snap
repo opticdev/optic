@@ -1,0 +1,5 @@
+---
+source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+expression: "&spec_projection.contributions().to_json_string()"
+---
+"{\"field_BbqlNm0IrO\":{\"description\":\"this matters\"},\"field_agNCpLfAQW\":{\"description\":\"this is the ID\"},\"path_p6kbd9Kkg7.GET\":{\"description\":\"My favorite endpoint\",\"purpose\":\"Get posts\"}}"

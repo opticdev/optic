@@ -1,0 +1,1175 @@
+---
+source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+expression: "&spec_projection.shapes_serializable()"
+---
+{
+  "nodes": [
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$string",
+        "descriptor": {
+          "kind": "StringKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$number",
+        "descriptor": {
+          "kind": "NumberKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$boolean",
+        "descriptor": {
+          "kind": "BooleanKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$list",
+        "descriptor": {
+          "kind": "ListKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$listItem",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$object",
+        "descriptor": {
+          "kind": "ObjectKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$nullable",
+        "descriptor": {
+          "kind": "NullableKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$nullableInner",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$unknown",
+        "descriptor": {
+          "kind": "UnknownKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$optional",
+        "descriptor": {
+          "kind": "OptionalKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$optionalInner",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$oneOf",
+        "descriptor": {
+          "kind": "OneOfKind"
+        }
+      }
+    },
+    {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "a83be1f3-a56f-43c3-a711-cc90eee84601",
+        "createdAt": "2021-02-03T01:21:01.677Z"
+      }
+    },
+    {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "62b05d70-c86b-4df6-a243-946e21c35820",
+        "createdAt": "2021-02-03T01:21:55.644Z"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_X1SkJOUfKT"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_Fv4AnjuMfr"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_O5w3VQAJmV"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_nDtKtB2KtJ",
+        "descriptor": {
+          "name": "assignedBy"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_cvw6rvavN8"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_GROMPaJig6"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_30c9L6fbQ3",
+        "descriptor": {
+          "name": "dueDate"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_gAv6yKZzFD"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_QO3y8UJ0Lv"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_fXda473ILm",
+        "descriptor": {
+          "name": "hello"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_JxlNtOYsuU"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_mYQDOd3Y0i",
+        "descriptor": {
+          "name": "id"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_oZ77wP2E0G"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_iISbLxbnLI"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_AbzpZ0m9nF",
+        "descriptor": {
+          "name": "isDone"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_h6noJEJact"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_GLsxCDU63N",
+        "descriptor": {
+          "name": "task"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_KrxPAcTUDM"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_MINPkyPjlU"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_9eGPShaC6K"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_sT8BeBcwG6"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_QO5yNJDzl6",
+        "descriptor": {
+          "name": "assignedBy"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_wYhKIM87RV"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_y3btjllmxs"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_V93LVuyg6y",
+        "descriptor": {
+          "name": "dueDate"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_bASddE5AqG"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_PHlpFg1Im4"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_MzT8sXrwIj",
+        "descriptor": {
+          "name": "hello"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_ASYWWGZUXX"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_GEBzgPSSgx",
+        "descriptor": {
+          "name": "id"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_sKcXmXqnpW"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_AJI1NUOcuk"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_Wsvi8Mz3I8",
+        "descriptor": {
+          "name": "isDone"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_QlChWMhENf"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_RkcLaQrvWP",
+        "descriptor": {
+          "name": "task"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_hcQz2zr63G"
+      }
+    }
+  ],
+  "edges": [
+    [
+      4,
+      3,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      7,
+      6,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      10,
+      9,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      14,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      14,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      15,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      15,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      16,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      16,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      16,
+      17,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      17,
+      15,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      17,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      18,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      18,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      19,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      19,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      19,
+      20,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      20,
+      15,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      20,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      21,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      21,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      22,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      22,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      22,
+      23,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      23,
+      15,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      23,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      24,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      24,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      24,
+      25,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      25,
+      15,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      25,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      26,
+      2,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      26,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      27,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      27,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      27,
+      28,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      28,
+      15,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      28,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      29,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      29,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      29,
+      30,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      30,
+      15,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      30,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      31,
+      3,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      31,
+      13,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      19,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_cvw6rvavN8"
+        }
+      }
+    ],
+    [
+      19,
+      13,
+      {
+        "type": "UpdatedIn"
+      }
+    ],
+    [
+      22,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_gAv6yKZzFD"
+        }
+      }
+    ],
+    [
+      22,
+      13,
+      {
+        "type": "UpdatedIn"
+      }
+    ],
+    [
+      27,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_oZ77wP2E0G"
+        }
+      }
+    ],
+    [
+      27,
+      13,
+      {
+        "type": "UpdatedIn"
+      }
+    ],
+    [
+      31,
+      4,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_Fv4AnjuMfr"
+        }
+      }
+    ],
+    [
+      31,
+      13,
+      {
+        "type": "UpdatedIn"
+      }
+    ],
+    [
+      32,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      32,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      33,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      33,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      34,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      34,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      34,
+      35,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      35,
+      33,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      35,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      36,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      36,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      37,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      37,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      37,
+      38,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      38,
+      33,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      38,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      39,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      39,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      40,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      40,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      40,
+      41,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      41,
+      33,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      41,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      42,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      42,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      42,
+      43,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      43,
+      33,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      43,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      44,
+      2,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      44,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      45,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      45,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      45,
+      46,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      46,
+      33,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      46,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      47,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      47,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      47,
+      48,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      48,
+      33,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      48,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      49,
+      3,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      49,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      37,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_wYhKIM87RV"
+        }
+      }
+    ],
+    [
+      37,
+      12,
+      {
+        "type": "UpdatedIn"
+      }
+    ],
+    [
+      40,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_bASddE5AqG"
+        }
+      }
+    ],
+    [
+      40,
+      12,
+      {
+        "type": "UpdatedIn"
+      }
+    ],
+    [
+      45,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_sKcXmXqnpW"
+        }
+      }
+    ],
+    [
+      45,
+      12,
+      {
+        "type": "UpdatedIn"
+      }
+    ],
+    [
+      49,
+      4,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_9eGPShaC6K"
+        }
+      }
+    ],
+    [
+      49,
+      12,
+      {
+        "type": "UpdatedIn"
+      }
+    ]
+  ],
+  "nodeIndexToId": {
+    "0": "$string",
+    "1": "$number",
+    "10": "$optionalInner",
+    "11": "$oneOf",
+    "12": "a83be1f3-a56f-43c3-a711-cc90eee84601",
+    "13": "62b05d70-c86b-4df6-a243-946e21c35820",
+    "14": "shape_X1SkJOUfKT",
+    "15": "shape_Fv4AnjuMfr",
+    "16": "shape_O5w3VQAJmV",
+    "17": "field_nDtKtB2KtJ",
+    "18": "shape_cvw6rvavN8",
+    "19": "shape_GROMPaJig6",
+    "2": "$boolean",
+    "20": "field_30c9L6fbQ3",
+    "21": "shape_gAv6yKZzFD",
+    "22": "shape_QO3y8UJ0Lv",
+    "23": "field_fXda473ILm",
+    "24": "shape_JxlNtOYsuU",
+    "25": "field_mYQDOd3Y0i",
+    "26": "shape_oZ77wP2E0G",
+    "27": "shape_iISbLxbnLI",
+    "28": "field_AbzpZ0m9nF",
+    "29": "shape_h6noJEJact",
+    "3": "$list",
+    "30": "field_GLsxCDU63N",
+    "31": "shape_KrxPAcTUDM",
+    "32": "shape_MINPkyPjlU",
+    "33": "shape_9eGPShaC6K",
+    "34": "shape_sT8BeBcwG6",
+    "35": "field_QO5yNJDzl6",
+    "36": "shape_wYhKIM87RV",
+    "37": "shape_y3btjllmxs",
+    "38": "field_V93LVuyg6y",
+    "39": "shape_bASddE5AqG",
+    "4": "$listItem",
+    "40": "shape_PHlpFg1Im4",
+    "41": "field_MzT8sXrwIj",
+    "42": "shape_ASYWWGZUXX",
+    "43": "field_GEBzgPSSgx",
+    "44": "shape_sKcXmXqnpW",
+    "45": "shape_AJI1NUOcuk",
+    "46": "field_Wsvi8Mz3I8",
+    "47": "shape_QlChWMhENf",
+    "48": "field_RkcLaQrvWP",
+    "49": "shape_hcQz2zr63G",
+    "5": "$object",
+    "6": "$nullable",
+    "7": "$nullableInner",
+    "8": "$unknown",
+    "9": "$optional"
+  }
+}

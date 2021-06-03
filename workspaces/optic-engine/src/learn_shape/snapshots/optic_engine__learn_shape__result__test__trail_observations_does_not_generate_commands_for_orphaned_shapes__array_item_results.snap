@@ -1,0 +1,20 @@
+---
+source: workspaces/optic-engine-native/src/learn_shape/result.rs
+expression: "&array_item_results"
+---
+(
+    Some(
+        "test-id-8",
+    ),
+    [
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-8",
+                    base_shape_id: "$string",
+                    name: "",
+                },
+            ),
+        ),
+    ],
+)

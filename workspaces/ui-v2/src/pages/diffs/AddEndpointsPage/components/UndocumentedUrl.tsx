@@ -189,44 +189,22 @@ function PathComponentRender({
   const classes = useStyles();
   const [name, setName] = useState(pathComponent.name);
 
-  const [isEditing, setIsEditing] = useState(false);
-
   const onStartEdit = () => {
     const defaultValue = initialNameForComponent(pathComponent.index);
     if (defaultValue.length) {
       setName(defaultValue);
       onChange({ ...pathComponent, isParameter: true, name: defaultValue });
-      setIsEditing(true);
     } else {
       setName('');
       onChange({
         ...pathComponent,
         isParameter: true,
       });
-      setIsEditing(true);
     }
   };
 
-  if (pathComponent.isParameter && !isEditing) {
-    return (
-      <div
-        className={classNames(
-          classes.pathComponent,
-          classes.pathComponentButton
-        )}
-        onClick={() => {
-          if (pathComponent.isParameter) {
-            setIsEditing(true);
-          }
-        }}
-      >
-        <span className={classes.pathComponentInput}>{`{${name}}`}</span>
-      </div>
-    );
-  }
-
   const placeholder = 'name path parameter';
-  if (pathComponent.isParameter && isEditing) {
+  if (pathComponent.isParameter) {
     return (
       <div className={classes.pathComponent}>
         <span className={classes.pathComponentInput}>{'{'}</span>
@@ -234,13 +212,6 @@ function PathComponentRender({
           autoFocus
           value={name}
           placeholder={placeholder}
-          onBlur={(e) => {
-            //@ts-ignore
-            if (e.relatedTarget && e.relatedTarget.id === 'delete-button')
-              return;
-            setIsEditing(false);
-            onChange({ ...pathComponent, name });
-          }}
           onKeyDown={(e) => {
             // stop editing on enter, on escape or on backspace when empty
             if (
@@ -249,14 +220,15 @@ function PathComponentRender({
               (!name && e.keyCode === 8)
             ) {
               e.currentTarget.blur();
-              setIsEditing(false);
             }
           }}
           onChange={(e) => {
-            setName(e.target.value.replace(/\s/g, ''));
+            const name = e.target.value.replace(/\s/g, '');
+            setName(name);
             onChange({
               ...pathComponent,
               isParameter: true,
+              name,
             });
           }}
           style={{
@@ -279,7 +251,6 @@ function PathComponentRender({
               name: pathComponent.originalName,
               isParameter: false,
             });
-            setIsEditing(false);
           }}
         >
           <ClearIcon style={{ width: 10, height: 10 }} />
@@ -337,7 +308,6 @@ const useStyles = makeStyles((theme) => ({
   pathComponent: {
     fontFamily: 'Ubuntu Mono',
     marginLeft: 1,
-    userSelect: 'none',
     color: '#697386',
   },
   pathComponentButton: {

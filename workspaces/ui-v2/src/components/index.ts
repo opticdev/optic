@@ -7,4 +7,4 @@ export * from './PromptNavigateAway';
 export * from './layouts';
 export * from './loaders';
 export * from './navigation';
-export * from './shapes';
+export * from './ShapeRenderer';

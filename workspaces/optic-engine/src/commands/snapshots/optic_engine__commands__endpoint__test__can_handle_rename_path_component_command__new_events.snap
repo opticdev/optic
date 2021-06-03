@@ -1,0 +1,13 @@
+---
+source: workspaces/optic-engine-native/src/commands/endpoint.rs
+expression: new_events
+---
+[
+    PathComponentRenamed(
+        PathComponentRenamed {
+            path_id: "path_1",
+            name: "tasks",
+            event_context: None,
+        },
+    ),
+]

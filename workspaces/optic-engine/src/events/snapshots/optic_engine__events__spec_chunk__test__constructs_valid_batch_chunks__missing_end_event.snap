@@ -1,0 +1,5 @@
+---
+source: workspaces/optic-engine-native/src/events/spec_chunk.rs
+expression: missing_end_event_result.unwrap_err().0
+---
+"Chunk does not end in a BatchCommitEnded event"

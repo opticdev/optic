@@ -1,0 +1,68 @@
+---
+source: workspaces/optic-engine-native/tests/shape_diff.rs
+expression: results
+---
+[
+    UnmatchedShape {
+        json_trail: JsonTrail {
+            path: [
+                JsonArrayItem {
+                    index: 1,
+                },
+                JsonObjectKey {
+                    key: "firstName",
+                },
+            ],
+        },
+        shape_trail: ShapeTrail {
+            root_shape_id: "list_1",
+            path: [
+                ListItemTrail {
+                    list_shape_id: "list_1",
+                    item_shape_id: "object_1",
+                },
+                ObjectFieldTrail {
+                    field_id: "field_1",
+                    field_shape_id: "optional_shape_1",
+                    parent_object_shape_id: "object_1",
+                },
+                OptionalTrail {
+                    shape_id: "optional_shape_1",
+                },
+            ],
+        },
+    },
+    UnmatchedShape {
+        json_trail: JsonTrail {
+            path: [
+                JsonArrayItem {
+                    index: 1,
+                },
+                JsonObjectKey {
+                    key: "firstName",
+                },
+            ],
+        },
+        shape_trail: ShapeTrail {
+            root_shape_id: "list_1",
+            path: [
+                ListItemTrail {
+                    list_shape_id: "list_1",
+                    item_shape_id: "object_1",
+                },
+                ObjectFieldTrail {
+                    field_id: "field_1",
+                    field_shape_id: "optional_shape_1",
+                    parent_object_shape_id: "object_1",
+                },
+                OptionalTrail {
+                    shape_id: "optional_shape_1",
+                },
+                OptionalItemTrail {
+                    shape_id: "optional_shape_1",
+                    inner_shape_id: "string_shape_1",
+                },
+            ],
+        },
+    },
+]

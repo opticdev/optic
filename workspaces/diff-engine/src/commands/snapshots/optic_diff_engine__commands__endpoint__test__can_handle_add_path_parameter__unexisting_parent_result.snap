@@ -1,7 +1,0 @@
----
-source: workspaces/diff-engine/src/commands/endpoint.rs
-expression: unexisting_parent_result.unwrap_err()
----
-Validation(
-    "Command failed validation: parent path component must exist to add path parameter, \"AddPathParameter(AddPathParameter { path_id: \\\"path_2\\\", parent_path_id: \\\"not-a-path\\\", name: \\\"completed\\\" })\"",
-)

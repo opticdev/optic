@@ -1,12 +1,12 @@
 import { CaptureInteractionIterator } from '../captures/avro/file-system/interaction-iterator';
 import fs from 'fs-extra';
 
-import { learnUndocumentedBodies } from '@useoptic/diff-engine';
-import { Streams } from '@useoptic/diff-engine-wasm';
-import { LearnedBodies } from '@useoptic/diff-engine-wasm/lib/streams/learning-results/undocumented-endpoint-bodies';
-import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
+import { learnUndocumentedBodies } from '@useoptic/optic-engine-native';
+import { Streams } from '@useoptic/optic-domain';
+import { LearnedBodies } from '@useoptic/optic-domain/build/streams/learning-results/undocumented-endpoint-bodies';
+import * as OpticEngine from '@useoptic/optic-engine-wasm';
 import * as path from 'path';
-import { IHttpInteraction } from '../optic-types';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 
 export interface InitialBodiesWorkerConfig {
   pathId: string;
@@ -100,10 +100,10 @@ async function createEndpointFilter(
   pathId: string,
   method: string
 ): Promise<EndpointInteractionFilter> {
-  let spec = DiffEngine.spec_from_events(JSON.stringify(events));
+  let spec = OpticEngine.spec_from_events(JSON.stringify(events));
 
   return function (interaction: IHttpInteraction) {
-    const interactionPathId = DiffEngine.spec_resolve_path_id(
+    const interactionPathId = OpticEngine.spec_resolve_path_id(
       spec,
       interaction.request.path
     );

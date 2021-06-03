@@ -1,0 +1,12 @@
+---
+source: workspaces/optic-engine-native/src/commands/rfc.rs
+expression: new_events
+---
+[
+    BatchCommitEnded(
+        BatchCommitEnded {
+            batch_id: "batch_2",
+            event_context: None,
+        },
+    ),
+]

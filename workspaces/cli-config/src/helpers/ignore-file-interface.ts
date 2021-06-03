@@ -4,7 +4,6 @@ import { readApiConfig } from '../index';
 import lockfile from 'proper-lockfile';
 
 interface IIgnoreFileParsed {
-  filePath: string;
   ruleLines: IIgnoreFileRuleLine[];
   rulesFromYamlDeprecated: string[];
   allRules: string[];
@@ -37,7 +36,6 @@ export class IgnoreFileHelper {
 
     const rulesFromYamlDeprecated = await this.loadDeprecatedRules();
     return {
-      filePath: path.resolve(ignoreFile),
       ruleLines: rules,
       rulesFromYamlDeprecated,
       allRules: [...rules.map((i) => i.rule), ...rulesFromYamlDeprecated],

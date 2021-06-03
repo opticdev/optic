@@ -3,7 +3,7 @@ import Tap from 'tap';
 import { makeSpectacle } from '../../src';
 import { loadEvents } from '../utils';
 import { InMemoryOpticContextBuilder } from '../../src/in-memory';
-import * as OpticEngine from '../../../diff-engine-wasm/engine/build';
+import * as OpticEngine from '../../../optic-engine-wasm/build';
 import { generateOpenApi } from '../../src/openapi';
 
 const specs = [

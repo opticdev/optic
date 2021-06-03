@@ -4,6 +4,7 @@ const { defaults: tsjPreset } = require('ts-jest/presets');
 
 module.exports = {
   // [...]
+  testPathIgnorePatterns: ['build/*'],
   transform: {
     ...tsjPreset.transform,
     // [...]
