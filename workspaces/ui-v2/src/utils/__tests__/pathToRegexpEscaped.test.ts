@@ -16,7 +16,7 @@ test('generates a regexp with special characters', () => {
   expect(regex.test('/api/123/hel-lo[/*')).toBe(false);
 });
 
-test('treats underscores as the same named path parameter', () => {
+test('treats dashes as the same named path parameter', () => {
   const regex = pathToRegexpEscaped('/api/:some-other-path/feed');
 
   expect(regex.test('/api/someother_path/feed')).toBe(true);
