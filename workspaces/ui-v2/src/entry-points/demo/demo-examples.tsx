@@ -138,9 +138,9 @@ export type InMemorySpectacleDependenciesLoader = () => Promise<InMemorySpectacl
 //@SYNC: useInMemorySpectacle
 export function useInMemorySpectacle(
   loadDependencies: InMemorySpectacleDependenciesLoader
-): AsyncStatus<InMemoryBaseSpectacle> {
+): AsyncStatus<InMemorySpectacle> {
   const opticEngine = useOpticEngine();
-  const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle>();
+  const [spectacle, setSpectacle] = useState<InMemorySpectacle>();
   const [inputs, setInputs] = useState<{
     events: any[];
     samples: any[];
