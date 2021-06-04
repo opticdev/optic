@@ -5,17 +5,7 @@ import {
 } from '@reduxjs/toolkit';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { AsyncStatus, IEndpoint } from '<src>/types';
-
-function sharedStart(array: string[]): string {
-  if (array.length === 0) return '/';
-  let A = array.concat().sort(),
-    a1 = A[0],
-    a2 = A[A.length - 1],
-    L = a1.length,
-    i = 0;
-  while (i < L && a1.charAt(i) === a2.charAt(i)) i++;
-  return a1.substring(0, i);
-}
+import { findLongestStartingSubstring } from '<src>/utils';
 
 export const AllEndpointsQuery = `{
   requests {
@@ -54,9 +44,12 @@ export type EndpointQueryResults = {
 export const endpointQueryResultsToJson = ({
   requests,
 }: EndpointQueryResults) => {
-  const commonStart = sharedStart(
-    requests.map((req) => req.absolutePathPatternWithParameterNames)
-  );
+  const commonStart =
+    requests.length > 0
+      ? findLongestStartingSubstring(
+          requests.map((req) => req.absolutePathPatternWithParameterNames)
+        )
+      : '/';
 
   return requests.map((request) => ({
     pathId: request.pathId,
