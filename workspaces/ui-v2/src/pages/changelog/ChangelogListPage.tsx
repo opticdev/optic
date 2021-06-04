@@ -13,10 +13,10 @@ import {
   Loading,
   PageLayout,
 } from '<src>/components';
-import { useEndpoints } from '<src>/hooks/useEndpointsHook';
 import { Box, List, ListItem, Typography } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
+import { useAppSelector } from '<src>/store';
 import { IEndpoint } from '<src>/types';
 
 import {
@@ -42,16 +42,18 @@ export const ChangelogListPage: FC<
 };
 
 export function ChangelogRootPage(props: { changelogBatchId: string }) {
-  const { endpoints, loading } = useEndpoints(props.changelogBatchId);
+  const endpointsState = useAppSelector((state) => state.endpoints.results);
   const history = useHistory();
   const match = useRouteMatch();
 
-  const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
+  const grouped = useMemo(() => groupBy(endpointsState.data || [], 'group'), [
+    endpointsState,
+  ]);
   const tocKeys = Object.keys(grouped).sort();
   const changelogStyles = useChangelogStyles();
   const styles = useStyles();
 
-  if (loading) {
+  if (endpointsState.loading) {
     return <Loading />;
   }
 

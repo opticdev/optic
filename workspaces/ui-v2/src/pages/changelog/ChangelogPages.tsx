@@ -4,6 +4,7 @@ import {
   useChangelogPages,
   useChangelogEndpointPageLink,
 } from '<src>/components/navigation/Routes';
+import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
 
 import { ChangelogListPage } from './ChangelogListPage';
 import { ChangelogEndpointRootPage } from './ChangelogEndpointRootPage';
@@ -11,6 +12,7 @@ import { ChangelogEndpointRootPage } from './ChangelogEndpointRootPage';
 export function ChangelogPages() {
   const changelogPages = useChangelogPages();
   const changelogEndpointPageLink = useChangelogEndpointPageLink();
+  useFetchEndpoints();
 
   return (
     <Switch>

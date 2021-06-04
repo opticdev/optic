@@ -7,12 +7,12 @@ import {
   Loading,
   PageLayout,
 } from '<src>/components';
-import { useEndpoints } from '<src>/hooks/useEndpointsHook';
 import { Box, List, ListItem, Typography } from '@material-ui/core';
 import { useContributionEditing } from './contexts/Contributions';
-import { getEndpointId } from '<src>/utils';
+import { useAppSelector } from '<src>/store';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import { IEndpoint } from '<src>/types';
+import { getEndpointId } from '<src>/utils';
 import {
   DocsPageAccessoryNavigation,
   EndpointNameMiniContribution,
@@ -25,7 +25,7 @@ export const DocumentationRootPageWithDocsNav: FC = () => (
 );
 
 export function DocumentationRootPage() {
-  const { endpoints, loading } = useEndpoints();
+  const endpointsState = useAppSelector((state) => state.endpoints.results);
   const history = useHistory();
   const match = useRouteMatch();
 
@@ -35,7 +35,9 @@ export function DocumentationRootPage() {
     setCommitModalOpen,
   } = useContributionEditing();
 
-  const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
+  const grouped = useMemo(() => groupBy(endpointsState.data || [], 'group'), [
+    endpointsState,
+  ]);
   const tocKeys = Object.keys(grouped).sort();
   const onKeyPress = useRunOnKeypress(
     () => {
@@ -49,7 +51,7 @@ export function DocumentationRootPage() {
     }
   );
 
-  if (loading) {
+  if (endpointsState.loading) {
     return <Loading />;
   }
 

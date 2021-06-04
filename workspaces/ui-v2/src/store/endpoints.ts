@@ -7,9 +7,9 @@ import { IForkableSpectacle } from '@useoptic/spectacle';
 import { AsyncStatus, IEndpoint } from '<src>/types';
 
 const initialState: {
-  data: AsyncStatus<IEndpoint[], SerializedError>;
+  results: AsyncStatus<IEndpoint[], SerializedError>;
 } = {
-  data: {
+  results: {
     loading: true,
   },
 };
@@ -33,13 +33,13 @@ const endpointsSlice = createSlice({
     builder.addCase(fetchEndpoints.fulfilled, (state, action) => {
       const results = action.payload;
 
-      state.data = {
+      state.results = {
         loading: false,
         data: endpointQueryResultsToJson(results),
       };
     });
     builder.addCase(fetchEndpoints.rejected, (state, action) => {
-      state.data = {
+      state.results = {
         loading: false,
         error: action.error,
       };
