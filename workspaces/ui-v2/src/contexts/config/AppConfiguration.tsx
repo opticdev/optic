@@ -1,6 +1,8 @@
 import React, { ReactNode, useContext } from 'react';
 import invariant from 'invariant';
-interface IFeatureFlags {}
+interface IFeatureFlags {
+  showDeleteEndpointUi: boolean;
+}
 
 interface IAppConfigurations {
   navigation: {

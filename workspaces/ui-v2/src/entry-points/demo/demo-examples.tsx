@@ -34,7 +34,9 @@ import {
 import { SpecMetadataProvider, store } from '<src>/store';
 
 const appConfig: OpticAppConfig = {
-  featureFlags: {},
+  featureFlags: {
+    showDeleteEndpointUi: false,
+  },
   config: {
     navigation: {
       showChangelog: true,
