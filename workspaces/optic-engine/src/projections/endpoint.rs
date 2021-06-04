@@ -1,6 +1,5 @@
 use crate::events::endpoint as endpoint_events;
 use crate::events::{EndpointEvent, SpecEvent};
-use serde::Serialize;
 use crate::state::endpoint::*;
 use crate::{
   commands::{endpoint, EndpointCommand, SpecCommand, SpecCommandError},
@@ -8,6 +7,7 @@ use crate::{
 };
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, Event};
 use petgraph::graph::{Graph, NodeIndex};
+use serde::Serialize;
 use std::collections::HashMap;
 
 pub const ROOT_PATH_ID: &str = "root";
@@ -287,6 +287,44 @@ impl EndpointProjection {
       None
     }
   }
+
+  // TODO: figure out why this isn't allowed (#rustlang head scratcher that I can't seem to figure out: shouldn't this trait bound syntax vs impl syntax be identical? https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=372d707441227b01c2b8d1c55bef5954)
+  // pub fn get_response_node_indexes<'a, I: 'a + Iterator<Item = NodeIndex>>(
+  //   &'a self,
+  //   path_id: &'a PathComponentId,
+  //   method: &'a HttpMethod,
+  // ) -> Option<I> {
+  //   let path_node_index = self.get_path_component_node_index(path_id)?;
+
+  //   let children = self
+  //     .graph
+  //     .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
+
+  //   let matching_method = children
+  //     .filter(move |i| {
+  //       let node = self.graph.node_weight(*i).unwrap();
+  //       match node {
+  //         Node::HttpMethod(http_method) => method == http_method,
+  //         _ => false,
+  //       }
+  //     })
+  //     .flat_map(move |i| {
+  //       let children = self
+  //         .graph
+  //         .neighbors_directed(i, petgraph::Direction::Incoming);
+
+  //       let operations = children.filter_map(move |i| {
+  //         let node = self.graph.node_weight(i).unwrap();
+  //         match node {
+  //           Node::Response(_, _) => Some(i),
+  //           _ => None,
+  //         }
+  //       });
+  //       operations
+  //     });
+
+  //   Some(matching_method)
+  // }
 }
 
 impl Default for EndpointProjection {

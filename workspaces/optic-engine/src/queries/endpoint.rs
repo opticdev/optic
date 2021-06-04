@@ -168,16 +168,46 @@ impl<'a> EndpointQueries<'a> {
     })
   }
 
+  // TODO: refactor to not access graph internals directly but use endpoint_projection.get_response_node_indexes
   pub fn resolve_responses(
     &self,
-    interaction: &'a HttpInteraction,
     path_id: PathComponentIdRef,
-  ) -> impl Iterator<Item = (&ResponseId, &ResponseBodyDescriptor)> {
-    self.resolve_responses_by_method_and_status_code(
-      &interaction.request.method,
-      interaction.response.status_code,
-      path_id,
-    )
+    method: &'a String,
+  ) -> Option<impl Iterator<Item = (&ResponseId, &ResponseBodyDescriptor)>> {
+    let path_node_index = self.graph_get_index(path_id)?;
+
+    let children = self
+      .endpoint_projection
+      .graph
+      .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
+
+    let matching_method = children
+      .filter(move |i| {
+        let node = self.endpoint_projection.graph.node_weight(*i).unwrap();
+        match node {
+          Node::HttpMethod(http_method) => method == http_method,
+          _ => false,
+        }
+      })
+      .flat_map(move |i| {
+        let children = self
+          .endpoint_projection
+          .graph
+          .neighbors_directed(i, petgraph::Direction::Incoming);
+
+        let operations = children.filter_map(move |i| {
+          let node = self.endpoint_projection.graph.node_weight(i).unwrap();
+          match node {
+            Node::Response(response_id, response_descriptor) => {
+              Some((response_id, response_descriptor))
+            }
+            _ => None,
+          }
+        });
+        operations
+      });
+
+    Some(matching_method)
   }
 
   pub fn resolve_response_by_method_status_code_and_content_type(
@@ -269,6 +299,9 @@ impl<'a> EndpointQueries<'a> {
     path_id: PathComponentIdRef,
     method: &'a HttpMethod,
   ) -> Option<DeleteEndpointCommands> {
+    let requests = self.resolve_requests(path_id, method);
+    let responses = self.resolve_responses(path_id, method);
+
     todo!("implement generation of delete endpoint commands");
   }
 
