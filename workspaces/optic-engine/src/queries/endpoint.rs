@@ -330,7 +330,12 @@ pub struct DeleteEndpointCommands {
 #[cfg(test)]
 mod test {
   use super::*;
+  use crate::events::SpecEvent;
+  use crate::projections::SpecProjection;
+  use crate::Aggregate;
+  use petgraph::dot::Dot;
   use serde_json::json;
+
   fn interaction_with_path(path: String) -> HttpInteraction {
     serde_json::from_value(json!(
       {
@@ -397,5 +402,65 @@ mod test {
     let interaction: HttpInteraction = interaction_with_path(String::from("/"));
     let normalized_path = EndpointQueries::extract_normalized_path(&interaction.request.path);
     assert_eq!(normalized_path, "/")
+  }
+
+  #[test]
+  #[ignore]
+  pub fn can_generate_delete_commands() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
+      {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "favourites" }},
+      {"PathComponentAdded": { "pathId": "path_3", "parentPathId": "root", "name": "authors" }},
+
+      {"RequestAdded": { "requestId": "request_1", "pathId": "path_2", "httpMethod": "GET"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_1", "pathId": "path_2", "httpMethod": "GET", "httpStatusCode": 200 }},
+
+      {"RequestAdded": { "requestId": "request_2", "pathId": "path_2", "httpMethod": "POST"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_2", "pathId": "path_2", "httpMethod": "POST", "httpStatusCode": 201 }},
+
+      {"RequestAdded": { "requestId": "request_3", "pathId": "path_3", "httpMethod": "GET"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_3", "pathId": "path_3", "httpMethod": "GET", "httpStatusCode": 200 }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+
+    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+
+    let subject_path = String::from("path_2");
+    let subject_method = String::from("GET");
+    let deleted_endpoint_commmands = endpoint_queries
+      .delete_endpoint_commands(&subject_path, &subject_method)
+      .expect("delete commands are generated for existing path and method");
+
+    // TODO: test ignored because remove commands aren't handled yet
+    let updated_spec = assert_valid_commands(deleted_endpoint_commmands.commands);
+    let updated_queries = EndpointQueries::new(&updated_spec.endpoint());
+    let remaining_requests = updated_queries
+      .resolve_requests(&subject_path, &subject_method)
+      .unwrap()
+      .collect::<Vec<_>>();
+    let remaining_responses = updated_queries
+      .resolve_responses(&subject_path, &subject_method)
+      .unwrap()
+      .collect::<Vec<_>>();
+    assert_eq!(remaining_requests.len(), 0);
+    assert_eq!(remaining_responses.len(), 0);
+  }
+
+  fn assert_valid_commands(commands: impl IntoIterator<Item = SpecCommand>) -> SpecProjection {
+    let mut spec_projection = SpecProjection::default();
+    for command in commands {
+      let events = spec_projection
+        .execute(command)
+        .expect("generated commands must be valid");
+
+      for event in events {
+        spec_projection.apply(event)
+      }
+    }
+
+    spec_projection
   }
 }

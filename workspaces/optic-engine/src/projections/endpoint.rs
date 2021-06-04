@@ -308,11 +308,17 @@ impl EndpointProjection {
         }
       })
       .flat_map(move |i| {
-        let children = self
+        let status_code_nodes = self
           .graph
           .neighbors_directed(i, petgraph::Direction::Incoming);
 
-        let operations = children.filter_map(move |i| {
+        status_code_nodes
+      })
+      .flat_map(move |i| {
+        let response_nodes = self
+          .graph
+          .neighbors_directed(i, petgraph::Direction::Incoming);
+        let operations = response_nodes.filter_map(move |i| {
           let node = self.graph.node_weight(i).unwrap();
           match node {
             Node::Response(response_id, body_descriptor) => Some(node),
