@@ -8,7 +8,7 @@ category: Community
 social_image: its-ok-to-break-your-api.png
 ---
 
-![alt](/img/blog-content/its-ok-to-break-your-api.png)
+![It's OK to break your API](/img/blog-content/its-ok-to-break-your-api.png)
 
 Great APIs _can_ integrate with anything, but in practice they don’t integrate with everything. Yet, much of the industry approaches their APIs like a fragile, priceless vase: not to be altered for fear of ruining their value and perhaps breaking it.
 
@@ -17,6 +17,8 @@ Simultaneously, these APIs are integrated with a growing number of real-world ap
 Most organizations today produce more private and internal APIs than public APIs. So, the idea that an API must work for _everyone_ who may use it has become less relevant over time. However, if you build an API, it must still work well for users. And while most APIs have a small number of consumers, changes to an API can lead to _startling_ impacts in the real world. 
 
 You can avoid these unexpected consequences when you change your API. All it takes is effective communication and building strong relationships between you and the consumers of your API.
+
+<!--truncate-->
 
 ## Unexpected Consequences in the Real World
 
