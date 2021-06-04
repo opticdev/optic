@@ -1,4 +1,4 @@
-use crate::commands::SpecCommand;
+use crate::commands::{EndpointCommand, SpecCommand};
 use crate::events::HttpInteraction;
 use crate::projections::endpoint::{Edge, EndpointProjection, Node, ROOT_PATH_ID};
 use crate::projections::endpoint::{RequestBodyDescriptor, ResponseBodyDescriptor};
@@ -168,46 +168,19 @@ impl<'a> EndpointQueries<'a> {
     })
   }
 
-  // TODO: refactor to not access graph internals directly but use endpoint_projection.get_response_node_indexes
   pub fn resolve_responses(
     &self,
-    path_id: PathComponentIdRef,
+    path_id: &'a PathComponentId,
     method: &'a String,
   ) -> Option<impl Iterator<Item = (&ResponseId, &ResponseBodyDescriptor)>> {
-    let path_node_index = self.graph_get_index(path_id)?;
-
-    let children = self
+    let response_nodes = self
       .endpoint_projection
-      .graph
-      .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
+      .get_response_nodes(path_id, method)?;
 
-    let matching_method = children
-      .filter(move |i| {
-        let node = self.endpoint_projection.graph.node_weight(*i).unwrap();
-        match node {
-          Node::HttpMethod(http_method) => method == http_method,
-          _ => false,
-        }
-      })
-      .flat_map(move |i| {
-        let children = self
-          .endpoint_projection
-          .graph
-          .neighbors_directed(i, petgraph::Direction::Incoming);
-
-        let operations = children.filter_map(move |i| {
-          let node = self.endpoint_projection.graph.node_weight(i).unwrap();
-          match node {
-            Node::Response(response_id, response_descriptor) => {
-              Some((response_id, response_descriptor))
-            }
-            _ => None,
-          }
-        });
-        operations
-      });
-
-    Some(matching_method)
+    Some(response_nodes.map(|node| match node {
+      Node::Response(response_id, body_descriptor) => (response_id, body_descriptor),
+      _ => unreachable!("get response nodes should only return response nodes"),
+    }))
   }
 
   pub fn resolve_response_by_method_status_code_and_content_type(
@@ -296,13 +269,27 @@ impl<'a> EndpointQueries<'a> {
 
   pub fn delete_endpoint_commands(
     &self,
-    path_id: PathComponentIdRef,
+    path_id: &'a PathComponentId,
     method: &'a HttpMethod,
   ) -> Option<DeleteEndpointCommands> {
-    let requests = self.resolve_requests(path_id, method);
-    let responses = self.resolve_responses(path_id, method);
+    let request_ids = self
+      .resolve_requests(path_id, method)?
+      .map(|(request_id, _)| request_id);
+    let response_ids = self
+      .resolve_responses(path_id, method)?
+      .map(|(response_id, _)| response_id);
 
-    todo!("implement generation of delete endpoint commands");
+    let request_commands = request_ids.cloned().map(EndpointCommand::remove_request);
+    let response_commands = response_ids.cloned().map(EndpointCommand::remove_response);
+
+    Some(DeleteEndpointCommands {
+      path_id: path_id.clone(),
+      method: method.clone(),
+      commands: request_commands
+        .chain(response_commands)
+        .map(SpecCommand::from)
+        .collect(),
+    })
   }
 
   fn graph_get_index(&self, node_id: &str) -> Option<&petgraph::graph::NodeIndex> {

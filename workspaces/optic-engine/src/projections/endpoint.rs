@@ -288,11 +288,11 @@ impl EndpointProjection {
     }
   }
 
-  pub fn get_response_node_indexes<'a>(
+  pub fn get_response_nodes<'a>(
     &'a self,
     path_id: &'a PathComponentId,
     method: &'a HttpMethod,
-  ) -> Option<impl Iterator<Item = NodeIndex> + 'a> {
+  ) -> Option<impl Iterator<Item = &Node> + 'a> {
     let path_node_index = self.get_path_component_node_index(path_id)?;
 
     let children = self
@@ -315,7 +315,7 @@ impl EndpointProjection {
         let operations = children.filter_map(move |i| {
           let node = self.graph.node_weight(i).unwrap();
           match node {
-            Node::Response(_, _) => Some(i),
+            Node::Response(response_id, body_descriptor) => Some(node),
             _ => None,
           }
         });

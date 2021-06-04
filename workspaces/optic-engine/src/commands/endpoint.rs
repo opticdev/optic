@@ -91,6 +91,10 @@ impl EndpointCommand {
     })
   }
 
+  pub fn remove_request(request_id: RequestId) -> EndpointCommand {
+    EndpointCommand::RemoveRequest(RemoveRequest { request_id })
+  }
+
   // Responses
   // ---------
 
@@ -122,6 +126,10 @@ impl EndpointCommand {
         is_removed,
       },
     })
+  }
+
+  pub fn remove_response(response_id: ResponseId) -> EndpointCommand {
+    EndpointCommand::RemoveResponse(RemoveResponse { response_id })
   }
 }
 
