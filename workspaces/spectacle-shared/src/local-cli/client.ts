@@ -1,5 +1,4 @@
 import {
-  IBaseSpectacle,
   ICapture,
   IForkableSpectacle,
   IListDiffsResponse,
@@ -24,7 +23,7 @@ import { IApiCliConfig } from '@useoptic/cli-config';
 
 export class LocalCliSpectacle implements IForkableSpectacle {
   constructor(private baseUrl: string, private opticEngine: IOpticEngine) {}
-  async fork(): Promise<IBaseSpectacle> {
+  async fork(): Promise<IForkableSpectacle> {
     const events = await JsonHttpClient.getJson(`${this.baseUrl}/events`);
     const opticContext = await InMemoryOpticContextBuilder.fromEvents(
       this.opticEngine,
@@ -49,18 +48,18 @@ export class LocalCliSpectacle implements IForkableSpectacle {
 }
 
 export interface LocalCliServices {
-  spectacle: IBaseSpectacle;
+  spectacle: IForkableSpectacle;
   capturesService: IOpticCapturesService;
   opticEngine: IOpticEngine;
   configRepository: IOpticConfigRepository;
 }
 export interface LocalCliCapturesServiceDependencies {
   baseUrl: string;
-  spectacle: IBaseSpectacle;
+  spectacle: IForkableSpectacle;
 }
 export interface LocalCliDiffServiceDependencies {
   baseUrl: string;
-  spectacle: IBaseSpectacle;
+  spectacle: IForkableSpectacle;
   diffId: string;
   captureId: string;
 }
@@ -161,7 +160,7 @@ export class LocalCliDiffService implements IOpticDiffService {
 
 export interface LocalCliConfigRepositoryDependencies {
   baseUrl: string;
-  spectacle: IBaseSpectacle;
+  spectacle: IForkableSpectacle;
 }
 
 export class LocalCliConfigRepository implements IOpticConfigRepository {

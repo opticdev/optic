@@ -1,14 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { SpectacleInput, IBaseSpectacle } from '@useoptic/spectacle';
+import { SpectacleInput, IForkableSpectacle } from '@useoptic/spectacle';
 
 import { AsyncStatus } from '<src>/types';
 
-export const SpectacleContext = React.createContext<IBaseSpectacle | null>(
+export const SpectacleContext = React.createContext<IForkableSpectacle | null>(
   null
 );
 
 export const SpectacleStore = (props: {
-  spectacle: IBaseSpectacle;
+  spectacle: IForkableSpectacle;
   children: React.ReactNode;
 }) => {
   return (

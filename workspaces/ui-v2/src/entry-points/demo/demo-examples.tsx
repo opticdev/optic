@@ -14,7 +14,6 @@ import { DiffReviewEnvironments } from '<src>/pages/diffs/ReviewDiffPages';
 import {
   InMemoryOpticContextBuilder,
   InMemorySpectacle,
-  InMemoryBaseSpectacle,
 } from '@useoptic/spectacle/build/in-memory';
 import { CapturesServiceStore } from '<src>/hooks/useCapturesHook';
 import { ChangelogPages } from '<src>/pages/changelog/ChangelogPages';
@@ -138,9 +137,9 @@ export type InMemorySpectacleDependenciesLoader = () => Promise<InMemorySpectacl
 //@SYNC: useInMemorySpectacle
 export function useInMemorySpectacle(
   loadDependencies: InMemorySpectacleDependenciesLoader
-): AsyncStatus<InMemoryBaseSpectacle> {
+): AsyncStatus<InMemorySpectacle> {
   const opticEngine = useOpticEngine();
-  const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle>();
+  const [spectacle, setSpectacle] = useState<InMemorySpectacle>();
   const [inputs, setInputs] = useState<{
     events: any[];
     samples: any[];
