@@ -11,7 +11,7 @@ use optic_engine::{
 };
 use std::collections::HashMap;
 use uuid::Uuid;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{__rt::WasmRefCell, prelude::*};
 
 #[wasm_bindgen(start)]
 pub fn init() {
@@ -378,6 +378,28 @@ pub fn spec_resolve_response(
 
   serde_json::to_string(&response)
     .map_err(|err| JsValue::from(format!("responses could not be serialized: {:?}", err)))
+}
+
+#[wasm_bindgen]
+pub fn spec_endpoint_delete_commands(
+  spec: &WasmSpecProjection,
+  path_id: String,
+  method: String,
+) -> Result<String, JsValue> {
+  let endpoint_queries = spec.endpoint_queries();
+
+  let commands = endpoint_queries
+    .delete_endpoint_commands(&path_id, &method)
+    .ok_or_else(|| {
+      JsValue::from("delete endpoint commands could not be generated for unexisting endpoint")
+    })?;
+
+  serde_json::to_string(&commands).map_err(|err| {
+    JsValue::from(format!(
+      "delete enpoints commands could not be serialized: {:?}",
+      err
+    ))
+  })
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

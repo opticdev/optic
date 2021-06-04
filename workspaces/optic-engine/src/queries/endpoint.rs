@@ -1,11 +1,13 @@
+use crate::commands::SpecCommand;
+use crate::events::HttpInteraction;
 use crate::projections::endpoint::{Edge, EndpointProjection, Node, ROOT_PATH_ID};
 use crate::projections::endpoint::{RequestBodyDescriptor, ResponseBodyDescriptor};
 use crate::state::endpoint::{
   HttpMethod, HttpStatusCode, PathComponentId, PathComponentIdRef, RequestId, ResponseId,
 };
-use crate::HttpInteraction;
 use petgraph::graph::Graph;
 use petgraph::visit::EdgeFilteredNeighborsDirected;
+use serde::Serialize;
 
 pub struct EndpointQueries<'a> {
   pub endpoint_projection: &'a EndpointProjection,
@@ -262,6 +264,14 @@ impl<'a> EndpointQueries<'a> {
     matching_status_code
   }
 
+  pub fn delete_endpoint_commands(
+    &self,
+    path_id: PathComponentIdRef,
+    method: &'a HttpMethod,
+  ) -> Option<DeleteEndpointCommands> {
+    todo!("implement generation of delete endpoint commands");
+  }
+
   fn graph_get_index(&self, node_id: &str) -> Option<&petgraph::graph::NodeIndex> {
     self.endpoint_projection.node_id_to_index.get(node_id)
   }
@@ -288,6 +298,13 @@ impl<'a> EndpointQueries<'a> {
       .neighbors_directed(*node_index, petgraph::Direction::Incoming);
     return neighbors;
   }
+}
+
+#[derive(Debug, Serialize)]
+pub struct DeleteEndpointCommands {
+  path_id: PathComponentId,
+  method: HttpMethod,
+  commands: Vec<SpecCommand>,
 }
 
 #[cfg(test)]
