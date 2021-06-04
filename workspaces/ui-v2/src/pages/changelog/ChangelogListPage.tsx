@@ -16,6 +16,10 @@ import {
 import { Box, List, ListItem, Typography } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
+import {
+  EndpointChangelog,
+  useEndpointsChangelog,
+} from '<src>/hooks/useEndpointsChangelog';
 import { useAppSelector } from '<src>/store';
 import { IEndpoint } from '<src>/types';
 
@@ -43,6 +47,14 @@ export const ChangelogListPage: FC<
 
 export function ChangelogRootPage(props: { changelogBatchId: string }) {
   const endpointsState = useAppSelector((state) => state.endpoints.results);
+  const changelog = useEndpointsChangelog(props.changelogBatchId);
+  const changelogByEndpointId = changelog.reduce(
+    (acc: Record<string, EndpointChangelog>, endpointChange) => {
+      acc[`${endpointChange.method}${endpointChange.pathId}`] = endpointChange;
+      return acc;
+    },
+    {}
+  );
   const history = useHistory();
   const match = useRouteMatch();
 
@@ -100,10 +112,15 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
                         `${match.url}/paths/${endpoint.pathId}/methods/${endpoint.method}`
                       )
                     }
-                    // TODO fetch these changes differently
                     className={classNames({
-                      [changelogStyles.added]: endpoint.changelog?.added,
-                      [changelogStyles.updated]: endpoint.changelog?.changed,
+                      [changelogStyles.added]:
+                        changelogByEndpointId[
+                          `${endpoint.method}${endpoint.pathId}`
+                        ]?.change.category === 'added',
+                      [changelogStyles.updated]:
+                        changelogByEndpointId[
+                          `${endpoint.method}${endpoint.pathId}`
+                        ]?.change.category === 'updated',
                     })}
                   >
                     <div style={{ flex: 1 }}>
