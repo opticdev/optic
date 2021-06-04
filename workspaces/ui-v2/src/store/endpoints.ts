@@ -6,14 +6,6 @@ import {
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { AsyncStatus, IEndpoint } from '<src>/types';
 
-const initialState: {
-  results: AsyncStatus<IEndpoint[], SerializedError>;
-} = {
-  results: {
-    loading: true,
-  },
-};
-
 function sharedStart(array: string[]): string {
   if (array.length === 0) return '/';
   let A = array.concat().sort(),
@@ -24,28 +16,6 @@ function sharedStart(array: string[]): string {
   while (i < L && a1.charAt(i) === a2.charAt(i)) i++;
   return a1.substring(0, i);
 }
-
-const endpointsSlice = createSlice({
-  name: 'endpoints',
-  initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(fetchEndpoints.fulfilled, (state, action) => {
-      const results = action.payload;
-
-      state.results = {
-        loading: false,
-        data: endpointQueryResultsToJson(results),
-      };
-    });
-    builder.addCase(fetchEndpoints.rejected, (state, action) => {
-      state.results = {
-        loading: false,
-        error: action.error,
-      };
-    });
-  },
-});
 
 export const AllEndpointsQuery = `{
   requests {
@@ -120,6 +90,36 @@ const fetchEndpoints = createAsyncThunk(
     return results.data!;
   }
 );
+
+const initialState: {
+  results: AsyncStatus<IEndpoint[], SerializedError>;
+} = {
+  results: {
+    loading: true,
+  },
+};
+
+const endpointsSlice = createSlice({
+  name: 'endpoints',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(fetchEndpoints.fulfilled, (state, action) => {
+      const results = action.payload;
+
+      state.results = {
+        loading: false,
+        data: endpointQueryResultsToJson(results),
+      };
+    });
+    builder.addCase(fetchEndpoints.rejected, (state, action) => {
+      state.results = {
+        loading: false,
+        error: action.error,
+      };
+    });
+  },
+});
 
 export const actions = {
   fetchEndpoints,
