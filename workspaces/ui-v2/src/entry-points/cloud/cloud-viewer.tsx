@@ -166,7 +166,7 @@ class CloudInMemorySpectacle
     this.spectaclePromise = makeSpectacle(opticContext);
   }
 
-  async fork(): Promise<IBaseSpectacle> {
+  async fork(): Promise<IForkableSpectacle> {
     const opticContext = await InMemoryOpticContextBuilder.fromEvents(
       this.opticContext.opticEngine,
       [...(await this.opticContext.specRepository.listEvents())]
@@ -200,9 +200,9 @@ export type CloudInMemorySpectacleDependenciesLoader = () => Promise<CloudInMemo
 //@SYNC: useInMemorySpectacle useCloudInMemorySpectacle
 export function useCloudInMemorySpectacle(
   loadDependencies: CloudInMemorySpectacleDependenciesLoader
-): AsyncStatus<CloudInMemoryBaseSpectacle> {
+): AsyncStatus<CloudInMemorySpectacle> {
   const opticEngine = useOpticEngine();
-  const [spectacle, setSpectacle] = useState<CloudInMemoryBaseSpectacle>();
+  const [spectacle, setSpectacle] = useState<CloudInMemorySpectacle>();
   const [inputs, setInputs] = useState<{
     events: any[];
     samples: any[];
