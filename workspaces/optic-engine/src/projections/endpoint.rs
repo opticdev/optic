@@ -288,43 +288,42 @@ impl EndpointProjection {
     }
   }
 
-  // TODO: figure out why this isn't allowed (#rustlang head scratcher that I can't seem to figure out: shouldn't this trait bound syntax vs impl syntax be identical? https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=372d707441227b01c2b8d1c55bef5954)
-  // pub fn get_response_node_indexes<'a, I: 'a + Iterator<Item = NodeIndex>>(
-  //   &'a self,
-  //   path_id: &'a PathComponentId,
-  //   method: &'a HttpMethod,
-  // ) -> Option<I> {
-  //   let path_node_index = self.get_path_component_node_index(path_id)?;
+  pub fn get_response_node_indexes<'a>(
+    &'a self,
+    path_id: &'a PathComponentId,
+    method: &'a HttpMethod,
+  ) -> Option<impl Iterator<Item = NodeIndex> + 'a> {
+    let path_node_index = self.get_path_component_node_index(path_id)?;
 
-  //   let children = self
-  //     .graph
-  //     .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
+    let children = self
+      .graph
+      .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
 
-  //   let matching_method = children
-  //     .filter(move |i| {
-  //       let node = self.graph.node_weight(*i).unwrap();
-  //       match node {
-  //         Node::HttpMethod(http_method) => method == http_method,
-  //         _ => false,
-  //       }
-  //     })
-  //     .flat_map(move |i| {
-  //       let children = self
-  //         .graph
-  //         .neighbors_directed(i, petgraph::Direction::Incoming);
+    let matching_method = children
+      .filter(move |i| {
+        let node = self.graph.node_weight(*i).unwrap();
+        match node {
+          Node::HttpMethod(http_method) => method == http_method,
+          _ => false,
+        }
+      })
+      .flat_map(move |i| {
+        let children = self
+          .graph
+          .neighbors_directed(i, petgraph::Direction::Incoming);
 
-  //       let operations = children.filter_map(move |i| {
-  //         let node = self.graph.node_weight(i).unwrap();
-  //         match node {
-  //           Node::Response(_, _) => Some(i),
-  //           _ => None,
-  //         }
-  //       });
-  //       operations
-  //     });
+        let operations = children.filter_map(move |i| {
+          let node = self.graph.node_weight(i).unwrap();
+          match node {
+            Node::Response(_, _) => Some(i),
+            _ => None,
+          }
+        });
+        operations
+      });
 
-  //   Some(matching_method)
-  // }
+    Some(matching_method)
+  }
 }
 
 impl Default for EndpointProjection {
