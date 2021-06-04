@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  makeStyles,
 } from '@material-ui/core';
 
 import { EndpointName } from '<src>/components';
@@ -22,19 +23,24 @@ export const DeleteEndpointConfirmationModal: FC<DeleteEndpointConfirmationModal
   handleClose,
   handleConfirm,
 }) => {
+  const classes = useStyles();
   return (
     <Dialog open={true} onClose={handleClose}>
       <DialogTitle>Confirm delete endpoint</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          <div>
+          <div className={classes.confirmationTextContainer}>
             Are you sure you want to delete endpoint the following endpoint?
             <EndpointName
               method={endpoint.method}
               fullPath={endpoint.fullPath}
             />
           </div>
-          <div>This will do XYZ - TODO fill me in</div>
+          <div className={classes.confirmationTextContainer}>
+            This will permanently delete this endpoint. You will lose all
+            contributions associated with this endpoint and will no longer see
+            this endpoint in your documentation page.
+          </div>
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -48,3 +54,9 @@ export const DeleteEndpointConfirmationModal: FC<DeleteEndpointConfirmationModal
     </Dialog>
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  confirmationTextContainer: {
+    padding: '8px 0',
+  },
+}));

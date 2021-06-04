@@ -37,16 +37,15 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
   const { showDeleteEndpointUi } = useFeatureFlags();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  // TODO replace this with redux selector query
-  const isEndpointStagedForDeletion =
-    endpoint.pathId.slice(-1).charCodeAt(0) % 2 === 0;
+  // TODO redux-delete-implement replace this with redux selector query
+  const isEndpointStagedForDeletion = false;
 
   const deleteEndpoint = (endpointId: string) => {
-    // TODO implement
+    // TODO redux-delete-implement implement
   };
 
   const undeleteEndpoint = (endpointId: string) => {
-    // TODO implement
+    // TODO redux-delete-implement implement
   };
 
   return (
