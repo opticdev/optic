@@ -14,7 +14,6 @@ import { DiffReviewEnvironments } from '<src>/pages/diffs/ReviewDiffPages';
 import {
   InMemoryOpticContextBuilder,
   InMemorySpectacle,
-  InMemoryBaseSpectacle,
 } from '@useoptic/spectacle/build/in-memory';
 import { CapturesServiceStore } from '<src>/hooks/useCapturesHook';
 import { ChangelogPages } from '<src>/pages/changelog/ChangelogPages';
