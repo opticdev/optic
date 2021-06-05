@@ -2,8 +2,12 @@ import React, { FC, useMemo } from 'react';
 import groupBy from 'lodash.groupby';
 import { CenteredColumn, Loading, PageLayout } from '<src>/components';
 import { Box, List, Typography } from '@material-ui/core';
-import { useContributionEditing } from '../contexts/Contributions';
-import { useAppSelector } from '<src>/store';
+import {
+  useAppSelector,
+  useAppDispatch,
+  documentationEditActions,
+  selectors,
+} from '<src>/store';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import { IEndpoint } from '<src>/types';
 import { DocsPageAccessoryNavigation } from '../components';
@@ -17,12 +21,21 @@ export const DocumentationRootPageWithDocsNav: FC = () => (
 
 export function DocumentationRootPage() {
   const endpointsState = useAppSelector((state) => state.endpoints.results);
+  const isEditing = useAppSelector(
+    (state) => state.documentationEdits.isEditing
+  );
+  const pendingCount = useAppSelector(
+    selectors.getDocumentationEditStagedCount
+  );
+  const dispatch = useAppDispatch();
 
-  const {
-    isEditing,
-    pendingCount,
-    setCommitModalOpen,
-  } = useContributionEditing();
+  const setCommitModalOpen = (commitModalOpen: boolean) => {
+    dispatch(
+      documentationEditActions.updateCommitModalState({
+        commitModalOpen,
+      })
+    );
+  };
 
   const grouped = useMemo(() => groupBy(endpointsState.data || [], 'group'), [
     endpointsState,

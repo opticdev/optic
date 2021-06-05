@@ -15,11 +15,11 @@ import { EndpointName } from '<src>/components';
 import { IEndpoint } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
-import { useContributionEditing } from '../contexts/Contributions';
 import {
   DeleteEndpointConfirmationModal,
   EndpointNameMiniContribution,
 } from '../components';
+import { useAppSelector } from '<src>/store';
 
 type EndpointRowProps = {
   endpoint: IEndpoint;
@@ -33,7 +33,9 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
     method: endpoint.method,
     pathId: endpoint.pathId,
   });
-  const { isEditing } = useContributionEditing();
+  const isEditing = useAppSelector(
+    (state) => state.documentationEdits.isEditing
+  );
   const { showDeleteEndpointUi } = useFeatureFlags();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
@@ -88,6 +90,7 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
         >
           <EndpointNameMiniContribution
             id={endpointId}
+            endpointId={endpointId}
             defaultText="name for this endpoint"
             contributionKey="purpose"
             initialValue={endpoint.purpose}

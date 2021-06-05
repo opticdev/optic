@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Client } from '@useoptic/cli-client';
 
 export function useClientAgent() {
-  const [clientAgent, setClientAgent] = useState<string | null>(null);
+  const [clientAgent, setClientAgent] = useState<string>('anon_id');
   useEffect(() => {
     async function loadIdentity() {
       const client = new Client('/api');
@@ -14,9 +14,7 @@ export function useClientAgent() {
         } else {
           throw new Error();
         }
-      } catch (e) {
-        setClientAgent('anon_id');
-      }
+      } catch (e) {}
     }
     loadIdentity();
   }, []);

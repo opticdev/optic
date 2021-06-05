@@ -1,6 +1,5 @@
 import React from 'react';
 import { Redirect, Switch, Route } from 'react-router-dom';
-import { ContributionEditingStore } from './contexts/Contributions';
 import {
   useDocumentationPageLink,
   useEndpointPageLink,
@@ -16,20 +15,18 @@ export function DocumentationPages() {
   useFetchEndpoints();
 
   return (
-    <ContributionEditingStore>
-      <Switch>
-        <Route
-          exact
-          path={endpointPageLink.path}
-          component={EndpointRootPageWithDocsNav}
-        />
-        <Route
-          exact
-          path={documentationPageLink.path}
-          component={DocumentationRootPageWithDocsNav}
-        />
-        <Redirect to={documentationPageLink.path} />
-      </Switch>
-    </ContributionEditingStore>
+    <Switch>
+      <Route
+        exact
+        path={endpointPageLink.path}
+        component={EndpointRootPageWithDocsNav}
+      />
+      <Route
+        exact
+        path={documentationPageLink.path}
+        component={DocumentationRootPageWithDocsNav}
+      />
+      <Redirect to={documentationPageLink.path} />
+    </Switch>
   );
 }

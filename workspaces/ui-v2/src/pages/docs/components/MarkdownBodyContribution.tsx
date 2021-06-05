@@ -3,19 +3,21 @@ import { ChangeEvent } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { TextField } from '@material-ui/core';
 import classNames from 'classnames';
-import {
-  useContributionEditing,
-  useValueWithStagedContributions,
-} from '<src>/pages/docs/contexts/Contributions';
 
 import { OpticBlueReadable } from '<src>/constants/theme';
 import ReactMarkdown from 'react-markdown';
+import {
+  useAppSelector,
+  useAppDispatch,
+  documentationEditActions,
+} from '<src>/store';
 
 export type MarkdownBodyContributionProps = {
   id: string;
   contributionKey: string;
   defaultText: string;
   initialValue: string;
+  endpointId: string;
 };
 
 export function MarkdownBodyContribution({
@@ -23,15 +25,21 @@ export function MarkdownBodyContribution({
   contributionKey,
   defaultText,
   initialValue,
+  endpointId,
 }: MarkdownBodyContributionProps) {
-  const { isEditing } = useContributionEditing();
-
   const classes = useStyles();
-  const { value, setValue } = useValueWithStagedContributions(
-    id,
-    contributionKey,
-    initialValue
+
+  const isEditing = useAppSelector(
+    (state) => state.documentationEdits.isEditing
   );
+  const contributionValue = useAppSelector(
+    (state) =>
+      state.documentationEdits.contributions.find(
+        (c) => c.id === id && c.contributionKey === contributionKey
+      )?.value
+  );
+  const dispatch = useAppDispatch();
+  const value = contributionValue || initialValue;
 
   const inner = isEditing ? (
     <TextField
@@ -41,8 +49,15 @@ export function MarkdownBodyContribution({
       multiline
       placeholder={defaultText}
       value={value}
-      onChange={(e: ChangeEvent<HTMLInputElement>) => {
-        setValue(e.target.value);
+      onChange={({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+        dispatch(
+          documentationEditActions.addContribution({
+            id,
+            contributionKey,
+            value,
+            endpointId,
+          })
+        );
       }}
     />
   ) : (
