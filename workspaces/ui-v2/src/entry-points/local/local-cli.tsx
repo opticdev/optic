@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import {
   useRouteMatch,
   useParams,
@@ -115,11 +115,17 @@ export function useLocalCliServices(
 ): AsyncStatus<LocalCliServices> {
   const opticEngine = useOpticEngine();
   const apiBaseUrl = `/api/specs/${specId}`;
-  const spectacle = useMemo(
-    () => new LocalCliSpectacle(apiBaseUrl, opticEngine),
-    [apiBaseUrl, opticEngine]
+  const [spectacle, setSpectacle] = useState(
+    new LocalCliSpectacle(apiBaseUrl, opticEngine)
   );
-  const capturesService = React.useMemo(
+  const refEngine = useRef(opticEngine);
+  const refApiUrl = useRef(apiBaseUrl);
+  useEffect(() => {
+    spectacle.registerSpectacleUpdateEvent(() => {
+      setSpectacle(new LocalCliSpectacle(refApiUrl.current, refEngine.current));
+    });
+  }, [spectacle]);
+  const capturesService = useMemo(
     () =>
       new LocalCliCapturesService({
         baseUrl: apiBaseUrl,

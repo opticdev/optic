@@ -22,7 +22,10 @@ import {
 import { IApiCliConfig } from '@useoptic/cli-config';
 
 export class LocalCliSpectacle implements IForkableSpectacle {
-  constructor(private baseUrl: string, private opticEngine: IOpticEngine) {}
+  private spectacleUpdateEvents: ((...args: any) => any)[];
+  constructor(private baseUrl: string, private opticEngine: IOpticEngine) {
+    this.spectacleUpdateEvents = [];
+  }
   async fork(): Promise<IForkableSpectacle> {
     const events = await JsonHttpClient.getJson(`${this.baseUrl}/events`);
     const opticContext = await InMemoryOpticContextBuilder.fromEvents(
@@ -36,7 +39,14 @@ export class LocalCliSpectacle implements IForkableSpectacle {
     options: SpectacleInput<Input>
   ): Promise<Result> {
     // send query to local cli-server
-    return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
+    const response = await JsonHttpClient.postJson(
+      `${this.baseUrl}/spectacle`,
+      options
+    );
+    this.spectacleUpdateEvents.forEach((fn) => {
+      fn();
+    });
+    return response;
   }
 
   async query<Result, Input = {}>(
@@ -44,6 +54,10 @@ export class LocalCliSpectacle implements IForkableSpectacle {
   ): Promise<Result> {
     // send query to local cli-server
     return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
+  }
+
+  registerSpectacleUpdateEvent<T extends (...args: any) => any>(fn: T) {
+    this.spectacleUpdateEvents.push(fn);
   }
 }
 
