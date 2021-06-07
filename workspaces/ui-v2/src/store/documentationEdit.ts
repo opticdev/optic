@@ -13,6 +13,7 @@ import {
 } from '@useoptic/spectacle';
 
 import { RootState, AppDispatch } from './root';
+import { getValidContributions } from './selectors';
 
 const saveDocumentationChanges = createAsyncThunk<
   {},
@@ -29,20 +30,14 @@ const saveDocumentationChanges = createAsyncThunk<
 >(
   'SAVE_DOCUMENTATION_CHANGES',
   async ({ spectacle, commitMessage, clientId, clientSessionId }, thunkApi) => {
-    const {
-      deletedEndpoints,
-      contributions,
-    } = thunkApi.getState().documentationEdits;
-    const deletedEndpointsSet = new Set(deletedEndpoints);
+    const state = thunkApi.getState();
     // TODO fetch from spectacle
+    // const { deletedEndpoints } = state.documentationEdits;
     const deleteCommands: CQRSCommand[] = [];
 
-    // TODO filter out any contributions that have the same initial contribution
-    const filteredContributions = contributions.filter(
-      (contribution) => !deletedEndpointsSet.has(contribution.endpointId)
-    );
+    const validContributions = getValidContributions(state);
 
-    const contributionCommands: CQRSCommand[] = filteredContributions.map(
+    const contributionCommands: CQRSCommand[] = validContributions.map(
       (contribution) =>
         AddContribution(
           contribution.id,
@@ -86,23 +81,25 @@ const saveDocumentationChanges = createAsyncThunk<
   }
 );
 
-interface IContribution {
-  endpointId: string;
-  id: string;
-  contributionKey: string;
-  value: string;
-}
-
 // This needs to be exported for typescript to be able to infer typings
 export type DocumentationEditState = {
-  contributions: IContribution[];
+  contributions: Record<
+    string,
+    Record<
+      string,
+      {
+        endpointId: string;
+        value: string;
+      }
+    >
+  >;
   deletedEndpoints: string[];
   commitModalOpen: boolean;
   isEditing: boolean;
 };
 
 const initialState: DocumentationEditState = {
-  contributions: [],
+  contributions: {},
   deletedEndpoints: [],
   commitModalOpen: false,
   isEditing: false,
@@ -112,18 +109,28 @@ const documentationEditSlice = createSlice({
   name: 'documentationEdit',
   initialState,
   reducers: {
-    addContribution: (state, action: PayloadAction<IContribution>) => {
-      const { id, contributionKey, value } = action.payload;
-      const contributionToUpdate = state.contributions.find(
-        (contribution) =>
-          contribution.id === id &&
-          contribution.contributionKey === contributionKey
-      );
-
-      if (contributionToUpdate) {
-        contributionToUpdate.value = value;
+    addContribution: (
+      state,
+      action: PayloadAction<{
+        endpointId: string;
+        id: string;
+        contributionKey: string;
+        value: string;
+      }>
+    ) => {
+      const { id, contributionKey, value, endpointId } = action.payload;
+      if (!state.contributions[id]) {
+        state.contributions[id] = {
+          [contributionKey]: {
+            value,
+            endpointId,
+          },
+        };
       } else {
-        state.contributions.push(action.payload);
+        state.contributions[id][contributionKey] = {
+          value,
+          endpointId,
+        };
       }
     },
     deleteEndpoint: (

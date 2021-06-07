@@ -34,9 +34,7 @@ export function MarkdownBodyContribution({
   );
   const contributionValue = useAppSelector(
     (state) =>
-      state.documentationEdits.contributions.find(
-        (c) => c.id === id && c.contributionKey === contributionKey
-      )?.value
+      state.documentationEdits.contributions[id]?.[contributionKey]?.value
   );
   const dispatch = useAppDispatch();
   const value = contributionValue || initialValue;
