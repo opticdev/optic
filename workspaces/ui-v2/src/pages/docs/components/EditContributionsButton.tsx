@@ -21,7 +21,7 @@ export function EditContributionsButton() {
   const contents = !isEditing ? (
     <>
       <Typography variant="body2" style={{ textTransform: 'none' }}>
-        Edit Descriptions
+        Edit
       </Typography>
       <EditIcon style={{ marginLeft: 3, height: 14 }} />
     </>
