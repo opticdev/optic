@@ -1,8 +1,5 @@
 import React, { ReactNode, useContext } from 'react';
 import invariant from 'invariant';
-interface IFeatureFlags {
-  showDeleteEndpointUi: boolean;
-}
 
 interface IAppConfigurations {
   navigation: {
@@ -24,7 +21,6 @@ interface IAppConfigurations {
 }
 
 export type OpticAppConfig = {
-  featureFlags: IFeatureFlags;
   config: IAppConfigurations;
 };
 
@@ -43,14 +39,8 @@ export const AppConfigurationStore = (props: {
   );
 };
 
-export function useFeatureFlags() {
-  const value = useContext(AppConfigurationContext);
-  invariant(value, 'useFeatureFlags could not find AppConfigurationContext');
-  return value!.featureFlags;
-}
-
 export function useAppConfig() {
   const value = useContext(AppConfigurationContext);
-  invariant(value, 'useFeatureFlags could not find AppConfigurationContext');
+  invariant(value, 'useAppConfig could not find AppConfigurationContext');
   return value!.config;
 }
