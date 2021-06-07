@@ -10,7 +10,6 @@ import {
 import { Delete as DeleteIcon, Undo as UndoIcon } from '@material-ui/icons';
 
 import { RemovedRedBackground } from '<src>/constants/theme';
-import { useFeatureFlags } from '<src>/contexts/config/AppConfiguration';
 import { EndpointName } from '<src>/components';
 import { IEndpoint } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
@@ -36,7 +35,8 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
   const isEditing = useAppSelector(
     (state) => state.documentationEdits.isEditing
   );
-  const { showDeleteEndpointUi } = useFeatureFlags();
+  const showDeleteEndpointUi =
+    process.env.REACT_APP_FF_SHOW_DELETE_ENDPOINT === 'true';
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   // TODO redux-delete-implement replace this with redux selector query

@@ -13,7 +13,6 @@ import {
   PageLayout,
 } from '<src>/components';
 import { FullWidth } from '<src>/components';
-import { useFeatureFlags } from '<src>/contexts/config/AppConfiguration';
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import { SubtleBlueBackground } from '<src>/constants/theme';
 import {
@@ -85,7 +84,8 @@ export const EndpointRootPage: FC<
       inputTagNames: new Set(['input']),
     }
   );
-  const { showDeleteEndpointUi } = useFeatureFlags();
+  const showDeleteEndpointUi =
+    process.env.REACT_APP_FF_SHOW_DELETE_ENDPOINT === 'true';
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   // TODO redux-delete-implement replace this with redux selector query
