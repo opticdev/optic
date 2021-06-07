@@ -12,29 +12,29 @@ use std::collections::HashMap;
 
 pub const ROOT_PATH_ID: &str = "root";
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PathComponentDescriptor {
   pub is_parameter: bool,
   pub name: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct BodyDescriptor {
   pub http_content_type: HttpContentType,
   pub root_shape_id: ShapeId,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct RequestBodyDescriptor {
   pub body: Option<BodyDescriptor>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct ResponseBodyDescriptor {
   pub body: Option<BodyDescriptor>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Node {
   PathComponent(PathComponentId, PathComponentDescriptor),
   HttpMethod(HttpMethod),
@@ -43,12 +43,12 @@ pub enum Node {
   Response(ResponseId, ResponseBodyDescriptor),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Edge {
   IsChildOf,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct EndpointProjection {
   pub graph: Graph<Node, Edge>,
   // SAFETY: node indices are not stable upon removing of nodes from graph -> node indices might be referred to

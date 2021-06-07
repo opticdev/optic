@@ -23,7 +23,7 @@ use crate::events::{EndpointEvent, RfcEvent, ShapeEvent, SpecEvent};
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, CommandError};
 use std::error::Error;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SpecProjection {
   endpoint: endpoint::EndpointProjection,
   history: history::HistoryProjection,

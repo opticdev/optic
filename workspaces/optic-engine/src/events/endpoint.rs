@@ -35,6 +35,7 @@ pub enum EndpointEvent {
   RequestContentTypeSet(RequestContentTypeSet),
   RequestBodySet(RequestBodySet),
   RequestBodyUnset(RequestBodyUnset),
+  RequestRemoved(RequestRemoved),
 
   // Response events
   ResponseAddedByPathAndMethod(ResponseAddedByPathAndMethod),
@@ -255,6 +256,7 @@ impl Event for EndpointEvent {
       EndpointEvent::RequestContentTypeSet(evt) => evt.event_type(),
       EndpointEvent::RequestBodySet(evt) => evt.event_type(),
       EndpointEvent::RequestBodyUnset(evt) => evt.event_type(),
+      EndpointEvent::RequestRemoved(evt) => evt.event_type(),
 
       // Response events
       EndpointEvent::ResponseAddedByPathAndMethod(evt) => evt.event_type(),
@@ -294,6 +296,7 @@ impl WithEventContext for EndpointEvent {
       EndpointEvent::RequestContentTypeSet(evt) => evt.event_context.replace(event_context),
       EndpointEvent::RequestBodySet(evt) => evt.event_context.replace(event_context),
       EndpointEvent::RequestBodyUnset(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::RequestRemoved(evt) => evt.event_context.replace(event_context),
 
       // Response events
       EndpointEvent::ResponseAddedByPathAndMethod(evt) => evt.event_context.replace(event_context),
@@ -498,6 +501,12 @@ impl From<RequestBodySet> for EndpointEvent {
   }
 }
 
+impl From<RequestRemoved> for EndpointEvent {
+  fn from(event: RequestRemoved) -> Self {
+    Self::RequestRemoved(event)
+  }
+}
+
 impl From<ResponseAddedByPathAndMethod> for EndpointEvent {
   fn from(event: ResponseAddedByPathAndMethod) -> Self {
     Self::ResponseAddedByPathAndMethod(event)
@@ -507,6 +516,12 @@ impl From<ResponseAddedByPathAndMethod> for EndpointEvent {
 impl From<ResponseBodySet> for EndpointEvent {
   fn from(event: ResponseBodySet) -> Self {
     Self::ResponseBodySet(event)
+  }
+}
+
+impl From<ResponseRemoved> for EndpointEvent {
+  fn from(event: ResponseRemoved) -> Self {
+    Self::ResponseRemoved(event)
   }
 }
 
@@ -541,11 +556,15 @@ impl From<EndpointCommand> for EndpointEvent {
       EndpointCommand::SetRequestBodyShape(command) => {
         EndpointEvent::from(RequestBodySet::from(command))
       }
+      EndpointCommand::RemoveRequest(command) => EndpointEvent::from(RequestRemoved::from(command)),
       EndpointCommand::AddResponseByPathAndMethod(command) => {
         EndpointEvent::from(ResponseAddedByPathAndMethod::from(command))
       }
       EndpointCommand::SetResponseBodyShape(command) => {
         EndpointEvent::from(ResponseBodySet::from(command))
+      }
+      EndpointCommand::RemoveResponse(command) => {
+        EndpointEvent::from(ResponseRemoved::from(command))
       }
       _ => unimplemented!(
         "conversion from endpoint command to endpoint event not implemented for variant: {:?}",
@@ -647,6 +666,15 @@ impl From<endpoint_commands::SetRequestBodyShape> for RequestBodySet {
   }
 }
 
+impl From<endpoint_commands::RemoveRequest> for RequestRemoved {
+  fn from(command: endpoint_commands::RemoveRequest) -> Self {
+    Self {
+      request_id: command.request_id,
+      event_context: None,
+    }
+  }
+}
+
 impl From<endpoint_commands::AddResponseByPathAndMethod> for ResponseAddedByPathAndMethod {
   fn from(command: endpoint_commands::AddResponseByPathAndMethod) -> Self {
     Self {
@@ -664,6 +692,15 @@ impl From<endpoint_commands::SetResponseBodyShape> for ResponseBodySet {
     Self {
       response_id: command.response_id,
       body_descriptor: command.body_descriptor,
+      event_context: None,
+    }
+  }
+}
+
+impl From<endpoint_commands::RemoveResponse> for ResponseRemoved {
+  fn from(command: endpoint_commands::RemoveResponse) -> Self {
+    Self {
+      response_id: command.response_id,
       event_context: None,
     }
   }

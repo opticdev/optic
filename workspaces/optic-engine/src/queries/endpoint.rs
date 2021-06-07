@@ -405,7 +405,6 @@ mod test {
   }
 
   #[test]
-  #[ignore]
   pub fn can_generate_delete_commands() {
     let events: Vec<SpecEvent> = serde_json::from_value(json!([
       {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
@@ -424,7 +423,7 @@ mod test {
     .expect("should be able to deserialize test events");
 
     let spec_projection = SpecProjection::from(events);
-    dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
 
     let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
 
@@ -434,8 +433,8 @@ mod test {
       .delete_endpoint_commands(&subject_path, &subject_method)
       .expect("delete commands are generated for existing path and method");
 
-    // TODO: test ignored because remove commands aren't handled yet
-    let updated_spec = assert_valid_commands(deleted_endpoint_commmands.commands);
+    let updated_spec =
+      assert_valid_commands(spec_projection.clone(), deleted_endpoint_commmands.commands);
     let updated_queries = EndpointQueries::new(&updated_spec.endpoint());
     let remaining_requests = updated_queries
       .resolve_requests(&subject_path, &subject_method)
@@ -445,12 +444,17 @@ mod test {
       .resolve_responses(&subject_path, &subject_method)
       .unwrap()
       .collect::<Vec<_>>();
-    assert_eq!(remaining_requests.len(), 0);
-    assert_eq!(remaining_responses.len(), 0);
+
+    // TODO: enable these assertions as the EndpointProjection handles the resulting events
+    // assert_eq!(remaining_requests.len(), 0);
+    // assert_eq!(remaining_responses.len(), 0);
   }
 
-  fn assert_valid_commands(commands: impl IntoIterator<Item = SpecCommand>) -> SpecProjection {
-    let mut spec_projection = SpecProjection::default();
+  fn assert_valid_commands(
+    mut spec_projection: SpecProjection,
+    commands: impl IntoIterator<Item = SpecCommand>,
+  ) -> SpecProjection {
+    // let mut spec_projection = SpecProjection::default();
     for command in commands {
       let events = spec_projection
         .execute(command)
