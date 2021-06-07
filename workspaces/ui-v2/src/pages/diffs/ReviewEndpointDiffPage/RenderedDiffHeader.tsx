@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight, Menu as MenuIcon } from '@material-ui/icons';
 
 import { EndpointName } from '<src>/components';
 import { DiffHeader } from '../components/DiffHeader';
-import { IEndpoint } from '<src>/hooks/useEndpointsHook';
+import { IEndpoint } from '<src>/types';
 import { IInterpretation } from '<src>/lib/Interfaces';
 
 import { DiffLinks } from './DiffLinks';

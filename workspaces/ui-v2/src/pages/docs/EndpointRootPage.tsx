@@ -1,6 +1,5 @@
 import React, { FC, useMemo } from 'react';
 
-import { useEndpoints } from '<src>/hooks/useEndpointsHook';
 import {
   EndpointName,
   PathParameters,
@@ -14,6 +13,7 @@ import { FullWidth } from '<src>/components';
 import { RouteComponentProps } from 'react-router-dom';
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import { SubtleBlueBackground } from '<src>/constants/theme';
+import { useAppSelector } from '<src>/store';
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
@@ -41,15 +41,18 @@ export const EndpointRootPage: FC<
     method: string;
   }>
 > = ({ match }) => {
-  const { endpoints, loading } = useEndpoints();
+  const endpointsState = useAppSelector((state) => state.endpoints.results);
 
   const { pathId, method } = match.params;
+  const thisEndpoint = useMemo(
+    () =>
+      endpointsState.data?.find(
+        (i) => i.pathId === pathId && i.method === method
+      ),
+    [endpointsState, method, pathId]
+  );
 
   const bodies = useEndpointBody(pathId, method);
-  const thisEndpoint = useMemo(
-    () => endpoints.find((i) => i.pathId === pathId && i.method === method),
-    [pathId, method, endpoints]
-  );
   const {
     isEditing,
     pendingCount,
@@ -68,7 +71,7 @@ export const EndpointRootPage: FC<
     }
   );
 
-  if (loading) {
+  if (endpointsState.loading) {
     return <Loading />;
   }
 

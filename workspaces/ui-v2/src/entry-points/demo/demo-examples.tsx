@@ -6,6 +6,7 @@ import {
   useParams,
   useRouteMatch,
 } from 'react-router-dom';
+import { Provider as ReduxProvider } from 'react-redux';
 import { Provider as BaseUrlProvider } from '<src>/hooks/useBaseUrl';
 import { DocumentationPages } from '<src>/pages/docs';
 import { SpectacleStore } from '<src>/contexts/spectacle-provider';
@@ -30,7 +31,7 @@ import {
   initialize,
   track,
 } from '<src>/contexts/analytics/implementations/publicExampleAnalytics';
-import { SpecMetadataProvider } from '<src>/store';
+import { SpecMetadataProvider, store } from '<src>/store';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -92,33 +93,35 @@ export default function DemoExamples(props: { lookupDir: string }) {
           <CapturesServiceStore
             capturesService={data.opticContext.capturesService}
           >
-            <BaseUrlProvider value={{ url: match.url }}>
-              <AnalyticsStore
-                getMetadata={getMetadata(() =>
-                  data.opticContext.configRepository.getApiName()
-                )}
-                initialize={initialize}
-                track={track}
-              >
-                <SpecMetadataProvider>
-                  <Switch>
-                    <Route
-                      path={`${match.path}/changes-since/:batchId`}
-                      component={ChangelogPages}
-                    />
-                    <Route
-                      path={`${match.path}/documentation`}
-                      component={DocumentationPages}
-                    />
-                    <Route
-                      path={`${match.path}/diffs`}
-                      component={DiffReviewEnvironments}
-                    />
-                    <Redirect to={`${match.path}/documentation`} />
-                  </Switch>
-                </SpecMetadataProvider>
-              </AnalyticsStore>
-            </BaseUrlProvider>
+            <ReduxProvider store={store}>
+              <BaseUrlProvider value={{ url: match.url }}>
+                <AnalyticsStore
+                  getMetadata={getMetadata(() =>
+                    data.opticContext.configRepository.getApiName()
+                  )}
+                  initialize={initialize}
+                  track={track}
+                >
+                  <SpecMetadataProvider>
+                    <Switch>
+                      <Route
+                        path={`${match.path}/changes-since/:batchId`}
+                        component={ChangelogPages}
+                      />
+                      <Route
+                        path={`${match.path}/documentation`}
+                        component={DocumentationPages}
+                      />
+                      <Route
+                        path={`${match.path}/diffs`}
+                        component={DiffReviewEnvironments}
+                      />
+                      <Redirect to={`${match.path}/documentation`} />
+                    </Switch>
+                  </SpecMetadataProvider>
+                </AnalyticsStore>
+              </BaseUrlProvider>
+            </ReduxProvider>
           </CapturesServiceStore>
         </ConfigRepositoryStore>
       </SpectacleStore>

@@ -15,7 +15,7 @@ export const endpointChangeQuery = `query X($sinceBatchCommitId: String) {
 
 type ChangelogCategory = 'added' | 'updated' | 'removed';
 
-type EndpointChangelog = {
+export type EndpointChangelog = {
   change: {
     category: ChangelogCategory;
   };

@@ -1,4 +1,4 @@
-export type AsyncStatus<T> =
+export type AsyncStatus<T, E = Error> =
   | {
       loading: true;
       error?: undefined;
@@ -6,7 +6,7 @@ export type AsyncStatus<T> =
     }
   | {
       loading: false;
-      error: Error;
+      error: E;
       data?: undefined;
     }
   | { loading: false; error?: undefined; data: T };
