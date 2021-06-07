@@ -37,7 +37,8 @@ export function MarkdownBodyContribution({
       state.documentationEdits.contributions[id]?.[contributionKey]?.value
   );
   const dispatch = useAppDispatch();
-  const value = contributionValue || initialValue;
+  const value =
+    contributionValue !== undefined ? contributionValue : initialValue;
 
   const inner = isEditing ? (
     <TextField

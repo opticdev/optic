@@ -37,6 +37,8 @@ export function DocsFieldOrParameterContribution({
     (state) =>
       state.documentationEdits.contributions[id]?.[contributionKey]?.value
   );
+  const value =
+    contributionValue !== undefined ? contributionValue : initialValue;
   const dispatch = useAppDispatch();
 
   return (
@@ -44,7 +46,7 @@ export function DocsFieldOrParameterContribution({
       name={name}
       shapes={shapes}
       depth={depth}
-      value={contributionValue || initialValue}
+      value={value}
       setValue={(value) =>
         dispatch(
           documentationEditActions.addContribution({
@@ -84,7 +86,8 @@ export function EndpointNameContribution({
       state.documentationEdits.contributions[id]?.[contributionKey]?.value
   );
   const dispatch = useAppDispatch();
-  const value = contributionValue || initialValue;
+  const value =
+    contributionValue !== undefined ? contributionValue : initialValue;
 
   return (
     <>
@@ -134,7 +137,8 @@ export function EndpointNameMiniContribution({
       state.documentationEdits.contributions[id]?.[contributionKey]?.value
   );
   const dispatch = useAppDispatch();
-  const value = contributionValue || initialValue;
+  const value =
+    contributionValue !== undefined ? contributionValue : initialValue;
 
   return (
     <EditableTextField
