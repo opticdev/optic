@@ -1,7 +1,6 @@
 import { assign, Machine, spawn } from 'xstate';
 // @ts-ignore
 import * as niceTry from 'nice-try';
-import { pathToRegexp } from 'path-to-regexp';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
 import {
   AddContributionType,
@@ -17,6 +16,7 @@ import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useo
 import { AssembleCommands } from '<src>/lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
 import { generatePathCommands } from '<src>/lib/stable-path-batch-generator';
+import { pathToRegexpEscaped } from '<src>/utils';
 
 function transformDiffs(
   currentSpecContext: CurrentSpecContext,
@@ -139,7 +139,7 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 pendingEndpoints: (ctx, event) => {
-                  const regex = pathToRegexp(event.pattern, [], {
+                  const regex = pathToRegexpEscaped(event.pattern, [], {
                     start: true,
                     end: true,
                   });
