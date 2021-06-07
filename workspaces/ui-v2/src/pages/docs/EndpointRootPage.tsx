@@ -87,17 +87,17 @@ export const EndpointRootPage: FC<
   const showDeleteEndpointUi =
     process.env.REACT_APP_FF_SHOW_DELETE_ENDPOINT === 'true';
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const endpointId = getEndpointId({ method, pathId });
 
-  // TODO redux-delete-implement replace this with redux selector query
-  const isEndpointStagedForDeletion = false;
+  const isEndpointStagedForDeletion = useAppSelector((state) =>
+    state.documentationEdits.deletedEndpoints.includes(endpointId)
+  );
 
-  const deleteEndpoint = (endpointId: string) => {
-    // TODO redux-delete-implement implement
-  };
+  const deleteEndpoint = () =>
+    dispatch(documentationEditActions.deleteEndpoint({ endpointId }));
 
-  const undeleteEndpoint = (endpointId: string) => {
-    // TODO redux-delete-implement implement
-  };
+  const undeleteEndpoint = () =>
+    dispatch(documentationEditActions.undeleteEndpoint({ endpointId }));
 
   const classes = useStyles();
 
@@ -108,7 +108,6 @@ export const EndpointRootPage: FC<
   if (!thisEndpoint) {
     return <>no endpoint here</>;
   }
-  const endpointId = getEndpointId({ method, pathId });
   const parameterizedPathParts = thisEndpoint.pathParameters.filter(
     (path) => path.isParameterized
   );
@@ -120,7 +119,7 @@ export const EndpointRootPage: FC<
           endpoint={thisEndpoint}
           handleClose={() => setDeleteModalOpen(false)}
           handleConfirm={() => {
-            deleteEndpoint(endpointId);
+            deleteEndpoint();
             setDeleteModalOpen(false);
           }}
         />
@@ -155,7 +154,7 @@ export const EndpointRootPage: FC<
                 variant="outlined"
                 color="secondary"
                 onClick={() => {
-                  undeleteEndpoint(endpointId);
+                  undeleteEndpoint();
                 }}
               >
                 Undelete <UndoIcon className={classes.icon} />

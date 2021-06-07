@@ -150,7 +150,7 @@ const documentationEditSlice = createSlice({
     ) => {
       const { endpointId } = action.payload;
       const newDeletedEndpoints = state.deletedEndpoints.filter(
-        (id) => id === endpointId
+        (id) => id !== endpointId
       );
       state.deletedEndpoints = newDeletedEndpoints;
     },
