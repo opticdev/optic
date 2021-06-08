@@ -4,12 +4,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 
 import { Loading } from '<src>/components';
-import {
-  SpectacleStore,
-  useSpectacleContext,
-} from '<src>/contexts/spectacle-provider';
+import { SpectacleStore } from '<src>/contexts/spectacle-provider';
 import { useSessionId } from '<src>/hooks/useSessionId';
-import { createReduxStore, useAppDispatch, endpointActions } from '<src>/store';
+import { createReduxStore } from '<src>/store';
+import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
 
 type SimulatedCommandStoreProps = {
   spectacle: IForkableSpectacle;
@@ -82,15 +80,7 @@ mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clien
 }
 
 const DataFetcherComponent: FC = ({ children }) => {
-  const spectacle = useSpectacleContext();
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(
-      endpointActions.fetchEndpoints({
-        spectacle,
-      })
-    );
-  }, [spectacle, dispatch]);
+  useFetchEndpoints();
   return <>{children}</>;
 };
 
