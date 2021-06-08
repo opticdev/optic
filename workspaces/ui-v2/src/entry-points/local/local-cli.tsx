@@ -121,9 +121,11 @@ export function useLocalCliServices(
   const refEngine = useRef(opticEngine);
   const refApiUrl = useRef(apiBaseUrl);
   useEffect(() => {
-    spectacle.registerSpectacleUpdateEvent(() => {
+    const refreshFn = () => {
       setSpectacle(new LocalCliSpectacle(refApiUrl.current, refEngine.current));
-    });
+    };
+    spectacle.registerUpdateEvent(refreshFn);
+    return () => spectacle.unregisterUpdateEvent(refreshFn);
   }, [spectacle]);
   const capturesService = useMemo(
     () =>
