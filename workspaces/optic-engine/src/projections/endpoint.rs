@@ -7,6 +7,7 @@ use crate::{
 };
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, Event};
 use petgraph::graph::{Graph, NodeIndex};
+use petgraph::visit::EdgeRef;
 use serde::Serialize;
 use std::collections::HashMap;
 
@@ -127,6 +128,33 @@ impl EndpointProjection {
       .graph
       .add_edge(request_node_index, method_node_index, Edge::IsChildOf);
     self.node_id_to_index.insert(request_id, request_node_index);
+  }
+
+  pub fn without_request(&mut self, request_id: RequestId) {
+    let request_node_index = *self
+      .node_id_to_index
+      .get(&request_id)
+      .expect("expected request_id to have a corresponding node");
+
+    let method_parent_edge_index = self
+      .graph
+      .edges_directed(request_node_index, petgraph::Direction::Outgoing)
+      .find(|parent_edge| {
+        let parent_node_index = parent_edge.target();
+        let node = self.graph.node_weight(parent_node_index);
+        matches!(node, Some(Node::HttpMethod(_)))
+      })
+      .map(|parent_edge| parent_edge.id());
+
+    if let Some(method_parent_edge_index) = method_parent_edge_index {
+      self.graph.remove_edge(method_parent_edge_index); // prevents request to be resolved from path node
+    }
+    self.node_id_to_index.remove(&request_id); // prevents request node to be looked up by request id
+
+    // GOTCHA: we're not deleting the request node itself, as that would invalidate self.node_id_to_index
+    // as the graph indexes shift.
+    // TODO: figure out the implications of the above, like correctness of queries and
+    // eventual garbage collection.
   }
 
   fn ensure_method_node(
@@ -387,6 +415,9 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
       }
       EndpointEvent::RequestAdded(e) => {
         aggregate.with_request(e.path_id, e.http_method, e.request_id);
+      }
+      EndpointEvent::RequestRemoved(e) => {
+        aggregate.without_request(e.request_id);
       }
       EndpointEvent::ResponseAddedByPathAndMethod(e) => {
         aggregate.with_response(e.path_id, e.http_method, e.http_status_code, e.response_id);

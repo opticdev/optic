@@ -445,8 +445,10 @@ mod test {
       .unwrap()
       .collect::<Vec<_>>();
 
+    // dbg!(Dot::with_config(&updated_spec.endpoint().graph, &[]));
+
     // TODO: enable these assertions as the EndpointProjection handles the resulting events
-    // assert_eq!(remaining_requests.len(), 0);
+    assert_eq!(remaining_requests.len(), 0);
     // assert_eq!(remaining_responses.len(), 0);
   }
 
