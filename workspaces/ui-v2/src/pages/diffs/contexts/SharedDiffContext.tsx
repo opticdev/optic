@@ -8,8 +8,7 @@ import {
 import shortId from 'shortid';
 import { useMachine } from '@xstate/react';
 import { PathComponentAuthoring } from '<src>/pages/diffs/AddEndpointsPage/utils';
-import { IEndpoint } from '<src>/hooks/useEndpointsHook';
-import { pathToRegexp } from 'path-to-regexp';
+import { IEndpoint } from '<src>/types';
 import { IRequestBody, IResponseBody } from '<src>/hooks/useEndpointBodyHook';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import {
@@ -26,6 +25,7 @@ import { useConfigRepository } from '<src>/hooks/useConfigHook';
 import { useAnalytics } from '<src>/contexts/analytics';
 import { makePattern } from '<src>/pages/diffs/AddEndpointsPage/utils';
 import { IPath } from '<src>/hooks/usePathsHook';
+import { pathToRegexpEscaped } from '<src>/utils';
 
 export const SharedDiffReactContext = React.createContext<ISharedDiffContext | null>(
   null
@@ -178,7 +178,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     .filter(([, { isParameterized }]) => isParameterized)
     .map(([pathMethod, { components, method }]) => ({
       pathMethod,
-      matcher: pathToRegexp(makePattern(components)),
+      matcher: pathToRegexpEscaped(makePattern(components)),
       method,
     }));
 

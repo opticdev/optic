@@ -5,7 +5,6 @@ import { Typography } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import ReactMarkdown from 'react-markdown';
 
-import { useEndpoints } from '<src>/hooks/useEndpointsHook';
 import {
   EndpointName,
   PathParameters,
@@ -19,6 +18,7 @@ import {
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import { SubtleBlueBackground } from '<src>/constants/theme';
 import { CodeBlock, EndpointTOC, TwoColumn } from '<src>/pages/docs/components';
+import { useAppSelector } from '<src>/store';
 
 import {
   ChangelogPageAccessoryNavigation,
@@ -49,19 +49,25 @@ const ChangelogRootComponent: FC<
     batchId: string;
   }>
 > = ({ match }) => {
-  const { endpoints, loading } = useEndpoints();
+  const endpointsState = useAppSelector((state) => state.endpoints.results);
 
   const { pathId, method, batchId } = match.params;
+  const thisEndpoint = useMemo(
+    () =>
+      endpointsState.data?.find(
+        (i) => i.pathId === pathId && i.method === method
+      ),
+    [endpointsState, method, pathId]
+  );
 
   const bodies = useEndpointBody(pathId, method, batchId);
   const styles = useStyles();
-  const thisEndpoint = useMemo(
-    () => endpoints.find((i) => i.pathId === pathId && i.method === method),
-    [pathId, method, endpoints]
-  );
 
-  if (loading) {
+  if (endpointsState.loading) {
     return <Loading />;
+  }
+  if (endpointsState.error) {
+    return <>error</>;
   }
 
   if (!thisEndpoint) {

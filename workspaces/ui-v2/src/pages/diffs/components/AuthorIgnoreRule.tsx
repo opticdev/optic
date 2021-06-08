@@ -144,8 +144,13 @@ export function AuthorIgnoreRules() {
                   ? `and ${matchingPreview.length - 3} more`
                   : ''
               }:`}</Typography>
-              {matchingPreview.slice(0, 3).map((i, index) => (
-                <EndpointName leftPad={0} method={i.method} fullPath={i.path} />
+              {matchingPreview.slice(0, 3).map((i) => (
+                <EndpointName
+                  key={`${i.method}${i.path}`}
+                  leftPad={0}
+                  method={i.method}
+                  fullPath={i.path}
+                />
               ))}
             </>
           ) : null}

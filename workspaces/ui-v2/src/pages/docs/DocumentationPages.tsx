@@ -5,6 +5,7 @@ import {
   useDocumentationPageLink,
   useEndpointPageLink,
 } from '<src>/components/navigation/Routes';
+import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
 
 import { DocumentationRootPageWithDocsNav } from './DocumentationRootPage';
 import { EndpointRootPageWithDocsNav } from './EndpointRootPage';
@@ -12,6 +13,7 @@ import { EndpointRootPageWithDocsNav } from './EndpointRootPage';
 export function DocumentationPages() {
   const documentationPageLink = useDocumentationPageLink();
   const endpointPageLink = useEndpointPageLink();
+  useFetchEndpoints();
 
   return (
     <ContributionEditingStore>
