@@ -24,14 +24,15 @@ import {
 } from '<src>/contexts/config/AppConfiguration';
 import { useOpticEngine } from '<src>/hooks/useOpticEngine';
 import { AsyncStatus } from '<src>/types';
-import { ConfigRepositoryStore } from '<src>/hooks/useConfigHook';
+import { ConfigRepositoryStore } from '<src>/contexts/OpticConfigContext';
 import { AnalyticsStore } from '<src>/contexts/analytics';
 import {
   getMetadata,
   initialize,
   track,
 } from '<src>/contexts/analytics/implementations/publicExampleAnalytics';
-import { SpecMetadataProvider, store } from '<src>/store';
+import { store } from '<src>/store';
+import { MetadataLoader } from '<src>/contexts/MetadataLoader';
 
 const appConfig: OpticAppConfig = {
   config: {
@@ -101,7 +102,7 @@ export default function DemoExamples(props: { lookupDir: string }) {
                   initialize={initialize}
                   track={track}
                 >
-                  <SpecMetadataProvider>
+                  <MetadataLoader>
                     <Switch>
                       <Route
                         path={`${match.path}/changes-since/:batchId`}
@@ -117,7 +118,7 @@ export default function DemoExamples(props: { lookupDir: string }) {
                       />
                       <Redirect to={`${match.path}/documentation`} />
                     </Switch>
-                  </SpecMetadataProvider>
+                  </MetadataLoader>
                 </AnalyticsStore>
               </BaseUrlProvider>
             </ReduxProvider>

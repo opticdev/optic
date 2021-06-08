@@ -20,7 +20,7 @@ import {
   AppConfigurationStore,
   OpticAppConfig,
 } from '<src>/contexts/config/AppConfiguration';
-import { ConfigRepositoryStore } from '<src>/hooks/useConfigHook';
+import { ConfigRepositoryStore } from '<src>/contexts/OpticConfigContext';
 import { useOpticEngine } from '<src>/hooks/useOpticEngine';
 import {
   LocalCliCapturesService,
@@ -34,7 +34,8 @@ import {
   initialize,
   track,
 } from '<src>/contexts/analytics/implementations/localCliAnalytics';
-import { SpecMetadataProvider, store } from '<src>/store';
+import { store } from '<src>/store';
+import { MetadataLoader } from '<src>/contexts/MetadataLoader';
 
 const appConfig: OpticAppConfig = {
   config: {
@@ -83,7 +84,7 @@ export default function LocalCli() {
                   initialize={initialize}
                   track={track}
                 >
-                  <SpecMetadataProvider>
+                  <MetadataLoader>
                     <Switch>
                       <Route
                         path={`${match.path}/changes-since/:batchId`}
@@ -99,7 +100,7 @@ export default function LocalCli() {
                       />
                       <Redirect to={`${match.path}/documentation`} />
                     </Switch>
-                  </SpecMetadataProvider>
+                  </MetadataLoader>
                 </AnalyticsStore>
               </BaseUrlProvider>
             </ReduxProvider>
