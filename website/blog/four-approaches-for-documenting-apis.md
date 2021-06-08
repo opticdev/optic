@@ -20,8 +20,10 @@ Your API documentation shows consumers how best to use your API. Documentation t
 But creating API documentation and keeping it up to date can be a challenge. In many cases,  the only documentation available consists of ad hoc comments left by the developer who last touched the code. 
 
 In this post, we’ll compare four approaches you can use to create and maintain your API documentation:  
-* Manually updating API docs
-* Designing API docs then building to it, (3) programmatically generating API docs with Express OpenAPI, and (4) using Optic to automatically diff and update your API docs.
+1. Manually updating API docs
+1. Designing API docs then building to it
+1. Programmatically generating API docs with Express OpenAPI
+1. Using Optic to automatically diff and update your API docs
 
 ## Method 1: Manual
 
@@ -55,7 +57,7 @@ Designing and writing your API definition before writing any code, and then buil
 
 With the Design First approach, the specifics of your API—including endpoints, requests, response objects, error codes, and headers—are fleshed out in detail and tested before being handed over to developers for implementation. 
 
-After the design is complete, you can share API documents with other technical and non-technical stakeholders for review and feedback. This gives you the opportunity to catch issues before development begins. Once the design is approved, developers can use it to write or generate code implementations using tools such as [Swagger Editor](http://editor.swagger.io/# “Swagger Editor open source editor to design, define, and document RESTful APIs in the Swagger Specification”). 
+After the design is complete, you can share API documents with other technical and non-technical stakeholders for review and feedback. This gives you the opportunity to catch issues before development begins. Once the design is approved, developers can use it to write or generate code implementations using tools such as [Swagger Editor](http://editor.swagger.io/). 
 
 When you design first, you can ensure that your API definitions conform to industry standards and best practices. 
 
@@ -95,7 +97,7 @@ OpenAPI is an API description format for REST APIs that has become an industry s
 
 ## Method 4: Documentation Diffs with Optic
 
-[Optic](https://useoptic.com/) is a version control system and central repository for API contracts that function much like GitHub. It helps you document your APIs as you build them by observing development traffic to learn the behavior of your API. It presents the API changes it finds as diffs that can be reviewed, approved, or documented before your API is released. 
+[Optic](https://useoptic.com/) is a version control system and central repository for API contracts that function much like GitHub. It helps you document your APIs as you build them by observing request and response traffic to learn the behavior of your API. It presents the API changes it finds as diffs that can be reviewed, approved, or documented before your API is released. 
 
 ### How It Works
 
@@ -111,7 +113,7 @@ Using Optic, you can publish your API documentation to a shared website, making 
 
 **Can be used during code review:** Optic provides both API changes and changelogs that can provide valuable information and feedback when reviewing code. 
 
-**Works with all major languages and frameworks:** Integrates with major languages and API frameworks, including Django, Express.js, C-Sharp, and Laravel, IDEs such as IntelliJ, and CI/CD environments like GitHub Actions and CircleCI. 
+**Works with all major languages and frameworks:** Integrates with [major languages and API frameworks](/docs/integrations/integrations), including Django, Express.js, C-Sharp, and Laravel, IDEs such as IntelliJ and VSCode, and CI/CD environments like GitHub Actions and CircleCI. 
 
 ### Cons
 
