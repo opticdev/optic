@@ -2,14 +2,15 @@ import React from 'react';
 import { IShapeRenderer } from '<src>/components/ShapeRenderer/ShapeRenderInterfaces';
 import Helmet from 'react-helmet';
 import {
-  useContributionEditing,
-  useValueWithStagedContributions,
-} from '<src>/pages/docs/contexts/Contributions';
-import {
   EditableTextField,
   TextFieldVariant,
   FieldOrParameter,
 } from '<src>/components';
+import {
+  useAppSelector,
+  useAppDispatch,
+  documentationEditActions,
+} from '<src>/store';
 
 export type DocsFieldOrParameterContributionProps = {
   shapes: IShapeRenderer[];
@@ -17,6 +18,7 @@ export type DocsFieldOrParameterContributionProps = {
   name: string;
   depth: number;
   initialValue: string;
+  endpointId: string;
 };
 
 export function DocsFieldOrParameterContribution({
@@ -25,15 +27,19 @@ export function DocsFieldOrParameterContribution({
   shapes,
   depth,
   initialValue,
+  endpointId,
 }: DocsFieldOrParameterContributionProps) {
   const contributionKey = 'description';
-  const { isEditing } = useContributionEditing();
-
-  const { value, setValue } = useValueWithStagedContributions(
-    id,
-    contributionKey,
-    initialValue
+  const isEditing = useAppSelector(
+    (state) => state.documentationEdits.isEditing
   );
+  const contributionValue = useAppSelector(
+    (state) =>
+      state.documentationEdits.contributions[id]?.[contributionKey]?.value
+  );
+  const value =
+    contributionValue !== undefined ? contributionValue : initialValue;
+  const dispatch = useAppDispatch();
 
   return (
     <FieldOrParameter
@@ -41,18 +47,28 @@ export function DocsFieldOrParameterContribution({
       shapes={shapes}
       depth={depth}
       value={value}
-      setValue={setValue}
+      setValue={(value) =>
+        dispatch(
+          documentationEditActions.addContribution({
+            id,
+            contributionKey,
+            value,
+            endpointId,
+          })
+        )
+      }
       isEditing={isEditing}
     />
   );
 }
 
-export type EndpointNameContributionProps = {
+type EndpointNameContributionProps = {
   id: string;
   contributionKey: string;
   defaultText: string;
   requiredError?: string;
   initialValue: string;
+  endpointId: string;
 };
 
 export function EndpointNameContribution({
@@ -60,13 +76,18 @@ export function EndpointNameContribution({
   contributionKey,
   defaultText,
   initialValue,
+  endpointId,
 }: EndpointNameContributionProps) {
-  const { isEditing, setEditing } = useContributionEditing();
-  const { value, setValue } = useValueWithStagedContributions(
-    id,
-    contributionKey,
-    initialValue
+  const isEditing = useAppSelector(
+    (state) => state.documentationEdits.isEditing
   );
+  const contributionValue = useAppSelector(
+    (state) =>
+      state.documentationEdits.contributions[id]?.[contributionKey]?.value
+  );
+  const dispatch = useAppDispatch();
+  const value =
+    contributionValue !== undefined ? contributionValue : initialValue;
 
   return (
     <>
@@ -75,9 +96,24 @@ export function EndpointNameContribution({
       </Helmet>
       <EditableTextField
         isEditing={isEditing}
-        setEditing={setEditing}
+        setEditing={(value) =>
+          dispatch(
+            documentationEditActions.updateEditState({
+              isEditing: value,
+            })
+          )
+        }
         value={value}
-        setValue={setValue}
+        setValue={(value) =>
+          dispatch(
+            documentationEditActions.addContribution({
+              id,
+              contributionKey,
+              value,
+              endpointId,
+            })
+          )
+        }
         helperText="Help consumers by naming this endpoint"
         defaultText={defaultText}
         variant={TextFieldVariant.REGULAR}
@@ -91,21 +127,40 @@ export function EndpointNameMiniContribution({
   contributionKey,
   defaultText,
   initialValue,
+  endpointId,
 }: EndpointNameContributionProps) {
-  const { isEditing, setEditing } = useContributionEditing();
-
-  const { value, setValue } = useValueWithStagedContributions(
-    id,
-    contributionKey,
-    initialValue
+  const isEditing = useAppSelector(
+    (state) => state.documentationEdits.isEditing
   );
+  const contributionValue = useAppSelector(
+    (state) =>
+      state.documentationEdits.contributions[id]?.[contributionKey]?.value
+  );
+  const dispatch = useAppDispatch();
+  const value =
+    contributionValue !== undefined ? contributionValue : initialValue;
 
   return (
     <EditableTextField
       isEditing={isEditing}
-      setEditing={setEditing}
+      setEditing={(value) =>
+        dispatch(
+          documentationEditActions.updateEditState({
+            isEditing: value,
+          })
+        )
+      }
       value={value}
-      setValue={setValue}
+      setValue={(value) =>
+        dispatch(
+          documentationEditActions.addContribution({
+            id,
+            contributionKey,
+            value,
+            endpointId,
+          })
+        )
+      }
       defaultText={defaultText}
       variant={TextFieldVariant.SMALL}
     />
