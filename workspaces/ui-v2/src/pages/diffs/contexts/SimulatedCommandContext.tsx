@@ -1,9 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { IForkableSpectacle } from '@useoptic/spectacle';
-import { SpectacleStore } from '<src>/contexts/spectacle-provider';
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
+import { Provider } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import { useSessionId } from '<src>/hooks/useSessionId';
+import { IForkableSpectacle } from '@useoptic/spectacle';
+
 import { Loading } from '<src>/components';
+import { SpectacleStore } from '<src>/contexts/spectacle-provider';
+import { useSessionId } from '<src>/hooks/useSessionId';
+import { createReduxStore } from '<src>/store';
+import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
 
 type SimulatedCommandStoreProps = {
   spectacle: IForkableSpectacle;
@@ -22,6 +26,7 @@ export const SimulatedCommandContext = React.createContext<SimulatedCommandConte
 export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
   const value = { previewCommands: props.previewCommands };
   const [isProcessing, setIsProcessing] = useState(true);
+  const store = useMemo(() => createReduxStore(), []);
   const [simulated, setSimulated] = useState<IForkableSpectacle | undefined>(
     undefined
   );
@@ -66,11 +71,18 @@ mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clien
   return (
     <SimulatedCommandContext.Provider value={value}>
       <SpectacleStore spectacle={spectacleToUse}>
-        {props.children}
+        <Provider store={store}>
+          <DataFetcherComponent>{props.children}</DataFetcherComponent>
+        </Provider>
       </SpectacleStore>
     </SimulatedCommandContext.Provider>
   );
 }
+
+const DataFetcherComponent: FC = ({ children }) => {
+  useFetchEndpoints();
+  return <>{children}</>;
+};
 
 export function useSimulatedCommands() {
   const { previewCommands } = useContext(SimulatedCommandContext);
