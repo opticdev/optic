@@ -29,8 +29,10 @@ export function MarkdownBodyContribution({
 }: MarkdownBodyContributionProps) {
   const classes = useStyles();
 
-  const isEditing = useAppSelector(
-    (state) => state.documentationEdits.isEditing
+  const isEditable = useAppSelector(
+    (state) =>
+      state.documentationEdits.isEditing &&
+      !state.documentationEdits.deletedEndpoints.includes(endpointId)
   );
   const contributionValue = useAppSelector(
     (state) =>
@@ -40,7 +42,7 @@ export function MarkdownBodyContribution({
   const value =
     contributionValue !== undefined ? contributionValue : initialValue;
 
-  const inner = isEditing ? (
+  const inner = isEditable ? (
     <TextField
       inputProps={{ className: classNames(classes.contents, classes.editing) }}
       fullWidth
