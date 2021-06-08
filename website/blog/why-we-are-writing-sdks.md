@@ -3,7 +3,7 @@ date: "06/11/2021"
 title: "Why We Are Writing SDKs"
 author: Mike Elsmore
 author_url: "https://github.com/ukmadlz"
-author_image_url: "/img/team/mike-elsmore.jpg"
+author_image_url: "/img/team/mike-elsmore.png"
 category: Community
 ---
 
