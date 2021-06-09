@@ -49,7 +49,10 @@ export function EditContributionsButton() {
         spectacle,
         commitMessage,
       })
-    );
+    ).catch((e) => {
+      // TODO handle error state
+      console.error(e);
+    });
   };
 
   const contents = !isEditing ? (

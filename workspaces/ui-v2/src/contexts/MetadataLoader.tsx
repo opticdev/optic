@@ -23,6 +23,7 @@ export const MetadataLoader: FC = ({ children }) => {
     return <FullPageLoader title="loading" />;
   }
   if (result.error) {
+    console.error(result.error);
     return <>error</>;
   }
 

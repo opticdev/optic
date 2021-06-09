@@ -89,15 +89,15 @@ export const EndpointRootPage: FC<
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const endpointId = getEndpointId({ method, pathId });
 
-  const isEndpointStagedForDeletion = useAppSelector((state) =>
-    state.documentationEdits.deletedEndpoints.includes(endpointId)
+  const isEndpointStagedForDeletion = useAppSelector(
+    selectors.isEndpointDeleted({ method, pathId })
   );
 
   const deleteEndpoint = () =>
-    dispatch(documentationEditActions.deleteEndpoint({ endpointId }));
+    dispatch(documentationEditActions.deleteEndpoint({ method, pathId }));
 
   const undeleteEndpoint = () =>
-    dispatch(documentationEditActions.undeleteEndpoint({ endpointId }));
+    dispatch(documentationEditActions.undeleteEndpoint({ method, pathId }));
 
   const classes = useStyles();
 
@@ -138,7 +138,10 @@ export const EndpointRootPage: FC<
           contributionKey="purpose"
           defaultText="What does this endpoint do?"
           initialValue={thisEndpoint.purpose}
-          endpointId={endpointId}
+          endpoint={{
+            pathId,
+            method,
+          }}
         />
         <div className={classes.endpointNameContainer}>
           <EndpointName
@@ -179,7 +182,10 @@ export const EndpointRootPage: FC<
               contributionKey={'description'}
               defaultText={'Describe this endpoint'}
               initialValue={thisEndpoint.description}
-              endpointId={endpointId}
+              endpoint={{
+                pathId,
+                method,
+              }}
             />
           }
           right={
@@ -204,7 +210,10 @@ export const EndpointRootPage: FC<
                   return (
                     <DocsFieldOrParameterContribution
                       key={param.id}
-                      endpointId={endpointId}
+                      endpoint={{
+                        pathId,
+                        method,
+                      }}
                       id={param.id}
                       name={param.name}
                       shapes={[alwaysAString]}
@@ -234,7 +243,10 @@ export const EndpointRootPage: FC<
           return (
             <TwoColumnBodyEditable
               key={i.rootShapeId}
-              endpointId={endpointId}
+              endpoint={{
+                pathId,
+                method,
+              }}
               rootShapeId={i.rootShapeId}
               bodyId={i.requestId}
               location={'Request Body'}
@@ -247,7 +259,10 @@ export const EndpointRootPage: FC<
           return (
             <TwoColumnBodyEditable
               key={i.rootShapeId}
-              endpointId={endpointId}
+              endpoint={{
+                pathId,
+                method,
+              }}
               rootShapeId={i.rootShapeId}
               bodyId={i.responseId}
               location={`${i.statusCode} Response`}
