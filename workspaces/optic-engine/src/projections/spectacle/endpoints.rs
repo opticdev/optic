@@ -7,7 +7,7 @@ use crate::state::shape::ShapeId;
 use crate::RfcEvent;
 use cqrs_core::{Aggregate, AggregateEvent};
 use petgraph::csr::NodeIndex;
-use petgraph::Direction::Incoming;
+use petgraph::visit::EdgeRef;
 use petgraph::Graph;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
@@ -122,6 +122,9 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
           projection.with_creation_history(&c.client_command_batch_id, &e.request_id);
         }
       }
+      EndpointEvent::RequestRemoved(e) => {
+        projection.without_request(e.request_id);
+      }
       EndpointEvent::ResponseAddedByPathAndMethod(e) => {
         projection.with_response(
           e.response_id.clone(),
@@ -133,6 +136,9 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         if let Some(c) = e.event_context {
           projection.with_creation_history(&c.client_command_batch_id, &e.response_id);
         }
+      }
+      EndpointEvent::ResponseRemoved(e) => {
+        projection.without_response(e.response_id);
       }
       EndpointEvent::RequestBodySet(e) => {
         //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (request_id, http_content_type)
@@ -316,6 +322,33 @@ impl EndpointsProjection {
     self.domain_id_to_index.insert(request_id, node_index);
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
+  pub fn without_request(&mut self, request_id: RequestId) {
+    let request_node_index = *self
+      .domain_id_to_index
+      .get(&request_id)
+      .expect("expected request_id to have a corresponding node");
+
+    let request_edge_index = self
+      .graph
+      .edges_directed(request_node_index, petgraph::Direction::Outgoing)
+      .find(|parent_edge| {
+        let parent_node_index = parent_edge.target();
+        let node = self.graph.node_weight(parent_node_index);
+        matches!(node, Some(Node::Request(RequestNode { request_id, .. })))
+      })
+      .map(|parent_edge| parent_edge.id());
+
+    if let Some(request_edge_index) = request_edge_index {
+      self.graph.remove_edge(request_edge_index); // prevents request to be resolved from path node
+    }
+    self.domain_id_to_index.remove(&request_id); // prevents request node to be looked up by request id
+
+    // GOTCHA: we're not deleting the request node itself, as that would invalidate self.node_id_to_index
+    // as the graph indexes shift.
+    // TODO: figure out the implications of the above, like correctness of queries and
+    // eventual garbage collection.
+  }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_response(
     &mut self,
     response_id: ResponseId,
@@ -341,7 +374,33 @@ impl EndpointsProjection {
 
     self.domain_id_to_index.insert(response_id, node_index);
   }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  pub fn without_response(&mut self, response_id: ResponseId) {
+    let response_node_index = *self
+      .domain_id_to_index
+      .get(&response_id)
+      .expect("expected response_id to have a corresponding node");
 
+    let response_edge_index = self
+      .graph
+      .edges_directed(response_node_index, petgraph::Direction::Outgoing)
+      .find(|parent_edge| {
+        let parent_node_index = parent_edge.target();
+        let node = self.graph.node_weight(parent_node_index);
+        matches!(node, Some(Node::Response(ResponseNode { response_id, .. })))
+      })
+      .map(|parent_edge| parent_edge.id());
+
+    if let Some(response_edge_index) = response_edge_index {
+      self.graph.remove_edge(response_edge_index); // prevents response to be resolved from path node
+    }
+    self.domain_id_to_index.remove(&response_id); // prevents response node to be looked up by response id
+
+    // GOTCHA: we're not deleting the response node itself, as that would invalidate self.node_id_to_index
+    // as the graph indexes shift.
+    // TODO: figure out the implications of the above, like correctness of queries and
+    // eventual garbage collection.
+  }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_request_body(
     &mut self,
