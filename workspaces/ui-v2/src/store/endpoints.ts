@@ -99,6 +99,8 @@ const endpointsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchEndpoints.fulfilled, (state, action) => {
       const results = action.payload;
+      console.log(results);
+      console.log(endpointQueryResultsToJson(results));
 
       state.results = {
         loading: false,
