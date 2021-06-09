@@ -1,0 +1,27 @@
+---
+source: workspaces/optic-engine/tests/e2e-scenarios.rs
+expression: "Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])"
+---
+digraph {
+    0 [ label = "Path(\l    PathNode {\l        absolute_path_pattern: \"/\",\l        is_parameterized: false,\l        name: \"\",\l        path_id: \"root\",\l    },\l)\l" ]
+    1 [ label = "Path(\l    PathNode {\l        absolute_path_pattern: \"/api\",\l        is_parameterized: false,\l        name: \"api\",\l        path_id: \"path_blfLlMamQG\",\l    },\l)\l" ]
+    2 [ label = "Path(\l    PathNode {\l        absolute_path_pattern: \"/api/f1\",\l        is_parameterized: false,\l        name: \"f1\",\l        path_id: \"path_eVx6Ev3iEI\",\l    },\l)\l" ]
+    3 [ label = "Path(\l    PathNode {\l        absolute_path_pattern: \"/api/f1/{}\",\l        is_parameterized: true,\l        name: \"year\",\l        path_id: \"path_RQwRDUB18T\",\l    },\l)\l" ]
+    4 [ label = "Path(\l    PathNode {\l        absolute_path_pattern: \"/api/f1/{}/drivers\",\l        is_parameterized: false,\l        name: \"drivers\",\l        path_id: \"path_SCQeRkSjzD\",\l    },\l)\l" ]
+    5 [ label = "Path(\l    PathNode {\l        absolute_path_pattern: \"/api/f1/{}/drivers/{}\",\l        is_parameterized: true,\l        name: \"driver\",\l        path_id: \"path_M2iaqo5M9p\",\l    },\l)\l" ]
+    6 [ label = "Path(\l    PathNode {\l        absolute_path_pattern: \"/api/f1/{}/drivers/{}/results\",\l        is_parameterized: false,\l        name: \"results\",\l        path_id: \"path_SYRwhqD1XN\",\l    },\l)\l" ]
+    7 [ label = "BatchCommit(\l    BatchCommitNode {\l        batch_id: \"eb323d68-2557-40f9-8926-dc531f6d57e7\",\l        created_at: \"2020-07-09T15:53:57.022Z\",\l        commit_message: \"\\n\\nChanges:\\n- Added Request with No Body\\n- Added 200 Response with application/json Body\",\l    },\l)\l" ]
+    8 [ label = "Request(\l    RequestNode {\l        http_method: \"GET\",\l        request_id: \"request_6aJsM8n6C7\",\l    },\l)\l" ]
+    9 [ label = "Response(\l    ResponseNode {\l        http_method: \"GET\",\l        http_status_code: 200,\l        response_id: \"response_KBRwJqndED\",\l    },\l)\l" ]
+    10 [ label = "Body(\l    BodyNode {\l        http_content_type: \"application/json\",\l        root_shape_id: \"shape_GMtxDoA6QP\",\l    },\l)\l" ]
+    1 -> 0 [ label = "IsChildOf\l" ]
+    2 -> 1 [ label = "IsChildOf\l" ]
+    3 -> 2 [ label = "IsChildOf\l" ]
+    4 -> 3 [ label = "IsChildOf\l" ]
+    5 -> 4 [ label = "IsChildOf\l" ]
+    6 -> 5 [ label = "IsChildOf\l" ]
+    8 -> 6 [ label = "IsChildOf\l" ]
+    9 -> 6 [ label = "IsChildOf\l" ]
+    10 -> 9 [ label = "IsChildOf\l" ]
+}
+

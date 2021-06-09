@@ -1,0 +1,16 @@
+---
+source: workspaces/optic-engine/tests/e2e-scenarios.rs
+expression: "Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])"
+---
+digraph {
+    0 [ label = "Path(\l    PathNode {\l        absolute_path_pattern: \"/\",\l        is_parameterized: false,\l        name: \"\",\l        path_id: \"root\",\l    },\l)\l" ]
+    1 [ label = "Path(\l    PathNode {\l        absolute_path_pattern: \"/homes\",\l        is_parameterized: false,\l        name: \"homes\",\l        path_id: \"baseline-path_1\",\l    },\l)\l" ]
+    2 [ label = "Request(\l    RequestNode {\l        http_method: \"GET\",\l        request_id: \"baseline-request_1\",\l    },\l)\l" ]
+    3 [ label = "Response(\l    ResponseNode {\l        http_method: \"GET\",\l        http_status_code: 200,\l        response_id: \"baseline-response_1\",\l    },\l)\l" ]
+    4 [ label = "Body(\l    BodyNode {\l        http_content_type: \"application/json\",\l        root_shape_id: \"baseline-shape_9\",\l    },\l)\l" ]
+    1 -> 0 [ label = "IsChildOf\l" ]
+    2 -> 1 [ label = "IsChildOf\l" ]
+    3 -> 1 [ label = "IsChildOf\l" ]
+    4 -> 3 [ label = "IsChildOf\l" ]
+}
+

@@ -517,6 +517,10 @@ fn scenario_1() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_1__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_1__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -903,6 +907,10 @@ fn scenario_2() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_2__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_2__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -1137,6 +1145,10 @@ fn scenario_3() {
   assert_debug_snapshot!(
     "scenario_3__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_3__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_3__shape_choice_mapping",
@@ -1641,6 +1653,10 @@ fn scenario_4() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_4__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_4__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -2069,6 +2085,10 @@ fn scenario_5() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_5__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_5__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -2455,6 +2475,10 @@ fn scenario_6() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_6__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_6__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -2802,6 +2826,10 @@ fn scenario_7() {
   assert_debug_snapshot!(
     "scenario_7__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_7__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_7__shape_choice_mapping",
@@ -3188,6 +3216,10 @@ fn scenario_8() {
   assert_debug_snapshot!(
     "scenario_8__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_8__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_8__shape_choice_mapping",
@@ -3690,6 +3722,10 @@ fn scenario_9() {
   assert_debug_snapshot!(
     "scenario_9__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_9__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_9__shape_choice_mapping",
@@ -4218,6 +4254,10 @@ fn scenario_10() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_10__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_10__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -4646,6 +4686,10 @@ fn scenario_11() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_11__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_11__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -5030,6 +5074,10 @@ fn scenario_12() {
   assert_debug_snapshot!(
     "scenario_12__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_12__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_12__shape_choice_mapping",
@@ -5534,6 +5582,10 @@ fn scenario_13() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_13__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_13__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -5768,6 +5820,10 @@ fn scenario_14() {
   assert_debug_snapshot!(
     "scenario_14__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_14__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_14__shape_choice_mapping",
@@ -6196,6 +6252,10 @@ fn scenario_15() {
   assert_debug_snapshot!(
     "scenario_15__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_15__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_15__shape_choice_mapping",
@@ -6700,6 +6760,10 @@ fn scenario_16() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_16__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_16__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -7202,6 +7266,10 @@ fn scenario_17() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_17__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_17__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -7630,6 +7698,10 @@ fn scenario_18() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_18__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_18__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -7864,6 +7936,10 @@ fn scenario_19() {
   assert_debug_snapshot!(
     "scenario_19__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_19__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_19__shape_choice_mapping",
@@ -8368,6 +8444,10 @@ fn scenario_20() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_20__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_20__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -8796,6 +8876,10 @@ fn scenario_21() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_21__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_21__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -9222,6 +9306,10 @@ fn scenario_22() {
   assert_debug_snapshot!(
     "scenario_22__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_22__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_22__shape_choice_mapping",
@@ -9750,6 +9838,10 @@ fn scenario_23() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_23__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_23__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -10276,6 +10368,10 @@ fn scenario_24() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_24__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_24__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -10800,6 +10896,10 @@ fn scenario_25() {
   assert_debug_snapshot!(
     "scenario_25__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_25__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_25__shape_choice_mapping",
@@ -13397,6 +13497,10 @@ fn scenario_26() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_26__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_26__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -13923,6 +14027,10 @@ fn scenario_27() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_27__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_27__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -14307,6 +14415,10 @@ fn scenario_28() {
   assert_debug_snapshot!(
     "scenario_28__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_28__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_28__shape_choice_mapping",
@@ -14835,6 +14947,10 @@ fn scenario_29() {
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
   assert_debug_snapshot!(
+    "scenario_29__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
     "scenario_29__shape_choice_mapping",
     &spec_projection.shape().to_choice_mapping()
   );
@@ -15261,6 +15377,10 @@ fn scenario_30() {
   assert_debug_snapshot!(
     "scenario_30__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_30__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_30__shape_choice_mapping",
@@ -15763,6 +15883,10 @@ fn scenario_31() {
   assert_debug_snapshot!(
     "scenario_31__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_31__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
   );
   assert_debug_snapshot!(
     "scenario_31__shape_choice_mapping",
