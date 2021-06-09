@@ -28,7 +28,7 @@ export const DeleteEndpointConfirmationModal: FC<DeleteEndpointConfirmationModal
     <Dialog open={true} onClose={handleClose}>
       <DialogTitle>Confirm delete endpoint</DialogTitle>
       <DialogContent>
-        <DialogContentText>
+        <DialogContentText component="div">
           <div className={classes.confirmationTextContainer}>
             Are you sure you want to delete endpoint the following endpoint?
             <EndpointName

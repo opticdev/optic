@@ -3,9 +3,18 @@ import { IShapeRenderer } from '<src>/components/ShapeRenderer/ShapeRenderInterf
 import { createFlatList } from '<src>/components/FieldOrParameter';
 import { DocsFieldOrParameterContribution } from './Contributions';
 
-type ContributionGroupProps = { rootShape: IShapeRenderer[] };
+type ContributionGroupProps = {
+  rootShape: IShapeRenderer[];
+  endpoint: {
+    pathId: string;
+    method: string;
+  };
+};
 
-export const ContributionGroup = ({ rootShape }: ContributionGroupProps) => {
+export const ContributionGroup = ({
+  rootShape,
+  endpoint,
+}: ContributionGroupProps) => {
   const contributions = createFlatList(rootShape);
 
   return (
@@ -19,6 +28,7 @@ export const ContributionGroup = ({ rootShape }: ContributionGroupProps) => {
             shapes={i.shapes}
             key={i.contributionId + i.name + index}
             initialValue={i.description}
+            endpoint={endpoint}
           />
         );
       })}

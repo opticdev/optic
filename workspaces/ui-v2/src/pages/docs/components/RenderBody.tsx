@@ -23,8 +23,14 @@ type OneColumnBodyProps = SharedProps & {
 export type TwoColumnBodyProps = SharedProps & {
   description: string;
 };
-
-export function TwoColumnBodyEditable(props: TwoColumnBodyProps) {
+const TwoColumnBodyEditableUnMemoized = (
+  props: TwoColumnBodyProps & {
+    endpoint: {
+      pathId: string;
+      method: string;
+    };
+  }
+) => {
   const shapeChoices = useShapeDescriptor(props.rootShapeId, undefined);
   return (
     <TwoColumn
@@ -39,9 +45,13 @@ export function TwoColumnBodyEditable(props: TwoColumnBodyProps) {
               contributionKey={'description'}
               defaultText={'Add a description'}
               initialValue={props.description}
+              endpoint={props.endpoint}
             />
           </div>
-          <ContributionGroup rootShape={shapeChoices} />
+          <ContributionGroup
+            rootShape={shapeChoices}
+            endpoint={props.endpoint}
+          />
         </>
       }
       right={
@@ -53,7 +63,12 @@ export function TwoColumnBodyEditable(props: TwoColumnBodyProps) {
       }
     />
   );
-}
+};
+
+// Memoize this as there could be a large number of contribution groups
+export const TwoColumnBodyEditable = React.memo(
+  TwoColumnBodyEditableUnMemoized
+);
 
 export function OneColumnBody(props: OneColumnBodyProps) {
   const shapeChoices = useShapeDescriptor(

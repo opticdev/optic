@@ -70,19 +70,19 @@ export const endpointQueryResultsToJson = ({
   }));
 };
 
-const fetchEndpoints = createAsyncThunk(
-  'FETCH_ENDPOINTS',
-  async ({ spectacle }: { spectacle: IForkableSpectacle }) => {
-    const results = await spectacle.query<EndpointQueryResults>({
-      query: AllEndpointsQuery,
-      variables: {},
-    });
-    if (results.errors) {
-      throw new Error();
-    }
-    return results.data!;
+const fetchEndpoints = createAsyncThunk<
+  EndpointQueryResults,
+  { spectacle: IForkableSpectacle }
+>('FETCH_ENDPOINTS', async ({ spectacle }) => {
+  const results = await spectacle.query<EndpointQueryResults>({
+    query: AllEndpointsQuery,
+    variables: {},
+  });
+  if (results.errors) {
+    throw new Error();
   }
-);
+  return results.data!;
+});
 
 const initialState: {
   results: AsyncStatus<IEndpoint[], SerializedError>;
