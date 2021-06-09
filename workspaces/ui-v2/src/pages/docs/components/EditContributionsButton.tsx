@@ -3,20 +3,54 @@ import { ToggleButton } from '@material-ui/lab';
 import { Typography, makeStyles } from '@material-ui/core';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import EditIcon from '@material-ui/icons/Edit';
-import { useContributionEditing } from '<src>/pages/docs/contexts/Contributions';
+
 import { CommitMessageModal } from '<src>/components';
+import { useSpectacleContext } from '<src>/contexts/spectacle-provider';
+import {
+  useAppSelector,
+  useAppDispatch,
+  documentationEditActions,
+  selectors,
+} from '<src>/store';
 
 export function EditContributionsButton() {
   const classes = useStyles();
+  const spectacle = useSpectacleContext();
 
-  const {
-    isEditing,
-    save,
-    pendingCount,
-    setEditing,
-    commitModalOpen,
-    setCommitModalOpen,
-  } = useContributionEditing();
+  const isEditing = useAppSelector(
+    (state) => state.documentationEdits.isEditing
+  );
+  const commitModalOpen = useAppSelector(
+    (state) => state.documentationEdits.commitModalOpen
+  );
+  const pendingCount = useAppSelector(
+    selectors.getDocumentationEditStagedCount
+  );
+  const dispatch = useAppDispatch();
+
+  const setCommitModalOpen = (commitModalOpen: boolean) => {
+    dispatch(
+      documentationEditActions.updateCommitModalState({
+        commitModalOpen,
+      })
+    );
+  };
+  const setEditing = (isEditing: boolean) => {
+    dispatch(
+      documentationEditActions.updateEditState({
+        isEditing,
+      })
+    );
+  };
+
+  const save = (commitMessage: string) => {
+    dispatch(
+      documentationEditActions.saveDocumentationChanges({
+        spectacle,
+        commitMessage,
+      })
+    );
+  };
 
   const contents = !isEditing ? (
     <>

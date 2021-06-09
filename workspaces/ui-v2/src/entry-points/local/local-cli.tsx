@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import {
   useRouteMatch,
   useParams,
@@ -20,7 +20,7 @@ import {
   AppConfigurationStore,
   OpticAppConfig,
 } from '<src>/contexts/config/AppConfiguration';
-import { ConfigRepositoryStore } from '<src>/hooks/useConfigHook';
+import { ConfigRepositoryStore } from '<src>/contexts/OpticConfigContext';
 import { useOpticEngine } from '<src>/hooks/useOpticEngine';
 import {
   LocalCliCapturesService,
@@ -34,7 +34,8 @@ import {
   initialize,
   track,
 } from '<src>/contexts/analytics/implementations/localCliAnalytics';
-import { SpecMetadataProvider, store } from '<src>/store';
+import { store } from '<src>/store';
+import { MetadataLoader } from '<src>/contexts/MetadataLoader';
 
 const appConfig: OpticAppConfig = {
   config: {
@@ -83,7 +84,7 @@ export default function LocalCli() {
                   initialize={initialize}
                   track={track}
                 >
-                  <SpecMetadataProvider>
+                  <MetadataLoader>
                     <Switch>
                       <Route
                         path={`${match.path}/changes-since/:batchId`}
@@ -99,7 +100,7 @@ export default function LocalCli() {
                       />
                       <Redirect to={`${match.path}/documentation`} />
                     </Switch>
-                  </SpecMetadataProvider>
+                  </MetadataLoader>
                 </AnalyticsStore>
               </BaseUrlProvider>
             </ReduxProvider>
@@ -115,11 +116,19 @@ export function useLocalCliServices(
 ): AsyncStatus<LocalCliServices> {
   const opticEngine = useOpticEngine();
   const apiBaseUrl = `/api/specs/${specId}`;
-  const spectacle = useMemo(
-    () => new LocalCliSpectacle(apiBaseUrl, opticEngine),
-    [apiBaseUrl, opticEngine]
+  const [spectacle, setSpectacle] = useState(
+    new LocalCliSpectacle(apiBaseUrl, opticEngine)
   );
-  const capturesService = React.useMemo(
+  const refEngine = useRef(opticEngine);
+  const refApiUrl = useRef(apiBaseUrl);
+  useEffect(() => {
+    const refreshFn = () => {
+      setSpectacle(new LocalCliSpectacle(refApiUrl.current, refEngine.current));
+    };
+    spectacle.registerUpdateEvent(refreshFn);
+    return () => spectacle.unregisterUpdateEvent(refreshFn);
+  }, [spectacle]);
+  const capturesService = useMemo(
     () =>
       new LocalCliCapturesService({
         baseUrl: apiBaseUrl,
