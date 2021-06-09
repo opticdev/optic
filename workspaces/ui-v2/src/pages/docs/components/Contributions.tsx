@@ -30,8 +30,10 @@ export function DocsFieldOrParameterContribution({
   endpointId,
 }: DocsFieldOrParameterContributionProps) {
   const contributionKey = 'description';
-  const isEditing = useAppSelector(
-    (state) => state.documentationEdits.isEditing
+  const isEditable = useAppSelector(
+    (state) =>
+      state.documentationEdits.isEditing &&
+      !state.documentationEdits.deletedEndpoints.includes(endpointId)
   );
   const contributionValue = useAppSelector(
     (state) =>
@@ -57,7 +59,7 @@ export function DocsFieldOrParameterContribution({
           })
         )
       }
-      isEditing={isEditing}
+      isEditing={isEditable}
     />
   );
 }
@@ -78,8 +80,10 @@ export function EndpointNameContribution({
   initialValue,
   endpointId,
 }: EndpointNameContributionProps) {
-  const isEditing = useAppSelector(
-    (state) => state.documentationEdits.isEditing
+  const isEditable = useAppSelector(
+    (state) =>
+      state.documentationEdits.isEditing &&
+      !state.documentationEdits.deletedEndpoints.includes(endpointId)
   );
   const contributionValue = useAppSelector(
     (state) =>
@@ -95,7 +99,7 @@ export function EndpointNameContribution({
         <title>{value || 'Unnamed Endpoint'}</title>
       </Helmet>
       <EditableTextField
-        isEditing={isEditing}
+        isEditing={isEditable}
         setEditing={(value) =>
           dispatch(
             documentationEditActions.updateEditState({
@@ -129,8 +133,10 @@ export function EndpointNameMiniContribution({
   initialValue,
   endpointId,
 }: EndpointNameContributionProps) {
-  const isEditing = useAppSelector(
-    (state) => state.documentationEdits.isEditing
+  const isEditable = useAppSelector(
+    (state) =>
+      state.documentationEdits.isEditing &&
+      !state.documentationEdits.deletedEndpoints.includes(endpointId)
   );
   const contributionValue = useAppSelector(
     (state) =>
@@ -142,7 +148,7 @@ export function EndpointNameMiniContribution({
 
   return (
     <EditableTextField
-      isEditing={isEditing}
+      isEditing={isEditable}
       setEditing={(value) =>
         dispatch(
           documentationEditActions.updateEditState({
