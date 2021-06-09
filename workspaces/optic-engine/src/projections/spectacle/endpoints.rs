@@ -334,7 +334,7 @@ impl EndpointsProjection {
       .find(|parent_edge| {
         let parent_node_index = parent_edge.target();
         let node = self.graph.node_weight(parent_node_index);
-        matches!(node, Some(Node::Request(RequestNode { request_id, .. })))
+        matches!(node, Some(Node::Path(_)))
       })
       .map(|parent_edge| parent_edge.id());
 
@@ -387,7 +387,7 @@ impl EndpointsProjection {
       .find(|parent_edge| {
         let parent_node_index = parent_edge.target();
         let node = self.graph.node_weight(parent_node_index);
-        matches!(node, Some(Node::Response(ResponseNode { response_id, .. })))
+        matches!(node, Some(Node::Path(_)))
       })
       .map(|parent_edge| parent_edge.id());
 
