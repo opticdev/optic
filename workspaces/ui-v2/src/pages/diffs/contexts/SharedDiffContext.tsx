@@ -21,7 +21,7 @@ import { newRandomIdGenerator } from '<src>/lib/domain-id-generator';
 import { ParsedDiff } from '<src>/lib/parse-diff';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '<src>/hooks/useOpticEngine';
-import { useConfigRepository } from '<src>/hooks/useConfigHook';
+import { useConfigRepository } from '<src>/contexts/OpticConfigContext';
 import { useAnalytics } from '<src>/contexts/analytics';
 import { makePattern } from '<src>/pages/diffs/AddEndpointsPage/utils';
 import { IPath } from '<src>/hooks/usePathsHook';

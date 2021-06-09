@@ -3,12 +3,14 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 import { reducer as endpointsReducer } from './endpoints';
 import { reducer as documentationEditReducer } from './documentationEdit';
+import { reducer as metadataReducer } from './metadata';
 
 export const createReduxStore = () =>
   configureStore({
     reducer: {
       endpoints: endpointsReducer,
       documentationEdits: documentationEditReducer,
+      metadata: metadataReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

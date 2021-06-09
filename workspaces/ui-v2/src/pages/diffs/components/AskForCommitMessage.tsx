@@ -13,9 +13,7 @@ import {
 } from '<src>/components/navigation/Routes';
 import { PromptNavigateAway } from '<src>/components';
 import { useAnalytics } from '<src>/contexts/analytics';
-import { useClientAgent } from '<src>/hooks/useClientAgent';
-import { useSessionId } from '<src>/hooks/useSessionId';
-import { useSpecMetadata } from '<src>/store';
+import { useAppSelector } from '<src>/store';
 
 const useStagedChangesCount = () => {
   const { pendingEndpoints, context } = useSharedDiffContext();
@@ -52,11 +50,15 @@ export default function AskForCommitMessageDiffPage(props: {
   const spectacleMutator = useSpectacleCommand();
   const history = useHistory();
   const analytics = useAnalytics();
-  const clientSessionId = useSessionId();
-  const clientId = useClientAgent();
   const lastBatchCommitId = useLastBatchCommitId();
   const changelogPageRoute = useChangelogPages();
-  const { id: specId } = useSpecMetadata();
+  const specId = useAppSelector(
+    (state) => state.metadata.data?.specificationId!
+  );
+  const clientId = useAppSelector((state) => state.metadata.data?.clientAgent!);
+  const clientSessionId = useAppSelector(
+    (state) => state.metadata.data?.sessionId!
+  );
   const documentationPageRoute = useDocumentationPageLink();
 
   const {

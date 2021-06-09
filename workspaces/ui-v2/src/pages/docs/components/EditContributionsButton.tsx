@@ -6,8 +6,6 @@ import EditIcon from '@material-ui/icons/Edit';
 
 import { CommitMessageModal } from '<src>/components';
 import { useSpectacleContext } from '<src>/contexts/spectacle-provider';
-import { useClientAgent } from '<src>/hooks/useClientAgent';
-import { useSessionId } from '<src>/hooks/useSessionId';
 import {
   useAppSelector,
   useAppDispatch,
@@ -18,8 +16,6 @@ import {
 export function EditContributionsButton() {
   const classes = useStyles();
   const spectacle = useSpectacleContext();
-  const clientId = useClientAgent();
-  const clientSessionId = useSessionId();
 
   const isEditing = useAppSelector(
     (state) => state.documentationEdits.isEditing
@@ -52,8 +48,6 @@ export function EditContributionsButton() {
       documentationEditActions.saveDocumentationChanges({
         spectacle,
         commitMessage,
-        clientId,
-        clientSessionId,
       })
     );
   };

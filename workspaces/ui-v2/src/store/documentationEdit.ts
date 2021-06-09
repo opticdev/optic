@@ -20,8 +20,6 @@ const saveDocumentationChanges = createAsyncThunk<
   {
     spectacle: IForkableSpectacle;
     commitMessage: string;
-    clientId: string;
-    clientSessionId: string;
   },
   {
     dispatch: AppDispatch;
@@ -29,8 +27,10 @@ const saveDocumentationChanges = createAsyncThunk<
   }
 >(
   'SAVE_DOCUMENTATION_CHANGES',
-  async ({ spectacle, commitMessage, clientId, clientSessionId }, thunkApi) => {
+  async ({ spectacle, commitMessage }, thunkApi) => {
     const state = thunkApi.getState();
+    const clientId = state.metadata.data?.clientAgent || '';
+    const clientSessionId = state.metadata.data?.sessionId || '';
     // TODO fetch from spectacle
     // const { deletedEndpoints } = state.documentationEdits;
     const deleteCommands: CQRSCommand[] = [];
