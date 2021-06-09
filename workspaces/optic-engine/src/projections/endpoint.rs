@@ -283,6 +283,50 @@ impl EndpointProjection {
       .insert(response_id, response_node_index);
   }
 
+  pub fn without_response(&mut self, response_id: ResponseId) {
+    let response_node_index = *self
+      .node_id_to_index
+      .get(&response_id)
+      .expect("expected response_id to have a corresponding node");
+
+    let method_parent_edge_index = self
+      .graph
+      .edges_directed(response_node_index, petgraph::Direction::Outgoing)
+      .find_map(|response_edge| {
+        let status_code_node_index = response_edge.target();
+        let _status_code_node = self
+          .graph
+          .node_weight(status_code_node_index)
+          .filter(|node| matches!(node, Node::HttpStatusCode(_)))?;
+
+        Some(status_code_node_index)
+      })
+      .map(|status_code_node_index| {
+        self
+          .graph
+          .edges_directed(status_code_node_index, petgraph::Direction::Outgoing)
+          .find_map(|status_code_edge| {
+            let _method_node = self
+              .graph
+              .node_weight(status_code_edge.target())
+              .filter(|node| matches!(node, Node::HttpMethod(_)))?;
+
+            Some(status_code_edge.id())
+          })
+      })
+      .flatten();
+
+    if let Some(method_parent_edge_index) = method_parent_edge_index {
+      self.graph.remove_edge(method_parent_edge_index); // prevents response to be resolved from path node
+    }
+    self.node_id_to_index.remove(&response_id); // prevents request node to be looked up by response id
+
+    // GOTCHA: we're not deleting the request node itself, as that would invalidate self.node_id_to_index
+    // as the graph indexes shift.
+    // TODO: figure out the implications of the above, like correctness of queries and
+    // eventual garbage collection.
+  }
+
   pub fn get_path_component_node_index(
     &self,
     path_component_id: &PathComponentId,
@@ -421,6 +465,9 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
       }
       EndpointEvent::ResponseAddedByPathAndMethod(e) => {
         aggregate.with_response(e.path_id, e.http_method, e.http_status_code, e.response_id);
+      }
+      EndpointEvent::ResponseRemoved(e) => {
+        aggregate.without_response(e.response_id);
       }
       EndpointEvent::RequestBodySet(e) => {
         aggregate.with_request_body(
