@@ -9,7 +9,7 @@ use petgraph::Direction::Incoming;
 use petgraph::Graph;
 use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ConflictsProjection {
   pub graph: Graph<Node, Edge>,
 
@@ -328,7 +328,7 @@ impl ConflictsProjection {
 pub type AbsolutePathPattern = String;
 pub type ConflictingIds = Vec<String>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Node {
   Path(AbsolutePathPattern, ConflictingIds),
   HttpMethod(HttpMethod, ConflictingIds),
@@ -336,7 +336,7 @@ pub enum Node {
   HttpContentType(HttpContentType, ConflictingIds),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Edge {
   IsChildOf,
 }

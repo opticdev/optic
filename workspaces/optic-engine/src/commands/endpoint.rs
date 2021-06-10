@@ -91,6 +91,10 @@ impl EndpointCommand {
     })
   }
 
+  pub fn remove_request(request_id: RequestId) -> EndpointCommand {
+    EndpointCommand::RemoveRequest(RemoveRequest { request_id })
+  }
+
   // Responses
   // ---------
 
@@ -122,6 +126,10 @@ impl EndpointCommand {
         is_removed,
       },
     })
+  }
+
+  pub fn remove_response(response_id: ResponseId) -> EndpointCommand {
+    EndpointCommand::RemoveResponse(RemoveResponse { response_id })
   }
 }
 
@@ -217,7 +225,7 @@ pub struct UnsetRequestBodyShape {
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RemoveRequest {
-  request_id: RequestId,
+  pub request_id: RequestId,
 }
 
 // Responses
@@ -274,7 +282,7 @@ pub struct UnsetResponseBodyShape {
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RemoveResponse {
-  response_id: ResponseId,
+  pub response_id: ResponseId,
 }
 
 // Headers
@@ -465,6 +473,17 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         ))]
       }
 
+      EndpointCommand::RemoveRequest(command) => {
+        validation.require(
+          validation.request_exists(&command.request_id),
+          "request id must be in use to be removed",
+        )?;
+
+        vec![EndpointEvent::from(endpoint_events::RequestRemoved::from(
+          command,
+        ))]
+      }
+
       // Responses
       // ---------
       EndpointCommand::AddResponseByPathAndMethod(command) => {
@@ -489,6 +508,17 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         )?;
 
         vec![EndpointEvent::from(endpoint_events::ResponseBodySet::from(
+          command,
+        ))]
+      }
+
+      EndpointCommand::RemoveResponse(command) => {
+        validation.require(
+          validation.response_exists(&command.response_id),
+          "response id must be in use to be removed",
+        )?;
+
+        vec![EndpointEvent::from(endpoint_events::ResponseRemoved::from(
           command,
         ))]
       }
@@ -1000,6 +1030,46 @@ mod test {
   }
 
   #[test]
+  pub fn can_handle_remove_request_command() {
+    let initial_events: Vec<EndpointEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+      {"RequestAdded": {"requestId": "request_1", "pathId": "path_1", "httpMethod": "GET"}},
+      {"RequestAdded": {"requestId": "request_2", "pathId": "path_1", "httpMethod": "POST"}},
+      {"RequestRemoved": {"requestId": "request_2" }},
+    ]))
+    .expect("initial events should be valid endpoint events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let valid_command: EndpointCommand = serde_json::from_value(json!(
+      {"RemoveRequest": {"requestId": "request_1" }}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!("can_handle_remove_request_command__new_events", new_events);
+
+    // TODO: enable this usecase once EndpointProjection handles new removing of requests
+    // let unexisting_request: EndpointCommand = serde_json::from_value(json!(
+    //   {"RemoveRequest": {"requestId": "request_2" }}
+    // ))
+    // .unwrap();
+    // let unexisting_request_result = projection.execute(unexisting_request);
+    // assert!(unexisting_request_result.is_err());
+    // assert_debug_snapshot!(
+    //   "can_handle_remove_request_command__unexisting_request_result",
+    //   unexisting_request_result.unwrap_err()
+    // );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
   pub fn can_handle_add_response_by_path_and_method_command() {
     let initial_events: Vec<EndpointEvent> = serde_json::from_value(json!([
       {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
@@ -1086,6 +1156,49 @@ mod test {
       "can_handle_set_response_body_shape_command__unexisting_response_result",
       unexisting_response_result.unwrap_err()
     );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
+  pub fn can_handle_remove_response_command() {
+    let initial_events: Vec<EndpointEvent> = serde_json::from_value(json!([
+        {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+        {"RequestAdded": {"requestId": "request_1", "pathId": "path_1", "httpMethod": "GET"}},
+        {"RequestAdded": {"requestId": "request_2", "pathId": "path_1", "httpMethod": "POST"}},
+
+        {"ResponseAddedByPathAndMethod": {"responseId": "response_1", "pathId": "path_1", "httpMethod": "GET", "httpStatusCode": 200}},
+        {"ResponseAddedByPathAndMethod": {"responseId": "response_2", "pathId": "path_1", "httpMethod": "POST", "httpStatusCode": 201}},
+        {"ResponseRemoved": {"responseId": "response_2" }},
+      ]))
+      .expect("initial events should be valid endpoint events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let valid_command: EndpointCommand = serde_json::from_value(json!(
+      {"RemoveResponse": {"responseId": "response_1" }}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!("can_handle_remove_response_command__new_events", new_events);
+
+    // TODO: enable this usecase once EndpointProjection handles new removing of responses
+    // let unexisting_response: EndpointCommand = serde_json::from_value(json!(
+    //   {"RemoveRequest": {"requestId": "request_2" }}
+    // ))
+    // .unwrap();
+    // let unexisting_response_result = projection.execute(unexisting_response);
+    // assert!(unexisting_response_result.is_err());
+    // assert_debug_snapshot!(
+    //   "can_handle_remove_response_command__unexisting_response_result",
+    //   unexisting_response_result.unwrap_err()
+    // );
 
     for event in new_events {
       projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
