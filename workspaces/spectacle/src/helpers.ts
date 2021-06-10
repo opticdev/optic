@@ -1,42 +1,94 @@
 import { shapes, endpoints } from '@useoptic/graph-lib';
-import { NodeType } from '../../graph-lib/build/shapes-graph';
+import { NodeType as EndpointsNodeType } from '../../graph-lib/build/endpoints-graph';
+import { NodeType as ShapesNodeType } from '../../graph-lib/build/shapes-graph';
+
+type SerializedGraph = {
+  nodes: any[];
+  edges: [number, number, any][];
+  nodeIndexToId: Record<string, string>;
+};
+
+const getReachableNodes = (
+  { edges, nodeIndexToId }: SerializedGraph,
+  rootId: string
+): Set<string> => {
+  const reachableNodes = new Set<string>();
+  const nodesToOutgoingNeighbors = new Map<string, string[]>();
+  for (const [sourceIndex, targetIndex] of edges) {
+    // With using a map, we need to be more specific with strings vs numbers
+    // (where as objects allow us to be looser)
+    const strSourceIndex = sourceIndex.toString();
+    const strTargetIndex = targetIndex.toString();
+    const neighbors = nodesToOutgoingNeighbors.get(strTargetIndex);
+    if (neighbors) {
+      neighbors.push(strSourceIndex);
+    } else {
+      nodesToOutgoingNeighbors.set(strTargetIndex, [strSourceIndex]);
+    }
+  }
+
+  // We need to use find since nodeIndexToId can be missing indexes of deleted nodes
+  const startingNodeToIndex = Object.entries(nodeIndexToId).find(
+    ([, id]) => id === rootId
+  );
+  if (!startingNodeToIndex) {
+    return reachableNodes;
+  }
+  const startingIndex = startingNodeToIndex[0];
+
+  const stack = [startingIndex];
+  while (stack.length > 0) {
+    const next = stack.pop()!;
+    reachableNodes.add(nodeIndexToId[next]);
+    const neighbors = nodesToOutgoingNeighbors.get(next);
+    if (neighbors) {
+      for (const neighbor of neighbors) {
+        const neighborId = nodeIndexToId[neighbor];
+        if (!reachableNodes.has(neighborId)) {
+          stack.push(neighbor);
+        }
+      }
+    }
+  }
+
+  return reachableNodes;
+};
 
 export function buildEndpointsGraph(spec: any, opticEngine: any) {
-  const serializedGraph = JSON.parse(
+  const serializedGraph: SerializedGraph = JSON.parse(
     opticEngine.get_endpoints_projection(spec)
   );
   const { nodes, edges, nodeIndexToId } = serializedGraph;
 
   const indexer = new endpoints.GraphIndexer();
-
-  function remapId(arrayIndex: number) {
-    const fallbackId = arrayIndex.toString();
-    const id = nodeIndexToId[fallbackId];
-    if (id !== undefined) {
-      return id;
-    }
-    return fallbackId;
-  }
+  const reachableNodes = getReachableNodes(serializedGraph, 'root');
 
   nodes.forEach((node: endpoints.Node, index: number) => {
-    const id = remapId(index);
-    indexer.addNode({
-      ...node,
-      id,
-    });
+    const id: string | undefined = nodeIndexToId[index];
+    if (node.type === EndpointsNodeType.BatchCommit || reachableNodes.has(id)) {
+      indexer.addNode({
+        ...node,
+        id,
+      });
+    }
   });
-  edges.forEach((e: [number, number, any]) => {
+  edges.forEach((e) => {
     const [sourceIndex, targetIndex, edge] = e;
-    indexer.addEdge(edge, remapId(sourceIndex), remapId(targetIndex));
+    const sourceId: string | undefined = nodeIndexToId[sourceIndex];
+    const targetId: string | undefined = nodeIndexToId[targetIndex];
+    if (reachableNodes.has(sourceId) && reachableNodes.has(targetId)) {
+      indexer.addEdge(edge, sourceId, targetId);
+    }
   });
   const queries = new endpoints.GraphQueries(indexer);
   return queries;
 }
 
 export function buildShapesGraph(spec: any, opticEngine: any) {
-  const serializedGraph = JSON.parse(opticEngine.get_shapes_projection(spec));
+  const serializedGraph: SerializedGraph = JSON.parse(
+    opticEngine.get_shapes_projection(spec)
+  );
   const { nodes, edges, nodeIndexToId } = serializedGraph;
-  // console.log('nodes', nodes);
 
   const indexer = new shapes.GraphIndexer();
 
@@ -85,7 +137,7 @@ export function buildEndpointChanges(
   sinceBatchCommitId?: string
 ): EndpointChanges {
   const sortedBatchCommits = endpointQueries
-    .listNodesByType(endpoints.NodeType.BatchCommit)
+    .listNodesByType(EndpointsNodeType.BatchCommit)
     .results.sort((a: any, b: any) => {
       return a.result.data.createdAt < b.result.data.createdAt ? 1 : -1;
     });
@@ -123,19 +175,19 @@ export function buildEndpointChanges(
     const batchCommitId = batchCommit.result.id;
     // TODO: create query for neighbors of all types
     shapeQueries
-      .listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
+      .listIncomingNeighborsByType(batchCommitId, ShapesNodeType.Shape)
       .results.forEach((shape: any) => {
         batchCommitNeighborIds.set(shape.result.id, batchCommitId);
       });
     shapeQueries
-      .listIncomingNeighborsByType(batchCommitId, NodeType.Field)
+      .listIncomingNeighborsByType(batchCommitId, ShapesNodeType.Field)
       .results.forEach((field: any) => {
         batchCommitNeighborIds.set(field.result.id, batchCommitId);
       });
   });
 
   endpointQueries
-    .listNodesByType(endpoints.NodeType.Body)
+    .listNodesByType(EndpointsNodeType.Body)
     .results.reduce((results: string[], bodyNode: any) => {
       const { rootShapeId } = bodyNode.result.data;
       if (batchCommitNeighborIds.has(rootShapeId)) {
