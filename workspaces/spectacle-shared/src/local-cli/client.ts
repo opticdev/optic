@@ -20,9 +20,13 @@ import {
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IApiCliConfig } from '@useoptic/cli-config';
+import { EventEmitter } from 'events';
 
 export class LocalCliSpectacle implements IForkableSpectacle {
-  constructor(private baseUrl: string, private opticEngine: IOpticEngine) {}
+  private eventEmitter: EventEmitter;
+  constructor(private baseUrl: string, private opticEngine: IOpticEngine) {
+    this.eventEmitter = new EventEmitter();
+  }
   async fork(): Promise<IForkableSpectacle> {
     const events = await JsonHttpClient.getJson(`${this.baseUrl}/events`);
     const opticContext = await InMemoryOpticContextBuilder.fromEvents(
@@ -36,7 +40,12 @@ export class LocalCliSpectacle implements IForkableSpectacle {
     options: SpectacleInput<Input>
   ): Promise<Result> {
     // send query to local cli-server
-    return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
+    const response = await JsonHttpClient.postJson(
+      `${this.baseUrl}/spectacle`,
+      options
+    );
+    this.eventEmitter.emit('update');
+    return response;
   }
 
   async query<Result, Input = {}>(
@@ -44,6 +53,14 @@ export class LocalCliSpectacle implements IForkableSpectacle {
   ): Promise<Result> {
     // send query to local cli-server
     return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
+  }
+
+  registerUpdateEvent<T extends (...args: any) => any>(fn: T) {
+    this.eventEmitter.on('update', fn);
+  }
+
+  unregisterUpdateEvent<T extends (...args: any) => any>(fn: T) {
+    this.eventEmitter.off('update', fn);
   }
 }
 

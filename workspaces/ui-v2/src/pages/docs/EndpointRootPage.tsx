@@ -12,11 +12,15 @@ import {
   JsonLike,
   PageLayout,
 } from '<src>/components';
-import { useContributionEditing } from './contexts/Contributions';
 import { FullWidth } from '<src>/components';
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import { SubtleBlueBackground } from '<src>/constants/theme';
-import { useAppSelector } from '<src>/store';
+import {
+  useAppSelector,
+  useAppDispatch,
+  selectors,
+  documentationEditActions,
+} from '<src>/store';
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
@@ -46,6 +50,13 @@ export const EndpointRootPage: FC<
   }>
 > = ({ match }) => {
   const endpointsState = useAppSelector((state) => state.endpoints.results);
+  const isEditing = useAppSelector(
+    (state) => state.documentationEdits.isEditing
+  );
+  const pendingCount = useAppSelector(
+    selectors.getDocumentationEditStagedCount
+  );
+  const dispatch = useAppDispatch();
 
   const { pathId, method } = match.params;
   const thisEndpoint = useMemo(
@@ -57,16 +68,15 @@ export const EndpointRootPage: FC<
   );
 
   const bodies = useEndpointBody(pathId, method);
-  const {
-    isEditing,
-    pendingCount,
-    setCommitModalOpen,
-  } = useContributionEditing();
 
   const onKeyPress = useRunOnKeypress(
     () => {
       if (isEditing && pendingCount > 0) {
-        setCommitModalOpen(true);
+        dispatch(
+          documentationEditActions.updateCommitModalState({
+            commitModalOpen: true,
+          })
+        );
       }
     },
     {
@@ -77,17 +87,17 @@ export const EndpointRootPage: FC<
   const showDeleteEndpointUi =
     process.env.REACT_APP_FF_SHOW_DELETE_ENDPOINT === 'true';
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const endpointId = getEndpointId({ method, pathId });
 
-  // TODO redux-delete-implement replace this with redux selector query
-  const isEndpointStagedForDeletion = false;
+  const isEndpointStagedForDeletion = useAppSelector((state) =>
+    state.documentationEdits.deletedEndpoints.includes(endpointId)
+  );
 
-  const deleteEndpoint = (endpointId: string) => {
-    // TODO redux-delete-implement implement
-  };
+  const deleteEndpoint = () =>
+    dispatch(documentationEditActions.deleteEndpoint({ endpointId }));
 
-  const undeleteEndpoint = (endpointId: string) => {
-    // TODO redux-delete-implement implement
-  };
+  const undeleteEndpoint = () =>
+    dispatch(documentationEditActions.undeleteEndpoint({ endpointId }));
 
   const classes = useStyles();
 
@@ -98,7 +108,6 @@ export const EndpointRootPage: FC<
   if (!thisEndpoint) {
     return <>no endpoint here</>;
   }
-  const endpointId = getEndpointId({ method, pathId });
   const parameterizedPathParts = thisEndpoint.pathParameters.filter(
     (path) => path.isParameterized
   );
@@ -110,7 +119,7 @@ export const EndpointRootPage: FC<
           endpoint={thisEndpoint}
           handleClose={() => setDeleteModalOpen(false)}
           handleConfirm={() => {
-            deleteEndpoint(endpointId);
+            deleteEndpoint();
             setDeleteModalOpen(false);
           }}
         />
@@ -129,6 +138,7 @@ export const EndpointRootPage: FC<
           contributionKey="purpose"
           defaultText="What does this endpoint do?"
           initialValue={thisEndpoint.purpose}
+          endpointId={endpointId}
         />
         <div className={classes.endpointNameContainer}>
           <EndpointName
@@ -144,7 +154,7 @@ export const EndpointRootPage: FC<
                 variant="outlined"
                 color="secondary"
                 onClick={() => {
-                  undeleteEndpoint(endpointId);
+                  undeleteEndpoint();
                 }}
               >
                 Undelete <UndoIcon className={classes.icon} />
@@ -169,6 +179,7 @@ export const EndpointRootPage: FC<
               contributionKey={'description'}
               defaultText={'Describe this endpoint'}
               initialValue={thisEndpoint.description}
+              endpointId={endpointId}
             />
           }
           right={
@@ -193,6 +204,7 @@ export const EndpointRootPage: FC<
                   return (
                     <DocsFieldOrParameterContribution
                       key={param.id}
+                      endpointId={endpointId}
                       id={param.id}
                       name={param.name}
                       shapes={[alwaysAString]}
@@ -218,10 +230,11 @@ export const EndpointRootPage: FC<
           }
         />
 
-        {bodies.requests.map((i, index) => {
+        {bodies.requests.map((i) => {
           return (
             <TwoColumnBodyEditable
-              key={index}
+              key={i.rootShapeId}
+              endpointId={endpointId}
               rootShapeId={i.rootShapeId}
               bodyId={i.requestId}
               location={'Request Body'}
@@ -230,10 +243,11 @@ export const EndpointRootPage: FC<
             />
           );
         })}
-        {bodies.responses.map((i, index) => {
+        {bodies.responses.map((i) => {
           return (
             <TwoColumnBodyEditable
-              key={index}
+              key={i.rootShapeId}
+              endpointId={endpointId}
               rootShapeId={i.rootShapeId}
               bodyId={i.responseId}
               location={`${i.statusCode} Response`}

@@ -1,0 +1,12 @@
+---
+source: workspaces/optic-engine/src/commands/endpoint.rs
+expression: new_events
+---
+[
+    ResponseRemoved(
+        ResponseRemoved {
+            response_id: "response_1",
+            event_context: None,
+        },
+    ),
+]

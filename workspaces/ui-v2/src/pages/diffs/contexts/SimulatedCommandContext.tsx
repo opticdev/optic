@@ -5,8 +5,7 @@ import { IForkableSpectacle } from '@useoptic/spectacle';
 
 import { Loading } from '<src>/components';
 import { SpectacleStore } from '<src>/contexts/spectacle-provider';
-import { useSessionId } from '<src>/hooks/useSessionId';
-import { createReduxStore } from '<src>/store';
+import { createReduxStore, useAppSelector } from '<src>/store';
 import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
 
 type SimulatedCommandStoreProps = {
@@ -30,7 +29,9 @@ export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
   const [simulated, setSimulated] = useState<IForkableSpectacle | undefined>(
     undefined
   );
-  const clientSessionId = useSessionId();
+  const clientSessionId = useAppSelector(
+    (state) => state.metadata.data?.sessionId!
+  );
   useEffect(() => {
     async function task() {
       const simulated = await props.spectacle.fork();

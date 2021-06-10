@@ -14,11 +14,15 @@ import { EndpointName } from '<src>/components';
 import { IEndpoint } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
-import { useContributionEditing } from '../contexts/Contributions';
 import {
   DeleteEndpointConfirmationModal,
   EndpointNameMiniContribution,
 } from '../components';
+import {
+  useAppSelector,
+  useAppDispatch,
+  documentationEditActions,
+} from '<src>/store';
 
 type EndpointRowProps = {
   endpoint: IEndpoint;
@@ -32,21 +36,23 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
     method: endpoint.method,
     pathId: endpoint.pathId,
   });
-  const { isEditing } = useContributionEditing();
+  const dispatch = useAppDispatch();
+  const isEditing = useAppSelector(
+    (state) => state.documentationEdits.isEditing
+  );
   const showDeleteEndpointUi =
     process.env.REACT_APP_FF_SHOW_DELETE_ENDPOINT === 'true';
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  // TODO redux-delete-implement replace this with redux selector query
-  const isEndpointStagedForDeletion = false;
+  const isEndpointStagedForDeletion = useAppSelector((state) =>
+    state.documentationEdits.deletedEndpoints.includes(endpointId)
+  );
 
-  const deleteEndpoint = (endpointId: string) => {
-    // TODO redux-delete-implement implement
-  };
+  const deleteEndpoint = () =>
+    dispatch(documentationEditActions.deleteEndpoint({ endpointId }));
 
-  const undeleteEndpoint = (endpointId: string) => {
-    // TODO redux-delete-implement implement
-  };
+  const undeleteEndpoint = () =>
+    dispatch(documentationEditActions.undeleteEndpoint({ endpointId }));
 
   return (
     <>
@@ -55,7 +61,7 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
           endpoint={endpoint}
           handleClose={() => setDeleteModalOpen(false)}
           handleConfirm={() => {
-            deleteEndpoint(endpointId);
+            deleteEndpoint();
             setDeleteModalOpen(false);
           }}
         />
@@ -88,6 +94,7 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
         >
           <EndpointNameMiniContribution
             id={endpointId}
+            endpointId={endpointId}
             defaultText="name for this endpoint"
             contributionKey="purpose"
             initialValue={endpoint.purpose}
@@ -98,7 +105,7 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
                 <Tooltip title="Unstage endpoint deletion">
                   <IconButton
                     onClick={() => {
-                      undeleteEndpoint(endpointId);
+                      undeleteEndpoint();
                     }}
                   >
                     <UndoIcon fontSize="small" />

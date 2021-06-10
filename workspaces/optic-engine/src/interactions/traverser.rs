@@ -56,7 +56,11 @@ impl<'a> Traverser<'a> {
       Some(path_id) => {
         let responses = self
           .endpoint_queries
-          .resolve_responses(interaction, path_id);
+          .resolve_responses_by_method_and_status_code(
+            &interaction.request.method,
+            interaction.response.status_code,
+            path_id,
+          );
         for response in responses {
           // eprintln!("visiting response body");
           response_body_visitor.visit(

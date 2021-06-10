@@ -26,14 +26,15 @@ import {
 import { AsyncStatus } from '<src>/types';
 import { useOpticEngine } from '<src>/hooks/useOpticEngine';
 import { useCallback, useEffect, useState } from 'react';
-import { ConfigRepositoryStore } from '<src>/hooks/useConfigHook';
+import { ConfigRepositoryStore } from '<src>/contexts/OpticConfigContext';
 import { AnalyticsStore } from '<src>/contexts/analytics';
 import {
   getMetadata,
   initialize,
   track,
 } from '<src>/contexts/analytics/implementations/cloudViewerAnalytics';
-import { SpecMetadataProvider, store } from '<src>/store';
+import { store } from '<src>/store';
+import { MetadataLoader } from '<src>/contexts/MetadataLoader';
 
 const appConfig: OpticAppConfig = {
   config: {
@@ -127,7 +128,7 @@ export default function CloudViewer() {
                   initialize={initialize}
                   track={track}
                 >
-                  <SpecMetadataProvider>
+                  <MetadataLoader>
                     <Switch>
                       <Route
                         path={`${match.path}/changes-since/:batchId`}
@@ -143,7 +144,7 @@ export default function CloudViewer() {
                       />
                       <Redirect to={`${match.path}/documentation`} />
                     </Switch>
-                  </SpecMetadataProvider>
+                  </MetadataLoader>
                 </AnalyticsStore>
               </BaseUrlProvider>
             </ReduxProvider>
