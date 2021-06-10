@@ -29,7 +29,6 @@ export function buildEndpointsGraph(spec: any, opticEngine: any) {
     const [sourceIndex, targetIndex, edge] = e;
     indexer.addEdge(edge, remapId(sourceIndex), remapId(targetIndex));
   });
-  console.log(serializedGraph);
   const queries = new endpoints.GraphQueries(indexer);
   return queries;
 }

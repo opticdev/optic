@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+source: workspaces/optic-engine/tests/domain-conflict-scenarios-generated.rs
 expression: "&spec_projection.spectacle_endpoints_serializable()"
 ---
 {
@@ -10,7 +10,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "absolutePathPattern": "/",
         "isParameterized": false,
         "name": "",
-        "pathId": "root"
+        "pathId": "root",
+        "isDeleted": false
       }
     },
     {
@@ -27,7 +28,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "absolutePathPattern": "/posts",
         "isParameterized": false,
         "name": "posts",
-        "pathId": "path_8fRaIiFWPP"
+        "pathId": "path_8fRaIiFWPP",
+        "isDeleted": false
       }
     },
     {
@@ -36,14 +38,16 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "absolutePathPattern": "/posts/1",
         "isParameterized": false,
         "name": "1",
-        "pathId": "path_p6kbd9Kkg7"
+        "pathId": "path_p6kbd9Kkg7",
+        "isDeleted": false
       }
     },
     {
       "type": "Request",
       "data": {
         "httpMethod": "GET",
-        "requestId": "request_kXPYf9Kvz3"
+        "requestId": "request_kXPYf9Kvz3",
+        "isDeleted": false
       }
     },
     {
@@ -51,14 +55,16 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "httpStatusCode": 200,
-        "responseId": "response_nHVA0oUt5j"
+        "responseId": "response_nHVA0oUt5j",
+        "isDeleted": false
       }
     },
     {
       "type": "Body",
       "data": {
         "httpContentType": "application/json",
-        "rootShapeId": "shape_UzxFqwGJ8h"
+        "rootShapeId": "shape_UzxFqwGJ8h",
+        "isDeleted": false
       }
     },
     {
