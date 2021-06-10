@@ -11,7 +11,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "isParameterized": false,
         "name": "",
         "pathId": "root",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -29,7 +29,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "isParameterized": false,
         "name": "posts",
         "pathId": "path_rmPGKep5SW",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -39,7 +39,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "isParameterized": false,
         "name": "profile",
         "pathId": "path_CmA4ZrhSXc",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -47,7 +47,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "requestId": "request_lUXaqigODI",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -56,7 +56,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "httpMethod": "GET",
         "httpStatusCode": 200,
         "responseId": "response_zEjgh3n6Uq",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -64,7 +64,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpContentType": "application/json",
         "rootShapeId": "shape_GsyFkrJzlL",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -72,7 +72,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "requestId": "request_ncEWlZU2g3",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -81,7 +81,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "httpMethod": "GET",
         "httpStatusCode": 200,
         "responseId": "response_pan3yNmeiQ",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -89,7 +89,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpContentType": "application/json",
         "rootShapeId": "shape_ApnstcbWQx",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -107,7 +107,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "isParameterized": false,
         "name": "posts",
         "pathId": "path_9Wdr4kyshW",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -117,7 +117,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "isParameterized": false,
         "name": "comments",
         "pathId": "path_8paa69fCfC",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -127,7 +127,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "isParameterized": false,
         "name": "profile",
         "pathId": "path_osi3pD8diw",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -135,7 +135,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "requestId": "request_w0KmJ5kZIe",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -144,7 +144,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "httpMethod": "GET",
         "httpStatusCode": 200,
         "responseId": "response_iQd5ISIZH9",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -152,7 +152,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpContentType": "application/json",
         "rootShapeId": "shape_E9IzHThmZv",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -160,7 +160,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "requestId": "request_CEJzcYN3NN",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -169,7 +169,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "httpMethod": "GET",
         "httpStatusCode": 200,
         "responseId": "response_ata4rM8zB1",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -177,7 +177,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpContentType": "application/json",
         "rootShapeId": "shape_UlLNexyAzZ",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -185,7 +185,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "requestId": "request_AJISCmgnoU",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -194,7 +194,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "httpMethod": "GET",
         "httpStatusCode": 200,
         "responseId": "response_HZFYN85Iui",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -202,7 +202,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpContentType": "application/json",
         "rootShapeId": "shape_MiVhGwZrMY",
-        "isDeleted": false
+        "isRemoved": false
       }
     }
   ],

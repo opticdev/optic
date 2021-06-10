@@ -40,24 +40,24 @@ export type PathNode = {
   pathId: string;
   name: string;
   isParameterized: boolean;
-  isDeleted: boolean;
+  isRemoved: boolean;
 };
 export type RequestNode = {
   requestId: string;
   httpMethod: string;
-  isDeleted: boolean;
+  isRemoved: boolean;
 };
 export type ResponseNode = {
   responseId: string;
   httpMethod: string;
   httpStatusCode: number;
-  isDeleted: boolean;
+  isRemoved: boolean;
 };
 
 export type BodyNode = {
   httpContentType: string;
   rootShapeId: string;
-  isDeleted: boolean;
+  isRemoved: boolean;
 };
 
 export type BatchCommitNode = {
@@ -69,7 +69,7 @@ export type BatchCommitNode = {
 ////////////////////////////////////////////////////////////////////////////////
 // A batch commit node can never be deleted
 const isNodeDeleted = (node: Node): boolean =>
-  node.type !== NodeType.BatchCommit && node.data.isDeleted;
+  node.type !== NodeType.BatchCommit && node.data.isRemoved;
 
 ////////////////////////////////////////////////////////////////////////////////
 

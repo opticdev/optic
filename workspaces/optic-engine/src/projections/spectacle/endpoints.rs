@@ -287,7 +287,7 @@ impl EndpointsProjection {
       path_id: path_id.clone(),
       name: path_name,
       is_parameterized,
-      is_deleted: false,
+      is_removed: false,
     }));
     self.domain_id_to_index.insert(path_id, node_index);
 
@@ -313,7 +313,7 @@ impl EndpointsProjection {
     let node = Node::Request(RequestNode {
       http_method: http_method,
       request_id: request_id.clone(),
-      is_deleted: false,
+      is_removed: false,
     });
 
     let node_index = self.graph.add_node(node);
@@ -331,7 +331,7 @@ impl EndpointsProjection {
       .expect("expected request_id to have a corresponding node");
 
     if let Some(Node::Request(request_node)) = self.graph.node_weight_mut(request_node_index) {
-      request_node.is_deleted = true;
+      request_node.is_removed = true;
     }
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -351,7 +351,7 @@ impl EndpointsProjection {
       http_method: http_method,
       http_status_code: http_status_code,
       response_id: response_id.clone(),
-      is_deleted: false,
+      is_removed: false,
     });
 
     let node_index = self.graph.add_node(node);
@@ -369,7 +369,7 @@ impl EndpointsProjection {
       .expect("expected response_id to have a corresponding node");
 
     if let Some(Node::Response(response_node)) = self.graph.node_weight_mut(response_node_index) {
-      response_node.is_deleted = true;
+      response_node.is_removed = true;
     }
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -386,7 +386,7 @@ impl EndpointsProjection {
     let node = Node::Body(BodyNode {
       http_content_type: http_content_type,
       root_shape_id: root_shape_id.clone(),
-      is_deleted: false,
+      is_removed: false,
     });
     let node_index = self.graph.add_node(node);
     self
@@ -410,7 +410,7 @@ impl EndpointsProjection {
     let node = Node::Body(BodyNode {
       http_content_type: http_content_type,
       root_shape_id: root_shape_id.clone(),
-      is_deleted: false,
+      is_removed: false,
     });
     let node_index = self.graph.add_node(node);
     self
@@ -498,7 +498,7 @@ pub struct PathNode {
   is_parameterized: bool,
   name: String,
   path_id: PathComponentId,
-  is_deleted: bool,
+  is_removed: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -506,7 +506,7 @@ pub struct PathNode {
 pub struct RequestNode {
   http_method: HttpMethod,
   request_id: RequestId,
-  is_deleted: bool,
+  is_removed: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -515,7 +515,7 @@ pub struct ResponseNode {
   http_method: HttpMethod,
   http_status_code: HttpStatusCode,
   response_id: ResponseId,
-  is_deleted: bool,
+  is_removed: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -523,7 +523,7 @@ pub struct ResponseNode {
 pub struct BodyNode {
   http_content_type: HttpContentType,
   root_shape_id: ShapeId,
-  is_deleted: bool,
+  is_removed: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

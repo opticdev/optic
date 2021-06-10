@@ -11,7 +11,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "isParameterized": false,
         "name": "",
         "pathId": "root",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -29,7 +29,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "isParameterized": false,
         "name": "todos",
         "pathId": "path_2r0poc4Efl",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -45,7 +45,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "requestId": "request_eaGDFPq9ha",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -54,7 +54,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "httpMethod": "GET",
         "httpStatusCode": 200,
         "responseId": "response_7XA4cz1Jq4",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -62,7 +62,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpContentType": "application/json",
         "rootShapeId": "shape_KrxPAcTUDM",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -70,7 +70,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "requestId": "request_p8FwHVQwXH",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -79,7 +79,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "httpMethod": "GET",
         "httpStatusCode": 200,
         "responseId": "response_fr6lmtes1c",
-        "isDeleted": false
+        "isRemoved": false
       }
     },
     {
@@ -87,7 +87,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpContentType": "application/json",
         "rootShapeId": "shape_hcQz2zr63G",
-        "isDeleted": false
+        "isRemoved": false
       }
     }
   ],
