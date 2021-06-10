@@ -1,10 +1,12 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { ToggleButton } from '@material-ui/lab';
 import { Typography, makeStyles } from '@material-ui/core';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import EditIcon from '@material-ui/icons/Edit';
 
 import { CommitMessageModal } from '<src>/components';
+import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
 import { useSpectacleContext } from '<src>/contexts/spectacle-provider';
 import {
   useAppSelector,
@@ -15,6 +17,8 @@ import {
 
 export function EditContributionsButton() {
   const classes = useStyles();
+  const history = useHistory();
+  const documentationPageRoute = useDocumentationPageLink();
   const spectacle = useSpectacleContext();
 
   const isEditing = useAppSelector(
@@ -25,6 +29,9 @@ export function EditContributionsButton() {
   );
   const pendingCount = useAppSelector(
     selectors.getDocumentationEditStagedCount
+  );
+  const deletedEndpointCount = useAppSelector(
+    (state) => state.documentationEdits.deletedEndpoints.length
   );
   const dispatch = useAppDispatch();
 
@@ -44,12 +51,25 @@ export function EditContributionsButton() {
   };
 
   const save = (commitMessage: string) => {
+    // If we are on endpoint root page and we just deleted the page, we want to redirect
+    const shouldRedirect =
+      deletedEndpointCount > 0 &&
+      history.location.pathname !== documentationPageRoute.path;
     dispatch(
       documentationEditActions.saveDocumentationChanges({
         spectacle,
         commitMessage,
       })
-    );
+    )
+      .then(() => {
+        if (shouldRedirect) {
+          history.push(documentationPageRoute.linkTo());
+        }
+      })
+      .catch((e) => {
+        // TODO handle error state
+        console.error(e);
+      });
   };
 
   const contents = !isEditing ? (

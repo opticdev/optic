@@ -9,15 +9,20 @@ import ReactMarkdown from 'react-markdown';
 import {
   useAppSelector,
   useAppDispatch,
+  selectors,
   documentationEditActions,
 } from '<src>/store';
+import { getEndpointId } from '<src>/utils';
 
 export type MarkdownBodyContributionProps = {
   id: string;
   contributionKey: string;
   defaultText: string;
   initialValue: string;
-  endpointId: string;
+  endpoint: {
+    method: string;
+    pathId: string;
+  };
 };
 
 export function MarkdownBodyContribution({
@@ -25,15 +30,12 @@ export function MarkdownBodyContribution({
   contributionKey,
   defaultText,
   initialValue,
-  endpointId,
+  endpoint,
 }: MarkdownBodyContributionProps) {
+  const endpointId = getEndpointId(endpoint);
   const classes = useStyles();
 
-  const isEditable = useAppSelector(
-    (state) =>
-      state.documentationEdits.isEditing &&
-      !state.documentationEdits.deletedEndpoints.includes(endpointId)
-  );
+  const isEditable = useAppSelector(selectors.isEndpointEditable(endpoint));
   const contributionValue = useAppSelector(
     (state) =>
       state.documentationEdits.contributions[id]?.[contributionKey]?.value
