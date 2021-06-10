@@ -232,7 +232,7 @@ You can dive in deeper by clicking “Review” to see exactly which API request
 
 ![Showing changed API endpoints in Optic](https://i.imgur.com/h4xgAgQ.png)
 
-Anytime a pull request is opened, the Optic GitHub Action will compare the new specification to the specification file in the base branch. Then it summarizes the differences in a comment, allowing your teammates, API consumers, or QA team to quickly assess how your changes might affect the API in the real world.
+Anytime a pull request is opened, the Optic GitHub Action will compare the new specification to the specification file in the base branch. Then it summarizes the differences in a comment, allowing your teammates, API consumers, or QA team to quickly assess how your changes might affect the API in the real world. You can even have your teammates notified with the optional `SUBSCRIBERS` option. It takes a comma-separated value of GitHub usernames to include in the PR comment, which will notify the users of an API change`
 
 These open comments are also a great place to have discussions with your team, tag users who need to know about the changes, and suggest updates.
 
