@@ -1,0 +1,8 @@
+---
+source: workspaces/optic-engine/src/queries/endpoint.rs
+expression: unused_path_ids
+---
+[
+    "path_3",
+    "path_parameter_1",
+]

@@ -97,7 +97,7 @@ impl AppendedBatch {
       let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
       let unused_path_ids = endpoint_queries.resolve_unused_paths();
       unused_path_ids
-        .flat_map(|path_id| endpoint_queries.delete_path_commands(path_id))
+        .flat_map(|path_id| endpoint_queries.delete_path_commands(&path_id))
         .collect()
     };
 

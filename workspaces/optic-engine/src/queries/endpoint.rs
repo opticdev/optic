@@ -6,8 +6,11 @@ use crate::state::endpoint::{
   HttpMethod, HttpStatusCode, PathComponentId, PathComponentIdRef, RequestId, ResponseId,
 };
 use petgraph::graph::Graph;
-use petgraph::visit::EdgeFilteredNeighborsDirected;
+use petgraph::visit::{
+  depth_first_search, Control, DfsEvent, EdgeFilteredNeighborsDirected, Reversed,
+};
 use serde::Serialize;
+use std::collections::{BTreeSet, HashMap};
 
 pub struct EndpointQueries<'a> {
   pub endpoint_projection: &'a EndpointProjection,
@@ -97,10 +100,81 @@ impl<'a> EndpointQueries<'a> {
     last_resolved_path_id
   }
 
-  pub fn resolve_unused_paths(&self) -> impl Iterator<Item = &PathComponentId> + '_ {
-    todo!("implement resolving of unused paths");
+  pub fn resolve_unused_paths(&self) -> impl Iterator<Item = PathComponentId> + '_ {
+    let root_path_node_index = self
+      .graph_get_index(ROOT_PATH_ID)
+      .expect("a root path component node should exist");
 
-    std::iter::empty()
+    let reversed_graph = Reversed(&self.endpoint_projection.graph);
+
+    let mut unused_path_ids: BTreeSet<PathComponentId> = BTreeSet::new();
+    let mut path_ids_by_index = HashMap::new();
+
+    depth_first_search(&reversed_graph, Some(*root_path_node_index), |event| {
+      match event {
+        // Discovered a new node
+        DfsEvent::Discover(discovered_node_index, time) => {
+          let node = self
+            .endpoint_projection
+            .graph
+            .node_weight(discovered_node_index);
+          if let Some(Node::PathComponent(path_id, _)) = node {
+            unused_path_ids.insert(path_id.clone());
+            path_ids_by_index.insert(discovered_node_index, path_id.clone());
+            Control::Continue
+          } else {
+            Control::Prune // Stop going down this branch when not a path component
+          }
+        }
+        // discovered an outgoing edge from an already discovered node
+        DfsEvent::TreeEdge(parent_node_index, child_node_index) => {
+          let child_node = self
+            .endpoint_projection
+            .graph
+            .node_weight(child_node_index)
+            .expect("target node should exists");
+
+          let path_id = path_ids_by_index
+            .get(&parent_node_index)
+            .expect("parent path node should already have been discovered");
+
+          match child_node {
+            Node::PathComponent(_, _) => {
+              unused_path_ids.remove(path_id);
+              Control::Continue // we'll want to discover at the target edge as well
+            }
+            Node::HttpMethod(method) => {
+              let request_ids = self
+                .resolve_requests(path_id, method)
+                .expect("path should exist")
+                .map(|_| ());
+              let response_ids = self
+                .resolve_responses(path_id, method)
+                .expect("path should exist")
+                .map(|_| ());
+
+              if let Some(_) = request_ids.chain(response_ids).next() {
+                // found a request or response, path is being used
+                unused_path_ids.remove(path_id);
+              }
+
+              Control::Prune // no more paths down this branch
+            }
+            _ => Control::Prune, // no more paths down this branch
+          }
+        }
+        DfsEvent::Finish(finished_node_index, time) => {
+          if *root_path_node_index == finished_node_index {
+            Control::Break(())
+          } else {
+            Control::Continue
+          }
+        }
+        _ => Control::Continue,
+      }
+    });
+
+    unused_path_ids.into_iter()
   }
 
   pub fn resolve_operations_by_request_method(
@@ -348,6 +422,7 @@ mod test {
   use crate::events::SpecEvent;
   use crate::projections::SpecProjection;
   use crate::Aggregate;
+  use insta::assert_debug_snapshot;
   use petgraph::dot::Dot;
   use serde_json::json;
 
@@ -417,6 +492,37 @@ mod test {
     let interaction: HttpInteraction = interaction_with_path(String::from("/"));
     let normalized_path = EndpointQueries::extract_normalized_path(&interaction.request.path);
     assert_eq!(normalized_path, "/")
+  }
+
+  #[test]
+  pub fn can_find_unused_paths() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
+      {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "favourites" }},
+      {"PathComponentAdded": { "pathId": "path_3", "parentPathId": "root", "name": "authors" }},
+      {"PathParameterAdded":{"pathId":"path_parameter_1","parentPathId":"path_1","name":"postId"}},
+      {"ShapeAdded":{"shapeId":"shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"" }},
+      {"PathParameterShapeSet":{"pathId":"path_parameter_1","shapeDescriptor":{"shapeId":"shape_Ba53AWXhVW","isRemoved":false} }},
+
+      {"RequestAdded": { "requestId": "request_1", "pathId": "path_2", "httpMethod": "GET"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_1", "pathId": "path_2", "httpMethod": "GET", "httpStatusCode": 200 }},
+
+      {"RequestAdded": { "requestId": "request_2", "pathId": "path_1", "httpMethod": "GET"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_2", "pathId": "path_1", "httpMethod": "GET", "httpStatusCode": 200 }},
+
+      {"RequestRemoved": { "requestId": "request_2" }},
+      {"ResponseRemoved": { "responseId": "response_2" }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+
+    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+
+    let unused_path_ids = endpoint_queries.resolve_unused_paths().collect::<Vec<_>>();
+
+    assert_debug_snapshot!("can_find_unused_paths__unused_paths", unused_path_ids);
   }
 
   #[test]
