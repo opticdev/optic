@@ -13,10 +13,15 @@ import {
   Loading,
   PageLayout,
 } from '<src>/components';
-import { IEndpoint, useEndpoints } from '<src>/hooks/useEndpointsHook';
 import { Box, List, ListItem, Typography } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
+import {
+  EndpointChangelog,
+  useEndpointsChangelog,
+} from '<src>/hooks/useEndpointsChangelog';
+import { useAppSelector } from '<src>/store';
+import { IEndpoint } from '<src>/types';
 
 import {
   ChangelogPageAccessoryNavigation,
@@ -41,16 +46,26 @@ export const ChangelogListPage: FC<
 };
 
 export function ChangelogRootPage(props: { changelogBatchId: string }) {
-  const { endpoints, loading } = useEndpoints(props.changelogBatchId);
+  const endpointsState = useAppSelector((state) => state.endpoints.results);
+  const changelog = useEndpointsChangelog(props.changelogBatchId);
+  const changelogByEndpointId = changelog.reduce(
+    (acc: Record<string, EndpointChangelog>, endpointChange) => {
+      acc[`${endpointChange.method}${endpointChange.pathId}`] = endpointChange;
+      return acc;
+    },
+    {}
+  );
   const history = useHistory();
   const match = useRouteMatch();
 
-  const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
+  const grouped = useMemo(() => groupBy(endpointsState.data || [], 'group'), [
+    endpointsState,
+  ]);
   const tocKeys = Object.keys(grouped).sort();
   const changelogStyles = useChangelogStyles();
   const styles = useStyles();
 
-  if (loading) {
+  if (endpointsState.loading) {
     return <Loading />;
   }
 
@@ -98,8 +113,14 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
                       )
                     }
                     className={classNames({
-                      [changelogStyles.added]: endpoint.changelog?.added,
-                      [changelogStyles.updated]: endpoint.changelog?.changed,
+                      [changelogStyles.added]:
+                        changelogByEndpointId[
+                          `${endpoint.method}${endpoint.pathId}`
+                        ]?.change.category === 'added',
+                      [changelogStyles.updated]:
+                        changelogByEndpointId[
+                          `${endpoint.method}${endpoint.pathId}`
+                        ]?.change.category === 'updated',
                     })}
                   >
                     <div style={{ flex: 1 }}>

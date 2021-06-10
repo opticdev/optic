@@ -1,12 +1,10 @@
 import React, { FC, ReactNode } from 'react';
-import { useEndpoints, IPathParameter } from '<src>/hooks/useEndpointsHook';
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import {
   EndpointName,
   PathParameters,
   FieldOrParameter,
   FullWidth,
-  Loading,
   IShapeRenderer,
   JsonLike,
 } from '<src>/components';
@@ -18,6 +16,8 @@ import { IParsedLocation } from '<src>/lib/Interfaces';
 import { HighlightedLocation } from '<src>/pages/diffs/components/HighlightedLocation';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { useDebouncedFn, useStateWithSideEffect } from '<src>/hooks/util';
+import { useAppSelector } from '<src>/store';
+import { IPathParameter } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
 type EndpointDocumentationPaneProps = {
@@ -40,14 +40,12 @@ export const EndpointDocumentationPane: FC<
   renderHeader,
   ...props
 }) => {
-  const { endpoints, loading } = useEndpoints();
-  const bodies = useEndpointBody(pathId, method, lastBatchCommit);
-  const thisEndpoint = endpoints.find(
-    (i) => i.pathId === pathId && i.method === method
+  const thisEndpoint = useAppSelector((state) =>
+    state.endpoints.results.data?.find(
+      (endpoint) => endpoint.pathId === pathId && endpoint.method === method
+    )
   );
-  if (loading) {
-    return <Loading />;
-  }
+  const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   if (!thisEndpoint) {
     return <>no endpoint here</>;

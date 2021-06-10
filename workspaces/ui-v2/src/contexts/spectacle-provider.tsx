@@ -1,14 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { SpectacleInput, IBaseSpectacle } from '@useoptic/spectacle';
+import { SpectacleInput, IForkableSpectacle } from '@useoptic/spectacle';
 
 import { AsyncStatus } from '<src>/types';
 
-export const SpectacleContext = React.createContext<IBaseSpectacle | null>(
+export const SpectacleContext = React.createContext<IForkableSpectacle | null>(
   null
 );
 
 export const SpectacleStore = (props: {
-  spectacle: IBaseSpectacle;
+  spectacle: IForkableSpectacle;
   children: React.ReactNode;
 }) => {
   return (
@@ -18,10 +18,19 @@ export const SpectacleStore = (props: {
   );
 };
 
+export const useSpectacleContext = () => {
+  const value = useContext(SpectacleContext);
+  if (!value) {
+    throw new Error('Could not find spectacle context');
+  }
+
+  return value;
+};
+
 export function useSpectacleQuery<Result, Input = {}>(
   input: SpectacleInput<Input>
 ): AsyncStatus<Result> {
-  const spectacle = useContext(SpectacleContext)!;
+  const spectacle = useSpectacleContext();
 
   const [result, setResult] = useState<AsyncStatus<Result>>({
     loading: true,
@@ -57,7 +66,7 @@ export function useSpectacleQuery<Result, Input = {}>(
 export function useSpectacleCommand(): <Result, Input = {}>(
   input: SpectacleInput<Input>
 ) => Promise<Result> {
-  const spectacle = useContext(SpectacleContext)!;
+  const spectacle = useSpectacleContext();
 
   return useCallback(
     async <Result, Input>(input: SpectacleInput<Input>): Promise<Result> => {

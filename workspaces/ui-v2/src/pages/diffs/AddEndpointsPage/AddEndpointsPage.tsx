@@ -8,7 +8,6 @@ import { Divider, List, ListItem, Typography } from '@material-ui/core';
 
 import {
   TwoColumnFullWidth,
-  Loading,
   CenteredColumn,
   EndpointName,
   PageLayout,
@@ -24,11 +23,12 @@ import { AuthorIgnoreRules } from '<src>/pages/diffs/components/AuthorIgnoreRule
 import { FixedSizeList } from 'react-window';
 // @ts-ignore
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { IEndpoint, useEndpoints } from '<src>/hooks/useEndpointsHook';
 import { IPendingEndpoint } from '<src>/pages/diffs/contexts/SharedDiffState';
 import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import { DiffAccessoryNavigation } from '<src>/pages/diffs/components/DiffAccessoryNavigation';
+import { useAppSelector } from '<src>/store';
+import { IEndpoint } from '<src>/types';
 
 import {
   AddEndpointDiffHeader,
@@ -158,8 +158,9 @@ export function DiffUrlsPage() {
 }
 
 export function DocumentationRootPageWithPendingEndpoints() {
-  const { endpoints, loading } = useEndpoints();
-
+  const endpoints = useAppSelector(
+    (state) => state.endpoints.results.data || []
+  );
   const {
     pendingEndpoints,
     setCommitModalOpen,
@@ -186,10 +187,6 @@ export function DocumentationRootPageWithPendingEndpoints() {
       inputTagNames: new Set(['input']),
     }
   );
-
-  if (loading) {
-    return <Loading />;
-  }
 
   return (
     <CenteredColumn maxWidth="md" style={{ marginTop: 35 }}>

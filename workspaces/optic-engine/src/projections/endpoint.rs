@@ -1,6 +1,5 @@
 use crate::events::endpoint as endpoint_events;
 use crate::events::{EndpointEvent, SpecEvent};
-use serde::Serialize;
 use crate::state::endpoint::*;
 use crate::{
   commands::{endpoint, EndpointCommand, SpecCommand, SpecCommandError},
@@ -8,33 +7,35 @@ use crate::{
 };
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, Event};
 use petgraph::graph::{Graph, NodeIndex};
+use petgraph::visit::EdgeRef;
+use serde::Serialize;
 use std::collections::HashMap;
 
 pub const ROOT_PATH_ID: &str = "root";
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PathComponentDescriptor {
   pub is_parameter: bool,
   pub name: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct BodyDescriptor {
   pub http_content_type: HttpContentType,
   pub root_shape_id: ShapeId,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct RequestBodyDescriptor {
   pub body: Option<BodyDescriptor>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct ResponseBodyDescriptor {
   pub body: Option<BodyDescriptor>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Node {
   PathComponent(PathComponentId, PathComponentDescriptor),
   HttpMethod(HttpMethod),
@@ -43,12 +44,12 @@ pub enum Node {
   Response(ResponseId, ResponseBodyDescriptor),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Edge {
   IsChildOf,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct EndpointProjection {
   pub graph: Graph<Node, Edge>,
   // SAFETY: node indices are not stable upon removing of nodes from graph -> node indices might be referred to
@@ -127,6 +128,33 @@ impl EndpointProjection {
       .graph
       .add_edge(request_node_index, method_node_index, Edge::IsChildOf);
     self.node_id_to_index.insert(request_id, request_node_index);
+  }
+
+  pub fn without_request(&mut self, request_id: RequestId) {
+    let request_node_index = *self
+      .node_id_to_index
+      .get(&request_id)
+      .expect("expected request_id to have a corresponding node");
+
+    let method_parent_edge_index = self
+      .graph
+      .edges_directed(request_node_index, petgraph::Direction::Outgoing)
+      .find(|parent_edge| {
+        let parent_node_index = parent_edge.target();
+        let node = self.graph.node_weight(parent_node_index);
+        matches!(node, Some(Node::HttpMethod(_)))
+      })
+      .map(|parent_edge| parent_edge.id());
+
+    if let Some(method_parent_edge_index) = method_parent_edge_index {
+      self.graph.remove_edge(method_parent_edge_index); // prevents request to be resolved from path node
+    }
+    self.node_id_to_index.remove(&request_id); // prevents request node to be looked up by request id
+
+    // GOTCHA: we're not deleting the request node itself, as that would invalidate self.node_id_to_index
+    // as the graph indexes shift.
+    // TODO: figure out the implications of the above, like correctness of queries and
+    // eventual garbage collection.
   }
 
   fn ensure_method_node(
@@ -255,6 +283,50 @@ impl EndpointProjection {
       .insert(response_id, response_node_index);
   }
 
+  pub fn without_response(&mut self, response_id: ResponseId) {
+    let response_node_index = *self
+      .node_id_to_index
+      .get(&response_id)
+      .expect("expected response_id to have a corresponding node");
+
+    let method_parent_edge_index = self
+      .graph
+      .edges_directed(response_node_index, petgraph::Direction::Outgoing)
+      .find_map(|response_edge| {
+        let status_code_node_index = response_edge.target();
+        let _status_code_node = self
+          .graph
+          .node_weight(status_code_node_index)
+          .filter(|node| matches!(node, Node::HttpStatusCode(_)))?;
+
+        Some(status_code_node_index)
+      })
+      .map(|status_code_node_index| {
+        self
+          .graph
+          .edges_directed(status_code_node_index, petgraph::Direction::Outgoing)
+          .find_map(|status_code_edge| {
+            let _method_node = self
+              .graph
+              .node_weight(status_code_edge.target())
+              .filter(|node| matches!(node, Node::HttpMethod(_)))?;
+
+            Some(status_code_edge.id())
+          })
+      })
+      .flatten();
+
+    if let Some(method_parent_edge_index) = method_parent_edge_index {
+      self.graph.remove_edge(method_parent_edge_index); // prevents response to be resolved from path node
+    }
+    self.node_id_to_index.remove(&response_id); // prevents request node to be looked up by response id
+
+    // GOTCHA: we're not deleting the request node itself, as that would invalidate self.node_id_to_index
+    // as the graph indexes shift.
+    // TODO: figure out the implications of the above, like correctness of queries and
+    // eventual garbage collection.
+  }
+
   pub fn get_path_component_node_index(
     &self,
     path_component_id: &PathComponentId,
@@ -286,6 +358,49 @@ impl EndpointProjection {
     } else {
       None
     }
+  }
+
+  pub fn get_response_nodes<'a>(
+    &'a self,
+    path_id: &'a PathComponentId,
+    method: &'a HttpMethod,
+  ) -> Option<impl Iterator<Item = &Node> + 'a> {
+    let path_node_index = self.get_path_component_node_index(path_id)?;
+
+    let children = self
+      .graph
+      .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
+
+    let matching_method = children
+      .filter(move |i| {
+        let node = self.graph.node_weight(*i).unwrap();
+        match node {
+          Node::HttpMethod(http_method) => method == http_method,
+          _ => false,
+        }
+      })
+      .flat_map(move |i| {
+        let status_code_nodes = self
+          .graph
+          .neighbors_directed(i, petgraph::Direction::Incoming);
+
+        status_code_nodes
+      })
+      .flat_map(move |i| {
+        let response_nodes = self
+          .graph
+          .neighbors_directed(i, petgraph::Direction::Incoming);
+        let operations = response_nodes.filter_map(move |i| {
+          let node = self.graph.node_weight(i).unwrap();
+          match node {
+            Node::Response(response_id, body_descriptor) => Some(node),
+            _ => None,
+          }
+        });
+        operations
+      });
+
+    Some(matching_method)
   }
 }
 
@@ -345,8 +460,14 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
       EndpointEvent::RequestAdded(e) => {
         aggregate.with_request(e.path_id, e.http_method, e.request_id);
       }
+      EndpointEvent::RequestRemoved(e) => {
+        aggregate.without_request(e.request_id);
+      }
       EndpointEvent::ResponseAddedByPathAndMethod(e) => {
         aggregate.with_response(e.path_id, e.http_method, e.http_status_code, e.response_id);
+      }
+      EndpointEvent::ResponseRemoved(e) => {
+        aggregate.without_response(e.response_id);
       }
       EndpointEvent::RequestBodySet(e) => {
         aggregate.with_request_body(
