@@ -40,20 +40,24 @@ export type PathNode = {
   pathId: string;
   name: string;
   isParameterized: boolean;
+  isDeleted: boolean;
 };
 export type RequestNode = {
   requestId: string;
   httpMethod: string;
+  isDeleted: boolean;
 };
 export type ResponseNode = {
   responseId: string;
   httpMethod: string;
   httpStatusCode: number;
+  isDeleted: boolean;
 };
 
 export type BodyNode = {
   httpContentType: string;
   rootShapeId: string;
+  isDeleted: boolean;
 };
 
 export type BatchCommitNode = {
@@ -61,6 +65,11 @@ export type BatchCommitNode = {
   batchId: string;
   commitMessage: string;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// A batch commit node can never be deleted
+const isNodeDeleted = (node: Node): boolean =>
+  node.type !== NodeType.BatchCommit && node.data.isDeleted;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -310,36 +319,57 @@ export class GraphQueries {
     return this.wrap(node);
   }
 
-  listNodesByType(type: NodeType): NodeListWrapper {
-    return this.wrapList(type, this.index.nodesByType.get(type) || []);
+  listNodesByType(
+    type: NodeType,
+    includeDeleted: boolean = true
+  ): NodeListWrapper {
+    const nodesByType = this.index.nodesByType.get(type) || [];
+    const filteredNodesByType = includeDeleted
+      ? nodesByType
+      : nodesByType.filter((node) => !isNodeDeleted(node));
+    return this.wrapList(type, filteredNodesByType);
   }
 
   //@TODO add singular find* variant
-  listIncomingNeighborsByType(id: NodeId, incomingNeighborType: NodeType) {
+  listIncomingNeighborsByType(
+    id: NodeId,
+    incomingNeighborType: NodeType,
+    includeDeleted: boolean = true
+  ) {
     const neighbors = this.index.inboundNeighbors.get(id);
     if (!neighbors) {
       return this.wrapList(incomingNeighborType, []);
     }
-    const neighborsOfType = neighbors.get(incomingNeighborType);
-    return this.wrapList(incomingNeighborType, neighborsOfType || []);
+    const neighborsOfType = neighbors.get(incomingNeighborType) || [];
+    const filteredNeighborsOfType = includeDeleted
+      ? neighborsOfType
+      : neighborsOfType.filter((node) => !isNodeDeleted(node));
+
+    return this.wrapList(incomingNeighborType, filteredNeighborsOfType);
   }
 
   //@TODO add singular find* variant
   listOutgoingNeighborsByType(
     id: NodeId,
-    outgoingNeighborType: NodeType
+    outgoingNeighborType: NodeType,
+    includeDeleted: boolean = true
   ): NodeListWrapper {
     const neighbors = this.index.outboundNeighbors.get(id);
     if (!neighbors) {
       return this.wrapList(outgoingNeighborType, []);
     }
-    const neighborsOfType = neighbors.get(outgoingNeighborType);
-    return this.wrapList(outgoingNeighborType, neighborsOfType || []);
+    const neighborsOfType = neighbors.get(outgoingNeighborType) || [];
+    const filteredNeighborsOfType = includeDeleted
+      ? neighborsOfType
+      : neighborsOfType.filter((node) => !isNodeDeleted(node));
+
+    return this.wrapList(outgoingNeighborType, filteredNeighborsOfType);
   }
 
   *descendantsIterator(
     nodeId: NodeId,
-    seenSet: Set<NodeId> = new Set()
+    seenSet: Set<NodeId> = new Set(),
+    includeDeleted: boolean = true
   ): Generator<Node> {
     const inboundNeighbors = this.index.inboundNeighbors.get(nodeId);
     if (!inboundNeighbors) {
@@ -351,8 +381,10 @@ export class GraphQueries {
     seenSet.add(nodeId);
     for (const neighborsByNodeType of inboundNeighbors.values()) {
       for (const neighborNode of neighborsByNodeType) {
-        yield neighborNode;
-        yield* this.descendantsIterator(neighborNode.id, seenSet);
+        if (includeDeleted || !isNodeDeleted(neighborNode)) {
+          yield neighborNode;
+          yield* this.descendantsIterator(neighborNode.id, seenSet);
+        }
       }
     }
   }

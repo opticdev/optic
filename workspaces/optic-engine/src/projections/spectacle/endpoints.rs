@@ -122,6 +122,9 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
           projection.with_creation_history(&c.client_command_batch_id, &e.request_id);
         }
       }
+      EndpointEvent::RequestRemoved(e) => {
+        projection.without_request(e.request_id);
+      }
       EndpointEvent::ResponseAddedByPathAndMethod(e) => {
         projection.with_response(
           e.response_id.clone(),
@@ -133,6 +136,9 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         if let Some(c) = e.event_context {
           projection.with_creation_history(&c.client_command_batch_id, &e.response_id);
         }
+      }
+      EndpointEvent::ResponseRemoved(e) => {
+        projection.without_response(e.response_id);
       }
       EndpointEvent::RequestBodySet(e) => {
         //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (request_id, http_content_type)
@@ -281,6 +287,7 @@ impl EndpointsProjection {
       path_id: path_id.clone(),
       name: path_name,
       is_parameterized,
+      is_deleted: false,
     }));
     self.domain_id_to_index.insert(path_id, node_index);
 
@@ -306,6 +313,7 @@ impl EndpointsProjection {
     let node = Node::Request(RequestNode {
       http_method: http_method,
       request_id: request_id.clone(),
+      is_deleted: false,
     });
 
     let node_index = self.graph.add_node(node);
@@ -314,6 +322,17 @@ impl EndpointsProjection {
       .add_edge(node_index, *path_index, Edge::IsChildOf);
 
     self.domain_id_to_index.insert(request_id, node_index);
+  }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  pub fn without_request(&mut self, request_id: RequestId) {
+    let request_node_index = *self
+      .domain_id_to_index
+      .get(&request_id)
+      .expect("expected request_id to have a corresponding node");
+
+    if let Some(Node::Request(request_node)) = self.graph.node_weight_mut(request_node_index) {
+      request_node.is_deleted = true;
+    }
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_response(
@@ -332,6 +351,7 @@ impl EndpointsProjection {
       http_method: http_method,
       http_status_code: http_status_code,
       response_id: response_id.clone(),
+      is_deleted: false,
     });
 
     let node_index = self.graph.add_node(node);
@@ -341,7 +361,17 @@ impl EndpointsProjection {
 
     self.domain_id_to_index.insert(response_id, node_index);
   }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  pub fn without_response(&mut self, response_id: ResponseId) {
+    let response_node_index = *self
+      .domain_id_to_index
+      .get(&response_id)
+      .expect("expected response_id to have a corresponding node");
 
+    if let Some(Node::Response(response_node)) = self.graph.node_weight_mut(response_node_index) {
+      response_node.is_deleted = true;
+    }
+  }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_request_body(
     &mut self,
@@ -356,6 +386,7 @@ impl EndpointsProjection {
     let node = Node::Body(BodyNode {
       http_content_type: http_content_type,
       root_shape_id: root_shape_id.clone(),
+      is_deleted: false,
     });
     let node_index = self.graph.add_node(node);
     self
@@ -379,6 +410,7 @@ impl EndpointsProjection {
     let node = Node::Body(BodyNode {
       http_content_type: http_content_type,
       root_shape_id: root_shape_id.clone(),
+      is_deleted: false,
     });
     let node_index = self.graph.add_node(node);
     self
@@ -466,6 +498,7 @@ pub struct PathNode {
   is_parameterized: bool,
   name: String,
   path_id: PathComponentId,
+  is_deleted: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -473,6 +506,7 @@ pub struct PathNode {
 pub struct RequestNode {
   http_method: HttpMethod,
   request_id: RequestId,
+  is_deleted: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -481,6 +515,7 @@ pub struct ResponseNode {
   http_method: HttpMethod,
   http_status_code: HttpStatusCode,
   response_id: ResponseId,
+  is_deleted: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -488,6 +523,7 @@ pub struct ResponseNode {
 pub struct BodyNode {
   http_content_type: HttpContentType,
   root_shape_id: ShapeId,
+  is_deleted: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
