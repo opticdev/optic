@@ -9,9 +9,9 @@ category: Community
 
 I’m new around here, and my first post is about something I really love… code that makes life easier!
 
-To begin with Optic's CLI is ridiculously easy to start using within your application, you simply head to the root of your directory and run `api init`, configure your `.optic.yml` to wrap your application start command, and tada you’ve started gathering data about your API endpoints by just using them. Super simple and great right? To look at the full process and implement it yourself, please check out [our documentation](https://www.useoptic.com/docs/).
+To begin with Optic's CLI is ridiculously easy to start using within your application, you simply head to the root of your directory and run `api init`, configure your `.optic.yaml` to wrap your application start command, and tada you’ve started gathering data about your API endpoints by just using them. Super simple and great right? To look at the full process and implement it yourself, please check out [our documentation](https://www.useoptic.com/docs/).
 
-But what happens when you can’t do that? Plenty of instances exist where it’s very complex to work in a team and wrap the command that starts your application. What happens when you use feature flags on that command, or you have to make operating system specific changes?
+But what happens when you can’t do that? Plenty of instances exist where it’s very complex to work in a team and wrap the command that starts your application. What happens when you use feature flags on that command, or you have to make operating system specific changes, or your API testing is done entirely internally and doesn't hit the network?
 
 <!-- truncate -->
 
