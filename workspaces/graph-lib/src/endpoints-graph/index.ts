@@ -321,10 +321,14 @@ export class GraphQueries {
 
   listNodesByType(
     type: NodeType,
-    includeDeleted: boolean = true
+    {
+      includeRemoved = true,
+    }: {
+      includeRemoved?: boolean;
+    } = {}
   ): NodeListWrapper {
     const nodesByType = this.index.nodesByType.get(type) || [];
-    const filteredNodesByType = includeDeleted
+    const filteredNodesByType = includeRemoved
       ? nodesByType
       : nodesByType.filter((node) => !isNodeDeleted(node));
     return this.wrapList(type, filteredNodesByType);
@@ -334,14 +338,18 @@ export class GraphQueries {
   listIncomingNeighborsByType(
     id: NodeId,
     incomingNeighborType: NodeType,
-    includeDeleted: boolean = true
+    {
+      includeRemoved = true,
+    }: {
+      includeRemoved?: boolean;
+    } = {}
   ) {
     const neighbors = this.index.inboundNeighbors.get(id);
     if (!neighbors) {
       return this.wrapList(incomingNeighborType, []);
     }
     const neighborsOfType = neighbors.get(incomingNeighborType) || [];
-    const filteredNeighborsOfType = includeDeleted
+    const filteredNeighborsOfType = includeRemoved
       ? neighborsOfType
       : neighborsOfType.filter((node) => !isNodeDeleted(node));
 
@@ -352,14 +360,18 @@ export class GraphQueries {
   listOutgoingNeighborsByType(
     id: NodeId,
     outgoingNeighborType: NodeType,
-    includeDeleted: boolean = true
+    {
+      includeRemoved = true,
+    }: {
+      includeRemoved?: boolean;
+    } = {}
   ): NodeListWrapper {
     const neighbors = this.index.outboundNeighbors.get(id);
     if (!neighbors) {
       return this.wrapList(outgoingNeighborType, []);
     }
     const neighborsOfType = neighbors.get(outgoingNeighborType) || [];
-    const filteredNeighborsOfType = includeDeleted
+    const filteredNeighborsOfType = includeRemoved
       ? neighborsOfType
       : neighborsOfType.filter((node) => !isNodeDeleted(node));
 
@@ -369,7 +381,11 @@ export class GraphQueries {
   *descendantsIterator(
     nodeId: NodeId,
     seenSet: Set<NodeId> = new Set(),
-    includeDeleted: boolean = true
+    {
+      includeRemoved = true,
+    }: {
+      includeRemoved?: boolean;
+    } = {}
   ): Generator<Node> {
     const inboundNeighbors = this.index.inboundNeighbors.get(nodeId);
     if (!inboundNeighbors) {
@@ -381,7 +397,7 @@ export class GraphQueries {
     seenSet.add(nodeId);
     for (const neighborsByNodeType of inboundNeighbors.values()) {
       for (const neighborNode of neighborsByNodeType) {
-        if (includeDeleted || !isNodeDeleted(neighborNode)) {
+        if (includeRemoved || !isNodeDeleted(neighborNode)) {
           yield neighborNode;
           yield* this.descendantsIterator(neighborNode.id, seenSet);
         }
