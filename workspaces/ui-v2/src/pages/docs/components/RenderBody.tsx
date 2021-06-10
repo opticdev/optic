@@ -25,7 +25,10 @@ export type TwoColumnBodyProps = SharedProps & {
 };
 const TwoColumnBodyEditableUnMemoized = (
   props: TwoColumnBodyProps & {
-    endpointId: string;
+    endpoint: {
+      pathId: string;
+      method: string;
+    };
   }
 ) => {
   const shapeChoices = useShapeDescriptor(props.rootShapeId, undefined);
@@ -42,12 +45,12 @@ const TwoColumnBodyEditableUnMemoized = (
               contributionKey={'description'}
               defaultText={'Add a description'}
               initialValue={props.description}
-              endpointId={props.endpointId}
+              endpoint={props.endpoint}
             />
           </div>
           <ContributionGroup
             rootShape={shapeChoices}
-            endpointId={props.endpointId}
+            endpoint={props.endpoint}
           />
         </>
       }

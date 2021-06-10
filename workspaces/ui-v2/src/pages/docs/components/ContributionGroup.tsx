@@ -5,12 +5,15 @@ import { DocsFieldOrParameterContribution } from './Contributions';
 
 type ContributionGroupProps = {
   rootShape: IShapeRenderer[];
-  endpointId: string;
+  endpoint: {
+    pathId: string;
+    method: string;
+  };
 };
 
 export const ContributionGroup = ({
   rootShape,
-  endpointId,
+  endpoint,
 }: ContributionGroupProps) => {
   const contributions = createFlatList(rootShape);
 
@@ -25,7 +28,7 @@ export const ContributionGroup = ({
             shapes={i.shapes}
             key={i.contributionId + i.name + index}
             initialValue={i.description}
-            endpointId={endpointId}
+            endpoint={endpoint}
           />
         );
       })}

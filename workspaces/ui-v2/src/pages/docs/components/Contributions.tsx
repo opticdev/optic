@@ -9,8 +9,10 @@ import {
 import {
   useAppSelector,
   useAppDispatch,
+  selectors,
   documentationEditActions,
 } from '<src>/store';
+import { getEndpointId } from '<src>/utils';
 
 export type DocsFieldOrParameterContributionProps = {
   shapes: IShapeRenderer[];
@@ -18,7 +20,10 @@ export type DocsFieldOrParameterContributionProps = {
   name: string;
   depth: number;
   initialValue: string;
-  endpointId: string;
+  endpoint: {
+    method: string;
+    pathId: string;
+  };
 };
 
 export function DocsFieldOrParameterContribution({
@@ -27,14 +32,11 @@ export function DocsFieldOrParameterContribution({
   shapes,
   depth,
   initialValue,
-  endpointId,
+  endpoint,
 }: DocsFieldOrParameterContributionProps) {
   const contributionKey = 'description';
-  const isEditable = useAppSelector(
-    (state) =>
-      state.documentationEdits.isEditing &&
-      !state.documentationEdits.deletedEndpoints.includes(endpointId)
-  );
+  const endpointId = getEndpointId(endpoint);
+  const isEditable = useAppSelector(selectors.isEndpointEditable(endpoint));
   const contributionValue = useAppSelector(
     (state) =>
       state.documentationEdits.contributions[id]?.[contributionKey]?.value
@@ -70,7 +72,10 @@ type EndpointNameContributionProps = {
   defaultText: string;
   requiredError?: string;
   initialValue: string;
-  endpointId: string;
+  endpoint: {
+    method: string;
+    pathId: string;
+  };
 };
 
 export function EndpointNameContribution({
@@ -78,13 +83,10 @@ export function EndpointNameContribution({
   contributionKey,
   defaultText,
   initialValue,
-  endpointId,
+  endpoint,
 }: EndpointNameContributionProps) {
-  const isEditable = useAppSelector(
-    (state) =>
-      state.documentationEdits.isEditing &&
-      !state.documentationEdits.deletedEndpoints.includes(endpointId)
-  );
+  const endpointId = getEndpointId(endpoint);
+  const isEditable = useAppSelector(selectors.isEndpointEditable(endpoint));
   const contributionValue = useAppSelector(
     (state) =>
       state.documentationEdits.contributions[id]?.[contributionKey]?.value
@@ -131,13 +133,10 @@ export function EndpointNameMiniContribution({
   contributionKey,
   defaultText,
   initialValue,
-  endpointId,
+  endpoint,
 }: EndpointNameContributionProps) {
-  const isEditable = useAppSelector(
-    (state) =>
-      state.documentationEdits.isEditing &&
-      !state.documentationEdits.deletedEndpoints.includes(endpointId)
-  );
+  const endpointId = getEndpointId(endpoint);
+  const isEditable = useAppSelector(selectors.isEndpointEditable(endpoint));
   const contributionValue = useAppSelector(
     (state) =>
       state.documentationEdits.contributions[id]?.[contributionKey]?.value

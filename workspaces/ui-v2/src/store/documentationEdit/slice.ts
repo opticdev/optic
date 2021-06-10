@@ -4,82 +4,8 @@
  * flow for editing, we could consolidate the two slices)
  */
 
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { v4 as uuidv4 } from 'uuid';
-import {
-  AddContribution,
-  CQRSCommand,
-  IForkableSpectacle,
-} from '@useoptic/spectacle';
-
-import { RootState, AppDispatch } from './root';
-import { getValidContributions } from './selectors';
-
-const saveDocumentationChanges = createAsyncThunk<
-  {},
-  {
-    spectacle: IForkableSpectacle;
-    commitMessage: string;
-  },
-  {
-    dispatch: AppDispatch;
-    state: RootState;
-  }
->(
-  'SAVE_DOCUMENTATION_CHANGES',
-  async ({ spectacle, commitMessage }, thunkApi) => {
-    const state = thunkApi.getState();
-    const clientId = state.metadata.data?.clientAgent || '';
-    const clientSessionId = state.metadata.data?.sessionId || '';
-    // TODO fetch from spectacle
-    // const { deletedEndpoints } = state.documentationEdits;
-    const deleteCommands: CQRSCommand[] = [];
-
-    const validContributions = getValidContributions(state);
-
-    const contributionCommands: CQRSCommand[] = validContributions.map(
-      (contribution) =>
-        AddContribution(
-          contribution.id,
-          contribution.contributionKey,
-          contribution.value
-        )
-    );
-
-    const commands = [...deleteCommands, ...contributionCommands];
-
-    if (commands.length > 0) {
-      await spectacle.mutate({
-        query: `
-      mutation X(
-        $commands: [JSON],
-        $batchCommitId: ID,
-        $commitMessage: String,
-        $clientId: ID,
-        $clientSessionId: ID
-      ) {
-        applyCommands(
-          commands: $commands,
-          batchCommitId: $batchCommitId,
-          commitMessage: $commitMessage,
-          clientId: $clientId,
-          clientSessionId: $clientSessionId
-        ) {
-          batchCommitId
-        }
-      }
-      `,
-        variables: {
-          commands,
-          commitMessage,
-          batchCommitId: uuidv4(),
-          clientId,
-          clientSessionId,
-        },
-      });
-    }
-  }
-);
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { saveDocumentationChanges } from './thunks';
 
 // This needs to be exported for typescript to be able to infer typings
 export type DocumentationEditState = {
@@ -93,7 +19,10 @@ export type DocumentationEditState = {
       }
     >
   >;
-  deletedEndpoints: string[];
+  deletedEndpoints: {
+    pathId: string;
+    method: string;
+  }[];
   commitModalOpen: boolean;
   isEditing: boolean;
 };
@@ -136,21 +65,22 @@ const documentationEditSlice = createSlice({
     deleteEndpoint: (
       state,
       action: PayloadAction<{
-        endpointId: string;
+        pathId: string;
+        method: string;
       }>
     ) => {
-      const { endpointId } = action.payload;
-      state.deletedEndpoints.push(endpointId);
+      state.deletedEndpoints.push(action.payload);
     },
     undeleteEndpoint: (
       state,
       action: PayloadAction<{
-        endpointId: string;
+        pathId: string;
+        method: string;
       }>
     ) => {
-      const { endpointId } = action.payload;
+      const { pathId, method } = action.payload;
       const newDeletedEndpoints = state.deletedEndpoints.filter(
-        (id) => id !== endpointId
+        (endpoint) => pathId !== endpoint.pathId && method !== endpoint.method
       );
       state.deletedEndpoints = newDeletedEndpoints;
     },

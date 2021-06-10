@@ -79,6 +79,7 @@ const fetchEndpoints = createAsyncThunk<
     variables: {},
   });
   if (results.errors) {
+    console.error(results.errors);
     throw new Error();
   }
   return results.data!;
