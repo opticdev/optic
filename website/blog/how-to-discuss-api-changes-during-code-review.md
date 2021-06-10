@@ -123,21 +123,17 @@ curl --location --request GET 'http://localhost:18000/accounts/3'
 curl --location --request GET 'http://localhost:18000/accounts/4'
 ```
 
-Load the Optic API Diff locally at `http://localhost:34444/apis/1/review`. This shows you that you have six undocumented endpoints.
+Load the Optic API Diff locally at `http://localhost:34444/apis/1/diffs`. This shows you that you have six undocumented endpoints.
 
-![Undocumented endpoints in the Optic API Diff](https://i.imgur.com/ItPXhhh.png)
+![Undocumented endpoints in the Optic API Diff](/img/blog-content/htd-undocumented-endpoints.png)
 
 If this is the first time you've run this API, you need to add each of these endpoints, define the dynamic parameters, and describe them for Optic.
 
-![Using Optic to describe endpoints](https://i.imgur.com/Ti5KAcg.png)
+![Using Optic to describe endpoints](/img/blog-content/htd-match-urls.gif)
 
-When done, finalize the changes, and Optic will automatically add them to your documentation.
+When done, save the changes, and Optic will automatically add them to your documentation.
 
-![Finalizing your API changes in Optic](https://i.imgur.com/kG3pGxF.png)
-
-You can also describe each endpoint on the documentation page.
-
-![Describe each endpoint](https://i.imgur.com/UKoWrXO.png)
+![Finalizing your API changes in Optic](/img/blog-content/htd-save-changes.png)
 
 Once you've completed the baseline documentation for your API, Optic will continue to document new endpoints as they're added, updated, and removed. In the next section, you'll see what updated endpoints look like and how to review changes before you push them to GitHub.
 
@@ -161,17 +157,13 @@ To affect a change to your API, open up the `src/data.js` file and add a new fie
 ...
 ```
 
-Restart the API by stopping and running `api start` again. Call the same six endpoints you did before so that Optic can see the changes and then head to `http://localhost:34444/apis/1/review` to review them.
+Restart the API by stopping and running `api start` again. Call the same six endpoints you did before so that Optic can see the changes and then head to `http://localhost:34444/apis/1/diffs` to review them.
 
-![Optic shows the diff of each endpoint](https://i.imgur.com/RHFNEPd.png)
+![Optic shows the diff of each endpoint](/img/blog-content/htd-diffs.png)
 
 Optic shows you the new field on each endpoint, so you can understand what changed and ensure that you didn't accidentally break anything in your API. Since these changes are intentional, click **Approve** in the upper right-hand corner. Optic will add the new field to your documentation.
 
-If there's a bug or regression in your API, you can use the **mark as incorrect** option.
-
-![Marking a change as incorrect in Optic](https://i.imgur.com/VCwxjhi.png)
-
-Marking changes as incorrect will keep your API spec unchanged and hide them from the diff. If the incorrect behavior is still present in future API calls, Optic will let you know to make sure you fix the error.
+If there's a bug or regression in your API, you can use the **ignore diff** option. Marking changes as incorrect will keep your API spec unchanged and hide them from the diff. If the incorrect behavior is still present in future API calls, Optic will let you know to make sure you fix the error.
 
 Now that you've seen how to review changes to your API locally with Optic, you're ready to see how Optic can work with your team on GitHub.
 
