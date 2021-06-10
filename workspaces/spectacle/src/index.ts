@@ -412,21 +412,24 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return Promise.resolve(parent.value.requestId);
       },
       pathId: (parent: endpoints.RequestNodeWrapper) => {
-        return Promise.resolve(parent.path().value.pathId);
+        return Promise.resolve(parent.path()?.value.pathId || '');
       },
       absolutePathPattern: (parent: endpoints.RequestNodeWrapper) => {
-        return Promise.resolve(parent.path().value.absolutePathPattern);
+        return Promise.resolve(parent.path()?.value.absolutePathPattern || '');
       },
       absolutePathPatternWithParameterNames: (
         parent: endpoints.RequestNodeWrapper
       ) => {
         return Promise.resolve(
-          parent.path().absolutePathPatternWithParameterNames
+          parent.path()?.absolutePathPatternWithParameterNames || ''
         );
       },
       pathComponents: (parent: endpoints.RequestNodeWrapper) => {
         let path = parent.path();
-        let parentPath = path.parentPath();
+        let parentPath = path?.parentPath();
+        if (!path || !parentPath) {
+          return Promise.resolve([]);
+        }
         const components = [path.value];
         while (parentPath !== null) {
           components.push(parentPath.value);
@@ -444,8 +447,12 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       responses: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.responses());
       },
-      pathContributions: (parent: any, args: any, context: any) => {
-        const pathId = parent.path().value.pathId;
+      pathContributions: (
+        parent: endpoints.RequestNodeWrapper,
+        args: any,
+        context: any
+      ) => {
+        const pathId = parent.path()?.value.pathId;
         const method = parent.value.httpMethod;
         return Promise.resolve(
           context.spectacleContext().contributionsProjection[

@@ -160,20 +160,22 @@ export class RequestNodeWrapper implements NodeWrapper {
     return this.result.data as RequestNode;
   }
 
-  path(): PathNodeWrapper {
+  path(): PathNodeWrapper | null {
     const neighbors = this.queries.listOutgoingNeighborsByType(
       this.result.id,
       NodeType.Path
     );
     if (neighbors.results.length === 0) {
-      throw new Error(`expected Request to have a parent Path`);
+      return null;
     }
     return neighbors.results[0] as PathNodeWrapper;
   }
 
   responses(): ResponseNodeWrapper[] {
-    return (this.path().responses() as any).results.filter(
-      (response: any) => response.value.httpMethod === this.value.httpMethod
+    return (
+      (this.path()?.responses() as any).results.filter(
+        (response: any) => response.value.httpMethod === this.value.httpMethod
+      ) || []
     );
   }
 
@@ -192,13 +194,13 @@ export class ResponseNodeWrapper implements NodeWrapper {
     return this.result.data as ResponseNode;
   }
 
-  path(): PathNodeWrapper {
+  path(): PathNodeWrapper | null {
     const neighbors = this.queries.listOutgoingNeighborsByType(
       this.result.id,
       NodeType.Path
     );
     if (neighbors.results.length === 0) {
-      throw new Error(`expected Response to have a parent Path`);
+      return null;
     }
     return neighbors.results[0] as PathNodeWrapper;
   }
