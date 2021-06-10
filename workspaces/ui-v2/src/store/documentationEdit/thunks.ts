@@ -66,7 +66,6 @@ export const saveDocumentationChanges = createAsyncThunk<
     const clientSessionId = state.metadata.data?.sessionId || '';
 
     const { deletedEndpoints } = state.documentationEdits;
-    console.log(deletedEndpoints);
 
     const deleteCommands: CQRSCommand[] = (
       await Promise.all(
@@ -77,7 +76,6 @@ export const saveDocumentationChanges = createAsyncThunk<
     ).flatMap((x) => x);
 
     const validContributions = getValidContributions(state);
-    console.log(deleteCommands);
 
     const contributionCommands: CQRSCommand[] = validContributions.map(
       (contribution) =>
