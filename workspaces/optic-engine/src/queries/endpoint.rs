@@ -1,11 +1,13 @@
+use crate::commands::{EndpointCommand, SpecCommand};
+use crate::events::HttpInteraction;
 use crate::projections::endpoint::{Edge, EndpointProjection, Node, ROOT_PATH_ID};
 use crate::projections::endpoint::{RequestBodyDescriptor, ResponseBodyDescriptor};
 use crate::state::endpoint::{
   HttpMethod, HttpStatusCode, PathComponentId, PathComponentIdRef, RequestId, ResponseId,
 };
-use crate::HttpInteraction;
 use petgraph::graph::Graph;
 use petgraph::visit::EdgeFilteredNeighborsDirected;
+use serde::Serialize;
 
 pub struct EndpointQueries<'a> {
   pub endpoint_projection: &'a EndpointProjection,
@@ -168,14 +170,17 @@ impl<'a> EndpointQueries<'a> {
 
   pub fn resolve_responses(
     &self,
-    interaction: &'a HttpInteraction,
-    path_id: PathComponentIdRef,
-  ) -> impl Iterator<Item = (&ResponseId, &ResponseBodyDescriptor)> {
-    self.resolve_responses_by_method_and_status_code(
-      &interaction.request.method,
-      interaction.response.status_code,
-      path_id,
-    )
+    path_id: &'a PathComponentId,
+    method: &'a String,
+  ) -> Option<impl Iterator<Item = (&ResponseId, &ResponseBodyDescriptor)>> {
+    let response_nodes = self
+      .endpoint_projection
+      .get_response_nodes(path_id, method)?;
+
+    Some(response_nodes.map(|node| match node {
+      Node::Response(response_id, body_descriptor) => (response_id, body_descriptor),
+      _ => unreachable!("get response nodes should only return response nodes"),
+    }))
   }
 
   pub fn resolve_response_by_method_status_code_and_content_type(
@@ -262,6 +267,31 @@ impl<'a> EndpointQueries<'a> {
     matching_status_code
   }
 
+  pub fn delete_endpoint_commands(
+    &self,
+    path_id: &'a PathComponentId,
+    method: &'a HttpMethod,
+  ) -> Option<DeleteEndpointCommands> {
+    let request_ids = self
+      .resolve_requests(path_id, method)?
+      .map(|(request_id, _)| request_id);
+    let response_ids = self
+      .resolve_responses(path_id, method)?
+      .map(|(response_id, _)| response_id);
+
+    let request_commands = request_ids.cloned().map(EndpointCommand::remove_request);
+    let response_commands = response_ids.cloned().map(EndpointCommand::remove_response);
+
+    Some(DeleteEndpointCommands {
+      path_id: path_id.clone(),
+      method: method.clone(),
+      commands: request_commands
+        .chain(response_commands)
+        .map(SpecCommand::from)
+        .collect(),
+    })
+  }
+
   fn graph_get_index(&self, node_id: &str) -> Option<&petgraph::graph::NodeIndex> {
     self.endpoint_projection.node_id_to_index.get(node_id)
   }
@@ -290,10 +320,22 @@ impl<'a> EndpointQueries<'a> {
   }
 }
 
+#[derive(Debug, Serialize)]
+pub struct DeleteEndpointCommands {
+  path_id: PathComponentId,
+  method: HttpMethod,
+  commands: Vec<SpecCommand>,
+}
+
 #[cfg(test)]
 mod test {
   use super::*;
+  use crate::events::SpecEvent;
+  use crate::projections::SpecProjection;
+  use crate::Aggregate;
+  use petgraph::dot::Dot;
   use serde_json::json;
+
   fn interaction_with_path(path: String) -> HttpInteraction {
     serde_json::from_value(json!(
       {
@@ -360,5 +402,71 @@ mod test {
     let interaction: HttpInteraction = interaction_with_path(String::from("/"));
     let normalized_path = EndpointQueries::extract_normalized_path(&interaction.request.path);
     assert_eq!(normalized_path, "/")
+  }
+
+  #[test]
+  pub fn can_generate_delete_commands() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
+      {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "favourites" }},
+      {"PathComponentAdded": { "pathId": "path_3", "parentPathId": "root", "name": "authors" }},
+
+      {"RequestAdded": { "requestId": "request_1", "pathId": "path_2", "httpMethod": "GET"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_1", "pathId": "path_2", "httpMethod": "GET", "httpStatusCode": 200 }},
+
+      {"RequestAdded": { "requestId": "request_2", "pathId": "path_2", "httpMethod": "POST"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_2", "pathId": "path_2", "httpMethod": "POST", "httpStatusCode": 201 }},
+
+      {"RequestAdded": { "requestId": "request_3", "pathId": "path_3", "httpMethod": "GET"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_3", "pathId": "path_3", "httpMethod": "GET", "httpStatusCode": 200 }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+
+    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+
+    let subject_path = String::from("path_2");
+    let subject_method = String::from("GET");
+    let deleted_endpoint_commmands = endpoint_queries
+      .delete_endpoint_commands(&subject_path, &subject_method)
+      .expect("delete commands are generated for existing path and method");
+
+    let updated_spec =
+      assert_valid_commands(spec_projection.clone(), deleted_endpoint_commmands.commands);
+    let updated_queries = EndpointQueries::new(&updated_spec.endpoint());
+    let remaining_requests = updated_queries
+      .resolve_requests(&subject_path, &subject_method)
+      .unwrap()
+      .collect::<Vec<_>>();
+    let remaining_responses = updated_queries
+      .resolve_responses(&subject_path, &subject_method)
+      .unwrap()
+      .collect::<Vec<_>>();
+
+    // dbg!(Dot::with_config(&updated_spec.endpoint().graph, &[]));
+
+    // TODO: enable these assertions as the EndpointProjection handles the resulting events
+    assert_eq!(remaining_requests.len(), 0);
+    assert_eq!(remaining_responses.len(), 0);
+  }
+
+  fn assert_valid_commands(
+    mut spec_projection: SpecProjection,
+    commands: impl IntoIterator<Item = SpecCommand>,
+  ) -> SpecProjection {
+    // let mut spec_projection = SpecProjection::default();
+    for command in commands {
+      let events = spec_projection
+        .execute(command)
+        .expect("generated commands must be valid");
+
+      for event in events {
+        spec_projection.apply(event)
+      }
+    }
+
+    spec_projection
   }
 }
