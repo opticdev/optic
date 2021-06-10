@@ -67,8 +67,8 @@ export type BatchCommitNode = {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// A batch commit node can never be deleted
-const isNodeDeleted = (node: Node): boolean =>
+// A batch commit node can never be removed
+const isNodeRemoved = (node: Node): boolean =>
   node.type !== NodeType.BatchCommit && node.data.isRemoved;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -330,7 +330,7 @@ export class GraphQueries {
     const nodesByType = this.index.nodesByType.get(type) || [];
     const filteredNodesByType = includeRemoved
       ? nodesByType
-      : nodesByType.filter((node) => !isNodeDeleted(node));
+      : nodesByType.filter((node) => !isNodeRemoved(node));
     return this.wrapList(type, filteredNodesByType);
   }
 
@@ -351,7 +351,7 @@ export class GraphQueries {
     const neighborsOfType = neighbors.get(incomingNeighborType) || [];
     const filteredNeighborsOfType = includeRemoved
       ? neighborsOfType
-      : neighborsOfType.filter((node) => !isNodeDeleted(node));
+      : neighborsOfType.filter((node) => !isNodeRemoved(node));
 
     return this.wrapList(incomingNeighborType, filteredNeighborsOfType);
   }
@@ -373,7 +373,7 @@ export class GraphQueries {
     const neighborsOfType = neighbors.get(outgoingNeighborType) || [];
     const filteredNeighborsOfType = includeRemoved
       ? neighborsOfType
-      : neighborsOfType.filter((node) => !isNodeDeleted(node));
+      : neighborsOfType.filter((node) => !isNodeRemoved(node));
 
     return this.wrapList(outgoingNeighborType, filteredNeighborsOfType);
   }
@@ -397,7 +397,7 @@ export class GraphQueries {
     seenSet.add(nodeId);
     for (const neighborsByNodeType of inboundNeighbors.values()) {
       for (const neighborNode of neighborsByNodeType) {
-        if (includeRemoved || !isNodeDeleted(neighborNode)) {
+        if (includeRemoved || !isNodeRemoved(neighborNode)) {
           yield neighborNode;
           yield* this.descendantsIterator(neighborNode.id, seenSet);
         }
