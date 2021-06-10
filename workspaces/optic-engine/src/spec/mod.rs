@@ -4,6 +4,7 @@ use crate::commands::{
 };
 use crate::events::SpecEvent;
 use crate::projections::SpecProjection;
+use crate::queries::EndpointQueries;
 use cqrs_core::Aggregate;
 
 /// Create an interface that allows commands to be applied to a spec as part of a single
@@ -69,7 +70,13 @@ impl AppendedBatch {
     Ok(())
   }
 
-  pub fn commit(self) -> Vec<SpecEvent> {
+  pub fn commit(mut self) -> Vec<SpecEvent> {
+    for prune_command in self.prune_commands() {
+      self
+        .with_command(prune_command)
+        .expect("should be able to apply spec pruning commands");
+    }
+
     let mut new_events = self.new_events;
     let end_event = self
       .command_handler
@@ -82,5 +89,18 @@ impl AppendedBatch {
     new_events.push(end_event);
 
     new_events
+  }
+
+  fn prune_commands(&mut self) -> Vec<SpecCommand> {
+    let unused_path_deletion_commands: Vec<_> = {
+      let spec_projection = self.command_handler.spec_projection();
+      let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+      let unused_path_ids = endpoint_queries.resolve_unused_paths();
+      unused_path_ids
+        .flat_map(|path_id| endpoint_queries.delete_path_commands(path_id))
+        .collect()
+    };
+
+    unused_path_deletion_commands
   }
 }

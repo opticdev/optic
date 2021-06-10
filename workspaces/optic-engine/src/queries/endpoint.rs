@@ -97,6 +97,12 @@ impl<'a> EndpointQueries<'a> {
     last_resolved_path_id
   }
 
+  pub fn resolve_unused_paths(&self) -> impl Iterator<Item = &PathComponentId> + '_ {
+    todo!("implement resolving of unused paths");
+
+    std::iter::empty()
+  }
+
   pub fn resolve_operations_by_request_method(
     &self,
     method: &'a String,
@@ -290,6 +296,15 @@ impl<'a> EndpointQueries<'a> {
         .map(SpecCommand::from)
         .collect(),
     })
+  }
+
+  pub fn delete_path_commands(
+    &self,
+    path_id: &'a PathComponentId,
+  ) -> impl Iterator<Item = SpecCommand> {
+    todo!("implement delete path commands");
+
+    std::iter::empty()
   }
 
   fn graph_get_index(&self, node_id: &str) -> Option<&petgraph::graph::NodeIndex> {
