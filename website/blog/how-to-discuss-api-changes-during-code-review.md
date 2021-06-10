@@ -41,7 +41,7 @@ For this tutorial, I'm using a fork of the [sample-node-api](https://github.com/
 The Optic command-line interface (CLI) requires Node version 12+. Assuming you have a recent version of Node installed, run the following to install the CLI:
 
 ```shell
-npm install @useoptic/cli -g
+npm install @useoptic/cli -g --legacy-peer-deps
 ```
 
 The [Optic Quick Start guide](https://useoptic.com/docs/) also includes instructions for setting up Optic using [Yarn](https://yarnpkg.com/) or [Homebrew](https://brew.sh/) if you prefer.
@@ -52,7 +52,7 @@ To verify the installation, run:
 api --help
 ```
  
-![Optic CLI help output](https://i.imgur.com/TgUlwsD.png)
+![Optic CLI help output](https://i.imgur.com/eZDkkyg.png)
 
 Next, you need to initialize Optic in your project's root directory.
 
@@ -60,17 +60,23 @@ Next, you need to initialize Optic in your project's root directory.
 cd /path/to/api && api init
 ```
 
-The prompt will walk you through some basic questions and create an [Optic configuration file](https://useoptic.com/docs/get-started/config) in your project's root directory.
+The prompt will create an [Optic configuration file](https://useoptic.com/docs/get-started/config) in your project's root directory.
 
-![Output for the api init command](https://i.imgur.com/Mj5r08E.png)
+![Output for the api init command](https://i.imgur.com/WvkZfzo.png)
 
 Optic works by observing requests to your API endpoints and tracking the way your application responds. If responses change during development, Optic will track them so you can review them before you push the changes to your team to review.
 
-To finish setting up your API, visit the link created by Optic after initialization. Add the start command for your application and the port your API will run on so that Optic can intercept requests and monitor changes.
+To finish setting up your API, open the `optic.yml` file created during initialization. Add the start command for your application and the port your API will run on so that Optic can intercept requests and monitor changes.
 
-![Optic configuration walkthrough](https://i.imgur.com/tD4YhF9.png)
+In the case of the `sample-node-api`, the start command is `node src/index.js`, and the URL is `http://localhost:18000`:
 
-In the case of the `sample-node-app`, the start command is `node src/index.js`, and the URL is `http://localhost:18000`.
+```yml
+name: "sample-node-api"
+tasks:
+  start:
+    command: node src/index.js
+    inboundUrl: http://localhost:18000
+```
 
 I had to make one small change to the sample application to ensure that the API runs on a port that Optic can control using the `$PORT` environment variable. If you're following along with the sample application, update the `port` option in the `src/config.js` file:
 
