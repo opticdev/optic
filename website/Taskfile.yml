@@ -62,9 +62,17 @@ tasks:
 
   docker:build:
     desc: Build a Docker image
+    env:
+      TAG: '{{default "local" .TAG}}'
     cmds:
       # built with docker to avoid a docker-compose dependency in CI
-      - docker build . -t 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs
+      - docker build . -t 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:$TAG
+
+  docker:push:
+    env:
+      TAG: '{{default "local" .TAG}}'
+    cmds:
+      - docker push 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:$TAG
 
   docker:up:
     desc: Start Docs
