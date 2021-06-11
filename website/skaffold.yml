@@ -1,7 +1,7 @@
 apiVersion: skaffold/v2beta14
 kind: Config
 metadata:
-  name: optichub
+  name: docs
 build:
   artifacts:
     - image: 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs
@@ -10,7 +10,7 @@ build:
 deploy:
   helm:
     releases:
-      - name: optichub
+      - name: docs
         chartPath: chart/
         valuesFiles:
           - values.development.yaml
