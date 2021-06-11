@@ -63,12 +63,16 @@ tasks:
   docker:build:
     desc: Build a Docker image
     cmds:
+      # built with docker to avoid a docker-compose dependency in CI
       - docker build . -t 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs
 
   docker:up:
-    desc: Start the docs webserver locally
+    desc: Start Docs
     cmds:
       - docker-compose up -d
+      - echo "Listening on localhost:34999"
 
   docker:down:
-    - docker-compose down
+    desc: Stop Docs
+    cmds:
+      - docker-compose down
