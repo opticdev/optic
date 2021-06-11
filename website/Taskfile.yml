@@ -84,3 +84,15 @@ tasks:
     desc: Stop Docs
     cmds:
       - docker-compose down
+
+  docker:deploy:
+    desc: Deploy Docs to K8s
+    env:
+      TAG: '{{default "local" .TAG}}'
+    cmds:
+      - skaffold deploy -i 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:$TAG
+
+  docker:ci:
+    - docker:build
+    - docker:push
+    - docker:deploy
