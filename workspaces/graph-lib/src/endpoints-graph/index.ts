@@ -40,20 +40,24 @@ export type PathNode = {
   pathId: string;
   name: string;
   isParameterized: boolean;
+  isRemoved: boolean;
 };
 export type RequestNode = {
   requestId: string;
   httpMethod: string;
+  isRemoved: boolean;
 };
 export type ResponseNode = {
   responseId: string;
   httpMethod: string;
   httpStatusCode: number;
+  isRemoved: boolean;
 };
 
 export type BodyNode = {
   httpContentType: string;
   rootShapeId: string;
+  isRemoved: boolean;
 };
 
 export type BatchCommitNode = {
@@ -61,6 +65,11 @@ export type BatchCommitNode = {
   batchId: string;
   commitMessage: string;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// A batch commit node can never be removed
+const isNodeRemoved = (node: Node): boolean =>
+  node.type !== NodeType.BatchCommit && node.data.isRemoved;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -310,36 +319,73 @@ export class GraphQueries {
     return this.wrap(node);
   }
 
-  listNodesByType(type: NodeType): NodeListWrapper {
-    return this.wrapList(type, this.index.nodesByType.get(type) || []);
+  listNodesByType(
+    type: NodeType,
+    {
+      includeRemoved = true,
+    }: {
+      includeRemoved?: boolean;
+    } = {}
+  ): NodeListWrapper {
+    const nodesByType = this.index.nodesByType.get(type) || [];
+    const filteredNodesByType = includeRemoved
+      ? nodesByType
+      : nodesByType.filter((node) => !isNodeRemoved(node));
+    return this.wrapList(type, filteredNodesByType);
   }
 
   //@TODO add singular find* variant
-  listIncomingNeighborsByType(id: NodeId, incomingNeighborType: NodeType) {
+  listIncomingNeighborsByType(
+    id: NodeId,
+    incomingNeighborType: NodeType,
+    {
+      includeRemoved = true,
+    }: {
+      includeRemoved?: boolean;
+    } = {}
+  ) {
     const neighbors = this.index.inboundNeighbors.get(id);
     if (!neighbors) {
       return this.wrapList(incomingNeighborType, []);
     }
-    const neighborsOfType = neighbors.get(incomingNeighborType);
-    return this.wrapList(incomingNeighborType, neighborsOfType || []);
+    const neighborsOfType = neighbors.get(incomingNeighborType) || [];
+    const filteredNeighborsOfType = includeRemoved
+      ? neighborsOfType
+      : neighborsOfType.filter((node) => !isNodeRemoved(node));
+
+    return this.wrapList(incomingNeighborType, filteredNeighborsOfType);
   }
 
   //@TODO add singular find* variant
   listOutgoingNeighborsByType(
     id: NodeId,
-    outgoingNeighborType: NodeType
+    outgoingNeighborType: NodeType,
+    {
+      includeRemoved = true,
+    }: {
+      includeRemoved?: boolean;
+    } = {}
   ): NodeListWrapper {
     const neighbors = this.index.outboundNeighbors.get(id);
     if (!neighbors) {
       return this.wrapList(outgoingNeighborType, []);
     }
-    const neighborsOfType = neighbors.get(outgoingNeighborType);
-    return this.wrapList(outgoingNeighborType, neighborsOfType || []);
+    const neighborsOfType = neighbors.get(outgoingNeighborType) || [];
+    const filteredNeighborsOfType = includeRemoved
+      ? neighborsOfType
+      : neighborsOfType.filter((node) => !isNodeRemoved(node));
+
+    return this.wrapList(outgoingNeighborType, filteredNeighborsOfType);
   }
 
   *descendantsIterator(
     nodeId: NodeId,
-    seenSet: Set<NodeId> = new Set()
+    seenSet: Set<NodeId> = new Set(),
+    {
+      includeRemoved = true,
+    }: {
+      includeRemoved?: boolean;
+    } = {}
   ): Generator<Node> {
     const inboundNeighbors = this.index.inboundNeighbors.get(nodeId);
     if (!inboundNeighbors) {
@@ -351,8 +397,10 @@ export class GraphQueries {
     seenSet.add(nodeId);
     for (const neighborsByNodeType of inboundNeighbors.values()) {
       for (const neighborNode of neighborsByNodeType) {
-        yield neighborNode;
-        yield* this.descendantsIterator(neighborNode.id, seenSet);
+        if (includeRemoved || !isNodeRemoved(neighborNode)) {
+          yield neighborNode;
+          yield* this.descendantsIterator(neighborNode.id, seenSet);
+        }
       }
     }
   }

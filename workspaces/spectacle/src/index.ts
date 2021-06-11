@@ -320,15 +320,18 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return Promise.resolve(
           context
             .spectacleContext()
-            .endpointsQueries.listNodesByType(endpoints.NodeType.Path).results
+            .endpointsQueries.listNodesByType(endpoints.NodeType.Path, {
+              includeRemoved: false,
+            }).results
         );
       },
       requests: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(
           context
             .spectacleContext()
-            .endpointsQueries.listNodesByType(endpoints.NodeType.Request)
-            .results
+            .endpointsQueries.listNodesByType(endpoints.NodeType.Request, {
+              includeRemoved: false,
+            }).results
         );
       },
       shapeChoices: async (parent: any, args: any, context: any, info: any) => {

@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+source: workspaces/optic-engine/tests/domain-conflict-scenarios-generated.rs
 expression: "&spec_projection.spectacle_endpoints_serializable()"
 ---
 {
@@ -10,7 +10,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "absolutePathPattern": "/",
         "isParameterized": false,
         "name": "",
-        "pathId": "root"
+        "pathId": "root",
+        "isRemoved": false
       }
     },
     {
@@ -27,7 +28,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "absolutePathPattern": "/todos",
         "isParameterized": false,
         "name": "todos",
-        "pathId": "path_2r0poc4Efl"
+        "pathId": "path_2r0poc4Efl",
+        "isRemoved": false
       }
     },
     {
@@ -42,7 +44,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "type": "Request",
       "data": {
         "httpMethod": "GET",
-        "requestId": "request_eaGDFPq9ha"
+        "requestId": "request_eaGDFPq9ha",
+        "isRemoved": false
       }
     },
     {
@@ -50,21 +53,24 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "httpStatusCode": 200,
-        "responseId": "response_7XA4cz1Jq4"
+        "responseId": "response_7XA4cz1Jq4",
+        "isRemoved": false
       }
     },
     {
       "type": "Body",
       "data": {
         "httpContentType": "application/json",
-        "rootShapeId": "shape_KrxPAcTUDM"
+        "rootShapeId": "shape_KrxPAcTUDM",
+        "isRemoved": false
       }
     },
     {
       "type": "Request",
       "data": {
         "httpMethod": "GET",
-        "requestId": "request_p8FwHVQwXH"
+        "requestId": "request_p8FwHVQwXH",
+        "isRemoved": false
       }
     },
     {
@@ -72,14 +78,16 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "httpStatusCode": 200,
-        "responseId": "response_fr6lmtes1c"
+        "responseId": "response_fr6lmtes1c",
+        "isRemoved": false
       }
     },
     {
       "type": "Body",
       "data": {
         "httpContentType": "application/json",
-        "rootShapeId": "shape_hcQz2zr63G"
+        "rootShapeId": "shape_hcQz2zr63G",
+        "isRemoved": false
       }
     }
   ],
