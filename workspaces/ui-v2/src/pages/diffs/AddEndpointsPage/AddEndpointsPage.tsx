@@ -159,7 +159,7 @@ export function DiffUrlsPage() {
 
 export function DocumentationRootPageWithPendingEndpoints() {
   const endpoints = selectors.filterRemovedEndpoints(
-    useAppSelector(selectors.getAssertedEndpoints)
+    useAppSelector((state) => state.endpoints.results.data || [])
   );
   const {
     pendingEndpoints,

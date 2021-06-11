@@ -84,7 +84,6 @@ export class InMemorySpecRepository implements IOpticSpecReadWriteRepository {
       commandContext.clientSessionId
     );
     const newEvents = JSON.parse(newEventsString);
-    console.log(newEventsString);
     this.events.push(...newEvents);
     this.notifications.emit('change');
   }

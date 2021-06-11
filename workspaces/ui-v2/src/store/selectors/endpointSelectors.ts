@@ -1,36 +1,9 @@
-import { RootState } from '../root';
 import { IEndpoint, IEndpointWithChanges } from '<src>/types';
 import {
   EndpointChangelog,
   ChangelogCategory,
 } from '<src>/hooks/useEndpointsChangelog';
 import { getEndpointId } from '<src>/utils';
-
-export const getAssertedEndpoints = (state: RootState): IEndpoint[] => {
-  const endpointState = state.endpoints.results.data;
-
-  if (!endpointState) {
-    throw new Error(
-      'Endpoint results were nullable, loading and error states should be handled above this component'
-    );
-  }
-
-  return endpointState;
-};
-
-export const getAssertedEndpoint = ({
-  pathId,
-  method,
-}: {
-  pathId: string;
-  method: string;
-}) => (state: RootState): IEndpoint | undefined => {
-  const endpointState = getAssertedEndpoints(state);
-
-  return endpointState.find(
-    (endpoint) => endpoint.pathId === pathId && endpoint.method === method
-  );
-};
 
 export const filterRemovedEndpoints = (endpoints: IEndpoint[]): IEndpoint[] =>
   endpoints.filter((endpoint) => !endpoint.isRemoved);

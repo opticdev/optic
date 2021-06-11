@@ -11,7 +11,7 @@ import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffConte
 import { SpectacleContext } from '<src>/contexts/spectacle-provider';
 import { Loading, PageLayout } from '<src>/components';
 import { DiffAccessoryNavigation } from '<src>/pages/diffs/components/DiffAccessoryNavigation';
-import { selectors, useAppSelector } from '<src>/store';
+import { useAppSelector } from '<src>/store';
 
 import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
 
@@ -26,8 +26,10 @@ export const ReviewEndpointDiffContainer: FC<
   const spectacle = useContext(SpectacleContext)!;
 
   const endpointDiffs = useEndpointDiffs(pathId, method);
-  const endpoint = useAppSelector(
-    selectors.getAssertedEndpoint({ pathId, method })
+  const endpoint = useAppSelector((state) =>
+    state.endpoints.results.data?.find(
+      (endpoint) => endpoint.pathId === pathId && endpoint.method === method
+    )
   );
   const { context } = useSharedDiffContext();
 

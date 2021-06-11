@@ -35,8 +35,9 @@ export function DiffReviewPages(props: any) {
   const allRequestsAndResponsesOfBaseSpec = useAllRequestsAndResponses();
   useFetchEndpoints();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
-  const filteredEndpoints = selectors.filterRemovedEndpoints(
-    endpointsState.data || []
+  const filteredEndpoints = useMemo(
+    () => selectors.filterRemovedEndpoints(endpointsState.data || []),
+    [endpointsState.data]
   );
   const allPaths = usePaths();
 
