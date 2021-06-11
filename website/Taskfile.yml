@@ -64,3 +64,11 @@ tasks:
     desc: Build a Docker image
     cmds:
       - docker build . -t testing/docs
+
+  docker:up:
+    desc: Start the docs webserver locally
+    cmds:
+      - docker-compose up -d
+
+  docker:down:
+    - docker-compose down
