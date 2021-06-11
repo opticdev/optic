@@ -33,9 +33,9 @@ export const filterRemovedEndpointsForChangelogAndMapChanges = (
     const endpointId = getEndpointId(endpoint);
 
     // Assumption - if an endpoint is removed, but this batch of changes contains _any_ change for this endpoint
-    // we should show this endpoint - the last change you could make is a delete
+    // we should show this endpoint - the last change you could make is a removal
     // Two assumptions:
-    // - You cannot undelete a specific endpoint
+    // - You cannot un-remove a specific endpoint (with history, you can undo batches)
     // - You must always view changes compared to the latest version
     return !(endpoint.isRemoved && !endpointChangesByEndpointId[endpointId]);
   });

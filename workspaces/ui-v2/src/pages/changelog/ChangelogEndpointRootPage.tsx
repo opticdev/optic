@@ -100,8 +100,8 @@ const ChangelogRootComponent: FC<
   return (
     <>
       {isEndpointRemovedInThisBatch && (
-        <Alert severity="error" className={styles.deleteInfoHeader}>
-          This endpoint has been deleted
+        <Alert severity="error" className={styles.removedInfoHeader}>
+          This endpoint has been removed
         </Alert>
       )}
       <FullWidth style={{ paddingTop: 30, paddingBottom: 400 }}>
@@ -212,7 +212,7 @@ const useStyles = makeStyles((theme) => ({
     color: '#4f566b',
     paddingRight: 50,
   },
-  deleteInfoHeader: {
+  removedInfoHeader: {
     justifyContent: 'center',
     display: 'fixed',
   },
