@@ -409,11 +409,19 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
             .expect("unused path should exist")
         });
 
+        let mut simulated_projection = projection.clone();
         removal_commands
           .flat_map(|removal_command| {
-            projection
+            // CLEANUP: this would be more elegant once the EndpointCommandHandler would be a thing
+            let events = simulated_projection
               .execute(removal_command)
-              .expect("removal of unused paths should be valid")
+              .expect("removal of unused paths should be valid");
+
+            for event in events.iter() {
+              simulated_projection.apply(event.clone());
+            }
+
+            events
           })
           .collect()
       }
