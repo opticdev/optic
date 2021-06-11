@@ -11,7 +11,7 @@ export default function TopLevelRoutes() {
         <Route
           strict
           //@TODO: centralize this path pattern
-          path="/public-specs/:personId/:specId"
+          path="/person/:personId/public-specs/:specId"
           component={CloudViewer}
         />
 
