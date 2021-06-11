@@ -9,6 +9,6 @@ RUN yarn build
 
 FROM library/nginx:alpine
 
-COPY --from=build --chown=nginx:nginx /tmp/docs/build/ /usr/share/nginx/html/
+COPY --from=build /tmp/docs/build/ /usr/share/nginx/html/
 COPY etc/nginx/conf.d/ /etc/nginx/conf.d/
 EXPOSE 80
