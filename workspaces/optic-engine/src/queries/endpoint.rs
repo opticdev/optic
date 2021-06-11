@@ -597,10 +597,7 @@ mod test {
 
     let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
 
-    let subjects = [
-      ("path_3", "/posts/favourites"),
-      ("path_parameter_1", "/posts/1"),
-    ];
+    let subjects = [("path_3", "/authors"), ("path_parameter_1", "/posts/1")];
 
     let delete_path_commands = subjects
       .iter()
@@ -612,8 +609,6 @@ mod test {
       .map(|endpoint_command| SpecCommand::from(endpoint_command))
       .collect::<Vec<_>>();
 
-    dbg!(&delete_path_commands);
-
     let updated_spec = assert_valid_commands(spec_projection.clone(), delete_path_commands);
     let updated_queries = EndpointQueries::new(&updated_spec.endpoint());
     let remaining_paths = subjects
@@ -621,8 +616,10 @@ mod test {
       .filter_map(|(_, subject_path)| updated_queries.resolve_path(*subject_path))
       .collect::<Vec<_>>();
 
+    // dbg!(Dot::with_config(&updated_spec.endpoint().graph, &[]));
+
     // TODO: enable assertion once projection is updated
-    // assert_eq!(remaining_paths.len(), 0);
+    assert_eq!(remaining_paths.len(), 0);
   }
 
   fn assert_valid_commands(

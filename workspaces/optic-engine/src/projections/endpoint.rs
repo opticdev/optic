@@ -88,6 +88,14 @@ impl EndpointProjection {
     self.with_path_component_node(parent_path_id, path_id, path_name, true);
   }
 
+  pub fn without_path(&mut self, path_id: PathComponentId) {
+    self.without_path_component(path_id);
+  }
+
+  pub fn without_path_parameter(&mut self, path_id: PathComponentId) {
+    self.without_path_component(path_id);
+  }
+
   fn with_path_component_node(
     &mut self,
     parent_path_id: PathComponentId,
@@ -109,6 +117,33 @@ impl EndpointProjection {
     self
       .graph
       .add_edge(node_index, parent_node_index, Edge::IsChildOf);
+  }
+
+  fn without_path_component(&mut self, path_id: PathComponentId) {
+    let path_component_node_index = *self
+      .node_id_to_index
+      .get(&path_id)
+      .expect("expected path_id to have a corresponding node");
+
+    let parent_path_edge_index = self
+      .graph
+      .edges_directed(path_component_node_index, petgraph::Direction::Outgoing)
+      .find(|parent_edge| {
+        let parent_node_index = parent_edge.target();
+        let node = self.graph.node_weight(parent_node_index);
+        matches!(node, Some(Node::PathComponent(_, _)))
+      })
+      .map(|parent_edge| parent_edge.id());
+
+    if let Some(parent_path_edge_index) = parent_path_edge_index {
+      self.graph.remove_edge(parent_path_edge_index); // prevents path to be resolved from path node
+    }
+    self.node_id_to_index.remove(&path_id); // prevents path node to be looked up by path id
+
+    // GOTCHA: we're not deleting the path node itself, as that would invalidate self.node_id_to_index
+    // as the graph indexes shift.
+    // GOTCHA: this assumes nested entities like requests and responses have already been deleted,
+    // as it does not delete ids for those nested entities
   }
 
   pub fn with_request(
@@ -467,8 +502,14 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
       EndpointEvent::PathComponentAdded(e) => {
         aggregate.with_path(e.parent_path_id, e.path_id, e.name);
       }
+      EndpointEvent::PathComponentRemoved(e) => {
+        aggregate.without_path(e.path_id);
+      }
       EndpointEvent::PathParameterAdded(e) => {
-        aggregate.with_path_parameter(e.parent_path_id, e.path_id, e.name)
+        aggregate.with_path_parameter(e.parent_path_id, e.path_id, e.name);
+      }
+      EndpointEvent::PathParameterRemoved(e) => {
+        aggregate.without_path_parameter(e.path_id);
       }
       EndpointEvent::RequestAdded(e) => {
         aggregate.with_request(e.path_id, e.http_method, e.request_id);
