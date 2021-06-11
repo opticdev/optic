@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useMemo } from 'react';
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import {
   EndpointName,
@@ -16,7 +16,7 @@ import { IParsedLocation } from '<src>/lib/Interfaces';
 import { HighlightedLocation } from '<src>/pages/diffs/components/HighlightedLocation';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { useDebouncedFn, useStateWithSideEffect } from '<src>/hooks/util';
-import { selectors, useAppSelector } from '<src>/store';
+import { useAppSelector } from '<src>/store';
 import { IPathParameter } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
@@ -40,9 +40,15 @@ export const EndpointDocumentationPane: FC<
   renderHeader,
   ...props
 }) => {
-  const thisEndpoint = useAppSelector(
-    selectors.getAssertedEndpoint({ pathId, method })
+  const endpointsState = useAppSelector((state) => state.endpoints.results);
+  const thisEndpoint = useMemo(
+    () =>
+      endpointsState.data?.find(
+        (i) => i.pathId === pathId && i.method === method
+      ),
+    [endpointsState, method, pathId]
   );
+
   const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   if (!thisEndpoint) {
