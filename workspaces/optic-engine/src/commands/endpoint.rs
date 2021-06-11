@@ -978,7 +978,7 @@ mod test {
     let mut projection = EndpointProjection::from(initial_events);
 
     let command: EndpointCommand = serde_json::from_value(json!(
-      { "RemovePathParameter": {"pathId": "path_1"}}
+      { "RemovePathParameter": {"pathId": "path_2"}}
     ))
     .expect("commands should be valid endpoint events");
 
@@ -989,6 +989,17 @@ mod test {
     assert_debug_snapshot!(
       "can_handle_remove_path_parameter_command__new_events",
       new_events
+    );
+
+    let path_with_children: EndpointCommand = serde_json::from_value(json!(
+      { "RemovePathParameter": {"pathId": "path_1"}}
+    ))
+    .unwrap();
+    let path_with_children_result = projection.execute(path_with_children);
+    assert!(path_with_children_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_remove_path_parameter_command__path_with_children_result",
+      path_with_children_result.unwrap_err()
     );
 
     let removing_root: EndpointCommand = serde_json::from_value(json!(

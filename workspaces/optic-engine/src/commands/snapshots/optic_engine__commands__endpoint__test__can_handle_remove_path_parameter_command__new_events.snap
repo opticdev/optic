@@ -1,11 +1,11 @@
 ---
-source: workspaces/optic-engine-native/src/commands/endpoint.rs
+source: workspaces/optic-engine/src/commands/endpoint.rs
 expression: new_events
 ---
 [
     PathParameterRemoved(
         PathParameterRemoved {
-            path_id: "path_1",
+            path_id: "path_2",
             name: "",
             event_context: None,
         },
