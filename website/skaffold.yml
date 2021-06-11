@@ -11,9 +11,11 @@ deploy:
   helm:
     releases:
       - name: docs
-        chartPath: chart/
+        namespace: docs
+        createNamespace: true
+        chartPath: k8s/
         valuesFiles:
-          - values.development.yaml
+          - k8s/values.development.yaml
         artifactOverrides:
           image: 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs
 profiles:
@@ -23,11 +25,11 @@ profiles:
     patches:
       - op: replace
         path: /deploy/helm/releases/0/valuesFiles/0
-        value: values.staging.yaml
+        value: k8s/values.staging.yaml
   - name: production
     activation:
       - kubeContext: production
     patches:
       - op: replace
         path: /deploy/helm/releases/0/valuesFiles/0
-        value: values.production.yaml
+        value: k8s/values.production.yaml

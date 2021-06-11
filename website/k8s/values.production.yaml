@@ -1,0 +1,14 @@
+name: docs
+hpa_cpu_util: 75
+hpa_max_replicas: 10
+hpa_min_replicas: 3
+image: docs
+replicas: 3
+resources:
+  requests:
+    cpu: 64m
+    memory: 64M
+revision_history: 5
+min_ready_seconds: 5
+tty_enabled: false
+port: 80

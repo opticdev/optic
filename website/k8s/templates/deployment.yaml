@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app: {{ .Values.name }}
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: {{ .Values.replicas }}
+  revisionHistoryLimit: {{ .Values.revision_history_limit }}
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  minReadySeconds: {{ .Values.min_ready_seconds }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      nodeSelector:
+        node-group: {{ .Values.node_group | default "default" }}
+      containers:
+        - name: {{ .Values.name }}
+          image: {{ .Values.image }}
+          {{- if .Values.tty_enabled }}
+          stdin: true
+          tty: true
+          {{- end }}
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: nginx
+description: an nginx chart focused on host our static react sites
+type: application
+version: 0.1.0
+appVersion: 0.0.0
