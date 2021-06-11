@@ -375,10 +375,17 @@ impl<'a> EndpointQueries<'a> {
   pub fn delete_path_commands(
     &self,
     path_id: &'a PathComponentId,
-  ) -> impl Iterator<Item = SpecCommand> {
-    todo!("implement delete path commands");
+  ) -> Option<impl Iterator<Item = EndpointCommand>> {
+    let path_descriptor = self
+      .endpoint_projection
+      .get_path_component_descriptor(path_id)?;
+    let command = if path_descriptor.is_parameter {
+      EndpointCommand::remove_path_parameter(path_id.clone())
+    } else {
+      EndpointCommand::remove_path_component(path_id.clone())
+    };
 
-    std::iter::empty()
+    Some(std::iter::once(command))
   }
 
   fn graph_get_index(&self, node_id: &str) -> Option<&petgraph::graph::NodeIndex> {
@@ -526,7 +533,7 @@ mod test {
   }
 
   #[test]
-  pub fn can_generate_delete_commands() {
+  pub fn can_generate_delete_endpoint_commands() {
     let events: Vec<SpecEvent> = serde_json::from_value(json!([
       {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
       {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "favourites" }},
@@ -568,9 +575,54 @@ mod test {
 
     // dbg!(Dot::with_config(&updated_spec.endpoint().graph, &[]));
 
-    // TODO: enable these assertions as the EndpointProjection handles the resulting events
     assert_eq!(remaining_requests.len(), 0);
     assert_eq!(remaining_responses.len(), 0);
+  }
+
+  #[test]
+  pub fn can_generate_delete_path_commands() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
+      {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "favourites" }},
+      {"PathComponentAdded": { "pathId": "path_3", "parentPathId": "root", "name": "authors" }},
+
+      {"PathParameterAdded":{"pathId":"path_parameter_1","parentPathId":"path_1","name":"postId"}},
+      {"ShapeAdded":{"shapeId":"shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"" }},
+      {"PathParameterShapeSet":{"pathId":"path_parameter_1","shapeDescriptor":{"shapeId":"shape_Ba53AWXhVW","isRemoved":false} }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+
+    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+
+    let subjects = [
+      ("path_3", "/posts/favourites"),
+      ("path_parameter_1", "/posts/1"),
+    ];
+
+    let delete_path_commands = subjects
+      .iter()
+      .flat_map(|(subject_path_id, _)| {
+        endpoint_queries
+          .delete_path_commands(&String::from(*subject_path_id))
+          .expect("delete commands are generated for existing path")
+      })
+      .map(|endpoint_command| SpecCommand::from(endpoint_command))
+      .collect::<Vec<_>>();
+
+    dbg!(&delete_path_commands);
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), delete_path_commands);
+    let updated_queries = EndpointQueries::new(&updated_spec.endpoint());
+    let remaining_paths = subjects
+      .iter()
+      .filter_map(|(_, subject_path)| updated_queries.resolve_path(*subject_path))
+      .collect::<Vec<_>>();
+
+    // TODO: enable assertion once projection is updated
+    assert_eq!(remaining_paths.len(), 0);
   }
 
   fn assert_valid_commands(

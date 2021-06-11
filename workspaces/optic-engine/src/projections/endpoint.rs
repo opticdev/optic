@@ -340,6 +340,19 @@ impl EndpointProjection {
     }
   }
 
+  pub fn get_path_component_descriptor(
+    &self,
+    path_id: &PathComponentId,
+  ) -> Option<PathComponentDescriptor> {
+    let path_node_index = self.node_id_to_index.get(path_id)?;
+    let node = self.graph.node_weight(*path_node_index)?;
+    if let &Node::PathComponent(_, ref descriptor) = node {
+      Some(descriptor.clone())
+    } else {
+      None
+    }
+  }
+
   pub fn get_request_node_index(&self, request_id: &RequestId) -> Option<&NodeIndex> {
     let node_index = self.node_id_to_index.get(request_id)?;
     let node = self.graph.node_weight(*node_index)?;
