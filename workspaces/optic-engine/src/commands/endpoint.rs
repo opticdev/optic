@@ -4,13 +4,14 @@ use serde::{Deserialize, Serialize};
 use crate::events::EndpointEvent;
 use crate::projections::endpoint::ROOT_PATH_ID;
 use crate::projections::EndpointProjection;
+use crate::queries::EndpointQueries;
 use crate::state::endpoint::{
   PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor,
   ShapedRequestParameterShapeDescriptor,
 };
 use crate::state::shape::ShapeId;
 use crate::{events::endpoint as endpoint_events, state::body};
-use cqrs_core::AggregateCommand;
+use cqrs_core::{Aggregate, AggregateCommand};
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
 pub enum EndpointCommand {
@@ -18,6 +19,7 @@ pub enum EndpointCommand {
   AddPathComponent(AddPathComponent),
   RenamePathComponent(RenamePathComponent),
   RemovePathComponent(RemovePathComponent),
+  PrunePathComponents(PrunePathComponents),
 
   // Path parameters
   AddPathParameter(AddPathParameter),
@@ -50,6 +52,10 @@ pub enum EndpointCommand {
 }
 
 impl EndpointCommand {
+  pub fn remove_path_component(path_id: PathComponentId) -> EndpointCommand {
+    EndpointCommand::RemovePathComponent(RemovePathComponent { path_id })
+  }
+
   pub fn set_path_parameter_shape(path_id: PathComponentId, shape_id: ShapeId) -> EndpointCommand {
     EndpointCommand::SetPathParameterShape(SetPathParameterShape {
       path_id,
@@ -58,6 +64,10 @@ impl EndpointCommand {
         is_removed: false,
       },
     })
+  }
+
+  pub fn remove_path_parameter(path_id: PathComponentId) -> EndpointCommand {
+    EndpointCommand::RemovePathParameter(RemovePathParameter { path_id })
   }
 
   // Requests
@@ -156,6 +166,10 @@ pub struct RenamePathComponent {
 pub struct RemovePathComponent {
   pub path_id: PathComponentId,
 }
+
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PrunePathComponents {}
 
 // Path parameters
 // ---------------
@@ -380,6 +394,24 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         vec![EndpointEvent::from(
           endpoint_events::PathComponentRemoved::from(command),
         )]
+      }
+
+      EndpointCommand::PrunePathComponents(command) => {
+        let endpoint_queries = EndpointQueries::new(projection);
+        let unused_paths = endpoint_queries.resolve_unused_paths();
+        let removal_commands = unused_paths.flat_map(|path_id| {
+          endpoint_queries
+            .delete_path_commands(&path_id)
+            .expect("unused path should exist")
+        });
+
+        removal_commands
+          .flat_map(|removal_command| {
+            projection
+              .execute(removal_command)
+              .expect("removal of unused paths should be valid")
+          })
+          .collect()
       }
 
       // Path parameters
