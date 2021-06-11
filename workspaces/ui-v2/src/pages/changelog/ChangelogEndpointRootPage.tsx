@@ -1,7 +1,8 @@
 import React, { FC, useMemo } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { Redirect, RouteComponentProps } from 'react-router-dom';
 
 import { Typography } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import makeStyles from '@material-ui/styles/makeStyles';
 import ReactMarkdown from 'react-markdown';
 
@@ -15,10 +16,12 @@ import {
   FullWidth,
   FieldOrParameter,
 } from '<src>/components';
-import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
+import { useChangelogPages } from '<src>/components/navigation/Routes';
 import { SubtleBlueBackground } from '<src>/constants/theme';
+import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
+import { useEndpointsChangelog } from '<src>/hooks/useEndpointsChangelog';
+import { selectors, useAppSelector } from '<src>/store';
 import { CodeBlock, EndpointTOC, TwoColumn } from '<src>/pages/docs/components';
-import { useAppSelector } from '<src>/store';
 
 import {
   ChangelogPageAccessoryNavigation,
@@ -49,7 +52,8 @@ const ChangelogRootComponent: FC<
     batchId: string;
   }>
 > = ({ match }) => {
-  // TODO check if deleted + should render
+  const styles = useStyles();
+  const changelogPageLink = useChangelogPages();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
 
   const { pathId, method, batchId } = match.params;
@@ -60,9 +64,19 @@ const ChangelogRootComponent: FC<
       ),
     [endpointsState, method, pathId]
   );
+  const changelog = useEndpointsChangelog(batchId);
+  const endpointWithChanges = selectors.filterRemovedEndpointsForChangelogAndMapChanges(
+    thisEndpoint ? [thisEndpoint] : [],
+    changelog
+  );
+
+  const isEndpointRemoved =
+    changelog.length > 0 && thisEndpoint && endpointWithChanges.length === 0;
+  const isEndpointRemovedInThisBatch =
+    endpointWithChanges.length > 0 &&
+    endpointWithChanges[0].changes === 'removed';
 
   const bodies = useEndpointBody(pathId, method, batchId);
-  const styles = useStyles();
 
   if (endpointsState.loading) {
     return <Loading />;
@@ -74,102 +88,114 @@ const ChangelogRootComponent: FC<
   if (!thisEndpoint) {
     return <>no endpoint here</>;
   }
+
+  if (isEndpointRemoved) {
+    return <Redirect to={changelogPageLink.linkTo(batchId)} />;
+  }
+
   const parameterizedPathParts = thisEndpoint.pathParameters.filter(
     (path) => path.isParameterized
   );
 
   return (
-    <FullWidth style={{ paddingTop: 30, paddingBottom: 400 }}>
-      <Typography className={styles.regularField}>
-        {thisEndpoint.purpose || 'Unnamed Endpoint'}
-      </Typography>
-      <EndpointName
-        fontSize={19}
-        leftPad={0}
-        method={thisEndpoint.method}
-        fullPath={thisEndpoint.fullPath}
-      />
-      <TwoColumn
-        style={{ marginTop: 5 }}
-        left={
-          <ReactMarkdown
-            className={styles.contents}
-            source={thisEndpoint.description}
-          />
-        }
-        right={
-          <CodeBlock
-            header={
-              <EndpointName
-                fontSize={14}
-                leftPad={0}
-                method={thisEndpoint.method}
-                fullPath={thisEndpoint.fullPath}
-              />
-            }
-          >
-            <PathParameters
-              parameters={parameterizedPathParts}
-              renderField={(param) => {
-                const alwaysAString: IShapeRenderer = {
-                  shapeId: param.id + 'shape',
-                  jsonType: JsonLike.STRING,
-                  value: undefined,
-                };
-                return (
-                  <FieldOrParameter
-                    key={param.id}
-                    name={param.name}
-                    shapes={[alwaysAString]}
-                    depth={0}
-                    value={param.description}
-                  />
-                );
-              }}
+    <>
+      {isEndpointRemovedInThisBatch && (
+        <Alert severity="error" className={styles.deleteInfoHeader}>
+          This endpoint has been deleted
+        </Alert>
+      )}
+      <FullWidth style={{ paddingTop: 30, paddingBottom: 400 }}>
+        <Typography className={styles.regularField}>
+          {thisEndpoint.purpose || 'Unnamed Endpoint'}
+        </Typography>
+        <EndpointName
+          fontSize={19}
+          leftPad={0}
+          method={thisEndpoint.method}
+          fullPath={thisEndpoint.fullPath}
+        />
+        <TwoColumn
+          style={{ marginTop: 5 }}
+          left={
+            <ReactMarkdown
+              className={styles.contents}
+              source={thisEndpoint.description}
             />
-            <div
-              style={{
-                marginTop: 10,
-                backgroundColor: SubtleBlueBackground,
-                borderTop: '1px solid #e2e2e2',
-              }}
+          }
+          right={
+            <CodeBlock
+              header={
+                <EndpointName
+                  fontSize={14}
+                  leftPad={0}
+                  method={thisEndpoint.method}
+                  fullPath={thisEndpoint.fullPath}
+                />
+              }
             >
-              <EndpointTOC
-                requests={bodies.requests}
-                responses={bodies.responses}
+              <PathParameters
+                parameters={parameterizedPathParts}
+                renderField={(param) => {
+                  const alwaysAString: IShapeRenderer = {
+                    shapeId: param.id + 'shape',
+                    jsonType: JsonLike.STRING,
+                    value: undefined,
+                  };
+                  return (
+                    <FieldOrParameter
+                      key={param.id}
+                      name={param.name}
+                      shapes={[alwaysAString]}
+                      depth={0}
+                      value={param.description}
+                    />
+                  );
+                }}
               />
-            </div>
-          </CodeBlock>
-        }
-      />
+              <div
+                style={{
+                  marginTop: 10,
+                  backgroundColor: SubtleBlueBackground,
+                  borderTop: '1px solid #e2e2e2',
+                }}
+              >
+                <EndpointTOC
+                  requests={bodies.requests}
+                  responses={bodies.responses}
+                />
+              </div>
+            </CodeBlock>
+          }
+        />
 
-      {bodies.requests.map((i, index) => {
-        return (
-          <TwoColumnBodyChangelog
-            key={i.rootShapeId}
-            changesSinceBatchCommitId={batchId}
-            rootShapeId={i.rootShapeId}
-            bodyId={i.requestId}
-            location={'Request Body'}
-            contentType={i.contentType}
-            description={i.description}
-          />
-        );
-      })}
-      {bodies.responses.map((i, index) => {
-        return (
-          <TwoColumnBodyChangelog
-            key={i.rootShapeId}
-            changesSinceBatchCommitId={batchId}
-            rootShapeId={i.rootShapeId}
-            bodyId={i.responseId}
-            location={`${i.statusCode} Response`}
-            contentType={i.contentType}
-            description={i.description}
-          />
-        );
-      })}
-    </FullWidth>
+        {bodies.requests.map((i, index) => {
+          return (
+            <TwoColumnBodyChangelog
+              key={i.rootShapeId}
+              changesSinceBatchCommitId={batchId}
+              rootShapeId={i.rootShapeId}
+              bodyId={i.requestId}
+              location={'Request Body'}
+              contentType={i.contentType}
+              description={i.description}
+            />
+          );
+        })}
+        {bodies.responses.map((i, index) => {
+          return (
+            <TwoColumnBodyChangelog
+              key={i.rootShapeId}
+              changesSinceBatchCommitId={batchId}
+              rootShapeId={i.rootShapeId}
+              bodyId={i.responseId}
+              location={`${i.statusCode} Response`}
+              contentType={i.contentType}
+              description={i.description}
+            />
+          );
+        })}
+      </FullWidth>
+    </>
   );
 };
 
@@ -185,5 +211,9 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: 1.6,
     color: '#4f566b',
     paddingRight: 50,
+  },
+  deleteInfoHeader: {
+    justifyContent: 'center',
+    display: 'fixed',
   },
 }));

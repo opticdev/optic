@@ -1,7 +1,8 @@
 import React, { FC, useMemo } from 'react';
 import groupBy from 'lodash.groupby';
-import { CenteredColumn, Loading, PageLayout } from '<src>/components';
 import { Box, List, Typography } from '@material-ui/core';
+
+import { CenteredColumn, Loading, PageLayout } from '<src>/components';
 import {
   useAppSelector,
   useAppDispatch,

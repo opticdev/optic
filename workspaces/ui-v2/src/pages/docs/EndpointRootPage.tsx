@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Button, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { Delete as DeleteIcon, Undo as UndoIcon } from '@material-ui/icons';
@@ -11,8 +11,9 @@ import {
   IShapeRenderer,
   JsonLike,
   PageLayout,
+  FullWidth,
 } from '<src>/components';
-import { FullWidth } from '<src>/components';
+import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import { SubtleBlueBackground } from '<src>/constants/theme';
 import {
@@ -49,6 +50,7 @@ export const EndpointRootPage: FC<
     method: string;
   }>
 > = ({ match }) => {
+  const documentationPageLink = useDocumentationPageLink();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
   const isEditing = useAppSelector(
     (state) => state.documentationEdits.isEditing
@@ -66,6 +68,8 @@ export const EndpointRootPage: FC<
       ),
     [endpointsState, method, pathId]
   );
+
+  const isEndpointRemoved = thisEndpoint ? thisEndpoint.isRemoved : false;
 
   const bodies = useEndpointBody(pathId, method);
 
@@ -108,6 +112,11 @@ export const EndpointRootPage: FC<
   if (!thisEndpoint) {
     return <>no endpoint here</>;
   }
+
+  if (isEndpointRemoved) {
+    return <Redirect to={documentationPageLink.linkTo()} />;
+  }
+
   const parameterizedPathParts = thisEndpoint.pathParameters.filter(
     (path) => path.isParameterized
   );
