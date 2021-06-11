@@ -10,7 +10,7 @@ use petgraph::visit::{
   depth_first_search, Control, DfsEvent, EdgeFilteredNeighborsDirected, Reversed,
 };
 use serde::Serialize;
-use std::collections::{BTreeSet, HashMap};
+use std::collections::{HashMap, HashSet};
 
 pub struct EndpointQueries<'a> {
   pub endpoint_projection: &'a EndpointProjection,
@@ -107,8 +107,11 @@ impl<'a> EndpointQueries<'a> {
 
     let reversed_graph = Reversed(&self.endpoint_projection.graph);
 
-    let mut unused_path_ids: BTreeSet<PathComponentId> = BTreeSet::new();
+    let mut path_ids_with_endpoints: HashSet<PathComponentId> = HashSet::new();
+    let mut unused_path_ids: HashSet<PathComponentId> = HashSet::new();
+    let mut unused_path_ids_sorted: Vec<PathComponentId> = Vec::new();
     let mut path_ids_by_index = HashMap::new();
+    let mut children_path_ids_by_path_id = HashMap::new();
 
     depth_first_search(&reversed_graph, Some(*root_path_node_index), |event| {
       match event {
@@ -119,8 +122,8 @@ impl<'a> EndpointQueries<'a> {
             .graph
             .node_weight(discovered_node_index);
           if let Some(Node::PathComponent(path_id, _)) = node {
-            unused_path_ids.insert(path_id.clone());
             path_ids_by_index.insert(discovered_node_index, path_id.clone());
+            children_path_ids_by_path_id.insert(path_id.clone(), vec![]);
             Control::Continue
           } else {
             Control::Prune // Stop going down this branch when not a path component
@@ -139,8 +142,11 @@ impl<'a> EndpointQueries<'a> {
             .expect("parent path node should already have been discovered");
 
           match child_node {
-            Node::PathComponent(_, _) => {
-              unused_path_ids.remove(path_id);
+            Node::PathComponent(child_path_id, _) => {
+              let children_path_ids = children_path_ids_by_path_id
+                .get_mut(path_id)
+                .expect("parent should have created collection of child paths");
+              children_path_ids.push(child_path_id);
               Control::Continue // we'll want to discover at the target edge as well
             }
             Node::HttpMethod(method) => {
@@ -155,7 +161,7 @@ impl<'a> EndpointQueries<'a> {
 
               if let Some(_) = request_ids.chain(response_ids).next() {
                 // found a request or response, path is being used
-                unused_path_ids.remove(path_id);
+                path_ids_with_endpoints.insert(path_id.clone());
               }
 
               Control::Prune // no more paths down this branch
@@ -164,6 +170,21 @@ impl<'a> EndpointQueries<'a> {
           }
         }
         DfsEvent::Finish(finished_node_index, time) => {
+          let path_id = path_ids_by_index
+            .get(&finished_node_index)
+            .expect("finished path node should already have been discovered");
+
+          let has_used_child = children_path_ids_by_path_id
+            .get(path_id)
+            .expect("collection of child paths should have been created during discovery")
+            .iter()
+            .any(|child_path_id| !unused_path_ids.contains(*child_path_id));
+
+          if !path_ids_with_endpoints.contains(path_id) && !has_used_child {
+            unused_path_ids.insert(path_id.clone());
+            unused_path_ids_sorted.push(path_id.clone());
+          }
+
           if *root_path_node_index == finished_node_index {
             Control::Break(())
           } else {
@@ -174,7 +195,7 @@ impl<'a> EndpointQueries<'a> {
       }
     });
 
-    unused_path_ids.into_iter()
+    unused_path_ids_sorted.into_iter()
   }
 
   pub fn resolve_operations_by_request_method(
@@ -507,6 +528,7 @@ mod test {
       {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
       {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "favourites" }},
       {"PathComponentAdded": { "pathId": "path_3", "parentPathId": "root", "name": "authors" }},
+      {"PathComponentAdded": { "pathId": "path_4", "parentPathId": "path_3", "name": "dutch" }},
       {"PathParameterAdded":{"pathId":"path_parameter_1","parentPathId":"path_1","name":"postId"}},
       {"ShapeAdded":{"shapeId":"shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"" }},
       {"PathParameterShapeSet":{"pathId":"path_parameter_1","shapeDescriptor":{"shapeId":"shape_Ba53AWXhVW","isRemoved":false} }},
