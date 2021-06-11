@@ -390,6 +390,10 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
           validation.path_component_id_exists(&command.path_id),
           "path component must exist to remove path component",
         )?;
+        validation.require(
+          validation.path_component_unused(&command.path_id),
+          "path component must be unused to be removed",
+        )?;
 
         vec![EndpointEvent::from(
           endpoint_events::PathComponentRemoved::from(command),
@@ -469,6 +473,10 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         validation.require(
           validation.path_component_id_exists(&command.path_id),
           "path component must exist to remove path parameter",
+        )?;
+        validation.require(
+          validation.path_component_unused(&command.path_id),
+          "path parameter must be unused to be removed",
         )?;
 
         vec![EndpointEvent::from(
@@ -591,6 +599,35 @@ impl<'a> CommandValidationQueries<'a> {
 
   pub fn path_component_is_root(&self, path_component_id: &PathComponentId) -> bool {
     path_component_id == ROOT_PATH_ID
+  }
+
+  pub fn path_component_unused(&self, path_component_id: &PathComponentId) -> bool {
+    let first_path_component_node = self
+      .endpoint_projection
+      .get_child_path_component_nodes(path_component_id)
+      .expect("path component should exist")
+      .next();
+
+    let first_request_node = self
+      .endpoint_projection
+      .get_request_nodes(path_component_id)
+      .expect("path component should exist")
+      .next();
+
+    let first_response_node = self
+      .endpoint_projection
+      .get_response_nodes(path_component_id)
+      .expect("path component should exist")
+      .next();
+
+    matches!(
+      (
+        first_path_component_node,
+        first_request_node,
+        first_response_node
+      ),
+      (None, None, None)
+    )
   }
 
   pub fn request_exists(&self, request_id: &RequestId) -> bool {

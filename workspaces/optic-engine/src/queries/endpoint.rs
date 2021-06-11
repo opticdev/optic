@@ -255,7 +255,7 @@ impl<'a> EndpointQueries<'a> {
   ) -> Option<impl Iterator<Item = (&ResponseId, &ResponseBodyDescriptor)>> {
     let response_nodes = self
       .endpoint_projection
-      .get_response_nodes(path_id, method)?;
+      .get_endpoint_response_nodes(path_id, method)?;
 
     Some(response_nodes.map(|node| match node {
       Node::Response(response_id, body_descriptor) => (response_id, body_descriptor),

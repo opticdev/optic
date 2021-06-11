@@ -408,7 +408,117 @@ impl EndpointProjection {
     }
   }
 
+  pub fn get_child_path_component_nodes<'a>(
+    &'a self,
+    path_id: &'a PathComponentId,
+  ) -> Option<impl Iterator<Item = &'a Node> + 'a> {
+    let path_node_index = self.get_path_component_node_index(path_id)?;
+
+    let children = self
+      .graph
+      .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
+
+    let child_path_components = children.filter_map(move |node_index| {
+      let node = self.graph.node_weight(node_index)?;
+      match node {
+        Node::PathComponent(_, _) => Some(node),
+        _ => None,
+      }
+    });
+
+    Some(child_path_components)
+  }
+
+  pub fn get_request_nodes<'a>(
+    &'a self,
+    path_id: &'a PathComponentId,
+  ) -> Option<impl Iterator<Item = (&'a HttpMethod, &'a Node)> + 'a> {
+    let path_node_index = self.get_path_component_node_index(path_id)?;
+
+    let children = self
+      .graph
+      .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
+
+    let request_nodes = children
+      .filter_map(move |node_index| {
+        let node = self.graph.node_weight(node_index)?;
+        match node {
+          Node::HttpMethod(http_method) => Some((node_index, http_method)),
+          _ => None,
+        }
+      })
+      .flat_map(move |(http_method_node_index, http_method)| {
+        let response_nodes = self
+          .graph
+          .neighbors_directed(http_method_node_index, petgraph::Direction::Incoming);
+
+        response_nodes
+          .filter_map(move |i| {
+            let node = self.graph.node_weight(i).unwrap();
+            match node {
+              Node::Response(response_id, body_descriptor) => Some(node),
+              _ => None,
+            }
+          })
+          .map(move |node| (http_method, node))
+      });
+
+    Some(request_nodes)
+  }
+
   pub fn get_response_nodes<'a>(
+    &'a self,
+    path_id: &'a PathComponentId,
+  ) -> Option<impl Iterator<Item = (&'a HttpMethod, &'a HttpStatusCode, &'a Node)> + 'a> {
+    let path_node_index = self.get_path_component_node_index(path_id)?;
+
+    let children = self
+      .graph
+      .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
+
+    let response_nodes = children
+      .filter_map(move |node_index| {
+        let node = self.graph.node_weight(node_index)?;
+        match node {
+          Node::HttpMethod(http_method) => Some((node_index, http_method)),
+          _ => None,
+        }
+      })
+      .flat_map(move |(http_method_node_index, http_method)| {
+        let status_code_nodes = self
+          .graph
+          .neighbors_directed(http_method_node_index, petgraph::Direction::Incoming);
+
+        status_code_nodes.flat_map(move |status_code_node_index| {
+          let status_code = self
+            .graph
+            .node_weight(status_code_node_index)
+            .map(|node| match node {
+              Node::HttpStatusCode(status_code) => Some(status_code),
+              _ => None,
+            })
+            .flatten()
+            .unwrap();
+          let response_nodes = self
+            .graph
+            .neighbors_directed(status_code_node_index, petgraph::Direction::Incoming);
+
+          response_nodes
+            .filter_map(move |i| {
+              let node = self.graph.node_weight(i).unwrap();
+              match node {
+                Node::Response(response_id, body_descriptor) => Some(node),
+                _ => None,
+              }
+            })
+            .map(move |node| (http_method, status_code, node))
+        })
+      });
+
+    Some(response_nodes)
+  }
+
+  pub fn get_endpoint_response_nodes<'a>(
     &'a self,
     path_id: &'a PathComponentId,
     method: &'a HttpMethod,
