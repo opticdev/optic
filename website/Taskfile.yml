@@ -63,7 +63,7 @@ tasks:
   docker:build:
     desc: Build a Docker image
     cmds:
-      - docker build . -t testing/docs
+      - docker build . -t 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs
 
   docker:up:
     desc: Start the docs webserver locally
