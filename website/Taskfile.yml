@@ -30,7 +30,7 @@ tasks:
 
   deploy:staging:
     desc: Dry run of a deploy to staging
-    cmds: 
+    cmds:
       - task: deploy
         vars:
           AWS_PROFILE: staging
@@ -38,15 +38,15 @@ tasks:
 
   deploy:staging:doit:
     desc: Deploy to staging
-    cmds: 
+    cmds:
       - task: deploy
         vars:
           AWS_PROFILE: staging
-          DRY_RUN: false  
+          DRY_RUN: false
 
   deploy:prod:
     desc: Dry run of a deploy to production
-    cmds: 
+    cmds:
       - task: deploy
         vars:
           AWS_PROFILE: production
@@ -58,4 +58,9 @@ tasks:
       - task: deploy
         vars:
           AWS_PROFILE: production
-          DRY_RUN: false  
+          DRY_RUN: false
+
+  docker:build:
+    desc: Build a Docker image
+    cmds:
+      - docker build . -t testing/docs
