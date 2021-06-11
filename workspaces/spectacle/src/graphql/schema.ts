@@ -43,6 +43,8 @@ type Query {
   # Diffs for existing endpoints and unrecognized URLs
   diff(diffId: ID): DiffState
 
+  endpoint(pathId: ID, method: String): Endpoint
+
   # Metadata about the current spec
   metadata: SpecMetadata
 }
@@ -76,6 +78,14 @@ type Path {
   
   # Path ID
   pathId: String
+}
+
+type Endpoint {
+  commands: EndpointCommands
+}
+
+type EndpointCommands {
+  remove: [JSON]
 }
 
 """

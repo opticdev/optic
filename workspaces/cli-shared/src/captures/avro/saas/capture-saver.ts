@@ -5,7 +5,7 @@ import {
   SaasClient,
 } from '../../../index';
 import { serdes } from '../index';
-import { IHttpInteraction, IInteractionBatch } from '../../../optic-types';
+import { IHttpInteraction, IInteractionBatch } from '@useoptic/optic-domain';
 
 export interface ISaasCaptureSaverConfig {
   orgId: string;

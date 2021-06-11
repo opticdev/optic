@@ -7,7 +7,7 @@ import {
   ITaskSpecificationInputs,
   TaskType,
 } from '..';
-import { IHttpInteraction } from '@useoptic/cli-shared/build/optic-types';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 
 export interface InteractionsFileToJsTaskInputs
   extends ITaskSpecificationInputs {}

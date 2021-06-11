@@ -1,0 +1,850 @@
+---
+source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+expression: "&spec_projection.shape().to_choice_mapping()"
+---
+{
+    "shape_0Z1KxFx3Q3": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_0Z1KxFx3Q3",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_1K7h84XwT6": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_1K7h84XwT6",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "xmlns",
+                        field_id: "field_u20HS5kyf1",
+                        shape_id: "shape_7bGGTfwuUs",
+                    },
+                    ObjectFieldChoice {
+                        name: "url",
+                        field_id: "field_bCm0zHsqCa",
+                        shape_id: "shape_4l2V7bUzNQ",
+                    },
+                    ObjectFieldChoice {
+                        name: "total",
+                        field_id: "field_dlVIugfUjy",
+                        shape_id: "shape_7okUlcsfTe",
+                    },
+                    ObjectFieldChoice {
+                        name: "series",
+                        field_id: "field_HHoUcbcxiY",
+                        shape_id: "shape_xMMQP7RnaR",
+                    },
+                    ObjectFieldChoice {
+                        name: "offset",
+                        field_id: "field_AJm7jNHyxN",
+                        shape_id: "shape_OsCK29Ako2",
+                    },
+                    ObjectFieldChoice {
+                        name: "limit",
+                        field_id: "field_D2sd46FKwj",
+                        shape_id: "shape_0Z1KxFx3Q3",
+                    },
+                    ObjectFieldChoice {
+                        name: "RaceTable",
+                        field_id: "field_I25Vs4cAAF",
+                        shape_id: "shape_HBb7JQz6nd",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_1VbLLR6vHi": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_1VbLLR6vHi",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "url",
+                        field_id: "field_5vrGHyf7ZM",
+                        shape_id: "shape_fj2yWpRDEh",
+                    },
+                    ObjectFieldChoice {
+                        name: "time",
+                        field_id: "field_EOHqqOsyYy",
+                        shape_id: "shape_vtcch5ZDVh",
+                    },
+                    ObjectFieldChoice {
+                        name: "season",
+                        field_id: "field_fxqkg1XvG1",
+                        shape_id: "shape_JqT7NUslk6",
+                    },
+                    ObjectFieldChoice {
+                        name: "round",
+                        field_id: "field_tHi1Gwb8Ku",
+                        shape_id: "shape_i61BOAwOhw",
+                    },
+                    ObjectFieldChoice {
+                        name: "raceName",
+                        field_id: "field_ITFL2jMB8x",
+                        shape_id: "shape_qqIHC6xDVH",
+                    },
+                    ObjectFieldChoice {
+                        name: "date",
+                        field_id: "field_Uh902Vk78C",
+                        shape_id: "shape_h8jdPLNKsp",
+                    },
+                    ObjectFieldChoice {
+                        name: "Results",
+                        field_id: "field_zOCRycvAZJ",
+                        shape_id: "shape_3qED1KRQhg",
+                    },
+                    ObjectFieldChoice {
+                        name: "Circuit",
+                        field_id: "field_s68MXfY4fa",
+                        shape_id: "shape_SjcBKS9X84",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_1j3n4HJX9Q": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_1j3n4HJX9Q",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_3Xq1EaSQkc": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_3Xq1EaSQkc",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_3qED1KRQhg": [
+        Array(
+            ArrayChoice {
+                json_type: Array,
+                shape_id: "shape_3qED1KRQhg",
+                item_shape_id: "shape_XA5M5sp7FW",
+            },
+        ),
+    ],
+    "shape_4gwDxcPIcD": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_4gwDxcPIcD",
+                json_type: Object,
+                fields: [],
+            },
+        ),
+    ],
+    "shape_4l2V7bUzNQ": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_4l2V7bUzNQ",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_5pwI4nMken": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_5pwI4nMken",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_6PiVFtClLo": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_6PiVFtClLo",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_7bGGTfwuUs": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_7bGGTfwuUs",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_7okUlcsfTe": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_7okUlcsfTe",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_9MGrgzPhOw": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_9MGrgzPhOw",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_9nsoVJbTP1": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_9nsoVJbTP1",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_DEfFaB2sUk": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_DEfFaB2sUk",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_DHB4lACdul": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_DHB4lACdul",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_DTHG1XLMPV": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_DTHG1XLMPV",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "rank",
+                        field_id: "field_WnKwfz5il8",
+                        shape_id: "shape_cqBVUMcF7a",
+                    },
+                    ObjectFieldChoice {
+                        name: "lap",
+                        field_id: "field_1LCpA0S0dv",
+                        shape_id: "shape_fzqDsTcmuM",
+                    },
+                    ObjectFieldChoice {
+                        name: "Time",
+                        field_id: "field_aTz005ocl8",
+                        shape_id: "shape_Hkes6mW059",
+                    },
+                    ObjectFieldChoice {
+                        name: "AverageSpeed",
+                        field_id: "field_dGAokm0W6a",
+                        shape_id: "shape_Mz0Bk8LJx4",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_E3wIBYUTxz": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_E3wIBYUTxz",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_GMtxDoA6QP": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_GMtxDoA6QP",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "MRData",
+                        field_id: "field_AfS6EZ0kL3",
+                        shape_id: "shape_1K7h84XwT6",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_Gs1LzYEfCQ": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_Gs1LzYEfCQ",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_HA1BOdtyPQ": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_HA1BOdtyPQ",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_HBb7JQz6nd": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_HBb7JQz6nd",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "season",
+                        field_id: "field_twka43JljA",
+                        shape_id: "shape_Gs1LzYEfCQ",
+                    },
+                    ObjectFieldChoice {
+                        name: "driverId",
+                        field_id: "field_44RBXlpcQJ",
+                        shape_id: "shape_9nsoVJbTP1",
+                    },
+                    ObjectFieldChoice {
+                        name: "Races",
+                        field_id: "field_pwfcDq2meR",
+                        shape_id: "shape_oCz30NI4Be",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_Hkes6mW059": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_Hkes6mW059",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "time",
+                        field_id: "field_6ydB4IrZlc",
+                        shape_id: "shape_3Xq1EaSQkc",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_JqT7NUslk6": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_JqT7NUslk6",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_K6Xw9fkWDL": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_K6Xw9fkWDL",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_KS7FqcnW2A": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_KS7FqcnW2A",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "url",
+                        field_id: "field_TkpOoAcXqQ",
+                        shape_id: "shape_oHbu87Sp9N",
+                    },
+                    ObjectFieldChoice {
+                        name: "nationality",
+                        field_id: "field_rUJm7Tpubm",
+                        shape_id: "shape_Y8rkTAcuZE",
+                    },
+                    ObjectFieldChoice {
+                        name: "name",
+                        field_id: "field_GSf561xjeR",
+                        shape_id: "shape_1j3n4HJX9Q",
+                    },
+                    ObjectFieldChoice {
+                        name: "constructorId",
+                        field_id: "field_s6VsXMW0us",
+                        shape_id: "shape_kaSMMlXLVr",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_LogwGfZ6dt": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_LogwGfZ6dt",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_M1u1THiLg5": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_M1u1THiLg5",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_Mz0Bk8LJx4": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_Mz0Bk8LJx4",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "units",
+                        field_id: "field_5Zv3SxFPOU",
+                        shape_id: "shape_iIDIvLCcfS",
+                    },
+                    ObjectFieldChoice {
+                        name: "speed",
+                        field_id: "field_o5ULX5rah5",
+                        shape_id: "shape_g4w0rcshvo",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_O0T6r1aNzJ": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_O0T6r1aNzJ",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_OsCK29Ako2": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_OsCK29Ako2",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_Q1vmb3Yk2o": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_Q1vmb3Yk2o",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "url",
+                        field_id: "field_81jKaGGrKR",
+                        shape_id: "shape_LogwGfZ6dt",
+                    },
+                    ObjectFieldChoice {
+                        name: "permanentNumber",
+                        field_id: "field_hVjqCtul7Q",
+                        shape_id: "shape_rJTgdHbZb7",
+                    },
+                    ObjectFieldChoice {
+                        name: "nationality",
+                        field_id: "field_jdFc2OsRqK",
+                        shape_id: "shape_dHPixDTUHS",
+                    },
+                    ObjectFieldChoice {
+                        name: "givenName",
+                        field_id: "field_8H0yrYYep1",
+                        shape_id: "shape_y7BytS15uN",
+                    },
+                    ObjectFieldChoice {
+                        name: "familyName",
+                        field_id: "field_9snl3gNh4X",
+                        shape_id: "shape_hqbqzPsf3k",
+                    },
+                    ObjectFieldChoice {
+                        name: "driverId",
+                        field_id: "field_7J5ypaUHV9",
+                        shape_id: "shape_HA1BOdtyPQ",
+                    },
+                    ObjectFieldChoice {
+                        name: "dateOfBirth",
+                        field_id: "field_IlsI9NRyiz",
+                        shape_id: "shape_O0T6r1aNzJ",
+                    },
+                    ObjectFieldChoice {
+                        name: "code",
+                        field_id: "field_9SnD9jv8Tl",
+                        shape_id: "shape_hWdV0MH64c",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_SjcBKS9X84": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_SjcBKS9X84",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "url",
+                        field_id: "field_dw1hKLcEMo",
+                        shape_id: "shape_wlrayc7Z9k",
+                    },
+                    ObjectFieldChoice {
+                        name: "circuitName",
+                        field_id: "field_uvJluUP3ut",
+                        shape_id: "shape_TErEvQDRaw",
+                    },
+                    ObjectFieldChoice {
+                        name: "circuitId",
+                        field_id: "field_ptSwJsy7tI",
+                        shape_id: "shape_K6Xw9fkWDL",
+                    },
+                    ObjectFieldChoice {
+                        name: "Location",
+                        field_id: "field_qFQP5yfXhW",
+                        shape_id: "shape_mJS8YvoM93",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_TErEvQDRaw": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_TErEvQDRaw",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_XA5M5sp7FW": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_XA5M5sp7FW",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "status",
+                        field_id: "field_9dSuRtTTxG",
+                        shape_id: "shape_DHB4lACdul",
+                    },
+                    ObjectFieldChoice {
+                        name: "positionText",
+                        field_id: "field_VuPEcyF1vf",
+                        shape_id: "shape_9MGrgzPhOw",
+                    },
+                    ObjectFieldChoice {
+                        name: "position",
+                        field_id: "field_c0MactNj2A",
+                        shape_id: "shape_xlbP1rucqo",
+                    },
+                    ObjectFieldChoice {
+                        name: "points",
+                        field_id: "field_vsB4s8Pe09",
+                        shape_id: "shape_txo6ZqOtpk",
+                    },
+                    ObjectFieldChoice {
+                        name: "number",
+                        field_id: "field_aCn1z3SwaT",
+                        shape_id: "shape_DEfFaB2sUk",
+                    },
+                    ObjectFieldChoice {
+                        name: "laps",
+                        field_id: "field_H4Pl7Ds9uR",
+                        shape_id: "shape_E3wIBYUTxz",
+                    },
+                    ObjectFieldChoice {
+                        name: "grid",
+                        field_id: "field_EctFv7oFaj",
+                        shape_id: "shape_M1u1THiLg5",
+                    },
+                    ObjectFieldChoice {
+                        name: "Time",
+                        field_id: "field_jBer8hMnm5",
+                        shape_id: "shape_ZaQCM40d39",
+                    },
+                    ObjectFieldChoice {
+                        name: "FastestLap",
+                        field_id: "field_lKkPHZp1kM",
+                        shape_id: "shape_DTHG1XLMPV",
+                    },
+                    ObjectFieldChoice {
+                        name: "Driver",
+                        field_id: "field_9NjjQ8XqiC",
+                        shape_id: "shape_Q1vmb3Yk2o",
+                    },
+                    ObjectFieldChoice {
+                        name: "Constructor",
+                        field_id: "field_oD4xnLYdGS",
+                        shape_id: "shape_KS7FqcnW2A",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_Y8rkTAcuZE": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_Y8rkTAcuZE",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_ZUQJjxZZWk": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_ZUQJjxZZWk",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_ZaQCM40d39": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_ZaQCM40d39",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "time",
+                        field_id: "field_aI3iJKd8d8",
+                        shape_id: "shape_ixSsYcqP04",
+                    },
+                    ObjectFieldChoice {
+                        name: "millis",
+                        field_id: "field_gOoqPkowDP",
+                        shape_id: "shape_5pwI4nMken",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_cnvPSZhe85": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_cnvPSZhe85",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_cqBVUMcF7a": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_cqBVUMcF7a",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_dHCx3UqvZy": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_dHCx3UqvZy",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_dHPixDTUHS": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_dHPixDTUHS",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_fj2yWpRDEh": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_fj2yWpRDEh",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_fzqDsTcmuM": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_fzqDsTcmuM",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_g4w0rcshvo": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_g4w0rcshvo",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_gHBFqqy32v": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_gHBFqqy32v",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_h8jdPLNKsp": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_h8jdPLNKsp",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_hWdV0MH64c": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_hWdV0MH64c",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_hqbqzPsf3k": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_hqbqzPsf3k",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_i61BOAwOhw": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_i61BOAwOhw",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_iIDIvLCcfS": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_iIDIvLCcfS",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_iTjHeinxZf": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_iTjHeinxZf",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_ixSsYcqP04": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_ixSsYcqP04",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_kaSMMlXLVr": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_kaSMMlXLVr",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_mJS8YvoM93": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_mJS8YvoM93",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "long",
+                        field_id: "field_bucD5E3tTS",
+                        shape_id: "shape_6PiVFtClLo",
+                    },
+                    ObjectFieldChoice {
+                        name: "locality",
+                        field_id: "field_f7TctEJF0J",
+                        shape_id: "shape_cnvPSZhe85",
+                    },
+                    ObjectFieldChoice {
+                        name: "lat",
+                        field_id: "field_npavLXSDbj",
+                        shape_id: "shape_iTjHeinxZf",
+                    },
+                    ObjectFieldChoice {
+                        name: "country",
+                        field_id: "field_rmmGg6vaf7",
+                        shape_id: "shape_dHCx3UqvZy",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_oCz30NI4Be": [
+        Array(
+            ArrayChoice {
+                json_type: Array,
+                shape_id: "shape_oCz30NI4Be",
+                item_shape_id: "shape_1VbLLR6vHi",
+            },
+        ),
+    ],
+    "shape_oHbu87Sp9N": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_oHbu87Sp9N",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_qqIHC6xDVH": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_qqIHC6xDVH",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_rJTgdHbZb7": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_rJTgdHbZb7",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_txo6ZqOtpk": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_txo6ZqOtpk",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_vtcch5ZDVh": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_vtcch5ZDVh",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_wlrayc7Z9k": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_wlrayc7Z9k",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_xMMQP7RnaR": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_xMMQP7RnaR",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_xlbP1rucqo": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_xlbP1rucqo",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_y7BytS15uN": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_y7BytS15uN",
+                json_type: String,
+            },
+        ),
+    ],
+}

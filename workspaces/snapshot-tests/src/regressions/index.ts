@@ -4,7 +4,7 @@ import {
   LocalCliCapturesService,
   LocalCliSpectacle,
 } from '@useoptic/spectacle-shared';
-import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as opticEngine from '@useoptic/optic-engine-wasm';
 
 async function main(input: {
   interactionsCount: string;

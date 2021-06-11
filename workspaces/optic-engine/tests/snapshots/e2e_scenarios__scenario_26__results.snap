@@ -1,0 +1,252 @@
+---
+source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+expression: results
+---
+[
+    UnmatchedResponseBodyShape(
+        UnmatchedResponseBodyShape {
+            interaction_trail: InteractionTrail {
+                path: [
+                    ResponseBody {
+                        content_type: "application/json",
+                        status_code: 200,
+                    },
+                ],
+            },
+            requests_trail: SpecResponseBody(
+                SpecResponseBody {
+                    response_id: "response_KBRwJqndED",
+                },
+            ),
+            shape_diff_result: UnmatchedShape {
+                json_trail: JsonTrail {
+                    path: [
+                        JsonObjectKey {
+                            key: "MRData",
+                        },
+                        JsonObjectKey {
+                            key: "RaceTable",
+                        },
+                        JsonObjectKey {
+                            key: "Races",
+                        },
+                        JsonArrayItem {
+                            index: 12,
+                        },
+                        JsonObjectKey {
+                            key: "Results",
+                        },
+                        JsonArrayItem {
+                            index: 0,
+                        },
+                        JsonObjectKey {
+                            key: "Time",
+                        },
+                    ],
+                },
+                shape_trail: ShapeTrail {
+                    root_shape_id: "shape_GMtxDoA6QP",
+                    path: [
+                        ObjectFieldTrail {
+                            field_id: "field_AfS6EZ0kL3",
+                            field_shape_id: "shape_1K7h84XwT6",
+                            parent_object_shape_id: "shape_GMtxDoA6QP",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_I25Vs4cAAF",
+                            field_shape_id: "shape_HBb7JQz6nd",
+                            parent_object_shape_id: "shape_1K7h84XwT6",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_pwfcDq2meR",
+                            field_shape_id: "shape_oCz30NI4Be",
+                            parent_object_shape_id: "shape_HBb7JQz6nd",
+                        },
+                        ListItemTrail {
+                            list_shape_id: "shape_oCz30NI4Be",
+                            item_shape_id: "shape_1VbLLR6vHi",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_zOCRycvAZJ",
+                            field_shape_id: "shape_3qED1KRQhg",
+                            parent_object_shape_id: "shape_1VbLLR6vHi",
+                        },
+                        ListItemTrail {
+                            list_shape_id: "shape_3qED1KRQhg",
+                            item_shape_id: "shape_XA5M5sp7FW",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_jBer8hMnm5",
+                            field_shape_id: "shape_ZaQCM40d39",
+                            parent_object_shape_id: "shape_XA5M5sp7FW",
+                        },
+                    ],
+                },
+            },
+        },
+    ),
+    UnmatchedResponseBodyShape(
+        UnmatchedResponseBodyShape {
+            interaction_trail: InteractionTrail {
+                path: [
+                    ResponseBody {
+                        content_type: "application/json",
+                        status_code: 200,
+                    },
+                ],
+            },
+            requests_trail: SpecResponseBody(
+                SpecResponseBody {
+                    response_id: "response_KBRwJqndED",
+                },
+            ),
+            shape_diff_result: UnmatchedShape {
+                json_trail: JsonTrail {
+                    path: [
+                        JsonObjectKey {
+                            key: "MRData",
+                        },
+                        JsonObjectKey {
+                            key: "RaceTable",
+                        },
+                        JsonObjectKey {
+                            key: "Races",
+                        },
+                        JsonArrayItem {
+                            index: 12,
+                        },
+                        JsonObjectKey {
+                            key: "Results",
+                        },
+                        JsonArrayItem {
+                            index: 0,
+                        },
+                        JsonObjectKey {
+                            key: "FastestLap",
+                        },
+                    ],
+                },
+                shape_trail: ShapeTrail {
+                    root_shape_id: "shape_GMtxDoA6QP",
+                    path: [
+                        ObjectFieldTrail {
+                            field_id: "field_AfS6EZ0kL3",
+                            field_shape_id: "shape_1K7h84XwT6",
+                            parent_object_shape_id: "shape_GMtxDoA6QP",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_I25Vs4cAAF",
+                            field_shape_id: "shape_HBb7JQz6nd",
+                            parent_object_shape_id: "shape_1K7h84XwT6",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_pwfcDq2meR",
+                            field_shape_id: "shape_oCz30NI4Be",
+                            parent_object_shape_id: "shape_HBb7JQz6nd",
+                        },
+                        ListItemTrail {
+                            list_shape_id: "shape_oCz30NI4Be",
+                            item_shape_id: "shape_1VbLLR6vHi",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_zOCRycvAZJ",
+                            field_shape_id: "shape_3qED1KRQhg",
+                            parent_object_shape_id: "shape_1VbLLR6vHi",
+                        },
+                        ListItemTrail {
+                            list_shape_id: "shape_3qED1KRQhg",
+                            item_shape_id: "shape_XA5M5sp7FW",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_lKkPHZp1kM",
+                            field_shape_id: "shape_DTHG1XLMPV",
+                            parent_object_shape_id: "shape_XA5M5sp7FW",
+                        },
+                    ],
+                },
+            },
+        },
+    ),
+    UnmatchedResponseBodyShape(
+        UnmatchedResponseBodyShape {
+            interaction_trail: InteractionTrail {
+                path: [
+                    ResponseBody {
+                        content_type: "application/json",
+                        status_code: 200,
+                    },
+                ],
+            },
+            requests_trail: SpecResponseBody(
+                SpecResponseBody {
+                    response_id: "response_KBRwJqndED",
+                },
+            ),
+            shape_diff_result: UnmatchedShape {
+                json_trail: JsonTrail {
+                    path: [
+                        JsonObjectKey {
+                            key: "MRData",
+                        },
+                        JsonObjectKey {
+                            key: "RaceTable",
+                        },
+                        JsonObjectKey {
+                            key: "Races",
+                        },
+                        JsonArrayItem {
+                            index: 16,
+                        },
+                        JsonObjectKey {
+                            key: "Results",
+                        },
+                        JsonArrayItem {
+                            index: 0,
+                        },
+                        JsonObjectKey {
+                            key: "Time",
+                        },
+                    ],
+                },
+                shape_trail: ShapeTrail {
+                    root_shape_id: "shape_GMtxDoA6QP",
+                    path: [
+                        ObjectFieldTrail {
+                            field_id: "field_AfS6EZ0kL3",
+                            field_shape_id: "shape_1K7h84XwT6",
+                            parent_object_shape_id: "shape_GMtxDoA6QP",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_I25Vs4cAAF",
+                            field_shape_id: "shape_HBb7JQz6nd",
+                            parent_object_shape_id: "shape_1K7h84XwT6",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_pwfcDq2meR",
+                            field_shape_id: "shape_oCz30NI4Be",
+                            parent_object_shape_id: "shape_HBb7JQz6nd",
+                        },
+                        ListItemTrail {
+                            list_shape_id: "shape_oCz30NI4Be",
+                            item_shape_id: "shape_1VbLLR6vHi",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_zOCRycvAZJ",
+                            field_shape_id: "shape_3qED1KRQhg",
+                            parent_object_shape_id: "shape_1VbLLR6vHi",
+                        },
+                        ListItemTrail {
+                            list_shape_id: "shape_3qED1KRQhg",
+                            item_shape_id: "shape_XA5M5sp7FW",
+                        },
+                        ObjectFieldTrail {
+                            field_id: "field_jBer8hMnm5",
+                            field_shape_id: "shape_ZaQCM40d39",
+                            parent_object_shape_id: "shape_XA5M5sp7FW",
+                        },
+                    ],
+                },
+            },
+        },
+    ),
+]

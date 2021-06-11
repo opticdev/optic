@@ -18,12 +18,12 @@ import {
   SpectacleInput,
   StartDiffResult,
 } from '../index';
-import { AsyncTools, Streams } from '@useoptic/diff-engine-wasm';
+import { AsyncTools, Streams } from '@useoptic/optic-domain';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { HttpInteraction } from '@useoptic/diff-engine-wasm/lib/streams/http-interactions';
+import { HttpInteraction } from '@useoptic/optic-domain/build/streams/http-interactions';
 import { defaultIgnoreRules } from '@useoptic/cli-config/build/helpers/default-ignore-rules';
 import { IApiCliConfig, IOpticScript, IOpticTask } from '@useoptic/cli-config';
 
@@ -509,7 +509,7 @@ export class InMemorySpectacle
     this.spectaclePromise = makeSpectacle(opticContext);
   }
 
-  async fork(): Promise<IBaseSpectacle> {
+  async fork(): Promise<IForkableSpectacle> {
     const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
       this.opticContext.opticEngine,
       [...(await this.opticContext.specRepository.listEvents())],

@@ -1,6 +1,5 @@
 import { useSpectacleQuery } from '<src>/contexts/spectacle-provider';
 
-//@todo not working as expected -- never any changes
 export const endpointChangeQuery = `query X($sinceBatchCommitId: String) {
     endpointChanges(sinceBatchCommitId: $sinceBatchCommitId) {
       endpoints {
@@ -15,7 +14,7 @@ export const endpointChangeQuery = `query X($sinceBatchCommitId: String) {
 
 type ChangelogCategory = 'added' | 'updated' | 'removed';
 
-type EndpointChangelog = {
+export type EndpointChangelog = {
   change: {
     category: ChangelogCategory;
   };

@@ -1,0 +1,14 @@
+---
+source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+expression: "Dot::with_config(&spec_projection.conflicts().graph, &[])"
+---
+digraph {
+    0 [ label = "Path(\l    \"/\",\l    [\l        \"root\",\l    ],\l)\l" ]
+    1 [ label = "Path(\l    \"/posts\",\l    [\l        \"path_8fRaIiFWPP\",\l    ],\l)\l" ]
+    2 [ label = "Path(\l    \"/posts/1\",\l    [\l        \"path_p6kbd9Kkg7\",\l    ],\l)\l" ]
+    3 [ label = "HttpMethod(\l    \"GET\",\l    [\l        \"request_kXPYf9Kvz3\",\l    ],\l)\l" ]
+    4 [ label = "HttpStatusCode(\l    200,\l    [\l        \"response_nHVA0oUt5j\",\l    ],\l)\l" ]
+    3 -> 2 [ label = "IsChildOf\l" ]
+    4 -> 3 [ label = "IsChildOf\l" ]
+}
+

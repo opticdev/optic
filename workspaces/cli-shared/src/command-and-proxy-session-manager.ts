@@ -10,7 +10,7 @@ import {
 import url from 'url';
 import { buildQueryStringParser } from './query/build-query-string-parser';
 import { awaitTaskUp } from './tasks/await-up';
-import { IHttpInteraction } from './optic-types';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 
 class CommandAndProxySessionManager {
   constructor(

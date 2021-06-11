@@ -12,7 +12,7 @@ image: /img/blog-content/lhc.jpg
 Starting today, you can now run Optic in Real API Environments. [Sign up here](https://4babutyltxb.typeform.com/to/qd6PHfHI)!
 :::
 
-![alt](/img/blog-content/lhc.jpg)
+![Data plotted from the Large Hadron Collider](/img/blog-content/lhc.jpg)
 
 Once our APIs are deployed in a real environment like staging or production, traffic races in from all directions, interacting with the API in the ways we expect, and in ways we could never anticipate. These 'surprises' can teach us things and help us build better designed and more robust APIs.
 
@@ -24,7 +24,9 @@ There is so much to be learned from looking at our API's actual behavior and usa
 
 Users have long asked for options to run Optic in real environments to get more observability into their API's real behavior. We have even observed teams using the local-cli in their real environments without official tooling or support from the main project. Now you can join [the beta and start monitoring your deployed APIs with Optic](https://4babutyltxb.typeform.com/to/qd6PHfHI). You can also check out [the docs to learn more about how the integrations work](/docs/deploy/live).
 
-![alt](/img/blog-content/optic-contract-testing-diagram.svg)
+![Optic contract testing diagram](/img/blog-content/optic-contract-testing-diagram.svg)
+
+<!--truncate-->
 
 ## API Observability
 

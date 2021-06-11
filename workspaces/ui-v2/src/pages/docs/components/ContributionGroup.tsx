@@ -1,79 +1,37 @@
 import * as React from 'react';
-import makeStyles from '@material-ui/styles/makeStyles';
-import { IShapeRenderer } from '<src>/components/shapes/ShapeRenderInterfaces';
-import { DepthStore } from '<src>/components/shapes/DepthContext';
+import { IShapeRenderer } from '<src>/components/ShapeRenderer/ShapeRenderInterfaces';
+import { createFlatList } from '<src>/components/FieldOrParameter';
 import { DocsFieldOrParameterContribution } from './Contributions';
 
-type ContributionGroupProps = { rootShape: IShapeRenderer[] };
+type ContributionGroupProps = {
+  rootShape: IShapeRenderer[];
+  endpoint: {
+    pathId: string;
+    method: string;
+  };
+};
 
-export const ContributionGroup = ({ rootShape }: ContributionGroupProps) => {
-  const classes = useStyles();
+export const ContributionGroup = ({
+  rootShape,
+  endpoint,
+}: ContributionGroupProps) => {
   const contributions = createFlatList(rootShape);
 
   return (
-    <DepthStore depth={0}>
-      <div className={classes.container}>
-        {contributions.map((i, index) => {
-          return (
-            <DocsFieldOrParameterContribution
-              depth={i.depth}
-              id={i.contributionId}
-              name={i.name}
-              shapes={i.shapes}
-              key={i.contributionId + i.name + index}
-              initialValue={i.description}
-            />
-          );
-        })}
-      </div>
-    </DepthStore>
+    <div>
+      {contributions.map((i, index) => {
+        return (
+          <DocsFieldOrParameterContribution
+            depth={i.depth}
+            id={i.contributionId}
+            name={i.name}
+            shapes={i.shapes}
+            key={i.contributionId + i.name + index}
+            initialValue={i.description}
+            endpoint={endpoint}
+          />
+        );
+      })}
+    </div>
   );
 };
-
-interface IContributions {
-  contributionId: string;
-  name: string;
-  shapes: IShapeRenderer[];
-  description: string;
-  depth: number;
-}
-
-function createFlatList(
-  shapes: IShapeRenderer[],
-  depth: number = 0
-): IContributions[] {
-  const contributions: IContributions[] = [];
-
-  shapes.forEach((shape) => {
-    if (shape.asObject) {
-      shape.asObject.fields.forEach((field) => {
-        contributions.push({
-          name: field.name,
-          depth,
-          description: field.contributions.description || '',
-          shapes: field.shapeChoices,
-          contributionId: field.fieldId,
-        });
-
-        contributions.push(...createFlatList(field.shapeChoices, depth + 1));
-      });
-    }
-    if (shape.asArray) {
-      contributions.push(
-        ...createFlatList(shape.asArray.shapeChoices, depth + 1)
-      );
-    }
-  });
-
-  return contributions;
-}
-
-const useStyles = makeStyles((theme) => ({
-  container: {},
-  edit: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: 20,
-  },
-}));

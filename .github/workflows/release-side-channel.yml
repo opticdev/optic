@@ -56,9 +56,9 @@ jobs:
       matrix:
         platform:
           - os: ubuntu-latest
-            task: diff-engine:build-windows diff-engine:build-linux
+            task: optic-engine-native:build-windows optic-engine-native:build-linux
           - os: macos-latest
-            task: diff-engine:build-macos
+            task: optic-engine-native:build-macos
     runs-on: ${{ matrix.platform.os }}
     steps:
       - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4
@@ -93,14 +93,14 @@ jobs:
           BUILD_ARGS: --all-features --workspace --release
         run: |
           task \
-            diff-engine:add-targets \
+            optic-engine-native:add-targets \
             ${{ matrix.platform.task }} \
             flush-to-disk
-      - run: task diff-engine:locate-binaries
+      - run: task optic-engine-native:locate-binaries
       - name: Publish
         env:
           BUCKET: optic-side-channel-production
-        run: task release:side-channel:diff-engine
+        run: task release:side-channel:optic-engine-native
 
   announce:
     runs-on: ubuntu-latest

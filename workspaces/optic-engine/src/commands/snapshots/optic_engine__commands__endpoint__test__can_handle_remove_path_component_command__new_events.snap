@@ -1,0 +1,12 @@
+---
+source: workspaces/optic-engine-native/src/commands/endpoint.rs
+expression: new_events
+---
+[
+    PathComponentRemoved(
+        PathComponentRemoved {
+            path_id: "path_1",
+            event_context: None,
+        },
+    ),
+]

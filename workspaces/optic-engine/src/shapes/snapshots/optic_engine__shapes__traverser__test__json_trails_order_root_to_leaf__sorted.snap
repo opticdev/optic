@@ -1,0 +1,92 @@
+---
+source: workspaces/optic-engine-native/src/shapes/traverser.rs
+expression: trails
+---
+[
+  {
+    "path": [
+      {
+        "JsonObject": {}
+      }
+    ]
+  },
+  {
+    "path": [
+      {
+        "JsonObject": {}
+      },
+      {
+        "JsonObjectKey": {
+          "key": "a"
+        }
+      }
+    ]
+  },
+  {
+    "path": [
+      {
+        "JsonObject": {}
+      },
+      {
+        "JsonObjectKey": {
+          "key": "a"
+        }
+      },
+      {
+        "JsonArray": {}
+      }
+    ]
+  },
+  {
+    "path": [
+      {
+        "JsonObject": {}
+      },
+      {
+        "JsonObjectKey": {
+          "key": "a"
+        }
+      },
+      {
+        "JsonArray": {}
+      },
+      {
+        "JsonArrayItem": {
+          "index": 0
+        }
+      }
+    ]
+  },
+  {
+    "path": [
+      {
+        "JsonObject": {}
+      },
+      {
+        "JsonObjectKey": {
+          "key": "b"
+        }
+      }
+    ]
+  },
+  {
+    "path": [
+      {
+        "JsonObject": {}
+      },
+      {
+        "JsonObjectKey": {
+          "key": "b"
+        }
+      },
+      {
+        "JsonObject": {}
+      },
+      {
+        "JsonObjectKey": {
+          "key": "foo"
+        }
+      }
+    ]
+  }
+]

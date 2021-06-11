@@ -1,5 +1,4 @@
 import {
-  IBaseSpectacle,
   ICapture,
   IForkableSpectacle,
   IListDiffsResponse,
@@ -21,10 +20,14 @@ import {
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IApiCliConfig } from '@useoptic/cli-config';
+import { EventEmitter } from 'events';
 
 export class LocalCliSpectacle implements IForkableSpectacle {
-  constructor(private baseUrl: string, private opticEngine: IOpticEngine) {}
-  async fork(): Promise<IBaseSpectacle> {
+  private eventEmitter: EventEmitter;
+  constructor(private baseUrl: string, private opticEngine: IOpticEngine) {
+    this.eventEmitter = new EventEmitter();
+  }
+  async fork(): Promise<IForkableSpectacle> {
     const events = await JsonHttpClient.getJson(`${this.baseUrl}/events`);
     const opticContext = await InMemoryOpticContextBuilder.fromEvents(
       this.opticEngine,
@@ -37,7 +40,12 @@ export class LocalCliSpectacle implements IForkableSpectacle {
     options: SpectacleInput<Input>
   ): Promise<Result> {
     // send query to local cli-server
-    return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
+    const response = await JsonHttpClient.postJson(
+      `${this.baseUrl}/spectacle`,
+      options
+    );
+    this.eventEmitter.emit('update');
+    return response;
   }
 
   async query<Result, Input = {}>(
@@ -46,21 +54,29 @@ export class LocalCliSpectacle implements IForkableSpectacle {
     // send query to local cli-server
     return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
   }
+
+  registerUpdateEvent<T extends (...args: any) => any>(fn: T) {
+    this.eventEmitter.on('update', fn);
+  }
+
+  unregisterUpdateEvent<T extends (...args: any) => any>(fn: T) {
+    this.eventEmitter.off('update', fn);
+  }
 }
 
 export interface LocalCliServices {
-  spectacle: IBaseSpectacle;
+  spectacle: IForkableSpectacle;
   capturesService: IOpticCapturesService;
   opticEngine: IOpticEngine;
   configRepository: IOpticConfigRepository;
 }
 export interface LocalCliCapturesServiceDependencies {
   baseUrl: string;
-  spectacle: IBaseSpectacle;
+  spectacle: IForkableSpectacle;
 }
 export interface LocalCliDiffServiceDependencies {
   baseUrl: string;
-  spectacle: IBaseSpectacle;
+  spectacle: IForkableSpectacle;
   diffId: string;
   captureId: string;
 }
@@ -161,7 +177,7 @@ export class LocalCliDiffService implements IOpticDiffService {
 
 export interface LocalCliConfigRepositoryDependencies {
   baseUrl: string;
-  spectacle: IBaseSpectacle;
+  spectacle: IForkableSpectacle;
 }
 
 export class LocalCliConfigRepository implements IOpticConfigRepository {

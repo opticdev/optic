@@ -1,0 +1,82 @@
+---
+source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+expression: "&spec_projection.shape().to_choice_mapping()"
+---
+{
+    "shape_10": [
+        Array(
+            ArrayChoice {
+                json_type: Array,
+                shape_id: "shape_10",
+                item_shape_id: "shape_9",
+            },
+        ),
+    ],
+    "shape_11": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_11",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_12": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_12",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "name",
+                        field_id: "field_6",
+                        shape_id: "shape_11",
+                    },
+                    ObjectFieldChoice {
+                        name: "colors",
+                        field_id: "field_5",
+                        shape_id: "shape_10",
+                    },
+                    ObjectFieldChoice {
+                        name: "age",
+                        field_id: "field_4",
+                        shape_id: "shape_7",
+                    },
+                ],
+            },
+        ),
+    ],
+    "shape_13": [
+        Array(
+            ArrayChoice {
+                json_type: Array,
+                shape_id: "shape_13",
+                item_shape_id: "shape_12",
+            },
+        ),
+    ],
+    "shape_14": [
+        Object(
+            ObjectChoice {
+                shape_id: "shape_14",
+                json_type: Object,
+                fields: [],
+            },
+        ),
+    ],
+    "shape_7": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_7",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_9": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_9",
+                json_type: String,
+            },
+        ),
+    ],
+}

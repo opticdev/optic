@@ -3,19 +3,26 @@ import { ChangeEvent } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { TextField } from '@material-ui/core';
 import classNames from 'classnames';
-import {
-  useContributionEditing,
-  useValueWithStagedContributions,
-} from '<src>/pages/docs/contexts/Contributions';
 
 import { OpticBlueReadable } from '<src>/constants/theme';
 import ReactMarkdown from 'react-markdown';
+import {
+  useAppSelector,
+  useAppDispatch,
+  selectors,
+  documentationEditActions,
+} from '<src>/store';
+import { getEndpointId } from '<src>/utils';
 
 export type MarkdownBodyContributionProps = {
   id: string;
   contributionKey: string;
   defaultText: string;
   initialValue: string;
+  endpoint: {
+    method: string;
+    pathId: string;
+  };
 };
 
 export function MarkdownBodyContribution({
@@ -23,17 +30,21 @@ export function MarkdownBodyContribution({
   contributionKey,
   defaultText,
   initialValue,
+  endpoint,
 }: MarkdownBodyContributionProps) {
-  const { isEditing } = useContributionEditing();
-
+  const endpointId = getEndpointId(endpoint);
   const classes = useStyles();
-  const { value, setValue } = useValueWithStagedContributions(
-    id,
-    contributionKey,
-    initialValue
-  );
 
-  const inner = isEditing ? (
+  const isEditable = useAppSelector(selectors.isEndpointEditable(endpoint));
+  const contributionValue = useAppSelector(
+    (state) =>
+      state.documentationEdits.contributions[id]?.[contributionKey]?.value
+  );
+  const dispatch = useAppDispatch();
+  const value =
+    contributionValue !== undefined ? contributionValue : initialValue;
+
+  const inner = isEditable ? (
     <TextField
       inputProps={{ className: classNames(classes.contents, classes.editing) }}
       fullWidth
@@ -41,8 +52,15 @@ export function MarkdownBodyContribution({
       multiline
       placeholder={defaultText}
       value={value}
-      onChange={(e: ChangeEvent<HTMLInputElement>) => {
-        setValue(e.target.value);
+      onChange={({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+        dispatch(
+          documentationEditActions.addContribution({
+            id,
+            contributionKey,
+            value,
+            endpointId,
+          })
+        );
       }}
     />
   ) : (

@@ -11,13 +11,13 @@ import { Container } from '@material-ui/core';
 import SubjectIcon from '@material-ui/icons/Subject';
 import { NavButton } from './NavButton';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
-import { useApiName } from '<src>/hooks/useApiNameHook';
 import { useDiffReviewPageLink, useDocumentationPageLink } from './Routes';
 import { useAppConfig } from '<src>/contexts/config/AppConfiguration';
+import { useAppSelector } from '<src>/store';
 
 export function TopNavigation(props: { AccessoryNavigation: any }) {
   const classes = useStyles();
-  const apiName = useApiName();
+  const apiName = useAppSelector((state) => state.metadata.data?.apiName || '');
   const appConfig = useAppConfig();
 
   const documentationPage = useDocumentationPageLink();

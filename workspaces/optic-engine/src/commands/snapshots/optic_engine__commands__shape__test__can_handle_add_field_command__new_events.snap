@@ -1,0 +1,20 @@
+---
+source: workspaces/optic-engine-native/src/commands/shape.rs
+expression: new_events
+---
+[
+    FieldAdded(
+        FieldAdded {
+            field_id: "field_2",
+            shape_id: "shape_1",
+            name: "username",
+            shape_descriptor: FieldShapeFromShape(
+                FieldShapeFromShape {
+                    field_id: "field_2",
+                    shape_id: "shape_3",
+                },
+            ),
+            event_context: None,
+        },
+    ),
+]

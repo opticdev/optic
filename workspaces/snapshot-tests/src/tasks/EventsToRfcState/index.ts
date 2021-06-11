@@ -5,7 +5,7 @@ import {
   ITaskSpecificationInputs,
   TaskType,
 } from '..';
-import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as opticEngine from '@useoptic/optic-engine-wasm';
 import {
   EventsFileToJsTaskOutput,
   EventsFileToJsTaskSpecification,

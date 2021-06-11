@@ -6,6 +6,7 @@ import {
   Redirect,
   Switch,
 } from 'react-router-dom';
+import { Provider as ReduxProvider } from 'react-redux';
 import { Provider as BaseUrlProvider } from '<src>/hooks/useBaseUrl';
 import { makeSpectacle, SpectacleInput } from '@useoptic/spectacle';
 import { DocumentationPages } from '<src>/pages/docs';
@@ -25,17 +26,17 @@ import {
 import { AsyncStatus } from '<src>/types';
 import { useOpticEngine } from '<src>/hooks/useOpticEngine';
 import { useCallback, useEffect, useState } from 'react';
-import { ConfigRepositoryStore } from '<src>/hooks/useConfigHook';
+import { ConfigRepositoryStore } from '<src>/contexts/OpticConfigContext';
 import { AnalyticsStore } from '<src>/contexts/analytics';
 import {
   getMetadata,
   initialize,
   track,
 } from '<src>/contexts/analytics/implementations/cloudViewerAnalytics';
-import { SpecMetadataProvider } from '<src>/store';
+import { store } from '<src>/store';
+import { MetadataLoader } from '<src>/contexts/MetadataLoader';
 
 const appConfig: OpticAppConfig = {
-  featureFlags: {},
   config: {
     navigation: {
       showChangelog: true,
@@ -118,33 +119,35 @@ export default function CloudViewer() {
           <CapturesServiceStore
             capturesService={data.opticContext.capturesService}
           >
-            <BaseUrlProvider value={{ url: match.url }}>
-              <AnalyticsStore
-                getMetadata={getMetadata(() =>
-                  data.opticContext.configRepository.getApiName()
-                )}
-                initialize={initialize}
-                track={track}
-              >
-                <SpecMetadataProvider>
-                  <Switch>
-                    <Route
-                      path={`${match.path}/changes-since/:batchId`}
-                      component={ChangelogPages}
-                    />
-                    <Route
-                      path={`${match.path}/documentation`}
-                      component={DocumentationPages}
-                    />
-                    <Route
-                      path={`${match.path}/diffs`}
-                      component={DiffReviewEnvironments}
-                    />
-                    <Redirect to={`${match.path}/documentation`} />
-                  </Switch>
-                </SpecMetadataProvider>
-              </AnalyticsStore>
-            </BaseUrlProvider>
+            <ReduxProvider store={store}>
+              <BaseUrlProvider value={{ url: match.url }}>
+                <AnalyticsStore
+                  getMetadata={getMetadata(() =>
+                    data.opticContext.configRepository.getApiName()
+                  )}
+                  initialize={initialize}
+                  track={track}
+                >
+                  <MetadataLoader>
+                    <Switch>
+                      <Route
+                        path={`${match.path}/changes-since/:batchId`}
+                        component={ChangelogPages}
+                      />
+                      <Route
+                        path={`${match.path}/documentation`}
+                        component={DocumentationPages}
+                      />
+                      <Route
+                        path={`${match.path}/diffs`}
+                        component={DiffReviewEnvironments}
+                      />
+                      <Redirect to={`${match.path}/documentation`} />
+                    </Switch>
+                  </MetadataLoader>
+                </AnalyticsStore>
+              </BaseUrlProvider>
+            </ReduxProvider>
           </CapturesServiceStore>
         </ConfigRepositoryStore>
       </SpectacleStore>
@@ -163,7 +166,7 @@ class CloudInMemorySpectacle
     this.spectaclePromise = makeSpectacle(opticContext);
   }
 
-  async fork(): Promise<IBaseSpectacle> {
+  async fork(): Promise<IForkableSpectacle> {
     const opticContext = await InMemoryOpticContextBuilder.fromEvents(
       this.opticContext.opticEngine,
       [...(await this.opticContext.specRepository.listEvents())]
@@ -197,9 +200,9 @@ export type CloudInMemorySpectacleDependenciesLoader = () => Promise<CloudInMemo
 //@SYNC: useInMemorySpectacle useCloudInMemorySpectacle
 export function useCloudInMemorySpectacle(
   loadDependencies: CloudInMemorySpectacleDependenciesLoader
-): AsyncStatus<CloudInMemoryBaseSpectacle> {
+): AsyncStatus<CloudInMemorySpectacle> {
   const opticEngine = useOpticEngine();
-  const [spectacle, setSpectacle] = useState<CloudInMemoryBaseSpectacle>();
+  const [spectacle, setSpectacle] = useState<CloudInMemorySpectacle>();
   const [inputs, setInputs] = useState<{
     events: any[];
     samples: any[];

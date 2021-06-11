@@ -1,0 +1,36 @@
+---
+source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+expression: results
+---
+[
+    UnmatchedResponseBodyShape(
+        UnmatchedResponseBodyShape {
+            interaction_trail: InteractionTrail {
+                path: [
+                    ResponseBody {
+                        content_type: "application/json",
+                        status_code: 200,
+                    },
+                ],
+            },
+            requests_trail: SpecResponseBody(
+                SpecResponseBody {
+                    response_id: "baseline-response_1",
+                },
+            ),
+            shape_diff_result: UnspecifiedShape {
+                json_trail: JsonTrail {
+                    path: [
+                        JsonObjectKey {
+                            key: "favoriteColor",
+                        },
+                    ],
+                },
+                shape_trail: ShapeTrail {
+                    root_shape_id: "baseline-shape_8",
+                    path: [],
+                },
+            },
+        },
+    ),
+]

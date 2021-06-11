@@ -12,22 +12,26 @@ type SharedProps = {
   location: string;
   contentType: string;
   changes?: IChanges;
-  changesSinceBatchCommitId?: string;
-  bodyId: string; //@aidan make sure this name/value makes sense
+  bodyId: string;
   rootShapeId: string;
 };
 
-type OneColumnBodyProps = SharedProps;
+type OneColumnBodyProps = SharedProps & {
+  changesSinceBatchCommitId?: string;
+};
 
 export type TwoColumnBodyProps = SharedProps & {
   description: string;
 };
-
-export function TwoColumnBody(props: TwoColumnBodyProps) {
-  const shapeChoices = useShapeDescriptor(
-    props.rootShapeId,
-    props.changesSinceBatchCommitId
-  );
+const TwoColumnBodyEditableUnMemoized = (
+  props: TwoColumnBodyProps & {
+    endpoint: {
+      pathId: string;
+      method: string;
+    };
+  }
+) => {
+  const shapeChoices = useShapeDescriptor(props.rootShapeId, undefined);
   return (
     <TwoColumn
       id={props.bodyId}
@@ -41,9 +45,13 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
               contributionKey={'description'}
               defaultText={'Add a description'}
               initialValue={props.description}
+              endpoint={props.endpoint}
             />
           </div>
-          <ContributionGroup rootShape={shapeChoices} />
+          <ContributionGroup
+            rootShape={shapeChoices}
+            endpoint={props.endpoint}
+          />
         </>
       }
       right={
@@ -55,7 +63,12 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
       }
     />
   );
-}
+};
+
+// Memoize this as there could be a large number of contribution groups
+export const TwoColumnBodyEditable = React.memo(
+  TwoColumnBodyEditableUnMemoized
+);
 
 export function OneColumnBody(props: OneColumnBodyProps) {
   const shapeChoices = useShapeDescriptor(

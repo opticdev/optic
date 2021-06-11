@@ -120,7 +120,7 @@ export async function delay(milliseconds: number) {
 ////////////////////////////////////////////////////////////////////////////////
 
 import * as uuid from 'uuid';
-import { IHttpInteraction } from './optic-types';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 
 export interface IdGenerator<T> {
   nextId(): T;

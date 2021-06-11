@@ -20,7 +20,7 @@ import url from 'url';
 import { BrowserLaunchers } from '../shared/intercept/browser-launchers';
 import { cli } from 'cli-ux';
 import openBrowser from 'react-dev-utils/openBrowser';
-import { IHttpInteraction } from '@useoptic/cli-shared/build/optic-types';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 import { linkToCapture } from '../shared/ui-links';
 
 export default class Intercept extends Command {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import {
   useRouteMatch,
   useParams,
@@ -8,6 +8,7 @@ import {
   Switch,
 } from 'react-router-dom';
 import { AsyncStatus } from '<src>/types';
+import { Provider as ReduxProvider } from 'react-redux';
 import { Provider as BaseUrlProvider } from '<src>/hooks/useBaseUrl';
 import { DocumentationPages } from '<src>/pages/docs';
 import { SpectacleStore } from '<src>/contexts/spectacle-provider';
@@ -19,7 +20,7 @@ import {
   AppConfigurationStore,
   OpticAppConfig,
 } from '<src>/contexts/config/AppConfiguration';
-import { ConfigRepositoryStore } from '<src>/hooks/useConfigHook';
+import { ConfigRepositoryStore } from '<src>/contexts/OpticConfigContext';
 import { useOpticEngine } from '<src>/hooks/useOpticEngine';
 import {
   LocalCliCapturesService,
@@ -33,10 +34,10 @@ import {
   initialize,
   track,
 } from '<src>/contexts/analytics/implementations/localCliAnalytics';
-import { SpecMetadataProvider } from '<src>/store';
+import { store } from '<src>/store';
+import { MetadataLoader } from '<src>/contexts/MetadataLoader';
 
 const appConfig: OpticAppConfig = {
-  featureFlags: {},
   config: {
     navigation: {
       showChangelog: true,
@@ -74,33 +75,35 @@ export default function LocalCli() {
       <SpectacleStore spectacle={data.spectacle}>
         <ConfigRepositoryStore config={data.configRepository}>
           <CapturesServiceStore capturesService={data.capturesService}>
-            <BaseUrlProvider value={{ url: match.url }}>
-              <AnalyticsStore
-                getMetadata={getMetadata(() =>
-                  data.configRepository.getApiName()
-                )}
-                initialize={initialize}
-                track={track}
-              >
-                <SpecMetadataProvider>
-                  <Switch>
-                    <Route
-                      path={`${match.path}/changes-since/:batchId`}
-                      component={ChangelogPages}
-                    />
-                    <Route
-                      path={`${match.path}/documentation`}
-                      component={DocumentationPages}
-                    />
-                    <Route
-                      path={`${match.path}/diffs`}
-                      component={DiffReviewEnvironments}
-                    />
-                    <Redirect to={`${match.path}/documentation`} />
-                  </Switch>
-                </SpecMetadataProvider>
-              </AnalyticsStore>
-            </BaseUrlProvider>
+            <ReduxProvider store={store}>
+              <BaseUrlProvider value={{ url: match.url }}>
+                <AnalyticsStore
+                  getMetadata={getMetadata(() =>
+                    data.configRepository.getApiName()
+                  )}
+                  initialize={initialize}
+                  track={track}
+                >
+                  <MetadataLoader>
+                    <Switch>
+                      <Route
+                        path={`${match.path}/changes-since/:batchId`}
+                        component={ChangelogPages}
+                      />
+                      <Route
+                        path={`${match.path}/documentation`}
+                        component={DocumentationPages}
+                      />
+                      <Route
+                        path={`${match.path}/diffs`}
+                        component={DiffReviewEnvironments}
+                      />
+                      <Redirect to={`${match.path}/documentation`} />
+                    </Switch>
+                  </MetadataLoader>
+                </AnalyticsStore>
+              </BaseUrlProvider>
+            </ReduxProvider>
           </CapturesServiceStore>
         </ConfigRepositoryStore>
       </SpectacleStore>
@@ -113,11 +116,19 @@ export function useLocalCliServices(
 ): AsyncStatus<LocalCliServices> {
   const opticEngine = useOpticEngine();
   const apiBaseUrl = `/api/specs/${specId}`;
-  const spectacle = useMemo(
-    () => new LocalCliSpectacle(apiBaseUrl, opticEngine),
-    [apiBaseUrl, opticEngine]
+  const [spectacle, setSpectacle] = useState(
+    new LocalCliSpectacle(apiBaseUrl, opticEngine)
   );
-  const capturesService = React.useMemo(
+  const refEngine = useRef(opticEngine);
+  const refApiUrl = useRef(apiBaseUrl);
+  useEffect(() => {
+    const refreshFn = () => {
+      setSpectacle(new LocalCliSpectacle(refApiUrl.current, refEngine.current));
+    };
+    spectacle.registerUpdateEvent(refreshFn);
+    return () => spectacle.unregisterUpdateEvent(refreshFn);
+  }, [spectacle]);
+  const capturesService = useMemo(
     () =>
       new LocalCliCapturesService({
         baseUrl: apiBaseUrl,

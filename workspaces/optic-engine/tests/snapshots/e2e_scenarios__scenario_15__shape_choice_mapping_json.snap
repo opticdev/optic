@@ -1,0 +1,86 @@
+---
+source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+expression: "&spec_projection.shape().to_choice_mapping()"
+---
+{
+  "baseline-shape_10": [
+    {
+      "type": "Object",
+      "shapeId": "baseline-shape_10",
+      "jsonType": "Object",
+      "fields": []
+    }
+  ],
+  "baseline-shape_2": [
+    {
+      "type": "Primitive",
+      "shapeId": "baseline-shape_2",
+      "jsonType": "Number"
+    }
+  ],
+  "baseline-shape_4": [
+    {
+      "type": "Primitive",
+      "shapeId": "baseline-shape_4",
+      "jsonType": "String"
+    }
+  ],
+  "baseline-shape_5": [
+    {
+      "type": "Array",
+      "jsonType": "Array",
+      "shapeId": "baseline-shape_5",
+      "itemShapeId": "baseline-shape_4"
+    }
+  ],
+  "baseline-shape_6": [
+    {
+      "type": "Primitive",
+      "shapeId": "baseline-shape_6",
+      "jsonType": "String"
+    }
+  ],
+  "baseline-shape_7": [
+    {
+      "type": "Primitive",
+      "shapeId": "baseline-shape_7",
+      "jsonType": "String"
+    }
+  ],
+  "baseline-shape_8": [
+    {
+      "type": "Object",
+      "shapeId": "baseline-shape_8",
+      "jsonType": "Object",
+      "fields": [
+        {
+          "name": "lastName",
+          "fieldId": "baseline-field_4",
+          "shapeId": "baseline-shape_7"
+        },
+        {
+          "name": "firstName",
+          "fieldId": "baseline-field_3",
+          "shapeId": "baseline-shape_6"
+        },
+        {
+          "name": "cities",
+          "fieldId": "baseline-field_2",
+          "shapeId": "baseline-shape_5"
+        },
+        {
+          "name": "age",
+          "fieldId": "baseline-field_1",
+          "shapeId": "baseline-shape_2"
+        }
+      ]
+    }
+  ],
+  "baseline-shape_9": [
+    {
+      "type": "Primitive",
+      "shapeId": "baseline-shape_9",
+      "jsonType": "String"
+    }
+  ]
+}

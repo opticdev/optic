@@ -58,6 +58,12 @@ export interface IOpticEngine {
   ): string;
 
   spec_from_events(eventsJson: string): any;
+
+  spec_endpoint_delete_commands(
+    spec: any,
+    path_id: string,
+    method: string
+  ): string;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -200,6 +206,18 @@ async function buildProjections(opticContext: IOpticContext) {
     shapesQueries,
     shapeViewerProjection,
     contributionsProjection,
+    getEndpointProjection: (pathId: string, method: string) => {
+      const endpointProjection = opticContext.opticEngine.spec_endpoint_delete_commands(
+        spec,
+        pathId,
+        method
+      );
+      return {
+        commands: {
+          remove: JSON.parse(endpointProjection).commands,
+        },
+      };
+    },
   };
 }
 
@@ -207,7 +225,15 @@ export async function makeSpectacle(opticContext: IOpticContext) {
   let endpointsQueries: endpoints.GraphQueries,
     shapeQueries: shapes.GraphQueries,
     shapeViewerProjection: any,
-    contributionsProjection: ContributionsProjection;
+    contributionsProjection: ContributionsProjection,
+    getEndpointProjection: (
+      pathId: string,
+      method: string
+    ) => {
+      commands: {
+        remove: any[]; // TODO change typing
+      };
+    };
 
   // TODO: consider debouncing reloads (head and tail?)
   async function reload(opticContext: IOpticContext) {
@@ -216,6 +242,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     shapeQueries = projections.shapesQueries;
     shapeViewerProjection = projections.shapeViewerProjection;
     contributionsProjection = projections.contributionsProjection;
+    getEndpointProjection = projections.getEndpointProjection;
     return projections;
   }
 
@@ -306,6 +333,10 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       shapeChoices: async (parent: any, args: any, context: any, info: any) => {
         return context.spectacleContext().shapeViewerProjection[args.shapeId];
+      },
+      endpoint: async (parent: any, args: any, context: any, info: any) => {
+        const { pathId, method } = args;
+        return context.spectacleContext().getEndpointProjection(pathId, method);
       },
       endpointChanges: (
         parent: any,
@@ -609,6 +640,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       shapeViewerProjection,
       // @ts-ignore
       contributionsProjection,
+      getEndpointProjection,
     };
   };
   const queryWrapper = function <Result, Input = {}>(

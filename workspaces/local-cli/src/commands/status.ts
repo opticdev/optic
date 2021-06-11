@@ -37,7 +37,7 @@ import {
   LocalCliCapturesService,
   LocalCliSpectacle,
 } from '@useoptic/spectacle-shared';
-import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as opticEngine from '@useoptic/optic-engine-wasm';
 import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
 import { IUnrecognizedUrl } from '@useoptic/spectacle';
 import { StatusRun } from '@useoptic/analytics';
