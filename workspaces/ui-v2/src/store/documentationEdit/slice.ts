@@ -80,7 +80,8 @@ const documentationEditSlice = createSlice({
     ) => {
       const { pathId, method } = action.payload;
       const newDeletedEndpoints = state.deletedEndpoints.filter(
-        (endpoint) => pathId !== endpoint.pathId && method !== endpoint.method
+        (endpoint) =>
+          !(pathId === endpoint.pathId && method === endpoint.method)
       );
       state.deletedEndpoints = newDeletedEndpoints;
     },
