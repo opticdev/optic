@@ -15,7 +15,7 @@ import { ReviewEndpointDiffContainer } from './ReviewEndpointDiffPage';
 import { useDiffsForCapture } from '<src>/pages/diffs/hooks/useDiffForCapture';
 import { v4 as uuidv4 } from 'uuid';
 import { useAllRequestsAndResponses } from '<src>/pages/diffs/hooks/useAllRequestsAndResponses';
-import { useAppSelector } from '<src>/store';
+import { selectors, useAppSelector } from '<src>/store';
 import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
 import {
   CapturePageWithoutDiffOrRedirect,
@@ -35,6 +35,9 @@ export function DiffReviewPages(props: any) {
   const allRequestsAndResponsesOfBaseSpec = useAllRequestsAndResponses();
   useFetchEndpoints();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
+  const filteredEndpoints = selectors.filterRemovedEndpoints(
+    endpointsState.data || []
+  );
   const allPaths = usePaths();
 
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
@@ -63,7 +66,7 @@ export function DiffReviewPages(props: any) {
       diffTrails={diff.data!.trails}
       urls={diff.data!.urls}
       captureId={boundaryId}
-      endpoints={endpointsState.data!}
+      endpoints={filteredEndpoints}
       allPaths={allPaths.paths}
       requests={allRequestsAndResponsesOfBaseSpec.data?.requests!}
       responses={allRequestsAndResponsesOfBaseSpec.data?.responses!}

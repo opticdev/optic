@@ -139,6 +139,10 @@ export interface NodeListWrapper {
 export class BodyNodeWrapper implements NodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 
+  get value(): BodyNode {
+    return this.result.data as BodyNode;
+  }
+
   response(): ResponseNodeWrapper | null {
     const neighbors = this.queries.listOutgoingNeighborsByType(
       this.result.id,

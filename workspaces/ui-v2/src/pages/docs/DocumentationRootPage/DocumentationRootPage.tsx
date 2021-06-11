@@ -37,8 +37,12 @@ export function DocumentationRootPage() {
     );
   };
 
-  const grouped = useMemo(() => groupBy(endpointsState.data || [], 'group'), [
-    endpointsState,
+  const filteredEndpoints = selectors.filterRemovedEndpoints(
+    endpointsState.data || []
+  );
+
+  const grouped = useMemo(() => groupBy(filteredEndpoints, 'group'), [
+    filteredEndpoints,
   ]);
   const tocKeys = Object.keys(grouped).sort();
   const onKeyPress = useRunOnKeypress(

@@ -12,7 +12,7 @@ export const endpointChangeQuery = `query X($sinceBatchCommitId: String) {
     }
 }`;
 
-type ChangelogCategory = 'added' | 'updated' | 'removed';
+export type ChangelogCategory = 'added' | 'updated' | 'removed';
 
 export type EndpointChangelog = {
   change: {

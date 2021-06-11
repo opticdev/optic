@@ -16,7 +16,7 @@ import { IParsedLocation } from '<src>/lib/Interfaces';
 import { HighlightedLocation } from '<src>/pages/diffs/components/HighlightedLocation';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { useDebouncedFn, useStateWithSideEffect } from '<src>/hooks/util';
-import { useAppSelector } from '<src>/store';
+import { selectors, useAppSelector } from '<src>/store';
 import { IPathParameter } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
@@ -40,10 +40,8 @@ export const EndpointDocumentationPane: FC<
   renderHeader,
   ...props
 }) => {
-  const thisEndpoint = useAppSelector((state) =>
-    state.endpoints.results.data?.find(
-      (endpoint) => endpoint.pathId === pathId && endpoint.method === method
-    )
+  const thisEndpoint = useAppSelector(
+    selectors.getAssertedEndpoint({ pathId, method })
   );
   const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 

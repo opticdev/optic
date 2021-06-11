@@ -49,6 +49,7 @@ const ChangelogRootComponent: FC<
     batchId: string;
   }>
 > = ({ match }) => {
+  // TODO check if deleted + should render
   const endpointsState = useAppSelector((state) => state.endpoints.results);
 
   const { pathId, method, batchId } = match.params;
