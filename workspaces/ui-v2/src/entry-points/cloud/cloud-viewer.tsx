@@ -74,7 +74,7 @@ export default function CloudViewer() {
         }
       })();
       const response = await fetch(
-        `${apiBase}/api/people/${personId}/specs/${specId}`,
+        `${apiBase}/api/people/${personId}/public-specs/${specId}`,
         {
           headers: { accept: 'application/json' },
         }
