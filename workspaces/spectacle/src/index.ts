@@ -320,18 +320,15 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return Promise.resolve(
           context
             .spectacleContext()
-            .endpointsQueries.listNodesByType(endpoints.NodeType.Path, {
-              includeRemoved: false,
-            }).results
+            .endpointsQueries.listNodesByType(endpoints.NodeType.Path).results
         );
       },
       requests: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(
           context
             .spectacleContext()
-            .endpointsQueries.listNodesByType(endpoints.NodeType.Request, {
-              includeRemoved: false,
-            }).results
+            .endpointsQueries.listNodesByType(endpoints.NodeType.Request)
+            .results
         );
       },
       shapeChoices: async (parent: any, args: any, context: any, info: any) => {
@@ -447,7 +444,11 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       responses: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.responses());
       },
-      pathContributions: (parent: any, args: any, context: any) => {
+      pathContributions: (
+        parent: endpoints.RequestNodeWrapper,
+        args: any,
+        context: any
+      ) => {
         const pathId = parent.path().value.pathId;
         const method = parent.value.httpMethod;
         return Promise.resolve(
@@ -456,28 +457,38 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           ] || {}
         );
       },
-      requestContributions: (parent: any, args: any, context: any) => {
+      requestContributions: (
+        parent: endpoints.RequestNodeWrapper,
+        args: any,
+        context: any
+      ) => {
         return Promise.resolve(
           context.spectacleContext().contributionsProjection[
             parent.value.requestId
           ] || {}
         );
       },
+      isRemoved: (
+        parent: endpoints.RequestNodeWrapper,
+        args: any,
+        context: any
+      ) => {
+        return Promise.resolve(parent.value.isRemoved);
+      },
     },
     Path: {
-      absolutePathPattern: (parent: any) => {
-        return Promise.resolve(parent.result.data.absolutePathPattern);
+      absolutePathPattern: (parent: endpoints.PathNodeWrapper) => {
+        return Promise.resolve(parent.value.absolutePathPattern);
       },
-      isParameterized: (parent: any) => {
-        return Promise.resolve(parent.result.data.isParameterized);
+      isParameterized: (parent: endpoints.PathNodeWrapper) => {
+        return Promise.resolve(parent.value.isParameterized);
       },
-      name: (parent: any) => {
-        return Promise.resolve(parent.result.data.name);
+      name: (parent: endpoints.PathNodeWrapper) => {
+        return Promise.resolve(parent.value.name);
       },
-      pathId: (parent: any) => {
-        return Promise.resolve(parent.result.data.pathId);
+      pathId: (parent: endpoints.PathNodeWrapper) => {
+        return Promise.resolve(parent.value.pathId);
       },
-
       parentPathId: (parent: endpoints.PathNodeWrapper) => {
         const parentPath = parent.parentPath();
         if (parentPath) {
@@ -490,23 +501,41 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       ) => {
         return Promise.resolve(parent.absolutePathPatternWithParameterNames);
       },
+      isRemoved: (
+        parent: endpoints.PathNodeWrapper,
+        args: any,
+        context: any
+      ) => {
+        return Promise.resolve(parent.value.isRemoved);
+      },
     },
     HttpResponse: {
-      id: (parent: any) => {
-        return Promise.resolve(parent.result.data.responseId);
+      id: (parent: endpoints.ResponseNodeWrapper) => {
+        return Promise.resolve(parent.value.responseId);
       },
-      statusCode: (parent: any) => {
-        return Promise.resolve(parent.result.data.httpStatusCode);
+      statusCode: (parent: endpoints.ResponseNodeWrapper) => {
+        return Promise.resolve(parent.value.httpStatusCode);
       },
-      bodies: (parent: any) => {
+      bodies: (parent: endpoints.ResponseNodeWrapper) => {
         return Promise.resolve(parent.bodies().results);
       },
-      contributions: (parent: any, args: any, context: any) => {
+      contributions: (
+        parent: endpoints.ResponseNodeWrapper,
+        args: any,
+        context: any
+      ) => {
         return Promise.resolve(
           context.spectacleContext().contributionsProjection[
-            parent.result.data.responseId
+            parent.value.responseId
           ] || {}
         );
+      },
+      isRemoved: (
+        parent: endpoints.ResponseNodeWrapper,
+        args: any,
+        context: any
+      ) => {
+        return Promise.resolve(parent.value.isRemoved);
       },
     },
     PathComponent: {
@@ -521,11 +550,18 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     HttpBody: {
-      contentType: (parent: any) => {
-        return Promise.resolve(parent.result.data.httpContentType);
+      contentType: (parent: endpoints.BodyNodeWrapper) => {
+        return Promise.resolve(parent.value.httpContentType);
       },
-      rootShapeId: (parent: any) => {
-        return Promise.resolve(parent.result.data.rootShapeId);
+      rootShapeId: (parent: endpoints.BodyNodeWrapper) => {
+        return Promise.resolve(parent.value.rootShapeId);
+      },
+      isRemoved: (
+        parent: endpoints.BodyNodeWrapper,
+        args: any,
+        context: any
+      ) => {
+        return Promise.resolve(parent.value.isRemoved);
       },
     },
     OpticShape: {

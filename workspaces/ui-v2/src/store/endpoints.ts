@@ -21,6 +21,7 @@ export const AllEndpointsQuery = `{
     }
     method
     pathContributions
+    isRemoved
   }
 }`;
 
@@ -38,6 +39,7 @@ export type EndpointQueryResults = {
     }[];
     method: string;
     pathContributions: Record<string, string>;
+    isRemoved: boolean;
   }[];
 };
 
@@ -67,6 +69,7 @@ export const endpointQueryResultsToJson = ({
     })),
     description: request.pathContributions.description || '',
     purpose: request.pathContributions.purpose || '',
+    isRemoved: request.isRemoved,
   }));
 };
 

@@ -123,7 +123,10 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         }
       }
       EndpointEvent::RequestRemoved(e) => {
-        projection.without_request(e.request_id);
+        projection.without_request(&e.request_id);
+        if let Some(c) = e.event_context {
+          projection.with_remove_history(&c.client_command_batch_id, &e.request_id);
+        }
       }
       EndpointEvent::ResponseAddedByPathAndMethod(e) => {
         projection.with_response(
@@ -138,7 +141,10 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         }
       }
       EndpointEvent::ResponseRemoved(e) => {
-        projection.without_response(e.response_id);
+        projection.without_response(&e.response_id);
+        if let Some(c) = e.event_context {
+          projection.with_remove_history(&c.client_command_batch_id, &e.response_id);
+        }
       }
       EndpointEvent::RequestBodySet(e) => {
         //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (request_id, http_content_type)
@@ -324,10 +330,10 @@ impl EndpointsProjection {
     self.domain_id_to_index.insert(request_id, node_index);
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  pub fn without_request(&mut self, request_id: RequestId) {
+  pub fn without_request(&mut self, request_id: &RequestId) {
     let request_node_index = *self
       .domain_id_to_index
-      .get(&request_id)
+      .get(request_id)
       .expect("expected request_id to have a corresponding node");
 
     if let Some(Node::Request(request_node)) = self.graph.node_weight_mut(request_node_index) {
@@ -362,10 +368,10 @@ impl EndpointsProjection {
     self.domain_id_to_index.insert(response_id, node_index);
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  pub fn without_response(&mut self, response_id: ResponseId) {
+  pub fn without_response(&mut self, response_id: &ResponseId) {
     let response_node_index = *self
       .domain_id_to_index
-      .get(&response_id)
+      .get(response_id)
       .expect("expected response_id to have a corresponding node");
 
     if let Some(Node::Response(response_node)) = self.graph.node_weight_mut(response_node_index) {
@@ -467,6 +473,22 @@ impl EndpointsProjection {
       eprintln!("bad implicit batch id {}", &batch_id);
     }
   }
+  pub fn with_remove_history(&mut self, batch_id: &str, removed_node_id: &str) {
+    let removed_node_index = self
+      .domain_id_to_index
+      .get(removed_node_id)
+      .expect("expected removed_node_id to exist");
+
+    let batch_node_index_option = self.domain_id_to_index.get(batch_id);
+
+    if let Some(batch_node_index) = batch_node_index_option {
+      self
+        .graph
+        .add_edge(*removed_node_index, *batch_node_index, Edge::RemovedIn);
+    } else {
+      eprintln!("bad implicit batch id {}", &batch_id);
+    }
+  }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -532,5 +554,6 @@ pub enum Edge {
   IsChildOf,
   CreatedIn,
   UpdatedIn,
+  RemovedIn,
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////

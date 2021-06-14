@@ -1,7 +1,8 @@
 import React, { FC, useMemo } from 'react';
 import groupBy from 'lodash.groupby';
-import { CenteredColumn, Loading, PageLayout } from '<src>/components';
 import { Box, List, Typography } from '@material-ui/core';
+
+import { CenteredColumn, Loading, PageLayout } from '<src>/components';
 import {
   useAppSelector,
   useAppDispatch,
@@ -37,8 +38,12 @@ export function DocumentationRootPage() {
     );
   };
 
-  const grouped = useMemo(() => groupBy(endpointsState.data || [], 'group'), [
-    endpointsState,
+  const filteredEndpoints = selectors.filterRemovedEndpoints(
+    endpointsState.data || []
+  );
+
+  const grouped = useMemo(() => groupBy(filteredEndpoints, 'group'), [
+    filteredEndpoints,
   ]);
   const tocKeys = Object.keys(grouped).sort();
   const onKeyPress = useRunOnKeypress(

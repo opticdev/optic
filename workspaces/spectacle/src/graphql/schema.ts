@@ -78,6 +78,9 @@ type Path {
   
   # Path ID
   pathId: String
+
+  # Is the path removed
+  isRemoved: Boolean
 }
 
 type Endpoint {
@@ -97,6 +100,9 @@ type HttpBody {
   
   # Root shape ID for the HTTP body. Look at the shapeChoices query getting more information about the root shape
   rootShapeId: String
+
+  # Is the body removed
+  isRemoved: Boolean
 }
 
 """
@@ -134,6 +140,9 @@ type HttpRequest {
   
   # Request contributions which define descriptions
   requestContributions: JSON
+
+  # Is the request removed
+  isRemoved: Boolean
 }
 
 """
@@ -170,6 +179,9 @@ type HttpResponse {
   
   # HTTP response contributions which define descriptions
   contributions: JSON
+
+  # Is the response removed
+  isRemoved: Boolean
 }
 
 """
