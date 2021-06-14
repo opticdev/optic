@@ -160,6 +160,9 @@ type PathComponent {
   
   # Path component contributions which define descriptions
   contributions: JSON
+
+  # Is the path component removed
+  isRemoved: Boolean
 }
 
 """

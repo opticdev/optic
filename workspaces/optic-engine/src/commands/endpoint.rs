@@ -4,13 +4,14 @@ use serde::{Deserialize, Serialize};
 use crate::events::EndpointEvent;
 use crate::projections::endpoint::ROOT_PATH_ID;
 use crate::projections::EndpointProjection;
+use crate::queries::EndpointQueries;
 use crate::state::endpoint::{
   PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor,
   ShapedRequestParameterShapeDescriptor,
 };
 use crate::state::shape::ShapeId;
 use crate::{events::endpoint as endpoint_events, state::body};
-use cqrs_core::AggregateCommand;
+use cqrs_core::{Aggregate, AggregateCommand};
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
 pub enum EndpointCommand {
@@ -18,6 +19,7 @@ pub enum EndpointCommand {
   AddPathComponent(AddPathComponent),
   RenamePathComponent(RenamePathComponent),
   RemovePathComponent(RemovePathComponent),
+  PrunePathComponents(PrunePathComponents),
 
   // Path parameters
   AddPathParameter(AddPathParameter),
@@ -50,6 +52,10 @@ pub enum EndpointCommand {
 }
 
 impl EndpointCommand {
+  pub fn remove_path_component(path_id: PathComponentId) -> EndpointCommand {
+    EndpointCommand::RemovePathComponent(RemovePathComponent { path_id })
+  }
+
   pub fn set_path_parameter_shape(path_id: PathComponentId, shape_id: ShapeId) -> EndpointCommand {
     EndpointCommand::SetPathParameterShape(SetPathParameterShape {
       path_id,
@@ -58,6 +64,10 @@ impl EndpointCommand {
         is_removed: false,
       },
     })
+  }
+
+  pub fn remove_path_parameter(path_id: PathComponentId) -> EndpointCommand {
+    EndpointCommand::RemovePathParameter(RemovePathParameter { path_id })
   }
 
   // Requests
@@ -156,6 +166,10 @@ pub struct RenamePathComponent {
 pub struct RemovePathComponent {
   pub path_id: PathComponentId,
 }
+
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PrunePathComponents {}
 
 // Path parameters
 // ---------------
@@ -376,10 +390,40 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
           validation.path_component_id_exists(&command.path_id),
           "path component must exist to remove path component",
         )?;
+        validation.require(
+          validation.path_component_unused(&command.path_id),
+          "path component must be unused to be removed",
+        )?;
 
         vec![EndpointEvent::from(
           endpoint_events::PathComponentRemoved::from(command),
         )]
+      }
+
+      EndpointCommand::PrunePathComponents(command) => {
+        let endpoint_queries = EndpointQueries::new(projection);
+        let unused_paths = endpoint_queries.resolve_unused_paths();
+        let removal_commands = unused_paths.flat_map(|path_id| {
+          endpoint_queries
+            .delete_path_commands(&path_id)
+            .expect("unused path should exist")
+        });
+
+        let mut simulated_projection = projection.clone();
+        removal_commands
+          .flat_map(|removal_command| {
+            // CLEANUP: this would be more elegant once the EndpointCommandHandler would be a thing
+            let events = simulated_projection
+              .execute(removal_command)
+              .expect("removal of unused paths should be valid");
+
+            for event in events.iter() {
+              simulated_projection.apply(event.clone());
+            }
+
+            events
+          })
+          .collect()
       }
 
       // Path parameters
@@ -437,6 +481,10 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         validation.require(
           validation.path_component_id_exists(&command.path_id),
           "path component must exist to remove path parameter",
+        )?;
+        validation.require(
+          validation.path_component_unused(&command.path_id),
+          "path parameter must be unused to be removed",
         )?;
 
         vec![EndpointEvent::from(
@@ -559,6 +607,35 @@ impl<'a> CommandValidationQueries<'a> {
 
   pub fn path_component_is_root(&self, path_component_id: &PathComponentId) -> bool {
     path_component_id == ROOT_PATH_ID
+  }
+
+  pub fn path_component_unused(&self, path_component_id: &PathComponentId) -> bool {
+    let first_path_component_node = self
+      .endpoint_projection
+      .get_child_path_component_nodes(path_component_id)
+      .expect("path component should exist")
+      .next();
+
+    let first_request_node = self
+      .endpoint_projection
+      .get_request_nodes(path_component_id)
+      .expect("path component should exist")
+      .next();
+
+    let first_response_node = self
+      .endpoint_projection
+      .get_response_nodes(path_component_id)
+      .expect("path component should exist")
+      .next();
+
+    matches!(
+      (
+        first_path_component_node,
+        first_request_node,
+        first_response_node
+      ),
+      (None, None, None)
+    )
   }
 
   pub fn request_exists(&self, request_id: &RequestId) -> bool {
@@ -901,7 +978,7 @@ mod test {
     let mut projection = EndpointProjection::from(initial_events);
 
     let command: EndpointCommand = serde_json::from_value(json!(
-      { "RemovePathParameter": {"pathId": "path_1"}}
+      { "RemovePathParameter": {"pathId": "path_2"}}
     ))
     .expect("commands should be valid endpoint events");
 
@@ -912,6 +989,17 @@ mod test {
     assert_debug_snapshot!(
       "can_handle_remove_path_parameter_command__new_events",
       new_events
+    );
+
+    let path_with_children: EndpointCommand = serde_json::from_value(json!(
+      { "RemovePathParameter": {"pathId": "path_1"}}
+    ))
+    .unwrap();
+    let path_with_children_result = projection.execute(path_with_children);
+    assert!(path_with_children_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_remove_path_parameter_command__path_with_children_result",
+      path_with_children_result.unwrap_err()
     );
 
     let removing_root: EndpointCommand = serde_json::from_value(json!(

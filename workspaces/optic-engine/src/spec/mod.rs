@@ -4,6 +4,7 @@ use crate::commands::{
 };
 use crate::events::SpecEvent;
 use crate::projections::SpecProjection;
+use crate::queries::EndpointQueries;
 use cqrs_core::Aggregate;
 
 /// Create an interface that allows commands to be applied to a spec as part of a single

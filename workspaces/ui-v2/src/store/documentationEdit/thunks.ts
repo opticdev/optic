@@ -4,6 +4,7 @@ import {
   AddContribution,
   CQRSCommand,
   IForkableSpectacle,
+  PrunePathComponents,
 } from '@useoptic/spectacle';
 
 import { RootState, AppDispatch } from '../root';
@@ -73,7 +74,9 @@ export const saveDocumentationChanges = createAsyncThunk<
           fetchDeleteEndpointCommands(spectacle, pathId, method)
         )
       )
-    ).flatMap((x) => x);
+    )
+      .flatMap((x) => x)
+      .concat([PrunePathComponents()]);
 
     const validContributions = getValidContributions(state);
 
