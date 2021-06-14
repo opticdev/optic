@@ -67,7 +67,7 @@ export default function CloudViewer() {
         return body;
       }
       const apiBase = (function () {
-        if (window.location.hostname.indexOf('useoptic.com')) {
+        if (window.location.hostname.indexOf('useoptic.com') >= 0) {
           return process.env.REACT_APP_PROD_API_BASE;
         } else {
           return process.env.REACT_APP_STAGING_API_BASE;
