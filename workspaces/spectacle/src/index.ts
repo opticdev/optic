@@ -548,6 +548,9 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             {}
         );
       },
+      isRemoved: (parent: endpoints.PathNode, args: any, context: any) => {
+        return Promise.resolve(parent.isRemoved);
+      },
     },
     HttpBody: {
       contentType: (parent: endpoints.BodyNodeWrapper) => {

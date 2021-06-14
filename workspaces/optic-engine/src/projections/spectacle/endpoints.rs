@@ -109,10 +109,22 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
           projection.with_creation_history(&c.client_command_batch_id, &e.path_id);
         }
       }
+      EndpointEvent::PathComponentRemoved(e) => {
+        projection.without_path_component(&e.path_id);
+        if let Some(c) = e.event_context {
+          projection.with_remove_history(&c.client_command_batch_id, &e.path_id);
+        }
+      }
       EndpointEvent::PathParameterAdded(e) => {
         projection.with_path_parameter(e.parent_path_id, e.path_id.clone(), e.name);
         if let Some(c) = e.event_context {
           projection.with_creation_history(&c.client_command_batch_id, &e.path_id);
+        }
+      }
+      EndpointEvent::PathParameterRemoved(e) => {
+        projection.without_path_component(&e.path_id);
+        if let Some(c) = e.event_context {
+          projection.with_remove_history(&c.client_command_batch_id, &e.path_id);
         }
       }
       EndpointEvent::RequestAdded(e) => {
@@ -278,6 +290,17 @@ impl EndpointsProjection {
       path_name.clone(),
       true,
     );
+  }
+
+  pub fn without_path_component(&mut self, path_id: &PathComponentId) {
+    let path_node_index = *self
+      .domain_id_to_index
+      .get(path_id)
+      .expect("expected path_id to have a corresponding node");
+
+    if let Some(Node::Path(path_node)) = self.graph.node_weight_mut(path_node_index) {
+      path_node.is_removed = true;
+    }
   }
 
   pub fn with_path_component_node(

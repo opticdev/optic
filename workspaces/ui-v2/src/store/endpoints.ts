@@ -18,6 +18,7 @@ export const AllEndpointsQuery = `{
       name
       isParameterized
       contributions
+      isRemoved
     }
     method
     pathContributions
@@ -36,6 +37,7 @@ export type EndpointQueryResults = {
       name: string;
       isParameterized: boolean;
       contributions: Record<string, string>;
+      isRemoved: boolean;
     }[];
     method: string;
     pathContributions: Record<string, string>;
@@ -52,7 +54,6 @@ export const endpointQueryResultsToJson = ({
           requests.map((req) => req.absolutePathPatternWithParameterNames)
         )
       : '/';
-
   return requests.map((request) => ({
     pathId: request.pathId,
     method: request.method,
