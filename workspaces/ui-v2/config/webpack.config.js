@@ -6,6 +6,7 @@ const webpack = require('webpack');
 const resolve = require('resolve');
 const PnpWebpackPlugin = require('pnp-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const SentryWebpackPlugin = require('@sentry/webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -55,6 +56,9 @@ const imageInlineSizeLimit = parseInt(
 
 // Check if TypeScript is setup
 const useTypeScript = fs.existsSync(paths.appTsConfig);
+
+const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN;
+const shouldUploadSentrySourcemaps = shouldUseSourceMap && !!sentryAuthToken;
 
 // Get the path to the uncompiled service worker (if it exists).
 const swSrc = paths.swSrc;
@@ -591,6 +595,24 @@ module.exports = function (webpackEnv) {
         )
       ),
       new OpticWasmWebpackPlugin(),
+      shouldUploadSentrySourcemaps &&
+        new SentryWebpackPlugin({
+          // sentry-cli configuration
+          authToken: sentryAuthToken,
+          org: 'opticdev',
+          project: 'local-ui',
+          release: `local_cli_${appPackageJson.version}`,
+          // webpack specific configuration
+          include: '.',
+          ignore: [
+            'node_modules',
+            'webpack.config.js',
+            'config',
+            'scripts',
+            'jest.config.js',
+            'setupTests.js',
+          ],
+        }),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358
