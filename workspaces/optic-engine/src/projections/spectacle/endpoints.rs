@@ -122,6 +122,12 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
           projection.with_creation_history(&c.client_command_batch_id, &e.request_id);
         }
       }
+      EndpointEvent::RequestRemoved(e) => {
+        projection.without_request(&e.request_id);
+        if let Some(c) = e.event_context {
+          projection.with_remove_history(&c.client_command_batch_id, &e.request_id);
+        }
+      }
       EndpointEvent::ResponseAddedByPathAndMethod(e) => {
         projection.with_response(
           e.response_id.clone(),
@@ -132,6 +138,12 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
 
         if let Some(c) = e.event_context {
           projection.with_creation_history(&c.client_command_batch_id, &e.response_id);
+        }
+      }
+      EndpointEvent::ResponseRemoved(e) => {
+        projection.without_response(&e.response_id);
+        if let Some(c) = e.event_context {
+          projection.with_remove_history(&c.client_command_batch_id, &e.response_id);
         }
       }
       EndpointEvent::RequestBodySet(e) => {
@@ -281,6 +293,7 @@ impl EndpointsProjection {
       path_id: path_id.clone(),
       name: path_name,
       is_parameterized,
+      is_removed: false,
     }));
     self.domain_id_to_index.insert(path_id, node_index);
 
@@ -306,6 +319,7 @@ impl EndpointsProjection {
     let node = Node::Request(RequestNode {
       http_method: http_method,
       request_id: request_id.clone(),
+      is_removed: false,
     });
 
     let node_index = self.graph.add_node(node);
@@ -314,6 +328,17 @@ impl EndpointsProjection {
       .add_edge(node_index, *path_index, Edge::IsChildOf);
 
     self.domain_id_to_index.insert(request_id, node_index);
+  }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  pub fn without_request(&mut self, request_id: &RequestId) {
+    let request_node_index = *self
+      .domain_id_to_index
+      .get(request_id)
+      .expect("expected request_id to have a corresponding node");
+
+    if let Some(Node::Request(request_node)) = self.graph.node_weight_mut(request_node_index) {
+      request_node.is_removed = true;
+    }
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_response(
@@ -332,6 +357,7 @@ impl EndpointsProjection {
       http_method: http_method,
       http_status_code: http_status_code,
       response_id: response_id.clone(),
+      is_removed: false,
     });
 
     let node_index = self.graph.add_node(node);
@@ -341,7 +367,17 @@ impl EndpointsProjection {
 
     self.domain_id_to_index.insert(response_id, node_index);
   }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  pub fn without_response(&mut self, response_id: &ResponseId) {
+    let response_node_index = *self
+      .domain_id_to_index
+      .get(response_id)
+      .expect("expected response_id to have a corresponding node");
 
+    if let Some(Node::Response(response_node)) = self.graph.node_weight_mut(response_node_index) {
+      response_node.is_removed = true;
+    }
+  }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_request_body(
     &mut self,
@@ -356,6 +392,7 @@ impl EndpointsProjection {
     let node = Node::Body(BodyNode {
       http_content_type: http_content_type,
       root_shape_id: root_shape_id.clone(),
+      is_removed: false,
     });
     let node_index = self.graph.add_node(node);
     self
@@ -379,6 +416,7 @@ impl EndpointsProjection {
     let node = Node::Body(BodyNode {
       http_content_type: http_content_type,
       root_shape_id: root_shape_id.clone(),
+      is_removed: false,
     });
     let node_index = self.graph.add_node(node);
     self
@@ -435,6 +473,22 @@ impl EndpointsProjection {
       eprintln!("bad implicit batch id {}", &batch_id);
     }
   }
+  pub fn with_remove_history(&mut self, batch_id: &str, removed_node_id: &str) {
+    let removed_node_index = self
+      .domain_id_to_index
+      .get(removed_node_id)
+      .expect("expected removed_node_id to exist");
+
+    let batch_node_index_option = self.domain_id_to_index.get(batch_id);
+
+    if let Some(batch_node_index) = batch_node_index_option {
+      self
+        .graph
+        .add_edge(*removed_node_index, *batch_node_index, Edge::RemovedIn);
+    } else {
+      eprintln!("bad implicit batch id {}", &batch_id);
+    }
+  }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -466,6 +520,7 @@ pub struct PathNode {
   is_parameterized: bool,
   name: String,
   path_id: PathComponentId,
+  is_removed: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -473,6 +528,7 @@ pub struct PathNode {
 pub struct RequestNode {
   http_method: HttpMethod,
   request_id: RequestId,
+  is_removed: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -481,6 +537,7 @@ pub struct ResponseNode {
   http_method: HttpMethod,
   http_status_code: HttpStatusCode,
   response_id: ResponseId,
+  is_removed: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -488,6 +545,7 @@ pub struct ResponseNode {
 pub struct BodyNode {
   http_content_type: HttpContentType,
   root_shape_id: ShapeId,
+  is_removed: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -496,5 +554,6 @@ pub enum Edge {
   IsChildOf,
   CreatedIn,
   UpdatedIn,
+  RemovedIn,
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////

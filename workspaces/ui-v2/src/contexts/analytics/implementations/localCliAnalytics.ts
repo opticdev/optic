@@ -46,6 +46,7 @@ export const initialize: AnalyticsStoreProps['initialize'] = async (
 
   if (appConfig.analytics.fullStoryOrgId) {
     FullStory.init({ orgId: appConfig.analytics.fullStoryOrgId });
+    FullStory.event('Version', { clientId: clientId });
   }
 
   if (appConfig.analytics.sentryUrl) {

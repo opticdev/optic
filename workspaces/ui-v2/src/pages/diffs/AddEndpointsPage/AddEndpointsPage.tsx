@@ -27,7 +27,7 @@ import { IPendingEndpoint } from '<src>/pages/diffs/contexts/SharedDiffState';
 import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import { DiffAccessoryNavigation } from '<src>/pages/diffs/components/DiffAccessoryNavigation';
-import { useAppSelector } from '<src>/store';
+import { selectors, useAppSelector } from '<src>/store';
 import { IEndpoint } from '<src>/types';
 
 import {
@@ -158,8 +158,8 @@ export function DiffUrlsPage() {
 }
 
 export function DocumentationRootPageWithPendingEndpoints() {
-  const endpoints = useAppSelector(
-    (state) => state.endpoints.results.data || []
+  const endpoints = selectors.filterRemovedEndpoints(
+    useAppSelector((state) => state.endpoints.results.data || [])
   );
   const {
     pendingEndpoints,

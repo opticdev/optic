@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useMemo } from 'react';
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import {
   EndpointName,
@@ -40,11 +40,15 @@ export const EndpointDocumentationPane: FC<
   renderHeader,
   ...props
 }) => {
-  const thisEndpoint = useAppSelector((state) =>
-    state.endpoints.results.data?.find(
-      (endpoint) => endpoint.pathId === pathId && endpoint.method === method
-    )
+  const endpointsState = useAppSelector((state) => state.endpoints.results);
+  const thisEndpoint = useMemo(
+    () =>
+      endpointsState.data?.find(
+        (i) => i.pathId === pathId && i.method === method
+      ),
+    [endpointsState, method, pathId]
   );
+
   const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   if (!thisEndpoint) {

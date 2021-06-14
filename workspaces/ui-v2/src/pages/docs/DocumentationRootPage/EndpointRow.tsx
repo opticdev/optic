@@ -21,6 +21,7 @@ import {
 import {
   useAppSelector,
   useAppDispatch,
+  selectors,
   documentationEditActions,
 } from '<src>/store';
 
@@ -44,15 +45,28 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
     process.env.REACT_APP_FF_SHOW_DELETE_ENDPOINT === 'true';
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const isEndpointStagedForDeletion = useAppSelector((state) =>
-    state.documentationEdits.deletedEndpoints.includes(endpointId)
+  const isEndpointStagedForDeletion = useAppSelector(
+    selectors.isEndpointDeleted({
+      method: endpoint.method,
+      pathId: endpoint.pathId,
+    })
   );
 
   const deleteEndpoint = () =>
-    dispatch(documentationEditActions.deleteEndpoint({ endpointId }));
+    dispatch(
+      documentationEditActions.deleteEndpoint({
+        method: endpoint.method,
+        pathId: endpoint.pathId,
+      })
+    );
 
   const undeleteEndpoint = () =>
-    dispatch(documentationEditActions.undeleteEndpoint({ endpointId }));
+    dispatch(
+      documentationEditActions.undeleteEndpoint({
+        method: endpoint.method,
+        pathId: endpoint.pathId,
+      })
+    );
 
   return (
     <>
@@ -94,7 +108,10 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
         >
           <EndpointNameMiniContribution
             id={endpointId}
-            endpointId={endpointId}
+            endpoint={{
+              method: endpoint.method,
+              pathId: endpoint.pathId,
+            }}
             defaultText="name for this endpoint"
             contributionKey="purpose"
             initialValue={endpoint.purpose}

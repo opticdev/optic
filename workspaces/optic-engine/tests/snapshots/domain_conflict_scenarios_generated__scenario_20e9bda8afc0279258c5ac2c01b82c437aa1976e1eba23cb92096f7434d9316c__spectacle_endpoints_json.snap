@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+source: workspaces/optic-engine/tests/domain-conflict-scenarios-generated.rs
 expression: "&spec_projection.spectacle_endpoints_serializable()"
 ---
 {
@@ -10,7 +10,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "absolutePathPattern": "/",
         "isParameterized": false,
         "name": "",
-        "pathId": "root"
+        "pathId": "root",
+        "isRemoved": false
       }
     },
     {
@@ -27,7 +28,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "absolutePathPattern": "/posts",
         "isParameterized": false,
         "name": "posts",
-        "pathId": "path_rmPGKep5SW"
+        "pathId": "path_rmPGKep5SW",
+        "isRemoved": false
       }
     },
     {
@@ -36,14 +38,16 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "absolutePathPattern": "/profile",
         "isParameterized": false,
         "name": "profile",
-        "pathId": "path_CmA4ZrhSXc"
+        "pathId": "path_CmA4ZrhSXc",
+        "isRemoved": false
       }
     },
     {
       "type": "Request",
       "data": {
         "httpMethod": "GET",
-        "requestId": "request_lUXaqigODI"
+        "requestId": "request_lUXaqigODI",
+        "isRemoved": false
       }
     },
     {
@@ -51,21 +55,24 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "httpStatusCode": 200,
-        "responseId": "response_zEjgh3n6Uq"
+        "responseId": "response_zEjgh3n6Uq",
+        "isRemoved": false
       }
     },
     {
       "type": "Body",
       "data": {
         "httpContentType": "application/json",
-        "rootShapeId": "shape_GsyFkrJzlL"
+        "rootShapeId": "shape_GsyFkrJzlL",
+        "isRemoved": false
       }
     },
     {
       "type": "Request",
       "data": {
         "httpMethod": "GET",
-        "requestId": "request_ncEWlZU2g3"
+        "requestId": "request_ncEWlZU2g3",
+        "isRemoved": false
       }
     },
     {
@@ -73,14 +80,16 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "httpStatusCode": 200,
-        "responseId": "response_pan3yNmeiQ"
+        "responseId": "response_pan3yNmeiQ",
+        "isRemoved": false
       }
     },
     {
       "type": "Body",
       "data": {
         "httpContentType": "application/json",
-        "rootShapeId": "shape_ApnstcbWQx"
+        "rootShapeId": "shape_ApnstcbWQx",
+        "isRemoved": false
       }
     },
     {
@@ -97,7 +106,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "absolutePathPattern": "/posts",
         "isParameterized": false,
         "name": "posts",
-        "pathId": "path_9Wdr4kyshW"
+        "pathId": "path_9Wdr4kyshW",
+        "isRemoved": false
       }
     },
     {
@@ -106,7 +116,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "absolutePathPattern": "/comments",
         "isParameterized": false,
         "name": "comments",
-        "pathId": "path_8paa69fCfC"
+        "pathId": "path_8paa69fCfC",
+        "isRemoved": false
       }
     },
     {
@@ -115,14 +126,16 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "absolutePathPattern": "/profile",
         "isParameterized": false,
         "name": "profile",
-        "pathId": "path_osi3pD8diw"
+        "pathId": "path_osi3pD8diw",
+        "isRemoved": false
       }
     },
     {
       "type": "Request",
       "data": {
         "httpMethod": "GET",
-        "requestId": "request_w0KmJ5kZIe"
+        "requestId": "request_w0KmJ5kZIe",
+        "isRemoved": false
       }
     },
     {
@@ -130,21 +143,24 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "httpStatusCode": 200,
-        "responseId": "response_iQd5ISIZH9"
+        "responseId": "response_iQd5ISIZH9",
+        "isRemoved": false
       }
     },
     {
       "type": "Body",
       "data": {
         "httpContentType": "application/json",
-        "rootShapeId": "shape_E9IzHThmZv"
+        "rootShapeId": "shape_E9IzHThmZv",
+        "isRemoved": false
       }
     },
     {
       "type": "Request",
       "data": {
         "httpMethod": "GET",
-        "requestId": "request_CEJzcYN3NN"
+        "requestId": "request_CEJzcYN3NN",
+        "isRemoved": false
       }
     },
     {
@@ -152,21 +168,24 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "httpStatusCode": 200,
-        "responseId": "response_ata4rM8zB1"
+        "responseId": "response_ata4rM8zB1",
+        "isRemoved": false
       }
     },
     {
       "type": "Body",
       "data": {
         "httpContentType": "application/json",
-        "rootShapeId": "shape_UlLNexyAzZ"
+        "rootShapeId": "shape_UlLNexyAzZ",
+        "isRemoved": false
       }
     },
     {
       "type": "Request",
       "data": {
         "httpMethod": "GET",
-        "requestId": "request_AJISCmgnoU"
+        "requestId": "request_AJISCmgnoU",
+        "isRemoved": false
       }
     },
     {
@@ -174,14 +193,16 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "data": {
         "httpMethod": "GET",
         "httpStatusCode": 200,
-        "responseId": "response_HZFYN85Iui"
+        "responseId": "response_HZFYN85Iui",
+        "isRemoved": false
       }
     },
     {
       "type": "Body",
       "data": {
         "httpContentType": "application/json",
-        "rootShapeId": "shape_MiVhGwZrMY"
+        "rootShapeId": "shape_MiVhGwZrMY",
+        "isRemoved": false
       }
     }
   ],

@@ -43,6 +43,8 @@ type Query {
   # Diffs for existing endpoints and unrecognized URLs
   diff(diffId: ID): DiffState
 
+  endpoint(pathId: ID, method: String): Endpoint
+
   # Metadata about the current spec
   metadata: SpecMetadata
 }
@@ -76,6 +78,17 @@ type Path {
   
   # Path ID
   pathId: String
+
+  # Is the path removed
+  isRemoved: Boolean
+}
+
+type Endpoint {
+  commands: EndpointCommands
+}
+
+type EndpointCommands {
+  remove: [JSON]
 }
 
 """
@@ -87,6 +100,9 @@ type HttpBody {
   
   # Root shape ID for the HTTP body. Look at the shapeChoices query getting more information about the root shape
   rootShapeId: String
+
+  # Is the body removed
+  isRemoved: Boolean
 }
 
 """
@@ -124,6 +140,9 @@ type HttpRequest {
   
   # Request contributions which define descriptions
   requestContributions: JSON
+
+  # Is the request removed
+  isRemoved: Boolean
 }
 
 """
@@ -160,6 +179,9 @@ type HttpResponse {
   
   # HTTP response contributions which define descriptions
   contributions: JSON
+
+  # Is the response removed
+  isRemoved: Boolean
 }
 
 """
