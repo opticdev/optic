@@ -82,7 +82,7 @@ const ChangelogRootComponent: FC<
     return <Loading />;
   }
   if (endpointsState.error) {
-    return <>error</>;
+    return <>error loading endpoint changelog information</>;
   }
 
   if (!thisEndpoint) {
