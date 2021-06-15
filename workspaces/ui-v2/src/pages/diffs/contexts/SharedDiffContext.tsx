@@ -1,4 +1,11 @@
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   IPendingEndpoint,
   IUndocumentedUrl,
@@ -26,6 +33,7 @@ import { useAnalytics } from '<src>/contexts/analytics';
 import { makePattern } from '<src>/pages/diffs/AddEndpointsPage/utils';
 import { IPath } from '<src>/hooks/usePathsHook';
 import { pathToRegexpEscaped } from '<src>/utils';
+import { useGlobalDiffDebug } from '<src>/components';
 
 export const SharedDiffReactContext = React.createContext<ISharedDiffContext | null>(
   null
@@ -173,6 +181,17 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       method: string;
     };
   }>({});
+
+  useGlobalDiffDebug(
+    useCallback(
+      () => ({
+        context,
+        wipPatterns,
+        currentSpecContext,
+      }),
+      [context, wipPatterns, currentSpecContext]
+    )
+  );
 
   const wipPatternMatchers = Object.entries(wipPatterns)
     .filter(([, { isParameterized }]) => isParameterized)

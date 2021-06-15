@@ -15,7 +15,7 @@ import { SpectacleStore } from '<src>/contexts/spectacle-provider';
 import { DiffReviewEnvironments } from '<src>/pages/diffs/ReviewDiffPages';
 import { CapturesServiceStore } from '<src>/hooks/useCapturesHook';
 import { ChangelogPages } from '<src>/pages/changelog/ChangelogPages';
-import { Loading } from '<src>/components';
+import { Loading, DebugOpticComponent } from '<src>/components';
 import {
   AppConfigurationStore,
   OpticAppConfig,
@@ -27,6 +27,7 @@ import {
   LocalCliConfigRepository,
   LocalCliServices,
   LocalCliSpectacle,
+  LocalCliSpecRepository,
 } from '@useoptic/spectacle-shared';
 import { AnalyticsStore } from '<src>/contexts/analytics';
 import {
@@ -55,6 +56,7 @@ const appConfig: OpticAppConfig = {
     },
   },
 };
+
 export default function LocalCli() {
   const match = useRouteMatch();
   const params = useParams<{ specId: string }>();
@@ -84,6 +86,7 @@ export default function LocalCli() {
                   initialize={initialize}
                   track={track}
                 >
+                  <DebugOpticComponent specService={data.specRepository} />
                   <MetadataLoader>
                     <Switch>
                       <Route
@@ -140,8 +143,15 @@ export function useLocalCliServices(
     baseUrl: apiBaseUrl,
     spectacle,
   });
+  const specRepository = new LocalCliSpecRepository({ baseUrl: apiBaseUrl });
   return {
     loading: false,
-    data: { spectacle, capturesService, opticEngine, configRepository },
+    data: {
+      spectacle,
+      capturesService,
+      opticEngine,
+      configRepository,
+      specRepository,
+    },
   };
 }

@@ -7,6 +7,7 @@ import {
   IOpticConfigRepository,
   IOpticDiffService,
   IOpticEngine,
+  IOpticSpecRepository,
   SpectacleInput,
   StartDiffResult,
 } from '@useoptic/spectacle';
@@ -69,6 +70,7 @@ export interface LocalCliServices {
   capturesService: IOpticCapturesService;
   opticEngine: IOpticEngine;
   configRepository: IOpticConfigRepository;
+  specRepository: IOpticSpecRepository;
 }
 export interface LocalCliCapturesServiceDependencies {
   baseUrl: string;
@@ -199,5 +201,13 @@ export class LocalCliConfigRepository implements IOpticConfigRepository {
     );
     const config: IApiCliConfig = result.config;
     return config.name;
+  }
+}
+
+export class LocalCliSpecRepository implements IOpticSpecRepository {
+  constructor(private dependencies: { baseUrl: string }) {}
+
+  async listEvents(): Promise<any> {
+    return JsonHttpClient.getJson(`${this.dependencies.baseUrl}/events`);
   }
 }

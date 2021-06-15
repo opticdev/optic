@@ -11,7 +11,7 @@ import { Provider as BaseUrlProvider } from '<src>/hooks/useBaseUrl';
 import { makeSpectacle, SpectacleInput } from '@useoptic/spectacle';
 import { DocumentationPages } from '<src>/pages/docs';
 import { SpectacleStore } from '<src>/contexts/spectacle-provider';
-import { Loading } from '<src>/components';
+import { Loading, DebugOpticComponent } from '<src>/components';
 import { DiffReviewEnvironments } from '<src>/pages/diffs/ReviewDiffPages';
 import { IBaseSpectacle } from '@useoptic/spectacle';
 import { IForkableSpectacle } from '@useoptic/spectacle';
@@ -128,6 +128,9 @@ export default function CloudViewer() {
                   initialize={initialize}
                   track={track}
                 >
+                  <DebugOpticComponent
+                    specService={data.opticContext.specRepository}
+                  />
                   <MetadataLoader>
                     <Switch>
                       <Route
