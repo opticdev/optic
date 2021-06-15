@@ -13,7 +13,6 @@ export class OpticUIEvents {
     });
   }
 
-  // proposed
   reviewPageLoaded(
     diffs: number,
     undocumentedUrls: number,
@@ -58,6 +57,16 @@ export class OpticUIEvents {
     });
   }
 
+  userSavedDocChanges(
+    deletedEndpointCount: number,
+    contributionChangesCount: number
+  ) {
+    this.dispatch({
+      type: 'user_saved_documentation_changes',
+      data: { deletedEndpointCount, contributionChangesCount },
+    });
+  }
+
   userSavedChanges(
     undocumentedUrls: number,
     endpointsChangedCount: number,
@@ -72,6 +81,8 @@ export class OpticUIEvents {
       },
     });
   }
+
+  // proposed
 
   // deprecated
 }
