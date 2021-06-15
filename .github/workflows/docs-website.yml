@@ -40,15 +40,10 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@060516122e7b4cc1cc3d4614a998adbb93d3fbf2 # v1.2.2
-      - env:
-          REPO: 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs
-          SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL }}
-          USER: ${{ env.GITHUB_ACTOR }}
-        run: >
+      - run: >
           task
             website:docker:build
             website:docker:push
-            docker:slack-notifier
       - name: Configure staging AWS credentials
         uses: aws-actions/configure-aws-credentials@32d908adfb55576ba0c59f3c557058e80b5194c3 # v1.5.3
         if: env.APP_ENV == 'staging'
