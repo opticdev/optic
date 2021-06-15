@@ -25,7 +25,7 @@ jobs:
       - name: Set env vars
         run: |
           echo "TAG=${BRANCH}-b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
-          if [ "$BRANCH" =~ ^(develop|release)$ ]
+          if [[ "$BRANCH" =~ ^(develop|release)$ ]]
           then
             echo "APP_ENV=production" >> $GITHUB_ENV
           else
