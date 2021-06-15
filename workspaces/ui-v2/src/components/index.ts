@@ -1,4 +1,5 @@
 export * from './CommitMessageModal';
+export * from './DebugOpticComponent';
 export * from './EditableTextField';
 export * from './EndpointName';
 export * from './FieldOrParameter';
