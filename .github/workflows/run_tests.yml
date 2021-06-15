@@ -9,12 +9,14 @@ on:
       - website/**
       - .github/**
       - "**.md"
+      - Taskfile.yml
   pull_request:
     branches: [ 'develop' ]
     paths-ignore:
       - website/**
       - .github/**
       - "**.md"
+      - Taskfile.yml
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
