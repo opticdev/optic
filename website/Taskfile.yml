@@ -96,7 +96,7 @@ tasks:
     env:
       TAG: '{{default "local" .TAG}}'
     cmds:
-      - skaffold deploy -i 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:$TAG
+      - skaffold deploy -i 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:$TAG --namespace docs
 
   docker:ci:
     - docker:build

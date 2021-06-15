@@ -1,0 +1,70 @@
+---
+name: Docs Website
+
+on:
+  push:
+    paths:
+      - .github/works/docs-website.yml
+      - website/**/*
+      - "!website/README.md"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f  # v2.3.4
+      - name: Install Task
+        run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
+      - name: Install Skaffold
+        run: |
+          curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
+          sudo install skaffold /usr/local/bin/
+      - name: Set branch name
+        run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+      - name: Set env vars
+        run: |
+          echo "TAG=${BRANCH}-b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+          if [ "$BRANCH" =~ ^(develop|release)$" ]
+          then
+            echo "APP_ENV=production" >> $GITHUB_ENV
+          else
+            echo "APP_ENV=staging" >> $GITHUB_ENV
+          fi
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@32d908adfb55576ba0c59f3c557058e80b5194c3 # v1.5.3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "us-east-1"
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@060516122e7b4cc1cc3d4614a998adbb93d3fbf2 # v1.2.2
+      - env:
+          REPO: 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs
+          SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL }}
+          USER: ${{ env.GITHUB_ACTOR }}
+        run: >
+          task
+            website:docker:build
+            website:docker:push
+            docker:slack-notifier
+      - name: Configure staging AWS credentials
+        uses: aws-actions/configure-aws-credentials@32d908adfb55576ba0c59f3c557058e80b5194c3 # v1.5.3
+        if: env.APP_ENV == 'staging'
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_STAGING_CI_ROLE_ARN }}
+          role-duration-seconds: 900 # 15m, minimum
+          role-session-name: GithubActionStagingDeploy
+      - env:
+          REPO: 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs
+          SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL }}
+          USER: ${{ env.GITHUB_ACTOR }}
+          MSG: "was deployed to ${{ env.APP_ENV }}."
+        run: >
+          task
+            website:docker:deploy
+            docker:slack-notifier
