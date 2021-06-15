@@ -74,7 +74,7 @@ tasks:
     cmds:
       - docker push 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:$TAG
       - |
-        if [[ "$BRANCH" =~ ^(develop|release) ]]
+        if [[ "$BRANCH" =~ ^(develop|release)$ ]]
         then
           docker tag 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:$TAG 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:latest
           docker push 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:latest
