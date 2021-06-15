@@ -26,7 +26,6 @@ jobs:
       - name: Set env vars
         run: |
           echo "TAG=${BRANCH}-b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
-          echo "USER=${GITHUB_ACTOR}" >> $GITHUB_ENV
           if [[ "$BRANCH" =~ ^(develop|release)$ ]]
           then
             echo "APP_ENV=production" >> $GITHUB_ENV
@@ -56,6 +55,7 @@ jobs:
       - env:
           REPO: 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL }}
+          USER: ${{ github.actor }}
           MSG: "was deployed to ${{ env.APP_ENV }}."
         run: |
           aws eks update-kubeconfig --name default --alias "$APP_ENV"
