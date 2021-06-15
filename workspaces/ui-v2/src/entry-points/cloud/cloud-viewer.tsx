@@ -57,8 +57,8 @@ const appConfig: OpticAppConfig = {
 
 export default function CloudViewer() {
   const match = useRouteMatch();
-  const params = useParams<{ specId: string }>();
-  const { specId } = params;
+  const params = useParams<{ specId: string; personId: string }>();
+  const { personId, specId } = params;
   const task: CloudInMemorySpectacleDependenciesLoader = useCallback(async () => {
     const loadUploadedSpec = async () => {
       if (process.env.NODE_ENV === 'development') {
@@ -67,17 +67,20 @@ export default function CloudViewer() {
         return body;
       }
       const apiBase = (function () {
-        if (window.location.hostname.indexOf('useoptic.com')) {
+        if (window.location.hostname.indexOf('useoptic.com') >= 0) {
           return process.env.REACT_APP_PROD_API_BASE;
         } else {
           return process.env.REACT_APP_STAGING_API_BASE;
         }
       })();
-      const response = await fetch(`${apiBase}/api/specs/${specId}`, {
-        headers: { accept: 'application/json' },
-      });
+      const response = await fetch(
+        `${apiBase}/api/people/${personId}/public-specs/${specId}`,
+        {
+          headers: { accept: 'application/json' },
+        }
+      );
       if (!response.ok) {
-        throw new Error(`could not find spec ${specId}`);
+        throw new Error(`could not find spec ${personId}/${specId}`);
       }
       const responseJson = await response.json();
       let signedUrl = responseJson.read_url;
@@ -88,7 +91,7 @@ export default function CloudViewer() {
 
       let contentReq = await fetch(signedUrl);
       if (!contentReq.ok) {
-        throw new Error(`Unable to fetch spec ${specId}`);
+        throw new Error(`Unable to fetch spec ${personId}/${specId}`);
       }
 
       let spec = await contentReq.json();
@@ -99,7 +102,7 @@ export default function CloudViewer() {
       events,
       samples: [],
     };
-  }, [specId]);
+  }, [specId, personId]);
   const { loading, error, data } = useCloudInMemorySpectacle(task);
   if (loading) {
     return <Loading />;
