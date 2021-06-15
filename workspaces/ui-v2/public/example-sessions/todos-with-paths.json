@@ -1,6 +1,54 @@
 {
   "events": [
     {
+      "BatchCommitStarted": {
+        "batchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+        "commitMessage": "Initialize specification attributes",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "metadata",
+        "key": "id",
+        "value": "e368ee28-ea2e-432b-80a4-625215423510",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
+        }
+      }
+    },
+    {
+      "BatchCommitStarted": {
+        "batchId": "4852cc8a-83cd-4803-b237-d7bf77b0933b",
+        "commitMessage": "dsasa",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bcfad727-81fd-4552-b0fb-82828f7b05f2",
+          "clientCommandBatchId": "860e177a-39ce-4ebf-b6e8-6d7c09247c2b",
+          "createdAt": "2020-04-02T18:52:35.863Z"
+        }
+      }
+    },
+    {
       "PathComponentAdded": {
         "pathId": "path_jNlbaVZ0Ar",
         "parentPathId": "root",
@@ -23,18 +71,6 @@
           "clientSessionId": "bcfad727-81fd-4552-b0fb-82828f7b05f2",
           "clientCommandBatchId": "ad4c2dd3-feb9-443a-b506-a64603d8185a",
           "createdAt": "2020-04-02T18:52:25.994Z"
-        }
-      }
-    },
-    {
-      "BatchCommitStarted": {
-        "batchId": "4852cc8a-83cd-4803-b237-d7bf77b0933b",
-        "commitMessage": "dsasa",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "bcfad727-81fd-4552-b0fb-82828f7b05f2",
-          "clientCommandBatchId": "860e177a-39ce-4ebf-b6e8-6d7c09247c2b",
-          "createdAt": "2020-04-02T18:52:35.863Z"
         }
       }
     },
@@ -250,6 +286,18 @@
       }
     },
     {
+      "BatchCommitStarted": {
+        "batchId": "0566e48d-ac86-4a91-b148-3dccda573c09",
+        "commitMessage": "Added New Endpoint\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "5239c93d-502f-4a89-9cbb-734ace2bfc8e",
+          "clientCommandBatchId": "4210fe7a-1f54-49c4-82b9-5f58dddcb8fa",
+          "createdAt": "2020-04-07T13:07:41.103Z"
+        }
+      }
+    },
+    {
       "PathParameterAdded": {
         "pathId": "path_4DpQAqvkOA",
         "parentPathId": "path_jNlbaVZ0Ar",
@@ -286,18 +334,6 @@
           "clientSessionId": "5239c93d-502f-4a89-9cbb-734ace2bfc8e",
           "clientCommandBatchId": "9baf44da-6593-476a-a58c-49b427fbca8b",
           "createdAt": "2020-04-07T13:07:31.317Z"
-        }
-      }
-    },
-    {
-      "BatchCommitStarted": {
-        "batchId": "0566e48d-ac86-4a91-b148-3dccda573c09",
-        "commitMessage": "Added New Endpoint\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "5239c93d-502f-4a89-9cbb-734ace2bfc8e",
-          "clientCommandBatchId": "4210fe7a-1f54-49c4-82b9-5f58dddcb8fa",
-          "createdAt": "2020-04-07T13:07:41.103Z"
         }
       }
     },
@@ -714,6 +750,18 @@
       }
     },
     {
+      "BatchCommitStarted": {
+        "batchId": "bc4d0fe2-0113-4674-80f4-c43d7e1c1344",
+        "commitMessage": "\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body\n- Made field 'america' nullable",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "9769d3f8-1177-40a6-85a3-5c66a6bb3a2e",
+          "clientCommandBatchId": "680ed06f-79cf-4685-8cad-c6af3b6b92c5",
+          "createdAt": "2020-04-17T23:06:44.972Z"
+        }
+      }
+    },
+    {
       "PathComponentAdded": {
         "pathId": "path_u2SxMpeXl7",
         "parentPathId": "root",
@@ -736,18 +784,6 @@
           "clientSessionId": "9769d3f8-1177-40a6-85a3-5c66a6bb3a2e",
           "clientCommandBatchId": "306fe106-9d49-442d-9048-ed1acf66b766",
           "createdAt": "2020-04-17T23:06:37.298Z"
-        }
-      }
-    },
-    {
-      "BatchCommitStarted": {
-        "batchId": "bc4d0fe2-0113-4674-80f4-c43d7e1c1344",
-        "commitMessage": "\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body\n- Made field 'america' nullable",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "9769d3f8-1177-40a6-85a3-5c66a6bb3a2e",
-          "clientCommandBatchId": "680ed06f-79cf-4685-8cad-c6af3b6b92c5",
-          "createdAt": "2020-04-17T23:06:44.972Z"
         }
       }
     },
@@ -1078,6 +1114,18 @@
       }
     },
     {
+      "BatchCommitStarted": {
+        "batchId": "e10ee301-6e56-4167-b3f2-0ec15fffaee2",
+        "commitMessage": "\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body\n- Made field 'abc' optional\n- Made field 'fieldB' optional\n- Allowed field 'hello' to be either a Object or String",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "9769d3f8-1177-40a6-85a3-5c66a6bb3a2e",
+          "clientCommandBatchId": "0c9e77b6-39b4-45ac-84d4-6891cd6a9674",
+          "createdAt": "2020-04-17T23:07:08.964Z"
+        }
+      }
+    },
+    {
       "PathComponentAdded": {
         "pathId": "path_KfgfQ24ALA",
         "parentPathId": "root",
@@ -1100,18 +1148,6 @@
           "clientSessionId": "9769d3f8-1177-40a6-85a3-5c66a6bb3a2e",
           "clientCommandBatchId": "b850ac36-7ca2-4597-a6a9-bfa1c8af4cb8",
           "createdAt": "2020-04-17T23:06:49.719Z"
-        }
-      }
-    },
-    {
-      "BatchCommitStarted": {
-        "batchId": "e10ee301-6e56-4167-b3f2-0ec15fffaee2",
-        "commitMessage": "\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body\n- Made field 'abc' optional\n- Made field 'fieldB' optional\n- Allowed field 'hello' to be either a Object or String",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "9769d3f8-1177-40a6-85a3-5c66a6bb3a2e",
-          "clientCommandBatchId": "0c9e77b6-39b4-45ac-84d4-6891cd6a9674",
-          "createdAt": "2020-04-17T23:07:08.964Z"
         }
       }
     },
@@ -1637,19 +1673,6 @@
     {
       "BatchCommitEnded": {
         "batchId": "e10ee301-6e56-4167-b3f2-0ec15fffaee2",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "9769d3f8-1177-40a6-85a3-5c66a6bb3a2e",
-          "clientCommandBatchId": "578c99ef-1102-46da-a82c-b250050824ab",
-          "createdAt": "2020-04-17T23:07:08.974Z"
-        }
-      }
-    },
-    {
-      "ContributionAdded": {
-        "id": "metadata",
-        "key": "id",
-        "value": "0cbbe708-cd05-407b-ab79-99e5891097ca",
         "eventContext": {
           "clientId": "anonymous",
           "clientSessionId": "9769d3f8-1177-40a6-85a3-5c66a6bb3a2e",
