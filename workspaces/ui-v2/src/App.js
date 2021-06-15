@@ -36,7 +36,7 @@ class App extends React.Component {
 
 function AppError() {
   return (
-    <div>
+    <div style={{ padding: '12px 24px' }}>
       <div>
         <h1>There was a problem in displaying the Optic app.</h1>
 
