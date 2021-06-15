@@ -1,6 +1,18 @@
 {
   "events": [
     {
+      "BatchCommitStarted": {
+        "batchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+        "commitMessage": "Initialize specification attributes",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
+        }
+      }
+    },
+    {
       "ContributionAdded": {
         "id": "metadata",
         "key": "id",
@@ -8,8 +20,19 @@
         "eventContext": {
           "clientId": "anonymous",
           "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
-          "clientCommandBatchId": "9296cd05-8c2e-4079-bfaa-d56aad29aacd",
-          "createdAt": "2020-10-20T20:52:31.794Z"
+          "clientCommandBatchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
         }
       }
     }

@@ -2,6 +2,42 @@
   "events": [
     {
       "BatchCommitStarted": {
+        "batchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+        "commitMessage": "Initialize specification attributes",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "metadata",
+        "key": "id",
+        "value": "fe49e0c5-51a7-482c-b404-09eb6e6c523e",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
+        }
+      }
+    },
+    {
+      "BatchCommitStarted": {
         "batchId": "73773d7b-c173-4b58-9e01-2b27f08b4fad",
         "commitMessage": "",
         "eventContext": {
@@ -52571,19 +52607,6 @@
     {
       "BatchCommitEnded": {
         "batchId": "524f5418-59a0-493a-9c19-89f9abcefb58",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "bade46c4-86f6-4692-be22-07caca8f6f05",
-          "clientCommandBatchId": "524f5418-59a0-493a-9c19-89f9abcefb58",
-          "createdAt": "2021-04-27T14:12:58.467Z"
-        }
-      }
-    },
-    {
-      "ContributionAdded": {
-        "id": "metadata",
-        "key": "id",
-        "value": "fe49e0c5-51a7-482c-b404-09eb6e6c523e",
         "eventContext": {
           "clientId": "anonymous",
           "clientSessionId": "bade46c4-86f6-4692-be22-07caca8f6f05",

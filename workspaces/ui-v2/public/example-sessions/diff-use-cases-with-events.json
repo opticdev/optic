@@ -1,6 +1,54 @@
 {
   "events": [
     {
+      "BatchCommitStarted": {
+        "batchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+        "commitMessage": "Initialize specification attributes",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "metadata",
+        "key": "id",
+        "value": "e0ef7280-269c-461b-887d-1a973ab1448b",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "b6cc38d6-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
+        }
+      }
+    },
+    {
+      "BatchCommitStarted": {
+        "batchId": "c6cc38d3-f82f-445a-85b2-6acf2adafe27",
+        "commitMessage": "Add in events",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "c6cc38d3-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
+        }
+      }
+    },
+    {
       "PathComponentAdded": {
         "pathId": "path_aPqDtqTGQN",
         "parentPathId": "root",
@@ -1859,15 +1907,13 @@
       }
     },
     {
-      "ContributionAdded": {
-        "id": "metadata",
-        "key": "id",
-        "value": "e0ef7280-269c-461b-887d-1a973ab1448b",
+      "BatchCommitEnded": {
+        "batchId": "c6cc38d3-f82f-445a-85b2-6acf2adafe27",
         "eventContext": {
-          "clientId": "ccc",
-          "clientSessionId": "sss",
-          "clientCommandBatchId": "bbb",
-          "createdAt": "NOW"
+          "clientId": "anonymous",
+          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
+          "clientCommandBatchId": "c6cc38d3-f82f-445a-85b2-6acf2adafe27",
+          "createdAt": "2020-10-20T20:51:53.435Z"
         }
       }
     }
