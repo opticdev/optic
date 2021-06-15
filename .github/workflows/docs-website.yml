@@ -4,7 +4,7 @@ name: Docs Website
 on:
   push:
     paths:
-      - .github/works/docs-website.yml
+      - .github/workflows/docs-website.yml
       - website/**/*
       - "!website/README.md"
   workflow_dispatch:
