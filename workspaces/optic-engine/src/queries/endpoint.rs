@@ -170,6 +170,7 @@ impl<'a> EndpointQueries<'a> {
           }
         }
         DfsEvent::Finish(finished_node_index, time) => {
+          let is_root_node = *root_path_node_index == finished_node_index;
           let path_id = path_ids_by_index
             .get(&finished_node_index)
             .expect("finished path node should already have been discovered");
@@ -180,12 +181,12 @@ impl<'a> EndpointQueries<'a> {
             .iter()
             .any(|child_path_id| !unused_path_ids.contains(*child_path_id));
 
-          if !path_ids_with_endpoints.contains(path_id) && !has_used_child {
+          if !path_ids_with_endpoints.contains(path_id) && !has_used_child && !is_root_node {
             unused_path_ids.insert(path_id.clone());
             unused_path_ids_sorted.push(path_id.clone());
           }
 
-          if *root_path_node_index == finished_node_index {
+          if is_root_node {
             Control::Break(())
           } else {
             Control::Continue
