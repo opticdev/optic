@@ -26,6 +26,9 @@ export function EditContributionsButton() {
   const isEditing = useAppSelector(
     (state) => state.documentationEdits.isEditing
   );
+  const specId = useAppSelector(
+    (state) => state.metadata.data?.specificationId!
+  );
   const commitModalOpen = useAppSelector(
     (state) => state.documentationEdits.commitModalOpen
   );
@@ -66,7 +69,8 @@ export function EditContributionsButton() {
       .then(() => {
         analytics.userSavedDocChanges(
           deletedEndpointCount,
-          pendingCount - deletedEndpointCount
+          pendingCount - deletedEndpointCount,
+          specId
         );
         if (shouldRedirect) {
           history.push(documentationPageRoute.linkTo());
