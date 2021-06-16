@@ -71,12 +71,16 @@ export const saveDocumentationChanges = createAsyncThunk<
     const deleteCommands: CQRSCommand[] = (
       await Promise.all(
         deletedEndpoints.map(({ pathId, method }) =>
-          fetchDeleteEndpointCommands(spectacle, pathId, method)
+          fetchDeleteEndpointCommands(
+            spectacle,
+            pathId,
+            method
+          ).then((deleteCommands) =>
+            deleteCommands.concat([PrunePathComponents()])
+          )
         )
       )
-    )
-      .flatMap((x) => x)
-      .concat([PrunePathComponents()]);
+    ).flatMap((x) => x);
 
     const validContributions = getValidContributions(state);
 
