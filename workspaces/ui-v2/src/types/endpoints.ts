@@ -15,7 +15,6 @@ export interface IEndpoint {
   description: string;
   fullPath: string;
   pathParameters: IPathParameter[];
-  group: string;
   isRemoved: boolean;
 }
 
