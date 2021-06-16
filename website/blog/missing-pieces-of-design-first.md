@@ -6,9 +6,11 @@ author_url: "https://github.com/smizell"
 author_image_url: "/img/team/smizell.jpg"
 description: |
     To do a Design First approach well, we need to incorporate other practices and patterns into our workflow. We need to be able to experimentation, visibility, collaboration, quality, and evidence in our workflows.
-image: ""
+image: "/img/blog-content/flowchart.png"
 category: Community
 ---
+
+![Flowchart example](/img/blog-content/flowchart.png)
 
 Design First is a practice that encourages us to design any API change before writing the code code. The goal is to do the upfront work to produce better API changes. Design First is normally done by modifying an OpenAPI document first and then using that change as guidance on what to develop.
 
