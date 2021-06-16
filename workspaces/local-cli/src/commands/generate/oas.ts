@@ -9,6 +9,7 @@ import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-speci
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import * as OpticEngine from '@useoptic/optic-engine-wasm';
 import { generateOpenApi, makeSpectacle } from '@useoptic/spectacle';
+import deepmerge from 'deepmerge';
 
 export default class GenerateOas extends Command {
   static description = 'export an OpenAPI 3.0.3 spec';
@@ -16,20 +17,26 @@ export default class GenerateOas extends Command {
   static flags = {
     json: flags.boolean({}),
     yaml: flags.boolean({}),
+    baseDocument: flags.string({
+      description:
+        'A base OpenAPI document to merge into the generated OpenAPI document',
+    }),
   };
 
   async run() {
     const { flags } = this.parse(GenerateOas);
     await generateOas(
       flags.yaml || (!flags.json && !flags.yaml) /* make this default */,
-      flags.json
+      flags.json,
+      flags.baseDocument
     );
   }
 }
 
 export async function generateOas(
   flagYaml: boolean,
-  flagJson: boolean
+  flagJson: boolean,
+  flagBaseDocument?: string
 ): Promise<{ json: string | undefined; yaml: string | undefined } | undefined> {
   try {
     const paths = await getPathsRelativeToConfig();
@@ -39,7 +46,14 @@ export async function generateOas(
 
       const parsedOas = await generateOpenApiFromEvents(events);
 
-      const outputFiles = await emit(paths, parsedOas, flagYaml, flagJson);
+      const finalOas = flagBaseDocument
+        ? deepmerge(
+            parsedOas,
+            yaml.load(fs.readFileSync(flagBaseDocument, 'utf-8')) as object
+          )
+        : parsedOas;
+
+      const outputFiles = await emit(paths, finalOas, flagYaml, flagJson);
       const filePaths = Object.values(outputFiles);
       console.log(
         '\n' +
@@ -75,7 +89,7 @@ export async function emit(
   if (shouldOutputYaml) {
     const outputFile = path.join(outputPath, 'openapi.yaml');
     //@ts-ignore
-    await fs.writeFile(outputFile, yaml.safeDump(parsedOas, { indent: 1 }));
+    await fs.writeFile(outputFile, yaml.dump(parsedOas, { indent: 1 }));
     yamlPath = outputFile;
   }
   if (shouldOutputJson) {
