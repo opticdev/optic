@@ -4,7 +4,8 @@ title: "The Missing Pieces of Design First Workflows"
 author: Stephen Mizell
 author_url: "https://github.com/smizell"
 author_image_url: "/img/team/smizell.jpg"
-description: "I've worked on two different products that provided API design guide tooling. The idea for both was the same—provide a tool that helps companies design consistent APIs and helps communicate good design patterns to all of their developers"
+description: |
+    To do a Design First approach well, we need to incorporate other practices and patterns into our workflow. We need to be able to experimentation, visibility, collaboration, quality, and evidence in our workflows.
 image: ""
 category: Community
 ---
@@ -16,6 +17,8 @@ But Design First is a small piece to the larger API development process. There a
 When taken alone, Design First seems to imply that the process is linear—first there's the design, then development, then deployment. But design doesn't work this way. Design is something we're always doing, even when writing code.
 
 What then are the practices we need to add into our Design First workflows that makes Design First work?
+
+<!--truncate-->
 
 ## Experimenting: is it cheap to try out ideas?
 
