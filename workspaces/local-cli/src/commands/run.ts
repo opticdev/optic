@@ -3,7 +3,10 @@ import {
   LocalTaskSessionWrapper,
   runCommandFlags,
 } from '../shared/local-cli-task-runner';
-import { cleanupAndExit } from '@useoptic/cli-shared';
+import { cleanupAndExit, loadPathsAndConfig } from '@useoptic/cli-shared';
+import { isCommandOnlyTask } from '@useoptic/cli-config';
+import Exec from './exec';
+import { ingestOnlyTaskRunner } from '../shared/ingest-only-task-runner';
 
 export default class Run extends Command {
   static description = 'run tasks from your optic.yml';
@@ -20,7 +23,17 @@ export default class Run extends Command {
     const { args } = this.parse(Run);
     const { flags } = this.parse(Run);
     const { taskName } = args;
-    await LocalTaskSessionWrapper(this, taskName, flags);
-    cleanupAndExit();
+
+    const { config } = await loadPathsAndConfig(this);
+
+    const task = config.tasks[taskName];
+    if (taskName && task && isCommandOnlyTask(task)) {
+      // this is an ingest-only use case
+      ingestOnlyTaskRunner(this, task.command!, flags);
+    } else {
+      // this is a local proxy use case
+      await LocalTaskSessionWrapper(this, taskName, flags);
+      cleanupAndExit();
+    }
   }
 }

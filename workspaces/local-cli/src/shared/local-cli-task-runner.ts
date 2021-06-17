@@ -73,7 +73,7 @@ export const runCommandFlags = {
     description: 'Enables CI-specific behavior',
   }),
 };
-interface LocalCliTaskFlags {
+export interface LocalCliTaskFlags {
   'print-coverage'?: boolean;
   'collect-diffs'?: boolean;
   'exit-on-diff'?: boolean;
