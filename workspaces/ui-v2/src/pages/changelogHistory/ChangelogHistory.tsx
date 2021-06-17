@@ -2,9 +2,14 @@ import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 import classNames from 'classnames';
 
-import { Page, useChangelogPages } from '<src>/components';
+import {
+  Page,
+  useChangelogPages,
+  useDocumentationPageLink,
+} from '<src>/components';
 import { useBatchCommits } from '<src>/hooks/useBatchCommits';
 import { useSpacingStyles, useUtilityStyles } from '<src>/styles';
+import { formatTimeAgo } from '<src>/utils';
 
 export const ChangelogHistory: FC = () => {
   const containerSpacing = useSpacingStyles({
@@ -13,7 +18,8 @@ export const ChangelogHistory: FC = () => {
   const batchCommitSpacing = useSpacingStyles({});
   const utilityStyles = useUtilityStyles({});
   const { loading, batchCommits } = useBatchCommits();
-  const changelogPages = useChangelogPages();
+  const changelogPage = useChangelogPages();
+  const documentationPage = useDocumentationPageLink();
   const history = useHistory();
 
   return (
@@ -30,7 +36,7 @@ export const ChangelogHistory: FC = () => {
       >
         <h1>Changelog</h1>
         <div style={{ width: 800, display: 'flex', flexDirection: 'column' }}>
-          {batchCommits.map((batchCommit) => (
+          {batchCommits.map((batchCommit, i) => (
             <div
               className={classNames(
                 batchCommitSpacing.padding,
@@ -41,12 +47,15 @@ export const ChangelogHistory: FC = () => {
               }}
               key={batchCommit.batchId}
               onClick={() =>
-                history.push(changelogPages.linkTo(batchCommit.batchId))
+                history.push(
+                  i === 0
+                    ? documentationPage.linkTo()
+                    : changelogPage.linkTo(batchCommit.batchId)
+                )
               }
             >
-              <h2>{batchCommit.commitMessage}</h2>
-              <p>{batchCommit.batchId}</p>
-              <p>{batchCommit.createdAt}</p>
+              <h4>{batchCommit.commitMessage}</h4>
+              <p>{formatTimeAgo(new Date(batchCommit.createdAt))}</p>
             </div>
           ))}
         </div>

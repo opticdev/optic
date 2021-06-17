@@ -9,13 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { BatchCommit, useBatchCommits } from '<src>/hooks/useBatchCommits';
 import { useBaseUrl } from '<src>/hooks/useBaseUrl';
 import { OpticBlue, OpticBlueReadable } from '<src>/styles';
-// @ts-ignore
-import TimeAgo from 'javascript-time-ago';
-// @ts-ignore
-import en from 'javascript-time-ago/locale/en';
-
-TimeAgo.addLocale(en);
-const timeAgo = new TimeAgo('en-US');
+import { formatTimeAgo } from '<src>/utils';
 
 export function ChangesSinceDropdown(props: any) {
   const classes = useStyles();
@@ -148,7 +142,7 @@ function BatchCommitMenuItem({ batch }: { batch: BatchCommit }) {
           color: OpticBlueReadable,
         }}
       >
-        {batch.createdAt && timeAgo.format(new Date(batch.createdAt))}
+        {batch.createdAt && formatTimeAgo(new Date(batch.createdAt))}
       </Typography>
     </Box>
   );
