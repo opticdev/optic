@@ -11,6 +11,8 @@ import {
 } from '<src>/store';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import { IEndpoint } from '<src>/types';
+import { findLongestCommonPath } from '<src>/utils';
+
 import { DocsPageAccessoryNavigation } from '../components';
 import { EndpointRow } from './EndpointRow';
 
@@ -42,10 +44,21 @@ export function DocumentationRootPage() {
     endpointsState.data || []
   );
 
-  const grouped = useMemo(() => groupBy(filteredEndpoints, 'group'), [
-    filteredEndpoints,
-  ]);
-  const tocKeys = Object.keys(grouped).sort();
+  const groupedEndpoints = useMemo(() => {
+    const commonStart = findLongestCommonPath(
+      filteredEndpoints.map((endpoint) => endpoint.fullPath)
+    );
+    const endpointsWithGroups = filteredEndpoints.map((endpoint) => ({
+      ...endpoint,
+      // If there is only one endpoint, split['/'][1] returns undefined since
+      // commonStart.length === endpoint.fullPath.length
+      group: endpoint.fullPath.slice(commonStart.length).split('/')[1] || '',
+    }));
+
+    return groupBy(endpointsWithGroups, 'group');
+  }, [filteredEndpoints]);
+
+  const tocKeys = Object.keys(groupedEndpoints).sort();
   const onKeyPress = useRunOnKeypress(
     () => {
       if (isEditing && pendingCount > 0) {
@@ -92,7 +105,7 @@ export function DocumentationRootPage() {
               >
                 {tocKey}
               </Typography>
-              {grouped[tocKey].map((endpoint: IEndpoint) => (
+              {groupedEndpoints[tocKey].map((endpoint: IEndpoint) => (
                 <EndpointRow
                   endpoint={endpoint}
                   key={endpoint.pathId + endpoint.method}

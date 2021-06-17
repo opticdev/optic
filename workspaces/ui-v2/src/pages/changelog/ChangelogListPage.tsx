@@ -20,6 +20,7 @@ import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBa
 import { useEndpointsChangelog } from '<src>/hooks/useEndpointsChangelog';
 import { selectors, useAppSelector } from '<src>/store';
 import { IEndpointWithChanges } from '<src>/types';
+import { findLongestCommonPath } from '<src>/utils';
 
 import {
   ChangelogPageAccessoryNavigation,
@@ -53,10 +54,21 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
   const history = useHistory();
   const match = useRouteMatch();
 
-  const grouped = useMemo(() => groupBy(filteredAndMappedEndpoints, 'group'), [
-    filteredAndMappedEndpoints,
-  ]);
-  const tocKeys = Object.keys(grouped).sort();
+  const groupedEndpoints = useMemo(() => {
+    const commonStart = findLongestCommonPath(
+      filteredAndMappedEndpoints.map((endpoint) => endpoint.fullPath)
+    );
+    const endpointsWithGroups = filteredAndMappedEndpoints.map((endpoint) => ({
+      ...endpoint,
+      // If there is only one endpoint, split['/'][1] returns undefined since
+      // commonStart.length === endpoint.fullPath.length
+      group: endpoint.fullPath.slice(commonStart.length).split('/')[1] || '',
+    }));
+
+    return groupBy(endpointsWithGroups, 'group');
+  }, [filteredAndMappedEndpoints]);
+
+  const tocKeys = Object.keys(groupedEndpoints).sort();
   const changelogStyles = useChangelogStyles();
   const styles = useStyles();
 
@@ -94,7 +106,7 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
               >
                 {tocKey}
               </Typography>
-              {grouped[tocKey].map(
+              {groupedEndpoints[tocKey].map(
                 (endpoint: IEndpointWithChanges, index: number) => {
                   return (
                     <ListItem
