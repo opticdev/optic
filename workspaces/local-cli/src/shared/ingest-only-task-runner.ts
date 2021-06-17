@@ -1,6 +1,10 @@
 import { Command } from '@oclif/command';
 import { LocalCliTaskFlags } from './local-cli-task-runner';
-import { developerDebugLogger, loadPathsAndConfig } from '@useoptic/cli-shared';
+import {
+  cleanupAndExit,
+  developerDebugLogger,
+  loadPathsAndConfig,
+} from '@useoptic/cli-shared';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 import * as uuid from 'uuid';
 import { getCaptureId } from './git/git-context-capture';
@@ -10,6 +14,10 @@ import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from './paths';
 import { Config } from '../config';
 import { EventEmitter } from 'events';
+import { InteractionCollectorService } from '@useoptic/cli-shared/build/ingest/ingest-traffic-service';
+import colors from 'colors';
+import { spawnProcess, spawnProcessReturnExitCode } from './spawn-process';
+import { computeCoverage, printCoverage } from './coverage';
 
 export async function ingestOnlyTaskRunner(
   cli: Command,
@@ -62,4 +70,44 @@ export async function ingestOnlyTaskRunner(
     config,
     specServiceClient
   );
+
+  await persistenceManager.init();
+
+  const collectionService = new InteractionCollectorService(persistenceManager);
+  const loggingUrl = await collectionService.start();
+
+  const env: any = {
+    OPTIC_LOGGING_URL: loggingUrl,
+  };
+
+  console.log(`Running command: ${colors.grey(command)} `);
+  console.log(`Traffic can be sent to: ${colors.grey(loggingUrl)} `);
+
+  let exitedByUser = false;
+  async function finish(statusCode: number) {
+    //stop server, no new batches
+    await collectionService.stop();
+    //await all pending / unsaved traffic
+    await persistenceManager.cleanup();
+    // mark capture as complete
+    await cliClient.markCaptureAsCompleted(cliSession.session.id, captureId);
+
+    if (flags['print-coverage']) {
+      const diff_maps = await computeCoverage(paths, captureId);
+      await printCoverage(paths, diff_maps.with_diffs, diff_maps.without_diffs);
+    }
+
+    cleanupAndExit(statusCode);
+  }
+
+  process.on('SIGINT', function () {
+    exitedByUser = true;
+    finish(0);
+  });
+
+  const exitCode = await spawnProcessReturnExitCode(command, env);
+
+  if (!exitedByUser) {
+    finish(exitCode);
+  }
 }

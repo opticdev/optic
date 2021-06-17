@@ -6,6 +6,7 @@ import {
 } from '../shared/local-cli-task-runner';
 import { cleanupAndExit, loadPathsAndConfig } from '@useoptic/cli-shared';
 import { isCommandOnlyTask } from '@useoptic/cli-config';
+import { ingestOnlyTaskRunner } from '../shared/ingest-only-task-runner';
 
 export default class Exec extends Command {
   static description =
@@ -22,12 +23,7 @@ export default class Exec extends Command {
   async run() {
     const { args } = this.parse(Exec);
     const { flags } = this.parse(Exec);
-    const { taskName } = args;
+    const { command } = args;
+    await ingestOnlyTaskRunner(this, command, flags);
   }
 }
-
-export function runExec(
-  cli: Command,
-  command: string,
-  flags: LocalCliTaskFlags
-) {}

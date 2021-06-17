@@ -29,7 +29,7 @@ export default class Run extends Command {
     const task = config.tasks[taskName];
     if (taskName && task && isCommandOnlyTask(task)) {
       // this is an ingest-only use case
-      ingestOnlyTaskRunner(this, task.command!, flags);
+      await ingestOnlyTaskRunner(this, task.command!, flags);
     } else {
       // this is a local proxy use case
       await LocalTaskSessionWrapper(this, taskName, flags);

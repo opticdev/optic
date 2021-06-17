@@ -161,7 +161,6 @@ export default class Intercept extends Command {
     const uiBaseUrl = makeUiBaseUrl(daemonState);
 
     const uiUrl = linkToCapture(uiBaseUrl, cliSession.session.id, captureId);
-    await cliClient.markCaptureAsCompleted(cliSession.session.id, captureId);
     openBrowser(uiUrl);
 
     cleanupAndExit(0);

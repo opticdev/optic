@@ -4,9 +4,11 @@ import bodyParser from 'body-parser';
 import fs from 'fs-extra';
 import path from 'path';
 import getPort from 'get-port';
+import http from 'http';
 
-class InteractionCollectorService {
+export class InteractionCollectorService {
   private collectorService: express.Application;
+  private server: http.Server | undefined;
   constructor(private captureSaver: ICaptureSaver) {
     this.collectorService = express();
     this.collectorService.use(bodyParser.json({ limit: '20mb' }));
@@ -19,11 +21,19 @@ class InteractionCollectorService {
       port: getPort.makeRange(3700, 3900),
     });
 
-    await new Promise((resolve) => {
-      this.collectorService.listen(servicePort, () => resolve(true));
+    this.server = await new Promise<http.Server>((resolve) => {
+      const server: http.Server = this.collectorService.listen(servicePort);
+      server.on('listening', () => resolve(server));
     });
 
     return `http://localhost:${servicePort}/`;
+  }
+
+  async stop() {
+    if (this.server) {
+      this.server.close();
+      this.server = undefined;
+    }
   }
 
   //handlers
@@ -34,7 +44,7 @@ class InteractionCollectorService {
     );
     //for now just save the JSON in the cwd so we can write tests on our ECS parser
     await fs.writeJson(
-      path.join(process.cwd(), new Date().getUTCMilliseconds().toString()),
+      path.join(process.cwd(), Date.now().toString() + '.json'),
       samples
     );
     res.sendStatus(201);
