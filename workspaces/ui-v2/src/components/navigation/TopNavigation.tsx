@@ -14,6 +14,7 @@ import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import { useDiffReviewPageLink, useDocumentationPageLink } from './Routes';
 import { useAppConfig } from '<src>/contexts/config/AppConfiguration';
 import { useAppSelector } from '<src>/store';
+import { ShareButton } from '../Sharing';
 
 export function TopNavigation(props: { AccessoryNavigation: any }) {
   const classes = useStyles();
@@ -55,6 +56,7 @@ export function TopNavigation(props: { AccessoryNavigation: any }) {
             </div>
             <div className={classes.spacer} />
             <div>{AccessoryNavigation && <AccessoryNavigation />}</div>
+            {appConfig.sharing.enabled && <ShareButton />}
           </Toolbar>
         </AppBar>
       </Container>

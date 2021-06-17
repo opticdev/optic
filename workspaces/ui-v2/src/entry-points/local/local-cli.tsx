@@ -37,6 +37,8 @@ import {
 } from '<src>/contexts/analytics/implementations/localCliAnalytics';
 import { store } from '<src>/store';
 import { MetadataLoader } from '<src>/contexts/MetadataLoader';
+import { Auth0Provider } from '@auth0/auth0-react';
+import { SpecRepositoryStore } from '<src>/contexts/SpecRepositoryContext';
 
 const appConfig: OpticAppConfig = {
   config: {
@@ -54,8 +56,26 @@ const appConfig: OpticAppConfig = {
     documentation: {
       allowDescriptionEditing: true,
     },
+    api: {
+      domain:
+        (window.location.hostname.indexOf('useoptic.com') >= 0
+          ? process.env.REACT_APP_PROD_API_BASE
+          : process.env.REACT_APP_STAGING_API_BASE) || 'https://api.o3c.info',
+    },
+    sharing: {
+      enabled: true,
+      specViewerDomain:
+        (window.location.hostname.indexOf('useoptic.com') >= 0
+          ? process.env.REACT_APP_PROD_SPEC_VIEWER_BASE
+          : process.env.REACT_APP_STAGING_SPEC_VIEWER_BASE) ||
+        'https://spec.o3c.info',
+    },
   },
 };
+
+const AUTH0_DOMAIN = process.env.REACT_APP_AUTH0_DOMAIN || 'optic.auth0.com';
+const AUTH0_CLIENT_ID =
+  process.env.REACT_APP_AUTH0_CLIENT_ID || 'S7AeH5IQweLb2KHNoyfQfKBtkroE1joF';
 
 export default function LocalCli() {
   const match = useRouteMatch();
@@ -78,34 +98,42 @@ export default function LocalCli() {
         <ConfigRepositoryStore config={data.configRepository}>
           <CapturesServiceStore capturesService={data.capturesService}>
             <ReduxProvider store={store}>
-              <BaseUrlProvider value={{ url: match.url }}>
-                <AnalyticsStore
-                  getMetadata={getMetadata(() =>
-                    data.configRepository.getApiName()
-                  )}
-                  initialize={initialize}
-                  track={track}
-                >
-                  <DebugOpticComponent specService={data.specRepository} />
-                  <MetadataLoader>
-                    <Switch>
-                      <Route
-                        path={`${match.path}/changes-since/:batchId`}
-                        component={ChangelogPages}
-                      />
-                      <Route
-                        path={`${match.path}/documentation`}
-                        component={DocumentationPages}
-                      />
-                      <Route
-                        path={`${match.path}/diffs`}
-                        component={DiffReviewEnvironments}
-                      />
-                      <Redirect to={`${match.path}/documentation`} />
-                    </Switch>
-                  </MetadataLoader>
-                </AnalyticsStore>
-              </BaseUrlProvider>
+              <SpecRepositoryStore specRepo={data.specRepository}>
+                <BaseUrlProvider value={{ url: match.url }}>
+                  <Auth0Provider
+                    domain={AUTH0_DOMAIN}
+                    clientId={AUTH0_CLIENT_ID}
+                    audience={appConfig.config.api.domain}
+                  >
+                    <AnalyticsStore
+                      getMetadata={getMetadata(() =>
+                        data.configRepository.getApiName()
+                      )}
+                      initialize={initialize}
+                      track={track}
+                    >
+                      <DebugOpticComponent />
+                      <MetadataLoader>
+                        <Switch>
+                          <Route
+                            path={`${match.path}/changes-since/:batchId`}
+                            component={ChangelogPages}
+                          />
+                          <Route
+                            path={`${match.path}/documentation`}
+                            component={DocumentationPages}
+                          />
+                          <Route
+                            path={`${match.path}/diffs`}
+                            component={DiffReviewEnvironments}
+                          />
+                          <Redirect to={`${match.path}/documentation`} />
+                        </Switch>
+                      </MetadataLoader>
+                    </AnalyticsStore>
+                  </Auth0Provider>
+                </BaseUrlProvider>
+              </SpecRepositoryStore>
             </ReduxProvider>
           </CapturesServiceStore>
         </ConfigRepositoryStore>

@@ -62,3 +62,5 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL }}
           REACT_APP_PROD_API_BASE: https://api.useoptic.com
           REACT_APP_STAGING_API_BASE: https://api.o3c.info
+          REACT_APP_PROD_SPEC_VIEWER_BASE: https://spec.useoptic.com
+          REACT_APP_STAGING_SPEC_VIEWER_BASE: https://spec.o3c.info
