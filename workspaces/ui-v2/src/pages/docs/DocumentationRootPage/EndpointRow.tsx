@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import { Delete as DeleteIcon, Undo as UndoIcon } from '@material-ui/icons';
 
-import { RemovedRedBackground } from '<src>/constants/theme';
+import { RemovedRedBackground } from '<src>/styles';
 import { EndpointName } from '<src>/components';
 import { IEndpoint } from '<src>/types';
 import { getEndpointId } from '<src>/utils';

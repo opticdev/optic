@@ -1,6 +1,6 @@
 import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { appTheme } from './constants/theme';
+import { appTheme } from './styles';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core/styles';
 import * as SupportLinks from './constants/SupportLinks';

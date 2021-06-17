@@ -9,7 +9,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Button, Zoom } from '@material-ui/core';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import classNames from 'classnames';
-import { SubtleBlueBackground } from '<src>/constants/theme';
+import { SubtleBlueBackground } from '<src>/styles';
 
 type ISuggestionGroup = {
   suggestions: ISuggestion[];

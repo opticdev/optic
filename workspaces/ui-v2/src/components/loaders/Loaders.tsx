@@ -5,7 +5,7 @@ import { Box, Typography } from '@material-ui/core';
 import { SpinningOpticLogo } from './SpinningOpticLogo';
 
 interface ILoaderProps {
-  title: string;
+  title?: string;
 }
 
 export function FullPageLoader({ title }: ILoaderProps) {
@@ -28,13 +28,13 @@ export function Loader({ title }: ILoaderProps) {
   );
 }
 
-export function LoaderWithOpticLogo({ title }: ILoaderProps) {
+function LoaderWithOpticLogo({ title }: ILoaderProps) {
   const classes = useStyles();
   return (
     <Box display="flex">
       <SpinningOpticLogo />
       <Typography variant="h6" color="textSecondary" className={classes.text}>
-        {title}...
+        {title || 'Loading'}...
       </Typography>
     </Box>
   );

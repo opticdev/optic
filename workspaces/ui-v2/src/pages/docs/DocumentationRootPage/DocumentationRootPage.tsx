@@ -1,8 +1,8 @@
 import React, { FC, useMemo } from 'react';
 import groupBy from 'lodash.groupby';
-import { Box, List, Typography } from '@material-ui/core';
+import { Box, List, LinearProgress, Typography } from '@material-ui/core';
 
-import { CenteredColumn, Loading, PageLayout } from '<src>/components';
+import { CenteredColumn, PageLayout } from '<src>/components';
 import {
   useAppSelector,
   useAppDispatch,
@@ -59,7 +59,7 @@ export function DocumentationRootPage() {
   );
 
   if (endpointsState.loading) {
-    return <Loading />;
+    return <LinearProgress variant="indeterminate" />;
   }
 
   if (tocKeys.length === 0) {

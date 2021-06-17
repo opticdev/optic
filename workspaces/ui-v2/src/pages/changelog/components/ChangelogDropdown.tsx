@@ -8,7 +8,7 @@ import { useParams, useHistory, useLocation } from 'react-router-dom';
 import MenuItem from '@material-ui/core/MenuItem';
 import { BatchCommit, useBatchCommits } from '<src>/hooks/useBatchCommits';
 import { useBaseUrl } from '<src>/hooks/useBaseUrl';
-import { OpticBlue, OpticBlueReadable } from '<src>/constants/theme';
+import { OpticBlue, OpticBlueReadable } from '<src>/styles';
 // @ts-ignore
 import TimeAgo from 'javascript-time-ago';
 // @ts-ignore

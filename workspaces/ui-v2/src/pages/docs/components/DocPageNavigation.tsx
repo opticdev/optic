@@ -18,7 +18,7 @@ export const DocsPageAccessoryNavigation: FC = () => {
   return (
     <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
       <PromptNavigateAway shouldPrompt={isEditing && pendingCount > 0} />
-      {appConfig.navigation.showChangelog && <ChangesSinceDropdown />}
+      <ChangesSinceDropdown />
       {appConfig.documentation.allowDescriptionEditing && (
         <EditContributionsButton />
       )}

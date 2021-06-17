@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { primary } from '<src>/constants/theme';
+import { primary } from '<src>/styles';
 
 export const useShapeViewerStyles = makeStyles((theme) => ({
   root: {

@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 
-import { Typography } from '@material-ui/core';
+import { LinearProgress, Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import makeStyles from '@material-ui/styles/makeStyles';
 import ReactMarkdown from 'react-markdown';
@@ -9,7 +9,6 @@ import ReactMarkdown from 'react-markdown';
 import {
   EndpointName,
   PathParameters,
-  Loading,
   IShapeRenderer,
   JsonLike,
   PageLayout,
@@ -17,7 +16,7 @@ import {
   FieldOrParameter,
 } from '<src>/components';
 import { useChangelogPages } from '<src>/components/navigation/Routes';
-import { SubtleBlueBackground } from '<src>/constants/theme';
+import { SubtleBlueBackground } from '<src>/styles';
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import { useEndpointsChangelog } from '<src>/hooks/useEndpointsChangelog';
 import { selectors, useAppSelector } from '<src>/store';
@@ -79,7 +78,7 @@ const ChangelogRootComponent: FC<
   const bodies = useEndpointBody(pathId, method, batchId);
 
   if (endpointsState.loading) {
-    return <Loading />;
+    return <LinearProgress variant="indeterminate" />;
   }
   if (endpointsState.error) {
     return <>error loading endpoint changelog information</>;

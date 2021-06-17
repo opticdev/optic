@@ -13,7 +13,7 @@ import en from 'javascript-time-ago/locale/en';
 import { ICapture } from '@useoptic/spectacle';
 import { useHistory } from 'react-router-dom';
 import { useCaptures } from '<src>/hooks/useCapturesHook';
-import { OpticBlueReadable } from '<src>/constants/theme';
+import { OpticBlueReadable } from '<src>/styles';
 import { useDiffEnvironmentsRoot } from '<src>/components';
 
 TimeAgo.addLocale(en);
