@@ -55,7 +55,9 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
 
   const groupedEndpoints = useMemo(() => {
     const commonStart = findLongestCommonPath(
-      filteredAndMappedEndpoints.map((endpoint) => endpoint.fullPath)
+      filteredAndMappedEndpoints.map((endpoint) =>
+        endpoint.pathParameters.map((pathParameter) => pathParameter.name)
+      )
     );
     const endpointsWithGroups = filteredAndMappedEndpoints.map((endpoint) => ({
       ...endpoint,

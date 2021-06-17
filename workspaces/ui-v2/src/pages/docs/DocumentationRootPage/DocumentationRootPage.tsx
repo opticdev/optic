@@ -46,8 +46,11 @@ export function DocumentationRootPage() {
 
   const groupedEndpoints = useMemo(() => {
     const commonStart = findLongestCommonPath(
-      filteredEndpoints.map((endpoint) => endpoint.fullPath)
+      filteredEndpoints.map((endpoint) =>
+        endpoint.pathParameters.map((pathParameter) => pathParameter.name)
+      )
     );
+
     const endpointsWithGroups = filteredEndpoints.map((endpoint) => ({
       ...endpoint,
       // If there is only one endpoint, split['/'][1] returns undefined since
