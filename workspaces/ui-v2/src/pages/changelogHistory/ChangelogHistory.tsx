@@ -44,6 +44,9 @@ export const ChangelogHistory: FC = () => {
               )}
               style={{
                 cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
               }}
               key={batchCommit.batchId}
               onClick={() =>
@@ -55,7 +58,14 @@ export const ChangelogHistory: FC = () => {
               }
             >
               <h4>{batchCommit.commitMessage}</h4>
-              <p>{formatTimeAgo(new Date(batchCommit.createdAt))}</p>
+              <p
+                style={{
+                  width: '30%',
+                  textAlign: 'right',
+                }}
+              >
+                {formatTimeAgo(new Date(batchCommit.createdAt))}
+              </p>
             </div>
           ))}
         </div>
