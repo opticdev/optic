@@ -5,7 +5,6 @@ import {
 } from '@reduxjs/toolkit';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { AsyncStatus, IEndpoint } from '<src>/types';
-import { findLongestStartingSubstring } from '<src>/utils';
 
 export const AllEndpointsQuery = `{
   requests {
@@ -47,20 +46,11 @@ export type EndpointQueryResults = {
 
 export const endpointQueryResultsToJson = ({
   requests,
-}: EndpointQueryResults) => {
-  const commonStart =
-    requests.length > 0
-      ? findLongestStartingSubstring(
-          requests.map((req) => req.absolutePathPatternWithParameterNames)
-        )
-      : '/';
-  return requests.map((request) => ({
+}: EndpointQueryResults) =>
+  requests.map((request) => ({
     pathId: request.pathId,
     method: request.method,
     fullPath: request.absolutePathPatternWithParameterNames,
-    group: request.absolutePathPatternWithParameterNames
-      .substring(commonStart.length)
-      .split('/')[0],
     pathParameters: request.pathComponents.map((path) => ({
       id: path.id,
       name: path.name,
@@ -72,7 +62,6 @@ export const endpointQueryResultsToJson = ({
     purpose: request.pathContributions.purpose || '',
     isRemoved: request.isRemoved,
   }));
-};
 
 const fetchEndpoints = createAsyncThunk<
   EndpointQueryResults,
