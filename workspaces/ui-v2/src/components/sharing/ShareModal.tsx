@@ -65,7 +65,7 @@ export const ShareModal: React.FC<{
   const { isAuthenticated, isLoading, loginWithPopup } = useAuth0();
 
   const endpointCount = useAppSelector(
-    (state) => state.endpoints.results?.data!.length || 0
+    (state) => state.endpoints.results.data?.length || 0
   );
 
   const [shareType, setShareType] = useState<ShareTarget | null>(null);
