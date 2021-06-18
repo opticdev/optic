@@ -65,7 +65,7 @@ const appConfig: OpticAppConfig = {
     sharing: {
       enabled: true,
       specViewerDomain:
-        (window.location.hostname.indexOf('useoptic.com') >= 0
+        (process.env.NODE_ENV === 'development'
           ? process.env.REACT_APP_PROD_SPEC_VIEWER_BASE
           : process.env.REACT_APP_STAGING_SPEC_VIEWER_BASE) ||
         'https://spec.o3c.info',
