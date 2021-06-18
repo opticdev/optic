@@ -1,10 +1,9 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import {
   RouteComponentProps,
   useHistory,
   useRouteMatch,
 } from 'react-router-dom';
-import groupBy from 'lodash.groupby';
 import classNames from 'classnames';
 
 import {
@@ -19,12 +18,12 @@ import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBa
 import { useEndpointsChangelog } from '<src>/hooks/useEndpointsChangelog';
 import { selectors, useAppSelector } from '<src>/store';
 import { IEndpointWithChanges } from '<src>/types';
-import { findLongestCommonPath } from '<src>/utils';
 
 import {
   ChangelogPageAccessoryNavigation,
   ValidateBatchId,
 } from './components';
+import { useGroupedEndpoints } from '<src>/hooks/useGroupedEndpoints';
 
 export const ChangelogListPage: FC<
   RouteComponentProps<{
@@ -53,21 +52,7 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
   const history = useHistory();
   const match = useRouteMatch();
 
-  const groupedEndpoints = useMemo(() => {
-    const commonStart = findLongestCommonPath(
-      filteredAndMappedEndpoints.map((endpoint) =>
-        endpoint.pathParameters.map((pathParameter) => pathParameter.name)
-      )
-    );
-    const endpointsWithGroups = filteredAndMappedEndpoints.map((endpoint) => ({
-      ...endpoint,
-      // If there is only one endpoint, split['/'][1] returns undefined since
-      // commonStart.length === endpoint.fullPath.length
-      group: endpoint.fullPath.slice(commonStart.length).split('/')[1] || '',
-    }));
-
-    return groupBy(endpointsWithGroups, 'group');
-  }, [filteredAndMappedEndpoints]);
+  const groupedEndpoints = useGroupedEndpoints(filteredAndMappedEndpoints);
 
   const tocKeys = Object.keys(groupedEndpoints).sort();
   const changelogStyles = useChangelogStyles();
