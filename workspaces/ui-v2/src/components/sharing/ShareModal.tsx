@@ -78,7 +78,7 @@ export const ShareModal: React.FC<{
       let timeout = setTimeout(() => setCopied(false), 7500);
       return () => clearTimeout(timeout);
     }
-  }, [copied, setCopied]);
+  }, [copied]);
 
   const copy = useCallback(() => {
     const input = inputRef.current;
@@ -88,7 +88,7 @@ export const ShareModal: React.FC<{
       document.execCommand('copy');
       setCopied(true);
     }
-  }, [inputRef, setCopied]);
+  }, []);
 
   // Call share when authenticated and you set a shareType
   const shareUrl = useAsyncMemo(async () => {
