@@ -41,6 +41,32 @@ impl<'a> EndpointQueries<'a> {
   }
 
   pub fn resolve_path(&self, path: &str) -> Option<PathComponentIdRef> {
+    // If the path is a root path, we need to check it separately
+    // There is always going to be a node for the root path, so we need to check
+    // If it has been learnt, there will be an associated HTTP method
+    if path.eq("/") {
+      let root_path_node_index = self
+        .graph_get_index(ROOT_PATH_ID)
+        .expect("expected a node with node_id to exist");
+
+      let mut has_root_requests = false;
+      for child in self.graph_get_children(root_path_node_index) {
+        let child_node = self.endpoint_projection.graph.node_weight(child).unwrap();
+        match child_node {
+          Node::HttpMethod(..) => {
+            has_root_requests = true;
+            break;
+          }
+          _ => {}
+        }
+      }
+      return if has_root_requests {
+        Some(ROOT_PATH_ID)
+      } else {
+        None
+      };
+    }
+
     let path = Self::extract_normalized_path(path);
     // eprintln!("{}", path);
     let mut path_components = path.split('/');

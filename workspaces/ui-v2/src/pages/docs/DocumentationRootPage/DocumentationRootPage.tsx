@@ -1,5 +1,4 @@
-import React, { FC, useMemo } from 'react';
-import groupBy from 'lodash.groupby';
+import React, { FC } from 'react';
 import { Box, List, Typography } from '@material-ui/core';
 
 import { CenteredColumn, Loading, PageLayout } from '<src>/components';
@@ -10,8 +9,8 @@ import {
   selectors,
 } from '<src>/store';
 import { useRunOnKeypress } from '<src>/hooks/util';
+import { useGroupedEndpoints } from '<src>/hooks/useGroupedEndpoints';
 import { IEndpoint } from '<src>/types';
-import { findLongestCommonPath } from '<src>/utils';
 
 import { DocsPageAccessoryNavigation } from '../components';
 import { EndpointRow } from './EndpointRow';
@@ -44,19 +43,7 @@ export function DocumentationRootPage() {
     endpointsState.data || []
   );
 
-  const groupedEndpoints = useMemo(() => {
-    const commonStart = findLongestCommonPath(
-      filteredEndpoints.map((endpoint) => endpoint.fullPath)
-    );
-    const endpointsWithGroups = filteredEndpoints.map((endpoint) => ({
-      ...endpoint,
-      // If there is only one endpoint, split['/'][1] returns undefined since
-      // commonStart.length === endpoint.fullPath.length
-      group: endpoint.fullPath.slice(commonStart.length).split('/')[1] || '',
-    }));
-
-    return groupBy(endpointsWithGroups, 'group');
-  }, [filteredEndpoints]);
+  const groupedEndpoints = useGroupedEndpoints(filteredEndpoints);
 
   const tocKeys = Object.keys(groupedEndpoints).sort();
   const onKeyPress = useRunOnKeypress(
