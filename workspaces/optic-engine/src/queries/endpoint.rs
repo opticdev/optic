@@ -45,26 +45,7 @@ impl<'a> EndpointQueries<'a> {
     // There is always going to be a node for the root path, so we need to check
     // If it has been learnt, there will be an associated HTTP method
     if path.eq("/") {
-      let root_path_node_index = self
-        .graph_get_index(ROOT_PATH_ID)
-        .expect("expected a node with node_id to exist");
-
-      let mut has_root_requests = false;
-      for child in self.graph_get_children(root_path_node_index) {
-        let child_node = self.endpoint_projection.graph.node_weight(child).unwrap();
-        match child_node {
-          Node::HttpMethod(..) => {
-            has_root_requests = true;
-            break;
-          }
-          _ => {}
-        }
-      }
-      return if has_root_requests {
-        Some(ROOT_PATH_ID)
-      } else {
-        None
-      };
+      return Some(ROOT_PATH_ID);
     }
 
     let path = Self::extract_normalized_path(path);
@@ -567,24 +548,6 @@ mod test {
     let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
 
     assert_eq!(endpoint_queries.resolve_path("/").unwrap(), "root");
-  }
-
-  #[test]
-  pub fn resolve_path_does_not_include_root_when_no_methods_attached() {
-    let events: Vec<SpecEvent> = serde_json::from_value(json!([
-      {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
-      {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "favourites" }},
-      {"PathComponentAdded": { "pathId": "path_3", "parentPathId": "root", "name": "authors" }},
-      {"PathComponentAdded": { "pathId": "path_4", "parentPathId": "path_3", "name": "dutch" }},
-    ]))
-    .expect("should be able to deserialize test events");
-
-    let spec_projection = SpecProjection::from(events);
-    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
-
-    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
-
-    assert_eq!(endpoint_queries.resolve_path("/"), None);
   }
 
   #[test]
