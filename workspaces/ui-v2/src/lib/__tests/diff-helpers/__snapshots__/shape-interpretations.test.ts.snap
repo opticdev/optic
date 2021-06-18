@@ -2100,6 +2100,7 @@ Object {
     ],
     "lastList": "shape_7",
     "lastListItem": "shape_6",
+    "lastObject": undefined,
   },
   "preview": Object {
     "diffDescription": Object {
@@ -3859,6 +3860,7 @@ Object {
     ],
     "lastList": "shape_13",
     "lastListItem": "shape_12",
+    "lastObject": "shape_12",
   },
   "preview": Object {
     "diffDescription": Object {
@@ -4129,6 +4131,7 @@ Object {
     ],
     "lastList": "shape_13",
     "lastListItem": "shape_12",
+    "lastObject": "shape_12",
   },
   "preview": Object {
     "diffDescription": Object {
@@ -4387,6 +4390,7 @@ Object {
     ],
     "lastList": "shape_13",
     "lastListItem": "shape_12",
+    "lastObject": "shape_12",
   },
   "preview": Object {
     "diffDescription": Object {
@@ -5672,6 +5676,7 @@ Object {
     ],
     "lastList": "baseline-shape_5",
     "lastListItem": "baseline-shape_4",
+    "lastObject": undefined,
   },
   "preview": Object {
     "diffDescription": Object {
@@ -6009,6 +6014,7 @@ Object {
     ],
     "lastList": "baseline-shape_5",
     "lastListItem": "baseline-shape_4",
+    "lastObject": undefined,
   },
   "preview": Object {
     "diffDescription": Object {
