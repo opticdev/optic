@@ -14,6 +14,7 @@ import { useAsyncMemo } from 'use-async-memo';
 import { ShareTarget } from './ShareButton';
 import { useAppSelector } from '<src>/store';
 import logoSvg from '<src>/constants/LogoSvg';
+import { encodeQueryParams } from '<src>/utils/encodeQueryParams';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,19 +36,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function generateBadgeUrl({ endpointCount }: { endpointCount: number }) {
-  const params = {
+  return `https://img.shields.io/static/v1?${encodeQueryParams({
     label: 'API Docs',
     message: `${endpointCount} Endpoints`,
     style: 'flat',
     color: 'rgb(43,123,209)',
     logo: logoSvg,
-  };
-
-  const queryParams = Object.entries(params)
-    .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
-    .join('&');
-
-  return `https://img.shields.io/static/v1?${queryParams}`;
+  })}`;
 }
 
 function generateBadgeMarkdown({
