@@ -41,9 +41,6 @@ impl<'a> EndpointQueries<'a> {
   }
 
   pub fn resolve_path(&self, path: &str) -> Option<PathComponentIdRef> {
-    // If the path is a root path, we need to check it separately
-    // There is always going to be a node for the root path, so we need to check
-    // If it has been learnt, there will be an associated HTTP method
     if path.eq("/") {
       return Some(ROOT_PATH_ID);
     }
@@ -541,6 +538,19 @@ mod test {
       {"ResponseAddedByPathAndMethod": {"responseId": "response_1", "pathId": "root", "httpMethod": "GET", "httpStatusCode": 200 }},
     ]))
     .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+
+    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+
+    assert_eq!(endpoint_queries.resolve_path("/").unwrap(), "root");
+  }
+
+  #[test]
+  pub fn resolve_path_should_resolve_against_an_empty_spec() {
+    let events: Vec<SpecEvent> =
+      serde_json::from_value(json!([])).expect("should be able to deserialize test events");
 
     let spec_projection = SpecProjection::from(events);
     // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
