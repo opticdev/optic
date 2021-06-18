@@ -6,7 +6,7 @@ import path from 'path';
 import getPort from 'get-port';
 import http from 'http';
 
-export class InteractionCollectorService {
+export class IngestTrafficService {
   private collectorService: express.Application;
   private server: http.Server | undefined;
   constructor(private captureSaver: ICaptureSaver) {
