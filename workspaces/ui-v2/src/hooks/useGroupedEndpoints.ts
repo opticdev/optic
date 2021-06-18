@@ -7,7 +7,9 @@ import { findLongestCommonPath } from '<src>/utils';
 export const useGroupedEndpoints = <T extends IEndpoint>(endpoints: T[]) => {
   return useMemo(() => {
     const commonStart = findLongestCommonPath(
-      endpoints.map((endpoint) => endpoint.fullPath)
+      endpoints.map((endpoint) =>
+        endpoint.pathParameters.map((pathParameter) => pathParameter.name)
+      )
     );
     const endpointsWithGroups = endpoints.map((endpoint) => ({
       ...endpoint,

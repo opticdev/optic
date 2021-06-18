@@ -1,9 +1,8 @@
-export function findLongestCommonPath(paths: string[]): string {
+export function findLongestCommonPath(paths: string[][]): string {
   if (paths.length === 0) return '/';
   let match: string[] = [];
-  const splitPaths = paths.map((path) => path.split('/'));
   // sorted paths by lengths ascending
-  const sortedPaths = splitPaths
+  const sortedPaths = paths
     .concat()
     .sort((a, b) => (a.length - b.length > 0 ? 1 : -1));
   const shortestPath = sortedPaths[0];
