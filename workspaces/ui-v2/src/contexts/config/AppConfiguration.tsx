@@ -18,7 +18,7 @@ interface IAppConfigurations {
   documentation: {
     allowDescriptionEditing: boolean;
   };
-  api: {
+  backendApi: {
     domain?: string;
   };
   sharing:

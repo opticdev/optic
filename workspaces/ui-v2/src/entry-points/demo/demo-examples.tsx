@@ -48,7 +48,7 @@ const appConfig: OpticAppConfig = {
     documentation: {
       allowDescriptionEditing: true,
     },
-    api: {},
+    backendApi: {},
     sharing: { enabled: false },
   },
 };

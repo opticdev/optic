@@ -56,7 +56,7 @@ const appConfig: OpticAppConfig = {
     documentation: {
       allowDescriptionEditing: true,
     },
-    api: {
+    backendApi: {
       domain:
         (window.location.hostname.indexOf('useoptic.com') >= 0
           ? process.env.REACT_APP_PROD_API_BASE
@@ -103,7 +103,7 @@ export default function LocalCli() {
                   <Auth0Provider
                     domain={AUTH0_DOMAIN}
                     clientId={AUTH0_CLIENT_ID}
-                    audience={appConfig.config.api.domain}
+                    audience={appConfig.config.backendApi.domain}
                   >
                     <AnalyticsStore
                       getMetadata={getMetadata(() =>

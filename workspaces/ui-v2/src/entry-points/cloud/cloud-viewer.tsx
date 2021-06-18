@@ -53,7 +53,7 @@ const appConfig: OpticAppConfig = {
     documentation: {
       allowDescriptionEditing: false,
     },
-    api: {
+    backendApi: {
       domain:
         window.location.hostname.indexOf('useoptic.com') >= 0
           ? process.env.REACT_APP_PROD_API_BASE
@@ -75,7 +75,7 @@ export default function CloudViewer() {
         return body;
       }
       const response = await fetch(
-        `${appConfig.config.api.domain}/api/people/${personId}/public-specs/${specId}`,
+        `${appConfig.config.backendApi.domain}/api/people/${personId}/public-specs/${specId}`,
         {
           headers: { accept: 'application/json' },
         }
