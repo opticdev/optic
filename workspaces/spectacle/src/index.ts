@@ -1,11 +1,12 @@
-import { ExecutionResult, graphql } from 'graphql';
+import { graphql } from 'graphql';
 import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 import GraphQLJSON from 'graphql-type-json';
 import {
   buildEndpointChanges,
+  EndpointChanges,
+  EndpointChange,
   buildEndpointsGraph,
   buildShapesGraph,
   ContributionsProjection,
@@ -14,172 +15,14 @@ import {
   getFieldChanges,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
-import { IOpticCommandContext } from './in-memory';
+import { CQRSCommand } from './commands';
 import {
-  ILearnedBodies,
-  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
-} from '@useoptic/cli-shared/build/diffs/initial-types';
-
-export * from './openapi';
-export * from './commands';
-
-////////////////////////////////////////////////////////////////////////////////
-
-export interface IOpticEngine {
-  try_apply_commands(
-    commandsJson: string,
-    eventsJson: string,
-    batchId: string,
-    commitMessage: string,
-    clientId: string,
-    clientSessionId: string
-  ): any;
-
-  affordances_to_commands(
-    json_affordances_json: string,
-    json_trail_json: string,
-    id_generator_strategy: string
-  ): string;
-
-  get_shape_viewer_projection(spec: any): string;
-
-  get_contributions_projection(spec: any): string;
-
-  learn_shape_diff_affordances(
-    spec: any,
-    diff_results_json: string,
-    tagged_interactions_jsonl: string
-  ): string;
-
-  learn_undocumented_bodies(
-    spec: any,
-    interactions_jsonl: string,
-    id_generator_strategy: string
-  ): string;
-
-  spec_from_events(eventsJson: string): any;
-
-  spec_endpoint_delete_commands(
-    spec: any,
-    path_id: string,
-    method: string
-  ): string;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export interface IOpticSpecRepository {
-  listEvents(): Promise<any[]>;
-}
-
-export interface IOpticSpecReadWriteRepository extends IOpticSpecRepository {
-  applyCommands(
-    commands: any[],
-    batchCommitId: string,
-    commitMessage: string,
-    commandContext: IOpticCommandContext
-  ): Promise<void>;
-
-  changes: AsyncGenerator<number>;
-
-  notifications: EventEmitter;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export interface ICapture {
-  captureId: string;
-  startedAt: string;
-}
-
-export interface StartDiffResult {
-  //notifications: EventEmitter;
-  onComplete: Promise<IOpticDiffService>;
-}
-
-export interface IOpticCapturesService {
-  listCaptures(): Promise<ICapture[]>;
-
-  loadInteraction(captureId: string, pointer: string): Promise<any | undefined>;
-
-  startDiff(diffId: string, captureId: string): Promise<StartDiffResult>;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-export interface IListDiffsResponse {
-  diffs: any[];
-}
-
-export interface IListUnrecognizedUrlsResponse {
-  urls: IUnrecognizedUrl[];
-}
-
-export interface IUnrecognizedUrl {
-  path: string;
-  method: string;
-  count: number;
-}
-
-export interface IOpticDiffService {
-  listDiffs(): Promise<IListDiffsResponse>;
-
-  listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse>;
-
-  learnUndocumentedBodies(
-    pathId: string,
-    method: string,
-    newPathCommands: any[]
-  ): Promise<ILearnedBodies>;
-
-  learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash>;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export interface IOpticDiffRepository {
-  findById(id: string): Promise<IOpticDiffService>;
-
-  add(id: string, diff: IOpticDiffService): Promise<void>;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-export interface IOpticConfigRepository {
-  addIgnoreRule(rule: string): Promise<void>;
-  getApiName(): Promise<string>;
-  listIgnoreRules(): Promise<string[]>;
-}
-
-export interface IOpticInteractionsRepository {
-  listById(id: string): Promise<any[]>;
-
-  set(id: string, interactions: any[]): Promise<void>;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export interface IOpticContext {
-  opticEngine: IOpticEngine;
-  configRepository: IOpticConfigRepository;
-  specRepository: IOpticSpecReadWriteRepository;
-  capturesService: IOpticCapturesService;
-  diffRepository: IOpticDiffRepository;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export interface IBaseSpectacle {
-  query<Result, Input = {}>(
-    options: SpectacleInput<Input>
-  ): Promise<ExecutionResult<Result>>;
-
-  mutate<Result, Input = {}>(
-    options: SpectacleInput<Input>
-  ): Promise<ExecutionResult<Result>>;
-}
-
-export interface IForkableSpectacle extends IBaseSpectacle {
-  fork(): Promise<IBaseSpectacle>;
-}
+  IOpticContext,
+  IOpticDiffService,
+  SpectacleInput,
+  GraphQLContext,
+  EndpointProjection,
+} from './types';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -206,7 +49,10 @@ async function buildProjections(opticContext: IOpticContext) {
     shapesQueries,
     shapeViewerProjection,
     contributionsProjection,
-    getEndpointProjection: (pathId: string, method: string) => {
+    getEndpointProjection: (
+      pathId: string,
+      method: string
+    ): EndpointProjection => {
       const endpointProjection = opticContext.opticEngine.spec_endpoint_delete_commands(
         spec,
         pathId,
@@ -231,7 +77,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       method: string
     ) => {
       commands: {
-        remove: any[]; // TODO change typing
+        remove: CQRSCommand[];
       };
     };
 
@@ -268,7 +114,17 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     JSON: GraphQLJSON,
     Mutation: {
       //@jaap: this mutation needs to be linearized/atomic so only one spec change executes at a time, against the latest spec.
-      applyCommands: async (parent: any, args: any, context: any) => {
+      applyCommands: async (
+        parent: any,
+        args: {
+          batchCommitId: string;
+          commands: any[];
+          commitMessage: string;
+          clientId: string;
+          clientSessionId: string;
+        },
+        context: GraphQLContext
+      ) => {
         const {
           batchCommitId,
           commands,
@@ -297,33 +153,32 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           batchCommitId,
         };
       },
-      startDiff: async (parent: any, args: any, context: any) => {
+      startDiff: async (
+        parent: any,
+        args: { diffId: string; captureId: string },
+        context: GraphQLContext
+      ) => {
         const { diffId, captureId } = args;
         await context
           .spectacleContext()
-          .opticContext.capturesService.startDiff(
-            diffId,
-            captureId,
-            context.spectacleContext().opticContext.specRepository,
-            context.spectacleContext().opticContext.configRepository
-          );
+          .opticContext.capturesService.startDiff(diffId, captureId);
         return {
           notificationsUrl: '',
         };
       },
-      invalidateCaches: async (parent: any, args: any, context: any) => {
+      invalidateCaches: async (parent: any, _: {}, context: GraphQLContext) => {
         await reload(context.spectacleContext().opticContext);
       },
     },
     Query: {
-      paths: (parent: any, args: any, context: any, info: any) => {
+      paths: (parent: any, _: {}, context: GraphQLContext) => {
         return Promise.resolve(
           context
             .spectacleContext()
             .endpointsQueries.listNodesByType(endpoints.NodeType.Path).results
         );
       },
-      requests: (parent: any, args: any, context: any, info: any) => {
+      requests: (parent: any, _: {}, context: GraphQLContext) => {
         return Promise.resolve(
           context
             .spectacleContext()
@@ -331,18 +186,26 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             .results
         );
       },
-      shapeChoices: async (parent: any, args: any, context: any, info: any) => {
+      shapeChoices: async (
+        parent: any,
+        // TODO shapeId should be non-nullable, but there are some shapes that call shapeId as null
+        args: any,
+        context: GraphQLContext
+      ) => {
         return context.spectacleContext().shapeViewerProjection[args.shapeId];
       },
-      endpoint: async (parent: any, args: any, context: any, info: any) => {
+      endpoint: async (
+        parent: any,
+        args: { pathId: string; method: string },
+        context: GraphQLContext
+      ) => {
         const { pathId, method } = args;
         return context.spectacleContext().getEndpointProjection(pathId, method);
       },
       endpointChanges: (
         parent: any,
         { sinceBatchCommitId }: { sinceBatchCommitId?: string },
-        context: any,
-        info: any
+        context: GraphQLContext
       ) => {
         const endpointChanges = buildEndpointChanges(
           endpointsQueries,
@@ -351,7 +214,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         );
         return Promise.resolve(endpointChanges);
       },
-      batchCommits: (parent: any, args: any, context: any, info: any) => {
+      batchCommits: (parent: any, _: {}, context: GraphQLContext) => {
         return Promise.resolve(
           context
             .spectacleContext()
@@ -359,13 +222,17 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             .results
         );
       },
-      diff: async (parent: any, args: any, context: any, info: any) => {
+      diff: async (
+        parent: any,
+        args: { diffId: string },
+        context: GraphQLContext
+      ) => {
         const { diffId } = args;
         return context
           .spectacleContext()
           .opticContext.diffRepository.findById(diffId);
       },
-      metadata: async (parent: any, args: any, context: any, info: any) => {
+      metadata: async (parent: any, _: {}, context: GraphQLContext) => {
         const metadataKey = 'metadata';
         const specIdKey = 'id';
         const metadata =
@@ -396,14 +263,10 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     DiffState: {
-      diffs: async (parent: IOpticDiffService, args: any, context: any) => {
+      diffs: async (parent: IOpticDiffService) => {
         return parent.listDiffs();
       },
-      unrecognizedUrls: async (
-        parent: IOpticDiffService,
-        args: any,
-        context: any
-      ) => {
+      unrecognizedUrls: async (parent: IOpticDiffService) => {
         return parent.listUnrecognizedUrls();
       },
     },
@@ -446,8 +309,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       pathContributions: (
         parent: endpoints.RequestNodeWrapper,
-        args: any,
-        context: any
+        _: {},
+        context: GraphQLContext
       ) => {
         const pathId = parent.path().value.pathId;
         const method = parent.value.httpMethod;
@@ -459,8 +322,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       requestContributions: (
         parent: endpoints.RequestNodeWrapper,
-        args: any,
-        context: any
+        _: {},
+        context: GraphQLContext
       ) => {
         return Promise.resolve(
           context.spectacleContext().contributionsProjection[
@@ -468,11 +331,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           ] || {}
         );
       },
-      isRemoved: (
-        parent: endpoints.RequestNodeWrapper,
-        args: any,
-        context: any
-      ) => {
+      isRemoved: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.value.isRemoved);
       },
     },
@@ -501,11 +360,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       ) => {
         return Promise.resolve(parent.absolutePathPatternWithParameterNames);
       },
-      isRemoved: (
-        parent: endpoints.PathNodeWrapper,
-        args: any,
-        context: any
-      ) => {
+      isRemoved: (parent: endpoints.PathNodeWrapper) => {
         return Promise.resolve(parent.value.isRemoved);
       },
     },
@@ -521,8 +376,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       contributions: (
         parent: endpoints.ResponseNodeWrapper,
-        args: any,
-        context: any
+        _: {},
+        context: GraphQLContext
       ) => {
         return Promise.resolve(
           context.spectacleContext().contributionsProjection[
@@ -530,11 +385,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           ] || {}
         );
       },
-      isRemoved: (
-        parent: endpoints.ResponseNodeWrapper,
-        args: any,
-        context: any
-      ) => {
+      isRemoved: (parent: endpoints.ResponseNodeWrapper) => {
         return Promise.resolve(parent.value.isRemoved);
       },
     },
@@ -542,13 +393,17 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       id: (parent: endpoints.PathNode) => {
         return Promise.resolve(parent.pathId);
       },
-      contributions: (parent: endpoints.PathNode, args: any, context: any) => {
+      contributions: (
+        parent: endpoints.PathNode,
+        _: {},
+        context: GraphQLContext
+      ) => {
         return Promise.resolve(
           context.spectacleContext().contributionsProjection[parent.pathId] ||
             {}
         );
       },
-      isRemoved: (parent: endpoints.PathNode, args: any, context: any) => {
+      isRemoved: (parent: endpoints.PathNode) => {
         return Promise.resolve(parent.isRemoved);
       },
     },
@@ -559,11 +414,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       rootShapeId: (parent: endpoints.BodyNodeWrapper) => {
         return Promise.resolve(parent.value.rootShapeId);
       },
-      isRemoved: (
-        parent: endpoints.BodyNodeWrapper,
-        args: any,
-        context: any
-      ) => {
+      isRemoved: (parent: endpoints.BodyNodeWrapper) => {
         return Promise.resolve(parent.value.isRemoved);
       },
     },
@@ -589,7 +440,13 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       shapeId: (parent: any) => {
         return Promise.resolve(parent.itemShapeId);
       },
-      changes: (parent: any, args: any, context: any) => {
+      changes: (
+        parent: any,
+        args: {
+          sinceBatchCommitId?: string;
+        },
+        context: GraphQLContext
+      ) => {
         return Promise.resolve(
           getArrayChanges(
             context.spectacleContext().shapeQueries,
@@ -600,7 +457,13 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     ObjectFieldMetadata: {
-      changes: (parent: any, args: any, context: any) => {
+      changes: (
+        parent: any,
+        args: {
+          sinceBatchCommitId?: string;
+        },
+        context: GraphQLContext
+      ) => {
         return Promise.resolve(
           getFieldChanges(
             context.spectacleContext().shapeQueries,
@@ -610,7 +473,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           )
         );
       },
-      contributions: (parent: any, args: any, context: any) => {
+      contributions: (parent: any, _: {}, context: GraphQLContext) => {
         return Promise.resolve(
           context.spectacleContext().contributionsProjection[parent.fieldId] ||
             {}
@@ -618,28 +481,29 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     EndpointChanges: {
-      opticUrl: (parent: any) => {
-        return Promise.resolve(parent.data.opticUrl);
-      },
-      endpoints: (parent: any) => {
+      endpoints: (parent: EndpointChanges) => {
         return Promise.resolve(parent.data.endpoints);
       },
     },
     EndpointChange: {
       // TODO: considering converting into ChangeResult
-      change: (parent: any) => {
+      change: (parent: EndpointChange) => {
         return Promise.resolve(parent.change);
       },
-      path: (parent: any) => {
+      path: (parent: EndpointChange) => {
         return Promise.resolve(parent.path);
       },
-      pathId: (parent: any) => {
+      pathId: (parent: EndpointChange) => {
         return Promise.resolve(parent.pathId);
       },
-      method: (parent: any) => {
+      method: (parent: EndpointChange) => {
         return Promise.resolve(parent.method);
       },
-      contributions: (parent: any, args: any, context: any) => {
+      contributions: (
+        parent: EndpointChange,
+        _: {},
+        context: GraphQLContext
+      ) => {
         const pathId = parent.pathId;
         const method = parent.method;
         return Promise.resolve(
@@ -650,19 +514,19 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     EndpointChangeMetadata: {
-      category: (parent: any) => {
+      category: (parent: EndpointChange['change']) => {
         return Promise.resolve(parent.category);
       },
     },
     BatchCommit: {
-      createdAt: (parent: any) => {
-        return Promise.resolve(parent.result.data.createdAt);
+      createdAt: (parent: endpoints.BatchCommitNodeWrapper) => {
+        return Promise.resolve(parent.value.createdAt);
       },
-      batchId: (parent: any) => {
-        return Promise.resolve(parent.result.data.batchId);
+      batchId: (parent: endpoints.BatchCommitNodeWrapper) => {
+        return Promise.resolve(parent.value.batchId);
       },
-      commitMessage: (parent: any) => {
-        return Promise.resolve(parent.result.data.commitMessage);
+      commitMessage: (parent: endpoints.BatchCommitNodeWrapper) => {
+        return Promise.resolve(parent.value.commitMessage);
       },
     },
   };
@@ -672,15 +536,12 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     resolvers,
   });
 
-  const graphqlContext = () => {
+  const graphqlContext: GraphQLContext['spectacleContext'] = () => {
     return {
       opticContext,
-      // @ts-ignore
       endpointsQueries,
-      // @ts-ignore
       shapeQueries,
       shapeViewerProjection,
-      // @ts-ignore
       contributionsProjection,
       getEndpointProjection,
     };
@@ -707,12 +568,6 @@ export async function makeSpectacle(opticContext: IOpticContext) {
   };
 }
 
-export interface SpectacleInput<
-  T extends {
-    [key: string]: any;
-  }
-> {
-  query: string;
-  variables: T;
-  operationName?: string;
-}
+export * from './openapi';
+export * from './commands';
+export * from './types';
