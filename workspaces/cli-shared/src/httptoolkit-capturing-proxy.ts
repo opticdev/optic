@@ -292,7 +292,7 @@ export class HttpToolkitCapturingProxy {
           asText:
             this.config.flags.includeTextBody && json
               ? null
-              : req.body.text || null,
+              : req.body.text || '',
         },
       };
     }
