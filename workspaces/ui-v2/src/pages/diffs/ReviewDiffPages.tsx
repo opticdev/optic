@@ -59,7 +59,6 @@ export function DiffReviewPages(props: any) {
       </LoadingPage>
     );
   }
-  console.log(diff.data);
 
   return (
     <SharedDiffStore
