@@ -30,7 +30,7 @@ export const ShareButton: React.FC<{}> = (props) => {
   const styles = useStyles(props);
 
   const { getAccessTokenSilently, isAuthenticated, logout } = useAuth0();
-  const { specRepo } = useSpecRepository();
+  const specRepo = useSpecRepository();
   const {
     backendApi: { domain: baseDomain },
     sharing,

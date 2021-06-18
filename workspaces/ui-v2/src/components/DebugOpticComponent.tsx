@@ -50,7 +50,7 @@ const debugDump = (specService: IOpticSpecRepository) => {
 };
 
 export const DebugOpticComponent: FC<{}> = () => {
-  const { specRepo } = useSpecRepository();
+  const specRepo = useSpecRepository();
   useEffect(() => {
     window.debugOptic = debugDump(specRepo);
   }, [specRepo]);

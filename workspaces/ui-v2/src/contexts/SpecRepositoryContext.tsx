@@ -2,13 +2,12 @@ import React, { FC } from 'react';
 import { useContext } from 'react';
 import { IOpticSpecRepository } from '@useoptic/spectacle';
 
-export function useSpecRepository(): {
-  specRepo: IOpticSpecRepository;
-} {
+export function useSpecRepository() {
   const specRepo = useContext(SpecRepositoryContext)!;
-  return {
-    specRepo,
-  };
+  if (!specRepo) {
+    throw new Error('Could not find spectacle context');
+  }
+  return specRepo;
 }
 
 interface SpecRepositoryContextProps {
