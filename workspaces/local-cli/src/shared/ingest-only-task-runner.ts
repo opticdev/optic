@@ -14,9 +14,9 @@ import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from './paths';
 import { Config } from '../config';
 import { EventEmitter } from 'events';
-import { InteractionCollectorService } from '@useoptic/cli-shared/build/ingest/ingest-traffic-service';
+import { IngestTrafficService } from '@useoptic/cli-shared/build/ingest/ingest-traffic-service';
 import colors from 'colors';
-import { spawnProcess, spawnProcessReturnExitCode } from './spawn-process';
+import { spawnProcessReturnExitCode } from './spawn-process';
 import { computeCoverage, printCoverage } from './coverage';
 
 export async function ingestOnlyTaskRunner(
@@ -73,7 +73,7 @@ export async function ingestOnlyTaskRunner(
 
   await persistenceManager.init();
 
-  const collectionService = new InteractionCollectorService(persistenceManager);
+  const collectionService = new IngestTrafficService(persistenceManager);
   const loggingUrl = await collectionService.start();
 
   const env: any = {
@@ -96,6 +96,8 @@ export async function ingestOnlyTaskRunner(
       const diff_maps = await computeCoverage(paths, captureId);
       await printCoverage(paths, diff_maps.with_diffs, diff_maps.without_diffs);
     }
+
+    // impliment exit on diff
 
     cleanupAndExit(statusCode);
   }
