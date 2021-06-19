@@ -5,6 +5,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import getPort from 'get-port';
 import http from 'http';
+import { ecsToHttpInteraction } from './ecs-to-sample';
 
 export class IngestTrafficService {
   private collectorService: express.Application;
@@ -39,14 +40,17 @@ export class IngestTrafficService {
   //handlers
   handleEcs = async (req: express.Request, res: express.Response) => {
     const samples = req.body;
-    samples.forEach((sample: any) =>
-      developerDebugLogger('saw sample', sample)
-    );
-    //for now just save the JSON in the cwd so we can write tests on our ECS parser
-    await fs.writeJson(
-      path.join(process.cwd(), Date.now().toString() + '.json'),
-      samples
-    );
+    samples.forEach((sample: any) => {
+      developerDebugLogger('saw sample', sample);
+      try {
+        ecsToHttpInteraction(sample);
+      } catch (e) {
+        developerDebugLogger(
+          'could not transform ecs sample -> interaction format',
+          e
+        );
+      }
+    });
     res.sendStatus(201);
   };
 }
