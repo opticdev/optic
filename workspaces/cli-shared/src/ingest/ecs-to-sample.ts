@@ -2,7 +2,10 @@ import * as uuid from 'uuid';
 import { IHttpInteraction } from '@useoptic/optic-domain';
 //@todo MIKE 'ecs' needs types
 //@todo write tests
-export function ecsToHttpInteraction(ecs: any): IHttpInteraction {
+export function ecsToHttpInteraction(
+  ecs: any,
+  id: string = uuid.v4()
+): IHttpInteraction {
   const { request, response } = ecs.http;
   const { path, domain } = ecs.url;
 
@@ -24,7 +27,7 @@ export function ecsToHttpInteraction(ecs: any): IHttpInteraction {
   }
 
   return {
-    uuid: uuid.v4(),
+    uuid: id,
     request: {
       host: domain,
       method: request.method,
