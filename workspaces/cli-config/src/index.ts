@@ -165,6 +165,10 @@ export function isTestTask(aliasedTask: IOpticTaskAliased): boolean {
   return Boolean(aliasedTask.useTask && aliasedTask.command);
 }
 
+export function isCommandOnlyTask(aliasedTask: IOpticTaskAliased): boolean {
+  return Boolean(aliasedTask.command && !aliasedTask.targetUrl);
+}
+
 export function isRecommendedTask(aliasedTask: IOpticTaskAliased): boolean {
   return Boolean(
     aliasedTask.command && (aliasedTask.inboundUrl || aliasedTask.baseUrl)
