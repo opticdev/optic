@@ -15,8 +15,8 @@ Tap.test('ecs to interactions', async (test) => {
 
   examples.forEach((i, index) => {
     test.matchSnapshot(
-      ecsToHttpInteraction(i, index + 1),
-      'ecs-' + (index + 1)
+      ecsToHttpInteraction(i, (index + 1).toString()),
+      'ecs-' + (index + 1).toString()
     );
   });
 });

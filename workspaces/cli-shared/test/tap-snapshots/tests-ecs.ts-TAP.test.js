@@ -47,7 +47,7 @@ Object {
     "statusCode": 201,
   },
   "tags": Array [],
-  "uuid": "0f202986-35d8-415e-b34a-00cfdbad57f2",
+  "uuid": "1",
 }
 `
 
@@ -93,7 +93,7 @@ Object {
     "statusCode": 500,
   },
   "tags": Array [],
-  "uuid": "c10467a7-3011-4a9a-97eb-469bdeb7aeb0",
+  "uuid": "10",
 }
 `
 
@@ -139,7 +139,7 @@ Object {
     "statusCode": 202,
   },
   "tags": Array [],
-  "uuid": "39e862c9-67e6-46b3-8b29-4b0903cc057c",
+  "uuid": "11",
 }
 `
 
@@ -185,7 +185,7 @@ Object {
     "statusCode": 201,
   },
   "tags": Array [],
-  "uuid": "4eee201a-7375-4bc6-b875-29820ca7382d",
+  "uuid": "12",
 }
 `
 
@@ -231,7 +231,7 @@ Object {
     "statusCode": 302,
   },
   "tags": Array [],
-  "uuid": "f66617ca-077a-4abf-88ed-e1359e1855af",
+  "uuid": "13",
 }
 `
 
@@ -277,7 +277,7 @@ Object {
     "statusCode": 404,
   },
   "tags": Array [],
-  "uuid": "06c396f8-d385-4504-a50c-f479aef3a867",
+  "uuid": "14",
 }
 `
 
@@ -323,7 +323,7 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "48ba6c84-0c63-4187-a008-caf4cac56985",
+  "uuid": "15",
 }
 `
 
@@ -369,7 +369,7 @@ Object {
     "statusCode": 405,
   },
   "tags": Array [],
-  "uuid": "a3b5adce-985b-4248-9c33-825680d0d7be",
+  "uuid": "16",
 }
 `
 
@@ -415,7 +415,7 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "11440443-7fa2-49dc-953d-870b08f110f4",
+  "uuid": "17",
 }
 `
 
@@ -461,7 +461,7 @@ Object {
     "statusCode": 405,
   },
   "tags": Array [],
-  "uuid": "e518aea7-f352-4d27-ae57-8cad3032eb41",
+  "uuid": "2",
 }
 `
 
@@ -507,7 +507,7 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "f7b1f268-c104-49e0-9719-d49c95da671f",
+  "uuid": "3",
 }
 `
 
@@ -553,7 +553,7 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "8833fe3f-6f23-4d53-978d-6ae5ffca7d42",
+  "uuid": "4",
 }
 `
 
@@ -599,7 +599,7 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "4246207b-207a-4488-9e75-d47e3d9893c4",
+  "uuid": "5",
 }
 `
 
@@ -645,7 +645,7 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "1c16009a-dca9-4827-9b47-5467daa40377",
+  "uuid": "6",
 }
 `
 
@@ -691,7 +691,7 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "c9980a9e-266b-4ff2-9943-f0b93f27c6f9",
+  "uuid": "7",
 }
 `
 
@@ -737,7 +737,7 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "2ba18e3b-5286-4742-bc6d-608842fb9920",
+  "uuid": "8",
 }
 `
 
@@ -783,6 +783,6 @@ Object {
     "statusCode": 504,
   },
   "tags": Array [],
-  "uuid": "b5e4a896-050d-4c60-a62d-afad621d8f85",
+  "uuid": "9",
 }
 `
