@@ -1,6 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import groupBy from 'lodash.groupby';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/styles';
 import { Check } from '@material-ui/icons';
@@ -26,6 +25,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { IPendingEndpoint } from '<src>/pages/diffs/contexts/SharedDiffState';
 import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
 import { useRunOnKeypress } from '<src>/hooks/util';
+import { useGroupedEndpoints } from '<src>/hooks/useGroupedEndpoints';
 import { DiffAccessoryNavigation } from '<src>/pages/diffs/components/DiffAccessoryNavigation';
 import { selectors, useAppSelector } from '<src>/store';
 import { IEndpoint } from '<src>/types';
@@ -170,8 +170,9 @@ export function DocumentationRootPageWithPendingEndpoints() {
   const classes = useStyles();
 
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
-  const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
-  const tocKeys = Object.keys(grouped).sort();
+  const groupedEndpoints = useGroupedEndpoints(endpoints);
+
+  const tocKeys = Object.keys(groupedEndpoints).sort();
   const changelogStyles = useChangelogStyles();
 
   const history = useHistory();
@@ -247,40 +248,42 @@ export function DocumentationRootPageWithPendingEndpoints() {
               >
                 {tocKey}
               </Typography>
-              {grouped[tocKey].map((endpoint: IEndpoint, index: number) => {
-                return (
-                  <ListItem
-                    key={index}
-                    button
-                    disableRipple
-                    disableGutters
-                    style={{ display: 'flex' }}
-                    onClick={() =>
-                      history.push(
-                        endpointPageLink.linkTo(
-                          endpoint.pathId,
-                          endpoint.method
+              {groupedEndpoints[tocKey].map(
+                (endpoint: IEndpoint, index: number) => {
+                  return (
+                    <ListItem
+                      key={index}
+                      button
+                      disableRipple
+                      disableGutters
+                      style={{ display: 'flex' }}
+                      onClick={() =>
+                        history.push(
+                          endpointPageLink.linkTo(
+                            endpoint.pathId,
+                            endpoint.method
+                          )
                         )
-                      )
-                    }
-                    className={classes.endpointRow}
-                  >
-                    <div className={classes.endpointNameContainer}>
-                      <EndpointName
-                        method={endpoint.method}
-                        fullPath={endpoint.fullPath}
-                        leftPad={6}
-                      />
-                    </div>
-                    <div
-                      className={classes.endpointContributionContainer}
-                      onClick={(e) => e.stopPropagation()}
+                      }
+                      className={classes.endpointRow}
                     >
-                      <ExistingEndpointNameField endpoint={endpoint} />
-                    </div>
-                  </ListItem>
-                );
-              })}
+                      <div className={classes.endpointNameContainer}>
+                        <EndpointName
+                          method={endpoint.method}
+                          fullPath={endpoint.fullPath}
+                          leftPad={6}
+                        />
+                      </div>
+                      <div
+                        className={classes.endpointContributionContainer}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <ExistingEndpointNameField endpoint={endpoint} />
+                      </div>
+                    </ListItem>
+                  );
+                }
+              )}
             </div>
           );
         })}
