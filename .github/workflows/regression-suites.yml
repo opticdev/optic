@@ -34,7 +34,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-node@c46424eee26de4078d34105d3de3cc4992202b1e  # v2.1.4
         with:
-          node-version: 12
+          node-version: 14
       - name: Restore cached node_modules
         id: workspace-node-modules
         uses: actions/cache@26968a09c0ea4f3e233fdddbafd1166051a095f6  # v2.1.4
