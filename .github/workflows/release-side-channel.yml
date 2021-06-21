@@ -21,6 +21,12 @@ jobs:
         uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
         with:
           node-version: 14
+      - name: 'Rust toolchain'
+        uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # https://github.com/actions-rs/toolchain/commits/v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
       - name: Install Task
         uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # they dont give us any tags :\
         with:
