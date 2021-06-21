@@ -44,7 +44,7 @@ export const ReviewEndpointDiffContainer: FC<
 
   return (
     <PageLayout AccessoryNavigation={DiffAccessoryNavigation}>
-      {!endpoint || shapeDiffs.loading ? (
+      {!endpoint || shapeDiffs.loading || newRegionDiffs.loading ? (
         <Loading />
       ) : (
         <ReviewEndpointDiffPage
