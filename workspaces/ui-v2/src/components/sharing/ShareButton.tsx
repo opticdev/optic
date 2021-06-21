@@ -15,8 +15,9 @@ import { useAppConfig } from '<src>/contexts/config/AppConfiguration';
 import { useAsyncMemo } from 'use-async-memo';
 
 export enum ShareTarget {
-  TEAM,
-  CUSTOMER,
+  TEAM = 'team',
+  CONSUMER = 'consumer',
+  OTHER = 'other',
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -63,7 +64,7 @@ export const ShareButton: React.FC<{}> = (props) => {
           body: JSON.stringify({
             sharing_context: {
               local_ui_v1: {
-                with: target === ShareTarget.TEAM ? 'team' : 'customer',
+                with: target.toString(),
               },
             },
           }),
@@ -95,16 +96,14 @@ export const ShareButton: React.FC<{}> = (props) => {
           );
         }
 
-        if (target === ShareTarget.CUSTOMER) {
-          return `${
-            sharing.enabled && sharing.specViewerDomain
-          }/people/${personId}/public-specs/${newSpecId}/documentation`;
-        } else if (target === ShareTarget.TEAM) {
+        if (target === ShareTarget.TEAM) {
           return `${
             sharing.enabled && sharing.specViewerDomain
           }/people/${personId}/public-specs/${newSpecId}/documentation?demo=true`;
         } else {
-          throw new Error(`Unknown share target: ${target}`);
+          return `${
+            sharing.enabled && sharing.specViewerDomain
+          }/people/${personId}/public-specs/${newSpecId}/documentation`;
         }
       }
     },

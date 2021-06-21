@@ -114,9 +114,19 @@ export const ShareModal: React.FC<{
             variant="outlined"
             size="large"
             fullWidth
-            onClick={() => setShareType(ShareTarget.CUSTOMER)}
+            onClick={() => setShareType(ShareTarget.CONSUMER)}
           >
-            Customer
+            Consumer
+          </Button>
+        </div>
+        <div className={styles.item}>
+          <Button
+            variant="outlined"
+            size="large"
+            fullWidth
+            onClick={() => setShareType(ShareTarget.OTHER)}
+          >
+            Other
           </Button>
         </div>
       </div>
