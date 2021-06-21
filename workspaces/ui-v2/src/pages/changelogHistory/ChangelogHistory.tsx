@@ -1,6 +1,4 @@
 import React, { FC } from 'react';
-import { useHistory } from 'react-router-dom';
-import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 
 import {
@@ -13,7 +11,6 @@ import {
   useDocumentationPageLink,
 } from '<src>/components';
 import { useBatchCommits } from '<src>/hooks/useBatchCommits';
-import { useSpacingStyles, useUtilityStyles } from '<src>/styles';
 import { formatTimeAgo } from '<src>/utils';
 
 export const ChangelogHistory: FC = () => {
