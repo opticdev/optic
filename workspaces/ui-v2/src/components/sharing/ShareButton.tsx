@@ -53,7 +53,7 @@ export const ShareButton: React.FC<{}> = (props) => {
       const token = await getAccessTokenSilently();
 
       let newSpecResp = await fetch(
-        `${baseDomain}/api/person/public-specs/v2`,
+        `${baseDomain}/api/person/public-specs-v2`,
         {
           method: 'POST',
           headers: {
