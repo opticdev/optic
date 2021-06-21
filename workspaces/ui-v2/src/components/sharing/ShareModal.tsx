@@ -73,13 +73,6 @@ export const ShareModal: React.FC<{
   let inputRef = useRef<HTMLInputElement>();
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    if (copied) {
-      let timeout = setTimeout(() => setCopied(false), 7500);
-      return () => clearTimeout(timeout);
-    }
-  }, [copied]);
-
   const copy = useCallback(() => {
     const input = inputRef.current;
     if (input) {
@@ -87,6 +80,7 @@ export const ShareModal: React.FC<{
       input.select();
       document.execCommand('copy');
       setCopied(true);
+      setTimeout(() => setCopied(false), 7500);
     }
   }, []);
 

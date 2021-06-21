@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 export const ShareButton: React.FC<{}> = (props) => {
   const styles = useStyles(props);
 
-  const { getAccessTokenSilently, isAuthenticated, logout } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const specRepo = useSpecRepository();
   const {
     backendApi: { domain: baseDomain },
@@ -52,16 +52,23 @@ export const ShareButton: React.FC<{}> = (props) => {
     async (target: ShareTarget) => {
       const token = await getAccessTokenSilently();
 
-      let newSpecResp = await fetch(`${baseDomain}/api/person/public-specs`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          origin: 'local_ui',
-        }),
-      });
+      let newSpecResp = await fetch(
+        `${baseDomain}/api/person/public-specs/v2`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({
+            sharing_context: {
+              local_ui_v1: {
+                with: target === ShareTarget.TEAM ? 'team' : 'customer',
+              },
+            },
+          }),
+        }
+      );
 
       if (!newSpecResp.ok) {
         throw new Error(
@@ -108,7 +115,6 @@ export const ShareButton: React.FC<{}> = (props) => {
 
   return (
     <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
-      {/* <Button onClick={() => logout()}>Log out</Button> */}
       <Button
         variant="outlined"
         className={styles.root}
