@@ -155,6 +155,8 @@ export default class Intercept extends Command {
     );
 
     await sessionManager.run(persistenceManager);
+    await cliClient.markCaptureAsCompleted(cliSession.session.id, captureId);
+
     if (browsers) {
       browsers!.cleanup();
     }
