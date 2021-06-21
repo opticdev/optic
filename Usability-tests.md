@@ -175,13 +175,13 @@ At this point, all observed traffic should be documented. The status of the proj
 - [ ] Run `api start` to bring up the project.
 - [ ] Send new traffic to the project: either modify an existing endpoint, or send traffic to a new endpoint. _Note_ this traffic will show up in the Optic review dashboard. Do not ignore/document/approve it.
 - [ ] Stop the process with `ctrl+c`.
-- [ ] Run `api status --pre-commit || echo $?`: Expect
+- [ ] Run `api status --pre-commit || [[ $? = 0 ]] && echo "API Status is clean" || echo "API Status is dirty"`: Expect
 	- Diffs and undocumented URLs are reported as observed.
-	- `1` is echoed to the terminal (API status is "dirty" and requires review)
+	- "API status is dirty" is echoed to the console.
 - [ ] Run `api status --review` and document/accept observed differences.
-- [ ] Run `api status --pre-commit || echo $?`: Expect
+- [ ] Run `api status --pre-commit || [[ $? = 0 ]] && echo "API Status is clean" || echo "API Status is dirty"`: Expect
 	- No diffs or undocumented URLs are reported.
-	- `0` is echoed to the terminal (API status is "clean")
+	- "API status is clean" is echoed to the console.
 
 ### Run a Script
 
