@@ -9238,7 +9238,7 @@ expression: events
         BatchCommitStarted(
             BatchCommitStarted {
                 batch_id: "2c11ed2c-d28a-4711-ad6d-dae57a072d81",
-                commit_message: "\n\nChanges:\n- Added '400' Response with 'application/json' Content-Type ",
+                commit_message: "\n\nChanges:\n- Added \'400\' Response with \'application/json\' Content-Type ",
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
@@ -9465,7 +9465,7 @@ expression: events
         BatchCommitStarted(
             BatchCommitStarted {
                 batch_id: "ef3911d5-a55e-4542-bcd5-df906451df39",
-                commit_message: "\n\nChanges:\n- Added '200' Response with 'application/json' Content-Type ",
+                commit_message: "\n\nChanges:\n- Added \'200\' Response with \'application/json\' Content-Type ",
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
@@ -10459,7 +10459,7 @@ expression: events
         BatchCommitStarted(
             BatchCommitStarted {
                 batch_id: "84008f7c-c965-469d-a71e-e4f61fe8939a",
-                commit_message: "\n\nChanges:\n- Added '200' Response with 'application/json' Content-Type ",
+                commit_message: "\n\nChanges:\n- Added \'200\' Response with \'application/json\' Content-Type ",
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",

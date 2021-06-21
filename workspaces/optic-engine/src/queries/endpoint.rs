@@ -41,6 +41,10 @@ impl<'a> EndpointQueries<'a> {
   }
 
   pub fn resolve_path(&self, path: &str) -> Option<PathComponentIdRef> {
+    if path.eq("/") {
+      return Some(ROOT_PATH_ID);
+    }
+
     let path = Self::extract_normalized_path(path);
     // eprintln!("{}", path);
     let mut path_components = path.split('/');
@@ -521,6 +525,39 @@ mod test {
     let interaction: HttpInteraction = interaction_with_path(String::from("/"));
     let normalized_path = EndpointQueries::extract_normalized_path(&interaction.request.path);
     assert_eq!(normalized_path, "/")
+  }
+
+  #[test]
+  pub fn resolve_path_can_resolves_root_path() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
+      {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "favourites" }},
+      {"PathComponentAdded": { "pathId": "path_3", "parentPathId": "root", "name": "authors" }},
+      {"PathComponentAdded": { "pathId": "path_4", "parentPathId": "path_3", "name": "dutch" }},
+      {"RequestAdded": { "requestId": "request_1", "pathId": "root", "httpMethod": "GET"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_1", "pathId": "root", "httpMethod": "GET", "httpStatusCode": 200 }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+
+    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+
+    assert_eq!(endpoint_queries.resolve_path("/").unwrap(), "root");
+  }
+
+  #[test]
+  pub fn resolve_path_should_resolve_against_an_empty_spec() {
+    let events: Vec<SpecEvent> =
+      serde_json::from_value(json!([])).expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+
+    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+
+    assert_eq!(endpoint_queries.resolve_path("/").unwrap(), "root");
   }
 
   #[test]
