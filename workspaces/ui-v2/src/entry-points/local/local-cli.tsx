@@ -29,7 +29,7 @@ import {
   LocalCliConfigRepository,
   LocalCliServices,
   LocalCliSpectacle,
-  LocalCliSpecRepository,
+  UILocalCliSpecRepository,
 } from '@useoptic/spectacle-shared';
 import { AnalyticsStore } from '<src>/contexts/analytics';
 import {
@@ -151,7 +151,7 @@ export function useLocalCliServices(
     baseUrl: apiBaseUrl,
     spectacle,
   });
-  const specRepository = new LocalCliSpecRepository({ baseUrl: apiBaseUrl });
+  const specRepository = new UILocalCliSpecRepository({ baseUrl: apiBaseUrl });
   return {
     loading: false,
     data: {

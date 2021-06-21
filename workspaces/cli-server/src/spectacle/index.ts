@@ -1,3 +1,8 @@
+import { EventEmitter } from 'events';
+import fs from 'fs-extra';
+import { Transform } from 'stream';
+import path from 'path';
+
 import {
   ICapture,
   IListDiffsResponse,
@@ -12,10 +17,9 @@ import {
   IOpticSpecRepository,
   StartDiffResult,
 } from '@useoptic/spectacle';
-import { EventEmitter } from 'events';
 import { AsyncTools, AsyncTools as AT, Streams } from '@useoptic/optic-domain';
-import * as OpticEngine from '@useoptic/optic-engine-native';
-import * as opticEngine from '@useoptic/optic-engine-wasm';
+import * as OpticEngineNative from '@useoptic/optic-engine-native';
+import * as OpticEngineWasm from '@useoptic/optic-engine-wasm';
 import { isEnvTrue } from '@useoptic/cli-shared';
 import {
   InMemoryDiffRepository,
@@ -28,11 +32,42 @@ import {
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InteractionDiffWorkerRust } from '@useoptic/cli-shared/build/diffs/interaction-diff-worker-rust';
 import { IPathMapping, readApiConfig } from '@useoptic/cli-config';
-import { CapturesHelpers } from '../routers/spec-router';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
-import fs from 'fs-extra';
-import Chokidar, { watch } from 'chokidar';
-import { Subject } from 'axax/esnext';
+import { v4 as uuidv4 } from 'uuid';
+import StreamArray from 'stream-json/streamers/StreamArray';
+import Chokidar from 'chokidar';
+
+import { CapturesHelpers } from '../routers/spec-router';
+
+class ResetToBatchStreamTransformer extends Transform {
+  private batchCommitId: string;
+  private foundBatchCommit: boolean;
+  constructor(batchCommitId: string) {
+    super({
+      readableObjectMode: true,
+      writableObjectMode: true,
+    });
+    this.batchCommitId = batchCommitId;
+    this.foundBatchCommit = false;
+  }
+
+  _transform(
+    chunk: any,
+    _: string,
+    next: (error?: Error | null, data?: any) => void
+  ) {
+    const event = chunk.value;
+    if (event.BatchCommitStarted?.batchId === this.batchCommitId) {
+      this.foundBatchCommit = true;
+    }
+
+    if (!this.foundBatchCommit) {
+      return next(null, chunk);
+    } else {
+      next();
+    }
+  }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 export interface LocalCliSpecState {}
@@ -84,7 +119,7 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
     commandContext: IOpticCommandContext
   ): Promise<void> {
     const commandsStream = AT.from<Streams.Commands.Command>(commands);
-    const output = OpticEngine.commit(commandsStream, {
+    const output = OpticEngineNative.commit(commandsStream, {
       specDirPath: this.dependencies.specDirPath,
       commitMessage: commitMessage,
       clientSessionId: commandContext.clientSessionId || 'unknown-session',
@@ -97,9 +132,10 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
 
   async listEvents(): Promise<any[]> {
     if (isEnvTrue(process.env.OPTIC_ASSEMBLED_SPEC_EVENTS)) {
-      const events = OpticEngine.readSpec({
+      const streamArray = StreamArray.withParser();
+      const events = OpticEngineNative.readSpec({
         specDirPath: this.dependencies.specDirPath,
-      });
+      }).pipe(streamArray);
       debugger;
       throw new Error(
         'unimplemented. need to streaming parse the events Readable stream'
@@ -108,6 +144,38 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
       const events = await getSpecEventsFrom(this.dependencies.specStorePath);
       return events;
     }
+  }
+
+  async resetToCommit(batchCommitId: string): Promise<void> {
+    // TODO handle partial error + cleanup
+    const specJsFile = path.join(
+      this.dependencies.specDirPath,
+      'specification.json'
+    );
+    const tempOutputFile = path.join(
+      this.dependencies.specDirPath,
+      `temp-spec-file${uuidv4()}.json`
+    );
+    const tempFileDeletion = path.join(
+      this.dependencies.specDirPath,
+      `spec-to-delete${uuidv4()}.json`
+    );
+    const streamArray = StreamArray.withParser();
+    const batchCommitFilter = new ResetToBatchStreamTransformer(batchCommitId);
+    const writeableStream = fs.createWriteStream(tempOutputFile);
+
+    const filteredEvents = OpticEngineNative.readSpec({
+      specDirPath: this.dependencies.specDirPath,
+    })
+      .pipe(streamArray)
+      .pipe(batchCommitFilter);
+
+    for await (const chunk of writeableStream.pipe(filteredEvents)) {
+    }
+
+    await fs.rename(specJsFile, tempFileDeletion);
+    await fs.rename(tempOutputFile, specJsFile);
+    await fs.remove(tempFileDeletion);
   }
 }
 
@@ -302,7 +370,7 @@ export class LocalCliOpticContextBuilder {
     const diffRepository = new InMemoryDiffRepository();
 
     const capturesService = new LocalCliCapturesService({
-      opticEngine,
+      opticEngine: OpticEngineWasm,
       configRepository,
       specRepository,
       diffRepository,
@@ -310,7 +378,7 @@ export class LocalCliOpticContextBuilder {
     });
 
     return {
-      opticEngine,
+      opticEngine: OpticEngineWasm,
       capturesService,
       specRepository,
       configRepository,
