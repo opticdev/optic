@@ -1,14 +1,11 @@
 import * as endpoints from './endpoints-graph';
 import * as shapes from './shapes-graph';
 
-export {
-  endpoints,
-  shapes
-};
+export { endpoints, shapes };
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export interface GraphCommandHandler<N, I, E = any> {
+export interface GraphCommandHandler<N, I, E> {
   addNode(node: N): void;
 
   addEdge(edge: E, sourceNodeId: I, targetNodeId: I): void;

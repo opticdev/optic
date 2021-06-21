@@ -20,7 +20,8 @@ export type CQRSCommand =
   | ShapedBodyDescriptorType
   | SetResponseBodyShapeType
   | SetRequestBodyShapeType
-  | AddResponseByPathAndMethodType;
+  | AddResponseByPathAndMethodType
+  | PrunePathComponentsType;
 
 export type AddShapeType = ReturnType<typeof AddShape>;
 export type AddRequestType = ReturnType<typeof AddRequest>;
@@ -41,6 +42,7 @@ export type SetRequestBodyShapeType = ReturnType<typeof SetRequestBodyShape>;
 export type AddResponseByPathAndMethodType = ReturnType<
   typeof AddResponseByPathAndMethod
 >;
+export type PrunePathComponentsType = ReturnType<typeof PrunePathComponents>;
 
 export function AddShape(
   shapeId: string,
@@ -183,5 +185,11 @@ export function AddResponseByPathAndMethod(
       httpMethod,
       httpStatusCode,
     },
+  };
+}
+
+export function PrunePathComponents() {
+  return {
+    PrunePathComponents: {},
   };
 }

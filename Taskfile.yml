@@ -56,6 +56,7 @@ tasks:
           cp $FLAGS_FILE workspaces/cli-server/.env
           cp $FLAGS_FILE workspaces/cli-scripts/.env
           cp $FLAGS_FILE workspaces/optic-engine/.env
+          cp $FLAGS_FILE workspaces/optic-engine-native/.env
           cp $FLAGS_FILE workspaces/ui-v2/.env.production.local
         else
           echo "Please specify the FLAGS_FILE environment variable"

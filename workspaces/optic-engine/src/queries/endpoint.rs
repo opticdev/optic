@@ -6,8 +6,11 @@ use crate::state::endpoint::{
   HttpMethod, HttpStatusCode, PathComponentId, PathComponentIdRef, RequestId, ResponseId,
 };
 use petgraph::graph::Graph;
-use petgraph::visit::EdgeFilteredNeighborsDirected;
+use petgraph::visit::{
+  depth_first_search, Control, DfsEvent, EdgeFilteredNeighborsDirected, Reversed,
+};
 use serde::Serialize;
+use std::collections::{HashMap, HashSet};
 
 pub struct EndpointQueries<'a> {
   pub endpoint_projection: &'a EndpointProjection,
@@ -38,6 +41,10 @@ impl<'a> EndpointQueries<'a> {
   }
 
   pub fn resolve_path(&self, path: &str) -> Option<PathComponentIdRef> {
+    if path.eq("/") {
+      return Some(ROOT_PATH_ID);
+    }
+
     let path = Self::extract_normalized_path(path);
     // eprintln!("{}", path);
     let mut path_components = path.split('/');
@@ -95,6 +102,105 @@ impl<'a> EndpointQueries<'a> {
       return None;
     }
     last_resolved_path_id
+  }
+
+  pub fn resolve_unused_paths(&self) -> impl Iterator<Item = PathComponentId> + '_ {
+    let root_path_node_index = self
+      .graph_get_index(ROOT_PATH_ID)
+      .expect("a root path component node should exist");
+
+    let reversed_graph = Reversed(&self.endpoint_projection.graph);
+
+    let mut path_ids_with_endpoints: HashSet<PathComponentId> = HashSet::new();
+    let mut unused_path_ids: HashSet<PathComponentId> = HashSet::new();
+    let mut unused_path_ids_sorted: Vec<PathComponentId> = Vec::new();
+    let mut path_ids_by_index = HashMap::new();
+    let mut children_path_ids_by_path_id = HashMap::new();
+
+    depth_first_search(&reversed_graph, Some(*root_path_node_index), |event| {
+      match event {
+        // Discovered a new node
+        DfsEvent::Discover(discovered_node_index, time) => {
+          let node = self
+            .endpoint_projection
+            .graph
+            .node_weight(discovered_node_index);
+          if let Some(Node::PathComponent(path_id, _)) = node {
+            path_ids_by_index.insert(discovered_node_index, path_id.clone());
+            children_path_ids_by_path_id.insert(path_id.clone(), vec![]);
+            Control::Continue
+          } else {
+            Control::Prune // Stop going down this branch when not a path component
+          }
+        }
+        // discovered an outgoing edge from an already discovered node
+        DfsEvent::TreeEdge(parent_node_index, child_node_index) => {
+          let child_node = self
+            .endpoint_projection
+            .graph
+            .node_weight(child_node_index)
+            .expect("target node should exists");
+
+          let path_id = path_ids_by_index
+            .get(&parent_node_index)
+            .expect("parent path node should already have been discovered");
+
+          match child_node {
+            Node::PathComponent(child_path_id, _) => {
+              let children_path_ids = children_path_ids_by_path_id
+                .get_mut(path_id)
+                .expect("parent should have created collection of child paths");
+              children_path_ids.push(child_path_id);
+              Control::Continue // we'll want to discover at the target edge as well
+            }
+            Node::HttpMethod(method) => {
+              let request_ids = self
+                .resolve_requests(path_id, method)
+                .expect("path should exist")
+                .map(|_| ());
+              let response_ids = self
+                .resolve_responses(path_id, method)
+                .expect("path should exist")
+                .map(|_| ());
+
+              if let Some(_) = request_ids.chain(response_ids).next() {
+                // found a request or response, path is being used
+                path_ids_with_endpoints.insert(path_id.clone());
+              }
+
+              Control::Prune // no more paths down this branch
+            }
+            _ => Control::Prune, // no more paths down this branch
+          }
+        }
+        DfsEvent::Finish(finished_node_index, time) => {
+          let is_root_node = *root_path_node_index == finished_node_index;
+          let path_id = path_ids_by_index
+            .get(&finished_node_index)
+            .expect("finished path node should already have been discovered");
+
+          let has_used_child = children_path_ids_by_path_id
+            .get(path_id)
+            .expect("collection of child paths should have been created during discovery")
+            .iter()
+            .any(|child_path_id| !unused_path_ids.contains(*child_path_id));
+
+          if !path_ids_with_endpoints.contains(path_id) && !has_used_child && !is_root_node {
+            unused_path_ids.insert(path_id.clone());
+            unused_path_ids_sorted.push(path_id.clone());
+          }
+
+          if is_root_node {
+            Control::Break(())
+          } else {
+            Control::Continue
+          }
+        }
+        _ => Control::Continue,
+      }
+    });
+
+    unused_path_ids_sorted.into_iter()
   }
 
   pub fn resolve_operations_by_request_method(
@@ -175,7 +281,7 @@ impl<'a> EndpointQueries<'a> {
   ) -> Option<impl Iterator<Item = (&ResponseId, &ResponseBodyDescriptor)>> {
     let response_nodes = self
       .endpoint_projection
-      .get_response_nodes(path_id, method)?;
+      .get_endpoint_response_nodes(path_id, method)?;
 
     Some(response_nodes.map(|node| match node {
       Node::Response(response_id, body_descriptor) => (response_id, body_descriptor),
@@ -292,6 +398,22 @@ impl<'a> EndpointQueries<'a> {
     })
   }
 
+  pub fn delete_path_commands(
+    &self,
+    path_id: &'a PathComponentId,
+  ) -> Option<impl Iterator<Item = EndpointCommand>> {
+    let path_descriptor = self
+      .endpoint_projection
+      .get_path_component_descriptor(path_id)?;
+    let command = if path_descriptor.is_parameter {
+      EndpointCommand::remove_path_parameter(path_id.clone())
+    } else {
+      EndpointCommand::remove_path_component(path_id.clone())
+    };
+
+    Some(std::iter::once(command))
+  }
+
   fn graph_get_index(&self, node_id: &str) -> Option<&petgraph::graph::NodeIndex> {
     self.endpoint_projection.node_id_to_index.get(node_id)
   }
@@ -333,6 +455,7 @@ mod test {
   use crate::events::SpecEvent;
   use crate::projections::SpecProjection;
   use crate::Aggregate;
+  use insta::assert_debug_snapshot;
   use petgraph::dot::Dot;
   use serde_json::json;
 
@@ -405,7 +528,72 @@ mod test {
   }
 
   #[test]
-  pub fn can_generate_delete_commands() {
+  pub fn resolve_path_can_resolves_root_path() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
+      {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "favourites" }},
+      {"PathComponentAdded": { "pathId": "path_3", "parentPathId": "root", "name": "authors" }},
+      {"PathComponentAdded": { "pathId": "path_4", "parentPathId": "path_3", "name": "dutch" }},
+      {"RequestAdded": { "requestId": "request_1", "pathId": "root", "httpMethod": "GET"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_1", "pathId": "root", "httpMethod": "GET", "httpStatusCode": 200 }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+
+    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+
+    assert_eq!(endpoint_queries.resolve_path("/").unwrap(), "root");
+  }
+
+  #[test]
+  pub fn resolve_path_should_resolve_against_an_empty_spec() {
+    let events: Vec<SpecEvent> =
+      serde_json::from_value(json!([])).expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+
+    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+
+    assert_eq!(endpoint_queries.resolve_path("/").unwrap(), "root");
+  }
+
+  #[test]
+  pub fn can_find_unused_paths() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
+      {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "favourites" }},
+      {"PathComponentAdded": { "pathId": "path_3", "parentPathId": "root", "name": "authors" }},
+      {"PathComponentAdded": { "pathId": "path_4", "parentPathId": "path_3", "name": "dutch" }},
+      {"PathParameterAdded":{"pathId":"path_parameter_1","parentPathId":"path_1","name":"postId"}},
+      {"ShapeAdded":{"shapeId":"shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"" }},
+      {"PathParameterShapeSet":{"pathId":"path_parameter_1","shapeDescriptor":{"shapeId":"shape_Ba53AWXhVW","isRemoved":false} }},
+
+      {"RequestAdded": { "requestId": "request_1", "pathId": "path_2", "httpMethod": "GET"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_1", "pathId": "path_2", "httpMethod": "GET", "httpStatusCode": 200 }},
+
+      {"RequestAdded": { "requestId": "request_2", "pathId": "path_1", "httpMethod": "GET"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_2", "pathId": "path_1", "httpMethod": "GET", "httpStatusCode": 200 }},
+
+      {"RequestRemoved": { "requestId": "request_2" }},
+      {"ResponseRemoved": { "responseId": "response_2" }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+
+    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+
+    let unused_path_ids = endpoint_queries.resolve_unused_paths().collect::<Vec<_>>();
+
+    assert_debug_snapshot!("can_find_unused_paths__unused_paths", unused_path_ids);
+  }
+
+  #[test]
+  pub fn can_generate_delete_endpoint_commands() {
     let events: Vec<SpecEvent> = serde_json::from_value(json!([
       {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
       {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "favourites" }},
@@ -447,9 +635,51 @@ mod test {
 
     // dbg!(Dot::with_config(&updated_spec.endpoint().graph, &[]));
 
-    // TODO: enable these assertions as the EndpointProjection handles the resulting events
     assert_eq!(remaining_requests.len(), 0);
     assert_eq!(remaining_responses.len(), 0);
+  }
+
+  #[test]
+  pub fn can_generate_delete_path_commands() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "posts" }},
+      {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "favourites" }},
+      {"PathComponentAdded": { "pathId": "path_3", "parentPathId": "root", "name": "authors" }},
+
+      {"PathParameterAdded":{"pathId":"path_parameter_1","parentPathId":"path_1","name":"postId"}},
+      {"ShapeAdded":{"shapeId":"shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"" }},
+      {"PathParameterShapeSet":{"pathId":"path_parameter_1","shapeDescriptor":{"shapeId":"shape_Ba53AWXhVW","isRemoved":false} }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+
+    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+
+    let subjects = [("path_3", "/authors"), ("path_parameter_1", "/posts/1")];
+
+    let delete_path_commands = subjects
+      .iter()
+      .flat_map(|(subject_path_id, _)| {
+        endpoint_queries
+          .delete_path_commands(&String::from(*subject_path_id))
+          .expect("delete commands are generated for existing path")
+      })
+      .map(|endpoint_command| SpecCommand::from(endpoint_command))
+      .collect::<Vec<_>>();
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), delete_path_commands);
+    let updated_queries = EndpointQueries::new(&updated_spec.endpoint());
+    let remaining_paths = subjects
+      .iter()
+      .filter_map(|(_, subject_path)| updated_queries.resolve_path(*subject_path))
+      .collect::<Vec<_>>();
+
+    // dbg!(Dot::with_config(&updated_spec.endpoint().graph, &[]));
+
+    // TODO: enable assertion once projection is updated
+    assert_eq!(remaining_paths.len(), 0);
   }
 
   fn assert_valid_commands(

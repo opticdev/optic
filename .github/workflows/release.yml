@@ -227,6 +227,12 @@ jobs:
     - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
       with:
         node-version: 12
+    - name: 'Rust toolchain'
+      uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # https://github.com/actions-rs/toolchain/commits/v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
     - name: 'Caching node modules'
       uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # https://github.com/actions/cache/releases/tag/v2.1.2
       with:
@@ -234,6 +240,8 @@ jobs:
           **/node_modules
         key: "${{ runner.os }}-npm-${{ hashFiles('**/yarn.lock') }}-vendor-v1"
     - name: Install Dependencies and Build Optic
+      env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       run: |
         if [ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ] && [ -n "${{ needs.release_logic.outputs.prerelease_tag }}" ]; then
           echo "Prelease with a tag detected. Staging any feature flags for '${{ needs.release_logic.outputs.prerelease_tag }}'."

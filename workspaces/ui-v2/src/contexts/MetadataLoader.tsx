@@ -24,7 +24,7 @@ export const MetadataLoader: FC = ({ children }) => {
   }
   if (result.error) {
     console.error(result.error);
-    return <>error</>;
+    return <>error loading app metadata</>;
   }
 
   return <>{children}</>;

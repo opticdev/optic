@@ -1,3 +1,5 @@
+import { ChangelogCategory } from '<src>/hooks/useEndpointsChangelog';
+
 export interface IPathParameter {
   id: string;
   name: string;
@@ -13,5 +15,9 @@ export interface IEndpoint {
   description: string;
   fullPath: string;
   pathParameters: IPathParameter[];
-  group: string;
+  isRemoved: boolean;
+}
+
+export interface IEndpointWithChanges extends IEndpoint {
+  changes: ChangelogCategory | null;
 }

@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SpectacleInput, IForkableSpectacle } from '@useoptic/spectacle';
-
+import * as Sentry from '@sentry/react';
 import { AsyncStatus } from '<src>/types';
 
 export const SpectacleContext = React.createContext<IForkableSpectacle | null>(
@@ -39,19 +39,22 @@ export function useSpectacleQuery<Result, Input = {}>(
   const stringInput = JSON.stringify(input);
   useEffect(() => {
     async function task() {
-      const result = await spectacle.query<Result, Input>(input);
-      if (result.errors) {
-        console.error(result.errors);
-        debugger;
-        setResult({
-          loading: false,
-          error: new Error(result.errors as any),
-        });
-      } else {
+      try {
+        const result = await spectacle.query<Result, Input>(input);
+        if (result.errors) {
+          throw new Error(JSON.stringify(result.errors));
+        }
         setResult({
           loading: false,
           // We've explicitly checked that there are no errors
           data: result.data!,
+        });
+      } catch (e) {
+        console.error(e);
+        Sentry.captureException(e);
+        setResult({
+          loading: false,
+          error: new Error(e),
         });
       }
     }
@@ -70,15 +73,18 @@ export function useSpectacleCommand(): <Result, Input = {}>(
 
   return useCallback(
     async <Result, Input>(input: SpectacleInput<Input>): Promise<Result> => {
-      const result = await spectacle.mutate<Result, Input>(input);
-      if (result.errors) {
-        console.error(result.errors);
-        debugger;
-        throw new Error('Error using spectacle command!');
+      try {
+        const result = await spectacle.mutate<Result, Input>(input);
+        if (result.errors) {
+          console.error(result.errors);
+          throw new Error(JSON.stringify(result.errors));
+        }
+        return result.data!;
+      } catch (e) {
+        console.error(e);
+        Sentry.captureException(e);
+        throw new Error(e);
       }
-
-      // We've explicitly checked that there are no errors
-      return result.data!;
     },
     [spectacle]
   );

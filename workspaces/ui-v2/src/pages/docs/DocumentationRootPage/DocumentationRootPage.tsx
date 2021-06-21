@@ -1,7 +1,7 @@
-import React, { FC, useMemo } from 'react';
-import groupBy from 'lodash.groupby';
-import { CenteredColumn, Loading, PageLayout } from '<src>/components';
+import React, { FC } from 'react';
 import { Box, List, Typography } from '@material-ui/core';
+
+import { CenteredColumn, Loading, PageLayout } from '<src>/components';
 import {
   useAppSelector,
   useAppDispatch,
@@ -9,7 +9,9 @@ import {
   selectors,
 } from '<src>/store';
 import { useRunOnKeypress } from '<src>/hooks/util';
+import { useGroupedEndpoints } from '<src>/hooks/useGroupedEndpoints';
 import { IEndpoint } from '<src>/types';
+
 import { DocsPageAccessoryNavigation } from '../components';
 import { EndpointRow } from './EndpointRow';
 
@@ -37,10 +39,13 @@ export function DocumentationRootPage() {
     );
   };
 
-  const grouped = useMemo(() => groupBy(endpointsState.data || [], 'group'), [
-    endpointsState,
-  ]);
-  const tocKeys = Object.keys(grouped).sort();
+  const filteredEndpoints = selectors.filterRemovedEndpoints(
+    endpointsState.data || []
+  );
+
+  const groupedEndpoints = useGroupedEndpoints(filteredEndpoints);
+
+  const tocKeys = Object.keys(groupedEndpoints).sort();
   const onKeyPress = useRunOnKeypress(
     () => {
       if (isEditing && pendingCount > 0) {
@@ -87,7 +92,7 @@ export function DocumentationRootPage() {
               >
                 {tocKey}
               </Typography>
-              {grouped[tocKey].map((endpoint: IEndpoint) => (
+              {groupedEndpoints[tocKey].map((endpoint: IEndpoint) => (
                 <EndpointRow
                   endpoint={endpoint}
                   key={endpoint.pathId + endpoint.method}

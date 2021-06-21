@@ -6,6 +6,7 @@ import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import EditIcon from '@material-ui/icons/Edit';
 
 import { CommitMessageModal } from '<src>/components';
+import { useAnalytics } from '<src>/contexts/analytics';
 import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
 import { useSpectacleContext } from '<src>/contexts/spectacle-provider';
 import {
@@ -20,9 +21,13 @@ export function EditContributionsButton() {
   const history = useHistory();
   const documentationPageRoute = useDocumentationPageLink();
   const spectacle = useSpectacleContext();
+  const analytics = useAnalytics();
 
   const isEditing = useAppSelector(
     (state) => state.documentationEdits.isEditing
+  );
+  const specId = useAppSelector(
+    (state) => state.metadata.data?.specificationId!
   );
   const commitModalOpen = useAppSelector(
     (state) => state.documentationEdits.commitModalOpen
@@ -62,6 +67,11 @@ export function EditContributionsButton() {
       })
     )
       .then(() => {
+        analytics.userSavedDocChanges(
+          deletedEndpointCount,
+          pendingCount - deletedEndpointCount,
+          specId
+        );
         if (shouldRedirect) {
           history.push(documentationPageRoute.linkTo());
         }

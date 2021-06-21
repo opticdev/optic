@@ -126,6 +126,10 @@ impl SpecCommandHandler {
   pub fn with_command_context(&mut self, command_context: CommandContext) {
     self.command_context = command_context
   }
+
+  pub fn spec_projection(&self) -> &'_ SpecProjection {
+    &self.spec_projection
+  }
 }
 
 impl Aggregate for SpecCommandHandler {

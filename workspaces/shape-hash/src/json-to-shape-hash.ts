@@ -76,14 +76,18 @@ function toJson(item: any) {
   switch (item.type) {
     case types.OBJECT:
       const newObj: Record<string, any> = {};
-      if (item.hasOwnProperty('fields')) { 
+      if (item.hasOwnProperty('fields')) {
         item.fields.forEach(({ key, hash }: any) => {
           newObj[key] = toJson(hash);
         });
       }
       return newObj;
     case types.ARRAY:
-      return [...item.items.map(toJson)];
+      if (item.hasOwnProperty('items')) {
+        return [...item.items.map(toJson)];
+      } else {
+        return [];
+      }
     case types.STRING:
       return 'string';
     case types.NUMBER:

@@ -3,9 +3,10 @@ import {
   createAsyncThunk,
   SerializedError,
 } from '@reduxjs/toolkit';
+import * as Sentry from '@sentry/react';
+
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { AsyncStatus, IEndpoint } from '<src>/types';
-import { findLongestStartingSubstring } from '<src>/utils';
 
 export const AllEndpointsQuery = `{
   requests {
@@ -18,9 +19,11 @@ export const AllEndpointsQuery = `{
       name
       isParameterized
       contributions
+      isRemoved
     }
     method
     pathContributions
+    isRemoved
   }
 }`;
 
@@ -35,29 +38,21 @@ export type EndpointQueryResults = {
       name: string;
       isParameterized: boolean;
       contributions: Record<string, string>;
+      isRemoved: boolean;
     }[];
     method: string;
     pathContributions: Record<string, string>;
+    isRemoved: boolean;
   }[];
 };
 
 export const endpointQueryResultsToJson = ({
   requests,
-}: EndpointQueryResults) => {
-  const commonStart =
-    requests.length > 0
-      ? findLongestStartingSubstring(
-          requests.map((req) => req.absolutePathPatternWithParameterNames)
-        )
-      : '/';
-
-  return requests.map((request) => ({
+}: EndpointQueryResults) =>
+  requests.map((request) => ({
     pathId: request.pathId,
     method: request.method,
     fullPath: request.absolutePathPatternWithParameterNames,
-    group: request.absolutePathPatternWithParameterNames
-      .substring(commonStart.length)
-      .split('/')[0],
     pathParameters: request.pathComponents.map((path) => ({
       id: path.id,
       name: path.name,
@@ -67,22 +62,28 @@ export const endpointQueryResultsToJson = ({
     })),
     description: request.pathContributions.description || '',
     purpose: request.pathContributions.purpose || '',
+    isRemoved: request.isRemoved,
   }));
-};
 
 const fetchEndpoints = createAsyncThunk<
   EndpointQueryResults,
   { spectacle: IForkableSpectacle }
 >('FETCH_ENDPOINTS', async ({ spectacle }) => {
-  const results = await spectacle.query<EndpointQueryResults>({
-    query: AllEndpointsQuery,
-    variables: {},
-  });
-  if (results.errors) {
-    console.error(results.errors);
-    throw new Error();
+  try {
+    const results = await spectacle.query<EndpointQueryResults>({
+      query: AllEndpointsQuery,
+      variables: {},
+    });
+    if (results.errors) {
+      console.error(results.errors);
+      throw new Error(JSON.stringify(results.errors));
+    }
+    return results.data!;
+  } catch (e) {
+    console.error(e);
+    Sentry.captureException(e);
+    throw e;
   }
-  return results.data!;
 });
 
 const initialState: {

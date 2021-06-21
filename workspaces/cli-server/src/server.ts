@@ -159,7 +159,7 @@ class CliServer {
       bodyParser.json({ limit: '5kb' }),
       async (req, res: express.Response) => {
         const { path, taskConfig, captureId } = req.body;
-        if (captureId && taskConfig) {
+        if (captureId) {
           const paths = await getPathsRelativeToCwd(path);
           const { capturesPath } = paths;
           const capturesHelpers = new CapturesHelpers(capturesPath);
