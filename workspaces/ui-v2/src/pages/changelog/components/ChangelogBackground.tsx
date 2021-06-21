@@ -5,7 +5,7 @@ import {
   ChangedYellowBackground,
   RemovedRed,
   RemovedRedBackground,
-} from '<src>/constants/theme';
+} from '<src>/styles';
 
 export const useChangelogStyles = makeStyles(() => ({
   added: {

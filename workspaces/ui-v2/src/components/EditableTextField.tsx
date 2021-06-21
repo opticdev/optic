@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FC } from 'react';
 import { TextField, Typography } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { OpticBlueReadable } from '<src>/constants/theme';
+import { OpticBlueReadable } from '<src>/styles';
 
 type EditableTextFieldProps = {
   isEditing: boolean;

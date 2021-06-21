@@ -6,13 +6,14 @@ import {
 } from 'react-router-dom';
 import classNames from 'classnames';
 
+import { CenteredColumn, EndpointName, PageLayout } from '<src>/components';
 import {
-  CenteredColumn,
-  EndpointName,
-  Loading,
-  PageLayout,
-} from '<src>/components';
-import { Box, List, ListItem, Typography } from '@material-ui/core';
+  Box,
+  List,
+  ListItem,
+  LinearProgress,
+  Typography,
+} from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
 import { useEndpointsChangelog } from '<src>/hooks/useEndpointsChangelog';
@@ -59,7 +60,7 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
   const styles = useStyles();
 
   if (endpointsState.loading) {
-    return <Loading />;
+    return <LinearProgress variant="indeterminate" />;
   }
 
   if (tocKeys.length === 0) {

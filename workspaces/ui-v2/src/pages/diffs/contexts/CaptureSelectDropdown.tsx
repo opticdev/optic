@@ -6,18 +6,12 @@ import Menu from '@material-ui/core/Menu';
 import { useParams } from 'react-router-dom';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import MenuItem from '@material-ui/core/MenuItem';
-// @ts-ignore
-import TimeAgo from 'javascript-time-ago';
-// @ts-ignore
-import en from 'javascript-time-ago/locale/en';
 import { ICapture } from '@useoptic/spectacle';
 import { useHistory } from 'react-router-dom';
 import { useCaptures } from '<src>/hooks/useCapturesHook';
-import { OpticBlueReadable } from '<src>/constants/theme';
+import { OpticBlueReadable } from '<src>/styles';
 import { useDiffEnvironmentsRoot } from '<src>/components';
-
-TimeAgo.addLocale(en);
-const timeAgo = new TimeAgo('en-US');
+import { formatTimeAgo } from '<src>/utils';
 
 export function CaptureSelectDropdown(props: any) {
   const classes = useStyles();
@@ -44,7 +38,7 @@ export function CaptureSelectDropdown(props: any) {
     <Typography variant="body2" style={{ textTransform: 'none' }}>
       Local Capture:{' '}
       {selectedCapture.startedAt &&
-        timeAgo.format(new Date(selectedCapture.startedAt))}
+        formatTimeAgo(new Date(selectedCapture.startedAt))}
     </Typography>
   ) : (
     <Typography variant="body2" style={{ textTransform: 'none' }}>
@@ -106,7 +100,7 @@ function CaptureMenuItem({ capture }: { capture: ICapture }) {
         }}
       >
         Local Capture:{' '}
-        {capture.startedAt && timeAgo.format(new Date(capture.startedAt))}
+        {capture.startedAt && formatTimeAgo(new Date(capture.startedAt))}
       </Typography>
     </Box>
   );

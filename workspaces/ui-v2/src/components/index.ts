@@ -9,3 +9,5 @@ export * from './layouts';
 export * from './loaders';
 export * from './navigation';
 export * from './ShapeRenderer';
+export * from './Page';
+export * from './LightToolTip';

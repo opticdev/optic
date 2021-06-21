@@ -10,7 +10,7 @@ import {
 } from '<src>/components';
 import { EndpointTOC } from '<src>/pages/docs/components/EndpointTOC';
 import { CodeBlock } from '<src>/pages/docs/components/BodyRender';
-import { SubtleBlueBackground } from '<src>/constants/theme';
+import { SubtleBlueBackground } from '<src>/styles';
 import { OneColumnBody } from '<src>/pages/docs/components/RenderBody';
 import { IParsedLocation } from '<src>/lib/Interfaces';
 import { HighlightedLocation } from '<src>/pages/diffs/components/HighlightedLocation';

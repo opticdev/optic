@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { LightBlueBackground, OpticBlueReadable } from '<src>/constants/theme';
+import { LightBlueBackground, OpticBlueReadable } from '<src>/styles';
 import { useHistory } from 'react-router-dom';
 
 export type NavButtonProps = {

@@ -1,1 +1,41 @@
-{"http":{"response":{"body":{"content":"{\n  \"slideshow\": {\n    \"author\": \"Yours Truly\", \n    \"date\": \"date of publication\", \n    \"slides\": [\n      {\n        \"title\": \"Wake up to WonderWidgets!\", \n        \"type\": \"all\"\n      }, \n      {\n        \"items\": [\n          \"Why <em>WonderWidgets</em> are great\", \n          \"Who <em>buys</em> WonderWidgets\"\n        ], \n        \"title\": \"Overview\", \n        \"type\": \"all\"\n      }\n    ], \n    \"title\": \"Sample Slide Show\"\n  }\n}\n","bytes":429},"status_code":200,"headers":{"x-powered-by":"Express","date":"Fri, 18 Jun 2021 15:15:29 GMT","content-type":"application/json","content-length":"429","connection":"close","server":"gunicorn/19.9.0","access-control-allow-origin":"*","access-control-allow-credentials":"true"}},"request":{"body":{"content":{}},"method":"GET","headers":{"user-agent":"PostmanRuntime/7.28.0","accept":"*/*","postman-token":"966527d8-8159-4098-995f-f2bd54927642","host":"localhost:3000","accept-encoding":"gzip, deflate, br","connection":"keep-alive"}},"version":"1.1"},"url":{"full":"http://localhost:3000/json","path":"/json","domain":"localhost"},"client":{"address":"::1","ip":"::1","port":60901},"user_agent":{"original":"PostmanRuntime/7.28.0"}}
+{
+  "http": {
+    "response": {
+      "body": {
+        "content": "{\n  \"slideshow\": {\n    \"author\": \"Yours Truly\", \n    \"date\": \"date of publication\", \n    \"slides\": [\n      {\n        \"title\": \"Wake up to WonderWidgets!\", \n        \"type\": \"all\"\n      }, \n      {\n        \"items\": [\n          \"Why <em>WonderWidgets</em> are great\", \n          \"Who <em>buys</em> WonderWidgets\"\n        ], \n        \"title\": \"Overview\", \n        \"type\": \"all\"\n      }\n    ], \n    \"title\": \"Sample Slide Show\"\n  }\n}\n",
+        "bytes": 429
+      },
+      "status_code": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "date": "Fri, 18 Jun 2021 15:15:29 GMT",
+        "content-type": "application/json",
+        "content-length": "429",
+        "connection": "close",
+        "server": "gunicorn/19.9.0",
+        "access-control-allow-origin": "*",
+        "access-control-allow-credentials": "true"
+      }
+    },
+    "request": {
+      "body": { "content": {} },
+      "method": "GET",
+      "headers": {
+        "user-agent": "PostmanRuntime/7.28.0",
+        "accept": "*/*",
+        "postman-token": "966527d8-8159-4098-995f-f2bd54927642",
+        "host": "localhost:3000",
+        "accept-encoding": "gzip, deflate, br",
+        "connection": "keep-alive"
+      }
+    },
+    "version": "1.1"
+  },
+  "url": {
+    "full": "http://localhost:3000/json",
+    "path": "/json",
+    "domain": "localhost"
+  },
+  "client": { "address": "::1", "ip": "::1", "port": 60901 },
+  "user_agent": { "original": "PostmanRuntime/7.28.0" }
+}

@@ -21,7 +21,7 @@ import {
   CapturePageWithoutDiffOrRedirect,
   CapturePageWithDiff,
 } from './CapturePage';
-import { LoadingPage } from '<src>/components';
+import { PageLayout } from '<src>/components';
 import { LoadingDiffReview } from '<src>/pages/diffs/components/LoadingDiffReview';
 import { usePaths } from '<src>/hooks/usePathsHook';
 
@@ -54,9 +54,9 @@ export function DiffReviewPages(props: any) {
 
   if (isLoading) {
     return (
-      <LoadingPage>
+      <PageLayout>
         <LoadingDiffReview />
-      </LoadingPage>
+      </PageLayout>
     );
   }
 
