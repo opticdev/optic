@@ -157,8 +157,12 @@ export const ShareModal: React.FC<{
       <div className={styles.root}>
         <div className={styles.item}>
           <Typography variant="h5" color="textPrimary">
-            Share with your{' '}
-            {shareType === ShareTarget.TEAM ? 'team' : 'customer'}
+            Share{' '}
+            {shareType === ShareTarget.TEAM
+              ? 'with your team'
+              : shareType === ShareTarget.CONSUMER
+              ? 'with your customer'
+              : 'link'}
           </Typography>
         </div>
         {shareUrl ? (
