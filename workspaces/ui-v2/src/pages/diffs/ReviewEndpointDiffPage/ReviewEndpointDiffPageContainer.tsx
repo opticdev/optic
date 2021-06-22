@@ -1,7 +1,7 @@
 import React, { FC, useContext } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { IForkableSpectacle } from '@useoptic/spectacle';
-
+import { LinearProgress } from '@material-ui/core';
 import { useEndpointDiffs } from '<src>/pages/diffs/hooks/useEndpointDiffs';
 import {
   useNewBodyDiffInterpretations,
@@ -9,7 +9,7 @@ import {
 } from '<src>/pages/diffs/hooks/useDiffInterpretations';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { SpectacleContext } from '<src>/contexts/spectacle-provider';
-import { Loading, PageLayout } from '<src>/components';
+import { PageLayout } from '<src>/components';
 import { DiffAccessoryNavigation } from '<src>/pages/diffs/components/DiffAccessoryNavigation';
 import { useAppSelector } from '<src>/store';
 
@@ -44,8 +44,8 @@ export const ReviewEndpointDiffContainer: FC<
 
   return (
     <PageLayout AccessoryNavigation={DiffAccessoryNavigation}>
-      {!endpoint || shapeDiffs.loading ? (
-        <Loading />
+      {!endpoint || shapeDiffs.loading || newRegionDiffs.loading ? (
+        <LinearProgress variant="indeterminate" />
       ) : (
         <ReviewEndpointDiffPage
           endpoint={endpoint}

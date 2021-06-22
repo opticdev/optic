@@ -7,6 +7,7 @@ import {
   Redirect,
   Switch,
 } from 'react-router-dom';
+import { LinearProgress } from '@material-ui/core';
 import { AsyncStatus } from '<src>/types';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Provider as BaseUrlProvider } from '<src>/hooks/useBaseUrl';
@@ -15,7 +16,8 @@ import { SpectacleStore } from '<src>/contexts/spectacle-provider';
 import { DiffReviewEnvironments } from '<src>/pages/diffs/ReviewDiffPages';
 import { CapturesServiceStore } from '<src>/hooks/useCapturesHook';
 import { ChangelogPages } from '<src>/pages/changelog/ChangelogPages';
-import { Loading, DebugOpticComponent } from '<src>/components';
+import { ChangelogHistory } from '<src>/pages/changelogHistory';
+import { DebugOpticComponent } from '<src>/components';
 import {
   AppConfigurationStore,
   OpticAppConfig,
@@ -43,9 +45,7 @@ import { SpecRepositoryStore } from '<src>/contexts/SpecRepositoryContext';
 const appConfig: OpticAppConfig = {
   config: {
     navigation: {
-      showChangelog: true,
       showDiff: true,
-      showDocs: true,
     },
     analytics: {
       enabled: Boolean(process.env.REACT_APP_ENABLE_ANALYTICS === 'yes'),
@@ -78,12 +78,14 @@ const AUTH0_CLIENT_ID =
   process.env.REACT_APP_AUTH0_CLIENT_ID || 'S7AeH5IQweLb2KHNoyfQfKBtkroE1joF';
 
 export default function LocalCli() {
+  const shouldRenderChangelogHistory =
+    process.env.REACT_APP_FF_SHOW_REVERT_COMMIT === 'true';
   const match = useRouteMatch();
   const params = useParams<{ specId: string }>();
   const { specId } = params;
   const { loading, error, data } = useLocalCliServices(specId);
   if (loading) {
-    return <Loading />;
+    return <LinearProgress variant="indeterminate" />;
   }
   if (error) {
     return <div>error :(</div>;
@@ -100,38 +102,38 @@ export default function LocalCli() {
             <ReduxProvider store={store}>
               <SpecRepositoryStore specRepo={data.specRepository}>
                 <BaseUrlProvider value={{ url: match.url }}>
-                  <Auth0Provider
-                    domain={AUTH0_DOMAIN}
-                    clientId={AUTH0_CLIENT_ID}
-                    audience={appConfig.config.backendApi.domain}
+                  <AnalyticsStore
+                    getMetadata={getMetadata(() =>
+                      data.configRepository.getApiName()
+                    )}
+                    initialize={initialize}
+                    track={track}
                   >
-                    <AnalyticsStore
-                      getMetadata={getMetadata(() =>
-                        data.configRepository.getApiName()
-                      )}
-                      initialize={initialize}
-                      track={track}
-                    >
-                      <DebugOpticComponent />
-                      <MetadataLoader>
-                        <Switch>
+                    <DebugOpticComponent />
+                    <MetadataLoader>
+                      <Switch>
+                        {shouldRenderChangelogHistory && (
                           <Route
-                            path={`${match.path}/changes-since/:batchId`}
-                            component={ChangelogPages}
+                            path={`${match.path}/changelog`}
+                            component={ChangelogHistory}
                           />
-                          <Route
-                            path={`${match.path}/documentation`}
-                            component={DocumentationPages}
-                          />
-                          <Route
-                            path={`${match.path}/diffs`}
-                            component={DiffReviewEnvironments}
-                          />
-                          <Redirect to={`${match.path}/documentation`} />
-                        </Switch>
-                      </MetadataLoader>
-                    </AnalyticsStore>
-                  </Auth0Provider>
+                        )}
+                        <Route
+                          path={`${match.path}/changes-since/:batchId`}
+                          component={ChangelogPages}
+                        />
+                        <Route
+                          path={`${match.path}/documentation`}
+                          component={DocumentationPages}
+                        />
+                        <Route
+                          path={`${match.path}/diffs`}
+                          component={DiffReviewEnvironments}
+                        />
+                        <Redirect to={`${match.path}/documentation`} />
+                      </Switch>
+                    </MetadataLoader>
+                  </AnalyticsStore>
                 </BaseUrlProvider>
               </SpecRepositoryStore>
             </ReduxProvider>

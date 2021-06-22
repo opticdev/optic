@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
+import * as Sentry from '@sentry/react';
 import {
   AddContribution,
   CQRSCommand,
@@ -23,30 +24,36 @@ const fetchDeleteEndpointCommands = async (
   pathId: string,
   method: string
 ): Promise<CQRSCommand[]> => {
-  const results = await spectacle.query<
-    EndpointProjection,
-    {
-      pathId: string;
-      method: string;
-    }
-  >({
-    query: `
-    query X($pathId: ID, $method: String) {
-      endpoint(pathId: $pathId, method: $method) {
-        commands {
-          remove
-        }
+  try {
+    const results = await spectacle.query<
+      EndpointProjection,
+      {
+        pathId: string;
+        method: string;
       }
-    }`,
-    variables: {
-      pathId,
-      method,
-    },
-  });
-  if (results.errors) {
-    throw new Error();
+    >({
+      query: `
+      query X($pathId: ID, $method: String) {
+        endpoint(pathId: $pathId, method: $method) {
+          commands {
+            remove
+          }
+        }
+      }`,
+      variables: {
+        pathId,
+        method,
+      },
+    });
+    if (results.errors) {
+      throw new Error();
+    }
+    return results.data!.endpoint.commands.remove;
+  } catch (e) {
+    console.error(e);
+    Sentry.captureException(e);
+    throw e;
   }
-  return results.data!.endpoint.commands.remove;
 };
 
 export const saveDocumentationChanges = createAsyncThunk<
@@ -71,12 +78,16 @@ export const saveDocumentationChanges = createAsyncThunk<
     const deleteCommands: CQRSCommand[] = (
       await Promise.all(
         deletedEndpoints.map(({ pathId, method }) =>
-          fetchDeleteEndpointCommands(spectacle, pathId, method)
+          fetchDeleteEndpointCommands(
+            spectacle,
+            pathId,
+            method
+          ).then((deleteCommands) =>
+            deleteCommands.concat([PrunePathComponents()])
+          )
         )
       )
-    )
-      .flatMap((x) => x)
-      .concat([PrunePathComponents()]);
+    ).flatMap((x) => x);
 
     const validContributions = getValidContributions(state);
 
@@ -92,34 +103,40 @@ export const saveDocumentationChanges = createAsyncThunk<
     const commands = [...deleteCommands, ...contributionCommands];
 
     if (commands.length > 0) {
-      await spectacle.mutate({
-        query: `
-      mutation X(
-        $commands: [JSON],
-        $batchCommitId: ID,
-        $commitMessage: String,
-        $clientId: ID,
-        $clientSessionId: ID
-      ) {
-        applyCommands(
-          commands: $commands,
-          batchCommitId: $batchCommitId,
-          commitMessage: $commitMessage,
-          clientId: $clientId,
-          clientSessionId: $clientSessionId
-        ) {
-          batchCommitId
-        }
+      try {
+        await spectacle.mutate({
+          query: `
+          mutation X(
+            $commands: [JSON],
+            $batchCommitId: ID,
+            $commitMessage: String,
+            $clientId: ID,
+            $clientSessionId: ID
+          ) {
+            applyCommands(
+              commands: $commands,
+              batchCommitId: $batchCommitId,
+              commitMessage: $commitMessage,
+              clientId: $clientId,
+              clientSessionId: $clientSessionId
+            ) {
+              batchCommitId
+            }
+          }
+        `,
+          variables: {
+            commands,
+            commitMessage,
+            batchCommitId: uuidv4(),
+            clientId,
+            clientSessionId,
+          },
+        });
+      } catch (e) {
+        console.error(e);
+        Sentry.captureException(e);
+        throw e;
       }
-      `,
-        variables: {
-          commands,
-          commitMessage,
-          batchCommitId: uuidv4(),
-          clientId,
-          clientSessionId,
-        },
-      });
     }
   }
 );

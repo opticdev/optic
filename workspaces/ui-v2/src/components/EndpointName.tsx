@@ -1,7 +1,7 @@
 import React from 'react';
 import padLeft from 'pad-left';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { methodColorsDark } from '<src>/constants/theme';
+import { methodColorsDark } from '<src>/styles';
 
 export type EndpointNameProps = {
   method: string;

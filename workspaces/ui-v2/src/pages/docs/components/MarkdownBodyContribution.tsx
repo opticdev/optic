@@ -4,7 +4,7 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { TextField } from '@material-ui/core';
 import classNames from 'classnames';
 
-import { OpticBlueReadable } from '<src>/constants/theme';
+import { OpticBlueReadable } from '<src>/styles';
 import ReactMarkdown from 'react-markdown';
 import {
   useAppSelector,

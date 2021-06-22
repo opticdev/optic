@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { IconButton, ListItem, Checkbox } from '@material-ui/core';
-import { methodColorsDark, primary } from '<src>/constants/theme';
+import { methodColorsDark, primary } from '<src>/styles';
 import AddIcon from '@material-ui/icons/Add';
 import padLeft from 'pad-left';
-import { LightTooltip } from '<src>/components/navigation/LightToolTip';
+import { LightTooltip } from '<src>/components';
 import classNames from 'classnames';
 import ClearIcon from '@material-ui/icons/Clear';
 import isEqual from 'lodash.isequal';

@@ -1,8 +1,7 @@
-import React, { FC, useMemo } from 'react';
-import groupBy from 'lodash.groupby';
-import { Box, List, Typography } from '@material-ui/core';
+import React, { FC } from 'react';
+import { Box, List, LinearProgress, Typography } from '@material-ui/core';
 
-import { CenteredColumn, Loading, PageLayout } from '<src>/components';
+import { CenteredColumn, PageLayout } from '<src>/components';
 import {
   useAppSelector,
   useAppDispatch,
@@ -10,7 +9,9 @@ import {
   selectors,
 } from '<src>/store';
 import { useRunOnKeypress } from '<src>/hooks/util';
+import { useGroupedEndpoints } from '<src>/hooks/useGroupedEndpoints';
 import { IEndpoint } from '<src>/types';
+
 import { DocsPageAccessoryNavigation } from '../components';
 import { EndpointRow } from './EndpointRow';
 
@@ -42,10 +43,9 @@ export function DocumentationRootPage() {
     endpointsState.data || []
   );
 
-  const grouped = useMemo(() => groupBy(filteredEndpoints, 'group'), [
-    filteredEndpoints,
-  ]);
-  const tocKeys = Object.keys(grouped).sort();
+  const groupedEndpoints = useGroupedEndpoints(filteredEndpoints);
+
+  const tocKeys = Object.keys(groupedEndpoints).sort();
   const onKeyPress = useRunOnKeypress(
     () => {
       if (isEditing && pendingCount > 0) {
@@ -59,7 +59,7 @@ export function DocumentationRootPage() {
   );
 
   if (endpointsState.loading) {
-    return <Loading />;
+    return <LinearProgress variant="indeterminate" />;
   }
 
   if (tocKeys.length === 0) {
@@ -92,7 +92,7 @@ export function DocumentationRootPage() {
               >
                 {tocKey}
               </Typography>
-              {grouped[tocKey].map((endpoint: IEndpoint) => (
+              {groupedEndpoints[tocKey].map((endpoint: IEndpoint) => (
                 <EndpointRow
                   endpoint={endpoint}
                   key={endpoint.pathId + endpoint.method}

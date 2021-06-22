@@ -1,3 +1,3 @@
-export * from './FullPageLoader';
-export * from './Loading';
+export * from './Loaders';
+export * from './Errors';
 export * from './SpinningOpticLogo';

@@ -3,7 +3,7 @@ import {
   AddedGreenBackground,
   ChangedYellowBackground,
   RemovedRedBackground,
-} from '<src>/constants/theme';
+} from '<src>/styles';
 
 export const useSharedStyles = makeStyles((theme) => ({
   shapeFont: {

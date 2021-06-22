@@ -7,10 +7,11 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import { Provider as ReduxProvider } from 'react-redux';
+import { LinearProgress } from '@material-ui/core';
 import { Provider as BaseUrlProvider } from '<src>/hooks/useBaseUrl';
 import { DocumentationPages } from '<src>/pages/docs';
 import { SpectacleStore } from '<src>/contexts/spectacle-provider';
-import { Loading, DebugOpticComponent } from '<src>/components';
+import { DebugOpticComponent } from '<src>/components';
 import { DiffReviewEnvironments } from '<src>/pages/diffs/ReviewDiffPages';
 import {
   InMemoryOpticContextBuilder,
@@ -18,6 +19,7 @@ import {
 } from '@useoptic/spectacle/build/in-memory';
 import { CapturesServiceStore } from '<src>/hooks/useCapturesHook';
 import { ChangelogPages } from '<src>/pages/changelog/ChangelogPages';
+import { ChangelogHistory } from '<src>/pages/changelogHistory';
 import {
   AppConfigurationStore,
   OpticAppConfig,
@@ -38,9 +40,7 @@ import { SpecRepositoryStore } from '<src>/contexts/SpecRepositoryContext';
 const appConfig: OpticAppConfig = {
   config: {
     navigation: {
-      showChangelog: true,
       showDiff: true,
-      showDocs: true,
     },
     analytics: {
       enabled: false,
@@ -54,6 +54,8 @@ const appConfig: OpticAppConfig = {
 };
 
 export default function PublicExamples(props: { lookupDir: string }) {
+  const shouldRenderChangelogHistory =
+    process.env.REACT_APP_FF_SHOW_REVERT_COMMIT === 'true';
   const match = useRouteMatch();
   const params = useParams<{ exampleId: string }>();
 
@@ -80,7 +82,7 @@ export default function PublicExamples(props: { lookupDir: string }) {
 
   const { loading, error, data } = useInMemorySpectacle(task);
   if (loading) {
-    return <Loading />;
+    return <LinearProgress variant="indeterminate" />;
   }
   if (error) {
     return <div>error :(</div>;
@@ -109,6 +111,12 @@ export default function PublicExamples(props: { lookupDir: string }) {
                     <DebugOpticComponent />
                     <MetadataLoader>
                       <Switch>
+                        {shouldRenderChangelogHistory && (
+                          <Route
+                            path={`${match.path}/changelog`}
+                            component={ChangelogHistory}
+                          />
+                        )}
                         <Route
                           path={`${match.path}/changes-since/:batchId`}
                           component={ChangelogPages}

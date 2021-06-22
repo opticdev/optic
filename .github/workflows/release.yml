@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
       - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
         with:
-          node-version: 12
+          node-version: 14
       - name: Install Task
         run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
       - name: Set version output
@@ -111,7 +111,7 @@ jobs:
         uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
       - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
         with:
-          node-version: 12
+          node-version: 14
       - name: 'Determine version and archive name'
         shell: bash
         run: |
@@ -176,7 +176,7 @@ jobs:
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
       - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
         with:
-          node-version: 12
+          node-version: 14
       - name: 'Determine version and archive name'
         run: |
           OPTIC_VERSION=${{ needs.release_logic.outputs.version }}
@@ -226,7 +226,13 @@ jobs:
       #   ref: release
     - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
       with:
-        node-version: 12
+        node-version: 14
+    - name: 'Rust toolchain'
+      uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # https://github.com/actions-rs/toolchain/commits/v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
     - name: 'Caching node modules'
       uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # https://github.com/actions/cache/releases/tag/v2.1.2
       with:

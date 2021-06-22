@@ -13,7 +13,7 @@ import {
   FormGroup,
   Typography,
 } from '@material-ui/core';
-import { OpticBlueReadable, SubtleBlueBackground } from '<src>/constants/theme';
+import { OpticBlueReadable, SubtleBlueBackground } from '<src>/styles';
 import { namerForOptions } from '<src>/lib/quick-namer';
 import { ArrowRight } from '@material-ui/icons';
 

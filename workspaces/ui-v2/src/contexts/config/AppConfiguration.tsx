@@ -3,8 +3,6 @@ import invariant from 'invariant';
 
 interface IAppConfigurations {
   navigation: {
-    showDocs: boolean;
-    showChangelog: boolean;
     showDiff: boolean;
   };
   analytics:

@@ -4,6 +4,7 @@ import {
   SerializedError,
 } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
+import * as Sentry from '@sentry/react';
 
 import { Client } from '@useoptic/cli-client';
 import {
@@ -49,18 +50,23 @@ const fetchMetadata = createAsyncThunk(
         return result.data.metadata.id;
       });
 
-    const [apiName, clientAgent, specificationId] = await Promise.all([
-      apiNamePromise,
-      clientAgentPromise,
-      specMetadataPromise,
-    ]);
-
-    return {
-      apiName,
-      clientAgent,
-      specificationId,
-      sessionId: uuidv4(),
-    };
+    try {
+      const [apiName, clientAgent, specificationId] = await Promise.all([
+        apiNamePromise,
+        clientAgentPromise,
+        specMetadataPromise,
+      ]);
+      return {
+        apiName,
+        clientAgent,
+        specificationId,
+        sessionId: uuidv4(),
+      };
+    } catch (e) {
+      console.error(e);
+      Sentry.captureException(e);
+      throw e;
+    }
   }
 );
 

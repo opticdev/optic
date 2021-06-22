@@ -6,7 +6,7 @@ import {
   ChangedYellow,
   ChangedYellowBackground,
   RemovedRedBackground,
-} from '<src>/constants/theme';
+} from '<src>/styles';
 import { IChanges } from '../IChanges';
 import classNames from 'classnames';
 

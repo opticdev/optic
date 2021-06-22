@@ -59,11 +59,12 @@ export class OpticUIEvents {
 
   userSavedDocChanges(
     deletedEndpointCount: number,
-    contributionChangesCount: number
+    contributionChangesCount: number,
+    specId: string
   ) {
     this.dispatch({
       type: 'user_saved_documentation_changes',
-      data: { deletedEndpointCount, contributionChangesCount },
+      data: { deletedEndpointCount, contributionChangesCount, specId },
     });
   }
 

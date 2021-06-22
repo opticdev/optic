@@ -1,19 +1,19 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import {
   RouteComponentProps,
   useHistory,
   useRouteMatch,
 } from 'react-router-dom';
-import groupBy from 'lodash.groupby';
 import classNames from 'classnames';
 
+import { CenteredColumn, EndpointName, PageLayout } from '<src>/components';
 import {
-  CenteredColumn,
-  EndpointName,
-  Loading,
-  PageLayout,
-} from '<src>/components';
-import { Box, List, ListItem, Typography } from '@material-ui/core';
+  Box,
+  List,
+  ListItem,
+  LinearProgress,
+  Typography,
+} from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
 import { useEndpointsChangelog } from '<src>/hooks/useEndpointsChangelog';
@@ -24,6 +24,7 @@ import {
   ChangelogPageAccessoryNavigation,
   ValidateBatchId,
 } from './components';
+import { useGroupedEndpoints } from '<src>/hooks/useGroupedEndpoints';
 
 export const ChangelogListPage: FC<
   RouteComponentProps<{
@@ -52,15 +53,14 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
   const history = useHistory();
   const match = useRouteMatch();
 
-  const grouped = useMemo(() => groupBy(filteredAndMappedEndpoints, 'group'), [
-    filteredAndMappedEndpoints,
-  ]);
-  const tocKeys = Object.keys(grouped).sort();
+  const groupedEndpoints = useGroupedEndpoints(filteredAndMappedEndpoints);
+
+  const tocKeys = Object.keys(groupedEndpoints).sort();
   const changelogStyles = useChangelogStyles();
   const styles = useStyles();
 
   if (endpointsState.loading) {
-    return <Loading />;
+    return <LinearProgress variant="indeterminate" />;
   }
 
   if (tocKeys.length === 0) {
@@ -93,7 +93,7 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
               >
                 {tocKey}
               </Typography>
-              {grouped[tocKey].map(
+              {groupedEndpoints[tocKey].map(
                 (endpoint: IEndpointWithChanges, index: number) => {
                   return (
                     <ListItem
