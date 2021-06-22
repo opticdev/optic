@@ -102,38 +102,44 @@ export default function LocalCli() {
             <ReduxProvider store={store}>
               <SpecRepositoryStore specRepo={data.specRepository}>
                 <BaseUrlProvider value={{ url: match.url }}>
-                  <AnalyticsStore
-                    getMetadata={getMetadata(() =>
-                      data.configRepository.getApiName()
-                    )}
-                    initialize={initialize}
-                    track={track}
+                  <Auth0Provider
+                    domain={AUTH0_DOMAIN}
+                    clientId={AUTH0_CLIENT_ID}
+                    audience={appConfig.config.backendApi.domain}
                   >
-                    <DebugOpticComponent />
-                    <MetadataLoader>
-                      <Switch>
-                        {shouldRenderChangelogHistory && (
+                    <AnalyticsStore
+                      getMetadata={getMetadata(() =>
+                        data.configRepository.getApiName()
+                      )}
+                      initialize={initialize}
+                      track={track}
+                    >
+                      <DebugOpticComponent />
+                      <MetadataLoader>
+                        <Switch>
+                          {shouldRenderChangelogHistory && (
+                            <Route
+                              path={`${match.path}/changelog`}
+                              component={ChangelogHistory}
+                            />
+                          )}
                           <Route
-                            path={`${match.path}/changelog`}
-                            component={ChangelogHistory}
+                            path={`${match.path}/changes-since/:batchId`}
+                            component={ChangelogPages}
                           />
-                        )}
-                        <Route
-                          path={`${match.path}/changes-since/:batchId`}
-                          component={ChangelogPages}
-                        />
-                        <Route
-                          path={`${match.path}/documentation`}
-                          component={DocumentationPages}
-                        />
-                        <Route
-                          path={`${match.path}/diffs`}
-                          component={DiffReviewEnvironments}
-                        />
-                        <Redirect to={`${match.path}/documentation`} />
-                      </Switch>
-                    </MetadataLoader>
-                  </AnalyticsStore>
+                          <Route
+                            path={`${match.path}/documentation`}
+                            component={DocumentationPages}
+                          />
+                          <Route
+                            path={`${match.path}/diffs`}
+                            component={DiffReviewEnvironments}
+                          />
+                          <Redirect to={`${match.path}/documentation`} />
+                        </Switch>
+                      </MetadataLoader>
+                    </AnalyticsStore>
+                  </Auth0Provider>
                 </BaseUrlProvider>
               </SpecRepositoryStore>
             </ReduxProvider>
