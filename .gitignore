@@ -12,6 +12,7 @@ node_modules
 /workspaces/optic-engine-wasm/build
 *.log
 build/
+.nyc_output
 
 
 .yarn/*
