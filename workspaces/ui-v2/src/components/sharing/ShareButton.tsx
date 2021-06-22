@@ -18,7 +18,7 @@ import { useAnalytics } from '<src>/contexts/analytics';
 export enum ShareTarget {
   TEAM = 'team',
   CONSUMER = 'consumer',
-  OTHER = 'other',
+  // OTHER = 'other',
 }
 
 const useStyles = makeStyles((theme) => ({

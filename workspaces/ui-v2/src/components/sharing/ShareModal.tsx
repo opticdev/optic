@@ -126,10 +126,10 @@ export const ShareModal: React.FC<{
             fullWidth
             onClick={() => setShareType(ShareTarget.CONSUMER)}
           >
-            Consumer
+            External Consumer
           </Button>
         </div>
-        <div className={styles.item}>
+        {/* <div className={styles.item}>
           <Button
             variant="outlined"
             size="large"
@@ -138,7 +138,7 @@ export const ShareModal: React.FC<{
           >
             Other
           </Button>
-        </div>
+        </div> */}
       </div>
     );
   } else if (!isAuthenticated) {
