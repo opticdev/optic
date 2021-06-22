@@ -567,7 +567,3 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     graphqlContext,
   };
 }
-
-export * from './openapi';
-export * from './commands';
-export * from './types';
