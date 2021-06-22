@@ -13,6 +13,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useSpecRepository } from '<src>/contexts/SpecRepositoryContext';
 import { useAppConfig } from '<src>/contexts/config/AppConfiguration';
 import { useAsyncMemo } from 'use-async-memo';
+import { useAnalytics } from '<src>/contexts/analytics';
 
 export enum ShareTarget {
   TEAM = 'team',
@@ -36,6 +37,8 @@ export const ShareButton: React.FC<{}> = (props) => {
     backendApi: { domain: baseDomain },
     sharing,
   } = useAppConfig();
+
+  const analytics = useAnalytics();
 
   const personId = useAsyncMemo(async () => {
     if (isAuthenticated) {
@@ -96,6 +99,8 @@ export const ShareButton: React.FC<{}> = (props) => {
           );
         }
 
+        analytics.userShared(target, newSpecId);
+
         if (target === ShareTarget.TEAM) {
           return `${
             sharing.enabled && sharing.specViewerDomain
@@ -107,7 +112,7 @@ export const ShareButton: React.FC<{}> = (props) => {
         }
       }
     },
-    [getAccessTokenSilently, specRepo, baseDomain, personId, sharing]
+    [getAccessTokenSilently, specRepo, baseDomain, personId, sharing, analytics]
   );
 
   const [isOpen, setIsOpen] = useState(false);
@@ -117,7 +122,10 @@ export const ShareButton: React.FC<{}> = (props) => {
       <Button
         variant="outlined"
         className={styles.root}
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          analytics.userStartedSharing();
+          setIsOpen(true);
+        }}
       >
         <Typography variant="body2" style={{ textTransform: 'none' }}>
           Share

@@ -15,6 +15,7 @@ import { ShareTarget } from './ShareButton';
 import { useAppSelector } from '<src>/store';
 import logoSvg from '<src>/constants/LogoSvg';
 import { encodeQueryParams } from '<src>/utils/encodeQueryParams';
+import { useAnalytics } from '<src>/contexts/analytics';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,6 +62,7 @@ export const ShareModal: React.FC<{
   share: (intent: ShareTarget) => Promise<string>;
 }> = (props) => {
   const styles = useStyles(props);
+  const analytics = useAnalytics();
 
   const { isAuthenticated, isLoading, loginWithPopup } = useAuth0();
 
@@ -68,7 +70,15 @@ export const ShareModal: React.FC<{
     (state) => state.endpoints.results.data?.length || 0
   );
 
-  const [shareType, setShareType] = useState<ShareTarget | null>(null);
+  const [shareType, _setShareType] = useState<ShareTarget | null>(null);
+
+  const setShareType = useCallback(
+    (shareType: ShareTarget) => {
+      analytics.userPickedShareTarget(shareType.toString());
+      _setShareType(shareType);
+    },
+    [analytics]
+  );
 
   let inputRef = useRef<HTMLInputElement>();
   const [copied, setCopied] = useState(false);
