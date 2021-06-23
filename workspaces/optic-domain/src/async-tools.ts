@@ -68,7 +68,12 @@ export function fromReadableJSONL<T>(): (stream: Readable) => AsyncIterable<T> {
   };
 }
 
-export function fromJSONMap<T>(): (stream: Readable) => AsyncIterable<T> {
+export function fromJSONMap<T>(): (
+  stream: Readable
+) => AsyncIterable<{
+  key: string;
+  value: T;
+}> {
   return async function* (source) {
     let parseResults = source.pipe(StreamObject.withParser());
 
