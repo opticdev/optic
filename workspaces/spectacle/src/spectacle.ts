@@ -169,6 +169,15 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       invalidateCaches: async (parent: any, _: {}, context: GraphQLContext) => {
         await reload(context.spectacleContext().opticContext);
       },
+      resetToCommit: async (
+        parent: any,
+        args: { batchCommitId: string },
+        context: GraphQLContext
+      ) => {
+        await context
+          .spectacleContext()
+          .opticContext.specRepository.resetToCommit(args.batchCommitId);
+      },
     },
     Query: {
       paths: (parent: any, _: {}, context: GraphQLContext) => {

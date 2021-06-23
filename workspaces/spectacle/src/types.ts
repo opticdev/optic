@@ -71,6 +71,8 @@ export interface IOpticSpecReadWriteRepository extends IOpticSpecRepository {
   changes: AsyncGenerator<number>;
 
   notifications: EventEmitter;
+
+  resetToCommit(batchCommitId: string): Promise<void>;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
