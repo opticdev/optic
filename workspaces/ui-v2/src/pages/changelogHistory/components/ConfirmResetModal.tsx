@@ -15,17 +15,20 @@ import { formatTimeAgo } from '<src>/utils';
 
 type ConfirmResetModalProps = {
   onClose: () => void;
+  onSave?: () => void;
   batchCommit: BatchCommit;
 };
 
 export const ConfirmResetModal: FC<ConfirmResetModalProps> = ({
   onClose,
+  onSave: onSaveProp,
   batchCommit,
 }) => {
   const spectacle = useSpectacleContext();
   const [isSaving, setIsSaving] = useState(false);
   const classes = useStyles();
   const onSave = async (batchCommitId: string) => {
+    onSaveProp && onSaveProp();
     try {
       const results = await spectacle.mutate<{}, { batchCommitId: string }>({
         query: `

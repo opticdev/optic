@@ -8,6 +8,7 @@ import {
   useChangelogPages,
   useDocumentationPageLink,
 } from '<src>/components';
+import { useAnalytics } from '<src>/contexts/analytics';
 import { BatchCommit, useBatchCommits } from '<src>/hooks/useBatchCommits';
 import { formatTimeAgo } from '<src>/utils';
 
@@ -24,6 +25,7 @@ export const ChangelogHistory: FC = () => {
   const documentationPage = useDocumentationPageLink();
   const history = useHistory();
   const classes = useStyles();
+  const analytics = useAnalytics();
   const [confirmResetModalState, setConfirmResetModalState] = useState<
     BatchCommit | false
   >(false);
@@ -83,6 +85,13 @@ export const ChangelogHistory: FC = () => {
         <ConfirmResetModal
           batchCommit={confirmResetModalState}
           onClose={() => setConfirmResetModalState(false)}
+          onSave={() => {
+            const numberOfCommitsReset = batchCommits.findIndex(
+              (batchCommit) =>
+                batchCommit.batchId === confirmResetModalState.batchId
+            );
+            analytics.resetToCommit(numberOfCommitsReset);
+          }}
         />
       )}
     </Page>
