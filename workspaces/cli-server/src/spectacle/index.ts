@@ -126,13 +126,12 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
     });
 
     const specEvents = Streams.SpecEvents.fromJSONStream()(rawEventStream);
-    const filteredEvents = AT.pipe(
-      Streams.SpecEvents.takeBatchesUntil(batchCommitId),
-      AsyncTools.intoJSONArray
-    )(specEvents);
+    const filteredEvents = Streams.SpecEvents.takeBatchesUntil(batchCommitId)(
+      specEvents
+    );
 
     return pipeline(
-      stream.Readable.from(filteredEvents),
+      AT.intoJSONArray(filteredEvents),
       fs.createWriteStream(specJsFile)
     );
   }

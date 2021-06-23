@@ -1,6 +1,9 @@
 export * from 'axax/esnext';
 //@ts-ignore
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
+import { stringer } from 'stream-json/Stringer';
+import { disassembler } from 'stream-json/Disassembler';
+import { chain } from 'stream-chain';
 import StreamObject from 'stream-json/streamers/StreamObject';
 import StreamArray from 'stream-json/streamers/StreamArray';
 import { reduce } from 'axax/esnext/reduce';
@@ -38,20 +41,14 @@ export function lastBy<T>(
   };
 }
 
-export async function* intoJSONArray<T>(
-  items: AsyncIterable<T>
-): AsyncIterable<string> {
-  let isFirstItem = true;
-  yield '[';
-  for await (let item of items) {
-    if (isFirstItem) {
-      isFirstItem = false;
-    } else {
-      yield ',';
-    }
-    yield `${JSON.stringify(item)}`;
-  }
-  yield ']';
+export function intoJSONArray<T>(items: AsyncIterable<T>): Readable {
+  return chain([
+    Readable.from(items),
+    disassembler(),
+    stringer({
+      makeArray: true,
+    }),
+  ]);
 }
 
 export function fromReadable<T>(stream: Readable): () => AsyncIterable<T> {
