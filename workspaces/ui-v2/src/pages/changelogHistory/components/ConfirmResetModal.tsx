@@ -8,6 +8,7 @@ import {
   DialogTitle,
   makeStyles,
 } from '@material-ui/core';
+import * as Sentry from '@sentry/react';
 
 import { useSpectacleContext } from '<src>/contexts/spectacle-provider';
 import { BatchCommit } from '<src>/hooks/useBatchCommits';
@@ -26,22 +27,28 @@ export const ConfirmResetModal: FC<ConfirmResetModalProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const classes = useStyles();
   const onSave = async (batchCommitId: string) => {
-    // TODO error handling
-    console.log(batchCommitId);
-    const results = await spectacle.mutate<{}, { batchCommitId: string }>({
-      query: `
-      mutation X(
-        $batchCommitId: ID!
-      ) {
-        resetToCommit(batchCommitId: $batchCommitId)
+    try {
+      const results = await spectacle.mutate<{}, { batchCommitId: string }>({
+        query: `
+        mutation X(
+          $batchCommitId: ID!
+        ) {
+          resetToCommit(batchCommitId: $batchCommitId)
+        }
+        `,
+        variables: {
+          batchCommitId,
+        },
+      });
+      if (results.errors) {
+        console.error(results.errors);
+        throw new Error(JSON.stringify(results.errors));
       }
-      `,
-      variables: {
-        batchCommitId,
-      },
-    });
-    // TODO check for results and raise error if results.error
-    console.log(results);
+    } catch (e) {
+      console.error(e);
+      Sentry.captureException(e);
+      throw e;
+    }
   };
 
   return (
