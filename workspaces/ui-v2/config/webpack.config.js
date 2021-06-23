@@ -603,15 +603,8 @@ module.exports = function (webpackEnv) {
           project: 'local-ui',
           release: `local_cli_${appPackageJson.version}`,
           // webpack specific configuration
-          include: '.',
-          ignore: [
-            'node_modules',
-            'webpack.config.js',
-            'config',
-            'scripts',
-            'jest.config.js',
-            'setupTests.js',
-          ],
+          include: './build/',
+          ignore: [],
         }),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.

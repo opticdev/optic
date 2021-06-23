@@ -5,8 +5,8 @@ schema {
   mutation: Mutation
 }
 type Mutation {
-  applyCommands(commands: [JSON], batchCommitId: ID, commitMessage: String, clientId: ID, clientSessionId: ID): AppliedCommandsResult
-  startDiff(diffId: ID, captureId: ID): StartDiffResult
+  applyCommands(commands: [JSON!]!, batchCommitId: ID!, commitMessage: String!, clientId: ID!, clientSessionId: ID!): AppliedCommandsResult
+  startDiff(diffId: ID!, captureId: ID!): StartDiffResult
   invalidateCaches: InvalidateCachesResult
 }
 type InvalidateCachesResult {
@@ -41,9 +41,9 @@ type Query {
   batchCommits: [BatchCommit]
   
   # Diffs for existing endpoints and unrecognized URLs
-  diff(diffId: ID): DiffState
+  diff(diffId: ID!): DiffState
 
-  endpoint(pathId: ID, method: String): Endpoint
+  endpoint(pathId: ID!, method: String!): Endpoint
 
   # Metadata about the current spec
   metadata: SpecMetadata
@@ -258,10 +258,7 @@ type ChangesResult {
 """
 Endpoint Changes
 """
-type EndpointChanges {
-  # URL for Optic change documentation
-  opticUrl: String
-  
+type EndpointChanges {  
   # Changed endpoints for the batch commit ID provided to query
   endpoints: [EndpointChange]
 }

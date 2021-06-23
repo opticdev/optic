@@ -78,7 +78,7 @@ export default function AskForCommitMessageDiffPage(props: {
     try {
       await spectacleMutator<any, any>({
         query: `
-        mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
+        mutation X($commands: [JSON!]!, $batchCommitId: ID!, $commitMessage: String!, $clientId: ID!, $clientSessionId: ID!) {
     applyCommands(commands: $commands, batchCommitId: $batchCommitId, commitMessage: $commitMessage, clientId: $clientId, clientSessionId: $clientSessionId) {
       batchCommitId
     }

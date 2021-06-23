@@ -1,6 +1,7 @@
 import { FC, useEffect } from 'react';
 
 import { IOpticSpecRepository } from '@useoptic/spectacle/build';
+import { useSpecRepository } from '<src>/contexts/SpecRepositoryContext';
 
 declare global {
   interface Window {
@@ -48,11 +49,10 @@ const debugDump = (specService: IOpticSpecRepository) => {
   };
 };
 
-export const DebugOpticComponent: FC<{
-  specService: IOpticSpecRepository;
-}> = ({ specService }) => {
+export const DebugOpticComponent: FC<{}> = () => {
+  const specRepo = useSpecRepository();
   useEffect(() => {
-    window.debugOptic = debugDump(specService);
-  }, [specService]);
+    window.debugOptic = debugDump(specRepo);
+  }, [specRepo]);
   return null;
 };

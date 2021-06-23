@@ -105,7 +105,7 @@ export class LocalCliCapturesService implements IOpticCapturesService {
 
   async startDiff(diffId: string, captureId: string): Promise<StartDiffResult> {
     await this.dependencies.spectacle.query({
-      query: `mutation X($diffId: ID, $captureId: ID){
+      query: `mutation X($diffId: ID!, $captureId: ID!){
         startDiff(diffId: $diffId, captureId: $captureId) {
           notificationsUrl
         }

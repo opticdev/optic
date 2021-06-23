@@ -16,6 +16,15 @@ interface IAppConfigurations {
   documentation: {
     allowDescriptionEditing: boolean;
   };
+  backendApi: {
+    domain?: string;
+  };
+  sharing:
+    | { enabled: false }
+    | {
+        enabled: true;
+        specViewerDomain: string;
+      };
 }
 
 export type OpticAppConfig = {
