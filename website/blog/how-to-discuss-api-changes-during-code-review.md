@@ -41,7 +41,7 @@ For this tutorial, I'm using a fork of the [sample-node-api](https://github.com/
 The Optic command-line interface (CLI) requires Node version 12+. Assuming you have a recent version of Node installed, run the following to install the CLI:
 
 ```shell
-npm install @useoptic/cli -g --legacy-peer-deps
+npm install @useoptic/cli -g
 ```
 
 The [Optic Quick Start guide](https://useoptic.com/docs/) also includes instructions for setting up Optic using [Yarn](https://yarnpkg.com/) or [Homebrew](https://brew.sh/) if you prefer.
