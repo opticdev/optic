@@ -63,7 +63,7 @@ export function buildShapesGraph(spec: any, opticEngine: any) {
   return queries;
 }
 
-type EndpointChange = {
+export type EndpointChange = {
   change: {
     category: string;
   };
@@ -72,7 +72,7 @@ type EndpointChange = {
   method: string;
 };
 
-type EndpointChanges = {
+export type EndpointChanges = {
   data: {
     endpoints: EndpointChange[];
   };
