@@ -76,7 +76,7 @@ export function fromJSONMap<T>(): (stream: Readable) => AsyncIterable<T> {
     let parseResults = source.pipe(StreamObject.withParser());
 
     for await (let parseResult of parseResults) {
-      yield parseResult.value;
+      yield parseResult;
     }
   };
 }

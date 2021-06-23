@@ -1,7 +1,8 @@
 import { EventEmitter } from 'events';
 import fs from 'fs-extra';
 import path from 'path';
-import { pipe } from 'axax/esnext/pipe';
+import stream from 'stream';
+import util from 'util';
 
 import {
   ICapture,
@@ -118,21 +119,22 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
       this.dependencies.specDirPath,
       'specification.json'
     );
+    const pipeline = util.promisify(stream.pipeline);
+
     const rawEventStream = OpticEngineNative.readSpec({
       specDirPath: this.dependencies.specDirPath,
     });
 
     const specEvents = Streams.SpecEvents.fromJSONStream()(rawEventStream);
-    const filteredEvents = pipe(
+    const filteredEvents = AT.pipe(
       Streams.SpecEvents.takeBatchesUntil(batchCommitId),
       AsyncTools.intoJSONArray
     )(specEvents);
 
-    const writeableStream = fs.createWriteStream(specJsFile);
-
-    for await (const chunk of filteredEvents) {
-      writeableStream.write(chunk);
-    }
+    return pipeline(
+      stream.Readable.from(filteredEvents),
+      fs.createWriteStream(specJsFile)
+    );
   }
 }
 
