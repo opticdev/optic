@@ -33,7 +33,7 @@ const fetchDeleteEndpointCommands = async (
       }
     >({
       query: `
-      query X($pathId: ID, $method: String) {
+      query X($pathId: ID!, $method: String!) {
         endpoint(pathId: $pathId, method: $method) {
           commands {
             remove
