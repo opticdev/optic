@@ -14,9 +14,12 @@ export function takeBatchesUntil(
 ): (iterable: AsyncIterable<Event>) => AsyncIterable<Event> {
   let seenBatchCommitId = false;
   return takeWhile((event) => {
-    if (event.BatchCommitStarted?.batchId === batchCommitId) {
+    if (seenBatchCommitId) {
+      return false;
+    }
+    if (event.BatchCommitEnded?.batchId === batchCommitId) {
       seenBatchCommitId = true;
     }
-    return !seenBatchCommitId;
+    return true;
   });
 }

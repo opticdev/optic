@@ -91,13 +91,14 @@ export class InMemorySpecRepository implements IOpticSpecReadWriteRepository {
   async resetToCommit(batchCommitId: string): Promise<void> {
     const newEvents = [];
     for (const event of this.events) {
-      if (event.BatchCommitStarted?.batchId === batchCommitId) {
+      newEvents.push(event);
+      if (event.BatchCommitEnded?.batchId === batchCommitId) {
         break;
       }
-      newEvents.push(event);
     }
 
     this.events = newEvents;
+    this.notifications.emit('change');
   }
 }
 

@@ -6,7 +6,7 @@ Tap.test('SpecEvents.takeUntilBatch', async (test) => {
   await test.test('takes events until a batch commit id', async (t) => {
     const exampleEvents = createExampleEvents();
     const batchesUntil = SpecEvents.takeBatchesUntil(
-      'c357b18e-657b-49c8-a430-5e992adc1824'
+      '254b7e9e-053c-45f7-b18f-8a78782de2aa'
     )(AT.from(exampleEvents));
     const results = await AT.toArray<any>(batchesUntil);
     test.matchSnapshot(results);
