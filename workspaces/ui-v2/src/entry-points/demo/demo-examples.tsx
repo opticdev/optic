@@ -114,7 +114,7 @@ export default function DemoExamples(props: { lookupDir: string }) {
                       <Switch>
                         {shouldRenderChangelogHistory && (
                           <Route
-                            path={`${match.path}/changelog`}
+                            path={`${match.path}/history`}
                             component={ChangelogHistory}
                           />
                         )}

@@ -119,7 +119,7 @@ export default function LocalCli() {
                         <Switch>
                           {shouldRenderChangelogHistory && (
                             <Route
-                              path={`${match.path}/changelog`}
+                              path={`${match.path}/history`}
                               component={ChangelogHistory}
                             />
                           )}
