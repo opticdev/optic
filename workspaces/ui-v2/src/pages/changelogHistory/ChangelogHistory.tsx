@@ -1,7 +1,9 @@
 import React, { FC } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Schedule as ScheduleIcon } from '@material-ui/icons';
 
 import {
+  Button,
   Link, // this should probably be one of our own global components
 } from '@material-ui/core';
 
@@ -25,25 +27,45 @@ export const ChangelogHistory: FC = () => {
       <Page.Navbar />
       <Page.Body padded className={classes.pageBody} loading={loading}>
         <section className={classes.changelogSection}>
-          <h1>Changelog</h1>
+          <div className={classes.changelogTimeline}>
+            <ScheduleIcon className={classes.changelogIcon} />
+          </div>
+
           <ol className={classes.commitsList}>
             {batchCommits.map((batchCommit, i) => (
               <li className={classes.commitsListItem} key={batchCommit.batchId}>
-                <Link
-                  className={classes.commitLink}
-                  href={
-                    i === 0
-                      ? documentationPage.linkTo()
-                      : changelogPage.linkTo(batchCommit.batchId)
-                  }
-                >
+                <div className={classes.commitDetails}>
                   <h4 className={classes.commitMessage}>
                     {batchCommit.commitMessage}
                   </h4>
                   <span className={classes.commitTime}>
                     {formatTimeAgo(new Date(batchCommit.createdAt))}
                   </span>
-                </Link>
+                </div>
+
+                <div className={classes.commitControls}>
+                  <Button
+                    className={classes.commitCompareButton}
+                    href={
+                      i === 0
+                        ? documentationPage.linkTo()
+                        : changelogPage.linkTo(batchCommit.batchId)
+                    }
+                  >
+                    Compare
+                  </Button>
+
+                  {i !== 0 && (
+                    <Button
+                      className={classes.commitResetButton}
+                      onClick={() => {
+                        console.log(`resetting to ${batchCommit.batchId}`);
+                      }}
+                    >
+                      Reset
+                    </Button>
+                  )}
+                </div>
               </li>
             ))}
           </ol>
@@ -64,8 +86,22 @@ const useStyles = makeStyles((theme) => ({
   changelogSection: {
     display: 'flex',
     maxWidth: theme.breakpoints.values.md,
-    flexDirection: 'column',
+    marginTop: theme.spacing(4),
     flexGrow: 1,
+  },
+
+  changelogTimeline: {
+    borderLeft: `2px solid ${theme.palette.grey[200]}`,
+    paddingRight: theme.spacing(1),
+    flexShrink: 0,
+  },
+  changelogIcon: {
+    marginLeft: theme.spacing(-1.5) - 1,
+    paddingBottom: theme.spacing(1),
+    background: theme.palette.background.default,
+    boxSizing: 'content-box',
+    fontSize: theme.spacing(3),
+    color: theme.palette.grey[400],
   },
 
   commitsList: {
@@ -73,19 +109,44 @@ const useStyles = makeStyles((theme) => ({
     // worth extracting into a mixin
     listStyleType: 'none',
     paddingLeft: 0,
+    marginTop: theme.spacing(3) + theme.spacing(1), // clock height + it's bottom spacing
+    maxWidth: '100%',
 
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
   },
-  commitsListItem: {},
-
-  commitLink: {
+  commitsListItem: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    background: '#fff',
+    padding: theme.spacing(2),
+    marginBottom: theme.spacing(3),
+    borderRadius: theme.shape.borderRadius,
+    border: `1px solid ${theme.palette.grey[200]}`,
   },
 
-  commitMessage: {},
-  commitTime: {},
+  commitDetails: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: 0,
+
+    '& h4': {},
+  },
+
+  commitMessage: {
+    margin: 0,
+  },
+  commitTime: {
+    fontSize: theme.typography.pxToRem(theme.typography.fontSize - 2),
+  },
+
+  commitControls: {
+    display: 'flex',
+    flexShrink: 0,
+    flexGrow: 0,
+  },
+  commitCompareButton: {},
+  commitResetButton: {},
 }));
