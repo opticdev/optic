@@ -1,23 +1,32 @@
-import React, { FC } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { FC, useState } from 'react';
+import { Button, makeStyles } from '@material-ui/core';
 import { Schedule as ScheduleIcon } from '@material-ui/icons';
-
-import { Button } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
 import {
   Page,
   useChangelogPages,
   useDocumentationPageLink,
 } from '<src>/components';
-import { useBatchCommits } from '<src>/hooks/useBatchCommits';
+import { BatchCommit, useBatchCommits } from '<src>/hooks/useBatchCommits';
 import { formatTimeAgo } from '<src>/utils';
+
+import { ConfirmResetModal } from './components';
+
+const SPECIFICATION_METADATA_COMMIT_MESSAGE =
+  'Initialize specification attributes';
+const canShowResetButton = (commitMessage: string, index: number) =>
+  commitMessage !== SPECIFICATION_METADATA_COMMIT_MESSAGE && index !== 0;
 
 export const ChangelogHistory: FC = () => {
   const { loading, batchCommits } = useBatchCommits();
   const changelogPage = useChangelogPages();
   const documentationPage = useDocumentationPageLink();
-
+  const history = useHistory();
   const classes = useStyles();
+  const [confirmResetModalState, setConfirmResetModalState] = useState<
+    BatchCommit | false
+  >(false);
 
   return (
     <Page>
@@ -43,20 +52,22 @@ export const ChangelogHistory: FC = () => {
                 <div className={classes.commitControls}>
                   <Button
                     className={classes.commitCompareButton}
-                    href={
-                      i === 0
-                        ? documentationPage.linkTo()
-                        : changelogPage.linkTo(batchCommit.batchId)
+                    onClick={() =>
+                      history.push(
+                        i === 0
+                          ? documentationPage.linkTo()
+                          : changelogPage.linkTo(batchCommit.batchId)
+                      )
                     }
                   >
-                    Compare
+                    {i === 0 ? 'View' : 'Compare'}
                   </Button>
 
-                  {i !== 0 && (
+                  {canShowResetButton(batchCommit.commitMessage, i) && (
                     <Button
                       className={classes.commitResetButton}
                       onClick={() => {
-                        console.log(`resetting to ${batchCommit.batchId}`);
+                        setConfirmResetModalState(batchCommit);
                       }}
                     >
                       Reset
@@ -68,6 +79,12 @@ export const ChangelogHistory: FC = () => {
           </ol>
         </section>
       </Page.Body>
+      {confirmResetModalState && (
+        <ConfirmResetModal
+          batchCommit={confirmResetModalState}
+          onClose={() => setConfirmResetModalState(false)}
+        />
+      )}
     </Page>
   );
 };
