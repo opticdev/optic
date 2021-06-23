@@ -141,7 +141,7 @@ export default function CloudViewer() {
                       <Switch>
                         {shouldRenderChangelogHistory && (
                           <Route
-                            path={`${match.path}/changelog`}
+                            path={`${match.path}/history`}
                             component={ChangelogHistory}
                           />
                         )}

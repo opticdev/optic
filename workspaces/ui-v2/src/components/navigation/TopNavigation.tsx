@@ -9,7 +9,7 @@ import { NavButton } from './NavButton';
 import {
   ChangeHistory as ChangeHistoryIcon,
   Subject as SubjectIcon,
-  List as ListIcon,
+  Schedule as ScheduleIcon,
 } from '@material-ui/icons';
 import {
   useDiffReviewPageLink,
@@ -53,13 +53,6 @@ export function TopNavigation(props: { AccessoryNavigation?: any }) {
                   to={documentationPage.linkTo()}
                   Icon={SubjectIcon}
                 />
-                {shouldRenderChangelogHistory && (
-                  <NavButton
-                    title="Changelog"
-                    to={changelogHistoryPage.linkTo()}
-                    Icon={ListIcon}
-                  />
-                )}
 
                 {/*@aidan: this needs to change*/}
                 {appConfig.navigation.showDiff && (
@@ -67,6 +60,14 @@ export function TopNavigation(props: { AccessoryNavigation?: any }) {
                     title="Diffs"
                     to={diffsPage.linkTo()}
                     Icon={ChangeHistoryIcon}
+                  />
+                )}
+
+                {shouldRenderChangelogHistory && (
+                  <NavButton
+                    title="History"
+                    to={changelogHistoryPage.linkTo()}
+                    Icon={ScheduleIcon}
                   />
                 )}
               </div>

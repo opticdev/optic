@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import Link from '@material-ui/core/Link';
 import { LightBlueBackground, OpticBlueReadable } from '<src>/styles';
 import { useHistory } from 'react-router-dom';
 
@@ -17,19 +18,14 @@ export function NavButton(props: NavButtonProps) {
   const history = useHistory();
 
   return (
-    <div
-      className={classes.root}
-      onClick={() => {
-        history.push(to);
-      }}
-    >
+    <Link className={classes.root} href={to}>
       <div className={classes.box}>
         <Icon className={classes.iconStyles} />
       </div>
       <Typography variant="subtitle2" className={classes.font}>
         {title}
       </Typography>
-    </div>
+    </Link>
   );
 }
 
@@ -61,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'pointer',
     '&:hover': {
       backgroundColor: LightBlueBackground,
+      textDecoration: 'none',
     },
   },
   iconStyles: {
