@@ -3,6 +3,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import stream from 'stream';
 import util from 'util';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   ICapture,
@@ -115,6 +116,14 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
   }
 
   async resetToCommit(batchCommitId: string): Promise<void> {
+    const tempOutputFile = path.join(
+      this.dependencies.specDirPath,
+      `optic-temp-spec-file-${uuidv4()}.json`
+    );
+    const tempFileDeletion = path.join(
+      this.dependencies.specDirPath,
+      `optic-temp-spec-to-delete-${uuidv4()}.json`
+    );
     const specJsFile = path.join(
       this.dependencies.specDirPath,
       'specification.json'
@@ -130,10 +139,14 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
       specEvents
     );
 
-    return pipeline(
+    await pipeline(
       AT.intoJSONArray(filteredEvents),
       fs.createWriteStream(specJsFile)
     );
+
+    await fs.rename(specJsFile, tempFileDeletion);
+    await fs.rename(tempOutputFile, specJsFile);
+    await fs.remove(tempFileDeletion);
   }
 }
 
