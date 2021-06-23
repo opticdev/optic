@@ -150,7 +150,7 @@ export class LocalCliDiffService implements IOpticDiffService {
 
   async listDiffs(): Promise<IListDiffsResponse> {
     const result = await this.dependencies.spectacle.query<any, any>({
-      query: `query X($diffId: ID) {
+      query: `query X($diffId: ID!) {
         diff(diffId: $diffId) {
           diffs
         }
@@ -164,7 +164,7 @@ export class LocalCliDiffService implements IOpticDiffService {
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
     const result = await this.dependencies.spectacle.query<any, any>({
-      query: `query X($diffId: ID) {
+      query: `query X($diffId: ID!) {
         diff(diffId: $diffId) {
           unrecognizedUrls
         }
