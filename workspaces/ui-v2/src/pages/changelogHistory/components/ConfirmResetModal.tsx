@@ -1,7 +1,5 @@
 import React, { FC, useState } from 'react';
 import {
-  Button,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -10,6 +8,7 @@ import {
 } from '@material-ui/core';
 import * as Sentry from '@sentry/react';
 
+import { Button } from '<src>/components';
 import { useSpectacleContext } from '<src>/contexts/spectacle-provider';
 import { BatchCommit } from '<src>/hooks/useBatchCommits';
 import { formatTimeAgo } from '<src>/utils';
@@ -71,7 +70,6 @@ export const ConfirmResetModal: FC<ConfirmResetModalProps> = ({
         <Button onClick={onClose} color="default">
           Cancel
         </Button>
-        {/* TODO create button wrapper over material ui */}
         <Button
           disabled={isSaving}
           onClick={async () => {
@@ -80,12 +78,9 @@ export const ConfirmResetModal: FC<ConfirmResetModalProps> = ({
             onClose();
           }}
           color="primary"
+          loading={isSaving}
         >
-          {isSaving ? (
-            <CircularProgress style={{ marginLeft: 5 }} size={20} />
-          ) : (
-            'Confirm'
-          )}
+          Confirm
         </Button>
       </DialogActions>
     </Dialog>

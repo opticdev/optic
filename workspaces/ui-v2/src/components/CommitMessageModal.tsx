@@ -1,7 +1,5 @@
 import React, { ChangeEvent, FC, useState } from 'react';
 import {
-  Button,
-  CircularProgress,
   TextField,
   Dialog,
   DialogActions,
@@ -10,6 +8,7 @@ import {
   DialogTitle,
   makeStyles,
 } from '@material-ui/core';
+import { Button } from '<src>/components';
 import { useRunOnKeypress } from '<src>/hooks/util';
 
 type CommitMessageModalProps = {
@@ -77,12 +76,9 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
             await onSave(commitMessage);
           }}
           color="primary"
+          loading={isSaving}
         >
-          {isSaving ? (
-            <CircularProgress style={{ marginLeft: 5 }} size={20} />
-          ) : (
-            'Save'
-          )}
+          Save
         </Button>
       </DialogActions>
     </Dialog>
