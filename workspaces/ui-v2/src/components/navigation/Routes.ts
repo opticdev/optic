@@ -158,7 +158,7 @@ export const useChangelogHistoryPage: () => {
   linkTo: () => string;
 } = () => {
   const baseUrl = useBaseUrl();
-  const path = `${baseUrl}/changelog`;
+  const path = `${baseUrl}/history`;
   return {
     path,
     linkTo: () => path,
