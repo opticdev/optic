@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import { LightBlueBackground, OpticBlueReadable } from '<src>/styles';
-import { useHistory } from 'react-router-dom';
 
 export type NavButtonProps = {
   Icon: React.ElementType;
@@ -14,8 +13,6 @@ export type NavButtonProps = {
 export function NavButton(props: NavButtonProps) {
   const classes = useStyles();
   const { Icon, title, to } = props;
-
-  const history = useHistory();
 
   return (
     <Link className={classes.root} href={to}>

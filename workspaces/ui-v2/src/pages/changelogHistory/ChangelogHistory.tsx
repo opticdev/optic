@@ -2,10 +2,7 @@ import React, { FC } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Schedule as ScheduleIcon } from '@material-ui/icons';
 
-import {
-  Button,
-  Link, // this should probably be one of our own global components
-} from '@material-ui/core';
+import { Button } from '@material-ui/core';
 
 import {
   Page,
