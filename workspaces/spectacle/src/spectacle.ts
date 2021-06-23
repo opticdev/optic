@@ -177,6 +177,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         await context
           .spectacleContext()
           .opticContext.specRepository.resetToCommit(args.batchCommitId);
+
+        await reload(context.spectacleContext().opticContext);
       },
     },
     Query: {

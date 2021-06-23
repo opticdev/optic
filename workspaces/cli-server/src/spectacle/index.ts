@@ -141,7 +141,7 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
 
     await pipeline(
       AT.intoJSONArray(filteredEvents),
-      fs.createWriteStream(specJsFile)
+      fs.createWriteStream(tempOutputFile)
     );
 
     await fs.rename(specJsFile, tempFileDeletion);
