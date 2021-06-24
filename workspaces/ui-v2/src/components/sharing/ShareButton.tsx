@@ -118,7 +118,14 @@ export const ShareButton: React.FC<{}> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
+    <div
+      style={{
+        marginRight: 5,
+        opacity: 0.45,
+        display: 'flex',
+        flexDirection: 'row',
+      }}
+    >
       <Button
         variant="outlined"
         className={styles.root}
