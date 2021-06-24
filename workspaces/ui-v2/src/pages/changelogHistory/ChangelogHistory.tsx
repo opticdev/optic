@@ -25,11 +25,6 @@ import {
 
 import { ConfirmResetModal } from './components';
 
-const SPECIFICATION_METADATA_COMMIT_MESSAGE =
-  'Initialize specification attributes';
-const canShowResetButton = (commitMessage: string, index: number) =>
-  commitMessage !== SPECIFICATION_METADATA_COMMIT_MESSAGE && index !== 0;
-
 export const ChangelogHistory: FC = () => {
   const { loading, batchCommits } = useBatchCommits();
   const changelogPage = useChangelogPages();
@@ -94,7 +89,7 @@ export const ChangelogHistory: FC = () => {
                       </Button>
                     )}
 
-                    {canShowResetButton(batchCommit.commitMessage, i) && (
+                    {!isCurrent && (
                       <Button
                         className={classes.commitResetButton}
                         variant="outlined"
