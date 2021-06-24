@@ -5,6 +5,7 @@ import { useAppConfig } from '<src>/contexts/config/AppConfiguration';
 import { useAppSelector, selectors } from '<src>/store';
 
 import { EditContributionsButton } from './EditContributionsButton';
+import { ShareButton } from '<src>/components/sharing/ShareButton';
 
 export const DocsPageAccessoryNavigation: FC = () => {
   const appConfig = useAppConfig();
@@ -22,6 +23,7 @@ export const DocsPageAccessoryNavigation: FC = () => {
       {appConfig.documentation.allowDescriptionEditing && (
         <EditContributionsButton />
       )}
+      {appConfig.sharing.enabled && <ShareButton />}
     </div>
   );
 };
