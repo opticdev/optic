@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/changelog",
-  "version": "10.0.6",
+  "version": "10.1.0",
   "scripts": {
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build",
@@ -19,9 +19,9 @@
     "/.env"
   ],
   "dependencies": {
-    "@useoptic/optic-engine-wasm": "10.0.6",
-    "@useoptic/graph-lib": "10.0.6",
-    "@useoptic/spectacle": "10.0.6"
+    "@useoptic/optic-engine-wasm": "10.1.0",
+    "@useoptic/graph-lib": "10.1.0",
+    "@useoptic/spectacle": "10.1.0"
   },
   "devDependencies": {
     "@types/node": "^12.12.6",
