@@ -5,6 +5,7 @@ import { useAppConfig } from '<src>/contexts/config/AppConfiguration';
 import { useAppSelector, selectors } from '<src>/store';
 
 import { EditContributionsButton } from './EditContributionsButton';
+import { ShareButton } from '<src>/components/sharing/ShareButton';
 
 export const DocsPageAccessoryNavigation: FC = () => {
   const appConfig = useAppConfig();
@@ -17,8 +18,9 @@ export const DocsPageAccessoryNavigation: FC = () => {
 
   return (
     <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
+      {appConfig.sharing.enabled && <ShareButton />}
       <PromptNavigateAway shouldPrompt={isEditing && pendingCount > 0} />
-      {appConfig.navigation.showChangelog && <ChangesSinceDropdown />}
+      <ChangesSinceDropdown />
       {appConfig.documentation.allowDescriptionEditing && (
         <EditContributionsButton />
       )}

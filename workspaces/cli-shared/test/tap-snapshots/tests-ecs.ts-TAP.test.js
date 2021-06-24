@@ -4,7 +4,7 @@
  * Re-generate by setting TAP_SNAPSHOT=1 and running tests.
  * Make sure to inspect the output below.  Do not ignore changes!
  */
-'use strict'
+'use strict';
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-1 1`] = `
 Object {
   "request": Object {
@@ -49,7 +49,7 @@ Object {
   "tags": Array [],
   "uuid": "1",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-10 1`] = `
 Object {
@@ -95,7 +95,7 @@ Object {
   "tags": Array [],
   "uuid": "10",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-11 1`] = `
 Object {
@@ -141,7 +141,7 @@ Object {
   "tags": Array [],
   "uuid": "11",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-12 1`] = `
 Object {
@@ -187,7 +187,7 @@ Object {
   "tags": Array [],
   "uuid": "12",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-13 1`] = `
 Object {
@@ -233,7 +233,7 @@ Object {
   "tags": Array [],
   "uuid": "13",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-14 1`] = `
 Object {
@@ -279,7 +279,7 @@ Object {
   "tags": Array [],
   "uuid": "14",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-15 1`] = `
 Object {
@@ -325,7 +325,7 @@ Object {
   "tags": Array [],
   "uuid": "15",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-16 1`] = `
 Object {
@@ -371,7 +371,7 @@ Object {
   "tags": Array [],
   "uuid": "16",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-17 1`] = `
 Object {
@@ -417,7 +417,7 @@ Object {
   "tags": Array [],
   "uuid": "17",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-2 1`] = `
 Object {
@@ -463,7 +463,7 @@ Object {
   "tags": Array [],
   "uuid": "2",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-3 1`] = `
 Object {
@@ -509,7 +509,7 @@ Object {
   "tags": Array [],
   "uuid": "3",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-4 1`] = `
 Object {
@@ -555,7 +555,7 @@ Object {
   "tags": Array [],
   "uuid": "4",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-5 1`] = `
 Object {
@@ -601,7 +601,7 @@ Object {
   "tags": Array [],
   "uuid": "5",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-6 1`] = `
 Object {
@@ -647,7 +647,7 @@ Object {
   "tags": Array [],
   "uuid": "6",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-7 1`] = `
 Object {
@@ -693,7 +693,7 @@ Object {
   "tags": Array [],
   "uuid": "7",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-8 1`] = `
 Object {
@@ -739,7 +739,7 @@ Object {
   "tags": Array [],
   "uuid": "8",
 }
-`
+`;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-9 1`] = `
 Object {
@@ -785,4 +785,4 @@ Object {
   "tags": Array [],
   "uuid": "9",
 }
-`
+`;

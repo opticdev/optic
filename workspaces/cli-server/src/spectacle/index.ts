@@ -1,3 +1,10 @@
+import { EventEmitter } from 'events';
+import fs from 'fs-extra';
+import path from 'path';
+import stream from 'stream';
+import util from 'util';
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   ICapture,
   IListDiffsResponse,
@@ -12,10 +19,9 @@ import {
   IOpticSpecRepository,
   StartDiffResult,
 } from '@useoptic/spectacle';
-import { EventEmitter } from 'events';
 import { AsyncTools, AsyncTools as AT, Streams } from '@useoptic/optic-domain';
-import * as OpticEngine from '@useoptic/optic-engine-native';
-import * as opticEngine from '@useoptic/optic-engine-wasm';
+import * as OpticEngineNative from '@useoptic/optic-engine-native';
+import * as OpticEngineWasm from '@useoptic/optic-engine-wasm';
 import { isEnvTrue } from '@useoptic/cli-shared';
 import {
   InMemoryDiffRepository,
@@ -28,11 +34,10 @@ import {
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InteractionDiffWorkerRust } from '@useoptic/cli-shared/build/diffs/interaction-diff-worker-rust';
 import { IPathMapping, readApiConfig } from '@useoptic/cli-config';
-import { CapturesHelpers } from '../routers/spec-router';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
-import fs from 'fs-extra';
-import Chokidar, { watch } from 'chokidar';
-import { Subject } from 'axax/esnext';
+import Chokidar from 'chokidar';
+
+import { CapturesHelpers } from '../routers/spec-router';
 
 ////////////////////////////////////////////////////////////////////////////////
 export interface LocalCliSpecState {}
@@ -84,7 +89,7 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
     commandContext: IOpticCommandContext
   ): Promise<void> {
     const commandsStream = AT.from<Streams.Commands.Command>(commands);
-    const output = OpticEngine.commit(commandsStream, {
+    const output = OpticEngineNative.commit(commandsStream, {
       specDirPath: this.dependencies.specDirPath,
       commitMessage: commitMessage,
       clientSessionId: commandContext.clientSessionId || 'unknown-session',
@@ -97,7 +102,7 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
 
   async listEvents(): Promise<any[]> {
     if (isEnvTrue(process.env.OPTIC_ASSEMBLED_SPEC_EVENTS)) {
-      const events = OpticEngine.readSpec({
+      const events = OpticEngineNative.readSpec({
         specDirPath: this.dependencies.specDirPath,
       });
       debugger;
@@ -108,6 +113,40 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
       const events = await getSpecEventsFrom(this.dependencies.specStorePath);
       return events;
     }
+  }
+
+  async resetToCommit(batchCommitId: string): Promise<void> {
+    const tempOutputFile = path.join(
+      this.dependencies.specDirPath,
+      `optic-temp-spec-file-${uuidv4()}.json`
+    );
+    const tempFileDeletion = path.join(
+      this.dependencies.specDirPath,
+      `optic-temp-spec-to-delete-${uuidv4()}.json`
+    );
+    const specJsFile = path.join(
+      this.dependencies.specDirPath,
+      'specification.json'
+    );
+    const pipeline = util.promisify(stream.pipeline);
+
+    const rawEventStream = OpticEngineNative.readSpec({
+      specDirPath: this.dependencies.specDirPath,
+    });
+
+    const specEvents = Streams.SpecEvents.fromJSONStream()(rawEventStream);
+    const filteredEvents = Streams.SpecEvents.takeBatchesUntil(batchCommitId)(
+      specEvents
+    );
+
+    await pipeline(
+      AT.intoJSONArray(filteredEvents),
+      fs.createWriteStream(tempOutputFile)
+    );
+
+    await fs.rename(specJsFile, tempFileDeletion);
+    await fs.rename(tempOutputFile, specJsFile);
+    await fs.remove(tempFileDeletion);
   }
 }
 
@@ -302,7 +341,7 @@ export class LocalCliOpticContextBuilder {
     const diffRepository = new InMemoryDiffRepository();
 
     const capturesService = new LocalCliCapturesService({
-      opticEngine,
+      opticEngine: OpticEngineWasm,
       configRepository,
       specRepository,
       diffRepository,
@@ -310,7 +349,7 @@ export class LocalCliOpticContextBuilder {
     });
 
     return {
-      opticEngine,
+      opticEngine: OpticEngineWasm,
       capturesService,
       specRepository,
       configRepository,

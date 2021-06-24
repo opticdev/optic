@@ -7,6 +7,7 @@ import {
   Redirect,
   Switch,
 } from 'react-router-dom';
+import { LinearProgress } from '@material-ui/core';
 import { AsyncStatus } from '<src>/types';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Provider as BaseUrlProvider } from '<src>/hooks/useBaseUrl';
@@ -15,7 +16,8 @@ import { SpectacleStore } from '<src>/contexts/spectacle-provider';
 import { DiffReviewEnvironments } from '<src>/pages/diffs/ReviewDiffPages';
 import { CapturesServiceStore } from '<src>/hooks/useCapturesHook';
 import { ChangelogPages } from '<src>/pages/changelog/ChangelogPages';
-import { Loading, DebugOpticComponent } from '<src>/components';
+import { ChangelogHistory } from '<src>/pages/changelogHistory';
+import { DebugOpticComponent } from '<src>/components';
 import {
   AppConfigurationStore,
   OpticAppConfig,
@@ -27,7 +29,7 @@ import {
   LocalCliConfigRepository,
   LocalCliServices,
   LocalCliSpectacle,
-  LocalCliSpecRepository,
+  UILocalCliSpecRepository,
 } from '@useoptic/spectacle-shared';
 import { AnalyticsStore } from '<src>/contexts/analytics';
 import {
@@ -37,13 +39,13 @@ import {
 } from '<src>/contexts/analytics/implementations/localCliAnalytics';
 import { store } from '<src>/store';
 import { MetadataLoader } from '<src>/contexts/MetadataLoader';
+import { Auth0Provider } from '@auth0/auth0-react';
+import { SpecRepositoryStore } from '<src>/contexts/SpecRepositoryContext';
 
 const appConfig: OpticAppConfig = {
   config: {
     navigation: {
-      showChangelog: true,
       showDiff: true,
-      showDocs: true,
     },
     analytics: {
       enabled: Boolean(process.env.REACT_APP_ENABLE_ANALYTICS === 'yes'),
@@ -54,16 +56,36 @@ const appConfig: OpticAppConfig = {
     documentation: {
       allowDescriptionEditing: true,
     },
+    backendApi: {
+      domain:
+        (window.location.hostname.indexOf('useoptic.com') >= 0
+          ? process.env.REACT_APP_PROD_API_BASE
+          : process.env.REACT_APP_STAGING_API_BASE) || 'https://api.o3c.info',
+    },
+    sharing: {
+      enabled: true,
+      specViewerDomain:
+        (process.env.NODE_ENV === 'development'
+          ? process.env.REACT_APP_PROD_SPEC_VIEWER_BASE
+          : process.env.REACT_APP_STAGING_SPEC_VIEWER_BASE) ||
+        'https://spec.o3c.info',
+    },
   },
 };
 
+const AUTH0_DOMAIN = process.env.REACT_APP_AUTH0_DOMAIN || 'optic.auth0.com';
+const AUTH0_CLIENT_ID =
+  process.env.REACT_APP_AUTH0_CLIENT_ID || 'S7AeH5IQweLb2KHNoyfQfKBtkroE1joF';
+
 export default function LocalCli() {
+  const shouldRenderChangelogHistory =
+    process.env.REACT_APP_FF_SHOW_REVERT_COMMIT === 'true';
   const match = useRouteMatch();
   const params = useParams<{ specId: string }>();
   const { specId } = params;
   const { loading, error, data } = useLocalCliServices(specId);
   if (loading) {
-    return <Loading />;
+    return <LinearProgress variant="indeterminate" />;
   }
   if (error) {
     return <div>error :(</div>;
@@ -78,34 +100,48 @@ export default function LocalCli() {
         <ConfigRepositoryStore config={data.configRepository}>
           <CapturesServiceStore capturesService={data.capturesService}>
             <ReduxProvider store={store}>
-              <BaseUrlProvider value={{ url: match.url }}>
-                <AnalyticsStore
-                  getMetadata={getMetadata(() =>
-                    data.configRepository.getApiName()
-                  )}
-                  initialize={initialize}
-                  track={track}
-                >
-                  <DebugOpticComponent specService={data.specRepository} />
-                  <MetadataLoader>
-                    <Switch>
-                      <Route
-                        path={`${match.path}/changes-since/:batchId`}
-                        component={ChangelogPages}
-                      />
-                      <Route
-                        path={`${match.path}/documentation`}
-                        component={DocumentationPages}
-                      />
-                      <Route
-                        path={`${match.path}/diffs`}
-                        component={DiffReviewEnvironments}
-                      />
-                      <Redirect to={`${match.path}/documentation`} />
-                    </Switch>
-                  </MetadataLoader>
-                </AnalyticsStore>
-              </BaseUrlProvider>
+              <SpecRepositoryStore specRepo={data.specRepository}>
+                <BaseUrlProvider value={{ url: match.url }}>
+                  <Auth0Provider
+                    domain={AUTH0_DOMAIN}
+                    clientId={AUTH0_CLIENT_ID}
+                    audience={appConfig.config.backendApi.domain}
+                  >
+                    <AnalyticsStore
+                      getMetadata={getMetadata(() =>
+                        data.configRepository.getApiName()
+                      )}
+                      initialize={initialize}
+                      track={track}
+                    >
+                      <DebugOpticComponent />
+                      <MetadataLoader>
+                        <Switch>
+                          {shouldRenderChangelogHistory && (
+                            <Route
+                              path={`${match.path}/history`}
+                              component={ChangelogHistory}
+                            />
+                          )}
+                          <Route
+                            path={`${match.path}/changes-since/:batchId`}
+                            component={ChangelogPages}
+                          />
+                          <Route
+                            path={`${match.path}/documentation`}
+                            component={DocumentationPages}
+                          />
+                          <Route
+                            path={`${match.path}/diffs`}
+                            component={DiffReviewEnvironments}
+                          />
+                          <Redirect to={`${match.path}/documentation`} />
+                        </Switch>
+                      </MetadataLoader>
+                    </AnalyticsStore>
+                  </Auth0Provider>
+                </BaseUrlProvider>
+              </SpecRepositoryStore>
             </ReduxProvider>
           </CapturesServiceStore>
         </ConfigRepositoryStore>
@@ -143,7 +179,7 @@ export function useLocalCliServices(
     baseUrl: apiBaseUrl,
     spectacle,
   });
-  const specRepository = new LocalCliSpecRepository({ baseUrl: apiBaseUrl });
+  const specRepository = new UILocalCliSpecRepository({ baseUrl: apiBaseUrl });
   return {
     loading: false,
     data: {

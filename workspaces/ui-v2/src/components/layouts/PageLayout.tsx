@@ -1,9 +1,9 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TopNavigation } from '<src>/components/navigation/TopNavigation';
 
 type PageLayoutProps = {
-  AccessoryNavigation: ReactNode;
+  AccessoryNavigation?: FC;
 };
 
 export const PageLayout: FC<PageLayoutProps> = ({
@@ -26,7 +26,6 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
   },
   scroll: {
-    paddingTop: 40,
     flex: 1,
     height: '100%',
   },

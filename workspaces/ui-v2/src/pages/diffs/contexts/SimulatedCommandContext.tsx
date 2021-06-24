@@ -1,9 +1,9 @@
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
 import { Provider } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import { IForkableSpectacle } from '@useoptic/spectacle';
+import { LinearProgress } from '@material-ui/core';
 
-import { Loading } from '<src>/components';
+import { IForkableSpectacle } from '@useoptic/spectacle';
 import { SpectacleStore } from '<src>/contexts/spectacle-provider';
 import { createReduxStore, useAppSelector } from '<src>/store';
 import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
@@ -37,7 +37,7 @@ export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
       const simulated = await props.spectacle.fork();
       await simulated.mutate({
         query: `
-mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
+mutation X($commands: [JSON!]!, $batchCommitId: ID!, $commitMessage: String!, $clientId: ID!, $clientSessionId: ID!) {
   applyCommands(commands: $commands, batchCommitId: $batchCommitId, commitMessage: $commitMessage, clientId: $clientId, clientSessionId: $clientSessionId) {
     batchCommitId
   }
@@ -64,7 +64,7 @@ mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clien
   }, [JSON.stringify(props.previewCommands)]);
 
   if (isProcessing) {
-    return <Loading />;
+    return <LinearProgress variant="indeterminate" />;
   }
 
   const spectacleToUse = simulated ? simulated : props.spectacle;

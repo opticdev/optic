@@ -105,7 +105,7 @@ export class LocalCliCapturesService implements IOpticCapturesService {
 
   async startDiff(diffId: string, captureId: string): Promise<StartDiffResult> {
     await this.dependencies.spectacle.query({
-      query: `mutation X($diffId: ID, $captureId: ID){
+      query: `mutation X($diffId: ID!, $captureId: ID!){
         startDiff(diffId: $diffId, captureId: $captureId) {
           notificationsUrl
         }
@@ -150,7 +150,7 @@ export class LocalCliDiffService implements IOpticDiffService {
 
   async listDiffs(): Promise<IListDiffsResponse> {
     const result = await this.dependencies.spectacle.query<any, any>({
-      query: `query X($diffId: ID) {
+      query: `query X($diffId: ID!) {
         diff(diffId: $diffId) {
           diffs
         }
@@ -164,7 +164,7 @@ export class LocalCliDiffService implements IOpticDiffService {
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
     const result = await this.dependencies.spectacle.query<any, any>({
-      query: `query X($diffId: ID) {
+      query: `query X($diffId: ID!) {
         diff(diffId: $diffId) {
           unrecognizedUrls
         }
@@ -204,7 +204,7 @@ export class LocalCliConfigRepository implements IOpticConfigRepository {
   }
 }
 
-export class LocalCliSpecRepository implements IOpticSpecRepository {
+export class UILocalCliSpecRepository implements IOpticSpecRepository {
   constructor(private dependencies: { baseUrl: string }) {}
 
   async listEvents(): Promise<any> {

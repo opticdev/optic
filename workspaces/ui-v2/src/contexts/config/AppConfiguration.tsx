@@ -3,8 +3,6 @@ import invariant from 'invariant';
 
 interface IAppConfigurations {
   navigation: {
-    showDocs: boolean;
-    showChangelog: boolean;
     showDiff: boolean;
   };
   analytics:
@@ -18,6 +16,15 @@ interface IAppConfigurations {
   documentation: {
     allowDescriptionEditing: boolean;
   };
+  backendApi: {
+    domain?: string;
+  };
+  sharing:
+    | { enabled: false }
+    | {
+        enabled: true;
+        specViewerDomain: string;
+      };
 }
 
 export type OpticAppConfig = {

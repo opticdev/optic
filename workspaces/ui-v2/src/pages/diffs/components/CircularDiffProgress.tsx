@@ -12,7 +12,7 @@ import {
   ChangedYellowDark,
   UpdatedBlue,
   UpdatedBlueBackground,
-} from '<src>/constants/theme';
+} from '<src>/styles';
 
 export function CircularDiffProgress(props: any) {
   const { total, handled, startBlue, symbol = '𝚫' } = props;

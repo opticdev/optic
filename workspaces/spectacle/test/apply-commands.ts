@@ -16,7 +16,7 @@ Tap.test('spectacle applyCommands mutation', async (test) => {
   const commands = [AddPathComponent('ppp', 'root', 'ppp')];
   await spectacle.queryWrapper({
     query: `
-mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
+mutation X($commands: [JSON!]!, $batchCommitId: ID!, $commitMessage: String!, $clientId: ID!, $clientSessionId: ID!) {
   applyCommands(commands: $commands, batchCommitId: $batchCommitId, commitMessage: $commitMessage, clientId: $clientId, clientSessionId: $clientSessionId) {
     batchCommitId
   }

@@ -1,1 +1,39 @@
-{"http":{"response":{"body":{"content":"","bytes":0},"status_code":201,"headers":{"x-powered-by":"Express","date":"Fri, 18 Jun 2021 15:15:23 GMT","content-type":"text/html; charset=utf-8","content-length":"0","connection":"close","server":"gunicorn/19.9.0","access-control-allow-origin":"*","access-control-allow-credentials":"true"}},"request":{"body":{"content":{},"bytes":0},"method":"DELETE","headers":{"user-agent":"PostmanRuntime/7.28.0","accept":"*/*","postman-token":"1ee705cd-0ad3-477b-9efe-1e0c62219f59","host":"localhost:3000","accept-encoding":"gzip, deflate, br","connection":"keep-alive","content-length":"0"}},"version":"1.1"},"url":{"full":"http://localhost:3000/status/201","path":"/status/201","domain":"localhost"},"client":{"address":"::1","ip":"::1","port":60845},"user_agent":{"original":"PostmanRuntime/7.28.0"}}
+{
+  "http": {
+    "response": {
+      "body": { "content": "", "bytes": 0 },
+      "status_code": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "date": "Fri, 18 Jun 2021 15:15:23 GMT",
+        "content-type": "text/html; charset=utf-8",
+        "content-length": "0",
+        "connection": "close",
+        "server": "gunicorn/19.9.0",
+        "access-control-allow-origin": "*",
+        "access-control-allow-credentials": "true"
+      }
+    },
+    "request": {
+      "body": { "content": {}, "bytes": 0 },
+      "method": "DELETE",
+      "headers": {
+        "user-agent": "PostmanRuntime/7.28.0",
+        "accept": "*/*",
+        "postman-token": "1ee705cd-0ad3-477b-9efe-1e0c62219f59",
+        "host": "localhost:3000",
+        "accept-encoding": "gzip, deflate, br",
+        "connection": "keep-alive",
+        "content-length": "0"
+      }
+    },
+    "version": "1.1"
+  },
+  "url": {
+    "full": "http://localhost:3000/status/201",
+    "path": "/status/201",
+    "domain": "localhost"
+  },
+  "client": { "address": "::1", "ip": "::1", "port": 60845 },
+  "user_agent": { "original": "PostmanRuntime/7.28.0" }
+}

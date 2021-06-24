@@ -150,3 +150,17 @@ export const useChangelogEndpointPageLink: () => {
       )}/paths/${pathId}/methods/${method}`,
   };
 };
+
+// changelog history
+
+export const useChangelogHistoryPage: () => {
+  path: string;
+  linkTo: () => string;
+} = () => {
+  const baseUrl = useBaseUrl();
+  const path = `${baseUrl}/history`;
+  return {
+    path,
+    linkTo: () => path,
+  };
+};

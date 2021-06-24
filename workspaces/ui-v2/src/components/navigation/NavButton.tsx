@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { LightBlueBackground, OpticBlueReadable } from '<src>/constants/theme';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { LightBlueBackground, OpticBlueReadable } from '<src>/styles';
 
 export type NavButtonProps = {
   Icon: React.ElementType;
@@ -14,22 +14,15 @@ export function NavButton(props: NavButtonProps) {
   const classes = useStyles();
   const { Icon, title, to } = props;
 
-  const history = useHistory();
-
   return (
-    <div
-      className={classes.root}
-      onClick={() => {
-        history.push(to);
-      }}
-    >
+    <Link className={classes.root} to={to}>
       <div className={classes.box}>
         <Icon className={classes.iconStyles} />
       </div>
       <Typography variant="subtitle2" className={classes.font}>
         {title}
       </Typography>
-    </div>
+    </Link>
   );
 }
 
@@ -59,8 +52,10 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 1,
     flexBasis: 'auto',
     cursor: 'pointer',
+    textDecoration: 'none',
     '&:hover': {
       backgroundColor: LightBlueBackground,
+      textDecoration: 'none',
     },
   },
   iconStyles: {

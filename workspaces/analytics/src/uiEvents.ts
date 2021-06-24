@@ -68,6 +68,27 @@ export class OpticUIEvents {
     });
   }
 
+  userStartedSharing() {
+    this.dispatch({
+      type: 'user_started_sharing',
+      data: {},
+    });
+  }
+
+  userPickedShareTarget(shareWith: string) {
+    this.dispatch({
+      type: 'user_picked_share_target',
+      data: { with: shareWith },
+    });
+  }
+
+  userShared(shareWith: string, publicSpecId: string) {
+    this.dispatch({
+      type: 'user_saved_documentation_changes',
+      data: { with: shareWith, publicSpecId },
+    });
+  }
+
   userSavedChanges(
     undocumentedUrls: number,
     endpointsChangedCount: number,
@@ -79,6 +100,15 @@ export class OpticUIEvents {
         undocumentedUrls,
         endpointsChangedCount,
         specId,
+      },
+    });
+  }
+
+  resetToCommit(numberOfCommitsReset: number) {
+    this.dispatch({
+      type: 'reset_to_commit',
+      data: {
+        numberOfCommitsReset,
       },
     });
   }

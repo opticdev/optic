@@ -1,4 +1,4 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme } from '@material-ui/core';
 export const primary = '#31366f';
 export const secondary = '#ea4a61';
 export const UpdatedBlue = '#2b7bd1';
@@ -33,6 +33,10 @@ export const methodColorsDark: { [key: string]: string | undefined } = {
   PATCH: '#796384',
   DELETE: '#be5353',
 };
+
+export const FontFamily =
+  '"Ubuntu", "Roboto", "Helvetica", "Arial", sans-serif';
+export const FontFamilyMono = '"Ubuntu Mono", monospace';
 
 export const ShapeViewerTheme = {
   updated: { main: UpdatedBlue, background: UpdatedBlueBackground },

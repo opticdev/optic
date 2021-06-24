@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
-import { OpticBlueReadable } from '<src>/constants/theme';
+import { OpticBlueReadable } from '<src>/styles';
 import { Button, LinearProgress, Typography } from '@material-ui/core';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import {

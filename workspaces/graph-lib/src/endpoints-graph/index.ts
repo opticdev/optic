@@ -336,6 +336,10 @@ export class PathNodeWrapper implements NodeWrapper {
 export class BatchCommitNodeWrapper implements NodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 
+  get value(): BatchCommitNode {
+    return this.result.data as BatchCommitNode;
+  }
+
   requests(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,

@@ -32,7 +32,7 @@ export async function buildUniverse(universe_raw: {
     const simulated = await makeSpectacle(opticContext);
     await simulated.queryWrapper({
       query: `
-mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
+mutation X($commands: [JSON!]!, $batchCommitId: ID!, $commitMessage: String!, $clientId: ID!, $clientSessionId: ID!) {
   applyCommands(commands: $commands, batchCommitId: $batchCommitId, commitMessage: $commitMessage, clientId: $clientId, clientSessionId: $clientSessionId) {
     batchCommitId
   }

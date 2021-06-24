@@ -33,7 +33,7 @@ const fetchDeleteEndpointCommands = async (
       }
     >({
       query: `
-      query X($pathId: ID, $method: String) {
+      query X($pathId: ID!, $method: String!) {
         endpoint(pathId: $pathId, method: $method) {
           commands {
             remove
@@ -107,11 +107,11 @@ export const saveDocumentationChanges = createAsyncThunk<
         await spectacle.mutate({
           query: `
           mutation X(
-            $commands: [JSON],
-            $batchCommitId: ID,
-            $commitMessage: String,
-            $clientId: ID,
-            $clientSessionId: ID
+            $commands: [JSON!]!,
+            $batchCommitId: ID!,
+            $commitMessage: String!,
+            $clientId: ID!,
+            $clientSessionId: ID!
           ) {
             applyCommands(
               commands: $commands,

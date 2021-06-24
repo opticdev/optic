@@ -1,13 +1,12 @@
 import React, { FC, useMemo, useState } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
-import { Button, makeStyles } from '@material-ui/core';
+import { Button, LinearProgress, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { Delete as DeleteIcon, Undo as UndoIcon } from '@material-ui/icons';
 
 import {
   EndpointName,
   PathParameters,
-  Loading,
   IShapeRenderer,
   JsonLike,
   PageLayout,
@@ -15,7 +14,7 @@ import {
 } from '<src>/components';
 import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
-import { SubtleBlueBackground } from '<src>/constants/theme';
+import { SubtleBlueBackground } from '<src>/styles';
 import {
   useAppSelector,
   useAppDispatch,
@@ -106,7 +105,7 @@ export const EndpointRootPage: FC<
   const classes = useStyles();
 
   if (endpointsState.loading) {
-    return <Loading />;
+    return <LinearProgress variant="indeterminate" />;
   }
 
   if (!thisEndpoint) {

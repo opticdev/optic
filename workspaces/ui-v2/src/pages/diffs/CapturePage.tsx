@@ -17,11 +17,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { CenteredColumn, PageLayout } from '<src>/components';
-import {
-  AddedDarkGreen,
-  OpticBlue,
-  OpticBlueReadable,
-} from '<src>/constants/theme';
+import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '<src>/styles';
 import { DiffAccessoryNavigation } from '<src>/pages/diffs/components/DiffAccessoryNavigation';
 
 import { CaptureSelectDropdown } from '<src>/pages/diffs/contexts/CaptureSelectDropdown';
@@ -204,7 +200,7 @@ function CapturePage(props: { showDiff?: boolean }) {
 }
 
 export const CapturePageWithoutDiffOrRedirect = (props: any) => (
-  <PageLayout AccessoryNavigation={null}>
+  <PageLayout>
     <CapturePage {...props} />
   </PageLayout>
 );

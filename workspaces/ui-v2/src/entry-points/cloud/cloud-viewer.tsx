@@ -7,11 +7,12 @@ import {
   Switch,
 } from 'react-router-dom';
 import { Provider as ReduxProvider } from 'react-redux';
+import { LinearProgress } from '@material-ui/core';
 import { Provider as BaseUrlProvider } from '<src>/hooks/useBaseUrl';
 import { makeSpectacle, SpectacleInput } from '@useoptic/spectacle';
 import { DocumentationPages } from '<src>/pages/docs';
 import { SpectacleStore } from '<src>/contexts/spectacle-provider';
-import { Loading, DebugOpticComponent } from '<src>/components';
+import { DebugOpticComponent } from '<src>/components';
 import { DiffReviewEnvironments } from '<src>/pages/diffs/ReviewDiffPages';
 import { IBaseSpectacle } from '@useoptic/spectacle';
 import { IForkableSpectacle } from '@useoptic/spectacle';
@@ -19,6 +20,7 @@ import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory
 import { CapturesServiceStore } from '<src>/hooks/useCapturesHook';
 import { IOpticContext } from '@useoptic/spectacle';
 import { ChangelogPages } from '<src>/pages/changelog/ChangelogPages';
+import { ChangelogHistory } from '<src>/pages/changelogHistory';
 import {
   AppConfigurationStore,
   OpticAppConfig,
@@ -35,13 +37,12 @@ import {
 } from '<src>/contexts/analytics/implementations/cloudViewerAnalytics';
 import { store } from '<src>/store';
 import { MetadataLoader } from '<src>/contexts/MetadataLoader';
+import { SpecRepositoryStore } from '<src>/contexts/SpecRepositoryContext';
 
 const appConfig: OpticAppConfig = {
   config: {
     navigation: {
-      showChangelog: true,
       showDiff: false,
-      showDocs: true,
     },
     analytics: {
       enabled: Boolean(process.env.REACT_APP_ENABLE_ANALYTICS === 'yes'),
@@ -52,10 +53,20 @@ const appConfig: OpticAppConfig = {
     documentation: {
       allowDescriptionEditing: false,
     },
+    backendApi: {
+      domain:
+        window.location.hostname.indexOf('useoptic.com') >= 0
+          ? process.env.REACT_APP_PROD_API_BASE
+          : process.env.REACT_APP_STAGING_API_BASE,
+    },
+    sharing: { enabled: false },
   },
 };
 
 export default function CloudViewer() {
+  const shouldRenderChangelogHistory =
+    process.env.REACT_APP_FF_SHOW_REVERT_COMMIT === 'true';
+
   const match = useRouteMatch();
   const params = useParams<{ specId: string; personId: string }>();
   const { personId, specId } = params;
@@ -66,15 +77,8 @@ export default function CloudViewer() {
         const body = await response.json();
         return body;
       }
-      const apiBase = (function () {
-        if (window.location.hostname.indexOf('useoptic.com') >= 0) {
-          return process.env.REACT_APP_PROD_API_BASE;
-        } else {
-          return process.env.REACT_APP_STAGING_API_BASE;
-        }
-      })();
       const response = await fetch(
-        `${apiBase}/api/people/${personId}/public-specs/${specId}`,
+        `${appConfig.config.backendApi.domain}/api/people/${personId}/public-specs/${specId}`,
         {
           headers: { accept: 'application/json' },
         }
@@ -105,7 +109,7 @@ export default function CloudViewer() {
   }, [specId, personId]);
   const { loading, error, data } = useCloudInMemorySpectacle(task);
   if (loading) {
-    return <Loading />;
+    return <LinearProgress variant="indeterminate" />;
   }
   if (error) {
     return <div>error :(</div>;
@@ -123,36 +127,42 @@ export default function CloudViewer() {
             capturesService={data.opticContext.capturesService}
           >
             <ReduxProvider store={store}>
-              <BaseUrlProvider value={{ url: match.url }}>
-                <AnalyticsStore
-                  getMetadata={getMetadata(() =>
-                    data.opticContext.configRepository.getApiName()
-                  )}
-                  initialize={initialize}
-                  track={track}
-                >
-                  <DebugOpticComponent
-                    specService={data.opticContext.specRepository}
-                  />
-                  <MetadataLoader>
-                    <Switch>
-                      <Route
-                        path={`${match.path}/changes-since/:batchId`}
-                        component={ChangelogPages}
-                      />
-                      <Route
-                        path={`${match.path}/documentation`}
-                        component={DocumentationPages}
-                      />
-                      <Route
-                        path={`${match.path}/diffs`}
-                        component={DiffReviewEnvironments}
-                      />
-                      <Redirect to={`${match.path}/documentation`} />
-                    </Switch>
-                  </MetadataLoader>
-                </AnalyticsStore>
-              </BaseUrlProvider>
+              <SpecRepositoryStore specRepo={data.opticContext.specRepository}>
+                <BaseUrlProvider value={{ url: match.url }}>
+                  <AnalyticsStore
+                    getMetadata={getMetadata(() =>
+                      data.opticContext.configRepository.getApiName()
+                    )}
+                    initialize={initialize}
+                    track={track}
+                  >
+                    <DebugOpticComponent />
+                    <MetadataLoader>
+                      <Switch>
+                        {shouldRenderChangelogHistory && (
+                          <Route
+                            path={`${match.path}/history`}
+                            component={ChangelogHistory}
+                          />
+                        )}
+                        <Route
+                          path={`${match.path}/changes-since/:batchId`}
+                          component={ChangelogPages}
+                        />
+                        <Route
+                          path={`${match.path}/documentation`}
+                          component={DocumentationPages}
+                        />
+                        <Route
+                          path={`${match.path}/diffs`}
+                          component={DiffReviewEnvironments}
+                        />
+                        <Redirect to={`${match.path}/documentation`} />
+                      </Switch>
+                    </MetadataLoader>
+                  </AnalyticsStore>
+                </BaseUrlProvider>
+              </SpecRepositoryStore>
             </ReduxProvider>
           </CapturesServiceStore>
         </ConfigRepositoryStore>

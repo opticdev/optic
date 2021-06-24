@@ -25,7 +25,6 @@ tasks:
       - rm -rfv {{.API_PROJECT_DIR}}/.optic/captures/ccc/diffs/*
       - cd {{.API_PROJECT_DIR}} && node ../workspaces/local-cli/bin/run daemon:stop
       - cd {{.API_PROJECT_DIR}} && node ../workspaces/local-cli/bin/run spec
-      - cargo build
       - >
         node
         workspaces/snapshot-tests/build/regressions/index.js
