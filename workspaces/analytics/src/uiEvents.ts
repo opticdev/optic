@@ -104,6 +104,15 @@ export class OpticUIEvents {
     });
   }
 
+  resetToCommit(numberOfCommitsReset: number) {
+    this.dispatch({
+      type: 'reset_to_commit',
+      data: {
+        numberOfCommitsReset,
+      },
+    });
+  }
+
   // proposed
 
   // deprecated

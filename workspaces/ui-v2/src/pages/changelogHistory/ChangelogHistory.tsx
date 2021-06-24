@@ -1,23 +1,45 @@
-import React, { FC } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Schedule as ScheduleIcon } from '@material-ui/icons';
-
-import { Button } from '@material-ui/core';
+import React, { CSSProperties, FC, useState } from 'react';
+import { Button, makeStyles } from '@material-ui/core';
+import ClassNames from 'classnames';
+import Color from 'color';
+import {
+  CompareArrows as CompareArrowsIcon,
+  Schedule as ScheduleIcon,
+  Subject as SubjectIcon,
+} from '@material-ui/icons';
+import { Link } from 'react-router-dom';
 
 import {
   Page,
   useChangelogPages,
   useDocumentationPageLink,
 } from '<src>/components';
-import { useBatchCommits } from '<src>/hooks/useBatchCommits';
+import { useAnalytics } from '<src>/contexts/analytics';
+import { BatchCommit, useBatchCommits } from '<src>/hooks/useBatchCommits';
 import { formatTimeAgo } from '<src>/utils';
+import {
+  LightBlueBackground,
+  OpticBlueReadable,
+  FontFamily,
+  OpticBlueLightened,
+} from '<src>/styles';
+
+import { ConfirmResetModal } from './components';
+
+const SPECIFICATION_METADATA_COMMIT_MESSAGE =
+  'Initialize specification attributes';
+const canShowResetButton = (commitMessage: string, index: number) =>
+  commitMessage !== SPECIFICATION_METADATA_COMMIT_MESSAGE && index !== 0;
 
 export const ChangelogHistory: FC = () => {
   const { loading, batchCommits } = useBatchCommits();
   const changelogPage = useChangelogPages();
   const documentationPage = useDocumentationPageLink();
-
   const classes = useStyles();
+  const analytics = useAnalytics();
+  const [confirmResetModalState, setConfirmResetModalState] = useState<
+    BatchCommit | false
+  >(false);
 
   return (
     <Page>
@@ -29,45 +51,81 @@ export const ChangelogHistory: FC = () => {
           </div>
 
           <ol className={classes.commitsList}>
-            {batchCommits.map((batchCommit, i) => (
-              <li className={classes.commitsListItem} key={batchCommit.batchId}>
-                <div className={classes.commitDetails}>
-                  <h4 className={classes.commitMessage}>
-                    {batchCommit.commitMessage}
-                  </h4>
-                  <span className={classes.commitTime}>
-                    {formatTimeAgo(new Date(batchCommit.createdAt))}
-                  </span>
-                </div>
+            {batchCommits.map((batchCommit, i) => {
+              const isCurrent = i === 0;
 
-                <div className={classes.commitControls}>
-                  <Button
-                    className={classes.commitCompareButton}
-                    href={
-                      i === 0
-                        ? documentationPage.linkTo()
-                        : changelogPage.linkTo(batchCommit.batchId)
-                    }
-                  >
-                    Compare
-                  </Button>
+              return (
+                <li
+                  className={ClassNames(classes.commitsListItem, {
+                    [classes.isCurrent]: isCurrent,
+                  })}
+                  key={batchCommit.batchId}
+                >
+                  <div className={classes.commitDetails}>
+                    <h4 className={classes.commitMessage}>
+                      {batchCommit.commitMessage}
+                    </h4>
+                    <span className={classes.commitTime}>
+                      {formatTimeAgo(new Date(batchCommit.createdAt))}
+                    </span>
+                  </div>
 
-                  {i !== 0 && (
-                    <Button
-                      className={classes.commitResetButton}
-                      onClick={() => {
-                        console.log(`resetting to ${batchCommit.batchId}`);
-                      }}
-                    >
-                      Reset
-                    </Button>
-                  )}
-                </div>
-              </li>
-            ))}
+                  <div className={classes.commitControls}>
+                    {isCurrent ? (
+                      <Button
+                        className={classes.commitDocsButton}
+                        component={Link}
+                        to={documentationPage.linkTo()}
+                        variant="text"
+                      >
+                        <SubjectIcon className={classes.commitControlIcon} />
+                        Docs
+                      </Button>
+                    ) : (
+                      <Button
+                        className={classes.commitCompareButton}
+                        component={Link}
+                        variant="text"
+                        to={changelogPage.linkTo(batchCommit.batchId)}
+                      >
+                        <CompareArrowsIcon
+                          className={classes.commitControlIcon}
+                        />
+                        Compare
+                      </Button>
+                    )}
+
+                    {canShowResetButton(batchCommit.commitMessage, i) && (
+                      <Button
+                        className={classes.commitResetButton}
+                        variant="outlined"
+                        onClick={() => {
+                          setConfirmResetModalState(batchCommit);
+                        }}
+                      >
+                        Reset
+                      </Button>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
           </ol>
         </section>
       </Page.Body>
+      {confirmResetModalState && (
+        <ConfirmResetModal
+          batchCommit={confirmResetModalState}
+          onClose={() => setConfirmResetModalState(false)}
+          onSave={() => {
+            const numberOfCommitsReset = batchCommits.findIndex(
+              (batchCommit) =>
+                batchCommit.batchId === confirmResetModalState.batchId
+            );
+            analytics.resetToCommit(numberOfCommitsReset);
+          }}
+        />
+      )}
     </Page>
   );
 };
@@ -117,12 +175,25 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
+
     background: '#fff',
     padding: theme.spacing(2),
     marginBottom: theme.spacing(3),
     borderRadius: theme.shape.borderRadius,
     border: `1px solid ${theme.palette.grey[200]}`,
+    color: Color(theme.palette.text.secondary).darken(0.3).hsl().string(),
+
+    '&$isCurrent': {
+      margin: theme.spacing(0, -0.5, 3),
+      border: `1px solid ${Color(theme.palette.primary.light)
+        .lighten(0.7)
+        .hex()}`,
+      background: Color(LightBlueBackground).lighten(0.03).hex(),
+      fontSize: theme.typography.pxToRem(theme.typography.fontSize + 3),
+    },
   },
+
+  isCurrent: {}, // state definition, so a classname is generated for it
 
   commitDetails: {
     display: 'flex',
@@ -143,7 +214,45 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexShrink: 0,
     flexGrow: 0,
+    flexDirection: 'row-reverse',
+    marginLeft: theme.spacing(1),
+
+    '& > *:nth-child(n + 2)': {
+      // all but the first child
+      marginRight: theme.spacing(1),
+    },
   },
-  commitCompareButton: {},
-  commitResetButton: {},
+  commitCompareButton: {
+    ...button(),
+  },
+  commitDocsButton: {
+    ...button(),
+
+    background: '#fff',
+  },
+
+  commitResetButton: {
+    ...button('outlined'),
+  },
+
+  commitControlIcon: {
+    width: theme.spacing(2),
+    marginRight: theme.spacing(0.5),
+  },
 }));
+
+function button(variant?: 'outlined'): CSSProperties {
+  return {
+    fontFamily: FontFamily,
+    color: OpticBlueReadable,
+    textTransform: 'none',
+
+    ...(variant === 'outlined'
+      ? {
+          border: `1px solid ${LightBlueBackground}`,
+        }
+      : {
+          background: LightBlueBackground,
+        }),
+  };
+}

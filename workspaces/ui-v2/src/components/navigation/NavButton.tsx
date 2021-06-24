@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
+import { Link } from 'react-router-dom';
 import { LightBlueBackground, OpticBlueReadable } from '<src>/styles';
 
 export type NavButtonProps = {
@@ -15,7 +15,7 @@ export function NavButton(props: NavButtonProps) {
   const { Icon, title, to } = props;
 
   return (
-    <Link className={classes.root} href={to}>
+    <Link className={classes.root} to={to}>
       <div className={classes.box}>
         <Icon className={classes.iconStyles} />
       </div>
@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 1,
     flexBasis: 'auto',
     cursor: 'pointer',
+    textDecoration: 'none',
     '&:hover': {
       backgroundColor: LightBlueBackground,
       textDecoration: 'none',

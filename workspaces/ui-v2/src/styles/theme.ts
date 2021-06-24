@@ -34,6 +34,10 @@ export const methodColorsDark: { [key: string]: string | undefined } = {
   DELETE: '#be5353',
 };
 
+export const FontFamily =
+  '"Ubuntu", "Roboto", "Helvetica", "Arial", sans-serif';
+export const FontFamilyMono = '"Ubuntu Mono", monospace';
+
 export const ShapeViewerTheme = {
   updated: { main: UpdatedBlue, background: UpdatedBlueBackground },
   changed: { main: ChangedYellow, background: ChangedYellowBackground },

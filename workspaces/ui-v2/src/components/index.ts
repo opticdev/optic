@@ -1,3 +1,4 @@
+export * from './Button';
 export * from './CommitMessageModal';
 export * from './DebugOpticComponent';
 export * from './EditableTextField';
