@@ -107,6 +107,24 @@ type HttpBody {
 }
 
 """
+HttpQuery - query parameters associated with a request
+"""
+type HttpQuery {
+  id: ID!
+
+  # The query parameter key
+  key: String!
+
+  # Reference to the shape for this query parameter
+  rootShapeId: String!
+
+  # Is the query removed
+  isRemoved: Boolean!
+
+  changes(sinceBatchCommitId: String): ChangesResult
+}
+
+"""
 HTTP Request
 """
 type HttpRequest {
@@ -126,6 +144,9 @@ type HttpRequest {
   
   # HTTP method for the HTTP request
   method: String
+
+  # Query parameters associated with this HTTP request
+  queries: [HttpQuery!]!
   
   # Request bodies associated with this HTTP request
   bodies: [HttpBody]
@@ -253,7 +274,11 @@ type ChangesResult {
   added: Boolean
   
   # Whether or not the change was one that was updated
+  # TODO @nic change this to updated
   changed: Boolean
+
+  # Whether or not the change was one that was removed
+  removed: Boolean
 }
 
 """

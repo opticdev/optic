@@ -281,6 +281,49 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return parent.listUnrecognizedUrls();
       },
     },
+    HttpQuery: {
+      // TODO update graphlib type and replace with hard coded typings
+      id: async (parent: {
+        id: string;
+        key: string;
+        rootShapeId: string;
+        isRemoved: boolean;
+      }) => {
+        return parent.id;
+      },
+      key: async (parent: {
+        id: string;
+        key: string;
+        rootShapeId: string;
+        isRemoved: boolean;
+      }) => {
+        return parent.key;
+      },
+      changes: async () => {
+        // TODO @nic to implement
+        return {
+          added: false,
+          changed: false,
+          removed: false,
+        };
+      },
+      rootShapeId: async (parent: {
+        id: string;
+        key: string;
+        rootShapeId: string;
+        isRemoved: boolean;
+      }) => {
+        return parent.rootShapeId;
+      },
+      isRemoved: async (parent: {
+        id: string;
+        key: string;
+        rootShapeId: string;
+        isRemoved: boolean;
+      }) => {
+        return parent.isRemoved;
+      },
+    },
     HttpRequest: {
       id: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.value.requestId);
@@ -311,6 +354,23 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       method: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.value.httpMethod);
+      },
+      queries: async () => {
+        // TODO connect up to rust code
+        return [
+          {
+            id: 'queryid-1',
+            key: 'todoId',
+            rootShapeId: 'shape-1',
+            isRemoved: false,
+          },
+          {
+            id: 'queryid-2',
+            key: 'limit',
+            rootShapeId: 'shape-2',
+            isRemoved: false,
+          },
+        ];
       },
       bodies: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.bodies().results);
@@ -497,7 +557,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     EndpointChange: {
-      // TODO: considering converting into ChangeResult
+      // TODO @nic considering converting into ChangeResult
       change: (parent: EndpointChange) => {
         return Promise.resolve(parent.change);
       },
