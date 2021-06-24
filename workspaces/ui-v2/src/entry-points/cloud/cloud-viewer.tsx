@@ -64,9 +64,6 @@ const appConfig: OpticAppConfig = {
 };
 
 export default function CloudViewer() {
-  const shouldRenderChangelogHistory =
-    process.env.REACT_APP_FF_SHOW_REVERT_COMMIT === 'true';
-
   const match = useRouteMatch();
   const params = useParams<{ specId: string; personId: string }>();
   const { personId, specId } = params;
@@ -139,12 +136,10 @@ export default function CloudViewer() {
                     <DebugOpticComponent />
                     <MetadataLoader>
                       <Switch>
-                        {shouldRenderChangelogHistory && (
-                          <Route
-                            path={`${match.path}/history`}
-                            component={ChangelogHistory}
-                          />
-                        )}
+                        <Route
+                          path={`${match.path}/history`}
+                          component={ChangelogHistory}
+                        />
                         <Route
                           path={`${match.path}/changes-since/:batchId`}
                           component={ChangelogPages}

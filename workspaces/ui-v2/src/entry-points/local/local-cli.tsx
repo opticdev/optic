@@ -78,8 +78,6 @@ const AUTH0_CLIENT_ID =
   process.env.REACT_APP_AUTH0_CLIENT_ID || 'S7AeH5IQweLb2KHNoyfQfKBtkroE1joF';
 
 export default function LocalCli() {
-  const shouldRenderChangelogHistory =
-    process.env.REACT_APP_FF_SHOW_REVERT_COMMIT === 'true';
   const match = useRouteMatch();
   const params = useParams<{ specId: string }>();
   const { specId } = params;
@@ -117,12 +115,10 @@ export default function LocalCli() {
                       <DebugOpticComponent />
                       <MetadataLoader>
                         <Switch>
-                          {shouldRenderChangelogHistory && (
-                            <Route
-                              path={`${match.path}/history`}
-                              component={ChangelogHistory}
-                            />
-                          )}
+                          <Route
+                            path={`${match.path}/history`}
+                            component={ChangelogHistory}
+                          />
                           <Route
                             path={`${match.path}/changes-since/:batchId`}
                             component={ChangelogPages}
