@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/styles';
-import { Check } from '@material-ui/icons';
+import { Check, Delete as DeleteIcon } from '@material-ui/icons';
 import { Divider, List, ListItem, Typography } from '@material-ui/core';
 
 import {
@@ -165,6 +165,7 @@ export function DocumentationRootPageWithPendingEndpoints() {
     pendingEndpoints,
     setCommitModalOpen,
     hasDiffChanges,
+    discardEndpoint,
   } = useSharedDiffContext();
   const pendingEndpointsToRender = pendingEndpoints.filter((i) => i.staged);
   const classes = useStyles();
@@ -231,6 +232,12 @@ export function DocumentationRootPageWithPendingEndpoints() {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <PendingEndpointNameField endpoint={endpoint} />
+                      <DeleteIcon
+                        onClick={() => {
+                          discardEndpoint(endpoint.id);
+                        }}
+                        fontSize="small"
+                      />
                     </div>
                   </ListItem>
                 );
@@ -305,6 +312,8 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   endpointContributionContainer: {
+    display: 'flex',
+    alignItems: 'center',
     paddingRight: 15,
     '@media (max-width: 1250px)': {
       paddingLeft: 20,

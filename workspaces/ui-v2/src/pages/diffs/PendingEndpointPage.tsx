@@ -93,7 +93,6 @@ export function PendingEndpointPage(props: any) {
     ignoreBody,
     includeBody,
     stageEndpoint,
-    discardEndpoint,
     newEndpointCommands,
     endpointName,
     changeEndpointName,
@@ -231,13 +230,6 @@ export function PendingEndpointPage(props: any) {
                   </Button>
                 </div>
                 <div>
-                  <Button
-                    size="small"
-                    color="secondary"
-                    onClick={discardEndpoint}
-                  >
-                    Discard Endpoint
-                  </Button>
                   <Button
                     size="small"
                     variant="contained"
