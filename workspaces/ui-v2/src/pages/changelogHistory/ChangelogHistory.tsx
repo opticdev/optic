@@ -21,7 +21,6 @@ import {
   LightBlueBackground,
   OpticBlueReadable,
   FontFamily,
-  OpticBlueLightened,
 } from '<src>/styles';
 
 import { ConfirmResetModal } from './components';
