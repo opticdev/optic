@@ -18,12 +18,12 @@ export const DocsPageAccessoryNavigation: FC = () => {
 
   return (
     <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
+      {appConfig.sharing.enabled && <ShareButton />}
       <PromptNavigateAway shouldPrompt={isEditing && pendingCount > 0} />
       <ChangesSinceDropdown />
       {appConfig.documentation.allowDescriptionEditing && (
         <EditContributionsButton />
       )}
-      {appConfig.sharing.enabled && <ShareButton />}
     </div>
   );
 };
