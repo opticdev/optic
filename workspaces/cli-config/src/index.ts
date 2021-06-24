@@ -325,6 +325,7 @@ export async function createFileTree(config: string, basePath: string) {
       path: gitignorePath,
       contents: `
 captures/
+optic-temp-*
 `,
     },
     {

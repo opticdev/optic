@@ -204,7 +204,7 @@ export class LocalCliConfigRepository implements IOpticConfigRepository {
   }
 }
 
-export class LocalCliSpecRepository implements IOpticSpecRepository {
+export class UILocalCliSpecRepository implements IOpticSpecRepository {
   constructor(private dependencies: { baseUrl: string }) {}
 
   async listEvents(): Promise<any> {
