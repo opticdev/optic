@@ -26,7 +26,7 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
   const [commitMessage, setCommitMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const classes = useStyles();
-  const canSubmit = commitMessage.length > 0;
+  const canSubmit = commitMessage.length > 0 && !isSaving;
   const onKeyPress = useRunOnKeypress(
     () => {
       if (canSubmit) {
@@ -71,7 +71,7 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
           Cancel
         </Button>
         <Button
-          disabled={!canSubmit || isSaving}
+          disabled={!canSubmit}
           onClick={async () => {
             setIsSaving(true);
             await onSave(commitMessage);
