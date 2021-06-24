@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Button, makeStyles } from '@material-ui/core';
 import { Schedule as ScheduleIcon } from '@material-ui/icons';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import {
   Page,
@@ -23,7 +23,6 @@ export const ChangelogHistory: FC = () => {
   const { loading, batchCommits } = useBatchCommits();
   const changelogPage = useChangelogPages();
   const documentationPage = useDocumentationPageLink();
-  const history = useHistory();
   const classes = useStyles();
   const analytics = useAnalytics();
   const [confirmResetModalState, setConfirmResetModalState] = useState<
@@ -40,44 +39,52 @@ export const ChangelogHistory: FC = () => {
           </div>
 
           <ol className={classes.commitsList}>
-            {batchCommits.map((batchCommit, i) => (
-              <li className={classes.commitsListItem} key={batchCommit.batchId}>
-                <div className={classes.commitDetails}>
-                  <h4 className={classes.commitMessage}>
-                    {batchCommit.commitMessage}
-                  </h4>
-                  <span className={classes.commitTime}>
-                    {formatTimeAgo(new Date(batchCommit.createdAt))}
-                  </span>
-                </div>
+            {batchCommits.map((batchCommit, i) => {
+              const isCurrent = i === 0;
 
-                <div className={classes.commitControls}>
-                  <Button
-                    className={classes.commitCompareButton}
-                    onClick={() =>
-                      history.push(
-                        i === 0
+              return (
+                <li
+                  className={classes.commitsListItem}
+                  key={batchCommit.batchId}
+                >
+                  <div className={classes.commitDetails}>
+                    <h4 className={classes.commitMessage}>
+                      {batchCommit.commitMessage}
+                    </h4>
+                    <span className={classes.commitTime}>
+                      {formatTimeAgo(new Date(batchCommit.createdAt))}
+                    </span>
+                  </div>
+
+                  <div className={classes.commitControls}>
+                    <Button
+                      className={classes.commitCompareButton}
+                      component={Link}
+                      variant="outlined"
+                      to={
+                        isCurrent
                           ? documentationPage.linkTo()
                           : changelogPage.linkTo(batchCommit.batchId)
-                      )
-                    }
-                  >
-                    {i === 0 ? 'View' : 'Compare'}
-                  </Button>
-
-                  {canShowResetButton(batchCommit.commitMessage, i) && (
-                    <Button
-                      className={classes.commitResetButton}
-                      onClick={() => {
-                        setConfirmResetModalState(batchCommit);
-                      }}
+                      }
                     >
-                      Reset
+                      {isCurrent ? 'View' : 'Compare'}
                     </Button>
-                  )}
-                </div>
-              </li>
-            ))}
+
+                    {canShowResetButton(batchCommit.commitMessage, i) && (
+                      <Button
+                        className={classes.commitResetButton}
+                        variant="outlined"
+                        onClick={() => {
+                          setConfirmResetModalState(batchCommit);
+                        }}
+                      >
+                        Reset
+                      </Button>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
           </ol>
         </section>
       </Page.Body>
@@ -169,6 +176,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexShrink: 0,
     flexGrow: 0,
+
+    '& > *:nth-child(n + 2)': {
+      // all but the first child
+      marginLeft: theme.spacing(1),
+    },
   },
   commitCompareButton: {},
   commitResetButton: {},
