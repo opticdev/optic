@@ -121,7 +121,7 @@ type HttpQuery {
   # Is the query removed
   isRemoved: Boolean!
 
-  changes(sinceBatchCommitId: String): ChangesResult
+  changes(sinceBatchCommitId: String): ChangesResult!
 }
 
 """
