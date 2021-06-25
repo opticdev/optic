@@ -281,49 +281,6 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return parent.listUnrecognizedUrls();
       },
     },
-    HttpQuery: {
-      // TODO update graphlib type and replace with hard coded typings
-      id: async (parent: {
-        id: string;
-        key: string;
-        rootShapeId: string;
-        isRemoved: boolean;
-      }) => {
-        return parent.id;
-      },
-      key: async (parent: {
-        id: string;
-        key: string;
-        rootShapeId: string;
-        isRemoved: boolean;
-      }) => {
-        return parent.key;
-      },
-      changes: async () => {
-        // TODO @nic to implement
-        return {
-          added: false,
-          changed: false,
-          removed: false,
-        };
-      },
-      rootShapeId: async (parent: {
-        id: string;
-        key: string;
-        rootShapeId: string;
-        isRemoved: boolean;
-      }) => {
-        return parent.rootShapeId;
-      },
-      isRemoved: async (parent: {
-        id: string;
-        key: string;
-        rootShapeId: string;
-        isRemoved: boolean;
-      }) => {
-        return parent.isRemoved;
-      },
-    },
     HttpRequest: {
       id: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.value.requestId);
@@ -355,22 +312,13 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       method: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.value.httpMethod);
       },
-      queries: async () => {
+      query: async () => {
         // TODO connect up to rust code
-        return [
-          {
-            id: 'queryid-1',
-            key: 'todoId',
-            rootShapeId: 'shape-1',
-            isRemoved: false,
-          },
-          {
-            id: 'queryid-2',
-            key: 'limit',
-            rootShapeId: 'shape-2',
-            isRemoved: false,
-          },
-        ];
+        return {
+          contentType: 'query-something',
+          rootShapeId: 'shape-1',
+          isRemoved: false,
+        };
       },
       bodies: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.bodies().results);

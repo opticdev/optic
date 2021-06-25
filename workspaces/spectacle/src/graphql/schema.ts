@@ -107,24 +107,6 @@ type HttpBody {
 }
 
 """
-HttpQuery - query parameters associated with a request
-"""
-type HttpQuery {
-  id: ID!
-
-  # The query parameter key
-  key: String!
-
-  # Reference to the shape for this query parameter
-  rootShapeId: String!
-
-  # Is the query removed
-  isRemoved: Boolean!
-
-  changes(sinceBatchCommitId: String): ChangesResult!
-}
-
-"""
 HTTP Request
 """
 type HttpRequest {
@@ -146,7 +128,7 @@ type HttpRequest {
   method: String
 
   # Query parameters associated with this HTTP request
-  queries: [HttpQuery!]!
+  query: HttpBody!
   
   # Request bodies associated with this HTTP request
   bodies: [HttpBody]
