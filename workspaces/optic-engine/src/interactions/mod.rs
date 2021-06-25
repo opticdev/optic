@@ -92,26 +92,35 @@ pub fn analyze_undocumented_bodies(
 
   let results = diff_visitors.take_results().unwrap();
 
-  results.into_iter().filter_map(move |result| match result {
+  results.into_iter().flat_map(move |result| match result {
     InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
       let body = &interaction.request.body;
-      let trail_observations = observe_body_trails(&body.value);
+      let body_trail_observations = observe_body_trails(&body.value);
 
-      Some(BodyAnalysisResult {
-        body_location: BodyAnalysisLocation::from(diff),
-        trail_observations,
-      })
+      let query_params = &interaction.request.query;
+      let query_trail_observations = observe_body_trails(query_params);
+
+      vec![
+        BodyAnalysisResult {
+          body_location: BodyAnalysisLocation::from(diff.clone()),
+          trail_observations: body_trail_observations,
+        },
+        BodyAnalysisResult {
+          body_location: BodyAnalysisLocation::from(diff).into_query_params(),
+          trail_observations: query_trail_observations,
+        },
+      ]
     }
     InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => {
       let body = &interaction.response.body;
       let trail_observations = observe_body_trails(&body.value);
 
-      Some(BodyAnalysisResult {
+      vec![BodyAnalysisResult {
         body_location: BodyAnalysisLocation::from(diff),
         trail_observations,
-      })
+      }]
     }
-    _ => None,
+    _ => vec![],
   })
 }
 
