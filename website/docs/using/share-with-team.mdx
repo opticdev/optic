@@ -39,6 +39,17 @@ optic.yml
 └── ignore
 ```
 
+### Share your Documentation
+
+On the documentation page of the Optic dashboard, you'll see a "Share" button. This lets you upload your current documentation to Optic and provides you a shareable link. Anyone who goes to the URL will see the documentation uploaded and be able to compare against older versions, just like in the local dashboard. The share link will also generate a badge for your repository with a link to the documentation. Here's an example of an Optic badge:
+
+<Paper elevation={2}>
+
+  <img src="https://img.shields.io/static/v1?label=API%20Docs&message=12%20Endpoints&style=flat&color=rgb(43%2C123%2C209)&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTM0IiBoZWlnaHQ9IjEzNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI%2BPGRlZnM%2BPGxpbmVhckdyYWRpZW50IHgxPSI1MCUiIHkxPSItMTQuMyUiIHgyPSI1MCUiIHkyPSIxMDAlIiBpZD0iYyI%2BPHN0b3Agc3RvcC1jb2xvcj0iI0ZGRiIgb2Zmc2V0PSIwJSIvPjxzdG9wIHN0b3AtY29sb3I9IiNGNEY0RjQiIG9mZnNldD0iMTAwJSIvPjwvbGluZWFyR3JhZGllbnQ%2BPGZpbHRlciB4PSItNS42JSIgeT0iLTQlIiB3aWR0aD0iMTExLjElIiBoZWlnaHQ9IjExMS4xJSIgZmlsdGVyVW5pdHM9Im9iamVjdEJvdW5kaW5nQm94IiBpZD0iYSI%2BPGZlT2Zmc2V0IGR5PSIyIiBpbj0iU291cmNlQWxwaGEiIHJlc3VsdD0ic2hhZG93T2Zmc2V0T3V0ZXIxIi8%2BPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMiIgaW49InNoYWRvd09mZnNldE91dGVyMSIgcmVzdWx0PSJzaGFkb3dCbHVyT3V0ZXIxIi8%2BPGZlQ29sb3JNYXRyaXggdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwLjUgMCIgaW49InNoYWRvd0JsdXJPdXRlcjEiLz48L2ZpbHRlcj48Y2lyY2xlIGlkPSJiIiBjeD0iNjMiIGN5PSI2MyIgcj0iNjMiLz48L2RlZnM%2BPGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48ZyBmaWxsLXJ1bGU9Im5vbnplcm8iIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQgMikiPjx1c2UgZmlsbD0iIzAwMCIgZmlsdGVyPSJ1cmwoI2EpIiB4bGluazpocmVmPSIjYiIvPjx1c2UgZmlsbD0idXJsKCNjKSIgeGxpbms6aHJlZj0iI2IiLz48L2c%2BPHBhdGggZD0iTTkwIDM1YTM4IDM4IDAgMDAtNDYgMG0yOCA2OGEzOCAzOCAwIDAwMzMtMzhjMC04LTMtMTYtNy0yMm0tMzYgNjBhMzggMzggMCAwMS0zMy0zOGMwLTggMy0xNiA3LTIyIiBzdHJva2U9IiMzNDNCRTUiIHN0cm9rZS13aWR0aD0iNC43IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNNTEgODVhMjYgMjYgMCAwMDMyIDBNNjMgMzljLTUgMS0xMCAzLTE0IDdhMjYgMjYgMCAwMC0zIDM0bTI1LTQxYzUgMSAxMCAzIDE0IDdhMjYgMjYgMCAwMTMgMzQiIHN0cm9rZT0iIzM0M0JFNSIgc3Ryb2tlLXdpZHRoPSI0LjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvZz48L3N2Zz4%3D" alt="Example of an Optic API documentation badge" />
+
+</Paper>
+
+
 ### Configure the [`optic-changelog` GitHub Action](https://github.com/opticdev/optic-changelog)
 
 Once you've checked-in Optic, the `optic-changelog` will start commenting on API PRs that include changes to the API's contract. It's like adding a "API Changes" tab next to "Files Changed".
