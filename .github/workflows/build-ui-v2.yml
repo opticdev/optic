@@ -51,7 +51,7 @@ jobs:
           echo "USER=${GITHUB_ACTOR}" >> $GITHUB_ENV
       - run: |
           task ui-v2:ci
-          if [ "$BRANCH" = "develop" ] || [ "$BRANCH" = "master" ]
+          if [ "$BRANCH" = "develop" ] || [ "$BRANCH" = "release" ]
           then
             docker tag \
               "513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:${TAG}" \
