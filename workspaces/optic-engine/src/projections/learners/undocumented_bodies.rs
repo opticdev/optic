@@ -10,13 +10,25 @@ use crate::JsonTrail;
 
 #[derive(Default, Debug)]
 pub struct LearnedUndocumentedBodiesProjection {
-  observations_by_body_location: HashMap<BodyAnalysisLocation, TrailObservationsResult>,
+  request_response_observations: HashMap<BodyAnalysisLocation, TrailObservationsResult>,
+  query_params_observations: HashMap<BodyAnalysisLocation, TrailObservationsResult>,
 }
 
 impl LearnedUndocumentedBodiesProjection {
   fn with_body_analysis_result(&mut self, analysis: BodyAnalysisResult) {
-    let existing_observations = self
-      .observations_by_body_location
+    let collection = match analysis.body_location {
+      BodyAnalysisLocation::UnmatchedRequest { .. }
+      | BodyAnalysisLocation::UnmatchedResponse { .. } => &mut self.request_response_observations,
+      BodyAnalysisLocation::UnmatchedRequestQueryParameters { .. } => {
+        &mut self.query_params_observations
+      }
+      BodyAnalysisLocation::MatchedRequest { .. }
+      | BodyAnalysisLocation::MatchedResponse { .. } => {
+        unreachable!("analyzing undocumented bodies should only yield unmatched analysiss")
+      }
+    };
+
+    let existing_observations = collection
       .entry(analysis.body_location)
       .or_insert_with(|| TrailObservationsResult::default());
 
@@ -24,15 +36,43 @@ impl LearnedUndocumentedBodiesProjection {
   }
 
   pub fn into_endpoint_bodies(
-    self,
+    mut self,
     id_generator: &mut impl SpecIdGenerator,
   ) -> impl Iterator<Item = EndpointBodies> {
     let mut endpoints_by_endpoint = HashMap::new();
-    for (body_location, observations) in self.observations_by_body_location {
+    for (body_location, observations) in self.request_response_observations {
       let (root_shape_id, body_commands) =
         observations.into_commands(id_generator, &JsonTrail::empty());
-      let endpoint_body =
-        EndpointBody::new(&body_location, root_shape_id, body_commands, id_generator);
+      let mut endpoint_body = EndpointBody::new(&body_location, root_shape_id, body_commands);
+
+      if let BodyAnalysisLocation::UnmatchedRequest {
+        ref path_id,
+        ref method,
+        ref content_type,
+      } = body_location
+      {
+        let expected_query_params_location =
+          BodyAnalysisLocation::UnmatchedRequestQueryParameters {
+            path_id: path_id.clone(),
+            method: method.clone(),
+            content_type: content_type.clone(),
+          };
+        let query_params_analysis = self
+          .query_params_observations
+          .remove(&expected_query_params_location);
+
+        if let Some(query_observations) = query_params_analysis {
+          let (query_parameters_shape_id, query_parameters_commands) =
+            query_observations.into_commands(id_generator, &JsonTrail::empty());
+
+          endpoint_body.with_query_params(
+            query_parameters_shape_id.expect("query parameters should have a root shape"),
+            query_parameters_commands,
+          )
+        }
+      }
+
+      endpoint_body.append_endpoint_commands(id_generator);
 
       let (path_id, method) = match body_location {
         BodyAnalysisLocation::UnmatchedRequest {
@@ -127,6 +167,8 @@ pub struct EndpointRequestBody {
 
   #[serde(flatten)]
   body_descriptor: Option<EndpointBodyDescriptor>,
+
+  query_parameters_shape_id: Option<String>,
 }
 
 #[derive(Default, Debug, Serialize)]
@@ -156,7 +198,6 @@ impl EndpointBody {
     body_location: &BodyAnalysisLocation,
     root_shape_id: Option<String>,
     body_commands: impl IntoIterator<Item = SpecCommand>,
-    id_generator: &mut impl SpecIdGenerator,
   ) -> Self {
     let body_descriptor = match root_shape_id {
       Some(root_shape_id) => Some(EndpointBodyDescriptor {
@@ -169,7 +210,7 @@ impl EndpointBody {
       None => None,
     };
 
-    let mut body = match body_location {
+    match body_location {
       BodyAnalysisLocation::UnmatchedRequest {
         path_id, method, ..
       } => EndpointBody::Request(EndpointRequestBody {
@@ -177,6 +218,7 @@ impl EndpointBody {
         path_id: path_id.clone(),
         method: method.clone(),
         commands: body_commands.into_iter().collect(),
+        query_parameters_shape_id: None,
       }),
       BodyAnalysisLocation::UnmatchedResponse {
         status_code,
@@ -191,11 +233,23 @@ impl EndpointBody {
         status_code: *status_code,
       }),
       _ => panic!("EndpointBody should only be created for unmatched responses and requests"),
-    };
+    }
+  }
 
-    body.append_endpoint_commands(id_generator);
-
-    body
+  fn with_query_params(
+    &mut self,
+    root_shape_id: String,
+    body_commands: impl IntoIterator<Item = SpecCommand>,
+  ) {
+    match self {
+      EndpointBody::Request(request_body) => {
+        request_body.query_parameters_shape_id = Some(root_shape_id);
+        request_body.commands.extend(body_commands);
+      }
+      EndpointBody::Response(_) => {
+        panic!("query parameters can only be added to the Request variant of an EndpointBody")
+      }
+    }
   }
 
   fn append_endpoint_commands(&mut self, ids: &mut impl SpecIdGenerator) {
@@ -220,6 +274,8 @@ impl EndpointBody {
               false,
             )));
         }
+
+        // TODO: append query parameter commands
       }
       EndpointBody::Response(response_body) => {
         let response_id = ids.response();
@@ -278,7 +334,7 @@ mod test {
 
     // dbg!(&projection);
     let aggregated_result = projection
-      .observations_by_body_location
+      .request_response_observations
       .get(&analysis_result.body_location)
       .unwrap();
 
