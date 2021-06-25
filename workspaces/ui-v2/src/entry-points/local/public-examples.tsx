@@ -54,8 +54,6 @@ const appConfig: OpticAppConfig = {
 };
 
 export default function PublicExamples(props: { lookupDir: string }) {
-  const shouldRenderChangelogHistory =
-    process.env.REACT_APP_FF_SHOW_REVERT_COMMIT === 'true';
   const match = useRouteMatch();
   const params = useParams<{ exampleId: string }>();
 
@@ -111,12 +109,10 @@ export default function PublicExamples(props: { lookupDir: string }) {
                     <DebugOpticComponent />
                     <MetadataLoader>
                       <Switch>
-                        {shouldRenderChangelogHistory && (
-                          <Route
-                            path={`${match.path}/history`}
-                            component={ChangelogHistory}
-                          />
-                        )}
+                        <Route
+                          path={`${match.path}/history`}
+                          component={ChangelogHistory}
+                        />
                         <Route
                           path={`${match.path}/changes-since/:batchId`}
                           component={ChangelogPages}

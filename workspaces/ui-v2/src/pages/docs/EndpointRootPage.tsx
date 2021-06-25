@@ -87,8 +87,6 @@ export const EndpointRootPage: FC<
       inputTagNames: new Set(['input']),
     }
   );
-  const showDeleteEndpointUi =
-    process.env.REACT_APP_FF_SHOW_DELETE_ENDPOINT === 'true';
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const endpointId = getEndpointId({ method, pathId });
 
@@ -159,7 +157,6 @@ export const EndpointRootPage: FC<
             fullPath={thisEndpoint.fullPath}
           />
           {isEditing &&
-            showDeleteEndpointUi &&
             (isEndpointStagedForDeletion ? (
               <Button
                 variant="outlined"

@@ -27,8 +27,6 @@ export function TopNavigation(props: { AccessoryNavigation?: any }) {
   const documentationPage = useDocumentationPageLink();
   const changelogHistoryPage = useChangelogHistoryPage();
   const diffsPage = useDiffReviewPageLink();
-  const shouldRenderChangelogHistory =
-    process.env.REACT_APP_FF_SHOW_REVERT_COMMIT === 'true';
 
   const { AccessoryNavigation } = props;
   return (
@@ -61,14 +59,11 @@ export function TopNavigation(props: { AccessoryNavigation?: any }) {
                     Icon={ChangeHistoryIcon}
                   />
                 )}
-
-                {shouldRenderChangelogHistory && (
-                  <NavButton
-                    title="History"
-                    to={changelogHistoryPage.linkTo()}
-                    Icon={ScheduleIcon}
-                  />
-                )}
+                <NavButton
+                  title="History"
+                  to={changelogHistoryPage.linkTo()}
+                  Icon={ScheduleIcon}
+                />
               </div>
               <div className={classes.spacer} />
               <div>{AccessoryNavigation && <AccessoryNavigation />}</div>
