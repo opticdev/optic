@@ -164,11 +164,11 @@ pub struct EndpointRequestBody {
   path_id: String,
   #[serde(skip)]
   method: String,
+  #[serde(skip)]
+  query_parameters_shape_id: Option<String>,
 
   #[serde(flatten)]
   body_descriptor: Option<EndpointBodyDescriptor>,
-
-  query_parameters_shape_id: Option<String>,
 }
 
 #[derive(Default, Debug, Serialize)]
@@ -268,11 +268,21 @@ impl EndpointBody {
           request_body
             .commands
             .push(SpecCommand::from(EndpointCommand::set_request_body_shape(
-              request_id,
+              request_id.clone(),
               body_descriptor.root_shape_id.clone(),
               body_descriptor.content_type.clone(),
               false,
             )));
+        }
+
+        if let Some(query_parameters_shape_id) = &request_body.query_parameters_shape_id {
+          request_body.commands.push(SpecCommand::from(
+            EndpointCommand::set_request_query_parameters_shape(
+              request_id.clone(),
+              query_parameters_shape_id.clone(),
+              false,
+            ),
+          ))
         }
 
         // TODO: append query parameter commands
@@ -360,6 +370,67 @@ mod test {
     assert_debug_snapshot!(
       "undocumented_bodies_can_aggregate_analysis_results_with_array_items__aggregated_trails",
       aggregated_trails
+    );
+  }
+
+  #[test]
+  fn undocumented_bodies_generates_commands_for_request_query_parameters() {
+    let test_path = "path-1";
+    let test_method = "GET";
+    let query_params_body = BodyDescriptor::from(json!({
+      "search": "a-search-query",
+      "page": "3"
+    }));
+
+    let analysis_results = vec![
+      BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::UnmatchedRequest {
+          content_type: None,
+          path_id: String::from(test_path),
+          method: String::from(test_method),
+        },
+        trail_observations: observe_body_trails(None),
+      },
+      BodyAnalysisResult {
+        // query params matching the preceding request
+        body_location: BodyAnalysisLocation::UnmatchedRequestQueryParameters {
+          path_id: String::from(test_path),
+          method: String::from(test_method),
+          content_type: None,
+        },
+        trail_observations: observe_body_trails(query_params_body.clone()),
+      },
+      BodyAnalysisResult {
+        // query params for a different request
+        body_location: BodyAnalysisLocation::UnmatchedRequestQueryParameters {
+          path_id: String::from(test_path),
+          method: String::from(test_method),
+          content_type: Some(String::from("application/json")),
+        },
+        trail_observations: observe_body_trails(query_params_body),
+      },
+    ];
+
+    let mut test_id_generator = TestIdGenerator::default();
+    let mut projection = LearnedUndocumentedBodiesProjection::default();
+
+    for result in analysis_results {
+      projection.apply(result);
+    }
+
+    let endpoint_bodies = projection
+      .into_endpoint_bodies(&mut test_id_generator)
+      .collect::<Vec<_>>();
+    assert_eq!(endpoint_bodies.len(), 1);
+
+    let endpoint_body = endpoint_bodies.first().unwrap();
+    assert_eq!(endpoint_body.requests.len(), 1);
+
+    let request_commands = &endpoint_body.requests.first().unwrap().commands;
+
+    assert_debug_snapshot!(
+      "undocumented_bodies_generates_commands_for_request_query_parameters__request_commands",
+      request_commands
     );
   }
 
