@@ -1,6 +1,6 @@
 use super::EventLoadingError;
 use crate::shapehash;
-use crate::state::body::BodyDescriptor;
+use crate::state::body::{BodyDescriptor, ParsedQueryString};
 use base64;
 use cqrs_core::Event;
 use protobuf::Message;
@@ -111,9 +111,15 @@ impl From<&ArbitraryData> for Option<BodyDescriptor> {
 
 impl From<&QueryParametersData> for Option<BodyDescriptor> {
   fn from(query_param_data: &QueryParametersData) -> Self {
-    // TODO: replace with QueryString specific implementation
     let data = &query_param_data.data;
-    data.into()
+
+    if let Some(query_string) = &data.as_text {
+      let parsed_query_string = ParsedQueryString::from_str(query_string)
+        .expect("as_text of QueryParametersData should always be a valid url encoded data");
+      Some(BodyDescriptor::from(parsed_query_string))
+    } else {
+      None
+    }
   }
 }
 

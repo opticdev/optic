@@ -1,6 +1,7 @@
 use crate::shapehash;
 use serde_json::map::Map as JsonMap;
 use serde_json::Value as JsonValue;
+use serde_urlencoded;
 use std::collections::HashMap;
 
 #[derive(PartialEq, Clone, Debug, Hash, Eq)]
@@ -165,5 +166,22 @@ impl From<String> for BodyDescriptor {
 impl From<&String> for BodyDescriptor {
   fn from(str: &String) -> Self {
     BodyDescriptor::String
+  }
+}
+
+pub struct ParsedQueryString {
+  entries: Vec<(String, String)>,
+}
+
+impl ParsedQueryString {
+  pub fn from_str(query_string: &str) -> Result<Self, serde_urlencoded::de::Error> {
+    let entries = serde_urlencoded::from_str(query_string)?;
+    Ok(Self { entries })
+  }
+}
+
+impl From<ParsedQueryString> for BodyDescriptor {
+  fn from(parsed_qs: ParsedQueryString) -> Self {
+    todo!()
   }
 }
