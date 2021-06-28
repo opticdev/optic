@@ -9,11 +9,11 @@ import {
   LinearProgress,
   Typography,
 } from '@material-ui/core';
-import { EndpointName, SpinningOpticLogo } from '<src>/components';
 
+import { EndpointName, SpinningOpticLogo } from '<src>/components';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { IUndocumentedUrl } from '<src>/pages/diffs/contexts/SharedDiffState';
-import { makePattern } from '../utils';
+import { makePattern } from '<src>/utils';
 
 type BulkLearnModalProps = {
   undocumentedEndpointsToLearn: IUndocumentedUrl[];
@@ -83,7 +83,11 @@ export const BulkLearnModal: FC<BulkLearnModalProps> = ({
       const pattern = wipPatterns[path + method]
         ? makePattern(wipPatterns[path + method].components)
         : path;
-      return { pattern, method };
+      return {
+        pattern,
+        method,
+        pathComponents: wipPatterns[path + method].components,
+      };
     }
   );
   const [learningInfo, setLearningInfo] = useState<{
@@ -91,8 +95,9 @@ export const BulkLearnModal: FC<BulkLearnModalProps> = ({
   } | null>(null);
 
   const learnEndpoints = () => {
-    const pendingEndpointIds = endpointsAsPatterns.map(({ pattern, method }) =>
-      documentEndpoint(pattern, method)
+    const pendingEndpointIds = endpointsAsPatterns.map(
+      ({ pattern, method, pathComponents }) =>
+        documentEndpoint(pattern, method, pathComponents)
     );
     setLearningInfo({
       pendingEndpointIds: new Set(pendingEndpointIds),

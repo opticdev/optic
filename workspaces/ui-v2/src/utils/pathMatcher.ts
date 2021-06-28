@@ -30,3 +30,17 @@ export const makePattern = (components: PathComponentAuthoring[]) => {
       .join('/')
   );
 };
+
+export const pathMatcher = (
+  pathComponents: PathComponentAuthoring[]
+): ((pathToMatch: string) => boolean) => {
+  return (pathToMatch: string): boolean => {
+    const partsToMatch = urlStringToPathComponents(pathToMatch);
+    if (partsToMatch.length !== pathComponents.length) {
+      return false;
+    }
+    return pathComponents.every(({ name, isParameter }, i) => {
+      return isParameter || name === partsToMatch[i].name;
+    });
+  };
+};
