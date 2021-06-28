@@ -6,8 +6,8 @@ use serde::{Deserialize, Serialize};
 use crate::commands::endpoint as endpoint_commands;
 use crate::commands::EndpointCommand;
 use crate::state::endpoint::{
-  PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor,
-  ShapedRequestParameterShapeDescriptor,
+  PathComponentId, QueryParametersShapeDescriptor, RequestId, RequestParameterId, ResponseId,
+  ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor,
 };
 
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
@@ -34,6 +34,7 @@ pub enum EndpointEvent {
   RequestAdded(RequestAdded),
   RequestContentTypeSet(RequestContentTypeSet),
   RequestBodySet(RequestBodySet),
+  RequestQueryParametersShapeSet(RequestQueryParametersShapeSet),
   RequestBodyUnset(RequestBodyUnset),
   RequestRemoved(RequestRemoved),
 
@@ -171,6 +172,14 @@ pub struct RequestBodySet {
 
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
+pub struct RequestQueryParametersShapeSet {
+  pub request_id: RequestId,
+  pub shape_descriptor: QueryParametersShapeDescriptor,
+  pub event_context: Option<EventContext>,
+}
+
+#[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct RequestBodyUnset {
   pub request_id: RequestId,
   pub event_context: Option<EventContext>,
@@ -255,6 +264,7 @@ impl Event for EndpointEvent {
       EndpointEvent::RequestAdded(evt) => evt.event_type(),
       EndpointEvent::RequestContentTypeSet(evt) => evt.event_type(),
       EndpointEvent::RequestBodySet(evt) => evt.event_type(),
+      EndpointEvent::RequestQueryParametersShapeSet(evt) => evt.event_type(),
       EndpointEvent::RequestBodyUnset(evt) => evt.event_type(),
       EndpointEvent::RequestRemoved(evt) => evt.event_type(),
 
@@ -295,6 +305,9 @@ impl WithEventContext for EndpointEvent {
       EndpointEvent::RequestAdded(evt) => evt.event_context.replace(event_context),
       EndpointEvent::RequestContentTypeSet(evt) => evt.event_context.replace(event_context),
       EndpointEvent::RequestBodySet(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::RequestQueryParametersShapeSet(evt) => {
+        evt.event_context.replace(event_context)
+      }
       EndpointEvent::RequestBodyUnset(evt) => evt.event_context.replace(event_context),
       EndpointEvent::RequestRemoved(evt) => evt.event_context.replace(event_context),
 
@@ -396,6 +409,12 @@ impl Event for RequestContentTypeSet {
 impl Event for RequestBodySet {
   fn event_type(&self) -> &'static str {
     "RequestBodySet"
+  }
+}
+
+impl Event for RequestQueryParametersShapeSet {
+  fn event_type(&self) -> &'static str {
+    "RequestQueryParametersShapeSet"
   }
 }
 
@@ -501,6 +520,12 @@ impl From<RequestBodySet> for EndpointEvent {
   }
 }
 
+impl From<RequestQueryParametersShapeSet> for EndpointEvent {
+  fn from(event: RequestQueryParametersShapeSet) -> Self {
+    Self::RequestQueryParametersShapeSet(event)
+  }
+}
+
 impl From<RequestRemoved> for EndpointEvent {
   fn from(event: RequestRemoved) -> Self {
     Self::RequestRemoved(event)
@@ -555,6 +580,9 @@ impl From<EndpointCommand> for EndpointEvent {
       EndpointCommand::AddRequest(command) => EndpointEvent::from(RequestAdded::from(command)),
       EndpointCommand::SetRequestBodyShape(command) => {
         EndpointEvent::from(RequestBodySet::from(command))
+      }
+      EndpointCommand::SetRequestQueryParametersShape(command) => {
+        EndpointEvent::from(RequestQueryParametersShapeSet::from(command))
       }
       EndpointCommand::RemoveRequest(command) => EndpointEvent::from(RequestRemoved::from(command)),
       EndpointCommand::AddResponseByPathAndMethod(command) => {
@@ -661,6 +689,16 @@ impl From<endpoint_commands::SetRequestBodyShape> for RequestBodySet {
     Self {
       request_id: command.request_id,
       body_descriptor: command.body_descriptor,
+      event_context: None,
+    }
+  }
+}
+
+impl From<endpoint_commands::SetRequestQueryParametersShape> for RequestQueryParametersShapeSet {
+  fn from(command: endpoint_commands::SetRequestQueryParametersShape) -> Self {
+    Self {
+      request_id: command.request_id,
+      shape_descriptor: command.shape_descriptor,
       event_context: None,
     }
   }
