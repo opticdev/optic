@@ -316,8 +316,10 @@ impl EndpointBody {
 #[cfg(test)]
 mod test {
   use super::*;
+  use crate::events::SpecEvent;
   use crate::interactions::InteractionDiffResult;
   use crate::learn_shape::observe_body_trails;
+  use crate::projections::SpecProjection;
   use crate::state::body::BodyDescriptor;
   use insta::assert_debug_snapshot;
   use serde_json::json;
@@ -375,7 +377,7 @@ mod test {
 
   #[test]
   fn undocumented_bodies_generates_commands_for_request_query_parameters() {
-    let test_path = "path-1";
+    let test_path = "root";
     let test_method = "GET";
     let query_params_body = BodyDescriptor::from(json!({
       "search": "a-search-query",
@@ -418,20 +420,23 @@ mod test {
       projection.apply(result);
     }
 
-    let endpoint_bodies = projection
+    let mut endpoint_bodies = projection
       .into_endpoint_bodies(&mut test_id_generator)
       .collect::<Vec<_>>();
     assert_eq!(endpoint_bodies.len(), 1);
 
-    let endpoint_body = endpoint_bodies.first().unwrap();
+    let mut endpoint_body = endpoint_bodies.remove(0);
     assert_eq!(endpoint_body.requests.len(), 1);
 
-    let request_commands = &endpoint_body.requests.first().unwrap().commands;
+    let request_commands = endpoint_body.requests.remove(0).commands;
 
     assert_debug_snapshot!(
       "undocumented_bodies_generates_commands_for_request_query_parameters__request_commands",
-      request_commands
+      &request_commands
     );
+
+    let base_spec = SpecProjection::default();
+    assert_valid_commands(base_spec, request_commands);
   }
 
   #[test]
@@ -472,5 +477,23 @@ mod test {
       self.counter += 1;
       id
     }
+  }
+
+  fn assert_valid_commands(
+    mut spec_projection: SpecProjection,
+    commands: impl IntoIterator<Item = SpecCommand>,
+  ) -> SpecProjection {
+    // let mut spec_projection = SpecProjection::default();
+    for command in commands {
+      let events = spec_projection
+        .execute(command)
+        .expect("generated commands must be valid");
+
+      for event in events {
+        spec_projection.apply(event)
+      }
+    }
+
+    spec_projection
   }
 }

@@ -1,6 +1,6 @@
 ---
 source: workspaces/optic-engine/src/projections/learners/undocumented_bodies.rs
-expression: request_commands
+expression: "&request_commands"
 ---
 [
     ShapeCommand(
@@ -64,7 +64,7 @@ expression: request_commands
         AddRequest(
             AddRequest {
                 request_id: "test-id-5",
-                path_id: "path-1",
+                path_id: "root",
                 http_method: "GET",
             },
         ),
