@@ -4,7 +4,11 @@ sidebar_label: Hapi
 slug: /hapi
 ---
 
-Optic is easy to use with Hapi, no special library or large code changes required.
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import GitHubButton from 'react-github-btn';
+
+Optic is really easy to use with Hapi, you can either use the [`api start` command](#api-start-command) without changing your application, or you can use [`api exec` and use middleware](#middleware-and-api-exec-command) without changing how you interact with your application:
 
 ## `api start` Command
 
@@ -50,6 +54,68 @@ Should you need any more help, or want to chat about the process, please reach o
 ## Run your API through Optic
 
 At this point you should be ready to run `api start` and document your API with Optic! Optic will observe your API traffic locally, and report on the routes and traffic shape it sees in the Optic dashboard. The next step is to start [building your baseline specification](/docs/using/baseline)
+
+## Middleware and `api exec` Command
+
+If you want to use programmatically controlled middleware, or record your endpoint traffic without touching the network using mocks, you can easily include Hapi middleware
+
+### Install the middleware
+
+<Tabs
+  defaultValue="yarn"
+  values={[
+    {label: 'yarn', value: 'yarn'},
+    {label: 'npm', value: 'npm'},
+  ]}>
+  <TabItem value="yarn">
+
+```sh
+yarn add @useoptic/hapi-middleware
+```
+
+  </TabItem>
+  <TabItem value="npm">
+
+```sh
+npm install @useoptic/hapi-middleware
+```
+
+  </TabItem>
+</Tabs>
+
+### Configure the middleware
+
+The middleware accepts a configuration object with the following options:
+- `enabled`: `boolean` (defaults to `false`) Programmatically control if capturing data and sending it to Optic
+- `uploadUrl`: `string` (defaults to `process.env.OPTIC_LOGGING_URL`) The URL to Optics capture URL, if left blank it will expect `OPTIC_LOGGING_URL` environment variable set by the Optic CLI
+- `console`: `boolean` (defaults to `false`) Send to stdout/console for debugging
+- `framework`: `string` (defaults to '') Additional information to inform Optic of where it is capturing information
+
+An example of it
+
+```js
+const Optic = require('@useoptic/hapi-middleware')
+
+const server = Hapi.server({
+  port: 3005,
+  host: 'localhost'
+})
+
+server.register({
+  plugin: Optic,
+  options: {
+    enabled: true
+  }
+})
+```
+
+### Send traffic via the middleware
+
+To start documenting your API at this point you just need to run `api exec "npm start"`, replacing `npm start` with whatever command you use to start your application.
+
+The command will start a server on an unused port to receive the captures and set `OPTIC_LOGGING_URL` for the middleware to send to the correct location.
+
+Optic will observe your API traffic locally, and report on the routes and traffic shape it sees in the Optic dashboard. The next step is to start [building your baseline specification](/docs/using/baseline)
 
 import {DocContributors} from '../../DocsContributors';
 
