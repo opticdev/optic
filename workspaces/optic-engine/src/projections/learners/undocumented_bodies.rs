@@ -320,8 +320,9 @@ mod test {
     }));
 
     let analysis_result = BodyAnalysisResult {
-      body_location: BodyAnalysisLocation::MatchedResponse {
-        response_id: String::from("test-response-1"),
+      body_location: BodyAnalysisLocation::UnmatchedResponse {
+        path_id: String::from("test-path-1"),
+        method: String::from("GET"),
         content_type: Some(String::from("application/json")),
         status_code: 200,
       },
