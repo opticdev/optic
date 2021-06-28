@@ -30,9 +30,8 @@ import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useo
 import { useOpticEngine } from '<src>/hooks/useOpticEngine';
 import { useConfigRepository } from '<src>/contexts/OpticConfigContext';
 import { useAnalytics } from '<src>/contexts/analytics';
-import { makePattern } from '<src>/pages/diffs/AddEndpointsPage/utils';
 import { IPath } from '<src>/hooks/usePathsHook';
-import { pathToRegexpEscaped } from '<src>/utils';
+import { pathMatcher } from '<src>/utils';
 import { useGlobalDiffDebug } from '<src>/components';
 
 export const SharedDiffReactContext = React.createContext<ISharedDiffContext | null>(
@@ -41,7 +40,11 @@ export const SharedDiffReactContext = React.createContext<ISharedDiffContext | n
 
 type ISharedDiffContext = {
   context: SharedDiffStateContext;
-  documentEndpoint: (pattern: string, method: string) => string;
+  documentEndpoint: (
+    pattern: string,
+    method: string,
+    pathComponents: PathComponentAuthoring[]
+  ) => string;
   addPathIgnoreRule: (rule: string) => void;
   addDiffHashIgnore: (diffHash: string) => void;
   persistWIPPattern: (
@@ -197,7 +200,12 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     .filter(([, { isParameterized }]) => isParameterized)
     .map(([pathMethod, { components, method }]) => ({
       pathMethod,
-      matcher: pathToRegexpEscaped(makePattern(components)),
+      matcher: pathMatcher(
+        components.map(({ name, isParameter }) => ({
+          part: name,
+          isParameterized: isParameter,
+        }))
+      ),
       method,
     }));
 
@@ -206,9 +214,19 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const value: ISharedDiffContext = {
     context,
     diffService: props.diffService,
-    documentEndpoint: (pattern: string, method: string) => {
+    documentEndpoint: (
+      pattern: string,
+      method: string,
+      pathComponents: PathComponentAuthoring[]
+    ) => {
       const uuid = shortId.generate();
-      send({ type: 'DOCUMENT_ENDPOINT', pattern, method, pendingId: uuid });
+      send({
+        type: 'DOCUMENT_ENDPOINT',
+        pattern,
+        method,
+        pendingId: uuid,
+        pathComponents,
+      });
       return uuid;
     },
     stageEndpoint: (id: string) =>
@@ -292,7 +310,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
           return wipPatternMatchers.every(
             ({ pathMethod, matcher, method }) =>
               pathMethod === url.path + url.method ||
-              !(matcher.test(url.path) && method === url.method)
+              !(matcher(url.path) && method === url.method)
           );
         })
         .filter((i) => !i.hide),

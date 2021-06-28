@@ -83,7 +83,11 @@ export const BulkLearnModal: FC<BulkLearnModalProps> = ({
       const pattern = wipPatterns[path + method]
         ? makePattern(wipPatterns[path + method].components)
         : path;
-      return { pattern, method };
+      return {
+        pattern,
+        method,
+        pathComponents: wipPatterns[path + method].components,
+      };
     }
   );
   const [learningInfo, setLearningInfo] = useState<{
@@ -91,8 +95,9 @@ export const BulkLearnModal: FC<BulkLearnModalProps> = ({
   } | null>(null);
 
   const learnEndpoints = () => {
-    const pendingEndpointIds = endpointsAsPatterns.map(({ pattern, method }) =>
-      documentEndpoint(pattern, method)
+    const pendingEndpointIds = endpointsAsPatterns.map(
+      ({ pattern, method, pathComponents }) =>
+        documentEndpoint(pattern, method, pathComponents)
     );
     setLearningInfo({
       pendingEndpointIds: new Set(pendingEndpointIds),

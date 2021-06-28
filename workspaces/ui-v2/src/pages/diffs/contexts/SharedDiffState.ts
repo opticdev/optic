@@ -1,6 +1,4 @@
 import { assign, Machine, spawn } from 'xstate';
-// @ts-ignore
-import * as niceTry from 'nice-try';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
 import {
   AddContributionType,
@@ -16,7 +14,8 @@ import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useo
 import { AssembleCommands } from '<src>/lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
 import { generatePathCommands } from '<src>/lib/stable-path-batch-generator';
-import { pathToRegexpEscaped } from '<src>/utils';
+import { pathMatcher } from '<src>/utils';
+import { PathComponentAuthoring } from '../AddEndpointsPage/utils';
 
 function transformDiffs(
   currentSpecContext: CurrentSpecContext,
@@ -139,10 +138,12 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 pendingEndpoints: (ctx, event) => {
-                  const regex = pathToRegexpEscaped(event.pattern, [], {
-                    start: true,
-                    end: true,
-                  });
+                  const matcher = pathMatcher(
+                    event.pathComponents.map(({ name, isParameter }) => ({
+                      part: name,
+                      isParameterized: isParameter,
+                    }))
+                  );
 
                   const { commands, endpointPathIdMap } = generatePathCommands(
                     [
@@ -180,8 +181,7 @@ export const newSharedDiffMachine = (
                         )
                       ),
                       matchesPattern: (url: string, method: string) => {
-                        const matchesPath = niceTry(() => regex.exec(url));
-                        return matchesPath && method === event.method;
+                        return matcher(url) && method === event.method;
                       },
                     },
                   ];
@@ -537,6 +537,7 @@ export type SharedDiffStateEvent =
   | {
       type: 'DOCUMENT_ENDPOINT';
       pattern: string;
+      pathComponents: PathComponentAuthoring[];
       method: string;
       pendingId: string;
     }
