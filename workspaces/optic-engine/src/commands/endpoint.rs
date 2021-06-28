@@ -6,8 +6,8 @@ use crate::projections::endpoint::ROOT_PATH_ID;
 use crate::projections::EndpointProjection;
 use crate::queries::EndpointQueries;
 use crate::state::endpoint::{
-  PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor,
-  ShapedRequestParameterShapeDescriptor,
+  PathComponentId, QueryParametersShapeDescriptor, RequestId, RequestParameterId, ResponseId,
+  ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor,
 };
 use crate::state::shape::ShapeId;
 use crate::{events::endpoint as endpoint_events, state::body};
@@ -31,6 +31,7 @@ pub enum EndpointCommand {
   AddRequest(AddRequest),
   SetRequestContentType(SetRequestContentType),
   SetRequestBodyShape(SetRequestBodyShape),
+  SetRequestQueryParametersShape(SetRequestQueryParametersShape),
   UnsetRequestBodyShape(UnsetRequestBodyShape),
   RemoveRequest(RemoveRequest),
 
@@ -95,6 +96,20 @@ impl EndpointCommand {
       request_id,
       body_descriptor: ShapedBodyDescriptor {
         http_content_type,
+        shape_id,
+        is_removed,
+      },
+    })
+  }
+
+  pub fn set_request_query_parameters_shape(
+    request_id: RequestId,
+    shape_id: ShapeId,
+    is_removed: bool,
+  ) -> EndpointCommand {
+    EndpointCommand::SetRequestQueryParametersShape(SetRequestQueryParametersShape {
+      request_id,
+      shape_descriptor: QueryParametersShapeDescriptor {
         shape_id,
         is_removed,
       },
@@ -227,6 +242,13 @@ pub struct SetRequestContentType {
 pub struct SetRequestBodyShape {
   pub request_id: RequestId,
   pub body_descriptor: ShapedBodyDescriptor,
+}
+
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SetRequestQueryParametersShape {
+  pub request_id: RequestId,
+  pub shape_descriptor: QueryParametersShapeDescriptor,
 }
 
 //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command anymore, or enforce uniqueness of content types across multiple requests

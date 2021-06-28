@@ -24,3 +24,10 @@ pub struct ShapedRequestParameterShapeDescriptor {
   pub shape_id: ShapeId,
   pub is_removed: bool,
 }
+
+#[derive(Debug, Deserialize, PartialEq, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct QueryParametersShapeDescriptor {
+  pub shape_id: ShapeId,
+  pub is_removed: bool,
+}
