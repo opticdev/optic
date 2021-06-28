@@ -32,7 +32,7 @@ pub struct Request {
   pub path: String,
   pub headers: ArbitraryData,
   // #[serde(skip)]
-  pub query: ArbitraryData,
+  pub query: QueryParametersData,
   pub body: Body,
 }
 
@@ -59,6 +59,12 @@ pub struct ArbitraryData {
   pub shape_hash_v1_base64: Option<String>,
   pub as_json_string: Option<String>,
   pub as_text: Option<String>,
+}
+
+#[derive(Clone, Deserialize, Serialize, Debug, Default)]
+pub struct QueryParametersData {
+  #[serde(flatten)]
+  data: ArbitraryData,
 }
 
 impl From<&ArbitraryData> for Option<serde_json::value::Value> {
@@ -100,6 +106,14 @@ impl From<&ArbitraryData> for Option<BodyDescriptor> {
     } else {
       None
     }
+  }
+}
+
+impl From<&QueryParametersData> for Option<BodyDescriptor> {
+  fn from(query_param_data: &QueryParametersData) -> Self {
+    // TODO: replace with QueryString specific implementation
+    let data = &query_param_data.data;
+    data.into()
   }
 }
 
