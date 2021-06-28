@@ -14,14 +14,18 @@ import {
   PathComponentAuthoring,
   urlStringToPathComponents,
   makePattern,
-} from '../utils';
+} from '<src>/utils';
 
 export type UndocumentedUrlProps = {
   style: Record<string, any>;
   index: number;
   data: {
     handleBulkModeSelection: (path: string, method: string) => void;
-    handleSelection: (path: string, method: string) => void;
+    handleSelection: (
+      path: string,
+      method: string,
+      pathComponents: PathComponentAuthoring[]
+    ) => void;
     undocumentedUrls: IUndocumentedUrl[];
     isBulkMode: boolean;
     isKnownPath: boolean;
@@ -110,7 +114,8 @@ export function UndocumentedUrl({
           ? handleBulkModeSelection(path, method)
           : handleSelection(
               isKnownPath ? path : makePattern(components),
-              method
+              method,
+              components
             )
       }
     >
