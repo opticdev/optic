@@ -14,7 +14,6 @@ import {
 } from './SharedDiffState';
 import shortId from 'shortid';
 import { useMachine } from '@xstate/react';
-import { PathComponentAuthoring } from '<src>/pages/diffs/AddEndpointsPage/utils';
 import { IEndpoint } from '<src>/types';
 import { IRequestBody, IResponseBody } from '<src>/hooks/useEndpointBodyHook';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
@@ -31,7 +30,7 @@ import { useOpticEngine } from '<src>/hooks/useOpticEngine';
 import { useConfigRepository } from '<src>/contexts/OpticConfigContext';
 import { useAnalytics } from '<src>/contexts/analytics';
 import { IPath } from '<src>/hooks/usePathsHook';
-import { pathMatcher } from '<src>/utils';
+import { pathMatcher, PathComponentAuthoring } from '<src>/utils';
 import { useGlobalDiffDebug } from '<src>/components';
 
 export const SharedDiffReactContext = React.createContext<ISharedDiffContext | null>(
@@ -200,12 +199,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     .filter(([, { isParameterized }]) => isParameterized)
     .map(([pathMethod, { components, method }]) => ({
       pathMethod,
-      matcher: pathMatcher(
-        components.map(({ name, isParameter }) => ({
-          part: name,
-          isParameterized: isParameter,
-        }))
-      ),
+      matcher: pathMatcher(components),
       method,
     }));
 

@@ -14,7 +14,7 @@ import {
   PathComponentAuthoring,
   urlStringToPathComponents,
   makePattern,
-} from '../utils';
+} from '<src>/utils';
 
 export type UndocumentedUrlProps = {
   style: Record<string, any>;

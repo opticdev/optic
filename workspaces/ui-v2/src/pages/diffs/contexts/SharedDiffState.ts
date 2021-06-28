@@ -14,8 +14,7 @@ import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useo
 import { AssembleCommands } from '<src>/lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
 import { generatePathCommands } from '<src>/lib/stable-path-batch-generator';
-import { pathMatcher } from '<src>/utils';
-import { PathComponentAuthoring } from '../AddEndpointsPage/utils';
+import { pathMatcher, PathComponentAuthoring } from '<src>/utils';
 
 function transformDiffs(
   currentSpecContext: CurrentSpecContext,
@@ -138,12 +137,7 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 pendingEndpoints: (ctx, event) => {
-                  const matcher = pathMatcher(
-                    event.pathComponents.map(({ name, isParameter }) => ({
-                      part: name,
-                      isParameterized: isParameter,
-                    }))
-                  );
+                  const matcher = pathMatcher(event.pathComponents);
 
                   const { commands, endpointPathIdMap } = generatePathCommands(
                     [

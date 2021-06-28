@@ -40,7 +40,7 @@ import {
 import { useCheckboxState } from './hooks';
 
 import { useAnalytics } from '<src>/contexts/analytics';
-import { PathComponentAuthoring } from './utils';
+import { PathComponentAuthoring } from '<src>/utils';
 
 export function DiffUrlsPage() {
   const undocumentedUrls = useUndocumentedUrls();

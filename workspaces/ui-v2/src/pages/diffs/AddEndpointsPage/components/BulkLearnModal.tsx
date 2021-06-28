@@ -9,11 +9,11 @@ import {
   LinearProgress,
   Typography,
 } from '@material-ui/core';
-import { EndpointName, SpinningOpticLogo } from '<src>/components';
 
+import { EndpointName, SpinningOpticLogo } from '<src>/components';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { IUndocumentedUrl } from '<src>/pages/diffs/contexts/SharedDiffState';
-import { makePattern } from '../utils';
+import { makePattern } from '<src>/utils';
 
 type BulkLearnModalProps = {
   undocumentedEndpointsToLearn: IUndocumentedUrl[];
