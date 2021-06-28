@@ -1,7 +1,8 @@
 use crate::events::{EndpointEvent, Event, ShapeEvent, SpecEvent};
 use crate::projections::endpoint::ROOT_PATH_ID;
 use crate::state::endpoint::{
-  HttpContentType, HttpMethod, HttpStatusCode, PathComponentId, RequestId, ResponseId,
+  HttpContentType, HttpMethod, HttpStatusCode, PathComponentId, QueryParametersShapeDescriptor,
+  RequestId, ResponseId,
 };
 use crate::state::shape::ShapeId;
 use crate::RfcEvent;
@@ -169,6 +170,9 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         if let Some(c) = e.event_context {
           projection.with_creation_history(&c.client_command_batch_id, &e.body_descriptor.shape_id);
         }
+      }
+      EndpointEvent::RequestQueryParametersShapeSet(e) => {
+        projection.with_query_parameters(e.request_id, e.shape_descriptor);
       }
       EndpointEvent::ResponseBodySet(e) => {
         //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (response_id, http_content_type)
@@ -426,6 +430,28 @@ impl EndpointsProjection {
       .add_edge(node_index, request_index, Edge::IsChildOf);
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
+  pub fn with_query_parameters(
+    &mut self,
+    request_id: RequestId,
+    shape_descriptor: QueryParametersShapeDescriptor,
+  ) {
+    let request_node_index = *self
+      .domain_id_to_index
+      .get(&request_id)
+      .expect("expected request_id to have a corresponding node");
+    let node = Node::QueryParameters(QueryParametersNode {
+      root_shape_id: shape_descriptor.shape_id.clone(),
+      is_removed: shape_descriptor.is_removed,
+    });
+    let node_index = self.graph.add_node(node);
+    self
+      .domain_id_to_index
+      .insert(shape_descriptor.shape_id.clone(), node_index);
+    self
+      .graph
+      .add_edge(node_index, request_node_index, Edge::IsChildOf);
+  }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_response_body(
     &mut self,
     response_id: ResponseId,
@@ -524,6 +550,7 @@ pub enum Node {
   Path(PathNode),
   Request(RequestNode),
   Response(ResponseNode),
+  QueryParameters(QueryParametersNode),
   Body(BodyNode),
   BatchCommit(BatchCommitNode),
 }
@@ -551,6 +578,13 @@ pub struct PathNode {
 pub struct RequestNode {
   http_method: HttpMethod,
   request_id: RequestId,
+  is_removed: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct QueryParametersNode {
+  root_shape_id: ShapeId,
   is_removed: bool,
 }
 

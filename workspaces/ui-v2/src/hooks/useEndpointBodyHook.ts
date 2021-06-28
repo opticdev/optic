@@ -8,6 +8,10 @@ const EndpointBodyQueryWithoutChanges = `
     pathId
     method
     requestContributions
+    query {
+      rootShapeId
+      isRemoved
+    }
     bodies {
       contentType
       rootShapeId
@@ -34,6 +38,10 @@ query X($sinceBatchCommitId: String) {
     changes(sinceBatchCommitId: $sinceBatchCommitId) {
       added
       changed
+    }
+    query {
+      rootShapeId
+      isRemoved
     }
     bodies {
       contentType
@@ -67,6 +75,10 @@ type EndpointBodyQueryResponse = {
     method: string;
     requestContributions: Record<string, string>;
     bodies: Body[];
+    query?: {
+      rootShapeId: string;
+      isRemoved: boolean;
+    };
     changes?: IChanges;
     responses: {
       id: string;
@@ -120,6 +132,9 @@ export function useEndpointBody(
         requestId: request.id,
         contentType: body.contentType,
         rootShapeId: body.rootShapeId,
+        query: {
+          rootShapeId: request.query?.rootShapeId || null,
+        },
         pathId: request.pathId,
         method: request.method,
         changes: request.changes,
@@ -153,6 +168,9 @@ export function useEndpointBody(
 export interface IRequestBody {
   requestId: string;
   contentType: string;
+  query: {
+    rootShapeId: string | null;
+  };
   rootShapeId: string;
   pathId: string;
   method: string;

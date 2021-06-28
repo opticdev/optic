@@ -139,7 +139,7 @@ type HttpRequest {
   method: String
 
   # Query parameters associated with this HTTP request
-  query: QueryParameters!
+  query: QueryParameters
   
   # Request bodies associated with this HTTP request
   bodies: [HttpBody]
