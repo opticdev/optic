@@ -65,7 +65,7 @@ function newContentType(
         shapes: [],
         copy: [
           plain('Document'),
-          code(location.inRequest!.contentType!.toString()),
+          code(location.inRequest!.contentType || 'null'),
           plain('Request'),
         ],
       },
