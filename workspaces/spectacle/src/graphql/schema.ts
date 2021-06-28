@@ -107,6 +107,17 @@ type HttpBody {
 }
 
 """
+Query Parameters, 1:1 mapping to a HttpRequest
+"""
+type QueryParameters {
+  # Root shape ID for the QueryParameter. Look at the shapeChoices query getting more information about the root shape
+  rootShapeId: String!
+
+  # Is the body removed
+  isRemoved: Boolean!
+}
+
+"""
 HTTP Request
 """
 type HttpRequest {
@@ -128,7 +139,7 @@ type HttpRequest {
   method: String
 
   # Query parameters associated with this HTTP request
-  query: HttpBody!
+  query: QueryParameters!
   
   # Request bodies associated with this HTTP request
   bodies: [HttpBody]

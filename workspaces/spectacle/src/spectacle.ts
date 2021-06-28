@@ -315,7 +315,6 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       query: async () => {
         // TODO connect up to rust code
         return {
-          contentType: 'query-something',
           rootShapeId: 'shape-1',
           isRemoved: false,
         };
@@ -352,6 +351,15 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       isRemoved: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.value.isRemoved);
+      },
+    },
+    QueryParameters: {
+      // TODO change typings when connected to graph lib + rust
+      rootShapeId: (parent: { rootShapeId: string; isRemoved: boolean }) => {
+        return parent.rootShapeId;
+      },
+      isRemoved: (parent: { rootShapeId: string; isRemoved: boolean }) => {
+        return parent.isRemoved;
       },
     },
     Path: {
