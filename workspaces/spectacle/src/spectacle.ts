@@ -313,7 +313,10 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return Promise.resolve(parent.value.httpMethod);
       },
       query: async (parent: endpoints.RequestNodeWrapper) => {
-        return parent.query();
+        return process.env.REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS ===
+          'true'
+          ? parent.query()
+          : null;
       },
       bodies: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.bodies().results);
