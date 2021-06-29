@@ -41,8 +41,6 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
   const isEditing = useAppSelector(
     (state) => state.documentationEdits.isEditing
   );
-  const showDeleteEndpointUi =
-    process.env.REACT_APP_FF_SHOW_DELETE_ENDPOINT === 'true';
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const isEndpointStagedForDeletion = useAppSelector(
@@ -116,7 +114,7 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
             contributionKey="purpose"
             initialValue={endpoint.purpose}
           />
-          {isEditing && showDeleteEndpointUi && (
+          {isEditing && (
             <div>
               {isEndpointStagedForDeletion ? (
                 <Tooltip title="Unstage endpoint deletion">

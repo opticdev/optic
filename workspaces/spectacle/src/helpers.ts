@@ -274,6 +274,7 @@ export function getShapeChanges(
   const results = {
     added: false,
     changed: false,
+    removed: false,
   };
 
   // TODO: figure out why shapeId is undefined
@@ -304,6 +305,7 @@ export function getFieldChanges(
   const results = {
     added: false,
     changed: false,
+    removed: false,
   };
 
   const deltaBatchCommits = getDeltaBatchCommits(
@@ -349,6 +351,7 @@ export function getArrayChanges(
   const results = {
     added: false,
     changed: false,
+    removed: false,
   };
 
   const deltaBatchCommits = getDeltaBatchCommits(
@@ -396,6 +399,7 @@ function checkForArrayChanges(
 type ChangeResult = {
   added: boolean;
   changed: boolean;
+  removed: boolean;
 };
 
 // TODO: use the endpointQueries one below

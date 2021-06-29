@@ -12,18 +12,13 @@ import { useBaseUrl } from '<src>/hooks/useBaseUrl';
 import { OpticBlue, OpticBlueReadable } from '<src>/styles';
 import { formatTimeAgo } from '<src>/utils';
 
-export function ChangesSinceDropdown(props: any) {
-  const shouldRenderChangelogHistory =
-    process.env.REACT_APP_FF_SHOW_REVERT_COMMIT === 'true';
-
+export function ChangesSinceDropdown() {
   const classes = useStyles();
   const history = useHistory();
   const batchCommits = useBatchCommits();
   const baseUrl = useBaseUrl();
   const { pathname } = useLocation();
-  const allBatchCommits = shouldRenderChangelogHistory
-    ? batchCommits.batchCommits.slice(0, 5)
-    : batchCommits.batchCommits;
+  const shownBatchCommits = batchCommits.batchCommits.slice(0, 5);
   const { batchId } = useParams<{ batchId?: string }>();
   const changelogHistoryPage = useChangelogHistoryPage();
 
@@ -38,7 +33,8 @@ export function ChangesSinceDropdown(props: any) {
   };
 
   const selectedBatchId =
-    batchId && allBatchCommits.find((i) => i.batchId.startsWith(batchId));
+    batchId &&
+    batchCommits.batchCommits.find((i) => i.batchId.startsWith(batchId));
 
   const content =
     batchId && selectedBatchId ? (
@@ -73,9 +69,9 @@ export function ChangesSinceDropdown(props: any) {
         onClose={handleClose}
         style={{ marginTop: 20 }}
       >
-        {allBatchCommits.length > 0 ? (
-          <>
-            {allBatchCommits.map((i, index) => (
+        {shownBatchCommits.length > 0 ? (
+          shownBatchCommits
+            .map((i, index) => (
               <MenuItem
                 key={i.batchId}
                 onClick={() => {
@@ -99,29 +95,31 @@ export function ChangesSinceDropdown(props: any) {
                   batch={index === 0 ? { ...i, commitMessage: 'Latest' } : i}
                 />
               </MenuItem>
-            ))}
-            {batchCommits.batchCommits.length > 5 &&
-              shouldRenderChangelogHistory && (
-                <MenuItem
-                  key="show-all-commits"
-                  onClick={() => {
-                    history.push(changelogHistoryPage.linkTo());
-                  }}
-                >
-                  <Typography
-                    component="span"
-                    variant="subtitle1"
-                    style={{
-                      fontFamily: 'Ubuntu Mono',
-                      fontSize: 14,
-                      color: OpticBlueReadable,
-                    }}
-                  >
-                    See all changes
-                  </Typography>
-                </MenuItem>
-              )}
-          </>
+            ))
+            .concat(
+              batchCommits.batchCommits.length > 5
+                ? [
+                    <MenuItem
+                      key="show-all-commits"
+                      onClick={() => {
+                        history.push(changelogHistoryPage.linkTo());
+                      }}
+                    >
+                      <Typography
+                        component="span"
+                        variant="subtitle1"
+                        style={{
+                          fontFamily: 'Ubuntu Mono',
+                          fontSize: 14,
+                          color: OpticBlueReadable,
+                        }}
+                      >
+                        See all changes
+                      </Typography>
+                    </MenuItem>,
+                  ]
+                : []
+            )
         ) : (
           <MenuItem>
             <Box>

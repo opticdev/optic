@@ -40,6 +40,7 @@ import {
 import { useCheckboxState } from './hooks';
 
 import { useAnalytics } from '<src>/contexts/analytics';
+import { PathComponentAuthoring } from '<src>/utils';
 
 export function DiffUrlsPage() {
   const undocumentedUrls = useUndocumentedUrls();
@@ -113,8 +114,16 @@ export function DiffUrlsPage() {
                             return newState;
                           });
                         },
-                        handleSelection: (pattern: string, method: string) => {
-                          const pendingId = documentEndpoint(pattern, method);
+                        handleSelection: (
+                          pattern: string,
+                          method: string,
+                          pathComponents: PathComponentAuthoring[]
+                        ) => {
+                          const pendingId = documentEndpoint(
+                            pattern,
+                            method,
+                            pathComponents
+                          );
                           analytics.userDocumentedEndpoint(true);
                           const link = diffReviewPagePendingEndpoint.linkTo(
                             pendingId
