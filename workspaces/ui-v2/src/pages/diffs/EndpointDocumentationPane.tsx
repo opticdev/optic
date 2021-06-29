@@ -14,6 +14,7 @@ import { OneColumnBody } from '<src>/pages/docs/components/RenderBody';
 import { IParsedLocation } from '<src>/lib/Interfaces';
 import { HighlightedLocation } from '<src>/pages/diffs/components/HighlightedLocation';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
+import { useEndpointsBodyChanges } from '<src>/hooks/useEndpointsBodyChanges';
 import { useDebouncedFn, useStateWithSideEffect } from '<src>/hooks/util';
 import { selectors, useAppSelector } from '<src>/store';
 import { IPathParameter } from '<src>/types';
@@ -42,6 +43,7 @@ export const EndpointDocumentationPane: FC<
   const thisEndpoint = useAppSelector(
     selectors.getEndpoint({ pathId, method })
   );
+  const endpointBodyChanges = useEndpointsBodyChanges(lastBatchCommit);
 
   if (!thisEndpoint) {
     return <>no endpoint here</>;
@@ -104,13 +106,12 @@ export const EndpointDocumentationPane: FC<
             contentType={thisEndpoint.requestBody.contentType}
             inRequest={true}
           >
-            {/* TODO reimplement changes */}
             <OneColumnBody
-              // changes={
-              //   highlightBodyChanges
-              //     ? thisEndpoint.requestBody.changes
-              //      : undefined
-              // }
+              changes={
+                highlightBodyChanges
+                  ? endpointBodyChanges[thisEndpoint.requestBody.requestId]
+                  : undefined
+              }
               changesSinceBatchCommitId={lastBatchCommit}
               rootShapeId={thisEndpoint.requestBody.rootShapeId}
               bodyId={thisEndpoint.requestBody.requestId}
@@ -131,7 +132,11 @@ export const EndpointDocumentationPane: FC<
               inResponse={true}
             >
               <OneColumnBody
-                // changes={highlightBodyChanges ? i.changes : undefined}
+                changes={
+                  highlightBodyChanges
+                    ? endpointBodyChanges[i.responseId]
+                    : undefined
+                }
                 changesSinceBatchCommitId={lastBatchCommit}
                 rootShapeId={i.rootShapeId}
                 bodyId={i.responseId}
