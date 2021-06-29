@@ -1,4 +1,5 @@
 use cqrs_core::{Aggregate, AggregateEvent, Event};
+use log;
 use serde::Serialize;
 use std::collections::HashMap;
 
@@ -65,10 +66,9 @@ impl LearnedUndocumentedBodiesProjection {
           let (query_parameters_shape_id, query_parameters_commands) =
             query_observations.into_commands(id_generator, &JsonTrail::empty());
 
-          endpoint_body.with_query_params(
-            query_parameters_shape_id.expect("query parameters should have a root shape"),
-            query_parameters_commands,
-          )
+          if let Some(query_parameters_shape_id) = query_parameters_shape_id {
+            endpoint_body.with_query_params(query_parameters_shape_id, query_parameters_commands)
+          }
         }
       }
 
@@ -432,6 +432,56 @@ mod test {
 
     assert_debug_snapshot!(
       "undocumented_bodies_generates_commands_for_request_query_parameters__request_commands",
+      &request_commands
+    );
+
+    let base_spec = SpecProjection::default();
+    assert_valid_commands(base_spec, request_commands);
+  }
+
+  #[test]
+  fn undocumented_bodies_can_generate_commands_for_request_with_empty_query_parameters() {
+    let test_path = "root";
+    let test_method = "GET";
+
+    let analysis_results = vec![
+      BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::UnmatchedRequest {
+          content_type: None,
+          path_id: String::from(test_path),
+          method: String::from(test_method),
+        },
+        trail_observations: observe_body_trails(None),
+      },
+      BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::UnmatchedRequestQueryParameters {
+          path_id: String::from(test_path),
+          method: String::from(test_method),
+          content_type: None,
+        },
+        trail_observations: observe_body_trails(None),
+      },
+    ];
+
+    let mut test_id_generator = TestIdGenerator::default();
+    let mut projection = LearnedUndocumentedBodiesProjection::default();
+
+    for result in analysis_results {
+      projection.apply(result);
+    }
+
+    let mut endpoint_bodies = projection
+      .into_endpoint_bodies(&mut test_id_generator)
+      .collect::<Vec<_>>();
+    assert_eq!(endpoint_bodies.len(), 1);
+
+    let mut endpoint_body = endpoint_bodies.remove(0);
+    assert_eq!(endpoint_body.requests.len(), 1);
+
+    let request_commands = endpoint_body.requests.remove(0).commands;
+
+    assert_debug_snapshot!(
+      "undocumented_bodies_can_generate_commands_for_request_with_empty_query_parameters__request_commands",
       &request_commands
     );
 
