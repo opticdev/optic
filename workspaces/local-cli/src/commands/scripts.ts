@@ -19,7 +19,10 @@ import {
   userDebugLogger,
 } from '@useoptic/cli-shared';
 import { generateOas } from './generate/oas';
-import { spawnProcess } from '../shared/spawn-process';
+import {
+  spawnProcess,
+  spawnProcessReturnExitCode,
+} from '../shared/spawn-process';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
 import { Config } from '../config';
@@ -131,7 +134,8 @@ export default class Scripts extends Command {
     };
 
     console.log(`Running command: ${colors.grey(script.command)} `);
-    await spawnProcess(script.command, env);
+    const exitStatus = await spawnProcessReturnExitCode(script.command, env);
+    process.exit(exitStatus);
   }
 
   // TODO: this is copy/pasted from commands/status.ts
