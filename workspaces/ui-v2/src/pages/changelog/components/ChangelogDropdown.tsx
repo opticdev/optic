@@ -70,8 +70,8 @@ export function ChangesSinceDropdown() {
         style={{ marginTop: 20 }}
       >
         {shownBatchCommits.length > 0 ? (
-          <>
-            {shownBatchCommits.map((i, index) => (
+          shownBatchCommits
+            .map((i, index) => (
               <MenuItem
                 key={i.batchId}
                 onClick={() => {
@@ -95,28 +95,31 @@ export function ChangesSinceDropdown() {
                   batch={index === 0 ? { ...i, commitMessage: 'Latest' } : i}
                 />
               </MenuItem>
-            ))}
-            {batchCommits.batchCommits.length > 5 && (
-              <MenuItem
-                key="show-all-commits"
-                onClick={() => {
-                  history.push(changelogHistoryPage.linkTo());
-                }}
-              >
-                <Typography
-                  component="span"
-                  variant="subtitle1"
-                  style={{
-                    fontFamily: 'Ubuntu Mono',
-                    fontSize: 14,
-                    color: OpticBlueReadable,
-                  }}
-                >
-                  See all changes
-                </Typography>
-              </MenuItem>
-            )}
-          </>
+            ))
+            .concat(
+              batchCommits.batchCommits.length > 5
+                ? [
+                    <MenuItem
+                      key="show-all-commits"
+                      onClick={() => {
+                        history.push(changelogHistoryPage.linkTo());
+                      }}
+                    >
+                      <Typography
+                        component="span"
+                        variant="subtitle1"
+                        style={{
+                          fontFamily: 'Ubuntu Mono',
+                          fontSize: 14,
+                          color: OpticBlueReadable,
+                        }}
+                      >
+                        See all changes
+                      </Typography>
+                    </MenuItem>,
+                  ]
+                : []
+            )
         ) : (
           <MenuItem>
             <Box>
