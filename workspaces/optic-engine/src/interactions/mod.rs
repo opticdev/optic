@@ -79,9 +79,10 @@ pub fn diff(
 ///
 /// A diff is performed to find a matching Request / Response, but with missing content types
 /// respectively. When found, a normalized description of the shape of the interaction is traversed.
-pub fn analyze_undocumented_bodies(
+pub fn analyze_undocumented_bodies<'a>(
   spec_projection: &SpecProjection,
   interaction: HttpInteraction,
+  config: &AnalyzeUndocumentedBodiesConfig,
 ) -> impl Iterator<Item = BodyAnalysisResult> {
   let endpoint_projection = spec_projection.endpoint();
   let endpoint_queries = EndpointQueries::new(endpoint_projection);
@@ -91,25 +92,29 @@ pub fn analyze_undocumented_bodies(
   interaction_traverser.traverse(&interaction, &mut diff_visitors);
 
   let results = diff_visitors.take_results().unwrap();
+  let include_query_params = config.include_query_params;
 
   results.into_iter().flat_map(move |result| match result {
     InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
       let body = &interaction.request.body;
       let body_trail_observations = observe_body_trails(&body.value);
 
-      let query_params = &interaction.request.query;
-      let query_trail_observations = observe_body_trails(query_params);
+      let mut results = vec![BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::from(diff.clone()),
+        trail_observations: body_trail_observations,
+      }];
 
-      vec![
-        BodyAnalysisResult {
-          body_location: BodyAnalysisLocation::from(diff.clone()),
-          trail_observations: body_trail_observations,
-        },
-        BodyAnalysisResult {
+      if include_query_params {
+        let query_params = &interaction.request.query;
+        let query_trail_observations = observe_body_trails(query_params);
+
+        results.push(BodyAnalysisResult {
           body_location: BodyAnalysisLocation::from(diff).into_query_params(),
           trail_observations: query_trail_observations,
-        },
-      ]
+        })
+      }
+
+      results
     }
     InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => {
       let body = &interaction.response.body;
@@ -122,6 +127,27 @@ pub fn analyze_undocumented_bodies(
     }
     _ => vec![],
   })
+}
+
+#[derive(Clone, Debug)]
+pub struct AnalyzeUndocumentedBodiesConfig {
+  include_query_params: bool,
+}
+
+impl Default for AnalyzeUndocumentedBodiesConfig {
+  fn default() -> Self {
+    Self {
+      include_query_params: false,
+    }
+  }
+}
+
+impl AnalyzeUndocumentedBodiesConfig {
+  pub fn with_query_params(self, flag: bool) -> Self {
+    let mut new = self.clone();
+    new.include_query_params = flag;
+    new
+  }
 }
 
 pub fn analyze_documented_bodies(

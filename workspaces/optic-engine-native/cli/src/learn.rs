@@ -4,6 +4,7 @@ use clap::{App, Arg, ArgGroup, ArgMatches, SubCommand};
 use futures::{try_join, SinkExt, Stream, StreamExt, TryStreamExt};
 use nanoid::nanoid;
 use serde_json;
+use std::env;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout, AsyncWrite};
 use tokio::sync::mpsc;
@@ -12,8 +13,9 @@ use tokio_stream::wrappers::ReceiverStream;
 use optic_engine::streams;
 use optic_engine::Aggregate;
 use optic_engine::{
-  analyze_documented_bodies, analyze_undocumented_bodies, InteractionDiffResult,
-  LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection,
+  analyze_documented_bodies, analyze_undocumented_bodies, AnalyzeUndocumentedBodiesConfig,
+  InteractionDiffResult, LearnedShapeDiffAffordancesProjection,
+  LearnedUndocumentedBodiesProjection,
 };
 use optic_engine::{
   HttpInteraction, SpecChunkEvent, SpecEvent, SpecIdGenerator, SpecProjection, TaggedInput,
@@ -63,7 +65,18 @@ pub async fn main<'a>(
     let interaction_lines = streams::http_interaction::json_lines(stdin);
     let sink = stdout();
 
-    learn_undocumented_bodies(spec_events, input_queue_size, interaction_lines, sink).await;
+    let learner_config = AnalyzeUndocumentedBodiesConfig::default().with_query_params(
+      is_env_flag_enabled("REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS"),
+    );
+
+    learn_undocumented_bodies(
+      spec_events,
+      input_queue_size,
+      interaction_lines,
+      learner_config,
+      sink,
+    )
+    .await;
   } else if command_matches.is_present("shape-diffs-affordances") {
     let diffs_path = command_matches
       .value_of("tagged-diff-results")
@@ -96,9 +109,11 @@ async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
   spec_events: Vec<SpecEvent>,
   input_queue_size: usize,
   interaction_lines: impl Stream<Item = Result<String, std::io::Error>>,
+  learner_config: AnalyzeUndocumentedBodiesConfig,
   sink: S,
 ) {
   let spec_projection = Arc::new(SpecProjection::from(spec_events));
+  let learner_config = Arc::new(learner_config);
 
   let (analysis_sender, analysis_receiver) = mpsc::channel(32);
 
@@ -108,6 +123,7 @@ async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
       .try_for_each_concurrent(input_queue_size, |interaction_json_result| {
         let projection = spec_projection.clone();
         let analysis_sender = analysis_sender.clone();
+        let learner_config = learner_config.clone();
 
         let analyze_task = tokio::spawn(async move {
           let analyze_comp = tokio::task::spawn_blocking(move || {
@@ -117,7 +133,7 @@ async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
             let interaction: HttpInteraction =
               serde_json::from_str(&interaction_json).expect("could not parse interaction json");
 
-            analyze_undocumented_bodies(&projection, interaction)
+            analyze_undocumented_bodies(&projection, interaction, &learner_config)
           });
 
           match analyze_comp.await {
@@ -260,6 +276,10 @@ impl SpecIdGenerator for IdGenerator {
   }
 }
 
+fn is_env_flag_enabled(env_var_name: &str) -> bool {
+  env::var(env_var_name).map_or(false, |var| var == "true" || var == "yes")
+}
+
 #[cfg(test)]
 mod test {
   use super::*;
@@ -280,7 +300,11 @@ mod test {
     let interaction_lines = streams::http_interaction::json_lines(tokio::io::empty());
     let sink = tokio::io::sink();
 
-    learn_undocumented_bodies(spec_events, 1, interaction_lines, sink).await;
+    let learner_config = AnalyzeUndocumentedBodiesConfig::default().with_query_params(
+      is_env_flag_enabled("REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS"),
+    );
+
+    learn_undocumented_bodies(spec_events, 1, interaction_lines, learner_config, sink).await;
   }
 
   #[tokio::main]

@@ -35,7 +35,13 @@ export const testCase = (basePath: string) => async (
   universe.opticContext.opticEngine.learn_undocumented_bodies = (
     spec,
     interactions_jsonl
-  ) => oldLearnBodies(spec, interactions_jsonl, 'sequential');
+  ) =>
+    oldLearnBodies(
+      spec,
+      interactions_jsonl,
+      'sequential',
+      process.env.REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS === 'true'
+    );
 
   const started = await universe.opticContext.capturesService.startDiff(
     '123',

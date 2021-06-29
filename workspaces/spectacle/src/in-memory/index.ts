@@ -288,7 +288,9 @@ export class InMemoryDiffService implements IOpticDiffService {
         this.dependencies.opticEngine.learn_undocumented_bodies(
           spec,
           interactionsJsonl,
-          'random'
+          'random',
+          process.env.REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS ===
+            'true'
         )
       );
       const learnedBodiesForPathIdAndMethod = learnedBodies.find(

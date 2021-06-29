@@ -5,8 +5,8 @@ use std::path::Path;
 use tokio::fs::read_to_string;
 
 use optic_engine::{
-  analyze_undocumented_bodies, Aggregate, HttpInteraction, LearnedUndocumentedBodiesProjection,
-  SpecCommand, SpecEvent, SpecIdGenerator, SpecProjection,
+  analyze_undocumented_bodies, Aggregate, AnalyzeUndocumentedBodiesConfig, HttpInteraction,
+  LearnedUndocumentedBodiesProjection, SpecCommand, SpecEvent, SpecIdGenerator, SpecProjection,
 };
 
 #[tokio::main]
@@ -19,7 +19,8 @@ async fn get_request_with_query_params() {
 
   let mut learned_undocumented_bodies = LearnedUndocumentedBodiesProjection::default();
 
-  let results = analyze_undocumented_bodies(&spec, interaction);
+  let learner_config = AnalyzeUndocumentedBodiesConfig::default().with_query_params(true);
+  let results = analyze_undocumented_bodies(&spec, interaction, &learner_config);
 
   for result in results {
     learned_undocumented_bodies.apply(result)
@@ -49,7 +50,8 @@ async fn get_request_with_object_query_params() {
 
   let mut learned_undocumented_bodies = LearnedUndocumentedBodiesProjection::default();
 
-  let results = analyze_undocumented_bodies(&spec, interaction);
+  let learner_config = AnalyzeUndocumentedBodiesConfig::default().with_query_params(true);
+  let results = analyze_undocumented_bodies(&spec, interaction, &learner_config);
 
   for result in results {
     learned_undocumented_bodies.apply(result)
