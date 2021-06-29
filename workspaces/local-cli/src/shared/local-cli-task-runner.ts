@@ -102,6 +102,7 @@ export async function LocalTaskSessionWrapper(
     flags['print-coverage'] = true;
     flags['pass-exit-code'] = true;
     flags['collect-diffs'] = true;
+    flags['exit-on-diff'] = true;
   }
 
   const usesTaskSpecificBoundary = flags['ci'] || flags['exit-on-diff'];

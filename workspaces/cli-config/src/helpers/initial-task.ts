@@ -29,16 +29,23 @@ export const defaultCommandInit =
 function buildInitialTask(flags: any, taskName: string) {
   //default config and valid for start injected
   let commandConfig = `  ${taskName}:
-     command: ${escapeIt(flags.command || defaultCommandInit)}
-     inboundUrl: ${flags.inboundUrl || 'http://localhost:4000'}
+    command: ${escapeIt(flags.command || defaultCommandInit)}
+    inboundUrl: ${flags.inboundUrl || 'http://localhost:4000'}
 `.trimRight();
 
   if (flags.inboundUrl && flags.targetUrl) {
     commandConfig = `  ${taskName}:
-     inboundUrl: ${flags.inboundUrl}
-     targetUrl: ${flags.targetUrl}
+    inboundUrl: ${flags.inboundUrl}
+    targetUrl: ${flags.targetUrl}
 `.trimRight();
   }
+
+  commandConfig = `${commandConfig}
+  # Use the test command to test your API in your CI build pipeline 
+  test:
+    command: ${escapeIt('echo "Error: no test command specified" && exit 1')}
+    useTask: start
+`.trimRight();
 
   return commandConfig;
 }
