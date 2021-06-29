@@ -94,7 +94,11 @@ export function useEndpointBody(
   pathId: string,
   method: string,
   renderChangesSince?: string
-): { requests: IRequestBody[]; responses: IResponseBody[] } {
+): {
+  query: IQueryParameters | null;
+  requests: IRequestBody[];
+  responses: IResponseBody[];
+} {
   const spectacleInput =
     typeof renderChangesSince === 'undefined'
       ? {
@@ -119,22 +123,19 @@ export function useEndpointBody(
     debugger;
   }
   if (!data) {
-    return { requests: [], responses: [] };
+    return { query: null, requests: [], responses: [] };
   } else {
     const request = data.requests.find(
       (i) => i.pathId === pathId && i.method === method
     );
     if (!request) {
-      return { requests: [], responses: [] };
+      return { query: null, requests: [], responses: [] };
     }
     const requests: IRequestBody[] = request.bodies.map((body: any) => {
       return {
         requestId: request.id,
         contentType: body.contentType,
         rootShapeId: body.rootShapeId,
-        query: {
-          rootShapeId: request.query?.rootShapeId || null,
-        },
         pathId: request.pathId,
         method: request.method,
         changes: request.changes,
@@ -161,16 +162,22 @@ export function useEndpointBody(
       (a, b) => a.statusCode - b.statusCode
     );
 
-    return { requests, responses: sortedResponses };
+    return {
+      query: request.query || null,
+      requests,
+      responses: sortedResponses,
+    };
   }
+}
+
+export interface IQueryParameters {
+  rootShapeId: string;
+  isRemoved: boolean;
 }
 
 export interface IRequestBody {
   requestId: string;
   contentType: string;
-  query: {
-    rootShapeId: string | null;
-  };
   rootShapeId: string;
   pathId: string;
   method: string;
