@@ -1,13 +1,10 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  SerializedError,
-} from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as Sentry from '@sentry/react';
 
 import { IForkableSpectacle } from '@useoptic/spectacle';
-import { AsyncStatus, IEndpoint } from '<src>/types';
+import { IEndpoint } from '<src>/types';
 
+// All endpoints
 export const AllEndpointsQuery = `{
   requests {
     id
@@ -23,9 +20,32 @@ export const AllEndpointsQuery = `{
     }
     method
     pathContributions
+    requestContributions
     isRemoved
+    query {
+      rootShapeId
+      isRemoved
+    }
+    bodies {
+      contentType
+      rootShapeId
+    }
+    responses {
+      id
+      statusCode
+      contributions
+      bodies {
+        contentType
+        rootShapeId
+      }
+    }
   }
 }`;
+
+type HttpBody = {
+  contentType: string;
+  rootShapeId: string;
+};
 
 export type EndpointQueryResults = {
   requests: {
@@ -42,13 +62,25 @@ export type EndpointQueryResults = {
     }[];
     method: string;
     pathContributions: Record<string, string>;
+    requestContributions: Record<string, string>;
     isRemoved: boolean;
+    bodies: HttpBody[];
+    query?: {
+      rootShapeId: string;
+      isRemoved: boolean;
+    };
+    responses: {
+      id: string;
+      statusCode: number;
+      contributions: Record<string, string>;
+      bodies: HttpBody[];
+    }[];
   }[];
 };
 
 export const endpointQueryResultsToJson = ({
   requests,
-}: EndpointQueryResults) =>
+}: EndpointQueryResults): IEndpoint[] =>
   requests.map((request) => ({
     pathId: request.pathId,
     method: request.method,
@@ -63,10 +95,37 @@ export const endpointQueryResultsToJson = ({
     description: request.pathContributions.description || '',
     purpose: request.pathContributions.purpose || '',
     isRemoved: request.isRemoved,
+    query: request.query || null,
+    requestBody:
+      request.bodies.length > 0
+        ? {
+            requestId: request.id,
+            contentType: request.bodies[0].contentType,
+            rootShapeId: request.bodies[0].rootShapeId,
+            pathId: request.pathId,
+            method: request.method,
+            description: request.requestContributions.description || '',
+          }
+        : null,
+    responseBodies: request.responses
+      .flatMap((response) => {
+        return response.bodies.map((body) => {
+          return {
+            statusCode: response.statusCode,
+            responseId: response.id,
+            contentType: body.contentType,
+            rootShapeId: body.rootShapeId,
+            pathId: request.pathId,
+            method: request.method,
+            description: response.contributions.description || '',
+          };
+        });
+      })
+      .sort((a, b) => a.statusCode - b.statusCode),
   }));
 
-const fetchEndpoints = createAsyncThunk<
-  EndpointQueryResults,
+export const fetchEndpoints = createAsyncThunk<
+  ReturnType<typeof endpointQueryResultsToJson>,
   { spectacle: IForkableSpectacle }
 >('FETCH_ENDPOINTS', async ({ spectacle }) => {
   try {
@@ -78,45 +137,10 @@ const fetchEndpoints = createAsyncThunk<
       console.error(results.errors);
       throw new Error(JSON.stringify(results.errors));
     }
-    return results.data!;
+    return endpointQueryResultsToJson(results.data!);
   } catch (e) {
     console.error(e);
     Sentry.captureException(e);
     throw e;
   }
 });
-
-const initialState: {
-  results: AsyncStatus<IEndpoint[], SerializedError>;
-} = {
-  results: {
-    loading: true,
-  },
-};
-
-const endpointsSlice = createSlice({
-  name: 'endpoints',
-  initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(fetchEndpoints.fulfilled, (state, action) => {
-      const results = action.payload;
-
-      state.results = {
-        loading: false,
-        data: endpointQueryResultsToJson(results),
-      };
-    });
-    builder.addCase(fetchEndpoints.rejected, (state, action) => {
-      state.results = {
-        loading: false,
-        error: action.error,
-      };
-    });
-  },
-});
-
-export const actions = {
-  fetchEndpoints,
-};
-export const reducer = endpointsSlice.reducer;

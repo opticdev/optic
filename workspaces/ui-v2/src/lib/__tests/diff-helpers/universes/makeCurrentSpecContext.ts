@@ -3,7 +3,7 @@ import {
   AllEndpointsQuery,
   endpointQueryResultsToJson,
   EndpointQueryResults,
-} from '<src>/store/endpoints';
+} from '<src>/store/endpoints/thunks';
 import { IBaseSpectacle } from '@useoptic/spectacle';
 import {
   AllRequestsAndResponsesQuery,

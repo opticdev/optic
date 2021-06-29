@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Button, LinearProgress, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
@@ -13,7 +13,6 @@ import {
   FullWidth,
 } from '<src>/components';
 import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
-import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import { SubtleBlueBackground } from '<src>/styles';
 import {
   useAppSelector,
@@ -60,17 +59,11 @@ export const EndpointRootPage: FC<
   const dispatch = useAppDispatch();
 
   const { pathId, method } = match.params;
-  const thisEndpoint = useMemo(
-    () =>
-      endpointsState.data?.find(
-        (i) => i.pathId === pathId && i.method === method
-      ),
-    [endpointsState, method, pathId]
+  const thisEndpoint = useAppSelector(
+    selectors.getEndpoint({ pathId, method })
   );
 
   const isEndpointRemoved = thisEndpoint ? thisEndpoint.isRemoved : false;
-
-  const bodies = useEndpointBody(pathId, method);
 
   const onKeyPress = useRunOnKeypress(
     () => {
@@ -236,31 +229,28 @@ export const EndpointRootPage: FC<
                 }}
               >
                 <EndpointTOC
-                  requests={bodies.requests}
-                  responses={bodies.responses}
+                  request={thisEndpoint.requestBody}
+                  responses={thisEndpoint.responseBodies}
                 />
               </div>
             </CodeBlock>
           }
         />
-
-        {bodies.requests.map((i) => {
-          return (
-            <TwoColumnBodyEditable
-              key={i.rootShapeId}
-              endpoint={{
-                pathId,
-                method,
-              }}
-              rootShapeId={i.rootShapeId}
-              bodyId={i.requestId}
-              location={'Request Body'}
-              contentType={i.contentType}
-              description={i.description}
-            />
-          );
-        })}
-        {bodies.responses.map((i) => {
+        {thisEndpoint.requestBody && (
+          <TwoColumnBodyEditable
+            key={thisEndpoint.requestBody.rootShapeId}
+            endpoint={{
+              pathId,
+              method,
+            }}
+            rootShapeId={thisEndpoint.requestBody.rootShapeId}
+            bodyId={thisEndpoint.requestBody.requestId}
+            location={'Request Body'}
+            contentType={thisEndpoint.requestBody.contentType}
+            description={thisEndpoint.requestBody.description}
+          />
+        )}
+        {thisEndpoint.responseBodies.map((i) => {
           return (
             <TwoColumnBodyEditable
               key={i.rootShapeId}

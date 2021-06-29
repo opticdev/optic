@@ -1,5 +1,5 @@
 import { useSpectacleQuery } from '<src>/contexts/spectacle-provider';
-import { IRequestBody, IResponseBody } from '<src>/hooks/useEndpointBodyHook';
+import { IRequestBody, IResponseBody } from '<src>/types';
 import { useMemo, useState } from 'react';
 
 export const AllRequestsAndResponsesQuery = `{

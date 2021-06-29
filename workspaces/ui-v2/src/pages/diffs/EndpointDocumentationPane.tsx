@@ -1,5 +1,4 @@
-import React, { FC, ReactNode, useMemo } from 'react';
-import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
+import React, { FC, ReactNode } from 'react';
 import {
   EndpointName,
   PathParameters,
@@ -16,7 +15,7 @@ import { IParsedLocation } from '<src>/lib/Interfaces';
 import { HighlightedLocation } from '<src>/pages/diffs/components/HighlightedLocation';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { useDebouncedFn, useStateWithSideEffect } from '<src>/hooks/util';
-import { useAppSelector } from '<src>/store';
+import { selectors, useAppSelector } from '<src>/store';
 import { IPathParameter } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
@@ -40,16 +39,9 @@ export const EndpointDocumentationPane: FC<
   renderHeader,
   ...props
 }) => {
-  const endpointsState = useAppSelector((state) => state.endpoints.results);
-  const thisEndpoint = useMemo(
-    () =>
-      endpointsState.data?.find(
-        (i) => i.pathId === pathId && i.method === method
-      ),
-    [endpointsState, method, pathId]
+  const thisEndpoint = useAppSelector(
+    selectors.getEndpoint({ pathId, method })
   );
-
-  const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   if (!thisEndpoint) {
     return <>no endpoint here</>;
@@ -99,34 +91,37 @@ export const EndpointDocumentationPane: FC<
           }}
         >
           <EndpointTOC
-            requests={bodies.requests}
-            responses={bodies.responses}
+            request={thisEndpoint.requestBody}
+            responses={thisEndpoint.responseBodies}
           />
         </div>
       </CodeBlock>
       <div style={{ height: 50 }} />
-      {bodies.requests.map((i, index) => {
-        return (
-          <React.Fragment key={i.requestId}>
-            <HighlightedLocation
-              targetLocation={highlightedLocation}
-              contentType={i.contentType}
-              inRequest={true}
-            >
-              <OneColumnBody
-                changes={highlightBodyChanges ? i.changes : undefined}
-                changesSinceBatchCommitId={lastBatchCommit}
-                rootShapeId={i.rootShapeId}
-                bodyId={i.requestId}
-                location={'Request Body'}
-                contentType={i.contentType}
-              />
-            </HighlightedLocation>
-            <div style={{ height: 50 }} />
-          </React.Fragment>
-        );
-      })}
-      {bodies.responses.map((i, index) => {
+      {thisEndpoint.requestBody && (
+        <>
+          <HighlightedLocation
+            targetLocation={highlightedLocation}
+            contentType={thisEndpoint.requestBody.contentType}
+            inRequest={true}
+          >
+            {/* TODO reimplement changes */}
+            <OneColumnBody
+              // changes={
+              //   highlightBodyChanges
+              //     ? thisEndpoint.requestBody.changes
+              //      : undefined
+              // }
+              changesSinceBatchCommitId={lastBatchCommit}
+              rootShapeId={thisEndpoint.requestBody.rootShapeId}
+              bodyId={thisEndpoint.requestBody.requestId}
+              location={'Request Body'}
+              contentType={thisEndpoint.requestBody.contentType}
+            />
+          </HighlightedLocation>
+          <div style={{ height: 50 }} />
+        </>
+      )}
+      {thisEndpoint.responseBodies.map((i, index) => {
         return (
           <React.Fragment key={i.responseId}>
             <HighlightedLocation
@@ -136,7 +131,7 @@ export const EndpointDocumentationPane: FC<
               inResponse={true}
             >
               <OneColumnBody
-                changes={highlightBodyChanges ? i.changes : undefined}
+                // changes={highlightBodyChanges ? i.changes : undefined}
                 changesSinceBatchCommitId={lastBatchCommit}
                 rootShapeId={i.rootShapeId}
                 bodyId={i.responseId}
