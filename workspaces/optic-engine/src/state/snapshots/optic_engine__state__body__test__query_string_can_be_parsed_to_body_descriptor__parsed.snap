@@ -1,0 +1,24 @@
+---
+source: workspaces/optic-engine/src/state/body.rs
+expression: "&parsed"
+---
+ParsedQueryString {
+    entries: [
+        (
+            "foo",
+            "bar",
+        ),
+        (
+            "csv",
+            "1,2,51",
+        ),
+        (
+            "list",
+            "twelve",
+        ),
+        (
+            "list",
+            "fourteen",
+        ),
+    ],
+}

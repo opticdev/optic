@@ -1,0 +1,33 @@
+---
+source: workspaces/optic-engine/src/state/body.rs
+expression: body_descriptor
+---
+Object(
+    ObjectDescriptor {
+        fields: [
+            FieldDescriptor(
+                "csv",
+                String,
+            ),
+            FieldDescriptor(
+                "foo",
+                String,
+            ),
+            FieldDescriptor(
+                "list",
+                Array(
+                    ItemsDescriptor {
+                        unique_items: [
+                            (
+                                String,
+                                [
+                                    0,
+                                ],
+                            ),
+                        ],
+                    },
+                ),
+            ),
+        ],
+    },
+)
