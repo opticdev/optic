@@ -134,8 +134,8 @@ export default class Scripts extends Command {
     };
 
     console.log(`Running command: ${colors.grey(script.command)} `);
-    const exitStatus = await spawnProcessReturnExitCode(script.command, env);
-    process.exit(exitStatus);
+    const exitCode = await spawnProcessReturnExitCode(script.command, env);
+    process.exit(exitCode);
   }
 
   // TODO: this is copy/pasted from commands/status.ts
