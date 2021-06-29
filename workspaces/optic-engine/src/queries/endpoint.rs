@@ -1,7 +1,7 @@
 use crate::commands::{EndpointCommand, SpecCommand};
 use crate::events::HttpInteraction;
 use crate::projections::endpoint::{Edge, EndpointProjection, Node, ROOT_PATH_ID};
-use crate::projections::endpoint::{RequestBodyDescriptor, ResponseBodyDescriptor};
+use crate::projections::endpoint::{RequestDescriptor, ResponseBodyDescriptor};
 use crate::state::endpoint::{
   HttpMethod, HttpStatusCode, PathComponentId, PathComponentIdRef, RequestId, ResponseId,
 };
@@ -207,7 +207,7 @@ impl<'a> EndpointQueries<'a> {
     &self,
     method: &'a String,
     path_id: PathComponentIdRef,
-  ) -> impl Iterator<Item = (&RequestId, &RequestBodyDescriptor)> {
+  ) -> impl Iterator<Item = (&RequestId, &RequestDescriptor)> {
     self
       .resolve_requests(path_id, method)
       .expect("expected a operations to exist")
@@ -217,7 +217,7 @@ impl<'a> EndpointQueries<'a> {
     &self,
     interaction: &'a HttpInteraction,
     path_id: PathComponentIdRef,
-  ) -> impl Iterator<Item = (&RequestId, &RequestBodyDescriptor)> {
+  ) -> impl Iterator<Item = (&RequestId, &RequestDescriptor)> {
     self.resolve_operations_by_request_method(&interaction.request.method, path_id)
   }
 
@@ -225,7 +225,7 @@ impl<'a> EndpointQueries<'a> {
     &self,
     path_id: PathComponentIdRef,
     method: &'a String,
-  ) -> Option<impl Iterator<Item = (&RequestId, &RequestBodyDescriptor)>> {
+  ) -> Option<impl Iterator<Item = (&RequestId, &RequestDescriptor)>> {
     let path_node_index = self.graph_get_index(path_id)?;
     let children = self
       .endpoint_projection
@@ -262,7 +262,7 @@ impl<'a> EndpointQueries<'a> {
     path_id: PathComponentIdRef,
     method: &'a String,
     content_type: Option<&'a String>,
-  ) -> Option<(&RequestId, &RequestBodyDescriptor)> {
+  ) -> Option<(&RequestId, &RequestDescriptor)> {
     self.resolve_requests(path_id, method).and_then(|mut it| {
       it.find(|(id, body)| match content_type {
         Some(content_type) => match body.body {

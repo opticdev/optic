@@ -6,8 +6,8 @@ use crate::projections::endpoint::ROOT_PATH_ID;
 use crate::projections::EndpointProjection;
 use crate::queries::EndpointQueries;
 use crate::state::endpoint::{
-  PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor,
-  ShapedRequestParameterShapeDescriptor,
+  PathComponentId, QueryParametersShapeDescriptor, RequestId, RequestParameterId, ResponseId,
+  ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor,
 };
 use crate::state::shape::ShapeId;
 use crate::{events::endpoint as endpoint_events, state::body};
@@ -31,6 +31,7 @@ pub enum EndpointCommand {
   AddRequest(AddRequest),
   SetRequestContentType(SetRequestContentType),
   SetRequestBodyShape(SetRequestBodyShape),
+  SetRequestQueryParametersShape(SetRequestQueryParametersShape),
   UnsetRequestBodyShape(UnsetRequestBodyShape),
   RemoveRequest(RemoveRequest),
 
@@ -95,6 +96,20 @@ impl EndpointCommand {
       request_id,
       body_descriptor: ShapedBodyDescriptor {
         http_content_type,
+        shape_id,
+        is_removed,
+      },
+    })
+  }
+
+  pub fn set_request_query_parameters_shape(
+    request_id: RequestId,
+    shape_id: ShapeId,
+    is_removed: bool,
+  ) -> EndpointCommand {
+    EndpointCommand::SetRequestQueryParametersShape(SetRequestQueryParametersShape {
+      request_id,
+      shape_descriptor: QueryParametersShapeDescriptor {
         shape_id,
         is_removed,
       },
@@ -227,6 +242,13 @@ pub struct SetRequestContentType {
 pub struct SetRequestBodyShape {
   pub request_id: RequestId,
   pub body_descriptor: ShapedBodyDescriptor,
+}
+
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SetRequestQueryParametersShape {
+  pub request_id: RequestId,
+  pub shape_descriptor: QueryParametersShapeDescriptor,
 }
 
 //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command anymore, or enforce uniqueness of content types across multiple requests
@@ -519,6 +541,17 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         vec![EndpointEvent::from(endpoint_events::RequestBodySet::from(
           command,
         ))]
+      }
+
+      EndpointCommand::SetRequestQueryParametersShape(command) => {
+        validation.require(
+          validation.request_exists(&command.request_id),
+          "request must exist to set query parameters shape",
+        )?;
+
+        vec![EndpointEvent::from(
+          endpoint_events::RequestQueryParametersShapeSet::from(command),
+        )]
       }
 
       EndpointCommand::RemoveRequest(command) => {
@@ -1109,6 +1142,46 @@ mod test {
     assert!(unexisting_request_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_request_body_shape_command__unexisting_request_result",
+      unexisting_request_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
+  pub fn can_handle_set_request_query_parameters_shape_command() {
+    let initial_events: Vec<EndpointEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+      {"RequestAdded": {"requestId": "request_1", "pathId": "path_1", "httpMethod": "POST"}}
+    ]))
+    .expect("initial events should be valid endpoint events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let valid_command: EndpointCommand = serde_json::from_value(json!(
+      {"SetRequestQueryParametersShape": {"requestId": "request_1", "shapeDescriptor": { "shapeId": "shape_1", "isRemoved": false }}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!(
+      "can_handle_set_request_query_parameters_shape_command__new_events",
+      new_events
+    );
+
+    let unexisting_request: EndpointCommand = serde_json::from_value(json!(
+      {"SetRequestQueryParametersShape": {"requestId": "not-a-request", "shapeDescriptor": { "shapeId": "shape_1", "isRemoved": false }}}
+    ))
+    .unwrap();
+    let unexisting_request_result = projection.execute(unexisting_request);
+    assert!(unexisting_request_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_request_query_parameters_shape_command__unexisting_request_result",
       unexisting_request_result.unwrap_err()
     );
 

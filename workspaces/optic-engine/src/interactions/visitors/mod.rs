@@ -1,6 +1,6 @@
 pub mod diff;
 
-use crate::projections::endpoint::{RequestBodyDescriptor, ResponseBodyDescriptor};
+use crate::projections::endpoint::{RequestDescriptor, ResponseBodyDescriptor};
 use crate::state::endpoint::{PathComponentId, PathComponentIdRef, RequestId, ResponseId};
 use crate::HttpInteraction;
 
@@ -69,7 +69,7 @@ pub struct PathVisitorContext<'a> {
 }
 pub struct RequestBodyVisitorContext<'a> {
   pub path: PathComponentIdRef<'a>,
-  pub operation: Option<(&'a RequestId, &'a RequestBodyDescriptor)>,
+  pub operation: Option<(&'a RequestId, &'a RequestDescriptor)>,
 }
 pub struct ResponseBodyVisitorContext<'a> {
   pub path: PathComponentIdRef<'a>,

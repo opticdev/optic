@@ -26,8 +26,9 @@ pub struct BodyDescriptor {
 }
 
 #[derive(Debug, Serialize, Clone)]
-pub struct RequestBodyDescriptor {
+pub struct RequestDescriptor {
   pub body: Option<BodyDescriptor>,
+  pub query: Option<QueryParametersShapeDescriptor>,
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -40,7 +41,7 @@ pub enum Node {
   PathComponent(PathComponentId, PathComponentDescriptor),
   HttpMethod(HttpMethod),
   HttpStatusCode(HttpStatusCode),
-  Request(RequestId, RequestBodyDescriptor),
+  Request(RequestId, RequestDescriptor),
   Response(ResponseId, ResponseBodyDescriptor),
 }
 
@@ -157,7 +158,13 @@ impl EndpointProjection {
       .get(&path_id)
       .expect("expected path_id to have a corresponding node");
     let method_node_index = self.ensure_method_node(path_node_index, http_method);
-    let request_node = Node::Request(request_id.clone(), RequestBodyDescriptor { body: None });
+    let request_node = Node::Request(
+      request_id.clone(),
+      RequestDescriptor {
+        body: None,
+        query: None,
+      },
+    );
     let request_node_index = self.graph.add_node(request_node);
     self
       .graph
@@ -270,6 +277,24 @@ impl EndpointProjection {
       }
       _ => {}
     }
+  }
+
+  pub fn with_query_parameters(
+    &mut self,
+    request_id: RequestId,
+    shape_descriptor: QueryParametersShapeDescriptor,
+  ) {
+    let request_node_index = self
+      .node_id_to_index
+      .get(&request_id)
+      .expect("expected request_id to have a corresponding node");
+    let request_node = self.graph.node_weight_mut(*request_node_index).unwrap();
+    let request_descriptor = match request_node {
+      Node::Request(id, descriptor) => descriptor,
+      _ => unreachable!("request ids should point to request nodes"),
+    };
+
+    request_descriptor.query = Some(shape_descriptor);
   }
 
   pub fn with_response_body(
@@ -639,6 +664,9 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
           e.body_descriptor.http_content_type,
           e.body_descriptor.shape_id,
         );
+      }
+      EndpointEvent::RequestQueryParametersShapeSet(e) => {
+        aggregate.with_query_parameters(e.request_id, e.shape_descriptor);
       }
       EndpointEvent::ResponseBodySet(e) => {
         aggregate.with_response_body(

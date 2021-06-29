@@ -1,6 +1,6 @@
 use super::EventLoadingError;
 use crate::shapehash;
-use crate::state::body::BodyDescriptor;
+use crate::state::body::{BodyDescriptor, ParsedQueryString};
 use base64;
 use cqrs_core::Event;
 use protobuf::Message;
@@ -32,7 +32,7 @@ pub struct Request {
   pub path: String,
   pub headers: ArbitraryData,
   // #[serde(skip)]
-  pub query: ArbitraryData,
+  pub query: QueryParametersData,
   pub body: Body,
 }
 
@@ -59,6 +59,12 @@ pub struct ArbitraryData {
   pub shape_hash_v1_base64: Option<String>,
   pub as_json_string: Option<String>,
   pub as_text: Option<String>,
+}
+
+#[derive(Clone, Deserialize, Serialize, Debug, Default)]
+pub struct QueryParametersData {
+  #[serde(flatten)]
+  data: ArbitraryData,
 }
 
 impl From<&ArbitraryData> for Option<serde_json::value::Value> {
@@ -97,6 +103,20 @@ impl From<&ArbitraryData> for Option<BodyDescriptor> {
       Some(BodyDescriptor::from(json))
     } else if let Some(text) = &data.as_text {
       Some(BodyDescriptor::from(text))
+    } else {
+      None
+    }
+  }
+}
+
+impl From<&QueryParametersData> for Option<BodyDescriptor> {
+  fn from(query_param_data: &QueryParametersData) -> Self {
+    let data = &query_param_data.data;
+
+    if let Some(query_string) = &data.as_text {
+      let parsed_query_string = ParsedQueryString::from_str(query_string)
+        .expect("as_text of QueryParametersData should always be a valid url encoded data");
+      Some(BodyDescriptor::from(parsed_query_string))
     } else {
       None
     }
