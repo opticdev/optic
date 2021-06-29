@@ -147,6 +147,20 @@ impl EndpointBodies {
       }
     }
   }
+
+  pub fn into_commands(self) -> impl Iterator<Item = SpecCommand> {
+    let requests_commands = self
+      .requests
+      .into_iter()
+      .flat_map(|request| request.commands.into_iter());
+
+    let responses_commands = self
+      .responses
+      .into_iter()
+      .flat_map(|response| response.commands.into_iter());
+
+    requests_commands.chain(responses_commands)
+  }
 }
 
 #[derive(Debug)]
