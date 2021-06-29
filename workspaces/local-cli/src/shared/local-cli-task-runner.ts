@@ -39,6 +39,8 @@ import { spawnProcessReturnExitCode } from './spawn-process';
 import { getCaptureId } from './git/git-context-capture';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 import { linkToCapture, linkToDiffs } from './ui-links';
+import { RunTaskVerboseLogger } from './verbose/verbose';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 
 export const runCommandFlags = {
   'print-coverage': flags.boolean({
@@ -72,6 +74,11 @@ export const runCommandFlags = {
     required: false,
     description: 'Enables CI-specific behavior',
   }),
+  verbose: flags.boolean({
+    default: false,
+    required: false,
+    description: 'Verbose logging of Optic lifecycle and sample collection',
+  }),
 };
 export interface LocalCliTaskFlags {
   'print-coverage'?: boolean;
@@ -80,6 +87,7 @@ export interface LocalCliTaskFlags {
   'transparent-proxy'?: boolean;
   'pass-exit-code'?: boolean;
   ci?: boolean;
+  verbose?: boolean;
 }
 
 export async function LocalTaskSessionWrapper(
@@ -114,7 +122,14 @@ export async function LocalTaskSessionWrapper(
     ? uuid.v4()
     : await getCaptureId(paths);
 
-  const runner = new LocalCliTaskRunner(captureId, paths, taskName, {
+  const logger = new RunTaskVerboseLogger(
+    flags.verbose || false,
+    taskName,
+    flags,
+    paths.basePath
+  );
+
+  const runner = new LocalCliTaskRunner(captureId, paths, taskName, logger, {
     shouldCollectDiffs: flags['collect-diffs'] !== false,
     shouldExitOnDiff: flags['exit-on-diff'] !== false,
     shouldTransparentProxy: flags['transparent-proxy'] !== false,
@@ -173,6 +188,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     private captureId: string,
     private paths: IPathMapping,
     private taskName: string,
+    private logger: RunTaskVerboseLogger,
     private options: {
       shouldCollectDiffs: boolean;
       shouldExitOnDiff: boolean;
@@ -190,6 +206,8 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
   ): Promise<void> {
     ////////////////////////////////////////////////////////////////////////////////
 
+    this.logger.logConfigMeaning(taskConfig);
+
     await trackUserEvent(
       config.name,
       StartedTaskWithLocalCli({
@@ -203,6 +221,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
 
     const blockers = await findProcess('port', taskConfig.proxyConfig.port);
     if (blockers.length > 0) {
+      this.logger.portTaken(taskConfig.proxyConfig.port);
       throw new TargetPortUnavailableError(`Optic could not start its proxy server on port ${
         taskConfig.proxyConfig.port
       }.
@@ -296,11 +315,21 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       testCommand
     );
 
+    sessionManager.inboundProxy.events.on(
+      'sample',
+      (sample: IHttpInteraction) => {
+        this.logger.sample(sample);
+      }
+    );
+
     await sessionManager.run(persistenceManager);
 
     if (!commandToRunWhenStarted && this.options.shouldPassThroughExitCode) {
       this.exitWithCode = sessionManager.getExitCodeOfProcess();
     }
+
+    if (this.exitWithCode !== undefined)
+      this.logger.commandExitCode(this.exitWithCode);
 
     ////////////////////////////////////////////////////////////////////////////////
     await cliClient.markCaptureAsCompleted(cliSession.session.id, captureId);
@@ -343,5 +372,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
         );
       }
     }
+
+    this.logger.results(sampleCount, this.foundDiff);
   }
 }
