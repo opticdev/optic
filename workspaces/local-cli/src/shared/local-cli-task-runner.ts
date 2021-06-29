@@ -221,13 +221,13 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
 
     const blockers = await findProcess('port', taskConfig.proxyConfig.port);
     if (blockers.length > 0) {
+      const conflict = `${blockers
+        .map((x) => `[pid ${x.pid}]: ${x.cmd}`)
+        .join('\n')}`;
       this.logger.portTaken(taskConfig.proxyConfig.port);
-      throw new TargetPortUnavailableError(`Optic could not start its proxy server on port ${
-        taskConfig.proxyConfig.port
-      }.
-There is something else running:
-${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
-`);
+      throw new TargetPortUnavailableError(
+        `Optic could not start its proxy server on port ${taskConfig.proxyConfig.port} \n ${conflict}`
+      );
     }
 
     ////////////////////////////////////////////////////////////////////////////////

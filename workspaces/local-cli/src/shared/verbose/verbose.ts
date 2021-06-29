@@ -40,16 +40,21 @@ class VerboseLogger {
 
 export class RunTaskVerboseLogger extends VerboseLogger {
   constructor(
-    enabled: boolean,
+    public enabled: boolean,
     private taskName: string,
     private flags: LocalCliTaskFlags,
     private path: string
   ) {
     super(enabled);
-    this.log(`Running task ${colors.bold(taskName)}`);
   }
 
   logConfigMeaning(taskConfig: IOpticTaskRunnerConfig) {
+    this.log(
+      colors.bgBlue(
+        `${colors.bold(this.taskName)} task is running. Explanation:`
+      )
+    );
+
     if (taskConfig.command) {
       waitOn({
         resources: [`tcp:${taskConfig.serviceConfig.port}`],
@@ -59,14 +64,14 @@ export class RunTaskVerboseLogger extends VerboseLogger {
       })
         .then((e) => {
           this.log(
-            `Correct! Your API just started on the port Optic assigned it using the env variable ${colors.cyan.bold(
+            `✅ Your API just started on the port Optic assigned it using the env variable ${colors.cyan.bold(
               'PORT'
             )} -> ${colors.cyan.bold(taskConfig.serviceConfig.port.toString())}`
           );
         })
         .catch((e) => {
           this.logError(
-            `After 15 seconds, Optic never saw your API start on the port ${colors.cyan.bold(
+            `⚠️  After 15 seconds, Optic never saw your API start on the port it assigns using the ${colors.cyan.bold(
               'PORT'
             )} variable`
           );
@@ -103,7 +108,7 @@ export class RunTaskVerboseLogger extends VerboseLogger {
 
   portTaken(port: number) {
     this.logError(
-      `Something is already running on port ${port}. Can not start Optic Proxy there`
+      `⚠️   Something is already running on port ${port}. Can not start Optic Proxy there.`
     );
   }
 
@@ -117,6 +122,14 @@ export class RunTaskVerboseLogger extends VerboseLogger {
         sampleCount.toString()
       )} samples in latest capture`
     );
+    if (this.failed) {
+      this.errors.forEach((i) => this.logError(i));
+    }
+    if (sampleCount === 0) {
+      this.logError(
+        'No samples were captured. Make sure your task is set up properly to start your API and the Optic Proxy'
+      );
+    }
   }
 }
 
@@ -125,10 +138,10 @@ export class ExecVerboseLogger extends VerboseLogger {
     super(enabled);
   }
 
-  results(sampleCount: any, foundDiff: boolean) {
+  results() {
     this.log(
       `Task finished with ${colors.cyan(
-        sampleCount.toString()
+        this.sampleCount.toString()
       )} samples in latest capture`
     );
   }

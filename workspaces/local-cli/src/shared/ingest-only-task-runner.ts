@@ -109,6 +109,8 @@ export async function ingestOnlyTaskRunner(
 
     // impliment exit on diff
 
+    logger.results();
+
     cleanupAndExit(statusCode);
   }
 
