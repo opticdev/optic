@@ -1910,6 +1910,93 @@
           "createdAt": "2020-10-20T20:52:31.789Z"
         }
       }
+    },
+    {
+      "BatchCommitStarted": {
+        "batchId": "2cc302d2-c660-4362-9601-dc14fe69542c",
+        "commitMessage": "Learn query parameters",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-11-20T20:52:31.789Z"
+        }
+      }
+    },
+    {
+      "RequestQueryParametersShapeSet": {
+        "requestId": "request_SqY61Qc9Mi",
+        "shapeDescriptor": {
+          "shapeId": "shape_tNRgroSwLj",
+          "isRemoved": false
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_tNRgroSwLj",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-11-20T20:52:31.789Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_qQT0krhOKn",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-11-20T20:52:31.789Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_hnI7P1UdbB",
+        "shapeId": "shape_tNRgroSwLj",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_hnI7P1UdbB",
+            "shapeId": "shape_qQT0krhOKn"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-11-20T20:52:31.789Z"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "2cc302d2-c660-4362-9601-dc14fe69542c",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-11-20T20:52:31.789Z"
+        }
+      }
     }
   ],
   "session": {

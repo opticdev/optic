@@ -8,6 +8,10 @@ const EndpointBodyQueryWithoutChanges = `
     pathId
     method
     requestContributions
+    query {
+      rootShapeId
+      isRemoved
+    }
     bodies {
       contentType
       rootShapeId
@@ -34,6 +38,10 @@ query X($sinceBatchCommitId: String) {
     changes(sinceBatchCommitId: $sinceBatchCommitId) {
       added
       changed
+    }
+    query {
+      rootShapeId
+      isRemoved
     }
     bodies {
       contentType
@@ -67,6 +75,10 @@ type EndpointBodyQueryResponse = {
     method: string;
     requestContributions: Record<string, string>;
     bodies: Body[];
+    query?: {
+      rootShapeId: string;
+      isRemoved: boolean;
+    };
     changes?: IChanges;
     responses: {
       id: string;
@@ -82,7 +94,11 @@ export function useEndpointBody(
   pathId: string,
   method: string,
   renderChangesSince?: string
-): { requests: IRequestBody[]; responses: IResponseBody[] } {
+): {
+  query: IQueryParameters | null;
+  requests: IRequestBody[];
+  responses: IResponseBody[];
+} {
   const spectacleInput =
     typeof renderChangesSince === 'undefined'
       ? {
@@ -107,13 +123,13 @@ export function useEndpointBody(
     debugger;
   }
   if (!data) {
-    return { requests: [], responses: [] };
+    return { query: null, requests: [], responses: [] };
   } else {
     const request = data.requests.find(
       (i) => i.pathId === pathId && i.method === method
     );
     if (!request) {
-      return { requests: [], responses: [] };
+      return { query: null, requests: [], responses: [] };
     }
     const requests: IRequestBody[] = request.bodies.map((body: any) => {
       return {
@@ -146,8 +162,17 @@ export function useEndpointBody(
       (a, b) => a.statusCode - b.statusCode
     );
 
-    return { requests, responses: sortedResponses };
+    return {
+      query: request.query || null,
+      requests,
+      responses: sortedResponses,
+    };
   }
+}
+
+export interface IQueryParameters {
+  rootShapeId: string;
+  isRemoved: boolean;
 }
 
 export interface IRequestBody {

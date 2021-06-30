@@ -312,12 +312,11 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       method: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.value.httpMethod);
       },
-      query: async () => {
-        // TODO connect up to rust code
-        return {
-          rootShapeId: 'shape-1',
-          isRemoved: false,
-        };
+      query: async (parent: endpoints.RequestNodeWrapper) => {
+        return process.env.REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS ===
+          'true'
+          ? parent.query()
+          : null;
       },
       bodies: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.bodies().results);
@@ -354,12 +353,11 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     QueryParameters: {
-      // TODO change typings when connected to graph lib + rust
-      rootShapeId: (parent: { rootShapeId: string; isRemoved: boolean }) => {
-        return parent.rootShapeId;
+      rootShapeId: (parent: endpoints.QueryParametersNodeWrapper) => {
+        return parent.value.rootShapeId;
       },
-      isRemoved: (parent: { rootShapeId: string; isRemoved: boolean }) => {
-        return parent.isRemoved;
+      isRemoved: (parent: endpoints.QueryParametersNodeWrapper) => {
+        return parent.value.isRemoved;
       },
     },
     Path: {
