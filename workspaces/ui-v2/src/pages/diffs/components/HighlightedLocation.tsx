@@ -1,40 +1,59 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { IParsedLocation } from '../../../lib/Interfaces';
 import { OpticBlueReadable, SubtleBlueBackground } from '<src>/styles';
 //@ts-ignore
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
-type IHighlightedLocation = {
-  targetLocation?: IParsedLocation;
-  statusCode?: number | undefined;
-  contentType?: string | undefined;
-  inRequest?: boolean | undefined;
-  inResponse?: boolean | undefined;
-  children: any;
-};
+type IHighlightedLocation =
+  | {
+      targetLocation?: IParsedLocation;
+      statusCode?: undefined;
+      contentType?: undefined;
+      expectedLocation: Location.Query;
+    }
+  | {
+      targetLocation?: IParsedLocation;
+      statusCode?: undefined;
+      contentType: string;
+      expectedLocation: Location.Request;
+    }
+  | {
+      targetLocation?: IParsedLocation;
+      statusCode: number;
+      contentType: string;
+      expectedLocation: Location.Response;
+    };
 
-export function HighlightedLocation({
-  targetLocation,
-  contentType,
-  statusCode,
-  inResponse,
-  inRequest,
-  children,
-}: IHighlightedLocation) {
+export enum Location {
+  Request,
+  Response,
+  Query,
+}
+
+export const HighlightedLocation: FC<IHighlightedLocation> = (props) => {
+  const { targetLocation, children } = props;
   const matches: boolean = (() => {
-    if (targetLocation && targetLocation.inRequest && inRequest) {
-      return (
-        targetLocation.inRequest.contentType === contentType &&
-        Boolean(contentType)
-      );
+    if (!targetLocation) {
+      return false;
     }
-    if (targetLocation && targetLocation.inResponse && inResponse) {
-      return (
-        targetLocation.inResponse.contentType === contentType &&
-        targetLocation.inResponse.statusCode === statusCode
-      );
+
+    switch (props.expectedLocation) {
+      case Location.Request:
+        return !!(
+          targetLocation.inRequest &&
+          targetLocation.inRequest.contentType === props.contentType
+        );
+      case Location.Response:
+        return !!(
+          targetLocation.inResponse &&
+          targetLocation.inResponse.contentType === props.contentType &&
+          targetLocation.inResponse.statusCode === props.statusCode
+        );
+      case Location.Query:
+        return !!targetLocation.inQuery;
+      default:
+        return false;
     }
-    return false;
   })();
 
   if (targetLocation && matches) {
@@ -57,4 +76,4 @@ export function HighlightedLocation({
   }
 
   return <>{children}</>;
-}
+};

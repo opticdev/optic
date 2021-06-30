@@ -186,6 +186,7 @@ export interface IResponseBodyLocation {
 export interface IParsedLocation {
   pathId: string;
   method: string;
+  inQuery?: boolean;
   inRequest?: IRequestBodyLocation;
   inResponse?: IResponseBodyLocation;
 }
