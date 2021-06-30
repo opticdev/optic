@@ -8,3 +8,4 @@ export * from './EndpointTOC';
 export * from './MarkdownBodyContribution';
 export * from './RenderBody';
 export * from './TwoColumn';
+export * from './DataFetchers';
