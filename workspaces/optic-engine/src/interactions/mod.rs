@@ -104,6 +104,10 @@ pub fn analyze_undocumented_bodies<'a>(
         trail_observations: body_trail_observations,
       }];
 
+      // @TODO: move the QueryParams own InteractionDiffResult variant, as we only
+      // record one set of query parameters for the entire endpoint, not for every
+      // content type we see. That makes that his breaks for endpoints which support
+      // multiple content type for request bodies
       if include_query_params {
         let query_params = &interaction.request.query;
         let query_trail_observations = observe_body_trails(query_params);

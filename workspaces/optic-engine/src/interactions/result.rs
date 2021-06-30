@@ -232,7 +232,6 @@ pub enum BodyAnalysisLocation {
   UnmatchedRequestQueryParameters {
     path_id: PathComponentId,
     method: String,
-    content_type: Option<String>,
   },
   UnmatchedResponse {
     path_id: PathComponentId,
@@ -255,26 +254,19 @@ impl BodyAnalysisLocation {
   pub fn content_type(&self) -> Option<&String> {
     match self {
       BodyAnalysisLocation::UnmatchedRequest { content_type, .. } => content_type.as_ref(),
-      BodyAnalysisLocation::UnmatchedRequestQueryParameters { content_type, .. } => {
-        content_type.as_ref()
-      }
+      BodyAnalysisLocation::UnmatchedRequestQueryParameters { .. } => None,
       BodyAnalysisLocation::UnmatchedResponse { content_type, .. } => content_type.as_ref(),
       BodyAnalysisLocation::MatchedRequest { content_type, .. } => content_type.as_ref(),
       BodyAnalysisLocation::MatchedResponse { content_type, .. } => content_type.as_ref(),
     }
   }
 
+  // @TODO: remove this when we introduce the QueryParams own InteractionDiffResult variant
   pub fn into_query_params(self) -> Self {
     match self {
       BodyAnalysisLocation::UnmatchedRequest {
-        path_id,
-        method,
-        content_type,
-      } => BodyAnalysisLocation::UnmatchedRequestQueryParameters {
-        path_id,
-        method,
-        content_type,
-      },
+        path_id, method, ..
+      } => BodyAnalysisLocation::UnmatchedRequestQueryParameters { path_id, method },
       BodyAnalysisLocation::UnmatchedRequestQueryParameters { .. } => self,
       BodyAnalysisLocation::UnmatchedResponse { .. }
       | BodyAnalysisLocation::MatchedRequest { .. }
