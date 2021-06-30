@@ -16,7 +16,7 @@ import {
   convertShapeToQueryParameters,
 } from '<src>/components';
 import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
-import { SubtleBlueBackground } from '<src>/styles';
+import { FontFamily, SubtleBlueBackground } from '<src>/styles';
 import {
   useAppSelector,
   useAppDispatch,
@@ -244,48 +244,51 @@ export const EndpointRootPage: FC<
         />
         {thisEndpoint.query && (
           <div className={classes.bodyContainer} id="query-parameters">
-            <div>
-              <h6>Query Parameters</h6>
-              <MarkdownBodyContribution
-                id={'QUERY TODO'}
-                contributionKey={'description'}
-                defaultText={'Add a description'}
-                initialValue={'TODO'}
-                endpoint={thisEndpoint}
-              />
-              <ContributionFetcher
-                rootShapeId={thisEndpoint.query.rootShapeId}
-                endpointId={endpointId}
-              >
-                {(contributions) => (
-                  <ContributionsList
-                    ContributionComponent={(contribution) => (
-                      <DocsFieldOrParameterContribution
-                        key={contribution.id}
-                        endpoint={{
-                          pathId,
-                          method,
-                        }}
-                        id={contribution.id}
-                        name={contribution.name}
-                        shapes={contribution.shapes}
-                        depth={contribution.depth}
-                        initialValue={contribution.value}
-                      />
-                    )}
-                    contributions={contributions}
-                  />
-                )}
-              </ContributionFetcher>
-            </div>
-            <div>
-              <ShapeFetcher rootShapeId={thisEndpoint.query.rootShapeId}>
-                {(shapes) => (
-                  <QueryParametersPanel
-                    parameters={convertShapeToQueryParameters(shapes)}
-                  />
-                )}
-              </ShapeFetcher>
+            <h6 className={classes.bodyHeader}>Query Parameters</h6>
+            <div className={classes.bodyDetails}>
+              <div>
+                {/* TODO QPB - change id from this to query id from spectacle */}
+                <MarkdownBodyContribution
+                  id={'QUERY TODO'}
+                  contributionKey={'description'}
+                  defaultText={'Add a description'}
+                  initialValue={'TODO'}
+                  endpoint={thisEndpoint}
+                />
+                <ContributionFetcher
+                  rootShapeId={thisEndpoint.query.rootShapeId}
+                  endpointId={endpointId}
+                >
+                  {(contributions) => (
+                    <ContributionsList
+                      ContributionComponent={(contribution) => (
+                        <DocsFieldOrParameterContribution
+                          key={contribution.id}
+                          endpoint={{
+                            pathId,
+                            method,
+                          }}
+                          id={contribution.id}
+                          name={contribution.name}
+                          shapes={contribution.shapes}
+                          depth={contribution.depth}
+                          initialValue={contribution.value}
+                        />
+                      )}
+                      contributions={contributions}
+                    />
+                  )}
+                </ContributionFetcher>
+              </div>
+              <div>
+                <ShapeFetcher rootShapeId={thisEndpoint.query.rootShapeId}>
+                  {(shapes) => (
+                    <QueryParametersPanel
+                      parameters={convertShapeToQueryParameters(shapes)}
+                    />
+                  )}
+                </ShapeFetcher>
+              </div>
             </div>
           </div>
         )}
@@ -340,11 +343,22 @@ const useStyles = makeStyles((theme) => ({
     display: 'fixed',
   },
   bodyContainer: {
+    marginTop: theme.spacing(6),
+    width: '100%',
+  },
+  bodyHeader: {
+    fontSize: '1.25rem',
+    fontFamily: FontFamily,
+    fontWeight: 500,
+    lineHeight: 1.6,
+    letterSpacing: '0.0075em',
+  },
+  bodyDetails: {
     display: 'flex',
     width: '100%',
-    marginTop: theme.spacing(6),
     '& > div': {
       width: '50%',
+      padding: `0 ${theme.spacing(1)}px`,
     },
   },
 }));

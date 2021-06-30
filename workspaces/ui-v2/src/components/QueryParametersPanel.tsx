@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { IFieldRenderer, IShapeRenderer, ShapeRenderer } from './ShapeRenderer';
 import { Panel } from './Panel';
+import { FontFamily } from '<src>/styles';
 
 type QueryParameters = Record<string, IFieldRenderer>;
 
@@ -9,7 +10,7 @@ type QueryParametersPanelProps = {
   parameters: QueryParameters;
 };
 
-// TODO this should move into redux
+// TODO QPB this should move into redux
 export const convertShapeToQueryParameters = (
   shapes: IShapeRenderer[]
 ): QueryParameters => {
@@ -31,12 +32,11 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
 }) => {
   const classes = useStyles();
   return (
-    // TODO add in query parsing strategy here?
+    // TODO QPB add in query parsing strategy here?
     <Panel header={''}>
       {Object.entries(parameters).map(([key, field]) => (
-        // TODO style this better
         <div className={classes.queryComponentContainer}>
-          <div>{key}</div>
+          <div className={classes.queryKey}>{key}</div>
           <div>
             <ShapeRenderer showExamples={false} shape={field.shapeChoices} />
           </div>
@@ -48,11 +48,16 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
 
 const useStyles = makeStyles((theme) => ({
   queryComponentContainer: {
-    marginBottom: theme.spacing(2),
-    paddingLeft: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    padding: `${theme.spacing(1)}px 0`,
     display: 'flex',
     '&:not(:first-child)': {
       borderTop: '1px solid #e4e8ed',
     },
+  },
+  queryKey: {
+    fontFamily: FontFamily,
+    fontWeight: 600,
+    fontSize: theme.typography.fontSize - 1,
   },
 }));

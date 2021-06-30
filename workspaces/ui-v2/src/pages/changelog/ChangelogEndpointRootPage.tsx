@@ -160,7 +160,7 @@ const ChangelogRootComponent: FC<
           }
         />
 
-        {/* TODO PR implement query renderer */}
+        {/* TODO QPB implement query renderer */}
 
         {thisEndpoint.requestBodies.map((requestBody) => (
           <TwoColumnBodyChangelog

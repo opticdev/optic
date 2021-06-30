@@ -100,7 +100,7 @@ export const EndpointDocumentationPane: FC<
         </div>
       </CodeBlock>
       <div style={{ height: 50 }} />
-      {/* TODO PR implement query renderer */}
+      {/* TODO QPB implement query renderer */}
 
       {thisEndpoint.requestBodies.map((requestBody) => (
         <React.Fragment key={requestBody.requestId}>

@@ -20,7 +20,7 @@ type ContributionFetcherProps = {
   ) => React.ReactNode;
 };
 
-// TODO replace this by fetching the contributions in redux
+// TODO QPB replace this by fetching the contributions in redux
 export const ContributionFetcher: FC<ContributionFetcherProps> = ({
   rootShapeId,
   endpointId,
@@ -46,7 +46,7 @@ type ShapeFetcherProps = {
   children: (shapes: ReturnType<typeof useShapeDescriptor>) => React.ReactNode;
 };
 
-// TODO replace this by fetching the shapes in redux
+// TODO QPB replace this by fetching the shapes in redux
 export const ShapeFetcher: FC<ShapeFetcherProps> = ({
   rootShapeId,
   children,
