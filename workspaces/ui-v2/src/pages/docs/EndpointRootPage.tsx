@@ -244,17 +244,19 @@ export const EndpointRootPage: FC<
         />
         {thisEndpoint.query && (
           <div className={classes.bodyContainer} id="query-parameters">
-            <h6 className={classes.bodyHeader}>Query Parameters</h6>
+            <div className={classes.bodyHeaderContainer}>
+              <h6 className={classes.bodyHeader}>Query Parameters</h6>
+              {/* TODO QPB - change id from this to query id from spectacle */}
+              <MarkdownBodyContribution
+                id={'QUERY TODO'}
+                contributionKey={'description'}
+                defaultText={'Add a description'}
+                initialValue={'TODO'}
+                endpoint={thisEndpoint}
+              />
+            </div>
             <div className={classes.bodyDetails}>
               <div>
-                {/* TODO QPB - change id from this to query id from spectacle */}
-                <MarkdownBodyContribution
-                  id={'QUERY TODO'}
-                  contributionKey={'description'}
-                  defaultText={'Add a description'}
-                  initialValue={'TODO'}
-                  endpoint={thisEndpoint}
-                />
                 <ContributionFetcher
                   rootShapeId={thisEndpoint.query.rootShapeId}
                   endpointId={endpointId}
@@ -346,12 +348,16 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(6),
     width: '100%',
   },
+  bodyHeaderContainer: {
+    marginBottom: theme.spacing(2),
+  },
   bodyHeader: {
     fontSize: '1.25rem',
     fontFamily: FontFamily,
     fontWeight: 500,
     lineHeight: 1.6,
     letterSpacing: '0.0075em',
+    margin: `${theme.spacing(3)}px 0`,
   },
   bodyDetails: {
     display: 'flex',
