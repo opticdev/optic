@@ -6,7 +6,7 @@ import { IShapeRenderer } from '<src>/components';
 type ContributionFetcherProps = {
   rootShapeId: string;
   endpointId: string;
-  // TODO change this typing
+  // TODO QPB change this typing - currently this holds contributions, and the data for rendering the shape
   children: (
     contributions: {
       id: string;
