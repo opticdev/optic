@@ -36,7 +36,7 @@ export async function makeCurrentSpecContext(
     })
   ).data || { paths: [] };
   const requests = endpoints
-    .map((endpoint) => endpoint.requestBody)
+    .flatMap((endpoint) => endpoint.requestBodies)
     .filter((body) => !!body) as IRequestBody[]; // cast to IRequestBody as filter removes non-null
 
   const responses = endpoints.flatMap((endpoint) => endpoint.responseBodies);

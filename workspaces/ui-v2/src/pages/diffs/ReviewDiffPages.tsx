@@ -41,7 +41,7 @@ export function DiffReviewPages(props: any) {
   const allRequests = useMemo(
     () =>
       filteredEndpoints
-        .map((endpoint) => endpoint.requestBody)
+        .flatMap((endpoint) => endpoint.requestBodies)
         .filter((body) => !!body) as IRequestBody[], // cast to IRequestBody as filter removes non-null
     [filteredEndpoints]
   );

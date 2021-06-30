@@ -96,17 +96,14 @@ export const endpointQueryResultsToJson = ({
     purpose: request.pathContributions.purpose || '',
     isRemoved: request.isRemoved,
     query: request.query || null,
-    requestBody:
-      request.bodies.length > 0
-        ? {
-            requestId: request.id,
-            contentType: request.bodies[0].contentType,
-            rootShapeId: request.bodies[0].rootShapeId,
-            pathId: request.pathId,
-            method: request.method,
-            description: request.requestContributions.description || '',
-          }
-        : null,
+    requestBodies: request.bodies.map((body) => ({
+      requestId: request.id,
+      contentType: body.contentType,
+      rootShapeId: body.rootShapeId,
+      pathId: request.pathId,
+      method: request.method,
+      description: request.requestContributions.description || '',
+    })),
     responseBodies: request.responses
       .flatMap((response) => {
         return response.bodies.map((body) => {

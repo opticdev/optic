@@ -93,35 +93,35 @@ export const EndpointDocumentationPane: FC<
           }}
         >
           <EndpointTOC
-            request={thisEndpoint.requestBody}
+            requests={thisEndpoint.requestBodies}
             responses={thisEndpoint.responseBodies}
           />
         </div>
       </CodeBlock>
       <div style={{ height: 50 }} />
-      {thisEndpoint.requestBody && (
-        <>
+      {thisEndpoint.requestBodies.map((requestBody) => (
+        <React.Fragment key={requestBody.requestId}>
           <HighlightedLocation
             targetLocation={highlightedLocation}
-            contentType={thisEndpoint.requestBody.contentType}
+            contentType={requestBody.contentType}
             inRequest={true}
           >
             <OneColumnBody
               changes={
                 highlightBodyChanges
-                  ? endpointBodyChanges[thisEndpoint.requestBody.requestId]
+                  ? endpointBodyChanges[requestBody.requestId]
                   : undefined
               }
               changesSinceBatchCommitId={lastBatchCommit}
-              rootShapeId={thisEndpoint.requestBody.rootShapeId}
-              bodyId={thisEndpoint.requestBody.requestId}
+              rootShapeId={requestBody.rootShapeId}
+              bodyId={requestBody.requestId}
               location={'Request Body'}
-              contentType={thisEndpoint.requestBody.contentType}
+              contentType={requestBody.contentType}
             />
           </HighlightedLocation>
           <div style={{ height: 50 }} />
-        </>
-      )}
+        </React.Fragment>
+      ))}
       {thisEndpoint.responseBodies.map((i, index) => {
         return (
           <React.Fragment key={i.responseId}>

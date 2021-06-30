@@ -229,27 +229,27 @@ export const EndpointRootPage: FC<
                 }}
               >
                 <EndpointTOC
-                  request={thisEndpoint.requestBody}
+                  requests={thisEndpoint.requestBodies}
                   responses={thisEndpoint.responseBodies}
                 />
               </div>
             </CodeBlock>
           }
         />
-        {thisEndpoint.requestBody && (
+        {thisEndpoint.requestBodies.map((requestBody) => (
           <TwoColumnBodyEditable
-            key={thisEndpoint.requestBody.rootShapeId}
+            key={requestBody.rootShapeId}
             endpoint={{
               pathId,
               method,
             }}
-            rootShapeId={thisEndpoint.requestBody.rootShapeId}
-            bodyId={thisEndpoint.requestBody.requestId}
+            rootShapeId={requestBody.rootShapeId}
+            bodyId={requestBody.requestId}
             location={'Request Body'}
-            contentType={thisEndpoint.requestBody.contentType}
-            description={thisEndpoint.requestBody.description}
+            contentType={requestBody.contentType}
+            description={requestBody.description}
           />
-        )}
+        ))}
         {thisEndpoint.responseBodies.map((i) => {
           return (
             <TwoColumnBodyEditable

@@ -151,7 +151,7 @@ const ChangelogRootComponent: FC<
                 }}
               >
                 <EndpointTOC
-                  request={thisEndpoint.requestBody}
+                  requests={thisEndpoint.requestBodies}
                   responses={thisEndpoint.responseBodies}
                 />
               </div>
@@ -159,16 +159,16 @@ const ChangelogRootComponent: FC<
           }
         />
 
-        {thisEndpoint.requestBody && (
+        {thisEndpoint.requestBodies.map((requestBody) => (
           <TwoColumnBodyChangelog
             changesSinceBatchCommitId={batchId}
-            rootShapeId={thisEndpoint.requestBody.rootShapeId}
-            bodyId={thisEndpoint.requestBody.requestId}
+            rootShapeId={requestBody.rootShapeId}
+            bodyId={requestBody.requestId}
             location={'Request Body'}
-            contentType={thisEndpoint.requestBody.contentType}
-            description={thisEndpoint.requestBody.description}
+            contentType={requestBody.contentType}
+            description={requestBody.description}
           />
-        )}
+        ))}
         {thisEndpoint.responseBodies.map((i, index) => {
           return (
             <TwoColumnBodyChangelog

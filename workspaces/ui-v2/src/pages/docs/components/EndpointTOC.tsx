@@ -7,7 +7,7 @@ import { IRequestBody, IResponseBody } from '<src>/types';
 import { goToAnchor } from '<src>/utils';
 
 export type EndpointTOCProps = {
-  request: IRequestBody | null;
+  requests: IRequestBody[];
   responses: IResponseBody[];
 };
 
@@ -30,21 +30,22 @@ export function EndpointTOC(props: EndpointTOCProps) {
 
   return (
     <List dense>
-      {props.request === null && props.responses.length === 0 ? (
+      {props.requests.length === 0 && props.responses.length === 0 ? (
         <Typography className={classes.none}>No bodies documented.</Typography>
       ) : null}
 
-      {props.request && (
+      {props.requests.map((request) => (
         <EndpointTOCRow
+          key={request.requestId}
           label={'Request Body'}
-          anchorLink={props.request.requestId}
+          anchorLink={request.requestId}
           detail={
             <>
-              consumes <Code value={props.request.contentType} />
+              consumes <Code value={request.contentType} />
             </>
           }
         />
-      )}
+      ))}
 
       {props.responses.map((body, index) => {
         return (

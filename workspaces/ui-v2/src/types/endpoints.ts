@@ -18,7 +18,7 @@ export interface IEndpoint {
   pathParameters: IPathParameter[];
   isRemoved: boolean;
   query: IQueryParameters | null;
-  requestBody: IRequestBody | null;
+  requestBodies: IRequestBody[];
   responseBodies: IResponseBody[];
 }
 
