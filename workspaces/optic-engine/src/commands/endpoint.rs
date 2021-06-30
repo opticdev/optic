@@ -6,8 +6,8 @@ use crate::projections::endpoint::ROOT_PATH_ID;
 use crate::projections::EndpointProjection;
 use crate::queries::EndpointQueries;
 use crate::state::endpoint::{
-  PathComponentId, QueryParametersShapeDescriptor, RequestId, RequestParameterId, ResponseId,
-  ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor,
+  PathComponentId, QueryParametersId, QueryParametersShapeDescriptor, RequestId,
+  RequestParameterId, ResponseId, ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor,
 };
 use crate::state::shape::ShapeId;
 use crate::{events::endpoint as endpoint_events, state::body};
@@ -31,7 +31,6 @@ pub enum EndpointCommand {
   AddRequest(AddRequest),
   SetRequestContentType(SetRequestContentType),
   SetRequestBodyShape(SetRequestBodyShape),
-  SetRequestQueryParametersShape(SetRequestQueryParametersShape),
   UnsetRequestBodyShape(UnsetRequestBodyShape),
   RemoveRequest(RemoveRequest),
 
@@ -43,6 +42,10 @@ pub enum EndpointCommand {
   SetResponseBodyShape(SetResponseBodyShape),
   UnsetResponseBodyShape(UnsetResponseBodyShape),
   RemoveResponse(RemoveResponse),
+
+  // Query parameters
+  AddQueryParameters(AddQueryParameters),
+  SetQueryParametersShape(SetQueryParametersShape),
 
   // Headers
   AddHeaderParameter(AddHeaderParameter),
@@ -102,20 +105,6 @@ impl EndpointCommand {
     })
   }
 
-  pub fn set_request_query_parameters_shape(
-    request_id: RequestId,
-    shape_id: ShapeId,
-    is_removed: bool,
-  ) -> EndpointCommand {
-    EndpointCommand::SetRequestQueryParametersShape(SetRequestQueryParametersShape {
-      request_id,
-      shape_descriptor: QueryParametersShapeDescriptor {
-        shape_id,
-        is_removed,
-      },
-    })
-  }
-
   pub fn remove_request(request_id: RequestId) -> EndpointCommand {
     EndpointCommand::RemoveRequest(RemoveRequest { request_id })
   }
@@ -155,6 +144,35 @@ impl EndpointCommand {
 
   pub fn remove_response(response_id: ResponseId) -> EndpointCommand {
     EndpointCommand::RemoveResponse(RemoveResponse { response_id })
+  }
+
+  // Query parameters
+  // ----------------
+
+  pub fn add_query_parameters(
+    query_parameters_id: QueryParametersId,
+    path_id: PathComponentId,
+    http_method: String,
+  ) -> EndpointCommand {
+    EndpointCommand::AddQueryParameters(AddQueryParameters {
+      query_parameters_id,
+      path_id,
+      http_method,
+    })
+  }
+
+  pub fn set_query_parameters_shape(
+    query_parameters_id: QueryParametersId,
+    shape_id: ShapeId,
+    is_removed: bool,
+  ) -> EndpointCommand {
+    EndpointCommand::SetQueryParametersShape(SetQueryParametersShape {
+      query_parameters_id,
+      shape_descriptor: QueryParametersShapeDescriptor {
+        shape_id,
+        is_removed,
+      },
+    })
   }
 }
 
@@ -244,13 +262,6 @@ pub struct SetRequestBodyShape {
   pub body_descriptor: ShapedBodyDescriptor,
 }
 
-#[derive(Deserialize, Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct SetRequestQueryParametersShape {
-  pub request_id: RequestId,
-  pub shape_descriptor: QueryParametersShapeDescriptor,
-}
-
 //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command anymore, or enforce uniqueness of content types across multiple requests
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -319,6 +330,24 @@ pub struct UnsetResponseBodyShape {
 #[serde(rename_all = "camelCase")]
 pub struct RemoveResponse {
   pub response_id: ResponseId,
+}
+
+// Query Parameters
+// ----------------
+
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AddQueryParameters {
+  pub query_parameters_id: QueryParametersId,
+  pub path_id: PathComponentId,
+  pub http_method: String,
+}
+
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SetQueryParametersShape {
+  pub query_parameters_id: QueryParametersId,
+  pub shape_descriptor: QueryParametersShapeDescriptor,
 }
 
 // Headers
@@ -543,17 +572,6 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         ))]
       }
 
-      EndpointCommand::SetRequestQueryParametersShape(command) => {
-        validation.require(
-          validation.request_exists(&command.request_id),
-          "request must exist to set query parameters shape",
-        )?;
-
-        vec![EndpointEvent::from(
-          endpoint_events::RequestQueryParametersShapeSet::from(command),
-        )]
-      }
-
       EndpointCommand::RemoveRequest(command) => {
         validation.require(
           validation.request_exists(&command.request_id),
@@ -602,6 +620,25 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         vec![EndpointEvent::from(endpoint_events::ResponseRemoved::from(
           command,
         ))]
+      }
+
+      // Query parameters
+      // ----------------
+      EndpointCommand::AddQueryParameters(command) => {
+        todo!()
+      }
+
+      EndpointCommand::SetQueryParametersShape(command) => {
+        // validation.require(
+        //   validation.query_parameters_exists(&command.query_parameters_id),
+        //   "query parameters must exist to set query parameters shape",
+        // )?;
+
+        // vec![EndpointEvent::from(
+        //   endpoint_events::RequestQueryParametersShapeSet::from(command),
+        // )]
+
+        todo!()
       }
 
       _ => Err(SpecCommandError::Unimplemented(

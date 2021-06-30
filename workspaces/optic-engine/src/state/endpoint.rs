@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 pub type PathComponentId = String;
 pub type PathComponentIdRef<'a> = &'a str;
+pub type QueryParametersId = String;
 pub type RequestId = String;
 pub type RequestParameterId = String;
 pub type ResponseId = String;
