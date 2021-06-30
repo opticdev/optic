@@ -1,9 +1,8 @@
 import React, { FC } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 
-import { LinearProgress, Typography } from '@material-ui/core';
+import { LinearProgress, Typography, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import makeStyles from '@material-ui/styles/makeStyles';
 import ReactMarkdown from 'react-markdown';
 
 import {
@@ -14,11 +13,17 @@ import {
   PageLayout,
   FullWidth,
   FieldOrParameter,
+  ContributionFetcher,
+  ShapeFetcher,
+  QueryParametersPanel,
+  ContributionsList,
+  convertShapeToQueryParameters,
 } from '<src>/components';
 import { useChangelogPages } from '<src>/components/navigation/Routes';
-import { SubtleBlueBackground } from '<src>/styles';
+import { SubtleBlueBackground, FontFamily } from '<src>/styles';
 import { useEndpointsChangelog } from '<src>/hooks/useEndpointsChangelog';
 import { selectors, useAppSelector } from '<src>/store';
+import { getEndpointId } from '<src>/utils';
 import { CodeBlock, EndpointTOC, TwoColumn } from '<src>/pages/docs/components';
 
 import {
@@ -51,7 +56,7 @@ const ChangelogRootComponent: FC<
   }>
 > = ({ match }) => {
   const { pathId, method, batchId } = match.params;
-  const styles = useStyles();
+  const classes = useStyles();
   const changelogPageLink = useChangelogPages();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
   const thisEndpoint = useAppSelector(
@@ -84,6 +89,7 @@ const ChangelogRootComponent: FC<
     return <Redirect to={changelogPageLink.linkTo(batchId)} />;
   }
 
+  const endpointId = getEndpointId(thisEndpoint);
   const parameterizedPathParts = thisEndpoint.pathParameters.filter(
     (path) => path.isParameterized
   );
@@ -91,12 +97,12 @@ const ChangelogRootComponent: FC<
   return (
     <>
       {isEndpointRemovedInThisBatch && (
-        <Alert severity="error" className={styles.removedInfoHeader}>
+        <Alert severity="error" className={classes.removedInfoHeader}>
           This endpoint has been removed
         </Alert>
       )}
       <FullWidth style={{ paddingTop: 30, paddingBottom: 400 }}>
-        <Typography className={styles.regularField}>
+        <Typography className={classes.regularField}>
           {thisEndpoint.purpose || 'Unnamed Endpoint'}
         </Typography>
         <EndpointName
@@ -109,7 +115,7 @@ const ChangelogRootComponent: FC<
           style={{ marginTop: 5 }}
           left={
             <ReactMarkdown
-              className={styles.contents}
+              className={classes.contents}
               source={thisEndpoint.description}
             />
           }
@@ -160,7 +166,51 @@ const ChangelogRootComponent: FC<
           }
         />
 
-        {/* TODO QPB implement query renderer */}
+        {thisEndpoint.query && (
+          <div className={classes.bodyContainer} id="query-parameters">
+            <div className={classes.bodyHeaderContainer}>
+              <h6 className={classes.bodyHeader}>Query Parameters</h6>
+              {/* TODO QPB - change id from this to query id from spectacle */}
+              <ReactMarkdown className={classes.contents} source={'TODO'} />
+            </div>
+            <div className={classes.bodyDetails}>
+              <div>
+                <ContributionFetcher
+                  rootShapeId={thisEndpoint.query.rootShapeId}
+                  endpointId={endpointId}
+                  changesSinceBatchCommit={batchId}
+                >
+                  {(contributions) => (
+                    <ContributionsList
+                      ContributionComponent={(contribution) => (
+                        <FieldOrParameter
+                          key={contribution.id}
+                          name={contribution.name}
+                          shapes={contribution.shapes}
+                          depth={contribution.depth}
+                          value={contribution.value}
+                        />
+                      )}
+                      contributions={contributions}
+                    />
+                  )}
+                </ContributionFetcher>
+              </div>
+              <div>
+                <ShapeFetcher
+                  rootShapeId={thisEndpoint.query.rootShapeId}
+                  changesSinceBatchCommit={batchId}
+                >
+                  {(shapes) => (
+                    <QueryParametersPanel
+                      parameters={convertShapeToQueryParameters(shapes)}
+                    />
+                  )}
+                </ShapeFetcher>
+              </div>
+            </div>
+          </div>
+        )}
 
         {thisEndpoint.requestBodies.map((requestBody) => (
           <TwoColumnBodyChangelog
@@ -206,5 +256,28 @@ const useStyles = makeStyles((theme) => ({
   removedInfoHeader: {
     justifyContent: 'center',
     display: 'fixed',
+  },
+  bodyContainer: {
+    marginTop: theme.spacing(6),
+    width: '100%',
+  },
+  bodyHeaderContainer: {
+    marginBottom: theme.spacing(2),
+  },
+  bodyHeader: {
+    fontSize: '1.25rem',
+    fontFamily: FontFamily,
+    fontWeight: 500,
+    lineHeight: 1.6,
+    letterSpacing: '0.0075em',
+    margin: `${theme.spacing(3)}px 0`,
+  },
+  bodyDetails: {
+    display: 'flex',
+    width: '100%',
+    '& > div': {
+      width: '50%',
+      padding: `0 ${theme.spacing(1)}px`,
+    },
   },
 }));

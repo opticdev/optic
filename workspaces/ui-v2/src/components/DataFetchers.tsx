@@ -6,6 +6,7 @@ import { IShapeRenderer } from '<src>/components';
 type ContributionFetcherProps = {
   rootShapeId: string;
   endpointId: string;
+  changesSinceBatchCommit?: string;
   // TODO QPB change this typing - currently this holds contributions, and the data for rendering the shape
   children: (
     contributions: {
@@ -25,8 +26,9 @@ export const ContributionFetcher: FC<ContributionFetcherProps> = ({
   rootShapeId,
   endpointId,
   children,
+  changesSinceBatchCommit,
 }) => {
-  const shapes = useShapeDescriptor(rootShapeId, undefined);
+  const shapes = useShapeDescriptor(rootShapeId, changesSinceBatchCommit);
   const contributions = createFlatList(shapes);
   const contributionsMapped = contributions.map((contribution) => ({
     id: contribution.contributionId,
@@ -43,14 +45,16 @@ export const ContributionFetcher: FC<ContributionFetcherProps> = ({
 
 type ShapeFetcherProps = {
   rootShapeId: string;
+  changesSinceBatchCommit?: string;
   children: (shapes: ReturnType<typeof useShapeDescriptor>) => React.ReactNode;
 };
 
 // TODO QPB replace this by fetching the shapes in redux
 export const ShapeFetcher: FC<ShapeFetcherProps> = ({
   rootShapeId,
+  changesSinceBatchCommit,
   children,
 }) => {
-  const shapes = useShapeDescriptor(rootShapeId, undefined);
+  const shapes = useShapeDescriptor(rootShapeId, changesSinceBatchCommit);
   return <>{children(shapes)}</>;
 };

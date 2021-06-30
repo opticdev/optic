@@ -14,6 +14,8 @@ import {
   ContributionsList,
   QueryParametersPanel,
   convertShapeToQueryParameters,
+  ContributionFetcher,
+  ShapeFetcher,
 } from '<src>/components';
 import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
 import { FontFamily, SubtleBlueBackground } from '<src>/styles';
@@ -35,8 +37,6 @@ import {
   MarkdownBodyContribution,
   TwoColumn,
   DeleteEndpointConfirmationModal,
-  ContributionFetcher,
-  ShapeFetcher,
 } from '<src>/pages/docs/components';
 
 export const EndpointRootPageWithDocsNav: FC<
