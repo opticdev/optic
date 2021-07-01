@@ -354,7 +354,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 500,
     lineHeight: 1.6,
     letterSpacing: '0.0075em',
-    margin: `${theme.spacing(3)}px 0`,
+    margin: theme.spacing(3, 0),
   },
   bodyDetails: {
     display: 'flex',
@@ -362,7 +362,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     '& > div': {
       width: '50%',
-      padding: `0 ${theme.spacing(1)}px`,
+      padding: theme.spacing(1, 0),
     },
   },
   panel: {
