@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core';
 import { FontFamilyMono } from '<src>/styles';
 
@@ -6,10 +7,12 @@ type PanelProps = {
   header: React.ReactNode;
 };
 
-export const Panel: FC<PanelProps> = ({ children, header }) => {
+export const Panel: FC<
+  PanelProps & React.HtmlHTMLAttributes<HTMLDivElement>
+> = ({ children, header, className, ...props }) => {
   const classes = useStyles();
   return (
-    <div className={classes.wrapper}>
+    <div {...props} className={classNames(classes.wrapper, className)}>
       <div className={classes.header}>
         <div>{header}</div>
       </div>
@@ -33,8 +36,8 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: FontFamilyMono,
     alignItems: 'center',
     overflow: 'hidden',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
+    borderTopLeftRadius: theme.shape.borderRadius * 2,
+    borderTopRightRadius: theme.shape.borderRadius * 2,
     borderBottom: '1px solid #e2e2e2',
   },
   content: {
@@ -45,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
     borderLeft: '1px solid #e4e8ed',
     borderRight: '1px solid #e4e8ed',
     borderBottom: '1px solid #e4e8ed',
-    borderBottomRightRadius: 4,
-    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: theme.shape.borderRadius,
+    borderBottomLeftRadius: theme.shape.borderRadius,
   },
 }));

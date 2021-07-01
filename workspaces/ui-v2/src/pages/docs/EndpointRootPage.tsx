@@ -338,7 +338,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '16px 0',
   },
   icon: {
-    paddingLeft: 8,
+    paddingLeft: theme.spacing(1),
   },
   deleteInfoHeader: {
     justifyContent: 'center',
@@ -357,14 +357,14 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 500,
     lineHeight: 1.6,
     letterSpacing: '0.0075em',
-    margin: `${theme.spacing(3)}px 0`,
+    margin: theme.spacing(3, 0),
   },
   bodyDetails: {
     display: 'flex',
     width: '100%',
     '& > div': {
       width: '50%',
-      padding: `0 ${theme.spacing(1)}px`,
+      padding: theme.spacing(0, 1),
     },
   },
 }));

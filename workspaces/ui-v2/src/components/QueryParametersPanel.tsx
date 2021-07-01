@@ -49,7 +49,7 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
 const useStyles = makeStyles((theme) => ({
   queryComponentContainer: {
     marginBottom: theme.spacing(1),
-    padding: `${theme.spacing(1)}px 0`,
+    padding: theme.spacing(1, 0),
     display: 'flex',
     '&:not(:first-child)': {
       borderTop: '1px solid #e4e8ed',
