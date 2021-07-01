@@ -420,10 +420,10 @@ mod test {
       .expect("query parameters should have been learned")
       .commands;
 
-    dbg!(query_param_commands);
+    dbg!(&query_param_commands);
 
     let base_spec = SpecProjection::default();
-    // assert_valid_commands(base_spec, query_param_commands);
+    assert_valid_commands(base_spec, query_param_commands);
   }
 
   #[test]
@@ -457,10 +457,10 @@ mod test {
       .expect("query parameters should have been learned")
       .commands;
 
-    dbg!(query_param_commands);
+    dbg!(&query_param_commands);
 
     let base_spec = SpecProjection::default();
-    // assert_valid_commands(base_spec, query_param_commands);
+    assert_valid_commands(base_spec, query_param_commands);
   }
 
   #[test]
