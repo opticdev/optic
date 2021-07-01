@@ -182,7 +182,7 @@ const ChangelogRootComponent: FC<
                 >
                   {(contributions) => (
                     <ContributionsList
-                      ContributionComponent={(contribution) => (
+                      renderContribution={(contribution) => (
                         <FieldOrParameter
                           key={contribution.id}
                           name={contribution.name}

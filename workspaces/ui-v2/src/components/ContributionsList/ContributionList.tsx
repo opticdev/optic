@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+
 import { IShapeRenderer } from '<src>/components';
 
 type Contribution = {
@@ -13,22 +14,12 @@ type Contribution = {
 
 type ContributionsListProps = {
   contributions: Contribution[];
-  ContributionComponent: FC<Contribution>;
+  renderContribution: (contribution: Contribution) => React.ReactElement;
 };
 
 export const ContributionsList: FC<ContributionsListProps> = ({
   contributions,
-  ContributionComponent,
+  renderContribution,
 }) => {
-  // TODO virtualize this list
-  return (
-    <>
-      {contributions.map((contribution) => (
-        <ContributionComponent
-          key={contribution.id + contribution.value}
-          {...contribution}
-        />
-      ))}
-    </>
-  );
+  return <>{contributions.map(renderContribution)}</>;
 };

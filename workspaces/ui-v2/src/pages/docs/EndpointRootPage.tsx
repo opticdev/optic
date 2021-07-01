@@ -263,7 +263,7 @@ export const EndpointRootPage: FC<
                 >
                   {(contributions) => (
                     <ContributionsList
-                      ContributionComponent={(contribution) => (
+                      renderContribution={(contribution) => (
                         <DocsFieldOrParameterContribution
                           key={contribution.id}
                           endpoint={{
@@ -318,7 +318,7 @@ export const EndpointRootPage: FC<
                 >
                   {(contributions) => (
                     <ContributionsList
-                      ContributionComponent={(contribution) => (
+                      renderContribution={(contribution) => (
                         <DocsFieldOrParameterContribution
                           key={contribution.id}
                           endpoint={{
@@ -377,7 +377,7 @@ export const EndpointRootPage: FC<
                   >
                     {(contributions) => (
                       <ContributionsList
-                        ContributionComponent={(contribution) => (
+                        renderContribution={(contribution) => (
                           <DocsFieldOrParameterContribution
                             key={contribution.id}
                             endpoint={{
@@ -396,7 +396,7 @@ export const EndpointRootPage: FC<
                     )}
                   </ContributionFetcher>
                 </div>
-                <div>
+                <div className={classes.panel}>
                   <ShapeFetcher rootShapeId={responseBody.rootShapeId}>
                     {(shapes) => (
                       <HttpBodyPanel
@@ -433,6 +433,7 @@ const useStyles = makeStyles((theme) => ({
   bodyContainer: {
     marginTop: theme.spacing(6),
     width: '100%',
+    height: '100%',
   },
   bodyHeaderContainer: {
     marginBottom: theme.spacing(2),
@@ -448,9 +449,15 @@ const useStyles = makeStyles((theme) => ({
   bodyDetails: {
     display: 'flex',
     width: '100%',
+    height: '100%',
     '& > div': {
       width: '50%',
       padding: `0 ${theme.spacing(1)}px`,
     },
+  },
+  panel: {
+    position: 'sticky',
+    top: 50,
+    alignSelf: 'flex-start',
   },
 }));
