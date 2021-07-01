@@ -6,10 +6,13 @@ use crate::HttpInteraction;
 
 pub trait InteractionVisitors<R> {
   type Path: PathVisitor<R>;
+  type QueryParameters: QueryParametersVisitor<R>;
   type RequestBody: RequestBodyVisitor<R>;
   type ResponseBody: ResponseBodyVisitor<R>;
 
   fn path(&mut self) -> &mut Self::Path;
+
+  fn query_params(&mut self) -> &mut Self::QueryParameters;
 
   fn request_body(&mut self) -> &mut Self::RequestBody;
 
@@ -49,6 +52,11 @@ pub trait InteractionVisitor<R> {
   }
 }
 
+pub trait QueryParametersVisitor<R>: InteractionVisitor<R> {
+  fn begin(&mut self);
+  fn visit(&mut self, interaction: &HttpInteraction, context: &QueryParametersVisitorContext);
+  fn end(&mut self, interaction: &HttpInteraction, context: &PathVisitorContext);
+}
 pub trait RequestBodyVisitor<R>: InteractionVisitor<R> {
   fn begin(&mut self);
   fn visit(&mut self, interaction: &HttpInteraction, context: &RequestBodyVisitorContext);
@@ -66,6 +74,10 @@ pub trait PathVisitor<R>: InteractionVisitor<R> {
 
 pub struct PathVisitorContext<'a> {
   pub path: Option<PathComponentIdRef<'a>>,
+}
+pub struct QueryParametersVisitorContext<'a> {
+  pub path: PathComponentIdRef<'a>,
+  // pub query: Option<(&'a QueryParametersId, &'a QueryParametersDescriptor)>
 }
 pub struct RequestBodyVisitorContext<'a> {
   pub path: PathComponentIdRef<'a>,

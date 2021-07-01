@@ -1,6 +1,7 @@
 use super::{
-  InteractionVisitor, InteractionVisitors, PathVisitor, PathVisitorContext, RequestBodyVisitor,
-  RequestBodyVisitorContext, ResponseBodyVisitor, ResponseBodyVisitorContext, VisitorResults,
+  InteractionVisitor, InteractionVisitors, PathVisitor, PathVisitorContext, QueryParametersVisitor,
+  QueryParametersVisitorContext, RequestBodyVisitor, RequestBodyVisitorContext,
+  ResponseBodyVisitor, ResponseBodyVisitorContext, VisitorResults,
 };
 use crate::interactions::result::{
   InteractionDiffResult, MatchedRequestBodyContentType, MatchedResponseBodyContentType, SpecRoot,
@@ -10,11 +11,12 @@ use crate::interactions::result::{
   InteractionTrail, InteractionTrailPathComponent, RequestSpecTrail, SpecPath, SpecRequestBody,
   SpecResponseBody,
 };
-use crate::state::endpoint::{RequestId, ResponseId};
+use crate::state::endpoint::{HttpContentType, RequestId, ResponseId};
 use crate::HttpInteraction;
 
 pub struct DiffVisitors {
   path: DiffPathVisitor,
+  query_params: DiffQueryParametersVisitor,
   request_body: DiffRequestBodyVisitor,
   response_body: DiffResponseBodyVisitor,
 }
@@ -23,6 +25,7 @@ impl DiffVisitors {
   pub fn new() -> Self {
     DiffVisitors {
       path: DiffPathVisitor::new(),
+      query_params: DiffQueryParametersVisitor::new(),
       request_body: DiffRequestBodyVisitor::new(),
       response_body: DiffResponseBodyVisitor::new(),
     }
@@ -33,11 +36,15 @@ type DiffResults = VisitorResults<InteractionDiffResult>;
 
 impl InteractionVisitors<InteractionDiffResult> for DiffVisitors {
   type Path = DiffPathVisitor;
+  type QueryParameters = DiffQueryParametersVisitor;
   type RequestBody = DiffRequestBodyVisitor;
   type ResponseBody = DiffResponseBodyVisitor;
 
   fn path(&mut self) -> &mut DiffPathVisitor {
     &mut self.path
+  }
+  fn query_params(&mut self) -> &mut DiffQueryParametersVisitor {
+    &mut self.query_params
   }
   fn request_body(&mut self) -> &mut DiffRequestBodyVisitor {
     &mut self.request_body
@@ -80,6 +87,40 @@ impl PathVisitor<InteractionDiffResult> for DiffPathVisitor {
       self.push(diff);
     }
   }
+}
+///////////////////////////////////////////////////////////////////////////////
+
+pub struct DiffQueryParametersVisitor {
+  results: DiffResults,
+}
+
+impl DiffQueryParametersVisitor {
+  fn new() -> Self {
+    Self {
+      results: DiffResults::new(),
+    }
+  }
+}
+
+impl InteractionVisitor<InteractionDiffResult> for DiffQueryParametersVisitor {
+  fn results(&mut self) -> Option<&mut DiffResults> {
+    Some(&mut self.results)
+  }
+}
+impl QueryParametersVisitor<InteractionDiffResult> for DiffQueryParametersVisitor {
+  fn begin(&mut self) {}
+  fn visit(&mut self, interaction: &HttpInteraction, context: &QueryParametersVisitorContext) {
+    todo!("implement matching and pushing results");
+
+    // if let Some(query) = context.query {
+    //   let (query_id, query_descriptor) = operation;
+
+    //   // TODO: push matching result
+    // } else {
+    //   // TODO push unmatching result
+    // }
+  }
+  fn end(&mut self, interaction: &HttpInteraction, context: &PathVisitorContext) {}
 }
 ///////////////////////////////////////////////////////////////////////////////
 
