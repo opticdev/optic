@@ -1,4 +1,6 @@
 import React, { FC, ReactNode } from 'react';
+import { makeStyles } from '@material-ui/core';
+
 import {
   EndpointName,
   PathParameters,
@@ -6,13 +8,19 @@ import {
   FullWidth,
   IShapeRenderer,
   JsonLike,
+  ShapeFetcher,
+  QueryParametersPanel,
+  convertShapeToQueryParameters,
 } from '<src>/components';
 import { EndpointTOC } from '<src>/pages/docs/components/EndpointTOC';
 import { CodeBlock } from '<src>/pages/docs/components/BodyRender';
-import { SubtleBlueBackground } from '<src>/styles';
+import { SubtleBlueBackground, FontFamily } from '<src>/styles';
 import { OneColumnBody } from '<src>/pages/docs/components/RenderBody';
 import { IParsedLocation } from '<src>/lib/Interfaces';
-import { HighlightedLocation } from '<src>/pages/diffs/components/HighlightedLocation';
+import {
+  HighlightedLocation,
+  Location,
+} from '<src>/pages/diffs/components/HighlightedLocation';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { useEndpointsBodyChanges } from '<src>/hooks/useEndpointsBodyChanges';
 import { useDebouncedFn, useStateWithSideEffect } from '<src>/hooks/util';
@@ -40,6 +48,7 @@ export const EndpointDocumentationPane: FC<
   renderHeader,
   ...props
 }) => {
+  const classes = useStyles();
   const thisEndpoint = useAppSelector(
     selectors.getEndpoint({ pathId, method })
   );
@@ -100,14 +109,37 @@ export const EndpointDocumentationPane: FC<
         </div>
       </CodeBlock>
       <div style={{ height: 50 }} />
-      {/* TODO QPB implement query renderer */}
+
+      {thisEndpoint.query && (
+        <HighlightedLocation
+          targetLocation={highlightedLocation}
+          expectedLocation={Location.Query}
+        >
+          {/* TODO QPB - change id from this to query id from spectacle */}
+          <div className={classes.bodyContainer} id="query-parameters">
+            <h6 className={classes.bodyHeader}>Query Parameters</h6>
+            <div className={classes.bodyDetails}>
+              <ShapeFetcher
+                rootShapeId={thisEndpoint.query.rootShapeId}
+                changesSinceBatchCommit={lastBatchCommit}
+              >
+                {(shapes) => (
+                  <QueryParametersPanel
+                    parameters={convertShapeToQueryParameters(shapes)}
+                  />
+                )}
+              </ShapeFetcher>
+            </div>
+          </div>
+        </HighlightedLocation>
+      )}
 
       {thisEndpoint.requestBodies.map((requestBody) => (
         <React.Fragment key={requestBody.requestId}>
           <HighlightedLocation
             targetLocation={highlightedLocation}
             contentType={requestBody.contentType}
-            inRequest={true}
+            expectedLocation={Location.Request}
           >
             <OneColumnBody
               changes={
@@ -132,7 +164,7 @@ export const EndpointDocumentationPane: FC<
               targetLocation={highlightedLocation}
               contentType={i.contentType}
               statusCode={i.statusCode}
-              inResponse={true}
+              expectedLocation={Location.Response}
             >
               <OneColumnBody
                 changes={
@@ -190,3 +222,21 @@ const DiffPathParamField: FC<{
     />
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  bodyContainer: {
+    width: '100%',
+    margin: `${theme.spacing(3)}px 0`,
+  },
+  bodyHeader: {
+    fontSize: '1.25rem',
+    fontFamily: FontFamily,
+    fontWeight: 500,
+    lineHeight: 1.6,
+    letterSpacing: '0.0075em',
+    margin: `${theme.spacing(3)}px 0`,
+  },
+  bodyDetails: {
+    padding: `0 ${theme.spacing(1)}px`,
+  },
+}));
