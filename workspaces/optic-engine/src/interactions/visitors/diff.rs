@@ -4,8 +4,9 @@ use super::{
   ResponseBodyVisitor, ResponseBodyVisitorContext, VisitorResults,
 };
 use crate::interactions::result::{
-  InteractionDiffResult, MatchedRequestBodyContentType, MatchedResponseBodyContentType, SpecRoot,
-  UnmatchedRequestBodyContentType, UnmatchedRequestUrl, UnmatchedResponseBodyContentType,
+  InteractionDiffResult, MatchedRequestBodyContentType, MatchedResponseBodyContentType,
+  SpecQueryParameters, SpecRoot, UnmatchedRequestBodyContentType, UnmatchedRequestUrl,
+  UnmatchedResponseBodyContentType,
 };
 use crate::interactions::result::{
   InteractionTrail, InteractionTrailPathComponent, RequestSpecTrail, SpecPath, SpecRequestBody,
@@ -110,15 +111,22 @@ impl InteractionVisitor<InteractionDiffResult> for DiffQueryParametersVisitor {
 impl QueryParametersVisitor<InteractionDiffResult> for DiffQueryParametersVisitor {
   fn begin(&mut self) {}
   fn visit(&mut self, interaction: &HttpInteraction, context: &QueryParametersVisitorContext) {
-    todo!("implement matching and pushing results");
+    if let Some((query_parameters_id, query_descriptor)) = context.query {
+      let requests_trail = RequestSpecTrail::SpecQueryParameters(SpecQueryParameters {
+        query_parameters_id: query_parameters_id.clone(),
+      });
+      let interaction_trail = {
+        let mut trail = InteractionTrail::default();
+        trail.with_query_parameters();
+        trail
+      };
 
-    // if let Some(query) = context.query {
-    //   let (query_id, query_descriptor) = operation;
-
-    //   // TODO: push matching result
-    // } else {
-    //   // TODO push unmatching result
-    // }
+      // self.push(InteractionDiffResult::MatchedQueryParameters(
+      //   MatchedQueryParameters::new(interaction_trail, requests_trail, )
+      // ))
+    } else {
+      // TODO push unmatching result
+    }
   }
   fn end(&mut self, interaction: &HttpInteraction, context: &PathVisitorContext) {}
 }

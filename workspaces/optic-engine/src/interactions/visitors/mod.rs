@@ -1,7 +1,11 @@
 pub mod diff;
 
-use crate::projections::endpoint::{RequestDescriptor, ResponseBodyDescriptor};
-use crate::state::endpoint::{PathComponentId, PathComponentIdRef, RequestId, ResponseId};
+use crate::projections::endpoint::{
+  QueryParametersDescriptor, RequestDescriptor, ResponseBodyDescriptor,
+};
+use crate::state::endpoint::{
+  PathComponentId, PathComponentIdRef, QueryParametersId, RequestId, ResponseId,
+};
 use crate::HttpInteraction;
 
 pub trait InteractionVisitors<R> {
@@ -77,7 +81,7 @@ pub struct PathVisitorContext<'a> {
 }
 pub struct QueryParametersVisitorContext<'a> {
   pub path: PathComponentIdRef<'a>,
-  // pub query: Option<(&'a QueryParametersId, &'a QueryParametersDescriptor)>
+  pub query: Option<(&'a QueryParametersId, &'a QueryParametersDescriptor)>,
 }
 pub struct RequestBodyVisitorContext<'a> {
   pub path: PathComponentIdRef<'a>,

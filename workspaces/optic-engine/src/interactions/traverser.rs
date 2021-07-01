@@ -33,17 +33,17 @@ impl<'a> Traverser<'a> {
     query_params_visitor.begin();
     match resolved_path {
       Some(path_id) => {
-        // let query = self
-        //   .endpoint_queries
-        //   .resolve_query_params(path_id, &interaction.request.method);
+        let query = self
+          .endpoint_queries
+          .resolve_endpoint_query_params(path_id, &interaction.request.method);
 
-        // query_params_visitor.visit(
-        //   interaction,
-        //   &QueryParametersVisitorContext {
-        //     path: path_id,
-        //     query,
-        //   },
-        // );
+        query_params_visitor.visit(
+          interaction,
+          &QueryParametersVisitorContext {
+            path: path_id,
+            query,
+          },
+        );
       }
       None => {}
     };
