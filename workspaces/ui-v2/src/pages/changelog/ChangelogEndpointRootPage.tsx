@@ -18,6 +18,7 @@ import {
   QueryParametersPanel,
   ContributionsList,
   convertShapeToQueryParameters,
+  HttpBodyPanel,
 } from '<src>/components';
 import { useChangelogPages } from '<src>/components/navigation/Routes';
 import { SubtleBlueBackground, FontFamily } from '<src>/styles';
@@ -29,7 +30,6 @@ import { CodeBlock, EndpointTOC, TwoColumn } from '<src>/pages/docs/components';
 import {
   ChangelogPageAccessoryNavigation,
   ValidateBatchId,
-  TwoColumnBodyChangelog,
 } from './components';
 
 export const ChangelogEndpointRootPage: FC<
@@ -196,7 +196,7 @@ const ChangelogRootComponent: FC<
                   )}
                 </ContributionFetcher>
               </div>
-              <div>
+              <div className={classes.panel}>
                 <ShapeFetcher
                   rootShapeId={thisEndpoint.query.rootShapeId}
                   changesSinceBatchCommit={batchId}
@@ -213,28 +213,111 @@ const ChangelogRootComponent: FC<
         )}
 
         {thisEndpoint.requestBodies.map((requestBody) => (
-          <TwoColumnBodyChangelog
-            changesSinceBatchCommitId={batchId}
-            rootShapeId={requestBody.rootShapeId}
-            bodyId={requestBody.requestId}
-            location={'Request Body'}
-            contentType={requestBody.contentType}
-            description={requestBody.description}
-          />
+          <div
+            className={classes.bodyContainer}
+            id={requestBody.requestId}
+            key={requestBody.requestId}
+          >
+            <div className={classes.bodyHeaderContainer}>
+              <h6 className={classes.bodyHeader}>Request Body</h6>
+              <ReactMarkdown
+                className={classes.contents}
+                source={requestBody.description}
+              />
+            </div>
+            <div className={classes.bodyDetails}>
+              <div>
+                <ContributionFetcher
+                  rootShapeId={requestBody.rootShapeId}
+                  endpointId={endpointId}
+                  changesSinceBatchCommit={batchId}
+                >
+                  {(contributions) => (
+                    <ContributionsList
+                      renderContribution={(contribution) => (
+                        <FieldOrParameter
+                          key={contribution.id}
+                          name={contribution.name}
+                          shapes={contribution.shapes}
+                          depth={contribution.depth}
+                          value={contribution.value}
+                        />
+                      )}
+                      contributions={contributions}
+                    />
+                  )}
+                </ContributionFetcher>
+              </div>
+              <div className={classes.panel}>
+                <ShapeFetcher
+                  rootShapeId={requestBody.rootShapeId}
+                  changesSinceBatchCommit={batchId}
+                >
+                  {(shapes) => (
+                    <HttpBodyPanel
+                      shapes={shapes}
+                      location={requestBody.contentType}
+                    />
+                  )}
+                </ShapeFetcher>
+              </div>
+            </div>
+          </div>
         ))}
-        {thisEndpoint.responseBodies.map((i, index) => {
-          return (
-            <TwoColumnBodyChangelog
-              key={i.rootShapeId}
-              changesSinceBatchCommitId={batchId}
-              rootShapeId={i.rootShapeId}
-              bodyId={i.responseId}
-              location={`${i.statusCode} Response`}
-              contentType={i.contentType}
-              description={i.description}
-            />
-          );
-        })}
+        {thisEndpoint.responseBodies.map((responseBody) => (
+          <div
+            className={classes.bodyContainer}
+            id={responseBody.responseId}
+            key={responseBody.responseId}
+          >
+            <div className={classes.bodyHeaderContainer}>
+              <h6 className={classes.bodyHeader}>
+                {responseBody.statusCode} Response
+              </h6>
+              <ReactMarkdown
+                className={classes.contents}
+                source={responseBody.description}
+              />
+            </div>
+            <div className={classes.bodyDetails}>
+              <div>
+                <ContributionFetcher
+                  rootShapeId={responseBody.rootShapeId}
+                  endpointId={endpointId}
+                  changesSinceBatchCommit={batchId}
+                >
+                  {(contributions) => (
+                    <ContributionsList
+                      renderContribution={(contribution) => (
+                        <FieldOrParameter
+                          key={contribution.id}
+                          name={contribution.name}
+                          shapes={contribution.shapes}
+                          depth={contribution.depth}
+                          value={contribution.value}
+                        />
+                      )}
+                      contributions={contributions}
+                    />
+                  )}
+                </ContributionFetcher>
+              </div>
+              <div className={classes.panel}>
+                <ShapeFetcher
+                  rootShapeId={responseBody.rootShapeId}
+                  changesSinceBatchCommit={batchId}
+                >
+                  {(shapes) => (
+                    <HttpBodyPanel
+                      shapes={shapes}
+                      location={responseBody.contentType}
+                    />
+                  )}
+                </ShapeFetcher>
+              </div>
+            </div>
+          </div>
+        ))}
       </FullWidth>
     </>
   );
@@ -260,6 +343,7 @@ const useStyles = makeStyles((theme) => ({
   bodyContainer: {
     marginTop: theme.spacing(6),
     width: '100%',
+    height: '100%',
   },
   bodyHeaderContainer: {
     marginBottom: theme.spacing(2),
@@ -275,9 +359,15 @@ const useStyles = makeStyles((theme) => ({
   bodyDetails: {
     display: 'flex',
     width: '100%',
+    height: '100%',
     '& > div': {
       width: '50%',
       padding: `0 ${theme.spacing(1)}px`,
     },
+  },
+  panel: {
+    position: 'sticky',
+    top: 50,
+    alignSelf: 'flex-start',
   },
 }));

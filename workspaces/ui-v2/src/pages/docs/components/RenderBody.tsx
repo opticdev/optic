@@ -17,10 +17,6 @@ type OneColumnBodyProps = SharedProps & {
   changesSinceBatchCommitId?: string;
 };
 
-export type TwoColumnBodyProps = SharedProps & {
-  description: string;
-};
-
 export function OneColumnBody(props: OneColumnBodyProps) {
   const shapeChoices = useShapeDescriptor(
     props.rootShapeId,

@@ -282,7 +282,7 @@ export const EndpointRootPage: FC<
                   )}
                 </ContributionFetcher>
               </div>
-              <div>
+              <div className={classes.panel}>
                 <ShapeFetcher rootShapeId={thisEndpoint.query.rootShapeId}>
                   {(shapes) => (
                     <QueryParametersPanel
@@ -337,7 +337,7 @@ export const EndpointRootPage: FC<
                   )}
                 </ContributionFetcher>
               </div>
-              <div>
+              <div className={classes.panel}>
                 <ShapeFetcher rootShapeId={requestBody.rootShapeId}>
                   {(shapes) => (
                     <HttpBodyPanel
