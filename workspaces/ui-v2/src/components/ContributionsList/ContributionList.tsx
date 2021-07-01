@@ -20,6 +20,7 @@ export const ContributionsList: FC<ContributionsListProps> = ({
   contributions,
   ContributionComponent,
 }) => {
+  // TODO virtualize this list
   return (
     <>
       {contributions.map((contribution) => (

@@ -16,6 +16,7 @@ import {
   convertShapeToQueryParameters,
   ContributionFetcher,
   ShapeFetcher,
+  HttpBodyPanel,
 } from '<src>/components';
 import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
 import { FontFamily, SubtleBlueBackground } from '<src>/styles';
@@ -28,7 +29,6 @@ import {
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
-  TwoColumnBodyEditable,
   CodeBlock,
   EndpointTOC,
   DocsFieldOrParameterContribution,
@@ -295,33 +295,119 @@ export const EndpointRootPage: FC<
           </div>
         )}
         {thisEndpoint.requestBodies.map((requestBody) => (
-          <TwoColumnBodyEditable
-            key={requestBody.rootShapeId}
-            endpoint={{
-              pathId,
-              method,
-            }}
-            rootShapeId={requestBody.rootShapeId}
-            bodyId={requestBody.requestId}
-            location={'Request Body'}
-            contentType={requestBody.contentType}
-            description={requestBody.description}
-          />
+          <div
+            className={classes.bodyContainer}
+            id={requestBody.requestId}
+            key={requestBody.requestId}
+          >
+            <div className={classes.bodyHeaderContainer}>
+              <h6 className={classes.bodyHeader}>Request Body</h6>
+              <MarkdownBodyContribution
+                id={requestBody.requestId}
+                contributionKey={'description'}
+                defaultText={'Add a description'}
+                initialValue={requestBody.description}
+                endpoint={thisEndpoint}
+              />
+            </div>
+            <div className={classes.bodyDetails}>
+              <div>
+                <ContributionFetcher
+                  rootShapeId={requestBody.rootShapeId}
+                  endpointId={endpointId}
+                >
+                  {(contributions) => (
+                    <ContributionsList
+                      ContributionComponent={(contribution) => (
+                        <DocsFieldOrParameterContribution
+                          key={contribution.id}
+                          endpoint={{
+                            pathId,
+                            method,
+                          }}
+                          id={contribution.id}
+                          name={contribution.name}
+                          shapes={contribution.shapes}
+                          depth={contribution.depth}
+                          initialValue={contribution.value}
+                        />
+                      )}
+                      contributions={contributions}
+                    />
+                  )}
+                </ContributionFetcher>
+              </div>
+              <div>
+                <ShapeFetcher rootShapeId={requestBody.rootShapeId}>
+                  {(shapes) => (
+                    <HttpBodyPanel
+                      shapes={shapes}
+                      location={requestBody.contentType}
+                    />
+                  )}
+                </ShapeFetcher>
+              </div>
+            </div>
+          </div>
         ))}
-        {thisEndpoint.responseBodies.map((i) => {
+        {thisEndpoint.responseBodies.map((responseBody) => {
           return (
-            <TwoColumnBodyEditable
-              key={i.rootShapeId}
-              endpoint={{
-                pathId,
-                method,
-              }}
-              rootShapeId={i.rootShapeId}
-              bodyId={i.responseId}
-              location={`${i.statusCode} Response`}
-              contentType={i.contentType}
-              description={i.description}
-            />
+            <div
+              className={classes.bodyContainer}
+              id={responseBody.responseId}
+              key={responseBody.responseId}
+            >
+              <div className={classes.bodyHeaderContainer}>
+                <h6 className={classes.bodyHeader}>
+                  {responseBody.statusCode} Response
+                </h6>
+                <MarkdownBodyContribution
+                  id={responseBody.responseId}
+                  contributionKey={'description'}
+                  defaultText={'Add a description'}
+                  initialValue={responseBody.description}
+                  endpoint={thisEndpoint}
+                />
+              </div>
+              <div className={classes.bodyDetails}>
+                <div>
+                  <ContributionFetcher
+                    rootShapeId={responseBody.rootShapeId}
+                    endpointId={endpointId}
+                  >
+                    {(contributions) => (
+                      <ContributionsList
+                        ContributionComponent={(contribution) => (
+                          <DocsFieldOrParameterContribution
+                            key={contribution.id}
+                            endpoint={{
+                              pathId,
+                              method,
+                            }}
+                            id={contribution.id}
+                            name={contribution.name}
+                            shapes={contribution.shapes}
+                            depth={contribution.depth}
+                            initialValue={contribution.value}
+                          />
+                        )}
+                        contributions={contributions}
+                      />
+                    )}
+                  </ContributionFetcher>
+                </div>
+                <div>
+                  <ShapeFetcher rootShapeId={responseBody.rootShapeId}>
+                    {(shapes) => (
+                      <HttpBodyPanel
+                        shapes={shapes}
+                        location={responseBody.contentType}
+                      />
+                    )}
+                  </ShapeFetcher>
+                </div>
+              </div>
+            </div>
           );
         })}
       </FullWidth>
