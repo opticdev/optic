@@ -1,8 +1,15 @@
 import React, { FC } from 'react';
 import { makeStyles } from '@material-ui/core';
+import classnames from 'classnames';
+
+import {
+  FontFamily,
+  AddedGreenBackground,
+  ChangedYellowBackground,
+  RemovedRedBackground,
+} from '<src>/styles';
 import { IFieldRenderer, IShapeRenderer, ShapeRenderer } from './ShapeRenderer';
 import { Panel } from './Panel';
-import { FontFamily } from '<src>/styles';
 
 type QueryParameters = Record<string, IFieldRenderer>;
 
@@ -16,7 +23,10 @@ export const convertShapeToQueryParameters = (
 ): QueryParameters => {
   const queryParameters: QueryParameters = {};
   if (shapes.length !== 1 || !shapes[0].asObject) {
-    console.error('unexpected format for query parameters');
+    if (shapes.length > 1) {
+      console.error('unexpected format for query parameters');
+    }
+    // otherwise loading
     return {};
   }
 
@@ -35,7 +45,13 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
     // TODO QPB add in query parsing strategy here?
     <Panel header={''}>
       {Object.entries(parameters).map(([key, field]) => (
-        <div className={classes.queryComponentContainer}>
+        <div
+          className={classnames(classes.queryComponentContainer, [
+            ...[field.changes?.added && classes.added],
+            ...[field.changes?.changed && classes.changed],
+          ])}
+          key={classes.queryKey}
+        >
           <div className={classes.queryKey}>{key}</div>
           <div>
             <ShapeRenderer showExamples={false} shape={field.shapeChoices} />
@@ -59,5 +75,14 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: FontFamily,
     fontWeight: 600,
     fontSize: theme.typography.fontSize - 1,
+  },
+  added: {
+    backgroundColor: `${AddedGreenBackground}`,
+  },
+  changed: {
+    backgroundColor: `${ChangedYellowBackground}`,
+  },
+  removed: {
+    backgroundColor: `${RemovedRedBackground}`,
   },
 }));

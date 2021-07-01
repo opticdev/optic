@@ -15,3 +15,4 @@ export * from './Page';
 export * from './LightToolTip';
 export * from './Panel';
 export * from './QueryParametersPanel';
+export * from './DataFetchers';
