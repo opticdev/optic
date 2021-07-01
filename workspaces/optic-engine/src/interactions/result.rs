@@ -1,13 +1,14 @@
 use crate::events::http_interaction::HttpInteraction;
 use crate::learn_shape::TrailObservationsResult;
 use crate::shapes::{JsonTrail, ShapeDiffResult};
-use crate::state::endpoint::{PathComponentId, RequestId, ResponseId, ShapeId};
+use crate::state::endpoint::{PathComponentId, QueryParametersId, RequestId, ResponseId, ShapeId};
 use serde::{Deserialize, Serialize};
 use std::collections::hash_map::{DefaultHasher, HashMap};
 use std::hash::{Hash, Hasher};
 
 #[derive(Debug, Deserialize, Serialize, Hash)]
 pub enum InteractionDiffResult {
+  UnmatchedQueryParameters(UnmatchedQueryParameters),
   UnmatchedRequestUrl(UnmatchedRequestUrl),
   UnmatchedRequestBodyContentType(UnmatchedRequestBodyContentType),
   UnmatchedRequestBodyShape(UnmatchedRequestBodyShape),
@@ -16,6 +17,8 @@ pub enum InteractionDiffResult {
   //
   // Matches
   // -------
+  #[serde(skip)]
+  MatchedQueryParameters(MatchedQueryParameters),
   #[serde(skip)]
   MatchedRequestBodyContentType(MatchedRequestBodyContentType),
   #[serde(skip)]
@@ -31,11 +34,13 @@ impl InteractionDiffResult {
 
   pub fn interaction_trail(&self) -> &InteractionTrail {
     match self {
+      InteractionDiffResult::UnmatchedQueryParameters(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedRequestUrl(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedRequestBodyShape(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedResponseBodyShape(diff) => &diff.interaction_trail,
+      InteractionDiffResult::MatchedQueryParameters(diff) => &diff.interaction_trail,
       InteractionDiffResult::MatchedRequestBodyContentType(diff) => &diff.interaction_trail,
       InteractionDiffResult::MatchedResponseBodyContentType(diff) => &diff.interaction_trail,
     }
@@ -43,11 +48,13 @@ impl InteractionDiffResult {
 
   pub fn requests_trail(&self) -> &RequestSpecTrail {
     match self {
+      InteractionDiffResult::UnmatchedQueryParameters(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedRequestUrl(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedRequestBodyShape(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedResponseBodyShape(diff) => &diff.requests_trail,
+      InteractionDiffResult::MatchedQueryParameters(diff) => &diff.requests_trail,
       InteractionDiffResult::MatchedRequestBodyContentType(diff) => &diff.requests_trail,
       InteractionDiffResult::MatchedResponseBodyContentType(diff) => &diff.requests_trail,
     }
@@ -86,6 +93,22 @@ impl UnmatchedRequestUrl {
 
 #[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
+pub struct UnmatchedQueryParameters {
+  pub interaction_trail: InteractionTrail,
+  pub requests_trail: RequestSpecTrail,
+}
+
+impl UnmatchedQueryParameters {
+  pub fn new(interaction_trail: InteractionTrail, requests_trail: RequestSpecTrail) -> Self {
+    return UnmatchedQueryParameters {
+      interaction_trail,
+      requests_trail,
+    };
+  }
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
+#[serde(rename_all = "camelCase")]
 pub struct UnmatchedRequestBodyContentType {
   pub interaction_trail: InteractionTrail,
   pub requests_trail: RequestSpecTrail,
@@ -99,6 +122,28 @@ impl UnmatchedRequestBodyContentType {
     };
   }
 }
+
+#[derive(Clone, Debug, Serialize, Hash)]
+pub struct MatchedQueryParameters {
+  pub interaction_trail: InteractionTrail,
+  pub requests_trail: RequestSpecTrail,
+  pub root_shape_id: ShapeId,
+}
+
+impl MatchedQueryParameters {
+  pub fn new(
+    interaction_trail: InteractionTrail,
+    requests_trail: RequestSpecTrail,
+    root_shape_id: ShapeId,
+  ) -> Self {
+    return MatchedQueryParameters {
+      interaction_trail,
+      requests_trail,
+      root_shape_id,
+    };
+  }
+}
+
 #[derive(Clone, Debug, Serialize, Hash)]
 pub struct MatchedRequestBodyContentType {
   pub interaction_trail: InteractionTrail,
@@ -485,6 +530,7 @@ impl InteractionTrail {
 pub enum RequestSpecTrail {
   SpecRoot(SpecRoot),
   SpecPath(SpecPath),
+  SpecQueryParameters(SpecQueryParameters),
   SpecRequestRoot(SpecRequestRoot),
   SpecRequestBody(SpecRequestBody),
   SpecResponseRoot(SpecResponseRoot),
@@ -523,6 +569,12 @@ pub struct SpecRoot {}
 #[serde(rename_all = "camelCase")]
 pub struct SpecPath {
   pub path_id: PathComponentId,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
+#[serde(rename_all = "camelCase")]
+pub struct SpecQueryParameters {
+  pub query_parameters_id: QueryParametersId,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, Hash)]
