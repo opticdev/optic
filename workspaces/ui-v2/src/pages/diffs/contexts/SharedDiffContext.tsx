@@ -1,4 +1,11 @@
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   IPendingEndpoint,
   IUndocumentedUrl,
@@ -7,9 +14,7 @@ import {
 } from './SharedDiffState';
 import shortId from 'shortid';
 import { useMachine } from '@xstate/react';
-import { PathComponentAuthoring } from '<src>/pages/diffs/AddEndpointsPage/utils';
-import { IEndpoint } from '<src>/hooks/useEndpointsHook';
-import { pathToRegexp } from 'path-to-regexp';
+import { IEndpoint } from '<src>/types';
 import { IRequestBody, IResponseBody } from '<src>/hooks/useEndpointBodyHook';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import {
@@ -22,10 +27,11 @@ import { newRandomIdGenerator } from '<src>/lib/domain-id-generator';
 import { ParsedDiff } from '<src>/lib/parse-diff';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '<src>/hooks/useOpticEngine';
-import { useConfigRepository } from '<src>/hooks/useConfigHook';
+import { useConfigRepository } from '<src>/contexts/OpticConfigContext';
 import { useAnalytics } from '<src>/contexts/analytics';
-import { makePattern } from '<src>/pages/diffs/AddEndpointsPage/utils';
 import { IPath } from '<src>/hooks/usePathsHook';
+import { pathMatcher, PathComponentAuthoring } from '<src>/utils';
+import { useGlobalDiffDebug } from '<src>/components';
 
 export const SharedDiffReactContext = React.createContext<ISharedDiffContext | null>(
   null
@@ -33,7 +39,11 @@ export const SharedDiffReactContext = React.createContext<ISharedDiffContext | n
 
 type ISharedDiffContext = {
   context: SharedDiffStateContext;
-  documentEndpoint: (pattern: string, method: string) => string;
+  documentEndpoint: (
+    pattern: string,
+    method: string,
+    pathComponents: PathComponentAuthoring[]
+  ) => string;
   addPathIgnoreRule: (rule: string) => void;
   addDiffHashIgnore: (diffHash: string) => void;
   persistWIPPattern: (
@@ -174,11 +184,22 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     };
   }>({});
 
+  useGlobalDiffDebug(
+    useCallback(
+      () => ({
+        context,
+        wipPatterns,
+        currentSpecContext,
+      }),
+      [context, wipPatterns, currentSpecContext]
+    )
+  );
+
   const wipPatternMatchers = Object.entries(wipPatterns)
     .filter(([, { isParameterized }]) => isParameterized)
     .map(([pathMethod, { components, method }]) => ({
       pathMethod,
-      matcher: pathToRegexp(makePattern(components)),
+      matcher: pathMatcher(components),
       method,
     }));
 
@@ -187,9 +208,19 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const value: ISharedDiffContext = {
     context,
     diffService: props.diffService,
-    documentEndpoint: (pattern: string, method: string) => {
+    documentEndpoint: (
+      pattern: string,
+      method: string,
+      pathComponents: PathComponentAuthoring[]
+    ) => {
       const uuid = shortId.generate();
-      send({ type: 'DOCUMENT_ENDPOINT', pattern, method, pendingId: uuid });
+      send({
+        type: 'DOCUMENT_ENDPOINT',
+        pattern,
+        method,
+        pendingId: uuid,
+        pathComponents,
+      });
       return uuid;
     },
     stageEndpoint: (id: string) =>
@@ -273,7 +304,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
           return wipPatternMatchers.every(
             ({ pathMethod, matcher, method }) =>
               pathMethod === url.path + url.method ||
-              !(matcher.test(url.path) && method === url.method)
+              !(matcher(url.path) && method === url.method)
           );
         })
         .filter((i) => !i.hide),

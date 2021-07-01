@@ -84,7 +84,7 @@ impl UnmatchedRequestUrl {
   }
 }
 
-#[derive(Debug, Deserialize, Serialize, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedRequestBodyContentType {
   pub interaction_trail: InteractionTrail,
@@ -229,6 +229,11 @@ pub enum BodyAnalysisLocation {
     method: String,
     content_type: Option<String>,
   },
+  UnmatchedRequestQueryParameters {
+    path_id: PathComponentId,
+    method: String,
+    content_type: Option<String>,
+  },
   UnmatchedResponse {
     path_id: PathComponentId,
     method: String,
@@ -250,9 +255,34 @@ impl BodyAnalysisLocation {
   pub fn content_type(&self) -> Option<&String> {
     match self {
       BodyAnalysisLocation::UnmatchedRequest { content_type, .. } => content_type.as_ref(),
+      BodyAnalysisLocation::UnmatchedRequestQueryParameters { content_type, .. } => {
+        content_type.as_ref()
+      }
       BodyAnalysisLocation::UnmatchedResponse { content_type, .. } => content_type.as_ref(),
       BodyAnalysisLocation::MatchedRequest { content_type, .. } => content_type.as_ref(),
       BodyAnalysisLocation::MatchedResponse { content_type, .. } => content_type.as_ref(),
+    }
+  }
+
+  pub fn into_query_params(self) -> Self {
+    match self {
+      BodyAnalysisLocation::UnmatchedRequest {
+        path_id,
+        method,
+        content_type,
+      } => BodyAnalysisLocation::UnmatchedRequestQueryParameters {
+        path_id,
+        method,
+        content_type,
+      },
+      BodyAnalysisLocation::UnmatchedRequestQueryParameters { .. } => self,
+      BodyAnalysisLocation::UnmatchedResponse { .. }
+      | BodyAnalysisLocation::MatchedRequest { .. }
+      | BodyAnalysisLocation::MatchedResponse { .. } => {
+        panic!(
+          "only UnmatchedRequest variant should be converted into UnmatchedRequestQueryParameters"
+        );
+      }
     }
   }
 }

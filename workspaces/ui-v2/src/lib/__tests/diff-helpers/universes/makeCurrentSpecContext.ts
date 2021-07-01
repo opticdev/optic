@@ -3,7 +3,7 @@ import {
   AllEndpointsQuery,
   endpointQueryResultsToJson,
   EndpointQueryResults,
-} from '<src>/hooks/useEndpointsHook';
+} from '<src>/store/endpoints';
 import { IBaseSpectacle } from '@useoptic/spectacle';
 import {
   AllRequestsAndResponsesQuery,
@@ -30,8 +30,7 @@ export async function makeCurrentSpecContext(
       })
     ).data || {
       requests: [],
-    },
-    []
+    }
   );
 
   const { requests, responses } = queryResultToAllRequestsResponses(

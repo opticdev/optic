@@ -1,7 +1,4 @@
 import { assign, Machine, spawn } from 'xstate';
-// @ts-ignore
-import * as niceTry from 'nice-try';
-import { pathToRegexp } from 'path-to-regexp';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
 import {
   AddContributionType,
@@ -17,6 +14,7 @@ import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useo
 import { AssembleCommands } from '<src>/lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
 import { generatePathCommands } from '<src>/lib/stable-path-batch-generator';
+import { pathMatcher, PathComponentAuthoring } from '<src>/utils';
 
 function transformDiffs(
   currentSpecContext: CurrentSpecContext,
@@ -139,10 +137,7 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 pendingEndpoints: (ctx, event) => {
-                  const regex = pathToRegexp(event.pattern, [], {
-                    start: true,
-                    end: true,
-                  });
+                  const matcher = pathMatcher(event.pathComponents);
 
                   const { commands, endpointPathIdMap } = generatePathCommands(
                     [
@@ -180,8 +175,7 @@ export const newSharedDiffMachine = (
                         )
                       ),
                       matchesPattern: (url: string, method: string) => {
-                        const matchesPath = niceTry(() => regex.exec(url));
-                        return matchesPath && method === event.method;
+                        return matcher(url) && method === event.method;
                       },
                     },
                   ];
@@ -537,6 +531,7 @@ export type SharedDiffStateEvent =
   | {
       type: 'DOCUMENT_ENDPOINT';
       pattern: string;
+      pathComponents: PathComponentAuthoring[];
       method: string;
       pendingId: string;
     }

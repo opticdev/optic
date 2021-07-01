@@ -1,4 +1,6 @@
+export * from './Button';
 export * from './CommitMessageModal';
+export * from './DebugOpticComponent';
 export * from './EditableTextField';
 export * from './EndpointName';
 export * from './FieldOrParameter';
@@ -8,3 +10,5 @@ export * from './layouts';
 export * from './loaders';
 export * from './navigation';
 export * from './ShapeRenderer';
+export * from './Page';
+export * from './LightToolTip';

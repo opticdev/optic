@@ -73,7 +73,7 @@ export const runCommandFlags = {
     description: 'Enables CI-specific behavior',
   }),
 };
-interface LocalCliTaskFlags {
+export interface LocalCliTaskFlags {
   'print-coverage'?: boolean;
   'collect-diffs'?: boolean;
   'exit-on-diff'?: boolean;
@@ -102,6 +102,7 @@ export async function LocalTaskSessionWrapper(
     flags['print-coverage'] = true;
     flags['pass-exit-code'] = true;
     flags['collect-diffs'] = true;
+    flags['exit-on-diff'] = true;
   }
 
   const usesTaskSpecificBoundary = flags['ci'] || flags['exit-on-diff'];

@@ -1,0 +1,15 @@
+---
+source: workspaces/optic-engine/src/projections/learners/undocumented_bodies.rs
+expression: "&request_commands"
+---
+[
+    EndpointCommand(
+        AddRequest(
+            AddRequest {
+                request_id: "test-id-0",
+                path_id: "root",
+                http_method: "GET",
+            },
+        ),
+    ),
+]

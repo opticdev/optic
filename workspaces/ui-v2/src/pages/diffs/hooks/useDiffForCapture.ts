@@ -4,7 +4,7 @@ import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
 import { ParsedDiff } from '<src>/lib/parse-diff';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useAnalytics } from '<src>/contexts/analytics';
-import { useEndpoints } from '<src>/hooks/useEndpointsHook';
+import { selectors, useAppSelector } from '<src>/store';
 
 interface DiffState {
   data?: {
@@ -24,8 +24,9 @@ export function useDiffsForCapture(
 ): DiffState {
   const capturesService = useContext(CapturesServiceContext)!;
   const analytics = useAnalytics();
-  const endpoint = useEndpoints();
-
+  const endpoints = selectors.filterRemovedEndpoints(
+    useAppSelector((state) => state.endpoints.results.data || [])
+  );
   const [diffState, setDiffState] = useState<DiffState>({
     loading: true,
   });
@@ -71,10 +72,10 @@ export function useDiffsForCapture(
         diffState.data.diffs.length,
         diffState.data.urls.length,
         diffState.data.durationMillis,
-        endpoint.endpoints.length
+        endpoints.length
       );
     }
-  }, [diffState, endpoint.endpoints.length, analytics]);
+  }, [diffState, endpoints, analytics]);
 
   return diffState;
 }

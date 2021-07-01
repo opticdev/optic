@@ -1,4 +1,5 @@
 use cqrs_core::{Aggregate, AggregateEvent, Event};
+use log;
 use serde::Serialize;
 use std::collections::HashMap;
 
@@ -10,13 +11,25 @@ use crate::JsonTrail;
 
 #[derive(Default, Debug)]
 pub struct LearnedUndocumentedBodiesProjection {
-  observations_by_body_location: HashMap<BodyAnalysisLocation, TrailObservationsResult>,
+  request_response_observations: HashMap<BodyAnalysisLocation, TrailObservationsResult>,
+  query_params_observations: HashMap<BodyAnalysisLocation, TrailObservationsResult>,
 }
 
 impl LearnedUndocumentedBodiesProjection {
   fn with_body_analysis_result(&mut self, analysis: BodyAnalysisResult) {
-    let existing_observations = self
-      .observations_by_body_location
+    let collection = match analysis.body_location {
+      BodyAnalysisLocation::UnmatchedRequest { .. }
+      | BodyAnalysisLocation::UnmatchedResponse { .. } => &mut self.request_response_observations,
+      BodyAnalysisLocation::UnmatchedRequestQueryParameters { .. } => {
+        &mut self.query_params_observations
+      }
+      BodyAnalysisLocation::MatchedRequest { .. }
+      | BodyAnalysisLocation::MatchedResponse { .. } => {
+        unreachable!("analyzing undocumented bodies should only yield unmatched analysiss")
+      }
+    };
+
+    let existing_observations = collection
       .entry(analysis.body_location)
       .or_insert_with(|| TrailObservationsResult::default());
 
@@ -24,15 +37,42 @@ impl LearnedUndocumentedBodiesProjection {
   }
 
   pub fn into_endpoint_bodies(
-    self,
+    mut self,
     id_generator: &mut impl SpecIdGenerator,
   ) -> impl Iterator<Item = EndpointBodies> {
     let mut endpoints_by_endpoint = HashMap::new();
-    for (body_location, observations) in self.observations_by_body_location {
+    for (body_location, observations) in self.request_response_observations {
       let (root_shape_id, body_commands) =
         observations.into_commands(id_generator, &JsonTrail::empty());
-      let endpoint_body =
-        EndpointBody::new(&body_location, root_shape_id, body_commands, id_generator);
+      let mut endpoint_body = EndpointBody::new(&body_location, root_shape_id, body_commands);
+
+      if let BodyAnalysisLocation::UnmatchedRequest {
+        ref path_id,
+        ref method,
+        ref content_type,
+      } = body_location
+      {
+        let expected_query_params_location =
+          BodyAnalysisLocation::UnmatchedRequestQueryParameters {
+            path_id: path_id.clone(),
+            method: method.clone(),
+            content_type: content_type.clone(),
+          };
+        let query_params_analysis = self
+          .query_params_observations
+          .remove(&expected_query_params_location);
+
+        if let Some(query_observations) = query_params_analysis {
+          let (query_parameters_shape_id, query_parameters_commands) =
+            query_observations.into_commands(id_generator, &JsonTrail::empty());
+
+          if let Some(query_parameters_shape_id) = query_parameters_shape_id {
+            endpoint_body.with_query_params(query_parameters_shape_id, query_parameters_commands)
+          }
+        }
+      }
+
+      endpoint_body.append_endpoint_commands(id_generator);
 
       let (path_id, method) = match body_location {
         BodyAnalysisLocation::UnmatchedRequest {
@@ -107,6 +147,20 @@ impl EndpointBodies {
       }
     }
   }
+
+  pub fn into_commands(self) -> impl Iterator<Item = SpecCommand> {
+    let requests_commands = self
+      .requests
+      .into_iter()
+      .flat_map(|request| request.commands.into_iter());
+
+    let responses_commands = self
+      .responses
+      .into_iter()
+      .flat_map(|response| response.commands.into_iter());
+
+    requests_commands.chain(responses_commands)
+  }
 }
 
 #[derive(Debug)]
@@ -124,6 +178,8 @@ pub struct EndpointRequestBody {
   path_id: String,
   #[serde(skip)]
   method: String,
+  #[serde(skip)]
+  query_parameters_shape_id: Option<String>,
 
   #[serde(flatten)]
   body_descriptor: Option<EndpointBodyDescriptor>,
@@ -156,7 +212,6 @@ impl EndpointBody {
     body_location: &BodyAnalysisLocation,
     root_shape_id: Option<String>,
     body_commands: impl IntoIterator<Item = SpecCommand>,
-    id_generator: &mut impl SpecIdGenerator,
   ) -> Self {
     let body_descriptor = match root_shape_id {
       Some(root_shape_id) => Some(EndpointBodyDescriptor {
@@ -169,7 +224,7 @@ impl EndpointBody {
       None => None,
     };
 
-    let mut body = match body_location {
+    match body_location {
       BodyAnalysisLocation::UnmatchedRequest {
         path_id, method, ..
       } => EndpointBody::Request(EndpointRequestBody {
@@ -177,6 +232,7 @@ impl EndpointBody {
         path_id: path_id.clone(),
         method: method.clone(),
         commands: body_commands.into_iter().collect(),
+        query_parameters_shape_id: None,
       }),
       BodyAnalysisLocation::UnmatchedResponse {
         status_code,
@@ -191,11 +247,23 @@ impl EndpointBody {
         status_code: *status_code,
       }),
       _ => panic!("EndpointBody should only be created for unmatched responses and requests"),
-    };
+    }
+  }
 
-    body.append_endpoint_commands(id_generator);
-
-    body
+  fn with_query_params(
+    &mut self,
+    root_shape_id: String,
+    body_commands: impl IntoIterator<Item = SpecCommand>,
+  ) {
+    match self {
+      EndpointBody::Request(request_body) => {
+        request_body.query_parameters_shape_id = Some(root_shape_id);
+        request_body.commands.extend(body_commands);
+      }
+      EndpointBody::Response(_) => {
+        panic!("query parameters can only be added to the Request variant of an EndpointBody")
+      }
+    }
   }
 
   fn append_endpoint_commands(&mut self, ids: &mut impl SpecIdGenerator) {
@@ -214,12 +282,24 @@ impl EndpointBody {
           request_body
             .commands
             .push(SpecCommand::from(EndpointCommand::set_request_body_shape(
-              request_id,
+              request_id.clone(),
               body_descriptor.root_shape_id.clone(),
               body_descriptor.content_type.clone(),
               false,
             )));
         }
+
+        if let Some(query_parameters_shape_id) = &request_body.query_parameters_shape_id {
+          request_body.commands.push(SpecCommand::from(
+            EndpointCommand::set_request_query_parameters_shape(
+              request_id.clone(),
+              query_parameters_shape_id.clone(),
+              false,
+            ),
+          ))
+        }
+
+        // TODO: append query parameter commands
       }
       EndpointBody::Response(response_body) => {
         let response_id = ids.response();
@@ -250,8 +330,10 @@ impl EndpointBody {
 #[cfg(test)]
 mod test {
   use super::*;
+  use crate::events::SpecEvent;
   use crate::interactions::InteractionDiffResult;
   use crate::learn_shape::observe_body_trails;
+  use crate::projections::SpecProjection;
   use crate::state::body::BodyDescriptor;
   use insta::assert_debug_snapshot;
   use serde_json::json;
@@ -264,8 +346,9 @@ mod test {
     }));
 
     let analysis_result = BodyAnalysisResult {
-      body_location: BodyAnalysisLocation::MatchedResponse {
-        response_id: String::from("test-response-1"),
+      body_location: BodyAnalysisLocation::UnmatchedResponse {
+        path_id: String::from("test-path-1"),
+        method: String::from("GET"),
         content_type: Some(String::from("application/json")),
         status_code: 200,
       },
@@ -278,7 +361,7 @@ mod test {
 
     // dbg!(&projection);
     let aggregated_result = projection
-      .observations_by_body_location
+      .request_response_observations
       .get(&analysis_result.body_location)
       .unwrap();
 
@@ -304,6 +387,120 @@ mod test {
       "undocumented_bodies_can_aggregate_analysis_results_with_array_items__aggregated_trails",
       aggregated_trails
     );
+  }
+
+  #[test]
+  fn undocumented_bodies_generates_commands_for_request_query_parameters() {
+    let test_path = "root";
+    let test_method = "GET";
+    let query_params_body = BodyDescriptor::from(json!({
+      "search": "a-search-query",
+      "page": "3"
+    }));
+
+    let analysis_results = vec![
+      BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::UnmatchedRequest {
+          content_type: None,
+          path_id: String::from(test_path),
+          method: String::from(test_method),
+        },
+        trail_observations: observe_body_trails(None),
+      },
+      BodyAnalysisResult {
+        // query params matching the preceding request
+        body_location: BodyAnalysisLocation::UnmatchedRequestQueryParameters {
+          path_id: String::from(test_path),
+          method: String::from(test_method),
+          content_type: None,
+        },
+        trail_observations: observe_body_trails(query_params_body.clone()),
+      },
+      BodyAnalysisResult {
+        // query params for a different request
+        body_location: BodyAnalysisLocation::UnmatchedRequestQueryParameters {
+          path_id: String::from(test_path),
+          method: String::from(test_method),
+          content_type: Some(String::from("application/json")),
+        },
+        trail_observations: observe_body_trails(query_params_body),
+      },
+    ];
+
+    let mut test_id_generator = TestIdGenerator::default();
+    let mut projection = LearnedUndocumentedBodiesProjection::default();
+
+    for result in analysis_results {
+      projection.apply(result);
+    }
+
+    let mut endpoint_bodies = projection
+      .into_endpoint_bodies(&mut test_id_generator)
+      .collect::<Vec<_>>();
+    assert_eq!(endpoint_bodies.len(), 1);
+
+    let mut endpoint_body = endpoint_bodies.remove(0);
+    assert_eq!(endpoint_body.requests.len(), 1);
+
+    let request_commands = endpoint_body.requests.remove(0).commands;
+
+    assert_debug_snapshot!(
+      "undocumented_bodies_generates_commands_for_request_query_parameters__request_commands",
+      &request_commands
+    );
+
+    let base_spec = SpecProjection::default();
+    assert_valid_commands(base_spec, request_commands);
+  }
+
+  #[test]
+  fn undocumented_bodies_can_generate_commands_for_request_with_empty_query_parameters() {
+    let test_path = "root";
+    let test_method = "GET";
+
+    let analysis_results = vec![
+      BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::UnmatchedRequest {
+          content_type: None,
+          path_id: String::from(test_path),
+          method: String::from(test_method),
+        },
+        trail_observations: observe_body_trails(None),
+      },
+      BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::UnmatchedRequestQueryParameters {
+          path_id: String::from(test_path),
+          method: String::from(test_method),
+          content_type: None,
+        },
+        trail_observations: observe_body_trails(None),
+      },
+    ];
+
+    let mut test_id_generator = TestIdGenerator::default();
+    let mut projection = LearnedUndocumentedBodiesProjection::default();
+
+    for result in analysis_results {
+      projection.apply(result);
+    }
+
+    let mut endpoint_bodies = projection
+      .into_endpoint_bodies(&mut test_id_generator)
+      .collect::<Vec<_>>();
+    assert_eq!(endpoint_bodies.len(), 1);
+
+    let mut endpoint_body = endpoint_bodies.remove(0);
+    assert_eq!(endpoint_body.requests.len(), 1);
+
+    let request_commands = endpoint_body.requests.remove(0).commands;
+
+    assert_debug_snapshot!(
+      "undocumented_bodies_can_generate_commands_for_request_with_empty_query_parameters__request_commands",
+      &request_commands
+    );
+
+    let base_spec = SpecProjection::default();
+    assert_valid_commands(base_spec, request_commands);
   }
 
   #[test]
@@ -344,5 +541,23 @@ mod test {
       self.counter += 1;
       id
     }
+  }
+
+  fn assert_valid_commands(
+    mut spec_projection: SpecProjection,
+    commands: impl IntoIterator<Item = SpecCommand>,
+  ) -> SpecProjection {
+    // let mut spec_projection = SpecProjection::default();
+    for command in commands {
+      let events = spec_projection
+        .execute(command)
+        .expect("generated commands must be valid");
+
+      for event in events {
+        spec_projection.apply(event)
+      }
+    }
+
+    spec_projection
   }
 }

@@ -13,7 +13,6 @@ export class OpticUIEvents {
     });
   }
 
-  // proposed
   reviewPageLoaded(
     diffs: number,
     undocumentedUrls: number,
@@ -58,6 +57,38 @@ export class OpticUIEvents {
     });
   }
 
+  userSavedDocChanges(
+    deletedEndpointCount: number,
+    contributionChangesCount: number,
+    specId: string
+  ) {
+    this.dispatch({
+      type: 'user_saved_documentation_changes',
+      data: { deletedEndpointCount, contributionChangesCount, specId },
+    });
+  }
+
+  userStartedSharing() {
+    this.dispatch({
+      type: 'user_started_sharing',
+      data: {},
+    });
+  }
+
+  userPickedShareTarget(shareWith: string) {
+    this.dispatch({
+      type: 'user_picked_share_target',
+      data: { with: shareWith },
+    });
+  }
+
+  userShared(shareWith: string, publicSpecId: string) {
+    this.dispatch({
+      type: 'user_saved_documentation_changes',
+      data: { with: shareWith, publicSpecId },
+    });
+  }
+
   userSavedChanges(
     undocumentedUrls: number,
     endpointsChangedCount: number,
@@ -72,6 +103,17 @@ export class OpticUIEvents {
       },
     });
   }
+
+  resetToCommit(numberOfCommitsReset: number) {
+    this.dispatch({
+      type: 'reset_to_commit',
+      data: {
+        numberOfCommitsReset,
+      },
+    });
+  }
+
+  // proposed
 
   // deprecated
 }

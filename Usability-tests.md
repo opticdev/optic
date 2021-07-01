@@ -33,6 +33,7 @@ There are other paths to test, and our goal is to have everything work as expect
 	- [ ] Enter `yes`
 	- [ ] Enter an API name
 	- [ ] Optic advises that configuration is added to `optic.yml`
+	- [ ] Optic opens browser to the docs, configuration page
 - [ ] In `optic.yml`
 	- [ ] Add an incorrect command (`"false"` works on POSIX-y systems).
 	- [ ] Run `api check start`: Expect:
@@ -43,6 +44,17 @@ There are other paths to test, and our goal is to have everything work as expect
 		- [ ] A command line error, Optic is not able to start its proxy
 	- [ ] Resolve issue by unbinding the inboundUrl port.
 	- [ ] Run `api check start`: Expect checks to pass.
+- [ ] Test the default **Environment**
+	- [ ] `api init` should provide a sample environment, production, to intercept traffic to GitHub's API
+	- [ ] Run `api intercept production --chrome`. Expect:
+		- [ ] A new Chrome browser session opens.
+		- [ ] The Chrome browser session is configured with:
+			- [ ] Optic's proxy information.
+			- [ ] Optic's self-signed certificate fingerprint (trusted).
+	- [ ] Using this new Chrome browser session, request a few GitHub API endpoints.
+	- [ ] Confirm the CLI shows and counts requests.
+	- [ ] Stop the CLI with `ctrl+c`. The Optic Dashboard should open in a browser tab.
+	- [ ] Confirm traffic shows up as undocumented endpoints. *N.B.* there is no need to document these endpoints unless you are focusing on Intercept: we'll test baselining and diffs in later tests.
 - [ ] Set up a **Proxy** configuration --or-- skip to **Generate API baseline documentation**
 	- [ ] Run `api check start` without starting the service to test: Expect:
 		- [ ] a command line error after timeout, is not resolvable.
@@ -147,7 +159,7 @@ This requires an automated test suite to run, such as a Newman script.
 	    useTask:  start
 	```
 - [ ] Run `api check start-tests`. This should pass, and will help troubleshoot any errors in the task definition.
-- [ ] Run `api run start-tests --collect-coverage`: Expect
+- [ ] Run `api run start-tests --print-coverage`: Expect
 	- [ ] The tests run successfully (if not, verify that your tests run without Optic).
 	- [ ] After completing tests, an API Coverage Report is generated.
 	- [ ] The coverage report accurately represents your test suite
@@ -156,17 +168,20 @@ This requires an automated test suite to run, such as a Newman script.
 
 At this point, all observed traffic should be documented. The status of the project should be clean, with no undocumented URLs or differences in behavior observed by Optic. If that is not the case, the observations will need to be resolved/ignored in the Optic review dashboard.
 
-- [ ] Run `api status --pre-commit && echo $?`: Expect
+- [ ] Run `api status --pre-commit && echo "OK: API Status exit code is clean"`: Expect
 	- No diffs observed for existing endpoints.
 	- No undocumented URLs observed. 
-	- `0` is echoed to the terminal (successful program exit)
+	- "OK: API Status exit code is clean" is echoed to the terminal (successful program exit)
 - [ ] Run `api start` to bring up the project.
 - [ ] Send new traffic to the project: either modify an existing endpoint, or send traffic to a new endpoint. _Note_ this traffic will show up in the Optic review dashboard. Do not ignore/document/approve it.
 - [ ] Stop the process with `ctrl+c`.
-- [ ] Run `api status --pre-commit && echo $?`: Expect
+- [ ] Run `api status --pre-commit || echo "OK: API Status exit code is dirty"`: Expect
 	- Diffs and undocumented URLs are reported as observed.
-	- `1` is echoed to the terminal (API status is "dirty" and requires review)
+	- "OK: API Status exit code is dirty" is echoed to the console.
 - [ ] Run `api status --review` and document/accept observed differences.
+- [ ] Run `api status --pre-commit && echo "OK: API Status exit code is clean"`: Expect
+	- No diffs or undocumented URLs are reported.
+	- "OK: API Status exit code is clean" is echoed to the console.
 
 ### Run a Script
 

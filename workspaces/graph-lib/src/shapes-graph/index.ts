@@ -172,11 +172,11 @@ export interface NodeListWrapper {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class CoreShapeNodeWrapper implements NodeWrapper {
+export class CoreShapeNodeWrapper implements NodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 }
 
-class ShapeNodeWrapper implements NodeWrapper {
+export class ShapeNodeWrapper implements NodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 
   coreShape(): NodeWrapper {
@@ -198,11 +198,11 @@ class ShapeNodeWrapper implements NodeWrapper {
   }
 }
 
-class ShapeParameterNodeWrapper implements NodeWrapper {
+export class ShapeParameterNodeWrapper implements NodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 }
 
-class FieldNodeWrapper implements NodeWrapper {
+export class FieldNodeWrapper implements NodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 
   batchCommits(): NodeListWrapper {

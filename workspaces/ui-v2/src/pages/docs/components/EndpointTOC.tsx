@@ -2,7 +2,7 @@ import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { getReasonPhrase } from 'http-status-codes';
 import { List, ListItem, Typography } from '@material-ui/core';
-import { SubtleGreyBackground } from '<src>/constants/theme';
+import { SubtleGreyBackground } from '<src>/styles';
 import { IRequestBody, IResponseBody } from '<src>/hooks/useEndpointBodyHook';
 import { goToAnchor } from '<src>/utils';
 

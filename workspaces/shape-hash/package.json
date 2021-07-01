@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/shape-hash",
-  "version": "10.0.5-beta.1",
+  "version": "10.1.0",
   "scripts": {
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build",

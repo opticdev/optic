@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useSpectacleQuery } from '<src>/contexts/spectacle-provider';
 
 export const AllPathsQuery = `{
@@ -8,6 +9,7 @@ export const AllPathsQuery = `{
       isParameterized
       name
       pathId
+      isRemoved
     }
     }`;
 
@@ -20,8 +22,12 @@ export interface IPath {
   pathId: string;
 }
 
+interface PathResponse extends IPath {
+  isRemoved: boolean;
+}
+
 export type PathQueryResponse = {
-  paths: IPath[];
+  paths: PathResponse[];
 };
 
 export function usePaths(): { paths: IPath[]; loading?: boolean } {
@@ -33,6 +39,10 @@ export function usePaths(): { paths: IPath[]; loading?: boolean } {
   const { data, loading, error } = useSpectacleQuery<PathQueryResponse>(
     queryInput
   );
+  const paths = useMemo(
+    () => data?.paths.filter((path) => !path.isRemoved) || [],
+    [data]
+  );
 
   if (error) {
     console.error(error);
@@ -40,7 +50,7 @@ export function usePaths(): { paths: IPath[]; loading?: boolean } {
   }
 
   if (data) {
-    return { paths: data.paths, loading };
+    return { paths: paths, loading };
   }
 
   return { loading, paths: [] };

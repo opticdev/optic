@@ -1,0 +1,43 @@
+{
+  "http": {
+    "response": {
+      "body": {
+        "content": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n<title>405 Method Not Allowed</title>\n<h1>Method Not Allowed</h1>\n<p>The method is not allowed for the requested URL.</p>\n",
+        "bytes": 178
+      },
+      "status_code": 405,
+      "headers": {
+        "x-powered-by": "Express",
+        "date": "Fri, 18 Jun 2021 15:15:27 GMT",
+        "content-type": "text/html",
+        "content-length": "178",
+        "connection": "close",
+        "server": "gunicorn/19.9.0",
+        "allow": "OPTIONS, HEAD, GET",
+        "access-control-allow-origin": "*",
+        "access-control-allow-credentials": "true"
+      }
+    },
+    "request": {
+      "body": { "content": {}, "bytes": 0 },
+      "method": "POST",
+      "headers": {
+        "user-agent": "PostmanRuntime/7.28.0",
+        "accept": "*/*",
+        "postman-token": "617c67f4-7fe1-4e6e-8d5e-9d31302a4001",
+        "host": "localhost:3000",
+        "accept-encoding": "gzip, deflate, br",
+        "connection": "keep-alive",
+        "content-length": "0"
+      }
+    },
+    "version": "1.1"
+  },
+  "url": {
+    "full": "http://localhost:3000/get",
+    "path": "/get",
+    "domain": "localhost"
+  },
+  "client": { "address": "::1", "ip": "::1", "port": 60881 },
+  "user_agent": { "original": "PostmanRuntime/7.28.0" }
+}

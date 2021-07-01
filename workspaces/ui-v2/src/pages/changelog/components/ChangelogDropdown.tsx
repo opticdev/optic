@@ -7,24 +7,20 @@ import Menu from '@material-ui/core/Menu';
 import { useParams, useHistory, useLocation } from 'react-router-dom';
 import MenuItem from '@material-ui/core/MenuItem';
 import { BatchCommit, useBatchCommits } from '<src>/hooks/useBatchCommits';
+import { useChangelogHistoryPage } from '<src>/components/navigation/Routes';
 import { useBaseUrl } from '<src>/hooks/useBaseUrl';
-import { OpticBlue, OpticBlueReadable } from '<src>/constants/theme';
-// @ts-ignore
-import TimeAgo from 'javascript-time-ago';
-// @ts-ignore
-import en from 'javascript-time-ago/locale/en';
+import { OpticBlue, OpticBlueReadable } from '<src>/styles';
+import { formatTimeAgo } from '<src>/utils';
 
-TimeAgo.addLocale(en);
-const timeAgo = new TimeAgo('en-US');
-
-export function ChangesSinceDropdown(props: any) {
+export function ChangesSinceDropdown() {
   const classes = useStyles();
   const history = useHistory();
   const batchCommits = useBatchCommits();
   const baseUrl = useBaseUrl();
   const { pathname } = useLocation();
-  const allBatchCommits = batchCommits.batchCommits;
+  const shownBatchCommits = batchCommits.batchCommits.slice(0, 5);
   const { batchId } = useParams<{ batchId?: string }>();
+  const changelogHistoryPage = useChangelogHistoryPage();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -37,7 +33,8 @@ export function ChangesSinceDropdown(props: any) {
   };
 
   const selectedBatchId =
-    batchId && allBatchCommits.find((i) => i.batchId.startsWith(batchId));
+    batchId &&
+    batchCommits.batchCommits.find((i) => i.batchId.startsWith(batchId));
 
   const content =
     batchId && selectedBatchId ? (
@@ -72,32 +69,57 @@ export function ChangesSinceDropdown(props: any) {
         onClose={handleClose}
         style={{ marginTop: 20 }}
       >
-        {allBatchCommits.length > 0 ? (
-          allBatchCommits.map((i, index) => (
-            <MenuItem
-              key={i.batchId}
-              onClick={() => {
-                const pathMatch = pathname.match(
-                  /(changes-since\/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}|documentation)(.*)/
-                );
-                const currentRelativePath =
-                  pathMatch && pathMatch[2] ? pathMatch[2] : '';
-                if (index === 0) {
-                  history.push(
-                    `${baseUrl}/documentation${currentRelativePath}`
+        {shownBatchCommits.length > 0 ? (
+          shownBatchCommits
+            .map((i, index) => (
+              <MenuItem
+                key={i.batchId}
+                onClick={() => {
+                  const pathMatch = pathname.match(
+                    /(changes-since\/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}|documentation)(.*)/
                   );
-                } else {
-                  history.push(
-                    `${baseUrl}/changes-since/${i.batchId}${currentRelativePath}`
-                  );
-                }
-              }}
-            >
-              <BatchCommitMenuItem
-                batch={index === 0 ? { ...i, commitMessage: 'Latest' } : i}
-              />
-            </MenuItem>
-          ))
+                  const currentRelativePath =
+                    pathMatch && pathMatch[2] ? pathMatch[2] : '';
+                  if (index === 0) {
+                    history.push(
+                      `${baseUrl}/documentation${currentRelativePath}`
+                    );
+                  } else {
+                    history.push(
+                      `${baseUrl}/changes-since/${i.batchId}${currentRelativePath}`
+                    );
+                  }
+                }}
+              >
+                <BatchCommitMenuItem
+                  batch={index === 0 ? { ...i, commitMessage: 'Latest' } : i}
+                />
+              </MenuItem>
+            ))
+            .concat(
+              batchCommits.batchCommits.length > 5
+                ? [
+                    <MenuItem
+                      key="show-all-commits"
+                      onClick={() => {
+                        history.push(changelogHistoryPage.linkTo());
+                      }}
+                    >
+                      <Typography
+                        component="span"
+                        variant="subtitle1"
+                        style={{
+                          fontFamily: 'Ubuntu Mono',
+                          fontSize: 14,
+                          color: OpticBlueReadable,
+                        }}
+                      >
+                        See all changes
+                      </Typography>
+                    </MenuItem>,
+                  ]
+                : []
+            )
         ) : (
           <MenuItem>
             <Box>
@@ -148,7 +170,7 @@ function BatchCommitMenuItem({ batch }: { batch: BatchCommit }) {
           color: OpticBlueReadable,
         }}
       >
-        {batch.createdAt && timeAgo.format(new Date(batch.createdAt))}
+        {batch.createdAt && formatTimeAgo(new Date(batch.createdAt))}
       </Typography>
     </Box>
   );

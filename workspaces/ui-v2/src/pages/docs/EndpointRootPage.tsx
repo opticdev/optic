@@ -1,19 +1,26 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useMemo, useState } from 'react';
+import { Redirect, RouteComponentProps } from 'react-router-dom';
+import { Button, LinearProgress, makeStyles } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import { Delete as DeleteIcon, Undo as UndoIcon } from '@material-ui/icons';
 
-import { useEndpoints } from '<src>/hooks/useEndpointsHook';
 import {
   EndpointName,
   PathParameters,
-  Loading,
   IShapeRenderer,
   JsonLike,
   PageLayout,
+  FullWidth,
 } from '<src>/components';
-import { useContributionEditing } from './contexts/Contributions';
-import { FullWidth } from '<src>/components';
-import { RouteComponentProps } from 'react-router-dom';
+import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
-import { SubtleBlueBackground } from '<src>/constants/theme';
+import { SubtleBlueBackground } from '<src>/styles';
+import {
+  useAppSelector,
+  useAppDispatch,
+  selectors,
+  documentationEditActions,
+} from '<src>/store';
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
@@ -25,6 +32,7 @@ import {
   DocsPageAccessoryNavigation,
   MarkdownBodyContribution,
   TwoColumn,
+  DeleteEndpointConfirmationModal,
 } from '<src>/pages/docs/components';
 
 export const EndpointRootPageWithDocsNav: FC<
@@ -41,25 +49,37 @@ export const EndpointRootPage: FC<
     method: string;
   }>
 > = ({ match }) => {
-  const { endpoints, loading } = useEndpoints();
+  const documentationPageLink = useDocumentationPageLink();
+  const endpointsState = useAppSelector((state) => state.endpoints.results);
+  const isEditing = useAppSelector(
+    (state) => state.documentationEdits.isEditing
+  );
+  const pendingCount = useAppSelector(
+    selectors.getDocumentationEditStagedCount
+  );
+  const dispatch = useAppDispatch();
 
   const { pathId, method } = match.params;
+  const thisEndpoint = useMemo(
+    () =>
+      endpointsState.data?.find(
+        (i) => i.pathId === pathId && i.method === method
+      ),
+    [endpointsState, method, pathId]
+  );
+
+  const isEndpointRemoved = thisEndpoint ? thisEndpoint.isRemoved : false;
 
   const bodies = useEndpointBody(pathId, method);
-  const thisEndpoint = useMemo(
-    () => endpoints.find((i) => i.pathId === pathId && i.method === method),
-    [pathId, method, endpoints]
-  );
-  const {
-    isEditing,
-    pendingCount,
-    setCommitModalOpen,
-  } = useContributionEditing();
 
   const onKeyPress = useRunOnKeypress(
     () => {
       if (isEditing && pendingCount > 0) {
-        setCommitModalOpen(true);
+        dispatch(
+          documentationEditActions.updateCommitModalState({
+            commitModalOpen: true,
+          })
+        );
       }
     },
     {
@@ -67,117 +87,213 @@ export const EndpointRootPage: FC<
       inputTagNames: new Set(['input']),
     }
   );
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const endpointId = getEndpointId({ method, pathId });
 
-  if (loading) {
-    return <Loading />;
+  const isEndpointStagedForDeletion = useAppSelector(
+    selectors.isEndpointDeleted({ method, pathId })
+  );
+
+  const deleteEndpoint = () =>
+    dispatch(documentationEditActions.deleteEndpoint({ method, pathId }));
+
+  const undeleteEndpoint = () =>
+    dispatch(documentationEditActions.undeleteEndpoint({ method, pathId }));
+
+  const classes = useStyles();
+
+  if (endpointsState.loading) {
+    return <LinearProgress variant="indeterminate" />;
   }
 
   if (!thisEndpoint) {
     return <>no endpoint here</>;
   }
-  const endpointId = getEndpointId({ method, pathId });
+
+  if (isEndpointRemoved) {
+    return <Redirect to={documentationPageLink.linkTo()} />;
+  }
+
   const parameterizedPathParts = thisEndpoint.pathParameters.filter(
     (path) => path.isParameterized
   );
 
   return (
-    <FullWidth
-      style={{ paddingTop: 30, paddingBottom: 400 }}
-      onKeyPress={onKeyPress}
-    >
-      <EndpointNameContribution
-        id={endpointId}
-        contributionKey="purpose"
-        defaultText="What does this endpoint do?"
-        initialValue={thisEndpoint.purpose}
-      />
-      <EndpointName
-        fontSize={19}
-        leftPad={0}
-        method={thisEndpoint.method}
-        fullPath={thisEndpoint.fullPath}
-      />
-      <TwoColumn
-        style={{ marginTop: 5 }}
-        left={
-          <MarkdownBodyContribution
-            id={endpointId}
-            contributionKey={'description'}
-            defaultText={'Describe this endpoint'}
-            initialValue={thisEndpoint.description}
+    <>
+      {deleteModalOpen && (
+        <DeleteEndpointConfirmationModal
+          endpoint={thisEndpoint}
+          handleClose={() => setDeleteModalOpen(false)}
+          handleConfirm={() => {
+            deleteEndpoint();
+            setDeleteModalOpen(false);
+          }}
+        />
+      )}
+      {isEndpointStagedForDeletion && isEditing && (
+        <Alert severity="warning" className={classes.deleteInfoHeader}>
+          This endpoint is staged to be deleted
+        </Alert>
+      )}
+      <FullWidth
+        style={{ paddingTop: 30, paddingBottom: 400 }}
+        onKeyPress={onKeyPress}
+      >
+        <EndpointNameContribution
+          id={endpointId}
+          contributionKey="purpose"
+          defaultText="What does this endpoint do?"
+          initialValue={thisEndpoint.purpose}
+          endpoint={{
+            pathId,
+            method,
+          }}
+        />
+        <div className={classes.endpointNameContainer}>
+          <EndpointName
+            fontSize={19}
+            leftPad={0}
+            method={thisEndpoint.method}
+            fullPath={thisEndpoint.fullPath}
           />
-        }
-        right={
-          <CodeBlock
-            header={
-              <EndpointName
-                fontSize={14}
-                leftPad={0}
-                method={thisEndpoint.method}
-                fullPath={thisEndpoint.fullPath}
-              />
-            }
-          >
-            <PathParameters
-              parameters={parameterizedPathParts}
-              renderField={(param, index) => {
-                const alwaysAString: IShapeRenderer = {
-                  shapeId: param.id + 'shape',
-                  jsonType: JsonLike.STRING,
-                  value: undefined,
-                };
-                return (
-                  <DocsFieldOrParameterContribution
-                    key={param.id}
-                    id={param.id}
-                    name={param.name}
-                    shapes={[alwaysAString]}
-                    depth={0}
-                    initialValue={param.description}
-                  />
-                );
+          {isEditing &&
+            (isEndpointStagedForDeletion ? (
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => {
+                  undeleteEndpoint();
+                }}
+              >
+                Undelete <UndoIcon className={classes.icon} />
+              </Button>
+            ) : (
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => {
+                  setDeleteModalOpen(true);
+                }}
+              >
+                Delete <DeleteIcon className={classes.icon} />
+              </Button>
+            ))}
+        </div>
+        <TwoColumn
+          style={{ marginTop: 5 }}
+          left={
+            <MarkdownBodyContribution
+              id={endpointId}
+              contributionKey={'description'}
+              defaultText={'Describe this endpoint'}
+              initialValue={thisEndpoint.description}
+              endpoint={{
+                pathId,
+                method,
               }}
             />
-            <div
-              style={{
-                marginTop: 10,
-                backgroundColor: SubtleBlueBackground,
-                borderTop: '1px solid #e2e2e2',
-              }}
+          }
+          right={
+            <CodeBlock
+              header={
+                <EndpointName
+                  fontSize={14}
+                  leftPad={0}
+                  method={thisEndpoint.method}
+                  fullPath={thisEndpoint.fullPath}
+                />
+              }
             >
-              <EndpointTOC
-                requests={bodies.requests}
-                responses={bodies.responses}
+              <PathParameters
+                parameters={parameterizedPathParts}
+                renderField={(param, index) => {
+                  const alwaysAString: IShapeRenderer = {
+                    shapeId: param.id + 'shape',
+                    jsonType: JsonLike.STRING,
+                    value: undefined,
+                  };
+                  return (
+                    <DocsFieldOrParameterContribution
+                      key={param.id}
+                      endpoint={{
+                        pathId,
+                        method,
+                      }}
+                      id={param.id}
+                      name={param.name}
+                      shapes={[alwaysAString]}
+                      depth={0}
+                      initialValue={param.description}
+                    />
+                  );
+                }}
               />
-            </div>
-          </CodeBlock>
-        }
-      />
+              <div
+                style={{
+                  marginTop: 10,
+                  backgroundColor: SubtleBlueBackground,
+                  borderTop: '1px solid #e2e2e2',
+                }}
+              >
+                <EndpointTOC
+                  requests={bodies.requests}
+                  responses={bodies.responses}
+                />
+              </div>
+            </CodeBlock>
+          }
+        />
 
-      {bodies.requests.map((i, index) => {
-        return (
-          <TwoColumnBodyEditable
-            key={index}
-            rootShapeId={i.rootShapeId}
-            bodyId={i.requestId}
-            location={'Request Body'}
-            contentType={i.contentType}
-            description={i.description}
-          />
-        );
-      })}
-      {bodies.responses.map((i, index) => {
-        return (
-          <TwoColumnBodyEditable
-            key={index}
-            rootShapeId={i.rootShapeId}
-            bodyId={i.responseId}
-            location={`${i.statusCode} Response`}
-            contentType={i.contentType}
-            description={i.description}
-          />
-        );
-      })}
-    </FullWidth>
+        {bodies.requests.map((i) => {
+          return (
+            <TwoColumnBodyEditable
+              key={i.rootShapeId}
+              endpoint={{
+                pathId,
+                method,
+              }}
+              rootShapeId={i.rootShapeId}
+              bodyId={i.requestId}
+              location={'Request Body'}
+              contentType={i.contentType}
+              description={i.description}
+            />
+          );
+        })}
+        {bodies.responses.map((i) => {
+          return (
+            <TwoColumnBodyEditable
+              key={i.rootShapeId}
+              endpoint={{
+                pathId,
+                method,
+              }}
+              rootShapeId={i.rootShapeId}
+              bodyId={i.responseId}
+              location={`${i.statusCode} Response`}
+              contentType={i.contentType}
+              description={i.description}
+            />
+          );
+        })}
+      </FullWidth>
+    </>
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  endpointNameContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    justifyContent: 'space-between',
+    padding: '16px 0',
+  },
+  icon: {
+    paddingLeft: 8,
+  },
+  deleteInfoHeader: {
+    justifyContent: 'center',
+    display: 'fixed',
+  },
+}));

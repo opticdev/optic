@@ -25,7 +25,7 @@ import {
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { HttpInteraction } from '@useoptic/optic-domain/build/streams/http-interactions';
 import { defaultIgnoreRules } from '@useoptic/cli-config/build/helpers/default-ignore-rules';
-import { IApiCliConfig, IOpticScript, IOpticTask } from '@useoptic/cli-config';
+import { IApiCliConfig } from '@useoptic/cli-config';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -85,6 +85,19 @@ export class InMemorySpecRepository implements IOpticSpecReadWriteRepository {
     );
     const newEvents = JSON.parse(newEventsString);
     this.events.push(...newEvents);
+    this.notifications.emit('change');
+  }
+
+  async resetToCommit(batchCommitId: string): Promise<void> {
+    const newEvents = [];
+    for (const event of this.events) {
+      newEvents.push(event);
+      if (event.BatchCommitEnded?.batchId === batchCommitId) {
+        break;
+      }
+    }
+
+    this.events = newEvents;
     this.notifications.emit('change');
   }
 }
@@ -275,7 +288,9 @@ export class InMemoryDiffService implements IOpticDiffService {
         this.dependencies.opticEngine.learn_undocumented_bodies(
           spec,
           interactionsJsonl,
-          'random'
+          'random',
+          process.env.REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS ===
+            'true'
         )
       );
       const learnedBodiesForPathIdAndMethod = learnedBodies.find(

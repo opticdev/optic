@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { SubtleBlueBackground } from '<src>/constants/theme';
+import { SubtleBlueBackground } from '<src>/styles';
 import TextField from '@material-ui/core/TextField';
 import InfoIcon from '@material-ui/icons/Info';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -10,7 +10,7 @@ import { useUndocumentedUrls } from '<src>/pages/diffs/hooks/useUndocumentedUrls
 import { EndpointName } from '<src>/components';
 import { Button, Typography } from '@material-ui/core';
 import { parseRule } from '@useoptic/cli-config/build/helpers/ignore-parser';
-import { LightTooltip } from '<src>/components/navigation/LightToolTip';
+import { LightTooltip } from '<src>/components';
 
 export function AuthorIgnoreRules() {
   const classes = useStyles();
@@ -144,8 +144,13 @@ export function AuthorIgnoreRules() {
                   ? `and ${matchingPreview.length - 3} more`
                   : ''
               }:`}</Typography>
-              {matchingPreview.slice(0, 3).map((i, index) => (
-                <EndpointName leftPad={0} method={i.method} fullPath={i.path} />
+              {matchingPreview.slice(0, 3).map((i) => (
+                <EndpointName
+                  key={`${i.method}${i.path}`}
+                  leftPad={0}
+                  method={i.method}
+                  fullPath={i.path}
+                />
               ))}
             </>
           ) : null}

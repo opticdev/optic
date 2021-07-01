@@ -89,7 +89,13 @@ export async function shapeTrailParserLastId(
     if (lastTrail.hasOwnProperty('ListItemTrail')) {
       const listItemTrail = (lastTrail as IListItemTrail).ListItemTrail;
       const choices = await getChoices(listItemTrail.itemShapeId, spectacle);
+
+      const lastObjectOption = Object.entries(
+        choices.allowedCoreShapeKindsByShapeId
+      ).find(([key, value]) => value === ICoreShapeKinds.ObjectKind);
+
       return {
+        lastObject: lastObjectOption ? lastObjectOption[0] : undefined,
         lastList: listItemTrail.listShapeId,
         lastListItem: listItemTrail.itemShapeId,
         ...choices,

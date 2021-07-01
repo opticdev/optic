@@ -1,17 +1,17 @@
 import React, { FC, useContext } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { IForkableSpectacle } from '@useoptic/spectacle';
-
+import { LinearProgress } from '@material-ui/core';
 import { useEndpointDiffs } from '<src>/pages/diffs/hooks/useEndpointDiffs';
 import {
   useNewBodyDiffInterpretations,
   useShapeDiffInterpretations,
 } from '<src>/pages/diffs/hooks/useDiffInterpretations';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
-import { useEndpoint } from '<src>/hooks/useEndpointsHook';
 import { SpectacleContext } from '<src>/contexts/spectacle-provider';
-import { Loading, PageLayout } from '<src>/components';
+import { PageLayout } from '<src>/components';
 import { DiffAccessoryNavigation } from '<src>/pages/diffs/components/DiffAccessoryNavigation';
+import { useAppSelector } from '<src>/store';
 
 import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
 
@@ -26,7 +26,11 @@ export const ReviewEndpointDiffContainer: FC<
   const spectacle = useContext(SpectacleContext)!;
 
   const endpointDiffs = useEndpointDiffs(pathId, method);
-  const endpoint = useEndpoint(pathId, method);
+  const endpoint = useAppSelector((state) =>
+    state.endpoints.results.data?.find(
+      (endpoint) => endpoint.pathId === pathId && endpoint.method === method
+    )
+  );
   const { context } = useSharedDiffContext();
 
   const shapeDiffs = useShapeDiffInterpretations(
@@ -40,8 +44,8 @@ export const ReviewEndpointDiffContainer: FC<
 
   return (
     <PageLayout AccessoryNavigation={DiffAccessoryNavigation}>
-      {!endpoint || shapeDiffs.loading ? (
-        <Loading />
+      {!endpoint || shapeDiffs.loading || newRegionDiffs.loading ? (
+        <LinearProgress variant="indeterminate" />
       ) : (
         <ReviewEndpointDiffPage
           endpoint={endpoint}

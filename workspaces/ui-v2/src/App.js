@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { appTheme } from './constants/theme';
+import { appTheme } from './styles';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core/styles';
 import * as SupportLinks from './constants/SupportLinks';
@@ -34,16 +34,10 @@ class App extends React.Component {
   }
 }
 
-function AppError(props) {
-  const onClickRefresh = useCallback((e) => {
-    e.preventDefault();
-    window && window.location && window.location.reload(true);
-  }, []);
-
-  // we have to be as conservative as possible here and only use styles from App.css, as we're not sure what subsystems this error has touched
+function AppError() {
   return (
-    <div className="app-error-container">
-      <div className="app-error">
+    <div style={{ padding: '12px 24px' }}>
+      <div>
         <h1>There was a problem in displaying the Optic app.</h1>
 
         <h4>
@@ -51,39 +45,28 @@ function AppError(props) {
           from it automatically.
         </h4>
 
-        <h5>
-          Please feel free to{' '}
-          <a href={SupportLinks.Contact('Optic App crash report')}>
-            contact us about it.
-          </a>
-        </h5>
-
-        <p>Meanwhile, you could try the following:</p>
-
-        <ul>
-          <li>
-            Create a debug file and{' '}
-            <a href={SupportLinks.Contact('Optic App crash report')}>
-              {' '}
-              email it to our team
-            </a>{' '}
-            or <a href={SupportLinks.GithubIssues}> open a GitHub issue</a>
-            {': '}
-            <ul>
-              <li>
-                share a debug capture <code>api debug:capture</code>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <button onClick={onClickRefresh}>Refresh the page</button> in your
-            browser.
-          </li>
-          <li>
-            Try <a href="https://browsehappy.com/">a different browser</a>, if
-            you can.
-          </li>
-        </ul>
+        <div>
+          You can help us debug this error:
+          <ul>
+            <li>
+              {/* eslint-disable-next-line */}
+              <a href="#" onClick={window.debugOptic}>
+                Click here
+              </a>{' '}
+              to generate a debug file
+            </li>
+            <li>
+              Send the debug file to{' '}
+              <a href={SupportLinks.Contact('Optic App crash report')}>
+                our team
+              </a>
+            </li>
+          </ul>
+          <p>
+            This debug file includes information about your specification,
+            current UI state and captured traffic Optic has seen.
+          </p>
+        </div>
       </div>
     </div>
   );

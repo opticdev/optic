@@ -6,11 +6,17 @@ import {
 } from '<src>/pages/diffs/contexts/LearnedPendingEndpointContext';
 import { Redirect, useHistory } from 'react-router-dom';
 
-import { Box, Button, Divider, TextField, Typography } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  Divider,
+  LinearProgress,
+  TextField,
+  Typography,
+} from '@material-ui/core';
 import {
   EndpointName,
   Loader,
-  Loading,
   TwoColumnFullWidth,
   useDiffUndocumentedUrlsPageLink,
   PageLayout,
@@ -19,11 +25,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/styles';
-import {
-  AddedDarkGreen,
-  OpticBlue,
-  OpticBlueReadable,
-} from '<src>/constants/theme';
+import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '<src>/styles';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { SimulatedCommandStore } from '<src>/pages/diffs/contexts/SimulatedCommandContext';
 import { IForkableSpectacle } from '@useoptic/spectacle';
@@ -91,7 +93,6 @@ export function PendingEndpointPage(props: any) {
     ignoreBody,
     includeBody,
     stageEndpoint,
-    discardEndpoint,
     newEndpointCommands,
     endpointName,
     changeEndpointName,
@@ -231,13 +232,6 @@ export function PendingEndpointPage(props: any) {
                 <div>
                   <Button
                     size="small"
-                    color="secondary"
-                    onClick={discardEndpoint}
-                  >
-                    Discard Endpoint
-                  </Button>
-                  <Button
-                    size="small"
                     variant="contained"
                     color="primary"
                     style={{ marginLeft: 10 }}
@@ -259,7 +253,7 @@ export function PendingEndpointPage(props: any) {
             previewCommands={newEndpointCommands}
           >
             {isLoading ? (
-              <Loading />
+              <LinearProgress variant="indeterminate" />
             ) : (
               <EndpointDocumentationPane
                 method={stagedCommandsIds.method}

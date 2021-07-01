@@ -15,12 +15,13 @@ import { ReviewEndpointDiffContainer } from './ReviewEndpointDiffPage';
 import { useDiffsForCapture } from '<src>/pages/diffs/hooks/useDiffForCapture';
 import { v4 as uuidv4 } from 'uuid';
 import { useAllRequestsAndResponses } from '<src>/pages/diffs/hooks/useAllRequestsAndResponses';
-import { useEndpoints } from '<src>/hooks/useEndpointsHook';
+import { selectors, useAppSelector } from '<src>/store';
+import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
 import {
   CapturePageWithoutDiffOrRedirect,
   CapturePageWithDiff,
 } from './CapturePage';
-import { LoadingPage } from '<src>/components';
+import { PageLayout } from '<src>/components';
 import { LoadingDiffReview } from '<src>/pages/diffs/components/LoadingDiffReview';
 import { usePaths } from '<src>/hooks/usePathsHook';
 
@@ -32,7 +33,12 @@ export function DiffReviewPages(props: any) {
   //dependencies
   const diff = useDiffsForCapture(boundaryId, diffId);
   const allRequestsAndResponsesOfBaseSpec = useAllRequestsAndResponses();
-  const allEndpointsOfBaseSpec = useEndpoints();
+  useFetchEndpoints();
+  const endpointsState = useAppSelector((state) => state.endpoints.results);
+  const filteredEndpoints = useMemo(
+    () => selectors.filterRemovedEndpoints(endpointsState.data || []),
+    [endpointsState.data]
+  );
   const allPaths = usePaths();
 
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
@@ -42,15 +48,15 @@ export function DiffReviewPages(props: any) {
 
   const isLoading =
     diff.loading ||
-    allEndpointsOfBaseSpec.loading ||
+    endpointsState.loading ||
     allPaths.loading ||
     allRequestsAndResponsesOfBaseSpec.loading;
 
   if (isLoading) {
     return (
-      <LoadingPage>
+      <PageLayout>
         <LoadingDiffReview />
-      </LoadingPage>
+      </PageLayout>
     );
   }
 
@@ -61,7 +67,7 @@ export function DiffReviewPages(props: any) {
       diffTrails={diff.data!.trails}
       urls={diff.data!.urls}
       captureId={boundaryId}
-      endpoints={allEndpointsOfBaseSpec.endpoints}
+      endpoints={filteredEndpoints}
       allPaths={allPaths.paths}
       requests={allRequestsAndResponsesOfBaseSpec.data?.requests!}
       responses={allRequestsAndResponsesOfBaseSpec.data?.responses!}

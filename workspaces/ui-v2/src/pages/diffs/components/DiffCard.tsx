@@ -5,7 +5,7 @@ import {
   OpticBlueLightened,
   OpticBlueReadable,
   secondary,
-} from '<src>/constants/theme';
+} from '<src>/styles';
 import { makeStyles } from '@material-ui/styles';
 import { Skeleton } from '@material-ui/lab';
 import { ICopyRender } from './ICopyRender';

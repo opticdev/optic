@@ -1,6 +1,5 @@
 use crate::events::endpoint as endpoint_events;
 use crate::events::{EndpointEvent, SpecEvent};
-use serde::Serialize;
 use crate::state::endpoint::*;
 use crate::{
   commands::{endpoint, EndpointCommand, SpecCommand, SpecCommandError},
@@ -8,47 +7,50 @@ use crate::{
 };
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, Event};
 use petgraph::graph::{Graph, NodeIndex};
+use petgraph::visit::EdgeRef;
+use serde::Serialize;
 use std::collections::HashMap;
 
 pub const ROOT_PATH_ID: &str = "root";
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PathComponentDescriptor {
   pub is_parameter: bool,
   pub name: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct BodyDescriptor {
   pub http_content_type: HttpContentType,
   pub root_shape_id: ShapeId,
 }
 
-#[derive(Debug, Serialize)]
-pub struct RequestBodyDescriptor {
+#[derive(Debug, Serialize, Clone)]
+pub struct RequestDescriptor {
   pub body: Option<BodyDescriptor>,
+  pub query: Option<QueryParametersShapeDescriptor>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct ResponseBodyDescriptor {
   pub body: Option<BodyDescriptor>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Node {
   PathComponent(PathComponentId, PathComponentDescriptor),
   HttpMethod(HttpMethod),
   HttpStatusCode(HttpStatusCode),
-  Request(RequestId, RequestBodyDescriptor),
+  Request(RequestId, RequestDescriptor),
   Response(ResponseId, ResponseBodyDescriptor),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Edge {
   IsChildOf,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct EndpointProjection {
   pub graph: Graph<Node, Edge>,
   // SAFETY: node indices are not stable upon removing of nodes from graph -> node indices might be referred to
@@ -87,6 +89,14 @@ impl EndpointProjection {
     self.with_path_component_node(parent_path_id, path_id, path_name, true);
   }
 
+  pub fn without_path(&mut self, path_id: PathComponentId) {
+    self.without_path_component(path_id);
+  }
+
+  pub fn without_path_parameter(&mut self, path_id: PathComponentId) {
+    self.without_path_component(path_id);
+  }
+
   fn with_path_component_node(
     &mut self,
     parent_path_id: PathComponentId,
@@ -110,6 +120,33 @@ impl EndpointProjection {
       .add_edge(node_index, parent_node_index, Edge::IsChildOf);
   }
 
+  fn without_path_component(&mut self, path_id: PathComponentId) {
+    let path_component_node_index = *self
+      .node_id_to_index
+      .get(&path_id)
+      .expect("expected path_id to have a corresponding node");
+
+    let parent_path_edge_index = self
+      .graph
+      .edges_directed(path_component_node_index, petgraph::Direction::Outgoing)
+      .find(|parent_edge| {
+        let parent_node_index = parent_edge.target();
+        let node = self.graph.node_weight(parent_node_index);
+        matches!(node, Some(Node::PathComponent(_, _)))
+      })
+      .map(|parent_edge| parent_edge.id());
+
+    if let Some(parent_path_edge_index) = parent_path_edge_index {
+      self.graph.remove_edge(parent_path_edge_index); // prevents path to be resolved from path node
+    }
+    self.node_id_to_index.remove(&path_id); // prevents path node to be looked up by path id
+
+    // GOTCHA: we're not deleting the path node itself, as that would invalidate self.node_id_to_index
+    // as the graph indexes shift.
+    // GOTCHA: this assumes nested entities like requests and responses have already been deleted,
+    // as it does not delete ids for those nested entities
+  }
+
   pub fn with_request(
     &mut self,
     path_id: PathComponentId,
@@ -121,12 +158,45 @@ impl EndpointProjection {
       .get(&path_id)
       .expect("expected path_id to have a corresponding node");
     let method_node_index = self.ensure_method_node(path_node_index, http_method);
-    let request_node = Node::Request(request_id.clone(), RequestBodyDescriptor { body: None });
+    let request_node = Node::Request(
+      request_id.clone(),
+      RequestDescriptor {
+        body: None,
+        query: None,
+      },
+    );
     let request_node_index = self.graph.add_node(request_node);
     self
       .graph
       .add_edge(request_node_index, method_node_index, Edge::IsChildOf);
     self.node_id_to_index.insert(request_id, request_node_index);
+  }
+
+  pub fn without_request(&mut self, request_id: RequestId) {
+    let request_node_index = *self
+      .node_id_to_index
+      .get(&request_id)
+      .expect("expected request_id to have a corresponding node");
+
+    let method_parent_edge_index = self
+      .graph
+      .edges_directed(request_node_index, petgraph::Direction::Outgoing)
+      .find(|parent_edge| {
+        let parent_node_index = parent_edge.target();
+        let node = self.graph.node_weight(parent_node_index);
+        matches!(node, Some(Node::HttpMethod(_)))
+      })
+      .map(|parent_edge| parent_edge.id());
+
+    if let Some(method_parent_edge_index) = method_parent_edge_index {
+      self.graph.remove_edge(method_parent_edge_index); // prevents request to be resolved from path node
+    }
+    self.node_id_to_index.remove(&request_id); // prevents request node to be looked up by request id
+
+    // GOTCHA: we're not deleting the request node itself, as that would invalidate self.node_id_to_index
+    // as the graph indexes shift.
+    // TODO: figure out the implications of the above, like correctness of queries and
+    // eventual garbage collection.
   }
 
   fn ensure_method_node(
@@ -209,6 +279,24 @@ impl EndpointProjection {
     }
   }
 
+  pub fn with_query_parameters(
+    &mut self,
+    request_id: RequestId,
+    shape_descriptor: QueryParametersShapeDescriptor,
+  ) {
+    let request_node_index = self
+      .node_id_to_index
+      .get(&request_id)
+      .expect("expected request_id to have a corresponding node");
+    let request_node = self.graph.node_weight_mut(*request_node_index).unwrap();
+    let request_descriptor = match request_node {
+      Node::Request(id, descriptor) => descriptor,
+      _ => unreachable!("request ids should point to request nodes"),
+    };
+
+    request_descriptor.query = Some(shape_descriptor);
+  }
+
   pub fn with_response_body(
     &mut self,
     response_id: ResponseId,
@@ -255,6 +343,50 @@ impl EndpointProjection {
       .insert(response_id, response_node_index);
   }
 
+  pub fn without_response(&mut self, response_id: ResponseId) {
+    let response_node_index = *self
+      .node_id_to_index
+      .get(&response_id)
+      .expect("expected response_id to have a corresponding node");
+
+    let method_parent_edge_index = self
+      .graph
+      .edges_directed(response_node_index, petgraph::Direction::Outgoing)
+      .find_map(|response_edge| {
+        let status_code_node_index = response_edge.target();
+        let _status_code_node = self
+          .graph
+          .node_weight(status_code_node_index)
+          .filter(|node| matches!(node, Node::HttpStatusCode(_)))?;
+
+        Some(status_code_node_index)
+      })
+      .map(|status_code_node_index| {
+        self
+          .graph
+          .edges_directed(status_code_node_index, petgraph::Direction::Outgoing)
+          .find_map(|status_code_edge| {
+            let _method_node = self
+              .graph
+              .node_weight(status_code_edge.target())
+              .filter(|node| matches!(node, Node::HttpMethod(_)))?;
+
+            Some(status_code_edge.id())
+          })
+      })
+      .flatten();
+
+    if let Some(method_parent_edge_index) = method_parent_edge_index {
+      self.graph.remove_edge(method_parent_edge_index); // prevents response to be resolved from path node
+    }
+    self.node_id_to_index.remove(&response_id); // prevents request node to be looked up by response id
+
+    // GOTCHA: we're not deleting the request node itself, as that would invalidate self.node_id_to_index
+    // as the graph indexes shift.
+    // TODO: figure out the implications of the above, like correctness of queries and
+    // eventual garbage collection.
+  }
+
   pub fn get_path_component_node_index(
     &self,
     path_component_id: &PathComponentId,
@@ -263,6 +395,19 @@ impl EndpointProjection {
     let node = self.graph.node_weight(*node_index)?;
     if let &Node::PathComponent(_, _) = node {
       Some(node_index)
+    } else {
+      None
+    }
+  }
+
+  pub fn get_path_component_descriptor(
+    &self,
+    path_id: &PathComponentId,
+  ) -> Option<PathComponentDescriptor> {
+    let path_node_index = self.node_id_to_index.get(path_id)?;
+    let node = self.graph.node_weight(*path_node_index)?;
+    if let &Node::PathComponent(_, ref descriptor) = node {
+      Some(descriptor.clone())
     } else {
       None
     }
@@ -286,6 +431,159 @@ impl EndpointProjection {
     } else {
       None
     }
+  }
+
+  pub fn get_child_path_component_nodes<'a>(
+    &'a self,
+    path_id: &'a PathComponentId,
+  ) -> Option<impl Iterator<Item = &'a Node> + 'a> {
+    let path_node_index = self.get_path_component_node_index(path_id)?;
+
+    let children = self
+      .graph
+      .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
+
+    let child_path_components = children.filter_map(move |node_index| {
+      let node = self.graph.node_weight(node_index)?;
+      match node {
+        Node::PathComponent(_, _) => Some(node),
+        _ => None,
+      }
+    });
+
+    Some(child_path_components)
+  }
+
+  pub fn get_request_nodes<'a>(
+    &'a self,
+    path_id: &'a PathComponentId,
+  ) -> Option<impl Iterator<Item = (&'a HttpMethod, &'a Node)> + 'a> {
+    let path_node_index = self.get_path_component_node_index(path_id)?;
+
+    let children = self
+      .graph
+      .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
+
+    let request_nodes = children
+      .filter_map(move |node_index| {
+        let node = self.graph.node_weight(node_index)?;
+        match node {
+          Node::HttpMethod(http_method) => Some((node_index, http_method)),
+          _ => None,
+        }
+      })
+      .flat_map(move |(http_method_node_index, http_method)| {
+        let response_nodes = self
+          .graph
+          .neighbors_directed(http_method_node_index, petgraph::Direction::Incoming);
+
+        response_nodes
+          .filter_map(move |i| {
+            let node = self.graph.node_weight(i).unwrap();
+            match node {
+              Node::Response(response_id, body_descriptor) => Some(node),
+              _ => None,
+            }
+          })
+          .map(move |node| (http_method, node))
+      });
+
+    Some(request_nodes)
+  }
+
+  pub fn get_response_nodes<'a>(
+    &'a self,
+    path_id: &'a PathComponentId,
+  ) -> Option<impl Iterator<Item = (&'a HttpMethod, &'a HttpStatusCode, &'a Node)> + 'a> {
+    let path_node_index = self.get_path_component_node_index(path_id)?;
+
+    let children = self
+      .graph
+      .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
+
+    let response_nodes = children
+      .filter_map(move |node_index| {
+        let node = self.graph.node_weight(node_index)?;
+        match node {
+          Node::HttpMethod(http_method) => Some((node_index, http_method)),
+          _ => None,
+        }
+      })
+      .flat_map(move |(http_method_node_index, http_method)| {
+        let status_code_nodes = self
+          .graph
+          .neighbors_directed(http_method_node_index, petgraph::Direction::Incoming);
+
+        status_code_nodes.flat_map(move |status_code_node_index| {
+          let status_code = self
+            .graph
+            .node_weight(status_code_node_index)
+            .map(|node| match node {
+              Node::HttpStatusCode(status_code) => Some(status_code),
+              _ => None,
+            })
+            .flatten()
+            .unwrap();
+          let response_nodes = self
+            .graph
+            .neighbors_directed(status_code_node_index, petgraph::Direction::Incoming);
+
+          response_nodes
+            .filter_map(move |i| {
+              let node = self.graph.node_weight(i).unwrap();
+              match node {
+                Node::Response(response_id, body_descriptor) => Some(node),
+                _ => None,
+              }
+            })
+            .map(move |node| (http_method, status_code, node))
+        })
+      });
+
+    Some(response_nodes)
+  }
+
+  pub fn get_endpoint_response_nodes<'a>(
+    &'a self,
+    path_id: &'a PathComponentId,
+    method: &'a HttpMethod,
+  ) -> Option<impl Iterator<Item = &Node> + 'a> {
+    let path_node_index = self.get_path_component_node_index(path_id)?;
+
+    let children = self
+      .graph
+      .neighbors_directed(*path_node_index, petgraph::Direction::Incoming);
+
+    let matching_method = children
+      .filter(move |i| {
+        let node = self.graph.node_weight(*i).unwrap();
+        match node {
+          Node::HttpMethod(http_method) => method == http_method,
+          _ => false,
+        }
+      })
+      .flat_map(move |i| {
+        let status_code_nodes = self
+          .graph
+          .neighbors_directed(i, petgraph::Direction::Incoming);
+
+        status_code_nodes
+      })
+      .flat_map(move |i| {
+        let response_nodes = self
+          .graph
+          .neighbors_directed(i, petgraph::Direction::Incoming);
+        let operations = response_nodes.filter_map(move |i| {
+          let node = self.graph.node_weight(i).unwrap();
+          match node {
+            Node::Response(response_id, body_descriptor) => Some(node),
+            _ => None,
+          }
+        });
+        operations
+      });
+
+    Some(matching_method)
   }
 }
 
@@ -339,14 +637,26 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
       EndpointEvent::PathComponentAdded(e) => {
         aggregate.with_path(e.parent_path_id, e.path_id, e.name);
       }
+      EndpointEvent::PathComponentRemoved(e) => {
+        aggregate.without_path(e.path_id);
+      }
       EndpointEvent::PathParameterAdded(e) => {
-        aggregate.with_path_parameter(e.parent_path_id, e.path_id, e.name)
+        aggregate.with_path_parameter(e.parent_path_id, e.path_id, e.name);
+      }
+      EndpointEvent::PathParameterRemoved(e) => {
+        aggregate.without_path_parameter(e.path_id);
       }
       EndpointEvent::RequestAdded(e) => {
         aggregate.with_request(e.path_id, e.http_method, e.request_id);
       }
+      EndpointEvent::RequestRemoved(e) => {
+        aggregate.without_request(e.request_id);
+      }
       EndpointEvent::ResponseAddedByPathAndMethod(e) => {
         aggregate.with_response(e.path_id, e.http_method, e.http_status_code, e.response_id);
+      }
+      EndpointEvent::ResponseRemoved(e) => {
+        aggregate.without_response(e.response_id);
       }
       EndpointEvent::RequestBodySet(e) => {
         aggregate.with_request_body(
@@ -354,6 +664,9 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
           e.body_descriptor.http_content_type,
           e.body_descriptor.shape_id,
         );
+      }
+      EndpointEvent::RequestQueryParametersShapeSet(e) => {
+        aggregate.with_query_parameters(e.request_id, e.shape_descriptor);
       }
       EndpointEvent::ResponseBodySet(e) => {
         aggregate.with_response_body(

@@ -5,9 +5,10 @@ schema {
   mutation: Mutation
 }
 type Mutation {
-  applyCommands(commands: [JSON], batchCommitId: ID, commitMessage: String, clientId: ID, clientSessionId: ID): AppliedCommandsResult
-  startDiff(diffId: ID, captureId: ID): StartDiffResult
+  applyCommands(commands: [JSON!]!, batchCommitId: ID!, commitMessage: String!, clientId: ID!, clientSessionId: ID!): AppliedCommandsResult
+  startDiff(diffId: ID!, captureId: ID!): StartDiffResult
   invalidateCaches: InvalidateCachesResult
+  resetToCommit(batchCommitId: ID!): Boolean
 }
 type InvalidateCachesResult {
   batchCommitId: ID
@@ -41,7 +42,9 @@ type Query {
   batchCommits: [BatchCommit]
   
   # Diffs for existing endpoints and unrecognized URLs
-  diff(diffId: ID): DiffState
+  diff(diffId: ID!): DiffState
+
+  endpoint(pathId: ID!, method: String!): Endpoint
 
   # Metadata about the current spec
   metadata: SpecMetadata
@@ -76,6 +79,17 @@ type Path {
   
   # Path ID
   pathId: String
+
+  # Is the path removed
+  isRemoved: Boolean
+}
+
+type Endpoint {
+  commands: EndpointCommands
+}
+
+type EndpointCommands {
+  remove: [JSON]
 }
 
 """
@@ -87,6 +101,20 @@ type HttpBody {
   
   # Root shape ID for the HTTP body. Look at the shapeChoices query getting more information about the root shape
   rootShapeId: String
+
+  # Is the body removed
+  isRemoved: Boolean
+}
+
+"""
+Query Parameters, 1:1 mapping to a HttpRequest
+"""
+type QueryParameters {
+  # Root shape ID for the QueryParameter. Look at the shapeChoices query getting more information about the root shape
+  rootShapeId: String!
+
+  # Is the body removed
+  isRemoved: Boolean!
 }
 
 """
@@ -109,6 +137,9 @@ type HttpRequest {
   
   # HTTP method for the HTTP request
   method: String
+
+  # Query parameters associated with this HTTP request
+  query: QueryParameters
   
   # Request bodies associated with this HTTP request
   bodies: [HttpBody]
@@ -124,6 +155,9 @@ type HttpRequest {
   
   # Request contributions which define descriptions
   requestContributions: JSON
+
+  # Is the request removed
+  isRemoved: Boolean
 }
 
 """
@@ -141,6 +175,9 @@ type PathComponent {
   
   # Path component contributions which define descriptions
   contributions: JSON
+
+  # Is the path component removed
+  isRemoved: Boolean
 }
 
 """
@@ -160,6 +197,9 @@ type HttpResponse {
   
   # HTTP response contributions which define descriptions
   contributions: JSON
+
+  # Is the response removed
+  isRemoved: Boolean
 }
 
 """
@@ -227,16 +267,17 @@ type ChangesResult {
   added: Boolean
   
   # Whether or not the change was one that was updated
+  # TODO @nic change this to updated
   changed: Boolean
+
+  # Whether or not the change was one that was removed
+  removed: Boolean
 }
 
 """
 Endpoint Changes
 """
-type EndpointChanges {
-  # URL for Optic change documentation
-  opticUrl: String
-  
+type EndpointChanges {  
   # Changed endpoints for the batch commit ID provided to query
   endpoints: [EndpointChange]
 }

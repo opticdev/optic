@@ -13,26 +13,26 @@ pub const ROOT_COMMIT_ID: &str = "root";
 pub type NodeId = String;
 pub type CommitId = String;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Node {
   BatchCommit(BatchCommitNode),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BatchCommitNode(CommitId, BatchCommitDescriptor);
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BatchCommitDescriptor {
   commit_message: String,
   pub is_complete: bool,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Edge {
   IsParentOf,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct HistoryProjection {
   pub graph: Graph<Node, Edge>,
   pub node_id_to_index: HashMap<NodeId, NodeIndex>,

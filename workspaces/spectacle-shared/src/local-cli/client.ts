@@ -7,6 +7,7 @@ import {
   IOpticConfigRepository,
   IOpticDiffService,
   IOpticEngine,
+  IOpticSpecRepository,
   SpectacleInput,
   StartDiffResult,
 } from '@useoptic/spectacle';
@@ -20,9 +21,13 @@ import {
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IApiCliConfig } from '@useoptic/cli-config';
+import { EventEmitter } from 'events';
 
 export class LocalCliSpectacle implements IForkableSpectacle {
-  constructor(private baseUrl: string, private opticEngine: IOpticEngine) {}
+  private eventEmitter: EventEmitter;
+  constructor(private baseUrl: string, private opticEngine: IOpticEngine) {
+    this.eventEmitter = new EventEmitter();
+  }
   async fork(): Promise<IForkableSpectacle> {
     const events = await JsonHttpClient.getJson(`${this.baseUrl}/events`);
     const opticContext = await InMemoryOpticContextBuilder.fromEvents(
@@ -36,7 +41,12 @@ export class LocalCliSpectacle implements IForkableSpectacle {
     options: SpectacleInput<Input>
   ): Promise<Result> {
     // send query to local cli-server
-    return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
+    const response = await JsonHttpClient.postJson(
+      `${this.baseUrl}/spectacle`,
+      options
+    );
+    this.eventEmitter.emit('update');
+    return response;
   }
 
   async query<Result, Input = {}>(
@@ -45,6 +55,14 @@ export class LocalCliSpectacle implements IForkableSpectacle {
     // send query to local cli-server
     return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
   }
+
+  registerUpdateEvent<T extends (...args: any) => any>(fn: T) {
+    this.eventEmitter.on('update', fn);
+  }
+
+  unregisterUpdateEvent<T extends (...args: any) => any>(fn: T) {
+    this.eventEmitter.off('update', fn);
+  }
 }
 
 export interface LocalCliServices {
@@ -52,6 +70,7 @@ export interface LocalCliServices {
   capturesService: IOpticCapturesService;
   opticEngine: IOpticEngine;
   configRepository: IOpticConfigRepository;
+  specRepository: IOpticSpecRepository;
 }
 export interface LocalCliCapturesServiceDependencies {
   baseUrl: string;
@@ -86,7 +105,7 @@ export class LocalCliCapturesService implements IOpticCapturesService {
 
   async startDiff(diffId: string, captureId: string): Promise<StartDiffResult> {
     await this.dependencies.spectacle.query({
-      query: `mutation X($diffId: ID, $captureId: ID){
+      query: `mutation X($diffId: ID!, $captureId: ID!){
         startDiff(diffId: $diffId, captureId: $captureId) {
           notificationsUrl
         }
@@ -131,7 +150,7 @@ export class LocalCliDiffService implements IOpticDiffService {
 
   async listDiffs(): Promise<IListDiffsResponse> {
     const result = await this.dependencies.spectacle.query<any, any>({
-      query: `query X($diffId: ID) {
+      query: `query X($diffId: ID!) {
         diff(diffId: $diffId) {
           diffs
         }
@@ -145,7 +164,7 @@ export class LocalCliDiffService implements IOpticDiffService {
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
     const result = await this.dependencies.spectacle.query<any, any>({
-      query: `query X($diffId: ID) {
+      query: `query X($diffId: ID!) {
         diff(diffId: $diffId) {
           unrecognizedUrls
         }
@@ -182,5 +201,13 @@ export class LocalCliConfigRepository implements IOpticConfigRepository {
     );
     const config: IApiCliConfig = result.config;
     return config.name;
+  }
+}
+
+export class UILocalCliSpecRepository implements IOpticSpecRepository {
+  constructor(private dependencies: { baseUrl: string }) {}
+
+  async listEvents(): Promise<any> {
+    return JsonHttpClient.getJson(`${this.dependencies.baseUrl}/events`);
   }
 }

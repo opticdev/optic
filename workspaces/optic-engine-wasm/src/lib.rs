@@ -3,15 +3,15 @@
 use chrono::Utc;
 use nanoid::nanoid;
 use optic_engine::{
-  analyze_undocumented_bodies, Aggregate, Body, BodyAnalysisResult, CommandContext,
-  EndpointQueries, HttpInteraction, InteractionDiffResult, JsonTrail,
-  LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection,
+  analyze_undocumented_bodies, Aggregate, AnalyzeUndocumentedBodiesConfig, Body,
+  BodyAnalysisResult, CommandContext, EndpointQueries, HttpInteraction, InteractionDiffResult,
+  JsonTrail, LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection,
   ResponseBodyDescriptor, ResponseId, SpecCommand, SpecEvent, SpecIdGenerator, SpecProjection,
   TaggedInput, TrailObservationsResult, TrailValues,
 };
 use std::collections::HashMap;
 use uuid::Uuid;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{__rt::WasmRefCell, prelude::*};
 
 #[wasm_bindgen(start)]
 pub fn init() {
@@ -127,15 +127,19 @@ pub fn learn_undocumented_bodies(
   spec: &WasmSpecProjection,
   interactions_json: String,
   id_generator_strategy: String,
+  include_query_params: bool,
 ) -> Result<String, JsValue> {
   let interactions = serde_json::Deserializer::from_str(&interactions_json).into_iter();
+
+  let learner_config =
+    AnalyzeUndocumentedBodiesConfig::default().with_query_params(include_query_params);
 
   let mut learned_undocumented_bodies = LearnedUndocumentedBodiesProjection::default();
   for interaction_parse_result in interactions {
     let interaction: HttpInteraction = interaction_parse_result
       .map_err(|err| JsValue::from(format!("could not parse interaction json: {}", err)))?;
 
-    let results = spec.analyze_undocumented_bodies(interaction);
+    let results = spec.analyze_undocumented_bodies(interaction, &learner_config);
 
     for result in results {
       learned_undocumented_bodies.apply(result)
@@ -212,11 +216,12 @@ impl WasmSpecProjection {
   pub fn diff_interaction(&self, interaction: HttpInteraction) -> Vec<InteractionDiffResult> {
     optic_engine::diff_interaction(&self.projection, interaction)
   }
-  fn analyze_undocumented_bodies(
-    &self,
+  fn analyze_undocumented_bodies<'a>(
+    &'a self,
     interaction: HttpInteraction,
-  ) -> impl Iterator<Item = BodyAnalysisResult> {
-    optic_engine::analyze_undocumented_bodies(&self.projection, interaction)
+    config: &'a AnalyzeUndocumentedBodiesConfig,
+  ) -> impl Iterator<Item = BodyAnalysisResult> + 'a {
+    optic_engine::analyze_undocumented_bodies(&self.projection, interaction, config)
   }
 
   fn analyze_documented_bodies(
@@ -378,6 +383,28 @@ pub fn spec_resolve_response(
 
   serde_json::to_string(&response)
     .map_err(|err| JsValue::from(format!("responses could not be serialized: {:?}", err)))
+}
+
+#[wasm_bindgen]
+pub fn spec_endpoint_delete_commands(
+  spec: &WasmSpecProjection,
+  path_id: String,
+  method: String,
+) -> Result<String, JsValue> {
+  let endpoint_queries = spec.endpoint_queries();
+
+  let commands = endpoint_queries
+    .delete_endpoint_commands(&path_id, &method)
+    .ok_or_else(|| {
+      JsValue::from("delete endpoint commands could not be generated for unexisting endpoint")
+    })?;
+
+  serde_json::to_string(&commands).map_err(|err| {
+    JsValue::from(format!(
+      "delete enpoints commands could not be serialized: {:?}",
+      err
+    ))
+  })
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

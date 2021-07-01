@@ -1,5 +1,4 @@
 import { shapes, endpoints } from '@useoptic/graph-lib';
-import { NodeType } from '../../graph-lib/build/shapes-graph';
 
 export function buildEndpointsGraph(spec: any, opticEngine: any) {
   const serializedGraph = JSON.parse(
@@ -64,7 +63,7 @@ export function buildShapesGraph(spec: any, opticEngine: any) {
   return queries;
 }
 
-type EndpointChange = {
+export type EndpointChange = {
   change: {
     category: string;
   };
@@ -73,7 +72,7 @@ type EndpointChange = {
   method: string;
 };
 
-type EndpointChanges = {
+export type EndpointChanges = {
   data: {
     endpoints: EndpointChange[];
   };
@@ -84,13 +83,14 @@ export function buildEndpointChanges(
   shapeQueries: shapes.GraphQueries,
   sinceBatchCommitId?: string
 ): EndpointChanges {
+  // Sorted in reverse order - the latest change takes precedence
   const sortedBatchCommits = endpointQueries
     .listNodesByType(endpoints.NodeType.BatchCommit)
     .results.sort((a: any, b: any) => {
       return a.result.data.createdAt < b.result.data.createdAt ? 1 : -1;
-    });
+    }) as endpoints.BatchCommitNodeWrapper[];
 
-  let deltaBatchCommits;
+  let deltaBatchCommits: endpoints.BatchCommitNodeWrapper[];
 
   if (sinceBatchCommitId) {
     const sinceBatchCommit: any = endpointQueries.findNodeById(
@@ -107,14 +107,55 @@ export function buildEndpointChanges(
 
   const changes = new Changes();
 
-  deltaBatchCommits.forEach((batchCommit: any) => {
-    batchCommit.requests().results.forEach((request: any) => {
-      changes.captureChange('added', endpointFromRequest(request));
-    });
-
-    batchCommit.responses().results.forEach((response: any) => {
-      changes.captureChange('updated', endpointFromResponse(response));
-    });
+  deltaBatchCommits.forEach((batchCommit: endpoints.BatchCommitNodeWrapper) => {
+    // Only createdIn and removedIn edges pointing to a request is treated as
+    // an added or removed change, everything else is updated.
+    // Bodies, and shape changes are handled below
+    batchCommit
+      .createdInEdgeNodes()
+      .results.forEach((node: endpoints.NodeWrapper) => {
+        if (node.result.type === endpoints.NodeType.Request) {
+          changes.captureChange(
+            'added',
+            endpointFromRequest(node as endpoints.RequestNodeWrapper)
+          );
+        } else if (node.result.type === endpoints.NodeType.Response) {
+          changes.captureChange(
+            'updated',
+            endpointFromResponse(node as endpoints.ResponseNodeWrapper)
+          );
+        }
+      });
+    batchCommit
+      .removedInEdgeNodes()
+      .results.forEach((node: endpoints.NodeWrapper) => {
+        if (node.result.type === endpoints.NodeType.Request) {
+          changes.captureChange(
+            'removed',
+            endpointFromRequest(node as endpoints.RequestNodeWrapper)
+          );
+        } else if (node.result.type === endpoints.NodeType.Response) {
+          changes.captureChange(
+            'updated',
+            endpointFromResponse(node as endpoints.ResponseNodeWrapper)
+          );
+        }
+      });
+    batchCommit
+      .updatedInEdgeNodes()
+      .results.forEach((node: endpoints.NodeWrapper) => {
+        if (node.result.type === endpoints.NodeType.Request) {
+          changes.captureChange(
+            'updated',
+            endpointFromRequest(node as endpoints.RequestNodeWrapper)
+          );
+        } else if (node.result.type === endpoints.NodeType.Response) {
+          changes.captureChange(
+            'updated',
+            endpointFromResponse(node as endpoints.ResponseNodeWrapper)
+          );
+        }
+      });
   });
 
   // Gather batch commit neighbors
@@ -123,12 +164,12 @@ export function buildEndpointChanges(
     const batchCommitId = batchCommit.result.id;
     // TODO: create query for neighbors of all types
     shapeQueries
-      .listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
+      .listIncomingNeighborsByType(batchCommitId, shapes.NodeType.Shape)
       .results.forEach((shape: any) => {
         batchCommitNeighborIds.set(shape.result.id, batchCommitId);
       });
     shapeQueries
-      .listIncomingNeighborsByType(batchCommitId, NodeType.Field)
+      .listIncomingNeighborsByType(batchCommitId, shapes.NodeType.Field)
       .results.forEach((field: any) => {
         batchCommitNeighborIds.set(field.result.id, batchCommitId);
       });
@@ -181,7 +222,10 @@ class Changes {
     this.changes = new Map();
   }
 
-  captureChange(category: string, endpoint: Endpoint): boolean {
+  captureChange(
+    category: 'added' | 'updated' | 'removed',
+    endpoint: Endpoint
+  ): boolean {
     if (this.changes.has(endpoint.endpointId)) return false;
     this.changes.set(endpoint.endpointId, {
       change: { category },
@@ -201,20 +245,22 @@ class Changes {
   }
 }
 
-function endpointFromRequest(request: any): Endpoint {
+function endpointFromRequest(request: endpoints.RequestNodeWrapper): Endpoint {
   let pathNode = request.path();
-  const pathId = pathNode.result.data.pathId;
+  const pathId = pathNode.value.pathId;
   const path = pathNode.absolutePathPatternWithParameterNames;
-  const method = request.result.data.httpMethod;
+  const method = request.value.httpMethod;
   const endpointId = JSON.stringify({ path, method });
   return { endpointId, pathId, path, method };
 }
 
-function endpointFromResponse(response: any): Endpoint {
+function endpointFromResponse(
+  response: endpoints.ResponseNodeWrapper
+): Endpoint {
   let pathNode = response.path();
-  const pathId = pathNode.result.data.pathId;
+  const pathId = pathNode.value.pathId;
   const path = pathNode.absolutePathPatternWithParameterNames;
-  const method = response.result.data.httpMethod;
+  const method = response.value.httpMethod;
   const endpointId = JSON.stringify({ path, method });
   return { endpointId, pathId, path, method };
 }
@@ -228,6 +274,7 @@ export function getShapeChanges(
   const results = {
     added: false,
     changed: false,
+    removed: false,
   };
 
   // TODO: figure out why shapeId is undefined
@@ -258,6 +305,7 @@ export function getFieldChanges(
   const results = {
     added: false,
     changed: false,
+    removed: false,
   };
 
   const deltaBatchCommits = getDeltaBatchCommits(
@@ -303,6 +351,7 @@ export function getArrayChanges(
   const results = {
     added: false,
     changed: false,
+    removed: false,
   };
 
   const deltaBatchCommits = getDeltaBatchCommits(
@@ -350,6 +399,7 @@ function checkForArrayChanges(
 type ChangeResult = {
   added: boolean;
   changed: boolean;
+  removed: boolean;
 };
 
 // TODO: use the endpointQueries one below

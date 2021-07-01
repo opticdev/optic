@@ -1,11 +1,8 @@
 import React, { ReactNode, useContext } from 'react';
 import invariant from 'invariant';
-interface IFeatureFlags {}
 
 interface IAppConfigurations {
   navigation: {
-    showDocs: boolean;
-    showChangelog: boolean;
     showDiff: boolean;
   };
   analytics:
@@ -19,10 +16,18 @@ interface IAppConfigurations {
   documentation: {
     allowDescriptionEditing: boolean;
   };
+  backendApi: {
+    domain?: string;
+  };
+  sharing:
+    | { enabled: false }
+    | {
+        enabled: true;
+        specViewerDomain: string;
+      };
 }
 
 export type OpticAppConfig = {
-  featureFlags: IFeatureFlags;
   config: IAppConfigurations;
 };
 
@@ -41,14 +46,8 @@ export const AppConfigurationStore = (props: {
   );
 };
 
-export function useFeatureFlags() {
-  const value = useContext(AppConfigurationContext);
-  invariant(value, 'useFeatureFlags could not find AppConfigurationContext');
-  return value!.featureFlags;
-}
-
 export function useAppConfig() {
   const value = useContext(AppConfigurationContext);
-  invariant(value, 'useFeatureFlags could not find AppConfigurationContext');
+  invariant(value, 'useAppConfig could not find AppConfigurationContext');
   return value!.config;
 }

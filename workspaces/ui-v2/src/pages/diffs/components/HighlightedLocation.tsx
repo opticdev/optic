@@ -1,6 +1,6 @@
 import React from 'react';
 import { IParsedLocation } from '../../../lib/Interfaces';
-import { OpticBlueReadable, SubtleBlueBackground } from '<src>/constants/theme';
+import { OpticBlueReadable, SubtleBlueBackground } from '<src>/styles';
 //@ts-ignore
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 

@@ -3,7 +3,9 @@ import {
   AddedGreen,
   ChangedYellow,
   ChangedYellowBackground,
-} from '<src>/constants/theme';
+  RemovedRed,
+  RemovedRedBackground,
+} from '<src>/styles';
 
 export const useChangelogStyles = makeStyles(() => ({
   added: {
@@ -13,5 +15,9 @@ export const useChangelogStyles = makeStyles(() => ({
   updated: {
     backgroundColor: ChangedYellowBackground,
     borderLeft: `2px solid ${ChangedYellow}`,
+  },
+  removed: {
+    backgroundColor: RemovedRedBackground,
+    borderLeft: `2px solid ${RemovedRed}`,
   },
 }));

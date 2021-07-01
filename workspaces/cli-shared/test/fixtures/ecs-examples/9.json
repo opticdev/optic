@@ -1,0 +1,41 @@
+{
+  "http": {
+    "response": {
+      "body": {
+        "content": "{\n  \"args\": {}, \n  \"headers\": {\n    \"Accept\": \"*/*\", \n    \"Accept-Encoding\": \"gzip, deflate, br\", \n    \"Host\": \"httpbin.org\", \n    \"Postman-Token\": \"fc6a8ac2-dde1-42bd-b2c7-71fc8981f5b8\", \n    \"User-Agent\": \"PostmanRuntime/7.28.0\", \n    \"X-Amzn-Trace-Id\": \"Root=1-60ccb88e-42167c226f68878718344b64\"\n  }, \n  \"origin\": \"94.194.147.150\", \n  \"url\": \"https://httpbin.org/get\"\n}\n",
+        "bytes": 373
+      },
+      "status_code": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "date": "Fri, 18 Jun 2021 15:15:26 GMT",
+        "content-type": "application/json",
+        "content-length": "373",
+        "connection": "close",
+        "server": "gunicorn/19.9.0",
+        "access-control-allow-origin": "*",
+        "access-control-allow-credentials": "true"
+      }
+    },
+    "request": {
+      "body": { "content": {} },
+      "method": "GET",
+      "headers": {
+        "user-agent": "PostmanRuntime/7.28.0",
+        "accept": "*/*",
+        "postman-token": "fc6a8ac2-dde1-42bd-b2c7-71fc8981f5b8",
+        "host": "localhost:3000",
+        "accept-encoding": "gzip, deflate, br",
+        "connection": "keep-alive"
+      }
+    },
+    "version": "1.1"
+  },
+  "url": {
+    "full": "http://localhost:3000/get",
+    "path": "/get",
+    "domain": "localhost"
+  },
+  "client": { "address": "::1", "ip": "::1", "port": 60877 },
+  "user_agent": { "original": "PostmanRuntime/7.28.0" }
+}

@@ -165,6 +165,10 @@ export function isTestTask(aliasedTask: IOpticTaskAliased): boolean {
   return Boolean(aliasedTask.useTask && aliasedTask.command);
 }
 
+export function isCommandOnlyTask(aliasedTask: IOpticTaskAliased): boolean {
+  return Boolean(aliasedTask.command && Object.keys(aliasedTask).length === 1);
+}
+
 export function isRecommendedTask(aliasedTask: IOpticTaskAliased): boolean {
   return Boolean(
     aliasedTask.command && (aliasedTask.inboundUrl || aliasedTask.baseUrl)
@@ -321,6 +325,7 @@ export async function createFileTree(config: string, basePath: string) {
       path: gitignorePath,
       contents: `
 captures/
+optic-temp-*
 `,
     },
     {

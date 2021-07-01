@@ -1,27 +1,30 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import {
   RouteComponentProps,
   useHistory,
   useRouteMatch,
 } from 'react-router-dom';
-import groupBy from 'lodash.groupby';
 import classNames from 'classnames';
 
+import { CenteredColumn, EndpointName, PageLayout } from '<src>/components';
 import {
-  CenteredColumn,
-  EndpointName,
-  Loading,
-  PageLayout,
-} from '<src>/components';
-import { IEndpoint, useEndpoints } from '<src>/hooks/useEndpointsHook';
-import { Box, List, ListItem, Typography } from '@material-ui/core';
+  Box,
+  List,
+  ListItem,
+  LinearProgress,
+  Typography,
+} from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
+import { useEndpointsChangelog } from '<src>/hooks/useEndpointsChangelog';
+import { selectors, useAppSelector } from '<src>/store';
+import { IEndpointWithChanges } from '<src>/types';
 
 import {
   ChangelogPageAccessoryNavigation,
   ValidateBatchId,
 } from './components';
+import { useGroupedEndpoints } from '<src>/hooks/useGroupedEndpoints';
 
 export const ChangelogListPage: FC<
   RouteComponentProps<{
@@ -41,17 +44,23 @@ export const ChangelogListPage: FC<
 };
 
 export function ChangelogRootPage(props: { changelogBatchId: string }) {
-  const { endpoints, loading } = useEndpoints(props.changelogBatchId);
+  const endpointsState = useAppSelector((state) => state.endpoints.results);
+  const changelog = useEndpointsChangelog(props.changelogBatchId);
+  const filteredAndMappedEndpoints = selectors.filterRemovedEndpointsForChangelogAndMapChanges(
+    endpointsState.data || [],
+    changelog
+  );
   const history = useHistory();
   const match = useRouteMatch();
 
-  const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
-  const tocKeys = Object.keys(grouped).sort();
+  const groupedEndpoints = useGroupedEndpoints(filteredAndMappedEndpoints);
+
+  const tocKeys = Object.keys(groupedEndpoints).sort();
   const changelogStyles = useChangelogStyles();
   const styles = useStyles();
 
-  if (loading) {
-    return <Loading />;
+  if (endpointsState.loading) {
+    return <LinearProgress variant="indeterminate" />;
   }
 
   if (tocKeys.length === 0) {
@@ -84,39 +93,44 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
               >
                 {tocKey}
               </Typography>
-              {grouped[tocKey].map((endpoint: IEndpoint, index: number) => {
-                return (
-                  <ListItem
-                    key={index}
-                    button
-                    disableRipple
-                    disableGutters
-                    style={{ display: 'flex' }}
-                    onClick={() =>
-                      history.push(
-                        `${match.url}/paths/${endpoint.pathId}/methods/${endpoint.method}`
-                      )
-                    }
-                    className={classNames({
-                      [changelogStyles.added]: endpoint.changelog?.added,
-                      [changelogStyles.updated]: endpoint.changelog?.changed,
-                    })}
-                  >
-                    <div style={{ flex: 1 }}>
-                      <EndpointName
-                        method={endpoint.method}
-                        fullPath={endpoint.fullPath}
-                        leftPad={6}
-                      />
-                    </div>
-                    <div style={{ paddingRight: 15 }}>
-                      <Typography className={styles.smallField}>
-                        {endpoint.purpose || 'Unnamed Endpoint'}
-                      </Typography>
-                    </div>
-                  </ListItem>
-                );
-              })}
+              {groupedEndpoints[tocKey].map(
+                (endpoint: IEndpointWithChanges, index: number) => {
+                  return (
+                    <ListItem
+                      key={index}
+                      button
+                      disableRipple
+                      disableGutters
+                      style={{ display: 'flex' }}
+                      onClick={() =>
+                        history.push(
+                          `${match.url}/paths/${endpoint.pathId}/methods/${endpoint.method}`
+                        )
+                      }
+                      className={classNames({
+                        [changelogStyles.added]: endpoint.changes === 'added',
+                        [changelogStyles.updated]:
+                          endpoint.changes === 'updated',
+                        [changelogStyles.removed]:
+                          endpoint.changes === 'removed',
+                      })}
+                    >
+                      <div style={{ flex: 1 }}>
+                        <EndpointName
+                          method={endpoint.method}
+                          fullPath={endpoint.fullPath}
+                          leftPad={6}
+                        />
+                      </div>
+                      <div style={{ paddingRight: 15 }}>
+                        <Typography className={styles.smallField}>
+                          {endpoint.purpose || 'Unnamed Endpoint'}
+                        </Typography>
+                      </div>
+                    </ListItem>
+                  );
+                }
+              )}
             </div>
           );
         })}

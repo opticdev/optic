@@ -12,7 +12,7 @@ import { toCommonJsPath } from '@useoptic/cli-shared/build/diffs/json-trail';
 import CheckIcon from '@material-ui/icons/Check';
 import { ICopy, ICopyRenderSpan } from './ICopyRender';
 import { IChangeType } from '../../../lib/Interfaces';
-import { AddedGreen, secondary, ShapeViewerTheme } from '<src>/constants/theme';
+import { AddedGreen, secondary, ShapeViewerTheme } from '<src>/styles';
 
 /*
 

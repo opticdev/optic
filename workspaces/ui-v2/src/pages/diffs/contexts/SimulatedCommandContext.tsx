@@ -1,9 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
+import { Provider } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
+import { LinearProgress } from '@material-ui/core';
+
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { SpectacleStore } from '<src>/contexts/spectacle-provider';
-import { v4 as uuidv4 } from 'uuid';
-import { useSessionId } from '<src>/hooks/useSessionId';
-import { Loading } from '<src>/components';
+import { createReduxStore, useAppSelector } from '<src>/store';
+import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
 
 type SimulatedCommandStoreProps = {
   spectacle: IForkableSpectacle;
@@ -22,16 +25,19 @@ export const SimulatedCommandContext = React.createContext<SimulatedCommandConte
 export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
   const value = { previewCommands: props.previewCommands };
   const [isProcessing, setIsProcessing] = useState(true);
+  const store = useMemo(() => createReduxStore(), []);
   const [simulated, setSimulated] = useState<IForkableSpectacle | undefined>(
     undefined
   );
-  const clientSessionId = useSessionId();
+  const clientSessionId = useAppSelector(
+    (state) => state.metadata.data?.sessionId!
+  );
   useEffect(() => {
     async function task() {
       const simulated = await props.spectacle.fork();
       await simulated.mutate({
         query: `
-mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
+mutation X($commands: [JSON!]!, $batchCommitId: ID!, $commitMessage: String!, $clientId: ID!, $clientSessionId: ID!) {
   applyCommands(commands: $commands, batchCommitId: $batchCommitId, commitMessage: $commitMessage, clientId: $clientId, clientSessionId: $clientSessionId) {
     batchCommitId
   }
@@ -58,7 +64,7 @@ mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clien
   }, [JSON.stringify(props.previewCommands)]);
 
   if (isProcessing) {
-    return <Loading />;
+    return <LinearProgress variant="indeterminate" />;
   }
 
   const spectacleToUse = simulated ? simulated : props.spectacle;
@@ -66,11 +72,18 @@ mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clien
   return (
     <SimulatedCommandContext.Provider value={value}>
       <SpectacleStore spectacle={spectacleToUse}>
-        {props.children}
+        <Provider store={store}>
+          <DataFetcherComponent>{props.children}</DataFetcherComponent>
+        </Provider>
       </SpectacleStore>
     </SimulatedCommandContext.Provider>
   );
 }
+
+const DataFetcherComponent: FC = ({ children }) => {
+  useFetchEndpoints();
+  return <>{children}</>;
+};
 
 export function useSimulatedCommands() {
   const { previewCommands } = useContext(SimulatedCommandContext);

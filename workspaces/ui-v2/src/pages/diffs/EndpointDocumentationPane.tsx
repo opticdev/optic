@@ -1,23 +1,23 @@
-import React, { FC, ReactNode } from 'react';
-import { useEndpoints, IPathParameter } from '<src>/hooks/useEndpointsHook';
+import React, { FC, ReactNode, useMemo } from 'react';
 import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import {
   EndpointName,
   PathParameters,
   FieldOrParameter,
   FullWidth,
-  Loading,
   IShapeRenderer,
   JsonLike,
 } from '<src>/components';
 import { EndpointTOC } from '<src>/pages/docs/components/EndpointTOC';
 import { CodeBlock } from '<src>/pages/docs/components/BodyRender';
-import { SubtleBlueBackground } from '<src>/constants/theme';
+import { SubtleBlueBackground } from '<src>/styles';
 import { OneColumnBody } from '<src>/pages/docs/components/RenderBody';
 import { IParsedLocation } from '<src>/lib/Interfaces';
 import { HighlightedLocation } from '<src>/pages/diffs/components/HighlightedLocation';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { useDebouncedFn, useStateWithSideEffect } from '<src>/hooks/util';
+import { useAppSelector } from '<src>/store';
+import { IPathParameter } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
 type EndpointDocumentationPaneProps = {
@@ -40,14 +40,16 @@ export const EndpointDocumentationPane: FC<
   renderHeader,
   ...props
 }) => {
-  const { endpoints, loading } = useEndpoints();
-  const bodies = useEndpointBody(pathId, method, lastBatchCommit);
-  const thisEndpoint = endpoints.find(
-    (i) => i.pathId === pathId && i.method === method
+  const endpointsState = useAppSelector((state) => state.endpoints.results);
+  const thisEndpoint = useMemo(
+    () =>
+      endpointsState.data?.find(
+        (i) => i.pathId === pathId && i.method === method
+      ),
+    [endpointsState, method, pathId]
   );
-  if (loading) {
-    return <Loading />;
-  }
+
+  const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   if (!thisEndpoint) {
     return <>no endpoint here</>;

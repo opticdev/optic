@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { IPathParameter } from '<src>/hooks/useEndpointsHook';
+import { IPathParameter } from '<src>/types';
 import { Divider, Typography } from '@material-ui/core';
 
 export type PathParametersProps = {
