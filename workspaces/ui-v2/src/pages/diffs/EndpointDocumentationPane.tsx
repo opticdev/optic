@@ -253,7 +253,7 @@ const DiffPathParamField: FC<{
 
 const useStyles = makeStyles((theme) => ({
   bodyContainer: {
-    margin: `${theme.spacing(3)}px 0`,
+    margin: theme.spacing(3, 0),
   },
   bodyHeader: {
     fontSize: '1.25rem',
@@ -265,6 +265,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   bodyDetails: {
-    padding: `0 ${theme.spacing(1)}px`,
+    padding: theme.spacing(0, 1),
   },
 }));
