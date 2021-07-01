@@ -14,8 +14,7 @@ import {
 } from './SharedDiffState';
 import shortId from 'shortid';
 import { useMachine } from '@xstate/react';
-import { IEndpoint } from '<src>/types';
-import { IRequestBody, IResponseBody } from '<src>/hooks/useEndpointBodyHook';
+import { IEndpoint, IRequestBody, IResponseBody } from '<src>/types';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import {
   AddContribution,

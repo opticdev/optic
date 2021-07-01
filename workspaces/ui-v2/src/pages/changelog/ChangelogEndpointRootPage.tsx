@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 
 import { LinearProgress, Typography } from '@material-ui/core';
@@ -17,7 +17,6 @@ import {
 } from '<src>/components';
 import { useChangelogPages } from '<src>/components/navigation/Routes';
 import { SubtleBlueBackground } from '<src>/styles';
-import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
 import { useEndpointsChangelog } from '<src>/hooks/useEndpointsChangelog';
 import { selectors, useAppSelector } from '<src>/store';
 import { CodeBlock, EndpointTOC, TwoColumn } from '<src>/pages/docs/components';
@@ -51,17 +50,12 @@ const ChangelogRootComponent: FC<
     batchId: string;
   }>
 > = ({ match }) => {
+  const { pathId, method, batchId } = match.params;
   const styles = useStyles();
   const changelogPageLink = useChangelogPages();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
-
-  const { pathId, method, batchId } = match.params;
-  const thisEndpoint = useMemo(
-    () =>
-      endpointsState.data?.find(
-        (i) => i.pathId === pathId && i.method === method
-      ),
-    [endpointsState, method, pathId]
+  const thisEndpoint = useAppSelector(
+    selectors.getEndpoint({ pathId, method })
   );
   const changelog = useEndpointsChangelog(batchId);
   const endpointWithChanges = selectors.filterRemovedEndpointsForChangelogAndMapChanges(
@@ -74,8 +68,6 @@ const ChangelogRootComponent: FC<
   const isEndpointRemovedInThisBatch =
     endpointWithChanges.length > 0 &&
     endpointWithChanges[0].changes === 'removed';
-
-  const bodies = useEndpointBody(pathId, method, batchId);
 
   if (endpointsState.loading) {
     return <LinearProgress variant="indeterminate" />;
@@ -159,28 +151,25 @@ const ChangelogRootComponent: FC<
                 }}
               >
                 <EndpointTOC
-                  requests={bodies.requests}
-                  responses={bodies.responses}
+                  requests={thisEndpoint.requestBodies}
+                  responses={thisEndpoint.responseBodies}
                 />
               </div>
             </CodeBlock>
           }
         />
 
-        {bodies.requests.map((i, index) => {
-          return (
-            <TwoColumnBodyChangelog
-              key={i.rootShapeId}
-              changesSinceBatchCommitId={batchId}
-              rootShapeId={i.rootShapeId}
-              bodyId={i.requestId}
-              location={'Request Body'}
-              contentType={i.contentType}
-              description={i.description}
-            />
-          );
-        })}
-        {bodies.responses.map((i, index) => {
+        {thisEndpoint.requestBodies.map((requestBody) => (
+          <TwoColumnBodyChangelog
+            changesSinceBatchCommitId={batchId}
+            rootShapeId={requestBody.rootShapeId}
+            bodyId={requestBody.requestId}
+            location={'Request Body'}
+            contentType={requestBody.contentType}
+            description={requestBody.description}
+          />
+        ))}
+        {thisEndpoint.responseBodies.map((i, index) => {
           return (
             <TwoColumnBodyChangelog
               key={i.rootShapeId}

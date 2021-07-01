@@ -1,9 +1,11 @@
-import { IEndpoint, IEndpointWithChanges } from '<src>/types';
 import {
   EndpointChangelog,
   ChangelogCategory,
 } from '<src>/hooks/useEndpointsChangelog';
+import { IEndpoint, IEndpointWithChanges } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
+
+import { RootState } from '../root';
 
 export const filterRemovedEndpoints = (endpoints: IEndpoint[]): IEndpoint[] =>
   endpoints.filter((endpoint) => !endpoint.isRemoved);
@@ -46,4 +48,18 @@ export const filterRemovedEndpointsForChangelogAndMapChanges = (
   }));
 
   return endpointsWithChanges;
+};
+
+export const getEndpoint = ({
+  pathId,
+  method,
+}: {
+  pathId: string;
+  method: string;
+}) => (state: RootState) => {
+  const endpointId = getEndpointId({ pathId, method });
+
+  return state.endpoints.results.data?.find(
+    (endpoint) => getEndpointId(endpoint) === endpointId
+  );
 };

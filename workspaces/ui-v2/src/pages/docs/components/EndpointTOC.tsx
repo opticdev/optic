@@ -3,7 +3,7 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { getReasonPhrase } from 'http-status-codes';
 import { List, ListItem, Typography } from '@material-ui/core';
 import { SubtleGreyBackground } from '<src>/styles';
-import { IRequestBody, IResponseBody } from '<src>/hooks/useEndpointBodyHook';
+import { IRequestBody, IResponseBody } from '<src>/types';
 import { goToAnchor } from '<src>/utils';
 
 export type EndpointTOCProps = {
@@ -34,20 +34,18 @@ export function EndpointTOC(props: EndpointTOCProps) {
         <Typography className={classes.none}>No bodies documented.</Typography>
       ) : null}
 
-      {props.requests.map((body, index) => {
-        return (
-          <EndpointTOCRow
-            key={index}
-            label={'Request Body'}
-            anchorLink={body.requestId}
-            detail={
-              <>
-                consumes <Code value={body.contentType} />
-              </>
-            }
-          />
-        );
-      })}
+      {props.requests.map((request) => (
+        <EndpointTOCRow
+          key={request.requestId}
+          label={'Request Body'}
+          anchorLink={request.requestId}
+          detail={
+            <>
+              consumes <Code value={request.contentType} />
+            </>
+          }
+        />
+      ))}
 
       {props.responses.map((body, index) => {
         return (
