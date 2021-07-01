@@ -444,6 +444,19 @@ impl EndpointProjection {
     }
   }
 
+  pub fn get_query_params_node_index(
+    &self,
+    query_params_id: &QueryParametersId,
+  ) -> Option<&NodeIndex> {
+    let node_index = self.node_id_to_index.get(query_params_id)?;
+    let node = self.graph.node_weight(*node_index)?;
+    if let &Node::QueryParameters(_, _) = node {
+      Some(node_index)
+    } else {
+      None
+    }
+  }
+
   pub fn get_request_node_index(&self, request_id: &RequestId) -> Option<&NodeIndex> {
     let node_index = self.node_id_to_index.get(request_id)?;
     let node = self.graph.node_weight(*node_index)?;

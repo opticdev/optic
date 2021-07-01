@@ -382,13 +382,13 @@ impl Event for PathParameterRemoved {
 
 impl Event for QueryParametersAdded {
   fn event_type(&self) -> &'static str {
-    "RequestQueryParametersShapeSet"
+    "QueryParametersAdded"
   }
 }
 
 impl Event for QueryParametersShapeSet {
   fn event_type(&self) -> &'static str {
-    "RequestQueryParametersShapeSet"
+    "QueryParametersShapeSet"
   }
 }
 
@@ -530,6 +530,18 @@ impl From<PathParameterRemoved> for EndpointEvent {
   }
 }
 
+impl From<QueryParametersAdded> for EndpointEvent {
+  fn from(event: QueryParametersAdded) -> Self {
+    Self::QueryParametersAdded(event)
+  }
+}
+
+impl From<QueryParametersShapeSet> for EndpointEvent {
+  fn from(event: QueryParametersShapeSet) -> Self {
+    Self::QueryParametersShapeSet(event)
+  }
+}
+
 impl From<RequestAdded> for EndpointEvent {
   fn from(event: RequestAdded) -> Self {
     Self::RequestAdded(event)
@@ -539,12 +551,6 @@ impl From<RequestAdded> for EndpointEvent {
 impl From<RequestBodySet> for EndpointEvent {
   fn from(event: RequestBodySet) -> Self {
     Self::RequestBodySet(event)
-  }
-}
-
-impl From<QueryParametersShapeSet> for EndpointEvent {
-  fn from(event: QueryParametersShapeSet) -> Self {
-    Self::QueryParametersShapeSet(event)
   }
 }
 
@@ -599,13 +605,16 @@ impl From<EndpointCommand> for EndpointEvent {
       EndpointCommand::RemovePathParameter(command) => {
         EndpointEvent::from(PathParameterRemoved::from(command))
       }
+      EndpointCommand::AddQueryParameters(command) => {
+        EndpointEvent::from(QueryParametersAdded::from(command))
+      }
+      EndpointCommand::SetQueryParametersShape(command) => {
+        EndpointEvent::from(QueryParametersShapeSet::from(command))
+      }
       EndpointCommand::AddRequest(command) => EndpointEvent::from(RequestAdded::from(command)),
       EndpointCommand::SetRequestBodyShape(command) => {
         EndpointEvent::from(RequestBodySet::from(command))
       }
-      // EndpointCommand::SetQueryParametersShape(command) => {
-      //   EndpointEvent::from(RequestQueryParametersShapeSet::from(command))
-      // }
       EndpointCommand::RemoveRequest(command) => EndpointEvent::from(RequestRemoved::from(command)),
       EndpointCommand::AddResponseByPathAndMethod(command) => {
         EndpointEvent::from(ResponseAddedByPathAndMethod::from(command))
@@ -695,6 +704,27 @@ impl From<endpoint_commands::RemovePathParameter> for PathParameterRemoved {
   }
 }
 
+impl From<endpoint_commands::AddQueryParameters> for QueryParametersAdded {
+  fn from(command: endpoint_commands::AddQueryParameters) -> Self {
+    Self {
+      http_method: command.http_method,
+      path_id: command.path_id,
+      query_parameters_id: command.query_parameters_id,
+      event_context: None,
+    }
+  }
+}
+
+impl From<endpoint_commands::SetQueryParametersShape> for QueryParametersShapeSet {
+  fn from(command: endpoint_commands::SetQueryParametersShape) -> Self {
+    Self {
+      query_parameters_id: command.query_parameters_id,
+      shape_descriptor: command.shape_descriptor,
+      event_context: None,
+    }
+  }
+}
+
 impl From<endpoint_commands::AddRequest> for RequestAdded {
   fn from(command: endpoint_commands::AddRequest) -> Self {
     Self {
@@ -715,16 +745,6 @@ impl From<endpoint_commands::SetRequestBodyShape> for RequestBodySet {
     }
   }
 }
-
-// impl From<endpoint_commands::SetQueryParametersShape> for RequestQueryParametersShapeSet {
-//   fn from(command: endpoint_commands::SetQueryParametersShape) -> Self {
-//     Self {
-//       request_id: command.request_id,
-//       shape_descriptor: command.shape_descriptor,
-//       event_context: None,
-//     }
-//   }
-// }
 
 impl From<endpoint_commands::RemoveRequest> for RequestRemoved {
   fn from(command: endpoint_commands::RemoveRequest) -> Self {
