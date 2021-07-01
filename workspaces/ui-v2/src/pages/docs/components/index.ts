@@ -1,4 +1,3 @@
-export * from './ContributionGroup';
 export * from './Contributions';
 export * from './DeleteEndpointConfirmationModal';
 export * from './DocPageNavigation';
