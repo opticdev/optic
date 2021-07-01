@@ -422,12 +422,6 @@ mod test {
 
     dbg!(query_param_commands);
 
-    // TODO: remove snapshot
-    // assert_debug_snapshot!(
-    //   "undocumented_bodies_generates_commands_for_request_query_parameters__request_commands",
-    //   &request_commands
-    // );
-
     let base_spec = SpecProjection::default();
     // assert_valid_commands(base_spec, query_param_commands);
   }
@@ -456,12 +450,6 @@ mod test {
       .into_endpoint_bodies(&mut test_id_generator)
       .collect::<Vec<_>>();
     assert_eq!(endpoint_bodies.len(), 1);
-
-    // TODO: remove snapshot
-    // assert_debug_snapshot!(
-    //   "undocumented_bodies_can_generate_commands_for_request_with_empty_query_parameters__request_commands",
-    //   &request_commands
-    // );
 
     let endpoint_body = endpoint_bodies.remove(0);
     let query_param_commands = endpoint_body
