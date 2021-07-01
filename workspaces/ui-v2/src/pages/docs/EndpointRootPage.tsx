@@ -11,9 +11,12 @@ import {
   JsonLike,
   PageLayout,
   FullWidth,
+  ContributionsList,
+  QueryParametersPanel,
+  convertShapeToQueryParameters,
 } from '<src>/components';
 import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
-import { SubtleBlueBackground } from '<src>/styles';
+import { FontFamily, SubtleBlueBackground } from '<src>/styles';
 import {
   useAppSelector,
   useAppDispatch,
@@ -32,6 +35,8 @@ import {
   MarkdownBodyContribution,
   TwoColumn,
   DeleteEndpointConfirmationModal,
+  ContributionFetcher,
+  ShapeFetcher,
 } from '<src>/pages/docs/components';
 
 export const EndpointRootPageWithDocsNav: FC<
@@ -229,6 +234,7 @@ export const EndpointRootPage: FC<
                 }}
               >
                 <EndpointTOC
+                  query={thisEndpoint.query}
                   requests={thisEndpoint.requestBodies}
                   responses={thisEndpoint.responseBodies}
                 />
@@ -236,6 +242,58 @@ export const EndpointRootPage: FC<
             </CodeBlock>
           }
         />
+        {thisEndpoint.query && (
+          <div className={classes.bodyContainer} id="query-parameters">
+            <div className={classes.bodyHeaderContainer}>
+              <h6 className={classes.bodyHeader}>Query Parameters</h6>
+              {/* TODO QPB - change id from this to query id from spectacle */}
+              <MarkdownBodyContribution
+                id={'QUERY TODO'}
+                contributionKey={'description'}
+                defaultText={'Add a description'}
+                initialValue={'TODO'}
+                endpoint={thisEndpoint}
+              />
+            </div>
+            <div className={classes.bodyDetails}>
+              <div>
+                <ContributionFetcher
+                  rootShapeId={thisEndpoint.query.rootShapeId}
+                  endpointId={endpointId}
+                >
+                  {(contributions) => (
+                    <ContributionsList
+                      ContributionComponent={(contribution) => (
+                        <DocsFieldOrParameterContribution
+                          key={contribution.id}
+                          endpoint={{
+                            pathId,
+                            method,
+                          }}
+                          id={contribution.id}
+                          name={contribution.name}
+                          shapes={contribution.shapes}
+                          depth={contribution.depth}
+                          initialValue={contribution.value}
+                        />
+                      )}
+                      contributions={contributions}
+                    />
+                  )}
+                </ContributionFetcher>
+              </div>
+              <div>
+                <ShapeFetcher rootShapeId={thisEndpoint.query.rootShapeId}>
+                  {(shapes) => (
+                    <QueryParametersPanel
+                      parameters={convertShapeToQueryParameters(shapes)}
+                    />
+                  )}
+                </ShapeFetcher>
+              </div>
+            </div>
+          </div>
+        )}
         {thisEndpoint.requestBodies.map((requestBody) => (
           <TwoColumnBodyEditable
             key={requestBody.rootShapeId}
@@ -280,10 +338,33 @@ const useStyles = makeStyles((theme) => ({
     padding: '16px 0',
   },
   icon: {
-    paddingLeft: 8,
+    paddingLeft: theme.spacing(1),
   },
   deleteInfoHeader: {
     justifyContent: 'center',
     display: 'fixed',
+  },
+  bodyContainer: {
+    marginTop: theme.spacing(6),
+    width: '100%',
+  },
+  bodyHeaderContainer: {
+    marginBottom: theme.spacing(2),
+  },
+  bodyHeader: {
+    fontSize: '1.25rem',
+    fontFamily: FontFamily,
+    fontWeight: 500,
+    lineHeight: 1.6,
+    letterSpacing: '0.0075em',
+    margin: theme.spacing(3, 0),
+  },
+  bodyDetails: {
+    display: 'flex',
+    width: '100%',
+    '& > div': {
+      width: '50%',
+      padding: theme.spacing(0, 1),
+    },
   },
 }));

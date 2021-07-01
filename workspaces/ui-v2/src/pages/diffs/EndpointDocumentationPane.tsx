@@ -93,12 +93,15 @@ export const EndpointDocumentationPane: FC<
           }}
         >
           <EndpointTOC
+            query={thisEndpoint.query}
             requests={thisEndpoint.requestBodies}
             responses={thisEndpoint.responseBodies}
           />
         </div>
       </CodeBlock>
       <div style={{ height: 50 }} />
+      {/* TODO QPB implement query renderer */}
+
       {thisEndpoint.requestBodies.map((requestBody) => (
         <React.Fragment key={requestBody.requestId}>
           <HighlightedLocation

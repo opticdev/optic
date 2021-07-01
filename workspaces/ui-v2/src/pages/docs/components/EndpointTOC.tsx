@@ -3,10 +3,11 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { getReasonPhrase } from 'http-status-codes';
 import { List, ListItem, Typography } from '@material-ui/core';
 import { SubtleGreyBackground } from '<src>/styles';
-import { IRequestBody, IResponseBody } from '<src>/types';
+import { IQueryParameters, IRequestBody, IResponseBody } from '<src>/types';
 import { goToAnchor } from '<src>/utils';
 
 export type EndpointTOCProps = {
+  query: IQueryParameters | null;
   requests: IRequestBody[];
   responses: IResponseBody[];
 };
@@ -30,9 +31,19 @@ export function EndpointTOC(props: EndpointTOCProps) {
 
   return (
     <List dense>
-      {props.requests.length === 0 && props.responses.length === 0 ? (
+      {props.query === null &&
+      props.requests.length === 0 &&
+      props.responses.length === 0 ? (
         <Typography className={classes.none}>No bodies documented.</Typography>
       ) : null}
+
+      {props.query && (
+        <EndpointTOCRow
+          label={'Query Parameters'}
+          anchorLink="query-parameters"
+          detail={<>consumes query string</>}
+        />
+      )}
 
       {props.requests.map((request) => (
         <EndpointTOCRow

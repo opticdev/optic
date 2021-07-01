@@ -151,6 +151,7 @@ const ChangelogRootComponent: FC<
                 }}
               >
                 <EndpointTOC
+                  query={thisEndpoint.query}
                   requests={thisEndpoint.requestBodies}
                   responses={thisEndpoint.responseBodies}
                 />
@@ -158,6 +159,8 @@ const ChangelogRootComponent: FC<
             </CodeBlock>
           }
         />
+
+        {/* TODO QPB implement query renderer */}
 
         {thisEndpoint.requestBodies.map((requestBody) => (
           <TwoColumnBodyChangelog
