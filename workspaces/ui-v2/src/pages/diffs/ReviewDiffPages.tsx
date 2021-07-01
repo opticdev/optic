@@ -35,7 +35,8 @@ export function DiffReviewPages(props: any) {
   useFetchEndpoints();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
   const filteredEndpoints = useMemo(
-    () => selectors.filterRemovedEndpoints(endpointsState.data || []),
+    () =>
+      selectors.filterRemovedEndpoints(endpointsState.data?.endpoints || []),
     [endpointsState.data]
   );
   const allRequests = useMemo(

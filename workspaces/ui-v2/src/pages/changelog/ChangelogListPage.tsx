@@ -47,7 +47,7 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
   const endpointsState = useAppSelector((state) => state.endpoints.results);
   const changelog = useEndpointsChangelog(props.changelogBatchId);
   const filteredAndMappedEndpoints = selectors.filterRemovedEndpointsForChangelogAndMapChanges(
-    endpointsState.data || [],
+    endpointsState.data?.endpoints || [],
     changelog
   );
   const history = useHistory();

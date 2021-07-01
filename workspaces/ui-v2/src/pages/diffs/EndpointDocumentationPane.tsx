@@ -24,7 +24,6 @@ import {
   Location,
 } from '<src>/pages/diffs/components/HighlightedLocation';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
-import { useEndpointsBodyChanges } from '<src>/hooks/useEndpointsBodyChanges';
 import { useDebouncedFn, useStateWithSideEffect } from '<src>/hooks/util';
 import { selectors, useAppSelector } from '<src>/store';
 import { IPathParameter } from '<src>/types';
@@ -54,7 +53,9 @@ export const EndpointDocumentationPane: FC<
   const thisEndpoint = useAppSelector(
     selectors.getEndpoint({ pathId, method })
   );
-  const endpointBodyChanges = useEndpointsBodyChanges(lastBatchCommit);
+  const endpointBodyChanges = useAppSelector(
+    (state) => state.endpoints.results.data?.changes || {}
+  );
 
   if (!thisEndpoint) {
     return <>no endpoint here</>;
@@ -119,6 +120,7 @@ export const EndpointDocumentationPane: FC<
         >
           {/* TODO QPB - change id from this to query id from spectacle */}
           <div id="query-parameters">
+            {/* TODO QPB add changelogBG to this panel */}
             <h6 className={classes.bodyHeader}>Query Parameters</h6>
             <div className={classes.bodyDetails}>
               <ShapeFetcher

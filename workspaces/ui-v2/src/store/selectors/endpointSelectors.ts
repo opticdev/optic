@@ -59,7 +59,7 @@ export const getEndpoint = ({
 }) => (state: RootState) => {
   const endpointId = getEndpointId({ pathId, method });
 
-  return state.endpoints.results.data?.find(
+  return state.endpoints.results.data?.endpoints.find(
     (endpoint) => getEndpointId(endpoint) === endpointId
   );
 };
