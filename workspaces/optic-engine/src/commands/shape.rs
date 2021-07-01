@@ -181,6 +181,15 @@ impl AggregateCommand<ShapeProjection> for EndpointCommand {
         vec![] // validation only
       }
 
+      EndpointCommand::SetQueryParametersShape(command) => {
+        validation.require(
+          validation.shape_id_exists(&command.shape_descriptor.shape_id),
+          "shape must exist to set the query parameters shape",
+        )?;
+
+        vec![] // validation only
+      }
+
       EndpointCommand::SetRequestBodyShape(command) => {
         validation.require(
           validation.shape_id_exists(&command.body_descriptor.shape_id),

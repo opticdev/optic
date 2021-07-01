@@ -565,16 +565,14 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
       }
 
       EndpointCommand::SetQueryParametersShape(command) => {
-        // validation.require(
-        //   validation.query_parameters_exists(&command.query_parameters_id),
-        //   "query parameters must exist to set query parameters shape",
-        // )?;
+        validation.require(
+          validation.query_parameters_id_exists(&command.query_parameters_id),
+          "query parameters must exist to set query parameteres shape",
+        )?;
 
-        // vec![EndpointEvent::from(
-        //   endpoint_events::RequestQueryParametersShapeSet::from(command),
-        // )]
-
-        todo!()
+        vec![EndpointEvent::from(
+          endpoint_events::QueryParametersShapeSet::from(command),
+        )]
       }
 
       // Requests
@@ -1187,6 +1185,46 @@ mod test {
     assert_debug_snapshot!(
       "can_handle_add_query_parameters_command__existing_params_result",
       existing_params_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
+  pub fn can_handle_set_query_parameters_shape_command() {
+    let initial_events: Vec<EndpointEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+      {"QueryParametersAdded": {"queryParametersId": "query_parameters_1", "pathId": "path_1", "httpMethod": "GET"}}
+    ]))
+    .expect("initial events should be valid endpoint events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let valid_command: EndpointCommand = serde_json::from_value(json!(
+      {"SetQueryParametersShape": {"queryParametersId": "query_parameters_1", "shapeDescriptor": { "shapeId": "shape_1", "isRemoved": false }}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!(
+      "can_handle_set_query_parameters_shape_command__new_events",
+      new_events
+    );
+
+    let unexisting_query_params: EndpointCommand = serde_json::from_value(json!(
+      {"SetQueryParametersShape": {"queryParametersId": "not-query-parameters", "shapeDescriptor": { "shapeId": "shape_1", "isRemoved": false }}}
+    ))
+    .unwrap();
+    let unexisting_query_params_result = projection.execute(unexisting_query_params);
+    assert!(unexisting_query_params_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_query_parameters_shape_command__unexisting_query_params_result",
+      unexisting_query_params_result.unwrap_err()
     );
 
     for event in new_events {
