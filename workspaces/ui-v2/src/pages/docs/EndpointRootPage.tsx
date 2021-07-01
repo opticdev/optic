@@ -243,15 +243,17 @@ export const EndpointRootPage: FC<
           }
         />
         {thisEndpoint.query && (
-          <div className={classes.bodyContainer} id="query-parameters">
+          <div
+            className={classes.bodyContainer}
+            id={thisEndpoint.query.queryParametersId}
+          >
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Query Parameters</h6>
-              {/* TODO QPB - change id from this to query id from spectacle */}
               <MarkdownBodyContribution
-                id={'QUERY TODO'}
+                id={thisEndpoint.query.queryParametersId}
                 contributionKey={'description'}
                 defaultText={'Add a description'}
-                initialValue={'TODO'}
+                initialValue={thisEndpoint.query.description}
                 endpoint={thisEndpoint}
               />
             </div>

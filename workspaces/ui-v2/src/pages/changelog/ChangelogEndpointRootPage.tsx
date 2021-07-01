@@ -167,11 +167,16 @@ const ChangelogRootComponent: FC<
         />
 
         {thisEndpoint.query && (
-          <div className={classes.bodyContainer} id="query-parameters">
+          <div
+            className={classes.bodyContainer}
+            id={thisEndpoint.query.queryParametersId}
+          >
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Query Parameters</h6>
-              {/* TODO QPB - change id from this to query id from spectacle */}
-              <ReactMarkdown className={classes.contents} source={'TODO'} />
+              <ReactMarkdown
+                className={classes.contents}
+                source={thisEndpoint.query.description}
+              />
             </div>
             <div className={classes.bodyDetails}>
               <div>

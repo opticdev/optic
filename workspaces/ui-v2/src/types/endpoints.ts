@@ -27,8 +27,10 @@ export interface IEndpointWithChanges extends IEndpoint {
 }
 
 export interface IQueryParameters {
+  queryParametersId: string;
   rootShapeId: string;
   isRemoved: boolean;
+  description: string;
 }
 
 export interface IRequestBody {
