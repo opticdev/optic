@@ -1,5 +1,4 @@
-import { ChangelogCategory } from '<src>/hooks/useEndpointsChangelog';
-import { IChanges } from '<src>/pages/changelog/IChanges';
+import { ChangeType } from './changes';
 
 export interface IPathParameter {
   id: string;
@@ -23,7 +22,7 @@ export interface IEndpoint {
 }
 
 export interface IEndpointWithChanges extends IEndpoint {
-  changes: ChangelogCategory | null;
+  changes: ChangeType | null;
 }
 
 export interface IQueryParameters {

@@ -27,7 +27,8 @@ export async function makeCurrentSpecContext(
       })
     ).data || {
       requests: [],
-    }
+    },
+    null
   );
   const { paths } = (
     await query<PathQueryResponse>({

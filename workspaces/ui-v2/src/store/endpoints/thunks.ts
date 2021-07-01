@@ -3,8 +3,8 @@ import * as Sentry from '@sentry/react';
 
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { ChangeType, IEndpoint } from '<src>/types';
+import { getEndpointId } from '<src>/utils';
 
-// All endpoints
 export const AllEndpointsQuery = `{
   requests {
     id
@@ -86,6 +86,32 @@ query X($sinceBatchCommitId: String) {
   }
 }`;
 
+export const EndpointChangeQuery = `query X($sinceBatchCommitId: String) {
+  endpointChanges(sinceBatchCommitId: $sinceBatchCommitId) {
+    endpoints {
+      change {
+        category
+      }
+      pathId
+      method
+    }
+  }
+}`;
+
+type EndpointChangelog = {
+  change: {
+    category: ChangeType;
+  };
+  pathId: string;
+  method: string;
+};
+
+type EndpointChangeQueryResults = {
+  endpointChanges: {
+    endpoints: EndpointChangelog[];
+  };
+};
+
 type HttpBody = {
   contentType: string;
   rootShapeId: string;
@@ -132,9 +158,10 @@ const mapChangeToChangeType = (changes: ChangesResponse): ChangeType | null => {
   return changes.added ? 'added' : changes.changed ? 'updated' : null;
 };
 
-export const endpointQueryResultsToJson = ({
-  requests,
-}: EndpointQueryResults): {
+export const endpointQueryResultsToJson = (
+  { requests }: EndpointQueryResults,
+  endpointChanges: EndpointChangeQueryResults | null
+): {
   endpoints: IEndpoint[];
   changes: Record<string, ChangeType>;
 } => {
@@ -193,6 +220,15 @@ export const endpointQueryResultsToJson = ({
     };
   });
 
+  if (endpointChanges) {
+    endpointChanges.endpointChanges.endpoints.forEach(
+      ({ pathId, method, change }) => {
+        const endpointId = getEndpointId({ pathId, method });
+        changes[endpointId] = change.category;
+      }
+    );
+  }
+
   return { endpoints, changes };
 };
 
@@ -201,7 +237,7 @@ export const fetchEndpoints = createAsyncThunk<
   { spectacle: IForkableSpectacle; sinceBatchCommitId?: string }
 >('FETCH_ENDPOINTS', async ({ spectacle, sinceBatchCommitId }) => {
   try {
-    const results = await spectacle.query<
+    const resultsPromise = spectacle.query<
       EndpointQueryResults,
       {
         sinceBatchCommitId?: string;
@@ -212,11 +248,36 @@ export const fetchEndpoints = createAsyncThunk<
         : AllEndpointsQuery,
       variables: { sinceBatchCommitId },
     });
+
+    const endpointChangesPromise = sinceBatchCommitId
+      ? spectacle.query<
+          EndpointChangeQueryResults,
+          {
+            sinceBatchCommitId?: string;
+          }
+        >({
+          query: EndpointChangeQuery,
+          variables: { sinceBatchCommitId },
+        })
+      : Promise.resolve(null);
+
+    const [results, endpointChanges] = await Promise.all([
+      resultsPromise,
+      endpointChangesPromise,
+    ]);
+
     if (results.errors) {
       console.error(results.errors);
       throw new Error(JSON.stringify(results.errors));
     }
-    return endpointQueryResultsToJson(results.data!);
+    if (endpointChanges && endpointChanges.errors) {
+      console.error(endpointChanges.errors);
+      throw new Error(JSON.stringify(endpointChanges.errors));
+    }
+    return endpointQueryResultsToJson(
+      results.data!,
+      endpointChanges?.data || null
+    );
   } catch (e) {
     console.error(e);
     Sentry.captureException(e);
