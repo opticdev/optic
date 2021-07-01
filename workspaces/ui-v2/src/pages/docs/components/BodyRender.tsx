@@ -1,46 +1,7 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { IShapeRenderer, ShapeRenderer } from '<src>/components';
 
-export type BodyRenderProps = {
-  shape: IShapeRenderer[];
-  location: string;
-  style: any;
-};
-
-export function BodyRender(props: BodyRenderProps) {
-  const classes = useStyles();
-  const [showExample] = useState('example');
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (contentRef && contentRef.current) {
-      contentRef.current.scrollTop = 0;
-    }
-  }, [showExample]);
-
-  return (
-    <div className={classes.wrapper} style={props.style}>
-      <div className={classes.header}>
-        <div>{props.location}</div>
-        <div style={{ flex: 1 }} />
-        {/*<ChoiceTabs*/}
-        {/*  value={showExample}*/}
-        {/*  setValue={setValue}*/}
-        {/*  choices={[{ label: 'shape', id: 'shape' }]}*/}
-        {/*/>*/}
-      </div>
-      <div className={classes.content} ref={contentRef}>
-        <ShapeRenderer
-          showExamples={showExample === 'example'}
-          shape={props.shape}
-        />
-      </div>
-    </div>
-  );
-}
-
+// TODO QPB - create path parameter panel and delete this component
 export type CodeBlockProps = {
   header?: any;
   children: any;
