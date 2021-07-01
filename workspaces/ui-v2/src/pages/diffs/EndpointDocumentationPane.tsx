@@ -12,9 +12,9 @@ import {
   QueryParametersPanel,
   HttpBodyPanel,
   convertShapeToQueryParameters,
+  Panel,
 } from '<src>/components';
 import { EndpointTOC } from '<src>/pages/docs/components/EndpointTOC';
-import { CodeBlock } from '<src>/pages/docs/components/BodyRender';
 import { SubtleBlueBackground, FontFamily } from '<src>/styles';
 import { ChangeLogBG } from '<src>/pages/changelog/components/ChangeLogBG';
 
@@ -74,7 +74,7 @@ export const EndpointDocumentationPane: FC<
     >
       {renderHeader()}
       <div style={{ height: 20 }} />
-      <CodeBlock
+      <Panel
         header={
           <EndpointName
             fontSize={14}
@@ -109,7 +109,7 @@ export const EndpointDocumentationPane: FC<
             responses={thisEndpoint.responseBodies}
           />
         </div>
-      </CodeBlock>
+      </Panel>
 
       {thisEndpoint.query && (
         <HighlightedLocation
