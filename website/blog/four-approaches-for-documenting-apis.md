@@ -1,5 +1,5 @@
 ---
-date: "06/09/2021"
+date: "07/01/2021"
 title: "Four Approaches for Documenting APIs"
 author: Deborah Ruck
 author_url: "https://deborahruck.com/"
@@ -103,7 +103,7 @@ OpenAPI is an API description format for REST APIs that has become an industry s
 
 Using Optic, you can publish your API documentation to a shared website, making it accessible by your entire team. The team can then search documentation, ask questions, see changelogs, and receive change notifications for specific APIs. Optic can manage your documentation process regardless of whether you are using a local or cloud environment. 
 
-![Optic supports design-first and code-first workflows](https://i.imgur.com/AIV6HXO.png)
+![Optic supports design-first and code-first workflows](/img/blog-content/optic-supports-design-first-and-code-first-workflows.png)
 
 ### Pros
 
