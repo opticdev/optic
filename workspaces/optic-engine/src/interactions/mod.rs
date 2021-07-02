@@ -95,30 +95,27 @@ pub fn analyze_undocumented_bodies<'a>(
   let include_query_params = config.include_query_params;
 
   results.into_iter().flat_map(move |result| match result {
-    InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
-      let body = &interaction.request.body;
-      let body_trail_observations = observe_body_trails(&body.value);
-
-      let mut results = vec![BodyAnalysisResult {
-        body_location: BodyAnalysisLocation::from(diff.clone()),
-        trail_observations: body_trail_observations,
-      }];
-
-      // @TODO: move the QueryParams own InteractionDiffResult variant, as we only
-      // record one set of query parameters for the entire endpoint, not for every
-      // content type we see. That makes that his breaks for endpoints which support
-      // multiple content type for request bodies
+    InteractionDiffResult::UnmatchedQueryParameters(diff) => {
       if include_query_params {
         let query_params = &interaction.request.query;
         let query_trail_observations = observe_body_trails(query_params);
 
-        results.push(BodyAnalysisResult {
+        vec![BodyAnalysisResult {
           body_location: BodyAnalysisLocation::from(diff).into_query_params(),
           trail_observations: query_trail_observations,
-        })
+        }]
+      } else {
+        vec![]
       }
+    }
+    InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
+      let body = &interaction.request.body;
+      let body_trail_observations = observe_body_trails(&body.value);
 
-      results
+      vec![BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::from(diff.clone()),
+        trail_observations: body_trail_observations,
+      }]
     }
     InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => {
       let body = &interaction.response.body;

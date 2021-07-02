@@ -40,9 +40,7 @@ impl LearnedUndocumentedBodiesProjection {
         BodyAnalysisLocation::UnmatchedRequest {
           path_id, method, ..
         } => (path_id, method),
-        BodyAnalysisLocation::UnmatchedRequestQueryParameters { path_id, method } => {
-          (path_id, method)
-        }
+        BodyAnalysisLocation::UnmatchedQueryParameters { path_id, method } => (path_id, method),
         BodyAnalysisLocation::UnmatchedResponse {
           path_id, method, ..
         } => (path_id, method),
@@ -219,7 +217,7 @@ impl EndpointBody {
           query_parameters_shape_id: None,
         })
       }
-      BodyAnalysisLocation::UnmatchedRequestQueryParameters { path_id, method } => {
+      BodyAnalysisLocation::UnmatchedQueryParameters { path_id, method } => {
         EndpointBody::QueryParameters(EndpointQueryParameters {
           path_id: path_id.clone(),
           method: method.clone(),
@@ -395,7 +393,7 @@ mod test {
 
     let analysis_results = vec![BodyAnalysisResult {
       // query params matching the preceding request
-      body_location: BodyAnalysisLocation::UnmatchedRequestQueryParameters {
+      body_location: BodyAnalysisLocation::UnmatchedQueryParameters {
         path_id: String::from(test_path),
         method: String::from(test_method),
       },
@@ -432,7 +430,7 @@ mod test {
     let test_method = "GET";
 
     let analysis_results = vec![BodyAnalysisResult {
-      body_location: BodyAnalysisLocation::UnmatchedRequestQueryParameters {
+      body_location: BodyAnalysisLocation::UnmatchedQueryParameters {
         path_id: String::from(test_path),
         method: String::from(test_method),
       },
