@@ -23,7 +23,6 @@ import {
 } from '<src>/components';
 import { useChangelogPages } from '<src>/components/navigation/Routes';
 import { SubtleBlueBackground, FontFamily } from '<src>/styles';
-import { useEndpointsChangelog } from '<src>/hooks/useEndpointsChangelog';
 import { selectors, useAppSelector } from '<src>/store';
 import { getEndpointId } from '<src>/utils';
 import { EndpointTOC } from '<src>/pages/docs/components';
@@ -63,14 +62,15 @@ const ChangelogRootComponent: FC<
   const thisEndpoint = useAppSelector(
     selectors.getEndpoint({ pathId, method })
   );
-  const changelog = useEndpointsChangelog(batchId);
+  const endpointChanges = useAppSelector(
+    (state) => state.endpoints.results.data?.changes || {}
+  );
   const endpointWithChanges = selectors.filterRemovedEndpointsForChangelogAndMapChanges(
     thisEndpoint ? [thisEndpoint] : [],
-    changelog
+    endpointChanges
   );
 
-  const isEndpointRemoved =
-    changelog.length > 0 && thisEndpoint && endpointWithChanges.length === 0;
+  const isEndpointRemoved = thisEndpoint && endpointWithChanges.length === 0;
   const isEndpointRemovedInThisBatch =
     endpointWithChanges.length > 0 &&
     endpointWithChanges[0].changes === 'removed';

@@ -25,7 +25,7 @@ export function useDiffsForCapture(
   const capturesService = useContext(CapturesServiceContext)!;
   const analytics = useAnalytics();
   const endpoints = selectors.filterRemovedEndpoints(
-    useAppSelector((state) => state.endpoints.results.data || [])
+    useAppSelector((state) => state.endpoints.results.data?.endpoints || [])
   );
   const [diffState, setDiffState] = useState<DiffState>({
     loading: true,

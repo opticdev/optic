@@ -1,11 +1,17 @@
 import { createSlice, SerializedError } from '@reduxjs/toolkit';
 
-import { AsyncStatus, IEndpoint } from '<src>/types';
+import { AsyncStatus, ChangeType, IEndpoint } from '<src>/types';
 
 import { fetchEndpoints } from './thunks';
 
 const initialState: {
-  results: AsyncStatus<IEndpoint[], SerializedError>;
+  results: AsyncStatus<
+    {
+      endpoints: IEndpoint[];
+      changes: Record<string, ChangeType>;
+    },
+    SerializedError
+  >;
 } = {
   results: {
     loading: true,
@@ -17,6 +23,11 @@ const endpointsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder.addCase(fetchEndpoints.pending, (state) => {
+      state.results = {
+        loading: true,
+      };
+    });
     builder.addCase(fetchEndpoints.fulfilled, (state, action) => {
       const results = action.payload;
 

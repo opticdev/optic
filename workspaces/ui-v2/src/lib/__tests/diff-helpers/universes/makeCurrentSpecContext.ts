@@ -19,7 +19,7 @@ export async function makeCurrentSpecContext(
   events: any[],
   query: IBaseSpectacle['query']
 ): Promise<CurrentSpecContext> {
-  const endpoints = endpointQueryResultsToJson(
+  const { endpoints } = endpointQueryResultsToJson(
     (
       await query<EndpointQueryResults>({
         query: AllEndpointsQuery,
@@ -27,7 +27,8 @@ export async function makeCurrentSpecContext(
       })
     ).data || {
       requests: [],
-    }
+    },
+    null
   );
   const { paths } = (
     await query<PathQueryResponse>({
