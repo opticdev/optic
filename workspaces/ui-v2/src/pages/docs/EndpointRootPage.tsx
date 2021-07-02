@@ -17,6 +17,7 @@ import {
   ContributionFetcher,
   ShapeFetcher,
   HttpBodyPanel,
+  Panel,
 } from '<src>/components';
 import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
 import { FontFamily, SubtleBlueBackground } from '<src>/styles';
@@ -29,13 +30,11 @@ import {
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
-  CodeBlock,
   EndpointTOC,
   DocsFieldOrParameterContribution,
   EndpointNameContribution,
   DocsPageAccessoryNavigation,
   MarkdownBodyContribution,
-  TwoColumn,
   DeleteEndpointConfirmationModal,
 } from '<src>/pages/docs/components';
 
@@ -177,81 +176,84 @@ export const EndpointRootPage: FC<
               </Button>
             ))}
         </div>
-        <TwoColumn
-          style={{ marginTop: 5 }}
-          left={
-            <MarkdownBodyContribution
-              id={endpointId}
-              contributionKey={'description'}
-              defaultText={'Describe this endpoint'}
-              initialValue={thisEndpoint.description}
-              endpoint={{
-                pathId,
-                method,
-              }}
-            />
-          }
-          right={
-            <CodeBlock
-              header={
-                <EndpointName
-                  fontSize={14}
-                  leftPad={0}
-                  method={thisEndpoint.method}
-                  fullPath={thisEndpoint.fullPath}
-                />
-              }
-            >
-              <PathParameters
-                parameters={parameterizedPathParts}
-                renderField={(param, index) => {
-                  const alwaysAString: IShapeRenderer = {
-                    shapeId: param.id + 'shape',
-                    jsonType: JsonLike.STRING,
-                    value: undefined,
-                  };
-                  return (
-                    <DocsFieldOrParameterContribution
-                      key={param.id}
-                      endpoint={{
-                        pathId,
-                        method,
-                      }}
-                      id={param.id}
-                      name={param.name}
-                      shapes={[alwaysAString]}
-                      depth={0}
-                      initialValue={param.description}
-                    />
-                  );
+        <div className={classes.bodyContainer}>
+          <div className={classes.bodyDetails}>
+            <div>
+              <MarkdownBodyContribution
+                id={endpointId}
+                contributionKey={'description'}
+                defaultText={'Describe this endpoint'}
+                initialValue={thisEndpoint.description}
+                endpoint={{
+                  pathId,
+                  method,
                 }}
               />
-              <div
-                style={{
-                  marginTop: 10,
-                  backgroundColor: SubtleBlueBackground,
-                  borderTop: '1px solid #e2e2e2',
-                }}
+            </div>
+            <div className={classes.panel}>
+              <Panel
+                header={
+                  <EndpointName
+                    fontSize={14}
+                    leftPad={0}
+                    method={thisEndpoint.method}
+                    fullPath={thisEndpoint.fullPath}
+                  />
+                }
               >
-                <EndpointTOC
-                  query={thisEndpoint.query}
-                  requests={thisEndpoint.requestBodies}
-                  responses={thisEndpoint.responseBodies}
+                <PathParameters
+                  parameters={parameterizedPathParts}
+                  renderField={(param, index) => {
+                    const alwaysAString: IShapeRenderer = {
+                      shapeId: param.id + 'shape',
+                      jsonType: JsonLike.STRING,
+                      value: undefined,
+                    };
+                    return (
+                      <DocsFieldOrParameterContribution
+                        key={param.id}
+                        endpoint={{
+                          pathId,
+                          method,
+                        }}
+                        id={param.id}
+                        name={param.name}
+                        shapes={[alwaysAString]}
+                        depth={0}
+                        initialValue={param.description}
+                      />
+                    );
+                  }}
                 />
-              </div>
-            </CodeBlock>
-          }
-        />
+                <div
+                  style={{
+                    marginTop: 10,
+                    backgroundColor: SubtleBlueBackground,
+                    borderTop: '1px solid #e2e2e2',
+                  }}
+                >
+                  <EndpointTOC
+                    query={thisEndpoint.query}
+                    requests={thisEndpoint.requestBodies}
+                    responses={thisEndpoint.responseBodies}
+                  />
+                </div>
+              </Panel>
+            </div>
+          </div>
+        </div>
         {thisEndpoint.query && (
-          <div className={classes.bodyContainer} id="query-parameters">
+          <div
+            className={classes.bodyContainer}
+            id={thisEndpoint.query.queryParametersId}
+          >
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Query Parameters</h6>
-              {/* TODO QPB - change id from this to query id from spectacle */}
               <MarkdownBodyContribution
-                id={'QUERY TODO'}
+                id={thisEndpoint.query.queryParametersId}
                 contributionKey={'description'}
                 defaultText={'Add a description'}
-                initialValue={'TODO'}
+                initialValue={thisEndpoint.query.description}
                 endpoint={thisEndpoint}
               />
             </div>

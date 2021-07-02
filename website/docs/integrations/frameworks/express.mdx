@@ -4,11 +4,15 @@ sidebar_label: Express
 slug: /express
 ---
 
-Optic is easy to use with Express JS, no special library or large code changes required.
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import GitHubButton from 'react-github-btn';
+
+Optic is really easy to use with Express JS, you can either use the [`api start` command](#api-start-command) without changing your application, or you can use [`api exec` and use middleware](#middleware-and-api-exec-command) without changing how you interact with your application:
 
 ## `api start` Command
 
-Let's say we have a simple Express JS server that we usually develop with on localhost:3005.
+Let's say we have a simple Express JS server that we usually develop on localhost:3005.
 
 ### Optic needs to know how to start our API
 
@@ -44,6 +48,58 @@ Should you need any more help, or want to chat about the process, please reach o
 ## Run your API through Optic
 
 At this point you should be ready to run `api start` and document your API with Optic! Optic will observe your API traffic locally, and report on the routes and traffic shape it sees in the Optic dashboard. The next step is to start [building your baseline specification](/docs/using/baseline)
+
+## Middleware and `api exec` Command
+
+If you want to use programmatically controlled middleware, or record your endpoint traffic without touching the network using mocks, you can easily include Express middleware
+
+### Install the middleware
+
+<Tabs
+  defaultValue="yarn"
+  values={[
+    {label: 'yarn', value: 'yarn'},
+    {label: 'npm', value: 'npm'},
+  ]}>
+  <TabItem value="yarn">
+
+```sh
+yarn add @useoptic/express-middleware
+```
+
+  </TabItem>
+  <TabItem value="npm">
+
+```sh
+npm install @useoptic/express-middleware
+```
+
+  </TabItem>
+</Tabs>
+
+import JSConfiguration from '../framework-components/js-configuration.mdx';
+
+<JSConfiguration />
+
+
+For the middleware to be able to read the body of the HTTP requests you will need something like [body-parser](https://www.npmjs.com/package/body-parser) installed as part of the middleware stack.
+
+An example of it
+
+```javascript
+const bodyParser = require('body-parser');
+const optic = require('@useoptic/express-middleware');
+
+app.use(bodyParser());
+const opticConfig = {
+    enabled: true,
+};
+app.use(optic(opticConfig));
+```
+
+import JSSendTraffic from '../framework-components/js-send-traffic.mdx';
+
+<JSSendTraffic/>
 
 import {DocContributors} from '../../DocsContributors';
 

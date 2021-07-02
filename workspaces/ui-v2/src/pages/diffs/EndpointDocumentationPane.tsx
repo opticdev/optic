@@ -12,9 +12,9 @@ import {
   QueryParametersPanel,
   HttpBodyPanel,
   convertShapeToQueryParameters,
+  Panel,
 } from '<src>/components';
 import { EndpointTOC } from '<src>/pages/docs/components/EndpointTOC';
-import { CodeBlock } from '<src>/pages/docs/components/BodyRender';
 import { SubtleBlueBackground, FontFamily } from '<src>/styles';
 import { ChangeLogBG } from '<src>/pages/changelog/components/ChangeLogBG';
 
@@ -75,7 +75,7 @@ export const EndpointDocumentationPane: FC<
     >
       {renderHeader()}
       <div style={{ height: 20 }} />
-      <CodeBlock
+      <Panel
         header={
           <EndpointName
             fontSize={14}
@@ -110,7 +110,7 @@ export const EndpointDocumentationPane: FC<
             responses={thisEndpoint.responseBodies}
           />
         </div>
-      </CodeBlock>
+      </Panel>
 
       {thisEndpoint.query && (
         <HighlightedLocation
@@ -118,9 +118,8 @@ export const EndpointDocumentationPane: FC<
           targetLocation={highlightedLocation}
           expectedLocation={Location.Query}
         >
-          {/* TODO QPB - change id from this to query id from spectacle */}
-          <div id="query-parameters">
-            {/* TODO QPB add changelogBG to this panel */}
+          {/* TODO QPB add changelogBG to this panel */}
+          <div id={thisEndpoint.query.queryParametersId}>
             <h6 className={classes.bodyHeader}>Query Parameters</h6>
             <div className={classes.bodyDetails}>
               <ShapeFetcher
