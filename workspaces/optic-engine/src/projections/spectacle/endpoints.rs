@@ -1,8 +1,8 @@
 use crate::events::{EndpointEvent, Event, ShapeEvent, SpecEvent};
 use crate::projections::endpoint::ROOT_PATH_ID;
 use crate::state::endpoint::{
-  HttpContentType, HttpMethod, HttpStatusCode, PathComponentId, QueryParametersShapeDescriptor,
-  RequestId, ResponseId,
+  HttpContentType, HttpMethod, HttpStatusCode, PathComponentId, QueryParametersId,
+  QueryParametersShapeDescriptor, RequestId, ResponseId,
 };
 use crate::state::shape::ShapeId;
 use crate::RfcEvent;
@@ -171,9 +171,12 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
           projection.with_creation_history(&c.client_command_batch_id, &e.body_descriptor.shape_id);
         }
       }
-      // EndpointEvent::RequestQueryParametersShapeSet(e) => {
-      //   projection.with_query_parameters(e.request_id, e.shape_descriptor);
-      // }
+      EndpointEvent::QueryParametersAdded(e) => {
+        projection.with_query_parameters(e.path_id, e.http_method, e.query_parameters_id)
+      }
+      EndpointEvent::QueryParametersShapeSet(e) => {
+        projection.with_query_parameters_shape(e.query_parameters_id, e.shape_descriptor);
+      }
       EndpointEvent::ResponseBodySet(e) => {
         //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (response_id, http_content_type)
         projection.with_response_body(
@@ -432,24 +435,46 @@ impl EndpointsProjection {
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_query_parameters(
     &mut self,
-    request_id: RequestId,
-    shape_descriptor: QueryParametersShapeDescriptor,
+    path_id: PathComponentId,
+    http_method: HttpMethod,
+    query_parameters_id: QueryParametersId,
   ) {
-    let request_node_index = *self
+    let path_index = self
       .domain_id_to_index
-      .get(&request_id)
-      .expect("expected request_id to have a corresponding node");
+      .get(&path_id)
+      .expect("expected node with domain_id $path_id to exist in the graph");
+
     let node = Node::QueryParameters(QueryParametersNode {
-      root_shape_id: shape_descriptor.shape_id.clone(),
-      is_removed: shape_descriptor.is_removed,
+      query_parameters_id: query_parameters_id.clone(),
+      http_method,
+      root_shape_id: None,
+      is_removed: false,
     });
+
     let node_index = self.graph.add_node(node);
     self
-      .domain_id_to_index
-      .insert(shape_descriptor.shape_id.clone(), node_index);
-    self
       .graph
-      .add_edge(node_index, request_node_index, Edge::IsChildOf);
+      .add_edge(node_index, *path_index, Edge::IsChildOf);
+
+    self
+      .domain_id_to_index
+      .insert(query_parameters_id, node_index);
+  }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  pub fn with_query_parameters_shape(
+    &mut self,
+    query_parameters_id: QueryParametersId,
+    shape_descriptor: QueryParametersShapeDescriptor,
+  ) {
+    let query_index = *self
+      .domain_id_to_index
+      .get(&query_parameters_id)
+      .expect("expected node with domain_id $request_id to exist in the graph");
+
+    if let Some(Node::QueryParameters(query_node)) = self.graph.node_weight_mut(query_index) {
+      query_node.root_shape_id = Some(shape_descriptor.shape_id);
+      query_node.is_removed = shape_descriptor.is_removed;
+    }
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_response_body(
@@ -584,7 +609,9 @@ pub struct RequestNode {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct QueryParametersNode {
-  root_shape_id: ShapeId,
+  query_parameters_id: String,
+  http_method: HttpMethod,
+  root_shape_id: Option<ShapeId>,
   is_removed: bool,
 }
 

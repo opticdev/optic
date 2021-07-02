@@ -247,15 +247,7 @@ export class RequestNodeWrapper implements NodeWrapper {
   }
 
   query(): QueryParametersNodeWrapper | null {
-    const neighbors = this.queries.listIncomingNeighborsByType(
-      this.result.id,
-      NodeType.QueryParameters
-    );
-    if (neighbors.results.length === 0) {
-      return null;
-    }
-
-    return neighbors.results[0] as QueryParametersNodeWrapper;
+    return this.path().query();
   }
 }
 
@@ -324,6 +316,18 @@ export class PathNodeWrapper implements NodeWrapper {
       this.result.id,
       NodeType.Response
     );
+  }
+
+  query(): QueryParametersNodeWrapper | null {
+    const neighbors = this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.QueryParameters
+    );
+    if (neighbors.results.length === 0) {
+      return null;
+    }
+
+    return neighbors.results[0] as QueryParametersNodeWrapper;
   }
 
   components(): PathNodeWrapper[] {

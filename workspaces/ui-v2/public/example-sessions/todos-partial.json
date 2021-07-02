@@ -1924,11 +1924,30 @@
       }
     },
     {
-      "RequestQueryParametersShapeSet": {
-        "requestId": "request_SqY61Qc9Mi",
+      "QueryParametersAdded": {
+        "queryParametersId": "query_LqY12Qc9Mi",
+        "httpMethod": "GET",
+        "pathId": "path_xhUZ8irdJO",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "2cc302d2-c660-4362-9601-dc14fe69542c",
+          "createdAt": "2020-11-20T20:52:31.789Z"
+        }
+      }
+    },
+    {
+      "QueryParametersShapeSet": {
+        "queryParametersId": "query_LqY12Qc9Mi",
         "shapeDescriptor": {
           "shapeId": "shape_tNRgroSwLj",
           "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "2cc302d2-c660-4362-9601-dc14fe69542c",
+          "createdAt": "2020-11-20T20:52:31.789Z"
         }
       }
     },
@@ -1945,7 +1964,7 @@
         "eventContext": {
           "clientId": "anonymous",
           "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
-          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "clientCommandBatchId": "2cc302d2-c660-4362-9601-dc14fe69542c",
           "createdAt": "2020-11-20T20:52:31.789Z"
         }
       }
@@ -1963,7 +1982,7 @@
         "eventContext": {
           "clientId": "anonymous",
           "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
-          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "clientCommandBatchId": "2cc302d2-c660-4362-9601-dc14fe69542c",
           "createdAt": "2020-11-20T20:52:31.789Z"
         }
       }
@@ -1982,7 +2001,7 @@
         "eventContext": {
           "clientId": "anonymous",
           "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
-          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "clientCommandBatchId": "2cc302d2-c660-4362-9601-dc14fe69542c",
           "createdAt": "2020-11-20T20:52:31.789Z"
         }
       }
@@ -1993,7 +2012,7 @@
         "eventContext": {
           "clientId": "anonymous",
           "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
-          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "clientCommandBatchId": "2cc302d2-c660-4362-9601-dc14fe69542c",
           "createdAt": "2020-11-20T20:52:31.789Z"
         }
       }
