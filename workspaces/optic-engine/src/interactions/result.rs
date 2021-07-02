@@ -274,7 +274,7 @@ pub enum BodyAnalysisLocation {
     method: String,
     content_type: Option<String>,
   },
-  UnmatchedRequestQueryParameters {
+  UnmatchedQueryParameters {
     path_id: PathComponentId,
     method: String,
   },
@@ -299,7 +299,7 @@ impl BodyAnalysisLocation {
   pub fn content_type(&self) -> Option<&String> {
     match self {
       BodyAnalysisLocation::UnmatchedRequest { content_type, .. } => content_type.as_ref(),
-      BodyAnalysisLocation::UnmatchedRequestQueryParameters { .. } => None,
+      BodyAnalysisLocation::UnmatchedQueryParameters { .. } => None,
       BodyAnalysisLocation::UnmatchedResponse { content_type, .. } => content_type.as_ref(),
       BodyAnalysisLocation::MatchedRequest { content_type, .. } => content_type.as_ref(),
       BodyAnalysisLocation::MatchedResponse { content_type, .. } => content_type.as_ref(),
@@ -311,8 +311,8 @@ impl BodyAnalysisLocation {
     match self {
       BodyAnalysisLocation::UnmatchedRequest {
         path_id, method, ..
-      } => BodyAnalysisLocation::UnmatchedRequestQueryParameters { path_id, method },
-      BodyAnalysisLocation::UnmatchedRequestQueryParameters { .. } => self,
+      } => BodyAnalysisLocation::UnmatchedQueryParameters { path_id, method },
+      BodyAnalysisLocation::UnmatchedQueryParameters { .. } => self,
       BodyAnalysisLocation::UnmatchedResponse { .. }
       | BodyAnalysisLocation::MatchedRequest { .. }
       | BodyAnalysisLocation::MatchedResponse { .. } => {
@@ -320,6 +320,24 @@ impl BodyAnalysisLocation {
           "only UnmatchedRequest variant should be converted into UnmatchedRequestQueryParameters"
         );
       }
+    }
+  }
+}
+
+impl From<UnmatchedQueryParameters> for BodyAnalysisLocation {
+  fn from(diff: UnmatchedQueryParameters) -> Self {
+    let interaction_trail = diff.interaction_trail;
+
+    Self::UnmatchedQueryParameters {
+      path_id: diff
+        .requests_trail
+        .get_path_id()
+        .expect("UnmatchedQueryParameters implies request to have a known path")
+        .clone(),
+      method: interaction_trail
+        .get_method()
+        .expect("UnmatchedQueryParameters implies request to have a known method")
+        .clone(),
     }
   }
 }

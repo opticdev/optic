@@ -25,6 +25,7 @@ pub trait InteractionVisitors<R> {
   fn take_results(&mut self) -> Option<Vec<R>> {
     let flattened = vec![
       self.path().take_results(),
+      self.query_params().take_results(),
       self.request_body().take_results(),
       self.response_body().take_results(),
     ]

@@ -4,14 +4,15 @@ use super::{
   ResponseBodyVisitor, ResponseBodyVisitorContext, VisitorResults,
 };
 use crate::interactions::result::{
-  InteractionDiffResult, MatchedRequestBodyContentType, MatchedResponseBodyContentType,
-  SpecQueryParameters, SpecRoot, UnmatchedRequestBodyContentType, UnmatchedRequestUrl,
-  UnmatchedResponseBodyContentType,
+  InteractionDiffResult, MatchedQueryParameters, MatchedRequestBodyContentType,
+  MatchedResponseBodyContentType, SpecQueryParameters, SpecRoot, UnmatchedQueryParameters,
+  UnmatchedRequestBodyContentType, UnmatchedRequestUrl, UnmatchedResponseBodyContentType,
 };
 use crate::interactions::result::{
   InteractionTrail, InteractionTrailPathComponent, RequestSpecTrail, SpecPath, SpecRequestBody,
   SpecResponseBody,
 };
+use crate::state::body::BodyDescriptor;
 use crate::state::endpoint::{HttpContentType, RequestId, ResponseId};
 use crate::HttpInteraction;
 
@@ -111,21 +112,49 @@ impl InteractionVisitor<InteractionDiffResult> for DiffQueryParametersVisitor {
 impl QueryParametersVisitor<InteractionDiffResult> for DiffQueryParametersVisitor {
   fn begin(&mut self) {}
   fn visit(&mut self, interaction: &HttpInteraction, context: &QueryParametersVisitorContext) {
-    if let Some((query_parameters_id, query_descriptor)) = context.query {
-      let requests_trail = RequestSpecTrail::SpecQueryParameters(SpecQueryParameters {
-        query_parameters_id: query_parameters_id.clone(),
-      });
-      let interaction_trail = {
-        let mut trail = InteractionTrail::default();
-        trail.with_query_parameters();
-        trail
-      };
+    let interaction_query_params: Option<BodyDescriptor> = (&interaction.request.query).into();
 
-      // self.push(InteractionDiffResult::MatchedQueryParameters(
-      //   MatchedQueryParameters::new(interaction_trail, requests_trail, )
-      // ))
-    } else {
-      // TODO push unmatching result
+    if let Some((query_parameters_id, query_descriptor)) = context.query {
+      match (&interaction_query_params, &query_descriptor.shape) {
+        (None, None) => {}
+        (None, Some(_)) | (Some(_), None) => {
+          let requests_trail = RequestSpecTrail::SpecPath(SpecPath {
+            path_id: String::from(context.path),
+          });
+
+          let interaction_trail = {
+            let mut trail = InteractionTrail::default();
+            trail.with_url(interaction.request.path.clone());
+            trail.with_method(interaction.request.method.clone());
+            trail
+          };
+
+          self.push(InteractionDiffResult::UnmatchedQueryParameters(
+            UnmatchedQueryParameters {
+              requests_trail,
+              interaction_trail,
+            },
+          ))
+        }
+        (Some(body_descriptor), Some(shape_descriptor)) => {
+          let requests_trail = RequestSpecTrail::SpecQueryParameters(SpecQueryParameters {
+            query_parameters_id: query_parameters_id.clone(),
+          });
+          let interaction_trail = {
+            let mut trail = InteractionTrail::default();
+            trail.with_query_parameters();
+            trail
+          };
+
+          self.push(InteractionDiffResult::MatchedQueryParameters(
+            MatchedQueryParameters::new(
+              interaction_trail,
+              requests_trail,
+              shape_descriptor.shape_id.clone(),
+            ),
+          ))
+        }
+      }
     }
   }
   fn end(&mut self, interaction: &HttpInteraction, context: &PathVisitorContext) {}
