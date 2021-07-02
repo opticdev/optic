@@ -19,13 +19,14 @@ import {
   ContributionsList,
   convertShapeToQueryParameters,
   HttpBodyPanel,
+  Panel,
 } from '<src>/components';
 import { useChangelogPages } from '<src>/components/navigation/Routes';
 import { SubtleBlueBackground, FontFamily } from '<src>/styles';
 import { useEndpointsChangelog } from '<src>/hooks/useEndpointsChangelog';
 import { selectors, useAppSelector } from '<src>/store';
 import { getEndpointId } from '<src>/utils';
-import { CodeBlock, EndpointTOC, TwoColumn } from '<src>/pages/docs/components';
+import { EndpointTOC } from '<src>/pages/docs/components';
 
 import {
   ChangelogPageAccessoryNavigation,
@@ -111,60 +112,62 @@ const ChangelogRootComponent: FC<
           method={thisEndpoint.method}
           fullPath={thisEndpoint.fullPath}
         />
-        <TwoColumn
-          style={{ marginTop: 5 }}
-          left={
-            <ReactMarkdown
-              className={classes.contents}
-              source={thisEndpoint.description}
-            />
-          }
-          right={
-            <CodeBlock
-              header={
-                <EndpointName
-                  fontSize={14}
-                  leftPad={0}
-                  method={thisEndpoint.method}
-                  fullPath={thisEndpoint.fullPath}
-                />
-              }
-            >
-              <PathParameters
-                parameters={parameterizedPathParts}
-                renderField={(param) => {
-                  const alwaysAString: IShapeRenderer = {
-                    shapeId: param.id + 'shape',
-                    jsonType: JsonLike.STRING,
-                    value: undefined,
-                  };
-                  return (
-                    <FieldOrParameter
-                      key={param.id}
-                      name={param.name}
-                      shapes={[alwaysAString]}
-                      depth={0}
-                      value={param.description}
-                    />
-                  );
-                }}
+
+        <div className={classes.bodyContainer}>
+          <div className={classes.bodyDetails}>
+            <div>
+              <ReactMarkdown
+                className={classes.contents}
+                source={thisEndpoint.description}
               />
-              <div
-                style={{
-                  marginTop: 10,
-                  backgroundColor: SubtleBlueBackground,
-                  borderTop: '1px solid #e2e2e2',
-                }}
+            </div>
+            <div className={classes.panel}>
+              <Panel
+                header={
+                  <EndpointName
+                    fontSize={14}
+                    leftPad={0}
+                    method={thisEndpoint.method}
+                    fullPath={thisEndpoint.fullPath}
+                  />
+                }
               >
-                <EndpointTOC
-                  query={thisEndpoint.query}
-                  requests={thisEndpoint.requestBodies}
-                  responses={thisEndpoint.responseBodies}
+                <PathParameters
+                  parameters={parameterizedPathParts}
+                  renderField={(param) => {
+                    const alwaysAString: IShapeRenderer = {
+                      shapeId: param.id + 'shape',
+                      jsonType: JsonLike.STRING,
+                      value: undefined,
+                    };
+                    return (
+                      <FieldOrParameter
+                        key={param.id}
+                        name={param.name}
+                        shapes={[alwaysAString]}
+                        depth={0}
+                        value={param.description}
+                      />
+                    );
+                  }}
                 />
-              </div>
-            </CodeBlock>
-          }
-        />
+                <div
+                  style={{
+                    marginTop: 10,
+                    backgroundColor: SubtleBlueBackground,
+                    borderTop: '1px solid #e2e2e2',
+                  }}
+                >
+                  <EndpointTOC
+                    query={thisEndpoint.query}
+                    requests={thisEndpoint.requestBodies}
+                    responses={thisEndpoint.responseBodies}
+                  />
+                </div>
+              </Panel>
+            </div>
+          </div>
+        </div>
 
         {thisEndpoint.query && (
           <div className={classes.bodyContainer} id="query-parameters">
@@ -362,7 +365,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     '& > div': {
       width: '50%',
-      padding: theme.spacing(1, 0),
+      padding: theme.spacing(0, 1),
     },
   },
   panel: {
