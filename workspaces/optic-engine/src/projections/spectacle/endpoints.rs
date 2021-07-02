@@ -171,9 +171,9 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
           projection.with_creation_history(&c.client_command_batch_id, &e.body_descriptor.shape_id);
         }
       }
-      EndpointEvent::RequestQueryParametersShapeSet(e) => {
-        projection.with_query_parameters(e.request_id, e.shape_descriptor);
-      }
+      // EndpointEvent::RequestQueryParametersShapeSet(e) => {
+      //   projection.with_query_parameters(e.request_id, e.shape_descriptor);
+      // }
       EndpointEvent::ResponseBodySet(e) => {
         //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (response_id, http_content_type)
         projection.with_response_body(
