@@ -117,8 +117,7 @@ export const EndpointDocumentationPane: FC<
           targetLocation={highlightedLocation}
           expectedLocation={Location.Query}
         >
-          {/* TODO QPB - change id from this to query id from spectacle */}
-          <div id="query-parameters">
+          <div id={thisEndpoint.query.queryParametersId}>
             <h6 className={classes.bodyHeader}>Query Parameters</h6>
             <div className={classes.bodyDetails}>
               <ShapeFetcher

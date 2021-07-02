@@ -110,11 +110,17 @@ type HttpBody {
 Query Parameters, 1:1 mapping to a HttpRequest
 """
 type QueryParameters {
+  # Id for the query parameter
+  id: String!
+
   # Root shape ID for the QueryParameter. Look at the shapeChoices query getting more information about the root shape
   rootShapeId: String!
 
   # Is the body removed
   isRemoved: Boolean!
+
+  # Contributions for the query parameter
+  contributions: JSON
 }
 
 """

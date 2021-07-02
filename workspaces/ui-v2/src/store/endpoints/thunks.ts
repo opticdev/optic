@@ -23,8 +23,10 @@ export const AllEndpointsQuery = `{
     requestContributions
     isRemoved
     query {
+      id
       rootShapeId
       isRemoved
+      contributions
     }
     bodies {
       contentType
@@ -66,8 +68,10 @@ export type EndpointQueryResults = {
     isRemoved: boolean;
     bodies: HttpBody[];
     query?: {
+      id: string;
       rootShapeId: string;
       isRemoved: boolean;
+      contributions: Record<string, string>;
     };
     responses: {
       id: string;
@@ -95,7 +99,14 @@ export const endpointQueryResultsToJson = ({
     description: request.pathContributions.description || '',
     purpose: request.pathContributions.purpose || '',
     isRemoved: request.isRemoved,
-    query: request.query || null,
+    query: request.query
+      ? {
+          queryParametersId: request.query.id,
+          rootShapeId: request.query.rootShapeId,
+          isRemoved: request.query.isRemoved,
+          description: request.query.contributions.description || '',
+        }
+      : null,
     requestBodies: request.bodies.map((body) => ({
       requestId: request.id,
       contentType: body.contentType,
