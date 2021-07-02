@@ -394,7 +394,8 @@ export async function computeCoverage(paths: IPathMapping, captureId: string) {
 
       const diff_str = OpticEngine.diff_interaction(
         JSON.stringify(item.interaction.value),
-        spec
+        spec,
+        {}
       );
       // Maybe we could be more clever here later
       // Would also love to get real types in here
