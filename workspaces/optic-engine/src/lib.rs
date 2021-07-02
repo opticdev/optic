@@ -20,11 +20,11 @@ pub use events::{
   http_interaction::{ArbitraryData, Body, HttpInteraction, Request, Response},
   RfcEvent, SpecChunkEvent, SpecEvent,
 };
-pub use interactions::diff as diff_interaction;
 pub use interactions::result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
 pub use interactions::{
   analyze_documented_bodies, analyze_undocumented_bodies, AnalyzeUndocumentedBodiesConfig,
 };
+pub use interactions::{diff as diff_interaction, DiffConfig as DiffInteractionConfig};
 pub use learn_shape::{TrailObservationsResult, TrailValues};
 pub use projections::{
   EndpointProjection, LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection,

@@ -1,7 +1,9 @@
 #![recursion_limit = "2560"]
 use insta::assert_debug_snapshot;
 use insta::assert_json_snapshot;
-use optic_engine::{diff_interaction, HttpInteraction, SpecEvent, SpecProjection};
+use optic_engine::{
+  diff_interaction, DiffInteractionConfig, HttpInteraction, SpecEvent, SpecProjection,
+};
 use petgraph::dot::Dot;
 use serde_json::json;
 
@@ -526,7 +528,11 @@ fn scenario_1() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_1__results", results)
   });
 }
@@ -912,7 +918,11 @@ fn scenario_2() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_2__results", results)
   });
 }
@@ -1148,7 +1158,11 @@ fn scenario_3() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_3__results", results)
   });
 }
@@ -1650,7 +1664,11 @@ fn scenario_4() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_4__results", results)
   });
 }
@@ -2078,7 +2096,11 @@ fn scenario_5() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_5__results", results)
   });
 }
@@ -2464,7 +2486,11 @@ fn scenario_6() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_6__results", results)
   });
 }
@@ -2813,7 +2839,11 @@ fn scenario_7() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_7__results", results)
   });
 }
@@ -3199,7 +3229,11 @@ fn scenario_8() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_8__results", results)
   });
 }
@@ -3701,7 +3735,11 @@ fn scenario_9() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_9__results", results)
   });
 }
@@ -4227,7 +4265,11 @@ fn scenario_10() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_10__results", results)
   });
 }
@@ -4655,7 +4697,11 @@ fn scenario_11() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_11__results", results)
   });
 }
@@ -5041,7 +5087,11 @@ fn scenario_12() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_12__results", results)
   });
 }
@@ -5543,7 +5593,11 @@ fn scenario_13() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_13__results", results)
   });
 }
@@ -5779,7 +5833,11 @@ fn scenario_14() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_14__results", results)
   });
 }
@@ -6207,7 +6265,11 @@ fn scenario_15() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_15__results", results)
   });
 }
@@ -6709,7 +6771,11 @@ fn scenario_16() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_16__results", results)
   });
 }
@@ -7211,7 +7277,11 @@ fn scenario_17() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_17__results", results)
   });
 }
@@ -7639,7 +7709,11 @@ fn scenario_18() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_18__results", results)
   });
 }
@@ -7875,7 +7949,11 @@ fn scenario_19() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_19__results", results)
   });
 }
@@ -8377,7 +8455,11 @@ fn scenario_20() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_20__results", results)
   });
 }
@@ -8805,7 +8887,11 @@ fn scenario_21() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_21__results", results)
   });
 }
@@ -9233,7 +9319,11 @@ fn scenario_22() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_22__results", results)
   });
 }
@@ -9759,7 +9849,11 @@ fn scenario_23() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_23__results", results)
   });
 }
@@ -10285,7 +10379,11 @@ fn scenario_24() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_24__results", results)
   });
 }
@@ -10811,7 +10909,11 @@ fn scenario_25() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_25__results", results)
   });
 }
@@ -13406,7 +13508,11 @@ fn scenario_26() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_26__results", results)
   });
 }
@@ -13932,7 +14038,11 @@ fn scenario_27() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_27__results", results)
   });
 }
@@ -14318,7 +14428,11 @@ fn scenario_28() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_28__results", results)
   });
 }
@@ -14844,7 +14958,11 @@ fn scenario_29() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_29__results", results)
   });
 }
@@ -15272,7 +15390,11 @@ fn scenario_30() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_30__results", results)
   });
 }
@@ -15774,7 +15896,11 @@ fn scenario_31() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_31__results", results)
   });
 }

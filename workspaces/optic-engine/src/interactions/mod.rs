@@ -23,6 +23,7 @@ use visitors::{InteractionVisitors, PathVisitor};
 pub fn diff(
   spec_projection: &SpecProjection,
   http_interaction: HttpInteraction,
+  config: &DiffConfig,
 ) -> Vec<InteractionDiffResult> {
   let endpoint_projection = spec_projection.endpoint();
   let endpoint_queries = EndpointQueries::new(endpoint_projection);
@@ -35,7 +36,15 @@ pub fn diff(
 
   results
     .into_iter()
+    .filter(|result| {
+      config.include_query_params
+        || !matches!(result, InteractionDiffResult::UnmatchedQueryParameters(_))
+    })
     .flat_map(move |result| match result {
+      InteractionDiffResult::MatchedQueryParameters(result) => {
+        // @TODO: implement shape diffing of query parameters
+        vec![]
+      }
       InteractionDiffResult::MatchedRequestBodyContentType(result) => {
         // eprintln!("shape diffing for matched a request body content type");
         let body = &http_interaction.request.body.value;
@@ -70,6 +79,27 @@ pub fn diff(
       _ => vec![result],
     })
     .collect()
+}
+
+#[derive(Clone, Debug)]
+pub struct DiffConfig {
+  include_query_params: bool,
+}
+
+impl Default for DiffConfig {
+  fn default() -> Self {
+    Self {
+      include_query_params: false,
+    }
+  }
+}
+
+impl DiffConfig {
+  pub fn with_query_params(self, flag: bool) -> Self {
+    let mut new = self.clone();
+    new.include_query_params = flag;
+    new
+  }
 }
 
 /// Analysises the shapes of interactions that have request or response bodies with previously
