@@ -61,8 +61,10 @@ query X($sinceBatchCommitId: String) {
     requestContributions
     isRemoved
     query {
+      id
       rootShapeId
       isRemoved
+      contributions
     }
     bodies {
       contentType
