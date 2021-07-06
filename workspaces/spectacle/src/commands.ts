@@ -5,6 +5,7 @@ TODO Replace with Rust constructors eventually
 // TODO fix any types in this file
 export type CQRSCommand =
   | AddShapeType
+  | AddQueryParametersType
   | AddRequestType
   | FieldFromShapeType
   | AddFieldType
@@ -18,12 +19,14 @@ export type CQRSCommand =
   | AddPathComponentType
   | AddContributionType
   | ShapedBodyDescriptorType
+  | SetQueryParameteresShapeType
   | SetResponseBodyShapeType
   | SetRequestBodyShapeType
   | AddResponseByPathAndMethodType
   | PrunePathComponentsType;
 
 export type AddShapeType = ReturnType<typeof AddShape>;
+export type AddQueryParametersType = ReturnType<typeof AddQueryParameters>;
 export type AddRequestType = ReturnType<typeof AddRequest>;
 export type FieldFromShapeType = ReturnType<typeof FieldShapeFromShape>;
 export type AddFieldType = ReturnType<typeof AddField>;
@@ -37,6 +40,9 @@ export type AddPathParameterType = ReturnType<typeof AddPathParameter>;
 export type AddPathComponentType = ReturnType<typeof AddPathComponent>;
 export type AddContributionType = ReturnType<typeof AddContribution>;
 export type ShapedBodyDescriptorType = ReturnType<typeof ShapedBodyDescriptor>;
+export type SetQueryParameteresShapeType = ReturnType<
+  typeof SetQueryParametersShape
+>;
 export type SetResponseBodyShapeType = ReturnType<typeof SetResponseBodyShape>;
 export type SetRequestBodyShapeType = ReturnType<typeof SetRequestBodyShape>;
 export type AddResponseByPathAndMethodType = ReturnType<
@@ -50,6 +56,14 @@ export function AddShape(
   name: string = ''
 ) {
   return { AddShape: { shapeId, baseShapeId, name } };
+}
+
+export function AddQueryParameters(
+  httpMethod: string,
+  pathId: string,
+  queryParametersId: string
+) {
+  return { AddQueryParameters: { httpMethod, pathId, queryParametersId } };
 }
 
 export function AddRequest(
@@ -153,6 +167,17 @@ export function ShapedBodyDescriptor(
     httpContentType,
     shapeId,
     isRemoved,
+  };
+}
+export function SetQueryParametersShape(
+  queryParametersId: string,
+  shapeDescriptor: any
+) {
+  return {
+    SetQueryParametersShape: {
+      queryParametersId,
+      shapeDescriptor,
+    },
   };
 }
 export function SetResponseBodyShape(responseId: string, bodyDescriptor: any) {

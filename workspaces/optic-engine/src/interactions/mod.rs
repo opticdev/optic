@@ -23,6 +23,7 @@ use visitors::{InteractionVisitors, PathVisitor};
 pub fn diff(
   spec_projection: &SpecProjection,
   http_interaction: HttpInteraction,
+  config: &DiffConfig,
 ) -> Vec<InteractionDiffResult> {
   let endpoint_projection = spec_projection.endpoint();
   let endpoint_queries = EndpointQueries::new(endpoint_projection);
@@ -35,7 +36,15 @@ pub fn diff(
 
   results
     .into_iter()
+    .filter(|result| {
+      config.include_query_params
+        || !matches!(result, InteractionDiffResult::UnmatchedQueryParameters(_))
+    })
     .flat_map(move |result| match result {
+      InteractionDiffResult::MatchedQueryParameters(result) => {
+        // @TODO: implement shape diffing of query parameters
+        vec![]
+      }
       InteractionDiffResult::MatchedRequestBodyContentType(result) => {
         // eprintln!("shape diffing for matched a request body content type");
         let body = &http_interaction.request.body.value;
@@ -72,6 +81,27 @@ pub fn diff(
     .collect()
 }
 
+#[derive(Clone, Debug)]
+pub struct DiffConfig {
+  include_query_params: bool,
+}
+
+impl Default for DiffConfig {
+  fn default() -> Self {
+    Self {
+      include_query_params: false,
+    }
+  }
+}
+
+impl DiffConfig {
+  pub fn with_query_params(self, flag: bool) -> Self {
+    let mut new = self.clone();
+    new.include_query_params = flag;
+    new
+  }
+}
+
 /// Analysises the shapes of interactions that have request or response bodies with previously
 /// unseen content types. From the result, observed types per json trail, commands can be generated
 /// applyable to the spec that would make the interaction compliant. Results can also be merged with
@@ -95,26 +125,27 @@ pub fn analyze_undocumented_bodies<'a>(
   let include_query_params = config.include_query_params;
 
   results.into_iter().flat_map(move |result| match result {
-    InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
-      let body = &interaction.request.body;
-      let body_trail_observations = observe_body_trails(&body.value);
-
-      let mut results = vec![BodyAnalysisResult {
-        body_location: BodyAnalysisLocation::from(diff.clone()),
-        trail_observations: body_trail_observations,
-      }];
-
+    InteractionDiffResult::UnmatchedQueryParameters(diff) => {
       if include_query_params {
         let query_params = &interaction.request.query;
         let query_trail_observations = observe_body_trails(query_params);
 
-        results.push(BodyAnalysisResult {
-          body_location: BodyAnalysisLocation::from(diff).into_query_params(),
+        vec![BodyAnalysisResult {
+          body_location: BodyAnalysisLocation::from(diff),
           trail_observations: query_trail_observations,
-        })
+        }]
+      } else {
+        vec![]
       }
+    }
+    InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
+      let body = &interaction.request.body;
+      let body_trail_observations = observe_body_trails(&body.value);
 
-      results
+      vec![BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::from(diff.clone()),
+        trail_observations: body_trail_observations,
+      }]
     }
     InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => {
       let body = &interaction.response.body;
