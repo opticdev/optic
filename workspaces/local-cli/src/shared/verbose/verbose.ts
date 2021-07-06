@@ -10,7 +10,7 @@ class VerboseLogger {
   public failed: boolean = false;
   public sampleCount: number = 0;
 
-  constructor(private enabled: boolean) {}
+  constructor(public enabled: boolean) {}
 
   log(message: string) {
     if (this.enabled) {
@@ -41,9 +41,9 @@ class VerboseLogger {
 export class RunTaskVerboseLogger extends VerboseLogger {
   constructor(
     public enabled: boolean,
-    private taskName: string,
-    private flags: LocalCliTaskFlags,
-    private path: string
+    public taskName: string,
+    public flags: LocalCliTaskFlags,
+    public path: string
   ) {
     super(enabled);
   }
