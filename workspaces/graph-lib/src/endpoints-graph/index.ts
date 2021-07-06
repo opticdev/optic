@@ -59,7 +59,9 @@ export type ResponseNode = {
   isRemoved: boolean;
 };
 export type QueryParametersNode = {
-  rootShapeId: string;
+  queryParameterId: string;
+  rootShapeId: string | null;
+  httpMethod: string;
   isRemoved: boolean;
 };
 export type BodyNode = {
@@ -247,15 +249,7 @@ export class RequestNodeWrapper implements NodeWrapper {
   }
 
   query(): QueryParametersNodeWrapper | null {
-    const neighbors = this.queries.listIncomingNeighborsByType(
-      this.result.id,
-      NodeType.QueryParameters
-    );
-    if (neighbors.results.length === 0) {
-      return null;
-    }
-
-    return neighbors.results[0] as QueryParametersNodeWrapper;
+    return this.path().query(this.value.httpMethod);
   }
 }
 
@@ -324,6 +318,21 @@ export class PathNodeWrapper implements NodeWrapper {
       this.result.id,
       NodeType.Response
     );
+  }
+
+  query(httpMethod: string): QueryParametersNodeWrapper | null {
+    const neighbors = this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.QueryParameters
+    );
+    const queryWithHttpMethod = (neighbors.results as QueryParametersNodeWrapper[]).filter(
+      (queryNode) => queryNode.value.httpMethod === httpMethod
+    );
+    if (queryWithHttpMethod.length === 0) {
+      return null;
+    }
+
+    return queryWithHttpMethod[0] as QueryParametersNodeWrapper;
   }
 
   components(): PathNodeWrapper[] {
