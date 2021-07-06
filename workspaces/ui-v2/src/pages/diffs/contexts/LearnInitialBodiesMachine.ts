@@ -79,7 +79,8 @@ export const newInitialBodiesMachine = (
                         event.removeIgnore.isRequest === i.isRequest &&
                         event.removeIgnore.isResponse === i.isResponse &&
                         event.removeIgnore.statusCode === i.statusCode &&
-                        event.removeIgnore.contentType === i.contentType
+                        event.removeIgnore.contentType === i.contentType &&
+                        event.removeIgnore.isQuery === i.isQuery
                       );
                     }),
                   ],
@@ -167,7 +168,10 @@ export function recomputePendingEndpointCommands(
   }
 
   if (ctx.learnedBodies) {
-    if (ctx.learnedBodies.queryParameters) {
+    if (
+      ctx.learnedBodies.queryParameters &&
+      !ctx.ignoredBodies.find((ignoredBody) => !!ignoredBody.isQuery)
+    ) {
       commands.push(...ctx.learnedBodies.queryParameters.commands);
     }
 
@@ -261,4 +265,5 @@ export type IIgnoreBody = {
   contentType: string;
   isRequest?: boolean;
   isResponse?: boolean;
+  isQuery?: boolean;
 };

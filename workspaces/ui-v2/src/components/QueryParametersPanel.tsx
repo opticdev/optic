@@ -50,7 +50,7 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
             ...[field.changes?.added && classes.added],
             ...[field.changes?.changed && classes.changed],
           ])}
-          key={classes.queryKey}
+          key={key}
         >
           <div className={classes.queryKey}>{key}</div>
           <div>
