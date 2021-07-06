@@ -41,7 +41,7 @@ export default function ApproveAll(props: { disabled?: boolean }) {
     analytics.userApprovedAll(shapeDiffs.results.length, 0);
     shapeDiffs.results.forEach((i) => {
       approveCommandsForDiff(
-        i.diffDescription?.diffHash!,
+        i.diffDescription.diffHash,
         i.toCommands(i.updateSpecChoices)
       );
     });

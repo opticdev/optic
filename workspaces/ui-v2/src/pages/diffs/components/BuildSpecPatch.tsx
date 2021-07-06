@@ -18,9 +18,9 @@ import { namerForOptions } from '<src>/lib/quick-namer';
 import { ArrowRight } from '@material-ui/icons';
 
 type IBuildSpecPatch = {
-  patchChoices?: IPatchChoices;
+  patchChoices: IPatchChoices;
   diffHash: string;
-  onPathChoicesUpdated: (pathChoices?: IPatchChoices) => void;
+  onPathChoicesUpdated: (pathChoices: IPatchChoices) => void;
   approved: () => void;
   ignore: () => void;
 };
@@ -63,7 +63,7 @@ export function BuildSpecPatch({
   const disabledWhenNoShapeSelected =
     patchChoices &&
     patchChoices.isField &&
-    selectedChoices?.shapes.every((i) => !i.isValid);
+    selectedChoices.shapes.every((i) => !i.isValid);
 
   return (
     <FormControl component="fieldset" style={{ width: '100%', paddingLeft: 5 }}>
