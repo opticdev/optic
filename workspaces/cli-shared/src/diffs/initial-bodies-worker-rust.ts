@@ -85,6 +85,7 @@ export class InitialBodiesWorkerRust {
     return {
       pathId: this.config.pathId,
       method: this.config.method,
+      queryParameters: null,
       requests: [],
       responses: [],
     };
