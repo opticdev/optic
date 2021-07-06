@@ -21,7 +21,8 @@ export async function newRegionInterpreters(
 ): Promise<IInterpretation | undefined> {
   if (
     diff.isA(DiffTypes.UnmatchedRequestBodyContentType) ||
-    diff.isA(DiffTypes.UnmatchedResponseBodyContentType)
+    diff.isA(DiffTypes.UnmatchedResponseBodyContentType) ||
+    diff.isA(DiffTypes.UnmatchedQueryParameters)
   ) {
     const location = diff.location(currentSpecContext);
     const { pathId, method } = location;
@@ -151,6 +152,9 @@ function newContentType(
         } else return [];
       },
     };
+  } else if (udiff.isA(DiffTypes.UnmatchedQueryParameters)) {
+    // TODO QPB to implement
+    return {} as IInterpretation;
   }
 
   throw new Error('new regions must match either a request or a response');

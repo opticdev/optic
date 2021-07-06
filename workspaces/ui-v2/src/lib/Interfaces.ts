@@ -100,6 +100,7 @@ export enum ICoreShapeInnerParameterNames {
 export const allowedDiffTypes: {
   [key: string]: {
     isBodyShapeDiff: boolean;
+    inQuery: boolean;
     inRequest: boolean;
     inResponse: boolean;
     unmatchedUrl: boolean;
@@ -108,6 +109,7 @@ export const allowedDiffTypes: {
 } = {
   UnmatchedRequestUrl: {
     isBodyShapeDiff: false,
+    inQuery: false,
     inRequest: false,
     inResponse: false,
     unmatchedUrl: true,
@@ -115,13 +117,23 @@ export const allowedDiffTypes: {
   },
   UnmatchedRequestMethod: {
     isBodyShapeDiff: false,
+    inQuery: false,
     inRequest: false,
     inResponse: false,
     unmatchedUrl: true,
     asString: 'UnmatchedRequestMethod',
   },
+  UnmatchedQueryParameters: {
+    isBodyShapeDiff: false,
+    inQuery: true,
+    inRequest: false,
+    inResponse: false,
+    unmatchedUrl: false,
+    asString: 'UnmatchedQueryParameters',
+  },
   UnmatchedRequestBodyContentType: {
     isBodyShapeDiff: false,
+    inQuery: false,
     inRequest: true,
     inResponse: false,
     unmatchedUrl: false,
@@ -129,6 +141,7 @@ export const allowedDiffTypes: {
   },
   UnmatchedResponseBodyContentType: {
     isBodyShapeDiff: false,
+    inQuery: false,
     inRequest: false,
     inResponse: true,
     unmatchedUrl: false,
@@ -136,13 +149,23 @@ export const allowedDiffTypes: {
   },
   UnmatchedResponseStatusCode: {
     isBodyShapeDiff: false,
+    inQuery: false,
     inRequest: false,
     inResponse: true,
     unmatchedUrl: false,
     asString: 'UnmatchedResponseStatusCode',
   },
+  UnmatchedQueryParametersShape: {
+    isBodyShapeDiff: true,
+    inQuery: true,
+    inRequest: false,
+    inResponse: false,
+    unmatchedUrl: false,
+    asString: 'UnmatchedQueryParametersShape',
+  },
   UnmatchedRequestBodyShape: {
     isBodyShapeDiff: true,
+    inQuery: false,
     inRequest: true,
     inResponse: false,
     unmatchedUrl: false,
@@ -150,6 +173,7 @@ export const allowedDiffTypes: {
   },
   UnmatchedResponseBodyShape: {
     isBodyShapeDiff: true,
+    inQuery: false,
     inRequest: false,
     inResponse: true,
     unmatchedUrl: false,
@@ -165,6 +189,8 @@ export const isBodyShapeDiff = (key: string): boolean =>
   allowedDiffTypes[key]?.isBodyShapeDiff;
 export const isDiffForKnownEndpoint = (key: string): boolean =>
   !allowedDiffTypes[key]?.unmatchedUrl;
+export const DiffInQuery = (key: string): boolean =>
+  allowedDiffTypes[key]?.inQuery;
 export const DiffInRequest = (key: string): boolean =>
   allowedDiffTypes[key]?.inRequest;
 export const DiffInResponse = (key: string): boolean =>

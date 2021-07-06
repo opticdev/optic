@@ -16,6 +16,9 @@ export function descriptionForNewRegions(
   location: IParsedLocation
 ): IDiffDescription {
   let title: ICopy[] = [];
+  if (location.inQuery) {
+    title = [plain('undocumented query parameters observed')];
+  }
   if (location.inRequest) {
     title = [
       plain('undocumented'),
@@ -35,7 +38,9 @@ export function descriptionForNewRegions(
 
   const getJsonBodyToPreview = (interaction: any) => {
     const body =
-      (location.inRequest && interaction.request.body) ||
+      (location.inQuery && interaction.query.body)(
+        location.inRequest && interaction.request.body
+      ) ||
       (location.inResponse && interaction.response.body);
 
     if (body) {
@@ -87,6 +92,7 @@ export async function descriptionForShapeDiff(
 
   const getJsonBodyToPreview = (interaction: any) => {
     const body =
+      (location.inQuery && interaction.query.body) ||
       (location.inRequest && interaction.request.body) ||
       (location.inResponse && interaction.response.body);
 

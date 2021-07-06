@@ -23,6 +23,7 @@ import {
   allowedDiffTypes,
   allowedDiffTypesKeys,
   CurrentSpecContext,
+  DiffInQuery,
   DiffInRequest,
   DiffInResponse,
   IParsedLocation,
@@ -107,6 +108,7 @@ export class ParsedDiff {
     return {
       pathId: location.pathId,
       method: location.method,
+      inQuery: DiffInQuery(this.diffType) ? true : undefined,
       inRequest: DiffInRequest(this.diffType)
         ? {
             contentType: location.contentType,

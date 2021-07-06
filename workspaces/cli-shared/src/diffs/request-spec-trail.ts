@@ -1,6 +1,3 @@
-//@ts-ignore
-import keymirror from 'keymirror';
-
 export type IRequestSpecTrail =
   | ISpecPath
   | ISpecRequestBody
@@ -15,14 +12,14 @@ export const RequestTrailConstants: {
   SpecRequestBody: string;
   SpecPath: string;
   SpecResponseBody: string;
-} = keymirror({
-  SpecResponseBody: null,
-  SpecRequestRoot: null,
-  SpecPath: null,
-  SpecRequestBody: null,
-  SpecResponseRoot: null,
-  SpecRoot: null,
-});
+} = {
+  SpecResponseBody: 'SpecResponseBody',
+  SpecRequestRoot: 'SpecRequestRoot',
+  SpecPath: 'SpecPath',
+  SpecRequestBody: 'SpecRequestBody',
+  SpecResponseRoot: 'SpecResponseRoot',
+  SpecRoot: 'SpecRoot',
+};
 
 export interface ISpecResponseBody {
   SpecResponseBody: {
