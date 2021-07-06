@@ -305,23 +305,6 @@ impl BodyAnalysisLocation {
       BodyAnalysisLocation::MatchedResponse { content_type, .. } => content_type.as_ref(),
     }
   }
-
-  // @TODO: remove this when we introduce the QueryParams own InteractionDiffResult variant
-  pub fn into_query_params(self) -> Self {
-    match self {
-      BodyAnalysisLocation::UnmatchedRequest {
-        path_id, method, ..
-      } => BodyAnalysisLocation::UnmatchedQueryParameters { path_id, method },
-      BodyAnalysisLocation::UnmatchedQueryParameters { .. } => self,
-      BodyAnalysisLocation::UnmatchedResponse { .. }
-      | BodyAnalysisLocation::MatchedRequest { .. }
-      | BodyAnalysisLocation::MatchedResponse { .. } => {
-        panic!(
-          "only UnmatchedRequest variant should be converted into UnmatchedRequestQueryParameters"
-        );
-      }
-    }
-  }
 }
 
 impl From<UnmatchedQueryParameters> for BodyAnalysisLocation {

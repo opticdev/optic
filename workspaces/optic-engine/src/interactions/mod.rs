@@ -131,7 +131,7 @@ pub fn analyze_undocumented_bodies<'a>(
         let query_trail_observations = observe_body_trails(query_params);
 
         vec![BodyAnalysisResult {
-          body_location: BodyAnalysisLocation::from(diff).into_query_params(),
+          body_location: BodyAnalysisLocation::from(diff),
           trail_observations: query_trail_observations,
         }]
       } else {
