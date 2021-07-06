@@ -3,6 +3,7 @@ import { IJsonTrail } from './json-trail';
 export interface ILearnedBodies {
   pathId: string;
   method: string;
+  queryParameters: ILearnedQueryParameters | null;
   requests: ILearnedBody[];
   responses: ILearnedBody[];
 }
@@ -10,6 +11,11 @@ export interface ILearnedBodies {
 export interface ILearnedBody {
   contentType: string;
   statusCode?: number;
+  commands: any[];
+  rootShapeId: string;
+}
+
+export interface ILearnedQueryParameters {
   commands: any[];
   rootShapeId: string;
 }

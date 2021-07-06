@@ -302,6 +302,7 @@ export class InMemoryDiffService implements IOpticDiffService {
         return {
           pathId,
           method,
+          queryParameters: null,
           requests: [],
           responses: [],
         };
