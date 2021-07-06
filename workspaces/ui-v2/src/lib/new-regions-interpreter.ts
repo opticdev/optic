@@ -9,7 +9,7 @@ import {
 import { ParsedDiff } from './parse-diff';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { DiffTypes } from '@useoptic/cli-shared/build/diffs/diffs';
-import { IOpticDiffService } from '@useoptic/spectacle';
+import { CQRSCommand, IOpticDiffService } from '@useoptic/spectacle';
 import { code, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { descriptionForNewRegions } from '<src>/lib/diff-description-interpreter';
 
@@ -153,8 +153,45 @@ function newContentType(
       },
     };
   } else if (udiff.isA(DiffTypes.UnmatchedQueryParameters)) {
-    // TODO QPB to implement
-    return {} as IInterpretation;
+    const commands = learnedBodies.queryParameters
+      ? learnedBodies.queryParameters.commands
+      : [];
+    if (!learnedBodies.queryParameters) {
+      console.error(
+        `UnmatchedQueryParameters did not have a learnedBody for queryParameters`
+      );
+    }
+    return {
+      previewTabs: [
+        {
+          allowsExpand: false,
+          assertion: [],
+          // TODO QPB figure out what the ignore rule should be used for
+          ignoreRule: {
+            newBodyInRequest: location.inRequest,
+            diffHash: udiff.diffHash,
+          },
+          interactionPointers: udiff.interactions,
+          invalid: true,
+          jsonTrailsByInteractions: {},
+          title: 'Query Parameters',
+        },
+      ],
+      diffDescription: descriptionForNewRegions(udiff, location),
+      updateSpecChoices: {
+        includeNewBody: true,
+        isNewRegionDiff: true,
+        shapes: [],
+        copy: [plain('Document Query Parameters')],
+      },
+      // TODO QPB figure out if this PR lands https://github.com/opticdev/optic/pull/964 first
+      // and if this fn signature needs to be updated
+      toCommands(choices?: IPatchChoices): CQRSCommand[] {
+        if (choices?.includeNewBody) {
+          return commands;
+        } else return [];
+      },
+    };
   }
 
   throw new Error('new regions must match either a request or a response');
