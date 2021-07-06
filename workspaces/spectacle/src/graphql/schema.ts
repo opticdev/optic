@@ -152,10 +152,7 @@ type HttpRequest {
   
   # Responses associated with this HTTP request
   responses: [HttpResponse]
-  
-  # Changes for the HTTP request based on the give batch commit ID
-  changes(sinceBatchCommitId: String): ChangesResult
-  
+
   # Path contributions which define descriptions
   pathContributions: JSON
   
@@ -197,9 +194,6 @@ type HttpResponse {
   
   # Response bodies associated with this HTTP response
   bodies: [HttpBody]
-  
-  # Changes for the HTTP response based on the give batch commit ID
-  changes(sinceBatchCommitId: String): ChangesResult
   
   # HTTP response contributions which define descriptions
   contributions: JSON
