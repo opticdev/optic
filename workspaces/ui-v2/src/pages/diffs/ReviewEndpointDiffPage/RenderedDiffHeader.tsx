@@ -36,17 +36,7 @@ export const RenderedDiffHeader: FC<RenderedDiffHeaderProps> = ({
       }
       secondary={
         <Collapse in={showToc}>
-          <DiffLinks
-            allDiffs={allDiffs}
-            setSelectedDiffHash={(hash: string) => {
-              const hashIndex = allDiffs.findIndex(
-                (i) => i.diffDescription?.diffHash === hash
-              );
-              // findIndex possibly returns -1
-              setCurrentIndex(Math.max(hashIndex, 0));
-              setShowToc(false);
-            }}
-          />
+          <DiffLinks allDiffs={allDiffs} setSelectedDiff={setCurrentIndex} />
         </Collapse>
       }
     >
