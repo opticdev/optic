@@ -7,20 +7,20 @@ author_image_url: "/img/people/eze-sunday.jpeg"
 category: Community
 ---
 
-Documenting your software is as important as developing your software. With [maintenance making up 50–70 percent of a system’s cost](https://www.researchgate.net/publication/312190273_Reduction_of_software_perfective_and_corrective_maintenance_cost) over its lifetime, it’s important to be efficient and clear about how the software was built and how it behaves. If human beings are going to maintain the application, you must document your software.
+Documenting your software is as important as developing your software. With [maintenance making up 50–70 percent of a system's cost](https://www.researchgate.net/publication/312190273_Reduction_of_software_perfective_and_corrective_maintenance_cost) over its lifetime, it's important to be efficient and clear about how the software was built and how it behaves. If human beings are going to maintain the application, you must document your software.
 
-However, it’s a tedious and constantly evolving process, which means you need to always make changes to the documentation each time you make a change to your software codebase. But what if you don’t have to worry so much about editing multiple documentation files each time you update your code? What if you could just focus on writing great code?
+However, it's a tedious and constantly evolving process, which means you need to always make changes to the documentation each time you make a change to your software codebase. But what if you don't have to worry so much about editing multiple documentation files each time you update your code? What if you could just focus on writing great code?
 
 <!-- truncate -->
 
-That’s what [Optic](https://useoptic.com/) does for you. Optic is an API documentation assistant that observes your API development traffic, learns your API behavioral pattern, and automatically creates and updates your API docs for you. You can track every change that happens at every step of the development process. Your team can review your docs the way you’d review your code on GitHub.
+That's what [Optic](https://useoptic.com/) does for you. Optic is an API documentation assistant that observes your API development traffic, learns your API behavioral pattern, and automatically creates and updates your API docs for you. You can track every change that happens at every step of the development process. Your team can review your docs the way you'd review your code on GitHub.
 
-In this tutorial, I’ll show you how to document an API built with [Go Mux](https://www.gorillatoolkit.org/pkg/mux). Mux is a full-featured router and dispatcher for Go that matches a wide range of requests, based on URL host, schemes, path, path prefix, header and query values, HTTP methods, and regex. This API will have Create, List, Retrieve capabilities, and you’ll see how efficient it is to build and maintain an API with Optics.
+In this tutorial, I'll show you how to document an API built with [Go Mux](https://www.gorillatoolkit.org/pkg/mux). Mux is a full-featured router and dispatcher for Go that matches a wide range of requests, based on URL host, schemes, path, path prefix, header and query values, HTTP methods, and regex. This API will have Create, List, Retrieve capabilities, and you'll see how efficient it is to build and maintain an API with Optics.
 
 ## Setting Up the API
 
-First, let’s go over the prerequisites for setting up this API on your machine:
-- You must have [Go](https://golang.org/) installed. You can [download](https://golang.org/dl/) and install it if you haven’t already.
+First, let's go over the prerequisites for setting up this API on your machine:
+- You must have [Go](https://golang.org/) installed. You can [download](https://golang.org/dl/) and install it if you haven't already.
 - You must have [Node v12+](https://nodejs.org) installed
 
 To begin, create a file, name it `app.go`, and add the following code to it:
@@ -118,7 +118,7 @@ Posts = []Post{
    }
 ```
 
-Also, we’re using the Mux library to handle request routing:
+Also, we're using the Mux library to handle request routing:
  
 ```go
 func handleRequests() {
@@ -135,13 +135,13 @@ func handleRequests() {
 }
 ```
 
-Since Mux is an external library, you’ll need to install it by running the following command on your terminal:
+Since Mux is an external library, you'll need to install it by running the following command on your terminal:
 
 ```bash
 go get -u github.com/gorilla/mux
 ```
 
-Mux is a powerful router for Go with lots of exciting features like matching dynamic (`router.Host("{subdomain:[a-z]+}.example.com")`) and exact routes (`router.Host("www.example.com")`). It has several ways of handling routing, but in this case, you’ll be using the static routes as shown in the example code mentioned earlier.
+Mux is a powerful router for Go with lots of exciting features like matching dynamic (`router.Host("{subdomain:[a-z]+}.example.com")`) and exact routes (`router.Host("www.example.com")`). It has several ways of handling routing, but in this case, you'll be using the static routes as shown in the example code mentioned earlier.
 
 After adding Mux, you can go ahead and run the application.
 
@@ -159,7 +159,7 @@ Now, you can access the API with Postman, as shown in the following image:
 
 ![API request with Postman example](https://i.imgur.com/s1iSxKE.png)
 
-The routes below are the routes we’ll be documenting with Optics:
+The routes below are the routes we'll be documenting with Optics:
 
 ```Go
    router.HandleFunc("/post/list", getAllPosts).Methods("GET")
@@ -167,11 +167,11 @@ The routes below are the routes we’ll be documenting with Optics:
    router.HandleFunc("/post/create", createNewPost).Methods("POST")
 ```
 
-Now, let’s add Optic to your workflow.
+Now, let's add Optic to your workflow.
 
 ## Adding Optic to Your Mux API Workflow
 
-For Optic to do its job effectively, it needs to integrate into your Mux API. So, let’s  go over how you can make that integration.
+For Optic to do its job effectively, it needs to integrate into your Mux API. So, let's  go over how you can make that integration.
 
 The first step to adding Optic to your application is to install its Command Line Interface (CLI). There are three ways to install the Optic CLI:
 
@@ -188,7 +188,7 @@ The first step to adding Optic to your application is to install its Command Lin
     brew install opticdev/optic/api
     ```
 
-When the installation is complete, make sure you’re in your project’s root directory. The CLI command is `api`. So, run `api init` to initialize Optic in your API. It should generate a few files, including an `optic.yaml` file:
+When the installation is complete, make sure you're in your project's root directory. The CLI command is `api`. So, run `api init` to initialize Optic in your API. It should generate a few files, including an `optic.yaml` file:
 
 ```yaml
 name: "Go Musk API"
@@ -199,13 +199,13 @@ tasks:
 
 ```
 
-We’ll update the command from `echo \"Setup A Valid Command to Start your API!\"` to `go run app.go`, and we’ll also change the port `4000` to use the port that will be generated from `$PORT` in your environment variable (Optic provides `$PORT` as an environment variable which you can access in your code) as shown in the code posted earlier.
+We'll update the command from `echo \"Setup A Valid Command to Start your API!\"` to `go run app.go`, and we'll also change the port `4000` to use the port that will be generated from `$PORT` in your environment variable (Optic provides `$PORT` as an environment variable which you can access in your code) as shown in the code posted earlier.
 
 ```go
    port := os.Getenv("PORT")
 ```
 
-Once you do that, you’ll have to start your app with `api start` instead of `go run app.go`. So, run it:
+Once you do that, you'll have to start your app with `api start` instead of `go run app.go`. So, run it:
 
 ```shell
 api start
@@ -221,7 +221,7 @@ Go API - Mux Routers
 
 Optic will start observing every activity that happens on route `http://localhost:3481`, and it will create a different log for you to review in route `http://localhost:34444/apis/1/review`.
 
-So, the first thing you should do is send a request to the APIs you’ve created using Postman. Send a request to:
+So, the first thing you should do is send a request to the APIs you've created using Postman. Send a request to:
 - http://localhost:3481/post/list
 - http://localhost:3481/post/1
 - http://localhost:3481/post/create
@@ -236,18 +236,18 @@ You can click on the routes in the review tab to edit the parameters, like the `
 
 Next, check all the boxes and click the **Document (3) Endpoint**` button. Now, you can enter the commit message for this change and apply the changes.
 
-Done? Cool. You’ll be redirected to the documentation page, where you can edit the title and add detailed descriptions to each route.
+Done? Cool. You'll be redirected to the documentation page, where you can edit the title and add detailed descriptions to each route.
 
 ![Documentation](https://i.imgur.com/hS4vkUY.png)
 
-If you click on one of the routes’ documents, it’ll take you to a page where you can find more information about the route. It should look like this:
+If you click on one of the routes' documents, it'll take you to a page where you can find more information about the route. It should look like this:
 
 ![Document Sample](https://i.imgur.com/SjaALZ6.png)
 
 You didn't write all that, right?
-Yeah, that’s the beauty of Optic.
+Yeah, that's the beauty of Optic.
 
-Now, let’s make a change to our API and see how Optic will react to it.
+Now, let's make a change to our API and see how Optic will react to it.
 
 In our use case, I made a change to the Post struct and made another request to the API. I changed `content` to `contents`.
 
