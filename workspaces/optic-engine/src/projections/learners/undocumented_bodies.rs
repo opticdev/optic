@@ -118,6 +118,11 @@ impl EndpointBodies {
   }
 
   pub fn into_commands(self) -> impl Iterator<Item = SpecCommand> {
+    let query_parameters_commands = self
+      .query_parameters
+      .into_iter()
+      .flat_map(|query_parameters| query_parameters.commands.into_iter());
+
     let requests_commands = self
       .requests
       .into_iter()
@@ -128,7 +133,9 @@ impl EndpointBodies {
       .into_iter()
       .flat_map(|response| response.commands.into_iter());
 
-    requests_commands.chain(responses_commands)
+    query_parameters_commands
+      .chain(requests_commands)
+      .chain(responses_commands)
   }
 }
 

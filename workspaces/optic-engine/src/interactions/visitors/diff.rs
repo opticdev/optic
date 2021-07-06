@@ -114,46 +114,53 @@ impl QueryParametersVisitor<InteractionDiffResult> for DiffQueryParametersVisito
   fn visit(&mut self, interaction: &HttpInteraction, context: &QueryParametersVisitorContext) {
     let interaction_query_params: Option<BodyDescriptor> = (&interaction.request.query).into();
 
-    if let Some((query_parameters_id, query_descriptor)) = context.query {
-      match (&interaction_query_params, &query_descriptor.shape) {
-        (None, None) => {}
-        (None, Some(_)) | (Some(_), None) => {
-          let requests_trail = RequestSpecTrail::SpecPath(SpecPath {
-            path_id: String::from(context.path),
-          });
+    let query_parameters_id = context.query.map(|(query_params_id, _)| query_params_id);
+    let query_shape_id = context
+      .query
+      .and_then(|(_, query_params_descriptor)| query_params_descriptor.shape.as_ref());
 
-          let interaction_trail = {
-            let mut trail = InteractionTrail::default();
-            trail.with_url(interaction.request.path.clone());
-            trail.with_method(interaction.request.method.clone());
-            trail
-          };
+    match (
+      &interaction_query_params,
+      query_parameters_id,
+      query_shape_id,
+    ) {
+      (None, None, None) => {}
+      (Some(body_descriptor), Some(query_parameters_id), Some(shape_descriptor)) => {
+        let requests_trail = RequestSpecTrail::SpecQueryParameters(SpecQueryParameters {
+          query_parameters_id: query_parameters_id.clone(),
+        });
+        let interaction_trail = {
+          let mut trail = InteractionTrail::default();
+          trail.with_query_parameters();
+          trail
+        };
 
-          self.push(InteractionDiffResult::UnmatchedQueryParameters(
-            UnmatchedQueryParameters {
-              requests_trail,
-              interaction_trail,
-            },
-          ))
-        }
-        (Some(body_descriptor), Some(shape_descriptor)) => {
-          let requests_trail = RequestSpecTrail::SpecQueryParameters(SpecQueryParameters {
-            query_parameters_id: query_parameters_id.clone(),
-          });
-          let interaction_trail = {
-            let mut trail = InteractionTrail::default();
-            trail.with_query_parameters();
-            trail
-          };
+        self.push(InteractionDiffResult::MatchedQueryParameters(
+          MatchedQueryParameters::new(
+            interaction_trail,
+            requests_trail,
+            shape_descriptor.shape_id.clone(),
+          ),
+        ))
+      }
+      _ => {
+        let requests_trail = RequestSpecTrail::SpecPath(SpecPath {
+          path_id: String::from(context.path),
+        });
 
-          self.push(InteractionDiffResult::MatchedQueryParameters(
-            MatchedQueryParameters::new(
-              interaction_trail,
-              requests_trail,
-              shape_descriptor.shape_id.clone(),
-            ),
-          ))
-        }
+        let interaction_trail = {
+          let mut trail = InteractionTrail::default();
+          trail.with_url(interaction.request.path.clone());
+          trail.with_method(interaction.request.method.clone());
+          trail
+        };
+
+        self.push(InteractionDiffResult::UnmatchedQueryParameters(
+          UnmatchedQueryParameters {
+            requests_trail,
+            interaction_trail,
+          },
+        ))
       }
     }
   }
