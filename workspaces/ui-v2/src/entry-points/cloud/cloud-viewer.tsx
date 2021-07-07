@@ -41,17 +41,12 @@ import { SpecRepositoryStore } from '<src>/contexts/SpecRepositoryContext';
 
 const appConfig: OpticAppConfig = {
   config: {
-    navigation: {
-      showDiff: false,
-    },
+    allowEditing: false,
     analytics: {
       enabled: Boolean(process.env.REACT_APP_ENABLE_ANALYTICS === 'yes'),
       segmentToken: process.env.REACT_APP_SEGMENT_CLOUD_UI,
       fullStoryOrgId: process.env.REACT_APP_FULLSTORY_ORG,
       sentryUrl: process.env.REACT_APP_SENTRY_URL,
-    },
-    documentation: {
-      allowDescriptionEditing: false,
     },
     backendApi: {
       domain:
