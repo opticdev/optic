@@ -1,4 +1,4 @@
-import React, { CSSProperties, FC, useState } from 'react';
+import React, { CSSProperties, FC, useEffect, useState } from 'react';
 import { Button, makeStyles } from '@material-ui/core';
 import ClassNames from 'classnames';
 import Color from 'color';
@@ -36,6 +36,10 @@ export const ChangelogHistory: FC = () => {
   const [confirmResetModalState, setConfirmResetModalState] = useState<
     BatchCommit | false
   >(false);
+
+  useEffect(() => {
+    analytics.historyPageLoaded();
+  }, [analytics]);
 
   return (
     <Page>

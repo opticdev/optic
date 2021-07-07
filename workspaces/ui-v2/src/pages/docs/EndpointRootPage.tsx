@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Button, LinearProgress, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
@@ -37,6 +37,7 @@ import {
   MarkdownBodyContribution,
   DeleteEndpointConfirmationModal,
 } from '<src>/pages/docs/components';
+import { useAnalytics } from '<src>/contexts/analytics';
 
 export const EndpointRootPageWithDocsNav: FC<
   React.ComponentProps<typeof EndpointRootPage>
@@ -52,6 +53,7 @@ export const EndpointRootPage: FC<
     method: string;
   }>
 > = ({ match }) => {
+  const analytics = useAnalytics();
   const documentationPageLink = useDocumentationPageLink();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
   const isEditing = useAppSelector(
@@ -86,6 +88,9 @@ export const EndpointRootPage: FC<
   );
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const endpointId = getEndpointId({ method, pathId });
+  useEffect(() => {
+    analytics.documentationListPageLoaded();
+  }, [analytics]);
 
   const isEndpointStagedForDeletion = useAppSelector(
     selectors.isEndpointDeleted({ method, pathId })
