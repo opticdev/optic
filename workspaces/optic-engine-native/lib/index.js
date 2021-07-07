@@ -199,6 +199,9 @@ function getBinPath() {
     }
   }
 
+  const files = Fs.readdirSync(Config.localBuildPath);
+  console.log(files);
+
   let debugBinPath = Path.join(Config.localBuildPath, binaryName);
   if (Fs.existsSync(debugBinPath)) {
     // @TODO: use reported version of the binary (run optic_diff -V (or --version)) to do
