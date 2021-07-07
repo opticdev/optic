@@ -41,9 +41,7 @@ import { SpecRepositoryStore } from '<src>/contexts/SpecRepositoryContext';
 
 const appConfig: OpticAppConfig = {
   config: {
-    features: {
-      allowEditing: false,
-    },
+    allowEditing: false,
     analytics: {
       enabled: Boolean(process.env.REACT_APP_ENABLE_ANALYTICS === 'yes'),
       segmentToken: process.env.REACT_APP_SEGMENT_CLOUD_UI,

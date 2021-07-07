@@ -2,9 +2,7 @@ import React, { ReactNode, useContext } from 'react';
 import invariant from 'invariant';
 
 interface IAppConfigurations {
-  features: {
-    allowEditing: boolean;
-  };
+  allowEditing: boolean;
   analytics:
     | { enabled: false }
     | {

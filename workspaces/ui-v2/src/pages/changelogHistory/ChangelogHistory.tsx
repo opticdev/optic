@@ -91,7 +91,7 @@ export const ChangelogHistory: FC = () => {
                       </Button>
                     )}
 
-                    {!isCurrent && appConfig.features.allowEditing && (
+                    {!isCurrent && appConfig.allowEditing && (
                       <Button
                         className={classes.commitResetButton}
                         variant="outlined"

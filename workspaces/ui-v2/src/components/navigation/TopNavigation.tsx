@@ -51,7 +51,7 @@ export function TopNavigation(props: { AccessoryNavigation?: any }) {
                   Icon={SubjectIcon}
                 />
 
-                {appConfig.features.allowEditing && (
+                {appConfig.allowEditing && (
                   <NavButton
                     title="Diffs"
                     to={diffsPage.linkTo()}

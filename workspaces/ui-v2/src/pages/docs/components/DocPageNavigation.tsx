@@ -21,7 +21,7 @@ export const DocsPageAccessoryNavigation: FC = () => {
       {appConfig.sharing.enabled && <ShareButton />}
       <PromptNavigateAway shouldPrompt={isEditing && pendingCount > 0} />
       <ChangesSinceDropdown />
-      {appConfig.features.allowEditing && <EditContributionsButton />}
+      {appConfig.allowEditing && <EditContributionsButton />}
     </div>
   );
 };
