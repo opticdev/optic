@@ -260,7 +260,7 @@ impl EndpointBody {
   fn append_endpoint_commands(&mut self, ids: &mut impl SpecIdGenerator) {
     match self {
       EndpointBody::QueryParameters(query_parameters) => {
-        let query_params_id = ids.request(); // TODO: give query params their own prefix
+        let query_params_id = ids.query_params();
 
         query_parameters
           .commands
@@ -501,8 +501,8 @@ mod test {
   }
 
   impl SpecIdGenerator for TestIdGenerator {
-    fn generate_id(&mut self, _prefix: &str) -> String {
-      let id = format!("test-id-{}", self.counter);
+    fn generate_id(&mut self, prefix: &str) -> String {
+      let id = format!("test-id-{}-{}", prefix, self.counter);
       self.counter += 1;
       id
     }
