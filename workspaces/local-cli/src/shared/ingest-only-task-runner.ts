@@ -116,12 +116,12 @@ export async function ingestOnlyTaskRunner(
 
   process.on('SIGINT', function () {
     exitedByUser = true;
-    finish(0);
+    finish(0, exitedByUser);
   });
 
   const exitCode = await spawnProcessReturnExitCode(command, env);
 
   if (!exitedByUser) {
-    finish(exitCode, true);
+    finish(exitCode, false);
   }
 }
