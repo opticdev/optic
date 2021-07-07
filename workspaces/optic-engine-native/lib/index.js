@@ -199,10 +199,7 @@ function getBinPath() {
     }
   }
 
-  let debugBinPath = Path.join(
-    Config.localBuildPath,
-    `${binaryName}${supportedPlatform ? supportedPlatform.suffix : ''}`
-  );
+  let debugBinPath = Path.join(Config.localBuildPath, binaryName);
   if (Fs.existsSync(debugBinPath)) {
     // @TODO: use reported version of the binary (run optic_diff -V (or --version)) to do
     // some rough determination whether the build is outdated or not. Not perfect, but
