@@ -373,6 +373,11 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
       }
     }
 
-    this.logger.results(sampleCount, this.foundDiff);
+    this.logger.results(
+      sampleCount,
+      this.foundDiff,
+      Boolean(this.exitWithCode),
+      this.exitWithCode
+    );
   }
 }

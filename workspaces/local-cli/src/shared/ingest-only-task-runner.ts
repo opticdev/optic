@@ -94,7 +94,7 @@ export async function ingestOnlyTaskRunner(
   console.log(`Traffic can be sent to: ${colors.grey(loggingUrl)} `);
 
   let exitedByUser = false;
-  async function finish(statusCode: number) {
+  async function finish(statusCode: number, ctrlC: boolean = false) {
     //stop server, no new batches
     await collectionService.stop();
     //await all pending / unsaved traffic
@@ -109,7 +109,7 @@ export async function ingestOnlyTaskRunner(
 
     // impliment exit on diff
 
-    logger.results();
+    logger.results(statusCode, ctrlC);
 
     cleanupAndExit(statusCode);
   }
@@ -122,6 +122,6 @@ export async function ingestOnlyTaskRunner(
   const exitCode = await spawnProcessReturnExitCode(command, env);
 
   if (!exitedByUser) {
-    finish(exitCode);
+    finish(exitCode, true);
   }
 }

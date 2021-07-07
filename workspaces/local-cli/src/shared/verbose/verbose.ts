@@ -116,12 +116,26 @@ export class RunTaskVerboseLogger extends VerboseLogger {
     this.log(`Command exited with code ${code}`);
   }
 
-  results(sampleCount: any, foundDiff: boolean) {
-    this.log(
-      `Task finished with ${colors.cyan(
-        sampleCount.toString()
-      )} samples in latest capture`
-    );
+  results(
+    sampleCount: any,
+    foundDiff: boolean,
+    ctrlC: boolean,
+    exitCode: number | undefined
+  ) {
+    if (ctrlC) {
+      this.log(
+        `Task stopped by user CTRL-C, with ${colors.cyan(
+          this.sampleCount.toString()
+        )} samples in latest capture`
+      );
+    } else {
+      this.log(
+        `Task exited with code ${exitCode}, with ${colors.cyan(
+          this.sampleCount.toString()
+        )} samples in latest capture`
+      );
+    }
+
     if (this.failed) {
       this.errors.forEach((i) => this.logError(i));
     }
@@ -138,12 +152,20 @@ export class ExecVerboseLogger extends VerboseLogger {
     super(enabled);
   }
 
-  results() {
-    this.log(
-      `Task finished with ${colors.cyan(
-        this.sampleCount.toString()
-      )} samples in latest capture`
-    );
+  results(exitCode: number, ctrlC: boolean = false) {
+    if (ctrlC) {
+      this.log(
+        `Task stopped by user CTRL-C, with ${colors.cyan(
+          this.sampleCount.toString()
+        )} samples in latest capture`
+      );
+    } else {
+      this.log(
+        `Task exited with code ${exitCode}, with ${colors.cyan(
+          this.sampleCount.toString()
+        )} samples in latest capture`
+      );
+    }
   }
 
   starting(command: string, loggingUrl: string) {
