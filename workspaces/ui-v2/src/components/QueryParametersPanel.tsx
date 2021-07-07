@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Tooltip } from '@material-ui/core';
+import { Help as HelpIcon } from '@material-ui/icons';
 import classnames from 'classnames';
 
 import {
@@ -42,8 +43,16 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
 }) => {
   const classes = useStyles();
   return (
-    // TODO QPB add in query parsing strategy here?
-    <Panel header={''}>
+    <Panel
+      header={
+        <Tooltip title="?key=value1&key=value2 is treated as an array of key=[value1, value2]">
+          <div className={classes.queryTooltipContainer}>
+            Query string parsing strategy
+            <HelpIcon fontSize="small" className={classes.queryTooltipIcon} />
+          </div>
+        </Tooltip>
+      }
+    >
       {Object.entries(parameters).map(([key, field]) => (
         <div
           className={classnames(classes.queryComponentContainer, [
@@ -63,6 +72,13 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
 };
 
 const useStyles = makeStyles((theme) => ({
+  queryTooltipContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  queryTooltipIcon: {
+    margin: theme.spacing(0, 1),
+  },
   queryComponentContainer: {
     marginBottom: theme.spacing(1),
     padding: theme.spacing(1, 0),
