@@ -1,9 +1,14 @@
 import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import classNames from 'classnames';
-import { makeStyles } from '@material-ui/styles';
 import { Check, Delete as DeleteIcon } from '@material-ui/icons';
-import { Divider, List, ListItem, Typography } from '@material-ui/core';
+import {
+  Divider,
+  List,
+  ListItem,
+  Typography,
+  makeStyles,
+} from '@material-ui/core';
 
 import {
   TwoColumnFullWidth,
@@ -292,6 +297,8 @@ export function DocumentationRootPageWithPendingEndpoints() {
 const useStyles = makeStyles((theme) => ({
   endpointRow: {
     display: 'flex',
+    padding: theme.spacing(0, 0.5),
+    margin: theme.spacing(0.5, 0),
     '@media (max-width: 1250px)': {
       flexDirection: 'column',
       alignItems: 'flex-start',
