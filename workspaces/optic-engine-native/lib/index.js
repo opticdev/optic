@@ -199,30 +199,10 @@ function getBinPath() {
     }
   }
 
-  const cargoTargetRoot = Path.join(Config.localBuildPath, '..');
-  const cargoTargetOpticNative = Path.join(
+  let debugBinPath = Path.join(
     Config.localBuildPath,
-    '..',
-    '..',
-    'workspaces',
-    'optic-engine-native',
-    'target'
+    `${binaryName}${supportedPlatform ? supportedPlatform.suffix : ''}`
   );
-
-  if (Fs.existsSync(cargoTargetRoot)) {
-    const files = Fs.readdirSync(cargoTargetRoot);
-    console.log(files);
-  } else {
-    console.log(cargoTargetRoot + ' does not exist');
-  }
-  if (Fs.existsSync(cargoTargetOpticNative)) {
-    const files = Fs.readdirSync(cargoTargetOpticNative);
-    console.log(files);
-  } else {
-    console.log(cargoTargetOpticNative + ' does not exist');
-  }
-
-  let debugBinPath = Path.join(Config.localBuildPath, binaryName);
   if (Fs.existsSync(debugBinPath)) {
     // @TODO: use reported version of the binary (run optic_diff -V (or --version)) to do
     // some rough determination whether the build is outdated or not. Not perfect, but
