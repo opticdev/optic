@@ -2,8 +2,8 @@ import React, { ReactNode, useContext } from 'react';
 import invariant from 'invariant';
 
 interface IAppConfigurations {
-  navigation: {
-    showDiff: boolean;
+  features: {
+    allowEditing: boolean;
   };
   analytics:
     | { enabled: false }
@@ -13,9 +13,6 @@ interface IAppConfigurations {
         sentryUrl?: string;
         fullStoryOrgId?: string;
       };
-  documentation: {
-    allowDescriptionEditing: boolean;
-  };
   backendApi: {
     domain?: string;
   };

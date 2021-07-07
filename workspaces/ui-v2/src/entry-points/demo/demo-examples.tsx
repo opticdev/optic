@@ -39,14 +39,11 @@ import { SpecRepositoryStore } from '<src>/contexts/SpecRepositoryContext';
 
 const appConfig: OpticAppConfig = {
   config: {
-    navigation: {
-      showDiff: true,
+    features: {
+      allowEditing: true,
     },
     analytics: {
       enabled: false,
-    },
-    documentation: {
-      allowDescriptionEditing: true,
     },
     backendApi: {},
     sharing: { enabled: false },
