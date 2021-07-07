@@ -9,6 +9,7 @@ use std::hash::{Hash, Hasher};
 #[derive(Debug, Deserialize, Serialize, Hash)]
 pub enum InteractionDiffResult {
   UnmatchedQueryParameters(UnmatchedQueryParameters),
+  UnmatchedQueryParametersShape(UnmatchedQueryParametersShape),
   UnmatchedRequestUrl(UnmatchedRequestUrl),
   UnmatchedRequestBodyContentType(UnmatchedRequestBodyContentType),
   UnmatchedRequestBodyShape(UnmatchedRequestBodyShape),
@@ -35,6 +36,7 @@ impl InteractionDiffResult {
   pub fn interaction_trail(&self) -> &InteractionTrail {
     match self {
       InteractionDiffResult::UnmatchedQueryParameters(diff) => &diff.interaction_trail,
+      InteractionDiffResult::UnmatchedQueryParametersShape(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedRequestUrl(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedRequestBodyShape(diff) => &diff.interaction_trail,
@@ -49,6 +51,7 @@ impl InteractionDiffResult {
   pub fn requests_trail(&self) -> &RequestSpecTrail {
     match self {
       InteractionDiffResult::UnmatchedQueryParameters(diff) => &diff.requests_trail,
+      InteractionDiffResult::UnmatchedQueryParametersShape(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedRequestUrl(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedRequestBodyShape(diff) => &diff.requests_trail,
@@ -107,6 +110,28 @@ impl UnmatchedQueryParameters {
   }
 }
 
+#[derive(Debug, Deserialize, Serialize, Hash)]
+#[serde(rename_all = "camelCase")]
+pub struct UnmatchedQueryParametersShape {
+  pub interaction_trail: InteractionTrail,
+  pub requests_trail: RequestSpecTrail,
+  pub shape_diff_result: ShapeDiffResult,
+}
+
+impl UnmatchedQueryParametersShape {
+  pub fn new(
+    interaction_trail: InteractionTrail,
+    requests_trail: RequestSpecTrail,
+    shape_diff_result: ShapeDiffResult,
+  ) -> Self {
+    return UnmatchedQueryParametersShape {
+      interaction_trail,
+      requests_trail,
+      shape_diff_result,
+    };
+  }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedRequestBodyContentType {
@@ -141,6 +166,17 @@ impl MatchedQueryParameters {
       requests_trail,
       root_shape_id,
     };
+  }
+
+  pub fn into_shape_diff(
+    self,
+    shape_diff_result: ShapeDiffResult,
+  ) -> UnmatchedQueryParametersShape {
+    UnmatchedQueryParametersShape::new(
+      self.interaction_trail,
+      self.requests_trail,
+      shape_diff_result,
+    )
   }
 }
 

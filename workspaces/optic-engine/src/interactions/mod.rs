@@ -42,8 +42,20 @@ pub fn diff(
     })
     .flat_map(move |result| match result {
       InteractionDiffResult::MatchedQueryParameters(result) => {
-        // @TODO: implement shape diffing of query parameters
-        vec![]
+        let query_params = &http_interaction.request.query;
+        let shape_diff_results = diff_shape(
+          spec_projection.shape(),
+          query_params.into(),
+          &result.root_shape_id,
+        );
+        shape_diff_results
+          .into_iter()
+          .map(|shape_diff| {
+            InteractionDiffResult::UnmatchedQueryParametersShape(
+              result.clone().into_shape_diff(shape_diff),
+            )
+          })
+          .collect()
       }
       InteractionDiffResult::MatchedRequestBodyContentType(result) => {
         // eprintln!("shape diffing for matched a request body content type");
