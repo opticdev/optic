@@ -47,3 +47,11 @@ export const CapturesServiceStore: FC<CapturesServiceStoreProps> = (props) => {
     </CapturesServiceContext.Provider>
   );
 };
+
+export const useCapturesService = () => {
+  const capturesService = useContext(CapturesServiceContext);
+  if (!capturesService) {
+    throw new Error('useCapturesService could not find CapturesServiceContext');
+  }
+  return capturesService;
+};

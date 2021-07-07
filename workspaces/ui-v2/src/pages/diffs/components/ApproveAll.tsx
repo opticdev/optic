@@ -19,7 +19,6 @@ export default function ApproveAll(props: { disabled?: boolean }) {
   const { context, approveCommandsForDiff } = useSharedDiffContext();
 
   const diffsGroupedByEndpoints = context.results.diffsGroupedByEndpoint;
-  console.log(diffsGroupedByEndpoints);
 
   const allShapeDiffs = useMemo(
     () => diffsGroupedByEndpoints.flatMap((i) => i.shapeDiffs),
