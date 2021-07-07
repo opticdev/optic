@@ -20,6 +20,7 @@ class CommandAndProxySessionManager {
   ) {}
 
   private commandSession: CommandSession | undefined;
+  public inboundProxy = new HttpToolkitCapturingProxy();
 
   public getExitCodeOfProcess(): number | undefined {
     if (this.commandSession) {
@@ -30,7 +31,6 @@ class CommandAndProxySessionManager {
   async run(persistenceManager: ICaptureSaver) {
     this.commandSession = new CommandSession();
     const commandSession = this.commandSession!;
-    const inboundProxy = new HttpToolkitCapturingProxy();
     const servicePort = this.config.serviceConfig.port;
     const serviceHost = this.config.serviceConfig.host;
     const opticServiceConfig = {
@@ -42,7 +42,7 @@ class CommandAndProxySessionManager {
 
     await persistenceManager.init();
 
-    inboundProxy.events.on('sample', (sample: IHttpInteraction) => {
+    this.inboundProxy.events.on('sample', (sample: IHttpInteraction) => {
       userDebugLogger(
         `attempting to save sample ${sample.request.method} ${sample.request.path}`
       );
@@ -58,7 +58,7 @@ class CommandAndProxySessionManager {
       protocol: this.config.serviceConfig.protocol,
     });
     developerDebugLogger({ target });
-    await inboundProxy.start({
+    await this.inboundProxy.start({
       flags: {
         includeTextBody: process.env.OPTIC_ENABLE_CAPTURE_BODY === 'yes',
         includeJsonBody: process.env.OPTIC_ENABLE_CAPTURE_BODY === 'yes',
@@ -110,7 +110,7 @@ class CommandAndProxySessionManager {
       if (this.onStarted) {
         // run test task for manual mode
         await awaitTaskUp(Modes.Recommended, this.config);
-        await this.onStarted(inboundProxy.fingerprint!);
+        await this.onStarted(this.inboundProxy.fingerprint!);
         await commandSession.stop();
       }
 
@@ -124,7 +124,7 @@ class CommandAndProxySessionManager {
     } else {
       if (this.onStarted) {
         await awaitTaskUp(Modes.Manual, this.config);
-        await this.onStarted(inboundProxy.fingerprint!);
+        await this.onStarted(this.inboundProxy.fingerprint!);
       }
     }
 
@@ -140,7 +140,7 @@ class CommandAndProxySessionManager {
     commandSession.stop();
     developerDebugLogger(`done waiting for command to complete or ^C`);
     developerDebugLogger(`waiting for proxy to stop...`);
-    await inboundProxy.stop();
+    await this.inboundProxy.stop();
     developerDebugLogger(`done waiting for proxy to stop`);
     developerDebugLogger(`waiting for persistence manager to stop...`);
     await persistenceManager.cleanup();
