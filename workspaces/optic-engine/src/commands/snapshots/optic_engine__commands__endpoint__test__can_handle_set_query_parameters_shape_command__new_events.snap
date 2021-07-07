@@ -3,9 +3,9 @@ source: workspaces/optic-engine/src/commands/endpoint.rs
 expression: new_events
 ---
 [
-    RequestQueryParametersShapeSet(
-        RequestQueryParametersShapeSet {
-            request_id: "request_1",
+    QueryParametersShapeSet(
+        QueryParametersShapeSet {
+            query_parameters_id: "query_parameters_1",
             shape_descriptor: QueryParametersShapeDescriptor {
                 shape_id: "shape_1",
                 is_removed: false,

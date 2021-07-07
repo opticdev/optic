@@ -1,6 +1,8 @@
 use futures::sink::SinkExt;
 use insta::assert_debug_snapshot;
-use optic_engine::{diff_interaction, streams, HttpInteraction, SpecEvent, SpecProjection};
+use optic_engine::{
+  diff_interaction, streams, DiffInteractionConfig, HttpInteraction, SpecEvent, SpecProjection,
+};
 use petgraph::dot::Dot;
 use serde_json::json;
 use tokio::io::{AsyncBufReadExt, BufReader};
@@ -75,7 +77,11 @@ async fn can_yield_interactive_diff_result() {
   .expect("example http interaction should deserialize");
   println!("{:?}", interaction);
 
-  let results = diff_interaction(&spec_projection, interaction);
+  let results = diff_interaction(
+    &spec_projection,
+    interaction,
+    &DiffInteractionConfig::default(),
+  );
 
   println!("{:?}", results);
   assert_eq!(results.len(), 1);
@@ -154,7 +160,11 @@ fn can_yield_unmatched_request_url() {
   .expect("example http interaction should deserialize");
 
   let spec_projection = SpecProjection::from(events);
-  let results = diff_interaction(&spec_projection, interaction);
+  let results = diff_interaction(
+    &spec_projection,
+    interaction,
+    &DiffInteractionConfig::default(),
+  );
   let fingerprints = results
     .iter()
     .map(|result| result.fingerprint())
@@ -230,7 +240,11 @@ async fn can_yield_unmatched_shape() {
   )
   .expect("example http interaction should deserialize");
 
-  let mut results = diff_interaction(&spec_projection, compliant_interaction);
+  let mut results = diff_interaction(
+    &spec_projection,
+    compliant_interaction,
+    &DiffInteractionConfig::default(),
+  );
   assert_debug_snapshot!(results);
   assert_eq!(results.len(), 0);
 
@@ -281,7 +295,11 @@ async fn can_yield_unmatched_shape() {
   )
   .expect("example http interaction should deserialize");
 
-  results = diff_interaction(&spec_projection, incompliant_interaction);
+  results = diff_interaction(
+    &spec_projection,
+    incompliant_interaction,
+    &DiffInteractionConfig::default(),
+  );
   let fingerprints = results
     .iter()
     .map(|result| result.fingerprint())

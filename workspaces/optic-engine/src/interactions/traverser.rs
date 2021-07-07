@@ -1,6 +1,7 @@
 use super::visitors::{
-  InteractionVisitors, PathVisitor, PathVisitorContext, RequestBodyVisitor,
-  RequestBodyVisitorContext, ResponseBodyVisitor, ResponseBodyVisitorContext,
+  InteractionVisitors, PathVisitor, PathVisitorContext, QueryParametersVisitor,
+  QueryParametersVisitorContext, RequestBodyVisitor, RequestBodyVisitorContext,
+  ResponseBodyVisitor, ResponseBodyVisitorContext,
 };
 use crate::events::HttpInteraction;
 use crate::projections::endpoint::ROOT_PATH_ID;
@@ -27,6 +28,26 @@ impl<'a> Traverser<'a> {
       path: resolved_path,
     };
     path_visitor.visit(interaction, &path_context);
+
+    let query_params_visitor = visitors.query_params();
+    query_params_visitor.begin();
+    match resolved_path {
+      Some(path_id) => {
+        let query = self
+          .endpoint_queries
+          .resolve_endpoint_query_params(path_id, &interaction.request.method);
+
+        query_params_visitor.visit(
+          interaction,
+          &QueryParametersVisitorContext {
+            path: path_id,
+            query,
+          },
+        );
+      }
+      None => {}
+    };
+    query_params_visitor.end(interaction, &path_context);
 
     let request_body_visitor = visitors.request_body();
     request_body_visitor.begin();

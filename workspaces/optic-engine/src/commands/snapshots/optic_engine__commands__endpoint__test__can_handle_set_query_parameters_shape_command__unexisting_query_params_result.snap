@@ -1,0 +1,7 @@
+---
+source: workspaces/optic-engine/src/commands/endpoint.rs
+expression: unexisting_query_params_result.unwrap_err()
+---
+Validation(
+    "Command failed validation: query parameters must exist to set query parameteres shape, \"SetQueryParametersShape(SetQueryParametersShape { query_parameters_id: \\\"not-query-parameters\\\", shape_descriptor: QueryParametersShapeDescriptor { shape_id: \\\"shape_1\\\", is_removed: false } })\"",
+)

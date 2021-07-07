@@ -1,9 +1,12 @@
 use crate::commands::{EndpointCommand, SpecCommand};
 use crate::events::HttpInteraction;
 use crate::projections::endpoint::{Edge, EndpointProjection, Node, ROOT_PATH_ID};
-use crate::projections::endpoint::{RequestDescriptor, ResponseBodyDescriptor};
+use crate::projections::endpoint::{
+  QueryParametersDescriptor, RequestDescriptor, ResponseBodyDescriptor,
+};
 use crate::state::endpoint::{
-  HttpMethod, HttpStatusCode, PathComponentId, PathComponentIdRef, RequestId, ResponseId,
+  HttpMethod, HttpStatusCode, PathComponentId, PathComponentIdRef, QueryParametersId, RequestId,
+  ResponseId,
 };
 use petgraph::graph::Graph;
 use petgraph::visit::{
@@ -219,6 +222,16 @@ impl<'a> EndpointQueries<'a> {
     path_id: PathComponentIdRef,
   ) -> impl Iterator<Item = (&RequestId, &RequestDescriptor)> {
     self.resolve_operations_by_request_method(&interaction.request.method, path_id)
+  }
+
+  pub fn resolve_endpoint_query_params(
+    &self,
+    path_id: PathComponentIdRef,
+    method: &String,
+  ) -> Option<(&QueryParametersId, &QueryParametersDescriptor)> {
+    self
+      .endpoint_projection
+      .get_endpoint_query_parameter_node(&path_id.to_owned(), method)
   }
 
   pub fn resolve_requests(

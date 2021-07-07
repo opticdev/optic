@@ -302,6 +302,7 @@ export class InMemoryDiffService implements IOpticDiffService {
         return {
           pathId,
           method,
+          queryParameters: null,
           requests: [],
           responses: [],
         };
@@ -358,7 +359,8 @@ export class InMemoryDiff {
       for (let interaction of interactions) {
         let results = opticEngine.diff_interaction(
           JSON.stringify(interaction),
-          spec
+          spec,
+          {}
         );
 
         let parsedResults = JSON.parse(results);
