@@ -4,6 +4,7 @@ import { fromReadableJSONL } from '../../async-tools';
 export interface LearnedBodies {
   pathId: string;
   method: string;
+  queryParameters: LearnedQueryParameters | null;
   requests: LearnedBody[];
   responses: LearnedBody[];
 }
@@ -11,6 +12,11 @@ export interface LearnedBodies {
 export interface LearnedBody {
   contentType: string;
   statusCode?: number;
+  commands: any[];
+  rootShapeId: string;
+}
+
+export interface LearnedQueryParameters {
   commands: any[];
   rootShapeId: string;
 }

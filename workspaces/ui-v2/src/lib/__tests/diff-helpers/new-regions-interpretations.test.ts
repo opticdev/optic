@@ -22,7 +22,7 @@ test('new request body has correct commands', async () => {
   );
 
   const preview = await newRegionPreview(
-    diffs.find((i) => i.diffHash === '41bb570841f9d23b')!,
+    diffs.find((i) => i.diffType === 'UnmatchedRequestBodyContentType')!,
     diffService,
     universe.universe
   );
@@ -40,7 +40,7 @@ test('new response body has correct commands', async () => {
 
   console.log(diffs[0]);
   const preview = await newRegionPreview(
-    diffs.find((i) => i.diffHash === '2d42a681976a8151')!,
+    diffs.find((i) => i.diffType === 'UnmatchedResponseBodyContentType')!,
     diffService,
     universe.universe
   );

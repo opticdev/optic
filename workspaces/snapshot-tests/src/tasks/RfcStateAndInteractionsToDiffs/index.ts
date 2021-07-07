@@ -56,7 +56,8 @@ export const buildDiffsFromRfcStateAndInteractions: ITaskExecutor<
   const diffs = interactions.flatMap((interaction) => {
     const interactionDiffs = opticEngine.diff_interaction(
       JSON.stringify(interaction),
-      spec
+      spec,
+      {}
     );
     return JSON.parse(interactionDiffs);
   });

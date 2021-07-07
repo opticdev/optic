@@ -3,12 +3,12 @@ use futures::try_join;
 use futures::SinkExt;
 use futures::{StreamExt, TryStreamExt};
 use num_cpus;
-use optic_engine::diff_interaction;
 use optic_engine::errors;
 use optic_engine::streams;
 use optic_engine::HttpInteraction;
 use optic_engine::InteractionDiffResult;
 use optic_engine::SpecProjection;
+use optic_engine::{diff_interaction, DiffInteractionConfig};
 use optic_engine::{SpecChunkEvent, SpecEvent};
 use std::cmp;
 use std::process;
@@ -147,14 +147,23 @@ fn main() {
         eprintln!("diffing interations against a spec");
         eprintln!("using input queue size {}", input_queue_size);
 
-        diff(events_from_chunks(spec_chunks).await, input_queue_size).await;
+        let diff_config = DiffInteractionConfig::default()
+          .with_query_params(is_env_flag_enabled("REACT_APP_FF_DIFF_QUERY_PARAMETERS"));
+
+        diff(
+          events_from_chunks(spec_chunks).await,
+          input_queue_size,
+          diff_config,
+        )
+        .await;
       }
     };
   });
 }
 
-async fn diff(events: Vec<SpecEvent>, diff_queue_size: usize) {
+async fn diff(events: Vec<SpecEvent>, diff_queue_size: usize, diff_config: DiffInteractionConfig) {
   let spec_projection = Arc::new(SpecProjection::from(events));
+  let diff_config = Arc::new(diff_config);
 
   let stdin = stdin(); // TODO: deal with std in never having been attached
 
@@ -183,6 +192,7 @@ async fn diff(events: Vec<SpecEvent>, diff_queue_size: usize) {
       .try_for_each_concurrent(diff_queue_size, |interaction_json_result| {
         let projection = spec_projection.clone();
         let results_sender = results_sender.clone();
+        let diff_config = diff_config.clone();
 
         let diff_task = tokio::spawn(async move {
           let diff_comp = tokio::task::spawn_blocking::<
@@ -200,7 +210,10 @@ async fn diff(events: Vec<SpecEvent>, diff_queue_size: usize) {
                 }
               };
 
-            Some((diff_interaction(&projection, interaction), tags))
+            Some((
+              diff_interaction(&projection, interaction, &diff_config),
+              tags,
+            ))
           });
           //dbg!("waiting for results");
           let results = diff_comp
@@ -267,6 +280,10 @@ async fn events_from_chunks(chunks: Vec<SpecChunkEvent>) -> Vec<SpecEvent> {
   streams::spec_events::from_spec_chunks(chunks)
     .await
     .unwrap() // TODO: report on these errors in a more user-friendly way (like for single spec files)
+}
+
+fn is_env_flag_enabled(env_var_name: &str) -> bool {
+  std::env::var(env_var_name).map_or(false, |var| var == "true" || var == "yes")
 }
 
 #[cfg(test)]

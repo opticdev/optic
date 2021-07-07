@@ -13,6 +13,10 @@ pub trait SpecIdGenerator {
     self.generate_id("field_")
   }
 
+  fn query_params(&mut self) -> String {
+    self.generate_id("query_params_")
+  }
+
   fn request(&mut self) -> String {
     self.generate_id("request_")
   }
