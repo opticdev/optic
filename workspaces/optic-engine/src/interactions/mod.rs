@@ -208,6 +208,16 @@ pub fn analyze_documented_bodies(
   let results = diff_visitors.take_results().unwrap();
 
   results.into_iter().filter_map(move |result| match result {
+    InteractionDiffResult::MatchedQueryParameters(diff) => {
+      let query_params = &interaction.request.query;
+      let trail_observations = observe_body_trails(query_params);
+
+      Some(BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::from(diff),
+        trail_observations,
+      })
+    }
+
     InteractionDiffResult::MatchedRequestBodyContentType(diff) => {
       let body = &interaction.request.body;
       let trail_observations = observe_body_trails(&body.value);

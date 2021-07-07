@@ -320,6 +320,9 @@ pub enum BodyAnalysisLocation {
     content_type: Option<String>,
     status_code: u16,
   },
+  MatchedQueryParameters {
+    query_parameters_id: QueryParametersId,
+  },
   MatchedRequest {
     request_id: RequestId,
     content_type: Option<String>,
@@ -337,6 +340,7 @@ impl BodyAnalysisLocation {
       BodyAnalysisLocation::UnmatchedRequest { content_type, .. } => content_type.as_ref(),
       BodyAnalysisLocation::UnmatchedQueryParameters { .. } => None,
       BodyAnalysisLocation::UnmatchedResponse { content_type, .. } => content_type.as_ref(),
+      BodyAnalysisLocation::MatchedQueryParameters { .. } => None,
       BodyAnalysisLocation::MatchedRequest { content_type, .. } => content_type.as_ref(),
       BodyAnalysisLocation::MatchedResponse { content_type, .. } => content_type.as_ref(),
     }
@@ -398,6 +402,20 @@ impl From<UnmatchedResponseBodyContentType> for BodyAnalysisLocation {
       status_code: interaction_trail
         .get_response_status_code()
         .expect("UnmatchedResponseBodyContentType implies response to have a status code"),
+    }
+  }
+}
+
+impl From<MatchedQueryParameters> for BodyAnalysisLocation {
+  fn from(diff: MatchedQueryParameters) -> Self {
+    let interaction_trail = diff.interaction_trail;
+
+    Self::MatchedQueryParameters {
+      query_parameters_id: diff
+        .requests_trail
+        .get_query_parameters_id()
+        .expect("MatchedQueryParameters implies request to have a known query parameters id")
+        .clone(),
     }
   }
 }
@@ -585,6 +603,15 @@ impl RequestSpecTrail {
   pub fn get_path_id(&self) -> Option<&String> {
     match self {
       RequestSpecTrail::SpecPath(spec_path) => Some(&spec_path.path_id),
+      _ => None,
+    }
+  }
+
+  pub fn get_query_parameters_id(&self) -> Option<&String> {
+    match self {
+      RequestSpecTrail::SpecQueryParameters(query_params_spec) => {
+        Some(&query_params_spec.query_parameters_id)
+      }
       _ => None,
     }
   }

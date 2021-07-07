@@ -23,6 +23,9 @@ impl LearnedShapeDiffAffordancesProjection {
     let affordances_by_diff_fingerprint = &mut self.affordances_by_diff_fingerprint;
 
     let spec_id = match analysis.body_location {
+      BodyAnalysisLocation::MatchedQueryParameters {
+        query_parameters_id,
+      } => Some(query_parameters_id),
       BodyAnalysisLocation::MatchedRequest { request_id, .. } => Some(request_id),
       BodyAnalysisLocation::MatchedResponse { response_id, .. } => Some(response_id),
       _ => None,
@@ -106,6 +109,11 @@ impl FromIterator<InteractionDiffResult> for LearnedShapeDiffAffordancesProjecti
     let mut diffs_by_spec_id = HashMap::new();
     for (fingerprint, diff_result) in unique_diffs {
       let spec_id = match &diff_result {
+        InteractionDiffResult::UnmatchedQueryParametersShape(diff) => {
+          diff.requests_trail.get_query_parameters_id().expect(
+            "UnmatchedQueryParametersShape should have a query parameters id in the requests trail",
+          )
+        }
         InteractionDiffResult::UnmatchedRequestBodyShape(diff) => diff
           .requests_trail
           .get_request_id()
