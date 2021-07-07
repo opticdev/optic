@@ -376,7 +376,9 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     this.logger.results(
       sampleCount,
       this.foundDiff,
-      !Boolean(this.exitWithCode),
+      commandToRunWhenStarted
+        ? false
+        : typeof this.exitWithCode === 'undefined',
       this.exitWithCode
     );
   }
