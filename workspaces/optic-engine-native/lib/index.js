@@ -199,8 +199,28 @@ function getBinPath() {
     }
   }
 
-  const files = Fs.readdirSync(Config.localBuildPath);
-  console.log(files);
+  const cargoTargetRoot = Path.join(Config.localBuildPath, '..');
+  const cargoTargetOpticNative = Path.join(
+    Config.localBuildPath,
+    '..',
+    '..',
+    'workspaces',
+    'optic-engine-native',
+    'target'
+  );
+
+  if (Fs.existsSync(cargoTargetRoot)) {
+    const files = Fs.readdirSync(cargoTargetRoot);
+    console.log(files);
+  } else {
+    console.log(cargoTargetRoot + ' does not exist');
+  }
+  if (Fs.existsSync(cargoTargetOpticNative)) {
+    const files = Fs.readdirSync(cargoTargetOpticNative);
+    console.log(files);
+  } else {
+    console.log(cargoTargetOpticNative + ' does not exist');
+  }
 
   let debugBinPath = Path.join(Config.localBuildPath, binaryName);
   if (Fs.existsSync(debugBinPath)) {
