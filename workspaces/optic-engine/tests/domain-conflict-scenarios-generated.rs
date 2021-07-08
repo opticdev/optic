@@ -1,6 +1,8 @@
 // DO NOT EDIT! This file was generated via workspace-scripts/diff-engine/generate-tests
 use insta::{assert_debug_snapshot, assert_json_snapshot};
-use optic_engine::{diff_interaction, HttpInteraction, SpecEvent, SpecProjection};
+use optic_engine::{
+  diff_interaction, DiffInteractionConfig, HttpInteraction, SpecEvent, SpecProjection,
+};
 use petgraph::dot::Dot;
 
 #[test]
@@ -47,7 +49,11 @@ pub fn scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d
   let interactions: Vec<HttpInteraction> = serde_json::from_str(&interactions_string).unwrap();
   for interaction in interactions {
     let label = format!("scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d__interaction_{}__diffs", interaction.uuid.clone());
-    let diffs = diff_interaction(&spec_projection, interaction);
+    let diffs = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!(label, diffs);
   }
 }
@@ -95,7 +101,11 @@ pub fn scenario_20e9bda8afc0279258c5ac2c01b82c437aa1976e1eba23cb92096f7434d9316c
   let interactions: Vec<HttpInteraction> = serde_json::from_str(&interactions_string).unwrap();
   for interaction in interactions {
     let label = format!("scenario_20e9bda8afc0279258c5ac2c01b82c437aa1976e1eba23cb92096f7434d9316c__interaction_{}__diffs", interaction.uuid.clone());
-    let diffs = diff_interaction(&spec_projection, interaction);
+    let diffs = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!(label, diffs);
   }
 }
@@ -144,7 +154,11 @@ pub fn scenario_af20bd1d8e76cf9db0416175232b9b0276447f7148f3261f2d14b006aa7a0229
   let interactions: Vec<HttpInteraction> = serde_json::from_str(&interactions_string).unwrap();
   for interaction in interactions {
     let label = format!("scenario_af20bd1d8e76cf9db0416175232b9b0276447f7148f3261f2d14b006aa7a0229__interaction_{}__diffs", interaction.uuid.clone());
-    let diffs = diff_interaction(&spec_projection, interaction);
+    let diffs = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!(label, diffs);
   }
 }
@@ -193,7 +207,11 @@ pub fn scenario_1f2c157783b46f9555f537046a7cb37cdde95466bd1af429b0f95f171a2bb4f9
   let interactions: Vec<HttpInteraction> = serde_json::from_str(&interactions_string).unwrap();
   for interaction in interactions {
     let label = format!("scenario_1f2c157783b46f9555f537046a7cb37cdde95466bd1af429b0f95f171a2bb4f9__interaction_{}__diffs", interaction.uuid.clone());
-    let diffs = diff_interaction(&spec_projection, interaction);
+    let diffs = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!(label, diffs);
   }
 }

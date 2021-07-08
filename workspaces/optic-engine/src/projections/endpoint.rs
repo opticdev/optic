@@ -26,7 +26,12 @@ pub struct BodyDescriptor {
 }
 
 #[derive(Debug, Serialize, Clone)]
-pub struct RequestBodyDescriptor {
+pub struct QueryParametersDescriptor {
+  pub shape: Option<QueryParametersShapeDescriptor>,
+}
+
+#[derive(Debug, Serialize, Clone)]
+pub struct RequestDescriptor {
   pub body: Option<BodyDescriptor>,
 }
 
@@ -37,10 +42,11 @@ pub struct ResponseBodyDescriptor {
 
 #[derive(Debug, Clone)]
 pub enum Node {
-  PathComponent(PathComponentId, PathComponentDescriptor),
   HttpMethod(HttpMethod),
   HttpStatusCode(HttpStatusCode),
-  Request(RequestId, RequestBodyDescriptor),
+  PathComponent(PathComponentId, PathComponentDescriptor),
+  QueryParameters(QueryParametersId, QueryParametersDescriptor),
+  Request(RequestId, RequestDescriptor),
   Response(ResponseId, ResponseBodyDescriptor),
 }
 
@@ -146,6 +152,56 @@ impl EndpointProjection {
     // as it does not delete ids for those nested entities
   }
 
+  pub fn with_query_parameters(
+    &mut self,
+    path_id: PathComponentId,
+    http_method: HttpMethod,
+    query_parameters_id: QueryParametersId,
+  ) {
+    if let Some(_) = self.get_endpoint_query_parameter_node(&path_id, &http_method) {
+      panic!("only a single query parameters node can correspond to an endpoint")
+    }
+
+    let path_node_index = *self
+      .node_id_to_index
+      .get(&path_id)
+      .expect("expected path_id to have a corresponding node");
+    let method_node_index = self.ensure_method_node(path_node_index, http_method);
+    let query_params_node = Node::QueryParameters(
+      query_parameters_id.clone(),
+      QueryParametersDescriptor { shape: None },
+    );
+
+    let query_params_node_index = self.graph.add_node(query_params_node);
+    self
+      .graph
+      .add_edge(query_params_node_index, method_node_index, Edge::IsChildOf);
+    self
+      .node_id_to_index
+      .insert(query_parameters_id, query_params_node_index);
+  }
+
+  pub fn with_query_parameters_shape(
+    &mut self,
+    query_parameters_id: QueryParametersId,
+    shape_descriptor: QueryParametersShapeDescriptor,
+  ) {
+    let query_params_node_index = self
+      .node_id_to_index
+      .get(&query_parameters_id)
+      .expect("expected query_parameters_id to have a corresponding node");
+    let request_node = self
+      .graph
+      .node_weight_mut(*query_params_node_index)
+      .unwrap();
+    let query_params_descriptor = match request_node {
+      Node::QueryParameters(id, descriptor) => descriptor,
+      _ => unreachable!("query parameter ids should point to query parameter nodes"),
+    };
+
+    query_params_descriptor.shape = Some(shape_descriptor);
+  }
+
   pub fn with_request(
     &mut self,
     path_id: PathComponentId,
@@ -157,7 +213,7 @@ impl EndpointProjection {
       .get(&path_id)
       .expect("expected path_id to have a corresponding node");
     let method_node_index = self.ensure_method_node(path_node_index, http_method);
-    let request_node = Node::Request(request_id.clone(), RequestBodyDescriptor { body: None });
+    let request_node = Node::Request(request_id.clone(), RequestDescriptor { body: None });
     let request_node_index = self.graph.add_node(request_node);
     self
       .graph
@@ -388,6 +444,19 @@ impl EndpointProjection {
     }
   }
 
+  pub fn get_query_params_node_index(
+    &self,
+    query_params_id: &QueryParametersId,
+  ) -> Option<&NodeIndex> {
+    let node_index = self.node_id_to_index.get(query_params_id)?;
+    let node = self.graph.node_weight(*node_index)?;
+    if let &Node::QueryParameters(_, _) = node {
+      Some(node_index)
+    } else {
+      None
+    }
+  }
+
   pub fn get_request_node_index(&self, request_id: &RequestId) -> Option<&NodeIndex> {
     let node_index = self.node_id_to_index.get(request_id)?;
     let node = self.graph.node_weight(*node_index)?;
@@ -560,6 +629,36 @@ impl EndpointProjection {
 
     Some(matching_method)
   }
+
+  pub fn get_endpoint_query_parameter_node(
+    &self,
+    path_id: &PathComponentId,
+    method: &HttpMethod,
+  ) -> Option<(&QueryParametersId, &QueryParametersDescriptor)> {
+    let path_node_index = self.get_path_component_node_index(path_id)?;
+
+    let method_node_index = self
+      .graph
+      .neighbors_directed(*path_node_index, petgraph::Direction::Incoming)
+      .find(move |i| {
+        let node = self.graph.node_weight(*i).unwrap();
+        match node {
+          Node::HttpMethod(http_method) => method == http_method,
+          _ => false,
+        }
+      })?;
+
+    self
+      .graph
+      .neighbors_directed(method_node_index, petgraph::Direction::Incoming)
+      .find_map(move |i| {
+        let node = self.graph.node_weight(i).unwrap();
+        match node {
+          Node::QueryParameters(query_params_id, descriptor) => Some((query_params_id, descriptor)),
+          _ => None,
+        }
+      })
+  }
 }
 
 impl Default for EndpointProjection {
@@ -620,6 +719,12 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
       }
       EndpointEvent::PathParameterRemoved(e) => {
         aggregate.without_path_parameter(e.path_id);
+      }
+      EndpointEvent::QueryParametersAdded(e) => {
+        aggregate.with_query_parameters(e.path_id, e.http_method, e.query_parameters_id);
+      }
+      EndpointEvent::QueryParametersShapeSet(e) => {
+        aggregate.with_query_parameters_shape(e.query_parameters_id, e.shape_descriptor);
       }
       EndpointEvent::RequestAdded(e) => {
         aggregate.with_request(e.path_id, e.http_method, e.request_id);

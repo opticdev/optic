@@ -3,12 +3,13 @@
 use chrono::Utc;
 use nanoid::nanoid;
 use optic_engine::{
-  analyze_undocumented_bodies, Aggregate, Body, BodyAnalysisResult, CommandContext,
-  EndpointQueries, HttpInteraction, InteractionDiffResult, JsonTrail,
-  LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection,
-  ResponseBodyDescriptor, ResponseId, SpecCommand, SpecEvent, SpecIdGenerator, SpecProjection,
-  TaggedInput, TrailObservationsResult, TrailValues,
+  analyze_undocumented_bodies, Aggregate, AnalyzeUndocumentedBodiesConfig, Body,
+  BodyAnalysisResult, CommandContext, DiffInteractionConfig, EndpointQueries, HttpInteraction,
+  InteractionDiffResult, JsonTrail, LearnedShapeDiffAffordancesProjection,
+  LearnedUndocumentedBodiesProjection, ResponseBodyDescriptor, ResponseId, SpecCommand, SpecEvent,
+  SpecIdGenerator, SpecProjection, TaggedInput, TrailObservationsResult, TrailValues,
 };
+use serde::Deserialize;
 use std::collections::HashMap;
 use uuid::Uuid;
 use wasm_bindgen::{__rt::WasmRefCell, prelude::*};
@@ -48,16 +49,48 @@ pub fn get_contributions_projection(spec: &WasmSpecProjection) -> Result<String,
 pub fn diff_interaction(
   interaction_json: String,
   spec: &WasmSpecProjection,
+  raw_options: &JsValue,
 ) -> Result<String, JsValue> {
+  let options = DiffInteractionOptions::from(raw_options);
   let interaction: HttpInteraction = serde_json::from_str(&interaction_json).unwrap();
 
+  let diff_config =
+    DiffInteractionConfig::default().with_query_params(options.include_query_params);
+
   let results: Vec<ResultContainer<InteractionDiffResult>> = spec
-    .diff_interaction(interaction)
+    .diff_interaction(interaction, &diff_config)
     .into_iter()
     .map(|result| result.into())
     .collect();
 
   Ok(serde_json::to_string(&results).unwrap())
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct DiffInteractionOptions {
+  #[serde(default)]
+  include_query_params: bool,
+}
+
+impl Default for DiffInteractionOptions {
+  fn default() -> Self {
+    Self {
+      include_query_params: false,
+    }
+  }
+}
+
+impl From<&JsValue> for DiffInteractionOptions {
+  fn from(options: &JsValue) -> Self {
+    if options.is_undefined() {
+      DiffInteractionOptions::default()
+    } else {
+      options
+        .into_serde()
+        .expect("diff interaction options must be valid")
+    }
+  }
 }
 
 #[wasm_bindgen]
@@ -127,15 +160,19 @@ pub fn learn_undocumented_bodies(
   spec: &WasmSpecProjection,
   interactions_json: String,
   id_generator_strategy: String,
+  include_query_params: bool,
 ) -> Result<String, JsValue> {
   let interactions = serde_json::Deserializer::from_str(&interactions_json).into_iter();
+
+  let learner_config =
+    AnalyzeUndocumentedBodiesConfig::default().with_query_params(include_query_params);
 
   let mut learned_undocumented_bodies = LearnedUndocumentedBodiesProjection::default();
   for interaction_parse_result in interactions {
     let interaction: HttpInteraction = interaction_parse_result
       .map_err(|err| JsValue::from(format!("could not parse interaction json: {}", err)))?;
 
-    let results = spec.analyze_undocumented_bodies(interaction);
+    let results = spec.analyze_undocumented_bodies(interaction, &learner_config);
 
     for result in results {
       learned_undocumented_bodies.apply(result)
@@ -209,14 +246,19 @@ pub struct WasmSpecProjection {
 }
 
 impl WasmSpecProjection {
-  pub fn diff_interaction(&self, interaction: HttpInteraction) -> Vec<InteractionDiffResult> {
-    optic_engine::diff_interaction(&self.projection, interaction)
-  }
-  fn analyze_undocumented_bodies(
-    &self,
+  pub fn diff_interaction<'a>(
+    &'a self,
     interaction: HttpInteraction,
-  ) -> impl Iterator<Item = BodyAnalysisResult> {
-    optic_engine::analyze_undocumented_bodies(&self.projection, interaction)
+    config: &'a DiffInteractionConfig,
+  ) -> Vec<InteractionDiffResult> {
+    optic_engine::diff_interaction(&self.projection, interaction, config)
+  }
+  fn analyze_undocumented_bodies<'a>(
+    &'a self,
+    interaction: HttpInteraction,
+    config: &'a AnalyzeUndocumentedBodiesConfig,
+  ) -> impl Iterator<Item = BodyAnalysisResult> + 'a {
+    optic_engine::analyze_undocumented_bodies(&self.projection, interaction, config)
   }
 
   fn analyze_documented_bodies(

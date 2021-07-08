@@ -1,9 +1,12 @@
 use crate::commands::{EndpointCommand, SpecCommand};
 use crate::events::HttpInteraction;
 use crate::projections::endpoint::{Edge, EndpointProjection, Node, ROOT_PATH_ID};
-use crate::projections::endpoint::{RequestBodyDescriptor, ResponseBodyDescriptor};
+use crate::projections::endpoint::{
+  QueryParametersDescriptor, RequestDescriptor, ResponseBodyDescriptor,
+};
 use crate::state::endpoint::{
-  HttpMethod, HttpStatusCode, PathComponentId, PathComponentIdRef, RequestId, ResponseId,
+  HttpMethod, HttpStatusCode, PathComponentId, PathComponentIdRef, QueryParametersId, RequestId,
+  ResponseId,
 };
 use petgraph::graph::Graph;
 use petgraph::visit::{
@@ -207,7 +210,7 @@ impl<'a> EndpointQueries<'a> {
     &self,
     method: &'a String,
     path_id: PathComponentIdRef,
-  ) -> impl Iterator<Item = (&RequestId, &RequestBodyDescriptor)> {
+  ) -> impl Iterator<Item = (&RequestId, &RequestDescriptor)> {
     self
       .resolve_requests(path_id, method)
       .expect("expected a operations to exist")
@@ -217,15 +220,25 @@ impl<'a> EndpointQueries<'a> {
     &self,
     interaction: &'a HttpInteraction,
     path_id: PathComponentIdRef,
-  ) -> impl Iterator<Item = (&RequestId, &RequestBodyDescriptor)> {
+  ) -> impl Iterator<Item = (&RequestId, &RequestDescriptor)> {
     self.resolve_operations_by_request_method(&interaction.request.method, path_id)
+  }
+
+  pub fn resolve_endpoint_query_params(
+    &self,
+    path_id: PathComponentIdRef,
+    method: &String,
+  ) -> Option<(&QueryParametersId, &QueryParametersDescriptor)> {
+    self
+      .endpoint_projection
+      .get_endpoint_query_parameter_node(&path_id.to_owned(), method)
   }
 
   pub fn resolve_requests(
     &self,
     path_id: PathComponentIdRef,
     method: &'a String,
-  ) -> Option<impl Iterator<Item = (&RequestId, &RequestBodyDescriptor)>> {
+  ) -> Option<impl Iterator<Item = (&RequestId, &RequestDescriptor)>> {
     let path_node_index = self.graph_get_index(path_id)?;
     let children = self
       .endpoint_projection
@@ -262,7 +275,7 @@ impl<'a> EndpointQueries<'a> {
     path_id: PathComponentIdRef,
     method: &'a String,
     content_type: Option<&'a String>,
-  ) -> Option<(&RequestId, &RequestBodyDescriptor)> {
+  ) -> Option<(&RequestId, &RequestDescriptor)> {
     self.resolve_requests(path_id, method).and_then(|mut it| {
       it.find(|(id, body)| match content_type {
         Some(content_type) => match body.body {

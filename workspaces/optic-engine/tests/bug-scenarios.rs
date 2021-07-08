@@ -1,6 +1,8 @@
 #![recursion_limit = "2560"]
 use insta::assert_debug_snapshot;
-use optic_engine::{diff_interaction, HttpInteraction, SpecEvent, SpecProjection};
+use optic_engine::{
+  diff_interaction, DiffInteractionConfig, HttpInteraction, SpecEvent, SpecProjection,
+};
 use petgraph::dot::Dot;
 use serde_json::json;
 
@@ -580,7 +582,11 @@ fn scenario_32() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_32__results", results)
   });
 }
@@ -1221,7 +1227,11 @@ fn scenario_33() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_33__results", results)
   });
 }
@@ -1940,7 +1950,11 @@ fn scenario_34() {
   );
 
   interactions.into_iter().for_each(|interaction| {
-    let results = diff_interaction(&spec_projection, interaction);
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
     assert_debug_snapshot!("scenario_34__results", results)
   });
 }

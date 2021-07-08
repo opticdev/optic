@@ -107,6 +107,23 @@ type HttpBody {
 }
 
 """
+Query Parameters, 1:1 mapping to a HttpRequest
+"""
+type QueryParameters {
+  # Id for the query parameter
+  id: String!
+
+  # Root shape ID for the QueryParameter. Look at the shapeChoices query getting more information about the root shape
+  rootShapeId: String!
+
+  # Is the body removed
+  isRemoved: Boolean!
+
+  # Contributions for the query parameter
+  contributions: JSON
+}
+
+"""
 HTTP Request
 """
 type HttpRequest {
@@ -126,6 +143,9 @@ type HttpRequest {
   
   # HTTP method for the HTTP request
   method: String
+
+  # Query parameters associated with this HTTP request
+  query: QueryParameters
   
   # Request bodies associated with this HTTP request
   bodies: [HttpBody]
@@ -253,7 +273,11 @@ type ChangesResult {
   added: Boolean
   
   # Whether or not the change was one that was updated
+  # TODO @nic change this to updated
   changed: Boolean
+
+  # Whether or not the change was one that was removed
+  removed: Boolean
 }
 
 """

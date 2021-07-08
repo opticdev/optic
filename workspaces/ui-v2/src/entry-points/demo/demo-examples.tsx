@@ -39,14 +39,9 @@ import { SpecRepositoryStore } from '<src>/contexts/SpecRepositoryContext';
 
 const appConfig: OpticAppConfig = {
   config: {
-    navigation: {
-      showDiff: true,
-    },
+    allowEditing: true,
     analytics: {
       enabled: false,
-    },
-    documentation: {
-      allowDescriptionEditing: true,
     },
     backendApi: {},
     sharing: { enabled: false },
@@ -54,9 +49,6 @@ const appConfig: OpticAppConfig = {
 };
 
 export default function DemoExamples(props: { lookupDir: string }) {
-  const shouldRenderChangelogHistory =
-    process.env.REACT_APP_FF_SHOW_REVERT_COMMIT === 'true';
-
   const match = useRouteMatch();
   const params = useParams<{ exampleId: string }>();
 
@@ -112,12 +104,10 @@ export default function DemoExamples(props: { lookupDir: string }) {
                     <DebugOpticComponent />
                     <MetadataLoader>
                       <Switch>
-                        {shouldRenderChangelogHistory && (
-                          <Route
-                            path={`${match.path}/history`}
-                            component={ChangelogHistory}
-                          />
-                        )}
+                        <Route
+                          path={`${match.path}/history`}
+                          component={ChangelogHistory}
+                        />
                         <Route
                           path={`${match.path}/changes-since/:batchId`}
                           component={ChangelogPages}

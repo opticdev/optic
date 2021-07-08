@@ -180,16 +180,18 @@ export async function printCoverage(
 
     const pathIds = new Map<string, string>(
       response.data.requests.map((r) => [
-        r.pathId,
+        `${r.method} ${r.pathId}`,
         r.absolutePathPatternWithParameterNames,
       ])
     );
 
-    for (const [pathId, pathString] of pathIds.entries()) {
+    for (const [_pathId, pathString] of pathIds.entries()) {
+      const [method, pathId] = _pathId.split(' ');
       const total_count =
         map_without_diffs[
-          TotalForPath({
+          TotalForPathAndMethod({
             path_id: pathId,
+            http_method: method,
           })
         ];
 
@@ -198,7 +200,7 @@ export async function printCoverage(
       }
 
       const requests = response.data.requests.filter(
-        (r) => r.pathId === pathId
+        (r) => r.pathId === pathId && r.method === method
       );
 
       let total_endpoint_requests = 0;
@@ -299,7 +301,9 @@ export async function printCoverage(
           : colors.red;
 
       const endpoint_contents = color_func(
-        `${colors.bold(pathString)} -> ${pct_coverage.toFixed(1)}% covered`
+        `${method} ${colors.bold(pathString)} -> ${pct_coverage.toFixed(
+          1
+        )}% covered`
       );
 
       table.push([
@@ -390,7 +394,8 @@ export async function computeCoverage(paths: IPathMapping, captureId: string) {
 
       const diff_str = OpticEngine.diff_interaction(
         JSON.stringify(item.interaction.value),
-        spec
+        spec,
+        {}
       );
       // Maybe we could be more clever here later
       // Would also love to get real types in here

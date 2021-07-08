@@ -1,5 +1,6 @@
-import React, { FC, ReactNode, useMemo } from 'react';
-import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
+import React, { FC, ReactNode } from 'react';
+import { makeStyles } from '@material-ui/core';
+
 import {
   EndpointName,
   PathParameters,
@@ -7,16 +8,24 @@ import {
   FullWidth,
   IShapeRenderer,
   JsonLike,
+  ShapeFetcher,
+  QueryParametersPanel,
+  HttpBodyPanel,
+  convertShapeToQueryParameters,
+  Panel,
 } from '<src>/components';
 import { EndpointTOC } from '<src>/pages/docs/components/EndpointTOC';
-import { CodeBlock } from '<src>/pages/docs/components/BodyRender';
-import { SubtleBlueBackground } from '<src>/styles';
-import { OneColumnBody } from '<src>/pages/docs/components/RenderBody';
+import { SubtleBlueBackground, FontFamily } from '<src>/styles';
+import { ChangeLogBG } from '<src>/pages/changelog/components/ChangeLogBG';
+
 import { IParsedLocation } from '<src>/lib/Interfaces';
-import { HighlightedLocation } from '<src>/pages/diffs/components/HighlightedLocation';
+import {
+  HighlightedLocation,
+  Location,
+} from '<src>/pages/diffs/components/HighlightedLocation';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { useDebouncedFn, useStateWithSideEffect } from '<src>/hooks/util';
-import { useAppSelector } from '<src>/store';
+import { selectors, useAppSelector } from '<src>/store';
 import { IPathParameter } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
@@ -40,16 +49,13 @@ export const EndpointDocumentationPane: FC<
   renderHeader,
   ...props
 }) => {
-  const endpointsState = useAppSelector((state) => state.endpoints.results);
-  const thisEndpoint = useMemo(
-    () =>
-      endpointsState.data?.find(
-        (i) => i.pathId === pathId && i.method === method
-      ),
-    [endpointsState, method, pathId]
+  const classes = useStyles();
+  const thisEndpoint = useAppSelector(
+    selectors.getEndpoint({ pathId, method })
   );
-
-  const bodies = useEndpointBody(pathId, method, lastBatchCommit);
+  const endpointBodyChanges = useAppSelector(
+    (state) => state.endpoints.results.data?.changes || {}
+  );
 
   if (!thisEndpoint) {
     return <>no endpoint here</>;
@@ -69,7 +75,7 @@ export const EndpointDocumentationPane: FC<
     >
       {renderHeader()}
       <div style={{ height: 20 }} />
-      <CodeBlock
+      <Panel
         header={
           <EndpointName
             fontSize={14}
@@ -99,52 +105,110 @@ export const EndpointDocumentationPane: FC<
           }}
         >
           <EndpointTOC
-            requests={bodies.requests}
-            responses={bodies.responses}
+            query={thisEndpoint.query}
+            requests={thisEndpoint.requestBodies}
+            responses={thisEndpoint.responseBodies}
           />
         </div>
-      </CodeBlock>
-      <div style={{ height: 50 }} />
-      {bodies.requests.map((i, index) => {
-        return (
-          <React.Fragment key={i.requestId}>
-            <HighlightedLocation
-              targetLocation={highlightedLocation}
-              contentType={i.contentType}
-              inRequest={true}
+      </Panel>
+
+      {thisEndpoint.query && (
+        <HighlightedLocation
+          className={classes.bodyContainer}
+          targetLocation={highlightedLocation}
+          expectedLocation={Location.Query}
+        >
+          {/* TODO QPB add changelogBG to this panel */}
+          <div id={thisEndpoint.query.queryParametersId}>
+            <h6 className={classes.bodyHeader}>Query Parameters</h6>
+            <div className={classes.bodyDetails}>
+              <ShapeFetcher
+                rootShapeId={thisEndpoint.query.rootShapeId}
+                changesSinceBatchCommit={lastBatchCommit}
+              >
+                {(shapes) => (
+                  <QueryParametersPanel
+                    parameters={convertShapeToQueryParameters(shapes)}
+                  />
+                )}
+              </ShapeFetcher>
+            </div>
+          </div>
+        </HighlightedLocation>
+      )}
+
+      {thisEndpoint.requestBodies.map((requestBody) => (
+        <React.Fragment key={requestBody.requestId}>
+          <HighlightedLocation
+            className={classes.bodyContainer}
+            targetLocation={highlightedLocation}
+            contentType={requestBody.contentType}
+            expectedLocation={Location.Request}
+          >
+            <ChangeLogBG
+              changes={
+                highlightBodyChanges
+                  ? endpointBodyChanges[requestBody.requestId]
+                  : undefined
+              }
             >
-              <OneColumnBody
-                changes={highlightBodyChanges ? i.changes : undefined}
-                changesSinceBatchCommitId={lastBatchCommit}
-                rootShapeId={i.rootShapeId}
-                bodyId={i.requestId}
-                location={'Request Body'}
-                contentType={i.contentType}
-              />
-            </HighlightedLocation>
-            <div style={{ height: 50 }} />
-          </React.Fragment>
-        );
-      })}
-      {bodies.responses.map((i, index) => {
+              <div id={requestBody.requestId}>
+                <h6 className={classes.bodyHeader}>Request Body</h6>
+                <div className={classes.bodyDetails}>
+                  <ShapeFetcher
+                    rootShapeId={requestBody.rootShapeId}
+                    changesSinceBatchCommit={lastBatchCommit}
+                  >
+                    {(shapes) => (
+                      <HttpBodyPanel
+                        shapes={shapes}
+                        location={`Request Body ${requestBody.contentType}`}
+                      />
+                    )}
+                  </ShapeFetcher>
+                </div>
+              </div>
+            </ChangeLogBG>
+          </HighlightedLocation>
+        </React.Fragment>
+      ))}
+      {thisEndpoint.responseBodies.map((responseBody) => {
         return (
-          <React.Fragment key={i.responseId}>
+          <React.Fragment key={responseBody.responseId}>
             <HighlightedLocation
+              className={classes.bodyContainer}
               targetLocation={highlightedLocation}
-              contentType={i.contentType}
-              statusCode={i.statusCode}
-              inResponse={true}
+              contentType={responseBody.contentType}
+              statusCode={responseBody.statusCode}
+              expectedLocation={Location.Response}
             >
-              <OneColumnBody
-                changes={highlightBodyChanges ? i.changes : undefined}
-                changesSinceBatchCommitId={lastBatchCommit}
-                rootShapeId={i.rootShapeId}
-                bodyId={i.responseId}
-                location={`${i.statusCode} response`}
-                contentType={i.contentType}
-              />
+              <ChangeLogBG
+                changes={
+                  highlightBodyChanges
+                    ? endpointBodyChanges[responseBody.responseId]
+                    : undefined
+                }
+              >
+                <div id={responseBody.responseId}>
+                  <h6 className={classes.bodyHeader}>
+                    {responseBody.statusCode} response
+                  </h6>
+                  <div className={classes.bodyDetails}>
+                    <ShapeFetcher
+                      rootShapeId={responseBody.rootShapeId}
+                      changesSinceBatchCommit={lastBatchCommit}
+                    >
+                      {(shapes) => (
+                        <HttpBodyPanel
+                          shapes={shapes}
+                          location={`${responseBody.statusCode} response ${responseBody.contentType}`}
+                        />
+                      )}
+                    </ShapeFetcher>
+                  </div>
+                </div>
+              </ChangeLogBG>
             </HighlightedLocation>
-            <div style={{ height: 50 }} />
           </React.Fragment>
         );
       })}
@@ -187,3 +251,21 @@ const DiffPathParamField: FC<{
     />
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  bodyContainer: {
+    margin: theme.spacing(3, 0),
+  },
+  bodyHeader: {
+    fontSize: '1.25rem',
+    fontFamily: FontFamily,
+    fontWeight: 500,
+    lineHeight: 1.6,
+    letterSpacing: '0.0075em',
+    marginTop: 0,
+    marginBottom: theme.spacing(2),
+  },
+  bodyDetails: {
+    padding: theme.spacing(0, 1),
+  },
+}));

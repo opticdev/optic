@@ -40,7 +40,7 @@ export function DocumentationRootPage() {
   };
 
   const filteredEndpoints = selectors.filterRemovedEndpoints(
-    endpointsState.data || []
+    endpointsState.data?.endpoints || []
   );
 
   const groupedEndpoints = useGroupedEndpoints(filteredEndpoints);

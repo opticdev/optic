@@ -93,7 +93,6 @@ export function PendingEndpointPage(props: any) {
     ignoreBody,
     includeBody,
     stageEndpoint,
-    discardEndpoint,
     newEndpointCommands,
     endpointName,
     changeEndpointName,
@@ -147,7 +146,7 @@ export function PendingEndpointPage(props: any) {
             <Loader title="Learning request and response bodies..." />
           )}
 
-          {isReady && (
+          {isReady && learnedBodies && (
             <div className={classes.bodyAdd}>
               <TextField
                 fullWidth={true}
@@ -161,8 +160,9 @@ export function PendingEndpointPage(props: any) {
                 onKeyPress={onKeyPress}
               />
 
-              {requestCheckboxes.length > 0 ||
-              learnedBodies!.responses.length > 0 ? (
+              {learnedBodies.queryParameters ||
+              requestCheckboxes.length > 0 ||
+              learnedBodies.responses.length > 0 ? (
                 <Typography
                   component="div"
                   variant="subtitle2"
@@ -171,6 +171,33 @@ export function PendingEndpointPage(props: any) {
                   Document the bodies for this endpoint:
                 </Typography>
               ) : null}
+
+              {learnedBodies.queryParameters && (
+                <>
+                  <FormControl component="fieldset" onKeyPress={onKeyPress}>
+                    <LearnBodyCheckBox
+                      initialStatus={isIgnored({
+                        isQuery: true,
+                        contentType: '',
+                      })}
+                      primary="Query Parameters"
+                      subtext=""
+                      onChange={(ignore) => {
+                        ignore
+                          ? ignoreBody({
+                              isQuery: true,
+                              contentType: '',
+                            })
+                          : includeBody({
+                              isQuery: true,
+                              contentType: '',
+                            });
+                      }}
+                    />
+                  </FormControl>
+                  <Divider />
+                </>
+              )}
 
               <FormControl component="fieldset" onKeyPress={onKeyPress}>
                 {requestCheckboxes.map((i, index) => {
@@ -231,13 +258,6 @@ export function PendingEndpointPage(props: any) {
                   </Button>
                 </div>
                 <div>
-                  <Button
-                    size="small"
-                    color="secondary"
-                    onClick={discardEndpoint}
-                  >
-                    Discard Endpoint
-                  </Button>
                   <Button
                     size="small"
                     variant="contained"

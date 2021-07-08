@@ -288,7 +288,9 @@ export class InMemoryDiffService implements IOpticDiffService {
         this.dependencies.opticEngine.learn_undocumented_bodies(
           spec,
           interactionsJsonl,
-          'random'
+          'random',
+          process.env.REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS ===
+            'true'
         )
       );
       const learnedBodiesForPathIdAndMethod = learnedBodies.find(
@@ -300,6 +302,7 @@ export class InMemoryDiffService implements IOpticDiffService {
         return {
           pathId,
           method,
+          queryParameters: null,
           requests: [],
           responses: [],
         };
@@ -356,7 +359,8 @@ export class InMemoryDiff {
       for (let interaction of interactions) {
         let results = opticEngine.diff_interaction(
           JSON.stringify(interaction),
-          spec
+          spec,
+          {}
         );
 
         let parsedResults = JSON.parse(results);

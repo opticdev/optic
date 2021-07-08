@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/styles';
-import { Check } from '@material-ui/icons';
+import { Check, Delete as DeleteIcon } from '@material-ui/icons';
 import { Divider, List, ListItem, Typography } from '@material-ui/core';
 
 import {
@@ -40,6 +40,7 @@ import {
 import { useCheckboxState } from './hooks';
 
 import { useAnalytics } from '<src>/contexts/analytics';
+import { PathComponentAuthoring } from '<src>/utils';
 
 export function DiffUrlsPage() {
   const undocumentedUrls = useUndocumentedUrls();
@@ -113,8 +114,16 @@ export function DiffUrlsPage() {
                             return newState;
                           });
                         },
-                        handleSelection: (pattern: string, method: string) => {
-                          const pendingId = documentEndpoint(pattern, method);
+                        handleSelection: (
+                          pattern: string,
+                          method: string,
+                          pathComponents: PathComponentAuthoring[]
+                        ) => {
+                          const pendingId = documentEndpoint(
+                            pattern,
+                            method,
+                            pathComponents
+                          );
                           analytics.userDocumentedEndpoint(true);
                           const link = diffReviewPagePendingEndpoint.linkTo(
                             pendingId
@@ -159,12 +168,13 @@ export function DiffUrlsPage() {
 
 export function DocumentationRootPageWithPendingEndpoints() {
   const endpoints = selectors.filterRemovedEndpoints(
-    useAppSelector((state) => state.endpoints.results.data || [])
+    useAppSelector((state) => state.endpoints.results.data?.endpoints || [])
   );
   const {
     pendingEndpoints,
     setCommitModalOpen,
     hasDiffChanges,
+    discardEndpoint,
   } = useSharedDiffContext();
   const pendingEndpointsToRender = pendingEndpoints.filter((i) => i.staged);
   const classes = useStyles();
@@ -231,6 +241,12 @@ export function DocumentationRootPageWithPendingEndpoints() {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <PendingEndpointNameField endpoint={endpoint} />
+                      <DeleteIcon
+                        onClick={() => {
+                          discardEndpoint(endpoint.id);
+                        }}
+                        fontSize="small"
+                      />
                     </div>
                   </ListItem>
                 );
@@ -305,6 +321,8 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   endpointContributionContainer: {
+    display: 'flex',
+    alignItems: 'center',
     paddingRight: 15,
     '@media (max-width: 1250px)': {
       paddingLeft: 20,

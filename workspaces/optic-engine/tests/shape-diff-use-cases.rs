@@ -5,7 +5,7 @@ use std::path::Path;
 use tokio::fs::read_to_string;
 
 use optic_engine::{
-  analyze_documented_bodies, diff_interaction, Aggregate, HttpInteraction,
+  analyze_documented_bodies, diff_interaction, Aggregate, DiffInteractionConfig, HttpInteraction,
   LearnedShapeDiffAffordancesProjection, SpecEvent, SpecProjection, TaggedInput,
 };
 
@@ -18,7 +18,11 @@ async fn a_known_field_is_missing() {
   let interaction = capture.session.samples.remove(0);
   let interaction_pointers: HashSet<_> =
     std::iter::once(String::from("test-interaction-1")).collect();
-  let diff_results = diff_interaction(&spec, interaction.clone());
+  let diff_results = diff_interaction(
+    &spec,
+    interaction.clone(),
+    &DiffInteractionConfig::default(),
+  );
 
   let mut learned_shape_diff_affordances =
     LearnedShapeDiffAffordancesProjection::from(diff_results);
@@ -46,7 +50,11 @@ async fn deeply_nested_fields_inside_of_arrays() {
   let interaction = capture.session.samples.remove(0);
   let interaction_pointers: HashSet<_> =
     std::iter::once(String::from("test-interaction-1")).collect();
-  let diff_results = diff_interaction(&spec, interaction.clone());
+  let diff_results = diff_interaction(
+    &spec,
+    interaction.clone(),
+    &DiffInteractionConfig::default(),
+  );
 
   let mut learned_shape_diff_affordances =
     LearnedShapeDiffAffordancesProjection::from(diff_results);

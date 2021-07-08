@@ -7,18 +7,18 @@ import {
   ChangedYellowBackground,
   RemovedRedBackground,
 } from '<src>/styles';
-import { IChanges } from '../IChanges';
 import classNames from 'classnames';
+import { ChangeType } from '<src>/types';
 
-export function ChangeLogBG(props: { changes?: IChanges; children: any }) {
+export function ChangeLogBG(props: { changes?: ChangeType; children: any }) {
   const classes = useStyles();
 
   const { changes } = props;
   return (
     <div
       className={classNames(
-        { [classes.added]: changes && changes.added },
-        { [classes.changed]: changes && changes.changed }
+        { [classes.added]: changes && changes === 'added' },
+        { [classes.changed]: changes && changes === 'updated' }
       )}
     >
       {props.children}

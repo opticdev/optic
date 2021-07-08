@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Button, LinearProgress, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
@@ -11,10 +11,16 @@ import {
   JsonLike,
   PageLayout,
   FullWidth,
+  ContributionsList,
+  QueryParametersPanel,
+  convertShapeToQueryParameters,
+  ContributionFetcher,
+  ShapeFetcher,
+  HttpBodyPanel,
+  Panel,
 } from '<src>/components';
 import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
-import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
-import { SubtleBlueBackground } from '<src>/styles';
+import { FontFamily, SubtleBlueBackground } from '<src>/styles';
 import {
   useAppSelector,
   useAppDispatch,
@@ -24,14 +30,11 @@ import {
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
-  TwoColumnBodyEditable,
-  CodeBlock,
   EndpointTOC,
   DocsFieldOrParameterContribution,
   EndpointNameContribution,
   DocsPageAccessoryNavigation,
   MarkdownBodyContribution,
-  TwoColumn,
   DeleteEndpointConfirmationModal,
 } from '<src>/pages/docs/components';
 
@@ -60,17 +63,11 @@ export const EndpointRootPage: FC<
   const dispatch = useAppDispatch();
 
   const { pathId, method } = match.params;
-  const thisEndpoint = useMemo(
-    () =>
-      endpointsState.data?.find(
-        (i) => i.pathId === pathId && i.method === method
-      ),
-    [endpointsState, method, pathId]
+  const thisEndpoint = useAppSelector(
+    selectors.getEndpoint({ pathId, method })
   );
 
   const isEndpointRemoved = thisEndpoint ? thisEndpoint.isRemoved : false;
-
-  const bodies = useEndpointBody(pathId, method);
 
   const onKeyPress = useRunOnKeypress(
     () => {
@@ -87,8 +84,6 @@ export const EndpointRootPage: FC<
       inputTagNames: new Set(['input']),
     }
   );
-  const showDeleteEndpointUi =
-    process.env.REACT_APP_FF_SHOW_DELETE_ENDPOINT === 'true';
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const endpointId = getEndpointId({ method, pathId });
 
@@ -159,7 +154,6 @@ export const EndpointRootPage: FC<
             fullPath={thisEndpoint.fullPath}
           />
           {isEditing &&
-            showDeleteEndpointUi &&
             (isEndpointStagedForDeletion ? (
               <Button
                 variant="outlined"
@@ -182,101 +176,240 @@ export const EndpointRootPage: FC<
               </Button>
             ))}
         </div>
-        <TwoColumn
-          style={{ marginTop: 5 }}
-          left={
-            <MarkdownBodyContribution
-              id={endpointId}
-              contributionKey={'description'}
-              defaultText={'Describe this endpoint'}
-              initialValue={thisEndpoint.description}
-              endpoint={{
-                pathId,
-                method,
-              }}
-            />
-          }
-          right={
-            <CodeBlock
-              header={
-                <EndpointName
-                  fontSize={14}
-                  leftPad={0}
-                  method={thisEndpoint.method}
-                  fullPath={thisEndpoint.fullPath}
-                />
-              }
-            >
-              <PathParameters
-                parameters={parameterizedPathParts}
-                renderField={(param, index) => {
-                  const alwaysAString: IShapeRenderer = {
-                    shapeId: param.id + 'shape',
-                    jsonType: JsonLike.STRING,
-                    value: undefined,
-                  };
-                  return (
-                    <DocsFieldOrParameterContribution
-                      key={param.id}
-                      endpoint={{
-                        pathId,
-                        method,
-                      }}
-                      id={param.id}
-                      name={param.name}
-                      shapes={[alwaysAString]}
-                      depth={0}
-                      initialValue={param.description}
-                    />
-                  );
+        <div className={classes.bodyContainer}>
+          <div className={classes.bodyDetails}>
+            <div>
+              <MarkdownBodyContribution
+                id={endpointId}
+                contributionKey={'description'}
+                defaultText={'Describe this endpoint'}
+                initialValue={thisEndpoint.description}
+                endpoint={{
+                  pathId,
+                  method,
                 }}
               />
-              <div
-                style={{
-                  marginTop: 10,
-                  backgroundColor: SubtleBlueBackground,
-                  borderTop: '1px solid #e2e2e2',
-                }}
+            </div>
+            <div className={classes.panel}>
+              <Panel
+                header={
+                  <EndpointName
+                    fontSize={14}
+                    leftPad={0}
+                    method={thisEndpoint.method}
+                    fullPath={thisEndpoint.fullPath}
+                  />
+                }
               >
-                <EndpointTOC
-                  requests={bodies.requests}
-                  responses={bodies.responses}
+                <PathParameters
+                  parameters={parameterizedPathParts}
+                  renderField={(param, index) => {
+                    const alwaysAString: IShapeRenderer = {
+                      shapeId: param.id + 'shape',
+                      jsonType: JsonLike.STRING,
+                      value: undefined,
+                    };
+                    return (
+                      <DocsFieldOrParameterContribution
+                        key={param.id}
+                        endpoint={{
+                          pathId,
+                          method,
+                        }}
+                        id={param.id}
+                        name={param.name}
+                        shapes={[alwaysAString]}
+                        depth={0}
+                        initialValue={param.description}
+                      />
+                    );
+                  }}
+                />
+                <div
+                  style={{
+                    marginTop: 10,
+                    backgroundColor: SubtleBlueBackground,
+                    borderTop: '1px solid #e2e2e2',
+                  }}
+                >
+                  <EndpointTOC
+                    query={thisEndpoint.query}
+                    requests={thisEndpoint.requestBodies}
+                    responses={thisEndpoint.responseBodies}
+                  />
+                </div>
+              </Panel>
+            </div>
+          </div>
+        </div>
+        {thisEndpoint.query && (
+          <div
+            className={classes.bodyContainer}
+            id={thisEndpoint.query.queryParametersId}
+          >
+            <div className={classes.bodyHeaderContainer}>
+              <h6 className={classes.bodyHeader}>Query Parameters</h6>
+              <MarkdownBodyContribution
+                id={thisEndpoint.query.queryParametersId}
+                contributionKey={'description'}
+                defaultText={'Add a description'}
+                initialValue={thisEndpoint.query.description}
+                endpoint={thisEndpoint}
+              />
+            </div>
+            <div className={classes.bodyDetails}>
+              <div>
+                <ContributionFetcher
+                  rootShapeId={thisEndpoint.query.rootShapeId}
+                  endpointId={endpointId}
+                >
+                  {(contributions) => (
+                    <ContributionsList
+                      renderContribution={(contribution) => (
+                        <DocsFieldOrParameterContribution
+                          key={contribution.id}
+                          endpoint={{
+                            pathId,
+                            method,
+                          }}
+                          id={contribution.id}
+                          name={contribution.name}
+                          shapes={contribution.shapes}
+                          depth={contribution.depth}
+                          initialValue={contribution.value}
+                        />
+                      )}
+                      contributions={contributions}
+                    />
+                  )}
+                </ContributionFetcher>
+              </div>
+              <div className={classes.panel}>
+                <ShapeFetcher rootShapeId={thisEndpoint.query.rootShapeId}>
+                  {(shapes) => (
+                    <QueryParametersPanel
+                      parameters={convertShapeToQueryParameters(shapes)}
+                    />
+                  )}
+                </ShapeFetcher>
+              </div>
+            </div>
+          </div>
+        )}
+        {thisEndpoint.requestBodies.map((requestBody) => (
+          <div
+            className={classes.bodyContainer}
+            id={requestBody.requestId}
+            key={requestBody.requestId}
+          >
+            <div className={classes.bodyHeaderContainer}>
+              <h6 className={classes.bodyHeader}>Request Body</h6>
+              <MarkdownBodyContribution
+                id={requestBody.requestId}
+                contributionKey={'description'}
+                defaultText={'Add a description'}
+                initialValue={requestBody.description}
+                endpoint={thisEndpoint}
+              />
+            </div>
+            <div className={classes.bodyDetails}>
+              <div>
+                <ContributionFetcher
+                  rootShapeId={requestBody.rootShapeId}
+                  endpointId={endpointId}
+                >
+                  {(contributions) => (
+                    <ContributionsList
+                      renderContribution={(contribution) => (
+                        <DocsFieldOrParameterContribution
+                          key={contribution.id}
+                          endpoint={{
+                            pathId,
+                            method,
+                          }}
+                          id={contribution.id}
+                          name={contribution.name}
+                          shapes={contribution.shapes}
+                          depth={contribution.depth}
+                          initialValue={contribution.value}
+                        />
+                      )}
+                      contributions={contributions}
+                    />
+                  )}
+                </ContributionFetcher>
+              </div>
+              <div className={classes.panel}>
+                <ShapeFetcher rootShapeId={requestBody.rootShapeId}>
+                  {(shapes) => (
+                    <HttpBodyPanel
+                      shapes={shapes}
+                      location={requestBody.contentType}
+                    />
+                  )}
+                </ShapeFetcher>
+              </div>
+            </div>
+          </div>
+        ))}
+        {thisEndpoint.responseBodies.map((responseBody) => {
+          return (
+            <div
+              className={classes.bodyContainer}
+              id={responseBody.responseId}
+              key={responseBody.responseId}
+            >
+              <div className={classes.bodyHeaderContainer}>
+                <h6 className={classes.bodyHeader}>
+                  {responseBody.statusCode} Response
+                </h6>
+                <MarkdownBodyContribution
+                  id={responseBody.responseId}
+                  contributionKey={'description'}
+                  defaultText={'Add a description'}
+                  initialValue={responseBody.description}
+                  endpoint={thisEndpoint}
                 />
               </div>
-            </CodeBlock>
-          }
-        />
-
-        {bodies.requests.map((i) => {
-          return (
-            <TwoColumnBodyEditable
-              key={i.rootShapeId}
-              endpoint={{
-                pathId,
-                method,
-              }}
-              rootShapeId={i.rootShapeId}
-              bodyId={i.requestId}
-              location={'Request Body'}
-              contentType={i.contentType}
-              description={i.description}
-            />
-          );
-        })}
-        {bodies.responses.map((i) => {
-          return (
-            <TwoColumnBodyEditable
-              key={i.rootShapeId}
-              endpoint={{
-                pathId,
-                method,
-              }}
-              rootShapeId={i.rootShapeId}
-              bodyId={i.responseId}
-              location={`${i.statusCode} Response`}
-              contentType={i.contentType}
-              description={i.description}
-            />
+              <div className={classes.bodyDetails}>
+                <div>
+                  <ContributionFetcher
+                    rootShapeId={responseBody.rootShapeId}
+                    endpointId={endpointId}
+                  >
+                    {(contributions) => (
+                      <ContributionsList
+                        renderContribution={(contribution) => (
+                          <DocsFieldOrParameterContribution
+                            key={contribution.id}
+                            endpoint={{
+                              pathId,
+                              method,
+                            }}
+                            id={contribution.id}
+                            name={contribution.name}
+                            shapes={contribution.shapes}
+                            depth={contribution.depth}
+                            initialValue={contribution.value}
+                          />
+                        )}
+                        contributions={contributions}
+                      />
+                    )}
+                  </ContributionFetcher>
+                </div>
+                <div className={classes.panel}>
+                  <ShapeFetcher rootShapeId={responseBody.rootShapeId}>
+                    {(shapes) => (
+                      <HttpBodyPanel
+                        shapes={shapes}
+                        location={responseBody.contentType}
+                      />
+                    )}
+                  </ShapeFetcher>
+                </div>
+              </div>
+            </div>
           );
         })}
       </FullWidth>
@@ -293,10 +426,40 @@ const useStyles = makeStyles((theme) => ({
     padding: '16px 0',
   },
   icon: {
-    paddingLeft: 8,
+    paddingLeft: theme.spacing(1),
   },
   deleteInfoHeader: {
     justifyContent: 'center',
     display: 'fixed',
+  },
+  bodyContainer: {
+    marginTop: theme.spacing(6),
+    width: '100%',
+    height: '100%',
+  },
+  bodyHeaderContainer: {
+    marginBottom: theme.spacing(2),
+  },
+  bodyHeader: {
+    fontSize: '1.25rem',
+    fontFamily: FontFamily,
+    fontWeight: 500,
+    lineHeight: 1.6,
+    letterSpacing: '0.0075em',
+    margin: theme.spacing(3, 0),
+  },
+  bodyDetails: {
+    display: 'flex',
+    width: '100%',
+    height: '100%',
+    '& > div': {
+      width: '50%',
+      padding: theme.spacing(0, 1),
+    },
+  },
+  panel: {
+    position: 'sticky',
+    top: 50,
+    alignSelf: 'flex-start',
   },
 }));

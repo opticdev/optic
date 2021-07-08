@@ -7,6 +7,7 @@ import { IForkableSpectacle } from '@useoptic/spectacle';
 import { SpectacleStore } from '<src>/contexts/spectacle-provider';
 import { createReduxStore, useAppSelector } from '<src>/store';
 import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
+import { useLastBatchCommitId } from '<src>/hooks/useBatchCommits';
 
 type SimulatedCommandStoreProps = {
   spectacle: IForkableSpectacle;
@@ -23,6 +24,7 @@ export const SimulatedCommandContext = React.createContext<SimulatedCommandConte
 );
 
 export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
+  const batchId = useLastBatchCommitId();
   const value = { previewCommands: props.previewCommands };
   const [isProcessing, setIsProcessing] = useState(true);
   const store = useMemo(() => createReduxStore(), []);
@@ -73,15 +75,20 @@ mutation X($commands: [JSON!]!, $batchCommitId: ID!, $commitMessage: String!, $c
     <SimulatedCommandContext.Provider value={value}>
       <SpectacleStore spectacle={spectacleToUse}>
         <Provider store={store}>
-          <DataFetcherComponent>{props.children}</DataFetcherComponent>
+          <DataFetcherComponent batchId={batchId}>
+            {props.children}
+          </DataFetcherComponent>
         </Provider>
       </SpectacleStore>
     </SimulatedCommandContext.Provider>
   );
 }
 
-const DataFetcherComponent: FC = ({ children }) => {
-  useFetchEndpoints();
+const DataFetcherComponent: FC<{ batchId?: string }> = ({
+  children,
+  batchId,
+}) => {
+  useFetchEndpoints(batchId);
   return <>{children}</>;
 };
 

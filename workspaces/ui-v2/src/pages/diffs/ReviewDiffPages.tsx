@@ -14,7 +14,6 @@ import { DiffUrlsPage } from './AddEndpointsPage';
 import { ReviewEndpointDiffContainer } from './ReviewEndpointDiffPage';
 import { useDiffsForCapture } from '<src>/pages/diffs/hooks/useDiffForCapture';
 import { v4 as uuidv4 } from 'uuid';
-import { useAllRequestsAndResponses } from '<src>/pages/diffs/hooks/useAllRequestsAndResponses';
 import { selectors, useAppSelector } from '<src>/store';
 import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
 import {
@@ -24,6 +23,7 @@ import {
 import { PageLayout } from '<src>/components';
 import { LoadingDiffReview } from '<src>/pages/diffs/components/LoadingDiffReview';
 import { usePaths } from '<src>/hooks/usePathsHook';
+import { IRequestBody } from '<src>/types';
 
 export function DiffReviewPages(props: any) {
   const { match } = props;
@@ -32,12 +32,23 @@ export function DiffReviewPages(props: any) {
 
   //dependencies
   const diff = useDiffsForCapture(boundaryId, diffId);
-  const allRequestsAndResponsesOfBaseSpec = useAllRequestsAndResponses();
   useFetchEndpoints();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
   const filteredEndpoints = useMemo(
-    () => selectors.filterRemovedEndpoints(endpointsState.data || []),
+    () =>
+      selectors.filterRemovedEndpoints(endpointsState.data?.endpoints || []),
     [endpointsState.data]
+  );
+  const allRequests = useMemo(
+    () =>
+      filteredEndpoints
+        .flatMap((endpoint) => endpoint.requestBodies)
+        .filter((body) => !!body) as IRequestBody[], // cast to IRequestBody as filter removes non-null
+    [filteredEndpoints]
+  );
+  const allResponses = useMemo(
+    () => filteredEndpoints.flatMap((endpoint) => endpoint.responseBodies),
+    [filteredEndpoints]
   );
   const allPaths = usePaths();
 
@@ -46,11 +57,7 @@ export function DiffReviewPages(props: any) {
   const diffForEndpointLink = useDiffForEndpointLink();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
 
-  const isLoading =
-    diff.loading ||
-    endpointsState.loading ||
-    allPaths.loading ||
-    allRequestsAndResponsesOfBaseSpec.loading;
+  const isLoading = diff.loading || endpointsState.loading || allPaths.loading;
 
   if (isLoading) {
     return (
@@ -69,8 +76,8 @@ export function DiffReviewPages(props: any) {
       captureId={boundaryId}
       endpoints={filteredEndpoints}
       allPaths={allPaths.paths}
-      requests={allRequestsAndResponsesOfBaseSpec.data?.requests!}
-      responses={allRequestsAndResponsesOfBaseSpec.data?.responses!}
+      requests={allRequests}
+      responses={allResponses}
     >
       <Switch>
         <Route

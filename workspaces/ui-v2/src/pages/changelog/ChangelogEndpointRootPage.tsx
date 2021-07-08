@@ -1,9 +1,8 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 
-import { LinearProgress, Typography } from '@material-ui/core';
+import { LinearProgress, Typography, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import makeStyles from '@material-ui/styles/makeStyles';
 import ReactMarkdown from 'react-markdown';
 
 import {
@@ -14,18 +13,23 @@ import {
   PageLayout,
   FullWidth,
   FieldOrParameter,
+  ContributionFetcher,
+  ShapeFetcher,
+  QueryParametersPanel,
+  ContributionsList,
+  convertShapeToQueryParameters,
+  HttpBodyPanel,
+  Panel,
 } from '<src>/components';
 import { useChangelogPages } from '<src>/components/navigation/Routes';
-import { SubtleBlueBackground } from '<src>/styles';
-import { useEndpointBody } from '<src>/hooks/useEndpointBodyHook';
-import { useEndpointsChangelog } from '<src>/hooks/useEndpointsChangelog';
+import { SubtleBlueBackground, FontFamily } from '<src>/styles';
 import { selectors, useAppSelector } from '<src>/store';
-import { CodeBlock, EndpointTOC, TwoColumn } from '<src>/pages/docs/components';
+import { getEndpointId } from '<src>/utils';
+import { EndpointTOC } from '<src>/pages/docs/components';
 
 import {
   ChangelogPageAccessoryNavigation,
   ValidateBatchId,
-  TwoColumnBodyChangelog,
 } from './components';
 
 export const ChangelogEndpointRootPage: FC<
@@ -51,31 +55,25 @@ const ChangelogRootComponent: FC<
     batchId: string;
   }>
 > = ({ match }) => {
-  const styles = useStyles();
+  const { pathId, method, batchId } = match.params;
+  const classes = useStyles();
   const changelogPageLink = useChangelogPages();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
-
-  const { pathId, method, batchId } = match.params;
-  const thisEndpoint = useMemo(
-    () =>
-      endpointsState.data?.find(
-        (i) => i.pathId === pathId && i.method === method
-      ),
-    [endpointsState, method, pathId]
+  const thisEndpoint = useAppSelector(
+    selectors.getEndpoint({ pathId, method })
   );
-  const changelog = useEndpointsChangelog(batchId);
+  const endpointChanges = useAppSelector(
+    (state) => state.endpoints.results.data?.changes || {}
+  );
   const endpointWithChanges = selectors.filterRemovedEndpointsForChangelogAndMapChanges(
     thisEndpoint ? [thisEndpoint] : [],
-    changelog
+    endpointChanges
   );
 
-  const isEndpointRemoved =
-    changelog.length > 0 && thisEndpoint && endpointWithChanges.length === 0;
+  const isEndpointRemoved = thisEndpoint && endpointWithChanges.length === 0;
   const isEndpointRemovedInThisBatch =
     endpointWithChanges.length > 0 &&
     endpointWithChanges[0].changes === 'removed';
-
-  const bodies = useEndpointBody(pathId, method, batchId);
 
   if (endpointsState.loading) {
     return <LinearProgress variant="indeterminate" />;
@@ -92,6 +90,7 @@ const ChangelogRootComponent: FC<
     return <Redirect to={changelogPageLink.linkTo(batchId)} />;
   }
 
+  const endpointId = getEndpointId(thisEndpoint);
   const parameterizedPathParts = thisEndpoint.pathParameters.filter(
     (path) => path.isParameterized
   );
@@ -99,12 +98,12 @@ const ChangelogRootComponent: FC<
   return (
     <>
       {isEndpointRemovedInThisBatch && (
-        <Alert severity="error" className={styles.removedInfoHeader}>
+        <Alert severity="error" className={classes.removedInfoHeader}>
           This endpoint has been removed
         </Alert>
       )}
       <FullWidth style={{ paddingTop: 30, paddingBottom: 400 }}>
-        <Typography className={styles.regularField}>
+        <Typography className={classes.regularField}>
           {thisEndpoint.purpose || 'Unnamed Endpoint'}
         </Typography>
         <EndpointName
@@ -113,86 +112,220 @@ const ChangelogRootComponent: FC<
           method={thisEndpoint.method}
           fullPath={thisEndpoint.fullPath}
         />
-        <TwoColumn
-          style={{ marginTop: 5 }}
-          left={
-            <ReactMarkdown
-              className={styles.contents}
-              source={thisEndpoint.description}
-            />
-          }
-          right={
-            <CodeBlock
-              header={
-                <EndpointName
-                  fontSize={14}
-                  leftPad={0}
-                  method={thisEndpoint.method}
-                  fullPath={thisEndpoint.fullPath}
-                />
-              }
-            >
-              <PathParameters
-                parameters={parameterizedPathParts}
-                renderField={(param) => {
-                  const alwaysAString: IShapeRenderer = {
-                    shapeId: param.id + 'shape',
-                    jsonType: JsonLike.STRING,
-                    value: undefined,
-                  };
-                  return (
-                    <FieldOrParameter
-                      key={param.id}
-                      name={param.name}
-                      shapes={[alwaysAString]}
-                      depth={0}
-                      value={param.description}
-                    />
-                  );
-                }}
-              />
-              <div
-                style={{
-                  marginTop: 10,
-                  backgroundColor: SubtleBlueBackground,
-                  borderTop: '1px solid #e2e2e2',
-                }}
-              >
-                <EndpointTOC
-                  requests={bodies.requests}
-                  responses={bodies.responses}
-                />
-              </div>
-            </CodeBlock>
-          }
-        />
 
-        {bodies.requests.map((i, index) => {
-          return (
-            <TwoColumnBodyChangelog
-              key={i.rootShapeId}
-              changesSinceBatchCommitId={batchId}
-              rootShapeId={i.rootShapeId}
-              bodyId={i.requestId}
-              location={'Request Body'}
-              contentType={i.contentType}
-              description={i.description}
-            />
-          );
-        })}
-        {bodies.responses.map((i, index) => {
-          return (
-            <TwoColumnBodyChangelog
-              key={i.rootShapeId}
-              changesSinceBatchCommitId={batchId}
-              rootShapeId={i.rootShapeId}
-              bodyId={i.responseId}
-              location={`${i.statusCode} Response`}
-              contentType={i.contentType}
-              description={i.description}
-            />
-          );
-        })}
+        <div className={classes.bodyContainer}>
+          <div className={classes.bodyDetails}>
+            <div>
+              <ReactMarkdown
+                className={classes.contents}
+                source={thisEndpoint.description}
+              />
+            </div>
+            <div className={classes.panel}>
+              <Panel
+                header={
+                  <EndpointName
+                    fontSize={14}
+                    leftPad={0}
+                    method={thisEndpoint.method}
+                    fullPath={thisEndpoint.fullPath}
+                  />
+                }
+              >
+                <PathParameters
+                  parameters={parameterizedPathParts}
+                  renderField={(param) => {
+                    const alwaysAString: IShapeRenderer = {
+                      shapeId: param.id + 'shape',
+                      jsonType: JsonLike.STRING,
+                      value: undefined,
+                    };
+                    return (
+                      <FieldOrParameter
+                        key={param.id}
+                        name={param.name}
+                        shapes={[alwaysAString]}
+                        depth={0}
+                        value={param.description}
+                      />
+                    );
+                  }}
+                />
+                <div
+                  style={{
+                    marginTop: 10,
+                    backgroundColor: SubtleBlueBackground,
+                    borderTop: '1px solid #e2e2e2',
+                  }}
+                >
+                  <EndpointTOC
+                    query={thisEndpoint.query}
+                    requests={thisEndpoint.requestBodies}
+                    responses={thisEndpoint.responseBodies}
+                  />
+                </div>
+              </Panel>
+            </div>
+          </div>
+        </div>
+
+        {thisEndpoint.query && (
+          <div
+            className={classes.bodyContainer}
+            id={thisEndpoint.query.queryParametersId}
+          >
+            <div className={classes.bodyHeaderContainer}>
+              <h6 className={classes.bodyHeader}>Query Parameters</h6>
+              <ReactMarkdown
+                className={classes.contents}
+                source={thisEndpoint.query.description}
+              />
+            </div>
+            <div className={classes.bodyDetails}>
+              <div>
+                <ContributionFetcher
+                  rootShapeId={thisEndpoint.query.rootShapeId}
+                  endpointId={endpointId}
+                  changesSinceBatchCommit={batchId}
+                >
+                  {(contributions) => (
+                    <ContributionsList
+                      renderContribution={(contribution) => (
+                        <FieldOrParameter
+                          key={contribution.id}
+                          name={contribution.name}
+                          shapes={contribution.shapes}
+                          depth={contribution.depth}
+                          value={contribution.value}
+                        />
+                      )}
+                      contributions={contributions}
+                    />
+                  )}
+                </ContributionFetcher>
+              </div>
+              <div className={classes.panel}>
+                <ShapeFetcher
+                  rootShapeId={thisEndpoint.query.rootShapeId}
+                  changesSinceBatchCommit={batchId}
+                >
+                  {(shapes) => (
+                    <QueryParametersPanel
+                      parameters={convertShapeToQueryParameters(shapes)}
+                    />
+                  )}
+                </ShapeFetcher>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {thisEndpoint.requestBodies.map((requestBody) => (
+          <div
+            className={classes.bodyContainer}
+            id={requestBody.requestId}
+            key={requestBody.requestId}
+          >
+            <div className={classes.bodyHeaderContainer}>
+              <h6 className={classes.bodyHeader}>Request Body</h6>
+              <ReactMarkdown
+                className={classes.contents}
+                source={requestBody.description}
+              />
+            </div>
+            <div className={classes.bodyDetails}>
+              <div>
+                <ContributionFetcher
+                  rootShapeId={requestBody.rootShapeId}
+                  endpointId={endpointId}
+                  changesSinceBatchCommit={batchId}
+                >
+                  {(contributions) => (
+                    <ContributionsList
+                      renderContribution={(contribution) => (
+                        <FieldOrParameter
+                          key={contribution.id}
+                          name={contribution.name}
+                          shapes={contribution.shapes}
+                          depth={contribution.depth}
+                          value={contribution.value}
+                        />
+                      )}
+                      contributions={contributions}
+                    />
+                  )}
+                </ContributionFetcher>
+              </div>
+              <div className={classes.panel}>
+                <ShapeFetcher
+                  rootShapeId={requestBody.rootShapeId}
+                  changesSinceBatchCommit={batchId}
+                >
+                  {(shapes) => (
+                    <HttpBodyPanel
+                      shapes={shapes}
+                      location={requestBody.contentType}
+                    />
+                  )}
+                </ShapeFetcher>
+              </div>
+            </div>
+          </div>
+        ))}
+        {thisEndpoint.responseBodies.map((responseBody) => (
+          <div
+            className={classes.bodyContainer}
+            id={responseBody.responseId}
+            key={responseBody.responseId}
+          >
+            <div className={classes.bodyHeaderContainer}>
+              <h6 className={classes.bodyHeader}>
+                {responseBody.statusCode} Response
+              </h6>
+              <ReactMarkdown
+                className={classes.contents}
+                source={responseBody.description}
+              />
+            </div>
+            <div className={classes.bodyDetails}>
+              <div>
+                <ContributionFetcher
+                  rootShapeId={responseBody.rootShapeId}
+                  endpointId={endpointId}
+                  changesSinceBatchCommit={batchId}
+                >
+                  {(contributions) => (
+                    <ContributionsList
+                      renderContribution={(contribution) => (
+                        <FieldOrParameter
+                          key={contribution.id}
+                          name={contribution.name}
+                          shapes={contribution.shapes}
+                          depth={contribution.depth}
+                          value={contribution.value}
+                        />
+                      )}
+                      contributions={contributions}
+                    />
+                  )}
+                </ContributionFetcher>
+              </div>
+              <div className={classes.panel}>
+                <ShapeFetcher
+                  rootShapeId={responseBody.rootShapeId}
+                  changesSinceBatchCommit={batchId}
+                >
+                  {(shapes) => (
+                    <HttpBodyPanel
+                      shapes={shapes}
+                      location={responseBody.contentType}
+                    />
+                  )}
+                </ShapeFetcher>
+              </div>
+            </div>
+          </div>
+        ))}
       </FullWidth>
     </>
   );
@@ -214,5 +347,35 @@ const useStyles = makeStyles((theme) => ({
   removedInfoHeader: {
     justifyContent: 'center',
     display: 'fixed',
+  },
+  bodyContainer: {
+    marginTop: theme.spacing(6),
+    width: '100%',
+    height: '100%',
+  },
+  bodyHeaderContainer: {
+    marginBottom: theme.spacing(2),
+  },
+  bodyHeader: {
+    fontSize: '1.25rem',
+    fontFamily: FontFamily,
+    fontWeight: 500,
+    lineHeight: 1.6,
+    letterSpacing: '0.0075em',
+    margin: theme.spacing(3, 0),
+  },
+  bodyDetails: {
+    display: 'flex',
+    width: '100%',
+    height: '100%',
+    '& > div': {
+      width: '50%',
+      padding: theme.spacing(0, 1),
+    },
+  },
+  panel: {
+    position: 'sticky',
+    top: 50,
+    alignSelf: 'flex-start',
   },
 }));

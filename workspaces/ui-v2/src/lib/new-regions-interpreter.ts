@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/react';
+
 import {
   CurrentSpecContext,
   IInterpretation,
@@ -39,9 +41,25 @@ function newContentType(
   learnedBodies: ILearnedBodies
 ): IInterpretation {
   if (udiff.isA(DiffTypes.UnmatchedRequestBodyContentType)) {
-    const { commands } = learnedBodies.requests.find(
+    const learnedRequestBody = learnedBodies.requests.find(
       (i) => i.contentType === location.inRequest?.contentType
-    )!;
+    );
+
+    if (!learnedRequestBody) {
+      console.error(
+        `Could not learn body for request with content type ${location.inRequest?.contentType}`
+      );
+      Sentry.captureEvent({
+        message: 'No learned request body was found',
+        extra: {
+          learnedBodies,
+          location,
+          udiff,
+        },
+      });
+    }
+
+    const commands = learnedRequestBody ? learnedRequestBody.commands : [];
 
     return {
       previewTabs: [
@@ -65,7 +83,7 @@ function newContentType(
         shapes: [],
         copy: [
           plain('Document'),
-          code(location.inRequest!.contentType!.toString()),
+          code(location.inRequest!.contentType || 'null'),
           plain('Request'),
         ],
       },
@@ -77,11 +95,27 @@ function newContentType(
     };
   } else if (udiff.isA(DiffTypes.UnmatchedResponseBodyContentType)) {
     //learn status code too.... currently missing
-    const { commands } = learnedBodies.responses.find(
+    const learnedResponseBody = learnedBodies.responses.find(
       (i) =>
         i.contentType === location.inResponse?.contentType &&
         i.statusCode === location.inResponse?.statusCode
-    )!;
+    );
+
+    if (!learnedResponseBody) {
+      console.error(
+        `Could not learn body for response with status code ${location.inResponse?.statusCode} content type ${location.inResponse?.contentType}`
+      );
+      Sentry.captureEvent({
+        message: 'No learned response body was found',
+        extra: {
+          learnedBodies,
+          location,
+          udiff,
+        },
+      });
+    }
+
+    const commands = learnedResponseBody ? learnedResponseBody.commands : [];
 
     return {
       previewTabs: [

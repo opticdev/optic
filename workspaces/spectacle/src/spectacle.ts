@@ -312,6 +312,12 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       method: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.value.httpMethod);
       },
+      query: async (parent: endpoints.RequestNodeWrapper) => {
+        return process.env.REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS ===
+          'true'
+          ? parent.query()
+          : null;
+      },
       bodies: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.bodies().results);
       },
@@ -344,6 +350,29 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       isRemoved: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.value.isRemoved);
+      },
+    },
+    QueryParameters: {
+      id: () => {
+        // TODO QPB - connect this to the correct value
+        // return parent.value.id
+        return `query_${uuidv4()}`;
+      },
+      rootShapeId: (parent: endpoints.QueryParametersNodeWrapper) => {
+        return parent.value.rootShapeId;
+      },
+      isRemoved: (parent: endpoints.QueryParametersNodeWrapper) => {
+        return parent.value.isRemoved;
+      },
+      contributions: (
+        parent: endpoints.QueryParametersNodeWrapper,
+        _: {},
+        context: GraphQLContext
+      ) => {
+        // TODO QPB - connect this to the correct value
+        // const id = parent.value.id;
+        const id = `query_${uuidv4()}`;
+        return context.spectacleContext().contributionsProjection[id] || {};
       },
     },
     Path: {
@@ -497,7 +526,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     EndpointChange: {
-      // TODO: considering converting into ChangeResult
+      // TODO @nic considering converting into ChangeResult
       change: (parent: EndpointChange) => {
         return Promise.resolve(parent.change);
       },

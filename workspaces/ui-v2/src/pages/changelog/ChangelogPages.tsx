@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Redirect, Route } from 'react-router-dom';
+import { Switch, Redirect, Route, useParams } from 'react-router-dom';
 import {
   useChangelogPages,
   useChangelogEndpointPageLink,
@@ -12,7 +12,12 @@ import { ChangelogEndpointRootPage } from './ChangelogEndpointRootPage';
 export function ChangelogPages() {
   const changelogPages = useChangelogPages();
   const changelogEndpointPageLink = useChangelogEndpointPageLink();
-  useFetchEndpoints();
+  const { batchId } = useParams<{
+    pathId: string;
+    method: string;
+    batchId: string;
+  }>();
+  useFetchEndpoints(batchId);
 
   return (
     <Switch>

@@ -6,7 +6,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
-import { useShapeDiffInterpretations } from '<src>/pages/diffs/hooks/useDiffInterpretations';
+import {
+  useShapeDiffInterpretations,
+  useNewBodyDiffInterpretations,
+} from '<src>/pages/diffs/hooks/useDiffInterpretations';
 import { useAnalytics } from '<src>/contexts/analytics';
 
 export default function ApproveAll(props: { disabled?: boolean }) {
@@ -14,10 +17,16 @@ export default function ApproveAll(props: { disabled?: boolean }) {
 
   const analytics = useAnalytics();
   const { context, approveCommandsForDiff } = useSharedDiffContext();
+
   const diffsGroupedByEndpoints = context.results.diffsGroupedByEndpoint;
+  console.log(diffsGroupedByEndpoints);
 
   const allShapeDiffs = useMemo(
     () => diffsGroupedByEndpoints.flatMap((i) => i.shapeDiffs),
+    [diffsGroupedByEndpoints]
+  );
+  const allRegionDiffs = useMemo(
+    () => diffsGroupedByEndpoints.flatMap((i) => i.newRegionDiffs),
     [diffsGroupedByEndpoints]
   );
 
@@ -25,6 +34,8 @@ export default function ApproveAll(props: { disabled?: boolean }) {
     allShapeDiffs,
     context.results.trailValues
   );
+
+  const newRegionDiffs = useNewBodyDiffInterpretations(allRegionDiffs);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -35,11 +46,14 @@ export default function ApproveAll(props: { disabled?: boolean }) {
   };
 
   const handleSave = () => {
-    if (shapeDiffs.loading) {
+    if (shapeDiffs.loading || newRegionDiffs.loading) {
       return;
     }
-    analytics.userApprovedAll(shapeDiffs.results.length, 0);
-    shapeDiffs.results.forEach((i) => {
+    analytics.userApprovedAll(
+      shapeDiffs.results.length,
+      newRegionDiffs.results.length
+    );
+    [...shapeDiffs.results, ...newRegionDiffs.results].forEach((i) => {
       approveCommandsForDiff(
         i.diffDescription?.diffHash!,
         i.toCommands(i.updateSpecChoices)

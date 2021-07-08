@@ -1,7 +1,9 @@
 use crate::shapehash;
+use serde::de::value;
 use serde_json::map::Map as JsonMap;
 use serde_json::Value as JsonValue;
-use std::collections::HashMap;
+use serde_urlencoded;
+use std::collections::{BTreeMap, HashMap};
 
 #[derive(PartialEq, Clone, Debug, Hash, Eq)]
 pub enum BodyDescriptor {
@@ -81,6 +83,14 @@ where
 
     Self {
       unique_items: Box::new(unique_items),
+    }
+  }
+}
+
+impl From<BodyDescriptor> for ItemsDescriptor {
+  fn from(single_item: BodyDescriptor) -> Self {
+    Self {
+      unique_items: Box::new(vec![(single_item, vec![0])]),
     }
   }
 }
@@ -165,5 +175,65 @@ impl From<String> for BodyDescriptor {
 impl From<&String> for BodyDescriptor {
   fn from(str: &String) -> Self {
     BodyDescriptor::String
+  }
+}
+
+#[derive(Debug, Default)]
+pub struct ParsedQueryString {
+  entries: Vec<(String, String)>,
+}
+
+impl ParsedQueryString {
+  pub fn from_str(query_string: &str) -> Result<Self, serde_urlencoded::de::Error> {
+    let entries = serde_urlencoded::from_str(query_string)?;
+    Ok(Self { entries })
+  }
+}
+
+impl From<ParsedQueryString> for BodyDescriptor {
+  fn from(parsed_qs: ParsedQueryString) -> Self {
+    let mut values_by_key = BTreeMap::new();
+
+    for (key, value) in parsed_qs.entries {
+      let entry = values_by_key.entry(key).or_insert_with(|| vec![]);
+      entry.push(value);
+    }
+
+    let fields = values_by_key.into_iter().map(|(key, values)| {
+      let value_descriptor = if values.len() == 1 {
+        BodyDescriptor::String
+      } else {
+        let item_descriptor = ItemsDescriptor::from(BodyDescriptor::String); // we only ever expect strings with this parser
+        BodyDescriptor::Array(item_descriptor)
+      };
+
+      (key, value_descriptor)
+    });
+
+    BodyDescriptor::Object(ObjectDescriptor::from(fields))
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use insta::assert_debug_snapshot;
+
+  #[test]
+  fn query_string_can_be_parsed_to_body_descriptor() {
+    let parsed = ParsedQueryString::from_str("foo=bar&csv=1,2,51&list=twelve&list=fourteen")
+      .expect("should be able to parse a query string");
+
+    assert_debug_snapshot!(
+      "query_string_can_be_parsed_to_body_descriptor__parsed",
+      &parsed
+    );
+
+    let body_descriptor = BodyDescriptor::from(parsed);
+
+    assert_debug_snapshot!(
+      "query_string_can_be_parsed_to_body_descriptor__body_descriptor",
+      body_descriptor
+    );
   }
 }

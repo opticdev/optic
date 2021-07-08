@@ -5,6 +5,7 @@ export type NodeId = string;
 export enum NodeType {
   Path = 'Path',
   Request = 'Request',
+  QueryParameters = 'QueryParameters',
   Response = 'Response',
   Body = 'Body',
   BatchCommit = 'BatchCommit',
@@ -33,6 +34,10 @@ export type Node = {
       type: NodeType.BatchCommit;
       data: BatchCommitNode;
     }
+  | {
+      type: NodeType.QueryParameters;
+      data: QueryParametersNode;
+    }
 );
 
 export type PathNode = {
@@ -53,7 +58,12 @@ export type ResponseNode = {
   httpStatusCode: number;
   isRemoved: boolean;
 };
-
+export type QueryParametersNode = {
+  queryParameterId: string;
+  rootShapeId: string | null;
+  httpMethod: string;
+  isRemoved: boolean;
+};
 export type BodyNode = {
   httpContentType: string;
   rootShapeId: string;
@@ -237,6 +247,10 @@ export class RequestNodeWrapper implements NodeWrapper {
       NodeType.Body
     );
   }
+
+  query(): QueryParametersNodeWrapper | null {
+    return this.path().query(this.value.httpMethod);
+  }
 }
 
 export class ResponseNodeWrapper implements NodeWrapper {
@@ -262,6 +276,14 @@ export class ResponseNodeWrapper implements NodeWrapper {
       this.result.id,
       NodeType.Body
     );
+  }
+}
+
+export class QueryParametersNodeWrapper implements NodeWrapper {
+  constructor(public result: Node, private queries: GraphQueries) {}
+
+  get value(): QueryParametersNode {
+    return this.result.data as QueryParametersNode;
   }
 }
 
@@ -296,6 +318,21 @@ export class PathNodeWrapper implements NodeWrapper {
       this.result.id,
       NodeType.Response
     );
+  }
+
+  query(httpMethod: string): QueryParametersNodeWrapper | null {
+    const neighbors = this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.QueryParameters
+    );
+    const queryWithHttpMethod = (neighbors.results as QueryParametersNodeWrapper[]).filter(
+      (queryNode) => queryNode.value.httpMethod === httpMethod
+    );
+    if (queryWithHttpMethod.length === 0) {
+      return null;
+    }
+
+    return queryWithHttpMethod[0] as QueryParametersNodeWrapper;
   }
 
   components(): PathNodeWrapper[] {
@@ -515,6 +552,8 @@ export class GraphQueries {
       return new PathNodeWrapper(node, this);
     } else if (node.type === NodeType.Body) {
       return new BodyNodeWrapper(node, this);
+    } else if (node.type === NodeType.QueryParameters) {
+      return new QueryParametersNodeWrapper(node, this);
     } else if (node.type === NodeType.BatchCommit) {
       return new BatchCommitNodeWrapper(node, this);
     }

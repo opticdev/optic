@@ -20,19 +20,21 @@ pub use events::{
   http_interaction::{ArbitraryData, Body, HttpInteraction, Request, Response},
   RfcEvent, SpecChunkEvent, SpecEvent,
 };
-pub use interactions::diff as diff_interaction;
 pub use interactions::result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
-pub use interactions::{analyze_documented_bodies, analyze_undocumented_bodies};
+pub use interactions::{
+  analyze_documented_bodies, analyze_undocumented_bodies, AnalyzeUndocumentedBodiesConfig,
+};
+pub use interactions::{diff as diff_interaction, DiffConfig as DiffInteractionConfig};
 pub use learn_shape::{TrailObservationsResult, TrailValues};
 pub use projections::{
   EndpointProjection, LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection,
-  ShapeProjection, SpecAssemblerProjection, SpecProjection, ResponseBodyDescriptor
+  ResponseBodyDescriptor, ShapeProjection, SpecAssemblerProjection, SpecProjection,
 };
 pub use protos::shapehash;
 pub use queries::endpoint::EndpointQueries;
-pub use state::endpoint::ResponseId;
 pub use shapes::{diff as diff_shape, JsonTrail};
 pub use spec::append_batch as append_batch_to_spec;
+pub use state::endpoint::ResponseId;
 pub use state::{body::BodyDescriptor, SpecIdGenerator, TaggedInput, Tags};
 
 pub mod errors {

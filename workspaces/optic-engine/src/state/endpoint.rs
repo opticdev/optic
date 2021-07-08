@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 pub type PathComponentId = String;
 pub type PathComponentIdRef<'a> = &'a str;
+pub type QueryParametersId = String;
 pub type RequestId = String;
 pub type RequestParameterId = String;
 pub type ResponseId = String;
@@ -21,6 +22,13 @@ pub struct ShapedBodyDescriptor {
 #[derive(Debug, Deserialize, PartialEq, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapedRequestParameterShapeDescriptor {
+  pub shape_id: ShapeId,
+  pub is_removed: bool,
+}
+
+#[derive(Debug, Deserialize, PartialEq, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct QueryParametersShapeDescriptor {
   pub shape_id: ShapeId,
   pub is_removed: bool,
 }

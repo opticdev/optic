@@ -1,9 +1,7 @@
-import { IEndpoint, IEndpointWithChanges } from '<src>/types';
-import {
-  EndpointChangelog,
-  ChangelogCategory,
-} from '<src>/hooks/useEndpointsChangelog';
+import { IEndpoint, IEndpointWithChanges, ChangeType } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
+
+import { RootState } from '../root';
 
 export const filterRemovedEndpoints = (endpoints: IEndpoint[]): IEndpoint[] =>
   endpoints.filter((endpoint) => !endpoint.isRemoved);
@@ -13,21 +11,8 @@ export const filterRemovedEndpoints = (endpoints: IEndpoint[]): IEndpoint[] =>
  */
 export const filterRemovedEndpointsForChangelogAndMapChanges = (
   endpoints: IEndpoint[],
-  endpointChanges: EndpointChangelog[]
+  endpointChanges: Record<string, ChangeType>
 ): IEndpointWithChanges[] => {
-  // key by endpointId
-  const endpointChangesByEndpointId = endpointChanges.reduce(
-    (acc: Record<string, ChangelogCategory>, endpointChange) => {
-      const endpointId = getEndpointId({
-        pathId: endpointChange.pathId,
-        method: endpointChange.method,
-      });
-      acc[endpointId] = endpointChange.change.category;
-      return acc;
-    },
-    {}
-  );
-
   // Filter removed endpoints that have no changes to display
   const filteredEndpoints = endpoints.filter((endpoint) => {
     const endpointId = getEndpointId(endpoint);
@@ -37,13 +22,27 @@ export const filterRemovedEndpointsForChangelogAndMapChanges = (
     // Two assumptions:
     // - You cannot un-remove a specific endpoint (with history, you can undo batches)
     // - You must always view changes compared to the latest version
-    return !(endpoint.isRemoved && !endpointChangesByEndpointId[endpointId]);
+    return !(endpoint.isRemoved && !endpointChanges[endpointId]);
   });
 
   const endpointsWithChanges = filteredEndpoints.map((endpoint) => ({
     ...endpoint,
-    changes: endpointChangesByEndpointId[getEndpointId(endpoint)] || null,
+    changes: endpointChanges[getEndpointId(endpoint)] || null,
   }));
 
   return endpointsWithChanges;
+};
+
+export const getEndpoint = ({
+  pathId,
+  method,
+}: {
+  pathId: string;
+  method: string;
+}) => (state: RootState) => {
+  const endpointId = getEndpointId({ pathId, method });
+
+  return state.endpoints.results.data?.endpoints.find(
+    (endpoint) => getEndpointId(endpoint) === endpointId
+  );
 };
