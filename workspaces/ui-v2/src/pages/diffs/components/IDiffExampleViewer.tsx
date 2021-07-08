@@ -18,7 +18,7 @@ import { AddedGreen, secondary, ShapeViewerTheme } from '<src>/styles';
 
 WARNING: Lots of unconstrained types here from the JS -> Typescript port.
 
-We need to come back and remove `:any` once we have this working vertically. Worth the 1-2 hrs to keep this complex component maintainable.
+We need to come back and remove `:any` once we have this working vertically. Worth the 1-2 hrs to keep this complex component maintainable. +1
 
  */
 
