@@ -14,7 +14,12 @@ import {
 } from './SharedDiffState';
 import shortId from 'shortid';
 import { useMachine } from '@xstate/react';
-import { IEndpoint, IRequestBody, IResponseBody } from '<src>/types';
+import {
+  IEndpoint,
+  IQueryParameters,
+  IRequestBody,
+  IResponseBody,
+} from '<src>/types';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import {
   AddContribution,
@@ -87,6 +92,7 @@ type ISharedDiffContext = {
 type SharedDiffStoreProps = {
   endpoints: IEndpoint[];
   captureId: string;
+  queries: IQueryParameters[];
   requests: IRequestBody[];
   responses: IResponseBody[];
   allPaths: IPath[];
@@ -105,6 +111,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     () => ({
       currentSpecPaths: props.allPaths,
       currentSpecEndpoints: props.endpoints,
+      currentSpecQueryParameters: props.queries,
       currentSpecRequests: props.requests,
       currentSpecResponses: props.responses,
       domainIds: newRandomIdGenerator(),
@@ -117,6 +124,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       props.endpoints,
       props.requests,
       props.responses,
+      props.queries,
     ]
   );
 

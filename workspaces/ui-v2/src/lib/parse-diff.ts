@@ -31,6 +31,7 @@ import {
 } from './Interfaces';
 import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
 
+// TODO QPB rewrite ParsedDiff to have better type safety and better utility functions
 export class ParsedDiff {
   diffType: string;
   diffHash: string;
@@ -76,8 +77,7 @@ export class ParsedDiff {
     const location = locationForTrails(
       this.requestsTrail(),
       this.interactionTrail(),
-      currentSpecContext.currentSpecRequests,
-      currentSpecContext.currentSpecResponses
+      currentSpecContext.currentSpecEndpoints
     );
     if (!location) {
       return false;
@@ -95,8 +95,7 @@ export class ParsedDiff {
     const location = locationForTrails(
       this.requestsTrail(),
       this.interactionTrail(),
-      currentSpecContext.currentSpecRequests,
-      currentSpecContext.currentSpecResponses
+      currentSpecContext.currentSpecEndpoints
     );
 
     invariant(
@@ -148,6 +147,11 @@ export class ParsedDiff {
 
     const asWithShapeDiff = this.serialized_diff as IDiffWithShapeDiff;
 
+    const queryParameterBodyShapeDiff: IShapeDiffResult | undefined =
+      // @ts-ignore
+      asWithShapeDiff[allowedDiffTypes.UnmatchedQueryParametersShape.asString]
+        ?.shapeDiffResult;
+
     const requestBodyShapeDiff: IShapeDiffResult | undefined =
       // @ts-ignore
       asWithShapeDiff[allowedDiffTypes.UnmatchedRequestBodyShape.asString]
@@ -161,7 +165,10 @@ export class ParsedDiff {
     return new BodyShapeDiff(
       this,
       this.serialized_diff,
-      (requestBodyShapeDiff || responseBodyShapeDiff)!,
+      // TODO QPB - remove the ! here
+      (queryParameterBodyShapeDiff ||
+        requestBodyShapeDiff ||
+        responseBodyShapeDiff)!,
       this.interactions,
       this.location(currentSpecContext)
     );

@@ -1,61 +1,99 @@
-import { IRequestSpecTrail, RequestTrailConstants } from './request-spec-trail';
-import {
-  IInteractionTrail,
-  IRequestBody,
-  IResponseBody,
-  IResponseStatusCode,
-} from './interaction-trail';
+import { IRequestSpecTrail } from './request-spec-trail';
+import { IInteractionTrail } from './interaction-trail';
 
-export interface IRequestBodyForTrailParser {
+// TODO QPB - remove these types - these are the same as the types in ui-v2 - these should be moved to optic-domain
+export interface IPathParameter {
+  id: string;
+  name: string;
+  isParameterized: boolean;
+  description: string;
+  endpointId: string;
+}
+
+interface IEndpoint {
+  pathId: string;
+  method: string;
+  purpose: string;
+  description: string;
+  fullPath: string;
+  pathParameters: IPathParameter[];
+  isRemoved: boolean;
+  query: IQueryParameters | null;
+  requestBodies: IRequestBody[];
+  responseBodies: IResponseBody[];
+}
+
+export interface IQueryParameters {
+  queryParametersId: string;
+  rootShapeId: string;
+  isRemoved: boolean;
+  description: string;
+}
+
+export interface IRequestBody {
   requestId: string;
   contentType: string;
   rootShapeId: string;
   pathId: string;
   method: string;
+  description: string;
 }
 
-export interface IResponseBodyForTrailParser {
+export interface IResponseBody {
   responseId: string;
   statusCode: number;
   contentType: string;
   rootShapeId: string;
   pathId: string;
   method: string;
+  description: string;
 }
-
-// TODO QPB
+// TODO QPB remove / reduce undefined or add in better error messages when missing + sentry
 export function locationForTrails(
   trail: IRequestSpecTrail,
   interactionTrail: IInteractionTrail,
-  requests: IRequestBodyForTrailParser[],
-  responses: IResponseBodyForTrailParser[]
-):
-  | {
-      pathId: string;
-      method: string;
-      requestId?: string;
-      responseId?: string;
-      inRequest?: boolean;
-      inResponse?: boolean;
-      statusCode?: number;
-      contentType?: string;
+  endpoints: IEndpoint[]
+  // TODO QPB use IParsedLocation type instead
+): {
+  pathId: string;
+  method: string;
+  inQuery?: boolean;
+  inRequest?: boolean;
+  inResponse?: boolean;
+  requestId?: string;
+  responseId?: string;
+  contentType?: string;
+  statusCode?: number;
+} | null {
+  if ('SpecRoot' in trail) {
+    return null;
+  } else if ('SpecRequestRoot' in trail || 'SpecRequestBody' in trail) {
+    const { requestId } =
+      'SpecRequestRoot' in trail
+        ? trail.SpecRequestRoot
+        : trail.SpecRequestBody;
+
+    let request = null;
+    for (const endpoint of endpoints) {
+      for (const requestBody of endpoint.requestBodies) {
+        if (requestBody.requestId === requestId) {
+          request = requestBody;
+          break;
+        }
+      }
+      if (request) {
+        break;
+      }
     }
-  | undefined {
-  function requestById(id: string) {
-    return requests.find((i) => i.requestId === id)!;
-  }
 
-  function responseById(id: string) {
-    return responses.find((i) => i.responseId === id)!;
-  }
+    if (!request) {
+      console.error(
+        `Could not find endpoint with request ${requestId} in current spec endpoints`
+      );
+      return null;
+    }
 
-  if ((trail as any)[RequestTrailConstants.SpecRoot]) {
-    return undefined;
-  }
-
-  if ((trail as any)[RequestTrailConstants.SpecRequestBody]) {
-    const { requestId } = (trail as any)[RequestTrailConstants.SpecRequestBody];
-    const { method, pathId, contentType } = requestById(requestId);
+    const { method, pathId, contentType } = request;
 
     return {
       pathId: pathId,
@@ -64,28 +102,32 @@ export function locationForTrails(
       contentType,
       inRequest: true,
     };
-  }
+  } else if ('SpecResponseRoot' in trail || 'SpecResponseBody' in trail) {
+    const { responseId } =
+      'SpecResponseRoot' in trail
+        ? trail.SpecResponseRoot
+        : trail.SpecResponseBody;
+    let response = null;
+    for (const endpoint of endpoints) {
+      for (const responseBody of endpoint.responseBodies) {
+        if (responseBody.responseId === responseId) {
+          response = responseBody;
+          break;
+        }
+      }
+      if (response) {
+        break;
+      }
+    }
 
-  if ((trail as any)[RequestTrailConstants.SpecRequestRoot]) {
-    const { requestId } = (trail as any)[RequestTrailConstants.SpecRequestRoot];
-    const { method, pathId, contentType } = requestById(requestId);
+    if (!response) {
+      console.error(
+        `Could not find endpoint with response ${responseId} in current spec endpoints`
+      );
+      return null;
+    }
+    const { pathId, method, statusCode, contentType } = response;
 
-    return {
-      pathId: pathId,
-      requestId,
-      method: method,
-      contentType,
-      inRequest: true,
-    };
-  }
-
-  if ((trail as any)[RequestTrailConstants.SpecResponseBody]) {
-    const { responseId } = (trail as any)[
-      RequestTrailConstants.SpecResponseBody
-    ];
-    const { pathId, method, statusCode, contentType } = responseById(
-      responseId
-    );
     return {
       pathId: pathId,
       method: method,
@@ -94,29 +136,8 @@ export function locationForTrails(
       contentType,
       inResponse: true,
     };
-  }
-
-  if ((trail as any)[RequestTrailConstants.SpecResponseRoot]) {
-    const { responseId } = (trail as any)[
-      RequestTrailConstants.SpecResponseRoot
-    ];
-    const { pathId, method, statusCode, contentType } = responseById(
-      responseId
-    );
-
-    return {
-      pathId: pathId,
-      method: method,
-      statusCode: statusCode,
-      responseId,
-      contentType: contentType,
-      inResponse: true,
-    };
-  }
-
-  // New Bodies
-  if ((trail as any)[RequestTrailConstants.SpecPath]) {
-    const { pathId } = (trail as any)[RequestTrailConstants.SpecPath];
+  } else if ('SpecPath' in trail) {
+    const { pathId } = trail.SpecPath;
     const methodOption = methodForInteractionTrail(interactionTrail);
 
     const inRequest = inRequestForInteractionTrail(interactionTrail);
@@ -131,19 +152,38 @@ export function locationForTrails(
     if (methodOption) {
       return { pathId, method: methodOption, statusCode, contentType };
     }
+  } else if ('SpecQueryParameters' in trail) {
+    const { queryParametersId } = trail.SpecQueryParameters;
+    const endpoint = endpoints.find(
+      (endpoint) =>
+        endpoint.query && endpoint.query.queryParametersId === queryParametersId
+    );
+
+    if (!endpoint) {
+      console.error(
+        `Could not find endpoint with query ${queryParametersId} in current spec endpoints`
+      );
+      return null;
+    }
+    return {
+      pathId: endpoint.pathId,
+      method: endpoint.method,
+      inQuery: true,
+    };
   }
+  console.error(`Received an unexpected trail`, trail);
+  return null;
 }
 
 export function methodForInteractionTrail(
   interactionTrail: IInteractionTrail
 ): string | undefined {
-  //@ts-ignore
-  const Method: IMethod | undefined = interactionTrail.path.find((i) => {
-    return (i as any)['Method'];
+  const pathComponent = interactionTrail.path.find((pathComponent) => {
+    return 'Method' in pathComponent;
   });
 
-  if (Method) {
-    return Method!.Method.method;
+  if (pathComponent && 'Method' in pathComponent) {
+    return pathComponent.Method.method;
   }
 }
 
@@ -151,14 +191,11 @@ export function inResponseForInteractionTrail(
   interactionTrail: IInteractionTrail
 ): { statusCode: number; contentType?: string } | undefined {
   const last = interactionTrail.path[interactionTrail.path.length - 1];
-  if ((last as any)['ResponseBody']) {
-    const asResponseBody = last as IResponseBody;
-    return asResponseBody.ResponseBody;
-  }
-  if ((last as any)['ResponseStatusCode']) {
-    const asResponseBody = last as IResponseStatusCode;
+  if ('ResponseBody' in last) {
+    return last.ResponseBody;
+  } else if ('ResponseStatusCode' in last) {
     return {
-      statusCode: asResponseBody.ResponseStatusCode.statusCode,
+      statusCode: last.ResponseStatusCode.statusCode,
     };
   }
 }
@@ -167,8 +204,7 @@ export function inRequestForInteractionTrail(
   interactionTrail: IInteractionTrail
 ): { contentType: string } | undefined {
   const last = interactionTrail.path[interactionTrail.path.length - 1];
-  if ((last as any)['RequestBody']) {
-    const asRequestBody = last as IRequestBody;
-    return asRequestBody.RequestBody;
+  if ('RequestBody' in last) {
+    return last.RequestBody;
   }
 }

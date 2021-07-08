@@ -4,7 +4,12 @@ import { ICopy } from '<src>/pages/diffs/components/ICopyRender';
 import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
 import { IgnoreRule } from './ignore-rule';
 import { DomainIdGenerator } from './domain-id-generator';
-import { IEndpoint, IRequestBody, IResponseBody } from '<src>/types';
+import {
+  IEndpoint,
+  IQueryParameters,
+  IRequestBody,
+  IResponseBody,
+} from '<src>/types';
 
 export interface IInterpretation {
   previewTabs: IInteractionPreviewTab[];
@@ -77,6 +82,7 @@ export interface ISuggestion {
   changeType: IChangeType;
 }
 
+// TODO QPB move core optic things into optic-domain
 export enum ICoreShapeKinds {
   ObjectKind = '$object',
   ListKind = '$list',
@@ -98,6 +104,7 @@ export enum ICoreShapeInnerParameterNames {
 
 // Diff Types the UI Handles
 
+// TODO QPB either remove this or handle this in a parsing function - this just means we have to update multiple places
 export const allowedDiffTypes: {
   [key: string]: {
     isBodyShapeDiff: boolean;
@@ -199,6 +206,7 @@ export const DiffInResponse = (key: string): boolean =>
 
 // The ones we like to work with in the UI
 
+// TODO QPB remove these external exports
 export interface IRequestBodyLocation {
   contentType?: string;
   requestId?: string;
@@ -210,6 +218,25 @@ export interface IResponseBodyLocation {
   responseId?: string;
 }
 
+// TODO QPB - refactor this type such that
+/**
+ * 
+export interface IParsedLocation {
+  pathId: string;
+  method: string;
+  location: {
+    type: 'query'
+  } | {
+    type: 'request'
+    requestId: string
+    contentType: string
+  } | {
+    type: 'response'
+    statusCode: number
+    contentType: string
+    responseId: string
+  }}
+ */
 export interface IParsedLocation {
   pathId: string;
   method: string;
@@ -219,15 +246,10 @@ export interface IParsedLocation {
 }
 
 ///////////////////////////////////////
-export interface IToDocument {
-  method: string;
-  count: number;
-  pathExpression: string;
-}
-
 export type CurrentSpecContext = {
   currentSpecPaths: any[];
   currentSpecEndpoints: IEndpoint[];
+  currentSpecQueryParameters: IQueryParameters[];
   currentSpecRequests: IRequestBody[];
   currentSpecResponses: IResponseBody[];
   domainIds: DomainIdGenerator;

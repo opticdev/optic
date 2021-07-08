@@ -29,7 +29,7 @@ import { PageLayout } from '<src>/components';
 import { LoadingDiffReview } from '<src>/pages/diffs/components/LoadingDiffReview';
 import { useCapturesService } from '<src>/hooks/useCapturesHook';
 import { usePaths } from '<src>/hooks/usePathsHook';
-import { IRequestBody } from '<src>/types';
+import { IQueryParameters, IRequestBody } from '<src>/types';
 import { IOpticDiffService } from '../../../../spectacle/build';
 import { useAnalytics } from '<src>/contexts/analytics';
 
@@ -77,6 +77,14 @@ export function DiffReviewPages(props: any) {
       selectors.filterRemovedEndpoints(endpointsState.data?.endpoints || []),
     [endpointsState.data]
   );
+  const allQueryParameters = useMemo(
+    () =>
+      filteredEndpoints
+        .map((endpoint) => endpoint.query)
+        .filter((query) => !!query) as IQueryParameters[],
+    [filteredEndpoints]
+  );
+
   const allRequests = useMemo(
     () =>
       filteredEndpoints
@@ -120,6 +128,7 @@ export function DiffReviewPages(props: any) {
       captureId={boundaryId}
       endpoints={filteredEndpoints}
       allPaths={allPaths.paths}
+      queries={allQueryParameters}
       requests={allRequests}
       responses={allResponses}
     >
