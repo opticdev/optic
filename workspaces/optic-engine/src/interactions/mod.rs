@@ -39,6 +39,7 @@ pub fn diff(
     .filter(|result| {
       config.include_query_params
         || !matches!(result, InteractionDiffResult::UnmatchedQueryParameters(_))
+          && !matches!(result, InteractionDiffResult::MatchedQueryParameters(_))
     })
     .flat_map(move |result| match result {
       InteractionDiffResult::MatchedQueryParameters(result) => {

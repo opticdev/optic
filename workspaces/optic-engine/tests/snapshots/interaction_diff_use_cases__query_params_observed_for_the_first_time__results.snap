@@ -3,8 +3,8 @@ source: workspaces/optic-engine/tests/interaction-diff-use-cases.rs
 expression: results
 ---
 [
-    UnmatchedRequestUrl(
-        UnmatchedRequestUrl {
+    UnmatchedQueryParameters(
+        UnmatchedQueryParameters {
             interaction_trail: InteractionTrail {
                 path: [
                     Url {
@@ -15,8 +15,10 @@ expression: results
                     },
                 ],
             },
-            requests_trail: SpecRoot(
-                SpecRoot,
+            requests_trail: SpecPath(
+                SpecPath {
+                    path_id: "path_1pomS4CVlc",
+                },
             ),
         },
     ),
