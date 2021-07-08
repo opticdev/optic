@@ -16,7 +16,6 @@ import {
 } from '<src>/components';
 import { EndpointTOC } from '<src>/pages/docs/components/EndpointTOC';
 import { SubtleBlueBackground, FontFamily } from '<src>/styles';
-import { ChangeLogBG } from '<src>/pages/changelog/components/ChangeLogBG';
 
 import { IParsedLocation } from '<src>/lib/Interfaces';
 import {
@@ -52,9 +51,6 @@ export const EndpointDocumentationPane: FC<
   const classes = useStyles();
   const thisEndpoint = useAppSelector(
     selectors.getEndpoint({ pathId, method })
-  );
-  const endpointBodyChanges = useAppSelector(
-    (state) => state.endpoints.results.data?.changes || {}
   );
 
   if (!thisEndpoint) {
@@ -118,7 +114,6 @@ export const EndpointDocumentationPane: FC<
           targetLocation={highlightedLocation}
           expectedLocation={Location.Query}
         >
-          {/* TODO QPB add changelogBG to this panel */}
           <div id={thisEndpoint.query.queryParametersId}>
             <h6 className={classes.bodyHeader}>Query Parameters</h6>
             <div className={classes.bodyDetails}>
@@ -145,30 +140,22 @@ export const EndpointDocumentationPane: FC<
             contentType={requestBody.contentType}
             expectedLocation={Location.Request}
           >
-            <ChangeLogBG
-              changes={
-                highlightBodyChanges
-                  ? endpointBodyChanges[requestBody.requestId]
-                  : undefined
-              }
-            >
-              <div id={requestBody.requestId}>
-                <h6 className={classes.bodyHeader}>Request Body</h6>
-                <div className={classes.bodyDetails}>
-                  <ShapeFetcher
-                    rootShapeId={requestBody.rootShapeId}
-                    changesSinceBatchCommit={lastBatchCommit}
-                  >
-                    {(shapes) => (
-                      <HttpBodyPanel
-                        shapes={shapes}
-                        location={`Request Body ${requestBody.contentType}`}
-                      />
-                    )}
-                  </ShapeFetcher>
-                </div>
+            <div id={requestBody.requestId}>
+              <h6 className={classes.bodyHeader}>Request Body</h6>
+              <div className={classes.bodyDetails}>
+                <ShapeFetcher
+                  rootShapeId={requestBody.rootShapeId}
+                  changesSinceBatchCommit={lastBatchCommit}
+                >
+                  {(shapes) => (
+                    <HttpBodyPanel
+                      shapes={shapes}
+                      location={`Request Body ${requestBody.contentType}`}
+                    />
+                  )}
+                </ShapeFetcher>
               </div>
-            </ChangeLogBG>
+            </div>
           </HighlightedLocation>
         </React.Fragment>
       ))}
@@ -182,32 +169,24 @@ export const EndpointDocumentationPane: FC<
               statusCode={responseBody.statusCode}
               expectedLocation={Location.Response}
             >
-              <ChangeLogBG
-                changes={
-                  highlightBodyChanges
-                    ? endpointBodyChanges[responseBody.responseId]
-                    : undefined
-                }
-              >
-                <div id={responseBody.responseId}>
-                  <h6 className={classes.bodyHeader}>
-                    {responseBody.statusCode} response
-                  </h6>
-                  <div className={classes.bodyDetails}>
-                    <ShapeFetcher
-                      rootShapeId={responseBody.rootShapeId}
-                      changesSinceBatchCommit={lastBatchCommit}
-                    >
-                      {(shapes) => (
-                        <HttpBodyPanel
-                          shapes={shapes}
-                          location={`${responseBody.statusCode} response ${responseBody.contentType}`}
-                        />
-                      )}
-                    </ShapeFetcher>
-                  </div>
+              <div id={responseBody.responseId}>
+                <h6 className={classes.bodyHeader}>
+                  {responseBody.statusCode} response
+                </h6>
+                <div className={classes.bodyDetails}>
+                  <ShapeFetcher
+                    rootShapeId={responseBody.rootShapeId}
+                    changesSinceBatchCommit={lastBatchCommit}
+                  >
+                    {(shapes) => (
+                      <HttpBodyPanel
+                        shapes={shapes}
+                        location={`${responseBody.statusCode} response ${responseBody.contentType}`}
+                      />
+                    )}
+                  </ShapeFetcher>
                 </div>
-              </ChangeLogBG>
+              </div>
             </HighlightedLocation>
           </React.Fragment>
         );
