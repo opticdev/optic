@@ -18,6 +18,7 @@ import {
   AddField,
   FieldShapeFromShape,
   SetFieldShape,
+  CQRSCommand,
 } from '@useoptic/spectacle';
 
 export function fieldShapeDiffInterpreter(
@@ -112,7 +113,7 @@ export function fieldShapeDiffInterpreter(
   return {
     previewTabs: present.createPreviews(isUnspecified),
     diffDescription,
-    toCommands(choices?: IPatchChoices): any[] {
+    toCommands(choices: IPatchChoices): CQRSCommand[] {
       if (!choices) {
         return [];
       }

@@ -16,6 +16,7 @@ import {
   SetRequestBodyShape,
   SetResponseBodyShape,
   ShapedBodyDescriptor,
+  CQRSCommand,
 } from '@useoptic/spectacle';
 
 export function rootShapeDiffInterpreter(
@@ -74,10 +75,7 @@ export function rootShapeDiffInterpreter(
   return {
     diffDescription,
     updateSpecChoices,
-    toCommands: (choices?: IPatchChoices) => {
-      if (!choices) {
-        return [];
-      }
+    toCommands: (choices: IPatchChoices): CQRSCommand[] => {
       const { commands, rootShapeId } = builderInnerShapeFromChoices(
         choices,
         expected.allowedCoreShapeKindsByShapeId(),
@@ -85,14 +83,22 @@ export function rootShapeDiffInterpreter(
         currentSpecContext
       );
 
-      return [...commands, resetBaseShape(location, rootShapeId)];
+      const resetShapeCommand = resetBaseShape(location, rootShapeId);
+      const allCommands: CQRSCommand[] = [...commands];
+      if (resetShapeCommand) {
+        allCommands.push(resetShapeCommand);
+      }
+
+      return allCommands;
     },
     previewTabs: sortBy(previews, (i) => !i.invalid),
-    // overrideTitle?: ICopy[];
   };
 }
 
-function resetBaseShape(location: IParsedLocation, newShapeId: string) {
+function resetBaseShape(
+  location: IParsedLocation,
+  newShapeId: string
+): CQRSCommand | null {
   if (location.inRequest) {
     return SetRequestBodyShape(
       location.inRequest.requestId!,
@@ -103,5 +109,10 @@ function resetBaseShape(location: IParsedLocation, newShapeId: string) {
       location.inResponse.responseId!,
       ShapedBodyDescriptor(location.inResponse.contentType!, newShapeId, false)
     );
+  }
+  // TODO QPB  handle location in query
+  else {
+    console.error('Unknown location', location);
+    return null;
   }
 }

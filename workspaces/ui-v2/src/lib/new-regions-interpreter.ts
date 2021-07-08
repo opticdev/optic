@@ -88,7 +88,7 @@ function newContentType(
           plain('Request'),
         ],
       },
-      toCommands(choices?: IPatchChoices): any[] {
+      toCommands(choices: IPatchChoices): CQRSCommand[] {
         if (choices?.includeNewBody) {
           return commands;
         } else return [];
@@ -146,7 +146,7 @@ function newContentType(
           plain('Response'),
         ],
       },
-      toCommands(choices?: IPatchChoices): any[] {
+      toCommands(choices: IPatchChoices): CQRSCommand[] {
         if (choices?.includeNewBody) {
           return commands;
         } else return [];
@@ -184,9 +184,7 @@ function newContentType(
         shapes: [],
         copy: [plain('Document Query Parameters')],
       },
-      // TODO QPB figure out if this PR lands https://github.com/opticdev/optic/pull/964 first
-      // and if this fn signature needs to be updated
-      toCommands(choices?: IPatchChoices): CQRSCommand[] {
+      toCommands(choices: IPatchChoices): CQRSCommand[] {
         if (choices?.includeNewBody) {
           return commands;
         } else return [];

@@ -1,3 +1,4 @@
+import { CQRSCommand } from '@useoptic/spectacle';
 import { ICopy } from '<src>/pages/diffs/components/ICopyRender';
 import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
 import { IgnoreRule } from './ignore-rule';
@@ -9,7 +10,7 @@ export interface IInterpretation {
   previewTabs: IInteractionPreviewTab[];
   diffDescription: IDiffDescription;
   updateSpecChoices: IPatchChoices;
-  toCommands: (choices: IPatchChoices) => any[];
+  toCommands: (choices: IPatchChoices) => CQRSCommand[];
 }
 
 export interface IShapeUpdateChoice {
@@ -55,7 +56,7 @@ export interface IDiffDescription {
 
 export interface ISuggestion {
   action: ICopyPair;
-  commands: any[];
+  commands: CQRSCommand[];
   changeType: IChangeType;
 }
 
@@ -72,7 +73,7 @@ interface ICopyPair {
 
 export interface ISuggestion {
   action: ICopyPair;
-  commands: any[];
+  commands: CQRSCommand[];
   changeType: IChangeType;
 }
 

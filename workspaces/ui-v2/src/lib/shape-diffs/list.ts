@@ -16,6 +16,7 @@ import {
   ProviderInShape,
   SetParameterShape,
   ShapeProvider,
+  CQRSCommand,
 } from '@useoptic/spectacle';
 
 export function listItemShapeDiffInterpreter(
@@ -66,7 +67,7 @@ export function listItemShapeDiffInterpreter(
   ////////////////
   return {
     diffDescription: diffDescription,
-    toCommands(choices?: IPatchChoices): any[] {
+    toCommands(choices: IPatchChoices): CQRSCommand[] {
       if (!choices) {
         return [];
       }

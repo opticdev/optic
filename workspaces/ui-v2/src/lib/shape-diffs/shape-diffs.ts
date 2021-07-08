@@ -70,9 +70,4 @@ export async function interpretShapeDiffs(
   }
 
   throw new Error('No interpreter');
-
-  // return {
-  //   diffDescription: undefined, toCommands(choices: IPatchChoices): any[] {
-  //     return [];
-  //   }, suggestions: [], previewTabs: [], specChoices: {shapes: [], } };
 }
