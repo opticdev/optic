@@ -21,7 +21,7 @@ import {
 import { AsyncTools, Streams } from '@useoptic/optic-domain';
 import {
   ILearnedBodies,
-  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+  IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { HttpInteraction } from '@useoptic/optic-domain/build/streams/http-interactions';
 import { defaultIgnoreRules } from '@useoptic/cli-config/build/helpers/default-ignore-rules';
@@ -219,7 +219,7 @@ interface InMemoryDiffServiceDependencies {
 export class InMemoryDiffService implements IOpticDiffService {
   constructor(private dependencies: InMemoryDiffServiceDependencies) {}
 
-  async learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+  async learnShapeDiffAffordances(): Promise<IAffordanceTrailsDiffHashMap> {
     const events = await this.dependencies.specRepository.listEvents();
     const spec = this.dependencies.opticEngine.spec_from_events(
       JSON.stringify(events)

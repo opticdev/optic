@@ -18,7 +18,7 @@ import {
 } from '@useoptic/spectacle/build/in-memory';
 import {
   ILearnedBodies,
-  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+  IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IApiCliConfig } from '@useoptic/cli-config';
 import { EventEmitter } from 'events';
@@ -126,7 +126,7 @@ export class LocalCliCapturesService implements IOpticCapturesService {
 export class LocalCliDiffService implements IOpticDiffService {
   constructor(private dependencies: LocalCliDiffServiceDependencies) {}
 
-  async learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+  async learnShapeDiffAffordances(): Promise<IAffordanceTrailsDiffHashMap> {
     const result = await JsonHttpClient.postJson(
       `${this.dependencies.baseUrl}/captures/${this.dependencies.captureId}/trail-values`,
       {

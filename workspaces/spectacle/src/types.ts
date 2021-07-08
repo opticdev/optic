@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 
 import {
   ILearnedBodies,
-  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+  IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { endpoints, shapes } from '@useoptic/graph-lib';
 
@@ -122,7 +122,7 @@ export interface IOpticDiffService {
     newPathCommands: any[]
   ): Promise<ILearnedBodies>;
 
-  learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash>;
+  learnShapeDiffAffordances(): Promise<IAffordanceTrailsDiffHashMap>;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

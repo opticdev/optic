@@ -1,5 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { unwrapResult } from '@reduxjs/toolkit';
+
 import {
   useDiffEnvironmentsRoot,
   useDiffForEndpointLink,
@@ -12,9 +14,12 @@ import { SharedDiffStore } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { PendingEndpointPageSession } from './PendingEndpointPage';
 import { DiffUrlsPage } from './AddEndpointsPage';
 import { ReviewEndpointDiffContainer } from './ReviewEndpointDiffPage';
-import { useDiffsForCapture } from '<src>/pages/diffs/hooks/useDiffForCapture';
-import { v4 as uuidv4 } from 'uuid';
-import { selectors, useAppSelector } from '<src>/store';
+import {
+  diffActions,
+  selectors,
+  useAppDispatch,
+  useAppSelector,
+} from '<src>/store';
 import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
 import {
   CapturePageWithoutDiffOrRedirect,
@@ -22,18 +27,51 @@ import {
 } from './CapturePage';
 import { PageLayout } from '<src>/components';
 import { LoadingDiffReview } from '<src>/pages/diffs/components/LoadingDiffReview';
+import { useCapturesService } from '<src>/hooks/useCapturesHook';
 import { usePaths } from '<src>/hooks/usePathsHook';
 import { IRequestBody } from '<src>/types';
+import { IOpticDiffService } from '../../../../spectacle/build';
+import { useAnalytics } from '<src>/contexts/analytics';
 
 export function DiffReviewPages(props: any) {
   const { match } = props;
   const { boundaryId } = match.params;
-  const diffId = useMemo(() => uuidv4(), []);
+  const analytics = useAnalytics();
+  const capturesService = useCapturesService();
+  const [diffService, setDiffService] = useState<IOpticDiffService | null>(
+    null
+  );
 
-  //dependencies
-  const diff = useDiffsForCapture(boundaryId, diffId);
+  const dispatch = useAppDispatch();
+
   useFetchEndpoints();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
+  useEffect(() => {
+    (async () => {
+      const startTime = Date.now();
+      const actionResult = await dispatch(
+        diffActions.fetchDiffsForCapture({
+          capturesService,
+          captureId: boundaryId,
+        })
+      );
+
+      try {
+        // unwrapResult throws an error if the thunk is rejected - we handle this in the redux layer
+        // we just cannot continue if there is an error
+        const results = unwrapResult(actionResult);
+        const endTime = Date.now();
+        setDiffService(results.diffService);
+        analytics.reviewPageLoaded(
+          results.data.diffs.length,
+          results.data.urls.length,
+          endTime - startTime,
+          results.numberOfEndpoints
+        );
+      } catch (e) {}
+    })();
+  }, [dispatch, capturesService, boundaryId, analytics]);
+  const diffState = useAppSelector((state) => state.diff.state);
   const filteredEndpoints = useMemo(
     () =>
       selectors.filterRemovedEndpoints(endpointsState.data?.endpoints || []),
@@ -57,22 +95,28 @@ export function DiffReviewPages(props: any) {
   const diffForEndpointLink = useDiffForEndpointLink();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
 
-  const isLoading = diff.loading || endpointsState.loading || allPaths.loading;
-
-  if (isLoading) {
+  if (
+    diffState.loading ||
+    endpointsState.loading ||
+    allPaths.loading ||
+    !diffService
+  ) {
     return (
       <PageLayout>
         <LoadingDiffReview />
       </PageLayout>
     );
   }
+  if (diffState.error || endpointsState.error) {
+    return <>error loading diff page</>;
+  }
 
   return (
     <SharedDiffStore
-      diffService={diff.data!.diffService}
-      diffs={diff.data!.diffs}
-      diffTrails={diff.data!.trails}
-      urls={diff.data!.urls}
+      diffService={diffService}
+      diffs={diffState.data.diffs}
+      diffTrails={diffState.data.trails}
+      urls={diffState.data.urls}
       captureId={boundaryId}
       endpoints={filteredEndpoints}
       allPaths={allPaths.paths}

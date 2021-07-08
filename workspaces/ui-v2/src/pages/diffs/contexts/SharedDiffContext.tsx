@@ -24,7 +24,7 @@ import {
 } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '<src>/lib/domain-id-generator';
 import { ParsedDiff } from '<src>/lib/parse-diff';
-import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IAffordanceTrailsDiffHashMap } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '<src>/hooks/useOpticEngine';
 import { useConfigRepository } from '<src>/contexts/OpticConfigContext';
 import { useAnalytics } from '<src>/contexts/analytics';
@@ -92,7 +92,7 @@ type SharedDiffStoreProps = {
   allPaths: IPath[];
   diffs: ParsedDiff[];
   diffService: IOpticDiffService;
-  diffTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
+  diffTrails: IAffordanceTrailsDiffHashMap;
   urls: IUnrecognizedUrl[];
 };
 

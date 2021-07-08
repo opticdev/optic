@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IAffordanceTrails } from '@useoptic/cli-shared/build/diffs/initial-types';
 import equals from 'lodash.isequal';
 import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
 import {
@@ -17,11 +17,11 @@ export interface IgnoreRule {
 }
 
 export function transformAffordanceMappingByIgnoreRules(
-  i: IValueAffordanceSerializationWithCounter,
+  i: IAffordanceTrails,
   diffHash: string,
   jsonTrail: IJsonTrail,
   rules: IgnoreRule[]
-): IValueAffordanceSerializationWithCounter {
+): IAffordanceTrails {
   const relevantRules = rules.filter(
     (i) => i.diffHash === diffHash && !!i.examplesOfCoreShapeKinds
   );
@@ -31,9 +31,7 @@ export function transformAffordanceMappingByIgnoreRules(
     return i;
   }
 
-  const copied: IValueAffordanceSerializationWithCounter = JSON.parse(
-    JSON.stringify(i)
-  );
+  const copied: IAffordanceTrails = JSON.parse(JSON.stringify(i));
 
   const result = relevantRules.reduce((values, rule) => {
     const coreShapeKind: ICoreShapeKinds = rule.examplesOfCoreShapeKinds!;
