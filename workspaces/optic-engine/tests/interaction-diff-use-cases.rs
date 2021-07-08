@@ -6,10 +6,73 @@ use optic_engine::{
 };
 use petgraph::dot::Dot;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 use std::fs::File;
 use std::path::Path;
 use tokio::fs::read_to_string;
+
+#[tokio::main]
+#[test]
+async fn query_params_observed_for_the_first_time() {
+  let capture = DebugCapture::from_name("query_params_observed_for_the_first_time.json").await;
+  let spec_projection = SpecProjection::from(capture.events);
+  assert_debug_snapshot!(
+    "query_params_observed_for_the_first_time__shape_graph",
+    Dot::with_config(&spec_projection.shape().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "query_params_observed_for_the_first_time__endpoints_graph",
+    Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "query_params_observed_for_the_first_time__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "query_params_observed_for_the_first_time__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
+  );
+
+  capture.session.samples.into_iter().for_each(|interaction| {
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
+    assert_debug_snapshot!("query_params_observed_for_the_first_time__results", results)
+  });
+}
+
+#[tokio::main]
+#[test]
+async fn query_param_required_but_missing() {
+  let capture = DebugCapture::from_name("query_param_required_but_missing.json").await;
+  let spec_projection = SpecProjection::from(capture.events);
+  assert_debug_snapshot!(
+    "query_param_required_but_missing__shape_graph",
+    Dot::with_config(&spec_projection.shape().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "query_param_required_but_missing__endpoints_graph",
+    Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "query_param_required_but_missing__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "query_param_required_but_missing__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
+  );
+
+  capture.session.samples.into_iter().for_each(|interaction| {
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default(),
+    );
+    assert_debug_snapshot!("query_param_required_but_missing__results", results)
+  });
+}
 
 #[tokio::main]
 #[test]

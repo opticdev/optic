@@ -1,0 +1,5 @@
+---
+source: workspaces/optic-engine/tests/interaction-diff-use-cases.rs
+expression: "&spec_projection.shape().to_choice_mapping()"
+---
+{}

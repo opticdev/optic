@@ -1,0 +1,10 @@
+---
+source: workspaces/optic-engine/tests/interaction-diff-use-cases.rs
+expression: "Dot::with_config(&spec_projection.endpoint().graph, &[])"
+---
+digraph {
+    0 [ label = "PathComponent(\l    \"root\",\l    PathComponentDescriptor {\l        is_parameter: false,\l        name: \"\",\l    },\l)\l" ]
+    1 [ label = "PathComponent(\l    \"path_jNlbaVZ0Ar\",\l    PathComponentDescriptor {\l        is_parameter: false,\l        name: \"todos\",\l    },\l)\l" ]
+    1 -> 0 [ label = "IsChildOf\l" ]
+}
+

@@ -1,0 +1,59 @@
+{
+  "events": [
+    {
+      "PathComponentAdded": {
+        "pathId": "path_jNlbaVZ0Ar",
+        "parentPathId": "root",
+        "name": "todos",
+        "eventContext": null
+      }
+    }
+  ],
+  "session": {
+    "samples": [
+      {
+        "uuid": "8eff95b1-4f6d-4d3c-ba71-5e3792780ce5",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/api/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": "status=open&author=homer"
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ]
+  }
+}
