@@ -31,8 +31,8 @@ type IDiffCardProps = {
   approve: () => void;
   ignore: () => void;
   handled: boolean;
-  specChoices?: IPatchChoices;
-  updatedSpecChoices: (choices?: IPatchChoices) => void;
+  specChoices: IPatchChoices;
+  updatedSpecChoices: (choices: IPatchChoices) => void;
 };
 
 export function DiffCard({

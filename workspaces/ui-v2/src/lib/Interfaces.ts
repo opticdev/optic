@@ -7,9 +7,9 @@ import { IEndpoint, IRequestBody, IResponseBody } from '<src>/types';
 
 export interface IInterpretation {
   previewTabs: IInteractionPreviewTab[];
-  diffDescription?: IDiffDescription;
-  updateSpecChoices?: IPatchChoices;
-  toCommands: (choices?: IPatchChoices) => any[];
+  diffDescription: IDiffDescription;
+  updateSpecChoices: IPatchChoices;
+  toCommands: (choices: IPatchChoices) => any[];
 }
 
 export interface IShapeUpdateChoice {

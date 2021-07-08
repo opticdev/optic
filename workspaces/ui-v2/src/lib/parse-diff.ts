@@ -163,15 +163,6 @@ export class ParsedDiff {
   }
 }
 
-export function parseDiffsArray(
-  array: [IDiff, string[], string][]
-): ParsedDiff[] {
-  return array.map(
-    ([rawDiff, pointers, fingerprint]) =>
-      new ParsedDiff(rawDiff, pointers, fingerprint)
-  );
-}
-
 export class BodyShapeDiff {
   shapeTrail: IShapeTrail;
   normalizedShapeTrail: IShapeTrail;

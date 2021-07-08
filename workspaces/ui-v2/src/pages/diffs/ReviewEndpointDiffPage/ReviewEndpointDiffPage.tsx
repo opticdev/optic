@@ -33,7 +33,7 @@ const useRedirectForDiffCompleted = (allDiffs: IInterpretation[]) => {
   useEffect(() => {
     if (
       allDiffs.length > 0 &&
-      allDiffs.every((i) => isDiffHandled(i.diffDescription?.diffHash!))
+      allDiffs.every((i) => isDiffHandled(i.diffDescription.diffHash))
     ) {
       history.push(diffReviewPage.linkTo());
     }
@@ -123,7 +123,7 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
             setCurrentIndex={setCurrentIndex}
           />
           <DiffCard
-            key={renderedDiff.diffDescription?.diffHash}
+            key={renderedDiff.diffDescription.diffHash}
             updatedSpecChoices={(choices) => {
               setPreviewCommands(renderedDiff.toCommands(choices));
             }}
@@ -141,9 +141,9 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
               );
             }}
             ignore={() => {
-              addDiffHashIgnore(renderedDiff.diffDescription!.diffHash);
+              addDiffHashIgnore(renderedDiff.diffDescription.diffHash);
               setCurrentIndex(
-                getNextIncompleteDiff(renderedDiff.diffDescription!.diffHash)
+                getNextIncompleteDiff(renderedDiff.diffDescription.diffHash)
               );
             }}
           />
@@ -159,7 +159,7 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
             pathId={pathId}
             lastBatchCommit={batchCommit}
             highlightedLocation={
-              allDiffs[currentIndex].diffDescription?.location
+              allDiffs[currentIndex].diffDescription.location
             }
             renderHeader={() => (
               <>
