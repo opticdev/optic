@@ -65,6 +65,7 @@ impl InteractionDiffResult {
 
   pub fn json_trail(&self) -> Option<&JsonTrail> {
     let shape_diff_result = match self {
+      InteractionDiffResult::UnmatchedQueryParametersShape(diff) => Some(&diff.shape_diff_result),
       InteractionDiffResult::UnmatchedRequestBodyShape(diff) => Some(&diff.shape_diff_result),
       InteractionDiffResult::UnmatchedResponseBodyShape(diff) => Some(&diff.shape_diff_result),
       _ => None,

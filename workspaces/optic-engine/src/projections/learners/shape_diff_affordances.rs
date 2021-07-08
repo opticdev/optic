@@ -187,6 +187,22 @@ pub struct ShapeDiffAffordances {
 }
 pub type InteractionPointers = Tags;
 
+impl ShapeDiffAffordances {
+  pub fn into_trail_observations(self) -> (JsonTrail, TrailObservationsResult) {
+    let root_shape_id = self.root_trail;
+    let values_by_trail: HashMap<_, _> = self
+      .affordances
+      .into_iter()
+      .map(|item| (item.trail.clone(), item))
+      .collect();
+
+    let trail_observation_results: TrailObservationsResult =
+      TrailObservationsResult { values_by_trail };
+
+    (root_shape_id, trail_observation_results)
+  }
+}
+
 #[derive(Debug, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct InteractionsAffordances {
