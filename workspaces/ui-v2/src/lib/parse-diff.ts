@@ -79,13 +79,16 @@ export class ParsedDiff {
       currentSpecContext.currentSpecRequests,
       currentSpecContext.currentSpecResponses
     );
+    if (!location) {
+      return false;
+    }
 
     const allEndpoints = currentSpecContext.currentSpecEndpoints;
     const isDocumented = allEndpoints.find(
-      (i: any) => i.pathId === location!.pathId && i.method === location!.method
+      (i: any) => i.pathId === location.pathId && i.method === location.method
     );
 
-    return location && location.pathId && Boolean(isDocumented);
+    return location.pathId && !!isDocumented;
   }
 
   location(currentSpecContext: CurrentSpecContext): IParsedLocation {

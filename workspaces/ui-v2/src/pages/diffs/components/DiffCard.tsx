@@ -21,6 +21,7 @@ import {
   IPatchChoices,
 } from '<src>/lib/Interfaces';
 import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 import { BuildSpecPatch } from './BuildSpecPatch';
 import { useInteraction } from '<src>/hooks/useInteraction';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
@@ -105,7 +106,7 @@ export function DiffCard({
                   assertion={diffDescription.assertion}
                   trailsAreCorrect={!tab.invalid}
                   jsonTrails={tab.jsonTrailsByInteractions}
-                  getJsonBodyToPreview={(interaction: any) => {
+                  getJsonBodyToPreview={(interaction: IHttpInteraction) => {
                     const body = diffDescription.getJsonBodyToPreview(
                       interaction
                     );
@@ -142,7 +143,7 @@ function RenderExampleBody({
   description,
   assertion,
 }: {
-  getJsonBodyToPreview: (interaction: any) => BodyPreview;
+  getJsonBodyToPreview: (interaction: IHttpInteraction) => BodyPreview;
   interactionPointer: string;
   jsonTrails: { [key: string]: IJsonTrail[] };
   trailsAreCorrect: boolean;
@@ -151,7 +152,7 @@ function RenderExampleBody({
 }) {
   const { captureId } = useSharedDiffContext();
   const { data } = useInteraction(captureId, interactionPointer);
-  const actualBody = useMemo<any | undefined>(() => {
+  const actualBody = useMemo<BodyPreview | undefined>(() => {
     if (data) {
       return getJsonBodyToPreview(data);
     } else {

@@ -1,9 +1,9 @@
-import { CQRSCommand } from '@useoptic/spectacle';
+import { CQRSCommand, IOpticEngine } from '@useoptic/spectacle';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 import { ICopy } from '<src>/pages/diffs/components/ICopyRender';
 import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
 import { IgnoreRule } from './ignore-rule';
 import { DomainIdGenerator } from './domain-id-generator';
-import { IOpticEngine } from '@useoptic/spectacle/src/index';
 import { IEndpoint, IRequestBody, IResponseBody } from '<src>/types';
 
 export interface IInterpretation {
@@ -49,7 +49,7 @@ export interface IDiffDescription {
   assertion: ICopy[];
   location: IParsedLocation;
   changeType: IChangeType;
-  getJsonBodyToPreview: (interaction: any) => BodyPreview;
+  getJsonBodyToPreview: (interaction: IHttpInteraction) => BodyPreview;
   unknownDiffBehavior?: boolean;
   diffHash: string;
 }

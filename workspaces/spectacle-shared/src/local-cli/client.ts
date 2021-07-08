@@ -21,6 +21,7 @@ import {
   IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IApiCliConfig } from '@useoptic/cli-config';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 import { EventEmitter } from 'events';
 
 export class LocalCliSpectacle implements IForkableSpectacle {
@@ -94,13 +95,16 @@ export class LocalCliCapturesService implements IOpticCapturesService {
   async loadInteraction(
     captureId: string,
     pointer: string
-  ): Promise<any | undefined> {
+  ): Promise<IHttpInteraction> {
     const response = await JsonHttpClient.getJson(
       `${this.dependencies.baseUrl}/captures/${captureId}/interactions/${pointer}`
     );
-    if (response.interaction) {
-      return response.interaction;
+    if (!response.interaction) {
+      throw new Error(
+        `Could not find interaction ${pointer} in capture ${captureId}`
+      );
     }
+    return response.interaction;
   }
 
   async startDiff(diffId: string, captureId: string): Promise<StartDiffResult> {

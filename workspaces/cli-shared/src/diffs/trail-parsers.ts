@@ -23,6 +23,7 @@ export interface IResponseBodyForTrailParser {
   method: string;
 }
 
+// TODO QPB
 export function locationForTrails(
   trail: IRequestSpecTrail,
   interactionTrail: IInteractionTrail,
