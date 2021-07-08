@@ -39,16 +39,12 @@ export async function makeCurrentSpecContext(
   const requests = endpoints
     .flatMap((endpoint) => endpoint.requestBodies)
     .filter((body) => !!body) as IRequestBody[]; // cast to IRequestBody as filter removes non-null
-  const queryParameters = endpoints
-    .map((endpoint) => endpoint.query)
-    .filter((query) => !!query) as IQueryParameters[];
 
   const responses = endpoints.flatMap((endpoint) => endpoint.responseBodies);
 
   return {
     currentSpecPaths: paths,
     currentSpecEndpoints: endpoints,
-    currentSpecQueryParameters: queryParameters,
     currentSpecResponses: responses,
     currentSpecRequests: requests,
     domainIds: newDeterministicIdGenerator(),
