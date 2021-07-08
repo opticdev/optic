@@ -43,12 +43,11 @@ pub fn diff(
     })
     .flat_map(move |result| match result {
       InteractionDiffResult::MatchedQueryParameters(result) => {
-        let query_params = &http_interaction.request.query;
-        let shape_diff_results = diff_shape(
-          spec_projection.shape(),
-          query_params.into(),
-          &result.root_shape_id,
-        );
+        let maybe_query_params: Option<BodyDescriptor> = (&http_interaction.request.query).into();
+        let query_params = maybe_query_params.or_else(|| Some(BodyDescriptor::empty_object()));
+
+        let shape_diff_results =
+          diff_shape(spec_projection.shape(), query_params, &result.root_shape_id);
         shape_diff_results
           .into_iter()
           .map(|shape_diff| {

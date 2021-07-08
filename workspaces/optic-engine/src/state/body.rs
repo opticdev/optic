@@ -15,6 +15,12 @@ pub enum BodyDescriptor {
   Null,
 }
 
+impl BodyDescriptor {
+  pub fn empty_object() -> Self {
+    Self::Object(ObjectDescriptor::from(std::iter::empty()))
+  }
+}
+
 #[derive(PartialEq, Clone, Debug, Hash, Eq)]
 pub struct FieldDescriptor(pub String, pub Box<BodyDescriptor>);
 
