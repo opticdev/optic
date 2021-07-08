@@ -1,6 +1,6 @@
 import { createSlice, SerializedError } from '@reduxjs/toolkit';
 
-import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IAffordanceTrailsDiffHashMap } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IUnrecognizedUrl } from '@useoptic/spectacle';
 
 import { ParsedDiff } from '<src>/lib/parse-diff';
@@ -13,7 +13,7 @@ export type DiffState = {
     {
       diffs: ParsedDiff[];
       urls: IUnrecognizedUrl[];
-      trails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
+      trails: IAffordanceTrailsDiffHashMap;
     },
     SerializedError
   >;

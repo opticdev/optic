@@ -11,7 +11,7 @@ import {
 } from '../Interfaces';
 import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
 import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
-import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IAffordanceTrails } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { code, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { builderInnerShapeFromChoices } from './build-inner-shape';
 import {
@@ -165,7 +165,7 @@ class FieldShapeInterpretationHelper {
     private diffHash: string,
     private shapeTrail: IShapeTrail,
     private jsonTrail: IJsonTrail,
-    private learnedTrails: IValueAffordanceSerializationWithCounter,
+    private learnedTrails: IAffordanceTrails,
     private actual: Actual,
     private expected: Expectation,
     private diffDescription: IDiffDescription

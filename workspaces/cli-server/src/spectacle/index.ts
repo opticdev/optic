@@ -30,7 +30,7 @@ import {
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 import {
   ILearnedBodies,
-  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+  IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InteractionDiffWorkerRust } from '@useoptic/cli-shared/build/diffs/interaction-diff-worker-rust';
 import { IPathMapping, readApiConfig } from '@useoptic/cli-config';
@@ -259,7 +259,7 @@ interface LocalCLiDiffServiceDependencies {
 export class LocalCliDiffService implements IOpticDiffService {
   constructor(private dependencies: LocalCLiDiffServiceDependencies) {}
 
-  learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+  learnShapeDiffAffordances(): Promise<IAffordanceTrailsDiffHashMap> {
     return Promise.reject('implement me');
   }
 

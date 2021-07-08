@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as Sentry from '@sentry/react';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IAffordanceTrailsDiffHashMap } from '@useoptic/cli-shared/build/diffs/initial-types';
 import {
   IOpticCapturesService,
   IOpticDiffService,
@@ -17,7 +17,7 @@ export const fetchDiffsForCapture = createAsyncThunk<
     data: {
       diffs: ParsedDiff[];
       urls: IUnrecognizedUrl[];
-      trails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
+      trails: IAffordanceTrailsDiffHashMap;
     };
     diffService: IOpticDiffService;
     numberOfEndpoints: number;

@@ -5,16 +5,16 @@ export type ILearnedBodies = LearningResults.UndocumentedEndpointBodies.LearnedB
 export type ILearnedBody = LearningResults.UndocumentedEndpointBodies.LearnedBody;
 export type ILearnedQueryParameters = LearningResults.UndocumentedEndpointBodies.LearnedQueryParameters;
 
-export interface IValueAffordanceSerializationWithCounter {
-  affordances: IValueAffordanceSerialization[];
+export interface IAffordanceTrails {
+  affordances: IAffordance[];
   interactions: IAffordanceInteractionPointers;
 }
 
-export interface IValueAffordanceSerializationWithCounterGroupedByDiffHash {
-  [key: string]: IValueAffordanceSerializationWithCounter;
+export interface IAffordanceTrailsDiffHashMap {
+  [key: string]: IAffordanceTrails;
 }
 
-export interface IValueAffordanceSerialization {
+export interface IAffordance {
   trail: IJsonTrail;
   wasString: boolean;
   wasNumber: boolean;

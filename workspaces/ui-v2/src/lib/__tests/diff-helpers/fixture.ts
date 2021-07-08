@@ -12,7 +12,7 @@ import sortby from 'lodash.sortby';
 import stringify from 'json-stable-stringify';
 import { ICopy, ICopyStyle } from '<src>/pages/diffs/components/ICopyRender';
 import { IChangeType, IInterpretation } from '<src>/lib/Interfaces';
-import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IAffordanceTrails } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { newRegionInterpreters } from '<src>/lib/new-regions-interpreter';
 import { IOpticDiffService } from '@useoptic/spectacle';
 import { getExpectationsForShapeTrail } from '<src>/lib/shape-diff-dsl-rust';
@@ -96,7 +96,7 @@ export const testCaseLoaded = async (
 export type IShapeDiffTestSnapshot = {
   preview: IInterpretation;
   commands: any[];
-  trailValues: IValueAffordanceSerializationWithCounter;
+  trailValues: IAffordanceTrails;
 };
 
 export async function newRegionPreview(
@@ -124,7 +124,7 @@ export async function shapeDiffPreview(
   universe: ITestUniverse
 ): Promise<{
   preview: IInterpretation;
-  trailValues: IValueAffordanceSerializationWithCounter;
+  trailValues: IAffordanceTrails;
   expectations: IExpectationHelper;
   commands: any[];
 }> {
@@ -140,7 +140,7 @@ export async function shapeDiffPreview(
   const trailValues = shapeAffordances[input.diffs[0]!.diffHash];
 
   //rust engine guarantees no ordering. make them snapshot friendly
-  const sortedTrailValues: IValueAffordanceSerializationWithCounter = {
+  const sortedTrailValues: IAffordanceTrails = {
     affordances: sortby(
       trailValues.affordances.map((i) => ({
         ...i,
