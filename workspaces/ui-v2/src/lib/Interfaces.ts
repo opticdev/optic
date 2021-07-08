@@ -4,7 +4,7 @@ import { ICopy } from '<src>/pages/diffs/components/ICopyRender';
 import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
 import { IgnoreRule } from './ignore-rule';
 import { DomainIdGenerator } from './domain-id-generator';
-import { IEndpoint, IRequestBody, IResponseBody } from '<src>/types';
+import { IEndpoint } from '<src>/types';
 
 export interface IInterpretation {
   previewTabs: IInteractionPreviewTab[];
@@ -244,8 +244,6 @@ export interface IParsedLocation {
 export type CurrentSpecContext = {
   currentSpecPaths: any[];
   currentSpecEndpoints: IEndpoint[];
-  currentSpecRequests: IRequestBody[];
-  currentSpecResponses: IResponseBody[];
   domainIds: DomainIdGenerator;
   idGeneratorStrategy: 'sequential' | 'random';
   opticEngine: IOpticEngine;
