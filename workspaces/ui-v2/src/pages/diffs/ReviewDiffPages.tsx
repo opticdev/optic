@@ -57,7 +57,9 @@ export function DiffReviewPages(props: any) {
       );
 
       try {
-        const results = await unwrapResult(actionResult);
+        // unwrapResult throws an error if the thunk is rejected - we handle this in the redux layer
+        // we just cannot continue if there is an error
+        const results = unwrapResult(actionResult);
         const endTime = Date.now();
         setDiffService(results.diffService);
         analytics.reviewPageLoaded(
