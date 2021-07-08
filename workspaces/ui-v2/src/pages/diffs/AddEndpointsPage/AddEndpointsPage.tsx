@@ -1,9 +1,14 @@
 import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import classNames from 'classnames';
-import { makeStyles } from '@material-ui/styles';
 import { Check, Delete as DeleteIcon } from '@material-ui/icons';
-import { Divider, List, ListItem, Typography } from '@material-ui/core';
+import {
+  Divider,
+  List,
+  ListItem,
+  Typography,
+  makeStyles,
+} from '@material-ui/core';
 
 import {
   TwoColumnFullWidth,
@@ -11,10 +16,7 @@ import {
   EndpointName,
   PageLayout,
 } from '<src>/components';
-import {
-  useDiffReviewPagePendingEndpoint,
-  useEndpointPageLink,
-} from '<src>/components/navigation/Routes';
+import { useDiffReviewPagePendingEndpoint } from '<src>/components/navigation/Routes';
 
 import { useUndocumentedUrls } from '<src>/pages/diffs/hooks/useUndocumentedUrls';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
@@ -186,7 +188,6 @@ export function DocumentationRootPageWithPendingEndpoints() {
   const changelogStyles = useChangelogStyles();
 
   const history = useHistory();
-  const endpointPageLink = useEndpointPageLink();
   const onKeyPress = useRunOnKeypress(
     () => {
       if (hasDiffChanges()) {
@@ -210,48 +211,46 @@ export function DocumentationRootPageWithPendingEndpoints() {
             >
               Recently Added
             </Typography>
-            {pendingEndpointsToRender.map(
-              (endpoint: IPendingEndpoint, index: number) => {
-                return (
-                  <ListItem
-                    key={index}
-                    button
-                    disableRipple
-                    disableGutters
-                    style={{ display: 'flex' }}
-                    onClick={() =>
-                      history.push(
-                        diffReviewPagePendingEndpoint.linkTo(endpoint.id)
-                      )
-                    }
-                    className={classNames(
-                      changelogStyles.added,
-                      classes.endpointRow
-                    )}
+            {pendingEndpointsToRender.map((endpoint: IPendingEndpoint) => {
+              return (
+                <ListItem
+                  key={endpoint.id}
+                  button
+                  disableRipple
+                  disableGutters
+                  style={{ display: 'flex' }}
+                  onClick={() =>
+                    history.push(
+                      diffReviewPagePendingEndpoint.linkTo(endpoint.id)
+                    )
+                  }
+                  className={classNames(
+                    changelogStyles.added,
+                    classes.endpointRow
+                  )}
+                >
+                  <div className={classes.endpointNameContainer}>
+                    <EndpointName
+                      method={endpoint.method}
+                      fullPath={endpoint.pathPattern}
+                      leftPad={6}
+                    />
+                  </div>
+                  <div
+                    className={classes.endpointContributionContainer}
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <div className={classes.endpointNameContainer}>
-                      <EndpointName
-                        method={endpoint.method}
-                        fullPath={endpoint.pathPattern}
-                        leftPad={6}
-                      />
-                    </div>
-                    <div
-                      className={classes.endpointContributionContainer}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <PendingEndpointNameField endpoint={endpoint} />
-                      <DeleteIcon
-                        onClick={() => {
-                          discardEndpoint(endpoint.id);
-                        }}
-                        fontSize="small"
-                      />
-                    </div>
-                  </ListItem>
-                );
-              }
-            )}
+                    <PendingEndpointNameField endpoint={endpoint} />
+                    <DeleteIcon
+                      onClick={() => {
+                        discardEndpoint(endpoint.id);
+                      }}
+                      fontSize="small"
+                    />
+                  </div>
+                </ListItem>
+              );
+            })}
             <Divider style={{ marginTop: 15 }} />
           </div>
         )}
@@ -264,42 +263,29 @@ export function DocumentationRootPageWithPendingEndpoints() {
               >
                 {tocKey}
               </Typography>
-              {groupedEndpoints[tocKey].map(
-                (endpoint: IEndpoint, index: number) => {
-                  return (
-                    <ListItem
-                      key={index}
-                      button
-                      disableRipple
-                      disableGutters
-                      style={{ display: 'flex' }}
-                      onClick={() =>
-                        history.push(
-                          endpointPageLink.linkTo(
-                            endpoint.pathId,
-                            endpoint.method
-                          )
-                        )
-                      }
-                      className={classes.endpointRow}
+              {groupedEndpoints[tocKey].map((endpoint: IEndpoint) => {
+                return (
+                  <ListItem
+                    key={endpoint.pathId + endpoint.method}
+                    style={{ display: 'flex' }}
+                    className={classes.endpointRow}
+                  >
+                    <div className={classes.endpointNameContainer}>
+                      <EndpointName
+                        method={endpoint.method}
+                        fullPath={endpoint.fullPath}
+                        leftPad={6}
+                      />
+                    </div>
+                    <div
+                      className={classes.endpointContributionContainer}
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <div className={classes.endpointNameContainer}>
-                        <EndpointName
-                          method={endpoint.method}
-                          fullPath={endpoint.fullPath}
-                          leftPad={6}
-                        />
-                      </div>
-                      <div
-                        className={classes.endpointContributionContainer}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <ExistingEndpointNameField endpoint={endpoint} />
-                      </div>
-                    </ListItem>
-                  );
-                }
-              )}
+                      <ExistingEndpointNameField endpoint={endpoint} />
+                    </div>
+                  </ListItem>
+                );
+              })}
             </div>
           );
         })}
@@ -311,6 +297,8 @@ export function DocumentationRootPageWithPendingEndpoints() {
 const useStyles = makeStyles((theme) => ({
   endpointRow: {
     display: 'flex',
+    padding: theme.spacing(0, 0.5),
+    margin: theme.spacing(0.5, 0),
     '@media (max-width: 1250px)': {
       flexDirection: 'column',
       alignItems: 'flex-start',
