@@ -27,7 +27,7 @@ export type PathQueryResponse = {
 export const fetchPaths = createAsyncThunk<
   IPath[],
   { spectacle: IForkableSpectacle }
->('FETCH_ENDPOINTS', async ({ spectacle }) => {
+>('FETCH_PATHS', async ({ spectacle }) => {
   try {
     const results = await spectacle.query<PathQueryResponse>({
       query: AllPathsQuery,
