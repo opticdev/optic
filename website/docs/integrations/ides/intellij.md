@@ -22,11 +22,7 @@ Just like Git, Cargo, or many other coding tools, the first step for integrating
 
 ![Running api init](/img/blog-content/intellij-api-init.png)
 
-Here we've selected the Proxy integration. This allows us to set the port on which our application runs with the IntelliJ run configurations, and gives us a place to pass traffic through Optic. Our API project runs on port 8080, so the targetUrl is `http://localhost:8080`. Optic will observe and forward traffic sent to `http://locaalhost:4000`, which is how we'll test our work as we develop. 
-
-Optic guides us to check our configuration. Go ahead and start your project with the Green Play button next to the Run Configurations in IntelliJ, and wait for it to start up. Then, run `api check` from the terminal. Optic will run some tests and make sure the configuration is right. If there are any issues, it will enumerate them and provide some suggested remedies. When all is set up properly, you'll get a check passed message.
-
-![API Check passed](/img/blog-content/intellij-api-start.png)
+Here we've selected the Proxy integration. This allows us to set the port on which our application runs with the IntelliJ run configurations, and gives us a place to pass traffic through Optic. Our API project runs on port 8080, so the targetUrl is `http://localhost:8080`. Optic will observe and forward traffic sent to `http://locaalhost:4000`, which is how we'll test our work as we develop.
 
 The Optic installer tells you to run `api start`, which will work. However, we can integrate this command with the IntelliJ Run Configurations so Optic will run with your existing configurations and even with your existing debugger.
 

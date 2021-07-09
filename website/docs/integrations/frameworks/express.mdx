@@ -39,9 +39,9 @@ app.listen(3000)
 app.listen(port || 3000)
 ```
 
-## Verifying with `api check start`
+## Verifying with `api run start --verbose`
 
-The setup tool will guide you through running checks to assure Optic is running successfully with your API project. You should see everything pass at this point. If you don't, it's most likely that you're not starting the API on the `$PORT` Optic provides. The Optic check will also report any other common issues it detects and give you steps and suggestions to resolve them.
+Which will give you advanced debugging logs on the console, and report common errors. Run some traffic through your application: we recommend at least 5 requests. You should seee Optic report the requests on the console. When you're confident that everything is ready, you can run the command without the `--verbose` flag.
 
 Should you need any more help, or want to chat about the process, please reach out to us. You can schedule a [quick chat with the maintainers](https://calendly.com/opticlabs/maintainer-office-hours) or [open an issue on GitHub](https://github.com/opticdev/optic/issues/new?title=API%20Init:%20).
 
