@@ -7,15 +7,9 @@ The Optic CLI installs the `api` command, which is used to manage integration, o
 
 ## Documenting your API
 
-### `check`
-
-Verifies that Optic can run your tasks and monitor traffic. When initializing Optic with your repository, the guided setup will have you run this command to validate the configuration. If there are any issues, they will be reported on the command line and in the Optic setup UI with recommendations on how to proceed. It takes the name of the task you wish to check, usually `start`:
-
-`api check start`
-
 ### `help`
 
-Provides usage information for `api` and subcommands. For subcommands that take parameters, such as `run` and `check` which take a task name, `--help` will provide the same information.
+Provides usage information for `api` and subcommands. For subcommands that take parameters, such as `run` which takes a task name, `--help` will provide the same information.
 
 For example, to learn more about the `init` command, run:
 
@@ -50,6 +44,7 @@ Run has a few flags that can modify the default behavior:
 - `--exit-on-diff` returns an exit code of `1` if unexpected API behavior is returned, such as an undocumented route or a change in behavior on a documented route. Normally, Optic returns `0` on successful termination regardless of the behavior observed. This is primarily used in CI/CD scenarios, such as in [GitHub Actions](/docs/github-actions), to fail builds when undocumented behavior is detected.
 - `--pass-exit-code` returns the exit code of your task. If you are using a [dependent task](/docs/get-started/testing), the exit code of the dependent command (not the base command) will be passed through. This flag is overridden by `--exit-on-diff` which will always exit a capture session with exit code 1 when a diff was detected. 
 - `--transparent-proxy` configures Optic to [transparently forward](/docs/using/advanced-configuration#transparent-proxy-mode) all traffic, which may be necessary for certain application configurations.
+- `--verbose` provides additional logging to the console, including data on problems starting the API application or the Optic proxy.
 
 ### `spec`
 
