@@ -58,6 +58,7 @@ export function locationForTrails(
   pathId: string;
   method: string;
   inQuery?: boolean;
+  queryParametersId?: string;
   inRequest?: boolean;
   inResponse?: boolean;
   requestId?: string;
@@ -169,6 +170,7 @@ export function locationForTrails(
       pathId: endpoint.pathId,
       method: endpoint.method,
       inQuery: true,
+      queryParametersId,
     };
   }
   console.error(`Received an unexpected trail`, trail);

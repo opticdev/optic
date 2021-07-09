@@ -16,6 +16,8 @@ import {
   SetRequestBodyShape,
   SetResponseBodyShape,
   ShapedBodyDescriptor,
+  SetQueryParametersShape,
+  QueryParametersShapeDescriptor,
   CQRSCommand,
 } from '@useoptic/spectacle';
 
@@ -109,9 +111,12 @@ function resetBaseShape(
       location.inResponse.responseId!,
       ShapedBodyDescriptor(location.inResponse.contentType!, newShapeId, false)
     );
-  }
-  // TODO QPB  handle location in query
-  else {
+  } else if (location.inQuery) {
+    return SetQueryParametersShape(
+      location.inQuery.queryParametersId,
+      QueryParametersShapeDescriptor(newShapeId)
+    );
+  } else {
     console.error('Unknown location', location);
     return null;
   }

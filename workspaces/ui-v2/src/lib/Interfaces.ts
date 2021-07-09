@@ -235,7 +235,9 @@ export interface IParsedLocation {
 export interface IParsedLocation {
   pathId: string;
   method: string;
-  inQuery?: boolean;
+  inQuery?: {
+    queryParametersId: string;
+  };
   inRequest?: IRequestBodyLocation;
   inResponse?: IResponseBodyLocation;
 }
