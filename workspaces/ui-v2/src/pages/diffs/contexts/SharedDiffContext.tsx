@@ -14,7 +14,7 @@ import {
 } from './SharedDiffState';
 import shortId from 'shortid';
 import { useMachine } from '@xstate/react';
-import { IEndpoint, IRequestBody, IResponseBody } from '<src>/types';
+import { IEndpoint, IRequestBody, IResponseBody, IPath } from '<src>/types';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import {
   AddContribution,
@@ -28,7 +28,6 @@ import { IAffordanceTrailsDiffHashMap } from '@useoptic/cli-shared/build/diffs/i
 import { useOpticEngine } from '<src>/hooks/useOpticEngine';
 import { useConfigRepository } from '<src>/contexts/OpticConfigContext';
 import { useAnalytics } from '<src>/contexts/analytics';
-import { IPath } from '<src>/hooks/usePathsHook';
 import { pathMatcher, PathComponentAuthoring } from '<src>/utils';
 import { useGlobalDiffDebug } from '<src>/components';
 

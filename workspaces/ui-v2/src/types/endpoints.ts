@@ -8,6 +8,15 @@ export interface IPathParameter {
   endpointId: string;
 }
 
+export interface IPath {
+  absolutePathPattern: string;
+  parentPathId: string | null;
+  absolutePathPatternWithParameterNames: string;
+  isParameterized: boolean;
+  name: string;
+  pathId: string;
+}
+
 export interface IEndpoint {
   pathId: string;
   method: string;

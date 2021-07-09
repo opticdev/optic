@@ -1,5 +1,5 @@
 import { IPendingEndpoint } from '<src>/pages/diffs/contexts/SharedDiffState';
-import { IPath } from '<src>/hooks/usePathsHook';
+import { IPath } from '<src>/types';
 import {
   AddPathComponent,
   AddPathParameter,

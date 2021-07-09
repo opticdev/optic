@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 import { reducer as endpointsReducer } from './endpoints';
+import { reducer as pathsReducer } from './paths';
 import { reducer as diffReducer } from './diff';
 import { reducer as documentationEditReducer } from './documentationEdit';
 import { reducer as metadataReducer } from './metadata';
@@ -13,6 +14,7 @@ export const createReduxStore = () =>
       documentationEdits: documentationEditReducer,
       metadata: metadataReducer,
       diff: diffReducer,
+      paths: pathsReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
