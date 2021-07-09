@@ -38,9 +38,7 @@ export class LocalCliSpectacle implements IForkableSpectacle {
     return new InMemorySpectacle(opticContext, []);
   }
 
-  async mutate<Result, Input = {}>(
-    options: SpectacleInput<Input>
-  ): Promise<Result> {
+  mutate: IForkableSpectacle['mutate'] = async (options) => {
     // send query to local cli-server
     const response = await JsonHttpClient.postJson(
       `${this.baseUrl}/spectacle`,
@@ -48,14 +46,12 @@ export class LocalCliSpectacle implements IForkableSpectacle {
     );
     this.eventEmitter.emit('update');
     return response;
-  }
+  };
 
-  async query<Result, Input = {}>(
-    options: SpectacleInput<Input>
-  ): Promise<Result> {
+  query: IForkableSpectacle['query'] = (options) => {
     // send query to local cli-server
     return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
-  }
+  };
 
   registerUpdateEvent<T extends (...args: any) => any>(fn: T) {
     this.eventEmitter.on('update', fn);

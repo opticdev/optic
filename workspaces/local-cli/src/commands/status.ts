@@ -110,7 +110,7 @@ export default class Status extends Command {
     const { diffs } = await diffService.listDiffs();
     const { urls } = await diffService.listUnrecognizedUrls();
 
-    const requests: any = await spectacle.query({
+    const requestQuery = await spectacle.query<any>({
       query: `{
         requests {
           id
@@ -151,7 +151,7 @@ export default class Status extends Command {
       variables: {},
     });
 
-    const endpoints = requests.data.map((request: any) => {
+    const endpoints = requestQuery.data.requests.map((request: any) => {
       return {
         pathId: request.pathId,
         method: request.method,
