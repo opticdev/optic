@@ -61,8 +61,8 @@ const appConfig: OpticAppConfig = {
       enabled: true,
       specViewerDomain:
         (process.env.NODE_ENV === 'development'
-          ? process.env.REACT_APP_PROD_SPEC_VIEWER_BASE
-          : process.env.REACT_APP_STAGING_SPEC_VIEWER_BASE) ||
+          ? process.env.REACT_APP_STAGING_SPEC_VIEWER_BASE
+          : process.env.REACT_APP_PROD_SPEC_VIEWER_BASE) ||
         'https://spec.o3c.info',
     },
   },
