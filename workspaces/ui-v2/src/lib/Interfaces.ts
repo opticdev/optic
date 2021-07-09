@@ -198,18 +198,6 @@ export const DiffInResponse = (key: string): boolean =>
 
 // The ones we like to work with in the UI
 
-// TODO QPB remove these external exports
-export interface IRequestBodyLocation {
-  contentType?: string;
-  requestId?: string;
-}
-
-export interface IResponseBodyLocation {
-  statusCode: number;
-  contentType?: string;
-  responseId?: string;
-}
-
 export interface IParsedLocation {
   pathId: string;
   method: string;
