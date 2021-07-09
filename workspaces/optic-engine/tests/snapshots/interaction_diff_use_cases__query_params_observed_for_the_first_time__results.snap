@@ -1,0 +1,25 @@
+---
+source: workspaces/optic-engine/tests/interaction-diff-use-cases.rs
+expression: results
+---
+[
+    UnmatchedQueryParameters(
+        UnmatchedQueryParameters {
+            interaction_trail: InteractionTrail {
+                path: [
+                    Url {
+                        path: "/api/todos",
+                    },
+                    Method {
+                        method: "GET",
+                    },
+                ],
+            },
+            requests_trail: SpecPath(
+                SpecPath {
+                    path_id: "path_1pomS4CVlc",
+                },
+            ),
+        },
+    ),
+]

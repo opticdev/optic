@@ -125,7 +125,7 @@ impl QueryParametersVisitor<InteractionDiffResult> for DiffQueryParametersVisito
       query_shape_id,
     ) {
       (None, None, None) => {}
-      (Some(body_descriptor), Some(query_parameters_id), Some(shape_descriptor)) => {
+      (_, Some(query_parameters_id), Some(shape_descriptor)) => {
         let requests_trail = RequestSpecTrail::SpecQueryParameters(SpecQueryParameters {
           query_parameters_id: query_parameters_id.clone(),
         });

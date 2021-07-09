@@ -39,11 +39,23 @@ pub fn diff(
     .filter(|result| {
       config.include_query_params
         || !matches!(result, InteractionDiffResult::UnmatchedQueryParameters(_))
+          && !matches!(result, InteractionDiffResult::MatchedQueryParameters(_))
     })
     .flat_map(move |result| match result {
       InteractionDiffResult::MatchedQueryParameters(result) => {
-        // @TODO: implement shape diffing of query parameters
-        vec![]
+        let maybe_query_params: Option<BodyDescriptor> = (&http_interaction.request.query).into();
+        let query_params = maybe_query_params.or_else(|| Some(BodyDescriptor::empty_object()));
+
+        let shape_diff_results =
+          diff_shape(spec_projection.shape(), query_params, &result.root_shape_id);
+        shape_diff_results
+          .into_iter()
+          .map(|shape_diff| {
+            InteractionDiffResult::UnmatchedQueryParametersShape(
+              result.clone().into_shape_diff(shape_diff),
+            )
+          })
+          .collect()
       }
       InteractionDiffResult::MatchedRequestBodyContentType(result) => {
         // eprintln!("shape diffing for matched a request body content type");
@@ -196,6 +208,16 @@ pub fn analyze_documented_bodies(
   let results = diff_visitors.take_results().unwrap();
 
   results.into_iter().filter_map(move |result| match result {
+    InteractionDiffResult::MatchedQueryParameters(diff) => {
+      let query_params = &interaction.request.query;
+      let trail_observations = observe_body_trails(query_params);
+
+      Some(BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::from(diff),
+        trail_observations,
+      })
+    }
+
     InteractionDiffResult::MatchedRequestBodyContentType(diff) => {
       let body = &interaction.request.body;
       let trail_observations = observe_body_trails(&body.value);

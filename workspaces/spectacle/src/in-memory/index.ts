@@ -360,7 +360,10 @@ export class InMemoryDiff {
         let results = opticEngine.diff_interaction(
           JSON.stringify(interaction),
           spec,
-          {}
+          {
+            includeQueryParams:
+              process.env.REACT_APP_FF_DIFF_QUERY_PARAMETERS === 'true',
+          }
         );
 
         let parsedResults = JSON.parse(results);

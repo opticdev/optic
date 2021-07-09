@@ -1,17 +1,17 @@
 ---
-source: workspaces/optic-engine/tests/shape-diff-use-cases.rs
-expression: learned_shape_diff_affordances.into_iter()
+source: workspaces/optic-engine/tests/shape-diff-affordances-learner.rs
+expression: "&shape_diff_affordances"
 ---
 [
     (
-        "ea25d391e579a9c0",
+        "746574744fd7fb0e",
         ShapeDiffAffordances {
             affordances: [
                 TrailValues {
                     trail: JsonTrail {
                         path: [
                             JsonObjectKey {
-                                key: "firstName",
+                                key: "author",
                             },
                         ],
                     },
@@ -48,7 +48,7 @@ expression: learned_shape_diff_affordances.into_iter()
                         JsonTrail {
                             path: [
                                 JsonObjectKey {
-                                    key: "firstName",
+                                    key: "author",
                                 },
                             ],
                         },
@@ -58,7 +58,7 @@ expression: learned_shape_diff_affordances.into_iter()
             root_trail: JsonTrail {
                 path: [
                     JsonObjectKey {
-                        key: "firstName",
+                        key: "author",
                     },
                 ],
             },
