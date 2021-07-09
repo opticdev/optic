@@ -76,6 +76,38 @@ async fn query_param_required_but_missing() {
 
 #[tokio::main]
 #[test]
+async fn query_params_required_and_provided() {
+  let capture = DebugCapture::from_name("query_params_required_and_provided.json").await;
+  let spec_projection = SpecProjection::from(capture.events);
+  assert_debug_snapshot!(
+    "query_params_required_and_provided__shape_graph",
+    Dot::with_config(&spec_projection.shape().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "query_params_required_and_provided__endpoints_graph",
+    Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "query_params_required_and_provided__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "query_params_required_and_provided__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
+  );
+
+  capture.session.samples.into_iter().for_each(|interaction| {
+    let results = diff_interaction(
+      &spec_projection,
+      interaction,
+      &DiffInteractionConfig::default().with_query_params(true),
+    );
+    assert_debug_snapshot!("query_params_required_and_provided__results", results)
+  });
+}
+
+#[tokio::main]
+#[test]
 async fn query_params_required_but_not_captured() {
   let capture = DebugCapture::from_name("query_params_required_but_not_captured.json").await;
   let spec_projection = SpecProjection::from(capture.events);
