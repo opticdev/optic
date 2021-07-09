@@ -1,0 +1,107 @@
+{
+  "events": [
+    {
+      "PathComponentAdded": {
+        "pathId": "path_jNlbaVZ0Ar",
+        "parentPathId": "root",
+        "name": "todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bcfad727-81fd-4552-b0fb-82828f7b05f2",
+          "clientCommandBatchId": "ad4c2dd3-feb9-443a-b506-a64603d8185a",
+          "createdAt": "2020-04-02T18:52:25.989Z"
+        }
+      }
+    }
+  ],
+  "session": {
+    "samples": [
+      {
+        "uuid": "id1",
+        "request": {
+          "host": "example.com",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": "status=open&label=feature"
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": "[]",
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "id2",
+        "request": {
+          "host": "example.com",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": "[]",
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ]
+  }
+}
