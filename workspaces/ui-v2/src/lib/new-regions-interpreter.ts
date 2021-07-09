@@ -65,12 +65,7 @@ function newContentType(
     return {
       previewTabs: [
         {
-          allowsExpand: false,
           assertion: [],
-          ignoreRule: {
-            newBodyInRequest: location.inRequest,
-            diffHash: udiff.diffHash,
-          },
           interactionPointers: udiff.interactions,
           invalid: true,
           jsonTrailsByInteractions: {},
@@ -121,12 +116,7 @@ function newContentType(
     return {
       previewTabs: [
         {
-          allowsExpand: false,
           assertion: [],
-          ignoreRule: {
-            newBodyInRequest: location.inRequest,
-            diffHash: udiff.diffHash,
-          },
           interactionPointers: udiff.interactions,
           invalid: true,
           jsonTrailsByInteractions: {},
@@ -164,13 +154,7 @@ function newContentType(
     return {
       previewTabs: [
         {
-          allowsExpand: false,
           assertion: [],
-          // TODO QPB figure out what the ignore rule should be used for
-          ignoreRule: {
-            newBodyInRequest: location.inRequest,
-            diffHash: udiff.diffHash,
-          },
           interactionPointers: udiff.interactions,
           invalid: true,
           jsonTrailsByInteractions: {},

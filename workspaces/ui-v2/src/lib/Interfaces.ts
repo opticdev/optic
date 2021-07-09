@@ -2,7 +2,6 @@ import { CQRSCommand, IOpticEngine } from '@useoptic/spectacle';
 import { IHttpInteraction } from '@useoptic/optic-domain';
 import { ICopy } from '<src>/pages/diffs/components/ICopyRender';
 import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
-import { IgnoreRule } from './ignore-rule';
 import { DomainIdGenerator } from './domain-id-generator';
 import { IEndpoint } from '<src>/types';
 
@@ -31,12 +30,10 @@ export interface IPatchChoices {
 
 export interface IInteractionPreviewTab {
   title: string;
-  allowsExpand: boolean;
   invalid: boolean;
   assertion: ICopy[];
   jsonTrailsByInteractions: { [key: string]: IJsonTrail[] };
   interactionPointers: string[];
-  ignoreRule: IgnoreRule;
 }
 
 export interface BodyPreview {

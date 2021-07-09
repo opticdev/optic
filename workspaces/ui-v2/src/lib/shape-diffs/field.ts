@@ -187,12 +187,7 @@ class FieldShapeInterpretationHelper {
       previews.push({
         title: i.label,
         invalid: isUnspecified ? true : !expected.has(i.kind),
-        allowsExpand: true,
         interactionPointers: i.interactions,
-        ignoreRule: {
-          diffHash: this.diffHash,
-          examplesOfCoreShapeKinds: i.kind,
-        },
         assertion: [
           plain('expected' + asFieldType),
           code(this.expected.shapeName()),

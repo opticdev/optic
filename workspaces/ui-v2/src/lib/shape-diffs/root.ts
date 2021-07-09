@@ -62,12 +62,7 @@ export function rootShapeDiffInterpreter(
     previews.push({
       title: i.label,
       invalid: !expectedShapes.has(i.kind),
-      allowsExpand: true,
       interactionPointers: i.interactions,
-      ignoreRule: {
-        diffHash: shapeDiff.diffHash(),
-        examplesOfCoreShapeKinds: i.kind,
-      },
       assertion: [plain('expected'), code(expected.shapeName())],
       jsonTrailsByInteractions: i.jsonTrailsByInteractions,
     });
