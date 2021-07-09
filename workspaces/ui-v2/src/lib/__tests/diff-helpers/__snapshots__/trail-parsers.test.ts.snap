@@ -1,121 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`accurate spec trail for all diffs: 5e18070b54dfd9ab-parsed 1`] = `
+exports[`accurate spec trail for all diffs: 2d026d49eaf0fa95-parsed 1`] = `
 ParsedDiff {
-  "diffHash": "5e18070b54dfd9ab",
-  "diffType": "UnmatchedRequestBodyContentType",
+  "diffHash": "2d026d49eaf0fa95",
+  "diffType": "UnmatchedResponseBodyShape",
   "interactions": Array [
-    "a5eaf726-5548-4e37-8bc8-d5fb2accb2e9",
+    "fa0def9226-abf8-41a7-ba1f-7fd09c509090",
   ],
   "serialized_diff": Object {
-    "UnmatchedRequestBodyContentType": Object {
+    "UnmatchedResponseBodyShape": Object {
       "interactionTrail": Object {
         "path": Array [
-          Object {
-            "Url": Object {
-              "path": "/api/todos",
-            },
-          },
-          Object {
-            "Method": Object {
-              "method": "POST",
-            },
-          },
-          Object {
-            "RequestBody": Object {
-              "contentType": "application/json",
-            },
-          },
-        ],
-      },
-      "requestsTrail": Object {
-        "SpecPath": Object {
-          "pathId": "path_UOIsxzICu5",
-        },
-      },
-    },
-  },
-}
-`;
-
-exports[`accurate spec trail for all diffs: 5e18070b54dfd9ab-parsed-location 1`] = `
-Object {
-  "inRequest": Object {
-    "contentType": "application/json",
-    "requestId": undefined,
-  },
-  "inResponse": undefined,
-  "method": "POST",
-  "pathId": "path_UOIsxzICu5",
-}
-`;
-
-exports[`accurate spec trail for all diffs: 7dd706ef103015fa-parsed 1`] = `
-ParsedDiff {
-  "diffHash": "7dd706ef103015fa",
-  "diffType": "UnmatchedRequestBodyContentType",
-  "interactions": Array [
-    "2488a433-85f6-4b1fdsa-bd80-23c2c46a5c87",
-  ],
-  "serialized_diff": Object {
-    "UnmatchedRequestBodyContentType": Object {
-      "interactionTrail": Object {
-        "path": Array [
-          Object {
-            "Url": Object {
-              "path": "/api/todos/5ebk000",
-            },
-          },
-          Object {
-            "Method": Object {
-              "method": "PATCH",
-            },
-          },
-          Object {
-            "RequestBody": Object {
-              "contentType": "application/json",
-            },
-          },
-        ],
-      },
-      "requestsTrail": Object {
-        "SpecPath": Object {
-          "pathId": "path_it2OyjUysW",
-        },
-      },
-    },
-  },
-}
-`;
-
-exports[`accurate spec trail for all diffs: 7dd706ef103015fa-parsed-location 1`] = `
-Object {
-  "inRequest": Object {
-    "contentType": "application/json",
-    "requestId": undefined,
-  },
-  "inResponse": undefined,
-  "method": "PATCH",
-  "pathId": "path_it2OyjUysW",
-}
-`;
-
-exports[`accurate spec trail for all diffs: 8f1f19513e6e9d9d-parsed 1`] = `
-ParsedDiff {
-  "diffHash": "8f1f19513e6e9d9d",
-  "diffType": "UnmatchedResponseBodyContentType",
-  "interactions": Array [
-    "a5eaf726-5548-4e37-8bc8-d5fb2accb2e9",
-  ],
-  "serialized_diff": Object {
-    "UnmatchedResponseBodyContentType": Object {
-      "interactionTrail": Object {
-        "path": Array [
-          Object {
-            "Method": Object {
-              "method": "POST",
-            },
-          },
           Object {
             "ResponseBody": Object {
               "contentType": "application/json",
@@ -125,8 +20,44 @@ ParsedDiff {
         ],
       },
       "requestsTrail": Object {
-        "SpecPath": Object {
-          "pathId": "path_UOIsxzICu5",
+        "SpecResponseBody": Object {
+          "responseId": "response_dE2gzm1TWj",
+        },
+      },
+      "shapeDiffResult": Object {
+        "UnmatchedShape": Object {
+          "jsonTrail": Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "dueDate",
+                },
+              },
+            ],
+          },
+          "shapeTrail": Object {
+            "path": Array [
+              Object {
+                "ListItemTrail": Object {
+                  "itemShapeId": "shape_w9f5rUduX2",
+                  "listShapeId": "shape_atTrTmH6j9",
+                },
+              },
+              Object {
+                "ObjectFieldTrail": Object {
+                  "fieldId": "field_MxN4prqQaf",
+                  "fieldShapeId": "shape_5Htez4BFKO",
+                  "parentObjectShapeId": "shape_w9f5rUduX2",
+                },
+              },
+            ],
+            "rootShapeId": "shape_atTrTmH6j9",
+          },
         },
       },
     },
@@ -134,22 +65,100 @@ ParsedDiff {
 }
 `;
 
-exports[`accurate spec trail for all diffs: 8f1f19513e6e9d9d-parsed-location 1`] = `
+exports[`accurate spec trail for all diffs: 2d026d49eaf0fa95-parsed-location 1`] = `
 Object {
   "inRequest": undefined,
   "inResponse": Object {
     "contentType": "application/json",
-    "responseId": undefined,
+    "responseId": "response_dE2gzm1TWj",
     "statusCode": 200,
   },
-  "method": "POST",
-  "pathId": "path_UOIsxzICu5",
+  "method": "GET",
+  "pathId": "path_wPHNu8BDab",
 }
 `;
 
-exports[`accurate spec trail for all diffs: 9b361c71bb5725ef-parsed 1`] = `
+exports[`accurate spec trail for all diffs: 4f2147e2d4a69bc0-parsed 1`] = `
 ParsedDiff {
-  "diffHash": "9b361c71bb5725ef",
+  "diffHash": "4f2147e2d4a69bc0",
+  "diffType": "UnmatchedResponseBodyShape",
+  "interactions": Array [
+    "a3af782f-8e44-4e1327-806d-032323fb0a4fd",
+  ],
+  "serialized_diff": Object {
+    "UnmatchedResponseBodyShape": Object {
+      "interactionTrail": Object {
+        "path": Array [
+          Object {
+            "ResponseBody": Object {
+              "contentType": "application/json",
+              "statusCode": 200,
+            },
+          },
+        ],
+      },
+      "requestsTrail": Object {
+        "SpecResponseBody": Object {
+          "responseId": "response_RkkvxIt2RG",
+        },
+      },
+      "shapeDiffResult": Object {
+        "UnmatchedShape": Object {
+          "jsonTrail": Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "dueDate",
+                },
+              },
+            ],
+          },
+          "shapeTrail": Object {
+            "path": Array [
+              Object {
+                "ListItemTrail": Object {
+                  "itemShapeId": "shape_ohd8yFyzEg",
+                  "listShapeId": "shape_ToF242uYVA",
+                },
+              },
+              Object {
+                "ObjectFieldTrail": Object {
+                  "fieldId": "field_TxVlnhtLaa",
+                  "fieldShapeId": "shape_3Xt9wp5UxL",
+                  "parentObjectShapeId": "shape_ohd8yFyzEg",
+                },
+              },
+            ],
+            "rootShapeId": "shape_ToF242uYVA",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`accurate spec trail for all diffs: 4f2147e2d4a69bc0-parsed-location 1`] = `
+Object {
+  "inRequest": undefined,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "responseId": "response_RkkvxIt2RG",
+    "statusCode": 200,
+  },
+  "method": "GET",
+  "pathId": "path_xhUZ8irdJO",
+}
+`;
+
+exports[`accurate spec trail for all diffs: 4fc531c016328e1-parsed 1`] = `
+ParsedDiff {
+  "diffHash": "4fc531c016328e1",
   "diffType": "UnmatchedRequestBodyShape",
   "interactions": Array [
     "8eff95b1-4f6d-4d3c-ba71-5e3792780ce4",
@@ -215,7 +224,7 @@ ParsedDiff {
 }
 `;
 
-exports[`accurate spec trail for all diffs: 9b361c71bb5725ef-parsed-location 1`] = `
+exports[`accurate spec trail for all diffs: 4fc531c016328e1-parsed-location 1`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
@@ -227,9 +236,111 @@ Object {
 }
 `;
 
-exports[`accurate spec trail for all diffs: 23db1df46288a529-parsed 1`] = `
+exports[`accurate spec trail for all diffs: 8de10f26b6ef26ca-parsed 1`] = `
 ParsedDiff {
-  "diffHash": "23db1df46288a529",
+  "diffHash": "8de10f26b6ef26ca",
+  "diffType": "UnmatchedRequestBodyContentType",
+  "interactions": Array [
+    "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+    "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+  ],
+  "serialized_diff": Object {
+    "UnmatchedRequestBodyContentType": Object {
+      "interactionTrail": Object {
+        "path": Array [
+          Object {
+            "Url": Object {
+              "path": "/api/todos/abcdfeg",
+            },
+          },
+          Object {
+            "Method": Object {
+              "method": "GET",
+            },
+          },
+          Object {
+            "RequestBody": Object {
+              "contentType": "application/json",
+            },
+          },
+        ],
+      },
+      "requestsTrail": Object {
+        "SpecPath": Object {
+          "pathId": "path_it2OyjUysW",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`accurate spec trail for all diffs: 8de10f26b6ef26ca-parsed-location 1`] = `
+Object {
+  "inRequest": Object {
+    "contentType": "application/json",
+    "requestId": undefined,
+  },
+  "inResponse": undefined,
+  "method": "GET",
+  "pathId": "path_it2OyjUysW",
+}
+`;
+
+exports[`accurate spec trail for all diffs: 9a9d4567077e6388-parsed 1`] = `
+ParsedDiff {
+  "diffHash": "9a9d4567077e6388",
+  "diffType": "UnmatchedRequestBodyContentType",
+  "interactions": Array [
+    "2488a433-85f6-4b1f-bd80-23c2c46a5c87",
+    "75f97fe4-4b0c-47e3-834f-ba991dd525a7",
+  ],
+  "serialized_diff": Object {
+    "UnmatchedRequestBodyContentType": Object {
+      "interactionTrail": Object {
+        "path": Array [
+          Object {
+            "Url": Object {
+              "path": "/api/todos/5exvbk000",
+            },
+          },
+          Object {
+            "Method": Object {
+              "method": "PATCH",
+            },
+          },
+          Object {
+            "RequestBody": Object {
+              "contentType": "application/json",
+            },
+          },
+        ],
+      },
+      "requestsTrail": Object {
+        "SpecPath": Object {
+          "pathId": "path_it2OyjUysW",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`accurate spec trail for all diffs: 9a9d4567077e6388-parsed-location 1`] = `
+Object {
+  "inRequest": Object {
+    "contentType": "application/json",
+    "requestId": undefined,
+  },
+  "inResponse": undefined,
+  "method": "PATCH",
+  "pathId": "path_it2OyjUysW",
+}
+`;
+
+exports[`accurate spec trail for all diffs: 22d96b2ef2dd13d0-parsed 1`] = `
+ParsedDiff {
+  "diffHash": "22d96b2ef2dd13d0",
   "diffType": "UnmatchedRequestBodyShape",
   "interactions": Array [
     "fa0def9226-abf8-41a7-ba1f-7fd09c509090",
@@ -291,7 +402,7 @@ ParsedDiff {
 }
 `;
 
-exports[`accurate spec trail for all diffs: 23db1df46288a529-parsed-location 1`] = `
+exports[`accurate spec trail for all diffs: 22d96b2ef2dd13d0-parsed-location 1`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
@@ -303,145 +414,27 @@ Object {
 }
 `;
 
-exports[`accurate spec trail for all diffs: 79adf014b794ae4-parsed 1`] = `
+exports[`accurate spec trail for all diffs: 92a6b20a0d317304-parsed 1`] = `
 ParsedDiff {
-  "diffHash": "79adf014b794ae4",
-  "diffType": "UnmatchedResponseBodyContentType",
+  "diffHash": "92a6b20a0d317304",
+  "diffType": "UnmatchedRequestBodyContentType",
   "interactions": Array [
-    "2488a433-85f6-4b1f-bd80-23c2c46a5c87",
-    "2488a433-85f6-4b1f-bd80-23c2c4ds6a5c87",
-    "2488a433-85f6-4b1fdsa-bd80-23c2c46a5c87",
-    "75f97fe4-4b0c-47e3-834f-ba991dd525a7",
+    "a5eaf726-5548-4e37-8bc8-d5fb2accb2e9",
   ],
   "serialized_diff": Object {
-    "UnmatchedResponseBodyContentType": Object {
+    "UnmatchedRequestBodyContentType": Object {
       "interactionTrail": Object {
         "path": Array [
+          Object {
+            "Url": Object {
+              "path": "/api/todos",
+            },
+          },
           Object {
             "Method": Object {
-              "method": "PATCH",
+              "method": "POST",
             },
           },
-          Object {
-            "ResponseBody": Object {
-              "contentType": "application/json",
-              "statusCode": 200,
-            },
-          },
-        ],
-      },
-      "requestsTrail": Object {
-        "SpecPath": Object {
-          "pathId": "path_it2OyjUysW",
-        },
-      },
-    },
-  },
-}
-`;
-
-exports[`accurate spec trail for all diffs: 79adf014b794ae4-parsed-location 1`] = `
-Object {
-  "inRequest": undefined,
-  "inResponse": Object {
-    "contentType": "application/json",
-    "responseId": undefined,
-    "statusCode": 200,
-  },
-  "method": "PATCH",
-  "pathId": "path_it2OyjUysW",
-}
-`;
-
-exports[`accurate spec trail for all diffs: 114fa2d7addabd7d-parsed 1`] = `
-ParsedDiff {
-  "diffHash": "114fa2d7addabd7d",
-  "diffType": "UnmatchedResponseBodyShape",
-  "interactions": Array [
-    "a3af782f-8e44-4e1327-806d-032323fb0a4fd",
-  ],
-  "serialized_diff": Object {
-    "UnmatchedResponseBodyShape": Object {
-      "interactionTrail": Object {
-        "path": Array [
-          Object {
-            "ResponseBody": Object {
-              "contentType": "application/json",
-              "statusCode": 200,
-            },
-          },
-        ],
-      },
-      "requestsTrail": Object {
-        "SpecResponseBody": Object {
-          "responseId": "response_RkkvxIt2RG",
-        },
-      },
-      "shapeDiffResult": Object {
-        "UnmatchedShape": Object {
-          "jsonTrail": Object {
-            "path": Array [
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 1,
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "dueDate",
-                },
-              },
-            ],
-          },
-          "shapeTrail": Object {
-            "path": Array [
-              Object {
-                "ListItemTrail": Object {
-                  "itemShapeId": "shape_ohd8yFyzEg",
-                  "listShapeId": "shape_ToF242uYVA",
-                },
-              },
-              Object {
-                "ObjectFieldTrail": Object {
-                  "fieldId": "field_TxVlnhtLaa",
-                  "fieldShapeId": "shape_3Xt9wp5UxL",
-                  "parentObjectShapeId": "shape_ohd8yFyzEg",
-                },
-              },
-            ],
-            "rootShapeId": "shape_ToF242uYVA",
-          },
-        },
-      },
-    },
-  },
-}
-`;
-
-exports[`accurate spec trail for all diffs: 114fa2d7addabd7d-parsed-location 1`] = `
-Object {
-  "inRequest": undefined,
-  "inResponse": Object {
-    "contentType": "application/json",
-    "responseId": "response_RkkvxIt2RG",
-    "statusCode": 200,
-  },
-  "method": "GET",
-  "pathId": "path_xhUZ8irdJO",
-}
-`;
-
-exports[`accurate spec trail for all diffs: 656d0d3d1f441124-parsed 1`] = `
-ParsedDiff {
-  "diffHash": "656d0d3d1f441124",
-  "diffType": "UnmatchedRequestBodyShape",
-  "interactions": Array [
-    "a3af782f-8e44-4e1327-806d-032323fb0a4fd",
-  ],
-  "serialized_diff": Object {
-    "UnmatchedRequestBodyShape": Object {
-      "interactionTrail": Object {
-        "path": Array [
           Object {
             "RequestBody": Object {
               "contentType": "application/json",
@@ -450,44 +443,8 @@ ParsedDiff {
         ],
       },
       "requestsTrail": Object {
-        "SpecRequestBody": Object {
-          "requestId": "request_SqY61Qc9Mi",
-        },
-      },
-      "shapeDiffResult": Object {
-        "UnmatchedShape": Object {
-          "jsonTrail": Object {
-            "path": Array [
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 1,
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "dueDate",
-                },
-              },
-            ],
-          },
-          "shapeTrail": Object {
-            "path": Array [
-              Object {
-                "ListItemTrail": Object {
-                  "itemShapeId": "shape_QU1rtECeM2",
-                  "listShapeId": "shape_Lx1MrhWlFb",
-                },
-              },
-              Object {
-                "ObjectFieldTrail": Object {
-                  "fieldId": "field_eHl286agXw",
-                  "fieldShapeId": "shape_PTjiKnpFzQ",
-                  "parentObjectShapeId": "shape_QU1rtECeM2",
-                },
-              },
-            ],
-            "rootShapeId": "shape_Lx1MrhWlFb",
-          },
+        "SpecPath": Object {
+          "pathId": "path_UOIsxzICu5",
         },
       },
     },
@@ -495,21 +452,21 @@ ParsedDiff {
 }
 `;
 
-exports[`accurate spec trail for all diffs: 656d0d3d1f441124-parsed-location 1`] = `
+exports[`accurate spec trail for all diffs: 92a6b20a0d317304-parsed-location 1`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
-    "requestId": "request_SqY61Qc9Mi",
+    "requestId": undefined,
   },
   "inResponse": undefined,
-  "method": "GET",
-  "pathId": "path_xhUZ8irdJO",
+  "method": "POST",
+  "pathId": "path_UOIsxzICu5",
 }
 `;
 
-exports[`accurate spec trail for all diffs: 701b1c03ae7b2595-parsed 1`] = `
+exports[`accurate spec trail for all diffs: 92e989e4d821dcf1-parsed 1`] = `
 ParsedDiff {
-  "diffHash": "701b1c03ae7b2595",
+  "diffHash": "92e989e4d821dcf1",
   "diffType": "UnmatchedResponseBodyShape",
   "interactions": Array [
     "8eff95b1-4f6d-4d3c-ba71-5e3792780ce4",
@@ -576,7 +533,7 @@ ParsedDiff {
 }
 `;
 
-exports[`accurate spec trail for all diffs: 701b1c03ae7b2595-parsed-location 1`] = `
+exports[`accurate spec trail for all diffs: 92e989e4d821dcf1-parsed-location 1`] = `
 Object {
   "inRequest": undefined,
   "inResponse": Object {
@@ -589,9 +546,9 @@ Object {
 }
 `;
 
-exports[`accurate spec trail for all diffs: 8665ed6d1fc5b5e6-parsed 1`] = `
+exports[`accurate spec trail for all diffs: 312f75a76267c7f2-parsed 1`] = `
 ParsedDiff {
-  "diffHash": "8665ed6d1fc5b5e6",
+  "diffHash": "312f75a76267c7f2",
   "diffType": "UnmatchedRequestBodyContentType",
   "interactions": Array [
     "a3af782f-8e44-4e17-806d-032323fb0a4fd",
@@ -627,7 +584,7 @@ ParsedDiff {
 }
 `;
 
-exports[`accurate spec trail for all diffs: 8665ed6d1fc5b5e6-parsed-location 1`] = `
+exports[`accurate spec trail for all diffs: 312f75a76267c7f2-parsed-location 1`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
@@ -639,87 +596,9 @@ Object {
 }
 `;
 
-exports[`accurate spec trail for all diffs: a2b47c45deeef5b2-parsed 1`] = `
+exports[`accurate spec trail for all diffs: 3871874498eaa9f3-parsed 1`] = `
 ParsedDiff {
-  "diffHash": "a2b47c45deeef5b2",
-  "diffType": "UnmatchedResponseBodyShape",
-  "interactions": Array [
-    "fa0def9226-abf8-41a7-ba1f-7fd09c509090",
-  ],
-  "serialized_diff": Object {
-    "UnmatchedResponseBodyShape": Object {
-      "interactionTrail": Object {
-        "path": Array [
-          Object {
-            "ResponseBody": Object {
-              "contentType": "application/json",
-              "statusCode": 200,
-            },
-          },
-        ],
-      },
-      "requestsTrail": Object {
-        "SpecResponseBody": Object {
-          "responseId": "response_dE2gzm1TWj",
-        },
-      },
-      "shapeDiffResult": Object {
-        "UnmatchedShape": Object {
-          "jsonTrail": Object {
-            "path": Array [
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 1,
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "dueDate",
-                },
-              },
-            ],
-          },
-          "shapeTrail": Object {
-            "path": Array [
-              Object {
-                "ListItemTrail": Object {
-                  "itemShapeId": "shape_w9f5rUduX2",
-                  "listShapeId": "shape_atTrTmH6j9",
-                },
-              },
-              Object {
-                "ObjectFieldTrail": Object {
-                  "fieldId": "field_MxN4prqQaf",
-                  "fieldShapeId": "shape_5Htez4BFKO",
-                  "parentObjectShapeId": "shape_w9f5rUduX2",
-                },
-              },
-            ],
-            "rootShapeId": "shape_atTrTmH6j9",
-          },
-        },
-      },
-    },
-  },
-}
-`;
-
-exports[`accurate spec trail for all diffs: a2b47c45deeef5b2-parsed-location 1`] = `
-Object {
-  "inRequest": undefined,
-  "inResponse": Object {
-    "contentType": "application/json",
-    "responseId": "response_dE2gzm1TWj",
-    "statusCode": 200,
-  },
-  "method": "GET",
-  "pathId": "path_wPHNu8BDab",
-}
-`;
-
-exports[`accurate spec trail for all diffs: a3822f063894ff6a-parsed 1`] = `
-ParsedDiff {
-  "diffHash": "a3822f063894ff6a",
+  "diffHash": "3871874498eaa9f3",
   "diffType": "UnmatchedRequestBodyContentType",
   "interactions": Array [
     "2488a433-85f6-4b1f-bd80-23c2c4ds6a5c87",
@@ -755,7 +634,7 @@ ParsedDiff {
 }
 `;
 
-exports[`accurate spec trail for all diffs: a3822f063894ff6a-parsed-location 1`] = `
+exports[`accurate spec trail for all diffs: 3871874498eaa9f3-parsed-location 1`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
@@ -767,61 +646,12 @@ Object {
 }
 `;
 
-exports[`accurate spec trail for all diffs: b50860633d3153cf-parsed 1`] = `
+exports[`accurate spec trail for all diffs: d44b141a1439cf3d-parsed 1`] = `
 ParsedDiff {
-  "diffHash": "b50860633d3153cf",
-  "diffType": "UnmatchedResponseBodyContentType",
-  "interactions": Array [
-    "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
-    "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
-  ],
-  "serialized_diff": Object {
-    "UnmatchedResponseBodyContentType": Object {
-      "interactionTrail": Object {
-        "path": Array [
-          Object {
-            "Method": Object {
-              "method": "GET",
-            },
-          },
-          Object {
-            "ResponseBody": Object {
-              "contentType": "application/json",
-              "statusCode": 200,
-            },
-          },
-        ],
-      },
-      "requestsTrail": Object {
-        "SpecPath": Object {
-          "pathId": "path_it2OyjUysW",
-        },
-      },
-    },
-  },
-}
-`;
-
-exports[`accurate spec trail for all diffs: b50860633d3153cf-parsed-location 1`] = `
-Object {
-  "inRequest": undefined,
-  "inResponse": Object {
-    "contentType": "application/json",
-    "responseId": undefined,
-    "statusCode": 200,
-  },
-  "method": "GET",
-  "pathId": "path_it2OyjUysW",
-}
-`;
-
-exports[`accurate spec trail for all diffs: c6a760d705d85171-parsed 1`] = `
-ParsedDiff {
-  "diffHash": "c6a760d705d85171",
+  "diffHash": "d44b141a1439cf3d",
   "diffType": "UnmatchedRequestBodyContentType",
   "interactions": Array [
-    "2488a433-85f6-4b1f-bd80-23c2c46a5c87",
-    "75f97fe4-4b0c-47e3-834f-ba991dd525a7",
+    "2488a433-85f6-4b1fdsa-bd80-23c2c46a5c87",
   ],
   "serialized_diff": Object {
     "UnmatchedRequestBodyContentType": Object {
@@ -829,7 +659,7 @@ ParsedDiff {
         "path": Array [
           Object {
             "Url": Object {
-              "path": "/api/todos/5exvbk000",
+              "path": "/api/todos/5ebk000",
             },
           },
           Object {
@@ -854,7 +684,7 @@ ParsedDiff {
 }
 `;
 
-exports[`accurate spec trail for all diffs: c6a760d705d85171-parsed-location 1`] = `
+exports[`accurate spec trail for all diffs: d44b141a1439cf3d-parsed-location 1`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
@@ -866,9 +696,9 @@ Object {
 }
 `;
 
-exports[`accurate spec trail for all diffs: c915f3d568de053b-parsed 1`] = `
+exports[`accurate spec trail for all diffs: dc68f0f84b0bd1db-parsed 1`] = `
 ParsedDiff {
-  "diffHash": "c915f3d568de053b",
+  "diffHash": "dc68f0f84b0bd1db",
   "diffType": "UnmatchedResponseBodyContentType",
   "interactions": Array [
     "a3af782f-8e44-4e17-806d-032323fb0a4fd",
@@ -900,7 +730,7 @@ ParsedDiff {
 }
 `;
 
-exports[`accurate spec trail for all diffs: c915f3d568de053b-parsed-location 1`] = `
+exports[`accurate spec trail for all diffs: dc68f0f84b0bd1db-parsed-location 1`] = `
 Object {
   "inRequest": undefined,
   "inResponse": Object {
@@ -913,31 +743,27 @@ Object {
 }
 `;
 
-exports[`accurate spec trail for all diffs: c3143e4b6814befa-parsed 1`] = `
+exports[`accurate spec trail for all diffs: e958234709591c5f-parsed 1`] = `
 ParsedDiff {
-  "diffHash": "c3143e4b6814befa",
-  "diffType": "UnmatchedRequestBodyContentType",
+  "diffHash": "e958234709591c5f",
+  "diffType": "UnmatchedResponseBodyContentType",
   "interactions": Array [
     "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
     "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
   ],
   "serialized_diff": Object {
-    "UnmatchedRequestBodyContentType": Object {
+    "UnmatchedResponseBodyContentType": Object {
       "interactionTrail": Object {
         "path": Array [
-          Object {
-            "Url": Object {
-              "path": "/api/todos/abcdfeg",
-            },
-          },
           Object {
             "Method": Object {
               "method": "GET",
             },
           },
           Object {
-            "RequestBody": Object {
+            "ResponseBody": Object {
               "contentType": "application/json",
+              "statusCode": 200,
             },
           },
         ],
@@ -952,14 +778,188 @@ ParsedDiff {
 }
 `;
 
-exports[`accurate spec trail for all diffs: c3143e4b6814befa-parsed-location 1`] = `
+exports[`accurate spec trail for all diffs: e958234709591c5f-parsed-location 1`] = `
+Object {
+  "inRequest": undefined,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "responseId": undefined,
+    "statusCode": 200,
+  },
+  "method": "GET",
+  "pathId": "path_it2OyjUysW",
+}
+`;
+
+exports[`accurate spec trail for all diffs: f45959c6c23c8fc8-parsed 1`] = `
+ParsedDiff {
+  "diffHash": "f45959c6c23c8fc8",
+  "diffType": "UnmatchedRequestBodyShape",
+  "interactions": Array [
+    "a3af782f-8e44-4e1327-806d-032323fb0a4fd",
+  ],
+  "serialized_diff": Object {
+    "UnmatchedRequestBodyShape": Object {
+      "interactionTrail": Object {
+        "path": Array [
+          Object {
+            "RequestBody": Object {
+              "contentType": "application/json",
+            },
+          },
+        ],
+      },
+      "requestsTrail": Object {
+        "SpecRequestBody": Object {
+          "requestId": "request_SqY61Qc9Mi",
+        },
+      },
+      "shapeDiffResult": Object {
+        "UnmatchedShape": Object {
+          "jsonTrail": Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "dueDate",
+                },
+              },
+            ],
+          },
+          "shapeTrail": Object {
+            "path": Array [
+              Object {
+                "ListItemTrail": Object {
+                  "itemShapeId": "shape_QU1rtECeM2",
+                  "listShapeId": "shape_Lx1MrhWlFb",
+                },
+              },
+              Object {
+                "ObjectFieldTrail": Object {
+                  "fieldId": "field_eHl286agXw",
+                  "fieldShapeId": "shape_PTjiKnpFzQ",
+                  "parentObjectShapeId": "shape_QU1rtECeM2",
+                },
+              },
+            ],
+            "rootShapeId": "shape_Lx1MrhWlFb",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`accurate spec trail for all diffs: f45959c6c23c8fc8-parsed-location 1`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
-    "requestId": undefined,
+    "requestId": "request_SqY61Qc9Mi",
   },
   "inResponse": undefined,
   "method": "GET",
+  "pathId": "path_xhUZ8irdJO",
+}
+`;
+
+exports[`accurate spec trail for all diffs: fe447736f416eac6-parsed 1`] = `
+ParsedDiff {
+  "diffHash": "fe447736f416eac6",
+  "diffType": "UnmatchedResponseBodyContentType",
+  "interactions": Array [
+    "a5eaf726-5548-4e37-8bc8-d5fb2accb2e9",
+  ],
+  "serialized_diff": Object {
+    "UnmatchedResponseBodyContentType": Object {
+      "interactionTrail": Object {
+        "path": Array [
+          Object {
+            "Method": Object {
+              "method": "POST",
+            },
+          },
+          Object {
+            "ResponseBody": Object {
+              "contentType": "application/json",
+              "statusCode": 200,
+            },
+          },
+        ],
+      },
+      "requestsTrail": Object {
+        "SpecPath": Object {
+          "pathId": "path_UOIsxzICu5",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`accurate spec trail for all diffs: fe447736f416eac6-parsed-location 1`] = `
+Object {
+  "inRequest": undefined,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "responseId": undefined,
+    "statusCode": 200,
+  },
+  "method": "POST",
+  "pathId": "path_UOIsxzICu5",
+}
+`;
+
+exports[`accurate spec trail for all diffs: ffd0f3f68e0a185b-parsed 1`] = `
+ParsedDiff {
+  "diffHash": "ffd0f3f68e0a185b",
+  "diffType": "UnmatchedResponseBodyContentType",
+  "interactions": Array [
+    "2488a433-85f6-4b1f-bd80-23c2c46a5c87",
+    "2488a433-85f6-4b1f-bd80-23c2c4ds6a5c87",
+    "2488a433-85f6-4b1fdsa-bd80-23c2c46a5c87",
+    "75f97fe4-4b0c-47e3-834f-ba991dd525a7",
+  ],
+  "serialized_diff": Object {
+    "UnmatchedResponseBodyContentType": Object {
+      "interactionTrail": Object {
+        "path": Array [
+          Object {
+            "Method": Object {
+              "method": "PATCH",
+            },
+          },
+          Object {
+            "ResponseBody": Object {
+              "contentType": "application/json",
+              "statusCode": 200,
+            },
+          },
+        ],
+      },
+      "requestsTrail": Object {
+        "SpecPath": Object {
+          "pathId": "path_it2OyjUysW",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`accurate spec trail for all diffs: ffd0f3f68e0a185b-parsed-location 1`] = `
+Object {
+  "inRequest": undefined,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "responseId": undefined,
+    "statusCode": 200,
+  },
+  "method": "PATCH",
   "pathId": "path_it2OyjUysW",
 }
 `;

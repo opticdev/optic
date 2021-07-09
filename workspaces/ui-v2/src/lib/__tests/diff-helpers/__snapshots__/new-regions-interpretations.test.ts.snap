@@ -161,7 +161,7 @@ Object {
         },
       ],
       "changeType": 0,
-      "diffHash": "c3143e4b6814befa",
+      "diffHash": "8de10f26b6ef26ca",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": Object {
@@ -192,7 +192,7 @@ Object {
         "allowsExpand": false,
         "assertion": Array [],
         "ignoreRule": Object {
-          "diffHash": "c3143e4b6814befa",
+          "diffHash": "8de10f26b6ef26ca",
           "newBodyInRequest": Object {
             "contentType": "application/json",
             "requestId": undefined,
@@ -393,7 +393,7 @@ Object {
         },
       ],
       "changeType": 0,
-      "diffHash": "b50860633d3153cf",
+      "diffHash": "e958234709591c5f",
       "getJsonBodyToPreview": [Function],
       "location": Object {
         "inRequest": undefined,
@@ -433,7 +433,7 @@ Object {
         "allowsExpand": false,
         "assertion": Array [],
         "ignoreRule": Object {
-          "diffHash": "b50860633d3153cf",
+          "diffHash": "e958234709591c5f",
           "newBodyInRequest": undefined,
         },
         "interactionPointers": Array [
