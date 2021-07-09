@@ -210,33 +210,25 @@ export interface IResponseBodyLocation {
   responseId?: string;
 }
 
-// TODO QPB - refactor this type such that
-/**
- * 
 export interface IParsedLocation {
   pathId: string;
   method: string;
-  location: {
-    type: 'query'
-  } | {
-    type: 'request'
-    requestId: string
-    contentType: string
-  } | {
-    type: 'response'
-    statusCode: number
-    contentType: string
-    responseId: string
-  }}
- */
-export interface IParsedLocation {
-  pathId: string;
-  method: string;
-  inQuery?: {
-    queryParametersId: string;
-  };
-  inRequest?: IRequestBodyLocation;
-  inResponse?: IResponseBodyLocation;
+  data:
+    | {
+        type: 'query';
+        queryParametersId: string;
+      }
+    | {
+        type: 'request';
+        requestId: string;
+        contentType: string;
+      }
+    | {
+        type: 'response';
+        statusCode: number;
+        contentType: string;
+        responseId: string;
+      };
 }
 
 ///////////////////////////////////////

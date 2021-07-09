@@ -81,12 +81,8 @@ export function rootShapeDiffInterpreter(
       );
 
       const resetShapeCommand = resetBaseShape(location, rootShapeId);
-      const allCommands: CQRSCommand[] = [...commands];
-      if (resetShapeCommand) {
-        allCommands.push(resetShapeCommand);
-      }
 
-      return allCommands;
+      return [...commands, resetShapeCommand];
     },
     previewTabs: sortBy(previews, (i) => !i.invalid),
   };
@@ -95,24 +91,22 @@ export function rootShapeDiffInterpreter(
 function resetBaseShape(
   location: IParsedLocation,
   newShapeId: string
-): CQRSCommand | null {
-  if (location.inRequest) {
+): CQRSCommand {
+  if (location.data.type === 'request') {
     return SetRequestBodyShape(
-      location.inRequest.requestId!,
-      ShapedBodyDescriptor(location.inRequest.contentType!, newShapeId, false)
+      location.data.requestId,
+      ShapedBodyDescriptor(location.data.contentType, newShapeId, false)
     );
-  } else if (location.inResponse) {
+  } else if (location.data.type === 'response') {
     return SetResponseBodyShape(
-      location.inResponse.responseId!,
-      ShapedBodyDescriptor(location.inResponse.contentType!, newShapeId, false)
-    );
-  } else if (location.inQuery) {
-    return SetQueryParametersShape(
-      location.inQuery.queryParametersId,
-      QueryParametersShapeDescriptor(newShapeId)
+      location.data.responseId,
+      ShapedBodyDescriptor(location.data.contentType, newShapeId, false)
     );
   } else {
-    console.error('Unknown location', location);
-    return null;
+    // Through typescript inference we know the only other possible shape is a query parameter
+    return SetQueryParametersShape(
+      location.data.queryParametersId,
+      QueryParametersShapeDescriptor(newShapeId)
+    );
   }
 }

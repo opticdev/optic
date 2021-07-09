@@ -16,22 +16,26 @@ export function DiffLinks({
   const classes = useStyles();
   return (
     <List>
-      {allDiffs.map((diff, i) => (
-        <React.Fragment key={diff.diffDescription.diffHash}>
-          <ListSubheader className={classes.locationHeader}>
-            {diff.diffDescription.location.inQuery
-              ? 'Query Parameters'
-              : diff.diffDescription.location.inRequest
-              ? `Request Body ${diff.diffDescription.location.inRequest.contentType}`
-              : diff.diffDescription.location.inResponse
-              ? `${diff.diffDescription.location.inResponse.statusCode} Response ${diff.diffDescription.location.inResponse.contentType}`
-              : 'Unknown location'}
-          </ListSubheader>
-          <ListItem button onClick={() => setSelectedDiff(i)}>
-            <ICopyRender variant="" copy={diff.diffDescription.title} />
-          </ListItem>
-        </React.Fragment>
-      ))}
+      {allDiffs.map((diff, i) => {
+        const { location, diffHash, title } = diff.diffDescription;
+
+        return (
+          <React.Fragment key={diffHash}>
+            <ListSubheader className={classes.locationHeader}>
+              {location.data.type === 'query'
+                ? 'Query Parameters'
+                : location.data.type === 'request'
+                ? `Request Body ${location.data.contentType}`
+                : location.data.type === 'response'
+                ? `${location.data.statusCode} Response ${location.data.contentType}`
+                : 'Unknown location'}
+            </ListSubheader>
+            <ListItem button onClick={() => setSelectedDiff(i)}>
+              <ICopyRender variant="" copy={title} />
+            </ListItem>
+          </React.Fragment>
+        );
+      })}
     </List>
   );
 }
