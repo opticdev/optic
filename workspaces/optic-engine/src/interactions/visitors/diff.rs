@@ -124,7 +124,6 @@ impl QueryParametersVisitor<InteractionDiffResult> for DiffQueryParametersVisito
       query_parameters_id,
       query_shape_id,
     ) {
-      (None, None, None) => {}
       (_, Some(query_parameters_id), Some(shape_descriptor)) => {
         let requests_trail = RequestSpecTrail::SpecQueryParameters(SpecQueryParameters {
           query_parameters_id: query_parameters_id.clone(),
@@ -143,7 +142,7 @@ impl QueryParametersVisitor<InteractionDiffResult> for DiffQueryParametersVisito
           ),
         ))
       }
-      _ => {
+      (maybe_query_params, _, _) => {
         let requests_trail = RequestSpecTrail::SpecPath(SpecPath {
           path_id: String::from(context.path),
         });
@@ -156,10 +155,11 @@ impl QueryParametersVisitor<InteractionDiffResult> for DiffQueryParametersVisito
         };
 
         self.push(InteractionDiffResult::UnmatchedQueryParameters(
-          UnmatchedQueryParameters {
-            requests_trail,
+          UnmatchedQueryParameters::new(
             interaction_trail,
-          },
+            requests_trail,
+            maybe_query_params.is_some(),
+          ),
         ))
       }
     }
