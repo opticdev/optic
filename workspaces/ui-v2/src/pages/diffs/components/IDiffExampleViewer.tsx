@@ -758,13 +758,12 @@ function shapeRows(
       listRows(shape, diffTrails, rows, collapsedTrails, indent, field);
       break;
     default:
-      // debugger
       let type = getFieldType(shape);
       let row = createRow(
         {
           type,
           ...field,
-          fieldValue: field ? field.fieldValue : shape,
+          fieldValue: field && field.fieldValue ? field.fieldValue : shape,
           indent,
         },
         { diffTrails }
