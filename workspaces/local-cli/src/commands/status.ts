@@ -151,7 +151,7 @@ export default class Status extends Command {
       variables: {},
     });
 
-    const endpoints = requests.map((request: any) => {
+    const endpoints = requests.data.map((request: any) => {
       return {
         pathId: request.pathId,
         method: request.method,
