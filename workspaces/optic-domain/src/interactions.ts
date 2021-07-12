@@ -1,3 +1,11 @@
+export interface IRequest {
+  host: string;
+  method: string;
+  path: string;
+  query: IArbitraryData;
+  headers: IArbitraryData;
+  body: IBody;
+}
 export interface IResponse {
   statusCode: number;
   headers: IArbitraryData;
@@ -27,14 +35,6 @@ export interface IGroupingIdentifiers {
 export interface IHttpInteractionTag {
   name: string;
   value: string;
-}
-export interface IRequest {
-  host: string;
-  method: string;
-  path: string;
-  query: IArbitraryData;
-  headers: IArbitraryData;
-  body: IBody;
 }
 export interface IInteractionBatch {
   groupingIdentifiers: IGroupingIdentifiers;

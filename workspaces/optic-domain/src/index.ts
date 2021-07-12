@@ -1,6 +1,6 @@
 export * as AsyncTools from './async-tools';
 export * as Streams from './streams';
-export * as Types from './types';
+export * as Interactions from './interactions';
 
 export * from './streams';
-export * from './types';
+export * from './interactions';
