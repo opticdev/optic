@@ -109,7 +109,7 @@ export class ParsedDiff {
     return {
       pathId: location.pathId,
       method: location.method,
-      data: DiffInQuery(this.diffType)
+      descriptor: DiffInQuery(this.diffType)
         ? {
             type: 'query',
             queryParametersId: location.queryParametersId!,

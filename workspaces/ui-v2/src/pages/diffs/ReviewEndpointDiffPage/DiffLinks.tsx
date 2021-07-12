@@ -22,12 +22,12 @@ export function DiffLinks({
         return (
           <React.Fragment key={diffHash}>
             <ListSubheader className={classes.locationHeader}>
-              {location.data.type === 'query'
+              {location.descriptor.type === 'query'
                 ? 'Query Parameters'
-                : location.data.type === 'request'
-                ? `Request Body ${location.data.contentType}`
-                : location.data.type === 'response'
-                ? `${location.data.statusCode} Response ${location.data.contentType}`
+                : location.descriptor.type === 'request'
+                ? `Request Body ${location.descriptor.contentType}`
+                : location.descriptor.type === 'response'
+                ? `${location.descriptor.statusCode} Response ${location.descriptor.contentType}`
                 : 'Unknown location'}
             </ListSubheader>
             <ListItem button onClick={() => setSelectedDiff(i)}>

@@ -17,9 +17,11 @@ const getJsonBodyToPreview = (
   interaction: IHttpInteraction
 ): BodyPreview => {
   const body =
-    (location.data.type === 'query' && interaction.request.query) ||
-    (location.data.type === 'request' && interaction.request.body.value) ||
-    (location.data.type === 'response' && interaction.response.body.value);
+    (location.descriptor.type === 'query' && interaction.request.query) ||
+    (location.descriptor.type === 'request' &&
+      interaction.request.body.value) ||
+    (location.descriptor.type === 'response' &&
+      interaction.response.body.value);
 
   if (body) {
     const { shapeHashV1Base64, asText, asJsonString } = body;
@@ -53,22 +55,22 @@ export function descriptionForNewRegions(
   location: IParsedLocation
 ): IDiffDescription {
   let title: ICopy[] = [];
-  if (location.data.type === 'query') {
+  if (location.descriptor.type === 'query') {
     title = [plain('undocumented query parameters observed')];
   }
-  if (location.data.type === 'request') {
+  if (location.descriptor.type === 'request') {
     title = [
       plain('undocumented'),
-      code(location.data.contentType),
+      code(location.descriptor.contentType),
       plain('request observed'),
     ];
   }
-  if (location.data.type === 'response') {
+  if (location.descriptor.type === 'response') {
     title = [
       plain('undocumented'),
-      code(location.data.statusCode.toString()),
+      code(location.descriptor.statusCode.toString()),
       plain('response with'),
-      code(location.data.contentType || 'No Body'),
+      code(location.descriptor.contentType || 'No Body'),
       plain('observed'),
     ];
   }

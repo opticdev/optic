@@ -45,17 +45,17 @@ export const HighlightedLocation: FC<
     switch (props.expectedLocation) {
       case Location.Request:
         return (
-          targetLocation.data.type === 'request' &&
-          targetLocation.data.contentType === props.contentType
+          targetLocation.descriptor.type === 'request' &&
+          targetLocation.descriptor.contentType === props.contentType
         );
       case Location.Response:
         return (
-          targetLocation.data.type === 'response' &&
-          targetLocation.data.contentType === props.contentType &&
-          targetLocation.data.statusCode === props.statusCode
+          targetLocation.descriptor.type === 'response' &&
+          targetLocation.descriptor.contentType === props.contentType &&
+          targetLocation.descriptor.statusCode === props.statusCode
         );
       case Location.Query:
-        return targetLocation.data.type === 'query';
+        return targetLocation.descriptor.type === 'query';
       default:
         return false;
     }

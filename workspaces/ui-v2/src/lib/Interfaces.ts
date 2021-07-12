@@ -201,7 +201,7 @@ export const DiffInResponse = (key: string): boolean =>
 export interface IParsedLocation {
   pathId: string;
   method: string;
-  data:
+  descriptor:
     | {
         type: 'query';
         queryParametersId: string;

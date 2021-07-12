@@ -44,7 +44,9 @@ function newContentType(
 ): IInterpretation {
   if (udiff.isA(DiffTypes.UnmatchedRequestBodyContentType)) {
     const contentType =
-      location.data.type === 'request' ? location.data.contentType : '';
+      location.descriptor.type === 'request'
+        ? location.descriptor.contentType
+        : '';
     const learnedRequestBody = learnedBodies.requests.find(
       (i) => i.contentType === contentType
     );
@@ -94,8 +96,8 @@ function newContentType(
     };
   } else if (udiff.isA(DiffTypes.UnmatchedResponseBodyContentType)) {
     const { contentType, statusCode } =
-      location.data.type === 'response'
-        ? location.data
+      location.descriptor.type === 'response'
+        ? location.descriptor
         : {
             contentType: '',
             statusCode: 0,

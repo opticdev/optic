@@ -92,20 +92,20 @@ function resetBaseShape(
   location: IParsedLocation,
   newShapeId: string
 ): CQRSCommand {
-  if (location.data.type === 'request') {
+  if (location.descriptor.type === 'request') {
     return SetRequestBodyShape(
-      location.data.requestId,
-      ShapedBodyDescriptor(location.data.contentType, newShapeId, false)
+      location.descriptor.requestId,
+      ShapedBodyDescriptor(location.descriptor.contentType, newShapeId, false)
     );
-  } else if (location.data.type === 'response') {
+  } else if (location.descriptor.type === 'response') {
     return SetResponseBodyShape(
-      location.data.responseId,
-      ShapedBodyDescriptor(location.data.contentType, newShapeId, false)
+      location.descriptor.responseId,
+      ShapedBodyDescriptor(location.descriptor.contentType, newShapeId, false)
     );
   } else {
     // Through typescript inference we know the only other possible shape is a query parameter
     return SetQueryParametersShape(
-      location.data.queryParametersId,
+      location.descriptor.queryParametersId,
       QueryParametersShapeDescriptor(newShapeId)
     );
   }
