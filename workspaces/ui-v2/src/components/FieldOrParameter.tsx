@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { IShapeRenderer } from './ShapeRenderer/ShapeRenderInterfaces';
 import { EditableTextField, TextFieldVariant } from './EditableTextField';
+import { IContribution } from '<src>/types';
 
 export type FieldOrParameterProps = {
   shapes: IShapeRenderer[];
@@ -48,42 +49,48 @@ function summarizeTypes(shapes: IShapeRenderer[]) {
   }
 }
 
-interface IContributions {
-  contributionId: string;
+interface IFieldDetails {
   name: string;
+  contribution: IContribution;
   shapes: IShapeRenderer[];
-  description: string;
   depth: number;
 }
 
 export function createFlatList(
   shapes: IShapeRenderer[],
+  endpointId: string,
   depth: number = 0
-): IContributions[] {
-  const contributions: IContributions[] = [];
+): IFieldDetails[] {
+  const fieldDetails: IFieldDetails[] = [];
 
   shapes.forEach((shape) => {
     if (shape.asObject) {
       shape.asObject.fields.forEach((field) => {
-        contributions.push({
+        fieldDetails.push({
           name: field.name,
+          contribution: {
+            id: field.fieldId,
+            contributionKey: 'description',
+            value: field.contributions.description || '',
+            endpointId: endpointId,
+          },
           depth,
-          description: field.contributions.description || '',
           shapes: field.shapeChoices,
-          contributionId: field.fieldId,
         });
 
-        contributions.push(...createFlatList(field.shapeChoices, depth + 1));
+        fieldDetails.push(
+          ...createFlatList(field.shapeChoices, endpointId, depth + 1)
+        );
       });
     }
     if (shape.asArray) {
-      contributions.push(
-        ...createFlatList(shape.asArray.shapeChoices, depth + 1)
+      fieldDetails.push(
+        ...createFlatList(shape.asArray.shapeChoices, endpointId, depth + 1)
       );
     }
   });
 
-  return contributions;
+  return fieldDetails;
 }
 
 const useStyles = makeStyles((theme) => ({

@@ -29,15 +29,15 @@ export const ContributionFetcher: FC<ContributionFetcherProps> = ({
   changesSinceBatchCommit,
 }) => {
   const shapes = useShapeDescriptor(rootShapeId, changesSinceBatchCommit);
-  const contributions = createFlatList(shapes);
-  const contributionsMapped = contributions.map((contribution) => ({
-    id: contribution.contributionId,
-    contributionKey: 'description',
-    value: contribution.description,
+  const shapesWithContributions = createFlatList(shapes, endpointId);
+  const contributionsMapped = shapesWithContributions.map((shape) => ({
+    id: shape.contribution.id,
+    contributionKey: shape.contribution.contributionKey,
+    value: shape.contribution.value,
     endpointId: endpointId,
-    depth: contribution.depth,
-    name: contribution.name,
-    shapes: contribution.shapes,
+    depth: shape.depth,
+    name: shape.name,
+    shapes: shape.shapes,
   }));
 
   return <>{children(contributionsMapped)}</>;
