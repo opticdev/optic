@@ -17,9 +17,11 @@ const getJsonBodyToPreview = (
   interaction: IHttpInteraction
 ): BodyPreview => {
   const body =
-    (location.inQuery && interaction.request.query) ||
-    (location.inRequest && interaction.request.body.value) ||
-    (location.inResponse && interaction.response.body.value);
+    (location.descriptor.type === 'query' && interaction.request.query) ||
+    (location.descriptor.type === 'request' &&
+      interaction.request.body.value) ||
+    (location.descriptor.type === 'response' &&
+      interaction.response.body.value);
 
   if (body) {
     const { shapeHashV1Base64, asText, asJsonString } = body;
@@ -53,22 +55,22 @@ export function descriptionForNewRegions(
   location: IParsedLocation
 ): IDiffDescription {
   let title: ICopy[] = [];
-  if (location.inQuery) {
+  if (location.descriptor.type === 'query') {
     title = [plain('undocumented query parameters observed')];
   }
-  if (location.inRequest) {
+  if (location.descriptor.type === 'request') {
     title = [
       plain('undocumented'),
-      code(location.inRequest.contentType || 'No Body'),
+      code(location.descriptor.contentType),
       plain('request observed'),
     ];
   }
-  if (location.inResponse) {
+  if (location.descriptor.type === 'response') {
     title = [
       plain('undocumented'),
-      code(location.inResponse.statusCode.toString()),
+      code(location.descriptor.statusCode.toString()),
       plain('response with'),
-      code(location.inResponse.contentType || 'No Body'),
+      code(location.descriptor.contentType || 'No Body'),
       plain('observed'),
     ];
   }

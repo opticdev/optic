@@ -36,19 +36,24 @@ export async function newRegionInterpreters(
   }
 }
 
+// TODO QPB - move IInterpretation generation into ParsedDiff
 function newContentType(
   udiff: ParsedDiff,
   location: IParsedLocation,
   learnedBodies: ILearnedBodies
 ): IInterpretation {
   if (udiff.isA(DiffTypes.UnmatchedRequestBodyContentType)) {
+    const contentType =
+      location.descriptor.type === 'request'
+        ? location.descriptor.contentType
+        : '';
     const learnedRequestBody = learnedBodies.requests.find(
-      (i) => i.contentType === location.inRequest?.contentType
+      (i) => i.contentType === contentType
     );
 
     if (!learnedRequestBody) {
       console.error(
-        `Could not learn body for request with content type ${location.inRequest?.contentType}`
+        `Could not learn body for request with content type ${contentType}`
       );
       Sentry.captureEvent({
         message: 'No learned request body was found',
@@ -69,7 +74,7 @@ function newContentType(
           interactionPointers: udiff.interactions,
           invalid: true,
           jsonTrailsByInteractions: {},
-          title: `${location.inRequest?.contentType || 'No Body'} Request`,
+          title: `${contentType || 'No Body'} Request`,
         },
       ],
       diffDescription: descriptionForNewRegions(udiff, location),
@@ -79,7 +84,7 @@ function newContentType(
         shapes: [],
         copy: [
           plain('Document'),
-          code(location.inRequest!.contentType || 'null'),
+          code(contentType || 'null'),
           plain('Request'),
         ],
       },
@@ -90,16 +95,21 @@ function newContentType(
       },
     };
   } else if (udiff.isA(DiffTypes.UnmatchedResponseBodyContentType)) {
+    const { contentType, statusCode } =
+      location.descriptor.type === 'response'
+        ? location.descriptor
+        : {
+            contentType: '',
+            statusCode: 0,
+          };
     //learn status code too.... currently missing
     const learnedResponseBody = learnedBodies.responses.find(
-      (i) =>
-        i.contentType === location.inResponse?.contentType &&
-        i.statusCode === location.inResponse?.statusCode
+      (i) => i.contentType === contentType && i.statusCode === statusCode
     );
 
     if (!learnedResponseBody) {
       console.error(
-        `Could not learn body for response with status code ${location.inResponse?.statusCode} content type ${location.inResponse?.contentType}`
+        `Could not learn body for response with status code ${statusCode} content type ${contentType}`
       );
       Sentry.captureEvent({
         message: 'No learned response body was found',
@@ -120,9 +130,7 @@ function newContentType(
           interactionPointers: udiff.interactions,
           invalid: true,
           jsonTrailsByInteractions: {},
-          title: `${location.inResponse?.statusCode} ${
-            location.inResponse?.contentType || ''
-          } Response`,
+          title: `${statusCode} ${contentType} Response`,
         },
       ],
       diffDescription: descriptionForNewRegions(udiff, location),
@@ -132,7 +140,7 @@ function newContentType(
         shapes: [],
         copy: [
           plain('Document'),
-          code(location.inResponse!.statusCode.toString()),
+          code(statusCode.toString()),
           plain('Response'),
         ],
       },

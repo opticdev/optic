@@ -25,7 +25,6 @@ import {
   CurrentSpecContext,
   DiffInQuery,
   DiffInRequest,
-  DiffInResponse,
   IParsedLocation,
   isBodyShapeDiff,
 } from './Interfaces';
@@ -110,22 +109,23 @@ export class ParsedDiff {
     return {
       pathId: location.pathId,
       method: location.method,
-      inQuery: DiffInQuery(this.diffType)
-        ? { queryParametersId: location.queryParametersId! }
-        : undefined,
-      inRequest: DiffInRequest(this.diffType)
+      descriptor: DiffInQuery(this.diffType)
         ? {
-            contentType: location.contentType,
-            requestId: location.requestId,
+            type: 'query',
+            queryParametersId: location.queryParametersId!,
           }
-        : undefined,
-      inResponse: DiffInResponse(this.diffType)
+        : DiffInRequest(this.diffType)
         ? {
+            type: 'request',
+            contentType: location.contentType!,
+            requestId: location.requestId!,
+          }
+        : {
+            type: 'response',
             statusCode: location.statusCode!,
-            contentType: location.contentType,
-            responseId: location.responseId,
-          }
-        : undefined,
+            contentType: location.contentType!,
+            responseId: location.responseId!,
+          },
     };
   }
 
