@@ -18,7 +18,7 @@ import {
   SpectacleInput,
   StartDiffResult,
 } from '../index';
-import { AsyncTools, Streams } from '@useoptic/optic-domain';
+import { AsyncTools, Streams, IHttpInteraction } from '@useoptic/optic-domain';
 import {
   ILearnedBodies,
   IAffordanceTrailsDiffHashMap,
@@ -139,11 +139,17 @@ export class InMemoryCapturesService implements IOpticCapturesService {
   async loadInteraction(
     captureId: string,
     pointer: string
-  ): Promise<any | undefined> {
+  ): Promise<IHttpInteraction> {
     const interactions = await this.dependencies.interactionsRepository.listById(
       captureId
     );
-    return interactions.find((i) => i.uuid === pointer);
+    const interaction = interactions.find((i) => i.uuid === pointer);
+    if (!interaction) {
+      throw new Error(
+        `Could not find interaction ${pointer} in capture ${captureId}`
+      );
+    }
+    return interaction;
   }
 
   async listCaptures(): Promise<ICapture[]> {

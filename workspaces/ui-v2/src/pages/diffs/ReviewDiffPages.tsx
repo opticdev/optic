@@ -79,17 +79,6 @@ export function DiffReviewPages(props: any) {
       selectors.filterRemovedEndpoints(endpointsState.data?.endpoints || []),
     [endpointsState.data]
   );
-  const allRequests = useMemo(
-    () =>
-      filteredEndpoints
-        .flatMap((endpoint) => endpoint.requestBodies)
-        .filter((body) => !!body) as IRequestBody[], // cast to IRequestBody as filter removes non-null
-    [filteredEndpoints]
-  );
-  const allResponses = useMemo(
-    () => filteredEndpoints.flatMap((endpoint) => endpoint.responseBodies),
-    [filteredEndpoints]
-  );
 
   useEffect(() => {
     dispatch(
@@ -130,8 +119,6 @@ export function DiffReviewPages(props: any) {
       captureId={boundaryId}
       endpoints={filteredEndpoints}
       allPaths={pathsState.data}
-      requests={allRequests}
-      responses={allResponses}
     >
       <Switch>
         <Route

@@ -1,15 +1,15 @@
+import { CQRSCommand, IOpticEngine } from '@useoptic/spectacle';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 import { ICopy } from '<src>/pages/diffs/components/ICopyRender';
 import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
-import { IgnoreRule } from './ignore-rule';
 import { DomainIdGenerator } from './domain-id-generator';
-import { IOpticEngine } from '@useoptic/spectacle/src/index';
-import { IEndpoint, IRequestBody, IResponseBody } from '<src>/types';
+import { IEndpoint } from '<src>/types';
 
 export interface IInterpretation {
   previewTabs: IInteractionPreviewTab[];
   diffDescription: IDiffDescription;
   updateSpecChoices: IPatchChoices;
-  toCommands: (choices: IPatchChoices) => any[];
+  toCommands: (choices: IPatchChoices) => CQRSCommand[];
 }
 
 export interface IShapeUpdateChoice {
@@ -30,12 +30,10 @@ export interface IPatchChoices {
 
 export interface IInteractionPreviewTab {
   title: string;
-  allowsExpand: boolean;
   invalid: boolean;
   assertion: ICopy[];
   jsonTrailsByInteractions: { [key: string]: IJsonTrail[] };
   interactionPointers: string[];
-  ignoreRule: IgnoreRule;
 }
 
 export interface BodyPreview {
@@ -48,14 +46,14 @@ export interface IDiffDescription {
   assertion: ICopy[];
   location: IParsedLocation;
   changeType: IChangeType;
-  getJsonBodyToPreview: (interaction: any) => BodyPreview;
+  getJsonBodyToPreview: (interaction: IHttpInteraction) => BodyPreview;
   unknownDiffBehavior?: boolean;
   diffHash: string;
 }
 
 export interface ISuggestion {
   action: ICopyPair;
-  commands: any[];
+  commands: CQRSCommand[];
   changeType: IChangeType;
 }
 
@@ -72,10 +70,11 @@ interface ICopyPair {
 
 export interface ISuggestion {
   action: ICopyPair;
-  commands: any[];
+  commands: CQRSCommand[];
   changeType: IChangeType;
 }
 
+// TODO QPB move core optic things into optic-domain
 export enum ICoreShapeKinds {
   ObjectKind = '$object',
   ListKind = '$list',
@@ -97,9 +96,11 @@ export enum ICoreShapeInnerParameterNames {
 
 // Diff Types the UI Handles
 
+// TODO QPB either remove this or handle this in a parsing function - this just means we have to update multiple places
 export const allowedDiffTypes: {
   [key: string]: {
     isBodyShapeDiff: boolean;
+    inQuery: boolean;
     inRequest: boolean;
     inResponse: boolean;
     unmatchedUrl: boolean;
@@ -108,6 +109,7 @@ export const allowedDiffTypes: {
 } = {
   UnmatchedRequestUrl: {
     isBodyShapeDiff: false,
+    inQuery: false,
     inRequest: false,
     inResponse: false,
     unmatchedUrl: true,
@@ -115,13 +117,23 @@ export const allowedDiffTypes: {
   },
   UnmatchedRequestMethod: {
     isBodyShapeDiff: false,
+    inQuery: false,
     inRequest: false,
     inResponse: false,
     unmatchedUrl: true,
     asString: 'UnmatchedRequestMethod',
   },
+  UnmatchedQueryParameters: {
+    isBodyShapeDiff: false,
+    inQuery: true,
+    inRequest: false,
+    inResponse: false,
+    unmatchedUrl: false,
+    asString: 'UnmatchedQueryParameters',
+  },
   UnmatchedRequestBodyContentType: {
     isBodyShapeDiff: false,
+    inQuery: false,
     inRequest: true,
     inResponse: false,
     unmatchedUrl: false,
@@ -129,6 +141,7 @@ export const allowedDiffTypes: {
   },
   UnmatchedResponseBodyContentType: {
     isBodyShapeDiff: false,
+    inQuery: false,
     inRequest: false,
     inResponse: true,
     unmatchedUrl: false,
@@ -136,13 +149,23 @@ export const allowedDiffTypes: {
   },
   UnmatchedResponseStatusCode: {
     isBodyShapeDiff: false,
+    inQuery: false,
     inRequest: false,
     inResponse: true,
     unmatchedUrl: false,
     asString: 'UnmatchedResponseStatusCode',
   },
+  UnmatchedQueryParametersShape: {
+    isBodyShapeDiff: true,
+    inQuery: true,
+    inRequest: false,
+    inResponse: false,
+    unmatchedUrl: false,
+    asString: 'UnmatchedQueryParametersShape',
+  },
   UnmatchedRequestBodyShape: {
     isBodyShapeDiff: true,
+    inQuery: false,
     inRequest: true,
     inResponse: false,
     unmatchedUrl: false,
@@ -150,6 +173,7 @@ export const allowedDiffTypes: {
   },
   UnmatchedResponseBodyShape: {
     isBodyShapeDiff: true,
+    inQuery: false,
     inRequest: false,
     inResponse: true,
     unmatchedUrl: false,
@@ -165,6 +189,8 @@ export const isBodyShapeDiff = (key: string): boolean =>
   allowedDiffTypes[key]?.isBodyShapeDiff;
 export const isDiffForKnownEndpoint = (key: string): boolean =>
   !allowedDiffTypes[key]?.unmatchedUrl;
+export const DiffInQuery = (key: string): boolean =>
+  allowedDiffTypes[key]?.inQuery;
 export const DiffInRequest = (key: string): boolean =>
   allowedDiffTypes[key]?.inRequest;
 export const DiffInResponse = (key: string): boolean =>
@@ -172,37 +198,31 @@ export const DiffInResponse = (key: string): boolean =>
 
 // The ones we like to work with in the UI
 
-export interface IRequestBodyLocation {
-  contentType?: string;
-  requestId?: string;
-}
-
-export interface IResponseBodyLocation {
-  statusCode: number;
-  contentType?: string;
-  responseId?: string;
-}
-
 export interface IParsedLocation {
   pathId: string;
   method: string;
-  inQuery?: boolean;
-  inRequest?: IRequestBodyLocation;
-  inResponse?: IResponseBodyLocation;
+  descriptor:
+    | {
+        type: 'query';
+        queryParametersId: string;
+      }
+    | {
+        type: 'request';
+        requestId: string;
+        contentType: string;
+      }
+    | {
+        type: 'response';
+        statusCode: number;
+        contentType: string;
+        responseId: string;
+      };
 }
 
 ///////////////////////////////////////
-export interface IToDocument {
-  method: string;
-  count: number;
-  pathExpression: string;
-}
-
 export type CurrentSpecContext = {
   currentSpecPaths: any[];
   currentSpecEndpoints: IEndpoint[];
-  currentSpecRequests: IRequestBody[];
-  currentSpecResponses: IResponseBody[];
   domainIds: DomainIdGenerator;
   idGeneratorStrategy: 'sequential' | 'random';
   opticEngine: IOpticEngine;

@@ -19,7 +19,12 @@ import {
   IOpticSpecRepository,
   StartDiffResult,
 } from '@useoptic/spectacle';
-import { AsyncTools, AsyncTools as AT, Streams } from '@useoptic/optic-domain';
+import {
+  AsyncTools,
+  AsyncTools as AT,
+  Streams,
+  IHttpInteraction,
+} from '@useoptic/optic-domain';
 import * as OpticEngineNative from '@useoptic/optic-engine-native';
 import * as OpticEngineWasm from '@useoptic/optic-engine-wasm';
 import { isEnvTrue } from '@useoptic/cli-shared';
@@ -192,7 +197,10 @@ export class LocalCliCapturesService implements IOpticCapturesService {
     };
   }
 
-  loadInteraction(captureId: string, pointer: string): Promise<any> {
+  loadInteraction(
+    captureId: string,
+    pointer: string
+  ): Promise<IHttpInteraction> {
     return Promise.reject(new Error('I should never be called'));
   }
 

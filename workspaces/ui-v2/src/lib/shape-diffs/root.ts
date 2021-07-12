@@ -16,6 +16,9 @@ import {
   SetRequestBodyShape,
   SetResponseBodyShape,
   ShapedBodyDescriptor,
+  SetQueryParametersShape,
+  QueryParametersShapeDescriptor,
+  CQRSCommand,
 } from '@useoptic/spectacle';
 
 export function rootShapeDiffInterpreter(
@@ -59,12 +62,7 @@ export function rootShapeDiffInterpreter(
     previews.push({
       title: i.label,
       invalid: !expectedShapes.has(i.kind),
-      allowsExpand: true,
       interactionPointers: i.interactions,
-      ignoreRule: {
-        diffHash: shapeDiff.diffHash(),
-        examplesOfCoreShapeKinds: i.kind,
-      },
       assertion: [plain('expected'), code(expected.shapeName())],
       jsonTrailsByInteractions: i.jsonTrailsByInteractions,
     });
@@ -74,10 +72,7 @@ export function rootShapeDiffInterpreter(
   return {
     diffDescription,
     updateSpecChoices,
-    toCommands: (choices?: IPatchChoices) => {
-      if (!choices) {
-        return [];
-      }
+    toCommands: (choices: IPatchChoices): CQRSCommand[] => {
       const { commands, rootShapeId } = builderInnerShapeFromChoices(
         choices,
         expected.allowedCoreShapeKindsByShapeId(),
@@ -85,23 +80,33 @@ export function rootShapeDiffInterpreter(
         currentSpecContext
       );
 
-      return [...commands, resetBaseShape(location, rootShapeId)];
+      const resetShapeCommand = resetBaseShape(location, rootShapeId);
+
+      return [...commands, resetShapeCommand];
     },
     previewTabs: sortBy(previews, (i) => !i.invalid),
-    // overrideTitle?: ICopy[];
   };
 }
 
-function resetBaseShape(location: IParsedLocation, newShapeId: string) {
-  if (location.inRequest) {
+function resetBaseShape(
+  location: IParsedLocation,
+  newShapeId: string
+): CQRSCommand {
+  if (location.descriptor.type === 'request') {
     return SetRequestBodyShape(
-      location.inRequest.requestId!,
-      ShapedBodyDescriptor(location.inRequest.contentType!, newShapeId, false)
+      location.descriptor.requestId,
+      ShapedBodyDescriptor(location.descriptor.contentType, newShapeId, false)
     );
-  } else if (location.inResponse) {
+  } else if (location.descriptor.type === 'response') {
     return SetResponseBodyShape(
-      location.inResponse.responseId!,
-      ShapedBodyDescriptor(location.inResponse.contentType!, newShapeId, false)
+      location.descriptor.responseId,
+      ShapedBodyDescriptor(location.descriptor.contentType, newShapeId, false)
+    );
+  } else {
+    // Through typescript inference we know the only other possible shape is a query parameter
+    return SetQueryParametersShape(
+      location.descriptor.queryParametersId,
+      QueryParametersShapeDescriptor(newShapeId)
     );
   }
 }

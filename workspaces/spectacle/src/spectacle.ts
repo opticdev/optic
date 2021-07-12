@@ -353,10 +353,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     QueryParameters: {
-      id: () => {
-        // TODO QPB - connect this to the correct value
-        // return parent.value.id
-        return `query_${uuidv4()}`;
+      id: (parent: endpoints.QueryParametersNodeWrapper) => {
+        return parent.value.queryParametersId;
       },
       rootShapeId: (parent: endpoints.QueryParametersNodeWrapper) => {
         return parent.value.rootShapeId;
@@ -369,9 +367,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         _: {},
         context: GraphQLContext
       ) => {
-        // TODO QPB - connect this to the correct value
-        // const id = parent.value.id;
-        const id = `query_${uuidv4()}`;
+        const id = parent.value.queryParametersId;
         return context.spectacleContext().contributionsProjection[id] || {};
       },
     },

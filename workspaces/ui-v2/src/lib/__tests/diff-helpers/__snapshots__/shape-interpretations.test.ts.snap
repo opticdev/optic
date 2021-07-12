@@ -64,11 +64,11 @@ Object {
       "diffHash": "84167c0c7595d4d6",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "baseline-response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "baseline-path_3",
@@ -94,7 +94,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -105,10 +104,6 @@ Object {
             "text": "String",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "84167c0c7595d4d6",
-          "examplesOfCoreShapeKinds": "$optional",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -309,11 +304,11 @@ Object {
       "diffHash": "d9a9a649152793af",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "baseline-response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "baseline-path_3",
@@ -339,7 +334,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -350,10 +344,6 @@ Object {
             "text": "Number",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "d9a9a649152793af",
-          "examplesOfCoreShapeKinds": "$string",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -528,11 +518,11 @@ Object {
       "diffHash": "c1c137f409e885dc",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_2",
@@ -554,7 +544,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -565,10 +554,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "c1c137f409e885dc",
-          "examplesOfCoreShapeKinds": "$list",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -794,11 +779,11 @@ Object {
       "diffHash": "c1c137f409e885dc",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_2",
@@ -820,7 +805,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -831,10 +815,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "c1c137f409e885dc",
-          "examplesOfCoreShapeKinds": "$list",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -1028,11 +1008,11 @@ Object {
       "diffHash": "f31dde2a282b48",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_2",
@@ -1054,7 +1034,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -1065,10 +1044,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "f31dde2a282b48",
-          "examplesOfCoreShapeKinds": "$string",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -1240,11 +1215,11 @@ Object {
       "diffHash": "63269210d11730b6",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_2",
@@ -1266,7 +1241,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -1277,10 +1251,6 @@ Object {
             "text": "Object (optional)",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "63269210d11730b6",
-          "examplesOfCoreShapeKinds": "$string",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -1518,11 +1488,11 @@ Object {
       "diffHash": "179f9d4a33ca4658",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_2",
@@ -1548,7 +1518,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -1559,10 +1528,6 @@ Object {
             "text": "Object (optional)",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "179f9d4a33ca4658",
-          "examplesOfCoreShapeKinds": "$string",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -1817,11 +1782,11 @@ Object {
       "diffHash": "124b53ff9a034b57",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_3",
@@ -1847,7 +1812,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -1858,10 +1822,6 @@ Object {
             "text": "List",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "124b53ff9a034b57",
-          "examplesOfCoreShapeKinds": "$object",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -2118,11 +2078,11 @@ Object {
       "diffHash": "3542ba6590d7ae3f",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_3",
@@ -2140,7 +2100,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -2151,10 +2110,6 @@ Object {
             "text": "String",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "3542ba6590d7ae3f",
-          "examplesOfCoreShapeKinds": "$object",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -2420,11 +2375,11 @@ Object {
       "diffHash": "179f9d4a33ca4658",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_2",
@@ -2450,7 +2405,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -2461,10 +2415,6 @@ Object {
             "text": "Object (optional)",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "179f9d4a33ca4658",
-          "examplesOfCoreShapeKinds": "$list",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -2679,11 +2629,11 @@ Object {
       "diffHash": "8d46ea69f9088574",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "baseline-response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "baseline-path_3",
@@ -2705,7 +2655,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -2716,10 +2665,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "8d46ea69f9088574",
-          "examplesOfCoreShapeKinds": "$string",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -2875,11 +2820,11 @@ Object {
       "diffHash": "d9d824261703f4be",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_3",
@@ -2905,7 +2850,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -2916,10 +2860,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "d9d824261703f4be",
-          "examplesOfCoreShapeKinds": "$nullable",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -3088,11 +3028,11 @@ Object {
       "diffHash": "d9d824261703f4be",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_3",
@@ -3118,7 +3058,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -3129,10 +3068,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "d9d824261703f4be",
-          "examplesOfCoreShapeKinds": "$optional",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -3297,11 +3232,11 @@ Object {
       "diffHash": "9680b0bf6bd1b6b1",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_3",
@@ -3327,7 +3262,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -3338,10 +3272,6 @@ Object {
             "text": "Number",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "9680b0bf6bd1b6b1",
-          "examplesOfCoreShapeKinds": "$optional",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -3579,11 +3509,11 @@ Object {
       "diffHash": "d9d824261703f4be",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_3",
@@ -3609,7 +3539,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -3620,10 +3549,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "d9d824261703f4be",
-          "examplesOfCoreShapeKinds": "$list",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -3878,11 +3803,11 @@ Object {
       "diffHash": "7cb55ecdc93fa003",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_1",
@@ -3900,7 +3825,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -3911,10 +3835,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "7cb55ecdc93fa003",
-          "examplesOfCoreShapeKinds": "$list",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -4149,11 +4069,11 @@ Object {
       "diffHash": "7cb55ecdc93fa003",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_1",
@@ -4171,7 +4091,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -4182,10 +4101,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "7cb55ecdc93fa003",
-          "examplesOfCoreShapeKinds": "$list",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -4408,11 +4323,11 @@ Object {
       "diffHash": "7cb55ecdc93fa003",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_1",
@@ -4430,7 +4345,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -4441,10 +4355,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "7cb55ecdc93fa003",
-          "examplesOfCoreShapeKinds": "$object",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -4465,7 +4375,6 @@ Object {
         "title": "object",
       },
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -4476,10 +4385,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "7cb55ecdc93fa003",
-          "examplesOfCoreShapeKinds": "$string",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -4759,11 +4664,11 @@ Object {
       "diffHash": "601c9b4584024d27",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_KBRwJqndED",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_SYRwhqD1XN",
@@ -4789,7 +4694,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -4800,10 +4704,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "601c9b4584024d27",
-          "examplesOfCoreShapeKinds": "$object",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -4893,7 +4793,6 @@ Object {
         "title": "object",
       },
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -4904,10 +4803,6 @@ Object {
             "text": "Object",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "601c9b4584024d27",
-          "examplesOfCoreShapeKinds": "$optional",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -5694,11 +5589,11 @@ Object {
       "diffHash": "59b1dc0fdc7951d3",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "baseline-response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "baseline-path_3",
@@ -5716,7 +5611,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -5727,50 +5621,6 @@ Object {
             "text": "String",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "59b1dc0fdc7951d3",
-          "examplesOfCoreShapeKinds": "$number",
-        },
-        "interactionPointers": Array [
-          "id",
-        ],
-        "invalid": true,
-        "jsonTrailsByInteractions": Object {
-          "id": Array [
-            Object {
-              "path": Array [
-                Object {
-                  "JsonObjectKey": Object {
-                    "key": "cities",
-                  },
-                },
-                Object {
-                  "JsonArrayItem": Object {
-                    "index": 1,
-                  },
-                },
-              ],
-            },
-          ],
-        },
-        "title": "number",
-      },
-      Object {
-        "allowsExpand": true,
-        "assertion": Array [
-          Object {
-            "style": 0,
-            "text": "expected",
-          },
-          Object {
-            "style": 1,
-            "text": "String",
-          },
-        ],
-        "ignoreRule": Object {
-          "diffHash": "59b1dc0fdc7951d3",
-          "examplesOfCoreShapeKinds": "$string",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -5794,6 +5644,41 @@ Object {
           ],
         },
         "title": "string",
+      },
+      Object {
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "cities",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 1,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "number",
       },
     ],
     "toCommands": [Function],
@@ -6032,11 +5917,11 @@ Object {
       "diffHash": "59b1dc0fdc7951d3",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "baseline-response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "baseline-path_3",
@@ -6054,7 +5939,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -6065,50 +5949,6 @@ Object {
             "text": "String",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "59b1dc0fdc7951d3",
-          "examplesOfCoreShapeKinds": "$number",
-        },
-        "interactionPointers": Array [
-          "id",
-        ],
-        "invalid": true,
-        "jsonTrailsByInteractions": Object {
-          "id": Array [
-            Object {
-              "path": Array [
-                Object {
-                  "JsonObjectKey": Object {
-                    "key": "cities",
-                  },
-                },
-                Object {
-                  "JsonArrayItem": Object {
-                    "index": 1,
-                  },
-                },
-              ],
-            },
-          ],
-        },
-        "title": "number",
-      },
-      Object {
-        "allowsExpand": true,
-        "assertion": Array [
-          Object {
-            "style": 0,
-            "text": "expected",
-          },
-          Object {
-            "style": 1,
-            "text": "String",
-          },
-        ],
-        "ignoreRule": Object {
-          "diffHash": "59b1dc0fdc7951d3",
-          "examplesOfCoreShapeKinds": "$string",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -6132,6 +5972,41 @@ Object {
           ],
         },
         "title": "string",
+      },
+      Object {
+        "assertion": Array [
+          Object {
+            "style": 0,
+            "text": "expected",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "interactionPointers": Array [
+          "id",
+        ],
+        "invalid": true,
+        "jsonTrailsByInteractions": Object {
+          "id": Array [
+            Object {
+              "path": Array [
+                Object {
+                  "JsonObjectKey": Object {
+                    "key": "cities",
+                  },
+                },
+                Object {
+                  "JsonArrayItem": Object {
+                    "index": 1,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        "title": "number",
       },
     ],
     "toCommands": [Function],
@@ -6359,11 +6234,11 @@ Object {
       "diffHash": "5afaa9bc7e91e73c",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_1",
@@ -6381,7 +6256,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -6392,10 +6266,6 @@ Object {
             "text": "List",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "5afaa9bc7e91e73c",
-          "examplesOfCoreShapeKinds": "$object",
-        },
         "interactionPointers": Array [
           "id",
         ],
@@ -6565,11 +6435,11 @@ Object {
       "diffHash": "d8b48b881aef10ca",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": "baseline-response_1",
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "baseline-path_1",
@@ -6595,7 +6465,6 @@ Object {
     },
     "previewTabs": Array [
       Object {
-        "allowsExpand": true,
         "assertion": Array [
           Object {
             "style": 0,
@@ -6606,10 +6475,6 @@ Object {
             "text": "Unknown (nullable)",
           },
         ],
-        "ignoreRule": Object {
-          "diffHash": "d8b48b881aef10ca",
-          "examplesOfCoreShapeKinds": "$number",
-        },
         "interactionPointers": Array [
           "id",
         ],

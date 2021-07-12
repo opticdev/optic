@@ -1,5 +1,6 @@
 import { BodyShapeDiff, ParsedDiff } from './parse-diff';
 import {
+  BodyPreview,
   CurrentSpecContext,
   IChangeType,
   IDiffDescription,
@@ -8,62 +9,71 @@ import {
 import { getExpectationsForShapeTrail } from './shape-diff-dsl-rust';
 import { code, ICopy, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { IJsonObjectKey } from '@useoptic/cli-shared/build/diffs/json-trail';
-//@ts-ignore
-const { toJsonExample } = require('@useoptic/shape-hash');
+import { IHttpInteraction } from '@useoptic/optic-domain';
+import { toJsonExample } from '@useoptic/shape-hash';
+
+const getJsonBodyToPreview = (
+  location: IParsedLocation,
+  interaction: IHttpInteraction
+): BodyPreview => {
+  const body =
+    (location.descriptor.type === 'query' && interaction.request.query) ||
+    (location.descriptor.type === 'request' &&
+      interaction.request.body.value) ||
+    (location.descriptor.type === 'response' &&
+      interaction.response.body.value);
+
+  if (body) {
+    const { shapeHashV1Base64, asText, asJsonString } = body;
+
+    if (asJsonString) {
+      return {
+        asJson: JSON.parse(asJsonString),
+        asText: null,
+        noBody: false,
+      };
+    }
+
+    if (shapeHashV1Base64) {
+      return {
+        asJson: toJsonExample(shapeHashV1Base64),
+        asText: null,
+        noBody: false,
+      };
+    }
+    if (asText) {
+      return { asJson: null, asText: asText, noBody: false };
+    }
+    return { asJson: null, asText: null, noBody: false };
+  } else {
+    return { asJson: null, asText: null, noBody: true };
+  }
+};
 
 export function descriptionForNewRegions(
   diff: ParsedDiff,
   location: IParsedLocation
 ): IDiffDescription {
   let title: ICopy[] = [];
-  if (location.inRequest) {
+  if (location.descriptor.type === 'query') {
+    title = [plain('undocumented query parameters observed')];
+  }
+  if (location.descriptor.type === 'request') {
     title = [
       plain('undocumented'),
-      code(location.inRequest.contentType || 'No Body'),
+      code(location.descriptor.contentType),
       plain('request observed'),
     ];
   }
-  if (location.inResponse) {
+  if (location.descriptor.type === 'response') {
     title = [
       plain('undocumented'),
-      code(location.inResponse.statusCode.toString()),
+      code(location.descriptor.statusCode.toString()),
       plain('response with'),
-      code(location.inResponse.contentType || 'No Body'),
+      code(location.descriptor.contentType || 'No Body'),
       plain('observed'),
     ];
   }
-
-  const getJsonBodyToPreview = (interaction: any) => {
-    const body =
-      (location.inRequest && interaction.request.body) ||
-      (location.inResponse && interaction.response.body);
-
-    if (body) {
-      const { shapeHashV1Base64, asText, asJsonString } = body.value;
-
-      if (asJsonString) {
-        return {
-          asJson: JSON.parse(asJsonString),
-          asText: null,
-          noBody: false,
-        };
-      }
-
-      if (shapeHashV1Base64) {
-        return {
-          asJson: toJsonExample(shapeHashV1Base64, 'base64'),
-          asText: null,
-          noBody: false,
-        };
-      }
-      if (asText) {
-        return { asJson: null, asText: asText, noBody: false };
-      }
-      return { asJson: null, asText: null, noBody: false };
-    } else {
-      return { asJson: null, asText: null, noBody: true };
-    }
-  };
 
   return {
     title,
@@ -71,7 +81,7 @@ export function descriptionForNewRegions(
     location,
     diffHash: diff.diffHash,
     assertion: [plain('Undocumented Body Observed')],
-    getJsonBodyToPreview,
+    getJsonBodyToPreview: getJsonBodyToPreview.bind(null, location),
   };
 }
 
@@ -84,38 +94,6 @@ export async function descriptionForShapeDiff(
 
   const jsonTrailPath = asShapeDiff.jsonTrail.path;
   const jsonTrailLast = jsonTrailPath[jsonTrailPath.length - 1]!;
-
-  const getJsonBodyToPreview = (interaction: any) => {
-    const body =
-      (location.inRequest && interaction.request.body) ||
-      (location.inResponse && interaction.response.body);
-
-    if (body) {
-      const { shapeHashV1Base64, asText, asJsonString } = body.value;
-
-      if (asJsonString) {
-        return {
-          asJson: JSON.parse(asJsonString),
-          asText: null,
-          noBody: false,
-        };
-      }
-
-      if (shapeHashV1Base64) {
-        return {
-          asJson: toJsonExample(shapeHashV1Base64, 'base64'),
-          asText: null,
-          noBody: false,
-        };
-      }
-      if (asText) {
-        return { asJson: null, asText: asText, noBody: false };
-      }
-      return { asJson: null, asText: null, noBody: false };
-    } else {
-      return { asJson: null, asText: null, noBody: true };
-    }
-  };
 
   const expected = await getExpectationsForShapeTrail(
     asShapeDiff.shapeTrail,
@@ -132,7 +110,7 @@ export async function descriptionForShapeDiff(
       changeType: IChangeType.Changed,
       assertion: [plain('expected'), code(expected.shapeName())],
       diffHash: asShapeDiff.diffHash(),
-      getJsonBodyToPreview,
+      getJsonBodyToPreview: getJsonBodyToPreview.bind(null, location),
     };
   }
 
@@ -150,7 +128,7 @@ export async function descriptionForShapeDiff(
         changeType: IChangeType.Changed,
         diffHash: asShapeDiff.diffHash(),
         assertion: [plain('expected'), code(expected.shapeName())],
-        getJsonBodyToPreview,
+        getJsonBodyToPreview: getJsonBodyToPreview.bind(null, location),
       };
     }
   }
@@ -168,7 +146,7 @@ export async function descriptionForShapeDiff(
       diffHash: asShapeDiff.diffHash(),
 
       assertion: [code('undocumented field')],
-      getJsonBodyToPreview,
+      getJsonBodyToPreview: getJsonBodyToPreview.bind(null, location),
     };
   }
 
@@ -181,7 +159,7 @@ export async function descriptionForShapeDiff(
       diffHash: asShapeDiff.diffHash(),
 
       assertion: [plain('expected'), code(expected.shapeName())],
-      getJsonBodyToPreview,
+      getJsonBodyToPreview: getJsonBodyToPreview.bind(null, location),
     };
   }
 
@@ -193,8 +171,6 @@ export async function descriptionForShapeDiff(
     assertion: [],
     unknownDiffBehavior: true,
     diffHash: asShapeDiff.diffHash(),
-    getJsonBodyToPreview,
+    getJsonBodyToPreview: getJsonBodyToPreview.bind(null, location),
   };
-
-  // invariant(false, 'Unexpected shape diff');
 }
