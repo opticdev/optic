@@ -49,7 +49,7 @@ export default class Spectacle extends Command {
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
-    const cliSession = await cliClient.findSession(basePath, null, null);
+    const cliSession = await cliClient.findSession(basePath, null, null, null);
     developerDebugLogger({ cliSession });
     const spectacleUrl = `${apiBaseUrl}/specs/${cliSession.session.id}/spectacle`;
     openBrowser(spectacleUrl);

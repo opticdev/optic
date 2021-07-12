@@ -248,7 +248,8 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     const cliSession = await cliClient.findSession(
       cwd,
       taskConfig,
-      this.captureId
+      this.captureId,
+      this.taskName
     );
     developerDebugLogger({ cliSession });
 

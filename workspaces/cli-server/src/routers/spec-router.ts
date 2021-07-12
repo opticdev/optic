@@ -40,6 +40,7 @@ export type ValidCaptureState = {
   metadata: {
     taskConfig: IOpticTaskRunnerConfig;
     startedAt: Iso8601Timestamp;
+    taskName: string;
     lastInteraction: {
       count: number;
       observedAt: Iso8601Timestamp;

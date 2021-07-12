@@ -44,7 +44,12 @@ export default class IngestS3 extends Command {
       const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
       const paths = await getPathsRelativeToConfig();
       const cliClient = new Client(apiBaseUrl);
-      const cliSession = await cliClient.findSession(paths.cwd, null, null);
+      const cliSession = await cliClient.findSession(
+        paths.cwd,
+        null,
+        null,
+        null
+      );
       const uiBaseUrl = makeUiBaseUrl(daemonState);
       openBrowser(linkToCapture(uiBaseUrl, cliSession.session.id, captureId));
 

@@ -64,7 +64,7 @@ export const ShareModal: React.FC<{
   const styles = useStyles(props);
   const analytics = useAnalytics();
 
-  const { isAuthenticated, isLoading, loginWithPopup } = useAuth0();
+  const { isAuthenticated, isLoading, error, loginWithPopup } = useAuth0();
 
   const endpointCount = useAppSelector(
     (state) => state.endpoints.results.data?.endpoints.length || 0
@@ -159,6 +159,11 @@ export const ShareModal: React.FC<{
           >
             {isLoading ? <CircularProgress size={18} /> : 'Log in'}
           </Button>
+          {error ? (
+            <Typography variant="subtitle1" color="error">
+              {error.name}: {error.message}
+            </Typography>
+          ) : null}
         </div>
       </div>
     );

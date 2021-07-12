@@ -54,7 +54,12 @@ export async function ingestOnlyTaskRunner(
   ////////////////////////////////////////////////////////////////////////////////
   developerDebugLogger('finding matching daemon session');
 
-  const cliSession = await cliClient.findSession(paths.cwd, null, captureId);
+  const cliSession = await cliClient.findSession(
+    paths.cwd,
+    null,
+    captureId,
+    null
+  );
 
   const eventEmitter = new EventEmitter();
   const specServiceClient = new SpecServiceClient(

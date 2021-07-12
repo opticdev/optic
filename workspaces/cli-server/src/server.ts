@@ -158,7 +158,7 @@ class CliServer {
       '/api/sessions',
       bodyParser.json({ limit: '5kb' }),
       async (req, res: express.Response) => {
-        const { path, taskConfig, captureId } = req.body;
+        const { path, taskConfig, captureId, taskName } = req.body;
         if (captureId) {
           const paths = await getPathsRelativeToCwd(path);
           const { capturesPath } = paths;
@@ -170,6 +170,7 @@ class CliServer {
             metadata: {
               startedAt: now,
               taskConfig,
+              taskName,
               lastInteraction: null,
             },
           });

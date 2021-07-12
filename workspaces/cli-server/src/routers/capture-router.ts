@@ -56,6 +56,8 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
       );
       res.json({
         status: captureInfo.status,
+        metadata:
+          captureInfo.status !== 'unknown' ? captureInfo.metadata : null,
         diffsCount: captureSummary.diffsCount,
         interactionsCount: captureSummary.interactionsCount,
       });

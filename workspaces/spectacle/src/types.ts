@@ -87,6 +87,21 @@ export interface StartDiffResult {
   onComplete: Promise<IOpticDiffService>;
 }
 
+export interface GetCaptureStatusResponse {
+  status: string;
+  diffsCount: number;
+  metadata: {
+    taskConfig: any;
+    startedAt: string;
+    taskName: string;
+    lastInteraction: {
+      count: number;
+      observedAt: string;
+    } | null;
+  } | null;
+  interactionsCount: number;
+}
+
 export interface IOpticCapturesService {
   listCaptures(): Promise<ICapture[]>;
 
@@ -96,6 +111,8 @@ export interface IOpticCapturesService {
   ): Promise<IHttpInteraction>;
 
   startDiff(diffId: string, captureId: string): Promise<StartDiffResult>;
+
+  getCaptureStatus(captureId: string): Promise<GetCaptureStatusResponse>;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

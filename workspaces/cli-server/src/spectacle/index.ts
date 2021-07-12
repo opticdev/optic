@@ -10,6 +10,7 @@ import {
   IListDiffsResponse,
   IListUnrecognizedUrlsResponse,
   IOpticCapturesService,
+  GetCaptureStatusResponse,
   IOpticConfigRepository,
   IOpticContext,
   IOpticDiffRepository,
@@ -197,10 +198,23 @@ export class LocalCliCapturesService implements IOpticCapturesService {
     };
   }
 
-  loadInteraction(
-    captureId: string,
-    pointer: string
-  ): Promise<IHttpInteraction> {
+  async getCaptureStatus(captureId: string): Promise<GetCaptureStatusResponse> {
+    // use capturesHelper -- it's the same as in the endpoint
+    const captureInfo = await this.dependencies.capturesHelpers.loadCaptureState(
+      captureId
+    );
+    const captureSummary = await this.dependencies.capturesHelpers.loadCaptureSummary(
+      captureId
+    );
+    return {
+      status: captureInfo.status,
+      metadata: captureInfo.status !== 'unknown' ? captureInfo.metadata : null,
+      diffsCount: captureSummary.diffsCount,
+      interactionsCount: captureSummary.interactionsCount,
+    };
+  }
+
+  loadInteraction(captureId: string, pointer: string): Promise<any> {
     return Promise.reject(new Error('I should never be called'));
   }
 

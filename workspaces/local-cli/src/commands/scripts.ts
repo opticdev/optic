@@ -124,7 +124,7 @@ export default class Scripts extends Command {
     );
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     const cliClient = new Client(apiBaseUrl);
-    const cliSession = await cliClient.findSession(paths.cwd, null, null);
+    const cliSession = await cliClient.findSession(paths.cwd, null, null, null);
     const spectacleUrl = `${apiBaseUrl}/specs/${cliSession.session.id}/spectacle`;
 
     const env: any = {

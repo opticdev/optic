@@ -12,6 +12,7 @@ async function main(inputs: { opticProjectDirectory: string }) {
   const x = await cliClient.findSession(
     inputs.opticProjectDirectory,
     null,
+    null,
     null
   );
   console.log(`navigate to http://localhost:3000/apis/${x.session.id}`);

@@ -66,7 +66,7 @@ export default class Intercept extends Command {
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
-    const cliSession = await cliClient.findSession(cwd, null, captureId);
+    const cliSession = await cliClient.findSession(cwd, null, captureId, null);
     const eventEmitter = new EventEmitter();
     const specServiceClient = new SpecServiceClient(
       cliSession.session.id,
