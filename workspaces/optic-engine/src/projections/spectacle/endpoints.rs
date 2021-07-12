@@ -172,10 +172,20 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         }
       }
       EndpointEvent::QueryParametersAdded(e) => {
-        projection.with_query_parameters(e.path_id, e.http_method, e.query_parameters_id)
+        projection.with_query_parameters(e.path_id, e.http_method, e.query_parameters_id);
       }
       EndpointEvent::QueryParametersShapeSet(e) => {
-        projection.with_query_parameters_shape(e.query_parameters_id, e.shape_descriptor);
+        projection.with_query_parameters_shape(&e.query_parameters_id, &e.shape_descriptor);
+        // We treat the query parameter only as created when there is a shape attached to it
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.query_parameters_id);
+        }
+      }
+      EndpointEvent::QueryParametersRemoved(e) => {
+        projection.without_query_parameters(&e.query_parameters_id);
+        if let Some(c) = e.event_context {
+          projection.with_remove_history(&c.client_command_batch_id, &e.query_parameters_id);
+        }
       }
       EndpointEvent::ResponseBodySet(e) => {
         //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (response_id, http_content_type)
@@ -463,19 +473,33 @@ impl EndpointsProjection {
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_query_parameters_shape(
     &mut self,
-    query_parameters_id: QueryParametersId,
-    shape_descriptor: QueryParametersShapeDescriptor,
+    query_parameters_id: &QueryParametersId,
+    shape_descriptor: &QueryParametersShapeDescriptor,
   ) {
     let query_index = *self
       .domain_id_to_index
-      .get(&query_parameters_id)
+      .get(query_parameters_id)
       .expect("expected node with domain_id $request_id to exist in the graph");
 
     if let Some(Node::QueryParameters(query_node)) = self.graph.node_weight_mut(query_index) {
-      query_node.root_shape_id = Some(shape_descriptor.shape_id);
+      query_node.root_shape_id = Some(shape_descriptor.shape_id.clone());
       query_node.is_removed = shape_descriptor.is_removed;
     }
   }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  pub fn without_query_parameters(&mut self, query_parameters_id: &QueryParametersId) {
+    let query_parameters_index = *self
+      .domain_id_to_index
+      .get(query_parameters_id)
+      .expect("expected node with domain_id $path_id to exist in the graph");
+
+    if let Some(Node::QueryParameters(query_node)) =
+      self.graph.node_weight_mut(query_parameters_index)
+    {
+      query_node.is_removed = true;
+    }
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_response_body(
     &mut self,
