@@ -53,9 +53,9 @@ const appConfig: OpticAppConfig = {
     },
     backendApi: {
       domain:
-        (window.location.hostname.indexOf('useoptic.com') >= 0
-          ? process.env.REACT_APP_PROD_API_BASE
-          : process.env.REACT_APP_STAGING_API_BASE) || 'https://api.o3c.info',
+        (process.env.NODE_ENV === 'development'
+          ? process.env.REACT_APP_STAGING_API_BASE
+          : process.env.REACT_APP_PROD_API_BASE) || 'https://api.o3c.info',
     },
     sharing: {
       enabled: true,
