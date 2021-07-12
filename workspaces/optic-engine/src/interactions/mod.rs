@@ -12,7 +12,9 @@ mod traverser;
 mod visitors;
 
 use result::InteractionTrail;
-pub use result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
+pub use result::{
+  BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult, UnmatchedQueryParameters,
+};
 use visitors::{InteractionVisitors, PathVisitor};
 
 /// Compute diffs based on a spec and an interaction.
@@ -89,6 +91,13 @@ pub fn diff(
           .collect()
       }
       _ => vec![result],
+    })
+    .filter(|result| {
+      // filter out any left-over results that aren't for outside consumoption
+      !matches!(
+        result,
+        InteractionDiffResult::UnmatchedQueryParameters(UnmatchedQueryParameters::Unobserved(_)),
+      )
     })
     .collect()
 }
