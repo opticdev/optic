@@ -1,70 +1,58 @@
 import { IRequestSpecTrail } from './request-spec-trail';
 import { IInteractionTrail } from './interaction-trail';
 
-// TODO QPB - remove these types - these are the same as the types in ui-v2 - these should be moved to optic-domain
-export interface IPathParameter {
-  id: string;
-  name: string;
-  isParameterized: boolean;
-  description: string;
-  endpointId: string;
-}
-
-interface IEndpoint {
+// This is a subset of IEndpoint in ui-v2
+type EndpointForTrails = {
   pathId: string;
   method: string;
-  purpose: string;
-  description: string;
-  fullPath: string;
-  pathParameters: IPathParameter[];
-  isRemoved: boolean;
-  query: IQueryParameters | null;
-  requestBodies: IRequestBody[];
-  responseBodies: IResponseBody[];
-}
+  query: {
+    queryParametersId: string;
+  } | null;
+  requestBodies: {
+    requestId: string;
+    contentType: string;
+  }[];
+  responseBodies: {
+    responseId: string;
+    statusCode: number;
+    contentType: string;
+  }[];
+};
 
-export interface IQueryParameters {
-  queryParametersId: string;
-  rootShapeId: string;
-  isRemoved: boolean;
-  description: string;
-}
-
-export interface IRequestBody {
-  requestId: string;
-  contentType: string;
-  rootShapeId: string;
-  pathId: string;
-  method: string;
-  description: string;
-}
-
-export interface IResponseBody {
-  responseId: string;
-  statusCode: number;
-  contentType: string;
-  rootShapeId: string;
-  pathId: string;
-  method: string;
-  description: string;
-}
-// TODO QPB remove / reduce undefined or add in better error messages when missing + sentry
 export function locationForTrails(
   trail: IRequestSpecTrail,
   interactionTrail: IInteractionTrail,
-  endpoints: IEndpoint[]
-  // TODO QPB use IParsedLocation type instead
+  endpoints: EndpointForTrails[]
 ): {
   pathId: string;
   method: string;
-  inQuery?: boolean;
-  queryParametersId?: string;
-  inRequest?: boolean;
-  inResponse?: boolean;
-  requestId?: string;
-  responseId?: string;
-  contentType?: string;
-  statusCode?: number;
+  descriptor:
+    | {
+        type: 'request';
+        requestId: string;
+        contentType: string;
+      }
+    | {
+        type: 'response';
+        responseId: string;
+        contentType: string;
+        statusCode: number;
+      }
+    | {
+        type: 'query';
+        queryParametersId: string;
+      }
+    // TODO figure out when path_request and path_response variants are generated
+    // These aren't currently handled by the UI
+    | {
+        type: 'path_request';
+        contentType: string;
+      }
+    | {
+        type: 'path_response';
+        statusCode: number;
+        contentType?: string; // TODO find out why contentType is nullable
+      };
 } | null {
   if ('SpecRoot' in trail) {
     return null;
@@ -74,84 +62,105 @@ export function locationForTrails(
         ? trail.SpecRequestRoot
         : trail.SpecRequestBody;
 
-    let request = null;
-    for (const endpoint of endpoints) {
-      for (const requestBody of endpoint.requestBodies) {
-        if (requestBody.requestId === requestId) {
-          request = requestBody;
-          break;
-        }
-      }
-      if (request) {
-        break;
-      }
-    }
+    let contentType = '';
+    const endpoint = endpoints.find(
+      (endpoint) =>
+        !!endpoint.requestBodies.find((requestBody) => {
+          if (requestBody.requestId === requestId) {
+            contentType = requestBody.contentType;
+          }
+          return requestBody.requestId === requestId;
+        })
+    );
 
-    if (!request) {
+    if (!endpoint) {
       console.error(
         `Could not find endpoint with request ${requestId} in current spec endpoints`
       );
       return null;
     }
 
-    const { method, pathId, contentType } = request;
+    const { method, pathId } = endpoint;
 
     return {
       pathId: pathId,
       method: method,
-      requestId,
-      contentType,
-      inRequest: true,
+      descriptor: {
+        type: 'request',
+        requestId,
+        contentType,
+      },
     };
   } else if ('SpecResponseRoot' in trail || 'SpecResponseBody' in trail) {
     const { responseId } =
       'SpecResponseRoot' in trail
         ? trail.SpecResponseRoot
         : trail.SpecResponseBody;
-    let response = null;
-    for (const endpoint of endpoints) {
-      for (const responseBody of endpoint.responseBodies) {
-        if (responseBody.responseId === responseId) {
-          response = responseBody;
-          break;
-        }
-      }
-      if (response) {
-        break;
-      }
-    }
 
-    if (!response) {
+    let contentType = '';
+    let statusCode = 0;
+    const endpoint = endpoints.find(
+      (endpoint) =>
+        !!endpoint.responseBodies.find((responseBody) => {
+          if (responseBody.responseId === responseId) {
+            contentType = responseBody.contentType;
+            statusCode = responseBody.statusCode;
+          }
+          return responseBody.responseId === responseId;
+        })
+    );
+
+    if (!endpoint) {
       console.error(
         `Could not find endpoint with response ${responseId} in current spec endpoints`
       );
       return null;
     }
-    const { pathId, method, statusCode, contentType } = response;
+    const { pathId, method } = endpoint;
 
     return {
       pathId: pathId,
       method: method,
-      statusCode: statusCode,
-      responseId,
-      contentType,
-      inResponse: true,
+      descriptor: {
+        type: 'response',
+        statusCode: statusCode,
+        responseId,
+        contentType,
+      },
     };
   } else if ('SpecPath' in trail) {
     const { pathId } = trail.SpecPath;
-    const methodOption = methodForInteractionTrail(interactionTrail);
+    const method = methodForInteractionTrail(interactionTrail);
+    if (!method) {
+      console.error('method not found in SpecPath interaction trail');
+      return null;
+    }
 
     const inRequest = inRequestForInteractionTrail(interactionTrail);
     const inResponse = inResponseForInteractionTrail(interactionTrail);
 
-    const statusCode = inResponse && inResponse.statusCode;
-
-    const contentType =
-      (inRequest && inRequest.contentType) ||
-      (inResponse && inResponse.contentType);
-
-    if (methodOption) {
-      return { pathId, method: methodOption, statusCode, contentType };
+    if (inRequest) {
+      return {
+        pathId,
+        method,
+        descriptor: {
+          type: 'path_request',
+          contentType: inRequest.contentType,
+        },
+      };
+    } else if (inResponse) {
+      return {
+        pathId,
+        method,
+        descriptor: {
+          type: 'path_response',
+          contentType: inResponse.contentType,
+          statusCode: inResponse.statusCode,
+        },
+      };
+    } else {
+      console.error('SpecPath trail was not found in request or response');
+      return null;
     }
   } else if ('SpecQueryParameters' in trail) {
     const { queryParametersId } = trail.SpecQueryParameters;
@@ -169,8 +178,10 @@ export function locationForTrails(
     return {
       pathId: endpoint.pathId,
       method: endpoint.method,
-      inQuery: true,
-      queryParametersId,
+      descriptor: {
+        type: 'query',
+        queryParametersId,
+      },
     };
   }
   console.error(`Received an unexpected trail`, trail);
