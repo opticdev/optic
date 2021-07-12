@@ -1,14 +1,11 @@
-import {
-  CurrentSpecContext,
-  ICoreShapeInnerParameterNames,
-  ICoreShapeKinds,
-  IPatchChoices,
-} from '../Interfaces';
+import { CurrentSpecContext, IPatchChoices } from '../Interfaces';
 import { Actual } from '../shape-diff-dsl-rust';
 import equals from 'lodash.isequal';
 import {
   AddShape,
   AddShapeParameter,
+  ICoreShapeInnerParameterNames,
+  ICoreShapeKinds,
   ProviderInShape,
   SetParameterShape,
   ShapeProvider,

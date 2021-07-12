@@ -1,5 +1,9 @@
 import { IOpticEngine } from '@useoptic/spectacle';
-import { CQRSCommand, IHttpInteraction } from '@useoptic/optic-domain';
+import {
+  CQRSCommand,
+  IHttpInteraction,
+  ICoreShapeKinds,
+} from '@useoptic/optic-domain';
 import { ICopy } from '<src>/pages/diffs/components/ICopyRender';
 import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
 import { DomainIdGenerator } from './domain-id-generator';
@@ -72,26 +76,6 @@ export interface ISuggestion {
   action: ICopyPair;
   commands: CQRSCommand[];
   changeType: IChangeType;
-}
-
-// TODO QPB move core optic things into optic-domain
-export enum ICoreShapeKinds {
-  ObjectKind = '$object',
-  ListKind = '$list',
-  MapKind = '$map',
-  OneOfKind = '$oneOf',
-  AnyKind = '$any',
-  StringKind = '$string',
-  NumberKind = '$number',
-  BooleanKind = '$boolean',
-  NullableKind = '$nullable',
-  OptionalKind = '$optional',
-  UnknownKind = '$unknown',
-}
-export enum ICoreShapeInnerParameterNames {
-  ListInner = '$listItem',
-  NullableInner = '$nullableInner',
-  OptionalInner = '$optionalInner',
 }
 
 // Diff Types the UI Handles
