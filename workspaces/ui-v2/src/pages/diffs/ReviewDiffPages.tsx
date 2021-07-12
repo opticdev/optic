@@ -29,7 +29,6 @@ import {
 import { PageLayout } from '<src>/components';
 import { LoadingDiffReview } from '<src>/pages/diffs/components/LoadingDiffReview';
 import { useCapturesService } from '<src>/hooks/useCapturesHook';
-import { IRequestBody } from '<src>/types';
 import { IOpticDiffService } from '../../../../spectacle/build';
 import { useAnalytics } from '<src>/contexts/analytics';
 import { useSpectacleContext } from '<src>/contexts/spectacle-provider';
