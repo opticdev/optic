@@ -101,6 +101,49 @@
           }
         },
         "tags": []
+      },
+      {
+        "uuid": "id3",
+        "request": {
+          "host": "example.com",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": "status=closed"
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": "[]",
+              "asText": null
+            }
+          }
+        },
+        "tags": []
       }
     ]
   }

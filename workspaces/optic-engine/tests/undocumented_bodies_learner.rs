@@ -118,7 +118,7 @@ async fn requests_with_and_without_query_params() {
 
   let commands = endpoint_bodies.into_commands().collect::<Vec<_>>();
 
-  dbg!(&commands);
+  // dbg!(&commands);
 
   let _updated_spec = assert_valid_commands(spec, commands);
 
