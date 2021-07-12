@@ -1,11 +1,8 @@
 import { assign, Machine, spawn } from 'xstate';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
-import {
-  AddContributionType,
-  CQRSCommand,
-  IOpticConfigRepository,
-  IOpticDiffService,
-} from '@useoptic/spectacle';
+import { IOpticConfigRepository, IOpticDiffService } from '@useoptic/spectacle';
+import { AddContributionType, CQRSCommand } from '@useoptic/optic-domain';
+
 import { BodyShapeDiff, ParsedDiff } from '<src>/lib/parse-diff';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import { DiffSet } from '<src>/lib/diff-set';

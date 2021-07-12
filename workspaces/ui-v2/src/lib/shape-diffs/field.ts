@@ -19,7 +19,7 @@ import {
   FieldShapeFromShape,
   SetFieldShape,
   CQRSCommand,
-} from '@useoptic/spectacle';
+} from '@useoptic/optic-domain';
 
 export function fieldShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,

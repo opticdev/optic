@@ -1,5 +1,5 @@
-import { CQRSCommand, IOpticEngine } from '@useoptic/spectacle';
-import { IHttpInteraction } from '@useoptic/optic-domain';
+import { IOpticEngine } from '@useoptic/spectacle';
+import { CQRSCommand, IHttpInteraction } from '@useoptic/optic-domain';
 import { ICopy } from '<src>/pages/diffs/components/ICopyRender';
 import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
 import { DomainIdGenerator } from './domain-id-generator';

@@ -12,7 +12,7 @@ import {
   ProviderInShape,
   SetParameterShape,
   ShapeProvider,
-} from '@useoptic/spectacle';
+} from '@useoptic/optic-domain';
 
 export function builderInnerShapeFromChoices(
   choices: IPatchChoices,

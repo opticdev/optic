@@ -17,7 +17,7 @@ import {
   SetParameterShape,
   ShapeProvider,
   CQRSCommand,
-} from '@useoptic/spectacle';
+} from '@useoptic/optic-domain';
 
 export function listItemShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,

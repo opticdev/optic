@@ -19,7 +19,7 @@ import {
   SetQueryParametersShape,
   QueryParametersShapeDescriptor,
   CQRSCommand,
-} from '@useoptic/spectacle';
+} from '@useoptic/optic-domain';
 
 export function rootShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,
