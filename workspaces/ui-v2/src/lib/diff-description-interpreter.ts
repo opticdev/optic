@@ -58,14 +58,20 @@ export function descriptionForNewRegions(
   if (location.descriptor.type === 'query') {
     title = [plain('undocumented query parameters observed')];
   }
-  if (location.descriptor.type === 'request') {
+  if (
+    location.descriptor.type === 'request' ||
+    location.descriptor.type === 'path_request'
+  ) {
     title = [
       plain('undocumented'),
       code(location.descriptor.contentType),
       plain('request observed'),
     ];
   }
-  if (location.descriptor.type === 'response') {
+  if (
+    location.descriptor.type === 'response' ||
+    location.descriptor.type === 'path_response'
+  ) {
     title = [
       plain('undocumented'),
       code(location.descriptor.statusCode.toString()),

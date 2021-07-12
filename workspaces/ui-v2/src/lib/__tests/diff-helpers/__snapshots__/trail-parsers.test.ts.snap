@@ -279,8 +279,7 @@ exports[`accurate spec trail for all diffs: 8de10f26b6ef26ca-parsed-location 1`]
 Object {
   "descriptor": Object {
     "contentType": "application/json",
-    "requestId": undefined,
-    "type": "request",
+    "type": "path_request",
   },
   "method": "GET",
   "pathId": "path_it2OyjUysW",
@@ -330,8 +329,7 @@ exports[`accurate spec trail for all diffs: 9a9d4567077e6388-parsed-location 1`]
 Object {
   "descriptor": Object {
     "contentType": "application/json",
-    "requestId": undefined,
-    "type": "request",
+    "type": "path_request",
   },
   "method": "PATCH",
   "pathId": "path_it2OyjUysW",
@@ -456,8 +454,7 @@ exports[`accurate spec trail for all diffs: 92a6b20a0d317304-parsed-location 1`]
 Object {
   "descriptor": Object {
     "contentType": "application/json",
-    "requestId": undefined,
-    "type": "request",
+    "type": "path_request",
   },
   "method": "POST",
   "pathId": "path_UOIsxzICu5",
@@ -588,8 +585,7 @@ exports[`accurate spec trail for all diffs: 312f75a76267c7f2-parsed-location 1`]
 Object {
   "descriptor": Object {
     "contentType": "application/json",
-    "requestId": undefined,
-    "type": "request",
+    "type": "path_request",
   },
   "method": "GET",
   "pathId": "path_AsEexQkVwC",
@@ -638,8 +634,7 @@ exports[`accurate spec trail for all diffs: 3871874498eaa9f3-parsed-location 1`]
 Object {
   "descriptor": Object {
     "contentType": "application/json",
-    "requestId": undefined,
-    "type": "request",
+    "type": "path_request",
   },
   "method": "PATCH",
   "pathId": "path_it2OyjUysW",
@@ -688,8 +683,7 @@ exports[`accurate spec trail for all diffs: d44b141a1439cf3d-parsed-location 1`]
 Object {
   "descriptor": Object {
     "contentType": "application/json",
-    "requestId": undefined,
-    "type": "request",
+    "type": "path_request",
   },
   "method": "PATCH",
   "pathId": "path_it2OyjUysW",
@@ -734,9 +728,8 @@ exports[`accurate spec trail for all diffs: dc68f0f84b0bd1db-parsed-location 1`]
 Object {
   "descriptor": Object {
     "contentType": "application/json",
-    "responseId": undefined,
     "statusCode": 200,
-    "type": "response",
+    "type": "path_response",
   },
   "method": "GET",
   "pathId": "path_AsEexQkVwC",
@@ -782,9 +775,8 @@ exports[`accurate spec trail for all diffs: e958234709591c5f-parsed-location 1`]
 Object {
   "descriptor": Object {
     "contentType": "application/json",
-    "responseId": undefined,
     "statusCode": 200,
-    "type": "response",
+    "type": "path_response",
   },
   "method": "GET",
   "pathId": "path_it2OyjUysW",
@@ -905,9 +897,8 @@ exports[`accurate spec trail for all diffs: fe447736f416eac6-parsed-location 1`]
 Object {
   "descriptor": Object {
     "contentType": "application/json",
-    "responseId": undefined,
     "statusCode": 200,
-    "type": "response",
+    "type": "path_response",
   },
   "method": "POST",
   "pathId": "path_UOIsxzICu5",
@@ -955,9 +946,8 @@ exports[`accurate spec trail for all diffs: ffd0f3f68e0a185b-parsed-location 1`]
 Object {
   "descriptor": Object {
     "contentType": "application/json",
-    "responseId": undefined,
     "statusCode": 200,
-    "type": "response",
+    "type": "path_response",
   },
   "method": "PATCH",
   "pathId": "path_it2OyjUysW",
