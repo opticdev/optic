@@ -49,7 +49,7 @@ function summarizeTypes(shapes: IShapeRenderer[]) {
   }
 }
 
-interface IFieldDetails {
+export interface IFieldDetails {
   name: string;
   contribution: IContribution;
   shapes: IShapeRenderer[];
