@@ -68,7 +68,7 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
               <span className={classes.optional}> (optional) </span>
             )}
           </div>
-          <div>
+          <div className={classes.shapeContainer}>
             <ShapeRenderer showExamples={false} shape={field.shapeChoices} />
           </div>
         </div>
@@ -98,9 +98,13 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
     fontSize: theme.typography.fontSize - 1,
   },
+  shapeContainer: {
+    flexGrow: 1,
+  },
   optional: {
     fontSize: theme.typography.fontSize - 1,
     fontFamily: FontFamilyMono,
+    fontWeight: 400,
     color: '#a3acb9',
   },
   added: {

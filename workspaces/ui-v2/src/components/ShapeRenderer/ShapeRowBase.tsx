@@ -123,7 +123,6 @@ export const RenderRootShape = ({
   right?: any[];
 }) => {
   const { depth } = useDepth();
-  console.log(shape);
   return (
     <>
       <ShapeRowBase depth={depth}>
