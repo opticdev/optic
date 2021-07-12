@@ -164,12 +164,11 @@ Object {
       "diffHash": "8de10f26b6ef26ca",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inQuery": undefined,
-        "inRequest": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "requestId": undefined,
+          "type": "request",
         },
-        "inResponse": undefined,
         "method": "GET",
         "pathId": "path_it2OyjUysW",
       },
@@ -389,12 +388,11 @@ Object {
       "diffHash": "e958234709591c5f",
       "getJsonBodyToPreview": [Function],
       "location": Object {
-        "inQuery": undefined,
-        "inRequest": undefined,
-        "inResponse": Object {
+        "descriptor": Object {
           "contentType": "application/json",
           "responseId": undefined,
           "statusCode": 200,
+          "type": "response",
         },
         "method": "GET",
         "pathId": "path_it2OyjUysW",
