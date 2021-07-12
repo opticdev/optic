@@ -7,54 +7,54 @@ import { getEndpointId } from '<src>/utils';
 
 // TODO QPB - figure out a better way to keep this in sync with the local-cli status command
 export const AllEndpointsQuery = `{
-  requests {
-    id
-    pathId
-    absolutePathPatternWithParameterNames
-    pathComponents {
+    requests {
       id
-      name
-      isParameterized
-      contributions
+      pathId
+      absolutePathPatternWithParameterNames
+      pathComponents {
+        id
+        name
+        isParameterized
+        contributions
+        isRemoved
+      }
+      method
+      pathContributions
+      requestContributions
       isRemoved
-    }
-    method
-    pathContributions
-    requestContributions
-    isRemoved
-    query {
-      id
-      rootShapeId
-      isRemoved
-      contributions
-    }
-    bodies {
-      contentType
-      rootShapeId
-    }
-    responses {
-      id
-      statusCode
-      contributions
+      query {
+        id
+        rootShapeId
+        isRemoved
+        contributions
+      }
       bodies {
         contentType
         rootShapeId
       }
+      responses {
+        id
+        statusCode
+        contributions
+        bodies {
+          contentType
+          rootShapeId
+        }
+      }
     }
-  }
-}`;
+  }`;
 
 export const EndpointChangeQuery = `query X($sinceBatchCommitId: String) {
-  endpointChanges(sinceBatchCommitId: $sinceBatchCommitId) {
-    endpoints {
-      change {
-        category
+    endpointChanges(sinceBatchCommitId: $sinceBatchCommitId) {
+      endpoints {
+        change {
+          category
+        }
+        pathId
+        method
       }
-      pathId
-      method
     }
-  }
-}`;
+  }`;
 
 type EndpointChangelog = {
   change: {

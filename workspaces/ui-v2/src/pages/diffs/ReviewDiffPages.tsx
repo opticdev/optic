@@ -16,6 +16,7 @@ import { DiffUrlsPage } from './AddEndpointsPage';
 import { ReviewEndpointDiffContainer } from './ReviewEndpointDiffPage';
 import {
   diffActions,
+  pathsActions,
   selectors,
   useAppDispatch,
   useAppSelector,
@@ -28,14 +29,15 @@ import {
 import { PageLayout } from '<src>/components';
 import { LoadingDiffReview } from '<src>/pages/diffs/components/LoadingDiffReview';
 import { useCapturesService } from '<src>/hooks/useCapturesHook';
-import { usePaths } from '<src>/hooks/usePathsHook';
 import { IOpticDiffService } from '../../../../spectacle/build';
 import { useAnalytics } from '<src>/contexts/analytics';
+import { useSpectacleContext } from '<src>/contexts/spectacle-provider';
 
 export function DiffReviewPages(props: any) {
   const { match } = props;
   const { boundaryId } = match.params;
   const analytics = useAnalytics();
+  const spectacle = useSpectacleContext();
   const capturesService = useCapturesService();
   const [diffService, setDiffService] = useState<IOpticDiffService | null>(
     null
@@ -76,7 +78,15 @@ export function DiffReviewPages(props: any) {
       selectors.filterRemovedEndpoints(endpointsState.data?.endpoints || []),
     [endpointsState.data]
   );
-  const allPaths = usePaths();
+
+  useEffect(() => {
+    dispatch(
+      pathsActions.fetchPaths({
+        spectacle,
+      })
+    );
+  }, [dispatch, spectacle]);
+  const pathsState = useAppSelector((state) => state.paths.results);
 
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
   const diffReviewCapturePageLink = useDiffReviewCapturePageLink();
@@ -86,7 +96,7 @@ export function DiffReviewPages(props: any) {
   if (
     diffState.loading ||
     endpointsState.loading ||
-    allPaths.loading ||
+    pathsState.loading ||
     !diffService
   ) {
     return (
@@ -95,7 +105,7 @@ export function DiffReviewPages(props: any) {
       </PageLayout>
     );
   }
-  if (diffState.error || endpointsState.error) {
+  if (diffState.error || endpointsState.error || pathsState.error) {
     return <>error loading diff page</>;
   }
 
@@ -107,7 +117,7 @@ export function DiffReviewPages(props: any) {
       urls={diffState.data.urls}
       captureId={boundaryId}
       endpoints={filteredEndpoints}
-      allPaths={allPaths.paths}
+      allPaths={pathsState.data}
     >
       <Switch>
         <Route
