@@ -5,6 +5,7 @@ import classnames from 'classnames';
 
 import {
   FontFamily,
+  FontFamilyMono,
   AddedGreenBackground,
   ChangedYellowBackground,
   RemovedRedBackground,
@@ -61,7 +62,12 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
           ])}
           key={key}
         >
-          <div className={classes.queryKey}>{key}</div>
+          <div className={classes.queryKey}>
+            {key}
+            {!field.required && (
+              <span className={classes.optional}> (optional) </span>
+            )}
+          </div>
           <div>
             <ShapeRenderer showExamples={false} shape={field.shapeChoices} />
           </div>
@@ -91,6 +97,11 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: FontFamily,
     fontWeight: 600,
     fontSize: theme.typography.fontSize - 1,
+  },
+  optional: {
+    fontSize: theme.typography.fontSize - 1,
+    fontFamily: FontFamilyMono,
+    color: '#a3acb9',
   },
   added: {
     backgroundColor: `${AddedGreenBackground}`,
