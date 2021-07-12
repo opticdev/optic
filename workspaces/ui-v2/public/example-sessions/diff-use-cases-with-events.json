@@ -1916,6 +1916,229 @@
           "createdAt": "2020-10-20T20:51:53.435Z"
         }
       }
+    },
+    {
+      "BatchCommitStarted": {
+        "batchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+        "commitMessage": "Add query parameters base documentation",
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        },
+        "parentId": "c6cc38d3-f82f-445a-85b2-6acf2adafe27"
+      }
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "path_eulJB3n7aL",
+        "parentPathId": "root",
+        "name": "query-parameters",
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_qnVTAWYYIO",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_02dbuNtzOC",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_Vkms3ZVee1",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_GPEEdWqBwm",
+        "baseShapeId": "$optional",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_GPEEdWqBwm",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_02dbuNtzOC"
+              }
+            },
+            "consumingParameterId": "$optionalInner"
+          }
+        },
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_98oTZrVr8L",
+        "shapeId": "shape_Vkms3ZVee1",
+        "name": "author",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_98oTZrVr8L",
+            "shapeId": "shape_GPEEdWqBwm"
+          }
+        },
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_PIyMXNLjyw",
+        "shapeId": "shape_Vkms3ZVee1",
+        "name": "status",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_PIyMXNLjyw",
+            "shapeId": "shape_qnVTAWYYIO"
+          }
+        },
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
+    },
+    {
+      "QueryParametersAdded": {
+        "queryParametersId": "query_params_pBDjjZdu9q",
+        "httpMethod": "GET",
+        "pathId": "path_eulJB3n7aL",
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
+    },
+    {
+      "QueryParametersShapeSet": {
+        "queryParametersId": "query_params_pBDjjZdu9q",
+        "shapeDescriptor": {
+          "shapeId": "shape_Vkms3ZVee1",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_QnOwO82qzC",
+        "pathId": "path_eulJB3n7aL",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_FxTd5QDgHj",
+        "pathId": "path_eulJB3n7aL",
+        "httpMethod": "GET",
+        "httpStatusCode": 201,
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+        "eventContext": {
+          "clientId": "anon_id",
+          "clientSessionId": "83fa389c-0eab-4b22-861b-e9ea877c3cab",
+          "clientCommandBatchId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d",
+          "createdAt": "2021-07-12T12:03:24.891+02:00"
+        }
+      }
     }
   ],
   "session": {
@@ -3205,6 +3428,221 @@
               "shapeHashV1Base64": "CAEaHBINCgdhZGRyZXNzEgIIAhILCgVwcmljZRICCAMaHBINCgdhZGRyZXNzEgIIAhILCgVwcmljZRICCAM=",
               "asJsonString": "[{\"address\":\"123\",\"price\":657},{\"address\":\"456\",\"price\":322}]",
               "asText": "[{\"address\":\"123\",\"price\":657},{\"address\":\"456\",\"price\":322}]"
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "id31",
+        "request": {
+          "host": "example.com",
+          "method": "GET",
+          "path": "/query-parameters",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": "status=open&author=homer"
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 201,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "id32",
+        "request": {
+          "host": "example.com",
+          "method": "GET",
+          "path": "/query-parameters",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": "status=closed"
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 201,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "id33",
+        "request": {
+          "host": "example.com",
+          "method": "GET",
+          "path": "/query-parameters",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 201,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "id34",
+        "request": {
+          "host": "example.com",
+          "method": "GET",
+          "path": "/query-parameters",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": "status=closed&status=pending"
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 201,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "id35",
+        "request": {
+          "host": "example.com",
+          "method": "GET",
+          "path": "/query-parameters",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": "created_before=yesterday"
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 201,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
             }
           }
         },
