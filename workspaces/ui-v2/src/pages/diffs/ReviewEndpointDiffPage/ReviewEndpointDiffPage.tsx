@@ -127,17 +127,17 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
             updatedSpecChoices={(choices) => {
               setPreviewCommands(renderedDiff.toCommands(choices));
             }}
-            diffDescription={renderedDiff.diffDescription!}
-            handled={isDiffHandled(renderedDiff.diffDescription!.diffHash)}
+            diffDescription={renderedDiff.diffDescription}
+            handled={isDiffHandled(renderedDiff.diffDescription.diffHash)}
             previewTabs={renderedDiff.previewTabs}
             specChoices={renderedDiff.updateSpecChoices}
             approve={() => {
               approveCommandsForDiff(
-                renderedDiff.diffDescription!.diffHash,
+                renderedDiff.diffDescription.diffHash,
                 previewCommands
               );
               setCurrentIndex(
-                getNextIncompleteDiff(renderedDiff.diffDescription!.diffHash)
+                getNextIncompleteDiff(renderedDiff.diffDescription.diffHash)
               );
             }}
             ignore={() => {
