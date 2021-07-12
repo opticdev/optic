@@ -5,6 +5,7 @@ import { IForkableSpectacle } from '@useoptic/spectacle';
 import { ChangeType, IEndpoint } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
+// TODO QPB - figure out a better way to keep this in sync with the local-cli status command
 export const AllEndpointsQuery = `{
   requests {
     id

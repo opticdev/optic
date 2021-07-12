@@ -86,7 +86,6 @@ export function BuildSpecPatch({
               size="small"
               checked={selectedChoices && selectedChoices.includeNewBody}
               onChange={(event, checked) => {
-                console.log(checked);
                 updateNewBodyChoice(checked);
               }}
             />

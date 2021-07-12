@@ -5,6 +5,7 @@ import {
   ILearnedBodies,
   IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 import { endpoints, shapes } from '@useoptic/graph-lib';
 
 import { CQRSCommand } from './commands';
@@ -91,7 +92,10 @@ export interface StartDiffResult {
 export interface IOpticCapturesService {
   listCaptures(): Promise<ICapture[]>;
 
-  loadInteraction(captureId: string, pointer: string): Promise<any | undefined>;
+  loadInteraction(
+    captureId: string,
+    pointer: string
+  ): Promise<IHttpInteraction>;
 
   startDiff(diffId: string, captureId: string): Promise<StartDiffResult>;
 }

@@ -18,7 +18,7 @@ import { AddedGreen, secondary, ShapeViewerTheme } from '<src>/styles';
 
 WARNING: Lots of unconstrained types here from the JS -> Typescript port.
 
-We need to come back and remove `:any` once we have this working vertically. Worth the 1-2 hrs to keep this complex component maintainable.
+We need to come back and remove `:any` once we have this working vertically. Worth the 1-2 hrs to keep this complex component maintainable. +1
 
  */
 
@@ -758,13 +758,12 @@ function shapeRows(
       listRows(shape, diffTrails, rows, collapsedTrails, indent, field);
       break;
     default:
-      // debugger
       let type = getFieldType(shape);
       let row = createRow(
         {
           type,
           ...field,
-          fieldValue: field ? field.fieldValue : shape,
+          fieldValue: field && field.fieldValue ? field.fieldValue : shape,
           indent,
         },
         { diffTrails }

@@ -9,7 +9,7 @@ import {
 import { ParsedDiff } from './parse-diff';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { DiffTypes } from '@useoptic/cli-shared/build/diffs/diffs';
-import { IOpticDiffService } from '@useoptic/spectacle';
+import { CQRSCommand, IOpticDiffService } from '@useoptic/spectacle';
 import { code, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { descriptionForNewRegions } from '<src>/lib/diff-description-interpreter';
 
@@ -21,7 +21,8 @@ export async function newRegionInterpreters(
 ): Promise<IInterpretation | undefined> {
   if (
     diff.isA(DiffTypes.UnmatchedRequestBodyContentType) ||
-    diff.isA(DiffTypes.UnmatchedResponseBodyContentType)
+    diff.isA(DiffTypes.UnmatchedResponseBodyContentType) ||
+    diff.isA(DiffTypes.UnmatchedQueryParameters)
   ) {
     const location = diff.location(currentSpecContext);
     const { pathId, method } = location;
@@ -64,12 +65,7 @@ function newContentType(
     return {
       previewTabs: [
         {
-          allowsExpand: false,
           assertion: [],
-          ignoreRule: {
-            newBodyInRequest: location.inRequest,
-            diffHash: udiff.diffHash,
-          },
           interactionPointers: udiff.interactions,
           invalid: true,
           jsonTrailsByInteractions: {},
@@ -87,7 +83,7 @@ function newContentType(
           plain('Request'),
         ],
       },
-      toCommands(choices?: IPatchChoices): any[] {
+      toCommands(choices: IPatchChoices): CQRSCommand[] {
         if (choices?.includeNewBody) {
           return commands;
         } else return [];
@@ -120,12 +116,7 @@ function newContentType(
     return {
       previewTabs: [
         {
-          allowsExpand: false,
           assertion: [],
-          ignoreRule: {
-            newBodyInRequest: location.inRequest,
-            diffHash: udiff.diffHash,
-          },
           interactionPointers: udiff.interactions,
           invalid: true,
           jsonTrailsByInteractions: {},
@@ -145,7 +136,39 @@ function newContentType(
           plain('Response'),
         ],
       },
-      toCommands(choices?: IPatchChoices): any[] {
+      toCommands(choices: IPatchChoices): CQRSCommand[] {
+        if (choices?.includeNewBody) {
+          return commands;
+        } else return [];
+      },
+    };
+  } else if (udiff.isA(DiffTypes.UnmatchedQueryParameters)) {
+    const commands = learnedBodies.queryParameters
+      ? learnedBodies.queryParameters.commands
+      : [];
+    if (!learnedBodies.queryParameters) {
+      console.error(
+        `UnmatchedQueryParameters did not have a learnedBody for queryParameters`
+      );
+    }
+    return {
+      previewTabs: [
+        {
+          assertion: [],
+          interactionPointers: udiff.interactions,
+          invalid: true,
+          jsonTrailsByInteractions: {},
+          title: 'Query Parameters',
+        },
+      ],
+      diffDescription: descriptionForNewRegions(udiff, location),
+      updateSpecChoices: {
+        includeNewBody: true,
+        isNewRegionDiff: true,
+        shapes: [],
+        copy: [plain('Document Query Parameters')],
+      },
+      toCommands(choices: IPatchChoices): CQRSCommand[] {
         if (choices?.includeNewBody) {
           return commands;
         } else return [];

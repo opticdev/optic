@@ -110,7 +110,7 @@ export async function newRegionPreview(
     universe.currentSpecContext
   );
 
-  const commands = newRegion?.toCommands(newRegion?.updateSpecChoices);
+  const commands = newRegion?.toCommands(newRegion.updateSpecChoices);
   universe.forkSpectacleWithCommands(commands);
   return { newRegion, commands };
 }
@@ -173,7 +173,7 @@ export async function shapeDiffPreview(
     universe.currentSpecContext
   );
 
-  const commands = preview.toCommands(preview.updateSpecChoices!);
+  const commands = preview.toCommands(preview.updateSpecChoices);
 
   await universe.forkSpectacleWithCommands(commands);
 

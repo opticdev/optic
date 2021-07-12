@@ -29,7 +29,6 @@ import { PageLayout } from '<src>/components';
 import { LoadingDiffReview } from '<src>/pages/diffs/components/LoadingDiffReview';
 import { useCapturesService } from '<src>/hooks/useCapturesHook';
 import { usePaths } from '<src>/hooks/usePathsHook';
-import { IRequestBody } from '<src>/types';
 import { IOpticDiffService } from '../../../../spectacle/build';
 import { useAnalytics } from '<src>/contexts/analytics';
 
@@ -77,17 +76,6 @@ export function DiffReviewPages(props: any) {
       selectors.filterRemovedEndpoints(endpointsState.data?.endpoints || []),
     [endpointsState.data]
   );
-  const allRequests = useMemo(
-    () =>
-      filteredEndpoints
-        .flatMap((endpoint) => endpoint.requestBodies)
-        .filter((body) => !!body) as IRequestBody[], // cast to IRequestBody as filter removes non-null
-    [filteredEndpoints]
-  );
-  const allResponses = useMemo(
-    () => filteredEndpoints.flatMap((endpoint) => endpoint.responseBodies),
-    [filteredEndpoints]
-  );
   const allPaths = usePaths();
 
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
@@ -120,8 +108,6 @@ export function DiffReviewPages(props: any) {
       captureId={boundaryId}
       endpoints={filteredEndpoints}
       allPaths={allPaths.paths}
-      requests={allRequests}
-      responses={allResponses}
     >
       <Switch>
         <Route

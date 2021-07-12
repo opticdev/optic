@@ -59,7 +59,7 @@ export type ResponseNode = {
   isRemoved: boolean;
 };
 export type QueryParametersNode = {
-  queryParameterId: string;
+  queryParametersId: string;
   rootShapeId: string | null;
   httpMethod: string;
   isRemoved: boolean;

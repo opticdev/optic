@@ -1972,7 +1972,7 @@
     {
       "ShapeAdded": {
         "shapeId": "shape_qQT0krhOKn",
-        "baseShapeId": "$number",
+        "baseShapeId": "$string",
         "parameters": {
           "DynamicParameterList": {
             "shapeParameterIds": []
@@ -1991,7 +1991,7 @@
       "FieldAdded": {
         "fieldId": "field_hnI7P1UdbB",
         "shapeId": "shape_tNRgroSwLj",
-        "name": "age",
+        "name": "author",
         "shapeDescriptor": {
           "FieldShapeFromShape": {
             "fieldId": "field_hnI7P1UdbB",
@@ -2029,7 +2029,7 @@
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
-            "asText": null
+            "asText": "status=open&author=homer"
           },
           "headers": {
             "shapeHashV1Base64": null,
@@ -2674,7 +2674,7 @@
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
-            "asText": null
+            "asText": "author=richard_richardson&status=archived"
           },
           "headers": {
             "shapeHashV1Base64": null,

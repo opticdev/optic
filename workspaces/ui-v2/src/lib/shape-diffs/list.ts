@@ -16,6 +16,7 @@ import {
   ProviderInShape,
   SetParameterShape,
   ShapeProvider,
+  CQRSCommand,
 } from '@useoptic/spectacle';
 
 export function listItemShapeDiffInterpreter(
@@ -52,12 +53,7 @@ export function listItemShapeDiffInterpreter(
       previews.push({
         title: i.label,
         invalid: !expectedShapes.has(i.kind),
-        allowsExpand: true,
         interactionPointers: i.interactions,
-        ignoreRule: {
-          diffHash: shapeDiff.diffHash(),
-          examplesOfCoreShapeKinds: i.kind,
-        },
         assertion: [plain('expected'), code(expected.shapeName())],
         jsonTrailsByInteractions: i.jsonTrailsByInteractions,
       });
@@ -66,7 +62,7 @@ export function listItemShapeDiffInterpreter(
   ////////////////
   return {
     diffDescription: diffDescription,
-    toCommands(choices?: IPatchChoices): any[] {
+    toCommands(choices: IPatchChoices): CQRSCommand[] {
       if (!choices) {
         return [];
       }

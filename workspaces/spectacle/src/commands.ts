@@ -23,7 +23,8 @@ export type CQRSCommand =
   | SetResponseBodyShapeType
   | SetRequestBodyShapeType
   | AddResponseByPathAndMethodType
-  | PrunePathComponentsType;
+  | PrunePathComponentsType
+  | QueryParametersShapeDescriptor;
 
 export type AddShapeType = ReturnType<typeof AddShape>;
 export type AddQueryParametersType = ReturnType<typeof AddQueryParameters>;
@@ -42,6 +43,9 @@ export type AddContributionType = ReturnType<typeof AddContribution>;
 export type ShapedBodyDescriptorType = ReturnType<typeof ShapedBodyDescriptor>;
 export type SetQueryParameteresShapeType = ReturnType<
   typeof SetQueryParametersShape
+>;
+export type QueryParametersShapeDescriptor = ReturnType<
+  typeof QueryParametersShapeDescriptor
 >;
 export type SetResponseBodyShapeType = ReturnType<typeof SetResponseBodyShape>;
 export type SetRequestBodyShapeType = ReturnType<typeof SetRequestBodyShape>;
@@ -169,9 +173,20 @@ export function ShapedBodyDescriptor(
     isRemoved,
   };
 }
+
+export function QueryParametersShapeDescriptor(
+  shapeId: string,
+  isRemoved: boolean = false
+) {
+  return {
+    shapeId,
+    isRemoved,
+  };
+}
+
 export function SetQueryParametersShape(
   queryParametersId: string,
-  shapeDescriptor: any
+  shapeDescriptor: ReturnType<typeof QueryParametersShapeDescriptor>
 ) {
   return {
     SetQueryParametersShape: {
@@ -180,7 +195,11 @@ export function SetQueryParametersShape(
     },
   };
 }
-export function SetResponseBodyShape(responseId: string, bodyDescriptor: any) {
+
+export function SetResponseBodyShape(
+  responseId: string,
+  bodyDescriptor: ReturnType<typeof ShapedBodyDescriptor>
+) {
   return {
     SetResponseBodyShape: {
       responseId,
@@ -188,7 +207,10 @@ export function SetResponseBodyShape(responseId: string, bodyDescriptor: any) {
     },
   };
 }
-export function SetRequestBodyShape(requestId: string, bodyDescriptor: any) {
+export function SetRequestBodyShape(
+  requestId: string,
+  bodyDescriptor: ReturnType<typeof ShapedBodyDescriptor>
+) {
   return {
     SetRequestBodyShape: {
       requestId,

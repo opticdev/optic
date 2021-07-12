@@ -14,7 +14,7 @@ import {
 } from './SharedDiffState';
 import shortId from 'shortid';
 import { useMachine } from '@xstate/react';
-import { IEndpoint, IRequestBody, IResponseBody } from '<src>/types';
+import { IEndpoint } from '<src>/types';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import {
   AddContribution,
@@ -87,8 +87,6 @@ type ISharedDiffContext = {
 type SharedDiffStoreProps = {
   endpoints: IEndpoint[];
   captureId: string;
-  requests: IRequestBody[];
-  responses: IResponseBody[];
   allPaths: IPath[];
   diffs: ParsedDiff[];
   diffService: IOpticDiffService;
@@ -105,19 +103,11 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     () => ({
       currentSpecPaths: props.allPaths,
       currentSpecEndpoints: props.endpoints,
-      currentSpecRequests: props.requests,
-      currentSpecResponses: props.responses,
       domainIds: newRandomIdGenerator(),
       idGeneratorStrategy: 'random',
       opticEngine,
     }),
-    [
-      opticEngine,
-      props.allPaths,
-      props.endpoints,
-      props.requests,
-      props.responses,
-    ]
+    [opticEngine, props.allPaths, props.endpoints]
   );
 
   const [state, send]: any = useMachine(() =>
