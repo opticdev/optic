@@ -12,7 +12,9 @@ mod traverser;
 mod visitors;
 
 use result::InteractionTrail;
-pub use result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
+pub use result::{
+  BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult, UnmatchedQueryParameters,
+};
 use visitors::{InteractionVisitors, PathVisitor};
 
 /// Compute diffs based on a spec and an interaction.
@@ -90,6 +92,13 @@ pub fn diff(
       }
       _ => vec![result],
     })
+    .filter(|result| {
+      // filter out any left-over results that aren't for outside consumoption
+      !matches!(
+        result,
+        InteractionDiffResult::UnmatchedQueryParameters(UnmatchedQueryParameters::Unobserved(_)),
+      )
+    })
     .collect()
 }
 
@@ -139,7 +148,9 @@ pub fn analyze_undocumented_bodies<'a>(
   results.into_iter().flat_map(move |result| match result {
     InteractionDiffResult::UnmatchedQueryParameters(diff) => {
       if include_query_params {
-        let query_params = &interaction.request.query;
+        let maybe_query_params: Option<BodyDescriptor> = (&interaction.request.query).into();
+        let query_params = maybe_query_params.or_else(|| Some(BodyDescriptor::empty_object()));
+
         let query_trail_observations = observe_body_trails(query_params);
 
         vec![BodyAnalysisResult {

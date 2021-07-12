@@ -35,7 +35,7 @@ impl InteractionDiffResult {
 
   pub fn interaction_trail(&self) -> &InteractionTrail {
     match self {
-      InteractionDiffResult::UnmatchedQueryParameters(diff) => &diff.interaction_trail,
+      InteractionDiffResult::UnmatchedQueryParameters(diff) => diff.interaction_trail(),
       InteractionDiffResult::UnmatchedQueryParametersShape(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedRequestUrl(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => &diff.interaction_trail,
@@ -50,7 +50,7 @@ impl InteractionDiffResult {
 
   pub fn requests_trail(&self) -> &RequestSpecTrail {
     match self {
-      InteractionDiffResult::UnmatchedQueryParameters(diff) => &diff.requests_trail,
+      InteractionDiffResult::UnmatchedQueryParameters(diff) => diff.requests_trail(),
       InteractionDiffResult::UnmatchedQueryParametersShape(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedRequestUrl(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => &diff.requests_trail,
@@ -97,17 +97,50 @@ impl UnmatchedRequestUrl {
 
 #[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
-pub struct UnmatchedQueryParameters {
+pub struct UnmatchedQueryParametersDescriptor {
   pub interaction_trail: InteractionTrail,
   pub requests_trail: RequestSpecTrail,
 }
 
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
+#[serde(untagged)]
+pub enum UnmatchedQueryParameters {
+  Observed(UnmatchedQueryParametersDescriptor),
+
+  #[serde(skip)]
+  Unobserved(UnmatchedQueryParametersDescriptor),
+}
+
 impl UnmatchedQueryParameters {
-  pub fn new(interaction_trail: InteractionTrail, requests_trail: RequestSpecTrail) -> Self {
-    return UnmatchedQueryParameters {
+  pub fn new(
+    interaction_trail: InteractionTrail,
+    requests_trail: RequestSpecTrail,
+    was_observed: bool,
+  ) -> Self {
+    let descriptor = UnmatchedQueryParametersDescriptor {
       interaction_trail,
       requests_trail,
     };
+    if was_observed {
+      UnmatchedQueryParameters::Observed(descriptor)
+    } else {
+      UnmatchedQueryParameters::Unobserved(descriptor)
+    }
+  }
+
+  pub fn descriptor(&self) -> &UnmatchedQueryParametersDescriptor {
+    match self {
+      UnmatchedQueryParameters::Observed(descriptor) => descriptor,
+      UnmatchedQueryParameters::Unobserved(descriptor) => descriptor,
+    }
+  }
+
+  pub fn interaction_trail(&self) -> &InteractionTrail {
+    &self.descriptor().interaction_trail
+  }
+
+  pub fn requests_trail(&self) -> &RequestSpecTrail {
+    &self.descriptor().requests_trail
   }
 }
 
@@ -350,10 +383,11 @@ impl BodyAnalysisLocation {
 
 impl From<UnmatchedQueryParameters> for BodyAnalysisLocation {
   fn from(diff: UnmatchedQueryParameters) -> Self {
-    let interaction_trail = diff.interaction_trail;
+    let diff_descriptor = diff.descriptor();
+    let interaction_trail = &diff_descriptor.interaction_trail;
 
     Self::UnmatchedQueryParameters {
-      path_id: diff
+      path_id: diff_descriptor
         .requests_trail
         .get_path_id()
         .expect("UnmatchedQueryParameters implies request to have a known path")
