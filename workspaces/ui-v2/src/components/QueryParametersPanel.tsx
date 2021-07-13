@@ -69,7 +69,7 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
             )}
           </div>
           <div className={classes.shapeContainer}>
-            <ShapeRenderer showExamples={false} shape={field.shapeChoices} />
+            <ShapeRenderer showExamples={false} shapes={field.shapeChoices} />
           </div>
         </div>
       ))}
@@ -87,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
   },
   queryComponentContainer: {
     marginBottom: theme.spacing(1),
-    padding: theme.spacing(1, 0),
+    padding: theme.spacing(1),
     display: 'flex',
     '&:not(:first-child)': {
       borderTop: '1px solid #e4e8ed',
