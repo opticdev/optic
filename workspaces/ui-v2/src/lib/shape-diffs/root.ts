@@ -1,11 +1,10 @@
-import { BodyShapeDiff } from '../parse-diff';
+import { BodyShapeDiff, DiffLocation } from '../parse-diff';
 import { Actual, Expectation } from '../shape-diff-dsl-rust';
 import {
   CurrentSpecContext,
   IDiffDescription,
   IInteractionPreviewTab,
   IInterpretation,
-  IParsedLocation,
   IPatchChoices,
 } from '../Interfaces';
 import sortBy from 'lodash.sortby';
@@ -37,7 +36,7 @@ export function rootShapeDiffInterpreter(
     copy: [],
     shapes: [],
     isField: false,
-    isQueryParam: shapeDiff.location.descriptor.type === 'query',
+    isQueryParam: shapeDiff.location.isQueryParameter(),
   };
 
   if (isUnmatched) {
@@ -90,22 +89,29 @@ export function rootShapeDiffInterpreter(
 }
 
 function resetBaseShape(
-  location: IParsedLocation,
+  location: DiffLocation,
   newShapeId: string
 ): CQRSCommand | null {
-  if (location.descriptor.type === 'request') {
+  const requestDescriptor = location.getRequestDescriptor();
+  const responseDescriptor = location.getResponseDescriptor();
+  const queryParametersId = location.getQueryParametersId();
+  if (requestDescriptor && requestDescriptor.requestId) {
     return SetRequestBodyShape(
-      location.descriptor.requestId,
-      ShapedBodyDescriptor(location.descriptor.contentType, newShapeId, false)
+      requestDescriptor.requestId,
+      ShapedBodyDescriptor(requestDescriptor.contentType, newShapeId, false)
     );
-  } else if (location.descriptor.type === 'response') {
+  } else if (
+    responseDescriptor &&
+    responseDescriptor.responseId &&
+    responseDescriptor.contentType
+  ) {
     return SetResponseBodyShape(
-      location.descriptor.responseId,
-      ShapedBodyDescriptor(location.descriptor.contentType, newShapeId, false)
+      responseDescriptor.responseId,
+      ShapedBodyDescriptor(responseDescriptor.contentType, newShapeId, false)
     );
-  } else if (location.descriptor.type === 'query') {
+  } else if (queryParametersId) {
     return SetQueryParametersShape(
-      location.descriptor.queryParametersId,
+      queryParametersId,
       QueryParametersShapeDescriptor(newShapeId)
     );
   } else {

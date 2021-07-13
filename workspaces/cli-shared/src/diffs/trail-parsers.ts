@@ -19,6 +19,35 @@ type EndpointForTrails = {
   }[];
 };
 
+export type LocationDescriptor =
+  | {
+      type: 'request';
+      requestId: string;
+      contentType: string;
+    }
+  | {
+      type: 'response';
+      responseId: string;
+      contentType: string;
+      statusCode: number;
+    }
+  | {
+      type: 'query';
+      queryParametersId: string;
+    }
+  | {
+      type: 'path_request';
+      contentType: string;
+    }
+  | {
+      type: 'path_response';
+      statusCode: number;
+      contentType?: string; // TODO find out why contentType is nullable
+    }
+  | {
+      type: 'path_query';
+    };
+
 export function locationForTrails(
   trail: IRequestSpecTrail,
   interactionTrail: IInteractionTrail,
@@ -26,33 +55,7 @@ export function locationForTrails(
 ): {
   pathId: string;
   method: string;
-  descriptor:
-    | {
-        type: 'request';
-        requestId: string;
-        contentType: string;
-      }
-    | {
-        type: 'response';
-        responseId: string;
-        contentType: string;
-        statusCode: number;
-      }
-    | {
-        type: 'query';
-        queryParametersId: string;
-      }
-    // TODO figure out when path_request and path_response variants are generated
-    // These aren't currently handled by the UI
-    | {
-        type: 'path_request';
-        contentType: string;
-      }
-    | {
-        type: 'path_response';
-        statusCode: number;
-        contentType?: string; // TODO find out why contentType is nullable
-      };
+  descriptor: LocationDescriptor;
 } | null {
   if ('SpecRoot' in trail) {
     return null;
@@ -159,8 +162,13 @@ export function locationForTrails(
         },
       };
     } else {
-      console.error('SpecPath trail was not found in request or response');
-      return null;
+      return {
+        pathId,
+        method,
+        descriptor: {
+          type: 'path_query',
+        },
+      };
     }
   } else if ('SpecQueryParameters' in trail) {
     const { queryParametersId } = trail.SpecQueryParameters;

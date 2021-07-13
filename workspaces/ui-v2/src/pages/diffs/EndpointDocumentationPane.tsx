@@ -17,7 +17,7 @@ import {
 import { EndpointTOC } from '<src>/pages/docs/components/EndpointTOC';
 import { SubtleBlueBackground, FontFamily } from '<src>/styles';
 
-import { IParsedLocation } from '<src>/lib/Interfaces';
+import { DiffLocation } from '<src>/lib/parse-diff';
 import {
   HighlightedLocation,
   Location,
@@ -33,7 +33,7 @@ type EndpointDocumentationPaneProps = {
   pathId: string;
   lastBatchCommit?: string;
   highlightBodyChanges?: boolean;
-  highlightedLocation?: IParsedLocation;
+  highlightedLocation?: DiffLocation;
   renderHeader: () => ReactNode;
 };
 
