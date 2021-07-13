@@ -126,7 +126,8 @@ export function BuildSpecPatch({
             <FormControlLabel
               label={
                 <Typography variant="body1" className={classes.checkboxLabel}>
-                  this field is optional
+                  this {patchChoices.isQueryParam ? 'query parameter' : 'field'}{' '}
+                  is optional
                 </Typography>
               }
               labelPlacement="end"

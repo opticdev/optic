@@ -23,6 +23,7 @@ export interface IPatchChoices {
   isOptional?: boolean;
   shouldRemoveField?: boolean;
   isField?: boolean;
+  isQueryParam?: boolean;
   isShape?: boolean;
   includeNewBody?: boolean;
   isNewRegionDiff?: boolean;
