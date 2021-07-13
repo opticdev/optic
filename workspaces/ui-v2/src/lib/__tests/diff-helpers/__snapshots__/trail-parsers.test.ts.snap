@@ -66,7 +66,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: 2d026d49eaf0fa95-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "responseId": "response_dE2gzm1TWj",
@@ -144,7 +144,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: 4f2147e2d4a69bc0-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "responseId": "response_RkkvxIt2RG",
@@ -225,7 +225,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: 4fc531c016328e1-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "requestId": "request_gwQEFrHpO0",
@@ -276,7 +276,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: 8de10f26b6ef26ca-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "type": "path_request",
@@ -326,7 +326,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: 9a9d4567077e6388-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "type": "path_request",
@@ -401,7 +401,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: 22d96b2ef2dd13d0-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "requestId": "request_3kjV3YMXdP",
@@ -451,7 +451,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: 92a6b20a0d317304-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "type": "path_request",
@@ -531,7 +531,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: 92e989e4d821dcf1-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "responseId": "response_Zv48g7lL5e",
@@ -582,7 +582,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: 312f75a76267c7f2-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "type": "path_request",
@@ -631,7 +631,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: 3871874498eaa9f3-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "type": "path_request",
@@ -680,7 +680,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: d44b141a1439cf3d-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "type": "path_request",
@@ -725,7 +725,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: dc68f0f84b0bd1db-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "statusCode": 200,
@@ -772,7 +772,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: e958234709591c5f-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "statusCode": 200,
@@ -848,7 +848,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: f45959c6c23c8fc8-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "requestId": "request_SqY61Qc9Mi",
@@ -894,7 +894,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: fe447736f416eac6-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "statusCode": 200,
@@ -943,7 +943,7 @@ ParsedDiff {
 `;
 
 exports[`accurate spec trail for all diffs: ffd0f3f68e0a185b-parsed-location 1`] = `
-Object {
+DiffLocation {
   "descriptor": Object {
     "contentType": "application/json",
     "statusCode": 200,
