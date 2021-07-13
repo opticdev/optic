@@ -17,6 +17,6 @@ export const defaultIgnoreRules = [
 
 export const defaultIgnoreFile = `
 # Default Ignore Rules
-# Learn to configure your own at http://localhost:4000/docs/using/advanced-configuration#ignoring-api-paths
+# Learn to configure your own at http://localhost:4000/reference/optic-yaml/ignore
 ${defaultIgnoreRules.join('\n')}
 `.trim();
