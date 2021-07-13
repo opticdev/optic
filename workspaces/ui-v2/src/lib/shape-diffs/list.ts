@@ -3,8 +3,6 @@ import { BodyShapeDiff } from '../parse-diff';
 import { Actual, Expectation } from '../shape-diff-dsl-rust';
 import {
   CurrentSpecContext,
-  ICoreShapeInnerParameterNames,
-  ICoreShapeKinds,
   IDiffDescription,
   IInteractionPreviewTab,
   IInterpretation,
@@ -13,11 +11,13 @@ import {
 import { code, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { builderInnerShapeFromChoices } from './build-inner-shape';
 import {
+  ICoreShapeInnerParameterNames,
+  ICoreShapeKinds,
   ProviderInShape,
   SetParameterShape,
   ShapeProvider,
   CQRSCommand,
-} from '@useoptic/spectacle';
+} from '@useoptic/optic-domain';
 
 export function listItemShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,
@@ -32,6 +32,7 @@ export function listItemShapeDiffInterpreter(
     copy: [],
     shapes: [],
     isField: false,
+    isQueryParam: shapeDiff.location.descriptor.type === 'query',
   };
 
   if (isUnmatched) {

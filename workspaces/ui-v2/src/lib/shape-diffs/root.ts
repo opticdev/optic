@@ -19,7 +19,7 @@ import {
   SetQueryParametersShape,
   QueryParametersShapeDescriptor,
   CQRSCommand,
-} from '@useoptic/spectacle';
+} from '@useoptic/optic-domain';
 
 export function rootShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,
@@ -37,6 +37,7 @@ export function rootShapeDiffInterpreter(
     copy: [],
     shapes: [],
     isField: false,
+    isQueryParam: shapeDiff.location.descriptor.type === 'query',
   };
 
   if (isUnmatched) {

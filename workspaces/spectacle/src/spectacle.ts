@@ -15,7 +15,7 @@ import {
   getFieldChanges,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
-import { CQRSCommand } from './commands';
+import { CQRSCommand } from '@useoptic/optic-domain';
 import {
   IOpticContext,
   IOpticDiffService,

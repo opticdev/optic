@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { ShapeRenderStore } from './ShapeRenderContext';
-import { RenderRootShape } from './ShapeRowBase';
+import { RenderRootShape, OneOfRender } from './ShapeRowBase';
 import { IShapeRenderer } from './ShapeRenderInterfaces';
 
 type ShapeRendererProps = {
@@ -14,7 +14,11 @@ export const ShapeRenderer: FC<ShapeRendererProps> = ({
 }) => {
   return (
     <ShapeRenderStore showExamples={showExamples}>
-      <RenderRootShape shape={shape} />
+      {shape.length > 1 ? (
+        <OneOfRender shapes={shape} parentShapeId={'root'} />
+      ) : (
+        <RenderRootShape shape={shape} />
+      )}
     </ShapeRenderStore>
   );
 };

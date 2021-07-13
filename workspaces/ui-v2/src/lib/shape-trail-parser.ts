@@ -11,7 +11,7 @@ import {
 } from '@useoptic/cli-shared/build/diffs/shape-trail';
 import { JsonLike } from '<src>/components';
 import invariant from 'invariant';
-import { ICoreShapeKinds } from './Interfaces';
+import { ICoreShapeKinds } from '@useoptic/optic-domain';
 
 export interface IExpectationHelper {
   allowedCoreShapes: string[];

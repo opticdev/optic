@@ -1,13 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 import * as Sentry from '@sentry/react';
+import { IForkableSpectacle } from '@useoptic/spectacle';
+
 import {
   AddContribution,
   CQRSCommand,
-  IForkableSpectacle,
   PrunePathComponents,
-} from '@useoptic/spectacle';
-
+} from '@useoptic/optic-domain';
 import { RootState, AppDispatch } from '../root';
 import { getValidContributions } from '../selectors';
 

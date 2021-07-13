@@ -65,18 +65,12 @@ export const RenderField = ({
         <ShapeRowBase depth={depth} changes={changes}>
           <span className={sharedClasses.shapeFont}>"{name}"</span>
           <span className={sharedClasses.symbolFont}>: </span>
-          <RenderFieldLeadingValue
-            parentId={parentId}
-            shapeRenderers={shapeChoices}
-          />
+          <RenderFieldLeadingValue shapeRenderers={shapeChoices} />
           {!required && (
             <span className={sharedClasses.symbolFont}> (optional) </span>
           )}
         </ShapeRowBase>
-        <RenderFieldRowValues
-          parentId={parentId}
-          shapeRenderers={shapeChoices}
-        />
+        <RenderFieldRowValues shapeRenderers={shapeChoices} />
       </>
     );
   } else if (shapeChoices.length === 0) {
@@ -105,10 +99,7 @@ export const RenderField = ({
           <span className={sharedClasses.shapeFont}>"{name}"</span>
           <span className={sharedClasses.symbolFont}>: </span>
           {toRenderShape && (
-            <RenderFieldLeadingValue
-              parentId={parentId}
-              shapeRenderers={[toRenderShape]}
-            />
+            <RenderFieldLeadingValue shapeRenderers={[toRenderShape]} />
           )}
           {!required && (
             <span className={sharedClasses.symbolFont}> (optional) </span>
@@ -117,10 +108,7 @@ export const RenderField = ({
           <OneOfTabs {...tabprops} />
         </ShapeRowBase>
         {toRenderShape && (
-          <RenderFieldRowValues
-            parentId={parentId}
-            shapeRenderers={[toRenderShape]}
-          />
+          <RenderFieldRowValues shapeRenderers={[toRenderShape]} />
         )}
       </>
     );
@@ -138,7 +126,7 @@ export const RenderRootShape = ({
   return (
     <>
       <ShapeRowBase depth={depth}>
-        <RenderFieldLeadingValue shapeRenderers={shape} parentId={'root'} />
+        <RenderFieldLeadingValue shapeRenderers={shape} />
         {right ? (
           <>
             <div style={{ flex: 1 }} />
@@ -146,19 +134,17 @@ export const RenderRootShape = ({
           </>
         ) : null}
       </ShapeRowBase>
-      <RenderFieldRowValues shapeRenderers={shape} parentId={'root'} />
+      <RenderFieldRowValues shapeRenderers={shape} />
     </>
   );
 };
 
 type RenderFieldValueProps = {
-  parentId: string;
   shapeRenderers: IShapeRenderer[];
 };
 
 export const RenderFieldLeadingValue = ({
   shapeRenderers,
-  parentId,
 }: RenderFieldValueProps) => {
   const sharedClasses = useSharedStyles();
   const shape = shapeRenderers[0];

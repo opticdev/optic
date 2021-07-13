@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import FormControl from '@material-ui/core/FormControl';
+import { ICoreShapeKinds } from '@useoptic/optic-domain';
 import { ICopyRender } from './ICopyRender';
-import { ICoreShapeKinds, IPatchChoices } from '<src>/lib/Interfaces';
+import { IPatchChoices } from '<src>/lib/Interfaces';
 import { makeStyles } from '@material-ui/styles';
 import deepCopy from 'deepcopy';
 import {
@@ -116,7 +117,13 @@ export function BuildSpecPatch({
                 }
                 label={
                   <Typography variant="body1" className={classes.checkboxLabel}>
-                    {namerForOptions([shape.coreShapeKind]).toLowerCase()}
+                    {shape.coreShapeKind === ICoreShapeKinds.ListKind &&
+                    patchChoices &&
+                    patchChoices.isQueryParam ? (
+                      <>query parameter accepted multiple times</>
+                    ) : (
+                      namerForOptions([shape.coreShapeKind]).toLowerCase()
+                    )}
                   </Typography>
                 }
               />
@@ -126,7 +133,8 @@ export function BuildSpecPatch({
             <FormControlLabel
               label={
                 <Typography variant="body1" className={classes.checkboxLabel}>
-                  this field is optional
+                  {patchChoices.isQueryParam ? 'query parameter' : 'field'} is
+                  optional
                 </Typography>
               }
               labelPlacement="end"

@@ -4,12 +4,12 @@ import {
   ILearnedBodies,
   ILearnedBody,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IOpticDiffService } from '@useoptic/spectacle';
 import {
   AddContribution,
   AddRequest,
   CQRSCommand,
-  IOpticDiffService,
-} from '@useoptic/spectacle';
+} from '@useoptic/optic-domain';
 import { getEndpointId } from '<src>/utils';
 import { newRandomIdGenerator } from '<src>/lib/domain-id-generator';
 

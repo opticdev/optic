@@ -1,7 +1,8 @@
 import Tap from 'tap';
 import { InMemoryOpticContextBuilder } from '../src/in-memory';
+import { AddPathComponent } from '@useoptic/optic-domain';
 import * as opticEngine from '@useoptic/optic-engine-wasm';
-import { AddPathComponent, makeSpectacle } from '../src';
+import { makeSpectacle } from '../src';
 
 Tap.test(`wasm opticEngine can generate nanoid`, async (test) => {
   const result = opticEngine.next_nano_id('x');

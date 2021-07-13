@@ -1,4 +1,4 @@
-import { CQRSCommand } from '@useoptic/spectacle';
+import { CQRSCommand } from '@useoptic/optic-domain';
 import { IPendingEndpoint } from '<src>/pages/diffs/contexts/SharedDiffState';
 import { recomputePendingEndpointCommands } from '<src>/pages/diffs/contexts/LearnInitialBodiesMachine';
 

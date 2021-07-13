@@ -6,7 +6,8 @@ import {
 import sortBy from 'lodash.sortby';
 import equals from 'lodash.isequal';
 import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
-import { CurrentSpecContext, ICoreShapeKinds } from './Interfaces';
+import { ICoreShapeKinds } from '@useoptic/optic-domain';
+import { CurrentSpecContext } from './Interfaces';
 import {
   IExpectationHelper,
   shapeTrailParserLastId,
