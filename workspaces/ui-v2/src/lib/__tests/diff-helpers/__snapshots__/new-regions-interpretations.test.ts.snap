@@ -166,8 +166,7 @@ Object {
       "location": Object {
         "descriptor": Object {
           "contentType": "application/json",
-          "requestId": undefined,
-          "type": "request",
+          "type": "path_request",
         },
         "method": "GET",
         "pathId": "path_it2OyjUysW",
@@ -390,9 +389,8 @@ Object {
       "location": Object {
         "descriptor": Object {
           "contentType": "application/json",
-          "responseId": undefined,
           "statusCode": 200,
-          "type": "response",
+          "type": "path_response",
         },
         "method": "GET",
         "pathId": "path_it2OyjUysW",

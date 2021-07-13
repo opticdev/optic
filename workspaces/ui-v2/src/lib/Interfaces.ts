@@ -174,14 +174,6 @@ export const isBodyShapeDiff = (key: string): boolean =>
   allowedDiffTypes[key]?.isBodyShapeDiff;
 export const isDiffForKnownEndpoint = (key: string): boolean =>
   !allowedDiffTypes[key]?.unmatchedUrl;
-export const DiffInQuery = (key: string): boolean =>
-  allowedDiffTypes[key]?.inQuery;
-export const DiffInRequest = (key: string): boolean =>
-  allowedDiffTypes[key]?.inRequest;
-export const DiffInResponse = (key: string): boolean =>
-  allowedDiffTypes[key]?.inResponse;
-
-// The ones we like to work with in the UI
 
 export interface IParsedLocation {
   pathId: string;
@@ -201,6 +193,15 @@ export interface IParsedLocation {
         statusCode: number;
         contentType: string;
         responseId: string;
+      }
+    | {
+        type: 'path_request';
+        contentType: string;
+      }
+    | {
+        type: 'path_response';
+        statusCode: number;
+        contentType?: string;
       };
 }
 

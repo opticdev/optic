@@ -23,8 +23,6 @@ import {
   allowedDiffTypes,
   allowedDiffTypesKeys,
   CurrentSpecContext,
-  DiffInQuery,
-  DiffInRequest,
   IParsedLocation,
   isBodyShapeDiff,
 } from './Interfaces';
@@ -73,11 +71,7 @@ export class ParsedDiff {
   }
 
   affectsADocumentedEndpoint(currentSpecContext: CurrentSpecContext) {
-    const location = locationForTrails(
-      this.requestsTrail(),
-      this.interactionTrail(),
-      currentSpecContext.currentSpecEndpoints
-    );
+    const location = this.location(currentSpecContext);
     if (!location) {
       return false;
     }
@@ -97,35 +91,14 @@ export class ParsedDiff {
       currentSpecContext.currentSpecEndpoints
     );
 
-    invariant(
-      Boolean(location!.pathId),
-      'Diffs handled by the UI should have a known endpoint'
-    );
-
     if (!location) {
-      invariant(false, 'no location found for diff');
+      throw new Error('no location found for diff');
     }
 
     return {
       pathId: location.pathId,
       method: location.method,
-      descriptor: DiffInQuery(this.diffType)
-        ? {
-            type: 'query',
-            queryParametersId: location.queryParametersId!,
-          }
-        : DiffInRequest(this.diffType)
-        ? {
-            type: 'request',
-            contentType: location.contentType!,
-            requestId: location.requestId!,
-          }
-        : {
-            type: 'response',
-            statusCode: location.statusCode!,
-            contentType: location.contentType!,
-            responseId: location.responseId!,
-          },
+      descriptor: location.descriptor,
     };
   }
 

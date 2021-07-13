@@ -83,7 +83,7 @@ export function rootShapeDiffInterpreter(
 
       const resetShapeCommand = resetBaseShape(location, rootShapeId);
 
-      return [...commands, resetShapeCommand];
+      return resetShapeCommand ? [...commands, resetShapeCommand] : commands;
     },
     previewTabs: sortBy(previews, (i) => !i.invalid),
   };
@@ -92,7 +92,7 @@ export function rootShapeDiffInterpreter(
 function resetBaseShape(
   location: IParsedLocation,
   newShapeId: string
-): CQRSCommand {
+): CQRSCommand | null {
   if (location.descriptor.type === 'request') {
     return SetRequestBodyShape(
       location.descriptor.requestId,
@@ -103,11 +103,14 @@ function resetBaseShape(
       location.descriptor.responseId,
       ShapedBodyDescriptor(location.descriptor.contentType, newShapeId, false)
     );
-  } else {
-    // Through typescript inference we know the only other possible shape is a query parameter
+  } else if (location.descriptor.type === 'query') {
     return SetQueryParametersShape(
       location.descriptor.queryParametersId,
       QueryParametersShapeDescriptor(newShapeId)
     );
+  } else {
+    // path_request and path_response are invalid locations that I don't believe hit this path
+    console.error('Unknown location received', location);
+    return null;
   }
 }
