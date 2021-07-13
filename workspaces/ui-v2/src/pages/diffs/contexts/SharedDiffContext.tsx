@@ -16,12 +16,9 @@ import shortId from 'shortid';
 import { useMachine } from '@xstate/react';
 import { IEndpoint, IPath } from '<src>/types';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
-import {
-  AddContribution,
-  CQRSCommand,
-  IOpticDiffService,
-  IUnrecognizedUrl,
-} from '@useoptic/spectacle';
+import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
+import { AddContribution, CQRSCommand } from '@useoptic/optic-domain';
+
 import { newRandomIdGenerator } from '<src>/lib/domain-id-generator';
 import { ParsedDiff } from '<src>/lib/parse-diff';
 import { IAffordanceTrailsDiffHashMap } from '@useoptic/cli-shared/build/diffs/initial-types';

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import FormControl from '@material-ui/core/FormControl';
+import { ICoreShapeKinds } from '@useoptic/optic-domain';
 import { ICopyRender } from './ICopyRender';
-import { ICoreShapeKinds, IPatchChoices } from '<src>/lib/Interfaces';
+import { IPatchChoices } from '<src>/lib/Interfaces';
 import { makeStyles } from '@material-ui/styles';
 import deepCopy from 'deepcopy';
 import {

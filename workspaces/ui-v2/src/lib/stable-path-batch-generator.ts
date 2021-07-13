@@ -4,7 +4,7 @@ import {
   AddPathComponent,
   AddPathParameter,
   CQRSCommand,
-} from '@useoptic/spectacle';
+} from '@useoptic/optic-domain';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 
 export function generatePathCommands(

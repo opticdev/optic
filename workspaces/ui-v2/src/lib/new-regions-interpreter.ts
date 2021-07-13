@@ -9,7 +9,8 @@ import {
 import { ParsedDiff } from './parse-diff';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { DiffTypes } from '@useoptic/cli-shared/build/diffs/diffs';
-import { CQRSCommand, IOpticDiffService } from '@useoptic/spectacle';
+import { IOpticDiffService } from '@useoptic/spectacle';
+import { CQRSCommand } from '@useoptic/optic-domain';
 import { code, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { descriptionForNewRegions } from '<src>/lib/diff-description-interpreter';
 

@@ -3,7 +3,6 @@ import { Actual, Expectation } from '../shape-diff-dsl-rust';
 import sortBy from 'lodash.sortby';
 import {
   CurrentSpecContext,
-  ICoreShapeKinds,
   IDiffDescription,
   IInteractionPreviewTab,
   IInterpretation,
@@ -17,9 +16,10 @@ import { builderInnerShapeFromChoices } from './build-inner-shape';
 import {
   AddField,
   FieldShapeFromShape,
+  ICoreShapeKinds,
   SetFieldShape,
   CQRSCommand,
-} from '@useoptic/spectacle';
+} from '@useoptic/optic-domain';
 
 export function fieldShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,

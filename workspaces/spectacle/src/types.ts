@@ -5,10 +5,8 @@ import {
   ILearnedBodies,
   IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { IHttpInteraction } from '@useoptic/optic-domain';
+import { IHttpInteraction, CQRSCommand } from '@useoptic/optic-domain';
 import { endpoints, shapes } from '@useoptic/graph-lib';
-
-import { CQRSCommand } from './commands';
 import { ContributionsProjection } from './helpers';
 import { IOpticCommandContext } from './in-memory';
 
