@@ -144,6 +144,15 @@ export class OpticUIEvents {
     });
   }
 
+  // Temporary
+  // 2021/07/13- can remove 2021/10/13
+  queryParameterDocumented() {
+    this.dispatch({
+      type: 'query_parameter_documented',
+      data: {},
+    });
+  }
+
   // proposed
 
   // deprecated

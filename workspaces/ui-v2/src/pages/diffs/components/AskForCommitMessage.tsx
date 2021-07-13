@@ -91,6 +91,14 @@ export default function AskForCommitMessageDiffPage(props: {
           clientSessionId,
         },
       });
+
+      const hasQueryParametersDocumented = commands.some(
+        (command) => 'AddQueryParameters' in command
+      );
+      if (hasQueryParametersDocumented) {
+        analytics.queryParameterDocumented();
+      }
+
       analytics.userSavedChanges(
         pendingEndpointsCount,
         changedEndpointsCount,
