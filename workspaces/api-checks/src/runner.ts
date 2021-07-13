@@ -1,5 +1,5 @@
 import path from 'path';
-import Spectacle from './spectacle';
+import { Spectacle } from './spectacle';
 import {
   CheckFunction,
   EndpointChangeChecksOptions,

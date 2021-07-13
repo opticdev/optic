@@ -3,7 +3,7 @@ import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory
 import OpticEngine from '@useoptic/optic-engine-wasm';
 import { makeSpectacle } from '@useoptic/spectacle';
 
-export default class Spectacle {
+export class Spectacle {
   constructor(public spectacle: any) {}
 
   static async fromFile(filename: string) {

@@ -1,4 +1,4 @@
-import { CheckResults } from './endpoint-checks';
+import { CheckResults } from './runner';
 
 export function basicReport(results: CheckResults) {
   if (results.hasFailures()) {

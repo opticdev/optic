@@ -5,7 +5,7 @@
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build",
     "ws:test": "tap",
-    "test": "echo 'no tests'"
+    "test": "tap"
   },
   "repository": {
     "type": "git",
