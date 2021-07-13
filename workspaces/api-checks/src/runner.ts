@@ -73,14 +73,3 @@ export class CheckResults {
     return Boolean(this.results.length);
   }
 }
-
-// export function displayResults(results: CheckResults) {
-//   if (results.hasFailures()) {
-//     console.log('API checks failed');
-//     for (const result of results.all()) {
-//       console.log(`- ${result}`);
-//     }
-//   } else {
-//     console.log('Passes all design guidelines');
-//   }
-// }
