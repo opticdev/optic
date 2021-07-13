@@ -42,7 +42,7 @@ export type LocationDescriptor =
   | {
       type: 'path_response';
       statusCode: number;
-      contentType?: string; // TODO find out why contentType is nullable
+      contentType?: string; // Content type is nullable for responses without bodies
     }
   | {
       type: 'path_query';
