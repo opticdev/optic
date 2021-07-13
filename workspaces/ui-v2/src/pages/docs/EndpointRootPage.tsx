@@ -268,23 +268,26 @@ export const EndpointRootPage: FC<
                   rootShapeId={thisEndpoint.query.rootShapeId}
                   endpointId={endpointId}
                 >
-                  {(contributions) => (
+                  {(fields) => (
                     <ContributionsList
-                      renderContribution={(contribution) => (
+                      renderField={(field) => (
                         <DocsFieldOrParameterContribution
-                          key={contribution.id}
+                          key={
+                            field.contribution.id +
+                            field.contribution.contributionKey
+                          }
                           endpoint={{
                             pathId,
                             method,
                           }}
-                          id={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          initialValue={contribution.value}
+                          name={field.name}
+                          shapes={field.shapes}
+                          depth={field.depth}
+                          id={field.contribution.id}
+                          initialValue={field.contribution.value}
                         />
                       )}
-                      contributions={contributions}
+                      fieldDetails={fields}
                     />
                   )}
                 </ContributionFetcher>
@@ -323,23 +326,26 @@ export const EndpointRootPage: FC<
                   rootShapeId={requestBody.rootShapeId}
                   endpointId={endpointId}
                 >
-                  {(contributions) => (
+                  {(fields) => (
                     <ContributionsList
-                      renderContribution={(contribution) => (
+                      renderField={(field) => (
                         <DocsFieldOrParameterContribution
-                          key={contribution.id}
+                          key={
+                            field.contribution.id +
+                            field.contribution.contributionKey
+                          }
                           endpoint={{
                             pathId,
                             method,
                           }}
-                          id={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          initialValue={contribution.value}
+                          name={field.name}
+                          shapes={field.shapes}
+                          depth={field.depth}
+                          id={field.contribution.id}
+                          initialValue={field.contribution.value}
                         />
                       )}
-                      contributions={contributions}
+                      fieldDetails={fields}
                     />
                   )}
                 </ContributionFetcher>
@@ -382,23 +388,26 @@ export const EndpointRootPage: FC<
                     rootShapeId={responseBody.rootShapeId}
                     endpointId={endpointId}
                   >
-                    {(contributions) => (
+                    {(fields) => (
                       <ContributionsList
-                        renderContribution={(contribution) => (
+                        renderField={(field) => (
                           <DocsFieldOrParameterContribution
-                            key={contribution.id}
+                            key={
+                              field.contribution.id +
+                              field.contribution.contributionKey
+                            }
                             endpoint={{
                               pathId,
                               method,
                             }}
-                            id={contribution.id}
-                            name={contribution.name}
-                            shapes={contribution.shapes}
-                            depth={contribution.depth}
-                            initialValue={contribution.value}
+                            name={field.name}
+                            shapes={field.shapes}
+                            depth={field.depth}
+                            id={field.contribution.id}
+                            initialValue={field.contribution.value}
                           />
                         )}
-                        contributions={contributions}
+                        fieldDetails={fields}
                       />
                     )}
                   </ContributionFetcher>

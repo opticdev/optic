@@ -188,18 +188,21 @@ const ChangelogRootComponent: FC<
                   endpointId={endpointId}
                   changesSinceBatchCommit={batchId}
                 >
-                  {(contributions) => (
+                  {(fields) => (
                     <ContributionsList
-                      renderContribution={(contribution) => (
+                      renderField={(field) => (
                         <FieldOrParameter
-                          key={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          value={contribution.value}
+                          key={
+                            field.contribution.id +
+                            field.contribution.contributionKey
+                          }
+                          name={field.name}
+                          shapes={field.shapes}
+                          depth={field.depth}
+                          value={field.contribution.value}
                         />
                       )}
-                      contributions={contributions}
+                      fieldDetails={fields}
                     />
                   )}
                 </ContributionFetcher>
@@ -240,18 +243,21 @@ const ChangelogRootComponent: FC<
                   endpointId={endpointId}
                   changesSinceBatchCommit={batchId}
                 >
-                  {(contributions) => (
+                  {(fields) => (
                     <ContributionsList
-                      renderContribution={(contribution) => (
+                      renderField={(field) => (
                         <FieldOrParameter
-                          key={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          value={contribution.value}
+                          key={
+                            field.contribution.id +
+                            field.contribution.contributionKey
+                          }
+                          name={field.name}
+                          shapes={field.shapes}
+                          depth={field.depth}
+                          value={field.contribution.value}
                         />
                       )}
-                      contributions={contributions}
+                      fieldDetails={fields}
                     />
                   )}
                 </ContributionFetcher>
@@ -294,18 +300,21 @@ const ChangelogRootComponent: FC<
                   endpointId={endpointId}
                   changesSinceBatchCommit={batchId}
                 >
-                  {(contributions) => (
+                  {(fields) => (
                     <ContributionsList
-                      renderContribution={(contribution) => (
+                      renderField={(field) => (
                         <FieldOrParameter
-                          key={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          value={contribution.value}
+                          key={
+                            field.contribution.id +
+                            field.contribution.contributionKey
+                          }
+                          name={field.name}
+                          shapes={field.shapes}
+                          depth={field.depth}
+                          value={field.contribution.value}
                         />
                       )}
-                      contributions={contributions}
+                      fieldDetails={fields}
                     />
                   )}
                 </ContributionFetcher>
