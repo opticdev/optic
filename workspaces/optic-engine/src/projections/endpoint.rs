@@ -202,6 +202,33 @@ impl EndpointProjection {
     query_params_descriptor.shape = Some(shape_descriptor);
   }
 
+  pub fn without_query_parameters(&mut self, query_parameters_id: QueryParametersId) {
+    let query_params_node_index = *self
+      .node_id_to_index
+      .get(&query_parameters_id)
+      .expect("expected query_parameters_id to have a corresponding node");
+
+    let method_parent_edge_index = self
+      .graph
+      .edges_directed(query_params_node_index, petgraph::Direction::Outgoing)
+      .find(|parent_edge| {
+        let parent_node_index = parent_edge.target();
+        let node = self.graph.node_weight(parent_node_index);
+        matches!(node, Some(Node::HttpMethod(_)))
+      })
+      .map(|parent_edge| parent_edge.id());
+
+    if let Some(method_parent_edge_index) = method_parent_edge_index {
+      self.graph.remove_edge(method_parent_edge_index); // prevents query to be resolved from path node
+    }
+    self.node_id_to_index.remove(&query_parameters_id); // prevents query node to be looked up by query id
+
+    // GOTCHA: we're not deleting the query node itself, as that would invalidate self.node_id_to_index
+    // as the graph indexes shift.
+    // TODO: figure out the implications of the above, like correctness of queries and
+    // eventual garbage collection.
+  }
+
   pub fn with_request(
     &mut self,
     path_id: PathComponentId,
@@ -725,6 +752,9 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
       }
       EndpointEvent::QueryParametersShapeSet(e) => {
         aggregate.with_query_parameters_shape(e.query_parameters_id, e.shape_descriptor);
+      }
+      EndpointEvent::QueryParametersRemoved(e) => {
+        aggregate.without_query_parameters(e.query_parameters_id);
       }
       EndpointEvent::RequestAdded(e) => {
         aggregate.with_request(e.path_id, e.http_method, e.request_id);

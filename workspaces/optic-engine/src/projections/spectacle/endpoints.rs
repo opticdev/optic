@@ -107,38 +107,38 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
       EndpointEvent::PathComponentAdded(e) => {
         projection.with_path_component(e.parent_path_id, e.path_id.clone(), e.name);
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.path_id);
+          projection.with_creation_history(c.client_command_batch_id, e.path_id);
         }
       }
       EndpointEvent::PathComponentRemoved(e) => {
         projection.without_path_component(&e.path_id);
         if let Some(c) = e.event_context {
-          projection.with_remove_history(&c.client_command_batch_id, &e.path_id);
+          projection.with_remove_history(c.client_command_batch_id, e.path_id);
         }
       }
       EndpointEvent::PathParameterAdded(e) => {
         projection.with_path_parameter(e.parent_path_id, e.path_id.clone(), e.name);
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.path_id);
+          projection.with_creation_history(c.client_command_batch_id, e.path_id);
         }
       }
       EndpointEvent::PathParameterRemoved(e) => {
         projection.without_path_component(&e.path_id);
         if let Some(c) = e.event_context {
-          projection.with_remove_history(&c.client_command_batch_id, &e.path_id);
+          projection.with_remove_history(c.client_command_batch_id, e.path_id);
         }
       }
       EndpointEvent::RequestAdded(e) => {
         projection.with_request(e.request_id.clone(), e.path_id, e.http_method);
 
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.request_id);
+          projection.with_creation_history(c.client_command_batch_id, e.request_id);
         }
       }
       EndpointEvent::RequestRemoved(e) => {
         projection.without_request(&e.request_id);
         if let Some(c) = e.event_context {
-          projection.with_remove_history(&c.client_command_batch_id, &e.request_id);
+          projection.with_remove_history(c.client_command_batch_id, e.request_id);
         }
       }
       EndpointEvent::ResponseAddedByPathAndMethod(e) => {
@@ -150,13 +150,13 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         );
 
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.response_id);
+          projection.with_creation_history(c.client_command_batch_id, e.response_id);
         }
       }
       EndpointEvent::ResponseRemoved(e) => {
         projection.without_response(&e.response_id);
         if let Some(c) = e.event_context {
-          projection.with_remove_history(&c.client_command_batch_id, &e.response_id);
+          projection.with_remove_history(c.client_command_batch_id, e.response_id);
         }
       }
       EndpointEvent::RequestBodySet(e) => {
@@ -168,14 +168,24 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         );
 
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.body_descriptor.shape_id);
+          projection.with_creation_history(c.client_command_batch_id, e.body_descriptor.shape_id);
         }
       }
       EndpointEvent::QueryParametersAdded(e) => {
-        projection.with_query_parameters(e.path_id, e.http_method, e.query_parameters_id)
+        projection.with_query_parameters(e.path_id, e.http_method, e.query_parameters_id);
       }
       EndpointEvent::QueryParametersShapeSet(e) => {
-        projection.with_query_parameters_shape(e.query_parameters_id, e.shape_descriptor);
+        projection.with_query_parameters_shape(e.query_parameters_id.clone(), e.shape_descriptor);
+        // We treat the query parameter only as created when there is a shape attached to it
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(c.client_command_batch_id, e.query_parameters_id);
+        }
+      }
+      EndpointEvent::QueryParametersRemoved(e) => {
+        projection.without_query_parameters(&e.query_parameters_id);
+        if let Some(c) = e.event_context {
+          projection.with_remove_history(c.client_command_batch_id, e.query_parameters_id);
+        }
       }
       EndpointEvent::ResponseBodySet(e) => {
         //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (response_id, http_content_type)
@@ -186,7 +196,7 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         );
 
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.body_descriptor.shape_id);
+          projection.with_creation_history(c.client_command_batch_id, e.body_descriptor.shape_id);
         }
       }
       _ => eprintln!(
@@ -472,10 +482,24 @@ impl EndpointsProjection {
       .expect("expected node with domain_id $request_id to exist in the graph");
 
     if let Some(Node::QueryParameters(query_node)) = self.graph.node_weight_mut(query_index) {
-      query_node.root_shape_id = Some(shape_descriptor.shape_id);
+      query_node.root_shape_id = Some(shape_descriptor.shape_id.clone());
       query_node.is_removed = shape_descriptor.is_removed;
     }
   }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  pub fn without_query_parameters(&mut self, query_parameters_id: &QueryParametersId) {
+    let query_parameters_index = *self
+      .domain_id_to_index
+      .get(query_parameters_id)
+      .expect("expected node with domain_id $path_id to exist in the graph");
+
+    if let Some(Node::QueryParameters(query_node)) =
+      self.graph.node_weight_mut(query_parameters_index)
+    {
+      query_node.is_removed = true;
+    }
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_response_body(
     &mut self,
@@ -515,13 +539,13 @@ impl EndpointsProjection {
     let node_index = self.graph.add_node(node);
     self.domain_id_to_index.insert(batch_id, node_index);
   }
-  pub fn with_creation_history(&mut self, batch_id: &str, created_node_id: &str) {
+  pub fn with_creation_history(&mut self, batch_id: String, created_node_id: String) {
     let created_node_index = self
       .domain_id_to_index
-      .get(created_node_id)
+      .get(&created_node_id)
       .expect("expected created_node_id to exist");
 
-    let batch_node_index_option = self.domain_id_to_index.get(batch_id);
+    let batch_node_index_option = self.domain_id_to_index.get(&batch_id);
 
     if let Some(batch_node_index) = batch_node_index_option {
       self
@@ -531,13 +555,13 @@ impl EndpointsProjection {
       eprintln!("bad implicit batch id {}", &batch_id);
     }
   }
-  pub fn with_update_history(&mut self, batch_id: &str, updated_node_id: &str) {
+  pub fn with_update_history(&mut self, batch_id: String, updated_node_id: String) {
     let updated_node_index = self
       .domain_id_to_index
-      .get(updated_node_id)
+      .get(&updated_node_id)
       .expect("expected updated_node_id to exist");
 
-    let batch_node_index_option = self.domain_id_to_index.get(batch_id);
+    let batch_node_index_option = self.domain_id_to_index.get(&batch_id);
 
     if let Some(batch_node_index) = batch_node_index_option {
       self
@@ -547,13 +571,13 @@ impl EndpointsProjection {
       eprintln!("bad implicit batch id {}", &batch_id);
     }
   }
-  pub fn with_remove_history(&mut self, batch_id: &str, removed_node_id: &str) {
+  pub fn with_remove_history(&mut self, batch_id: String, removed_node_id: String) {
     let removed_node_index = self
       .domain_id_to_index
-      .get(removed_node_id)
+      .get(&removed_node_id)
       .expect("expected removed_node_id to exist");
 
-    let batch_node_index_option = self.domain_id_to_index.get(batch_id);
+    let batch_node_index_option = self.domain_id_to_index.get(&batch_id);
 
     if let Some(batch_node_index) = batch_node_index_option {
       self
