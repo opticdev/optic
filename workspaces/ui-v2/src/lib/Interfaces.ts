@@ -7,6 +7,7 @@ import {
 import { ICopy } from '<src>/pages/diffs/components/ICopyRender';
 import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
 import { DomainIdGenerator } from './domain-id-generator';
+import { DiffLocation } from './parse-diff';
 import { IEndpoint } from '<src>/types';
 
 export interface IInterpretation {
@@ -49,7 +50,7 @@ export interface BodyPreview {
 export interface IDiffDescription {
   title: ICopy[];
   assertion: ICopy[];
-  location: IParsedLocation;
+  location: DiffLocation;
   changeType: IChangeType;
   getJsonBodyToPreview: (interaction: IHttpInteraction) => BodyPreview;
   unknownDiffBehavior?: boolean;
@@ -174,36 +175,6 @@ export const isBodyShapeDiff = (key: string): boolean =>
   allowedDiffTypes[key]?.isBodyShapeDiff;
 export const isDiffForKnownEndpoint = (key: string): boolean =>
   !allowedDiffTypes[key]?.unmatchedUrl;
-
-export interface IParsedLocation {
-  pathId: string;
-  method: string;
-  descriptor:
-    | {
-        type: 'query';
-        queryParametersId: string;
-      }
-    | {
-        type: 'request';
-        requestId: string;
-        contentType: string;
-      }
-    | {
-        type: 'response';
-        statusCode: number;
-        contentType: string;
-        responseId: string;
-      }
-    | {
-        type: 'path_request';
-        contentType: string;
-      }
-    | {
-        type: 'path_response';
-        statusCode: number;
-        contentType?: string;
-      };
-}
 
 ///////////////////////////////////////
 export type CurrentSpecContext = {

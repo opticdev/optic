@@ -18,16 +18,19 @@ export function DiffLinks({
     <List>
       {allDiffs.map((diff, i) => {
         const { location, diffHash, title } = diff.diffDescription;
+        const isQueryParameter = location.isQueryParameter();
+        const requestDescriptor = location.getRequestDescriptor();
+        const responseDescriptor = location.getResponseDescriptor();
 
         return (
           <React.Fragment key={diffHash}>
             <ListSubheader className={classes.locationHeader}>
-              {location.descriptor.type === 'query'
+              {isQueryParameter
                 ? 'Query Parameters'
-                : location.descriptor.type === 'request'
-                ? `Request Body ${location.descriptor.contentType}`
-                : location.descriptor.type === 'response'
-                ? `${location.descriptor.statusCode} Response ${location.descriptor.contentType}`
+                : requestDescriptor
+                ? `Request Body ${requestDescriptor.contentType}`
+                : responseDescriptor
+                ? `${responseDescriptor.statusCode} Response ${responseDescriptor.contentType}`
                 : 'Unknown location'}
             </ListSubheader>
             <ListItem button onClick={() => setSelectedDiff(i)}>

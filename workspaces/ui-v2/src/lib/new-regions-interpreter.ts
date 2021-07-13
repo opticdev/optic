@@ -3,10 +3,9 @@ import * as Sentry from '@sentry/react';
 import {
   CurrentSpecContext,
   IInterpretation,
-  IParsedLocation,
   IPatchChoices,
 } from './Interfaces';
-import { ParsedDiff } from './parse-diff';
+import { ParsedDiff, DiffLocation } from './parse-diff';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { DiffTypes } from '@useoptic/cli-shared/build/diffs/diffs';
 import { IOpticDiffService } from '@useoptic/spectacle';
@@ -40,15 +39,12 @@ export async function newRegionInterpreters(
 // TODO QPB - move IInterpretation generation into ParsedDiff
 function newContentType(
   udiff: ParsedDiff,
-  location: IParsedLocation,
+  location: DiffLocation,
   learnedBodies: ILearnedBodies
 ): IInterpretation {
   if (udiff.isA(DiffTypes.UnmatchedRequestBodyContentType)) {
-    const contentType =
-      location.descriptor.type === 'request' ||
-      location.descriptor.type === 'path_request'
-        ? location.descriptor.contentType
-        : '';
+    const requestDescriptor = location.getRequestDescriptor();
+    const contentType = requestDescriptor ? requestDescriptor.contentType : '';
     const learnedRequestBody = learnedBodies.requests.find(
       (i) => i.contentType === contentType
     );
@@ -97,14 +93,13 @@ function newContentType(
       },
     };
   } else if (udiff.isA(DiffTypes.UnmatchedResponseBodyContentType)) {
-    const { contentType, statusCode } =
-      location.descriptor.type === 'response' ||
-      location.descriptor.type === 'path_response'
-        ? location.descriptor
-        : {
-            contentType: '',
-            statusCode: 0,
-          };
+    const responseDescriptor = location.getResponseDescriptor();
+    const { contentType, statusCode } = responseDescriptor
+      ? responseDescriptor
+      : {
+          contentType: '',
+          statusCode: 0,
+        };
     //learn status code too.... currently missing
     const learnedResponseBody = learnedBodies.responses.find(
       (i) => i.contentType === contentType && i.statusCode === statusCode

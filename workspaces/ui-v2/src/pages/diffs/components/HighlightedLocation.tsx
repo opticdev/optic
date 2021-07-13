@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { IParsedLocation } from '../../../lib/Interfaces';
+import { DiffLocation } from '<src>/lib/parse-diff';
 import { OpticBlueReadable, SubtleBlueBackground } from '<src>/styles';
 //@ts-ignore
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
@@ -8,19 +8,19 @@ import classnames from 'classnames';
 
 type IHighlightedLocation =
   | {
-      targetLocation?: IParsedLocation;
+      targetLocation?: DiffLocation;
       statusCode?: undefined;
       contentType?: undefined;
       expectedLocation: Location.Query;
     }
   | {
-      targetLocation?: IParsedLocation;
+      targetLocation?: DiffLocation;
       statusCode?: undefined;
       contentType: string;
       expectedLocation: Location.Request;
     }
   | {
-      targetLocation?: IParsedLocation;
+      targetLocation?: DiffLocation;
       statusCode: number;
       contentType: string;
       expectedLocation: Location.Response;
@@ -45,17 +45,18 @@ export const HighlightedLocation: FC<
     switch (props.expectedLocation) {
       case Location.Request:
         return (
-          targetLocation.descriptor.type === 'request' &&
-          targetLocation.descriptor.contentType === props.contentType
+          targetLocation.getRequestDescriptor()?.contentType ===
+          props.contentType
         );
       case Location.Response:
         return (
-          targetLocation.descriptor.type === 'response' &&
-          targetLocation.descriptor.contentType === props.contentType &&
-          targetLocation.descriptor.statusCode === props.statusCode
+          targetLocation.getResponseDescriptor()?.contentType ===
+            props.contentType &&
+          targetLocation.getResponseDescriptor()?.statusCode ===
+            props.statusCode
         );
       case Location.Query:
-        return targetLocation.descriptor.type === 'query';
+        return targetLocation.isQueryParameter();
       default:
         return false;
     }

@@ -46,7 +46,7 @@ export function fieldShapeDiffInterpreter(
     copy: [],
     shapes: [],
     isField: true,
-    isQueryParam: shapeDiff.location.descriptor.type === 'query',
+    isQueryParam: shapeDiff.location.isQueryParameter(),
   };
 
   // field is in the spec, the value was not what we expected to see

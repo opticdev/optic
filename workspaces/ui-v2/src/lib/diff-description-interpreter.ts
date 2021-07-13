@@ -1,10 +1,9 @@
-import { BodyShapeDiff, ParsedDiff } from './parse-diff';
+import { BodyShapeDiff, ParsedDiff, DiffLocation } from './parse-diff';
 import {
   BodyPreview,
   CurrentSpecContext,
   IChangeType,
   IDiffDescription,
-  IParsedLocation,
 } from './Interfaces';
 import { getExpectationsForShapeTrail } from './shape-diff-dsl-rust';
 import { code, ICopy, plain } from '<src>/pages/diffs/components/ICopyRender';
@@ -13,15 +12,13 @@ import { IHttpInteraction } from '@useoptic/optic-domain';
 import { toJsonExample } from '@useoptic/shape-hash';
 
 const getJsonBodyToPreview = (
-  location: IParsedLocation,
+  location: DiffLocation,
   interaction: IHttpInteraction
 ): BodyPreview => {
   const body =
-    (location.descriptor.type === 'query' && interaction.request.query) ||
-    (location.descriptor.type === 'request' &&
-      interaction.request.body.value) ||
-    (location.descriptor.type === 'response' &&
-      interaction.response.body.value);
+    (location.isQueryParameter() && interaction.request.query) ||
+    (location.isRequest() && interaction.request.body.value) ||
+    (location.isResponse() && interaction.response.body.value);
 
   if (body) {
     const { shapeHashV1Base64, asText, asJsonString } = body;
@@ -52,31 +49,27 @@ const getJsonBodyToPreview = (
 
 export function descriptionForNewRegions(
   diff: ParsedDiff,
-  location: IParsedLocation
+  location: DiffLocation
 ): IDiffDescription {
   let title: ICopy[] = [];
-  if (location.descriptor.type === 'query') {
+  if (location.isQueryParameter()) {
     title = [plain('undocumented query parameters observed')];
   }
-  if (
-    location.descriptor.type === 'request' ||
-    location.descriptor.type === 'path_request'
-  ) {
+  const requestDescriptor = location.getRequestDescriptor();
+  if (requestDescriptor) {
     title = [
       plain('undocumented'),
-      code(location.descriptor.contentType),
+      code(requestDescriptor.contentType),
       plain('request observed'),
     ];
   }
-  if (
-    location.descriptor.type === 'response' ||
-    location.descriptor.type === 'path_response'
-  ) {
+  const responseDescriptor = location.getResponseDescriptor();
+  if (responseDescriptor) {
     title = [
       plain('undocumented'),
-      code(location.descriptor.statusCode.toString()),
+      code(responseDescriptor.statusCode.toString()),
       plain('response with'),
-      code(location.descriptor.contentType || 'No Body'),
+      code(responseDescriptor.contentType || 'No Body'),
       plain('observed'),
     ];
   }
@@ -141,10 +134,9 @@ export async function descriptionForShapeDiff(
   //undocumented field handler
   const lastIsField = (jsonTrailLast as IJsonObjectKey).JsonObjectKey;
   if (asShapeDiff.isUnspecified && lastIsField) {
-    const undocumentedLocation =
-      location.descriptor.type === 'query'
-        ? 'undocumented query parameter'
-        : 'undocumented field';
+    const undocumentedLocation = location.isQueryParameter()
+      ? 'undocumented query parameter'
+      : 'undocumented field';
     return {
       title: [
         plain(undocumentedLocation),

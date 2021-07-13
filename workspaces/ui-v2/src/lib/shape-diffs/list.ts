@@ -32,7 +32,7 @@ export function listItemShapeDiffInterpreter(
     copy: [],
     shapes: [],
     isField: false,
-    isQueryParam: shapeDiff.location.descriptor.type === 'query',
+    isQueryParam: shapeDiff.location.isQueryParameter(),
   };
 
   if (isUnmatched) {

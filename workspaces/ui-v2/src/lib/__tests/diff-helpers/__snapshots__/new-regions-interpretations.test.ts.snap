@@ -163,7 +163,7 @@ Object {
       "changeType": 0,
       "diffHash": "8de10f26b6ef26ca",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "type": "path_request",
@@ -386,7 +386,7 @@ Object {
       "changeType": 0,
       "diffHash": "e958234709591c5f",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "statusCode": 200,

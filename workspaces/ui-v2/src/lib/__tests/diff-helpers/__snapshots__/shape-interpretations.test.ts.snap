@@ -63,7 +63,7 @@ Object {
       "changeType": 1,
       "diffHash": "84167c0c7595d4d6",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "baseline-response_1",
@@ -304,7 +304,7 @@ Object {
       "changeType": 1,
       "diffHash": "d9a9a649152793af",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "baseline-response_1",
@@ -519,7 +519,7 @@ Object {
       "changeType": 0,
       "diffHash": "c1c137f409e885dc",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -781,7 +781,7 @@ Object {
       "changeType": 0,
       "diffHash": "c1c137f409e885dc",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -1011,7 +1011,7 @@ Object {
       "changeType": 0,
       "diffHash": "f31dde2a282b48",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -1219,7 +1219,7 @@ Object {
       "changeType": 0,
       "diffHash": "63269210d11730b6",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -1493,7 +1493,7 @@ Object {
       "changeType": 1,
       "diffHash": "179f9d4a33ca4658",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -1788,7 +1788,7 @@ Object {
       "changeType": 1,
       "diffHash": "124b53ff9a034b57",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -2085,7 +2085,7 @@ Object {
       "changeType": 1,
       "diffHash": "3542ba6590d7ae3f",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -2383,7 +2383,7 @@ Object {
       "changeType": 1,
       "diffHash": "179f9d4a33ca4658",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -2638,7 +2638,7 @@ Object {
       "changeType": 0,
       "diffHash": "8d46ea69f9088574",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "baseline-response_1",
@@ -2830,7 +2830,7 @@ Object {
       "changeType": 1,
       "diffHash": "d9d824261703f4be",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -3039,7 +3039,7 @@ Object {
       "changeType": 1,
       "diffHash": "d9d824261703f4be",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -3244,7 +3244,7 @@ Object {
       "changeType": 1,
       "diffHash": "9680b0bf6bd1b6b1",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -3522,7 +3522,7 @@ Object {
       "changeType": 1,
       "diffHash": "d9d824261703f4be",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -3817,7 +3817,7 @@ Object {
       "changeType": 1,
       "diffHash": "7cb55ecdc93fa003",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -4084,7 +4084,7 @@ Object {
       "changeType": 1,
       "diffHash": "7cb55ecdc93fa003",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -4339,7 +4339,7 @@ Object {
       "changeType": 1,
       "diffHash": "7cb55ecdc93fa003",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -4681,7 +4681,7 @@ Object {
       "changeType": 1,
       "diffHash": "601c9b4584024d27",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_KBRwJqndED",
@@ -5607,7 +5607,7 @@ Object {
       "changeType": 1,
       "diffHash": "59b1dc0fdc7951d3",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "baseline-response_1",
@@ -5936,7 +5936,7 @@ Object {
       "changeType": 1,
       "diffHash": "59b1dc0fdc7951d3",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "baseline-response_1",
@@ -6254,7 +6254,7 @@ Object {
       "changeType": 1,
       "diffHash": "5afaa9bc7e91e73c",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "response_1",
@@ -6456,7 +6456,7 @@ Object {
       "changeType": 1,
       "diffHash": "d8b48b881aef10ca",
       "getJsonBodyToPreview": [Function],
-      "location": Object {
+      "location": DiffLocation {
         "descriptor": Object {
           "contentType": "application/json",
           "responseId": "baseline-response_1",

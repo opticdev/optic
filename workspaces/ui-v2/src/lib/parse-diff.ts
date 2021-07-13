@@ -23,10 +23,85 @@ import {
   allowedDiffTypes,
   allowedDiffTypesKeys,
   CurrentSpecContext,
-  IParsedLocation,
   isBodyShapeDiff,
 } from './Interfaces';
-import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
+import {
+  locationForTrails,
+  LocationDescriptor,
+} from '@useoptic/cli-shared/build/diffs/trail-parsers';
+
+export class DiffLocation {
+  constructor(
+    public pathId: string,
+    public method: string,
+    private descriptor: LocationDescriptor
+  ) {}
+
+  isQueryParameter(): boolean {
+    return (
+      this.descriptor.type === 'query' || this.descriptor.type === 'path_query'
+    );
+  }
+
+  isRequest(): boolean {
+    return (
+      this.descriptor.type === 'request' ||
+      this.descriptor.type === 'path_request'
+    );
+  }
+
+  isResponse(): boolean {
+    return (
+      this.descriptor.type === 'response' ||
+      this.descriptor.type === 'path_response'
+    );
+  }
+
+  getQueryParametersId(): string | null {
+    return this.descriptor.type === 'query'
+      ? this.descriptor.queryParametersId
+      : null;
+  }
+
+  getRequestDescriptor(): {
+    requestId?: string; // requestId only lives on descriptor.type === 'request'
+    contentType: string;
+  } | null {
+    if (this.descriptor.type === 'request') {
+      return {
+        requestId: this.descriptor.requestId,
+        contentType: this.descriptor.contentType,
+      };
+    } else if (this.descriptor.type === 'path_request') {
+      return {
+        contentType: this.descriptor.contentType,
+      };
+    } else {
+      return null;
+    }
+  }
+
+  getResponseDescriptor(): {
+    responseId?: string; // responseId only lives on descriptor.type === 'responseId'
+    contentType?: string; // content type is nullable on path_response ????
+    statusCode: number;
+  } | null {
+    if (this.descriptor.type === 'response') {
+      return {
+        responseId: this.descriptor.responseId,
+        contentType: this.descriptor.contentType,
+        statusCode: this.descriptor.statusCode,
+      };
+    } else if (this.descriptor.type === 'path_response') {
+      return {
+        contentType: this.descriptor.contentType,
+        statusCode: this.descriptor.statusCode,
+      };
+    } else {
+      return null;
+    }
+  }
+}
 
 // TODO QPB rewrite ParsedDiff to have better type safety and better utility functions
 export class ParsedDiff {
@@ -84,7 +159,7 @@ export class ParsedDiff {
     return location.pathId && !!isDocumented;
   }
 
-  location(currentSpecContext: CurrentSpecContext): IParsedLocation {
+  location(currentSpecContext: CurrentSpecContext): DiffLocation {
     const location = locationForTrails(
       this.requestsTrail(),
       this.interactionTrail(),
@@ -95,11 +170,11 @@ export class ParsedDiff {
       throw new Error('no location found for diff');
     }
 
-    return {
-      pathId: location.pathId,
-      method: location.method,
-      descriptor: location.descriptor,
-    };
+    return new DiffLocation(
+      location.pathId,
+      location.method,
+      location.descriptor
+    );
   }
 
   isNewRegionDiff(): boolean {
@@ -163,7 +238,7 @@ export class BodyShapeDiff {
     private diff: IDiff,
     private shapeDiff: IShapeDiffResult,
     public interactionPointers: string[],
-    public location: IParsedLocation
+    public location: DiffLocation
   ) {
     // @ts-ignore
     this.shapeTrail = (shapeDiff['UnmatchedShape']?.shapeTrail ||
