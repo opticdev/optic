@@ -116,7 +116,13 @@ export function BuildSpecPatch({
                 }
                 label={
                   <Typography variant="body1" className={classes.checkboxLabel}>
-                    {namerForOptions([shape.coreShapeKind]).toLowerCase()}
+                    {shape.coreShapeKind === ICoreShapeKinds.ListKind &&
+                    patchChoices &&
+                    patchChoices.isQueryParam ? (
+                      <>query parameter accepted multiple times</>
+                    ) : (
+                      namerForOptions([shape.coreShapeKind]).toLowerCase()
+                    )}
                   </Typography>
                 }
               />
@@ -126,8 +132,8 @@ export function BuildSpecPatch({
             <FormControlLabel
               label={
                 <Typography variant="body1" className={classes.checkboxLabel}>
-                  this {patchChoices.isQueryParam ? 'query parameter' : 'field'}{' '}
-                  is optional
+                  {patchChoices.isQueryParam ? 'query parameter' : 'field'} is
+                  optional
                 </Typography>
               }
               labelPlacement="end"
