@@ -92,11 +92,11 @@ export default function AskForCommitMessageDiffPage(props: {
         },
       });
 
-      const hasQueryParametersDocumented = commands.some(
+      const numberOfQueryParametersDocumented = commands.filter(
         (command) => 'AddQueryParameters' in command
-      );
-      if (hasQueryParametersDocumented) {
-        analytics.queryParameterDocumented();
+      ).length;
+      if (numberOfQueryParametersDocumented > 0) {
+        analytics.queryParameterDocumented(numberOfQueryParametersDocumented);
       }
 
       analytics.userSavedChanges(

@@ -146,10 +146,12 @@ export class OpticUIEvents {
 
   // Temporary
   // 2021/07/13- can remove 2021/10/13
-  queryParameterDocumented() {
+  queryParameterDocumented(numberOfQueryParameterBodies: number) {
     this.dispatch({
       type: 'query_parameter_documented',
-      data: {},
+      data: {
+        numberOfQueryParameterBodies,
+      },
     });
   }
 
