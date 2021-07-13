@@ -46,6 +46,7 @@ export function fieldShapeDiffInterpreter(
     copy: [],
     shapes: [],
     isField: true,
+    isQueryParam: shapeDiff.location.descriptor.type === 'query',
   };
 
   // field is in the spec, the value was not what we expected to see
@@ -111,7 +112,10 @@ export function fieldShapeDiffInterpreter(
   }
 
   return {
-    previewTabs: present.createPreviews(isUnspecified),
+    previewTabs: present.createPreviews(
+      isUnspecified,
+      !!updateSpecChoices.isQueryParam
+    ),
     diffDescription,
     toCommands(choices: IPatchChoices): CQRSCommand[] {
       if (!choices) {
@@ -174,7 +178,10 @@ class FieldShapeInterpretationHelper {
 
   ///////////////////////////////////////////////////////////////////
 
-  public createPreviews(isUnspecified: boolean): IInteractionPreviewTab[] {
+  public createPreviews(
+    isUnspecified: boolean,
+    isQueryParam: boolean
+  ): IInteractionPreviewTab[] {
     const previews: IInteractionPreviewTab[] = [];
     const expected = this.expected.expectedShapes();
 
@@ -185,7 +192,10 @@ class FieldShapeInterpretationHelper {
 
     this.actual.interactionsGroupedByCoreShapeKind().forEach((i) => {
       previews.push({
-        title: i.label,
+        title:
+          isQueryParam && i.kind === ICoreShapeKinds.ListKind
+            ? 'multiple'
+            : i.label,
         invalid: isUnspecified ? true : !expected.has(i.kind),
         interactionPointers: i.interactions,
         assertion: [

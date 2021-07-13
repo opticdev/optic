@@ -37,6 +37,7 @@ export function rootShapeDiffInterpreter(
     copy: [],
     shapes: [],
     isField: false,
+    isQueryParam: shapeDiff.location.descriptor.type === 'query',
   };
 
   if (isUnmatched) {

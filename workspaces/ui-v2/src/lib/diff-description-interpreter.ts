@@ -135,17 +135,20 @@ export async function descriptionForShapeDiff(
   //undocumented field handler
   const lastIsField = (jsonTrailLast as IJsonObjectKey).JsonObjectKey;
   if (asShapeDiff.isUnspecified && lastIsField) {
+    const undocumentedLocation =
+      location.descriptor.type === 'query'
+        ? 'undocumented query parameter'
+        : 'undocumented field';
     return {
       title: [
-        plain('undocumented field'),
+        plain(undocumentedLocation),
         code(lastIsField.key),
         plain('observed'),
       ],
       location,
       changeType: IChangeType.Added,
       diffHash: asShapeDiff.diffHash(),
-
-      assertion: [code('undocumented field')],
+      assertion: [code(undocumentedLocation)],
       getJsonBodyToPreview: getJsonBodyToPreview.bind(null, location),
     };
   }

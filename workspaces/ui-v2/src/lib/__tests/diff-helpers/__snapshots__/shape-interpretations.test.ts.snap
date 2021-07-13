@@ -138,6 +138,7 @@ Object {
       ],
       "isField": true,
       "isOptional": true,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$string",
@@ -378,6 +379,7 @@ Object {
       ],
       "isField": true,
       "isOptional": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$number",
@@ -589,6 +591,7 @@ Object {
       "copy": Array [],
       "isField": true,
       "isOptional": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$list",
@@ -850,6 +853,7 @@ Object {
       "copy": Array [],
       "isField": true,
       "isOptional": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$list",
@@ -1079,6 +1083,7 @@ Object {
       "copy": Array [],
       "isField": true,
       "isOptional": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$string",
@@ -1291,6 +1296,7 @@ Object {
       "copy": Array [],
       "isField": true,
       "isOptional": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$string",
@@ -1572,6 +1578,7 @@ Object {
       ],
       "isField": true,
       "isOptional": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$object",
@@ -1856,6 +1863,7 @@ Object {
       ],
       "isField": true,
       "isOptional": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$list",
@@ -2139,6 +2147,7 @@ Object {
     "updateSpecChoices": Object {
       "copy": Array [],
       "isField": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$string",
@@ -2459,6 +2468,7 @@ Object {
       ],
       "isField": true,
       "isOptional": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$object",
@@ -2690,6 +2700,7 @@ Object {
       "copy": Array [],
       "isField": true,
       "isOptional": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$string",
@@ -2894,6 +2905,7 @@ Object {
       ],
       "isField": true,
       "isOptional": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$object",
@@ -3102,6 +3114,7 @@ Object {
       ],
       "isField": true,
       "isOptional": true,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$object",
@@ -3311,6 +3324,7 @@ Object {
       ],
       "isField": true,
       "isOptional": true,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$number",
@@ -3583,6 +3597,7 @@ Object {
       ],
       "isField": true,
       "isOptional": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$object",
@@ -3859,6 +3874,7 @@ Object {
     "updateSpecChoices": Object {
       "copy": Array [],
       "isField": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$object",
@@ -4125,6 +4141,7 @@ Object {
     "updateSpecChoices": Object {
       "copy": Array [],
       "isField": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$object",
@@ -4409,6 +4426,7 @@ Object {
     "updateSpecChoices": Object {
       "copy": Array [],
       "isField": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$object",
@@ -4867,6 +4885,7 @@ Object {
       ],
       "isField": true,
       "isOptional": true,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$object",
@@ -5685,6 +5704,7 @@ Object {
     "updateSpecChoices": Object {
       "copy": Array [],
       "isField": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$string",
@@ -6013,6 +6033,7 @@ Object {
     "updateSpecChoices": Object {
       "copy": Array [],
       "isField": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$string",
@@ -6284,6 +6305,7 @@ Object {
     "updateSpecChoices": Object {
       "copy": Array [],
       "isField": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$list",
@@ -6514,6 +6536,7 @@ Object {
       ],
       "isField": true,
       "isOptional": false,
+      "isQueryParam": false,
       "shapes": Array [
         Object {
           "coreShapeKind": "$nullable",
