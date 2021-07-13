@@ -2,7 +2,7 @@ export type CheckFunction = ({
   endpointChange,
   endpoint,
 }: {
-  endpointChange?: any;
+  endpointChange: any;
   endpoint: any;
 }) => Promise<string | undefined>;
 
