@@ -18,7 +18,12 @@ import {
   SpectacleInput,
   StartDiffResult,
 } from '../index';
-import { AsyncTools, Streams, IHttpInteraction } from '@useoptic/optic-domain';
+import {
+  AsyncTools,
+  Streams,
+  IHttpInteraction,
+  isValidHttpInteraction,
+} from '@useoptic/optic-domain';
 import {
   ILearnedBodies,
   IAffordanceTrailsDiffHashMap,
@@ -165,6 +170,7 @@ export class InMemoryCapturesService implements IOpticCapturesService {
 
     const events = await this.dependencies.specRepository.listEvents();
     const interactions = await this.listCapturedInteractions(captureId);
+    const filteredInteractions = interactions.filter(isValidHttpInteraction);
 
     const diff = new InMemoryDiff({
       opticEngine: this.dependencies.opticEngine,
@@ -175,13 +181,13 @@ export class InMemoryCapturesService implements IOpticCapturesService {
       diff,
       opticEngine: this.dependencies.opticEngine,
       specRepository: this.dependencies.specRepository,
-      interactions,
+      interactions: filteredInteractions,
     });
 
     const onComplete = new Promise<IOpticDiffService>((resolve, reject) => {
       notifications.once('complete', () => resolve(diffService));
     });
-    await diff.start(events, interactions);
+    await diff.start(events, filteredInteractions);
 
     await this.dependencies.diffRepository.add(diffId, diffService);
 

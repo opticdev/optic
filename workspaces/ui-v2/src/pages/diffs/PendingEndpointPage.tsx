@@ -276,7 +276,6 @@ export function PendingEndpointPage(props: any) {
       right={
         <>
           <SimulatedCommandStore
-            key={JSON.stringify(newEndpointCommands)}
             spectacle={spectacle as IForkableSpectacle}
             previewCommands={newEndpointCommands}
           >

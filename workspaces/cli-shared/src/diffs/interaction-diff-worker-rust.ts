@@ -2,7 +2,11 @@ import {
   CaptureInteractionIterator,
   LocalCaptureInteractionPointerConverter,
 } from '../captures/avro/file-system/interaction-iterator';
-import { Streams } from '@useoptic/optic-domain';
+import {
+  Streams,
+  isValidHttpInteraction,
+  IHttpInteraction,
+} from '@useoptic/optic-domain';
 import { diffInteractions } from '@useoptic/optic-engine-native';
 import fs from 'fs-extra';
 import { fork } from 'stream-fork';
@@ -54,8 +58,13 @@ export class InteractionDiffWorkerRust {
   private async setup() {
     const ignoreFilter = parseIgnore(this.config.ignoreRules);
 
-    const interactionFilter = (i: any) => {
-      return !ignoreFilter.shouldIgnore(i.request.method, i.request.path);
+    const interactionFilter = (interaction: IHttpInteraction): boolean => {
+      const shouldIgnore = ignoreFilter.shouldIgnore(
+        interaction.request.method,
+        interaction.request.path
+      );
+      const isValid = isValidHttpInteraction(interaction);
+      return !shouldIgnore && isValid;
     };
 
     const interactionIterator = CaptureInteractionIterator(

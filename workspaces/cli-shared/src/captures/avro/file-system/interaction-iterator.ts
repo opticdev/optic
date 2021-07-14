@@ -6,9 +6,6 @@ import avro from 'avsc';
 import { CaptureId } from '@useoptic/saas-types';
 import { IHttpInteraction, IInteractionBatch } from '@useoptic/optic-domain';
 
-export interface FilterPredicate<T> {
-  (item: T): boolean;
-}
 export type InteractionIteratorItem =
   | {
       hasMoreInteractions: false;
@@ -30,7 +27,7 @@ export type InteractionIteratorItem =
     };
 export async function* CaptureInteractionIterator(
   config: IFileSystemCaptureLoaderConfig,
-  filter: FilterPredicate<IHttpInteraction>
+  filter: (interaction: IHttpInteraction) => boolean
   //@TODO: add a way to check if the capture has completed
 ): AsyncGenerator<InteractionIteratorItem> {
   let shouldStop = false;

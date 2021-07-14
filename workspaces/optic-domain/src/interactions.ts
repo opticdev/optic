@@ -1,3 +1,4 @@
+// Types
 export interface IRequest {
   host: string;
   method: string;
@@ -40,3 +41,31 @@ export interface IInteractionBatch {
   groupingIdentifiers: IGroupingIdentifiers;
   batchItems: IHttpInteraction[];
 }
+
+// Utility functions
+// There is a potential to capture invalid interactions - once this is captured, it's in the user's
+// system until they clear their captures folder. If we introduce bugs in our capture, we can filter them out here
+// Ideally, we should catch these and not have captures that are invalid
+const isArbitraryDataNull = (value: IArbitraryData): boolean => {
+  return (
+    value.asJsonString === null &&
+    value.asText === null &&
+    value.shapeHashV1Base64 === null
+  );
+};
+
+export const isValidHttpInteraction = (
+  interaction: IHttpInteraction
+): boolean => {
+  if (
+    interaction.request.body.contentType !== null &&
+    isArbitraryDataNull(interaction.request.body.value)
+  ) {
+    return false;
+  }
+  if (isArbitraryDataNull(interaction.response.body.value)) {
+    return false;
+  }
+
+  return true;
+};
