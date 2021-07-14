@@ -160,6 +160,7 @@ module.exports = {
     'https://fonts.googleapis.com/css?family=Ubuntu+Mono:200,400,600,700',
   ],
   plugins: [
+    ['./analytics/src/index.js', {}],
     [
       '@docusaurus/plugin-client-redirects',
       {
@@ -272,4 +273,5 @@ module.exports = {
       },
     ],
   ],
+  scripts: [],
 };
