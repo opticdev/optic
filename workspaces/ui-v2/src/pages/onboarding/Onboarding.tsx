@@ -8,6 +8,7 @@ import { Checkbox, Typography } from '@material-ui/core';
 import {
   CapturesServiceContext,
   useCaptures,
+  useCapturesService,
 } from '<src>/hooks/useCapturesHook';
 
 const useStyles = makeStyles((theme) => ({
@@ -25,28 +26,28 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface OnboardingData {
-  specs_shared_with_team: number;
-  specs_shared_not_with_team: number;
-  specs_uploaded_by_gitbot: number;
-  coverages_uploaded: number;
+  specsSharedWithTeam: number;
+  specsSharedNotWithTeam: number;
+  specsUploadedByGitbot: number;
+  coveragesUploaded: number;
 }
 
 const emptyOnboardingData: {
   [key in keyof OnboardingData]: { total: number; users: number };
 } = {
-  specs_shared_with_team: {
+  specsSharedWithTeam: {
     total: 0,
     users: 0,
   },
-  specs_shared_not_with_team: {
+  specsSharedNotWithTeam: {
     total: 0,
     users: 0,
   },
-  specs_uploaded_by_gitbot: {
+  specsUploadedByGitbot: {
     total: 0,
     users: 0,
   },
-  coverages_uploaded: {
+  coveragesUploaded: {
     total: 0,
     users: 0,
   },
@@ -60,7 +61,7 @@ export default function Onboarding() {
   );
 
   const captures = useCaptures();
-  const capturesService = React.useContext(CapturesServiceContext);
+  const capturesService = useCapturesService();
 
   const captureStatuses = useAsyncMemo(async () => {
     if (!captures.loading && !captures.error && capturesService) {
@@ -153,42 +154,40 @@ export default function Onboarding() {
               </Typography>
               <Typography>
                 <Checkbox
-                  checked={onboardingData.specs_shared_with_team.total > 0}
+                  checked={onboardingData.specsSharedWithTeam.total > 0}
                 />{' '}
-                Share with your team:{' '}
-                {onboardingData.specs_shared_with_team.total} spec(s) shared by{' '}
-                {onboardingData.specs_shared_with_team.users}{' '}
-                {onboardingData.specs_shared_with_team.users === 1
+                Share with your team: {onboardingData.specsSharedWithTeam.total}{' '}
+                spec(s) shared by {onboardingData.specsSharedWithTeam.users}{' '}
+                {onboardingData.specsSharedWithTeam.users === 1
                   ? 'person'
                   : 'people'}
                 .
               </Typography>
               <Typography>
                 <Checkbox
-                  checked={onboardingData.specs_shared_not_with_team.total > 0}
+                  checked={onboardingData.specsSharedNotWithTeam.total > 0}
                 />{' '}
-                Share with others:{' '}
-                {onboardingData.specs_shared_not_with_team.total} spec(s) shared
-                by {onboardingData.specs_shared_not_with_team.users}{' '}
-                {onboardingData.specs_shared_not_with_team.users === 1
+                Share with others: {onboardingData.specsSharedNotWithTeam.total}{' '}
+                spec(s) shared by {onboardingData.specsSharedNotWithTeam.users}{' '}
+                {onboardingData.specsSharedNotWithTeam.users === 1
                   ? 'person'
                   : 'people'}
                 .
               </Typography>
               <Typography>
                 <Checkbox
-                  checked={onboardingData.specs_uploaded_by_gitbot.total > 0}
+                  checked={onboardingData.specsUploadedByGitbot.total > 0}
                 />{' '}
                 Add optic github integration:{' '}
-                {onboardingData.specs_uploaded_by_gitbot.total} spec(s)
+                {onboardingData.specsUploadedByGitbot.total} spec(s)
                 automatically uploaded.
               </Typography>
               <Typography>
                 <Checkbox
-                  checked={onboardingData.coverages_uploaded.total > 0}
+                  checked={onboardingData.coveragesUploaded.total > 0}
                 />{' '}
                 Add Optic to your CI pipeline:{' '}
-                {onboardingData.coverages_uploaded.total} CI runs detected.
+                {onboardingData.coveragesUploaded.total} CI runs detected.
               </Typography>
               <Typography>
                 <Checkbox checked={false} /> Optic is runing Staging
