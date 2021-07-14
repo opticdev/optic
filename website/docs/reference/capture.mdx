@@ -6,7 +6,7 @@ slug: /capture
 import { Paper } from '@material-ui/core';
 import {CIGitBot} from '../../workflows'
 import { ShowAllFrameworks } from '../../src/components/ShowAllFrameworks';
-import Beta from './real-environments/Beta.mdx'
+import LiveEnvironments from '../shared/live-environments-beta.mdx';
 
 Making it easy to capture traffic is one of the most important aspects of the Optic project. Without traffic, the tool can not auto-document our APIs, detect changes, calculate coverage and test our APIs.
 
@@ -35,17 +35,7 @@ Integrating automated tests is the next best step for projects with good test co
 
 ## Deployed Capture Methods
 
-<Beta />
-
-Explore some common deployed capture scenarios with Optic:
-
-- [AWS API Gateway](/reference/real-environments/aws-api-gateway)
-- [Azure API Management](/reference/real-environments/azure-api-management)
-- [Azure App Gateway](/reference/real-environments/azure-app-gateway)
-- [Cloudflare Worker](/reference/real-environments/cloudflare-worker)
-- [Envoy Proxy](/reference/real-environments/envoy-proxy)
-- [Kubernetes](/reference/real-environments/kubernetes)
-- [NGINX](/reference/real-environments/nginx)
+<LiveEnvironments />
 
 ### Got ideas?
 
