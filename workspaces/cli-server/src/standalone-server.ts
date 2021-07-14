@@ -9,12 +9,7 @@ async function main(inputs: { opticProjectDirectory: string }) {
   const baseUrl = `http://localhost:${serverState.port}/api`;
   console.log(`server started on ${baseUrl}`);
   const cliClient = new Client(baseUrl);
-  const x = await cliClient.findSession(
-    inputs.opticProjectDirectory,
-    null,
-    null,
-    null
-  );
+  const x = await cliClient.findSession({ path: inputs.opticProjectDirectory });
   console.log(`navigate to http://localhost:3000/apis/${x.session.id}`);
 }
 

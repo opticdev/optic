@@ -20,12 +20,17 @@ class Client {
     return JsonHttpClient.postJson(url, { apiName, events });
   }
 
-  findSession(
-    path: string,
-    taskConfig: IOpticTaskRunnerConfig | null,
-    captureId: string | null,
-    taskName: string | null
-  ): Promise<{ session: { id: string } }> {
+  findSession({
+    path,
+    taskConfig,
+    captureId,
+    taskName,
+  }: {
+    path: string;
+    taskConfig?: IOpticTaskRunnerConfig;
+    captureId?: string;
+    taskName?: string;
+  }): Promise<{ session: { id: string } }> {
     const url = `${this.baseUrl}/sessions`;
     return JsonHttpClient.postJson(url, {
       path,

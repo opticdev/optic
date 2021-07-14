@@ -78,7 +78,7 @@ export default class Status extends Command {
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
 
-    const cliSession = await cliClient.findSession(paths.cwd, null, null, null);
+    const cliSession = await cliClient.findSession({ path: paths.cwd });
 
     const sessionApiBaseUrl = `http://localhost:${daemonState.port}/api/specs/${cliSession.session.id}`;
     const spectacle = new LocalCliSpectacle(sessionApiBaseUrl, opticEngine);
@@ -354,7 +354,7 @@ export default class Status extends Command {
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
-    const cliSession = await cliClient.findSession(basePath, null, null, null);
+    const cliSession = await cliClient.findSession({ path: basePath });
     developerDebugLogger({ cliSession });
     const uiBaseUrl = makeUiBaseUrl(daemonState);
     openBrowser(linkToCapture(uiBaseUrl, cliSession.session.id, captureId));

@@ -245,12 +245,12 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     developerDebugLogger('finding matching daemon session');
 
     const { cwd } = this.paths;
-    const cliSession = await cliClient.findSession(
-      cwd,
+    const cliSession = await cliClient.findSession({
+      path: cwd,
       taskConfig,
-      this.captureId,
-      this.taskName
-    );
+      captureId: this.captureId,
+      taskName: this.taskName,
+    });
     developerDebugLogger({ cliSession });
 
     ////////////////////////////////////////////////////////////////////////////////

@@ -52,7 +52,7 @@ export default class Spec extends Command {
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
-    const cliSession = await cliClient.findSession(basePath, null, null, null);
+    const cliSession = await cliClient.findSession({ path: basePath });
     developerDebugLogger({ cliSession });
     const uiBaseUrl = makeUiBaseUrl(daemonState);
     openBrowser(linkToDocumentation(uiBaseUrl, cliSession.session.id));
