@@ -49,15 +49,11 @@ module.exports = {
           label: 'Docs',
           position: 'right',
         },
-        // {
-        //   label: 'Workflows',
-        //   items: [
-        //     allWorkflows.CIGitBot,
-        //     allWorkflows.TeamDesignFirst,
-        //     // allWorkflows.DevelopWithOpticLocally,
-        //   ],
-        //   position: 'right',
-        // },
+        {
+          label: 'Use Cases',
+          items: [allUseCases.Document, allUseCases.Test, allUseCases.Change],
+          position: 'right',
+        },
         {
           to: '/blog',
           activeBasePath: '/blog',
