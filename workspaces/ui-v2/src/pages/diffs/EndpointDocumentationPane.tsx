@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC } from 'react';
 import { makeStyles } from '@material-ui/core';
 
 import {
@@ -22,30 +22,26 @@ import {
   HighlightedLocation,
   Location,
 } from '<src>/pages/diffs/components/HighlightedLocation';
-import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
-import { useDebouncedFn, useStateWithSideEffect } from '<src>/hooks/util';
 import { selectors, useAppSelector } from '<src>/store';
-import { IPathParameter } from '<src>/types';
-import { getEndpointId } from '<src>/utils';
 
 type EndpointDocumentationPaneProps = {
+  name: string;
   method: string;
   pathId: string;
   lastBatchCommit?: string;
   highlightBodyChanges?: boolean;
   highlightedLocation?: DiffLocation;
-  renderHeader: () => ReactNode;
 };
 
 export const EndpointDocumentationPane: FC<
   EndpointDocumentationPaneProps & React.HtmlHTMLAttributes<HTMLDivElement>
 > = ({
+  name,
   method,
   pathId,
   lastBatchCommit,
   highlightedLocation,
   highlightBodyChanges,
-  renderHeader,
   ...props
 }) => {
   const classes = useStyles();
@@ -59,17 +55,13 @@ export const EndpointDocumentationPane: FC<
   const parameterizedPathParts = thisEndpoint.pathParameters.filter(
     (path) => path.isParameterized
   );
-  const endpointId = getEndpointId({
-    pathId: thisEndpoint.pathId,
-    method: thisEndpoint.method,
-  });
 
   return (
     <FullWidth
       style={{ padding: 30, paddingTop: 15, paddingBottom: 400 }}
       {...props}
     >
-      {renderHeader()}
+      <p className={classes.nameDisplay}>{name}</p>
       <div style={{ height: 20 }} />
       <Panel
         header={
@@ -84,11 +76,18 @@ export const EndpointDocumentationPane: FC<
         <PathParameters
           parameters={parameterizedPathParts}
           renderField={(param) => {
+            const alwaysAString: IShapeRenderer = {
+              shapeId: param.id + 'shape',
+              jsonType: JsonLike.STRING,
+              value: undefined,
+            };
             return (
-              <DiffPathParamField
+              <FieldOrParameter
                 key={param.id}
-                pathParameter={param}
-                endpointId={endpointId}
+                name={param.name}
+                shapes={[alwaysAString]}
+                depth={0}
+                value={param.description}
               />
             );
           }}
@@ -195,42 +194,6 @@ export const EndpointDocumentationPane: FC<
   );
 };
 
-const DiffPathParamField: FC<{
-  pathParameter: IPathParameter;
-  endpointId: string;
-}> = ({ pathParameter, endpointId }) => {
-  const alwaysAString: IShapeRenderer = {
-    shapeId: pathParameter.id + 'shape',
-    jsonType: JsonLike.STRING,
-    value: undefined,
-  };
-
-  const {
-    setPathDescription,
-    getContributedPathDescription,
-  } = useSharedDiffContext();
-
-  const debouncedAddContribution = useDebouncedFn(setPathDescription, 200);
-  const { value, setValue } = useStateWithSideEffect({
-    initialValue:
-      getContributedPathDescription(pathParameter.id) ||
-      pathParameter.description,
-    sideEffect: (description: string) =>
-      debouncedAddContribution(pathParameter.id, description, endpointId),
-  });
-
-  return (
-    <FieldOrParameter
-      isEditing={true}
-      shapes={[alwaysAString]}
-      depth={0}
-      name={pathParameter.name}
-      value={value}
-      setValue={setValue}
-    />
-  );
-};
-
 const useStyles = makeStyles((theme) => ({
   bodyContainer: {
     margin: theme.spacing(3, 0),
@@ -246,5 +209,11 @@ const useStyles = makeStyles((theme) => ({
   },
   bodyDetails: {
     padding: theme.spacing(0, 1),
+  },
+  nameDisplay: {
+    fontSize: '1.25rem',
+    fontFamily: 'Ubuntu, Inter',
+    fontWeight: 500,
+    lineHeight: 1.6,
   },
 }));

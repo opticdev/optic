@@ -286,11 +286,7 @@ export function PendingEndpointPage(props: any) {
               <EndpointDocumentationPane
                 method={stagedCommandsIds.method}
                 pathId={stagedCommandsIds.pathId}
-                renderHeader={() => (
-                  <Typography className={classes.nameDisplay}>
-                    {name === '' ? 'Unnamed Endpoint' : name}
-                  </Typography>
-                )}
+                name={name === '' ? 'Unnamed Endpoint' : name}
               />
             )}
           </SimulatedCommandStore>
@@ -355,11 +351,5 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 25,
     display: 'flex',
     justifyContent: 'space-between;',
-  },
-  nameDisplay: {
-    fontSize: '1.25rem',
-    fontFamily: 'Ubuntu, Inter',
-    fontWeight: 500,
-    lineHeight: 1.6,
   },
 }));
