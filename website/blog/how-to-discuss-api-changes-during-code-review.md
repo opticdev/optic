@@ -1,5 +1,5 @@
 ---
-date: "06/10/2021"
+date: 2021-06-10
 title: "How to Discuss API Changes During Code Review"
 author: Karl Hughes
 author_url: "https://www.karllhughes.com"
@@ -51,7 +51,7 @@ To verify the installation, run:
 ```shell
 api --help
 ```
- 
+
 ![Optic CLI help output](https://i.imgur.com/eZDkkyg.png)
 
 Next, you need to initialize Optic in your project's root directory.

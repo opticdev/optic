@@ -7,6 +7,7 @@ import React from 'react';
 import { useStyles } from './CommandDemo';
 import { Quote } from './Credo';
 import { Paper } from '@material-ui/core';
+import { SubtleBlueBackground } from './theme';
 
 const copy = require('./demo-copy.json');
 
@@ -19,8 +20,15 @@ const Quotes = [
     pic: '/people/kinface.jpg',
   },
   {
+    name: 'Nathan Clevenger',
+    title: 'FOUNDER DRIV.LY\nSerial Entrepreneur',
+    quote:
+      'At Driv.ly we’re aggregating data from hundreds of different back-end sources, many of which have constantly changing data models. Optic enables us to create self-documenting APIs and can proactively generate alerts when the shape of the data from any of our back-end sources unexpectedly changes.',
+    pic: '/people/nathanface.jpeg',
+  },
+  {
     name: 'Zdenek Nemec',
-    title: 'FOUNDER GOOD API\nCREATOR OF API BLUEPRINT',
+    title: 'FOUNDER SUPERFACE\nCREATOR OF API BLUEPRINT',
     quote:
       'Traffic-driven API development and ops is the the future of handling the skyrocketing complexity of API landscapes. Thats is why I am really excited to see efforts like Optic.',
     pic: '/people/zface.jpeg',
@@ -139,5 +147,54 @@ export function ApiSpecsEverywhere() {
         </Grid>
       </Container>
     </Container>
+  );
+}
+export function QuotesAll() {
+  const featuredStyles = useFeatureStyles();
+  const classes = useStyles();
+
+  return (
+    <div
+      style={{
+        backgroundColor: SubtleBlueBackground,
+        paddingTop: 90,
+        paddingBottom: 90,
+      }}
+    >
+      <Container maxWidth={false} className={classes.gitBotContainer}>
+        <Container maxWidth="lg">
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: 22,
+            }}
+          >
+            <Typography variant="subtitle1" className={featuredStyles.mini}>
+              What People Say About Optic
+            </Typography>
+          </div>
+          <Grid
+            justifyContent="flex-end"
+            alignItems="flex-end"
+            container
+            style={{ textAlign: 'left', paddingTop: 0 }}
+            spacing={8}
+          >
+            <Grid item md={4} xs={12}>
+              <Quote {...Quotes[0]} />
+            </Grid>
+            <Grid item md={4} xs={12}>
+              <Quote {...Quotes[1]} />
+            </Grid>
+            <Grid item md={4} xs={12}>
+              <Quote {...Quotes[2]} />
+            </Grid>
+          </Grid>
+        </Container>
+      </Container>
+    </div>
   );
 }

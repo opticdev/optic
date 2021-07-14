@@ -8,7 +8,7 @@
 /* You can override the default Infima variables here. */
 :root {
   --ifm-color-primary: #185392;
-  --ifm-color-primary-dark: #21269E;
+  --ifm-color-primary-dark: #21269e;
   --ifm-color-primary-darker: #0f3e70;
   --ifm-color-primary-darkest: #31366f;
   --ifm-color-primary-light: #3778be;
@@ -24,6 +24,9 @@
   padding: 0 var(--ifm-pre-padding);
 }
 
+.menu__list {
+  font-size: 14px;
+}
 
 .navbar__title {
   display: none;
@@ -33,5 +36,21 @@
 }
 
 article {
-  padding-bottom: 50px;
+}
+
+.MuiAccordion-root:before {
+  display: none;
+}
+
+.menu__link--sublist {
+  font-weight: 700;
+  white-space: pre;
+}
+
+.dropdown__link {
+  white-space: pre;
+}
+
+blockquote {
+  padding: 10px;
 }

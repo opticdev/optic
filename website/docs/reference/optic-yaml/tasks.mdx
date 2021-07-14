@@ -1,0 +1,76 @@
+---
+title: Tasks
+---
+
+In Optic, a `task` is a way to manually configure traffic capture for your project, often against a local target. It is very flexible in that it can take a `command` to start your project, and `inboundURL` and `targetUrl` to define the downstream and upstream proxy URLs. You won't need to use all of these parameters: which ones you choose will depend on how you want to capture your traffic. If you want to point Optic at a remote host with no other configuration, consider [environments](/reference/optic-yaml/environments) instead.
+
+## What kind of information does Optic require in a `task` configuration?
+
+[api run](/reference/optic-cli/commands/run) starts a local proxy and may also start your API project. Optic needs to know where it should listen for traffic, how it will reach your API (either by starting it or knowing where to send traffic), and if it depends on other Optic tasks to already be running (such as when running tests).
+
+:::tip
+[api exec](/reference/optic-cli/commands/exec) normally takes the start command on the command line. To share an `exec` configuration with your team, define a task with only a `command` parameter. Any task with only a `command` parameter can be run with `api run`, and will be treated as if it was run with `api exec`. That is, it will start a service to capture traffic from the Optic middleware.
+:::
+
+## What parameters are available when configuring a task?
+
+There are four parameters available when configuring a task. No task configuration requires all four: 
+
+  - `inboundURL`: Where will Optic listen for incoming traffic? We recommend starting this on the port your project usually starts on, as Optic will provide an environment variable, `PORT`, for the application to start on. That way, no changes need to be made to your local workflow. This is required for all tasks except [api exec](/reference/optic-cli/commands/exec) tasks.
+  - `command`: How Optic can start your API project. 
+    - Optic will provide the `PORT` enviornment variable to the application at startup. 
+    - If this is the only parameter present, it is treated as an [api exec](/reference/optic-cli/commands/exec) task. 
+    - This parameter is optional when defining both `inboundURL` and `targetUrl`, as these provide Optic the information it needs to proxy to your project if it is already running.
+  - `targetUrl`: Where Optic will point traffic, if Optic will not be starting the application with `command`. 
+    - This is only required when setting up a proxy manually. Otherwise, Optic would start your application with `command`, pass it an environment variable `PORT`, and expect it to listen on localhost:`PORT`.
+  - `useTask`: If this `run` task is starting tests or other processes that expect your service to be running, you can start them with another task and use the `useTask` parameter to depend on it.
+    - The base task definition (the task named in `useTask`) should work to intercept traffic to your application.
+    - When using `useTask`, the only other parameter to supply is `command` which will define the tests/other command to run.
+
+## What are some examples of how I'd define my tasks?
+
+```yaml title='Intercept traffic to my project, which normally listens on port 8080'
+name: "todo-js"
+tasks:
+  start:
+    # Starts a node server on $PORT (provided by Optic at runtime). Optic will listen for traffic on port 8080.
+    # To run this task: api run start
+    command: node server.js --watch db.json --routes routes.json --port $PORT
+    inboundUrl: http://localhost:8080
+```
+
+```yaml title='Set up a manual proxy to a service that runs separately'
+name: "todo-js"
+tasks:
+  start:
+    # Expects your API project to run on localhost:8080. Optic will listen on localhost:3001 and forward traffic.
+    # Make sure your clients all use localhost:3001, Optic's inbound proxy port, so traffic is captured.
+    # To run this task: api run start
+    targetUrl: http://localhost:8080
+    inboundUrl: http://localhost:3001
+```
+
+```yaml title='Run tests against my API project through Optic'
+name: "todo-js"
+tasks:
+  start:
+    command: node server.js --watch db.json --routes routes.json --port $PORT
+    inboundUrl: http://localhost:8080
+  tests:
+    # Runs a collection of Postman tests (using newman). Newman should send traffic to port 8080, Optic's inbound port.
+    # This uses the start task to spin up the application first, then sends test traffic through Optic.
+    command: newman run tests.postman_collection.json --environment local.postman_environment.json
+    useTask: start
+```
+
+```yaml title='Define an exec task to share with my team'
+name: "todo-js"
+tasks:
+  start:
+    # Starts the node server. This assumes it is already integrated with Optic midleware.
+    # Optic will start a service to receive traffic from the middleware.
+    # To run this task, the following are equivalent:
+    #   - api run start 
+    #   - api exec node server.js --watch db.json --routes routes.json --port $PORT
+    command: node server.js --watch db.json --routes routes.json --port $PORT
+```

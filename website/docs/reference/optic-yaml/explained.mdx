@@ -1,0 +1,158 @@
+---
+title: What is the optic.yml
+slug: /reference/optic-yaml
+---
+
+import { Button } from '@material-ui/core'
+import Tasks from './tasks.mdx'
+
+Optic has to store parameters to assure it can observe your API's traffic. The values, and even the parameters themselves, may vary by environment and how you integrate with your project. While we try to keep things simple, we know there is no one size fits all solution to developing, testing, and delivering software. The `optic.yml` file is where this kind of information lives. It should be checked in with your project, and everyone on your team will be able to use the same tasks. The file is broken down into sections: `tasks`, `environments`, and `scripts`.
+
+## Capture Traffic with `tasks` and `environments`
+
+`tasks` and `environments` are both types of traffic sources. Setting these up will let you capture API traffic to your project in the best way for your team, and to share those configurations with anyone who works on the project. `tasks` and `environments` have some different characteristics, and we recommend getting started by [documenting your first endpoints](/document) to walk through the best integration for your setup. These reference docs dive into the details of each type of traffic source.
+
+### What are `tasks`?
+
+In Optic, a `task` is a way to manually configure traffic capture for your project, often against a local target. It is very flexible in that a `task` has several parameters you can use, depending on how you want to capture your traffic. `tasks` also allow you to call other tasks, so you can start your API then run tests against it. The `run` command invokes `tasks`. If you want to point Optic at a remote host with no other configuration, consider [environments](#what-are-environments) instead.
+
+```sh title='Example: Postman tests (using Newman)'
+> api run tests
+[optic] Running dependent task start...
+[optic] Review the API Diff at http://localhost:34444/apis/2/diffs
+[optic] Optic is observing requests made to http://localhost:3001
+JSON Server is running
+[optic] Running test command newman run tests.postman_collection.json --environment local.postman_environment.json
+
+API tests
+
+→ Get all Todos
+  GET localhost:3001/api/todos  GET /todos 200 8.476 ms - -
+[200 OK, 7.76KB, 67ms]
+  ✓  Status Test
+
+...
+┌─────────────────────────┬──────────────────┬──────────────────┐
+│                         │         executed │           failed │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│              iterations │                1 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│                requests │                6 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│            test-scripts │                9 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│      prerequest-scripts │                6 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│              assertions │                2 │                0 │
+├─────────────────────────┴──────────────────┴──────────────────┤
+│ total run duration: 295ms                                     │
+├───────────────────────────────────────────────────────────────┤
+│ total data received: 7.89KB (approx)                          │
+├───────────────────────────────────────────────────────────────┤
+│ average response time: 20ms [min: 5ms, max: 67ms, s.d.: 21ms] │
+└───────────────────────────────────────────────────────────────┘
+[optic] Observed Unexpected API Behavior. Run "api status"
+```
+
+<Button color="primary" variant="contained" href="optic-yaml/tasks">
+Learn more about Tasks
+</Button>
+
+### What are `environments`?
+
+Unlike a `task`, an `environment` is a way to automatically configure a proxy, often against a remote target. You only need to define the target `host`. Traffic to `environments` is observed with the `intercept` command. Optic will set up a proxy, launch a new session of the browser of your choice (passed as a command line flag), and configure the new browser session to trust the Optic proxy. You then interact with your API project just as you would normally. Optic observes the traffic and builds a capture session for your review.
+
+```sh title='Example: Documenting GitHub's API'
+> api intercept production --chrome
+[optic] Transparent proxy is running on https://localhost:3700
+[optic] Monitoring Traffic to https://api.github.com
+[optic] Optic is observing requests made to https://localhost:3700
+[optic] Opening your API Diff at http://localhost:34444/apis/1/diffs/local/0a01c76-a3028cd4f056af82efb45f5f8311a376f459d09fda7aa9a5ecb75db688ec4661
+Waiting for traffic...... done
+```
+
+<Button color="primary" variant="contained" href="optic-yaml/environments">
+Learn more about Environments
+</Button>
+
+## Automate your API Ops with `scripts`
+
+Optic identifies changes in your API's behavior while observing traffic. When `tasks` and `environments` are properly configured, these changes can be detected anywhere your API receives traffic, such as in CI. `scripts` are task definitions that let you take action on changes to your specification. This is a great way to syndicate updates to your specification to other systems, or to update other documentation tools you may already be using to render your docs.
+
+### What are `scripts`
+
+`script` definitions allow you to run a command against the latest version of your specification to convert it to any format you need. For example, if your existing documentation is generated with `shins`, an Optic `script` would allow you to regenerate that any time your specification is updated. A `script` definition also allows you to specify dependencies and install commands, so your teammates won't need to do any manual configuration of their environment before running it.
+
+```sh title='Example: Updating documentation in shins'
+> api scripts publish-spec
+[optic] Found Script publish-spec
+Checking bin dependencies Requiring ["widdershins","shins"]... Missing dependencies
+[optic] Some bin dependencies are missing ["widdershins","shins"]. false
+Running install command: npm install --global widdershins shins ... ⣷
+
+...
+
++ shins@2.6.0
++ widdershins@4.0.1
+Running install command: npm install --global widdershins shins ... Success!
+Generating OAS file...
+[optic] Generated OAS files
+[optic] .../.optic/generated/openapi.json
+[optic] .../.optic/generated/openapi.yaml
+Running command: widdershins $OPENAPI_JSON -o /tmp/api.md && shins --inline -o docs/index.html /tmp/api.md
+Compiling all doT templates...
+
+...
+
+```
+
+<Button color="primary" variant="contained" href="optic-yaml/scripts">
+Learn more about Scripts
+</Button>
+
+---
+
+### Examples of `optic.yml`:
+
+```yml title='A basic start command'
+name: "todo-js"
+tasks:
+  start:
+    # Starts a node server on $PORT (provided by Optic at runtime). Optic will listen for traffic on port 3001.
+    # To run this task: api run start
+    command: node server.js --watch db.json --routes routes.json --port $PORT
+    inboundUrl: http://localhost:3001
+```
+
+```yml title='Running tests against the start command'
+name: "todo-js"
+tasks:
+  start:
+    ...
+  tests:
+    # Runs a collection of Postman tests (using newman)
+    # This uses the start task to spin up the application first.
+    command: newman run tests.postman_collection.json --environment local.postman_environment.json
+    useTask: start
+```
+
+```yml title='Documenting a remote API (GitHub)'
+name: "GitHub"
+environments:
+  production:
+    # Monitors requests to the host, and opens your browser to the (optional) webUI provided
+    host: https://api.github.com
+    webUI: https://api.github.com/repos/opticdev/optic
+```
+
+```yml title='Generating shins documentation with a script'
+name: "todo-js"
+scripts:
+  publish-spec:
+    # DependsOn and install assures everyone with this repostiory will have the pre-requisites set up.
+    command: "widdershins $OPENAPI_JSON -o /tmp/api.md && shins  --inline -o docs/index.html /tmp/api.md"
+    dependsOn:
+    - widdershins
+    - shins
+    install: npm install --global widdershins shins
+```

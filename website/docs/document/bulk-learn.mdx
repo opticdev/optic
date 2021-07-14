@@ -1,0 +1,105 @@
+---
+title: Learn Several Endpoints at Once
+slug: /document/advanced/bulk
+---
+> Once you get the hang of using Optic, you can speed up your baselining by documenting dozens of endpoints at once
+
+**Outcome**: A fast workflow to document the remaining endpoints in your API quickly
+
+You should have a few URLs on the Document New Endpoints page that have path parameters ie `GET /todos/:todoId/status`:
+
+<Paper elevation={3}>
+
+![8 Unmatched URLs observed in a traffic capture](/img/docs/doc-8-unmatched.png)
+
+</Paper>
+
+*Not seeing any URLs to document?* [Capture more traffic and come back to this step](/document)
+
+---
+
+## Using Bulk Mode to Learn Multiple Endpoints
+
+By default, Optic lets you [add one endpoint at a time](document/baseline). When adding each endpoint individually, you get a preview of what Optic has learned about that endpoint from the traffic. The **bulk mode** switch allows you to add multiple endpoints at once: the only difference is you don't have to go through each one individually. The plus signs have been replaced by checkboxes - you check these checkboxes to indicate which routes you want to learn. You can learn regular endpoints and [parameterized endpoints](/document/parameters) in bulk mode. The only difference is, instead of clicking a + icon to go to a preview, you check the **checkbox** to mark it for learning
+
+<Paper elevation={3}>
+
+  ![Marking some endpoints to add to the documentation](/img/docs/bulk-marked-endpoints.png)
+
+</Paper>
+
+**Do this ⤵️**
+
+- Click the **bulk mode** switch, which will slide right and turn blue to indicate it is enabled.
+- [Parameterize](/document/parameters) any relevant endpoints you see.
+- Check several checkboxes to mark them for learning.
+
+## Adding your endpoints
+
+Once you're ready to learn some endpoints, click the **Learn {n} endpoints** button in the upper-left hand corner. This will pop up a modal dialog confirming the endpoints you want to learn. Click **Learn** to add them to your documentation. They'll show up on the right-hand side, ready to be saved.
+
+<Paper elevation={3}>
+
+![The first endpoint is staged](/img/docs/bulk-learn-confirm.png)
+
+</Paper>
+
+<Paper elevation={3}>
+
+![The first endpoint is staged](/img/docs/bulk-learned-some.png)
+
+</Paper>
+
+**Do this ⤵️**
+
+- Click **Learn {n} endpoints**
+- Click the **Learn** button in the modal dialog that appears
+
+Your endpoints will be automatically learned in the same way they are learned individually, and added to the right-hand side of the documentation window. They have a green highlight, indicating they are ready to be saved to your documentation. If you added and endpoint that should be parameterized by mistake, you can [discard the endpoint](/document/parameters#did-you-make-a-mistake) and learn it again, with or without bulk mode.
+
+## Naming in Bulk
+
+The endpoints can be added to your documentation quickly, and they can be named quickly as well. When [adding endpoints one at a time](document/baseline), endpoint names can be added on the endpoint details screen. You won't see that in bulk mode and will name your endpoints on the right-hand side of the unmatched URL window. 
+
+<Paper elevation={3}>
+
+![All of the endpoints have been named](/img/docs/bulk-name.png)
+
+</Paper>
+
+**Do this ⤵️**
+
+- Click **Name for this endpoint** 
+- Add a name for the endpoint
+- Repeat for as many endpoints as you want to name
+
+You can name all of your endpoints at once, and adding these names is quick and easy whether you're documenting each endpoint individually or all at once in bulk mode. Your team gets to see both the documented behavior of your endpoint and the context you add by naming the endpoints.
+
+## Do I have to check every checkbox?
+
+You don't! As you start checking checboxes, you'll notice the checkbox at the top indicates that only some endpoints will be learned by putting a **-** in the checkbox. This checkbox can be toggled to reset all checkboxes, or check them all. Keep in mind that you will still need to click the necessary path elements to [parameterize](/document/parameters) any relevant endpoints, though if you forget, they can always be [discarded](/document/parameters#did-you-make-a-mistake) and re-learned.
+
+<Paper elevation={3}>
+
+![The bulk add checkbox is set, and all endpoints are checked](/img/docs/bulk-add-all.png)
+
+</Paper>
+
+**Do this ⤵️**
+
+- Check the checkbox to the right of **Learn {n} Endpoints**
+
+All of your endpoints are now ready to be added to your documentation. [Add your endpoints](/document/advanced/bulk#adding-your-endpoints) and they will all show up on the right-hand side, highlighted green, ready to be saved. You can enqueue all of your endpoints to be learned in as few as four clicks:
+
+- Enable **bulk mode**
+- Set all endpoints to be added
+- Click **Learn {n} endpoints**
+- Review your choices and confirm by clicking **Learn**
+
+If you need to, you can select all endpoints to be added and [parameterize](/document/parameters) endpoints in the list with a single click, adding IDs as you go along. Don't worry about going quickly: you can always [discard](/document/parameters#did-you-make-a-mistake) and re-learn an endpoint.
+
+Don't forget to click **Save changes** to save all of these added endpoints to your documentation!
+
+## Are there some URLs in the list that are not part of the API?
+
+Optic captures all of your traffic to your API project. Not all traffic is API traffic, and Optic recognizes that. By default, we will ignore common assets such as HTML and CSS stylesheets, javascript, and other assets commonly fetched for a Web UI. What if there's traffic that is recorded, but either not part of your API or not to an endpoint you want to document? Optic's default [ignore rules](/document/ignoring) can be extended to meet your needs

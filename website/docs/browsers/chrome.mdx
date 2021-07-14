@@ -1,0 +1,41 @@
+---
+title: Chrome
+flag: --chrome
+---
+
+import CodeBlock from '@theme/CodeBlock';
+import GetHelp from '../shared/get-help.mdx';
+
+<p>Optic is easy to integrate with {frontMatter.title} using Optic's Intercept feature. Optic will start a local proxy and a browser session that's configured to use the local proxy for its browsing. When you visit the application site, Optic will capture that API traffic for you to document.</p>
+
+## Integrating Optic with your browsing session
+
+### Optic needs to know where your API lives.
+
+The `optic.yml` file tells Optic where to find your API. It is capable of configuring multiple environments, so no matter where you would like to document your API Optic can help. For example, you could have separate environment configurations for local, staging, and production. For now, let's assume we're going to document a production environment, to establish the baseline behavior as it exists today. We can for example document GitHub's API with:
+
+```
+name: GitHub API
+environments:
+  production: 
+    host: https://api.github.com
+    webUI: https://api.github.com/repos/opticdev/optic
+```
+
+The `host` parameter defines the host for which all traffic will be assumed to be API traffic. Optic will capture any traffic sent to this host. The `webUI` parameter defines a default page for the new browser session. While it's optional, we recommend using your UI landing page to make documenting your API as smooth as possible.
+
+## Verify your API is integrated with Optic
+
+<p>Once your environment configuration is set, you're ready to browse your project through {frontMatter.title} and collect traffic to document with Optic. Optic will launch {frontMatter.title} with the necessary configurations to capture your API traffic by running:</p>
+
+
+<CodeBlock className="language-yml" children={`
+api intercept production ${frontMatter.flag} --verbose
+`.trim()}>
+</CodeBlock>
+
+<p>Optic will launch a new session of your browser and report some basic information about startup on the terminal so that you can verify Optic is running properly. Make sure you use the new session of {frontMatter.title} that Optic launches to navigate your project. You should send at least five requests to your API to verify the capture is working properly. As you send requests, The Optic CLI should report the requests seen and their response codes on the terminal.</p>
+
+Once Optic has seen at least five interactions, press `ctrl+c` on the terminal to end your Optic session. Optic will summarize your session on the terminal and launch the Optic dashboard to show you the captured traffic. Since there is no documentation yet, you should see the traffic marked as unmatched URLs. You're ready to [document your first endpoint](/document/baseline)!
+
+<GetHelp/>

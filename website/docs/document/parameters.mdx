@@ -1,0 +1,114 @@
+---
+title: Documenting Parameterized API Endpoints
+sidebar_label: Parameterized API Endpoints
+slug: /document/parameters
+---
+
+> Documenting the endpoints in your API takes seconds with Optic. Just click "+" and name the endpoint.
+
+**Outcome**: Learn how to document endpoints with path parameters in Optic
+
+**Do this ⤵️**
+
+If we run `api status -- review`, the Optic UI will open, and we should see some undocumented URLs:
+- Click on the Undocumented URLs Row above to start learning from the URLs Optic observed
+- *Not seeing any URLs to document?* [Capture more traffic and come back to this step](/document)
+
+Make sure there are a few URLs on the Document New Endpoints page that have path parameters ie `GET /todos/:todoId/status`:
+
+<Paper elevation={3}>
+
+![8 Unmatched URLs observed in a traffic capture](/img/docs/doc-8-unmatched.png)
+
+</Paper>
+
+---
+
+## Document an endpoint with a path parameter
+
+Documenting and endpoint with a path parameter is done in the same learning dashboard where you [documented your first endpoint](/document/baseline#documenting-your-first-endpoint). If you're not sure how to navigate this dashboard, please review that use case first.
+
+<Paper elevation={3}>
+
+  ![Click the relevant path element to turn it into a parameter](/img/docs/params-set-param.png)
+
+</Paper>
+
+**Do this ⤵️**
+
+- Click the element of your path that is an ID.
+- Enter the ID key you wish to use, such as `UserID`.
+- Click the **"+"** icon in the row
+
+Optic has collected all of the traffic observed to every path that matches the parameterized pattern, and automatically learns the endpoint requests and responses. It can learn multiple requests and responses: here there are two different responses seen: a 200 (OK) response for when a User ID is valid, and a 404 (Not Found) response for when a User ID is not valid. Optic has not only learned the shape of a response body, it has learned all of the possible shapes, optional fields, and different responses seen.
+
+<Paper elevation={3}>
+
+  ![Optic learns all responses for a parameterized route](/img/docs/params-learning.png)
+
+</Paper>
+
+**Do this ⤵️**
+
+- Name the endpoint
+- Click the **Add Endpoint** button
+
+The learned endpoint is now on the right, highlighted in green: rmember, this means Optic has learned this endpoint and has staged it be committed to the documentation.
+
+## Document related endpoints with the same path parameters
+
+In a RESTful API, you're likely to use HTTP verbs to indicate different actions on the same resource. For example, a `GET` request may fetch a user record, while a `PATCH` request may update a user record. Optic uses both observed traffic and elements it learns from you, such as path parameterization, so you don't have to repeat yourself when documenting an API.
+
+<Paper elevation={3}>
+
+  ![Parameterizing a path you have already learned will suggest the same ID](/img/docs/params-same-param.png)
+
+</Paper>
+
+**Do this ⤵️**
+
+- Click a path element to parameterize it and enter an ID key
+- Click the same path element from a different URL.
+
+The ID key will automatically populate for any path that has already had a parameter set. This works for endpoints that have been documented, staged, or are even still being learned!
+
+## Did you make a mistake?
+
+Don't worry about making a mistake. It's easy to rename a path parameter before committing your documentation.
+
+<Paper elevation={3}>
+
+  ![Parameter IDs can be changed, or parameterization may be removed altogether](/img/docs/params-change-id.png)
+
+</Paper>
+
+**Do this ⤵️**
+
+- In the left unmatched URL pane:
+    - Click the **x** button on a parameterized ID to remove the parameterization from that path.
+    - Click on the parameter ID to edit the ID
+
+If you have already added your endpoint, you'll need to click on it and click **Discard Endpoint**. Don't worry, you'll be able to learn it again just as quickly as before, and this time with the correct path parameter.
+
+<Paper elevation={3}>
+
+  ![You can discard staged changes to re-do them](/img/docs/params-discard-endpoint.png)
+
+</Paper>
+
+**Do this ⤵️**
+
+- Click on the staged endpoint in the right pane (it will be highlighted green).
+- Click the **Discard Endpoint** button.
+
+<Paper elevation={3}>
+
+  ![A change was unstaged](/img/docs/params-unstage.png)
+
+</Paper>
+
+Your endpoint will be unstaged, and you will be able to edit the parameter ID or remove the parameterization entirely. Once the parameterization is correct, you can re-add the endpoint with the **+** button to re-learn the same traffic as before.
+
+## Is it possible to automatically learn all the endpoints?
+
+We've also made it easy to document different endpoints in bulk. Read on to see how to [bulk learn](/document/advanced/bulk) all of your unmatched endpoints!
