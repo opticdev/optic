@@ -16,6 +16,7 @@ import {
   IArbitraryData,
   IBody,
   IHttpInteraction,
+  isValidHttpInteraction,
 } from '@useoptic/optic-domain';
 
 export interface IHttpToolkitCapturingProxyConfig {
@@ -203,6 +204,11 @@ export class HttpToolkitCapturingProxy {
             getters: true,
           })
         );
+
+        if (!isValidHttpInteraction(sample)) {
+          developerDebugLogger('Filtering out invalid sample', sample);
+          return;
+        }
 
         if (this.config.hostnameFilter) {
           //when filter is set, verify a match
