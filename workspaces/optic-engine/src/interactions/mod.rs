@@ -220,7 +220,8 @@ pub fn analyze_documented_bodies(
 
   results.into_iter().filter_map(move |result| match result {
     InteractionDiffResult::MatchedQueryParameters(diff) => {
-      let query_params = &interaction.request.query;
+      let maybe_query_params: Option<BodyDescriptor> = (&interaction.request.query).into();
+      let query_params = maybe_query_params.or_else(|| Some(BodyDescriptor::empty_object()));
       let trail_observations = observe_body_trails(query_params);
 
       Some(BodyAnalysisResult {

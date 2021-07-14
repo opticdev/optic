@@ -46,6 +46,7 @@ export interface BodyPreview {
   asJson: any | null;
   asText: any | null;
   noBody: boolean;
+  empty: boolean;
 }
 export interface IDiffDescription {
   title: ICopy[];
