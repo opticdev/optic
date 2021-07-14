@@ -1,0 +1,46 @@
+---
+title: api generate:oas
+---
+
+import IssuesAndContributing from '/docs/shared/issues-and-contributing.mdx';
+const issue_url = 'https://github.com/opticdev/optic/issues/new?title=%5Bissue%5D:%20api%20generate%20';
+const command_url = 'https://github.com/opticdev/optic/blob/develop/workspaces/local-cli/src/commands/generate.ts'
+
+Exports an OpenAPI 3.0.1 specification. This allows you to generate an OpenAPI specification for use in other software, such as third-party documentation generation software. Both `--json` and `--yaml` flags are supported to determine the output format. By default, a `.yaml` file is created.
+
+:::tip api scripts
+The scripts command will export an OpenAPI specification and allow you to run a command or script to process that specification. It can even manage dependencies! `generate:oas` is great for a one-time run, for workflow integration we recommend [scripts](/reference/optic-cli/commands/generate).
+:::
+
+### Flags & Options
+
+There are two optional flags that determine which formats will be exported. You may use both flags if you need both formats:
+
+- `--json`
+- `--yaml`
+
+### Examples
+
+#### Export an OpenAPI 3.0.1 specification
+
+```
+api generate:oas
+```
+
+```
+[optic] Generated OAS files
+[optic] {...}/todo-js/.optic/generated/openapi.yaml
+```
+
+#### Export an OpenAPI 3.0.1 specification in JSON format
+
+```
+api generate:oas --json
+```
+
+```
+[optic] Generated OAS files
+[optic] {...}/todo-js/.optic/generated/openapi.json
+```
+
+<IssuesAndContributing issue_url={issue_url} command_url={command_url} />

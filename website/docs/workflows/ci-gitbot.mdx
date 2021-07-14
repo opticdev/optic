@@ -1,0 +1,83 @@
+---
+title: Review API Changes in PRs
+slug: /workflows/apis-in-pull-requests
+hide_table_of_contents: false
+---
+
+import { HighlightSpan } from '../../src/components/HighlightSpan';
+import PreviewPageModal, { PreviewPageModalFakeLink } from '../../src/components/Modal';
+import { Paper, Button } from '@material-ui/core';
+import OpenInNewIcon from '@material-ui/icons/OpenInNew';
+import DX from './ci/dx.mdx'
+import Document from '../document/document.mdx'
+import Test from '../test/test.mdx'
+import CI from '../change/ci.mdx'
+import { CommonLinks } from '../../src/components/CommonLink'
+
+- Has your team struggled to maintain a single-source-of-truth for your API?
+- Have you tried OpenAPI, but found it difficult to scale and keep up-to-date?
+- Do you have trouble understanding when and how the API you are working on changes?
+
+> <HighlightSpan start={"Use Optic to ensure every change to your API "} end={" gets reviewed, approved and documented."} />
+
+### This workflow is great for teams that want
+
+- **A source of truth for your API behavior**, that's accurate and always up-to-date
+  - no need for engineers to manually write/update the specs
+- **A way to detect API changes in CI** by monitoring test traffic
+  - preventing unplanned changes from getting deployed.
+- **API changelogs** included in every Pull Request
+  - making it easy to discuss API changes during code review.
+
+<Paper elevation={3}>
+
+![alt](/img/ci-workflow.svg)
+
+</Paper>
+
+
+### To get started, you need
+- **A RESTful API**, <CommonLinks.Document text={"documented with Optic"}/>
+- **API tests that run in CI**, with reasonable <CommonLinks.Coverage />
+- **The ability to add Optic GitHub / GitLab Actions** to your repository
+- **Your team**, willing to try something new.
+
+
+---
+
+## How it works
+
+### 1. Optic catches unplanned API changes in CI
+> Unplanned API Changes should be caught as early as possible. Optic makes it easy to catch any unplanned changes in CI, and prevent them from getting released to users.
+
+**As developers,**
+- our time is best spent working on features, not writing exhaustive test cases about our API contract
+- we can work more confidently when we know our API's contract is being tested
+
+### 2. Developers can document new endpoints and propose API changes with ease
+> Replace "update the OpenAPI file" with Optic's UI for documenting new endpoints and recording changes to existing ones.
+
+**As developers,**
+- our time is best spent working on features and fixing issues, not writing documentation Optic can automate
+- we benefit from early feedback from their team on any API we are building or changing.
+- we can work more confidently when we know our API contract is constantly being tested by Optic
+
+### 3. API Changes get discussed during Code Review
+> Stop trying to figure out if a Pull Request changes the API by running the code in your head, or trying to understand an OpenAPI diff. Optic generates an accurate API changelog between each PR and the base branch.
+
+**As reviewers,**
+- it should be easy to tell exactly what API changes are being proposed in this PR
+- we should not have to run the code in our head or make sense a huge OpenAPI diff to give feedback to our colleague.
+
+
+<PreviewPageModal title="Demo: The Developer Experience" link={'/workflows/apis-in-pull-requests/developer-experience'} Source={<DX />}>
+  <button  className={'button button--primary'}  endIcon={<OpenInNewIcon />} variant="outlined" color="primary">Demo: See what it's like to use Optic as a Developer</button>
+</PreviewPageModal>
+
+---
+
+### Start using the Workflow
+
+1. <PreviewPageModalFakeLink linkText="Document your API with Optic" link={'/document'} source={<Document />}/>
+2. <PreviewPageModalFakeLink linkText="Add Optic to your API Tests " link={'/test'} source={<Test />}/>
+3. <PreviewPageModalFakeLink linkText="Add Optic Changelog Bot to your Repository " link={'/change/ci'} source={<CI />}/>

@@ -1,0 +1,84 @@
+---
+title: Developer Experience
+slug: /workflows/apis-in-pull-requests/developer-experience
+hide_table_of_contents: false
+hide_title: true
+---
+
+import { HighlightSpan } from '../../../src/components/HighlightSpan';
+import { Paper } from '@material-ui/core';
+
+## The Developer Experience
+
+> Replace "update the OpenAPI file" with Optic's UI for documenting new endpoints and recording changes to existing ones.
+
+## Documenting new endpoints
+Imagine if documenting that new endpoint you're building was as easy as `git add file`. With Optic, it is:
+
+1. Write the new endpoint, with Optic running as you work.
+2. You should see the new path show up under `Undocumented URLs` when you run `api status`
+3. Open Optic's UI *shorthand*: `api status --review`
+4. Document the new endpoint, using Optic (see gif)
+5. Commit changes to your API specification
+
+<Paper elevation={3} style={{marginBottom: 55}}>
+<img src={'/img/docs/doc-learn-endpoint.png'} width={'100%'} />
+</Paper>
+
+Don't take our word for it: [document your first endpoints](/document) now!
+
+## What your team sees
+
+### When you check-in your code and open a PR, Optic will comment with the API Changelog:
+
+<Paper elevation={3} style={{marginBottom: 55}}>
+<img src={'/img/pr1.png'} width={'100%'} />
+</Paper>
+
+### When they click on the `Review` button, they will see the `Compare Page`** (think GitHub compare, but for APIs):
+
+<Paper elevation={3} style={{marginBottom: 55}}>
+  <img src={'/img/compare1.png'} width={'100%'} />
+</Paper>
+
+### The full documentation for the new endpoint can be previewed:
+
+<Paper elevation={3} style={{marginBottom: 55}}>
+  <img src={'/img/new-endpoint1.png'} width={'100%'} />
+</Paper>
+
+
+## Proposing changes to existing endpoints
+It's easy to stage/discard code changes with Git, but updating our API specifications when we want to propose a change to our team is a much more laborious process.With Optic:
+
+1. Change the API, verify the changes by sending some traffic through Optic
+2. Run `api status`, you'll see the endpoint you updated under `Endpoints with Diffs`
+3. Open Optic's UI. *shorthand* `api status --review`
+4. Optic will suggest possible changes to the API spec, all you have to do is approve the changes by clicking `Save changes`:
+
+<Paper elevation={3} style={{marginBottom: 55}}>
+  <img src={'/img/diff-approve.png'} width={'100%'} />
+</Paper>
+
+5. Commit changes to your API specification
+
+### When you check-in your code and open a PR, Optic will comment with the API Changelog:
+
+<Paper elevation={3} style={{marginBottom: 55}}>
+  <img src={'/img/gitbot.png'} width={'100%'} />
+</Paper>
+
+### Just like GitHub's compare page shows code diffs, Optic's compare page shows the API changes you are proposing:
+
+<Paper elevation={3} style={{marginBottom: 55}}>
+  <img src={'/img/docs/change-changelog.png'} width={'100%'} />
+</Paper>
+
+---
+
+## Summary
+
+1. Documenting new endpoints takes seconds
+2. Proposing changes to existing endpoints is simple
+
+Each Pull Request you open that changes the API will include an API changelog. Your teammates can give you feedback on the API design early, and when the PR is merged, both the API and the docs are updated in parallel.

@@ -1,5 +1,5 @@
 ---
-date: "9/9/2020"
+date: 2020-09-09
 title: "React to API Changes with Optic Scripts"
 author: Lou Manglass
 author_image_url: "/img/team/lou.jpg"

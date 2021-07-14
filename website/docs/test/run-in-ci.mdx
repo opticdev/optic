@@ -1,0 +1,80 @@
+---
+title: Run Optic in CI
+slug: /test/run-in-ci
+---
+
+import { DocsImage } from '../../src/components/Image';
+
+
+> Make it easy to detect and fix unexpected API changes in CI. With Optic monitoring the tests in CI, you get confidence that every API change reviewed and documented before getting released.
+
+**Outcome**: Use Optic to verify your API contracts in CI.
+(optional) Block PRs with unplanned API Changes.
+
+### Prerequisites
+- An API, [documented with Optic](/document)
+- Your API tests [setup to run through Optic](/test/with-optic)
+
+## Why CI?
+If you have good [API test coverage](/test/with-optic#api-coverage) (>70%), putting Optic in your CI pipeline can give your team confidence that only planned API changes are getting merged/released.
+
+If unplanned API changes get detected in your Pull Request CI or Build Process, Optic can fail those tasks, and give feedback to developers, in their current tools.
+
+<DocsImage src={'/img/unplanned.png'}/>
+
+### Using the `--ci` flag
+To get Optic running in CI, just add a [Test Task](/test) and run it in your CI task using the `--ci` flag.
+
+```sh
+api run test --ci
+```
+
+```sh title='Output'
+[optic] Running dependent task start...
+[optic] Optic is observing requests made to http://localhost:3001
+[optic] Running test command newman run tests.postman_collection.json --environment local.postman_environment.json
+newman
+
+Baseline API
+
+→ Get all Todos
+  GET localhost:3001/api/todos  GET /todos 200 7.262 ms - -
+Optic logging request
+Optic logging to terminal
+[200 OK, 9.82KB, 66ms]
+  ✓  Status Test
+
+...
+
+Observed Unexpected API Behavior.
+
+
+ API Coverage Report:
+┌─────────────────────────────────────────────┬──────────────────────┬────────────────────────────────────┐
+│ Endpoint                                    │ Requests             │ Responses                          │
+├─────────────────────────────────────────────┼──────────────────────┼────────────────────────────────────┤
+│ GET /api/todos -> 100.0% covered            │ No Body: 1           │ 200: application/json: 1           │
+├─────────────────────────────────────────────┼──────────────────────┼────────────────────────────────────┤
+│ PATCH /api/todos/{TodoID} -> 100.0% covered │ application/json: 1  │ 200: application/json: 1           │
+├─────────────────────────────────────────────┼──────────────────────┼────────────────────────────────────┤
+│ GET /api/todos/{TodoID} -> 0.0% covered     │ No Body: No Coverage │ 200: application/json: No Coverage │
+├─────────────────────────────────────────────┼──────────────────────┼────────────────────────────────────┤
+│ POST /api/todos -> 100.0% covered           │ application/json: 1  │ 201: application/json: 1           │
+└─────────────────────────────────────────────┴──────────────────────┴────────────────────────────────────┘
+
+Based on 3 samples
+┌──────────────────────────────┬──────────┬──────────┬──────────────────┐
+│                              │ Observed │ Expected │ Percent Coverage │
+├──────────────────────────────┼──────────┼──────────┼──────────────────┤
+│ Documented Body Coverage     │ 6        │ 8        │ 75.0%            │
+├──────────────────────────────┼──────────┼──────────┼──────────────────┤
+│ Documented Endpoint Coverage │ 3        │ 4        │ 75.0%            │
+└──────────────────────────────┴──────────┴──────────┴──────────────────┘
+```
+
+Using the `--ci` flag makes Optic `exit 1` after running your tests if the API Contract deviates from the current contract. This is the same behavior as when using the `exit-on-diff` flag.
+
+Using the `--ci` flag also prints your API coverage into your CI logs, so you can see which endpoints have coverage, and therefore have had their contract verified, and which endpoints Optic was not able to verify. This is the same behavior as when using the `--print-coverage` flag.
+
+### What's Next
+You can also add Optic's API Changelogs, advanced testing setups, and API linting to CI. [Read more about how Optic helps your team design / change your API here.](/change)

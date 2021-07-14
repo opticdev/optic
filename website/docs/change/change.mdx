@@ -1,0 +1,63 @@
+---
+title: Change your API with Optic
+sidebar_label: Optic and API Change
+slug: /change
+---
+
+> Optic gives teams tools to ensure every API change gets reviewed, approved, and documented, before getting released.
+
+- Do you know when your API changes?
+- How does your team talk about, consider and review possible API changes?
+- How do you make sure the API specification is updated when things change?
+
+## Talking about Change
+We have great tools for talking about code changes (Git, Line Diffs and PRs), but the tooling out here today does not make it easy to discuss API Changes. Instead of line diffs, of OpenAPI files, we need semantic diffs, detailing exactly what resources in our API have changed.
+
+Like Git, Optic Specs include a history of every addition and change in your API since you ran `api init`. You can compare any two points in the history to understand how the API has changed.
+
+<Paper elevation={3}>
+
+![The history page lists your documentation commits in chronological order, and lets you compare changes from any given point until the current documentation](/img/docs/change-history.png)
+
+</Paper>
+
+### Real API Changelogs
+Once you choose two versions of your API to compare, Optic's documentation viewer will render the changelog. We tried to build an experience similar to a Git compare page, but optimized for working with API changes.
+
+<Paper elevation={3}>
+
+![Changes in your API are shown highlighted by endpoint](/img/docs/change-changelog.png)
+
+</Paper>
+
+Endpoints are highlighted based on the type of change that has happened:
+
+- <strong style={{color: 'green'}}>Green</strong> indicates endpoints that have been added are highlighted in green.
+- <strong style={{color: 'rgb(252,171,16)'}}>Yellow</strong> indicates changes have been made to an endpoint's shape.
+- <strong style={{color: 'red'}}>Red</strong> endpoints have been deleted from the specification, and are no longer in the current version of the documentation.
+
+<Paper elevation={3}>
+
+![Changes in your API are shown highlighted by endpoint](/img/docs/change-detail-changelog.png)
+
+</Paper>
+
+- <strong style={{color: 'green'}}>Green</strong> indicates a field that has been added in the history compare timeframe.
+- <strong style={{color: 'rgb(252,171,16)'}}>Yellow</strong> indicates changes have been made to a field, such as editing the field's type or metadata about the field (such as whether or not it is optional).
+- <strong style={{color: 'red'}}>Red</strong> fields have been deleted from the specification, and are no longer in the current version of the documentation.
+
+### Discuss Change During Code Review
+
+Optic's ability to understand the changes to your API over time enable powerful workflows that fit nicely into Pull Requests. Our GitBot adds an accurate API Changelog to every Pull Request, giving teams the context they need to discuss API changes during code review.
+
+"If we merge this PR, it changes this code, and updates that API endpoint"
+
+<Paper elevation={3}>
+
+![The Optic GitHub Action will show what differences in behavior have been detected in your endpoints during CI tests](/img/docs/github-actions-example.png)
+
+</Paper>
+
+---
+
+## What's Next

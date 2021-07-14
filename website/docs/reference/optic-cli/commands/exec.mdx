@@ -1,0 +1,50 @@
+---
+title: api exec
+---
+
+import IssuesAndContributing from '/docs/shared/issues-and-contributing.mdx';
+const issue_url = 'https://github.com/opticdev/optic/issues/new?title=%5Bissue%5D:%20api%20exec%20';
+const command_url = 'https://github.com/opticdev/optic/blob/develop/workspaces/local-cli/src/commands/exec.ts'
+
+Starts and Optic service locally to receive traffic from middleware integrated with your code, and starts your project. `exec` allows you to run any project in any environment and capture traffic. It takes the command to start your project as a required parameter.
+
+:::tip api run
+You can also take the command to start your project and define a task in `optic.yml` with only a `command` parameter. This task can be run with `api run <taskname>` and it will behave just like `api exec`. Please check out [an example](/reference/optic-yaml/tasks#what-are-some-examples-of-how-id-define-my-tasks)
+:::
+
+### Flags & Options
+
+Exec has a few flags that can modify the default behavior:
+
+- `-c`/`--print-coverage` prints how much of the documented API is covered by traffic seen in the capture session. The coverage prints once the session is terminated (`ctrl+c` or when tests finish running).
+- `--ci` Enables CI-specific behavior. This enables `--print-coverage`, `--exit-on-diff`, and `pass-exit-code`.
+- `--exit-on-diff` returns an exit code of `1` if unexpected API behavior is returned, such as an undocumented route or a change in behavior on a documented route. Normally, Optic returns `0` on successful termination regardless of the behavior observed. This is primarily used in CI/CD scenarios, such as in [GitHub Actions](/docs/github-actions), to fail builds when undocumented behavior is detected.
+- `--pass-exit-code` returns the exit code of your task. If you are using a [dependent task](/docs/get-started/testing), the exit code of the dependent command (not the base command) will be passed through. This flag is overridden by - - - `--verbose` which provides extra troubleshooting information at task startup, task end, and when traffic is observed. We recommend using this when configuring a new task. 
+
+### Examples
+
+```sh title='Run an application with integrated middleware'
+api exec "cargo run"
+```
+
+```sh title='Output'
+Running command: node basic-http-server.js
+Traffic can be sent to: http://localhost:3700/
+
+...
+
+```
+---
+
+```sh title='Run a task in optic.yml as an exec command'
+api run start
+```
+
+```yml title='optic.yml task for an exec command'
+name: "todo-js"
+tasks:
+  start:
+    command: node server.js
+```
+
+<IssuesAndContributing issue_url={issue_url} command_url={command_url} />

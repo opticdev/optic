@@ -1,0 +1,17 @@
+---
+title: Setup - Proxy Mode
+---
+import BrowserOnly from '@docusaurus/core/lib/client/exports/BrowserOnly';
+
+
+<BrowserOnly>
+
+### What does the Optic Middleware do?
+
+Optic Middleware logs traffic handled by your API to your local instance of Optic. This makes it easy to collect API traffic from tests that do not run over the network, and removes the need to run an Optic Proxy while developing. The only change in how you work is replacing your normal start command with Optic's:
+
+<div style={{marginBottom: 22}}>  <code>{props.start_command}</code>  - >  <code>api start</code> </div>
+
+The Middleware will only enable itself and log traffic when you start the application using Optic's `api run` command, providing guarantees that the Middleware will not run in any of your real environments.
+
+</BrowserOnly>

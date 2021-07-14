@@ -1,5 +1,5 @@
 ---
-date: "4/21/2021"
+date: 2021-04-21
 title: "When Real Traffic Smashes into your API"
 author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"

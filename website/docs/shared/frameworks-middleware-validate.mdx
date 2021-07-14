@@ -1,0 +1,44 @@
+---
+title: Setup - Integrate Optic via Middleware
+---
+
+import ExpandDocs from '../../src/components/Expand';
+
+We recommend collecting some traffic with the Middleware to validate it is set up correctly. Start up your project with Optic, using the `--verbose` flag:
+
+```
+api run start --verbose
+```
+
+Next, run some traffic through your application. We recommend running at least 5 requests against multiple endpoints to get different behavior coverage. This will help validate the traffic is observed correctly:
+
+```
+[optic-verbose] Starting a local server that receives traffic sent from your SDK/Middleware to http://localhost:3700/
+[optic-verbose] Running command node basic-http-server.js
+Running command: node basic-http-server.js
+Traffic can be sent to: http://localhost:3700/
+```
+
+<ExpandDocs title="Potential issue: the project start command is not working" defaultOpen={false}>
+
+```
+/bin/sh: noder: command not found
+[optic-verbose] Task finished with 0 samples in latest capture
+```
+
+This error occurs when the start task cannot run. The output of the command, and any failure items, will show up here. In this example the command `noder` is not found. The running command was `noder server.js --port $PORT` instead of `node ...`. This looks like a simple typo, a quick fix.
+
+</ExpandDocs>
+
+```
+Listen http://localhost:3000
+... traffic captures show up here
+^C[optic-verbose] Task finished with 5 samples in latest capture
+```
+
+Success! Repeat the same steps for your `test` command:
+
+```
+api run test --verbose
+```
+

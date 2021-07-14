@@ -1,0 +1,76 @@
+---
+title: api status
+---
+
+import IssuesAndContributing from '/docs/shared/issues-and-contributing.mdx';
+const issue_url = 'https://github.com/opticdev/optic/issues/new?title=%5Bissue%5D:%20api%20status%20';
+const command_url = 'https://github.com/opticdev/optic/blob/develop/workspaces/local-cli/src/commands/status.ts'
+
+### `status`
+
+Lists API diffs observed since your last git commit. This is a quick way on the command line to see if there are any undocumented behaviors that need to be resolved.
+
+### Flags & Options
+
+- `--review` will open the Optic dashboard to review and document any new endpoints or differences in behavior on existing endpoints. This is a handy way to get into the review process.
+- `--pre-commit` returns an exit code of `1` if there are any diffs that need to be resolved in the behavior, such as undocumented endpoints or endpoints whose observed behavior doesn't match the specification. This allows developers to use git hooks such as pre-commit hooks to assure the specification is up to date as part of their normal workflow.
+- `--print-coverage` will report the [coverage](/test/with-optic#api-coverage) of observed traffic over the API specification when the process is stopped.
+
+### Examples
+
+#### Show the status of your documentation
+
+To see if there are any diffs or unknown endpoints in the recent traffic capture:
+
+```
+api status
+```
+
+```
+Computing API diffs... Done!
+   Diffs observed for existing endpoints
+     (use "api status --review" to review in the UI
+         POST   /api/todos
+          GET   /api/todos
+        PATCH   /api/todos/{id}
+✓  No undocumented URLs observed
+```
+
+#### Show coverage report
+
+In addition to showing any diffs or unknown endpoints, you can also get a coverage report showing how much of the documented API was covered by traffic in the most recent capture.
+
+```
+api status --print-coverage
+```
+
+```
+Computing API diffs... Done!
+   Diffs observed for existing endpoints
+     (use "api status --review" to review in the UI
+        PATCH   /api/todos/{id}
+✓  No undocumented URLs observed
+
+
+ API Coverage Report:
+┌──────────────────────────────────┬──────────────────────────────────────────────┬───────────────────────────────────────────────────┐
+│ Endpoint                         │ Requests                                     │ Responses                                         │
+├──────────────────────────────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
+│ /api/todos -> 100.0% covered     │ No Body: 1                                   │ 200: application/json: 1                          │
+│                                  │ application/json: 1                          │ 201: application/json: 1                          │
+├──────────────────────────────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
+│ /api/todos/{id} -> 50.0% covered │ No Body: 1                                   │ 200: application/json: 1                          │
+│                                  │ application/json: No Coverage | 1 with diffs │ 200: application/json: No Coverage | 1 with diffs │
+└──────────────────────────────────┴──────────────────────────────────────────────┴───────────────────────────────────────────────────┘
+
+Based on 3 samples
+┌──────────────────────────────┬──────────┬──────────┬──────────────────┐
+│                              │ Observed │ Expected │ Percent Coverage │
+├──────────────────────────────┼──────────┼──────────┼──────────────────┤
+│ Documented Body Coverage     │ 6        │ 8        │ 75.0%            │
+├──────────────────────────────┼──────────┼──────────┼──────────────────┤
+│ Documented Endpoint Coverage │ 2        │ 2        │ 100.0%           │
+└──────────────────────────────┴──────────┴──────────┴──────────────────┘
+```
+
+<IssuesAndContributing issue_url={issue_url} command_url={command_url} />
