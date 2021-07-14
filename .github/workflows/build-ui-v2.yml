@@ -6,6 +6,7 @@ on:
       - release
       - develop
       - feature/cloud_spec_viewer
+      - feature/add-demo
     paths-ignore:
       - website/**
       - .github/**
