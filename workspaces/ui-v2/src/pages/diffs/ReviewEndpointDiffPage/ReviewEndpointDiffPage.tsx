@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import * as Sentry from '@sentry/react';
 
 import { IForkableSpectacle } from '@useoptic/spectacle';
 
@@ -32,7 +33,7 @@ const useRedirectForDiffCompleted = (allDiffs: IInterpretation[]) => {
 
   useEffect(() => {
     if (
-      allDiffs.length > 0 &&
+      allDiffs.length === 0 ||
       allDiffs.every((i) => isDiffHandled(i.diffDescription.diffHash))
     ) {
       history.push(diffReviewPage.linkTo());
@@ -111,6 +112,20 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
       inputTagNames: new Set(['input']),
     }
   );
+
+  // We should redirect using useRedirectForDiffCompleted
+  if (allDiffs.length === 0) {
+    console.error(
+      'Redirecting to diff capture page, no valid diffs were found'
+    );
+    // This means that newRegionsDiffs or shapeDiffs are being filtered out (because they are invalid due to their shape)
+    // This means we should investigate why we are generating invalid diffs
+    Sentry.captureEvent({
+      message:
+        'No diffs were found on the ReviewEndpointDiffPage.tsx component',
+    });
+    return null;
+  }
 
   return (
     <TwoColumnFullWidth

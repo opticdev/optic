@@ -18,7 +18,7 @@ export async function newRegionInterpreters(
   diff: ParsedDiff,
   opticDiffService: IOpticDiffService,
   currentSpecContext: CurrentSpecContext
-): Promise<IInterpretation | undefined> {
+): Promise<IInterpretation | null> {
   if (
     diff.isA(DiffTypes.UnmatchedRequestBodyContentType) ||
     diff.isA(DiffTypes.UnmatchedResponseBodyContentType) ||
@@ -34,6 +34,7 @@ export async function newRegionInterpreters(
 
     return newContentType(diff, location, learnedBodies);
   }
+  return null;
 }
 
 // TODO QPB - move IInterpretation generation into ParsedDiff
@@ -41,7 +42,7 @@ function newContentType(
   udiff: ParsedDiff,
   location: DiffLocation,
   learnedBodies: ILearnedBodies
-): IInterpretation {
+): IInterpretation | null {
   if (udiff.isA(DiffTypes.UnmatchedRequestBodyContentType)) {
     const requestDescriptor = location.getRequestDescriptor();
     const contentType = requestDescriptor ? requestDescriptor.contentType : '';
@@ -61,6 +62,7 @@ function newContentType(
           udiff,
         },
       });
+      return null;
     }
 
     const commands = learnedRequestBody ? learnedRequestBody.commands : [];
@@ -117,6 +119,7 @@ function newContentType(
           udiff,
         },
       });
+      return null;
     }
 
     const commands = learnedResponseBody ? learnedResponseBody.commands : [];
