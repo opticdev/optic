@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { IOpticCapturesService, ICapture } from '@useoptic/spectacle';
 import { useContext, useEffect, useState } from 'react';
 
@@ -23,13 +23,18 @@ export function useCaptures(): {
       shouldCancel = true;
     };
   }, [capturesService]);
-  if (captures === null) {
-    return { captures: [], loading: true };
-  }
-  return {
-    captures,
-    loading: false,
-  };
+
+  const returnValue = useMemo(() => {
+    if (captures === null) {
+      return { captures: [], loading: true };
+    }
+    return {
+      captures,
+      loading: false,
+    };
+  }, [captures]);
+
+  return returnValue;
 }
 
 interface CapturesServiceStoreProps {

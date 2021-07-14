@@ -31,6 +31,27 @@ interface OnboardingData {
   coverages_uploaded: number;
 }
 
+const emptyOnboardingData: {
+  [key in keyof OnboardingData]: { total: number; users: number };
+} = {
+  specs_shared_with_team: {
+    total: 0,
+    users: 0,
+  },
+  specs_shared_not_with_team: {
+    total: 0,
+    users: 0,
+  },
+  specs_uploaded_by_gitbot: {
+    total: 0,
+    users: 0,
+  },
+  coverages_uploaded: {
+    total: 0,
+    users: 0,
+  },
+};
+
 export default function Onboarding() {
   const classes = useStyles();
 
@@ -48,8 +69,6 @@ export default function Onboarding() {
           capturesService.getCaptureStatus(cap.captureId)
         )
       );
-
-      debugger;
 
       return captureStatuses.reduce(
         (accum, curr) => {
@@ -77,6 +96,11 @@ export default function Onboarding() {
       const onboardingResponse = await fetch(
         `${baseDomain}/api/public-specs/onboarding-by-analytics-id/${specId}`
       );
+
+      if (!onboardingResponse.ok) {
+        return emptyOnboardingData;
+      }
+
       const data: {
         by_person: { [key: string]: OnboardingData };
       } = await onboardingResponse.json();
@@ -90,24 +114,7 @@ export default function Onboarding() {
           });
           return accum;
         },
-        {
-          specs_shared_with_team: {
-            total: 0,
-            users: 0,
-          },
-          specs_shared_not_with_team: {
-            total: 0,
-            users: 0,
-          },
-          specs_uploaded_by_gitbot: {
-            total: 0,
-            users: 0,
-          },
-          coverages_uploaded: {
-            total: 0,
-            users: 0,
-          },
-        }
+        emptyOnboardingData
       );
     }
   }, [baseDomain, specId]);
