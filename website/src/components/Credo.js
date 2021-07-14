@@ -1,14 +1,9 @@
 import React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { Avatar, Typography } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
 import { FormatCopy } from './FormatCopy';
-import Divider from '@material-ui/core/Divider';
-import {
-  SubtleGreyBackground,
-  UpdatedBlueBackground,
-} from '@useoptic/ui-v2/src/constants/theme';
-import { SubtleBlueBackground } from './theme';
+import { UpdatedBlueBackground } from './theme';
+
 export const useStyles = makeStyles({
   bg: {
     paddingTop: 30,

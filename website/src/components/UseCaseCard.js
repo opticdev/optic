@@ -1,15 +1,9 @@
 import React from 'react';
 import { useHistory } from '@docusaurus/router';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { primary, SubtleBlueBackground, UpdatedBlueBackground } from './theme';
+import { SubtleBlueBackground, UpdatedBlue } from './theme';
 import { Paper, Typography } from '@material-ui/core';
 import { FormatCopy } from './FormatCopy';
-import {
-  OpticBlue,
-  OpticBlueLightened,
-  OpticBlueReadable,
-  UpdatedBlue,
-} from '@useoptic/ui-v2/src/constants/theme';
 import { useFeatureStyles } from './featureStyles';
 
 const useStyles = makeStyles((theme) => ({

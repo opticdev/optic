@@ -4,18 +4,6 @@ import Grid from '@material-ui/core/Grid';
 import { useFeatureStyles } from './featureStyles';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import { Paper } from '@material-ui/core';
-import {
-  OpticBlue,
-  OpticBlueLightened,
-  OpticBlueReadable,
-} from '@useoptic/ui-v2/src/constants/theme';
-import {
-  SubtleBlueBackground,
-  UpdatedBlue,
-  UpdatedBlueBackground,
-} from './theme';
-import Button from '@material-ui/core/Button';
 import Link from '@docusaurus/core/lib/client/exports/Link';
 import { links } from './links';
 
