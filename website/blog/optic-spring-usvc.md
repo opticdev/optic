@@ -6,6 +6,8 @@ author_image_url: "/img/team/lou.jpg"
 category: Built with Optic
 ---
 
+import { Link } from '@material-ui/core'
+
 Optic helps teams write and maintain their first OpenAPI specifications. You don't need to get your team on-board to learn OpenAPI or worry about maintaining 10k line YAML files -- Optic takes care of all of that. Optic manages this process whether your development environment is running locally on your machine out in the Cloud, or somewhere in between. No matter where you develop and test, you have confidence that every change to your API is reviewed, approved, and documented before it's released. Optic can work at any interface in your project, even with microservices.
 
 <!--truncate-->
