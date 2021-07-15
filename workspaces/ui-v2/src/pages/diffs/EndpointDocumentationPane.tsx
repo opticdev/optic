@@ -4,10 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import {
   EndpointName,
   PathParameters,
-  FieldOrParameter,
   FullWidth,
-  IShapeRenderer,
-  JsonLike,
   ShapeFetcher,
   QueryParametersPanel,
   HttpBodyPanel,
@@ -73,25 +70,7 @@ export const EndpointDocumentationPane: FC<
           />
         }
       >
-        <PathParameters
-          parameters={parameterizedPathParts}
-          renderField={(param) => {
-            const alwaysAString: IShapeRenderer = {
-              shapeId: param.id + 'shape',
-              jsonType: JsonLike.STRING,
-              value: undefined,
-            };
-            return (
-              <FieldOrParameter
-                key={param.id}
-                name={param.name}
-                shapes={[alwaysAString]}
-                depth={0}
-                value={param.description}
-              />
-            );
-          }}
-        />
+        <PathParameters parameters={parameterizedPathParts} />
         <div
           style={{
             marginTop: 10,
