@@ -4,6 +4,8 @@ sidebar_label: Reviewing Diffs
 slug: /change/diff-review
 ---
 
+import { Paper } from '@material-ui/core';
+
 The `api status` command will let you know from the command line when Optic has seen diffs in your traffic. Running `api status --review` will open the Optic dashboard as well, so you can review these changes in detail and take the appropriate action. Diffs can be ignored if they're a transient issue that should not be documented, or they can be used to update the specification. This includes adding metadata to fields, such as whether or not a field is optional. This is all quick and easy from the Optic dashboard on the diff review page.
 
 <Paper elevation={3}>
