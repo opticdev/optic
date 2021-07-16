@@ -12,12 +12,18 @@ on:
       - website/**
   workflow_dispatch:
 
+env:
+  DRY_RUN: "true"
+  SKIP_VERIFY: "true"
+
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+
+      # TODO: set APP_ENV based on the branch
 
       - name: Setup Node
         uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # v1.4.4
@@ -35,9 +41,4 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - run: task website:deploy
-        env:
-          DRYRUN: "true"
-          SKIP_VERIFY: "true"
-          APP_ENV: "staging"
-
 

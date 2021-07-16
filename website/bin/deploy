@@ -22,7 +22,7 @@ S3_BUCKET="optic-${SITE_NAME}-website-${APP_ENV}"
 CLOUDFRONT_DIST=""
 
 function usage {
-    echo "AWS_PROFILE=(staging|production) DRY_RUN=(true|false) ./bin/deploy"
+    echo "APP_ENV=(staging|production) DRY_RUN=(true|false) SKIP_VERIFY=(true|false) ./bin/deploy"
 }
 
 function set_cloudfront_dist_arn {
