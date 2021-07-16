@@ -4,13 +4,6 @@ set -eu
 trap 'usage' ERR
 trap 'cleanup' EXIT
 
-# require APP_ENV to be set
-if [ -z "${APP_ENV}" ]
-then
-    echo "APP_ENV is not set"
-    usage
-fi
-
 DRY_RUN="${DRY_RUN:-true}"
 SKIP_VERIFY="${SKIP_VERIFY:-false}"
 
