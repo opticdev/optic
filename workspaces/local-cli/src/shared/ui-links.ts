@@ -9,4 +9,4 @@ export const linkToDocumentation = (uiBaseUrl: string, sessionId: string) =>
   `${uiBaseUrl}/apis/${sessionId}/documentation`;
 
 export const linkToSetup = (sessionId: string) =>
-  `https://useoptic.com/docs/get-started/config`;
+  `https://useoptic.com/document`;

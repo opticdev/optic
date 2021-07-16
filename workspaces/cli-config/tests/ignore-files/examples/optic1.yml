@@ -1,6 +1,6 @@
 name: Todo API
 tasks: []
 ignoreRequests:
-# For more information on configuration, visit https://www.useoptic.com/docs/get-started/config
+# For more information on configuration, visit https://www.useoptic.com/reference/optic-yaml/ignore
 - OPTIONS (.*)
 - GET /main/resource

@@ -100,7 +100,7 @@ export function AuthorIgnoreRules() {
               <div>
                 Want to match a pattern? See our{' '}
                 <a
-                  href="https://www.useoptic.com/docs/using/advanced-configuration/#ignoring-api-paths"
+                  href="https://www.useoptic.com/reference/optic-yaml/ignore"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
