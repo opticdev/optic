@@ -24,6 +24,9 @@ includes:
   verdaccio:
     taskfile: docker/private-npm-registry/Taskfile.yml
     dir: docker/private-npm-registry
+  website:
+    taskfile: website/Taskfile.yml
+    dir: website
 
 tasks:
   postpull:
@@ -127,7 +130,7 @@ tasks:
         * TAG — the Docker image tag
         * USER — the user to direct the message at
     vars:
-      MESSAGE: '{{.USER}}: `{{.REPO}}:{{.TAG}}` was pushed to our Docker registry.'
+      MESSAGE: '{{.USER}}: `{{.REPO}}:{{.TAG}}` {{default "was pushed to our Docker registry." .MSG}}'
     env:
       DATA: '{"text":"{{.MESSAGE}}"}'
     cmds:

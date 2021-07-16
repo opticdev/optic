@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  docs:
+    image: 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 34999:80
+    networks: [optic]
+
+networks:
+  optic:
+    name: optic
+    external: true

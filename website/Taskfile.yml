@@ -30,7 +30,7 @@ tasks:
 
   deploy:staging:
     desc: Dry run of a deploy to staging
-    cmds: 
+    cmds:
       - task: deploy
         vars:
           AWS_PROFILE: staging
@@ -38,15 +38,15 @@ tasks:
 
   deploy:staging:doit:
     desc: Deploy to staging
-    cmds: 
+    cmds:
       - task: deploy
         vars:
           AWS_PROFILE: staging
-          DRY_RUN: false  
+          DRY_RUN: false
 
   deploy:prod:
     desc: Dry run of a deploy to production
-    cmds: 
+    cmds:
       - task: deploy
         vars:
           AWS_PROFILE: production
@@ -54,8 +54,51 @@ tasks:
 
   deploy:prod:doit:
     desc: Deploy to production
-    cmds: 
+    cmds:
       - task: deploy
         vars:
           AWS_PROFILE: production
-          DRY_RUN: false  
+          DRY_RUN: false
+
+  docker:build:
+    desc: Build a Docker image
+    env:
+      TAG: '{{default "local" .TAG}}'
+    cmds:
+      # built with docker to avoid a docker-compose dependency in CI
+      - docker build . -t 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:$TAG
+
+  docker:push:
+    env:
+      TAG: '{{default "local" .TAG}}'
+    cmds:
+      - docker push 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:$TAG
+      - |
+        if [[ "$BRANCH" =~ ^(develop|release)$ ]]
+        then
+          docker tag 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:$TAG 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:latest
+          docker push 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:latest
+        fi
+
+  docker:up:
+    desc: Start Docs
+    cmds:
+      - docker-compose up -d
+      - echo "Listening on localhost:34999"
+
+  docker:down:
+    desc: Stop Docs
+    cmds:
+      - docker-compose down
+
+  docker:deploy:
+    desc: Deploy Docs to K8s
+    env:
+      TAG: '{{default "local" .TAG}}'
+    cmds:
+      - skaffold deploy -i 513974440343.dkr.ecr.us-east-1.amazonaws.com/docs:$TAG --namespace docs
+
+  docker:ci:
+    - docker:build
+    - docker:push
+    - docker:deploy
