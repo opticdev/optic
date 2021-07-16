@@ -12,6 +12,7 @@ import { PassThrough } from 'stream';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
 interface WorkerResult {
   results: AsyncIterable<DiffResult>;
+  onWriteComplete: Promise<void>;
 }
 
 interface WorkerConfig {
@@ -121,6 +122,14 @@ export class InteractionDiffWorkerRust {
     workerProcessOutput.pipe(fork([inMemorySink, fsSink]));
     return {
       results,
+      onWriteComplete: new Promise((resolve, reject) => {
+        fsSink.on('close', () => {
+          resolve();
+        });
+        fsSink.on('error', () => {
+          reject();
+        });
+      }),
     };
   }
 }
