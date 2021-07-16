@@ -28,6 +28,7 @@ jobs:
           else
             echo "APP_ENV=staging" >> $GITHUB_ENV
           fi
+
       - name: Setup Node
         uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # v1.4.4
         with:
