@@ -1,0 +1,31 @@
+name: Website
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - .github/wokflows/website.yml
+      - website/**
+  push:
+    branches: [release]
+    paths:
+      - website/**
+  workflow_dispatch:gs
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+      - name: Setup Node
+        uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # v1.4.4
+        with:
+          node-version: "14.x"
+      - name: Install Task
+        run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
+      - run: task website:build
+        env:
+          DRYRUN: "true"
+
+
