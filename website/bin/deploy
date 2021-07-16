@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -eu
 
-trap 'usage' ERR
-trap 'cleanup' EXIT
-
 DRY_RUN="${DRY_RUN:-true}"
 SKIP_VERIFY="${SKIP_VERIFY:-false}"
 
@@ -113,6 +110,9 @@ function run {
 
     echo "Done!"
 }
+
+trap 'usage' ERR
+trap 'cleanup' EXIT
 
 #
 # entrypoint
