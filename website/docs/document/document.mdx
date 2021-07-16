@@ -15,6 +15,7 @@ import { ShowAllTools } from '../../src/components/ShowAllTools';
 import TabItem from '@theme/TabItem';
 import { ShowAllBrowsers } from '../../src/components/ShowAllBrowsers';
 import { IFrameDemoNotCentered } from '../../src/components/iFrameDemo2';
+import LiveEnvironments from '../shared/live-environments-beta.mdx';
 
 > Get visibility into how your API works today. Optic learns your API's current behavior by observing traffic.
 
@@ -36,7 +37,7 @@ Want to start versioning some of your existing API endpoints with Optic?
 2. Add them to the spec in just a few clicks
 
 *Try out the UI without downloading Optic:*
-<IFrameDemoNotCentered demoPath={'/demos/github/review'} />
+<IFrameDemoNotCentered demoPath={'/examples/github/diffs/local/example-session/urls'} />
 
 </DemoPageModal>
 
@@ -93,7 +94,11 @@ Capture Traffic from your other API Tools:
 
 </TabItem>
 
-<TabItem value="passive">This is a banana 🍌</TabItem>
+<TabItem value="passive"> 
+  
+<LiveEnvironments />
+
+</TabItem>
 
 </Tabs>
 

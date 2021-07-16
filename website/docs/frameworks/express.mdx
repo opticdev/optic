@@ -16,7 +16,7 @@ import FrameworksMiddleware from '../shared/frameworks-middleware.mdx';
 import FrameworksMiddlewareValidate from '../shared/frameworks-middleware-validate.mdx';
 import FrameworksProxyMode from '../shared/frameworks-proxy-mode.mdx';
 import FrameworksProxyValidate from '../shared/frameworks-proxy-validate.mdx';
-import FrameworksMidleware from '../shared/frameworks-proxy-use-middleware.mdx';
+import FrameworksProxyUseMiddleware from '../shared/frameworks-proxy-use-middleware.mdx';
 import MoreDetails from '../shared/frameworks-more-details.mdx';
 
 <FrameworksPreflight />
@@ -25,15 +25,13 @@ import MoreDetails from '../shared/frameworks-more-details.mdx';
 
 <FrameworksMiddlewareDesc start_command={frontMatter.start_command} />
 
-<FrameworksSDK />
-
 #### Requirements
 
 The module requires `@useoptic/cli` to be installed, instructions on installing it are available [https://www.useoptic.com/docs/](https://www.useoptic.com/docs/).
 
 It also requires something like [`body-parser`](https://www.npmjs.com/package/body-parser) to be used as part of the middleware stack to access the body of the HTTP requests within Express
 
-#### Intsall
+#### Install
 
 ```sh
 npm install @useoptic/express-middleware
@@ -116,7 +114,7 @@ app.listen(process.env.PORT || 3000);
 
 <FrameworksProxyValidate />
 
-<FrameworksMidleware framework={frontMatter.title} />
+<FrameworksProxyUseMiddleware framework={frontMatter.title} />
 
 </ShowWhenProxy>
 
