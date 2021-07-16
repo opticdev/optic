@@ -82,7 +82,7 @@ function build {
 function deploy {
     [ "$DRY_RUN" = "true" ] && S3_DRY_RUN="--dryrun" || S3_DRY_RUN=""
 
-    aws s3 sync $BUILD_PATH/ s3://${S3_BUCKET}/ --delete --sse AES256 ${DRY_RUN}
+    aws s3 sync $BUILD_PATH/ s3://${S3_BUCKET}/ --delete --sse AES256 ${S3_DRY_RUN}
 
     [ "$DRY_RUN" != "true" ] && create_cloudfront_invalidation
     echo
