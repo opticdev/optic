@@ -64,14 +64,8 @@ type ISharedDiffContext = {
   handledCount: [number, number];
   startedFinalizing: () => void;
   setEndpointName: (id: string, name: string) => void;
-  setPathDescription: (
-    pathId: string,
-    description: string,
-    endpointId: string
-  ) => void;
   setPendingEndpointName: (id: string, name: string) => void;
   getContributedEndpointName: (endpointId: string) => string | undefined;
-  getContributedPathDescription: (pathId: string) => string | undefined;
   captureId: string;
   commitModalOpen: boolean;
   setCommitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -262,26 +256,10 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
         type: 'UPDATE_PENDING_ENDPOINT_NAME',
       });
     },
-    setPathDescription: (
-      pathId: string,
-      description: string,
-      endpointId: string
-    ) => {
-      send({
-        type: 'SET_PATH_DESCRIPTION',
-        pathId,
-        command: AddContribution(pathId, 'description', description),
-        endpointId,
-      });
-    },
     captureId: props.captureId,
     getContributedEndpointName: (endpointId: string): string | undefined => {
       return context.choices.existingEndpointNameContributions[endpointId]
         ?.AddContribution.value;
-    },
-    getContributedPathDescription: (pathId: string): string | undefined => {
-      return context.choices.existingEndpointPathContributions[pathId]?.command
-        .AddContribution.value;
     },
     getUndocumentedUrls: () =>
       context.results.displayedUndocumentedUrls

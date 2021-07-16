@@ -8,8 +8,6 @@ import ReactMarkdown from 'react-markdown';
 import {
   EndpointName,
   PathParameters,
-  IShapeRenderer,
-  JsonLike,
   PageLayout,
   FullWidth,
   FieldOrParameter,
@@ -132,25 +130,7 @@ const ChangelogRootComponent: FC<
                   />
                 }
               >
-                <PathParameters
-                  parameters={parameterizedPathParts}
-                  renderField={(param) => {
-                    const alwaysAString: IShapeRenderer = {
-                      shapeId: param.id + 'shape',
-                      jsonType: JsonLike.STRING,
-                      value: undefined,
-                    };
-                    return (
-                      <FieldOrParameter
-                        key={param.id}
-                        name={param.name}
-                        shapes={[alwaysAString]}
-                        depth={0}
-                        value={param.description}
-                      />
-                    );
-                  }}
-                />
+                <PathParameters parameters={parameterizedPathParts} />
                 <div
                   style={{
                     marginTop: 10,

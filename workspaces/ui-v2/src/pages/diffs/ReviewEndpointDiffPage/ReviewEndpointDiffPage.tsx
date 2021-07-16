@@ -1,22 +1,15 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 
 import { IForkableSpectacle } from '@useoptic/spectacle';
 
-import { EditableTextField, TextFieldVariant } from '<src>/components';
 import { TwoColumnFullWidth } from '<src>/components';
 import { DiffCard } from '<src>/pages/diffs/components/DiffCard';
 import { SimulatedCommandStore } from '<src>/pages/diffs/contexts/SimulatedCommandContext';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
-import {
-  useDebouncedFn,
-  useStateWithSideEffect,
-  useRunOnKeypress,
-} from '<src>/hooks/util';
+import { useRunOnKeypress } from '<src>/hooks/util';
 import { useDiffReviewCapturePageLink } from '<src>/components/navigation/Routes';
 import { IInterpretation } from '<src>/lib/Interfaces';
-import { getEndpointId } from '<src>/utils';
 
 import {
   RenderedDiffHeaderProps,
@@ -59,23 +52,12 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
   const {
     approveCommandsForDiff,
     isDiffHandled,
-    setEndpointName: setGlobalDiffEndpointName,
     addDiffHashIgnore,
     setCommitModalOpen,
     hasDiffChanges,
   } = useSharedDiffContext();
 
   const batchCommit = useLastBatchCommitId();
-
-  const debouncedSetName = useDebouncedFn(setGlobalDiffEndpointName, 200);
-  const {
-    value: endpointName,
-    setValue: setEndpointName,
-  } = useStateWithSideEffect({
-    initialValue: endpoint.purpose,
-    sideEffect: (newName: string) => debouncedSetName(endpointId, newName),
-  });
-  const endpointId = getEndpointId({ method, pathId });
 
   const getNextIncompleteDiff = (recentlyCompletedDiff?: string): number => {
     for (let i = 0; i < allDiffs.length; i++) {
@@ -161,22 +143,9 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
             highlightedLocation={
               allDiffs[currentIndex].diffDescription.location
             }
-            renderHeader={() => (
-              <>
-                <Helmet>
-                  <title>{endpointName || 'Unnamed Endpoint'}</title>
-                </Helmet>
-                <EditableTextField
-                  isEditing={true}
-                  setEditing={() => {}}
-                  value={endpointName}
-                  setValue={setEndpointName}
-                  helperText="Help consumers by naming this endpoint"
-                  defaultText="What does this endpoint do?"
-                  variant={TextFieldVariant.REGULAR}
-                />
-              </>
-            )}
+            name={
+              endpoint.purpose === '' ? 'Unnamed Endpoint' : endpoint.purpose
+            }
             onKeyPress={onKeyPress}
           />
         </SimulatedCommandStore>
