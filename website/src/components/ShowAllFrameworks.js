@@ -13,7 +13,7 @@ const contents = frameworks.data.map((i, index) => {
     <></>
   );
 
-  const icon = i.metadata.icon || '/img/langs/rust.svg';
+  const icon = i.metadata.icon || '/img/logo-bare.svg';
 
   return (
     <Grid item xs={12} sm={2}>

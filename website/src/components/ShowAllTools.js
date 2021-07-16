@@ -30,7 +30,7 @@ export function ShowAllTools() {
                 Source={<Component />}
               >
                 <img
-                  src={'/img/langs/rust.svg'}
+                  src={i.metadata.icon || '/img/logo-bare.svg'}
                   height={13}
                   style={{ marginRight: 10 }}
                 />

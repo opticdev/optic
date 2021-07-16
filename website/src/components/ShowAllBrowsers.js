@@ -30,7 +30,7 @@ export function ShowAllBrowsers() {
                 Source={<Component />}
               >
                 <img
-                  src={i.metadata.icon || '/img/langs/rust.svg'}
+                  src={i.metadata.icon || '/img/logo-bare.svg'}
                   height={13}
                   style={{ marginRight: 10 }}
                 />
