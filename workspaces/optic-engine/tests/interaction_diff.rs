@@ -56,7 +56,11 @@ async fn can_yield_interactive_diff_result() {
       },
       "body": {
         "contentType": null,
-        "value": {}
+        "value": {
+          "asJsonString": null,
+          "asText": "hello",
+          "asShapeHashBytes": null
+        }
       }
     },
     "response": {
@@ -68,7 +72,11 @@ async fn can_yield_interactive_diff_result() {
       },
       "body": {
         "contentType": "application/jsonxxx",
-        "value": {}
+        "value": {
+          "asJsonString": null,
+          "asText": "hello",
+          "asShapeHashBytes": null
+        }
       }
     },
     "tags": []
@@ -139,7 +147,11 @@ fn can_yield_unmatched_request_url() {
       },
       "body": {
         "contentType": null,
-        "value": {}
+        "value": {
+          "asJsonString": null,
+          "asText": "hello",
+          "asShapeHashBytes": null
+        }
       }
     },
     "response": {
@@ -151,7 +163,11 @@ fn can_yield_unmatched_request_url() {
       },
       "body": {
         "contentType": null,
-        "value": {}
+        "value": {
+          "asJsonString": null,
+          "asText": "hello",
+          "asShapeHashBytes": null
+        }
       }
     },
     "tags": []
