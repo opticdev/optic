@@ -32,6 +32,10 @@ export default class Intercept extends Command {
       description:
         'collect traffic to your deployed environment using Chrome network tab',
     }),
+    firefox: flags.boolean({
+      description:
+        'collect traffic to your deployed environment using Firefox network tab',
+    }),
   };
 
   static args = [
@@ -121,6 +125,7 @@ export default class Intercept extends Command {
       );
 
       if (flags.chrome) browsers.chrome();
+      if (flags.firefox) browsers.firefox();
     };
 
     let collected = 0;

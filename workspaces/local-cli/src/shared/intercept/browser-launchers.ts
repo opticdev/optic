@@ -32,6 +32,7 @@ export class BrowserLaunchers {
             options: [
               // Trust our CA certificate's fingerprint:
               `--ignore-certificate-errors-spki-list=${this.fingerprint}`,
+              `--test-type`,
               // Avoid annoying extra network noise:
               '--disable-background-networking',
             ],
