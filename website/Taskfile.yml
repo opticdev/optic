@@ -3,6 +3,8 @@ version: '3'
 tasks:
   deploy:
     desc: Deploy the website to S3
+    deps:
+      - install-deps
     cmds:
       - bin/deploy
     env:
