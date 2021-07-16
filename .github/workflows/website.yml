@@ -12,10 +12,6 @@ on:
       - website/**
   workflow_dispatch:
 
-env:
-  DRY_RUN: "true"
-  SKIP_VERIFY: "true"
-
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -60,4 +56,6 @@ jobs:
           role-session-name: GithubActionStagingDeploy
 
       - run: task website:deploy
-
+        env:
+          DRY_RUN: "false"
+          SKIP_VERIFY: "true"
