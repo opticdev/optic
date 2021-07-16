@@ -26,6 +26,7 @@ import {
 import { HttpInteraction } from '@useoptic/optic-domain/build/streams/http-interactions';
 import { defaultIgnoreRules } from '@useoptic/cli-config/build/helpers/default-ignore-rules';
 import { IApiCliConfig } from '@useoptic/cli-config';
+import { GetCaptureStatusResponse } from '../types';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -135,6 +136,10 @@ export class InMemoryCapturesService implements IOpticCapturesService {
     private dependencies: InMemoryCapturesServiceDependencies,
     private captures: ICapture[]
   ) {}
+
+  getCaptureStatus(captureId: string): Promise<GetCaptureStatusResponse> {
+    throw new Error('Should never get called');
+  }
 
   async loadInteraction(
     captureId: string,

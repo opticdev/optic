@@ -41,6 +41,7 @@ import { store } from '<src>/store';
 import { MetadataLoader } from '<src>/contexts/MetadataLoader';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { SpecRepositoryStore } from '<src>/contexts/SpecRepositoryContext';
+import Onboarding from '<src>/pages/onboarding/Onboarding';
 
 const appConfig: OpticAppConfig = {
   config: {
@@ -113,6 +114,10 @@ export default function LocalCli() {
                           <Route
                             path={`${match.path}/history`}
                             component={ChangelogHistory}
+                          />
+                          <Route
+                            path={`${match.path}/onboarding`}
+                            component={Onboarding}
                           />
                           <Route
                             path={`${match.path}/changes-since/:batchId`}

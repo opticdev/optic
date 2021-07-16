@@ -1,4 +1,5 @@
 import {
+  GetCaptureStatusResponse,
   ICapture,
   IForkableSpectacle,
   IListDiffsResponse,
@@ -81,6 +82,15 @@ export interface LocalCliDiffServiceDependencies {
 }
 export class LocalCliCapturesService implements IOpticCapturesService {
   constructor(private dependencies: LocalCliCapturesServiceDependencies) {}
+
+  async getCaptureStatus(captureId: string): Promise<GetCaptureStatusResponse> {
+    const response = await JsonHttpClient.getJson(
+      `${this.dependencies.baseUrl}/captures/${captureId}/status`
+    );
+
+    return response;
+  }
+
   async listCaptures(): Promise<ICapture[]> {
     const response = await JsonHttpClient.getJson(
       `${this.dependencies.baseUrl}/captures`
