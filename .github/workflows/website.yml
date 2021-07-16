@@ -10,7 +10,7 @@ on:
     branches: [release]
     paths:
       - website/**
-  workflow_dispatch:gs
+  workflow_dispatch:
 
 jobs:
   run:
