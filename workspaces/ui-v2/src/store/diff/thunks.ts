@@ -41,14 +41,13 @@ export const fetchDiffsForCapture = createAsyncThunk<
         captureId
       );
       const diffService = await startDiffResult.onComplete;
-      const diffsPromise = diffService.listDiffs();
+      // There's a race condition where listDiffs needs to run and resolve
+      // before the shapeLearner reads the diffs
+      // If we resolve the race condition, we can run these in parallel
+      const diffs = await diffService.listDiffs();
       const trailsPromise = diffService.learnShapeDiffAffordances();
       const urlsPromise = diffService.listUnrecognizedUrls();
-      const [diffs, trails, urls] = await Promise.all([
-        diffsPromise,
-        trailsPromise,
-        urlsPromise,
-      ]);
+      const [trails, urls] = await Promise.all([trailsPromise, urlsPromise]);
 
       const parsedDiffs = diffs.diffs.map(
         (i: any) => new ParsedDiff(i[0], i[1], i[2])
