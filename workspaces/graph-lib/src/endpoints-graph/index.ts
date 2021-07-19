@@ -397,7 +397,6 @@ export class PathNodeWrapper implements NodeWrapper {
   }
 }
 
-// TODO nic figure out if this needs to be updated
 export class BatchCommitNodeWrapper implements NodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 
