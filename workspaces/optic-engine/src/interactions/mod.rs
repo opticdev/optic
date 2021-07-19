@@ -1,4 +1,4 @@
-use crate::events::http_interaction::{ArbitraryData, Body, HttpInteraction, Request, Response};
+use crate::events::http_interaction::{Body, HttpInteraction};
 use crate::learn_shape::{observe_body_trails, TrailObservationsResult, TrailValues};
 use crate::projections::{EndpointProjection, SpecProjection};
 use crate::protos::shapehash::ShapeDescriptor;
