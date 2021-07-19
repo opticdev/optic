@@ -230,7 +230,7 @@ class LocalCliDiff {
     //@TODO: should this be writing output to the file system?
     // Consume stream instantly for now, resulting in a Promise that resolves once exhausted
     this.diffing = AsyncTools.toArray(worker.results);
-    worker.onWriteComplete.then(() => {
+    Promise.all([this.diffing, worker.onWriteComplete]).then(() => {
       this.dependencies.notifications.emit('complete');
     });
   }

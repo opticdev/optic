@@ -159,9 +159,12 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         context: GraphQLContext
       ) => {
         const { diffId, captureId } = args;
-        await context
+        const {
+          onComplete,
+        } = await context
           .spectacleContext()
           .opticContext.capturesService.startDiff(diffId, captureId);
+        await onComplete;
         return {
           notificationsUrl: '',
         };
