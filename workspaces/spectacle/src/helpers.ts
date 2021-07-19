@@ -248,22 +248,20 @@ class Changes {
 }
 
 function endpointFromRequest(request: endpoints.RequestNodeWrapper): Endpoint {
-  let pathNode = request.path();
-  const pathId = pathNode.value.pathId;
+  const endpoint = request.endpoint();
+  const pathNode = endpoint.path();
+  const { id: endpointId, pathId, httpMethod: method } = endpoint.value;
   const path = pathNode.absolutePathPatternWithParameterNames;
-  const method = request.value.httpMethod;
-  const endpointId = JSON.stringify({ path, method });
   return { endpointId, pathId, path, method };
 }
 
 function endpointFromResponse(
   response: endpoints.ResponseNodeWrapper
 ): Endpoint {
-  let pathNode = response.path();
-  const pathId = pathNode.value.pathId;
+  const endpoint = response.endpoint();
+  const pathNode = endpoint.path();
+  const { id: endpointId, pathId, httpMethod: method } = endpoint.value;
   const path = pathNode.absolutePathPatternWithParameterNames;
-  const method = response.value.httpMethod;
-  const endpointId = JSON.stringify({ path, method });
   return { endpointId, pathId, path, method };
 }
 
