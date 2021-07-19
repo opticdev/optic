@@ -148,15 +148,19 @@ pub fn analyze_undocumented_bodies<'a>(
   results.into_iter().flat_map(move |result| match result {
     InteractionDiffResult::UnmatchedQueryParameters(diff) => {
       if include_query_params {
-        let maybe_query_params: Option<BodyDescriptor> = (&interaction.request.query).into();
-        let query_params = maybe_query_params.or_else(|| Some(BodyDescriptor::empty_object()));
+        if let UnmatchedQueryParameters::Observed(_) = &diff {
+          let maybe_query_params: Option<BodyDescriptor> = (&interaction.request.query).into();
+          let query_params = maybe_query_params.or_else(|| Some(BodyDescriptor::empty_object()));
 
-        let query_trail_observations = observe_body_trails(query_params);
+          let query_trail_observations = observe_body_trails(query_params);
 
-        vec![BodyAnalysisResult {
-          body_location: BodyAnalysisLocation::from(diff),
-          trail_observations: query_trail_observations,
-        }]
+          vec![BodyAnalysisResult {
+            body_location: BodyAnalysisLocation::from(diff),
+            trail_observations: query_trail_observations,
+          }]
+        } else {
+          vec![]
+        }
       } else {
         vec![]
       }
