@@ -53,7 +53,7 @@ Using a basic [hapi](https://hapi.dev/) server.
 
 ```js
 const Hapi = require('@hapi/hapi')
-const Optic = require('@useoptic/hapi-middleware')
+const { OpticPlugin } = require('@useoptic/hapi-middleware')
 
 const init = async () => {
   const server = Hapi.server({
@@ -62,7 +62,7 @@ const init = async () => {
   })
 
   await server.register({
-    plugin: Optic,
+    plugin: OpticPlugin,
     options: {
       enabled: true
     }
