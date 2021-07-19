@@ -113,7 +113,6 @@ export const endpointQueryResultsToJson = (
   endpoints: IEndpoint[];
   changes: Record<string, ChangeType>;
 } => {
-  console.log(requests);
   const changes: Record<string, ChangeType> = {};
   const endpoints = requests.map((request) => {
     return {

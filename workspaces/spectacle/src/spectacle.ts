@@ -451,7 +451,9 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       commands: async (parent: endpoints.EndpointNodeWrapper) => {
         const { pathId, httpMethod } = parent.value;
-        return commandGenerator.endpoint.remove(pathId, httpMethod);
+        return {
+          remove: commandGenerator.endpoint.remove(pathId, httpMethod),
+        };
       },
     },
     // TODO @nic rename this to HttpRequest when old http request removed
