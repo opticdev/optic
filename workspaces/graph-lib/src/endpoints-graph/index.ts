@@ -245,7 +245,7 @@ export class EndpointNodeWrapper implements NodeWrapper {
   }
 
   query(): QueryParametersNodeWrapper | null {
-    const queryParameters = this.queries.listOutgoingNeighborsByType(
+    const queryParameters = this.queries.listIncomingNeighborsByType(
       this.result.id,
       NodeType.QueryParameters
     );
@@ -256,14 +256,14 @@ export class EndpointNodeWrapper implements NodeWrapper {
   }
 
   requests(): NodeListWrapper {
-    return this.queries.listOutgoingNeighborsByType(
+    return this.queries.listIncomingNeighborsByType(
       this.result.id,
       NodeType.Request
     );
   }
 
   responses(): NodeListWrapper {
-    return this.queries.listOutgoingNeighborsByType(
+    return this.queries.listIncomingNeighborsByType(
       this.result.id,
       NodeType.Response
     );

@@ -359,7 +359,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         endpointNode: endpoints.EndpointNodeWrapper;
         requestNode: endpoints.RequestNodeWrapper;
       }) => {
-        return Promise.resolve(parent.endpointNode.responses());
+        return Promise.resolve(parent.endpointNode.responses().results);
       },
       pathContributions: (
         parent: {
@@ -429,10 +429,10 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           : null;
       },
       requests: async (parent: endpoints.EndpointNodeWrapper) => {
-        return parent.requests();
+        return parent.requests().results;
       },
       responses: async (parent: endpoints.EndpointNodeWrapper) => {
-        return parent.responses();
+        return parent.responses().results;
       },
       contributions: async (
         parent: endpoints.EndpointNodeWrapper,
