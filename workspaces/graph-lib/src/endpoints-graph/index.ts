@@ -7,6 +7,7 @@ export enum NodeType {
   Request = 'Request',
   QueryParameters = 'QueryParameters',
   Response = 'Response',
+  Endpoint = 'Endpoint',
   Body = 'Body',
   BatchCommit = 'BatchCommit',
 }
@@ -25,6 +26,10 @@ export type Node = {
   | {
       type: NodeType.Response;
       data: ResponseNode;
+    }
+  | {
+      type: NodeType.Endpoint;
+      data: EndpointNode;
     }
   | {
       type: NodeType.Body;
@@ -49,13 +54,17 @@ export type PathNode = {
 };
 export type RequestNode = {
   requestId: string;
-  httpMethod: string;
   isRemoved: boolean;
 };
 export type ResponseNode = {
   responseId: string;
-  httpMethod: string;
   httpStatusCode: number;
+  isRemoved: boolean;
+};
+export type EndpointNode = {
+  pathId: string;
+  httpMethod: string;
+  id: string;
   isRemoved: boolean;
 };
 export type QueryParametersNode = {
@@ -217,11 +226,11 @@ export class BodyNodeWrapper implements NodeWrapper {
   }
 }
 
-export class RequestNodeWrapper implements NodeWrapper {
+export class EndpointNodeWrapper implements NodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 
-  get value(): RequestNode {
-    return this.result.data as RequestNode;
+  get value(): EndpointNode {
+    return this.result.data as EndpointNode;
   }
 
   path(): PathNodeWrapper {
@@ -230,26 +239,53 @@ export class RequestNodeWrapper implements NodeWrapper {
       NodeType.Path
     );
     if (neighbors.results.length === 0) {
-      throw new Error(`expected Request to have a parent Path`);
+      throw new Error(`expected endpoint to have a parent Path`);
     }
     return neighbors.results[0] as PathNodeWrapper;
   }
 
-  responses(): ResponseNodeWrapper[] {
-    return (this.path().responses() as any).results.filter(
-      (response: any) => response.value.httpMethod === this.value.httpMethod
+  query(): QueryParametersNodeWrapper | null {
+    const queryParameters = this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.QueryParameters
+    );
+
+    return queryParameters.results.length >= 1
+      ? (queryParameters.results[0] as QueryParametersNodeWrapper)
+      : null;
+  }
+
+  requests(): NodeListWrapper {
+    return this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.Request
     );
   }
 
-  bodies(): NodeListWrapper {
-    return this.queries.listIncomingNeighborsByType(
+  responses(): NodeListWrapper {
+    return this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.Response
+    );
+  }
+}
+
+export class RequestNodeWrapper implements NodeWrapper {
+  constructor(public result: Node, private queries: GraphQueries) {}
+
+  get value(): RequestNode {
+    return this.result.data as RequestNode;
+  }
+
+  body(): BodyNodeWrapper | null {
+    const bodies = this.queries.listIncomingNeighborsByType(
       this.result.id,
       NodeType.Body
     );
-  }
 
-  query(): QueryParametersNodeWrapper | null {
-    return this.path().query(this.value.httpMethod);
+    return bodies.results.length >= 1
+      ? (bodies.results[0] as BodyNodeWrapper)
+      : null;
   }
 }
 
@@ -258,17 +294,6 @@ export class ResponseNodeWrapper implements NodeWrapper {
 
   get value(): ResponseNode {
     return this.result.data as ResponseNode;
-  }
-
-  path(): PathNodeWrapper {
-    const neighbors = this.queries.listOutgoingNeighborsByType(
-      this.result.id,
-      NodeType.Path
-    );
-    if (neighbors.results.length === 0) {
-      throw new Error(`expected Response to have a parent Path`);
-    }
-    return neighbors.results[0] as PathNodeWrapper;
   }
 
   bodies(): NodeListWrapper {
@@ -306,33 +331,11 @@ export class PathNodeWrapper implements NodeWrapper {
     return parentPath as PathNodeWrapper;
   }
 
-  requests(): NodeListWrapper {
+  endpoints(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
-      NodeType.Request
+      NodeType.Endpoint
     );
-  }
-
-  responses(): NodeListWrapper {
-    return this.queries.listIncomingNeighborsByType(
-      this.result.id,
-      NodeType.Response
-    );
-  }
-
-  query(httpMethod: string): QueryParametersNodeWrapper | null {
-    const neighbors = this.queries.listIncomingNeighborsByType(
-      this.result.id,
-      NodeType.QueryParameters
-    );
-    const queryWithHttpMethod = (neighbors.results as QueryParametersNodeWrapper[]).filter(
-      (queryNode) => queryNode.value.httpMethod === httpMethod
-    );
-    if (queryWithHttpMethod.length === 0) {
-      return null;
-    }
-
-    return queryWithHttpMethod[0] as QueryParametersNodeWrapper;
   }
 
   components(): PathNodeWrapper[] {
@@ -370,6 +373,7 @@ export class PathNodeWrapper implements NodeWrapper {
   }
 }
 
+// TODO nic figure out if this needs to be updated
 export class BatchCommitNodeWrapper implements NodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 
@@ -556,6 +560,8 @@ export class GraphQueries {
       return new QueryParametersNodeWrapper(node, this);
     } else if (node.type === NodeType.BatchCommit) {
       return new BatchCommitNodeWrapper(node, this);
+    } else if (node.type === NodeType.Endpoint) {
+      return new EndpointNodeWrapper(node, this);
     }
     throw new Error(`unexpected node.type`);
   }
