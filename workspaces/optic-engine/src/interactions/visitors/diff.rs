@@ -197,26 +197,36 @@ impl RequestBodyVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
   fn visit(&mut self, interaction: &HttpInteraction, context: &RequestBodyVisitorContext) {
     if let Some(operation) = context.operation {
       let actual_content_type = &interaction.request.body.content_type;
+      let actual_body: Option<BodyDescriptor> = (&interaction.request.body.value).into();
       let (request_id, request_body_descriptor) = operation;
       //dbg!( actual_content_type);
       //dbg!(&request_body_descriptor);
-      match (&request_body_descriptor.body, actual_content_type) {
-        (None, None) => {
+      match (
+        &request_body_descriptor.body,
+        actual_content_type,
+        actual_body,
+      ) {
+        (None, None, _) => {
           self
             .visited_with_matched_content_types
             .insert(request_id.clone());
         }
-        (None, Some(content_type)) => {
+        (None, Some(content_type), None) => {
+          self
+            .visited_with_matched_content_types
+            .insert(request_id.clone());
+        }
+        (None, Some(content_type), Some(interaction_body)) => {
           self
             .visited_with_unmatched_content_types
             .insert(request_id.clone());
         }
-        (Some(body), None) => {
+        (Some(body), None, _) => {
           self
             .visited_with_unmatched_content_types
             .insert(request_id.clone());
         }
-        (Some(body), Some(content_type)) => {
+        (Some(body), Some(content_type), _) => {
           if body.http_content_type == *content_type {
             self
               .visited_with_matched_content_types
@@ -307,29 +317,40 @@ impl ResponseBodyVisitor<InteractionDiffResult> for DiffResponseBodyVisitor {
     //dbg!("visit response body");
     if let Some(response) = context.response {
       let actual_content_type = &interaction.response.body.content_type;
+      let actual_body: Option<BodyDescriptor> = (&interaction.response.body.value).into();
       let (response_id, response_body_descriptor) = response;
       //dbg!("actual response content type", actual_content_type);
       // dbg!(
       //   "expecting response content type",
       //   &response_body_descriptor
       // );
-      match (&response_body_descriptor.body, actual_content_type) {
-        (None, None) => {
+      match (
+        &response_body_descriptor.body,
+        actual_content_type,
+        actual_body,
+      ) {
+        (None, None, _) => {
           self
             .visited_with_matched_content_types
             .insert(response_id.clone());
         }
-        (None, Some(content_type)) => {
+        (None, Some(content_type), None) => {
+          self
+            .visited_with_matched_content_types
+            .insert(response_id.clone());
+        }
+        (None, Some(content_type), Some(interaction_body)) => {
           self
             .visited_with_unmatched_content_types
             .insert(response_id.clone());
         }
-        (Some(body), None) => {
+        (Some(body), None, _) => {
           self
             .visited_with_unmatched_content_types
             .insert(response_id.clone());
         }
-        (Some(body), Some(content_type)) => {
+        (Some(body), Some(content_type), _) => {
+          // TODO investigate this branch
           if body.http_content_type == *content_type {
             self
               .visited_with_matched_content_types

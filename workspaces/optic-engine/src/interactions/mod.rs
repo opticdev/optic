@@ -17,49 +17,6 @@ pub use result::{
 };
 use visitors::{InteractionVisitors, PathVisitor};
 
-// An invalid http interaction are interactions we cannot generate diffs from
-fn is_invalid_http_interaction(http_interaction: &HttpInteraction) -> bool {
-  match http_interaction {
-    // Request with content type not-null and null body
-    HttpInteraction {
-      request:
-        Request {
-          body:
-            Body {
-              content_type: Some(_),
-              value:
-                ArbitraryData {
-                  shape_hash_v1_base64: None,
-                  as_json_string: None,
-                  as_text: None,
-                },
-            },
-          ..
-        },
-      ..
-    } => true,
-    // Response with null body
-    HttpInteraction {
-      response:
-        Response {
-          body:
-            Body {
-              value:
-                ArbitraryData {
-                  shape_hash_v1_base64: None,
-                  as_json_string: None,
-                  as_text: None,
-                },
-              ..
-            },
-          ..
-        },
-      ..
-    } => true,
-    _ => false,
-  }
-}
-
 /// Compute diffs based on a spec and an interaction.
 ///
 /// Will first try to match the interaction to a Request + Response pair from the spec. From there
@@ -70,10 +27,6 @@ pub fn diff(
   http_interaction: HttpInteraction,
   config: &DiffConfig,
 ) -> Vec<InteractionDiffResult> {
-  if is_invalid_http_interaction(&http_interaction) {
-    return Vec::new();
-  }
-
   let endpoint_projection = spec_projection.endpoint();
   let endpoint_queries = EndpointQueries::new(endpoint_projection);
   let interaction_traverser = traverser::Traverser::new(&endpoint_queries);
