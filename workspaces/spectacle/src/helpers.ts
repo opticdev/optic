@@ -1,4 +1,6 @@
 import { shapes, endpoints } from '@useoptic/graph-lib';
+import { CQRSCommand } from '@useoptic/optic-domain';
+import { IOpticEngine } from './types';
 
 export function buildEndpointsGraph(spec: any, opticEngine: any) {
   const serializedGraph = JSON.parse(
@@ -434,4 +436,18 @@ export function getContributionsProjection(
   opticEngine: any
 ): ContributionsProjection {
   return JSON.parse(opticEngine.get_contributions_projection(spec));
+}
+
+export class CommandGenerator {
+  constructor(private spec: any, private opticEngine: IOpticEngine) {}
+  public endpoint = {
+    remove: (pathId: string, method: string): CQRSCommand[] => {
+      const specEndpointDeleteCommands = this.opticEngine.spec_endpoint_delete_commands(
+        this.spec,
+        pathId,
+        method
+      );
+      return JSON.parse(specEndpointDeleteCommands).commands;
+    },
+  };
 }
