@@ -57,13 +57,13 @@ Using a basic [Express](https://expressjs.com/) server proxying to [httpbin](htt
 const express = require('express')
 const bodyParser = require('body-parser')
 const { createProxyMiddleware } = require('http-proxy-middleware');
-const optic = require('@useoptic/express-middleware');
+const { OpticMiddleware } = require('@useoptic/express-middleware');
 
 const app = express()
 const port = 3000
 
 app.use(bodyParser())
-app.use(optic({
+app.use(OpticMiddleware({
     enabled: true,
 }))
 
