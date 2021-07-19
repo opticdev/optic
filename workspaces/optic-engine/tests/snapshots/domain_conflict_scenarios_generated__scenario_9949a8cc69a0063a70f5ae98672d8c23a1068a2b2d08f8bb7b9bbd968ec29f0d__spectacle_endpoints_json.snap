@@ -53,9 +53,17 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     },
     {
+      "type": "Endpoint",
+      "data": {
+        "pathId": "path_9Wdr4kyshW",
+        "httpMethod": "GET",
+        "id": "path_9Wdr4kyshW.GET",
+        "isRemoved": false
+      }
+    },
+    {
       "type": "Request",
       "data": {
-        "httpMethod": "GET",
         "requestId": "request_w0KmJ5kZIe",
         "isRemoved": false
       }
@@ -63,7 +71,6 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     {
       "type": "Response",
       "data": {
-        "httpMethod": "GET",
         "httpStatusCode": 200,
         "responseId": "response_iQd5ISIZH9",
         "isRemoved": false
@@ -78,9 +85,17 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     },
     {
+      "type": "Endpoint",
+      "data": {
+        "pathId": "path_8paa69fCfC",
+        "httpMethod": "GET",
+        "id": "path_8paa69fCfC.GET",
+        "isRemoved": false
+      }
+    },
+    {
       "type": "Request",
       "data": {
-        "httpMethod": "GET",
         "requestId": "request_CEJzcYN3NN",
         "isRemoved": false
       }
@@ -88,7 +103,6 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     {
       "type": "Response",
       "data": {
-        "httpMethod": "GET",
         "httpStatusCode": 200,
         "responseId": "response_ata4rM8zB1",
         "isRemoved": false
@@ -103,9 +117,17 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     },
     {
+      "type": "Endpoint",
+      "data": {
+        "pathId": "path_osi3pD8diw",
+        "httpMethod": "GET",
+        "id": "path_osi3pD8diw.GET",
+        "isRemoved": false
+      }
+    },
+    {
       "type": "Request",
       "data": {
-        "httpMethod": "GET",
         "requestId": "request_AJISCmgnoU",
         "isRemoved": false
       }
@@ -113,7 +135,6 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     {
       "type": "Response",
       "data": {
-        "httpMethod": "GET",
         "httpStatusCode": 200,
         "responseId": "response_HZFYN85Iui",
         "isRemoved": false
@@ -156,9 +177,17 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     },
     {
+      "type": "Endpoint",
+      "data": {
+        "pathId": "path_rmPGKep5SW",
+        "httpMethod": "GET",
+        "id": "path_rmPGKep5SW.GET",
+        "isRemoved": false
+      }
+    },
+    {
       "type": "Request",
       "data": {
-        "httpMethod": "GET",
         "requestId": "request_lUXaqigODI",
         "isRemoved": false
       }
@@ -166,7 +195,6 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     {
       "type": "Response",
       "data": {
-        "httpMethod": "GET",
         "httpStatusCode": 200,
         "responseId": "response_zEjgh3n6Uq",
         "isRemoved": false
@@ -181,9 +209,17 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     },
     {
+      "type": "Endpoint",
+      "data": {
+        "pathId": "path_CmA4ZrhSXc",
+        "httpMethod": "GET",
+        "id": "path_CmA4ZrhSXc.GET",
+        "isRemoved": false
+      }
+    },
+    {
       "type": "Request",
       "data": {
-        "httpMethod": "GET",
         "requestId": "request_ncEWlZU2g3",
         "isRemoved": false
       }
@@ -191,7 +227,6 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     {
       "type": "Response",
       "data": {
-        "httpMethod": "GET",
         "httpStatusCode": 200,
         "responseId": "response_pan3yNmeiQ",
         "isRemoved": false
@@ -257,15 +292,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     ],
     [
+      6,
       5,
-      1,
-      {
-        "type": "CreatedIn"
-      }
-    ],
-    [
-      6,
-      2,
       {
         "type": "IsChildOf"
       }
@@ -279,7 +307,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     ],
     [
       7,
-      6,
+      5,
       {
         "type": "IsChildOf"
       }
@@ -293,7 +321,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     ],
     [
       8,
-      3,
+      7,
       {
         "type": "IsChildOf"
       }
@@ -313,13 +341,6 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     ],
     [
-      9,
-      1,
-      {
-        "type": "CreatedIn"
-      }
-    ],
-    [
       10,
       9,
       {
@@ -335,7 +356,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     ],
     [
       11,
-      4,
+      9,
       {
         "type": "IsChildOf"
       }
@@ -349,27 +370,34 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     ],
     [
       12,
+      11,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      12,
+      1,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      13,
       4,
       {
         "type": "IsChildOf"
       }
     ],
     [
-      12,
-      1,
-      {
-        "type": "CreatedIn"
-      }
-    ],
-    [
+      14,
       13,
-      12,
       {
         "type": "IsChildOf"
       }
     ],
     [
-      13,
+      14,
       1,
       {
         "type": "CreatedIn"
@@ -377,112 +405,154 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     ],
     [
       15,
+      13,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      15,
+      1,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      16,
+      15,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      16,
+      1,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      18,
       0,
       {
         "type": "IsChildOf"
       }
     ],
     [
-      15,
-      14,
+      18,
+      17,
       {
         "type": "CreatedIn"
       }
     ],
     [
-      16,
+      19,
       0,
       {
         "type": "IsChildOf"
       }
     ],
     [
-      16,
-      14,
-      {
-        "type": "CreatedIn"
-      }
-    ],
-    [
-      17,
-      15,
-      {
-        "type": "IsChildOf"
-      }
-    ],
-    [
-      17,
-      14,
-      {
-        "type": "CreatedIn"
-      }
-    ],
-    [
-      18,
-      15,
-      {
-        "type": "IsChildOf"
-      }
-    ],
-    [
-      18,
-      14,
-      {
-        "type": "CreatedIn"
-      }
-    ],
-    [
       19,
-      18,
-      {
-        "type": "IsChildOf"
-      }
-    ],
-    [
-      19,
-      14,
+      17,
       {
         "type": "CreatedIn"
       }
     ],
     [
       20,
-      16,
+      18,
       {
         "type": "IsChildOf"
       }
     ],
     [
+      21,
       20,
-      14,
-      {
-        "type": "CreatedIn"
-      }
-    ],
-    [
-      21,
-      16,
       {
         "type": "IsChildOf"
       }
     ],
     [
       21,
-      14,
+      17,
       {
         "type": "CreatedIn"
       }
     ],
     [
       22,
-      21,
+      20,
       {
         "type": "IsChildOf"
       }
     ],
     [
       22,
-      14,
+      17,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      23,
+      22,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      23,
+      17,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      24,
+      19,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      25,
+      24,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      25,
+      17,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      26,
+      24,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      26,
+      17,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      27,
+      26,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      27,
+      17,
       {
         "type": "CreatedIn"
       }
@@ -491,26 +561,31 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
   "nodeIndexToId": {
     "0": "root",
     "1": "57630124-211a-440d-8bd3-2496ccc97f0c",
-    "10": "shape_UlLNexyAzZ",
-    "11": "request_AJISCmgnoU",
-    "12": "response_HZFYN85Iui",
-    "13": "shape_MiVhGwZrMY",
-    "14": "2f5c2536-6500-495a-b0b1-947d55394009",
-    "15": "path_rmPGKep5SW",
-    "16": "path_CmA4ZrhSXc",
-    "17": "request_lUXaqigODI",
-    "18": "response_zEjgh3n6Uq",
-    "19": "shape_GsyFkrJzlL",
+    "10": "request_CEJzcYN3NN",
+    "11": "response_ata4rM8zB1",
+    "12": "shape_UlLNexyAzZ",
+    "13": "path_osi3pD8diw.GET",
+    "14": "request_AJISCmgnoU",
+    "15": "response_HZFYN85Iui",
+    "16": "shape_MiVhGwZrMY",
+    "17": "2f5c2536-6500-495a-b0b1-947d55394009",
+    "18": "path_rmPGKep5SW",
+    "19": "path_CmA4ZrhSXc",
     "2": "path_9Wdr4kyshW",
-    "20": "request_ncEWlZU2g3",
-    "21": "response_pan3yNmeiQ",
-    "22": "shape_ApnstcbWQx",
+    "20": "path_rmPGKep5SW.GET",
+    "21": "request_lUXaqigODI",
+    "22": "response_zEjgh3n6Uq",
+    "23": "shape_GsyFkrJzlL",
+    "24": "path_CmA4ZrhSXc.GET",
+    "25": "request_ncEWlZU2g3",
+    "26": "response_pan3yNmeiQ",
+    "27": "shape_ApnstcbWQx",
     "3": "path_8paa69fCfC",
     "4": "path_osi3pD8diw",
-    "5": "request_w0KmJ5kZIe",
-    "6": "response_iQd5ISIZH9",
-    "7": "shape_E9IzHThmZv",
-    "8": "request_CEJzcYN3NN",
-    "9": "response_ata4rM8zB1"
+    "5": "path_9Wdr4kyshW.GET",
+    "6": "request_w0KmJ5kZIe",
+    "7": "response_iQd5ISIZH9",
+    "8": "shape_E9IzHThmZv",
+    "9": "path_8paa69fCfC.GET"
   }
 }
