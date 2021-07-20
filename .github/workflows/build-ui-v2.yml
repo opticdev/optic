@@ -6,6 +6,7 @@ on:
       - release
       - develop
       - feature/cloud_spec_viewer
+      - feature/new-doc
     paths-ignore:
       - website/**
       - .github/**

@@ -1,38 +1,46 @@
 import React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { Avatar, Typography } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
 import { FormatCopy } from './FormatCopy';
-import Divider from '@material-ui/core/Divider';
+import { UpdatedBlueBackground } from './theme';
+
 export const useStyles = makeStyles({
   bg: {
-    backgroundColor: '#f5f5f5',
     paddingTop: 30,
     paddingBottom: 30,
     borderTop: '1px solid #e2e2e2',
     borderBottom: '1px solid #e2e2e2',
   },
   quoteBody: {
-    backgroundColor: 'white',
     borderRadius: 12,
   },
   quote: {
-    fontSize: 18,
+    fontSize: 16,
+    lineHeight: 1.7,
+    borderRadius: 17,
+    overflow: 'hidden',
+    backgroundColor: UpdatedBlueBackground,
+    marginBottom: 10,
+    fontFamily: 'Inter',
+    color: '#586069',
     padding: 16,
     fontWeight: 400,
+    textAlign: 'justify',
   },
   info: {
-    padding: 16,
+    padding: 7,
+    paddingLeft: 20,
   },
   author: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 500,
   },
   authorTitle: {
-    color: '#a9aec3',
+    color: '#586069',
     fontWeight: 400,
+    fontSize: 15,
+    textAlign: 'justify',
     textTransform: 'uppercase',
-    lineHeight: 1.2,
   },
   credoHeader: {
     fontWeight: 100,
@@ -63,11 +71,11 @@ export function Quote(props) {
   const { name, title, quote, pic } = props;
 
   return (
-    <Paper elevation={2} style={{ flex: 1 }} className={classes.quoteBody}>
-      <Typography variant="subtitle2" className={classes.quote}>
+    <div elevation={3} style={{ flex: 1 }} className={classes.quoteBody}>
+      <Typography variant="subtitle1" className={classes.quote}>
         <FormatCopy value={quote} />
       </Typography>
-      <Divider />
+      <div style={{ flex: 1 }} />
       <div
         className={classes.info}
         style={{
@@ -82,14 +90,14 @@ export function Quote(props) {
 
         <div>
           <div className={classes.author}>{name}</div>
-          <span className={classes.authorTitle}>
+          <div className={classes.authorTitle}>
             <FormatCopy
               value={title}
               style={{ whiteSpace: 'pre', textAlign: 'justify' }}
             />
-          </span>
+          </div>
         </div>
       </div>
-    </Paper>
+    </div>
   );
 }

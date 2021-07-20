@@ -60,13 +60,64 @@ async fn query_param_required_but_missing() {
 
   dbg!(&shape_diff_affordances);
 
-  let (root_shape_id, commands) = {
+  let (_root_shape_id, commands) = {
     let shape_diff_affordances = shape_diff_affordances.remove(0).1;
     let (json_trail, trail_observation_results) = shape_diff_affordances.into_trail_observations();
     trail_observation_results.into_commands(&mut id_generator, &json_trail)
   };
 
   dbg!(commands.collect::<Vec<_>>());
+}
+
+#[tokio::main]
+#[test]
+async fn query_param_new_and_optional() {
+  let capture = DebugCapture::from_name("query_param_new_and_optional.json").await;
+  let spec = SpecProjection::from(capture.events);
+
+  let diff_results = capture
+    .session
+    .samples
+    .iter()
+    .flat_map(|interaction| {
+      diff_interaction(
+        &spec,
+        interaction.clone(),
+        &DiffInteractionConfig::default().with_query_params(true),
+      )
+    })
+    .collect::<Vec<_>>();
+
+  let mut learned_shape_diff_affordances =
+    LearnedShapeDiffAffordancesProjection::from(diff_results);
+
+  for interaction in capture.session.samples {
+    let interaction_pointer = interaction.uuid.clone();
+    let results = analyze_documented_bodies(&spec, interaction).filter(|result| {
+      matches!(
+        result.body_location,
+        optic_engine::BodyAnalysisLocation::MatchedQueryParameters { .. }
+      )
+    });
+
+    for result in results {
+      let pointers = {
+        let mut set = HashSet::new();
+        set.insert(interaction_pointer.clone());
+        set
+      };
+      learned_shape_diff_affordances.apply(TaggedInput(result, pointers));
+    }
+  }
+
+  let shape_diff_affordances = learned_shape_diff_affordances
+    .into_iter()
+    .collect::<Vec<_>>();
+
+  assert_debug_snapshot!(
+    "query_param_new_and_optional__shape_diff_affordances",
+    &shape_diff_affordances
+  );
 }
 
 #[derive(Deserialize, Debug)]
@@ -110,7 +161,7 @@ impl SpecIdGenerator for SequentialIdGenerator {
   }
 }
 
-fn assert_valid_commands(
+fn _assert_valid_commands(
   mut spec_projection: SpecProjection,
   commands: impl IntoIterator<Item = SpecCommand>,
 ) -> SpecProjection {

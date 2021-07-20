@@ -115,6 +115,8 @@ export class LocalCliCapturesService implements IOpticCapturesService {
         captureId,
       },
     });
+    // This assumes that the onComplete implementation in the cli-server has completed, and that
+    // the fsWriteSink has completed, so that we can read the correct commands
     const onComplete = Promise.resolve(
       new LocalCliDiffService({ ...this.dependencies, diffId, captureId })
     );

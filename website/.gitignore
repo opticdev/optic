@@ -7,6 +7,11 @@
 # Generated files
 .docusaurus
 .cache-loader
+docs/reference/capture-methods/browsers/*.mdx
+docs/reference/capture-methods/tools/*.mdx
+docs/reference/capture-methods/using-integration/*.mdx
+docs/reference/ci-providers/*
+generate/results/*.js
 
 # Misc
 .DS_Store

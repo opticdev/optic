@@ -28,6 +28,7 @@ const getJsonBodyToPreview = (
         asJson: JSON.parse(asJsonString),
         asText: null,
         noBody: false,
+        empty: false,
       };
     }
 
@@ -36,14 +37,15 @@ const getJsonBodyToPreview = (
         asJson: toJsonExample(shapeHashV1Base64),
         asText: null,
         noBody: false,
+        empty: false,
       };
     }
     if (asText) {
-      return { asJson: null, asText: asText, noBody: false };
+      return { asJson: null, asText: asText, noBody: false, empty: false };
     }
-    return { asJson: null, asText: null, noBody: false };
+    return { asJson: null, asText: null, noBody: false, empty: true };
   } else {
-    return { asJson: null, asText: null, noBody: true };
+    return { asJson: null, asText: null, noBody: true, empty: false };
   }
 };
 

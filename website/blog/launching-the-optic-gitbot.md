@@ -1,5 +1,5 @@
 ---
-date: "9/2/2020"
+date: 2020-09-20
 title: "API Changelogs on Every PR"
 author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"

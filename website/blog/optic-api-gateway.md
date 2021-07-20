@@ -1,5 +1,5 @@
 ---
-date: "9/16/2020"
+date: 2020-09-16
 title: "Using Optic with your API Gateway"
 author: Lou Manglass
 author_image_url: "/img/team/lou.jpg"
