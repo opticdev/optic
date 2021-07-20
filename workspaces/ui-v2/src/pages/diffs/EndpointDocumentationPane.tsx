@@ -8,6 +8,7 @@ import {
   ShapeFetcher,
   QueryParametersPanel,
   HttpBodyPanel,
+  HttpBodySelector,
   convertShapeToQueryParameters,
   Panel,
 } from '<src>/components';
@@ -80,8 +81,8 @@ export const EndpointDocumentationPane: FC<
         >
           <EndpointTOC
             query={thisEndpoint.query}
-            requests={thisEndpoint.requestBodies}
-            responses={thisEndpoint.responseBodies}
+            requests={thisEndpoint.requests}
+            responses={thisEndpoint.responses}
           />
         </div>
       </Panel>
@@ -92,7 +93,7 @@ export const EndpointDocumentationPane: FC<
           targetLocation={highlightedLocation}
           expectedLocation={Location.Query}
         >
-          <div id={thisEndpoint.query.queryParametersId}>
+          <div id="query-parameters">
             <h6 className={classes.bodyHeader}>Query Parameters</h6>
             <div className={classes.bodyDetails}>
               <ShapeFetcher
@@ -110,59 +111,82 @@ export const EndpointDocumentationPane: FC<
         </HighlightedLocation>
       )}
 
-      {thisEndpoint.requestBodies.map((requestBody) => (
-        <React.Fragment key={requestBody.requestId}>
-          <HighlightedLocation
-            className={classes.bodyContainer}
-            targetLocation={highlightedLocation}
-            contentType={requestBody.contentType}
-            expectedLocation={Location.Request}
-          >
-            <div id={requestBody.requestId}>
-              <h6 className={classes.bodyHeader}>Request Body</h6>
-              <div className={classes.bodyDetails}>
-                <ShapeFetcher
-                  rootShapeId={requestBody.rootShapeId}
-                  changesSinceBatchCommit={lastBatchCommit}
-                >
-                  {(shapes) => (
-                    <HttpBodyPanel
-                      shapes={shapes}
-                      location={`Request Body ${requestBody.contentType}`}
-                    />
-                  )}
-                </ShapeFetcher>
-              </div>
+      {thisEndpoint.requests.length > 0 && (
+        <HighlightedLocation
+          className={classes.bodyContainer}
+          targetLocation={highlightedLocation}
+          // TODO remove content type from highlighted request?
+          contentType={'contentType'}
+          expectedLocation={Location.Request}
+        >
+          <div id="request-body">
+            <h6 className={classes.bodyHeader}>Request Body</h6>
+            <div className={classes.bodyDetails}>
+              <HttpBodySelector
+                items={thisEndpoint.requests}
+                getDisplayName={(request) =>
+                  request.body?.contentType || 'No Body'
+                }
+              >
+                {(request) =>
+                  request.body ? (
+                    <ShapeFetcher
+                      rootShapeId={request.body.rootShapeId}
+                      changesSinceBatchCommit={lastBatchCommit}
+                    >
+                      {(shapes) => (
+                        <HttpBodyPanel
+                          shapes={shapes}
+                          // Typescript cannot infer through render props for some reason
+                          location={`Request Body ${request.body!.contentType}`}
+                        />
+                      )}
+                    </ShapeFetcher>
+                  ) : (
+                    // TODO make this the same as the other three
+                    <div>No body details found</div>
+                  )
+                }
+              </HttpBodySelector>
             </div>
-          </HighlightedLocation>
-        </React.Fragment>
-      ))}
-      {thisEndpoint.responseBodies.map((responseBody) => {
+          </div>
+        </HighlightedLocation>
+      )}
+
+      {thisEndpoint.responses.map((response) => {
         return (
-          <React.Fragment key={responseBody.responseId}>
+          <React.Fragment key={response.responseId}>
             <HighlightedLocation
               className={classes.bodyContainer}
               targetLocation={highlightedLocation}
-              contentType={responseBody.contentType}
-              statusCode={responseBody.statusCode}
+              // TODO fix content type
+              contentType={'body.contentType'}
+              statusCode={response.statusCode}
               expectedLocation={Location.Response}
             >
-              <div id={responseBody.responseId}>
+              <div id={response.responseId}>
                 <h6 className={classes.bodyHeader}>
-                  {responseBody.statusCode} response
+                  {response.statusCode} response
                 </h6>
                 <div className={classes.bodyDetails}>
-                  <ShapeFetcher
-                    rootShapeId={responseBody.rootShapeId}
-                    changesSinceBatchCommit={lastBatchCommit}
+                  <HttpBodySelector
+                    items={response.bodies}
+                    getDisplayName={(body) => body.contentType}
                   >
-                    {(shapes) => (
-                      <HttpBodyPanel
-                        shapes={shapes}
-                        location={`${responseBody.statusCode} response ${responseBody.contentType}`}
-                      />
+                    {(body) => (
+                      <ShapeFetcher
+                        rootShapeId={body.rootShapeId}
+                        changesSinceBatchCommit={lastBatchCommit}
+                      >
+                        {(shapes) => (
+                          <HttpBodyPanel
+                            shapes={shapes}
+                            location={`${response.statusCode} response ${body.contentType}`}
+                          />
+                        )}
+                      </ShapeFetcher>
                     )}
-                  </ShapeFetcher>
+                  </HttpBodySelector>
                 </div>
               </div>
             </HighlightedLocation>

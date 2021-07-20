@@ -206,7 +206,11 @@ export default class Status extends Command {
         const location = locationForTrails(
           extractRequestsTrail(diff),
           extractInteractionTrail(diff),
-          endpoints
+          endpoints.map((endpoint: any) => ({
+            ...endpoint,
+            requests: endpoint.requestBodies,
+            responses: endpoint.responseBodies,
+          }))
         );
         if (location) {
           return { pathId: location.pathId, method: location.method, diff };

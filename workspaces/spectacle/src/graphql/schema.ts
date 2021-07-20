@@ -133,15 +133,15 @@ TODO @nic rename this
 """
 type HttpRequestNew {
   # Request Id
-  id: ID
+  id: ID!
 
   # Request body associated with this HTTP request
   body: HttpBody
 
-  contributions: JSON
+  contributions: JSON!
 
   # Is the request removed
-  isRemoved: Boolean
+  isRemoved: Boolean!
 }
 
 """
@@ -172,7 +172,7 @@ type QueryParameters {
   isRemoved: Boolean!
 
   # Contributions for the query parameter
-  contributions: JSON
+  contributions: JSON!
 }
 
 """

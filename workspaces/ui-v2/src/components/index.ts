@@ -17,3 +17,4 @@ export * from './Panel';
 export * from './QueryParametersPanel';
 export * from './DataFetchers';
 export * from './HttpBodyPanel';
+export * from './HttpBodySelector';

@@ -3,13 +3,13 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { getReasonPhrase } from 'http-status-codes';
 import { List, ListItem, Typography } from '@material-ui/core';
 import { SubtleGreyBackground } from '<src>/styles';
-import { IQueryParameters, IRequestBody, IResponseBody } from '<src>/types';
+import { IQueryParameters, IRequest, IResponse } from '<src>/types';
 import { goToAnchor } from '<src>/utils';
 
 export type EndpointTOCProps = {
   query: IQueryParameters | null;
-  requests: IRequestBody[];
-  responses: IResponseBody[];
+  requests: IRequest[];
+  responses: IResponse[];
 };
 
 function Code({ value }: { value: string }) {
@@ -41,34 +41,45 @@ export function EndpointTOC(props: EndpointTOCProps) {
         <EndpointTOCRow
           label={'Query Parameters'}
           anchorLink="query-parameters"
-          detail={<>consumes query string</>}
+          detail={<></>}
         />
       )}
 
-      {props.requests.map((request) => (
+      {props.requests.length > 0 && (
         <EndpointTOCRow
-          key={request.requestId}
           label={'Request Body'}
-          anchorLink={request.requestId}
+          anchorLink={'request-body'}
           detail={
             <>
-              consumes <Code value={request.contentType} />
+              consumes{' '}
+              {props.requests.length > 1 ? (
+                <>{props.requests.length} content types</>
+              ) : (
+                <Code
+                  value={props.requests[0].body?.contentType || 'No body'}
+                />
+              )}
             </>
           }
         />
-      ))}
+      )}
 
-      {props.responses.map((body, index) => {
+      {props.responses.map((response) => {
         return (
           <EndpointTOCRow
-            label={`${getReasonPhrase(body.statusCode)} - ${
-              body.statusCode
+            label={`${getReasonPhrase(response.statusCode)} - ${
+              response.statusCode
             } Response`}
-            anchorLink={body.responseId}
-            key={index}
+            anchorLink={response.responseId}
+            key={response.responseId}
             detail={
               <>
-                produces <Code value={body.contentType} />
+                produces{' '}
+                {response.bodies.length > 1 ? (
+                  <>{response.bodies.length} content types</>
+                ) : (
+                  <Code value={response.bodies[0].contentType} />
+                )}
               </>
             }
           />
