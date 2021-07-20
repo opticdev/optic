@@ -1,4 +1,4 @@
-import { ICoreShapeKinds } from '../Interfaces';
+import { ICoreShapeKinds } from '@useoptic/optic-domain';
 import { Actual, Expectation } from '../shape-diff-dsl-rust';
 import { code, ICopy } from '<src>/pages/diffs/components/ICopyRender';
 import { nameForCoreShapeKind, namerForOneOf } from '../quick-namer';

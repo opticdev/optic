@@ -8,6 +8,13 @@ export function fromOptic(msg: string) {
     .join('\n');
 }
 
+export function fromOpticVerbose(msg: string) {
+  return msg
+    .split('\n')
+    .map((line) => `${colors.blue('[optic-verbose]')} ${line}`)
+    .join('\n');
+}
+
 export function errorFromOptic(msg: string) {
   return msg
     .split('\n')

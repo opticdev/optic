@@ -1,16 +1,36 @@
 import React, { FC, ReactNode } from 'react';
-import makeStyles from '@material-ui/styles/makeStyles';
+import { Divider, Typography, makeStyles } from '@material-ui/core';
+
+import { FieldOrParameter } from './FieldOrParameter';
+import { IShapeRenderer, JsonLike } from './ShapeRenderer';
+
 import { IPathParameter } from '<src>/types';
-import { Divider, Typography } from '@material-ui/core';
 
 export type PathParametersProps = {
   parameters: IPathParameter[];
-  renderField: (pathParam: IPathParameter, index: number) => ReactNode;
+  renderField?: (pathParam: IPathParameter, index: number) => ReactNode;
+};
+
+const defaultFieldRender = (param: IPathParameter): ReactNode => {
+  const alwaysAString: IShapeRenderer = {
+    shapeId: param.id + 'shape',
+    jsonType: JsonLike.STRING,
+    value: undefined,
+  };
+  return (
+    <FieldOrParameter
+      key={param.id}
+      name={param.name}
+      shapes={[alwaysAString]}
+      depth={0}
+      value={param.description}
+    />
+  );
 };
 
 export const PathParameters: FC<PathParametersProps> = ({
   parameters,
-  renderField,
+  renderField = defaultFieldRender,
 }) => {
   const classes = useStyles();
 

@@ -51,6 +51,10 @@ jobs:
         env:
           FLAGS_FILE: ${{ github.event.inputs.flags_file }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          REACT_APP_PROD_API_BASE: https://api.useoptic.com
+          REACT_APP_STAGING_API_BASE: https://api.o3c.info
+          REACT_APP_PROD_SPEC_VIEWER_BASE: https://spec.useoptic.com
+          REACT_APP_STAGING_SPEC_VIEWER_BASE: https://spec.o3c.info
         run: task utility:create-docker-network verdaccio:up release:side-channel:npm_packages
       - uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # v2.2.2
         with:

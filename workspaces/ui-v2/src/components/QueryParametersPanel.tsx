@@ -1,9 +1,11 @@
 import React, { FC } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Tooltip } from '@material-ui/core';
+import { Help as HelpIcon } from '@material-ui/icons';
 import classnames from 'classnames';
 
 import {
   FontFamily,
+  FontFamilyMono,
   AddedGreenBackground,
   ChangedYellowBackground,
   RemovedRedBackground,
@@ -42,19 +44,32 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
 }) => {
   const classes = useStyles();
   return (
-    // TODO QPB add in query parsing strategy here?
-    <Panel header={''}>
+    <Panel
+      header={
+        <Tooltip title="?key=value1&key=value2 is treated as an array of key=[value1, value2]">
+          <div className={classes.queryTooltipContainer}>
+            Query string parsing strategy
+            <HelpIcon fontSize="small" className={classes.queryTooltipIcon} />
+          </div>
+        </Tooltip>
+      }
+    >
       {Object.entries(parameters).map(([key, field]) => (
         <div
           className={classnames(classes.queryComponentContainer, [
             ...[field.changes?.added && classes.added],
             ...[field.changes?.changed && classes.changed],
           ])}
-          key={classes.queryKey}
+          key={key}
         >
-          <div className={classes.queryKey}>{key}</div>
-          <div>
-            <ShapeRenderer showExamples={false} shape={field.shapeChoices} />
+          <div className={classes.queryKey}>
+            {key}
+            {!field.required && (
+              <span className={classes.optional}> (optional) </span>
+            )}
+          </div>
+          <div className={classes.shapeContainer}>
+            <ShapeRenderer showExamples={false} shapes={field.shapeChoices} />
           </div>
         </div>
       ))}
@@ -63,9 +78,16 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
 };
 
 const useStyles = makeStyles((theme) => ({
+  queryTooltipContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  queryTooltipIcon: {
+    margin: theme.spacing(0, 1),
+  },
   queryComponentContainer: {
     marginBottom: theme.spacing(1),
-    padding: theme.spacing(1, 0),
+    padding: theme.spacing(1),
     display: 'flex',
     '&:not(:first-child)': {
       borderTop: '1px solid #e4e8ed',
@@ -75,6 +97,15 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: FontFamily,
     fontWeight: 600,
     fontSize: theme.typography.fontSize - 1,
+  },
+  shapeContainer: {
+    flexGrow: 1,
+  },
+  optional: {
+    fontSize: theme.typography.fontSize - 1,
+    fontFamily: FontFamilyMono,
+    fontWeight: 400,
+    color: '#a3acb9',
   },
   added: {
     backgroundColor: `${AddedGreenBackground}`,

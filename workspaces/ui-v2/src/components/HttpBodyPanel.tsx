@@ -11,7 +11,7 @@ type HttpBodyPanelProps = {
 export const HttpBodyPanel: FC<HttpBodyPanelProps> = ({ shapes, location }) => {
   return (
     <Panel header={location}>
-      <ShapeRenderer showExamples={false} shape={shapes} />
+      <ShapeRenderer showExamples={false} shapes={shapes} />
     </Panel>
   );
 };

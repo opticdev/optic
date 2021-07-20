@@ -1,5 +1,5 @@
 import { BodyShapeDiff, ParsedDiff } from '<src>/lib/parse-diff';
-import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IAffordanceTrailsDiffHashMap } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { SpectacleContext } from '<src>/contexts/spectacle-provider';
 import { interpretShapeDiffs } from '<src>/lib/shape-diffs/shape-diffs';
 import { useContext, useEffect, useState } from 'react';
@@ -9,7 +9,7 @@ import { newRegionInterpreters } from '<src>/lib/new-regions-interpreter';
 
 export function useShapeDiffInterpretations(
   diffs: BodyShapeDiff[],
-  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash
+  trailValues: IAffordanceTrailsDiffHashMap
 ): { loading: false; results: IInterpretation[] } | { loading: true } {
   const spectacle = useContext(SpectacleContext)!;
   const { currentSpecContext } = useSharedDiffContext();

@@ -1,10 +1,12 @@
 ---
-date: "10/6/2020"
+date: 2020-10-06
 title: "Documenting Spring Boot Microservices with Optic"
 author: Lou Manglass
 author_image_url: "/img/team/lou.jpg"
 category: Built with Optic
 ---
+
+import { Link } from '@material-ui/core'
 
 Optic helps teams write and maintain their first OpenAPI specifications. You don't need to get your team on-board to learn OpenAPI or worry about maintaining 10k line YAML files -- Optic takes care of all of that. Optic manages this process whether your development environment is running locally on your machine out in the Cloud, or somewhere in between. No matter where you develop and test, you have confidence that every change to your API is reviewed, approved, and documented before it's released. Optic can work at any interface in your project, even with microservices.
 
@@ -25,7 +27,7 @@ The application we're looking at is composed of two services:
 
 ![Service flow chart](/img/blog-content/springboot-service-chart.png)
 
-Not pictured is the Eureka service. Eureka handles service discovery. When an instance of a microservice comes online, it registers with Eureka to say it is available for traffic. It also learns how to find other services, based on instance registration. For example, both our `CURRENCY-CONVERSION-SERVICE` and `FOREX-SERVICE` will register their URLs with Eureka at start-up, and `CURRENCY-CONVERSION-SERVICE` will use Eureka to discover where to send traffic for `FOREX-SERVICE` requests. This is how we can scale our application: if more instances are needed of either (or both) services, they can spin up and register with Eureka. When scaling down, instances tell Eureka that they are shutting down and Eureka removes their URL registrations. 
+Not pictured is the Eureka service. Eureka handles service discovery. When an instance of a microservice comes online, it registers with Eureka to say it is available for traffic. It also learns how to find other services, based on instance registration. For example, both our `CURRENCY-CONVERSION-SERVICE` and `FOREX-SERVICE` will register their URLs with Eureka at start-up, and `CURRENCY-CONVERSION-SERVICE` will use Eureka to discover where to send traffic for `FOREX-SERVICE` requests. This is how we can scale our application: if more instances are needed of either (or both) services, they can spin up and register with Eureka. When scaling down, instances tell Eureka that they are shutting down and Eureka removes their URL registrations.
 
 The key point here is that Eureka tells services how to find each other, so the services can speak directly to each other. We need to register with Eureka to observe traffic, even though we won't be receiving traffic from Eureka.
 
@@ -37,7 +39,7 @@ Our current application is run by invoking `Maven` on three Spring Boot projects
 mvn spring-boot:run
 ```
 
-Then, we can make a quick call to get a conversion. In this case, we'll see what 10000 Euros will yield in Indian Rupees (this is an example only, and doesn't reflect actual conversion rates): 
+Then, we can make a quick call to get a conversion. In this case, we'll see what 10000 Euros will yield in Indian Rupees (this is an example only, and doesn't reflect actual conversion rates):
 
 ``` bash
 curl http://localhost:8100/currency-converter/from/EUR/to/INR/quantity/10000

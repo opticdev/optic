@@ -6,6 +6,61 @@ export class OpticUIEvents {
   constructor(private dispatch: AnalyticsDispatcher) {}
 
   // in-use
+  // documentation page
+  documentationPageLoaded() {
+    this.dispatch({
+      type: 'documentation_page_loaded',
+      data: {},
+    });
+  }
+
+  documentationListPageLoaded() {
+    this.dispatch({
+      type: 'documentation_list_page_loaded',
+      data: {},
+    });
+  }
+
+  userSavedDocChanges(
+    deletedEndpointCount: number,
+    contributionChangesCount: number,
+    specId: string
+  ) {
+    this.dispatch({
+      type: 'user_saved_documentation_changes',
+      data: { deletedEndpointCount, contributionChangesCount, specId },
+    });
+  }
+
+  userStartedSharing() {
+    this.dispatch({
+      type: 'user_started_sharing',
+      data: {},
+    });
+  }
+
+  userPickedShareTarget(shareWith: string) {
+    this.dispatch({
+      type: 'user_picked_share_target',
+      data: { with: shareWith },
+    });
+  }
+
+  userShared(shareWith: string, publicSpecId: string) {
+    this.dispatch({
+      type: 'user_saved_documentation_changes',
+      data: { with: shareWith, publicSpecId },
+    });
+  }
+
+  userDeletedEndpoint() {
+    this.dispatch({
+      type: 'user_deleted_endpoint',
+      data: {},
+    });
+  }
+
+  // diff page
   userResetDiff(currentApproved: number, totalDiffs: number) {
     this.dispatch({
       type: 'user_reset_diff',
@@ -57,38 +112,6 @@ export class OpticUIEvents {
     });
   }
 
-  userSavedDocChanges(
-    deletedEndpointCount: number,
-    contributionChangesCount: number,
-    specId: string
-  ) {
-    this.dispatch({
-      type: 'user_saved_documentation_changes',
-      data: { deletedEndpointCount, contributionChangesCount, specId },
-    });
-  }
-
-  userStartedSharing() {
-    this.dispatch({
-      type: 'user_started_sharing',
-      data: {},
-    });
-  }
-
-  userPickedShareTarget(shareWith: string) {
-    this.dispatch({
-      type: 'user_picked_share_target',
-      data: { with: shareWith },
-    });
-  }
-
-  userShared(shareWith: string, publicSpecId: string) {
-    this.dispatch({
-      type: 'user_saved_documentation_changes',
-      data: { with: shareWith, publicSpecId },
-    });
-  }
-
   userSavedChanges(
     undocumentedUrls: number,
     endpointsChangedCount: number,
@@ -104,11 +127,30 @@ export class OpticUIEvents {
     });
   }
 
+  // history page
+  historyPageLoaded() {
+    this.dispatch({
+      type: 'history_page_loaded',
+      data: {},
+    });
+  }
+
   resetToCommit(numberOfCommitsReset: number) {
     this.dispatch({
       type: 'reset_to_commit',
       data: {
         numberOfCommitsReset,
+      },
+    });
+  }
+
+  // Temporary
+  // 2021/07/13- can remove 2021/10/13
+  queryParameterDocumented(numberOfQueryParameterBodies: number) {
+    this.dispatch({
+      type: 'query_parameter_documented',
+      data: {
+        numberOfQueryParameterBodies,
       },
     });
   }

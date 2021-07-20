@@ -26,10 +26,6 @@ import { trackUserEvent } from '../shared/analytics';
 import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 import { IInteractionTrail } from '@useoptic/cli-shared/build/diffs/interaction-trail';
 import { IRequestSpecTrail } from '@useoptic/cli-shared/build/diffs/request-spec-trail';
-import {
-  IRequestBodyForTrailParser,
-  IResponseBodyForTrailParser,
-} from '@useoptic/cli-shared/src/diffs/trail-parsers';
 import sortBy from 'lodash.sortby';
 import openBrowser from 'react-dev-utils/openBrowser';
 import { linkToCapture } from '../shared/ui-links';
@@ -114,13 +110,29 @@ export default class Status extends Command {
     const { diffs } = await diffService.listDiffs();
     const { urls } = await diffService.listUnrecognizedUrls();
 
-    const requests: any = await spectacle.query({
+    const requestQuery = await spectacle.query<any>({
       query: `{
         requests {
           id
           pathId
-          method
           absolutePathPatternWithParameterNames
+          pathComponents {
+            id
+            name
+            isParameterized
+            contributions
+            isRemoved
+          }
+          method
+          pathContributions
+          requestContributions
+          isRemoved
+          query {
+            id
+            rootShapeId
+            isRemoved
+            contributions
+          }
           bodies {
             contentType
             rootShapeId
@@ -128,6 +140,7 @@ export default class Status extends Command {
           responses {
             id
             statusCode
+            contributions
             bodies {
               contentType
               rootShapeId
@@ -138,40 +151,54 @@ export default class Status extends Command {
       variables: {},
     });
 
-    const endpoints: Endpoint[] = [];
-    const requestBodies: IRequestBodyForTrailParser[] = [];
-    const responseBodies: IResponseBodyForTrailParser[] = [];
-
-    for (const request of requests.data.requests) {
-      endpoints.push({
+    const endpoints = requestQuery.data.requests.map((request: any) => {
+      return {
         pathId: request.pathId,
         method: request.method,
         fullPath: request.absolutePathPatternWithParameterNames,
-      });
-
-      for (const requestBody of request.bodies) {
-        requestBodies.push({
+        pathParameters: request.pathComponents.map((path: any) => ({
+          id: path.id,
+          name: path.name,
+          isParameterized: path.isParameterized,
+          description: path.contributions.description || '',
+          endpointId: `${request.pathId}.${request.method}`,
+        })),
+        description: request.pathContributions.description || '',
+        purpose: request.pathContributions.purpose || '',
+        isRemoved: request.isRemoved,
+        query: request.query
+          ? {
+              queryParametersId: request.query.id,
+              rootShapeId: request.query.rootShapeId,
+              isRemoved: request.query.isRemoved,
+              description: request.query.contributions.description || '',
+            }
+          : null,
+        requestBodies: request.bodies.map((body: any) => ({
           requestId: request.id,
+          contentType: body.contentType,
+          rootShapeId: body.rootShapeId,
           pathId: request.pathId,
           method: request.method,
-          contentType: requestBody.contentType,
-          rootShapeId: requestBody.rootShapeId,
-        });
-      }
-
-      for (const response of request.responses) {
-        for (const responseBody of response.bodies) {
-          responseBodies.push({
-            responseId: response.id,
-            pathId: request.pathId,
-            method: request.method,
-            contentType: responseBody.contentType,
-            rootShapeId: responseBody.rootShapeId,
-            statusCode: response.statusCode,
-          });
-        }
-      }
-    }
+          description: request.requestContributions.description || '',
+        })),
+        responseBodies: request.responses
+          .flatMap((response: any) => {
+            return response.bodies.map((body: any) => {
+              return {
+                statusCode: response.statusCode,
+                responseId: response.id,
+                contentType: body.contentType,
+                rootShapeId: body.rootShapeId,
+                pathId: request.pathId,
+                method: request.method,
+                description: response.contributions.description || '',
+              };
+            });
+          })
+          .sort((a: any, b: any) => a.statusCode - b.statusCode),
+      };
+    });
 
     const locations = diffs
       .map((i) => {
@@ -179,8 +206,7 @@ export default class Status extends Command {
         const location = locationForTrails(
           extractRequestsTrail(diff),
           extractInteractionTrail(diff),
-          requestBodies,
-          responseBodies
+          endpoints
         );
         if (location) {
           return { pathId: location.pathId, method: location.method, diff };
@@ -193,9 +219,9 @@ export default class Status extends Command {
       (i: any) => `${i.method}.${i.pathId}`
     );
 
-    const endpointsWithDiff = endpoints.filter((i) =>
+    const endpointsWithDiff = endpoints.filter((i: any) =>
       locations.find(
-        (withDiff) =>
+        (withDiff: any) =>
           withDiff?.pathId === i.pathId && withDiff.method === i.method
       )
     );

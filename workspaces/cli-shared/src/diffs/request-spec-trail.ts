@@ -1,59 +1,48 @@
-//@ts-ignore
-import keymirror from 'keymirror';
-
 export type IRequestSpecTrail =
+  | ISpecRoot
   | ISpecPath
   | ISpecRequestBody
   | ISpecRequestRoot
   | ISpecResponseBody
-  | ISpecResponseRoot;
+  | ISpecResponseRoot
+  | ISpecQueryParameters;
 
-export const RequestTrailConstants: {
-  SpecRequestRoot: string;
-  SpecRoot: string;
-  SpecResponseRoot: string;
-  SpecRequestBody: string;
-  SpecPath: string;
-  SpecResponseBody: string;
-} = keymirror({
-  SpecResponseBody: null,
-  SpecRequestRoot: null,
-  SpecPath: null,
-  SpecRequestBody: null,
-  SpecResponseRoot: null,
-  SpecRoot: null,
-});
+interface ISpecQueryParameters {
+  SpecQueryParameters: {
+    queryParametersId: string;
+  };
+}
 
-export interface ISpecResponseBody {
+interface ISpecResponseBody {
   SpecResponseBody: {
     responseId: string;
   };
 }
 
-export interface ISpecRequestRoot {
+interface ISpecRequestRoot {
   SpecRequestRoot: {
     requestId: string;
   };
 }
 
-export interface ISpecPath {
+interface ISpecPath {
   SpecPath: {
     pathId: string;
   };
 }
 
-export interface ISpecRequestBody {
+interface ISpecRequestBody {
   SpecRequestBody: {
     requestId: string;
   };
 }
 
-export interface ISpecResponseRoot {
+interface ISpecResponseRoot {
   SpecResponseRoot: {
     responseId: string;
   };
 }
 
-export interface ISpecRoot {
+interface ISpecRoot {
   SpecRoot: {};
 }

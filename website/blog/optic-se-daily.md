@@ -1,5 +1,5 @@
 ---
-date: "9/8/2020"
+date: 2020-09-08
 title: "Optic on Software Engineering Daily"
 author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"

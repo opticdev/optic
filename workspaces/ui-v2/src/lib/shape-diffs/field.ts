@@ -3,7 +3,6 @@ import { Actual, Expectation } from '../shape-diff-dsl-rust';
 import sortBy from 'lodash.sortby';
 import {
   CurrentSpecContext,
-  ICoreShapeKinds,
   IDiffDescription,
   IInteractionPreviewTab,
   IInterpretation,
@@ -11,14 +10,16 @@ import {
 } from '../Interfaces';
 import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
 import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
-import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IAffordanceTrails } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { code, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { builderInnerShapeFromChoices } from './build-inner-shape';
 import {
   AddField,
   FieldShapeFromShape,
+  ICoreShapeKinds,
   SetFieldShape,
-} from '@useoptic/spectacle';
+  CQRSCommand,
+} from '@useoptic/optic-domain';
 
 export function fieldShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,
@@ -45,6 +46,7 @@ export function fieldShapeDiffInterpreter(
     copy: [],
     shapes: [],
     isField: true,
+    isQueryParam: shapeDiff.location.isQueryParameter(),
   };
 
   // field is in the spec, the value was not what we expected to see
@@ -110,9 +112,12 @@ export function fieldShapeDiffInterpreter(
   }
 
   return {
-    previewTabs: present.createPreviews(isUnspecified),
+    previewTabs: present.createPreviews(
+      isUnspecified,
+      !!updateSpecChoices.isQueryParam
+    ),
     diffDescription,
-    toCommands(choices?: IPatchChoices): any[] {
+    toCommands(choices: IPatchChoices): CQRSCommand[] {
       if (!choices) {
         return [];
       }
@@ -165,7 +170,7 @@ class FieldShapeInterpretationHelper {
     private diffHash: string,
     private shapeTrail: IShapeTrail,
     private jsonTrail: IJsonTrail,
-    private learnedTrails: IValueAffordanceSerializationWithCounter,
+    private learnedTrails: IAffordanceTrails,
     private actual: Actual,
     private expected: Expectation,
     private diffDescription: IDiffDescription
@@ -173,7 +178,10 @@ class FieldShapeInterpretationHelper {
 
   ///////////////////////////////////////////////////////////////////
 
-  public createPreviews(isUnspecified: boolean): IInteractionPreviewTab[] {
+  public createPreviews(
+    isUnspecified: boolean,
+    isQueryParam: boolean
+  ): IInteractionPreviewTab[] {
     const previews: IInteractionPreviewTab[] = [];
     const expected = this.expected.expectedShapes();
 
@@ -184,14 +192,12 @@ class FieldShapeInterpretationHelper {
 
     this.actual.interactionsGroupedByCoreShapeKind().forEach((i) => {
       previews.push({
-        title: i.label,
+        title:
+          isQueryParam && i.kind === ICoreShapeKinds.ListKind
+            ? 'multiple'
+            : i.label,
         invalid: isUnspecified ? true : !expected.has(i.kind),
-        allowsExpand: true,
         interactionPointers: i.interactions,
-        ignoreRule: {
-          diffHash: this.diffHash,
-          examplesOfCoreShapeKinds: i.kind,
-        },
         assertion: [
           plain('expected' + asFieldType),
           code(this.expected.shapeName()),

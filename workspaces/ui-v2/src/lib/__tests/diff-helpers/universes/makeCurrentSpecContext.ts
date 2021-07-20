@@ -7,8 +7,7 @@ import {
 import { IBaseSpectacle } from '@useoptic/spectacle';
 import { newDeterministicIdGenerator } from '<src>/lib/domain-id-generator';
 import * as opticEngine from '@useoptic/optic-engine-wasm';
-import { AllPathsQuery, PathQueryResponse } from '<src>/hooks/usePathsHook';
-import { IRequestBody } from '<src>/types';
+import { AllPathsQuery, PathQueryResponse } from '<src>/store/paths/thunks';
 
 //@GOTCHA: for some reason, probably because of jest, our wasm code thinks it is running in the browser even though it is running in node because of the presence of global.self:
 //@REF: https://github.com/rust-random/getrandom/issues/214
@@ -36,17 +35,10 @@ export async function makeCurrentSpecContext(
       variables: {},
     })
   ).data || { paths: [] };
-  const requests = endpoints
-    .flatMap((endpoint) => endpoint.requestBodies)
-    .filter((body) => !!body) as IRequestBody[]; // cast to IRequestBody as filter removes non-null
-
-  const responses = endpoints.flatMap((endpoint) => endpoint.responseBodies);
 
   return {
     currentSpecPaths: paths,
     currentSpecEndpoints: endpoints,
-    currentSpecResponses: responses,
-    currentSpecRequests: requests,
     domainIds: newDeterministicIdGenerator(),
     idGeneratorStrategy: 'sequential',
     opticEngine,

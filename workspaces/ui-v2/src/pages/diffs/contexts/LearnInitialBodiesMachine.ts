@@ -4,12 +4,12 @@ import {
   ILearnedBodies,
   ILearnedBody,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IOpticDiffService } from '@useoptic/spectacle';
 import {
   AddContribution,
   AddRequest,
   CQRSCommand,
-  IOpticDiffService,
-} from '@useoptic/spectacle';
+} from '@useoptic/optic-domain';
 import { getEndpointId } from '<src>/utils';
 import { newRandomIdGenerator } from '<src>/lib/domain-id-generator';
 
@@ -79,7 +79,8 @@ export const newInitialBodiesMachine = (
                         event.removeIgnore.isRequest === i.isRequest &&
                         event.removeIgnore.isResponse === i.isResponse &&
                         event.removeIgnore.statusCode === i.statusCode &&
-                        event.removeIgnore.contentType === i.contentType
+                        event.removeIgnore.contentType === i.contentType &&
+                        event.removeIgnore.isQuery === i.isQuery
                       );
                     }),
                   ],
@@ -167,7 +168,10 @@ export function recomputePendingEndpointCommands(
   }
 
   if (ctx.learnedBodies) {
-    if (ctx.learnedBodies.queryParameters) {
+    if (
+      ctx.learnedBodies.queryParameters &&
+      !ctx.ignoredBodies.find((ignoredBody) => !!ignoredBody.isQuery)
+    ) {
       commands.push(...ctx.learnedBodies.queryParameters.commands);
     }
 
@@ -261,4 +265,5 @@ export type IIgnoreBody = {
   contentType: string;
   isRequest?: boolean;
   isResponse?: boolean;
+  isQuery?: boolean;
 };

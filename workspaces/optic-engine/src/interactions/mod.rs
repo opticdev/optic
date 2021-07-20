@@ -12,7 +12,9 @@ mod traverser;
 mod visitors;
 
 use result::InteractionTrail;
-pub use result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
+pub use result::{
+  BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult, UnmatchedQueryParameters,
+};
 use visitors::{InteractionVisitors, PathVisitor};
 
 /// Compute diffs based on a spec and an interaction.
@@ -39,11 +41,23 @@ pub fn diff(
     .filter(|result| {
       config.include_query_params
         || !matches!(result, InteractionDiffResult::UnmatchedQueryParameters(_))
+          && !matches!(result, InteractionDiffResult::MatchedQueryParameters(_))
     })
     .flat_map(move |result| match result {
       InteractionDiffResult::MatchedQueryParameters(result) => {
-        // @TODO: implement shape diffing of query parameters
-        vec![]
+        let maybe_query_params: Option<BodyDescriptor> = (&http_interaction.request.query).into();
+        let query_params = maybe_query_params.or_else(|| Some(BodyDescriptor::empty_object()));
+
+        let shape_diff_results =
+          diff_shape(spec_projection.shape(), query_params, &result.root_shape_id);
+        shape_diff_results
+          .into_iter()
+          .map(|shape_diff| {
+            InteractionDiffResult::UnmatchedQueryParametersShape(
+              result.clone().into_shape_diff(shape_diff),
+            )
+          })
+          .collect()
       }
       InteractionDiffResult::MatchedRequestBodyContentType(result) => {
         // eprintln!("shape diffing for matched a request body content type");
@@ -77,6 +91,13 @@ pub fn diff(
           .collect()
       }
       _ => vec![result],
+    })
+    .filter(|result| {
+      // filter out any left-over results that aren't for outside consumoption
+      !matches!(
+        result,
+        InteractionDiffResult::UnmatchedQueryParameters(UnmatchedQueryParameters::Unobserved(_)),
+      )
     })
     .collect()
 }
@@ -127,13 +148,19 @@ pub fn analyze_undocumented_bodies<'a>(
   results.into_iter().flat_map(move |result| match result {
     InteractionDiffResult::UnmatchedQueryParameters(diff) => {
       if include_query_params {
-        let query_params = &interaction.request.query;
-        let query_trail_observations = observe_body_trails(query_params);
+        if let UnmatchedQueryParameters::Observed(_) = &diff {
+          let maybe_query_params: Option<BodyDescriptor> = (&interaction.request.query).into();
+          let query_params = maybe_query_params.or_else(|| Some(BodyDescriptor::empty_object()));
 
-        vec![BodyAnalysisResult {
-          body_location: BodyAnalysisLocation::from(diff),
-          trail_observations: query_trail_observations,
-        }]
+          let query_trail_observations = observe_body_trails(query_params);
+
+          vec![BodyAnalysisResult {
+            body_location: BodyAnalysisLocation::from(diff),
+            trail_observations: query_trail_observations,
+          }]
+        } else {
+          vec![]
+        }
       } else {
         vec![]
       }
@@ -196,6 +223,17 @@ pub fn analyze_documented_bodies(
   let results = diff_visitors.take_results().unwrap();
 
   results.into_iter().filter_map(move |result| match result {
+    InteractionDiffResult::MatchedQueryParameters(diff) => {
+      let maybe_query_params: Option<BodyDescriptor> = (&interaction.request.query).into();
+      let query_params = maybe_query_params.or_else(|| Some(BodyDescriptor::empty_object()));
+      let trail_observations = observe_body_trails(query_params);
+
+      Some(BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::from(diff),
+        trail_observations,
+      })
+    }
+
     InteractionDiffResult::MatchedRequestBodyContentType(diff) => {
       let body = &interaction.request.body;
       let trail_observations = observe_body_trails(&body.value);

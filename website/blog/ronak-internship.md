@@ -1,5 +1,5 @@
 ---
-date: "9/18/2020"
+date: 2020-09-18
 title: "What it's like to intern at Optic"
 author: Ronak Shah
 author_image_url: "/img/team/ronak.jpg"

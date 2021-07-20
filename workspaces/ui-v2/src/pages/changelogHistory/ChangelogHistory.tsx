@@ -1,4 +1,4 @@
-import React, { CSSProperties, FC, useState } from 'react';
+import React, { CSSProperties, FC, useEffect, useState } from 'react';
 import { Button, makeStyles } from '@material-ui/core';
 import ClassNames from 'classnames';
 import Color from 'color';
@@ -15,6 +15,7 @@ import {
   useDocumentationPageLink,
 } from '<src>/components';
 import { useAnalytics } from '<src>/contexts/analytics';
+import { useAppConfig } from '<src>/contexts/config/AppConfiguration';
 import { BatchCommit, useBatchCommits } from '<src>/hooks/useBatchCommits';
 import { formatTimeAgo } from '<src>/utils';
 import {
@@ -26,6 +27,7 @@ import {
 import { ConfirmResetModal } from './components';
 
 export const ChangelogHistory: FC = () => {
+  const appConfig = useAppConfig();
   const { loading, batchCommits } = useBatchCommits();
   const changelogPage = useChangelogPages();
   const documentationPage = useDocumentationPageLink();
@@ -34,6 +36,10 @@ export const ChangelogHistory: FC = () => {
   const [confirmResetModalState, setConfirmResetModalState] = useState<
     BatchCommit | false
   >(false);
+
+  useEffect(() => {
+    analytics.historyPageLoaded();
+  }, [analytics]);
 
   return (
     <Page>
@@ -89,7 +95,7 @@ export const ChangelogHistory: FC = () => {
                       </Button>
                     )}
 
-                    {!isCurrent && (
+                    {!isCurrent && appConfig.allowEditing && (
                       <Button
                         className={classes.commitResetButton}
                         variant="outlined"

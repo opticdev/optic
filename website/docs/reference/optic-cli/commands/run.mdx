@@ -1,0 +1,45 @@
+---
+title: api run
+---
+
+import IssuesAndContributing from '/docs/shared/issues-and-contributing.mdx';
+const issue_url = 'https://github.com/opticdev/optic/issues/new?title=%5Bissue%5D:%20api%20run%20';
+const command_url = 'https://github.com/opticdev/optic/blob/develop/workspaces/local-cli/src/commands/run.ts'
+
+Runs a task from your `optic.yml` file. This is the command you will use to start a task, such as for observing traffic or running tests. It takes the name of the task you wish to run, usually `start`. You may have multiple, advanced [task configurations](/reference/optic-yaml/tasks) depending on your project. 
+
+:::tip api start
+Since start is the most common task run, Optic has a command `start` that is an alias for `run start`.
+:::
+
+### Flags & Options
+
+Run has a few flags that can modify the default behavior:
+
+- `-c`/`--print-coverage` prints how much of the documented API is covered by traffic seen in the capture session. The coverage prints once the session is terminated (`ctrl+c` or when tests finish running).
+- `--ci` Enables CI-specific behavior. This enables `--print-coverage`, `--exit-on-diff`, and `pass-exit-code`.
+- `--exit-on-diff` returns an exit code of `1` if unexpected API behavior is returned, such as an undocumented route or a change in behavior on a documented route. Normally, Optic returns `0` on successful termination regardless of the behavior observed. This is primarily used in CI/CD scenarios, such as in [GitHub Actions](/docs/github-actions), to fail builds when undocumented behavior is detected.
+- `--pass-exit-code` returns the exit code of your task. If you are using a [dependent task](/docs/get-started/testing), the exit code of the dependent command (not the base command) will be passed through. This flag is overridden by - - - `--verbose` which provides extra troubleshooting information at task startup, task end, and when traffic is observed. We recommend using this when configuring a new task. 
+
+### Examples
+
+To run your `start` task:
+
+``` bash
+api run start
+```
+
+``` bash
+> api run baseline-ignores --collect-diffs
+[optic] Running dependent task start...
+[optic] Review the API Diff at http://localhost:34444/apis/2/diffs
+[optic] Optic is observing requests made to http://localhost:3001
+...
+[optic] Observed Unexpected API Behavior. Run "api status"
+```
+
+### Special notes
+
+The `run` tasks start a proxy, and will set the host headers to the targetUrl if provided. If not (such as when only a `command` and `inboundUrl` are given) the inboundUrl, which should be localhost, will be used in the request host header.
+
+<IssuesAndContributing issue_url={issue_url} command_url={command_url} />

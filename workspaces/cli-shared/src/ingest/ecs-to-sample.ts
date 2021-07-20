@@ -10,7 +10,8 @@ export function ecsToHttpInteraction(
   const { path, domain } = ecs.url;
 
   function extractBody(message: any) {
-    const content = message.body.content;
+    const content =
+      message.body && message.body.content ? message.body.content : '';
     if (typeof content === 'string') {
       return {
         asJsonString: tryParseJson(content),
@@ -43,7 +44,10 @@ export function ecsToHttpInteraction(
         shapeHashV1Base64: null,
       },
       body: {
-        contentType: request.headers['content-type'] || null,
+        contentType:
+          request.headers && request.headers['content-type']
+            ? request.headers['content-type']
+            : null,
         value: extractBody(request),
       },
     },
@@ -55,7 +59,10 @@ export function ecsToHttpInteraction(
         shapeHashV1Base64: null,
       },
       body: {
-        contentType: response.headers['content-type'] || null,
+        contentType:
+          response.headers && response.headers['content-type']
+            ? response.headers['content-type']
+            : null,
         value: extractBody(response),
       },
     },

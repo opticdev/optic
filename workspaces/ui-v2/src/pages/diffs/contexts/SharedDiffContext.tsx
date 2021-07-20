@@ -14,21 +14,17 @@ import {
 } from './SharedDiffState';
 import shortId from 'shortid';
 import { useMachine } from '@xstate/react';
-import { IEndpoint, IRequestBody, IResponseBody } from '<src>/types';
+import { IEndpoint, IPath } from '<src>/types';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
-import {
-  AddContribution,
-  CQRSCommand,
-  IOpticDiffService,
-  IUnrecognizedUrl,
-} from '@useoptic/spectacle';
+import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
+import { AddContribution, CQRSCommand } from '@useoptic/optic-domain';
+
 import { newRandomIdGenerator } from '<src>/lib/domain-id-generator';
 import { ParsedDiff } from '<src>/lib/parse-diff';
-import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IAffordanceTrailsDiffHashMap } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '<src>/hooks/useOpticEngine';
 import { useConfigRepository } from '<src>/contexts/OpticConfigContext';
 import { useAnalytics } from '<src>/contexts/analytics';
-import { IPath } from '<src>/hooks/usePathsHook';
 import { pathMatcher, PathComponentAuthoring } from '<src>/utils';
 import { useGlobalDiffDebug } from '<src>/components';
 
@@ -68,14 +64,8 @@ type ISharedDiffContext = {
   handledCount: [number, number];
   startedFinalizing: () => void;
   setEndpointName: (id: string, name: string) => void;
-  setPathDescription: (
-    pathId: string,
-    description: string,
-    endpointId: string
-  ) => void;
   setPendingEndpointName: (id: string, name: string) => void;
   getContributedEndpointName: (endpointId: string) => string | undefined;
-  getContributedPathDescription: (pathId: string) => string | undefined;
   captureId: string;
   commitModalOpen: boolean;
   setCommitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -87,12 +77,10 @@ type ISharedDiffContext = {
 type SharedDiffStoreProps = {
   endpoints: IEndpoint[];
   captureId: string;
-  requests: IRequestBody[];
-  responses: IResponseBody[];
   allPaths: IPath[];
   diffs: ParsedDiff[];
   diffService: IOpticDiffService;
-  diffTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
+  diffTrails: IAffordanceTrailsDiffHashMap;
   urls: IUnrecognizedUrl[];
 };
 
@@ -105,19 +93,11 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     () => ({
       currentSpecPaths: props.allPaths,
       currentSpecEndpoints: props.endpoints,
-      currentSpecRequests: props.requests,
-      currentSpecResponses: props.responses,
       domainIds: newRandomIdGenerator(),
       idGeneratorStrategy: 'random',
       opticEngine,
     }),
-    [
-      opticEngine,
-      props.allPaths,
-      props.endpoints,
-      props.requests,
-      props.responses,
-    ]
+    [opticEngine, props.allPaths, props.endpoints]
   );
 
   const [state, send]: any = useMachine(() =>
@@ -276,26 +256,10 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
         type: 'UPDATE_PENDING_ENDPOINT_NAME',
       });
     },
-    setPathDescription: (
-      pathId: string,
-      description: string,
-      endpointId: string
-    ) => {
-      send({
-        type: 'SET_PATH_DESCRIPTION',
-        pathId,
-        command: AddContribution(pathId, 'description', description),
-        endpointId,
-      });
-    },
     captureId: props.captureId,
     getContributedEndpointName: (endpointId: string): string | undefined => {
       return context.choices.existingEndpointNameContributions[endpointId]
         ?.AddContribution.value;
-    },
-    getContributedPathDescription: (pathId: string): string | undefined => {
-      return context.choices.existingEndpointPathContributions[pathId]?.command
-        .AddContribution.value;
     },
     getUndocumentedUrls: () =>
       context.results.displayedUndocumentedUrls

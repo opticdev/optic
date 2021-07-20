@@ -1,0 +1,116 @@
+---
+source: workspaces/optic-engine/tests/interaction-diff-use-cases.rs
+expression: "&spec_projection.shape().to_choice_mapping()"
+---
+{
+  "shape_9CwetZOv0K": [
+    {
+      "type": "Primitive",
+      "shapeId": "shape_9CwetZOv0K",
+      "jsonType": "Undefined"
+    },
+    {
+      "type": "Primitive",
+      "shapeId": "shape_fjzsDTs0rs",
+      "jsonType": "String"
+    }
+  ],
+  "shape_9pOqYqjpGb": [
+    {
+      "type": "Array",
+      "jsonType": "Array",
+      "shapeId": "shape_9pOqYqjpGb",
+      "itemShapeId": "shape_q6OD6W1YAb"
+    }
+  ],
+  "shape_VS2qYz39u4": [
+    {
+      "type": "Primitive",
+      "shapeId": "shape_VS2qYz39u4",
+      "jsonType": "String"
+    }
+  ],
+  "shape_X-OuIXHAsv": [
+    {
+      "type": "Object",
+      "shapeId": "shape_X-OuIXHAsv",
+      "jsonType": "Object",
+      "fields": [
+        {
+          "name": "status",
+          "fieldId": "field_9c9Zes28hj",
+          "shapeId": "shape_nPZOXH_CVA"
+        },
+        {
+          "name": "author",
+          "fieldId": "field_JkAduwmxKN",
+          "shapeId": "shape_VS2qYz39u4"
+        }
+      ]
+    }
+  ],
+  "shape_fjzsDTs0rs": [
+    {
+      "type": "Primitive",
+      "shapeId": "shape_fjzsDTs0rs",
+      "jsonType": "String"
+    }
+  ],
+  "shape_nPZOXH_CVA": [
+    {
+      "type": "Primitive",
+      "shapeId": "shape_nPZOXH_CVA",
+      "jsonType": "String"
+    }
+  ],
+  "shape_q6OD6W1YAb": [
+    {
+      "type": "Object",
+      "shapeId": "shape_q6OD6W1YAb",
+      "jsonType": "Object",
+      "fields": [
+        {
+          "name": "task",
+          "fieldId": "field_tToOrayR7C",
+          "shapeId": "shape_s59DPL1y4C"
+        },
+        {
+          "name": "isDone",
+          "fieldId": "field_ce28JLQRAU",
+          "shapeId": "shape_qvKmGxh-nZ"
+        },
+        {
+          "name": "id",
+          "fieldId": "field_Cu-cFjI4FI",
+          "shapeId": "shape_xXBDmbay66"
+        },
+        {
+          "name": "dueDate",
+          "fieldId": "field_uOKkB-HlmR",
+          "shapeId": "shape_9CwetZOv0K"
+        }
+      ]
+    }
+  ],
+  "shape_qvKmGxh-nZ": [
+    {
+      "type": "Primitive",
+      "shapeId": "shape_qvKmGxh-nZ",
+      "jsonType": "Boolean"
+    }
+  ],
+  "shape_s59DPL1y4C": [
+    {
+      "type": "Primitive",
+      "shapeId": "shape_s59DPL1y4C",
+      "jsonType": "String"
+    }
+  ],
+  "shape_xXBDmbay66": [
+    {
+      "type": "Primitive",
+      "shapeId": "shape_xXBDmbay66",
+      "jsonType": "String"
+    }
+  ]
+}

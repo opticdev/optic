@@ -1,7 +1,0 @@
----
-source: workspaces/optic-engine/tests/interaction_diff.rs
-expression: fingerprints
----
-[
-    "28c67019129aacf8",
-]

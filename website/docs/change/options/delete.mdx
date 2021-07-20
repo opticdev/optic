@@ -1,0 +1,62 @@
+---
+title: Deleting Endpoints
+slug: /change/endpoint/delete
+---
+
+import { Paper } from '@material-ui/core';
+
+## Deleting and endpoint from the endpoint detail page
+
+Click any endpoint you want to delete on the documentation page. This will bring you to the endpoint details. When looking at the latest version of the documentation, you'll see an **Edit** button on the page
+
+<Paper elevation={3}>
+
+![The endpoint detail view page](/img/docs/change-delete-detail.png)
+
+</Paper>
+
+click the **Edit** button to start an edit session. Edit sessions are required for all changes to an endpoint, including deleting the endpoint. The **Edit** button label will change to **Finish** and a **Delete** button will appear in the upper-right hand corner of the page.
+
+<Paper elevation={3}>
+
+![Editing the detailed endpoint documentation](/img/docs/change-delete-detail-edit.png)
+
+</Paper>
+
+You can stop the process now by clicking **Finish**, which will return you to the view mode for the endpoint. To delete the endpoint, click the **Delete** button. A modal dialog will appear to confirm your choice. It warns you that, once the deletion is saved to your specification, it is irreversible. The deletion cannot be undone: the endpoint must be learned or manually documented again.
+
+<Paper elevation={3}>
+
+![Confirm the endpoint deletion](/img/docs/change-delete-confirm.png)
+
+</Paper>
+
+A message will appear at the top of the page showing the endpoint is staged for deletion. The **Delete** button will now be an undelete button, providing one last opportunity to back out of the delete action. The **Finish** button label changes to **Save**, and will reflect 1 change - the deletion of the endpoint.
+
+<Paper elevation={3}>
+
+![Finalize the deletion of an endpoint](/img/docs/change-delete-detail-edit.png)
+
+</Paper>
+
+Clicking **Save** will prompt you for a commit message in a modal dialog. Once committed, the deletion is complete. Optic will return you to the documentation overview page.
+
+## Deleting multiple endpoints from the documentation page
+
+From the documentation overview page, you can delete multiple endpoints in one session. Click the **Edit** button to open a session, which will change to a **Finish** button.
+
+<Paper elevation={3}>
+
+![Editing the documentation overview page](/img/docs/change-delete-edit.png)
+
+</Paper>
+
+Click trash can to stage deletions. you'll get a modal confirmation dialog. The confirmation dialog reminds you that once saved, the deletion cannot be reversed. Any endpoints deleted must be relearned or added again manually. Multiple endpoints can be deleted in one session, though each will prompt you with a confirmation dialog. A revert button allows you to unstage a deleted endpoint.
+
+<Paper elevation={3}>
+
+![Staging deletes on the documentation overview page](/img/docs/change-delete-staged.png)
+
+</Paper>
+
+Click **Save** and enter a commit message to save your deletions. If all deletions are unstaged by clicking the revert button, and if there are no endpoint name edits, the **Save** button will revert to a **Finish** button. Clicking **Finish** will not prompt for a commit message, as there are no changes/deletions to save, and Optic will return to documentation viewing mode.

@@ -1,0 +1,21 @@
+---
+title: Setup - Integrate Optic via Middleware
+---
+
+import CodeBlock from '@theme/CodeBlock';
+
+### Connect to Optic
+
+Edit the `optic.yml` file created when you ran `api init`. We recommend creating both a `start` and a `test` task so that you can both run traffic against your project manually and run your existing tests. With both tasks defined, Optic will be able to observe all of the traffic.
+
+<CodeBlock className="language-yml" children={`
+tasks:
+  start:
+    command: ${props.start_command}
+  test:
+    command: ${props.test_command}
+`.trim()}>
+</CodeBlock>
+
+<br />
+<br />

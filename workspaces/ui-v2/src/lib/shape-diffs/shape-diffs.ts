@@ -1,4 +1,4 @@
-import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IAffordanceTrails } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { BodyShapeDiff } from '../parse-diff';
 import { CurrentSpecContext, IInterpretation } from '../Interfaces';
 import { Actual, getExpectationsForShapeTrail } from '../shape-diff-dsl-rust';
@@ -9,7 +9,7 @@ import { rootShapeDiffInterpreter } from './root';
 
 export async function interpretShapeDiffs(
   diff: BodyShapeDiff,
-  learnedTrails: IValueAffordanceSerializationWithCounter,
+  learnedTrails: IAffordanceTrails,
   spectacle: any,
   currentSpecContext: CurrentSpecContext
 ): Promise<IInterpretation> {
@@ -70,9 +70,4 @@ export async function interpretShapeDiffs(
   }
 
   throw new Error('No interpreter');
-
-  // return {
-  //   diffDescription: undefined, toCommands(choices: IPatchChoices): any[] {
-  //     return [];
-  //   }, suggestions: [], previewTabs: [], specChoices: {shapes: [], } };
 }

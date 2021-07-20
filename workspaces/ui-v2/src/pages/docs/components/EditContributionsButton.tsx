@@ -72,6 +72,9 @@ export function EditContributionsButton() {
           pendingCount - deletedEndpointCount,
           specId
         );
+        if (deletedEndpointCount > 0) {
+          analytics.userDeletedEndpoint();
+        }
         if (shouldRedirect) {
           history.push(documentationPageRoute.linkTo());
         }

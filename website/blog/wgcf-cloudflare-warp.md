@@ -1,5 +1,5 @@
 ---
-date: "8/16/2020"
+date: 2020-08-16
 title: "How wgcf used Optic to bring Cloudflare Warp to every Platform"
 author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"

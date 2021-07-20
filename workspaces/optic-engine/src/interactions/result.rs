@@ -9,6 +9,7 @@ use std::hash::{Hash, Hasher};
 #[derive(Debug, Deserialize, Serialize, Hash)]
 pub enum InteractionDiffResult {
   UnmatchedQueryParameters(UnmatchedQueryParameters),
+  UnmatchedQueryParametersShape(UnmatchedQueryParametersShape),
   UnmatchedRequestUrl(UnmatchedRequestUrl),
   UnmatchedRequestBodyContentType(UnmatchedRequestBodyContentType),
   UnmatchedRequestBodyShape(UnmatchedRequestBodyShape),
@@ -34,7 +35,8 @@ impl InteractionDiffResult {
 
   pub fn interaction_trail(&self) -> &InteractionTrail {
     match self {
-      InteractionDiffResult::UnmatchedQueryParameters(diff) => &diff.interaction_trail,
+      InteractionDiffResult::UnmatchedQueryParameters(diff) => diff.interaction_trail(),
+      InteractionDiffResult::UnmatchedQueryParametersShape(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedRequestUrl(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => &diff.interaction_trail,
       InteractionDiffResult::UnmatchedRequestBodyShape(diff) => &diff.interaction_trail,
@@ -48,7 +50,8 @@ impl InteractionDiffResult {
 
   pub fn requests_trail(&self) -> &RequestSpecTrail {
     match self {
-      InteractionDiffResult::UnmatchedQueryParameters(diff) => &diff.requests_trail,
+      InteractionDiffResult::UnmatchedQueryParameters(diff) => diff.requests_trail(),
+      InteractionDiffResult::UnmatchedQueryParametersShape(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedRequestUrl(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => &diff.requests_trail,
       InteractionDiffResult::UnmatchedRequestBodyShape(diff) => &diff.requests_trail,
@@ -62,6 +65,7 @@ impl InteractionDiffResult {
 
   pub fn json_trail(&self) -> Option<&JsonTrail> {
     let shape_diff_result = match self {
+      InteractionDiffResult::UnmatchedQueryParametersShape(diff) => Some(&diff.shape_diff_result),
       InteractionDiffResult::UnmatchedRequestBodyShape(diff) => Some(&diff.shape_diff_result),
       InteractionDiffResult::UnmatchedResponseBodyShape(diff) => Some(&diff.shape_diff_result),
       _ => None,
@@ -93,16 +97,71 @@ impl UnmatchedRequestUrl {
 
 #[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
-pub struct UnmatchedQueryParameters {
+pub struct UnmatchedQueryParametersDescriptor {
   pub interaction_trail: InteractionTrail,
   pub requests_trail: RequestSpecTrail,
 }
 
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
+#[serde(untagged)]
+pub enum UnmatchedQueryParameters {
+  Observed(UnmatchedQueryParametersDescriptor),
+
+  #[serde(skip)]
+  Unobserved(UnmatchedQueryParametersDescriptor),
+}
+
 impl UnmatchedQueryParameters {
-  pub fn new(interaction_trail: InteractionTrail, requests_trail: RequestSpecTrail) -> Self {
-    return UnmatchedQueryParameters {
+  pub fn new(
+    interaction_trail: InteractionTrail,
+    requests_trail: RequestSpecTrail,
+    was_observed: bool,
+  ) -> Self {
+    let descriptor = UnmatchedQueryParametersDescriptor {
       interaction_trail,
       requests_trail,
+    };
+    if was_observed {
+      UnmatchedQueryParameters::Observed(descriptor)
+    } else {
+      UnmatchedQueryParameters::Unobserved(descriptor)
+    }
+  }
+
+  pub fn descriptor(&self) -> &UnmatchedQueryParametersDescriptor {
+    match self {
+      UnmatchedQueryParameters::Observed(descriptor) => descriptor,
+      UnmatchedQueryParameters::Unobserved(descriptor) => descriptor,
+    }
+  }
+
+  pub fn interaction_trail(&self) -> &InteractionTrail {
+    &self.descriptor().interaction_trail
+  }
+
+  pub fn requests_trail(&self) -> &RequestSpecTrail {
+    &self.descriptor().requests_trail
+  }
+}
+
+#[derive(Debug, Deserialize, Serialize, Hash)]
+#[serde(rename_all = "camelCase")]
+pub struct UnmatchedQueryParametersShape {
+  pub interaction_trail: InteractionTrail,
+  pub requests_trail: RequestSpecTrail,
+  pub shape_diff_result: ShapeDiffResult,
+}
+
+impl UnmatchedQueryParametersShape {
+  pub fn new(
+    interaction_trail: InteractionTrail,
+    requests_trail: RequestSpecTrail,
+    shape_diff_result: ShapeDiffResult,
+  ) -> Self {
+    return UnmatchedQueryParametersShape {
+      interaction_trail,
+      requests_trail,
+      shape_diff_result,
     };
   }
 }
@@ -141,6 +200,17 @@ impl MatchedQueryParameters {
       requests_trail,
       root_shape_id,
     };
+  }
+
+  pub fn into_shape_diff(
+    self,
+    shape_diff_result: ShapeDiffResult,
+  ) -> UnmatchedQueryParametersShape {
+    UnmatchedQueryParametersShape::new(
+      self.interaction_trail,
+      self.requests_trail,
+      shape_diff_result,
+    )
   }
 }
 
@@ -284,6 +354,9 @@ pub enum BodyAnalysisLocation {
     content_type: Option<String>,
     status_code: u16,
   },
+  MatchedQueryParameters {
+    query_parameters_id: QueryParametersId,
+  },
   MatchedRequest {
     request_id: RequestId,
     content_type: Option<String>,
@@ -301,6 +374,7 @@ impl BodyAnalysisLocation {
       BodyAnalysisLocation::UnmatchedRequest { content_type, .. } => content_type.as_ref(),
       BodyAnalysisLocation::UnmatchedQueryParameters { .. } => None,
       BodyAnalysisLocation::UnmatchedResponse { content_type, .. } => content_type.as_ref(),
+      BodyAnalysisLocation::MatchedQueryParameters { .. } => None,
       BodyAnalysisLocation::MatchedRequest { content_type, .. } => content_type.as_ref(),
       BodyAnalysisLocation::MatchedResponse { content_type, .. } => content_type.as_ref(),
     }
@@ -309,10 +383,11 @@ impl BodyAnalysisLocation {
 
 impl From<UnmatchedQueryParameters> for BodyAnalysisLocation {
   fn from(diff: UnmatchedQueryParameters) -> Self {
-    let interaction_trail = diff.interaction_trail;
+    let diff_descriptor = diff.descriptor();
+    let interaction_trail = &diff_descriptor.interaction_trail;
 
     Self::UnmatchedQueryParameters {
-      path_id: diff
+      path_id: diff_descriptor
         .requests_trail
         .get_path_id()
         .expect("UnmatchedQueryParameters implies request to have a known path")
@@ -362,6 +437,20 @@ impl From<UnmatchedResponseBodyContentType> for BodyAnalysisLocation {
       status_code: interaction_trail
         .get_response_status_code()
         .expect("UnmatchedResponseBodyContentType implies response to have a status code"),
+    }
+  }
+}
+
+impl From<MatchedQueryParameters> for BodyAnalysisLocation {
+  fn from(diff: MatchedQueryParameters) -> Self {
+    let interaction_trail = diff.interaction_trail;
+
+    Self::MatchedQueryParameters {
+      query_parameters_id: diff
+        .requests_trail
+        .get_query_parameters_id()
+        .expect("MatchedQueryParameters implies request to have a known query parameters id")
+        .clone(),
     }
   }
 }
@@ -549,6 +638,15 @@ impl RequestSpecTrail {
   pub fn get_path_id(&self) -> Option<&String> {
     match self {
       RequestSpecTrail::SpecPath(spec_path) => Some(&spec_path.path_id),
+      _ => None,
+    }
+  }
+
+  pub fn get_query_parameters_id(&self) -> Option<&String> {
+    match self {
+      RequestSpecTrail::SpecQueryParameters(query_params_spec) => {
+        Some(&query_params_spec.query_parameters_id)
+      }
       _ => None,
     }
   }

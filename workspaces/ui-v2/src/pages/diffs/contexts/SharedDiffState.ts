@@ -1,16 +1,13 @@
 import { assign, Machine, spawn } from 'xstate';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
-import {
-  AddContributionType,
-  CQRSCommand,
-  IOpticConfigRepository,
-  IOpticDiffService,
-} from '@useoptic/spectacle';
+import { IOpticConfigRepository, IOpticDiffService } from '@useoptic/spectacle';
+import { AddContributionType, CQRSCommand } from '@useoptic/optic-domain';
+
 import { BodyShapeDiff, ParsedDiff } from '<src>/lib/parse-diff';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import { DiffSet } from '<src>/lib/diff-set';
 import uniqby from 'lodash.uniqby';
-import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IAffordanceTrailsDiffHashMap } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { AssembleCommands } from '<src>/lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
 import { generatePathCommands } from '<src>/lib/stable-path-batch-generator';
@@ -20,7 +17,7 @@ function transformDiffs(
   currentSpecContext: CurrentSpecContext,
   parsedDiffs: ParsedDiff[] = [],
   undocumentedUrls: IUndocumentedUrl[] = [],
-  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash
+  trailValues: IAffordanceTrailsDiffHashMap
 ) {
   const knownUndocumented = includeUndocumented(
     parsedDiffs,
@@ -59,7 +56,7 @@ export const newSharedDiffMachine = (
   currentSpecContext: CurrentSpecContext,
   parsedDiffs: ParsedDiff[],
   undocumentedUrls: IUndocumentedUrl[],
-  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+  trailValues: IAffordanceTrailsDiffHashMap,
   diffService: IOpticDiffService,
   configRepository: IOpticConfigRepository
 ) => {
@@ -564,7 +561,7 @@ export type SharedDiffStateEvent =
       currentSpecContext: CurrentSpecContext;
       parsedDiffs: ParsedDiff[];
       undocumentedUrls: IUndocumentedUrl[];
-      trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
+      trailValues: IAffordanceTrailsDiffHashMap;
     }
   | {
       type: 'USER_FINISHED_REVIEW';
@@ -595,7 +592,7 @@ export interface SharedDiffStateContext {
     knownPathUndocumented: IKnownPathUndocumented[];
     displayedUndocumentedUrls: IUndocumentedUrl[];
     parsedDiffs: ParsedDiff[];
-    trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
+    trailValues: IAffordanceTrailsDiffHashMap;
     diffsGroupedByEndpoint: EndpointDiffGrouping[];
   };
   choices: {
