@@ -174,12 +174,15 @@ export class ParsedDiff {
             requestId: request.requestId,
             contentType: request.body!.contentType,
           })),
-        responses: endpoint.responses.flatMap((response) =>
-          response.bodies.map((body) => ({
-            responseId: response.responseId,
-            statusCode: response.statusCode,
-            contentType: body.contentType,
-          }))
+        responses: Object.values(endpoint.responsesByStatusCode).flatMap(
+          (responses) =>
+            responses
+              .filter((response) => !!response.body)
+              .map((response) => ({
+                responseId: response.responseId,
+                statusCode: response.statusCode,
+                contentType: response.body!.contentType,
+              }))
         ),
       }))
     );

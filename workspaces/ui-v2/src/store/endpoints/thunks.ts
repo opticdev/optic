@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/react';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { ChangeType, IEndpoint } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
+import groupBy from 'lodash.groupby';
 
 export const AllEndpointsQuery = `{
   endpoints {
@@ -161,20 +162,27 @@ export const endpointQueryResultsToJson = (
       pathId: endpoint.pathId,
       method: endpoint.method,
     })),
-    responses: endpoint.responses
-      .map((response) => ({
-        responseId: response.id,
-        statusCode: response.statusCode,
-        description: response.contributions.description || '',
-        endpointId: endpoint.id,
-        pathId: endpoint.pathId,
-        method: endpoint.method,
-        bodies: response.bodies.map((body) => ({
-          rootShapeId: body.rootShapeId,
-          contentType: body.contentType,
-        })),
-      }))
-      .sort((a, b) => a.statusCode - b.statusCode),
+    // Group by status code
+    responsesByStatusCode: groupBy(
+      endpoint.responses.map((response) => {
+        return {
+          responseId: response.id,
+          statusCode: response.statusCode,
+          description: response.contributions.description || '',
+          endpointId: endpoint.id,
+          pathId: endpoint.pathId,
+          method: endpoint.method,
+          body:
+            response.bodies.length >= 1
+              ? {
+                  rootShapeId: response.bodies[0].rootShapeId,
+                  contentType: response.bodies[0].contentType,
+                }
+              : null,
+        };
+      }),
+      'statusCode'
+    ),
   }));
 
   if (endpointChanges) {

@@ -2,14 +2,15 @@ import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { getReasonPhrase } from 'http-status-codes';
 import { List, ListItem, Typography } from '@material-ui/core';
+import { selectors } from '<src>/store';
 import { SubtleGreyBackground } from '<src>/styles';
-import { IQueryParameters, IRequest, IResponse } from '<src>/types';
+import { IQueryParameters, IRequest, IEndpoint } from '<src>/types';
 import { goToAnchor } from '<src>/utils';
 
 export type EndpointTOCProps = {
   query: IQueryParameters | null;
   requests: IRequest[];
-  responses: IResponse[];
+  responsesByStatusCode: IEndpoint['responsesByStatusCode'];
 };
 
 function Code({ value }: { value: string }) {
@@ -29,11 +30,12 @@ function Code({ value }: { value: string }) {
 export function EndpointTOC(props: EndpointTOCProps) {
   const classes = useStyles();
 
+  console.log(props.responsesByStatusCode);
   return (
     <List dense>
       {props.query === null &&
       props.requests.length === 0 &&
-      props.responses.length === 0 ? (
+      Object.keys(props.responsesByStatusCode).length === 0 ? (
         <Typography className={classes.none}>No bodies documented.</Typography>
       ) : null}
 
@@ -56,7 +58,7 @@ export function EndpointTOC(props: EndpointTOCProps) {
                 <>{props.requests.length} content types</>
               ) : (
                 <Code
-                  value={props.requests[0].body?.contentType || 'No body'}
+                  value={props.requests[0].body?.contentType || 'No Body'}
                 />
               )}
             </>
@@ -64,27 +66,27 @@ export function EndpointTOC(props: EndpointTOCProps) {
         />
       )}
 
-      {props.responses.map((response) => {
-        return (
-          <EndpointTOCRow
-            label={`${getReasonPhrase(response.statusCode)} - ${
-              response.statusCode
-            } Response`}
-            anchorLink={response.responseId}
-            key={response.responseId}
-            detail={
-              <>
-                produces{' '}
-                {response.bodies.length > 1 ? (
-                  <>{response.bodies.length} content types</>
-                ) : (
-                  <Code value={response.bodies[0].contentType} />
-                )}
-              </>
-            }
-          />
-        );
-      })}
+      {selectors
+        .getResponsesInSortedOrder(props.responsesByStatusCode)
+        .map(([statusCode, responses]) => {
+          return (
+            <EndpointTOCRow
+              label={`${getReasonPhrase(statusCode)} - ${statusCode} Response`}
+              anchorLink={statusCode}
+              key={statusCode}
+              detail={
+                <>
+                  produces{' '}
+                  {responses.length > 1 ? (
+                    <>{responses.length} content types</>
+                  ) : (
+                    <Code value={responses[0].body?.contentType || 'No Body'} />
+                  )}
+                </>
+              }
+            />
+          );
+        })}
     </List>
   );
 }

@@ -142,7 +142,7 @@ const ChangelogRootComponent: FC<
                   <EndpointTOC
                     query={thisEndpoint.query}
                     requests={thisEndpoint.requests}
-                    responses={thisEndpoint.responses}
+                    responsesByStatusCode={thisEndpoint.responsesByStatusCode}
                   />
                 </div>
               </Panel>
@@ -210,7 +210,7 @@ const ChangelogRootComponent: FC<
             <HttpBodySelector
               items={thisEndpoint.requests}
               getDisplayName={(request) =>
-                request.body?.contentType || 'No body'
+                request.body?.contentType || 'No Body'
               }
             >
               {(request) => (
@@ -270,74 +270,82 @@ const ChangelogRootComponent: FC<
             </HttpBodySelector>
           </div>
         )}
-        {thisEndpoint.responses.map((response) => (
-          <div
-            className={classes.bodyContainer}
-            id={response.responseId}
-            key={response.responseId}
-          >
-            <div className={classes.bodyHeaderContainer}>
-              <h6 className={classes.bodyHeader}>
-                {response.statusCode} Response
-              </h6>
-            </div>
-            <div className={classes.bodyContributionContainer}>
-              <ReactMarkdown
-                className={classes.contents}
-                source={response.description}
-              />
-            </div>
-            <div className={classes.bodyDetails}>
+        {selectors
+          .getResponsesInSortedOrder(thisEndpoint.responsesByStatusCode)
+          .map(([statusCode, responses]) => (
+            <div
+              className={classes.bodyContainer}
+              id={statusCode}
+              key={statusCode}
+            >
+              <div className={classes.bodyHeaderContainer}>
+                <h6 className={classes.bodyHeader}>{statusCode} Response</h6>
+              </div>
               <HttpBodySelector
-                items={response.bodies}
-                getDisplayName={(body) => body.contentType}
+                items={responses}
+                getDisplayName={(response) =>
+                  response.body?.contentType || 'No Body'
+                }
               >
-                {(body) => (
+                {(response) => (
                   <>
-                    <div>
-                      <ContributionFetcher
-                        rootShapeId={body.rootShapeId}
-                        endpointId={endpointId}
-                        changesSinceBatchCommit={batchId}
-                      >
-                        {(fields) => (
-                          <ContributionsList
-                            renderField={(field) => (
-                              <FieldOrParameter
-                                key={
-                                  field.contribution.id +
-                                  field.contribution.contributionKey
-                                }
-                                name={field.name}
-                                shapes={field.shapes}
-                                depth={field.depth}
-                                value={field.contribution.value}
-                              />
-                            )}
-                            fieldDetails={fields}
-                          />
-                        )}
-                      </ContributionFetcher>
+                    <div className={classes.bodyContributionContainer}>
+                      <ReactMarkdown
+                        className={classes.contents}
+                        source={response.description}
+                      />
                     </div>
-                    <div className={classes.panel}>
-                      <ShapeFetcher
-                        rootShapeId={body.rootShapeId}
-                        changesSinceBatchCommit={batchId}
-                      >
-                        {(shapes) => (
-                          <HttpBodyPanel
-                            shapes={shapes}
-                            location={body.contentType}
-                          />
-                        )}
-                      </ShapeFetcher>
+                    <div className={classes.bodyDetails}>
+                      {response.body ? (
+                        <>
+                          <div>
+                            <ContributionFetcher
+                              rootShapeId={response.body.rootShapeId}
+                              endpointId={endpointId}
+                              changesSinceBatchCommit={batchId}
+                            >
+                              {(fields) => (
+                                <ContributionsList
+                                  renderField={(field) => (
+                                    <FieldOrParameter
+                                      key={
+                                        field.contribution.id +
+                                        field.contribution.contributionKey
+                                      }
+                                      name={field.name}
+                                      shapes={field.shapes}
+                                      depth={field.depth}
+                                      value={field.contribution.value}
+                                    />
+                                  )}
+                                  fieldDetails={fields}
+                                />
+                              )}
+                            </ContributionFetcher>
+                          </div>
+                          <div className={classes.panel}>
+                            <ShapeFetcher
+                              rootShapeId={response.body.rootShapeId}
+                              changesSinceBatchCommit={batchId}
+                            >
+                              {(shapes) => (
+                                <HttpBodyPanel
+                                  shapes={shapes}
+                                  location={response.body!.contentType}
+                                />
+                              )}
+                            </ShapeFetcher>
+                          </div>
+                        </>
+                      ) : (
+                        <>No Body Response</>
+                      )}
                     </div>
                   </>
                 )}
               </HttpBodySelector>
             </div>
-          </div>
-        ))}
+          ))}
       </FullWidth>
     </>
   );

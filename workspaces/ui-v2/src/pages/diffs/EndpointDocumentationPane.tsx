@@ -82,7 +82,7 @@ export const EndpointDocumentationPane: FC<
           <EndpointTOC
             query={thisEndpoint.query}
             requests={thisEndpoint.requests}
-            responses={thisEndpoint.responses}
+            responsesByStatusCode={thisEndpoint.responsesByStatusCode}
           />
         </div>
       </Panel>
@@ -150,44 +150,52 @@ export const EndpointDocumentationPane: FC<
         </HighlightedLocation>
       )}
 
-      {thisEndpoint.responses.map((response) => {
-        return (
-          <React.Fragment key={response.responseId}>
-            <HighlightedLocation
-              className={classes.bodyContainer}
-              targetLocation={highlightedLocation}
-              statusCode={response.statusCode}
-              expectedLocation={Location.Response}
-            >
-              <div id={response.responseId}>
-                <h6 className={classes.bodyHeader}>
-                  {response.statusCode} response
-                </h6>
-                <div className={classes.bodyDetails}>
-                  <HttpBodySelector
-                    items={response.bodies}
-                    getDisplayName={(body) => body.contentType}
-                  >
-                    {(body) => (
-                      <ShapeFetcher
-                        rootShapeId={body.rootShapeId}
-                        changesSinceBatchCommit={lastBatchCommit}
-                      >
-                        {(shapes) => (
-                          <HttpBodyPanel
-                            shapes={shapes}
-                            location={`${response.statusCode} response ${body.contentType}`}
-                          />
-                        )}
-                      </ShapeFetcher>
-                    )}
-                  </HttpBodySelector>
+      {selectors
+        .getResponsesInSortedOrder(thisEndpoint.responsesByStatusCode)
+        .map(([statusCode, responses]) => {
+          return (
+            <React.Fragment key={statusCode}>
+              <HighlightedLocation
+                className={classes.bodyContainer}
+                targetLocation={highlightedLocation}
+                statusCode={Number(statusCode)}
+                expectedLocation={Location.Response}
+              >
+                <div id={statusCode}>
+                  <h6 className={classes.bodyHeader}>{statusCode} response</h6>
+                  <div className={classes.bodyDetails}>
+                    <HttpBodySelector
+                      items={responses}
+                      getDisplayName={(response) =>
+                        response.body?.contentType || 'No Body'
+                      }
+                    >
+                      {(response) =>
+                        response.body ? (
+                          <ShapeFetcher
+                            rootShapeId={response.body.rootShapeId}
+                            changesSinceBatchCommit={lastBatchCommit}
+                          >
+                            {(shapes) => (
+                              <HttpBodyPanel
+                                shapes={shapes}
+                                location={`${response.statusCode} response ${
+                                  response.body!.contentType
+                                }`}
+                              />
+                            )}
+                          </ShapeFetcher>
+                        ) : (
+                          <div>No Body Request</div>
+                        )
+                      }
+                    </HttpBodySelector>
+                  </div>
                 </div>
-              </div>
-            </HighlightedLocation>
-          </React.Fragment>
-        );
-      })}
+              </HighlightedLocation>
+            </React.Fragment>
+          );
+        })}
     </FullWidth>
   );
 };
