@@ -330,7 +330,7 @@ module.exports = class ArticleService{
 }
 ```
 
-Now let's pause and restart the server. Proceed to `localhost:8000/API/v1/articles`.
+Now let's pause and restart the server. Proceed to `localhost:8000/api/v1/articles`.
 You should try making a post request to the above route, and if you've followed the steps correctly so far, the request should go true.
 
 Note that you should revisit the beginning of this article and look for omissions in your own code should you encounter any issues after restarting your server. You can also Google the error message you received for more insight.
@@ -365,7 +365,7 @@ api start
 
 Optic throws a proxy in between your traffic and the actual API process. This will help Optic monitor your API and keep track of changes.
 
-The next step is to exercise your API. You can do this by simply performing GET, POST, PUT, DELETE, and similar requests on your endpoint. This way, Optic can detect your API endpoints. To register all detected routes and review API diffs, proceed to the link for reviewing API diff shown to you when you run API status on your terminal.
+The next step is to exercise your API. You can do this by simply performing GET, POST, PUT, DELETE, and similar requests on your endpoint. This way, Optic can detect your API endpoints. To register all detected routes and review API diffs, proceed to the link for reviewing API diff shown to you when you run `api status` on your terminal.
 
 ```sh title='output of api start'
 $ api start
