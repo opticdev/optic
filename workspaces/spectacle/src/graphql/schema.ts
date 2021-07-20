@@ -25,8 +25,11 @@ type StartDiffResult {
 """
 Queries for Spectacle
 """
-type Query {  
+type Query {
+  endpoints: [Endpoint!]!
+
   # All HTTP requests defined in the spec
+  # TODO @nic deprecate
   requests: [HttpRequest]
 
   # URI paths for endpoints
@@ -85,11 +88,60 @@ type Path {
 }
 
 type Endpoint {
-  commands: EndpointCommands
+  # PathId + Method
+  id: ID!
+  
+  # Path ID
+  pathId: ID!
+  
+  # HTTP method for the HTTP request
+  method: String!
+
+  # Path components for the HTTP request
+  pathComponents: [PathComponent!]!
+  
+  # URI path pattern with parameter names included 
+  pathPattern: String!
+  
+  # Query parameters associated with this HTTP request
+  query: QueryParameters
+  
+  # Request bodies associated with this HTTP request
+  requests: [HttpRequestNew!]!
+  
+  # Responses associated with this HTTP request
+  responses: [HttpResponse!]!
+
+  # Contributions which define descriptions
+  # TODO figure out what this currently maps to in the contributions list
+  contributions: JSON!
+
+  # Is the endpoint removed
+  # TODO figure out how this gets mapped
+  isRemoved: Boolean!
+
+  commands: EndpointCommands!
 }
 
 type EndpointCommands {
-  remove: [JSON]
+  remove: [JSON!]!
+}
+
+"""
+HttpRequestNew - to supercede HttpRequest (and subsequently renamed to HttpRequest)
+TODO @nic rename this
+"""
+type HttpRequestNew {
+  # Request Id
+  id: ID
+
+  # Request body associated with this HTTP request
+  body: HttpBody
+
+  contributions: JSON
+
+  # Is the request removed
+  isRemoved: Boolean
 }
 
 """
@@ -125,6 +177,7 @@ type QueryParameters {
 
 """
 HTTP Request
+TODO @nic  Deprecate this
 """
 type HttpRequest {
   id: ID
@@ -276,6 +329,7 @@ type ChangesResult {
 
 """
 Endpoint Changes
+TODO move this into Endpoint type (as changes)
 """
 type EndpointChanges {  
   # Changed endpoints for the batch commit ID provided to query

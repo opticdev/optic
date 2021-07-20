@@ -46,7 +46,8 @@ const fetchDeleteEndpointCommands = async (
       },
     });
     if (results.errors) {
-      throw new Error();
+      console.error(results.errors);
+      throw new Error(JSON.stringify(results.errors));
     }
     return results.data!.endpoint.commands.remove;
   } catch (e) {
