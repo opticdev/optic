@@ -1,0 +1,21 @@
+---
+title: API Coverage
+---
+
+import Paper from '@material-ui/core/Paper'
+
+## API Coverage
+
+Coverage helps developers understand what they're testing, giving them more confidence that passing tests mean working software. Code coverage is relied on by most software engineering teams to give their tests power. Passing tests, paired with high code coverage, is a strong and trusted signal that your code is working as designed.
+
+:::info **What is API Coverage?**
+Code coverage reports on lines/files where code was executed, API coverage reports on the endpoints, body types, and status codes that were covered by traffic.
+:::
+
+Optic can report on API coverage for any of your test scripts, Postman collections, or even from using a webapp that talks to the API. After completing your session, the `api status` command will show you any diffs and undocumented URLs by default. Pass the `--print-coverage` flag to also print a coverage report:
+
+<Paper elevation={2}>
+
+![Show coverage](/img/print-coverage.svg)
+
+</Paper>
