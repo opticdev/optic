@@ -115,8 +115,6 @@ export const EndpointDocumentationPane: FC<
         <HighlightedLocation
           className={classes.bodyContainer}
           targetLocation={highlightedLocation}
-          // TODO remove content type from highlighted request?
-          contentType={'contentType'}
           expectedLocation={Location.Request}
         >
           <div id="request-body">
@@ -159,8 +157,6 @@ export const EndpointDocumentationPane: FC<
             <HighlightedLocation
               className={classes.bodyContainer}
               targetLocation={highlightedLocation}
-              // TODO fix content type
-              contentType={'body.contentType'}
               statusCode={response.statusCode}
               expectedLocation={Location.Response}
             >
