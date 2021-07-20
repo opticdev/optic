@@ -28,7 +28,7 @@ jobs:
           then
             echo "Deploying to Production..."
             echo "APP_ENV=production" >> $GITHUB_ENV
-          else=
+          else
             echo "Deploying to Staging..."
             echo "APP_ENV=staging" >> $GITHUB_ENV
           fi
