@@ -196,15 +196,16 @@ impl RequestBodyVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
 
   fn visit(&mut self, interaction: &HttpInteraction, context: &RequestBodyVisitorContext) {
     if let Some(operation) = context.operation {
-      let actual_content_type = &interaction.request.body.content_type;
-      let actual_body: Option<BodyDescriptor> = (&interaction.request.body.value).into();
-      let (request_id, request_body_descriptor) = operation;
-      //dbg!( actual_content_type);
-      //dbg!(&request_body_descriptor);
+      let maybe_interaction_content_type = &interaction.request.body.content_type;
+      let maybe_interaction_body_descriptor: Option<BodyDescriptor> =
+        (&interaction.request.body.value).into();
+      let (request_id, request_descriptor) = operation;
+      //dbg!( maybe_interaction_content_type);
+      //dbg!(&request_descriptor);
       match (
-        &request_body_descriptor.body,
-        actual_content_type,
-        actual_body,
+        &request_descriptor.body,
+        maybe_interaction_content_type,
+        maybe_interaction_body_descriptor,
       ) {
         (None, None, _) => {
           self
@@ -259,7 +260,7 @@ impl RequestBodyVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
   fn end(&mut self, interaction: &HttpInteraction, context: &PathVisitorContext) {
     if let Some(path_id) = context.path {
       if self.visited_with_matched_content_types.is_empty() {
-        let actual_content_type = &interaction.request.body.content_type;
+        let maybe_interaction_content_type = &interaction.request.body.content_type;
         let mut interaction_trail_components = vec![
           InteractionTrailPathComponent::Url {
             path: interaction.request.path.clone(),
@@ -268,7 +269,7 @@ impl RequestBodyVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
             method: interaction.request.method.clone(),
           },
         ];
-        if let Some(content_type) = actual_content_type {
+        if let Some(content_type) = maybe_interaction_content_type {
           interaction_trail_components.push(InteractionTrailPathComponent::RequestBody {
             content_type: content_type.clone(),
           });
@@ -316,18 +317,19 @@ impl ResponseBodyVisitor<InteractionDiffResult> for DiffResponseBodyVisitor {
   fn visit(&mut self, interaction: &HttpInteraction, context: &ResponseBodyVisitorContext) {
     //dbg!("visit response body");
     if let Some(response) = context.response {
-      let actual_content_type = &interaction.response.body.content_type;
-      let actual_body: Option<BodyDescriptor> = (&interaction.response.body.value).into();
-      let (response_id, response_body_descriptor) = response;
-      //dbg!("actual response content type", actual_content_type);
+      let maybe_interaction_content_type = &interaction.response.body.content_type;
+      let maybe_interaction_body_descriptor: Option<BodyDescriptor> =
+        (&interaction.response.body.value).into();
+      let (response_id, response_descriptor) = response;
+      //dbg!("actual response content type", maybe_interaction_content_type);
       // dbg!(
       //   "expecting response content type",
-      //   &response_body_descriptor
+      //   &response_descriptor
       // );
       match (
-        &response_body_descriptor.body,
-        actual_content_type,
-        actual_body,
+        &response_descriptor.body,
+        maybe_interaction_content_type,
+        maybe_interaction_body_descriptor,
       ) {
         (None, None, _) => {
           self
