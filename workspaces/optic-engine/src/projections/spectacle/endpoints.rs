@@ -350,7 +350,7 @@ impl EndpointsProjection {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  fn get_or_create_endpoint_node_index(
+  fn ensure_endpoint_node_index(
     &mut self,
     path_id: PathComponentId,
     http_method: HttpMethod,
@@ -456,7 +456,7 @@ impl EndpointsProjection {
     path_id: PathComponentId,
     http_method: HttpMethod,
   ) {
-    let endpoint_index = self.get_or_create_endpoint_node_index(path_id, http_method);
+    let endpoint_index = self.ensure_endpoint_node_index(path_id, http_method);
     let node = Node::Request(RequestNode {
       request_id: request_id.clone(),
       is_removed: false,
@@ -490,7 +490,7 @@ impl EndpointsProjection {
     http_method: HttpMethod,
     http_status_code: HttpStatusCode,
   ) {
-    let endpoint_index = self.get_or_create_endpoint_node_index(path_id, http_method);
+    let endpoint_index = self.ensure_endpoint_node_index(path_id, http_method);
 
     let node = Node::Response(ResponseNode {
       http_status_code: http_status_code,
@@ -549,7 +549,7 @@ impl EndpointsProjection {
     http_method: HttpMethod,
     query_parameters_id: QueryParametersId,
   ) {
-    let endpoint_index = self.get_or_create_endpoint_node_index(path_id, http_method);
+    let endpoint_index = self.ensure_endpoint_node_index(path_id, http_method);
 
     let node = Node::QueryParameters(QueryParametersNode {
       query_parameters_id: query_parameters_id.clone(),
