@@ -141,8 +141,7 @@ export const EndpointDocumentationPane: FC<
                       )}
                     </ShapeFetcher>
                   ) : (
-                    // TODO make this the same as the other three
-                    <div>No body details found</div>
+                    <div>No Body Request</div>
                   )
                 }
               </HttpBodySelector>

@@ -312,7 +312,7 @@ export const EndpointRootPage: FC<
             <HttpBodySelector
               items={thisEndpoint.requests}
               getDisplayName={(request) =>
-                request.body?.contentType || 'No Body Request'
+                request.body?.contentType || 'No Body'
               }
             >
               {(request) => (

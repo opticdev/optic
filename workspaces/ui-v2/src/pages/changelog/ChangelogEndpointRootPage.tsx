@@ -209,7 +209,6 @@ const ChangelogRootComponent: FC<
 
             <HttpBodySelector
               items={thisEndpoint.requests}
-              // TODO nic make this a standard key
               getDisplayName={(request) =>
                 request.body?.contentType || 'No body'
               }
@@ -223,7 +222,7 @@ const ChangelogRootComponent: FC<
                     />
                   </div>
                   {request.body ? (
-                    <>
+                    <div className={classes.bodyDetails}>
                       <div>
                         <ContributionFetcher
                           rootShapeId={request.body.rootShapeId}
@@ -262,9 +261,8 @@ const ChangelogRootComponent: FC<
                           )}
                         </ShapeFetcher>
                       </div>
-                    </>
+                    </div>
                   ) : (
-                    // TODO change this
                     <>No Body Request</>
                   )}
                 </>

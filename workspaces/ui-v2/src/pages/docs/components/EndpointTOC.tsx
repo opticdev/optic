@@ -123,7 +123,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyItems: 'center',
     color: 'rgb(79, 86, 107)',
-    minWidth: 130,
     fontSize: 13,
     fontWeight: 600,
     justifyContent: 'flex-end',
