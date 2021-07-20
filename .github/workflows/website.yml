@@ -4,14 +4,14 @@ on:
   pull_request:
     branches: [develop]
     paths:
-      - .github/wokflows/website.yml
+      - .github/workflows/website.yml
       - website/**
   push:
     branches:
       - release
       - develop
     paths:
-      - .github/wokflows/website.yml
+      - .github/workflows/website.yml
       - website/**
   workflow_dispatch:
 
