@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Button, LinearProgress, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
@@ -37,6 +37,7 @@ import {
   MarkdownBodyContribution,
   DeleteEndpointConfirmationModal,
 } from '<src>/pages/docs/components';
+import { useAnalytics } from '<src>/contexts/analytics';
 
 export const EndpointRootPageWithDocsNav: FC<
   React.ComponentProps<typeof EndpointRootPage>
@@ -52,6 +53,7 @@ export const EndpointRootPage: FC<
     method: string;
   }>
 > = ({ match }) => {
+  const analytics = useAnalytics();
   const documentationPageLink = useDocumentationPageLink();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
   const isEditing = useAppSelector(
@@ -86,6 +88,9 @@ export const EndpointRootPage: FC<
   );
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const endpointId = getEndpointId({ method, pathId });
+  useEffect(() => {
+    analytics.documentationListPageLoaded();
+  }, [analytics]);
 
   const isEndpointStagedForDeletion = useAppSelector(
     selectors.isEndpointDeleted({ method, pathId })
@@ -263,23 +268,26 @@ export const EndpointRootPage: FC<
                   rootShapeId={thisEndpoint.query.rootShapeId}
                   endpointId={endpointId}
                 >
-                  {(contributions) => (
+                  {(fields) => (
                     <ContributionsList
-                      renderContribution={(contribution) => (
+                      renderField={(field) => (
                         <DocsFieldOrParameterContribution
-                          key={contribution.id}
+                          key={
+                            field.contribution.id +
+                            field.contribution.contributionKey
+                          }
                           endpoint={{
                             pathId,
                             method,
                           }}
-                          id={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          initialValue={contribution.value}
+                          name={field.name}
+                          shapes={field.shapes}
+                          depth={field.depth}
+                          id={field.contribution.id}
+                          initialValue={field.contribution.value}
                         />
                       )}
-                      contributions={contributions}
+                      fieldDetails={fields}
                     />
                   )}
                 </ContributionFetcher>
@@ -318,23 +326,26 @@ export const EndpointRootPage: FC<
                   rootShapeId={requestBody.rootShapeId}
                   endpointId={endpointId}
                 >
-                  {(contributions) => (
+                  {(fields) => (
                     <ContributionsList
-                      renderContribution={(contribution) => (
+                      renderField={(field) => (
                         <DocsFieldOrParameterContribution
-                          key={contribution.id}
+                          key={
+                            field.contribution.id +
+                            field.contribution.contributionKey
+                          }
                           endpoint={{
                             pathId,
                             method,
                           }}
-                          id={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          initialValue={contribution.value}
+                          name={field.name}
+                          shapes={field.shapes}
+                          depth={field.depth}
+                          id={field.contribution.id}
+                          initialValue={field.contribution.value}
                         />
                       )}
-                      contributions={contributions}
+                      fieldDetails={fields}
                     />
                   )}
                 </ContributionFetcher>
@@ -377,23 +388,26 @@ export const EndpointRootPage: FC<
                     rootShapeId={responseBody.rootShapeId}
                     endpointId={endpointId}
                   >
-                    {(contributions) => (
+                    {(fields) => (
                       <ContributionsList
-                        renderContribution={(contribution) => (
+                        renderField={(field) => (
                           <DocsFieldOrParameterContribution
-                            key={contribution.id}
+                            key={
+                              field.contribution.id +
+                              field.contribution.contributionKey
+                            }
                             endpoint={{
                               pathId,
                               method,
                             }}
-                            id={contribution.id}
-                            name={contribution.name}
-                            shapes={contribution.shapes}
-                            depth={contribution.depth}
-                            initialValue={contribution.value}
+                            name={field.name}
+                            shapes={field.shapes}
+                            depth={field.depth}
+                            id={field.contribution.id}
+                            initialValue={field.contribution.value}
                           />
                         )}
-                        contributions={contributions}
+                        fieldDetails={fields}
                       />
                     )}
                   </ContributionFetcher>

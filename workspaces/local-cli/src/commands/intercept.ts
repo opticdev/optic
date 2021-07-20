@@ -163,6 +163,7 @@ export default class Intercept extends Command {
     const uiBaseUrl = makeUiBaseUrl(daemonState);
 
     const uiUrl = linkToCapture(uiBaseUrl, cliSession.session.id, captureId);
+    console.log(fromOptic(`Opening your API Diff at ${uiUrl}`));
     openBrowser(uiUrl);
 
     cleanupAndExit(0);

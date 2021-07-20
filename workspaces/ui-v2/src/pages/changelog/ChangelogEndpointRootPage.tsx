@@ -8,8 +8,6 @@ import ReactMarkdown from 'react-markdown';
 import {
   EndpointName,
   PathParameters,
-  IShapeRenderer,
-  JsonLike,
   PageLayout,
   FullWidth,
   FieldOrParameter,
@@ -132,25 +130,7 @@ const ChangelogRootComponent: FC<
                   />
                 }
               >
-                <PathParameters
-                  parameters={parameterizedPathParts}
-                  renderField={(param) => {
-                    const alwaysAString: IShapeRenderer = {
-                      shapeId: param.id + 'shape',
-                      jsonType: JsonLike.STRING,
-                      value: undefined,
-                    };
-                    return (
-                      <FieldOrParameter
-                        key={param.id}
-                        name={param.name}
-                        shapes={[alwaysAString]}
-                        depth={0}
-                        value={param.description}
-                      />
-                    );
-                  }}
-                />
+                <PathParameters parameters={parameterizedPathParts} />
                 <div
                   style={{
                     marginTop: 10,
@@ -188,18 +168,21 @@ const ChangelogRootComponent: FC<
                   endpointId={endpointId}
                   changesSinceBatchCommit={batchId}
                 >
-                  {(contributions) => (
+                  {(fields) => (
                     <ContributionsList
-                      renderContribution={(contribution) => (
+                      renderField={(field) => (
                         <FieldOrParameter
-                          key={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          value={contribution.value}
+                          key={
+                            field.contribution.id +
+                            field.contribution.contributionKey
+                          }
+                          name={field.name}
+                          shapes={field.shapes}
+                          depth={field.depth}
+                          value={field.contribution.value}
                         />
                       )}
-                      contributions={contributions}
+                      fieldDetails={fields}
                     />
                   )}
                 </ContributionFetcher>
@@ -240,18 +223,21 @@ const ChangelogRootComponent: FC<
                   endpointId={endpointId}
                   changesSinceBatchCommit={batchId}
                 >
-                  {(contributions) => (
+                  {(fields) => (
                     <ContributionsList
-                      renderContribution={(contribution) => (
+                      renderField={(field) => (
                         <FieldOrParameter
-                          key={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          value={contribution.value}
+                          key={
+                            field.contribution.id +
+                            field.contribution.contributionKey
+                          }
+                          name={field.name}
+                          shapes={field.shapes}
+                          depth={field.depth}
+                          value={field.contribution.value}
                         />
                       )}
-                      contributions={contributions}
+                      fieldDetails={fields}
                     />
                   )}
                 </ContributionFetcher>
@@ -294,18 +280,21 @@ const ChangelogRootComponent: FC<
                   endpointId={endpointId}
                   changesSinceBatchCommit={batchId}
                 >
-                  {(contributions) => (
+                  {(fields) => (
                     <ContributionsList
-                      renderContribution={(contribution) => (
+                      renderField={(field) => (
                         <FieldOrParameter
-                          key={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          value={contribution.value}
+                          key={
+                            field.contribution.id +
+                            field.contribution.contributionKey
+                          }
+                          name={field.name}
+                          shapes={field.shapes}
+                          depth={field.depth}
+                          value={field.contribution.value}
                         />
                       )}
-                      contributions={contributions}
+                      fieldDetails={fields}
                     />
                   )}
                 </ContributionFetcher>

@@ -1,0 +1,141 @@
+---
+title: Hapi
+middleware_url: https://github.com/opticdev/optic-node/blob/main/frameworks/hapi
+middleware_readme: https://github.com/opticdev/optic-node/blob/main/frameworks/hapi/README.md
+productboard_url: ''
+start_command: 'node app.js'
+icon: '/img/langs/hapi.png'
+---
+
+import { ShowWhenSdk, ShowWhenProxy } from '../../src/components/FrameworkHelper';
+import CodeBlock from '@theme/CodeBlock';
+import ExpandDocs from '../../src/components/Expand';
+import FrameworksPreflight from '../shared/frameworks-preflight.mdx'
+import FrameworksMiddlewareDesc from '../shared/frameworks-middleware-desc.mdx';
+import FrameworksMiddleware from '../shared/frameworks-middleware.mdx';
+import FrameworksMiddlewareValidate from '../shared/frameworks-middleware-validate.mdx';
+import FrameworksProxyMode from '../shared/frameworks-proxy-mode.mdx';
+import FrameworksProxyValidate from '../shared/frameworks-proxy-validate.mdx';
+import FrameworksProxyUseMiddleware from '../shared/frameworks-proxy-use-middleware.mdx';
+import MoreDetails from '../shared/frameworks-more-details.mdx';
+
+<FrameworksPreflight />
+
+<ShowWhenSdk {...props}>
+
+<FrameworksMiddlewareDesc start_command={frontMatter.start_command} />
+
+## Requirements
+
+The module requires `@useoptic/cli` to be installed, instructions on installing it are available [https://www.useoptic.com/docs/](https://www.useoptic.com/docs/).
+
+## Install
+
+```sh
+npm install @useoptic/express-middleware
+```
+
+## Usage
+
+The middleware takes a configuration object and captures traffic in the background as long as `@useoptic/cli` is installed.
+
+### Configuration
+
+All options are optional for easier configuration in your application
+- `enabled`: `boolean` (defaults to `false`) Programmatically control if capturing data and sending it to Optic
+- `uploadUrl`: `string` (defaults to `process.env.OPTIC_LOGGING_URL`) The URL to Optics capture URL, if left blank it will expect `OPTIC_LOGGING_URL` environment variable set by the Optic CLI
+- `console`: `boolean` (defaults to `false`) Send to stdout/console for debugging
+ - `framework`: `string` (defaults to '') Additional information to inform Optic of where it is capturing information
+
+### Example
+
+Using a basic [hapi](https://hapi.dev/) server.
+
+```js
+const Hapi = require('@hapi/hapi')
+const { OpticPlugin } = require('@useoptic/hapi-middleware')
+
+const init = async () => {
+  const server = Hapi.server({
+    port: 3001,
+    host: 'localhost'
+  })
+
+  await server.register({
+    plugin: OpticPlugin,
+    options: {
+      enabled: true
+    }
+  })
+  server.route({
+    method: ['GET', 'POST'],
+    path: '/',
+    handler: (request, h) => {
+      return 'Hello World! ' + Math.random()
+    }
+  })
+
+  await server.start()
+  console.log('Server running on %s', server.info.uri)
+}
+
+process.on('unhandledRejection', (err) => {
+  if (err) {
+    console.log('ERROR')
+    console.log(err)
+    process.exit(1)
+  }
+})
+
+init()
+```
+
+<p>For more information, you can check the <a href={frontMatter.middleware_url}>README.md</a> for the <a href={frontMatter.middleware_url}>{frontMatter.title} Middleware</a>. Once you've integrated the Middleware, the next step is to connect your project with Optic.</p>
+
+<FrameworksMiddleware {...frontMatter} test_command="newman run collection.json --environment environment.json" />
+
+<FrameworksMiddlewareValidate />
+
+</ShowWhenSdk>
+
+<ShowWhenProxy {...props}>
+
+<FrameworksProxyMode start_command="./foo" />
+
+### Connect to Optic
+
+Edit the `optic.yml` file created when you ran `api init`. For a proxy, you'll need to define the command to start your API and the port on which Optic should listen. Optic will tell your application to start on a specific port with the `PORT` environment variable. We recommend starting Optic on the port your project listens on today, so all of your consumers, such as tests and local clients, work without any changes.
+
+#### Configuring optic.yml
+
+<CodeBlock className="language-yml" children={`
+tasks:
+  start:
+    command: ${frontMatter.start_command}
+    inboundUrl: http://localhost:4000
+`.trim()}>
+</CodeBlock>
+
+#### Configuring your project
+
+```node title=Before
+app.listen(3000);
+```
+
+```node title=After
+app.listen(process.env.PORT || 3000);
+```
+<br />
+<br />
+
+<FrameworksProxyValidate />
+
+<FrameworksProxyUseMiddleware framework={frontMatter.title} />
+
+</ShowWhenProxy>
+
+## Next step: Document your first endpoint
+
+Now Optic is integrated with your API, and you've confirmed traffic is flowing properly. Congratulations! Since you captured some traffic while testing the integration, now is a great time to [document your first endpoint](/document/baseline).
+
+**Having trouble?** [Open an issue on GitHub](https://github.com/opticdev/optic/issues/new)

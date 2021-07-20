@@ -1,5 +1,5 @@
 ---
-date: "12/9/2020"
+date: 2020-12-09
 title: "The Git for APIs"
 author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"

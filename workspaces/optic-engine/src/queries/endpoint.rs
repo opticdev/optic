@@ -1,9 +1,12 @@
 use crate::commands::{EndpointCommand, SpecCommand};
 use crate::events::HttpInteraction;
 use crate::projections::endpoint::{Edge, EndpointProjection, Node, ROOT_PATH_ID};
-use crate::projections::endpoint::{RequestDescriptor, ResponseBodyDescriptor};
+use crate::projections::endpoint::{
+  QueryParametersDescriptor, RequestDescriptor, ResponseBodyDescriptor,
+};
 use crate::state::endpoint::{
-  HttpMethod, HttpStatusCode, PathComponentId, PathComponentIdRef, RequestId, ResponseId,
+  HttpMethod, HttpStatusCode, PathComponentId, PathComponentIdRef, QueryParametersId, RequestId,
+  ResponseId,
 };
 use petgraph::graph::Graph;
 use petgraph::visit::{
@@ -221,6 +224,16 @@ impl<'a> EndpointQueries<'a> {
     self.resolve_operations_by_request_method(&interaction.request.method, path_id)
   }
 
+  pub fn resolve_endpoint_query_params(
+    &self,
+    path_id: PathComponentIdRef,
+    method: &String,
+  ) -> Option<(&QueryParametersId, &QueryParametersDescriptor)> {
+    self
+      .endpoint_projection
+      .get_endpoint_query_parameter_node(&path_id.to_owned(), method)
+  }
+
   pub fn resolve_requests(
     &self,
     path_id: PathComponentIdRef,
@@ -378,6 +391,9 @@ impl<'a> EndpointQueries<'a> {
     path_id: &'a PathComponentId,
     method: &'a HttpMethod,
   ) -> Option<DeleteEndpointCommands> {
+    let query_param_id = self
+      .resolve_endpoint_query_params(path_id, method)
+      .map(|(query_param_id, _)| query_param_id);
     let request_ids = self
       .resolve_requests(path_id, method)?
       .map(|(request_id, _)| request_id);
@@ -385,6 +401,9 @@ impl<'a> EndpointQueries<'a> {
       .resolve_responses(path_id, method)?
       .map(|(response_id, _)| response_id);
 
+    let query_parameter_command = query_param_id
+      .cloned()
+      .map(EndpointCommand::remove_query_parameters);
     let request_commands = request_ids.cloned().map(EndpointCommand::remove_request);
     let response_commands = response_ids.cloned().map(EndpointCommand::remove_response);
 
@@ -393,6 +412,7 @@ impl<'a> EndpointQueries<'a> {
       method: method.clone(),
       commands: request_commands
         .chain(response_commands)
+        .chain(query_parameter_command)
         .map(SpecCommand::from)
         .collect(),
     })
@@ -607,6 +627,9 @@ mod test {
 
       {"RequestAdded": { "requestId": "request_3", "pathId": "path_3", "httpMethod": "GET"}},
       {"ResponseAddedByPathAndMethod": {"responseId": "response_3", "pathId": "path_3", "httpMethod": "GET", "httpStatusCode": 200 }},
+
+      {"QueryParametersAdded": {"queryParametersId": "query_1", "httpMethod": "GET", "pathId": "path_2"}},
+      {"QueryParametersShapeSet": {"queryParametersId": "query_1", "shapeDescriptor":{"shapeId":"shape_Ba53AWXhVW","isRemoved":false}}},
     ]))
     .expect("should be able to deserialize test events");
 
@@ -624,6 +647,8 @@ mod test {
     let updated_spec =
       assert_valid_commands(spec_projection.clone(), deleted_endpoint_commmands.commands);
     let updated_queries = EndpointQueries::new(&updated_spec.endpoint());
+    let remaining_query_parameters =
+      updated_queries.resolve_endpoint_query_params(&subject_path, &subject_method);
     let remaining_requests = updated_queries
       .resolve_requests(&subject_path, &subject_method)
       .unwrap()
@@ -635,6 +660,7 @@ mod test {
 
     // dbg!(Dot::with_config(&updated_spec.endpoint().graph, &[]));
 
+    assert!(remaining_query_parameters.is_none());
     assert_eq!(remaining_requests.len(), 0);
     assert_eq!(remaining_responses.len(), 0);
   }

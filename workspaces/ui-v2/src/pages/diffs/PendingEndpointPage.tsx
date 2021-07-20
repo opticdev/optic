@@ -146,7 +146,7 @@ export function PendingEndpointPage(props: any) {
             <Loader title="Learning request and response bodies..." />
           )}
 
-          {isReady && (
+          {isReady && learnedBodies && (
             <div className={classes.bodyAdd}>
               <TextField
                 fullWidth={true}
@@ -160,8 +160,9 @@ export function PendingEndpointPage(props: any) {
                 onKeyPress={onKeyPress}
               />
 
-              {requestCheckboxes.length > 0 ||
-              learnedBodies!.responses.length > 0 ? (
+              {learnedBodies.queryParameters ||
+              requestCheckboxes.length > 0 ||
+              learnedBodies.responses.length > 0 ? (
                 <Typography
                   component="div"
                   variant="subtitle2"
@@ -170,6 +171,33 @@ export function PendingEndpointPage(props: any) {
                   Document the bodies for this endpoint:
                 </Typography>
               ) : null}
+
+              {learnedBodies.queryParameters && (
+                <>
+                  <FormControl component="fieldset" onKeyPress={onKeyPress}>
+                    <LearnBodyCheckBox
+                      initialStatus={isIgnored({
+                        isQuery: true,
+                        contentType: '',
+                      })}
+                      primary="Query Parameters"
+                      subtext=""
+                      onChange={(ignore) => {
+                        ignore
+                          ? ignoreBody({
+                              isQuery: true,
+                              contentType: '',
+                            })
+                          : includeBody({
+                              isQuery: true,
+                              contentType: '',
+                            });
+                      }}
+                    />
+                  </FormControl>
+                  <Divider />
+                </>
+              )}
 
               <FormControl component="fieldset" onKeyPress={onKeyPress}>
                 {requestCheckboxes.map((i, index) => {
@@ -258,11 +286,7 @@ export function PendingEndpointPage(props: any) {
               <EndpointDocumentationPane
                 method={stagedCommandsIds.method}
                 pathId={stagedCommandsIds.pathId}
-                renderHeader={() => (
-                  <Typography className={classes.nameDisplay}>
-                    {name === '' ? 'Unnamed Endpoint' : name}
-                  </Typography>
-                )}
+                name={name === '' ? 'Unnamed Endpoint' : name}
               />
             )}
           </SimulatedCommandStore>
@@ -327,11 +351,5 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 25,
     display: 'flex',
     justifyContent: 'space-between;',
-  },
-  nameDisplay: {
-    fontSize: '1.25rem',
-    fontFamily: 'Ubuntu, Inter',
-    fontWeight: 500,
-    lineHeight: 1.6,
   },
 }));

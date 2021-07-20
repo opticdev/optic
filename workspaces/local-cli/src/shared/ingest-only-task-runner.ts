@@ -18,6 +18,8 @@ import { IngestTrafficService } from '@useoptic/cli-shared/build/ingest/ingest-t
 import colors from 'colors';
 import { spawnProcessReturnExitCode } from './spawn-process';
 import { computeCoverage, printCoverage } from './coverage';
+import { ExecVerboseLogger } from './verbose/verbose';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 
 export async function ingestOnlyTaskRunner(
   cli: Command,
@@ -73,18 +75,26 @@ export async function ingestOnlyTaskRunner(
 
   await persistenceManager.init();
 
-  const collectionService = new IngestTrafficService(persistenceManager);
+  const logger = new ExecVerboseLogger(flags.verbose || false);
+
+  const collectionService = new IngestTrafficService(
+    persistenceManager,
+    (sample: IHttpInteraction) => logger.sample(sample)
+  );
+
   const loggingUrl = await collectionService.start();
 
   const env: any = {
     OPTIC_LOGGING_URL: loggingUrl,
   };
 
+  logger.starting(command, loggingUrl);
+
   console.log(`Running command: ${colors.grey(command)} `);
   console.log(`Traffic can be sent to: ${colors.grey(loggingUrl)} `);
 
   let exitedByUser = false;
-  async function finish(statusCode: number) {
+  async function finish(statusCode: number, ctrlC: boolean = false) {
     //stop server, no new batches
     await collectionService.stop();
     //await all pending / unsaved traffic
@@ -99,17 +109,19 @@ export async function ingestOnlyTaskRunner(
 
     // impliment exit on diff
 
+    logger.results(statusCode, ctrlC);
+
     cleanupAndExit(statusCode);
   }
 
   process.on('SIGINT', function () {
     exitedByUser = true;
-    finish(0);
+    finish(0, exitedByUser);
   });
 
   const exitCode = await spawnProcessReturnExitCode(command, env);
 
   if (!exitedByUser) {
-    finish(exitCode);
+    finish(exitCode, false);
   }
 }

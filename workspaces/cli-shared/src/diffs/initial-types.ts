@@ -1,29 +1,20 @@
 import { IJsonTrail } from './json-trail';
+import { LearningResults } from '@useoptic/optic-domain';
 
-export interface ILearnedBodies {
-  pathId: string;
-  method: string;
-  requests: ILearnedBody[];
-  responses: ILearnedBody[];
-}
+export type ILearnedBodies = LearningResults.UndocumentedEndpointBodies.LearnedBodies;
+export type ILearnedBody = LearningResults.UndocumentedEndpointBodies.LearnedBody;
+export type ILearnedQueryParameters = LearningResults.UndocumentedEndpointBodies.LearnedQueryParameters;
 
-export interface ILearnedBody {
-  contentType: string;
-  statusCode?: number;
-  commands: any[];
-  rootShapeId: string;
-}
-
-export interface IValueAffordanceSerializationWithCounter {
-  affordances: IValueAffordanceSerialization[];
+export interface IAffordanceTrails {
+  affordances: IAffordance[];
   interactions: IAffordanceInteractionPointers;
 }
 
-export interface IValueAffordanceSerializationWithCounterGroupedByDiffHash {
-  [key: string]: IValueAffordanceSerializationWithCounter;
+export interface IAffordanceTrailsDiffHashMap {
+  [key: string]: IAffordanceTrails;
 }
 
-export interface IValueAffordanceSerialization {
+export interface IAffordance {
   trail: IJsonTrail;
   wasString: boolean;
   wasNumber: boolean;

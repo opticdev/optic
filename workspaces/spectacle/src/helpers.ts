@@ -1,4 +1,6 @@
 import { shapes, endpoints } from '@useoptic/graph-lib';
+import { CQRSCommand } from '@useoptic/optic-domain';
+import { IOpticEngine } from './types';
 
 export function buildEndpointsGraph(spec: any, opticEngine: any) {
   const serializedGraph = JSON.parse(
@@ -246,22 +248,20 @@ class Changes {
 }
 
 function endpointFromRequest(request: endpoints.RequestNodeWrapper): Endpoint {
-  let pathNode = request.path();
-  const pathId = pathNode.value.pathId;
+  const endpoint = request.endpoint();
+  const pathNode = endpoint.path();
+  const { id: endpointId, pathId, httpMethod: method } = endpoint.value;
   const path = pathNode.absolutePathPatternWithParameterNames;
-  const method = request.value.httpMethod;
-  const endpointId = JSON.stringify({ path, method });
   return { endpointId, pathId, path, method };
 }
 
 function endpointFromResponse(
   response: endpoints.ResponseNodeWrapper
 ): Endpoint {
-  let pathNode = response.path();
-  const pathId = pathNode.value.pathId;
+  const endpoint = response.endpoint();
+  const pathNode = endpoint.path();
+  const { id: endpointId, pathId, httpMethod: method } = endpoint.value;
   const path = pathNode.absolutePathPatternWithParameterNames;
-  const method = response.value.httpMethod;
-  const endpointId = JSON.stringify({ path, method });
   return { endpointId, pathId, path, method };
 }
 
@@ -434,4 +434,18 @@ export function getContributionsProjection(
   opticEngine: any
 ): ContributionsProjection {
   return JSON.parse(opticEngine.get_contributions_projection(spec));
+}
+
+export class CommandGenerator {
+  constructor(private spec: any, private opticEngine: IOpticEngine) {}
+  public endpoint = {
+    remove: (pathId: string, method: string): CQRSCommand[] => {
+      const specEndpointDeleteCommands = this.opticEngine.spec_endpoint_delete_commands(
+        this.spec,
+        pathId,
+        method
+      );
+      return JSON.parse(specEndpointDeleteCommands).commands;
+    },
+  };
 }

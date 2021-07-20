@@ -1,5 +1,5 @@
 ---
-date: "10/6/2020"
+date: 2020-10-06
 title: "Let’s Talk about API Coverage"
 author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"

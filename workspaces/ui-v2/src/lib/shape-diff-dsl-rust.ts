@@ -6,14 +6,15 @@ import {
 import sortBy from 'lodash.sortby';
 import equals from 'lodash.isequal';
 import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
-import { CurrentSpecContext, ICoreShapeKinds } from './Interfaces';
+import { ICoreShapeKinds } from '@useoptic/optic-domain';
+import { CurrentSpecContext } from './Interfaces';
 import {
   IExpectationHelper,
   shapeTrailParserLastId,
 } from './shape-trail-parser';
 import {
-  IValueAffordanceSerialization,
-  IValueAffordanceSerializationWithCounter,
+  IAffordance,
+  IAffordanceTrails,
 } from '../../../cli-shared/build/diffs/initial-types';
 import invariant from 'invariant';
 import { namer } from './quick-namer';
@@ -144,10 +145,10 @@ export class Expectation {
 }
 
 export class Actual {
-  public trailAffordances: IValueAffordanceSerialization[];
+  public trailAffordances: IAffordance[];
 
   constructor(
-    public learnedTrails: IValueAffordanceSerializationWithCounter,
+    public learnedTrails: IAffordanceTrails,
     private shapeTrail: IShapeTrail,
     public jsonTrail: IJsonTrail
   ) {

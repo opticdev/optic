@@ -1,7 +1,0 @@
----
-source: tests/interaction_diff.rs
-expression: fingerprints
----
-[
-    "2917414c919fbd64",
-]

@@ -23,6 +23,9 @@ impl LearnedShapeDiffAffordancesProjection {
     let affordances_by_diff_fingerprint = &mut self.affordances_by_diff_fingerprint;
 
     let spec_id = match analysis.body_location {
+      BodyAnalysisLocation::MatchedQueryParameters {
+        query_parameters_id,
+      } => Some(query_parameters_id),
       BodyAnalysisLocation::MatchedRequest { request_id, .. } => Some(request_id),
       BodyAnalysisLocation::MatchedResponse { response_id, .. } => Some(response_id),
       _ => None,
@@ -106,6 +109,11 @@ impl FromIterator<InteractionDiffResult> for LearnedShapeDiffAffordancesProjecti
     let mut diffs_by_spec_id = HashMap::new();
     for (fingerprint, diff_result) in unique_diffs {
       let spec_id = match &diff_result {
+        InteractionDiffResult::UnmatchedQueryParametersShape(diff) => {
+          diff.requests_trail.get_query_parameters_id().expect(
+            "UnmatchedQueryParametersShape should have a query parameters id in the requests trail",
+          )
+        }
         InteractionDiffResult::UnmatchedRequestBodyShape(diff) => diff
           .requests_trail
           .get_request_id()
@@ -178,6 +186,22 @@ pub struct ShapeDiffAffordances {
   root_trail: JsonTrail,
 }
 pub type InteractionPointers = Tags;
+
+impl ShapeDiffAffordances {
+  pub fn into_trail_observations(self) -> (JsonTrail, TrailObservationsResult) {
+    let root_shape_id = self.root_trail;
+    let values_by_trail: HashMap<_, _> = self
+      .affordances
+      .into_iter()
+      .map(|item| (item.trail.clone(), item))
+      .collect();
+
+    let trail_observation_results: TrailObservationsResult =
+      TrailObservationsResult { values_by_trail };
+
+    (root_shape_id, trail_observation_results)
+  }
+}
 
 #[derive(Debug, Default, Serialize)]
 #[serde(rename_all = "camelCase")]

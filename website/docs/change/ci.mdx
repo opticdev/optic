@@ -1,0 +1,46 @@
+---
+title: Optic, Git and CI
+slug: /change/ci
+---
+
+> Add Optic to Git Workflow + CI to help your team design great APIs, talk about API change, and prevent unplanned breaks. Optic offers several tools you can combine to fit your team's needs
+
+import { Button } from '@material-ui/core'
+import { DocsImage } from '../../src/components/Image';
+import PreviewPageModal from '../../src/components/Modal';
+import Changelog from '../reference/ci/changelog.mdx'
+import Test from '../reference/ci/test.mdx'
+
+
+## Changelog
+It's important to get your team talk about any API changes, whether those changes were planned or whether they were unexpected. Optic makes this possible by comparing your new spec with the existing one and adding a report in your Pull Request to show what's changed. This workflow empowers teams to be proactive. The time to have the conversation about API changes is before they make it into production. Since Optic can compare the proposed spec against the current one automatically, it can start these conversations without needing someone to manually figure out what changed.
+
+1. When developers open a Pull Request, Optic's bot comments with an API changelog. The Bot is basically saying: "If you merge this Pull Request, here's how the API will change"
+
+2. Other developers can review the proposed API changes, provide feedback and request changes
+
+3. The original author of the Pull Request can update the API and make subsequent commits. Each time one of those commits changes the API, Optic will comment again so the other reviewers can see revisions.
+
+4. When you merge the Pull Request, the API specification on your main branch is also updated
+
+<DocsImage width={500} src={'/img/docs/github-actions-example.png'} />
+
+<PreviewPageModal Source={<Changelog />} link={'/reference/ci/changelog'}>
+  <button className={'button button--primary'} >
+    Add Changelogs to your PRs
+  </button>
+</PreviewPageModal>
+
+## Test
+When you're working with a team to build and evolve an API, you want to make sure you don't introduce unexpected change that haven't been reviewed and make cause issues. Optic makes this possible by watching the traffic to and from your API in your build pipeline and comparing it against your existing spec. If there are any changes, Optic will point them out and allow you to fail your build process so the changes don't make it to production.
+
+The biggest benefit is that this can all happen automatically. It doesn't require someone to manually check a spec and compare it against what's already deployed. Optic can do that work for you so you can safely move quickly.
+
+<DocsImage width={500} src={'/img/unplanned.png'} />
+
+
+<PreviewPageModal Source={<Test />} link={'test/run-in-ci'}>
+  <button className={'button button--primary'}>
+    Set up CI testing with Optic
+  </button>
+</PreviewPageModal>

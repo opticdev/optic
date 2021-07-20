@@ -1,5 +1,5 @@
 ---
-date: "9/24/2020"
+date: 2020-09-24
 title: "Document your organization's Vault capabilities with Optic"
 author: Lou Manglass
 author_image_url: "/img/team/lou.jpg"
@@ -196,7 +196,7 @@ There's a few service endpoints fetched often, and some endpoints under `/v1/sys
 
 ![documented GET body](/img/blog-content/optic-vault-body.png)
 
-An important thing to note here: only the traffic shape is ever stored in the documentation. **The traffic itself is never stored in the documentation**. Raw traffic is observed and converted to its shape representation locally for documentation and comparison to any existing specification. We don't send your secrets off of your machine. 
+An important thing to note here: only the traffic shape is ever stored in the documentation. **The traffic itself is never stored in the documentation**. Raw traffic is observed and converted to its shape representation locally for documentation and comparison to any existing specification. We don't send your secrets off of your machine.
 
 Going through the requests, Optic has detected our `foo` field is always present. It also notices that our `excited` field is seen in some requests, and confirms with us:
 
@@ -214,7 +214,7 @@ Now I'll commit the changes and accept Optic's default commit message. Optic wil
 
 ## Reducing noise: Adding ignoreRequest rules
 
-Optic configurations are stored in the `optic.yml` file in the root of your API project. One configuration option available is `ignoreRequest`. This allows you to define methods and paths to ignore. You can read more about how to [ignore requests](https://www.useoptic.com/docs/faqs-and-troubleshooting/captures) in our documentation. For now, I'm going to ignore all methods to the noisy routes we've seen. I'll stop my Optic proxy with `CTRL + C` to break out of the current session and update my configuration. By default, Optic includes an ignore rule for `OPTIONS` requests. When I'm done editing `optic.yml` with my editor of choice, my `ignoreRequests` section looks like:
+Optic configurations are stored in the `optic.yml` file in the root of your API project. One configuration option available is `ignoreRequest`. This allows you to define methods and paths to ignore. You can read more about how to [ignore requests](https://www.useoptic.com/reference/optic-yaml/ignore) in our documentation. For now, I'm going to ignore all methods to the noisy routes we've seen. I'll stop my Optic proxy with `CTRL + C` to break out of the current session and update my configuration. By default, Optic includes an ignore rule for `OPTIONS` requests. When I'm done editing `optic.yml` with my editor of choice, my `ignoreRequests` section looks like:
 
 ``` yaml
 ignoreRequests:

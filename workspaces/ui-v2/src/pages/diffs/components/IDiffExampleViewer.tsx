@@ -18,7 +18,7 @@ import { AddedGreen, secondary, ShapeViewerTheme } from '<src>/styles';
 
 WARNING: Lots of unconstrained types here from the JS -> Typescript port.
 
-We need to come back and remove `:any` once we have this working vertically. Worth the 1-2 hrs to keep this complex component maintainable.
+We need to come back and remove `:any` once we have this working vertically. Worth the 1-2 hrs to keep this complex component maintainable. +1
 
  */
 
@@ -26,6 +26,7 @@ export type InteractionViewerBody = {
   noBody?: boolean;
   asJson?: any;
   asText?: string;
+  empty?: boolean;
 };
 
 type InteractionBodyViewerProps = {
@@ -285,6 +286,16 @@ function RowValue({
     return null;
   }
 
+  if (type === 'empty') {
+    return (
+      <span
+        className={classNames(generalClasses.symbols, classes.emptyContent)}
+      >
+        empty
+      </span>
+    );
+  }
+
   throw new Error(`Cannot render RowValue for type '${type}'`);
 }
 RowValue.displayName = 'ShapeViewer/RowValue';
@@ -491,6 +502,11 @@ const useStyles = makeStyles((theme) => ({
     color: SymbolColor,
   },
 
+  emptyContent: {
+    color: SymbolColor,
+    fontStyle: 'italic',
+  },
+
   numberContent: {
     fontWeight: 600,
     fontFamily: "'Source Code Pro', monospace",
@@ -612,11 +628,17 @@ const useStyles = makeStyles((theme) => ({
 
 function createInitialState({ jsonTrails, body }: any) {
   const diffTrails = jsonTrails.map(toCommonJsPath);
-  const shape = !body.noBody ? body.asJson || body.asText : undefined;
 
-  const [rows, collapsedTrails] = shapeRows(shape, diffTrails);
+  if (!body.empty) {
+    const shape = !body.noBody ? body.asJson || body.asText : undefined;
+    const [rows, collapsedTrails] = shapeRows(shape, diffTrails);
 
-  return { body: shape, rows, collapsedTrails, diffTrails };
+    return { body: shape, rows, collapsedTrails, diffTrails };
+  } else {
+    const rows = [emptyRow()];
+    const collapsedTrails = [] as any[];
+    return { body: undefined, rows, collapsedTrails, diffTrails };
+  }
 }
 
 function updateState(state: any, action: any) {
@@ -758,13 +780,12 @@ function shapeRows(
       listRows(shape, diffTrails, rows, collapsedTrails, indent, field);
       break;
     default:
-      // debugger
       let type = getFieldType(shape);
       let row = createRow(
         {
           type,
           ...field,
-          fieldValue: field ? field.fieldValue : shape,
+          fieldValue: field && field.fieldValue ? field.fieldValue : shape,
           indent,
         },
         { diffTrails }
@@ -954,6 +975,15 @@ function listRows(
   });
 
   rows.push(createRow({ type: 'array_close', indent, trail }));
+}
+
+function emptyRow() {
+  return createRow({
+    type: 'empty',
+    collapsed: false,
+    compliant: true,
+    trail: [],
+  });
 }
 
 function getFieldType(fieldValue: any): string {

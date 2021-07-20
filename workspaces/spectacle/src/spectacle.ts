@@ -13,15 +13,15 @@ import {
   getArrayChanges,
   getContributionsProjection,
   getFieldChanges,
+  CommandGenerator,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
-import { CQRSCommand } from './commands';
+import { CQRSCommand } from '@useoptic/optic-domain';
 import {
   IOpticContext,
   IOpticDiffService,
   SpectacleInput,
   GraphQLContext,
-  EndpointProjection,
 } from './types';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,6 +41,7 @@ async function buildProjections(opticContext: IOpticContext) {
     spec,
     opticContext.opticEngine
   );
+  const commandGenerator = new CommandGenerator(spec, opticContext.opticEngine);
 
   return {
     events,
@@ -49,21 +50,7 @@ async function buildProjections(opticContext: IOpticContext) {
     shapesQueries,
     shapeViewerProjection,
     contributionsProjection,
-    getEndpointProjection: (
-      pathId: string,
-      method: string
-    ): EndpointProjection => {
-      const endpointProjection = opticContext.opticEngine.spec_endpoint_delete_commands(
-        spec,
-        pathId,
-        method
-      );
-      return {
-        commands: {
-          remove: JSON.parse(endpointProjection).commands,
-        },
-      };
-    },
+    commandGenerator,
   };
 }
 
@@ -72,12 +59,9 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     shapeQueries: shapes.GraphQueries,
     shapeViewerProjection: any,
     contributionsProjection: ContributionsProjection,
-    getEndpointProjection: (
-      pathId: string,
-      method: string
-    ) => {
-      commands: {
-        remove: CQRSCommand[];
+    commandGenerator: {
+      endpoint: {
+        remove: (pathId: string, method: string) => CQRSCommand[];
       };
     };
 
@@ -88,7 +72,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     shapeQueries = projections.shapesQueries;
     shapeViewerProjection = projections.shapeViewerProjection;
     contributionsProjection = projections.contributionsProjection;
-    getEndpointProjection = projections.getEndpointProjection;
+    commandGenerator = projections.commandGenerator;
     return projections;
   }
 
@@ -159,9 +143,12 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         context: GraphQLContext
       ) => {
         const { diffId, captureId } = args;
-        await context
+        const {
+          onComplete,
+        } = await context
           .spectacleContext()
           .opticContext.capturesService.startDiff(diffId, captureId);
+        await onComplete;
         return {
           notificationsUrl: '',
         };
@@ -189,12 +176,18 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             .endpointsQueries.listNodesByType(endpoints.NodeType.Path).results
         );
       },
+      // TODO @nic deprecate this
       requests: (parent: any, _: {}, context: GraphQLContext) => {
         return Promise.resolve(
-          context
+          (context
             .spectacleContext()
-            .endpointsQueries.listNodesByType(endpoints.NodeType.Request)
-            .results
+            .endpointsQueries.listNodesByType(endpoints.NodeType.Endpoint)
+            .results as endpoints.EndpointNodeWrapper[]).flatMap((endpoint) => {
+            return endpoint.requests().results.map((request) => ({
+              endpointNode: endpoint,
+              requestNode: request,
+            }));
+          })
         );
       },
       shapeChoices: async (
@@ -205,13 +198,27 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       ) => {
         return context.spectacleContext().shapeViewerProjection[args.shapeId];
       },
+      endpoints: (parent: any, _: {}, context: GraphQLContext) => {
+        return context
+          .spectacleContext()
+          .endpointsQueries.listNodesByType(endpoints.NodeType.Endpoint)
+          .results;
+      },
       endpoint: async (
         parent: any,
         args: { pathId: string; method: string },
         context: GraphQLContext
       ) => {
-        const { pathId, method } = args;
-        return context.spectacleContext().getEndpointProjection(pathId, method);
+        return context
+          .spectacleContext()
+          .endpointsQueries.listNodesByType(endpoints.NodeType.Endpoint)
+          .results.find((endpointNode) => {
+            if (endpointNode.result.type === endpoints.NodeType.Endpoint) {
+              const { pathId, httpMethod } = endpointNode.result.data;
+              return args.pathId === pathId && args.method === httpMethod;
+            }
+            return false;
+          });
       },
       endpointChanges: (
         parent: any,
@@ -281,25 +288,41 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return parent.listUnrecognizedUrls();
       },
     },
+    // TODO @nic deprecate this
     HttpRequest: {
-      id: (parent: endpoints.RequestNodeWrapper) => {
-        return Promise.resolve(parent.value.requestId);
+      id: (parent: {
+        endpointNode: endpoints.EndpointNodeWrapper;
+        requestNode: endpoints.RequestNodeWrapper;
+      }) => {
+        return Promise.resolve(parent.requestNode.value.requestId);
       },
-      pathId: (parent: endpoints.RequestNodeWrapper) => {
-        return Promise.resolve(parent.path().value.pathId);
+      pathId: (parent: {
+        endpointNode: endpoints.EndpointNodeWrapper;
+        requestNode: endpoints.RequestNodeWrapper;
+      }) => {
+        return Promise.resolve(parent.endpointNode.path().value.pathId);
       },
-      absolutePathPattern: (parent: endpoints.RequestNodeWrapper) => {
-        return Promise.resolve(parent.path().value.absolutePathPattern);
-      },
-      absolutePathPatternWithParameterNames: (
-        parent: endpoints.RequestNodeWrapper
-      ) => {
+      absolutePathPattern: (parent: {
+        endpointNode: endpoints.EndpointNodeWrapper;
+        requestNode: endpoints.RequestNodeWrapper;
+      }) => {
         return Promise.resolve(
-          parent.path().absolutePathPatternWithParameterNames
+          parent.endpointNode.path().value.absolutePathPattern
         );
       },
-      pathComponents: (parent: endpoints.RequestNodeWrapper) => {
-        let path = parent.path();
+      absolutePathPatternWithParameterNames: (parent: {
+        endpointNode: endpoints.EndpointNodeWrapper;
+        requestNode: endpoints.RequestNodeWrapper;
+      }) => {
+        return Promise.resolve(
+          parent.endpointNode.path().absolutePathPatternWithParameterNames
+        );
+      },
+      pathComponents: (parent: {
+        endpointNode: endpoints.EndpointNodeWrapper;
+        requestNode: endpoints.RequestNodeWrapper;
+      }) => {
+        let path = parent.endpointNode.path();
         let parentPath = path.parentPath();
         const components = [path.value];
         while (parentPath !== null) {
@@ -309,28 +332,45 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         }
         return Promise.resolve(components.reverse());
       },
-      method: (parent: endpoints.RequestNodeWrapper) => {
-        return Promise.resolve(parent.value.httpMethod);
+      method: (parent: {
+        endpointNode: endpoints.EndpointNodeWrapper;
+        requestNode: endpoints.RequestNodeWrapper;
+      }) => {
+        return Promise.resolve(parent.endpointNode.value.httpMethod);
       },
-      query: async (parent: endpoints.RequestNodeWrapper) => {
+      query: async (parent: {
+        endpointNode: endpoints.EndpointNodeWrapper;
+        requestNode: endpoints.RequestNodeWrapper;
+      }) => {
         return process.env.REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS ===
           'true'
-          ? parent.query()
+          ? parent.endpointNode.query()
           : null;
       },
-      bodies: (parent: endpoints.RequestNodeWrapper) => {
-        return Promise.resolve(parent.bodies().results);
+      bodies: (parent: {
+        endpointNode: endpoints.EndpointNodeWrapper;
+        requestNode: endpoints.RequestNodeWrapper;
+      }) => {
+        return Promise.resolve(
+          parent.requestNode.body() ? [parent.requestNode.body()] : []
+        );
       },
-      responses: (parent: endpoints.RequestNodeWrapper) => {
-        return Promise.resolve(parent.responses());
+      responses: (parent: {
+        endpointNode: endpoints.EndpointNodeWrapper;
+        requestNode: endpoints.RequestNodeWrapper;
+      }) => {
+        return Promise.resolve(parent.endpointNode.responses().results);
       },
       pathContributions: (
-        parent: endpoints.RequestNodeWrapper,
+        parent: {
+          endpointNode: endpoints.EndpointNodeWrapper;
+          requestNode: endpoints.RequestNodeWrapper;
+        },
         _: {},
         context: GraphQLContext
       ) => {
-        const pathId = parent.path().value.pathId;
-        const method = parent.value.httpMethod;
+        const pathId = parent.endpointNode.path().value.pathId;
+        const method = parent.endpointNode.value.httpMethod;
         return Promise.resolve(
           context.spectacleContext().contributionsProjection[
             `${pathId}.${method}`
@@ -338,25 +378,109 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         );
       },
       requestContributions: (
-        parent: endpoints.RequestNodeWrapper,
+        parent: {
+          endpointNode: endpoints.EndpointNodeWrapper;
+          requestNode: endpoints.RequestNodeWrapper;
+        },
         _: {},
         context: GraphQLContext
       ) => {
         return Promise.resolve(
           context.spectacleContext().contributionsProjection[
-            parent.value.requestId
+            parent.requestNode.value.requestId
           ] || {}
         );
       },
-      isRemoved: (parent: endpoints.RequestNodeWrapper) => {
-        return Promise.resolve(parent.value.isRemoved);
+      isRemoved: (parent: {
+        endpointNode: endpoints.EndpointNodeWrapper;
+        requestNode: endpoints.RequestNodeWrapper;
+      }) => {
+        return Promise.resolve(parent.requestNode.value.isRemoved);
+      },
+    },
+    Endpoint: {
+      id: async (parent: endpoints.EndpointNodeWrapper) => {
+        return parent.value.id;
+      },
+      pathId: async (parent: endpoints.EndpointNodeWrapper) => {
+        return parent.value.pathId;
+      },
+      method: async (parent: endpoints.EndpointNodeWrapper) => {
+        return parent.value.httpMethod;
+      },
+      pathComponents: async (parent: endpoints.EndpointNodeWrapper) => {
+        let path = parent.path();
+        let parentPath = path.parentPath();
+        const components = [path.value];
+        while (parentPath !== null) {
+          components.push(parentPath.value);
+          path = parentPath;
+          parentPath = path.parentPath();
+        }
+        return components.reverse();
+      },
+      pathPattern: async (parent: endpoints.EndpointNodeWrapper) => {
+        return parent.path().absolutePathPatternWithParameterNames;
+      },
+      query: async (parent: endpoints.EndpointNodeWrapper) => {
+        return process.env.REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS ===
+          'true'
+          ? parent.query()
+          : null;
+      },
+      requests: async (parent: endpoints.EndpointNodeWrapper) => {
+        return parent.requests().results;
+      },
+      responses: async (parent: endpoints.EndpointNodeWrapper) => {
+        return parent.responses().results;
+      },
+      contributions: async (
+        parent: endpoints.EndpointNodeWrapper,
+        _: {},
+        context: GraphQLContext
+      ) => {
+        const { pathId, httpMethod } = parent.value;
+        return (
+          context.spectacleContext().contributionsProjection[
+            `${pathId}.${httpMethod}`
+          ] || {}
+        );
+      },
+      isRemoved: async (parent: endpoints.EndpointNodeWrapper) => {
+        return parent.value.isRemoved;
+      },
+      commands: async (parent: endpoints.EndpointNodeWrapper) => {
+        const { pathId, httpMethod } = parent.value;
+        return {
+          remove: commandGenerator.endpoint.remove(pathId, httpMethod),
+        };
+      },
+    },
+    // TODO @nic rename this to HttpRequest when old http request removed
+    HttpRequestNew: {
+      id: async (parent: endpoints.RequestNodeWrapper) => {
+        return parent.value.requestId;
+      },
+      body: async (parent: endpoints.RequestNodeWrapper) => {
+        return parent.body();
+      },
+      contributions: async (
+        parent: endpoints.RequestNodeWrapper,
+        _: {},
+        context: GraphQLContext
+      ) => {
+        const { requestId } = parent.value;
+        return (
+          context.spectacleContext().contributionsProjection[requestId] || {}
+        );
+      },
+      isRemoved: async (parent: endpoints.RequestNodeWrapper) => {
+        return parent.value.isRemoved;
       },
     },
     QueryParameters: {
-      id: () => {
-        // TODO QPB - connect this to the correct value
-        // return parent.value.id
-        return `query_${uuidv4()}`;
+      id: (parent: endpoints.QueryParametersNodeWrapper) => {
+        return parent.value.queryParametersId;
       },
       rootShapeId: (parent: endpoints.QueryParametersNodeWrapper) => {
         return parent.value.rootShapeId;
@@ -369,9 +493,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         _: {},
         context: GraphQLContext
       ) => {
-        // TODO QPB - connect this to the correct value
-        // const id = parent.value.id;
-        const id = `query_${uuidv4()}`;
+        const id = parent.value.queryParametersId;
         return context.spectacleContext().contributionsProjection[id] || {};
       },
     },
@@ -576,14 +698,14 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     resolvers,
   });
 
-  const graphqlContext: GraphQLContext['spectacleContext'] = () => {
+  const graphqlContext = () => {
     return {
       opticContext,
       endpointsQueries,
       shapeQueries,
       shapeViewerProjection,
       contributionsProjection,
-      getEndpointProjection,
+      commandGenerator,
     };
   };
   const queryWrapper = function <Result, Input = {}>(

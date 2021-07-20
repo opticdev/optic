@@ -60,7 +60,11 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
       for (let interaction of filteredItems) {
         const resultsString: string = OpticEngine.diff_interaction(
           JSON.stringify(interaction),
-          this.spec
+          this.spec,
+          {
+            includeQueryParams:
+              process.env.REACT_APP_FF_DIFF_QUERY_PARAMETERS === 'true',
+          }
         );
         const results = JSON.parse(resultsString);
         results.forEach((result: any) => {

@@ -1,4 +1,10 @@
 import makeStyles from '@material-ui/styles/makeStyles';
+import {
+  primary,
+  SubtleBlueBackground,
+  UpdatedBlue,
+  UpdatedBlueBackground,
+} from './theme';
 
 export const useFeatureStyles = makeStyles({
   root: {
@@ -22,14 +28,21 @@ export const useFeatureStyles = makeStyles({
     alignContent: 'flex-start',
   },
   mini: {
-    fontWeight: 100,
-    color: '#6d757d',
+    fontWeight: 800,
+    color: UpdatedBlue,
     fontFamily: 'Ubuntu Mono',
-    fontSize: 18,
-    marginBottom: -2,
+    marginBottom: 13,
+    fontSize: 14,
+    backgroundColor: UpdatedBlueBackground,
+    padding: 3,
+    paddingLeft: 6,
+    paddingRight: 6,
+    borderRadius: 5,
   },
   headline: {
     fontWeight: 600,
+    textAlign: 'left',
+    fontSize: 33,
     fontFamily: 'Inter',
   },
   transparentCard: {
@@ -37,8 +50,8 @@ export const useFeatureStyles = makeStyles({
   },
   subtext: {
     marginTop: 10,
-    textAlign: 'center',
-    maxWidth: 700,
+    textAlign: 'left',
+    lineHeight: 1.4,
     fontWeight: 400,
     fontFamily: 'Inter',
     color: '#586069',
@@ -83,7 +96,7 @@ export const useFeatureStyles = makeStyles({
     color: '#586069',
     fontWeight: 300,
     fontSize: 18,
-    marginTop: 12,
+    marginTop: 6,
     fontFamily: 'Inter',
     marginBottom: 50,
     textAlign: 'left',

@@ -1,0 +1,67 @@
+---
+title: Key Concepts
+slug: /reference
+---
+
+import FAQs from '/docs/shared/use-cases-faqs.mdx';
+
+> When it comes to APIs, we need to **version behavior, not just code.** While Git versions your code, Optic versions the behavior of your APIs.
+
+### Principles
+- **API specs need history:**
+The reason Git can power the change management workflows we use daily is because it keeps a history of every change, not the current state of any individual file. Similarly, [Optic specs are a ledger of every API change ever made](https://opticdev.github.io/changelog-spec-demo/).
+- **API specs need evidence:**
+Does the API actually work the way the spec says it does? You can't really know unless you compare it to real traffic and record evidence.
+- **Every API change should be documented, reviewed and approved:**
+Whether you work code-first, design-first or both -- it's important to review the API with your team every time it changes.
+
+### FAQs
+
+**Do I need to create traffic that covers the entire API each time I use Optic?**
+
+No. Previous Traffic -> Spec generators have been "one-shot". Optic instead learns your API incrementally. You can add endpoints one at a time, come back days later and add more. When you use Optic to validate your API behavior, it will give you a report about any API `Diffs` it observed, and the API `Coverage` from those tests.
+
+<FAQs />
+
+## Key Terms (in order of appearance)
+
+### Under the Hood
+- `Optic Spec(ification)` - A record of every change to your API since you initialized Optic in you project. Sort of like Git-history but for the API behavior. For Open Source users these events are recorded in `.optic/api/specification.json` file.
+
+- `Optic Engine` - the core of the Optic project that is responsible for ingesting traffic, computing diffs, and querying / mutating your Optic Spec. [It is open source and written in Rust](https://github.com/opticdev/optic/tree/develop/workspaces/optic-engine-native).
+
+- `HTTPInteraction` - Request/Response pairs that the Optic Engine reads when documenting your API or verifying its behavior
+
+- `Capture` - A set of `HTTPInteractions`. Grouped by test run, build-id, or other qualifier to keep relevant traffic together.
+
+- `Diff` - When a `Capture` is diffed against an `Optic Spec`, the `Optic Engine` will return 2 sets:
+  - `Undocumnted URLs` - similar to Git's "untracked files". These are URLs that do not match any endpoint that's part of your specification. If some of these should be included in your Spec, Optic makes it easy to document them in a few seconds.
+  - `Endpoint Diffs` - similar to Git's "changes to be committed", these are new behaviors that do not match the existing ones documented for the given endpoint. Ie a new field named `address` was seen in the 200 Response Body
+
+- `API Coverage` - Think Code Coverage, but for measuring the usage of different API endpoints, and their status codes. Coverage measures the % of your API's known surface area that a specific `Capture` exercises. It's helpful when evaluating the quality / power of your tests. If you see 100% coverage in CI, and no diffs, that's a storing signal that your entire API is working as expected.
+
+### User Space
+
+- `optic.yml` - Optic's config file. Here you can set up various methods of capturing API Traffic, that can be shared with your team, and called upon in CI/CD.
+  - `task` - aliases for the commands you use when building your API ie (`npm test`). When run, with `api run taskName`, the command executes, and any traffic handled by your API is captured.
+  - `environments` - deployed versions of your API that you can intercept traffic to from the client side. ie `api intercept production --chrome` will open your production webapp and collect all the traffic to your API that is seen in the Chrome Network tab.
+
+- `Optic UI` - Optic's equivalent of a Git client. Add new endpoints, and approve changes to existing ones. The [code for this UI is Open Source](https://github.com/opticdev/optic/tree/develop/workspaces/ui-v2)
+
+- `Endpoint` - An API path ie `/todos/:todoId` paired with an HTTP Method ie `GET`
+
+- `Contribution` - manually added titles, tags and descriptions added to the `Optic Spec` by users. Optic makes sure your contributions are retained over time as the spec changes.
+
+- `Commit` - When you use the `Optic UI` to change your API spec, these changes are saved in relation to a specific point in time, the `Commit`.
+
+- `API Changelog` - a semantic comparison between two points in the Optic Spec history.
+
+- `Spectacle` - the GraphQL API Optic exposes for interacting with your `Optic Spec`. It makes your `Optic Spec` end user programmable. This is what `Optic UI`, and a lot of the more advanced functionality in the tool is powered by
+
+### CI Space
+
+- `Optic GitBot` - Optic's GitBot, which adds `API Changelogs` to your Pull Requests.
+
+- `API Changelogs in Pull Requests` - Just like GitHub shows you "Files Changed" between the base / head branch, the Optic GitBot will show you the API changes between the base / head branch.
+
+- `API Checks` - Enforce governance rules and your API design guides in CI. Write checks using `Spectacle` that prevent breaking changes to published endpoints, enforce naming conventions, etc. It's fully programmable.

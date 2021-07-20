@@ -1,13 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 import * as Sentry from '@sentry/react';
+import { IForkableSpectacle } from '@useoptic/spectacle';
+
 import {
   AddContribution,
   CQRSCommand,
-  IForkableSpectacle,
   PrunePathComponents,
-} from '@useoptic/spectacle';
-
+} from '@useoptic/optic-domain';
 import { RootState, AppDispatch } from '../root';
 import { getValidContributions } from '../selectors';
 
@@ -46,7 +46,8 @@ const fetchDeleteEndpointCommands = async (
       },
     });
     if (results.errors) {
-      throw new Error();
+      console.error(results.errors);
+      throw new Error(JSON.stringify(results.errors));
     }
     return results.data!.endpoint.commands.remove;
   } catch (e) {

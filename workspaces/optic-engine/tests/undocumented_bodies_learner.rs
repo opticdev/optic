@@ -1,12 +1,13 @@
-use insta::assert_debug_snapshot;
-use petgraph::dot::Dot;
+// use insta::assert_debug_snapshot;
+// use petgraph::dot::Dot;
 use serde::Deserialize;
 use std::path::Path;
 use tokio::fs::read_to_string;
 
 use optic_engine::{
-  analyze_undocumented_bodies, Aggregate, AnalyzeUndocumentedBodiesConfig, HttpInteraction,
-  LearnedUndocumentedBodiesProjection, SpecCommand, SpecEvent, SpecIdGenerator, SpecProjection,
+  analyze_undocumented_bodies, Aggregate, AnalyzeUndocumentedBodiesConfig, EndpointCommand,
+  HttpInteraction, LearnedUndocumentedBodiesProjection, SpecCommand, SpecEvent, SpecIdGenerator,
+  SpecProjection,
 };
 
 #[tokio::main]
@@ -20,6 +21,7 @@ async fn get_request_with_query_params() {
   let mut learned_undocumented_bodies = LearnedUndocumentedBodiesProjection::default();
 
   let learner_config = AnalyzeUndocumentedBodiesConfig::default().with_query_params(true);
+
   let results = analyze_undocumented_bodies(&spec, interaction, &learner_config);
 
   for result in results {
@@ -33,7 +35,25 @@ async fn get_request_with_query_params() {
     .next()
     .expect("an endpoint should have been learned for");
 
-  let _updated_spec = assert_valid_commands(spec, endpoint_bodies.into_commands());
+  let commands = endpoint_bodies.into_commands().collect::<Vec<_>>();
+
+  assert!(commands
+    .iter()
+    .find(|command| matches!(
+      command,
+      SpecCommand::EndpointCommand(EndpointCommand::AddQueryParameters(_))
+    ))
+    .is_some());
+
+  assert!(commands
+    .iter()
+    .find(|command| matches!(
+      command,
+      SpecCommand::EndpointCommand(EndpointCommand::SetQueryParametersShape(_))
+    ))
+    .is_some());
+
+  let _updated_spec = assert_valid_commands(spec, commands);
 
   // TODO: assert snapshots on these once we figure out how to get stable ids to be generated
   // dbg!(Dot::with_config(&_updated_spec.endpoint().graph, &[]));
@@ -65,6 +85,42 @@ async fn get_request_with_object_query_params() {
     .expect("an endpoint should have been learned for");
 
   let _updated_spec = assert_valid_commands(spec, endpoint_bodies.into_commands());
+
+  // TODO: assert snapshots on these once we figure out how to get stable ids to be generated
+  // dbg!(Dot::with_config(&_updated_spec.endpoint().graph, &[]));
+  // dbg!(Dot::with_config(&_updated_spec.shape().graph, &[]));
+}
+
+#[tokio::main]
+#[test]
+async fn requests_with_and_without_query_params() {
+  let capture = DebugCapture::from_name("requests-with-and-without-query-params.json").await;
+  let spec = SpecProjection::from(capture.events);
+
+  let mut learned_undocumented_bodies = LearnedUndocumentedBodiesProjection::default();
+
+  let learner_config = AnalyzeUndocumentedBodiesConfig::default().with_query_params(true);
+
+  for interaction in capture.session.samples {
+    let results = analyze_undocumented_bodies(&spec, interaction, &learner_config);
+
+    for result in results {
+      learned_undocumented_bodies.apply(result)
+    }
+  }
+
+  let mut id_generator = SequentialIdGenerator { next_id: 1093 }; // <3 primes
+
+  let endpoint_bodies = learned_undocumented_bodies
+    .into_endpoint_bodies(&mut id_generator)
+    .next()
+    .expect("an endpoint should have been learned for");
+
+  let commands = endpoint_bodies.into_commands().collect::<Vec<_>>();
+
+  // dbg!(&commands);
+
+  let _updated_spec = assert_valid_commands(spec, commands);
 
   // TODO: assert snapshots on these once we figure out how to get stable ids to be generated
   // dbg!(Dot::with_config(&_updated_spec.endpoint().graph, &[]));

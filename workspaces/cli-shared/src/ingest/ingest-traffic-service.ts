@@ -6,11 +6,15 @@ import path from 'path';
 import getPort from 'get-port';
 import http from 'http';
 import { ecsToHttpInteraction } from './ecs-to-sample';
+import { HttpInteraction } from '@useoptic/optic-domain/build/streams/http-interactions';
 
 export class IngestTrafficService {
   private collectorService: express.Application;
   private server: http.Server | undefined;
-  constructor(private captureSaver: ICaptureSaver) {
+  constructor(
+    private captureSaver: ICaptureSaver,
+    onSample: (i: HttpInteraction) => void = (i) => {}
+  ) {
     this.collectorService = express();
     this.collectorService.use(bodyParser.json({ limit: '20mb' }));
     //https://www.elastic.co/guide/en/ecs/current/index.html

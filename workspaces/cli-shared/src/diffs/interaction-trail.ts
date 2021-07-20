@@ -3,7 +3,7 @@ export interface IInteractionTrail {
   path: IInteractionTrailPathComponent[];
 }
 
-export type IInteractionTrailPathComponent =
+type IInteractionTrailPathComponent =
   | IResponseHeaders
   | IResponseBody
   | IQueryString
@@ -13,48 +13,48 @@ export type IInteractionTrailPathComponent =
   | IMethod
   | IResponseStatusCode;
 
-export interface IResponseHeaders {
+interface IResponseHeaders {
   ResponseHeaders: {
     headerName: string;
   };
 }
 
-export interface IResponseBody {
+interface IResponseBody {
   ResponseBody: {
     contentType: string;
     statusCode: number;
   };
 }
 
-export interface IQueryString {
+interface IQueryString {
   QueryString: {
     queryString: string;
   };
 }
 
-export interface IUrl {
+interface IUrl {
   Url: {};
 }
 
-export interface IRequestBody {
+interface IRequestBody {
   RequestBody: {
     contentType: string;
   };
 }
 
-export interface IRequestHeaders {
+interface IRequestHeaders {
   RequestHeaders: {
     headerName: string;
   };
 }
 
-export interface IMethod {
+interface IMethod {
   Method: {
     method: string;
   };
 }
 
-export interface IResponseStatusCode {
+interface IResponseStatusCode {
   ResponseStatusCode: {
     statusCode: number;
   };

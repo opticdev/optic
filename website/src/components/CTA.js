@@ -1,20 +1,20 @@
 import React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { Container, Typography } from '@material-ui/core';
+import { Container, Paper, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 
 import { useFeatureStyles } from './featureStyles';
-import { FormatCopy } from './FormatCopy';
 import Box from '@material-ui/core/Box';
-import Chip from '@material-ui/core/Chip';
-import ForumIcon from '@material-ui/icons/Forum';
 import Link from '@docusaurus/core/lib/client/exports/Link';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import {GitHubStats} from './GitHubStatsSlim';
+import { UpdatedBlueBackground } from './theme';
+import Grid from '@material-ui/core/Grid';
+import { links } from './links';
+
 export const useStyles = makeStyles({
   section: {
-    paddingTop: 75,
-    paddingBottom: 75,
+    paddingTop: 100,
+    paddingBottom: 20,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -38,60 +38,99 @@ export const useStyles = makeStyles({
   },
 });
 
-const tryOptic = {
-  title: "API-first workflows built for awesome developers. **Try Adding Optic to your API**",
-  subtext: 'Setup takes 5-10 mins.',
-  description:
-    'When the CLI is installing, be sure to join the community.',
-};
-
-
 export function CTATryOptic() {
   const classes = useStyles();
   const featuredStyles = useFeatureStyles();
   return (
-    <Container maxWidth="md" style={{marginBottom: 110}}>
-      <Typography
-        variant="h4"
-        className={featuredStyles.headline}
-        style={{
-          fontWeight: 300,
-          fontSize: 45,
-          textAlign: 'left',
-        }}
-      >
-        <FormatCopy value={tryOptic.title} />
-      </Typography>
+    <div className={classes.section}>
+      <Container maxWidth="lg">
+        <Grid container xs={12}>
+          <Grid item xs={12} sm={5}>
+            <img
+              src="/img/Optic_Graphic2.svg"
+              width="400"
+              style={{ marginRight: 30 }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={7}>
+            <Typography variant="h1" className={featuredStyles.headline}>
+              We're here to help your team build a great API
+            </Typography>
+            <Typography variant="h1" className={featuredStyles.subtext}>
+              Explore our docs, our live demos and read about the workflows
+              Optic enables. When you are ready, set Optic up (it takes 10 mins)
+              or have a conversation with the Optic maintainers for help.
+            </Typography>
+            <Box style={{ marginTop: 5, marginBottom: 120 }}>
+              <Box
+                alignItems="center"
+                display="flex"
+                flexDirection="row"
+                justifyContent="flex-start"
+              >
+                <a className={'button button--primary'} href={links.DocsRoot}>
+                  Get Started
+                </a>
 
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        style={{ marginTop: 16 }}
-      >
-        <Chip
-          color="secondary"
-          style={{
-            marginLeft: 0,
-            paddingLeft: 0,
-            fontWeight: 800,
-            marginRight: 12,
-          }}
-          label="5-10 min setup"
-        />
-        <Typography variant="body1" style={{ color: '#6d757d' }}>
-          {tryOptic.description}
+                <div style={{ marginLeft: 10 }}>
+                  <Link href={links.Demo}>Schedule a Demo</Link>
+                </div>
+              </Box>
+              <Typography
+                variant="body1"
+                style={{ color: '#6d757d', marginTop: 20 }}
+              >
+                When the CLI is installing, be sure to{' '}
+                <Link href={links.Community}>join the community.</Link>
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
+    </div>
+  );
+}
+
+export function MiniCTA() {
+  return (
+    <Paper
+      elevation={0}
+      style={{
+        backgroundColor: UpdatedBlueBackground,
+        padding: 12,
+        display: 'flex',
+        alignItems: 'center',
+        border: '1px solid #e2e2e2',
+        marginBottom: 40,
+        marginTop: 100,
+      }}
+    >
+      <div>
+        <Typography variant="subtitle1" style={{ fontWeight: 800 }}>
+          Featured Tutorial (15 mins):{' '}
+          <b>Document your API using real traffic</b>
         </Typography>
-      </Box>
-
-      <Box style={{marginTop: 30, marginBottom: 120}}>
-        <Box alignItems="center" display="flex" flexDirection="row" alignItems="flex-start" justifyContent="flex-start">
-          <Button endIcon={<ForumIcon/>} component={Link} to="/docs/community/" variant="outlined" color="primary"  style={{marginRight: 13}}>Join Community</Button>
-          <Button endIcon={<ChevronRightIcon/>} component={Link} to="/docs/" variant="outlined" color="primary">Get Started</Button>
+        <Typography variant="caption" style={{ fontSize: 12 }}>
+          Learn how to add Optic to an existing API and document all the
+          endpoints in minutes.
+        </Typography>
+      </div>
+      <div style={{ flex: 1 }} />
+      <div>
+        <Box
+          alignItems="center"
+          display="flex"
+          flexDirection="row"
+          justifyContent="flex-start"
+        >
+          <div style={{ marginRight: 20 }}>
+            <Link href={links.Demo}>Schedule a Demo</Link>
+          </div>
+          <a className={'button button--primary'} href={links.DocumentAPI}>
+            Get Started
+          </a>
         </Box>
-        <GitHubStats style={{padding: 0, justifyContent: 'flex-start'}}/>
-      </Box>
-
-    </Container>
+      </div>
+    </Paper>
   );
 }

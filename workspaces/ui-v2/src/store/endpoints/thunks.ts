@@ -6,101 +6,54 @@ import { ChangeType, IEndpoint } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
 export const AllEndpointsQuery = `{
-  requests {
-    id
-    pathId
-    absolutePathPatternWithParameterNames
-    pathComponents {
+    requests {
       id
-      name
-      isParameterized
-      contributions
+      pathId
+      absolutePathPatternWithParameterNames
+      pathComponents {
+        id
+        name
+        isParameterized
+        contributions
+        isRemoved
+      }
+      method
+      pathContributions
+      requestContributions
       isRemoved
-    }
-    method
-    pathContributions
-    requestContributions
-    isRemoved
-    query {
-      id
-      rootShapeId
-      isRemoved
-      contributions
-    }
-    bodies {
-      contentType
-      rootShapeId
-    }
-    responses {
-      id
-      statusCode
-      contributions
+      query {
+        id
+        rootShapeId
+        isRemoved
+        contributions
+      }
       bodies {
         contentType
         rootShapeId
       }
-    }
-  }
-}`;
-
-const AllEndpointsQueryWithChanges = `
-query X($sinceBatchCommitId: String) {
-  requests {
-    id
-    pathId
-    absolutePathPatternWithParameterNames
-    pathComponents {
-      id
-      name
-      isParameterized
-      contributions
-      isRemoved
-    }
-    method
-    pathContributions
-    requestContributions
-    isRemoved
-    query {
-      id
-      rootShapeId
-      isRemoved
-      contributions
-    }
-    bodies {
-      contentType
-      rootShapeId
-    }
-    changes(sinceBatchCommitId: $sinceBatchCommitId) {
-      added
-      changed
-    }
-    responses {
-      id
-      statusCode
-      contributions
-      bodies {
-        contentType
-        rootShapeId
+      responses {
+        id
+        statusCode
+        contributions
+        bodies {
+          contentType
+          rootShapeId
+        }
       }
-      changes(sinceBatchCommitId: $sinceBatchCommitId) {
-        added
-        changed
-      }  
     }
-  }
-}`;
+  }`;
 
 export const EndpointChangeQuery = `query X($sinceBatchCommitId: String) {
-  endpointChanges(sinceBatchCommitId: $sinceBatchCommitId) {
-    endpoints {
-      change {
-        category
+    endpointChanges(sinceBatchCommitId: $sinceBatchCommitId) {
+      endpoints {
+        change {
+          category
+        }
+        pathId
+        method
       }
-      pathId
-      method
     }
-  }
-}`;
+  }`;
 
 type EndpointChangelog = {
   change: {
@@ -121,11 +74,6 @@ type HttpBody = {
   rootShapeId: string;
 };
 
-type ChangesResponse = {
-  added: boolean;
-  changed: boolean;
-};
-
 export type EndpointQueryResults = {
   requests: {
     id: string;
@@ -143,7 +91,6 @@ export type EndpointQueryResults = {
     requestContributions: Record<string, string>;
     isRemoved: boolean;
     bodies: HttpBody[];
-    changes?: ChangesResponse;
     query?: {
       id: string;
       rootShapeId: string;
@@ -155,13 +102,8 @@ export type EndpointQueryResults = {
       statusCode: number;
       contributions: Record<string, string>;
       bodies: HttpBody[];
-      changes?: ChangesResponse;
     }[];
   }[];
-};
-
-const mapChangeToChangeType = (changes: ChangesResponse): ChangeType | null => {
-  return changes.added ? 'added' : changes.changed ? 'updated' : null;
 };
 
 export const endpointQueryResultsToJson = (
@@ -173,12 +115,6 @@ export const endpointQueryResultsToJson = (
 } => {
   const changes: Record<string, ChangeType> = {};
   const endpoints = requests.map((request) => {
-    if (request.changes) {
-      const changeType = mapChangeToChangeType(request.changes);
-      if (changeType) {
-        changes[request.id] = changeType;
-      }
-    }
     return {
       pathId: request.pathId,
       method: request.method,
@@ -211,12 +147,6 @@ export const endpointQueryResultsToJson = (
       })),
       responseBodies: request.responses
         .flatMap((response) => {
-          if (response.changes) {
-            const changeType = mapChangeToChangeType(response.changes);
-            if (changeType) {
-              changes[response.id] = changeType;
-            }
-          }
           return response.bodies.map((body) => {
             return {
               statusCode: response.statusCode,
@@ -250,16 +180,9 @@ export const fetchEndpoints = createAsyncThunk<
   { spectacle: IForkableSpectacle; sinceBatchCommitId?: string }
 >('FETCH_ENDPOINTS', async ({ spectacle, sinceBatchCommitId }) => {
   try {
-    const resultsPromise = spectacle.query<
-      EndpointQueryResults,
-      {
-        sinceBatchCommitId?: string;
-      }
-    >({
-      query: sinceBatchCommitId
-        ? AllEndpointsQueryWithChanges
-        : AllEndpointsQuery,
-      variables: { sinceBatchCommitId },
+    const resultsPromise = spectacle.query<EndpointQueryResults>({
+      query: AllEndpointsQuery,
+      variables: {},
     });
 
     const endpointChangesPromise = sinceBatchCommitId

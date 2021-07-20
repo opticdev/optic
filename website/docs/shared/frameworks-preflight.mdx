@@ -1,0 +1,22 @@
+---
+title: Before integrating with your application
+---
+
+import { Link } from '@material-ui/core'
+import PreviewPageModal from '../../src/components/Modal';
+import InstallSlim from '../shared/install-slim.mdx'
+import InitSlim from '../shared/init-slim.mdx'
+
+Before you get started, make sure you have:
+<ul>
+    <li>
+        <PreviewPageModal Source={<InstallSlim />} link={'/reference/install'}>
+            <Link href="#">Installed Optic</Link>
+        </PreviewPageModal>
+    </li>
+    <li>
+        <PreviewPageModal Source={<InitSlim />} link={'/reference/init'}>
+            <Link href="#">Run `api init`</Link>
+        </PreviewPageModal>
+    </li>
+</ul>

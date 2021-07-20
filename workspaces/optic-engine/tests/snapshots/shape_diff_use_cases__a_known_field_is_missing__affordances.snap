@@ -1,10 +1,10 @@
 ---
-source: workspaces/optic-engine-native/tests/shape-diff-use-cases.rs
+source: workspaces/optic-engine/tests/shape-diff-use-cases.rs
 expression: learned_shape_diff_affordances.into_iter()
 ---
 [
     (
-        "fedffb083fbbda67",
+        "ea25d391e579a9c0",
         ShapeDiffAffordances {
             affordances: [
                 TrailValues {

@@ -19,7 +19,12 @@ import {
   IOpticSpecRepository,
   StartDiffResult,
 } from '@useoptic/spectacle';
-import { AsyncTools, AsyncTools as AT, Streams } from '@useoptic/optic-domain';
+import {
+  AsyncTools,
+  AsyncTools as AT,
+  Streams,
+  IHttpInteraction,
+} from '@useoptic/optic-domain';
 import * as OpticEngineNative from '@useoptic/optic-engine-native';
 import * as OpticEngineWasm from '@useoptic/optic-engine-wasm';
 import { isEnvTrue } from '@useoptic/cli-shared';
@@ -30,7 +35,7 @@ import {
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 import {
   ILearnedBodies,
-  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+  IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InteractionDiffWorkerRust } from '@useoptic/cli-shared/build/diffs/interaction-diff-worker-rust';
 import { IPathMapping, readApiConfig } from '@useoptic/cli-config';
@@ -192,7 +197,10 @@ export class LocalCliCapturesService implements IOpticCapturesService {
     };
   }
 
-  loadInteraction(captureId: string, pointer: string): Promise<any> {
+  loadInteraction(
+    captureId: string,
+    pointer: string
+  ): Promise<IHttpInteraction> {
     return Promise.reject(new Error('I should never be called'));
   }
 
@@ -222,7 +230,7 @@ class LocalCliDiff {
     //@TODO: should this be writing output to the file system?
     // Consume stream instantly for now, resulting in a Promise that resolves once exhausted
     this.diffing = AsyncTools.toArray(worker.results);
-    this.diffing.then(() => {
+    Promise.all([this.diffing, worker.onWriteComplete]).then(() => {
       this.dependencies.notifications.emit('complete');
     });
   }
@@ -259,7 +267,7 @@ interface LocalCLiDiffServiceDependencies {
 export class LocalCliDiffService implements IOpticDiffService {
   constructor(private dependencies: LocalCLiDiffServiceDependencies) {}
 
-  learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+  learnShapeDiffAffordances(): Promise<IAffordanceTrailsDiffHashMap> {
     return Promise.reject('implement me');
   }
 
