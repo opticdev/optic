@@ -25,10 +25,12 @@ jobs:
       - name: Set APP_ENV
         run: |
           branch=${GITHUB_REF##*/}
-          if [[ "$branch" =~ "^(develop|release)$" ]]
+          if [[ "$branch" =~ ^(develop|release)$ ]]
           then
+            echo "Deploying to Production..."
             echo "APP_ENV=production" >> $GITHUB_ENV
           else
+            echo "Deploying to Staging..."
             echo "APP_ENV=staging" >> $GITHUB_ENV
           fi
 
