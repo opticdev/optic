@@ -1,6 +1,5 @@
 import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import { IOpticEngine } from '@useoptic/spectacle';
-import invariant from 'invariant';
 const OpticEngineContext = React.createContext<IOpticEngine | null>(null);
 
 export function OpticEngineStore(props: { children: ReactNode }) {
@@ -27,6 +26,8 @@ export function OpticEngineStore(props: { children: ReactNode }) {
 
 export function useOpticEngine(): IOpticEngine {
   const value = useContext(OpticEngineContext);
-  invariant(value, 'useOpticEngine could not find OpticEngineContext');
-  return value!;
+  if (!value) {
+    throw new Error('useOpticEngine could not find OpticEngineContext');
+  }
+  return value;
 }

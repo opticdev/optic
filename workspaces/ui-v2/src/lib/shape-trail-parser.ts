@@ -10,7 +10,6 @@ import {
   IShapeTrailComponent,
 } from '@useoptic/cli-shared/build/diffs/shape-trail';
 import { JsonLike } from '<src>/components';
-import invariant from 'invariant';
 import { ICoreShapeKinds } from '@useoptic/optic-domain';
 
 export interface IExpectationHelper {
@@ -137,7 +136,7 @@ export async function shapeTrailParserLastId(
       };
     }
 
-    invariant(false, 'shape trail could not be parsed');
+    throw new Error('shape trail could not be parsed');
   } else {
     const choices = await getChoices(shapeTrail.rootShapeId, spectacle);
     const lastObject = Object.entries(
@@ -152,12 +151,6 @@ export async function shapeTrailParserLastId(
       rootShapeId: shapeTrail.rootShapeId,
     };
   }
-
-  invariant(true, 'shape trail could not be parsed');
-  return {
-    allowedCoreShapeKindsByShapeId: {},
-    allowedCoreShapes: [],
-  };
 }
 
 async function getChoices(

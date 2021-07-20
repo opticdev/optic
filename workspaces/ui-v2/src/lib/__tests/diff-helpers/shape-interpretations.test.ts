@@ -4,19 +4,16 @@ import {
   shapeDiffPreview,
   testCase,
 } from './fixture';
-import invariant from 'invariant';
 
 const cases = testCase('shape-diff-engine');
 
 function commonAssertions(result: IShapeDiffTestSnapshot) {
-  invariant(
-    result.preview.previewTabs.length > 0,
-    'all diffs should have a preview'
-  );
-  invariant(
-    result.trailValues.affordances.length > 0,
-    'all diffs should have affordances'
-  );
+  if (result.preview.previewTabs.length < 0) {
+    throw new Error('all diffs should have a preview');
+  }
+  if (result.trailValues.affordances.length < 0) {
+    throw new Error('all diffs should have affordances');
+  }
 
   const totalResults =
     result.trailValues.interactions.wasString.length +
@@ -27,7 +24,9 @@ function commonAssertions(result: IShapeDiffTestSnapshot) {
     result.trailValues.interactions.wasNumber.length +
     result.trailValues.interactions.wasObject.length;
 
-  invariant(totalResults > 0, 'all diffs should have interactions attached');
+  if (totalResults < 0) {
+    throw new Error('all diffs should have interactions attached');
+  }
 
   result.preview.toCommands(result.preview.updateSpecChoices!);
 }

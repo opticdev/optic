@@ -16,7 +16,6 @@ import {
   IAffordance,
   IAffordanceTrails,
 } from '../../../cli-shared/build/diffs/initial-types';
-import invariant from 'invariant';
 import { namer } from './quick-namer';
 import { setDifference } from '<src>/lib/set-ops';
 
@@ -74,31 +73,35 @@ export class Expectation {
   }
 
   lastObject(): string {
-    invariant(
-      this.expectationsFromSpec.lastObject,
-      'parent object shapeId not found'
-    );
+    if (!this.expectationsFromSpec.lastObject) {
+      throw new Error('parent object shapeId not found');
+    }
     return this.expectationsFromSpec.lastObject;
   }
 
   isOptionalField(): boolean {
-    invariant(this.isField(), 'shape trail is not a field.');
+    if (!this.isField()) {
+      throw new Error('shape trail is not a field');
+    }
     return this.expectationsFromSpec.fieldIsOptional || false;
   }
 
   fieldKey(): string {
-    invariant(this.isField(), 'shape trail is not a field.');
+    if (!this.isField()) {
+      throw new Error('shape trail is not a field');
+    }
     const lastJsonTrail = this.jsonTrail.path[this.jsonTrail.path.length - 1];
-    invariant(
-      lastJsonTrail.hasOwnProperty('JsonObjectKey'),
-      'expected a json trail for a field'
-    );
+    if (!lastJsonTrail.hasOwnProperty('JsonObjectKey')) {
+      throw new Error('expected a json trail for a field');
+    }
     const name = (lastJsonTrail as IJsonObjectKey).JsonObjectKey.key;
     return name;
   }
 
   fieldShapeId(): string {
-    invariant(this.isField(), 'shape trail is not a field.');
+    if (!this.isField()) {
+      throw new Error('shape trail is not a field');
+    }
     return this.expectationsFromSpec.lastFieldShapeId!;
   }
 
