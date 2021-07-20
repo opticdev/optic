@@ -1,5 +1,5 @@
 ---
-date: "07/05/2021"
+date: 2021-07-22
 title: "Documenting an Express API with Optic"
 author: Amarachi Amaechi
 author_url: "https://twitter.com/AmarachiAmaechi"
@@ -29,8 +29,7 @@ In this tutorial, you'll be building a basic API from scratch while testing and 
 ## Getting Started
 You're going to start simple. Below is the file structure you'll use, so you can start by creating these files in your root folder. Give your root folder whatever name you desire. 
 
-```
- 
+```sh title='Project folder structure'
 ______[ROOT FOLDER]
   |
   |___article.controller.js
@@ -43,7 +42,6 @@ ______[ROOT FOLDER]
   |
   |___article.routes.js
   |
- 
 ```
 
 You can see that your root folder contains five different files which serve different purposes. Before you move on, let's run the following command:
@@ -54,7 +52,7 @@ npm init -y
 
 Note that the `package.json` file has been set up. The content should look similar to this:
 
-```
+```json title='package.json'
 {
     "name": "optics_app",
     "version": "1.0.0",
@@ -67,7 +65,6 @@ Note that the `package.json` file has been set up. The content should look simil
     "author": "",
     "license": "ISC"
   }
-
 ```
 
 You'll need different dependencies, including `express`, `nodemon`,  `mongoose`, `body-parser`, and `dotenv`. Go ahead and run the following command to install all these necessary dependencies:
@@ -80,7 +77,7 @@ Check that the dependencies were correctly installed by moving to the `package.j
 
 Update your `server.js` file with the following code:
 
-```
+```js title='server.js'
 require('dotenv').config();
 const express = require("express")
 const app = express();
@@ -95,13 +92,12 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
     console.log(`Application is listening at port ${port}`);
 });
-
 ```
 
 If that's done correctly, you can start your server by running:
 
 ```
- node server.js
+node server.js
 ```
 
 Your application should be running at port 3000.
@@ -110,7 +106,7 @@ Next is to update the various files that you created before. You'll be learning 
 
 Update your `server.js` file with the following code:
 
-```
+```js title='server.js'
 require('dotenv').config();
 const mongoose =  require("mongoose");
 const articles = require("./article.routes");
@@ -136,7 +132,6 @@ app.use("/api/v1/articles", articles);
 app.listen(port, () => {
     console.log(`Application is listening at port ${port}`);
 });
-
 ```
 
 You defined your base route in the previous code and then imported the other routes from the `articles.routes.js` folder, which you have yet to update. Also, note that you created a MongoDB connection.
@@ -144,16 +139,14 @@ You defined your base route in the previous code and then imported the other rou
 You can proceed to [MongoDB atlas](https://www.mongodb.com/cloud/atlas/efficiency) to create an account as well as a MongoDB cluster if you have yet to. After that, you can then create a `.env` file and store your MongoDB details, which should look like this:
 
 ```
- mongodb+srv: <username> : <password> <extended link>
-
+mongodb+srv: <username> : <password> <extended link>
 ```
 
 Now let's update the remaining files. Update your `article.js` with the following code:
 
-```
+```js title='article.js'
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
- 
  
 const articleSchema = Schema({
  
@@ -176,19 +169,17 @@ const articleSchema = Schema({
         type: Date,
         default: Date.now(),
     }
- 
-});
- 
- 
-module.exports = Article = mongoose.model("data", articleSchema);
 
+});
+  
+module.exports = Article = mongoose.model("data", articleSchema);
 ```
 
 This file contains your defined Mongoose schema.
 
 Update the `articles.routes.js` file:
 
-```
+```js title='articles.routes.js'
 const  express =  require("express");
 const router = express.Router();
 const ArticleCtrl = require("./article.controller");
@@ -201,13 +192,11 @@ router.put("/article/:id", ArticleCtrl.apiUpdateArticle);
 router.delete("/article/:id", ArticleCtrl.apiDeleteArticle);
  
 module.exports =  router;
-
 ```
 
 And update the `article.controller.js` file:
 
-```
-
+```js title='article.controller.js'
 const ArticleService = require("./ArticleService");
  
 module.exports = class Article{
@@ -275,13 +264,11 @@ static async apiCreateArticle(req, res, next){
  }
  
 }
-
- 
 ```
 
 Your routes are defined on the `articles.routes.js` file, while the controllers are defined on the `article.controller.js` file. The only file yet to be updated is your articleService.js` file. Go ahead and update it with the following code:
 
-```
+```js title='articles.routes.js'
 const Article = require("./Article");
  
 module.exports = class ArticleService{
@@ -341,7 +328,6 @@ module.exports = class ArticleService{
  
     }
 }
-
 ```
 
 Now let's pause and restart the server. Proceed to `localhost:8000/API/v1/articles`.
@@ -360,15 +346,15 @@ npm install @useoptic/cli -g
 Next, navigate to your project directory and run the following command to help with basic Optic initialization and setup:
 
 ```
-API init
+api init
 ```
 
 An `optic.yml` file containing the command used to start your server, as well as the port where your server runs, will be created.
 
 For Optic to work effectively, you need to provide a port as an environment variable. To do this, set your port as follows:
 
-```
-const PORT = process.env.PORT || 8000
+```js title='server.js'
+const port = process.env.PORT || 8000;
 ```
 
 This way, Optic is allowed to set the port for you. You can start your server by running:
@@ -381,15 +367,23 @@ Optic throws a proxy in between your traffic and the actual API process. This wi
 
 The next step is to exercise your API. You can do this by simply performing GET, POST, PUT, DELETE, and similar requests on your endpoint. This way, Optic can detect your API endpoints. To register all detected routes and review API diffs, proceed to the link for reviewing API diff shown to you when you run API status on your terminal.
 
-![Link to review API diff](https://imgur.com/D7Cud2T.png)
+```sh title='output of api start'
+$ api start
+[optic] Review the API Diff at http://localhost:34444/apis/1/diffs
+[optic] Optic is observing requests made to http://localhost:3001
+```
 
-You should be directed to the following page:
+You should be directed to the following page, which tells you that you have **undocumented URLs**. Click through to start documenting this traffic:
 
-![Undocumented endpoints detected](https://imgur.com/4CUDGgJ.png)
+![Undocumented endpoints detected](/img/blog-content/documenting-express-unmatched.png)
 
-Go ahead and confirm each of the endpoints as listed on this page. Optic does not automate this process and allows users to register endpoints by themselves.
+Go ahead and confirm each of the endpoints as listed on this page. Don't forget to click on the parameterized elements of your URLs and add a descriptive identifier.
 
-![Confirming endpoints](https://imgur.com/LeZEeZi.png)
+![Documenting endpoints](/img/blog-content/documenting-express-document.png)
+
+Save your results, which will take you to the resulting documentation:
+
+![Confirming endpoints](/img/blog-content/documenting-express-documented.png)
 
 Optic automatically generates a summary of each endpoint and the possible response data. Though it's optional, a swagger file can also be generated. 
 
@@ -397,6 +391,6 @@ Optic automatically generates a summary of each endpoint and the possible respon
 
 API documentation as you have seen above is much easier with Optic. It does all the big work for you allowing users to focus mainly on the development process of their API. Unlike some other documentation tools available, Optic documents your API while you develop them by observing and registering new endpoints as you create them.
 
-If you want to use Optic as a middleware in your Express stack, you can check out [https://github.com/opticdev/optic-node/tree/main/frameworks/express](https://github.com/opticdev/optic-node/tree/main/frameworks/express). We'd love to get your feedback on the moduile.
+If you want to use Optic as a middleware in your Express stack, you can check out [https://github.com/opticdev/optic-node/tree/main/frameworks/express](https://github.com/opticdev/optic-node/tree/main/frameworks/express). We'd love to get your feedback on the module.
 
 Want to write an Optic library for your framework of choice? Optic is an open-source project, so you can [join the community](https://www.useoptic.com/docs/community/) working hard to make writing documentation easy.
