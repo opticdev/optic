@@ -17,6 +17,6 @@ export const defaultIgnoreRules = [
 
 export const defaultIgnoreFile = `
 # Default Ignore Rules
-# Learn to configure your own at http://localhost:4000/reference/optic-yaml/ignore
+# Learn to configure your own at https://www.useoptic.com/reference/optic-yaml/ignore
 ${defaultIgnoreRules.join('\n')}
 `.trim();
