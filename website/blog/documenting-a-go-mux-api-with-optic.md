@@ -1,5 +1,5 @@
 ---
-date: "07/08/2021"
+date: 2021-07-29
 title: "Documenting a Go Mux API with Optic"
 author: Eze Sunday
 author_url: "https://twitter.com/ezesundayeze"
@@ -15,7 +15,7 @@ However, it's a tedious and constantly evolving process, which means you need to
 
 That's what [Optic](https://useoptic.com/) does for you. Optic is an API documentation assistant that observes your API development traffic, learns your API behavioral pattern, and automatically creates and updates your API docs for you. You can track every change that happens at every step of the development process. Your team can review your docs the way you'd review your code on GitHub.
 
-In this tutorial, I'll show you how to document an API built with [Go Mux](https://www.gorillatoolkit.org/pkg/mux). Mux is a full-featured router and dispatcher for Go that matches a wide range of requests, based on URL host, schemes, path, path prefix, header and query values, HTTP methods, and regex. This API will have Create, List, Retrieve capabilities, and you'll see how efficient it is to build and maintain an API with Optics.
+In this tutorial, I'll show you how to document an API built with [Go Mux](https://www.gorillatoolkit.org/pkg/mux). Mux is a full-featured router and dispatcher for Go that matches a wide range of requests, based on URL host, schemes, path, path prefix, header and query values, HTTP methods, and regex. This API will have Create, List, Retrieve capabilities, and you'll see how efficient it is to build and maintain an API with Optic.
 
 ## Setting Up the API
 
@@ -25,8 +25,7 @@ First, let's go over the prerequisites for setting up this API on your machine:
 
 To begin, create a file, name it `app.go`, and add the following code to it:
 
-```go
-
+```go title='app.go'
 package main
 
 import (
@@ -107,11 +106,10 @@ func createNewPost(w http.ResponseWriter, r *http.Request) {
    Posts = append(Posts, Post)
    json.NewEncoder(w).Encode(Post)
 }
-
 ```
 The code above is the API. For simplicity, it was built without a database. I used an array to serve as the database as seen here:
 
-```go
+```go title='Posts database'
 Posts = []Post{
        Post{Id: "1", Title: "How to buy burger online", Desc: "You'll learn how to buy burger online", Content: "Buying burger online is easy, just buy it"},
        Post{Id: "2", Title: "How to avoid scammers", Desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit", Content: "Duis aute irure dolor in reprehenderit in voluptate velit"},
@@ -120,7 +118,7 @@ Posts = []Post{
 
 Also, we're using the Mux library to handle request routing:
  
-```go
+```go title='Mux library'
 func handleRequests() {
    router := mux.NewRouter()
    port := os.Getenv("PORT")
@@ -137,7 +135,7 @@ func handleRequests() {
 
 Since Mux is an external library, you'll need to install it by running the following command on your terminal:
 
-```bash
+```sh
 go get -u github.com/gorilla/mux
 ```
 
@@ -145,13 +143,13 @@ Mux is a powerful router for Go with lots of exciting features like matching dyn
 
 After adding Mux, you can go ahead and run the application.
 
-```go
-Go run app.go
+```sh
+go run app.go
 ```
 
 You should see something like this on your terminal:
 
-```bash
+```sh
 Go API - Mux Routers
 ```
 
@@ -159,9 +157,9 @@ Now, you can access the API with Postman, as shown in the following image:
 
 ![API request with Postman example](https://i.imgur.com/s1iSxKE.png)
 
-The routes below are the routes we'll be documenting with Optics:
+The routes below are the routes we'll be documenting with Optic:
 
-```Go
+```Go title='Routes'
    router.HandleFunc("/post/list", getAllPosts).Methods("GET")
    router.HandleFunc("/post/{id}", getSinglePost).Methods("GET")
    router.HandleFunc("/post/create", createNewPost).Methods("POST")
@@ -188,61 +186,61 @@ The first step to adding Optic to your application is to install its Command Lin
     brew install opticdev/optic/api
     ```
 
-When the installation is complete, make sure you're in your project's root directory. The CLI command is `api`. So, run `api init` to initialize Optic in your API. It should generate a few files, including an `optic.yaml` file:
+When the installation is complete, make sure you're in your project's root directory. The CLI command is `api`. So, run `api init` to initialize Optic in your API. It should generate a few files, including an `optic.yml` file. We'll update the command from `echo \"Setup A Valid Command to Start your API!\"` to `go run app.go`:
 
-```yaml
+```yaml title='optic.yml'
 name: "Go Musk API"
 tasks:
  start:
-    command: "echo \"Setup A Valid Command to Start your API!\""
+    command: "go run app.go"
     inboundUrl: http://localhost:4000
-
 ```
 
-We'll update the command from `echo \"Setup A Valid Command to Start your API!\"` to `go run app.go`, and we'll also change the port `4000` to use the port that will be generated from `$PORT` in your environment variable (Optic provides `$PORT` as an environment variable which you can access in your code) as shown in the code posted earlier.
+We'll also change the port `4000` to use the port that will be generated from `$PORT` in your environment variable (Optic provides `$PORT` as an environment variable which you can access in your code) as shown in the code posted earlier.
 
-```go
+```go title='app.go'
    port := os.Getenv("PORT")
 ```
 
 Once you do that, you'll have to start your app with `api start` instead of `go run app.go`. So, run it:
 
-```shell
+```sh
 api start
 ```
 
 You should see something like this if everything went well:
 
-```shell
-[optic] Review the API Diff at http://localhost:34444/apis/1/review
-[optic] Optic is observing requests made to http://localhost:3481
+```sh
+[optic] Review the API Diff at http://localhost:34444/apis/1/diffs
+[optic] Optic is observing requests made to http://localhost:4000
 Go API - Mux Routers
 ```
 
-Optic will start observing every activity that happens on route `http://localhost:3481`, and it will create a different log for you to review in route `http://localhost:34444/apis/1/review`.
+Optic will start observing every activity that happens on `http://localhost:4000`, and it will create a diff log for you to review in route `http://localhost:34444/apis/1/diffs`.
 
 So, the first thing you should do is send a request to the APIs you've created using Postman. Send a request to:
-- http://localhost:3481/post/list
-- http://localhost:3481/post/1
-- http://localhost:3481/post/create
+
+- http://localhost:4000/post/list
+- http://localhost:4000/post/1
+- http://localhost:4000/post/create
 
 Then check the documentation review dashboard. It should look like this:
 
-![Documentation Review Dashboard](https://i.imgur.com/L5C0BCl.png)
+![Documentation Review Dashboard](/img/blog-content/documenting-go-mux-diffs.png)
 
-You can click on the routes in the review tab to edit the parameters, like the `/post/1/` route. You can edit it and add the meaning of `1`, which is id, and it should look like the following image:
+Click through to start documenting your API. Start with any static routes, such as `/post/list`, then move on to parameterized routes, like the `/post/1/` route. You can edit it and add the meaning of `1`, which is id, and it should look like the following image:
 
-![Edited Review](https://i.imgur.com/NIqL3gU.png)
+![Edited Review](/img/blog-content/documenting-go-mux-learn.png)
 
-Next, check all the boxes and click the **Document (3) Endpoint**` button. Now, you can enter the commit message for this change and apply the changes.
+Next, click the **Save Changes** button. Now, you can enter the commit message for this change and apply the changes.
 
 Done? Cool. You'll be redirected to the documentation page, where you can edit the title and add detailed descriptions to each route.
 
-![Documentation](https://i.imgur.com/hS4vkUY.png)
+![Documentation](/img/blog-content/documenting-go-mux-documentation.png)
 
-If you click on one of the routes' documents, it'll take you to a page where you can find more information about the route. It should look like this:
+If you click on one of the route's documents, it'll take you to a page where you can find more information about the route. It should look like this:
 
-![Document Sample](https://i.imgur.com/SjaALZ6.png)
+![Document Sample](/img/blog-content/documenting-go-mux-detail.png)
 
 You didn't write all that, right?
 Yeah, that's the beauty of Optic.
@@ -251,18 +249,18 @@ Now, let's make a change to our API and see how Optic will react to it.
 
 In our use case, I made a change to the Post struct and made another request to the API. I changed `content` to `contents`.
 
-```go
+```go title='app.go'
 type Post struct {
    Id string `json:"Id"`
    Title string `json:"Title"`
    Desc string `json:"desc"`
-   Content string `json:"contents"`
+   Content string `json:"contents"` // This line changed `content` to `contents`
 }
 ```
 
 The API Optic observed that something changed.
 
-[API Docs Change Log](https://i.imgur.com/8TMBWpr.png)
+![API Docs Change Log](/img/blog-content/documenting-go-mux-diff-detail.png)
 
 I can decide whether to approve it or to mark it as incorrect, make the changes and come back to make it right. If I approve it, it updates the existing document straight up.
 
