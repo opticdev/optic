@@ -110,7 +110,7 @@ export function PendingEndpointPage(props: any) {
   const history = useHistory();
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
 
-  const requestCheckboxes = (learnedBodies?.requests || []).filter((i) =>
+  const filteredRequests = (learnedBodies?.requests || []).filter((i) =>
     Boolean(i.contentType)
   );
   const onKeyPress = useRunOnKeypress(
@@ -161,7 +161,7 @@ export function PendingEndpointPage(props: any) {
               />
 
               {learnedBodies.queryParameters ||
-              requestCheckboxes.length > 0 ||
+              filteredRequests.length > 0 ||
               learnedBodies.responses.length > 0 ? (
                 <Typography
                   component="div"
@@ -200,20 +200,18 @@ export function PendingEndpointPage(props: any) {
               )}
 
               <FormControl component="fieldset" onKeyPress={onKeyPress}>
-                {requestCheckboxes.map((i, index) => {
-                  if (!i.contentType) {
-                    return null;
-                  }
+                {filteredRequests.map((request) => {
+                  const contentType = request.contentType || '';
                   const body: IIgnoreBody = {
                     isRequest: true,
-                    contentType: i.contentType,
+                    contentType,
                   };
                   return (
                     <LearnBodyCheckBox
                       initialStatus={isIgnored(body)}
-                      key={index}
+                      key={request.rootShapeId}
                       primary="Request Body"
-                      subtext={i.contentType || 'no body'}
+                      subtext={contentType}
                       onChange={(ignore) => {
                         ignore ? ignoreBody(body) : includeBody(body);
                       }}
@@ -222,21 +220,21 @@ export function PendingEndpointPage(props: any) {
                 })}
               </FormControl>
 
-              {requestCheckboxes.length > 0 && <Divider />}
+              {filteredRequests.length > 0 && <Divider />}
 
               <FormControl component="fieldset" onKeyPress={onKeyPress}>
-                {learnedBodies!.responses.map((i, index) => {
+                {learnedBodies.responses.map((response) => {
                   const body: IIgnoreBody = {
                     isResponse: true,
-                    statusCode: i.statusCode,
-                    contentType: i.contentType,
+                    statusCode: response.statusCode,
+                    contentType: response.contentType,
                   };
                   return (
                     <LearnBodyCheckBox
                       initialStatus={isIgnored(body)}
-                      key={index}
-                      primary={`${i.statusCode} Response`}
-                      subtext={i.contentType}
+                      key={response.rootShapeId}
+                      primary={`${response.statusCode} Response`}
+                      subtext={response.contentType}
                       onChange={(ignore) => {
                         ignore ? ignoreBody(body) : includeBody(body);
                       }}

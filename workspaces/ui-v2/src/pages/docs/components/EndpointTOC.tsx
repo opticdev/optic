@@ -30,7 +30,6 @@ function Code({ value }: { value: string }) {
 export function EndpointTOC(props: EndpointTOCProps) {
   const classes = useStyles();
 
-  console.log(props.responsesByStatusCode);
   return (
     <List dense>
       {props.query === null &&
