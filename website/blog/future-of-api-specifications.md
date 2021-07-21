@@ -3,7 +3,7 @@ date: 2021-07-21
 title: "The Future of API Specifications"
 author: Aidan Cunniffe
 author_url: "https://twitter.com/aidandcunniffe"
-image: "https://raw.githubusercontent.com/opticdev/optic/develop/website/static/img/apispecs.001.jpeg"
+image: "https://imgur.com/GcMFCRl"
 author_image_url: "/img/team/aidan.jpg"
 ---
 I'm a big believer that the order you read a set of books can matter more than the books you read. When different ideas and perspectives mix into a savory synapse soup -- good things happen. That was my last 10 days. I've gotten to talk to some amazing people about the history of Swagger/OpenAPI (history matters), why API Specifications matter, and the problems we face building and scaling tools across the wider API Community.
