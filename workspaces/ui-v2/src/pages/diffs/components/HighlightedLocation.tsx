@@ -10,19 +10,16 @@ type IHighlightedLocation =
   | {
       targetLocation?: DiffLocation;
       statusCode?: undefined;
-      contentType?: undefined;
       expectedLocation: Location.Query;
     }
   | {
       targetLocation?: DiffLocation;
       statusCode?: undefined;
-      contentType: string;
       expectedLocation: Location.Request;
     }
   | {
       targetLocation?: DiffLocation;
       statusCode: number;
-      contentType: string;
       expectedLocation: Location.Response;
     };
 
@@ -44,16 +41,11 @@ export const HighlightedLocation: FC<
 
     switch (props.expectedLocation) {
       case Location.Request:
-        return (
-          targetLocation.getRequestDescriptor()?.contentType ===
-          props.contentType
-        );
+        return !!targetLocation.getRequestDescriptor();
       case Location.Response:
         return (
-          targetLocation.getResponseDescriptor()?.contentType ===
-            props.contentType &&
           targetLocation.getResponseDescriptor()?.statusCode ===
-            props.statusCode
+          props.statusCode
         );
       case Location.Query:
         return targetLocation.isQueryParameter();
