@@ -38,11 +38,6 @@ pub fn diff(
 
   results
     .into_iter()
-    .filter(|result| {
-      config.include_query_params
-        || !matches!(result, InteractionDiffResult::UnmatchedQueryParameters(_))
-          && !matches!(result, InteractionDiffResult::MatchedQueryParameters(_))
-    })
     .flat_map(move |result| match result {
       InteractionDiffResult::MatchedQueryParameters(result) => {
         let maybe_query_params: Option<BodyDescriptor> = (&http_interaction.request.query).into();
@@ -103,23 +98,11 @@ pub fn diff(
 }
 
 #[derive(Clone, Debug)]
-pub struct DiffConfig {
-  include_query_params: bool,
-}
+pub struct DiffConfig {}
 
 impl Default for DiffConfig {
   fn default() -> Self {
-    Self {
-      include_query_params: false,
-    }
-  }
-}
-
-impl DiffConfig {
-  pub fn with_query_params(self, flag: bool) -> Self {
-    let mut new = self.clone();
-    new.include_query_params = flag;
-    new
+    Self {}
   }
 }
 
@@ -143,24 +126,19 @@ pub fn analyze_undocumented_bodies<'a>(
   interaction_traverser.traverse(&interaction, &mut diff_visitors);
 
   let results = diff_visitors.take_results().unwrap();
-  let include_query_params = config.include_query_params;
 
   results.into_iter().flat_map(move |result| match result {
     InteractionDiffResult::UnmatchedQueryParameters(diff) => {
-      if include_query_params {
-        if let UnmatchedQueryParameters::Observed(_) = &diff {
-          let maybe_query_params: Option<BodyDescriptor> = (&interaction.request.query).into();
-          let query_params = maybe_query_params.or_else(|| Some(BodyDescriptor::empty_object()));
+      if let UnmatchedQueryParameters::Observed(_) = &diff {
+        let maybe_query_params: Option<BodyDescriptor> = (&interaction.request.query).into();
+        let query_params = maybe_query_params.or_else(|| Some(BodyDescriptor::empty_object()));
 
-          let query_trail_observations = observe_body_trails(query_params);
+        let query_trail_observations = observe_body_trails(query_params);
 
-          vec![BodyAnalysisResult {
-            body_location: BodyAnalysisLocation::from(diff),
-            trail_observations: query_trail_observations,
-          }]
-        } else {
-          vec![]
-        }
+        vec![BodyAnalysisResult {
+          body_location: BodyAnalysisLocation::from(diff),
+          trail_observations: query_trail_observations,
+        }]
       } else {
         vec![]
       }
@@ -188,23 +166,11 @@ pub fn analyze_undocumented_bodies<'a>(
 }
 
 #[derive(Clone, Debug)]
-pub struct AnalyzeUndocumentedBodiesConfig {
-  include_query_params: bool,
-}
+pub struct AnalyzeUndocumentedBodiesConfig {}
 
 impl Default for AnalyzeUndocumentedBodiesConfig {
   fn default() -> Self {
-    Self {
-      include_query_params: false,
-    }
-  }
-}
-
-impl AnalyzeUndocumentedBodiesConfig {
-  pub fn with_query_params(self, flag: bool) -> Self {
-    let mut new = self.clone();
-    new.include_query_params = flag;
-    new
+    Self {}
   }
 }
 

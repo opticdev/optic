@@ -41,8 +41,7 @@ export interface IOpticEngine {
   learn_undocumented_bodies(
     spec: any,
     interactions_jsonl: string,
-    id_generator_strategy: string,
-    include_query_params: boolean
+    id_generator_strategy: string
   ): string;
 
   spec_from_events(eventsJson: string): any;

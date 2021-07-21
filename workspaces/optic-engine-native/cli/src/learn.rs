@@ -65,9 +65,7 @@ pub async fn main<'a>(
     let interaction_lines = streams::http_interaction::json_lines(stdin);
     let sink = stdout();
 
-    let learner_config = AnalyzeUndocumentedBodiesConfig::default().with_query_params(
-      is_env_flag_enabled("REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS"),
-    );
+    let learner_config = AnalyzeUndocumentedBodiesConfig::default();
 
     learn_undocumented_bodies(
       spec_events,
@@ -276,10 +274,6 @@ impl SpecIdGenerator for IdGenerator {
   }
 }
 
-fn is_env_flag_enabled(env_var_name: &str) -> bool {
-  env::var(env_var_name).map_or(false, |var| var == "true" || var == "yes")
-}
-
 #[cfg(test)]
 mod test {
   use super::*;
@@ -300,9 +294,7 @@ mod test {
     let interaction_lines = streams::http_interaction::json_lines(tokio::io::empty());
     let sink = tokio::io::sink();
 
-    let learner_config = AnalyzeUndocumentedBodiesConfig::default().with_query_params(
-      is_env_flag_enabled("REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS"),
-    );
+    let learner_config = AnalyzeUndocumentedBodiesConfig::default();
 
     learn_undocumented_bodies(spec_events, 1, interaction_lines, learner_config, sink).await;
   }

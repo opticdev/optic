@@ -36,7 +36,7 @@ async fn query_params_observed_for_the_first_time() {
     let results = diff_interaction(
       &spec_projection,
       interaction,
-      &DiffInteractionConfig::default().with_query_params(true),
+      &DiffInteractionConfig::default(),
     );
     assert_debug_snapshot!("query_params_observed_for_the_first_time__results", results)
   });
@@ -68,7 +68,7 @@ async fn query_param_required_but_missing() {
     let results = diff_interaction(
       &spec_projection,
       interaction,
-      &DiffInteractionConfig::default().with_query_params(true),
+      &DiffInteractionConfig::default(),
     );
     assert_debug_snapshot!("query_param_required_but_missing__results", results)
   });
@@ -100,7 +100,7 @@ async fn query_params_required_and_provided() {
     let results = diff_interaction(
       &spec_projection,
       interaction,
-      &DiffInteractionConfig::default().with_query_params(true),
+      &DiffInteractionConfig::default(),
     );
     assert_debug_snapshot!("query_params_required_and_provided__results", results)
   });
@@ -132,7 +132,7 @@ async fn query_params_required_but_not_captured() {
     let results = diff_interaction(
       &spec_projection,
       interaction,
-      &DiffInteractionConfig::default().with_query_params(true),
+      &DiffInteractionConfig::default(),
     );
     assert_debug_snapshot!("query_params_required_but_not_captured__results", results)
   });

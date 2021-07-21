@@ -147,8 +147,7 @@ fn main() {
         eprintln!("diffing interations against a spec");
         eprintln!("using input queue size {}", input_queue_size);
 
-        let diff_config = DiffInteractionConfig::default()
-          .with_query_params(is_env_flag_enabled("REACT_APP_FF_DIFF_QUERY_PARAMETERS"));
+        let diff_config = DiffInteractionConfig::default();
 
         diff(
           events_from_chunks(spec_chunks).await,
@@ -280,10 +279,6 @@ async fn events_from_chunks(chunks: Vec<SpecChunkEvent>) -> Vec<SpecEvent> {
   streams::spec_events::from_spec_chunks(chunks)
     .await
     .unwrap() // TODO: report on these errors in a more user-friendly way (like for single spec files)
-}
-
-fn is_env_flag_enabled(env_var_name: &str) -> bool {
-  std::env::var(env_var_name).map_or(false, |var| var == "true" || var == "yes")
 }
 
 #[cfg(test)]
