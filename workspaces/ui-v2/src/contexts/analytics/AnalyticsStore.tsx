@@ -1,5 +1,6 @@
 import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import { OpticUIEvents, TrackingEventBase } from '@useoptic/analytics';
+import { InvariantViolationError } from '<src>/errors';
 import { useAppConfig } from '../config/AppConfiguration';
 
 const packageJson = require('../../../package.json');
@@ -78,7 +79,9 @@ export const AnalyticsStore: FC<AnalyticsStoreProps> = ({
 export function useAnalytics(): OpticUIEvents {
   const value = useContext(AnalyticsContext);
   if (!value) {
-    throw new Error('useAnalytics could not find AnalyticsContext');
+    throw new InvariantViolationError(
+      'useAnalytics could not find AnalyticsContext'
+    );
   }
   return value.trackEvent;
 }

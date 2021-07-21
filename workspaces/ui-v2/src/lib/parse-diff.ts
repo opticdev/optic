@@ -28,6 +28,7 @@ import {
   locationForTrails,
   LocationDescriptor,
 } from '@useoptic/cli-shared/build/diffs/trail-parsers';
+import { InvariantViolationError } from '<src>/errors';
 
 export class DiffLocation {
   constructor(
@@ -115,7 +116,9 @@ export class ParsedDiff {
     const keys = Object.keys(this.serialized_diff);
     const typeKey = keys[0]!;
     if (!(keys.length === 1 && allowedDiffTypesKeys.includes(typeKey))) {
-      throw new Error('Serialized diffs should only have one root key');
+      throw new InvariantViolationError(
+        'Serialized diffs should only have one root key'
+      );
     }
 
     this.diffHash = fingerprint;
@@ -165,7 +168,7 @@ export class ParsedDiff {
     );
 
     if (!location) {
-      throw new Error('no location found for diff');
+      throw new InvariantViolationError('no location found for diff');
     }
 
     return new DiffLocation(
@@ -243,7 +246,9 @@ export class BodyShapeDiff {
       // @ts-ignore
       shapeDiff['UnspecifiedShape']?.shapeTrail)!;
     if (!this.shapeTrail) {
-      throw new Error('A shape trail must be specified with all shape diffs');
+      throw new InvariantViolationError(
+        'A shape trail must be specified with all shape diffs'
+      );
     }
 
     this.normalizedShapeTrail = normalizeShapeTrail(this.shapeTrail);

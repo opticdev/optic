@@ -18,6 +18,7 @@ import {
   QueryParametersShapeDescriptor,
   CQRSCommand,
 } from '@useoptic/optic-domain';
+import { InvariantViolationError } from '<src>/errors';
 
 export function rootShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,
@@ -50,7 +51,9 @@ export function rootShapeDiffInterpreter(
   }
 
   if (isUnspecified) {
-    throw new Error('root object should never produce an unspecified diff');
+    throw new InvariantViolationError(
+      'root object should never produce an unspecified diff'
+    );
   }
 
   ////////////////

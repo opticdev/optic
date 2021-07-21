@@ -11,6 +11,7 @@ import {
 } from '@useoptic/cli-shared/build/diffs/shape-trail';
 import { JsonLike } from '<src>/components';
 import { ICoreShapeKinds } from '@useoptic/optic-domain';
+import { InvariantViolationError } from '<src>/errors';
 
 export interface IExpectationHelper {
   allowedCoreShapes: string[];
@@ -136,7 +137,7 @@ export async function shapeTrailParserLastId(
       };
     }
 
-    throw new Error('shape trail could not be parsed');
+    throw new InvariantViolationError('shape trail could not be parsed');
   } else {
     const choices = await getChoices(shapeTrail.rootShapeId, spectacle);
     const lastObject = Object.entries(

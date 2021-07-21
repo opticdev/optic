@@ -1,4 +1,5 @@
 import React, { ReactNode, useContext } from 'react';
+import { InvariantViolationError } from '<src>/errors';
 
 interface IAppConfigurations {
   allowEditing: boolean;
@@ -43,7 +44,9 @@ export const AppConfigurationStore = (props: {
 export function useAppConfig() {
   const value = useContext(AppConfigurationContext);
   if (!value) {
-    throw new Error('useAppConfig could not find AppConfigurationContext');
+    throw new InvariantViolationError(
+      'useAppConfig could not find AppConfigurationContext'
+    );
   }
   return value.config;
 }
