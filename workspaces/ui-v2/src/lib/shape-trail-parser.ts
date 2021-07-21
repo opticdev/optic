@@ -6,6 +6,7 @@ import {
   IObjectTrail,
   IOneOfItemTrail,
   IOptionalTrail,
+  IOptionalItemTrail,
   IShapeTrail,
   IShapeTrailComponent,
 } from '@useoptic/cli-shared/build/diffs/shape-trail';
@@ -122,6 +123,27 @@ export async function shapeTrailParserLastId(
     if (lastTrail.hasOwnProperty('OptionalTrail')) {
       const shapeId = (lastTrail as IOptionalTrail).OptionalTrail.shapeId;
       const choices = await getChoices(shapeId, spectacle);
+      const lastItems = await shapeTrailParserLastId(
+        {
+          ...shapeTrail,
+          path: [...shapeTrail.path.slice(0, shapeTrail.path.length - 1)],
+        },
+        spectacle
+      );
+      return {
+        lastObject: lastItems.lastObject,
+        lastField: lastItems.lastField,
+        lastFieldShapeId: lastItems.lastFieldShapeId,
+        ...choices,
+      };
+    }
+    if (lastTrail.hasOwnProperty('OptionalItemTrail')) {
+      const optionalItemTrail = (lastTrail as IOptionalItemTrail)
+        .OptionalItemTrail;
+      const choices = await getChoices(
+        optionalItemTrail.innerShapeId,
+        spectacle
+      );
       const lastItems = await shapeTrailParserLastId(
         {
           ...shapeTrail,
