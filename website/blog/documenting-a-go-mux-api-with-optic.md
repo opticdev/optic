@@ -189,7 +189,7 @@ The first step to adding Optic to your application is to install its Command Lin
 When the installation is complete, make sure you're in your project's root directory. The CLI command is `api`. So, run `api init` to initialize Optic in your API. It should generate a few files, including an `optic.yml` file. We'll update the command from `echo \"Setup A Valid Command to Start your API!\"` to `go run app.go`:
 
 ```yaml title='optic.yml'
-name: "Go Musk API"
+name: "Go Mux API"
 tasks:
  start:
     command: "go run app.go"
@@ -249,7 +249,7 @@ Now, let's make a change to our API and see how Optic will react to it.
 
 In our use case, I made a change to the Post struct and made another request to the API. I changed `content` to `contents`.
 
-```go title='app.go'
+```go title='app.go' {5}
 type Post struct {
    Id string `json:"Id"`
    Title string `json:"Title"`
@@ -258,11 +258,11 @@ type Post struct {
 }
 ```
 
-The API Optic observed that something changed.
+Optic observed that something changed in the API traffic:
 
 ![API Docs Change Log](/img/blog-content/documenting-go-mux-diff-detail.png)
 
-I can decide whether to approve it or to mark it as incorrect, make the changes and come back to make it right. If I approve it, it updates the existing document straight up.
+I can decide whether to approve it or to mark it as incorrect, make the changes and come back to make it right. If I approve it, it updates the existing endpoint.
 
 As you can see, setting up and using Optic in your Go Mux application is a straightforward process. 
 
