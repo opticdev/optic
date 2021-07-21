@@ -151,6 +151,7 @@ function RenderExampleBody({
   assertion: any;
 }) {
   const { captureId } = useSharedDiffContext();
+  // TODO add loading and error states to useInteraction
   const { data } = useInteraction(captureId, interactionPointer);
   const actualBody = useMemo<BodyPreview | undefined>(() => {
     if (data) {

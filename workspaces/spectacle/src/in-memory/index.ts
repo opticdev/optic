@@ -109,10 +109,7 @@ class InMemoryInteractionsRepository implements IOpticInteractionsRepository {
 
   async listById(id: string): Promise<any[]> {
     const interactions = this.map.get(id);
-    if (!interactions) {
-      throw new Error(`no interactions found for capture id ${id}`);
-    }
-    return interactions;
+    return interactions || [];
   }
 
   async set(id: string, interactions: any[]) {

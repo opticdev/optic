@@ -158,6 +158,7 @@ export function DiffReviewEnvironments(props: any) {
         component={CapturePageWithoutDiffOrRedirect}
       />
       <Route path={diffEnvironmentsRoot.path} component={DiffReviewPages} />
+      <Redirect to={diffRoot.path} />
     </Switch>
   );
 }
