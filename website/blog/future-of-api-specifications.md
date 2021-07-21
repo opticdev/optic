@@ -13,6 +13,7 @@ My brain was overloading, so I sat down and did a talk:
 ### Watch the Talk
 <iframe width="100%" height="400" src="https://www.youtube.com/embed/ozbb5ciauQ4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+<!-- truncate -->
 
 Big thank you to [Matt Trask](https://twitter.com/matthewtrask), [Dev Doshi](https://twitter.com/thedevisadev), [Mike Amundson](https://twitter.com/mamund) and [Kin Lane](https://twitter.com/kinlane) for the amazing discussions and storytelling. Lucky for everyone reading this, all our conversations are recorded so anyone reading this can try the synapse soup and share their ideas too 🍲.
 
@@ -22,11 +23,11 @@ Big thank you to [Matt Trask](https://twitter.com/matthewtrask), [Dev Doshi](htt
 
 - We value **evolvability, approachability, and usability** in our APIs, but those principles have not made it into the API specifications themselves.
 - **API Specifications are the API for our APIs**. Shouldn’t we treat them that way? What would we change if we designed new API specifications like we designed APIs?
-- The current architecture for API specifications complicates the use cases people care most about: **design**, **goverence**, **changelogs**, **validation**, and the emerging patterns/protocols (**hypermedia, graphql, grpc...**)
+- The current architecture for API specifications complicates the use cases people care most about: **design**, **governance**, **changelogs**, **validation**, and the emerging patterns/protocols (**hypermedia, graphql, grpc...**)
 
 ![alt](/img/apispecs.007.jpeg)
 
-- Explores the conflict and consequences of optimizing for all the above: **Human Writable**, **Human Readable**, **Machine Readbale** and **Human Writable**
+- Explores the conflict and consequences of optimizing for all the above: **Human Writable**, **Human Readable**, **Machine Readable** and **Human Writable**
 
 ![alt](/img/apispecs.012.jpeg)
 
@@ -45,7 +46,7 @@ Big thank you to [Matt Trask](https://twitter.com/matthewtrask), [Dev Doshi](htt
 - [**Live Demo from the video. The benefits**](https://opticdev.github.io/changelog-spec-demo/)
   - one reference implementation, shared by every vendor
   - API specs don't 'break' anymore when we make them better
-  - (because of the evolability above) you could add new protocols and spec features at-will, and forwards-proof many of the hard choices
+  - (because of the evolvability above) you could add new protocols and spec features at-will, and future-proofs many of the hard choices
 
 
 - **Ends with a quick reminder** -- we know how to build systems like this, it's what we do with our APIs every day. We are more than capable of making this happen :)
