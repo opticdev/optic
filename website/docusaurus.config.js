@@ -141,6 +141,8 @@ module.exports = {
         },
         blog: {
           showReadingTime: true,
+          blogSidebarCount: 0,
+          postsPerPage: 20,
           // Please change this to your repo.
           editUrl:
             'https://github.com/opticdev/optic/edit/develop/website/blog/',
