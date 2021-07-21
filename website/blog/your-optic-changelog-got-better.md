@@ -25,7 +25,7 @@ That means you have a URL to an accessible copy of your documentation you can sh
 Just think, no more having to get external collaborators or non-technical people to install [Optic](https://useoptic.com/docs) locally to be able to review the documentation. Now you can simply give them a link and let them review the endpoints and all the metadata about them.
 
 ## Changelog Bot
-But why just stop at sharing a link to the documentation, how about making your pull requests more informative about endpoint changes? If you were unaware, Optic has a [GitHub Action bot](https://useoptic.com/docs/apiops/pull-requests) to make this possible, and with Optic 10 it became even more awesome.
+But why just stop at sharing a link to the documentation, how about making your pull requests more informative about endpoint changes? If you were unaware, Optic has a [GitHub Action bot](/change/ci#changelog) to make this possible, and with Optic 10 it became even more awesome.
 
 After you follow the steps in [https://github.com/opticdev/optic-changelog](https://github.com/opticdev/optic-changelog) to add the bot to your repo it begins to register any changes in your API Specification with the pull request. Not only do you see the changes to the codebase but also the changes this causes to your API:
 
