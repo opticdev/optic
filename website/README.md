@@ -44,4 +44,4 @@ The website builds and deploys with GitHub Actions. The following scenarios shou
 ### Deploy to _production_
 Modifications to `website/**` files are merged into the 'develop' or 'release' branches.
 
-See [.github/workflows/website.yml](.github/workflows/website.yml) for all the details.
+See `.github/workflows/website.yml` for all the details.
