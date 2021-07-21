@@ -26,16 +26,14 @@ This command generates static content into the `build` directory and can be serv
 
 ## Deployment
 
-Refresh your AWS MFA code:
-```
-aws-mfa --profile parent
-```
+The website builds and deploys with GitHub Actions. The following scenarios should trigger deployments,
 
-Deploying to staging:
-```console
-# deploy with dry-run enabled
-AWS_PROFILE=staging bin/deploy
+### Deploy to _staging_
+1. Pushes received on a PR,
+    1. Opened against the 'develop' branch, and
+    1. The pushes contain modifications to `website/**` files
 
-# perform the deployment for real
-AWS_PROFILE=staging DRY_RUN=false bin/deploy
-```
+### Deploy to _production_
+Modifications to `website/**` files are merged into the 'develop' or 'release' branches.
+
+See [.github/workflows/website.yml](.github/workflows/website.yml) for all the details.
