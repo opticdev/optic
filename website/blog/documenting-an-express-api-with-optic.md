@@ -54,7 +54,7 @@ Note that the `package.json` file has been set up. The content should look simil
 
 ```json title='package.json'
 {
-    "name": "optics_app",
+    "name": "optic_app",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -180,7 +180,7 @@ This file contains your defined Mongoose schema.
 Update the `articles.routes.js` file:
 
 ```js title='articles.routes.js'
-const  express =  require("express");
+const express = require("express");
 const router = express.Router();
 const ArticleCtrl = require("./article.controller");
  
@@ -191,7 +191,7 @@ router.get("/article/:id", ArticleCtrl.apiGetArticleById);
 router.put("/article/:id", ArticleCtrl.apiUpdateArticle);
 router.delete("/article/:id", ArticleCtrl.apiDeleteArticle);
  
-module.exports =  router;
+module.exports = router;
 ```
 
 And update the `article.controller.js` file:
@@ -266,9 +266,9 @@ static async apiCreateArticle(req, res, next){
 }
 ```
 
-Your routes are defined on the `articles.routes.js` file, while the controllers are defined on the `article.controller.js` file. The only file yet to be updated is your articleService.js` file. Go ahead and update it with the following code:
+Your routes are defined on the `articles.routes.js` file, while the controllers are defined on the `article.controller.js` file. The only file yet to be updated is your `articleService.js` file. Go ahead and update it with the following code:
 
-```js title='articles.routes.js'
+```js title='articleService.js'
 const Article = require("./Article");
  
 module.exports = class ArticleService{
@@ -331,7 +331,7 @@ module.exports = class ArticleService{
 ```
 
 Now let's pause and restart the server. Proceed to `localhost:8000/api/v1/articles`.
-You should try making a post request to the above route, and if you've followed the steps correctly so far, the request should go true.
+You should try making a post request to the above route, and if you've followed the steps correctly so far, the request should go through.
 
 Note that you should revisit the beginning of this article and look for omissions in your own code should you encounter any issues after restarting your server. You can also Google the error message you received for more insight.
 
