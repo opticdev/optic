@@ -2,17 +2,23 @@
 
 This website is built using [Docusaurus 2](https://v2.docusaurus.io/), a modern static website generator.
 
+This project has a Taskfile. `task -l | grep website` to vire the available tasks.
+
 ## Installation
 
 ```console
 yarn install
 ```
 
+or `task website:install-deps`
+
 ## Local Development
 
 ```console
 yarn start
 ```
+
+or `task website:start`
 
 This command starts a local development server and open up a browser window. Most changes are reflected live without having to restart the server.
 
@@ -21,6 +27,8 @@ This command starts a local development server and open up a browser window. Mos
 ```console
 yarn build
 ```
+
+or `task website:build`
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
 
