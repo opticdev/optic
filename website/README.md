@@ -2,7 +2,7 @@
 
 This website is built using [Docusaurus 2](https://v2.docusaurus.io/), a modern static website generator.
 
-This project has a Taskfile. `task -l | grep website` to vire the available tasks.
+This project has a Taskfile. Run `task -l | grep website` to view the available tasks.
 
 ## Installation
 
