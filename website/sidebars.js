@@ -60,16 +60,21 @@ module.exports = {
       ],
     },
     {
+      type: 'category',
+      label: allUseCases.Share.label,
+      collapsed: false,
+      items: [
+        'share/share',
+        'share/optic-cloud',
+        'share/openapi',
+        'share/scripts',
+      ],
+    },
+    {
       type: 'link',
       label: 'Reference Docs',
       href: '/reference',
     },
-    // {
-    //   type: 'category',
-    //   label: allUseCases.Share.label,
-    //   collapsed: false,
-    //   items: ['share/share', 'share/changelogs', 'share/openapi'],
-    // },
   ],
   referenceSideBar: [
     'reference/key-concepts',
