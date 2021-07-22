@@ -3,7 +3,7 @@ title: Share your API with Optic
 slug: /share
 ---
 
-import { Paper } from '@material-ui/core';
+import { Button, Paper } from '@material-ui/core';
 
 > Optic lets you share always up to date API documentation with all your stakeholders, from your team to all your users.
 
@@ -17,25 +17,54 @@ APIs evolve, and they can evolve rapidly: as soon as code is deployed, behavior 
 
 Optic maintains and up to date specification and documentation alongside your project's code, and can share this documentation via the Optic Cloud. It can also syndicate documentation updates to other systems through OpenAPI exports and integrations, so your documentation can be updated for all of your stakeholders. No matter how you share your documentation today, Optic can help share the latest changes.
 
----
-
 ### Share your API documentation via the Optic Cloud
 
 The Optic dashboard includes a **Share** button which will allow you to host your latest documentation on the Optic Cloud. The URL for your cloud documentation allows anyone to view the same documentation you can see in your local Optic dashboard. Optic even generates a Markdown badge you can put in your project's `README.md` to show how many endpoints you have documented, linking to the Cloud documentation.
 
 <Paper elevation={3} style={{width: "50%"}}>
 
-![Share your documentation through the Optic Cloud](/img/docs/share-in-app-link.png)
+![Share your documentation via the Optic Cloud](/img/docs/share-in-app-link.png)
 
 </Paper>
 
+<button className={'button button--primary'} href="/share/optic-cloud">
+    Share your documentation via the Optic Cloud
+</button>
+
 ### Generate OAS specifications
 
--- Generate:OAS
+If you need a quick one-off export, Optic has a command that allows you to generate OpenAPI commands. With a single command, you can export your API's latest specification into YAML, JSON, or both formats, depending on your needs:
+
+```sh
+api generate:oas
+```
+
+<button className={'button button--primary'} href="/share/openapi">
+    Generate an OpenAPI Specification
+</button>
 
 ### Keep your existing documentation up to date
 
--- Scripts
+If you have existing documentation, or other systems that rely on accurate and up to date specifications such as testing mocks, consider running an Optic Script. Optic Scripts are managed in `optic.yml` and allow you to generate an up to date OpenAPI specification, then run any necessary scripts to integrate with your existing systems. A Script definition can also manage dependencies and their installation, and Scripts should run for everyone on your team.
 
+```sh
+api scripts export-spec --install
+```
 
-## What's Next
+```sh title='Running an export Script with Optic'
+[optic] Found Script export-spec
+Checking bin dependencies Requiring ["someprogram","anotherprogram"]... Missing dependencies
+[optic] Some bin dependencies are missing ["anotherprogram"]. false
+Running install command: { install command } ...
+Running install command: { install command } ... Success!
+
+[optic] Generated OAS files {...}/todo-js/.optic/generated/openapi.json
+[optic] {...}/todo-js/.optic/generated/openapi.yaml
+Running command: { command parameter from the script definition in optic.yml }
+
+{ command output ... }
+```
+
+<button className={'button button--primary'} href="/share/scripts">
+    Integrate Optic with Scripts
+</button>
