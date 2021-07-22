@@ -5,6 +5,12 @@ import { LogLevel } from '@sentry/types';
 import { AnalyticsStoreProps } from '../AnalyticsStore';
 import { getOrSetAgentFromLocalStorage } from '../utils';
 
+declare global {
+  interface Window {
+    Intercom?: (...args: any) => any;
+  }
+}
+
 const packageJson = require('../../../../package.json');
 const clientId = `local_cli_${packageJson.version}`;
 
@@ -59,6 +65,14 @@ export const initialize: AnalyticsStoreProps['initialize'] = async (
       logLevel: LogLevel.Debug,
     });
     Sentry.setUser({ id: metadata.clientAgent });
+  }
+
+  if (window.Intercom && appConfig.analytics.intercomAppId) {
+    window.Intercom('boot', {
+      app_id: appConfig.analytics.intercomAppId,
+      user_id: clientId,
+    });
+    window.Intercom('hide');
   }
 };
 

@@ -9,6 +9,7 @@ interface IAppConfigurations {
         enabled: true;
         segmentToken?: string;
         sentryUrl?: string;
+        intercomAppId?: string;
         fullStoryOrgId?: string;
       };
   backendApi: {
