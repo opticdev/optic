@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-config",
-  "version": "10.1.1",
+  "version": "10.2.0",
   "scripts": {
     "ws:test": "jest",
     "ws:build": "tsc -b --verbose",
