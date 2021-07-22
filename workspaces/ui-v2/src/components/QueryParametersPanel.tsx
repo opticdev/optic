@@ -62,16 +62,7 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
 }) => {
   const classes = useStyles();
   return (
-    <Panel
-      header={
-        <Tooltip title="?key=value1&key=value2 is treated as an array of key=[value1, value2]">
-          <div className={classes.queryTooltipContainer}>
-            Query string parsing strategy
-            <HelpIcon fontSize="small" className={classes.queryTooltipIcon} />
-          </div>
-        </Tooltip>
-      }
-    >
+    <Panel header={<span>query string</span>}>
       {Object.entries(parameters).map(([key, field]) => (
         <div
           className={classnames(classes.queryComponentContainer, [
