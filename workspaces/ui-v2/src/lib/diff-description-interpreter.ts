@@ -8,8 +8,9 @@ import {
 import { getExpectationsForShapeTrail } from './shape-diff-dsl-rust';
 import { code, ICopy, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { IJsonObjectKey } from '@useoptic/cli-shared/build/diffs/json-trail';
-import { IHttpInteraction } from '@useoptic/optic-domain';
+import { ICoreShapeKinds, IHttpInteraction } from '@useoptic/optic-domain';
 import { toJsonExample } from '@useoptic/shape-hash';
+import { namer, nameForCoreShapeKind } from './quick-namer';
 
 const getJsonBodyToPreview = (
   location: DiffLocation,
@@ -118,17 +119,27 @@ export async function descriptionForShapeDiff(
   //known field handler
   if (expected.isField()) {
     if (asShapeDiff.isUnmatched) {
+      let shapeName = location.isQueryParameter()
+        ? namer(Array.from(expected.expectedShapes()), (kind) => {
+            if (kind === ICoreShapeKinds.ListKind) {
+              return 'multiple';
+            } else {
+              return nameForCoreShapeKind(kind);
+            }
+          })
+        : expected.shapeName();
+
       return {
         title: [
           plain('values of '),
           code(expected.fieldKey()),
           plain('did not match'),
-          code(expected.shapeName()),
+          code(shapeName),
         ],
         location,
         changeType: IChangeType.Changed,
         diffHash: asShapeDiff.diffHash(),
-        assertion: [plain('expected'), code(expected.shapeName())],
+        assertion: [plain('expected'), code(shapeName)],
         getJsonBodyToPreview: getJsonBodyToPreview.bind(null, location),
       };
     }
