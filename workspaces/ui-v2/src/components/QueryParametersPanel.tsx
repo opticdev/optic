@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
-import { makeStyles, Tooltip } from '@material-ui/core';
-import { Help as HelpIcon } from '@material-ui/icons';
+import { makeStyles } from '@material-ui/core';
 import classnames from 'classnames';
 
 import {
