@@ -1,3 +1,8 @@
+declare global {
+  interface Window {
+    Intercom?: () => any;
+  }
+}
 import { Client } from '@useoptic/cli-client';
 import * as Sentry from '@sentry/react';
 import * as FullStory from '@fullstory/browser';
@@ -61,14 +66,11 @@ export const initialize: AnalyticsStoreProps['initialize'] = async (
     Sentry.setUser({ id: metadata.clientAgent });
   }
 
-  // @ts-ignore
   if (window.Intercom && appConfig.analytics.intercomAppId) {
-    // @ts-ignore
     window.Intercom('boot', {
       app_id: appConfig.analytics.intercomAppId,
       user_id: clientId,
     });
-    //@ts-ignore
     window.Intercom('hide');
   }
 };
