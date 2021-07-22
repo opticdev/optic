@@ -1,5 +1,5 @@
 ---
-date: "7/15/2020"
+date: 2020-07-15
 title: "Optic 8.2"
 author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"

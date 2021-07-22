@@ -68,8 +68,8 @@ Object {
       "shapeHashV1Base64": null,
     },
     "host": "localhost",
-    "method": "GET",
-    "path": "/status/500",
+    "method": "POST",
+    "path": "/get",
     "query": Object {
       "asJsonString": null,
       "asText": null,
@@ -78,10 +78,10 @@ Object {
   },
   "response": Object {
     "body": Object {
-      "contentType": "text/html; charset=utf-8",
+      "contentType": "text/html",
       "value": Object {
         "asJsonString": null,
-        "asText": "",
+        "asText": "<!DOCTYPE HTML PUBLIC \\"-//W3C//DTD HTML 3.2 Final//EN\\">\\n<title>405 Method Not Allowed</title>\\n<h1>Method Not Allowed</h1>\\n<p>The method is not allowed for the requested URL.</p>\\n",
         "shapeHashV1Base64": null,
       },
     },
@@ -90,7 +90,7 @@ Object {
       "asText": null,
       "shapeHashV1Base64": null,
     },
-    "statusCode": 500,
+    "statusCode": 405,
   },
   "tags": Array [],
   "uuid": "10",
@@ -98,374 +98,6 @@ Object {
 `;
 
 exports[`tests/ecs.ts TAP ecs to interactions > ecs-11 1`] = `
-Object {
-  "request": Object {
-    "body": Object {
-      "contentType": null,
-      "value": Object {
-        "asJsonString": null,
-        "asText": null,
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "host": "localhost",
-    "method": "PATCH",
-    "path": "/status/202",
-    "query": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-  },
-  "response": Object {
-    "body": Object {
-      "contentType": "text/html; charset=utf-8",
-      "value": Object {
-        "asJsonString": null,
-        "asText": "",
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "statusCode": 202,
-  },
-  "tags": Array [],
-  "uuid": "11",
-}
-`;
-
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-12 1`] = `
-Object {
-  "request": Object {
-    "body": Object {
-      "contentType": null,
-      "value": Object {
-        "asJsonString": null,
-        "asText": null,
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "host": "localhost",
-    "method": "POST",
-    "path": "/status/201",
-    "query": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-  },
-  "response": Object {
-    "body": Object {
-      "contentType": "text/html; charset=utf-8",
-      "value": Object {
-        "asJsonString": null,
-        "asText": "",
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "statusCode": 201,
-  },
-  "tags": Array [],
-  "uuid": "12",
-}
-`;
-
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-13 1`] = `
-Object {
-  "request": Object {
-    "body": Object {
-      "contentType": null,
-      "value": Object {
-        "asJsonString": null,
-        "asText": null,
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "host": "localhost",
-    "method": "PUT",
-    "path": "/status/302",
-    "query": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-  },
-  "response": Object {
-    "body": Object {
-      "contentType": null,
-      "value": Object {
-        "asJsonString": null,
-        "asText": "",
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "statusCode": 302,
-  },
-  "tags": Array [],
-  "uuid": "13",
-}
-`;
-
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-14 1`] = `
-Object {
-  "request": Object {
-    "body": Object {
-      "contentType": null,
-      "value": Object {
-        "asJsonString": null,
-        "asText": null,
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "host": "localhost",
-    "method": "GET",
-    "path": "/redirect/1",
-    "query": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-  },
-  "response": Object {
-    "body": Object {
-      "contentType": "text/plain; charset=utf-8",
-      "value": Object {
-        "asJsonString": null,
-        "asText": "",
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "statusCode": 404,
-  },
-  "tags": Array [],
-  "uuid": "14",
-}
-`;
-
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-15 1`] = `
-Object {
-  "request": Object {
-    "body": Object {
-      "contentType": null,
-      "value": Object {
-        "asJsonString": null,
-        "asText": null,
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "host": "localhost",
-    "method": "DELETE",
-    "path": "/delete",
-    "query": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-  },
-  "response": Object {
-    "body": Object {
-      "contentType": "application/json",
-      "value": Object {
-        "asJsonString": "{\\n  \\"args\\": {}, \\n  \\"data\\": \\"\\", \\n  \\"files\\": {}, \\n  \\"form\\": {}, \\n  \\"headers\\": {\\n    \\"Accept\\": \\"*/*\\", \\n    \\"Accept-Encoding\\": \\"gzip, deflate, br\\", \\n    \\"Content-Length\\": \\"0\\", \\n    \\"Host\\": \\"httpbin.org\\", \\n    \\"Postman-Token\\": \\"5137779a-ebd7-4201-812b-676504ad2d16\\", \\n    \\"User-Agent\\": \\"PostmanRuntime/7.28.0\\", \\n    \\"X-Amzn-Trace-Id\\": \\"Root=1-60ccb88e-3913cc66114275460caa74f9\\"\\n  }, \\n  \\"json\\": null, \\n  \\"origin\\": \\"94.194.147.150\\", \\n  \\"url\\": \\"https://httpbin.org/delete\\"\\n}\\n",
-        "asText": "{\\n  \\"args\\": {}, \\n  \\"data\\": \\"\\", \\n  \\"files\\": {}, \\n  \\"form\\": {}, \\n  \\"headers\\": {\\n    \\"Accept\\": \\"*/*\\", \\n    \\"Accept-Encoding\\": \\"gzip, deflate, br\\", \\n    \\"Content-Length\\": \\"0\\", \\n    \\"Host\\": \\"httpbin.org\\", \\n    \\"Postman-Token\\": \\"5137779a-ebd7-4201-812b-676504ad2d16\\", \\n    \\"User-Agent\\": \\"PostmanRuntime/7.28.0\\", \\n    \\"X-Amzn-Trace-Id\\": \\"Root=1-60ccb88e-3913cc66114275460caa74f9\\"\\n  }, \\n  \\"json\\": null, \\n  \\"origin\\": \\"94.194.147.150\\", \\n  \\"url\\": \\"https://httpbin.org/delete\\"\\n}\\n",
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "statusCode": 200,
-  },
-  "tags": Array [],
-  "uuid": "15",
-}
-`;
-
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-16 1`] = `
-Object {
-  "request": Object {
-    "body": Object {
-      "contentType": null,
-      "value": Object {
-        "asJsonString": null,
-        "asText": null,
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "host": "localhost",
-    "method": "GET",
-    "path": "/delete",
-    "query": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-  },
-  "response": Object {
-    "body": Object {
-      "contentType": "text/html",
-      "value": Object {
-        "asJsonString": null,
-        "asText": "<!DOCTYPE HTML PUBLIC \\"-//W3C//DTD HTML 3.2 Final//EN\\">\\n<title>405 Method Not Allowed</title>\\n<h1>Method Not Allowed</h1>\\n<p>The method is not allowed for the requested URL.</p>\\n",
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "statusCode": 405,
-  },
-  "tags": Array [],
-  "uuid": "16",
-}
-`;
-
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-17 1`] = `
-Object {
-  "request": Object {
-    "body": Object {
-      "contentType": null,
-      "value": Object {
-        "asJsonString": null,
-        "asText": null,
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "host": "localhost",
-    "method": "GET",
-    "path": "/get",
-    "query": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-  },
-  "response": Object {
-    "body": Object {
-      "contentType": "application/json",
-      "value": Object {
-        "asJsonString": "{\\n  \\"args\\": {}, \\n  \\"headers\\": {\\n    \\"Accept\\": \\"*/*\\", \\n    \\"Accept-Encoding\\": \\"gzip, deflate, br\\", \\n    \\"Host\\": \\"httpbin.org\\", \\n    \\"Postman-Token\\": \\"fc6a8ac2-dde1-42bd-b2c7-71fc8981f5b8\\", \\n    \\"User-Agent\\": \\"PostmanRuntime/7.28.0\\", \\n    \\"X-Amzn-Trace-Id\\": \\"Root=1-60ccb88e-42167c226f68878718344b64\\"\\n  }, \\n  \\"origin\\": \\"94.194.147.150\\", \\n  \\"url\\": \\"https://httpbin.org/get\\"\\n}\\n",
-        "asText": "{\\n  \\"args\\": {}, \\n  \\"headers\\": {\\n    \\"Accept\\": \\"*/*\\", \\n    \\"Accept-Encoding\\": \\"gzip, deflate, br\\", \\n    \\"Host\\": \\"httpbin.org\\", \\n    \\"Postman-Token\\": \\"fc6a8ac2-dde1-42bd-b2c7-71fc8981f5b8\\", \\n    \\"User-Agent\\": \\"PostmanRuntime/7.28.0\\", \\n    \\"X-Amzn-Trace-Id\\": \\"Root=1-60ccb88e-42167c226f68878718344b64\\"\\n  }, \\n  \\"origin\\": \\"94.194.147.150\\", \\n  \\"url\\": \\"https://httpbin.org/get\\"\\n}\\n",
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "statusCode": 200,
-  },
-  "tags": Array [],
-  "uuid": "17",
-}
-`;
-
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-2 1`] = `
-Object {
-  "request": Object {
-    "body": Object {
-      "contentType": null,
-      "value": Object {
-        "asJsonString": null,
-        "asText": null,
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "host": "localhost",
-    "method": "POST",
-    "path": "/get",
-    "query": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-  },
-  "response": Object {
-    "body": Object {
-      "contentType": "text/html",
-      "value": Object {
-        "asJsonString": null,
-        "asText": "<!DOCTYPE HTML PUBLIC \\"-//W3C//DTD HTML 3.2 Final//EN\\">\\n<title>405 Method Not Allowed</title>\\n<h1>Method Not Allowed</h1>\\n<p>The method is not allowed for the requested URL.</p>\\n",
-        "shapeHashV1Base64": null,
-      },
-    },
-    "headers": Object {
-      "asJsonString": null,
-      "asText": null,
-      "shapeHashV1Base64": null,
-    },
-    "statusCode": 405,
-  },
-  "tags": Array [],
-  "uuid": "2",
-}
-`;
-
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-3 1`] = `
 Object {
   "request": Object {
     "body": Object {
@@ -507,11 +139,11 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "3",
+  "uuid": "11",
 }
 `;
 
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-4 1`] = `
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-12 1`] = `
 Object {
   "request": Object {
     "body": Object {
@@ -553,11 +185,11 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "4",
+  "uuid": "12",
 }
 `;
 
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-5 1`] = `
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-13 1`] = `
 Object {
   "request": Object {
     "body": Object {
@@ -599,11 +231,11 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "5",
+  "uuid": "13",
 }
 `;
 
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-6 1`] = `
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-14 1`] = `
 Object {
   "request": Object {
     "body": Object {
@@ -645,11 +277,11 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "6",
+  "uuid": "14",
 }
 `;
 
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-7 1`] = `
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-15 1`] = `
 Object {
   "request": Object {
     "body": Object {
@@ -691,11 +323,11 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "7",
+  "uuid": "15",
 }
 `;
 
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-8 1`] = `
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-16 1`] = `
 Object {
   "request": Object {
     "body": Object {
@@ -737,11 +369,11 @@ Object {
     "statusCode": 200,
   },
   "tags": Array [],
-  "uuid": "8",
+  "uuid": "16",
 }
 `;
 
-exports[`tests/ecs.ts TAP ecs to interactions > ecs-9 1`] = `
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-17 1`] = `
 Object {
   "request": Object {
     "body": Object {
@@ -781,6 +413,650 @@ Object {
       "shapeHashV1Base64": null,
     },
     "statusCode": 504,
+  },
+  "tags": Array [],
+  "uuid": "17",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-18 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": "",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": undefined,
+    "method": "GET",
+    "path": "/username/map",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "application/json; charset=utf-8",
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 200,
+  },
+  "tags": Array [],
+  "uuid": "18",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-19 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": "",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": undefined,
+    "method": "GET",
+    "path": "/username/move/right",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "application/json; charset=utf-8",
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 200,
+  },
+  "tags": Array [],
+  "uuid": "19",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-2 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": "localhost",
+    "method": "GET",
+    "path": "/status/500",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "text/html; charset=utf-8",
+      "value": Object {
+        "asJsonString": null,
+        "asText": "",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 500,
+  },
+  "tags": Array [],
+  "uuid": "2",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-20 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": "",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": undefined,
+    "method": "GET",
+    "path": "/username/move/right",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "application/json; charset=utf-8",
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 400,
+  },
+  "tags": Array [],
+  "uuid": "20",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-21 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": "",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": undefined,
+    "method": "GET",
+    "path": "/username/attack/left",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "application/json; charset=utf-8",
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 400,
+  },
+  "tags": Array [],
+  "uuid": "21",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-22 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": "",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": undefined,
+    "method": "GET",
+    "path": "/username/attack/right",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "application/json; charset=utf-8",
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 200,
+  },
+  "tags": Array [],
+  "uuid": "22",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-23 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": "localhost",
+    "method": "GET",
+    "path": "/favicon.ico",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "application/json; charset=utf-8",
+      "value": Object {
+        "asJsonString": "{\\"code\\":404,\\"message\\":\\"Not found\\"}",
+        "asText": "{\\"code\\":404,\\"message\\":\\"Not found\\"}",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 404,
+  },
+  "tags": Array [],
+  "uuid": "23",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-3 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": "localhost",
+    "method": "PATCH",
+    "path": "/status/202",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "text/html; charset=utf-8",
+      "value": Object {
+        "asJsonString": null,
+        "asText": "",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 202,
+  },
+  "tags": Array [],
+  "uuid": "3",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-4 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": "localhost",
+    "method": "POST",
+    "path": "/status/201",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "text/html; charset=utf-8",
+      "value": Object {
+        "asJsonString": null,
+        "asText": "",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 201,
+  },
+  "tags": Array [],
+  "uuid": "4",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-5 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": "localhost",
+    "method": "PUT",
+    "path": "/status/302",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": "",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 302,
+  },
+  "tags": Array [],
+  "uuid": "5",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-6 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": "localhost",
+    "method": "GET",
+    "path": "/redirect/1",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "text/plain; charset=utf-8",
+      "value": Object {
+        "asJsonString": null,
+        "asText": "",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 404,
+  },
+  "tags": Array [],
+  "uuid": "6",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-7 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": "localhost",
+    "method": "DELETE",
+    "path": "/delete",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "application/json",
+      "value": Object {
+        "asJsonString": "{\\n  \\"args\\": {}, \\n  \\"data\\": \\"\\", \\n  \\"files\\": {}, \\n  \\"form\\": {}, \\n  \\"headers\\": {\\n    \\"Accept\\": \\"*/*\\", \\n    \\"Accept-Encoding\\": \\"gzip, deflate, br\\", \\n    \\"Content-Length\\": \\"0\\", \\n    \\"Host\\": \\"httpbin.org\\", \\n    \\"Postman-Token\\": \\"5137779a-ebd7-4201-812b-676504ad2d16\\", \\n    \\"User-Agent\\": \\"PostmanRuntime/7.28.0\\", \\n    \\"X-Amzn-Trace-Id\\": \\"Root=1-60ccb88e-3913cc66114275460caa74f9\\"\\n  }, \\n  \\"json\\": null, \\n  \\"origin\\": \\"94.194.147.150\\", \\n  \\"url\\": \\"https://httpbin.org/delete\\"\\n}\\n",
+        "asText": "{\\n  \\"args\\": {}, \\n  \\"data\\": \\"\\", \\n  \\"files\\": {}, \\n  \\"form\\": {}, \\n  \\"headers\\": {\\n    \\"Accept\\": \\"*/*\\", \\n    \\"Accept-Encoding\\": \\"gzip, deflate, br\\", \\n    \\"Content-Length\\": \\"0\\", \\n    \\"Host\\": \\"httpbin.org\\", \\n    \\"Postman-Token\\": \\"5137779a-ebd7-4201-812b-676504ad2d16\\", \\n    \\"User-Agent\\": \\"PostmanRuntime/7.28.0\\", \\n    \\"X-Amzn-Trace-Id\\": \\"Root=1-60ccb88e-3913cc66114275460caa74f9\\"\\n  }, \\n  \\"json\\": null, \\n  \\"origin\\": \\"94.194.147.150\\", \\n  \\"url\\": \\"https://httpbin.org/delete\\"\\n}\\n",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 200,
+  },
+  "tags": Array [],
+  "uuid": "7",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-8 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": "localhost",
+    "method": "GET",
+    "path": "/delete",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "text/html",
+      "value": Object {
+        "asJsonString": null,
+        "asText": "<!DOCTYPE HTML PUBLIC \\"-//W3C//DTD HTML 3.2 Final//EN\\">\\n<title>405 Method Not Allowed</title>\\n<h1>Method Not Allowed</h1>\\n<p>The method is not allowed for the requested URL.</p>\\n",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 405,
+  },
+  "tags": Array [],
+  "uuid": "8",
+}
+`;
+
+exports[`tests/ecs.ts TAP ecs to interactions > ecs-9 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": null,
+      "value": Object {
+        "asJsonString": null,
+        "asText": null,
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "host": "localhost",
+    "method": "GET",
+    "path": "/get",
+    "query": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "application/json",
+      "value": Object {
+        "asJsonString": "{\\n  \\"args\\": {}, \\n  \\"headers\\": {\\n    \\"Accept\\": \\"*/*\\", \\n    \\"Accept-Encoding\\": \\"gzip, deflate, br\\", \\n    \\"Host\\": \\"httpbin.org\\", \\n    \\"Postman-Token\\": \\"fc6a8ac2-dde1-42bd-b2c7-71fc8981f5b8\\", \\n    \\"User-Agent\\": \\"PostmanRuntime/7.28.0\\", \\n    \\"X-Amzn-Trace-Id\\": \\"Root=1-60ccb88e-42167c226f68878718344b64\\"\\n  }, \\n  \\"origin\\": \\"94.194.147.150\\", \\n  \\"url\\": \\"https://httpbin.org/get\\"\\n}\\n",
+        "asText": "{\\n  \\"args\\": {}, \\n  \\"headers\\": {\\n    \\"Accept\\": \\"*/*\\", \\n    \\"Accept-Encoding\\": \\"gzip, deflate, br\\", \\n    \\"Host\\": \\"httpbin.org\\", \\n    \\"Postman-Token\\": \\"fc6a8ac2-dde1-42bd-b2c7-71fc8981f5b8\\", \\n    \\"User-Agent\\": \\"PostmanRuntime/7.28.0\\", \\n    \\"X-Amzn-Trace-Id\\": \\"Root=1-60ccb88e-42167c226f68878718344b64\\"\\n  }, \\n  \\"origin\\": \\"94.194.147.150\\", \\n  \\"url\\": \\"https://httpbin.org/get\\"\\n}\\n",
+        "shapeHashV1Base64": null,
+      },
+    },
+    "headers": Object {
+      "asJsonString": null,
+      "asText": null,
+      "shapeHashV1Base64": null,
+    },
+    "statusCode": 200,
   },
   "tags": Array [],
   "uuid": "9",

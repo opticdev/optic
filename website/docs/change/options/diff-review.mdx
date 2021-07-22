@@ -1,0 +1,38 @@
+---
+title: Reviewing Diffs to Existing Endpoints
+sidebar_label: Reviewing Diffs
+slug: /change/diff-review
+---
+
+import { Paper } from '@material-ui/core';
+
+The `api status` command will let you know from the command line when Optic has seen diffs in your traffic. Running `api status --review` will open the Optic dashboard as well, so you can review these changes in detail and take the appropriate action. Diffs can be ignored if they're a transient issue that should not be documented, or they can be used to update the specification. This includes adding metadata to fields, such as whether or not a field is optional. This is all quick and easy from the Optic dashboard on the diff review page.
+
+<Paper elevation={3}>
+
+![Differences in behavior to review on some endpoints](/img/docs/change-status-diffs.png)
+
+</Paper>
+
+If you already know that you have made a matching number of changes, and don't wish to review them in detail, you may click **Approve All**, confirm your choice, and save the changes to your documentation. Even if you expect changes, we recommend reviewing them the first few times to get a feel for the interface. Clicking through an endpoint will bring you to a list of diffs for that endpoint. One will be shown at a time, with the difference in behavior detailed with sample traffic on the left and a detailed endpoint specification on the right. 
+
+The left-hand side of the diff window will have some checkboxes, which allow you to define the types and metadata (such as whether the field is optional) for the given field change. On the right, the specification will be highlighted with the proposed change.
+
+<Paper elevation={3}>
+
+![Reviewing a field that was expected to be a string, but was not present in the traffic](/img/docs/change-status-diff.png)
+
+</Paper>
+
+In this case, the left side of the diff screen shows the `priority` field was not seen in the traffic. The specification expected the field to have a value of type `string`. Beneath the sample traffic, Optic has provided two checkboxes which in this case are checked: that the `priority` field should be a `string`, and that the field is optional. The options provided and the defaults offered depend on the current specification and all of the relevant traffic seen to this endpoint during the capture.
+
+The differences can be ignored once with the **Ignore diff** button, and no changes will be made to the specification. If traffic is seen in future captures that would indicate the same specification change, it will appear in future diffs. Here, the Optic suggestions are correct: `priority` is an optional `string` field, and we'll click **Save changes** to make it part of the specification. Once endpoint diffs are all reviewed, Optic returns to the diff page.
+
+<Paper elevation={3}>
+
+![Reviewing a field that was expected to be a string, but was not present in the traffic](/img/docs/change-status-diff.png)
+
+</Paper>
+
+In this case, we reviewed all of the diffs to the `POST /api/todos` endpoint. There are still diffs to resolve or ignore to the `PATCH /api/todos/{TodoID}` endpoint. Once all endpoints have been updated or the unexpected traffic is ignored, don't forget to click **Save changes** to commit these changes to your documentation.
+

@@ -1,11 +1,10 @@
-import { BodyShapeDiff } from '../parse-diff';
+import { BodyShapeDiff, DiffLocation } from '../parse-diff';
 import { Actual, Expectation } from '../shape-diff-dsl-rust';
 import {
   CurrentSpecContext,
   IDiffDescription,
   IInteractionPreviewTab,
   IInterpretation,
-  IParsedLocation,
   IPatchChoices,
 } from '../Interfaces';
 import sortBy from 'lodash.sortby';
@@ -16,7 +15,10 @@ import {
   SetRequestBodyShape,
   SetResponseBodyShape,
   ShapedBodyDescriptor,
-} from '@useoptic/spectacle';
+  SetQueryParametersShape,
+  QueryParametersShapeDescriptor,
+  CQRSCommand,
+} from '@useoptic/optic-domain';
 
 export function rootShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,
@@ -34,6 +36,7 @@ export function rootShapeDiffInterpreter(
     copy: [],
     shapes: [],
     isField: false,
+    isQueryParam: shapeDiff.location.isQueryParameter(),
   };
 
   if (isUnmatched) {
@@ -59,12 +62,7 @@ export function rootShapeDiffInterpreter(
     previews.push({
       title: i.label,
       invalid: !expectedShapes.has(i.kind),
-      allowsExpand: true,
       interactionPointers: i.interactions,
-      ignoreRule: {
-        diffHash: shapeDiff.diffHash(),
-        examplesOfCoreShapeKinds: i.kind,
-      },
       assertion: [plain('expected'), code(expected.shapeName())],
       jsonTrailsByInteractions: i.jsonTrailsByInteractions,
     });
@@ -74,10 +72,7 @@ export function rootShapeDiffInterpreter(
   return {
     diffDescription,
     updateSpecChoices,
-    toCommands: (choices?: IPatchChoices) => {
-      if (!choices) {
-        return [];
-      }
+    toCommands: (choices: IPatchChoices): CQRSCommand[] => {
       const { commands, rootShapeId } = builderInnerShapeFromChoices(
         choices,
         expected.allowedCoreShapeKindsByShapeId(),
@@ -85,23 +80,43 @@ export function rootShapeDiffInterpreter(
         currentSpecContext
       );
 
-      return [...commands, resetBaseShape(location, rootShapeId)];
+      const resetShapeCommand = resetBaseShape(location, rootShapeId);
+
+      return resetShapeCommand ? [...commands, resetShapeCommand] : commands;
     },
     previewTabs: sortBy(previews, (i) => !i.invalid),
-    // overrideTitle?: ICopy[];
   };
 }
 
-function resetBaseShape(location: IParsedLocation, newShapeId: string) {
-  if (location.inRequest) {
+function resetBaseShape(
+  location: DiffLocation,
+  newShapeId: string
+): CQRSCommand | null {
+  const requestDescriptor = location.getRequestDescriptor();
+  const responseDescriptor = location.getResponseDescriptor();
+  const queryParametersId = location.getQueryParametersId();
+  if (requestDescriptor && requestDescriptor.requestId) {
     return SetRequestBodyShape(
-      location.inRequest.requestId!,
-      ShapedBodyDescriptor(location.inRequest.contentType!, newShapeId, false)
+      requestDescriptor.requestId,
+      ShapedBodyDescriptor(requestDescriptor.contentType, newShapeId, false)
     );
-  } else if (location.inResponse) {
+  } else if (
+    responseDescriptor &&
+    responseDescriptor.responseId &&
+    responseDescriptor.contentType
+  ) {
     return SetResponseBodyShape(
-      location.inResponse.responseId!,
-      ShapedBodyDescriptor(location.inResponse.contentType!, newShapeId, false)
+      responseDescriptor.responseId,
+      ShapedBodyDescriptor(responseDescriptor.contentType, newShapeId, false)
     );
+  } else if (queryParametersId) {
+    return SetQueryParametersShape(
+      queryParametersId,
+      QueryParametersShapeDescriptor(newShapeId)
+    );
+  } else {
+    // path_request and path_response are invalid locations that I don't believe hit this path
+    console.error('Unknown location received', location);
+    return null;
   }
 }

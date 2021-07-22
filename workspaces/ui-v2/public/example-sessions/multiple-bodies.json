@@ -1,0 +1,404 @@
+{
+  "events": [
+    {
+      "BatchCommitStarted": {
+        "batchId": "a98a5269-fd54-4239-a4fd-0be3ca4ca530",
+        "commitMessage": "Initialize specification attributes",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "unknown-session",
+          "clientCommandBatchId": "a98a5269-fd54-4239-a4fd-0be3ca4ca530",
+          "createdAt": "2021-07-14T15:46:33.287741-07:00"
+        },
+        "parentId": "root"
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "metadata",
+        "key": "id",
+        "value": "78a28c84-f30e-4972-9a2c-429cc0125eb5",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "unknown-session",
+          "clientCommandBatchId": "a98a5269-fd54-4239-a4fd-0be3ca4ca530",
+          "createdAt": "2021-07-14T15:46:33.287741-07:00"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "a98a5269-fd54-4239-a4fd-0be3ca4ca530",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "unknown-session",
+          "clientCommandBatchId": "a98a5269-fd54-4239-a4fd-0be3ca4ca530",
+          "createdAt": "2021-07-14T15:46:33.287741-07:00"
+        }
+      }
+    },
+    {
+      "BatchCommitStarted": {
+        "batchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+        "commitMessage": "123",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        },
+        "parentId": "a98a5269-fd54-4239-a4fd-0be3ca4ca530"
+      }
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "path_uhFLMNs_jV",
+        "parentPathId": "root",
+        "name": "api",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "path_AKmq2BmaeI",
+        "parentPathId": "path_uhFLMNs_jV",
+        "name": "todos",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "path_BaGsWf5tgh",
+        "parentPathId": "path_AKmq2BmaeI",
+        "name": "1",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_OhrLgc67-g",
+        "baseShapeId": "$string",
+        "parameters": { "DynamicParameterList": { "shapeParameterIds": [] } },
+        "name": "",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_zSvyDlJHqU",
+        "baseShapeId": "$object",
+        "parameters": { "DynamicParameterList": { "shapeParameterIds": [] } },
+        "name": "",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_35J9zpRase",
+        "shapeId": "shape_zSvyDlJHqU",
+        "name": "key",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_35J9zpRase",
+            "shapeId": "shape_OhrLgc67-g"
+          }
+        },
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_oRLopmXD_S",
+        "pathId": "path_BaGsWf5tgh",
+        "httpMethod": "POST",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "RequestBodySet": {
+        "requestId": "request_oRLopmXD_S",
+        "bodyDescriptor": {
+          "httpContentType": "text/html",
+          "shapeId": "shape_zSvyDlJHqU",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_4iUceRy6Xq",
+        "pathId": "path_BaGsWf5tgh",
+        "httpMethod": "POST",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_lRTpUKRTP1",
+        "baseShapeId": "$string",
+        "parameters": { "DynamicParameterList": { "shapeParameterIds": [] } },
+        "name": "",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7YfyaWkj86",
+        "baseShapeId": "$object",
+        "parameters": { "DynamicParameterList": { "shapeParameterIds": [] } },
+        "name": "",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_rqSDratxUQ",
+        "shapeId": "shape_7YfyaWkj86",
+        "name": "key",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_rqSDratxUQ",
+            "shapeId": "shape_lRTpUKRTP1"
+          }
+        },
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_GW2fKMm3hP",
+        "pathId": "path_BaGsWf5tgh",
+        "httpMethod": "POST",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "RequestBodySet": {
+        "requestId": "request_GW2fKMm3hP",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_7YfyaWkj86",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3VOX_TAGxz",
+        "baseShapeId": "$object",
+        "parameters": { "DynamicParameterList": { "shapeParameterIds": [] } },
+        "name": "",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_-xJHDfqMg5",
+        "pathId": "path_BaGsWf5tgh",
+        "httpMethod": "POST",
+        "httpStatusCode": 404,
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_-xJHDfqMg5",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_3VOX_TAGxz",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+        "eventContext": {
+          "clientId": "anon",
+          "clientSessionId": "216d336c-1702-41c1-9bab-54f230b125a9",
+          "clientCommandBatchId": "edf1f1b6-73ed-45cb-b567-f370d99e281e",
+          "createdAt": "2021-07-14T15:46:39.735079-07:00"
+        }
+      }
+    }
+  ],
+  "session": {
+    "samples": [
+      {
+        "uuid": "0532115b-2b6a-45a1-9ff5-46a29105f756",
+        "request": {
+          "host": "",
+          "method": "POST",
+          "path": "/api/todos/1",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "contentable-content",
+            "value": {
+              "shapeHashV1Base64": "CAA=",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 404,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "so-many-content-types",
+            "value": {
+              "shapeHashV1Base64": "CAA=",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "1532115b-2b6a-45a1-9ff5-46a29105f756",
+        "request": {
+          "host": "",
+          "method": "GET",
+          "path": "/api/null/endpoint",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 404,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ]
+  },
+  "examples": {}
+}

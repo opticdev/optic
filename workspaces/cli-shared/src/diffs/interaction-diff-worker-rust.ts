@@ -8,10 +8,12 @@ import fs from 'fs-extra';
 import { fork } from 'stream-fork';
 import { DiffResult } from '@useoptic/optic-domain/build/streams/diff-results';
 import path from 'path';
-import { PassThrough } from 'stream';
+import stream, { PassThrough } from 'stream';
+import util from 'util';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
 interface WorkerResult {
   results: AsyncIterable<DiffResult>;
+  onWriteComplete: Promise<void>;
 }
 
 interface WorkerConfig {
@@ -118,9 +120,12 @@ export class InteractionDiffWorkerRust {
     const inMemorySink = new PassThrough();
     const results = Streams.DiffResults.fromJSONL()(inMemorySink);
     const fsSink = fs.createWriteStream(diffsJsonlPath);
+    const finished = util.promisify(stream.finished);
+
     workerProcessOutput.pipe(fork([inMemorySink, fsSink]));
     return {
       results,
+      onWriteComplete: finished(fsSink),
     };
   }
 }

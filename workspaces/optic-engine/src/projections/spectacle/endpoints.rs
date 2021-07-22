@@ -8,12 +8,17 @@ use crate::state::shape::ShapeId;
 use crate::RfcEvent;
 use cqrs_core::{Aggregate, AggregateEvent};
 use petgraph::csr::NodeIndex;
+use petgraph::visit::EdgeRef;
 use petgraph::Direction::Incoming;
 use petgraph::Graph;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 use std::error::Error;
 use std::iter::FromIterator;
+
+fn get_endpoint_id(path_id: &str, method: &str) -> String {
+  format!("{}.{}", path_id, method.to_uppercase())
+}
 
 #[derive(Debug, Clone)]
 pub struct EndpointsProjection {
@@ -107,38 +112,38 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
       EndpointEvent::PathComponentAdded(e) => {
         projection.with_path_component(e.parent_path_id, e.path_id.clone(), e.name);
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.path_id);
+          projection.with_creation_history(c.client_command_batch_id, e.path_id);
         }
       }
       EndpointEvent::PathComponentRemoved(e) => {
         projection.without_path_component(&e.path_id);
         if let Some(c) = e.event_context {
-          projection.with_remove_history(&c.client_command_batch_id, &e.path_id);
+          projection.with_remove_history(c.client_command_batch_id, e.path_id);
         }
       }
       EndpointEvent::PathParameterAdded(e) => {
         projection.with_path_parameter(e.parent_path_id, e.path_id.clone(), e.name);
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.path_id);
+          projection.with_creation_history(c.client_command_batch_id, e.path_id);
         }
       }
       EndpointEvent::PathParameterRemoved(e) => {
         projection.without_path_component(&e.path_id);
         if let Some(c) = e.event_context {
-          projection.with_remove_history(&c.client_command_batch_id, &e.path_id);
+          projection.with_remove_history(c.client_command_batch_id, e.path_id);
         }
       }
       EndpointEvent::RequestAdded(e) => {
         projection.with_request(e.request_id.clone(), e.path_id, e.http_method);
 
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.request_id);
+          projection.with_creation_history(c.client_command_batch_id, e.request_id);
         }
       }
       EndpointEvent::RequestRemoved(e) => {
         projection.without_request(&e.request_id);
         if let Some(c) = e.event_context {
-          projection.with_remove_history(&c.client_command_batch_id, &e.request_id);
+          projection.with_remove_history(c.client_command_batch_id, e.request_id);
         }
       }
       EndpointEvent::ResponseAddedByPathAndMethod(e) => {
@@ -150,13 +155,13 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         );
 
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.response_id);
+          projection.with_creation_history(c.client_command_batch_id, e.response_id);
         }
       }
       EndpointEvent::ResponseRemoved(e) => {
         projection.without_response(&e.response_id);
         if let Some(c) = e.event_context {
-          projection.with_remove_history(&c.client_command_batch_id, &e.response_id);
+          projection.with_remove_history(c.client_command_batch_id, e.response_id);
         }
       }
       EndpointEvent::RequestBodySet(e) => {
@@ -168,14 +173,24 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         );
 
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.body_descriptor.shape_id);
+          projection.with_creation_history(c.client_command_batch_id, e.body_descriptor.shape_id);
         }
       }
       EndpointEvent::QueryParametersAdded(e) => {
-        projection.with_query_parameters(e.path_id, e.http_method, e.query_parameters_id)
+        projection.with_query_parameters(e.path_id, e.http_method, e.query_parameters_id);
       }
       EndpointEvent::QueryParametersShapeSet(e) => {
-        projection.with_query_parameters_shape(e.query_parameters_id, e.shape_descriptor);
+        projection.with_query_parameters_shape(e.query_parameters_id.clone(), e.shape_descriptor);
+        // We treat the query parameter only as created when there is a shape attached to it
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(c.client_command_batch_id, e.query_parameters_id);
+        }
+      }
+      EndpointEvent::QueryParametersRemoved(e) => {
+        projection.without_query_parameters(&e.query_parameters_id);
+        if let Some(c) = e.event_context {
+          projection.with_remove_history(c.client_command_batch_id, e.query_parameters_id);
+        }
       }
       EndpointEvent::ResponseBodySet(e) => {
         //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (response_id, http_content_type)
@@ -186,7 +201,7 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         );
 
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.body_descriptor.shape_id);
+          projection.with_creation_history(c.client_command_batch_id, e.body_descriptor.shape_id);
         }
       }
       _ => eprintln!(
@@ -335,19 +350,114 @@ impl EndpointsProjection {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
+  fn ensure_endpoint_node_index(
+    &mut self,
+    path_id: PathComponentId,
+    http_method: HttpMethod,
+  ) -> petgraph::graph::NodeIndex {
+    let endpoint_id = get_endpoint_id(&path_id, &http_method);
+    let maybe_endpoint_index = self.domain_id_to_index.get(&endpoint_id);
+
+    if let Some(endpoint_index) = maybe_endpoint_index {
+      // Unremove the endpoint - because we don't model endpoints in events, we don't have a unique id
+      // when endpoints with the same path + method are recreated
+      if let Some(Node::Endpoint(endpoint_node)) = self.graph.node_weight_mut(*endpoint_index) {
+        endpoint_node.is_removed = false;
+      }
+      *endpoint_index
+    } else {
+      // If the endpoint doesn't exist, create it
+      let path_index = self
+        .domain_id_to_index
+        .get(&path_id)
+        .expect("expected node with domain_id $path_id to exist in the graph");
+
+      let node = Node::Endpoint(EndpointNode {
+        id: endpoint_id.clone(),
+        path_id,
+        http_method,
+        is_removed: false,
+      });
+
+      let endpoint_index = self.graph.add_node(node);
+      self
+        .graph
+        .add_edge(endpoint_index, *path_index, Edge::IsChildOf);
+      self.domain_id_to_index.insert(endpoint_id, endpoint_index);
+
+      endpoint_index
+    }
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Looks to the parent node and extracts the parent endpoint id
+  fn get_endpoint_id_from_node(&self, id: &str) -> String {
+    let node_index = *self
+      .domain_id_to_index
+      .get(id)
+      .expect("expected node to exist in graph");
+
+    let endpoint_node = self
+      .graph
+      .edges_directed(node_index, petgraph::Direction::Outgoing)
+      .find_map(|parent_edge| {
+        let node = self.graph.node_weight(parent_edge.target());
+
+        if let Some(Node::Endpoint(endpoint_node)) = node {
+          Some(endpoint_node)
+        } else {
+          None
+        }
+      })
+      .expect("expect node to have a path node parent");
+
+    get_endpoint_id(&endpoint_node.path_id, &endpoint_node.http_method)
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  fn remove_endpoint_node_if_unused(&mut self, endpoint_id: &str) {
+    let endpoint_index = self
+      .domain_id_to_index
+      .get(endpoint_id)
+      .expect("expected endpoint to exist in graph");
+
+    let endpoint_node_is_unused = self
+      .graph
+      .edges_directed(*endpoint_index, petgraph::Direction::Incoming)
+      .all(|child_edge| {
+        let child_edge_index = child_edge.target();
+        let node = self
+          .graph
+          .node_weight(child_edge_index)
+          .expect("node to exist in graph");
+        match node {
+          Node::QueryParameters(QueryParametersNode {
+            is_removed: true, ..
+          }) => true,
+          Node::Request(RequestNode {
+            is_removed: true, ..
+          }) => true,
+          Node::Response(ResponseNode {
+            is_removed: true, ..
+          }) => true,
+          _ => false,
+        }
+      });
+
+    if let Some(Node::Endpoint(endpoint_node)) = self.graph.node_weight_mut(*endpoint_index) {
+      endpoint_node.is_removed = false;
+    }
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_request(
     &mut self,
     request_id: RequestId,
     path_id: PathComponentId,
     http_method: HttpMethod,
   ) {
-    let path_index = self
-      .domain_id_to_index
-      .get(&path_id)
-      .expect("expected node with domain_id $path_id to exist in the graph");
-
+    let endpoint_index = self.ensure_endpoint_node_index(path_id, http_method);
     let node = Node::Request(RequestNode {
-      http_method: http_method,
       request_id: request_id.clone(),
       is_removed: false,
     });
@@ -355,7 +465,7 @@ impl EndpointsProjection {
     let node_index = self.graph.add_node(node);
     self
       .graph
-      .add_edge(node_index, *path_index, Edge::IsChildOf);
+      .add_edge(node_index, endpoint_index, Edge::IsChildOf);
 
     self.domain_id_to_index.insert(request_id, node_index);
   }
@@ -368,6 +478,8 @@ impl EndpointsProjection {
 
     if let Some(Node::Request(request_node)) = self.graph.node_weight_mut(request_node_index) {
       request_node.is_removed = true;
+      let endpoint_id = self.get_endpoint_id_from_node(request_id);
+      self.remove_endpoint_node_if_unused(&endpoint_id);
     }
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,13 +490,9 @@ impl EndpointsProjection {
     http_method: HttpMethod,
     http_status_code: HttpStatusCode,
   ) {
-    let path_index = self
-      .domain_id_to_index
-      .get(&path_id)
-      .expect("expected node with domain_id $path_id to exist in the graph");
+    let endpoint_index = self.ensure_endpoint_node_index(path_id, http_method);
 
     let node = Node::Response(ResponseNode {
-      http_method: http_method,
       http_status_code: http_status_code,
       response_id: response_id.clone(),
       is_removed: false,
@@ -393,7 +501,7 @@ impl EndpointsProjection {
     let node_index = self.graph.add_node(node);
     self
       .graph
-      .add_edge(node_index, *path_index, Edge::IsChildOf);
+      .add_edge(node_index, endpoint_index, Edge::IsChildOf);
 
     self.domain_id_to_index.insert(response_id, node_index);
   }
@@ -406,6 +514,8 @@ impl EndpointsProjection {
 
     if let Some(Node::Response(response_node)) = self.graph.node_weight_mut(response_node_index) {
       response_node.is_removed = true;
+      let endpoint_id = self.get_endpoint_id_from_node(response_id);
+      self.remove_endpoint_node_if_unused(&endpoint_id);
     }
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -439,14 +549,10 @@ impl EndpointsProjection {
     http_method: HttpMethod,
     query_parameters_id: QueryParametersId,
   ) {
-    let path_index = self
-      .domain_id_to_index
-      .get(&path_id)
-      .expect("expected node with domain_id $path_id to exist in the graph");
+    let endpoint_index = self.ensure_endpoint_node_index(path_id, http_method);
 
     let node = Node::QueryParameters(QueryParametersNode {
       query_parameters_id: query_parameters_id.clone(),
-      http_method,
       root_shape_id: None,
       is_removed: false,
     });
@@ -454,7 +560,7 @@ impl EndpointsProjection {
     let node_index = self.graph.add_node(node);
     self
       .graph
-      .add_edge(node_index, *path_index, Edge::IsChildOf);
+      .add_edge(node_index, endpoint_index, Edge::IsChildOf);
 
     self
       .domain_id_to_index
@@ -472,10 +578,26 @@ impl EndpointsProjection {
       .expect("expected node with domain_id $request_id to exist in the graph");
 
     if let Some(Node::QueryParameters(query_node)) = self.graph.node_weight_mut(query_index) {
-      query_node.root_shape_id = Some(shape_descriptor.shape_id);
+      query_node.root_shape_id = Some(shape_descriptor.shape_id.clone());
       query_node.is_removed = shape_descriptor.is_removed;
     }
   }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  pub fn without_query_parameters(&mut self, query_parameters_id: &QueryParametersId) {
+    let query_parameters_index = *self
+      .domain_id_to_index
+      .get(query_parameters_id)
+      .expect("expected node with domain_id $path_id to exist in the graph");
+
+    if let Some(Node::QueryParameters(query_node)) =
+      self.graph.node_weight_mut(query_parameters_index)
+    {
+      query_node.is_removed = true;
+      let endpoint_id = self.get_endpoint_id_from_node(query_parameters_id);
+      self.remove_endpoint_node_if_unused(&endpoint_id);
+    }
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_response_body(
     &mut self,
@@ -515,13 +637,13 @@ impl EndpointsProjection {
     let node_index = self.graph.add_node(node);
     self.domain_id_to_index.insert(batch_id, node_index);
   }
-  pub fn with_creation_history(&mut self, batch_id: &str, created_node_id: &str) {
+  pub fn with_creation_history(&mut self, batch_id: String, created_node_id: String) {
     let created_node_index = self
       .domain_id_to_index
-      .get(created_node_id)
+      .get(&created_node_id)
       .expect("expected created_node_id to exist");
 
-    let batch_node_index_option = self.domain_id_to_index.get(batch_id);
+    let batch_node_index_option = self.domain_id_to_index.get(&batch_id);
 
     if let Some(batch_node_index) = batch_node_index_option {
       self
@@ -531,13 +653,13 @@ impl EndpointsProjection {
       eprintln!("bad implicit batch id {}", &batch_id);
     }
   }
-  pub fn with_update_history(&mut self, batch_id: &str, updated_node_id: &str) {
+  pub fn with_update_history(&mut self, batch_id: String, updated_node_id: String) {
     let updated_node_index = self
       .domain_id_to_index
-      .get(updated_node_id)
+      .get(&updated_node_id)
       .expect("expected updated_node_id to exist");
 
-    let batch_node_index_option = self.domain_id_to_index.get(batch_id);
+    let batch_node_index_option = self.domain_id_to_index.get(&batch_id);
 
     if let Some(batch_node_index) = batch_node_index_option {
       self
@@ -547,13 +669,13 @@ impl EndpointsProjection {
       eprintln!("bad implicit batch id {}", &batch_id);
     }
   }
-  pub fn with_remove_history(&mut self, batch_id: &str, removed_node_id: &str) {
+  pub fn with_remove_history(&mut self, batch_id: String, removed_node_id: String) {
     let removed_node_index = self
       .domain_id_to_index
-      .get(removed_node_id)
+      .get(&removed_node_id)
       .expect("expected removed_node_id to exist");
 
-    let batch_node_index_option = self.domain_id_to_index.get(batch_id);
+    let batch_node_index_option = self.domain_id_to_index.get(&batch_id);
 
     if let Some(batch_node_index) = batch_node_index_option {
       self
@@ -573,6 +695,7 @@ pub type AbsolutePathPattern = String;
 #[serde(tag = "type", content = "data")]
 pub enum Node {
   Path(PathNode),
+  Endpoint(EndpointNode),
   Request(RequestNode),
   Response(ResponseNode),
   QueryParameters(QueryParametersNode),
@@ -600,8 +723,16 @@ pub struct PathNode {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct RequestNode {
+pub struct EndpointNode {
+  path_id: PathComponentId,
   http_method: HttpMethod,
+  id: String,
+  is_removed: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RequestNode {
   request_id: RequestId,
   is_removed: bool,
 }
@@ -610,7 +741,6 @@ pub struct RequestNode {
 #[serde(rename_all = "camelCase")]
 pub struct QueryParametersNode {
   query_parameters_id: String,
-  http_method: HttpMethod,
   root_shape_id: Option<ShapeId>,
   is_removed: bool,
 }
@@ -618,7 +748,6 @@ pub struct QueryParametersNode {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ResponseNode {
-  http_method: HttpMethod,
   http_status_code: HttpStatusCode,
   response_id: ResponseId,
   is_removed: bool,

@@ -1,10 +1,10 @@
 import { IPendingEndpoint } from '<src>/pages/diffs/contexts/SharedDiffState';
-import { IPath } from '<src>/hooks/usePathsHook';
+import { IPath } from '<src>/types';
 import {
   AddPathComponent,
   AddPathParameter,
   CQRSCommand,
-} from '@useoptic/spectacle';
+} from '@useoptic/optic-domain';
 import { CurrentSpecContext } from '<src>/lib/Interfaces';
 
 export function generatePathCommands(

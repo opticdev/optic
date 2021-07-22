@@ -46,6 +46,7 @@ pub enum EndpointCommand {
   // Query parameters
   AddQueryParameters(AddQueryParameters),
   SetQueryParametersShape(SetQueryParametersShape),
+  RemoveQueryParameters(RemoveQueryParameters),
 
   // Headers
   AddHeaderParameter(AddHeaderParameter),
@@ -100,6 +101,12 @@ impl EndpointCommand {
         shape_id,
         is_removed,
       },
+    })
+  }
+
+  pub fn remove_query_parameters(query_parameters_id: QueryParametersId) -> EndpointCommand {
+    EndpointCommand::RemoveQueryParameters(RemoveQueryParameters {
+      query_parameters_id,
     })
   }
 
@@ -350,6 +357,12 @@ pub struct SetQueryParametersShape {
   pub shape_descriptor: QueryParametersShapeDescriptor,
 }
 
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RemoveQueryParameters {
+  pub query_parameters_id: QueryParametersId,
+}
+
 // Headers
 // -------
 
@@ -572,6 +585,17 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
 
         vec![EndpointEvent::from(
           endpoint_events::QueryParametersShapeSet::from(command),
+        )]
+      }
+
+      EndpointCommand::RemoveQueryParameters(command) => {
+        validation.require(
+          validation.query_parameters_id_exists(&command.query_parameters_id),
+          "query parameters must exist to be removed",
+        )?;
+
+        vec![EndpointEvent::from(
+          endpoint_events::QueryParametersRemoved::from(command),
         )]
       }
 

@@ -18,10 +18,10 @@ import {
   SpectacleInput,
   StartDiffResult,
 } from '../index';
-import { AsyncTools, Streams } from '@useoptic/optic-domain';
+import { AsyncTools, Streams, IHttpInteraction } from '@useoptic/optic-domain';
 import {
   ILearnedBodies,
-  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+  IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { HttpInteraction } from '@useoptic/optic-domain/build/streams/http-interactions';
 import { defaultIgnoreRules } from '@useoptic/cli-config/build/helpers/default-ignore-rules';
@@ -109,10 +109,7 @@ class InMemoryInteractionsRepository implements IOpticInteractionsRepository {
 
   async listById(id: string): Promise<any[]> {
     const interactions = this.map.get(id);
-    if (!interactions) {
-      throw new Error(`no interactions found for capture id ${id}`);
-    }
-    return interactions;
+    return interactions || [];
   }
 
   async set(id: string, interactions: any[]) {
@@ -139,11 +136,17 @@ export class InMemoryCapturesService implements IOpticCapturesService {
   async loadInteraction(
     captureId: string,
     pointer: string
-  ): Promise<any | undefined> {
+  ): Promise<IHttpInteraction> {
     const interactions = await this.dependencies.interactionsRepository.listById(
       captureId
     );
-    return interactions.find((i) => i.uuid === pointer);
+    const interaction = interactions.find((i) => i.uuid === pointer);
+    if (!interaction) {
+      throw new Error(
+        `Could not find interaction ${pointer} in capture ${captureId}`
+      );
+    }
+    return interaction;
   }
 
   async listCaptures(): Promise<ICapture[]> {
@@ -219,7 +222,7 @@ interface InMemoryDiffServiceDependencies {
 export class InMemoryDiffService implements IOpticDiffService {
   constructor(private dependencies: InMemoryDiffServiceDependencies) {}
 
-  async learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+  async learnShapeDiffAffordances(): Promise<IAffordanceTrailsDiffHashMap> {
     const events = await this.dependencies.specRepository.listEvents();
     const spec = this.dependencies.opticEngine.spec_from_events(
       JSON.stringify(events)
@@ -360,7 +363,10 @@ export class InMemoryDiff {
         let results = opticEngine.diff_interaction(
           JSON.stringify(interaction),
           spec,
-          {}
+          {
+            includeQueryParams:
+              process.env.REACT_APP_FF_DIFF_QUERY_PARAMETERS === 'true',
+          }
         );
 
         let parsedResults = JSON.parse(results);

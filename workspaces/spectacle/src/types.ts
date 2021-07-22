@@ -3,12 +3,11 @@ import { EventEmitter } from 'events';
 
 import {
   ILearnedBodies,
-  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+  IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 import { endpoints, shapes } from '@useoptic/graph-lib';
-
-import { CQRSCommand } from './commands';
-import { ContributionsProjection } from './helpers';
+import { CommandGenerator, ContributionsProjection } from './helpers';
 import { IOpticCommandContext } from './in-memory';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +90,10 @@ export interface StartDiffResult {
 export interface IOpticCapturesService {
   listCaptures(): Promise<ICapture[]>;
 
-  loadInteraction(captureId: string, pointer: string): Promise<any | undefined>;
+  loadInteraction(
+    captureId: string,
+    pointer: string
+  ): Promise<IHttpInteraction>;
 
   startDiff(diffId: string, captureId: string): Promise<StartDiffResult>;
 }
@@ -122,7 +124,7 @@ export interface IOpticDiffService {
     newPathCommands: any[]
   ): Promise<ILearnedBodies>;
 
-  learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash>;
+  learnShapeDiffAffordances(): Promise<IAffordanceTrailsDiffHashMap>;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -182,12 +184,6 @@ export interface SpectacleInput<
   operationName?: string;
 }
 
-export type EndpointProjection = {
-  commands: {
-    remove: CQRSCommand[];
-  };
-};
-
 export type GraphQLContext = {
   spectacleContext: () => {
     opticContext: IOpticContext;
@@ -195,9 +191,6 @@ export type GraphQLContext = {
     shapeQueries: shapes.GraphQueries;
     shapeViewerProjection: any;
     contributionsProjection: ContributionsProjection;
-    getEndpointProjection: (
-      pathId: string,
-      method: string
-    ) => EndpointProjection;
+    commandGenerator: CommandGenerator;
   };
 };

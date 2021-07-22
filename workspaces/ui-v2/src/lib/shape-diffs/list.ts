@@ -3,8 +3,6 @@ import { BodyShapeDiff } from '../parse-diff';
 import { Actual, Expectation } from '../shape-diff-dsl-rust';
 import {
   CurrentSpecContext,
-  ICoreShapeInnerParameterNames,
-  ICoreShapeKinds,
   IDiffDescription,
   IInteractionPreviewTab,
   IInterpretation,
@@ -13,10 +11,13 @@ import {
 import { code, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { builderInnerShapeFromChoices } from './build-inner-shape';
 import {
+  ICoreShapeInnerParameterNames,
+  ICoreShapeKinds,
   ProviderInShape,
   SetParameterShape,
   ShapeProvider,
-} from '@useoptic/spectacle';
+  CQRSCommand,
+} from '@useoptic/optic-domain';
 
 export function listItemShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,
@@ -31,6 +32,7 @@ export function listItemShapeDiffInterpreter(
     copy: [],
     shapes: [],
     isField: false,
+    isQueryParam: shapeDiff.location.isQueryParameter(),
   };
 
   if (isUnmatched) {
@@ -52,12 +54,7 @@ export function listItemShapeDiffInterpreter(
       previews.push({
         title: i.label,
         invalid: !expectedShapes.has(i.kind),
-        allowsExpand: true,
         interactionPointers: i.interactions,
-        ignoreRule: {
-          diffHash: shapeDiff.diffHash(),
-          examplesOfCoreShapeKinds: i.kind,
-        },
         assertion: [plain('expected'), code(expected.shapeName())],
         jsonTrailsByInteractions: i.jsonTrailsByInteractions,
       });
@@ -66,7 +63,7 @@ export function listItemShapeDiffInterpreter(
   ////////////////
   return {
     diffDescription: diffDescription,
-    toCommands(choices?: IPatchChoices): any[] {
+    toCommands(choices: IPatchChoices): CQRSCommand[] {
       if (!choices) {
         return [];
       }

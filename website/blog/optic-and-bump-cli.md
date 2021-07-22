@@ -1,5 +1,5 @@
 ---
-date: "12/21/2020"
+date: 2020-12-21
 title: "Generating Documentation with Optic and Bump in your CI/CD pipeline"
 author: Lou Manglass
 author_image_url: "/img/team/lou.jpg"
@@ -37,7 +37,7 @@ Bump CLI takes in an API specification file, such as an OpenAPI file, and sends 
 
 ## Automating Bump Documentation with Optic Scripts
 
-Looking good! Now, let's make this as simple as possible. Right now, there's multiple steps and any one could cause issues. If I forget to generate the new OpenAPI specification, I could be working with outdated information. Also, do I really want to have to remember where my generated files are located? Optic Scrips will handle this for us. Not only does this minimize what I need to keep in mind when developing my project, it sets me up to automate this later in my CI/CD pipeline. I've set up the following [Optic Script](https://www.useoptic.com/docs/faqs-and-troubleshooting/scripts) in my `optic.yml`file, which now looks like this.
+Looking good! Now, let's make this as simple as possible. Right now, there's multiple steps and any one could cause issues. If I forget to generate the new OpenAPI specification, I could be working with outdated information. Also, do I really want to have to remember where my generated files are located? Optic Scrips will handle this for us. Not only does this minimize what I need to keep in mind when developing my project, it sets me up to automate this later in my CI/CD pipeline. I've set up the following [Optic Script](https://www.useoptic.com/reference/optic-yaml/scripts) in my `optic.yml`file, which now looks like this.
 
 ```
 # optic.yml

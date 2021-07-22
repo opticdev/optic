@@ -6,13 +6,14 @@ import {
   OpticBlueReadable,
   secondary,
 } from '<src>/styles';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import { ICopyRender } from './ICopyRender';
 import WarningIcon from '@material-ui/icons/Warning';
 import CheckIcon from '@material-ui/icons/Check';
+import HelpIcon from '@material-ui/icons/Help';
 
-import { Tab, Tabs, Typography, withStyles } from '@material-ui/core';
+import { Tab, Tabs, Typography, Tooltip, withStyles } from '@material-ui/core';
 import InteractionBodyViewerAllJS from './IDiffExampleViewer';
 import {
   BodyPreview,
@@ -21,6 +22,7 @@ import {
   IPatchChoices,
 } from '<src>/lib/Interfaces';
 import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 import { BuildSpecPatch } from './BuildSpecPatch';
 import { useInteraction } from '<src>/hooks/useInteraction';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
@@ -31,8 +33,8 @@ type IDiffCardProps = {
   approve: () => void;
   ignore: () => void;
   handled: boolean;
-  specChoices?: IPatchChoices;
-  updatedSpecChoices: (choices?: IPatchChoices) => void;
+  specChoices: IPatchChoices;
+  updatedSpecChoices: (choices: IPatchChoices) => void;
 };
 
 export function DiffCard({
@@ -105,7 +107,7 @@ export function DiffCard({
                   assertion={diffDescription.assertion}
                   trailsAreCorrect={!tab.invalid}
                   jsonTrails={tab.jsonTrailsByInteractions}
-                  getJsonBodyToPreview={(interaction: any) => {
+                  getJsonBodyToPreview={(interaction: IHttpInteraction) => {
                     const body = diffDescription.getJsonBodyToPreview(
                       interaction
                     );
@@ -119,6 +121,20 @@ export function DiffCard({
             }
           })}
         </div>
+
+        {diffDescription.location.isQueryParameter() && (
+          <div className={classes.queryTooltipContainer}>
+            <Tooltip title="key=value pairs delimited by &">
+              <div className={classes.queryTooltip}>
+                Query string parsing
+                <HelpIcon
+                  fontSize="small"
+                  className={classes.queryTooltipIcon}
+                />
+              </div>
+            </Tooltip>
+          </div>
+        )}
       </div>
 
       <div className={classes.suggestionRegion}>
@@ -142,7 +158,7 @@ function RenderExampleBody({
   description,
   assertion,
 }: {
-  getJsonBodyToPreview: (interaction: any) => BodyPreview;
+  getJsonBodyToPreview: (interaction: IHttpInteraction) => BodyPreview;
   interactionPointer: string;
   jsonTrails: { [key: string]: IJsonTrail[] };
   trailsAreCorrect: boolean;
@@ -150,8 +166,9 @@ function RenderExampleBody({
   assertion: any;
 }) {
   const { captureId } = useSharedDiffContext();
+  // TODO add loading and error states to useInteraction
   const { data } = useInteraction(captureId, interactionPointer);
-  const actualBody = useMemo<any | undefined>(() => {
+  const actualBody = useMemo<BodyPreview | undefined>(() => {
     if (data) {
       return getJsonBodyToPreview(data);
     } else {
@@ -259,6 +276,25 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'white',
     padding: 8,
     paddingRight: 0,
+  },
+
+  queryTooltipContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0.5),
+    fontFamily: 'Ubuntu Mono',
+    fontSize: theme.typography.pxToRem(12),
+    color: 'rgba(255, 255, 255, 0.5)',
+  },
+
+  queryTooltip: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+
+  queryTooltipIcon: {
+    margin: theme.spacing(0, 1),
+    fontSize: theme.typography.pxToRem(13),
   },
 }));
 

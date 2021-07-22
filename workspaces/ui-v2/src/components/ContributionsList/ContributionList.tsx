@@ -1,25 +1,15 @@
 import React, { FC } from 'react';
 
-import { IShapeRenderer } from '<src>/components';
-
-type Contribution = {
-  id: string;
-  contributionKey: string;
-  value: string;
-  endpointId: string;
-  depth: number;
-  shapes: IShapeRenderer[];
-  name: string;
-};
+import { IFieldDetails } from '<src>/components';
 
 type ContributionsListProps = {
-  contributions: Contribution[];
-  renderContribution: (contribution: Contribution) => React.ReactElement;
+  fieldDetails: IFieldDetails[];
+  renderField: (contribution: IFieldDetails) => React.ReactElement;
 };
 
 export const ContributionsList: FC<ContributionsListProps> = ({
-  contributions,
-  renderContribution,
+  fieldDetails,
+  renderField,
 }) => {
-  return <>{contributions.map(renderContribution)}</>;
+  return <>{fieldDetails.map(renderField)}</>;
 };

@@ -23,13 +23,87 @@ import {
   allowedDiffTypes,
   allowedDiffTypesKeys,
   CurrentSpecContext,
-  DiffInRequest,
-  DiffInResponse,
-  IParsedLocation,
   isBodyShapeDiff,
 } from './Interfaces';
-import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
+import {
+  locationForTrails,
+  LocationDescriptor,
+} from '@useoptic/cli-shared/build/diffs/trail-parsers';
 
+export class DiffLocation {
+  constructor(
+    public pathId: string,
+    public method: string,
+    private descriptor: LocationDescriptor
+  ) {}
+
+  isQueryParameter(): boolean {
+    return (
+      this.descriptor.type === 'query' || this.descriptor.type === 'path_query'
+    );
+  }
+
+  isRequest(): boolean {
+    return (
+      this.descriptor.type === 'request' ||
+      this.descriptor.type === 'path_request'
+    );
+  }
+
+  isResponse(): boolean {
+    return (
+      this.descriptor.type === 'response' ||
+      this.descriptor.type === 'path_response'
+    );
+  }
+
+  getQueryParametersId(): string | null {
+    return this.descriptor.type === 'query'
+      ? this.descriptor.queryParametersId
+      : null;
+  }
+
+  getRequestDescriptor(): {
+    requestId?: string; // requestId only lives on descriptor.type === 'request'
+    contentType: string;
+  } | null {
+    if (this.descriptor.type === 'request') {
+      return {
+        requestId: this.descriptor.requestId,
+        contentType: this.descriptor.contentType,
+      };
+    } else if (this.descriptor.type === 'path_request') {
+      return {
+        contentType: this.descriptor.contentType,
+      };
+    } else {
+      return null;
+    }
+  }
+
+  getResponseDescriptor(): {
+    responseId?: string; // responseId only lives on descriptor.type === 'responseId'
+    contentType?: string; // content type is nullable on path_response ????
+    statusCode: number;
+  } | null {
+    if (this.descriptor.type === 'response') {
+      return {
+        responseId: this.descriptor.responseId,
+        contentType: this.descriptor.contentType,
+        statusCode: this.descriptor.statusCode,
+      };
+    } else if (this.descriptor.type === 'path_response') {
+      return {
+        contentType: this.descriptor.contentType,
+        statusCode: this.descriptor.statusCode,
+      };
+    } else {
+      return null;
+    }
+  }
+}
+
+// TODO QPB rewrite ParsedDiff to have better type safety and better utility functions
 export class ParsedDiff {
   diffType: string;
   diffHash: string;
@@ -72,55 +146,56 @@ export class ParsedDiff {
   }
 
   affectsADocumentedEndpoint(currentSpecContext: CurrentSpecContext) {
-    const location = locationForTrails(
-      this.requestsTrail(),
-      this.interactionTrail(),
-      currentSpecContext.currentSpecRequests,
-      currentSpecContext.currentSpecResponses
-    );
+    const location = this.location(currentSpecContext);
+    if (!location) {
+      return false;
+    }
 
     const allEndpoints = currentSpecContext.currentSpecEndpoints;
     const isDocumented = allEndpoints.find(
-      (i: any) => i.pathId === location!.pathId && i.method === location!.method
+      (i: any) => i.pathId === location.pathId && i.method === location.method
     );
 
-    return location && location.pathId && Boolean(isDocumented);
+    return location.pathId && !!isDocumented;
   }
 
-  location(currentSpecContext: CurrentSpecContext): IParsedLocation {
+  location(currentSpecContext: CurrentSpecContext): DiffLocation {
+    const endpoints = currentSpecContext.currentSpecEndpoints;
     const location = locationForTrails(
       this.requestsTrail(),
       this.interactionTrail(),
-      currentSpecContext.currentSpecRequests,
-      currentSpecContext.currentSpecResponses
-    );
-
-    invariant(
-      Boolean(location!.pathId),
-      'Diffs handled by the UI should have a known endpoint'
+      endpoints.map((endpoint) => ({
+        pathId: endpoint.pathId,
+        method: endpoint.method,
+        query: endpoint.query,
+        requests: endpoint.requests
+          .filter((request) => !!request.body)
+          .map((request) => ({
+            requestId: request.requestId,
+            contentType: request.body!.contentType,
+          })),
+        responses: Object.values(endpoint.responsesByStatusCode).flatMap(
+          (responses) =>
+            responses
+              .filter((response) => !!response.body)
+              .map((response) => ({
+                responseId: response.responseId,
+                statusCode: response.statusCode,
+                contentType: response.body!.contentType,
+              }))
+        ),
+      }))
     );
 
     if (!location) {
-      invariant(false, 'no location found for diff');
+      throw new Error('no location found for diff');
     }
 
-    return {
-      pathId: location.pathId,
-      method: location.method,
-      inRequest: DiffInRequest(this.diffType)
-        ? {
-            contentType: location.contentType,
-            requestId: location.requestId,
-          }
-        : undefined,
-      inResponse: DiffInResponse(this.diffType)
-        ? {
-            statusCode: location.statusCode!,
-            contentType: location.contentType,
-            responseId: location.responseId,
-          }
-        : undefined,
-    };
+    return new DiffLocation(
+      location.pathId,
+      location.method,
+      location.descriptor
+    );
   }
 
   isNewRegionDiff(): boolean {
@@ -143,6 +218,11 @@ export class ParsedDiff {
 
     const asWithShapeDiff = this.serialized_diff as IDiffWithShapeDiff;
 
+    const queryParameterBodyShapeDiff: IShapeDiffResult | undefined =
+      // @ts-ignore
+      asWithShapeDiff[allowedDiffTypes.UnmatchedQueryParametersShape.asString]
+        ?.shapeDiffResult;
+
     const requestBodyShapeDiff: IShapeDiffResult | undefined =
       // @ts-ignore
       asWithShapeDiff[allowedDiffTypes.UnmatchedRequestBodyShape.asString]
@@ -156,20 +236,14 @@ export class ParsedDiff {
     return new BodyShapeDiff(
       this,
       this.serialized_diff,
-      (requestBodyShapeDiff || responseBodyShapeDiff)!,
+      // TODO QPB - remove the ! here
+      (queryParameterBodyShapeDiff ||
+        requestBodyShapeDiff ||
+        responseBodyShapeDiff)!,
       this.interactions,
       this.location(currentSpecContext)
     );
   }
-}
-
-export function parseDiffsArray(
-  array: [IDiff, string[], string][]
-): ParsedDiff[] {
-  return array.map(
-    ([rawDiff, pointers, fingerprint]) =>
-      new ParsedDiff(rawDiff, pointers, fingerprint)
-  );
 }
 
 export class BodyShapeDiff {
@@ -185,7 +259,7 @@ export class BodyShapeDiff {
     private diff: IDiff,
     private shapeDiff: IShapeDiffResult,
     public interactionPointers: string[],
-    public location: IParsedLocation
+    public location: DiffLocation
   ) {
     // @ts-ignore
     this.shapeTrail = (shapeDiff['UnmatchedShape']?.shapeTrail ||

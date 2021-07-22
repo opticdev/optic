@@ -8,8 +8,6 @@ import ReactMarkdown from 'react-markdown';
 import {
   EndpointName,
   PathParameters,
-  IShapeRenderer,
-  JsonLike,
   PageLayout,
   FullWidth,
   FieldOrParameter,
@@ -19,6 +17,7 @@ import {
   ContributionsList,
   convertShapeToQueryParameters,
   HttpBodyPanel,
+  HttpBodySelector,
   Panel,
 } from '<src>/components';
 import { useChangelogPages } from '<src>/components/navigation/Routes';
@@ -132,25 +131,7 @@ const ChangelogRootComponent: FC<
                   />
                 }
               >
-                <PathParameters
-                  parameters={parameterizedPathParts}
-                  renderField={(param) => {
-                    const alwaysAString: IShapeRenderer = {
-                      shapeId: param.id + 'shape',
-                      jsonType: JsonLike.STRING,
-                      value: undefined,
-                    };
-                    return (
-                      <FieldOrParameter
-                        key={param.id}
-                        name={param.name}
-                        shapes={[alwaysAString]}
-                        depth={0}
-                        value={param.description}
-                      />
-                    );
-                  }}
-                />
+                <PathParameters parameters={parameterizedPathParts} />
                 <div
                   style={{
                     marginTop: 10,
@@ -160,8 +141,8 @@ const ChangelogRootComponent: FC<
                 >
                   <EndpointTOC
                     query={thisEndpoint.query}
-                    requests={thisEndpoint.requestBodies}
-                    responses={thisEndpoint.responseBodies}
+                    requests={thisEndpoint.requests}
+                    responsesByStatusCode={thisEndpoint.responsesByStatusCode}
                   />
                 </div>
               </Panel>
@@ -170,10 +151,7 @@ const ChangelogRootComponent: FC<
         </div>
 
         {thisEndpoint.query && (
-          <div
-            className={classes.bodyContainer}
-            id={thisEndpoint.query.queryParametersId}
-          >
+          <div className={classes.bodyContainer} id="query-parameters">
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Query Parameters</h6>
               <ReactMarkdown
@@ -188,18 +166,21 @@ const ChangelogRootComponent: FC<
                   endpointId={endpointId}
                   changesSinceBatchCommit={batchId}
                 >
-                  {(contributions) => (
+                  {(fields) => (
                     <ContributionsList
-                      renderContribution={(contribution) => (
+                      renderField={(field) => (
                         <FieldOrParameter
-                          key={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          value={contribution.value}
+                          key={
+                            field.contribution.id +
+                            field.contribution.contributionKey
+                          }
+                          name={field.name}
+                          shapes={field.shapes}
+                          depth={field.depth}
+                          value={field.contribution.value}
                         />
                       )}
-                      contributions={contributions}
+                      fieldDetails={fields}
                     />
                   )}
                 </ContributionFetcher>
@@ -220,112 +201,151 @@ const ChangelogRootComponent: FC<
           </div>
         )}
 
-        {thisEndpoint.requestBodies.map((requestBody) => (
-          <div
-            className={classes.bodyContainer}
-            id={requestBody.requestId}
-            key={requestBody.requestId}
-          >
+        {thisEndpoint.requests.length > 0 && (
+          <div className={classes.bodyContainer} id="request-body">
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Request Body</h6>
-              <ReactMarkdown
-                className={classes.contents}
-                source={requestBody.description}
-              />
             </div>
-            <div className={classes.bodyDetails}>
-              <div>
-                <ContributionFetcher
-                  rootShapeId={requestBody.rootShapeId}
-                  endpointId={endpointId}
-                  changesSinceBatchCommit={batchId}
-                >
-                  {(contributions) => (
-                    <ContributionsList
-                      renderContribution={(contribution) => (
-                        <FieldOrParameter
-                          key={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          value={contribution.value}
-                        />
-                      )}
-                      contributions={contributions}
+
+            <HttpBodySelector
+              items={thisEndpoint.requests}
+              getDisplayName={(request) =>
+                request.body?.contentType || 'No Body'
+              }
+            >
+              {(request) => (
+                <>
+                  <div className={classes.bodyContributionContainer}>
+                    <ReactMarkdown
+                      className={classes.contents}
+                      source={request.description}
                     />
+                  </div>
+                  {request.body ? (
+                    <div className={classes.bodyDetails}>
+                      <div>
+                        <ContributionFetcher
+                          rootShapeId={request.body.rootShapeId}
+                          endpointId={endpointId}
+                          changesSinceBatchCommit={batchId}
+                        >
+                          {(fields) => (
+                            <ContributionsList
+                              renderField={(field) => (
+                                <FieldOrParameter
+                                  key={
+                                    field.contribution.id +
+                                    field.contribution.contributionKey
+                                  }
+                                  name={field.name}
+                                  shapes={field.shapes}
+                                  depth={field.depth}
+                                  value={field.contribution.value}
+                                />
+                              )}
+                              fieldDetails={fields}
+                            />
+                          )}
+                        </ContributionFetcher>
+                      </div>
+                      <div className={classes.panel}>
+                        <ShapeFetcher
+                          rootShapeId={request.body.rootShapeId}
+                          changesSinceBatchCommit={batchId}
+                        >
+                          {(shapes) => (
+                            <HttpBodyPanel
+                              shapes={shapes}
+                              location={request.body!.contentType}
+                            />
+                          )}
+                        </ShapeFetcher>
+                      </div>
+                    </div>
+                  ) : (
+                    <>No Body Request</>
                   )}
-                </ContributionFetcher>
-              </div>
-              <div className={classes.panel}>
-                <ShapeFetcher
-                  rootShapeId={requestBody.rootShapeId}
-                  changesSinceBatchCommit={batchId}
-                >
-                  {(shapes) => (
-                    <HttpBodyPanel
-                      shapes={shapes}
-                      location={requestBody.contentType}
-                    />
-                  )}
-                </ShapeFetcher>
-              </div>
-            </div>
+                </>
+              )}
+            </HttpBodySelector>
           </div>
-        ))}
-        {thisEndpoint.responseBodies.map((responseBody) => (
-          <div
-            className={classes.bodyContainer}
-            id={responseBody.responseId}
-            key={responseBody.responseId}
-          >
-            <div className={classes.bodyHeaderContainer}>
-              <h6 className={classes.bodyHeader}>
-                {responseBody.statusCode} Response
-              </h6>
-              <ReactMarkdown
-                className={classes.contents}
-                source={responseBody.description}
-              />
-            </div>
-            <div className={classes.bodyDetails}>
-              <div>
-                <ContributionFetcher
-                  rootShapeId={responseBody.rootShapeId}
-                  endpointId={endpointId}
-                  changesSinceBatchCommit={batchId}
-                >
-                  {(contributions) => (
-                    <ContributionsList
-                      renderContribution={(contribution) => (
-                        <FieldOrParameter
-                          key={contribution.id}
-                          name={contribution.name}
-                          shapes={contribution.shapes}
-                          depth={contribution.depth}
-                          value={contribution.value}
-                        />
+        )}
+        {selectors
+          .getResponsesInSortedOrder(thisEndpoint.responsesByStatusCode)
+          .map(([statusCode, responses]) => (
+            <div
+              className={classes.bodyContainer}
+              id={statusCode}
+              key={statusCode}
+            >
+              <div className={classes.bodyHeaderContainer}>
+                <h6 className={classes.bodyHeader}>{statusCode} Response</h6>
+              </div>
+              <HttpBodySelector
+                items={responses}
+                getDisplayName={(response) =>
+                  response.body?.contentType || 'No Body'
+                }
+              >
+                {(response) => (
+                  <>
+                    <div className={classes.bodyContributionContainer}>
+                      <ReactMarkdown
+                        className={classes.contents}
+                        source={response.description}
+                      />
+                    </div>
+                    <div className={classes.bodyDetails}>
+                      {response.body ? (
+                        <>
+                          <div>
+                            <ContributionFetcher
+                              rootShapeId={response.body.rootShapeId}
+                              endpointId={endpointId}
+                              changesSinceBatchCommit={batchId}
+                            >
+                              {(fields) => (
+                                <ContributionsList
+                                  renderField={(field) => (
+                                    <FieldOrParameter
+                                      key={
+                                        field.contribution.id +
+                                        field.contribution.contributionKey
+                                      }
+                                      name={field.name}
+                                      shapes={field.shapes}
+                                      depth={field.depth}
+                                      value={field.contribution.value}
+                                    />
+                                  )}
+                                  fieldDetails={fields}
+                                />
+                              )}
+                            </ContributionFetcher>
+                          </div>
+                          <div className={classes.panel}>
+                            <ShapeFetcher
+                              rootShapeId={response.body.rootShapeId}
+                              changesSinceBatchCommit={batchId}
+                            >
+                              {(shapes) => (
+                                <HttpBodyPanel
+                                  shapes={shapes}
+                                  location={response.body!.contentType}
+                                />
+                              )}
+                            </ShapeFetcher>
+                          </div>
+                        </>
+                      ) : (
+                        <>No Body Response</>
                       )}
-                      contributions={contributions}
-                    />
-                  )}
-                </ContributionFetcher>
-              </div>
-              <div className={classes.panel}>
-                <ShapeFetcher
-                  rootShapeId={responseBody.rootShapeId}
-                  changesSinceBatchCommit={batchId}
-                >
-                  {(shapes) => (
-                    <HttpBodyPanel
-                      shapes={shapes}
-                      location={responseBody.contentType}
-                    />
-                  )}
-                </ShapeFetcher>
-              </div>
+                    </div>
+                  </>
+                )}
+              </HttpBodySelector>
             </div>
-          </div>
-        ))}
+          ))}
       </FullWidth>
     </>
   );
@@ -353,7 +373,8 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '100%',
   },
-  bodyHeaderContainer: {
+  bodyHeaderContainer: {},
+  bodyContributionContainer: {
     marginBottom: theme.spacing(2),
   },
   bodyHeader: {

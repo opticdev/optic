@@ -1,61 +1,25 @@
-# https://taskfile.dev
-
 version: '3'
 
 tasks:
-  default:
-    cmds:
-      - task --list
-    silent: true
-
-  check-credentials:
-    cmds:
-      - aws-mfa --profile parent
-    silent: true
-
   deploy:
-    desc: Deploys the web site (see --summary for detailed usage)
-    summary: |
-      Deploys the web site. Depends on having your AWS profiles set up properly with aws-mfa. This task deploys:
-
-      - to environment AWS_PROFILE, default is {{.AWS_PROFILE}}
-      - when DRY_RUN is false, default is {{.DRY_RUN}}
-    cmds:
-      - bin/deploy
-    deps:
-      - check-credentials
+    desc: Deploy the website to S3
+    deps: [install-deps]
+    cmds: [bin/deploy]
     env:
-      AWS_PROFILE: '{{default "staging" .AWS_PROFILE}}'
+      APP_ENV: '{{default "staging" .APP_ENV}}'
       DRY_RUN: '{{default "true" .DRY_RUN}}'
+      SKIP_VERIFY: '{{default "false" .SKIP_VERIFY}}'
 
-  deploy:staging:
-    desc: Dry run of a deploy to staging
-    cmds: 
-      - task: deploy
-        vars:
-          AWS_PROFILE: staging
-          DRY_RUN: true
+  install-deps:
+    desc: Install dependencies
+    cmds: [yarn install]
 
-  deploy:staging:doit:
-    desc: Deploy to staging
-    cmds: 
-      - task: deploy
-        vars:
-          AWS_PROFILE: staging
-          DRY_RUN: false  
+  build:
+    desc: Build the website
+    deps: [install-deps]
+    cmds: [yarn build]
 
-  deploy:prod:
-    desc: Dry run of a deploy to production
-    cmds: 
-      - task: deploy
-        vars:
-          AWS_PROFILE: production
-          DRY_RUN: true
-
-  deploy:prod:doit:
-    desc: Deploy to production
-    cmds: 
-      - task: deploy
-        vars:
-          AWS_PROFILE: production
-          DRY_RUN: false  
+  start:
+    desc: Run the website locally
+    deps: [install-deps]
+    cmds: [yarn start]

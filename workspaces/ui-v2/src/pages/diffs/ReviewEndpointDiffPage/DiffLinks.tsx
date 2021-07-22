@@ -16,26 +16,29 @@ export function DiffLinks({
   const classes = useStyles();
   return (
     <List>
-      {/* TODO figure out why diffDescription can be nullable */}
-      {allDiffs.map(
-        (diff, i) =>
-          diff.diffDescription && (
-            <React.Fragment key={diff.diffDescription.diffHash}>
-              <ListSubheader className={classes.locationHeader}>
-                {diff.diffDescription.location.inQuery
-                  ? 'Query Parameters'
-                  : diff.diffDescription.location.inRequest
-                  ? `Request Body ${diff.diffDescription.location.inRequest.contentType}`
-                  : diff.diffDescription.location.inResponse
-                  ? `${diff.diffDescription.location.inResponse.statusCode} Response ${diff.diffDescription.location.inResponse.contentType}`
-                  : 'Unknown location'}
-              </ListSubheader>
-              <ListItem button onClick={() => setSelectedDiff(i)}>
-                <ICopyRender variant="" copy={diff.diffDescription.title} />
-              </ListItem>
-            </React.Fragment>
-          )
-      )}
+      {allDiffs.map((diff, i) => {
+        const { location, diffHash, title } = diff.diffDescription;
+        const isQueryParameter = location.isQueryParameter();
+        const requestDescriptor = location.getRequestDescriptor();
+        const responseDescriptor = location.getResponseDescriptor();
+
+        return (
+          <React.Fragment key={diffHash}>
+            <ListSubheader className={classes.locationHeader}>
+              {isQueryParameter
+                ? 'Query Parameters'
+                : requestDescriptor
+                ? `Request Body ${requestDescriptor.contentType}`
+                : responseDescriptor
+                ? `${responseDescriptor.statusCode} Response ${responseDescriptor.contentType}`
+                : 'Unknown location'}
+            </ListSubheader>
+            <ListItem button onClick={() => setSelectedDiff(i)}>
+              <ICopyRender variant="" copy={title} />
+            </ListItem>
+          </React.Fragment>
+        );
+      })}
     </List>
   );
 }

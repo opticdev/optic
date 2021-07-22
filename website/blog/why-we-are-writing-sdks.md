@@ -1,5 +1,5 @@
 ---
-date: "06/11/2021"
+date: 2021-06-11
 title: "Why We Are Writing SDKs"
 author: Mike Elsmore
 author_url: "https://github.com/ukmadlz"
@@ -21,7 +21,7 @@ Firstly, the idea behind these isn’t to be able to interact with Optic's Cloud
 With that out of the way, let’s take a look at what we have so far, it’s all very work in progress so please pass along your feedback so we can make it just what you want/need sooner rather than later.
 
 Firstly we put together a specification of what should be contained in the SDK, we’ve published this on [Notion](https://www.notion.so/useoptic/Optic-SDK-Specification-ff4d7ba6f0444c9eb0862a6d5748d707) for now, please give it a look and add your comments.
-What this specification tries to achieve is a language agnostic flow of what the SDK could do, from giving a point of configuration, through to what it captures, the format it sends in, and where it sends the captured data. 
+What this specification tries to achieve is a language agnostic flow of what the SDK could do, from giving a point of configuration, through to what it captures, the format it sends in, and where it sends the captured data.
 
 Currently we have a work in progress Node SDK on GitHub (but not published to NPM) at [https://github.com/opticdev/optic-node/tree/main/sdk](https://github.com/opticdev/optic-node/tree/main/sdk), and this example just shows a working implementation of our SDK specification.
 ## But this isn’t simpler than before?

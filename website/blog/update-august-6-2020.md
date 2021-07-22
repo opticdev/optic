@@ -1,5 +1,5 @@
 ---
-date: "8/6/2020"
+date: 2020-08-06
 title: "Speeding towards Optic 9"
 author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"

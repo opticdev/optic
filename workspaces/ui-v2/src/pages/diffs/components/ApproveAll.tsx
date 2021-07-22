@@ -19,7 +19,6 @@ export default function ApproveAll(props: { disabled?: boolean }) {
   const { context, approveCommandsForDiff } = useSharedDiffContext();
 
   const diffsGroupedByEndpoints = context.results.diffsGroupedByEndpoint;
-  console.log(diffsGroupedByEndpoints);
 
   const allShapeDiffs = useMemo(
     () => diffsGroupedByEndpoints.flatMap((i) => i.shapeDiffs),
@@ -55,7 +54,7 @@ export default function ApproveAll(props: { disabled?: boolean }) {
     );
     [...shapeDiffs.results, ...newRegionDiffs.results].forEach((i) => {
       approveCommandsForDiff(
-        i.diffDescription?.diffHash!,
+        i.diffDescription.diffHash,
         i.toCommands(i.updateSpecChoices)
       );
     });

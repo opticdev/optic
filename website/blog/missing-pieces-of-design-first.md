@@ -1,5 +1,5 @@
 ---
-date: "6/16/2021"
+date: 2021-06-16
 title: "The Missing Pieces of Design First Workflows"
 author: Stephen Mizell
 author_url: "https://github.com/smizell"

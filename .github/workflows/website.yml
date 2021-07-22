@@ -1,0 +1,67 @@
+name: Website
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - .github/workflows/website.yml
+      - website/**
+  push:
+    branches:
+      - release
+      - develop
+    paths:
+      - .github/workflows/website.yml
+      - website/**
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+
+      - name: Set APP_ENV
+        run: |
+          branch=${GITHUB_REF##*/}
+          if [[ "$branch" =~ ^(develop|release)$ ]]
+          then
+            echo "Deploying to Production..."
+            echo "APP_ENV=production" >> $GITHUB_ENV
+          else
+            echo "Deploying to Staging..."
+            echo "APP_ENV=staging" >> $GITHUB_ENV
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # v1.4.4
+        with:
+          node-version: "14.x"
+
+      - name: Install Task
+        run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@32d908adfb55576ba0c59f3c557058e80b5194c3 # v1.5.3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # if we're deploying to staging, we need to configure AWS credentials for that account
+      - name: Configure staging AWS credentials
+        uses: aws-actions/configure-aws-credentials@32d908adfb55576ba0c59f3c557058e80b5194c3 # v1.5.3
+        if: env.APP_ENV == 'staging'
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_STAGING_CI_ROLE_ARN }}
+          role-duration-seconds: 900 # 15m, minimum
+          role-session-name: GithubActionStagingDeploy
+
+      - run: task website:deploy
+        env:
+          DRY_RUN: "false"
+          SKIP_VERIFY: "true"

@@ -1,5 +1,5 @@
 ---
-date: "9/23/2020"
+date: 2020-09-09
 title: "Building a Better API Specification"
 author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"

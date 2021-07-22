@@ -50,19 +50,20 @@ const appConfig: OpticAppConfig = {
       segmentToken: process.env.REACT_APP_SEGMENT_LOCAL_UI,
       fullStoryOrgId: process.env.REACT_APP_FULLSTORY_ORG,
       sentryUrl: process.env.REACT_APP_SENTRY_URL,
+      intercomAppId: process.env.REACT_APP_INTERCOM_APP_ID,
     },
     backendApi: {
       domain:
-        (window.location.hostname.indexOf('useoptic.com') >= 0
-          ? process.env.REACT_APP_PROD_API_BASE
-          : process.env.REACT_APP_STAGING_API_BASE) || 'https://api.o3c.info',
+        (process.env.NODE_ENV === 'development'
+          ? process.env.REACT_APP_STAGING_API_BASE
+          : process.env.REACT_APP_PROD_API_BASE) || 'https://api.o3c.info',
     },
     sharing: {
       enabled: true,
       specViewerDomain:
         (process.env.NODE_ENV === 'development'
-          ? process.env.REACT_APP_PROD_SPEC_VIEWER_BASE
-          : process.env.REACT_APP_STAGING_SPEC_VIEWER_BASE) ||
+          ? process.env.REACT_APP_STAGING_SPEC_VIEWER_BASE
+          : process.env.REACT_APP_PROD_SPEC_VIEWER_BASE) ||
         'https://spec.o3c.info',
     },
   },

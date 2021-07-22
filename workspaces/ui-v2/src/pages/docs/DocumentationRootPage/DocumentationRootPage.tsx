@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Box, List, LinearProgress, Typography } from '@material-ui/core';
 
 import { CenteredColumn, PageLayout } from '<src>/components';
@@ -14,6 +14,7 @@ import { IEndpoint } from '<src>/types';
 
 import { DocsPageAccessoryNavigation } from '../components';
 import { EndpointRow } from './EndpointRow';
+import { useAnalytics } from '<src>/contexts/analytics';
 
 export const DocumentationRootPageWithDocsNav: FC = () => (
   <PageLayout AccessoryNavigation={DocsPageAccessoryNavigation}>
@@ -22,6 +23,7 @@ export const DocumentationRootPageWithDocsNav: FC = () => (
 );
 
 export function DocumentationRootPage() {
+  const analytics = useAnalytics();
   const endpointsState = useAppSelector((state) => state.endpoints.results);
   const isEditing = useAppSelector(
     (state) => state.documentationEdits.isEditing
@@ -44,7 +46,9 @@ export function DocumentationRootPage() {
   );
 
   const groupedEndpoints = useGroupedEndpoints(filteredEndpoints);
-
+  useEffect(() => {
+    analytics.documentationPageLoaded();
+  }, [analytics]);
   const tocKeys = Object.keys(groupedEndpoints).sort();
   const onKeyPress = useRunOnKeypress(
     () => {

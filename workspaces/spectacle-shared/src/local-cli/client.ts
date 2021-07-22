@@ -18,9 +18,10 @@ import {
 } from '@useoptic/spectacle/build/in-memory';
 import {
   ILearnedBodies,
-  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+  IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IApiCliConfig } from '@useoptic/cli-config';
+import { IHttpInteraction } from '@useoptic/optic-domain';
 import { EventEmitter } from 'events';
 
 export class LocalCliSpectacle implements IForkableSpectacle {
@@ -37,9 +38,7 @@ export class LocalCliSpectacle implements IForkableSpectacle {
     return new InMemorySpectacle(opticContext, []);
   }
 
-  async mutate<Result, Input = {}>(
-    options: SpectacleInput<Input>
-  ): Promise<Result> {
+  mutate: IForkableSpectacle['mutate'] = async (options) => {
     // send query to local cli-server
     const response = await JsonHttpClient.postJson(
       `${this.baseUrl}/spectacle`,
@@ -47,14 +46,12 @@ export class LocalCliSpectacle implements IForkableSpectacle {
     );
     this.eventEmitter.emit('update');
     return response;
-  }
+  };
 
-  async query<Result, Input = {}>(
-    options: SpectacleInput<Input>
-  ): Promise<Result> {
+  query: IForkableSpectacle['query'] = (options) => {
     // send query to local cli-server
     return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
-  }
+  };
 
   registerUpdateEvent<T extends (...args: any) => any>(fn: T) {
     this.eventEmitter.on('update', fn);
@@ -94,13 +91,16 @@ export class LocalCliCapturesService implements IOpticCapturesService {
   async loadInteraction(
     captureId: string,
     pointer: string
-  ): Promise<any | undefined> {
+  ): Promise<IHttpInteraction> {
     const response = await JsonHttpClient.getJson(
       `${this.dependencies.baseUrl}/captures/${captureId}/interactions/${pointer}`
     );
-    if (response.interaction) {
-      return response.interaction;
+    if (!response.interaction) {
+      throw new Error(
+        `Could not find interaction ${pointer} in capture ${captureId}`
+      );
     }
+    return response.interaction;
   }
 
   async startDiff(diffId: string, captureId: string): Promise<StartDiffResult> {
@@ -115,6 +115,8 @@ export class LocalCliCapturesService implements IOpticCapturesService {
         captureId,
       },
     });
+    // This assumes that the onComplete implementation in the cli-server has completed, and that
+    // the fsWriteSink has completed, so that we can read the correct commands
     const onComplete = Promise.resolve(
       new LocalCliDiffService({ ...this.dependencies, diffId, captureId })
     );
@@ -126,7 +128,7 @@ export class LocalCliCapturesService implements IOpticCapturesService {
 export class LocalCliDiffService implements IOpticDiffService {
   constructor(private dependencies: LocalCliDiffServiceDependencies) {}
 
-  async learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+  async learnShapeDiffAffordances(): Promise<IAffordanceTrailsDiffHashMap> {
     const result = await JsonHttpClient.postJson(
       `${this.dependencies.baseUrl}/captures/${this.dependencies.captureId}/trail-values`,
       {

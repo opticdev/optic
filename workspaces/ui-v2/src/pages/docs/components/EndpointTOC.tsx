@@ -2,14 +2,15 @@ import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { getReasonPhrase } from 'http-status-codes';
 import { List, ListItem, Typography } from '@material-ui/core';
+import { selectors } from '<src>/store';
 import { SubtleGreyBackground } from '<src>/styles';
-import { IQueryParameters, IRequestBody, IResponseBody } from '<src>/types';
+import { IQueryParameters, IRequest, IEndpoint } from '<src>/types';
 import { goToAnchor } from '<src>/utils';
 
 export type EndpointTOCProps = {
   query: IQueryParameters | null;
-  requests: IRequestBody[];
-  responses: IResponseBody[];
+  requests: IRequest[];
+  responsesByStatusCode: IEndpoint['responsesByStatusCode'];
 };
 
 function Code({ value }: { value: string }) {
@@ -33,7 +34,7 @@ export function EndpointTOC(props: EndpointTOCProps) {
     <List dense>
       {props.query === null &&
       props.requests.length === 0 &&
-      props.responses.length === 0 ? (
+      Object.keys(props.responsesByStatusCode).length === 0 ? (
         <Typography className={classes.none}>No bodies documented.</Typography>
       ) : null}
 
@@ -41,39 +42,50 @@ export function EndpointTOC(props: EndpointTOCProps) {
         <EndpointTOCRow
           label={'Query Parameters'}
           anchorLink="query-parameters"
-          detail={<>consumes query string</>}
+          detail={<></>}
         />
       )}
 
-      {props.requests.map((request) => (
+      {props.requests.length > 0 && (
         <EndpointTOCRow
-          key={request.requestId}
           label={'Request Body'}
-          anchorLink={request.requestId}
+          anchorLink={'request-body'}
           detail={
             <>
-              consumes <Code value={request.contentType} />
+              consumes{' '}
+              {props.requests.length > 1 ? (
+                <>{props.requests.length} content types</>
+              ) : (
+                <Code
+                  value={props.requests[0].body?.contentType || 'No Body'}
+                />
+              )}
             </>
           }
         />
-      ))}
+      )}
 
-      {props.responses.map((body, index) => {
-        return (
-          <EndpointTOCRow
-            label={`${getReasonPhrase(body.statusCode)} - ${
-              body.statusCode
-            } Response`}
-            anchorLink={body.responseId}
-            key={index}
-            detail={
-              <>
-                produces <Code value={body.contentType} />
-              </>
-            }
-          />
-        );
-      })}
+      {selectors
+        .getResponsesInSortedOrder(props.responsesByStatusCode)
+        .map(([statusCode, responses]) => {
+          return (
+            <EndpointTOCRow
+              label={`${getReasonPhrase(statusCode)} - ${statusCode} Response`}
+              anchorLink={statusCode}
+              key={statusCode}
+              detail={
+                <>
+                  produces{' '}
+                  {responses.length > 1 ? (
+                    <>{responses.length} content types</>
+                  ) : (
+                    <Code value={responses[0].body?.contentType || 'No Body'} />
+                  )}
+                </>
+              }
+            />
+          );
+        })}
     </List>
   );
 }
@@ -112,7 +124,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyItems: 'center',
     color: 'rgb(79, 86, 107)',
-    minWidth: 130,
     fontSize: 13,
     fontWeight: 600,
     justifyContent: 'flex-end',
