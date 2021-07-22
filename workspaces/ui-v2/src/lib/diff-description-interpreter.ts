@@ -24,7 +24,7 @@ const getJsonBodyToPreview = (
   if (body) {
     const { shapeHashV1Base64, asText, asJsonString } = body;
 
-    if (asJsonString) {
+    if (asJsonString && !location.isQueryParameter()) {
       return {
         asJson: JSON.parse(asJsonString),
         asText: null,
@@ -33,7 +33,7 @@ const getJsonBodyToPreview = (
       };
     }
 
-    if (shapeHashV1Base64) {
+    if (shapeHashV1Base64 && !location.isQueryParameter()) {
       return {
         asJson: toJsonExample(shapeHashV1Base64),
         asText: null,
