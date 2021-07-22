@@ -1,14 +1,15 @@
-declare global {
-  interface Window {
-    Intercom?: () => any;
-  }
-}
 import { Client } from '@useoptic/cli-client';
 import * as Sentry from '@sentry/react';
 import * as FullStory from '@fullstory/browser';
 import { LogLevel } from '@sentry/types';
 import { AnalyticsStoreProps } from '../AnalyticsStore';
 import { getOrSetAgentFromLocalStorage } from '../utils';
+
+declare global {
+  interface Window {
+    Intercom?: () => any;
+  }
+}
 
 const packageJson = require('../../../../package.json');
 const clientId = `local_cli_${packageJson.version}`;
