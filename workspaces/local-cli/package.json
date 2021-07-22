@@ -49,7 +49,7 @@
     "lodash.sortby": "^4.7.0",
     "nice-try": "^2.0.1",
     "pad-left": "^2.1.0",
-    "react-dev-utils": "^10.0.0",
+    "react-dev-utils": "^11.0.4",
     "slugify": "^1.4.0",
     "strip-ansi": "^6.0.0",
     "tslib": "^1",

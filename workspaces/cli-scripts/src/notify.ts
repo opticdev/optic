@@ -5,7 +5,7 @@ function run(url: string, icon: string) {
     title: 'Observed Unexpected API Behavior',
     message: 'Click here to review the diff in Optic',
     icon,
-    timeout: 7,
+    timeout: 7000,
     open: url,
     wait: true,
   });
