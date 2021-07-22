@@ -11,12 +11,10 @@ Tap.test('ecs to interactions', async (test) => {
   const inputDir = Path.join(__dirname, '../fixtures/ecs-examples');
   const examples = Fs.readdirSync(
     Path.join(__dirname, '../fixtures/ecs-examples')
-  ).map((i) => require(Path.join(inputDir, i)));
+  ).map((i) => [Path.basename(i, '.json'), require(Path.join(inputDir, i))]);
 
-  examples.forEach((i, index) => {
-    test.matchSnapshot(
-      ecsToHttpInteraction(i, (index + 1).toString()),
-      'ecs-' + (index + 1).toString()
-    );
+  examples.forEach((example) => {
+    const [name, value] = example;
+    test.matchSnapshot(ecsToHttpInteraction(value, name), `ecs-${name}`);
   });
 });

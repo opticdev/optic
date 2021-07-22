@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
-import { makeStyles, Tooltip } from '@material-ui/core';
-import { Help as HelpIcon } from '@material-ui/icons';
+import { makeStyles } from '@material-ui/core';
 import classnames from 'classnames';
 
 import {
@@ -10,7 +9,12 @@ import {
   ChangedYellowBackground,
   RemovedRedBackground,
 } from '<src>/styles';
-import { IFieldRenderer, IShapeRenderer, ShapeRenderer } from './ShapeRenderer';
+import {
+  IFieldRenderer,
+  IShapeRenderer,
+  ShapeRenderer,
+  JsonLike,
+} from './ShapeRenderer';
 import { Panel } from './Panel';
 
 type QueryParameters = Record<string, IFieldRenderer>;
@@ -33,6 +37,19 @@ export const convertShapeToQueryParameters = (
   }
 
   for (const field of shapes[0].asObject.fields) {
+    let isArray = field.shapeChoices.findIndex(
+      (choice) => choice.jsonType === JsonLike.ARRAY
+    );
+
+    if (isArray > -1) {
+      field.additionalAttributes = ['multiple'];
+      if (field.shapeChoices.length > 1) {
+        field.shapeChoices.splice(isArray, 1);
+      } else {
+        field.shapeChoices = field.shapeChoices[isArray].asArray!.shapeChoices;
+      }
+    }
+
     queryParameters[field.name] = field;
   }
 
@@ -44,16 +61,7 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
 }) => {
   const classes = useStyles();
   return (
-    <Panel
-      header={
-        <Tooltip title="?key=value1&key=value2 is treated as an array of key=[value1, value2]">
-          <div className={classes.queryTooltipContainer}>
-            Query string parsing strategy
-            <HelpIcon fontSize="small" className={classes.queryTooltipIcon} />
-          </div>
-        </Tooltip>
-      }
-    >
+    <Panel header={<span>query string</span>}>
       {Object.entries(parameters).map(([key, field]) => (
         <div
           className={classnames(classes.queryComponentContainer, [
@@ -65,8 +73,16 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
           <div className={classes.queryKey}>
             {key}
             {!field.required && (
-              <span className={classes.optional}> (optional) </span>
+              <span className={classes.attribute}> (optional) </span>
             )}
+
+            {field.additionalAttributes &&
+              field.additionalAttributes.map((attribute) => (
+                <span key={attribute} className={classes.attribute}>
+                  {' '}
+                  ({attribute}){' '}
+                </span>
+              ))}
           </div>
           <div className={classes.shapeContainer}>
             <ShapeRenderer showExamples={false} shapes={field.shapeChoices} />
@@ -101,7 +117,7 @@ const useStyles = makeStyles((theme) => ({
   shapeContainer: {
     flexGrow: 1,
   },
-  optional: {
+  attribute: {
     fontSize: theme.typography.fontSize - 1,
     fontFamily: FontFamilyMono,
     fontWeight: 400,

@@ -1,4 +1,9 @@
-import { IEndpoint, IEndpointWithChanges, ChangeType } from '<src>/types';
+import {
+  IEndpoint,
+  IEndpointWithChanges,
+  ChangeType,
+  IResponse,
+} from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
 import { RootState } from '../root';
@@ -44,5 +49,13 @@ export const getEndpoint = ({
 
   return state.endpoints.results.data?.endpoints.find(
     (endpoint) => getEndpointId(endpoint) === endpointId
+  );
+};
+
+export const getResponsesInSortedOrder = (
+  responses: IEndpoint['responsesByStatusCode']
+): [string, IResponse[]][] => {
+  return Object.entries(responses).sort(
+    ([statusCode1], [statusCode2]) => Number(statusCode1) - Number(statusCode2)
   );
 };

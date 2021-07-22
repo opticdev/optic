@@ -15,6 +15,12 @@ module.exports = function (context, options) {
           {
             tagName: 'script',
             attributes: {
+              src: `https://platform.twitter.com/widgets.js`,
+            },
+          },
+          {
+            tagName: 'script',
+            attributes: {
               src: `window['_fs_debug'] = false;
 window['_fs_host'] = 'fullstory.com';
 window['_fs_script'] = 'edge.fullstory.com/s/fs.js';

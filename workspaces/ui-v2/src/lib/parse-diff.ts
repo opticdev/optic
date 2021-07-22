@@ -161,10 +161,31 @@ export class ParsedDiff {
   }
 
   location(currentSpecContext: CurrentSpecContext): DiffLocation {
+    const endpoints = currentSpecContext.currentSpecEndpoints;
     const location = locationForTrails(
       this.requestsTrail(),
       this.interactionTrail(),
-      currentSpecContext.currentSpecEndpoints
+      endpoints.map((endpoint) => ({
+        pathId: endpoint.pathId,
+        method: endpoint.method,
+        query: endpoint.query,
+        requests: endpoint.requests
+          .filter((request) => !!request.body)
+          .map((request) => ({
+            requestId: request.requestId,
+            contentType: request.body!.contentType,
+          })),
+        responses: Object.values(endpoint.responsesByStatusCode).flatMap(
+          (responses) =>
+            responses
+              .filter((response) => !!response.body)
+              .map((response) => ({
+                responseId: response.responseId,
+                statusCode: response.statusCode,
+                contentType: response.body!.contentType,
+              }))
+        ),
+      }))
     );
 
     if (!location) {

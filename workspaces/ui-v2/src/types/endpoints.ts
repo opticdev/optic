@@ -18,6 +18,7 @@ export interface IPath {
 }
 
 export interface IEndpoint {
+  id: string;
   pathId: string;
   method: string;
   purpose: string;
@@ -26,8 +27,9 @@ export interface IEndpoint {
   pathParameters: IPathParameter[];
   isRemoved: boolean;
   query: IQueryParameters | null;
-  requestBodies: IRequestBody[];
-  responseBodies: IResponseBody[];
+  requests: IRequest[];
+  // Grouped by status code
+  responsesByStatusCode: Record<number, IResponse[]>;
 }
 
 export interface IEndpointWithChanges extends IEndpoint {
@@ -39,23 +41,31 @@ export interface IQueryParameters {
   rootShapeId: string;
   isRemoved: boolean;
   description: string;
-}
-
-export interface IRequestBody {
-  requestId: string;
-  contentType: string;
-  rootShapeId: string;
+  endpointId: string;
   pathId: string;
   method: string;
-  description: string;
 }
 
-export interface IResponseBody {
+export interface IRequest {
+  requestId: string;
+  description: string;
+  endpointId: string;
+  pathId: string;
+  method: string;
+  body: IBody | null;
+}
+
+export interface IResponse {
   responseId: string;
   statusCode: number;
-  contentType: string;
-  rootShapeId: string;
+  endpointId: string;
   pathId: string;
   method: string;
   description: string;
+  body: IBody | null;
+}
+
+export interface IBody {
+  contentType: string;
+  rootShapeId: string;
 }

@@ -8,6 +8,7 @@ import {
   ShapeFetcher,
   QueryParametersPanel,
   HttpBodyPanel,
+  HttpBodySelector,
   convertShapeToQueryParameters,
   Panel,
 } from '<src>/components';
@@ -80,8 +81,8 @@ export const EndpointDocumentationPane: FC<
         >
           <EndpointTOC
             query={thisEndpoint.query}
-            requests={thisEndpoint.requestBodies}
-            responses={thisEndpoint.responseBodies}
+            requests={thisEndpoint.requests}
+            responsesByStatusCode={thisEndpoint.responsesByStatusCode}
           />
         </div>
       </Panel>
@@ -92,7 +93,7 @@ export const EndpointDocumentationPane: FC<
           targetLocation={highlightedLocation}
           expectedLocation={Location.Query}
         >
-          <div id={thisEndpoint.query.queryParametersId}>
+          <div id="query-parameters">
             <h6 className={classes.bodyHeader}>Query Parameters</h6>
             <div className={classes.bodyDetails}>
               <ShapeFetcher
@@ -110,65 +111,91 @@ export const EndpointDocumentationPane: FC<
         </HighlightedLocation>
       )}
 
-      {thisEndpoint.requestBodies.map((requestBody) => (
-        <React.Fragment key={requestBody.requestId}>
-          <HighlightedLocation
-            className={classes.bodyContainer}
-            targetLocation={highlightedLocation}
-            contentType={requestBody.contentType}
-            expectedLocation={Location.Request}
-          >
-            <div id={requestBody.requestId}>
-              <h6 className={classes.bodyHeader}>Request Body</h6>
-              <div className={classes.bodyDetails}>
-                <ShapeFetcher
-                  rootShapeId={requestBody.rootShapeId}
-                  changesSinceBatchCommit={lastBatchCommit}
-                >
-                  {(shapes) => (
-                    <HttpBodyPanel
-                      shapes={shapes}
-                      location={`Request Body ${requestBody.contentType}`}
-                    />
-                  )}
-                </ShapeFetcher>
-              </div>
+      {thisEndpoint.requests.length > 0 && (
+        <HighlightedLocation
+          className={classes.bodyContainer}
+          targetLocation={highlightedLocation}
+          expectedLocation={Location.Request}
+        >
+          <div id="request-body">
+            <h6 className={classes.bodyHeader}>Request Body</h6>
+            <div className={classes.bodyDetails}>
+              <HttpBodySelector
+                items={thisEndpoint.requests}
+                getDisplayName={(request) =>
+                  request.body?.contentType || 'No Body'
+                }
+              >
+                {(request) =>
+                  request.body ? (
+                    <ShapeFetcher
+                      rootShapeId={request.body.rootShapeId}
+                      changesSinceBatchCommit={lastBatchCommit}
+                    >
+                      {(shapes) => (
+                        <HttpBodyPanel
+                          shapes={shapes}
+                          // Typescript cannot infer through render props for some reason
+                          location={`Request Body ${request.body!.contentType}`}
+                        />
+                      )}
+                    </ShapeFetcher>
+                  ) : (
+                    <div>No Body Request</div>
+                  )
+                }
+              </HttpBodySelector>
             </div>
-          </HighlightedLocation>
-        </React.Fragment>
-      ))}
-      {thisEndpoint.responseBodies.map((responseBody) => {
-        return (
-          <React.Fragment key={responseBody.responseId}>
-            <HighlightedLocation
-              className={classes.bodyContainer}
-              targetLocation={highlightedLocation}
-              contentType={responseBody.contentType}
-              statusCode={responseBody.statusCode}
-              expectedLocation={Location.Response}
-            >
-              <div id={responseBody.responseId}>
-                <h6 className={classes.bodyHeader}>
-                  {responseBody.statusCode} response
-                </h6>
-                <div className={classes.bodyDetails}>
-                  <ShapeFetcher
-                    rootShapeId={responseBody.rootShapeId}
-                    changesSinceBatchCommit={lastBatchCommit}
-                  >
-                    {(shapes) => (
-                      <HttpBodyPanel
-                        shapes={shapes}
-                        location={`${responseBody.statusCode} response ${responseBody.contentType}`}
-                      />
-                    )}
-                  </ShapeFetcher>
+          </div>
+        </HighlightedLocation>
+      )}
+
+      {selectors
+        .getResponsesInSortedOrder(thisEndpoint.responsesByStatusCode)
+        .map(([statusCode, responses]) => {
+          return (
+            <React.Fragment key={statusCode}>
+              <HighlightedLocation
+                className={classes.bodyContainer}
+                targetLocation={highlightedLocation}
+                statusCode={Number(statusCode)}
+                expectedLocation={Location.Response}
+              >
+                <div id={statusCode}>
+                  <h6 className={classes.bodyHeader}>{statusCode} response</h6>
+                  <div className={classes.bodyDetails}>
+                    <HttpBodySelector
+                      items={responses}
+                      getDisplayName={(response) =>
+                        response.body?.contentType || 'No Body'
+                      }
+                    >
+                      {(response) =>
+                        response.body ? (
+                          <ShapeFetcher
+                            rootShapeId={response.body.rootShapeId}
+                            changesSinceBatchCommit={lastBatchCommit}
+                          >
+                            {(shapes) => (
+                              <HttpBodyPanel
+                                shapes={shapes}
+                                location={`${response.statusCode} response ${
+                                  response.body!.contentType
+                                }`}
+                              />
+                            )}
+                          </ShapeFetcher>
+                        ) : (
+                          <div>No Body Request</div>
+                        )
+                      }
+                    </HttpBodySelector>
+                  </div>
                 </div>
-              </div>
-            </HighlightedLocation>
-          </React.Fragment>
-        );
-      })}
+              </HighlightedLocation>
+            </React.Fragment>
+          );
+        })}
     </FullWidth>
   );
 };

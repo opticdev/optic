@@ -1,18 +1,17 @@
 import { IRequestSpecTrail } from './request-spec-trail';
 import { IInteractionTrail } from './interaction-trail';
 
-// This is a subset of IEndpoint in ui-v2
 type EndpointForTrails = {
   pathId: string;
   method: string;
   query: {
     queryParametersId: string;
   } | null;
-  requestBodies: {
+  requests: {
     requestId: string;
     contentType: string;
   }[];
-  responseBodies: {
+  responses: {
     responseId: string;
     statusCode: number;
     contentType: string;
@@ -68,11 +67,11 @@ export function locationForTrails(
     let contentType = '';
     const endpoint = endpoints.find(
       (endpoint) =>
-        !!endpoint.requestBodies.find((requestBody) => {
-          if (requestBody.requestId === requestId) {
-            contentType = requestBody.contentType;
+        !!endpoint.requests.find((request) => {
+          if (request.requestId === requestId) {
+            contentType = request.contentType;
           }
-          return requestBody.requestId === requestId;
+          return request.requestId === requestId;
         })
     );
 
@@ -104,12 +103,12 @@ export function locationForTrails(
     let statusCode = 0;
     const endpoint = endpoints.find(
       (endpoint) =>
-        !!endpoint.responseBodies.find((responseBody) => {
-          if (responseBody.responseId === responseId) {
-            contentType = responseBody.contentType;
-            statusCode = responseBody.statusCode;
+        !!endpoint.responses.find((response) => {
+          if (response.responseId === responseId) {
+            contentType = response.contentType;
+            statusCode = response.statusCode;
           }
-          return responseBody.responseId === responseId;
+          return response.responseId === responseId;
         })
     );
 

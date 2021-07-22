@@ -2139,6 +2139,145 @@
           "createdAt": "2021-07-12T12:03:24.891+02:00"
         }
       }
+    },
+    {
+      "BatchCommitStarted": {
+        "batchId": "f64b139e-5637-407e-a85c-e4d3a2f01c27",
+        "commitMessage": "Add query parameter tags",
+        "eventContext": {
+          "clientId": "splendid-deer-13",
+          "clientSessionId": "9667c8ae-5c32-4bb5-b442-9170533935fe",
+          "clientCommandBatchId": "f64b139e-5637-407e-a85c-e4d3a2f01c27",
+          "createdAt": "2021-07-22T10:36:59.319+02:00"
+        },
+        "parentId": "65d32f89-4b62-42c8-a657-7a84ba5fe13d"
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_rUSV0iS4eM",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "splendid-deer-13",
+          "clientSessionId": "9667c8ae-5c32-4bb5-b442-9170533935fe",
+          "clientCommandBatchId": "f64b139e-5637-407e-a85c-e4d3a2f01c27",
+          "createdAt": "2021-07-22T10:36:59.319+02:00"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_CWf4c9BjdU",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "splendid-deer-13",
+          "clientSessionId": "9667c8ae-5c32-4bb5-b442-9170533935fe",
+          "clientCommandBatchId": "f64b139e-5637-407e-a85c-e4d3a2f01c27",
+          "createdAt": "2021-07-22T10:36:59.319+02:00"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_CWf4c9BjdU",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_rUSV0iS4eM"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "splendid-deer-13",
+          "clientSessionId": "9667c8ae-5c32-4bb5-b442-9170533935fe",
+          "clientCommandBatchId": "f64b139e-5637-407e-a85c-e4d3a2f01c27",
+          "createdAt": "2021-07-22T10:36:59.319+02:00"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_osYNuUI2wF",
+        "baseShapeId": "$optional",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "splendid-deer-13",
+          "clientSessionId": "9667c8ae-5c32-4bb5-b442-9170533935fe",
+          "clientCommandBatchId": "f64b139e-5637-407e-a85c-e4d3a2f01c27",
+          "createdAt": "2021-07-22T10:36:59.319+02:00"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_osYNuUI2wF",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_CWf4c9BjdU"
+              }
+            },
+            "consumingParameterId": "$optionalInner"
+          }
+        },
+        "eventContext": {
+          "clientId": "splendid-deer-13",
+          "clientSessionId": "9667c8ae-5c32-4bb5-b442-9170533935fe",
+          "clientCommandBatchId": "f64b139e-5637-407e-a85c-e4d3a2f01c27",
+          "createdAt": "2021-07-22T10:36:59.319+02:00"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_r6f6wgqAn",
+        "shapeId": "shape_Vkms3ZVee1",
+        "name": "tag",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_r6f6wgqAn",
+            "shapeId": "shape_osYNuUI2wF"
+          }
+        },
+        "eventContext": {
+          "clientId": "splendid-deer-13",
+          "clientSessionId": "9667c8ae-5c32-4bb5-b442-9170533935fe",
+          "clientCommandBatchId": "f64b139e-5637-407e-a85c-e4d3a2f01c27",
+          "createdAt": "2021-07-22T10:36:59.319+02:00"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "f64b139e-5637-407e-a85c-e4d3a2f01c27",
+        "eventContext": {
+          "clientId": "splendid-deer-13",
+          "clientSessionId": "9667c8ae-5c32-4bb5-b442-9170533935fe",
+          "clientCommandBatchId": "f64b139e-5637-407e-a85c-e4d3a2f01c27",
+          "createdAt": "2021-07-22T10:36:59.319+02:00"
+        }
+      }
     }
   ],
   "session": {
@@ -3442,7 +3581,7 @@
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
-            "asText": "status=open&author=homer"
+            "asText": "status=open&author=homer&tag=cool&tag=bug"
           },
           "headers": {
             "shapeHashV1Base64": null,
@@ -3614,7 +3753,7 @@
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
-            "asText": "created_before=yesterday"
+            "asText": "created_before=yesterday&tag=cool"
           },
           "headers": {
             "shapeHashV1Base64": null,

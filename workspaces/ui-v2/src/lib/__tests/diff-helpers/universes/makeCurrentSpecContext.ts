@@ -25,7 +25,7 @@ export async function makeCurrentSpecContext(
         variables: {},
       })
     ).data || {
-      requests: [],
+      endpoints: [],
     },
     null
   );

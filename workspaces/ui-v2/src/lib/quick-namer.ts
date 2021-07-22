@@ -2,7 +2,14 @@ import sortby from 'lodash.sortby';
 import { code, ICopy, plain } from '<src>/pages/diffs/components/ICopyRender';
 import { ICoreShapeKinds } from '@useoptic/optic-domain';
 
-export function namer(kinds: ICoreShapeKinds[]): string {
+export interface ICoreShapeKindNamer {
+  (kind: ICoreShapeKinds): string;
+}
+
+export function namer(
+  kinds: ICoreShapeKinds[],
+  coreShapeNamer: ICoreShapeKindNamer = nameForCoreShapeKind
+): string {
   const kindsFiltered = kinds.filter(
     (i) =>
       ![ICoreShapeKinds.NullableKind, ICoreShapeKinds.OptionalKind].includes(i)
@@ -12,9 +19,9 @@ export function namer(kinds: ICoreShapeKinds[]): string {
     if (kindsFiltered.length === 0) {
       return 'Unknown';
     } else if (kindsFiltered.length === 1) {
-      return nameForCoreShapeKind(kindsFiltered[0]);
+      return coreShapeNamer(kindsFiltered[0]);
     } else {
-      return namerForOneOf(kindsFiltered)
+      return namerForOneOf(kindsFiltered, coreShapeNamer)
         .map((i) => i.text)
         .join(' ');
     }
@@ -25,7 +32,10 @@ export function namer(kinds: ICoreShapeKinds[]): string {
   }${kinds.includes(ICoreShapeKinds.NullableKind) ? ' (nullable)' : ''}`;
 }
 
-export function namerForOptions(kinds: ICoreShapeKinds[]): string {
+export function namerForOptions(
+  kinds: ICoreShapeKinds[],
+  coreShapeNamer: ICoreShapeKindNamer = nameForCoreShapeKind
+): string {
   const kindsFiltered = kinds.filter(
     (i) =>
       ![ICoreShapeKinds.NullableKind, ICoreShapeKinds.OptionalKind].includes(i)
@@ -37,7 +47,7 @@ export function namerForOptions(kinds: ICoreShapeKinds[]): string {
     } else if (kindsFiltered.length === 0) {
       return 'Unknown';
     } else if (kindsFiltered.length === 1) {
-      return nameForCoreShapeKind(kindsFiltered[0]);
+      return coreShapeNamer(kindsFiltered[0]);
     } else {
       return namerForOneOf(kindsFiltered)
         .map((i) => i.text)
@@ -67,7 +77,10 @@ export function nameForCoreShapeKind(kind: ICoreShapeKinds): string {
   }
 }
 
-export function namerForOneOf(kinds: ICoreShapeKinds[]): ICopy[] {
+export function namerForOneOf(
+  kinds: ICoreShapeKinds[],
+  coreShapeNamer: ICoreShapeKindNamer = nameForCoreShapeKind
+): ICopy[] {
   return sortby(kinds).reduce(
     (
       before: ICopy[],
@@ -77,7 +90,7 @@ export function namerForOneOf(kinds: ICoreShapeKinds[]): ICopy[] {
     ) => [
       ...before,
       plain(before.length ? (i < array.length - 1 ? ',' : 'or') : ''),
-      code(nameForCoreShapeKind(value)),
+      code(coreShapeNamer(value)),
     ],
     []
   );

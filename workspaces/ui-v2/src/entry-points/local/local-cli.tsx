@@ -50,6 +50,7 @@ const appConfig: OpticAppConfig = {
       segmentToken: process.env.REACT_APP_SEGMENT_LOCAL_UI,
       fullStoryOrgId: process.env.REACT_APP_FULLSTORY_ORG,
       sentryUrl: process.env.REACT_APP_SENTRY_URL,
+      intercomAppId: process.env.REACT_APP_INTERCOM_APP_ID,
     },
     backendApi: {
       domain:
