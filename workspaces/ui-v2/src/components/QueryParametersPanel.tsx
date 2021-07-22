@@ -10,7 +10,12 @@ import {
   ChangedYellowBackground,
   RemovedRedBackground,
 } from '<src>/styles';
-import { IFieldRenderer, IShapeRenderer, ShapeRenderer } from './ShapeRenderer';
+import {
+  IFieldRenderer,
+  IShapeRenderer,
+  ShapeRenderer,
+  JsonLike,
+} from './ShapeRenderer';
 import { Panel } from './Panel';
 
 type QueryParameters = Record<string, IFieldRenderer>;
@@ -33,6 +38,19 @@ export const convertShapeToQueryParameters = (
   }
 
   for (const field of shapes[0].asObject.fields) {
+    let isArray = field.shapeChoices.findIndex(
+      (choice) => choice.jsonType === JsonLike.ARRAY
+    );
+
+    if (isArray > -1) {
+      field.additionalAttributes = ['multiple'];
+      if (field.shapeChoices.length > 1) {
+        field.shapeChoices.splice(isArray, 1);
+      } else {
+        field.shapeChoices = field.shapeChoices[isArray].asArray!.shapeChoices;
+      }
+    }
+
     queryParameters[field.name] = field;
   }
 
@@ -65,8 +83,16 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
           <div className={classes.queryKey}>
             {key}
             {!field.required && (
-              <span className={classes.optional}> (optional) </span>
+              <span className={classes.attribute}> (optional) </span>
             )}
+
+            {field.additionalAttributes &&
+              field.additionalAttributes.map((attribute) => (
+                <span key={attribute} className={classes.attribute}>
+                  {' '}
+                  ({attribute}){' '}
+                </span>
+              ))}
           </div>
           <div className={classes.shapeContainer}>
             <ShapeRenderer showExamples={false} shapes={field.shapeChoices} />
@@ -101,7 +127,7 @@ const useStyles = makeStyles((theme) => ({
   shapeContainer: {
     flexGrow: 1,
   },
-  optional: {
+  attribute: {
     fontSize: theme.typography.fontSize - 1,
     fontFamily: FontFamilyMono,
     fontWeight: 400,

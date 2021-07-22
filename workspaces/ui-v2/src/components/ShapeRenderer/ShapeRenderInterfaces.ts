@@ -9,6 +9,7 @@ export interface IFieldRenderer {
   required: boolean;
   changes?: IChanges;
   contributions: Record<string, string>;
+  additionalAttributes?: string[];
 }
 
 export interface IShapeRenderer {
