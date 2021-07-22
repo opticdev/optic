@@ -270,23 +270,39 @@ export const EndpointRootPage: FC<
                 >
                   {(fields) => (
                     <ContributionsList
-                      renderField={(field) => (
-                        <DocsFieldOrParameterContribution
-                          key={
-                            field.contribution.id +
-                            field.contribution.contributionKey
+                      renderField={(field) => {
+                        let isArray = field.shapes.findIndex(
+                          (choice) => choice.jsonType === JsonLike.ARRAY
+                        );
+
+                        if (isArray > -1) {
+                          if (field.shapes.length > 1) {
+                            field.shapes.splice(isArray, 1);
+                          } else {
+                            field.shapes = field.shapes[
+                              isArray
+                            ].asArray!.shapeChoices;
                           }
-                          endpoint={{
-                            pathId,
-                            method,
-                          }}
-                          name={field.name}
-                          shapes={field.shapes}
-                          depth={field.depth}
-                          id={field.contribution.id}
-                          initialValue={field.contribution.value}
-                        />
-                      )}
+                        }
+
+                        return (
+                          <DocsFieldOrParameterContribution
+                            key={
+                              field.contribution.id +
+                              field.contribution.contributionKey
+                            }
+                            endpoint={{
+                              pathId,
+                              method,
+                            }}
+                            name={field.name}
+                            shapes={field.shapes}
+                            depth={field.depth}
+                            id={field.contribution.id}
+                            initialValue={field.contribution.value}
+                          />
+                        );
+                      }}
                       fieldDetails={fields}
                     />
                   )}
