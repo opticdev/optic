@@ -7,7 +7,7 @@ import { getOrSetAgentFromLocalStorage } from '../utils';
 
 declare global {
   interface Window {
-    Intercom?: () => any;
+    Intercom?: (...args: any) => any;
   }
 }
 
