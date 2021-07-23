@@ -25,7 +25,7 @@ export function ShowAllTools() {
             <Grid item xs={12} sm={2}>
               <PreviewPageModal
                 key={index}
-                link={i.link}
+                link={`/${i.link}`}
                 title={`Collect traffic from ${i.name}`}
                 Source={<Component />}
               >
