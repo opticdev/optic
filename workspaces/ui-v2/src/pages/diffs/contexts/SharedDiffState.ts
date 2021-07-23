@@ -111,28 +111,6 @@ export const newSharedDiffMachine = (
           DOCUMENT_ENDPOINT: {
             actions: [
               assign({
-                newPaths: (ctx, event) => {
-                  const regeneratePathCommands = generatePathCommands(
-                    [
-                      ...ctx.pendingEndpoints,
-                      {
-                        pathPattern: event.pattern,
-                        id: event.pendingId,
-                        matchesPattern: (a, b) => true,
-                        method: event.method,
-                        ref: undefined,
-                      },
-                    ],
-                    currentSpecContext
-                  );
-                  return {
-                    commands: regeneratePathCommands.commands,
-                    pendingEndpointMap:
-                      regeneratePathCommands.endpointPathIdMap,
-                  };
-                },
-              }),
-              assign({
                 pendingEndpoints: (ctx, event) => {
                   const matcher = pathMatcher(event.pathComponents);
 
@@ -195,6 +173,22 @@ export const newSharedDiffMachine = (
                 },
               }),
               assign({
+                newPaths: (ctx, event) => {
+                  // We should only generate commands from endpoints that have been staged
+                  const regeneratePathCommands = generatePathCommands(
+                    ctx.pendingEndpoints.filter(
+                      (endpoint) => !!endpoint.staged
+                    ),
+                    currentSpecContext
+                  );
+                  return {
+                    commands: regeneratePathCommands.commands,
+                    pendingEndpointMap:
+                      regeneratePathCommands.endpointPathIdMap,
+                  };
+                },
+              }),
+              assign({
                 results: (ctx) => updateUrlResults(ctx),
                 simulatedCommands: (ctx) =>
                   AssembleCommands(
@@ -218,8 +212,11 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 newPaths: (ctx, event) => {
+                  // We should only generate commands from endpoints that have been staged
                   const regeneratePathCommands = generatePathCommands(
-                    ctx.pendingEndpoints,
+                    ctx.pendingEndpoints.filter(
+                      (endpoint) => !!endpoint.staged
+                    ),
                     currentSpecContext
                   );
                   return {
