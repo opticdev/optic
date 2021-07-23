@@ -54,8 +54,8 @@ module.exports = {
           items: [
             allUseCases.Document,
             allUseCases.Test,
-            allUseCases.Share,
             allUseCases.Change,
+            allUseCases.Share,
           ],
           position: 'right',
         },
