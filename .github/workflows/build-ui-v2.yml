@@ -5,8 +5,7 @@ on:
     branches:
       - release
       - develop
-      - feature/cloud_spec_viewer
-      - feature/new-doc
+      - fix/inject-env-variables # TODO remove this before merging
     paths-ignore:
       - website/**
       - .github/**
@@ -51,6 +50,7 @@ jobs:
           echo "TAG=${BRANCH}-b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
           echo "USER=${GITHUB_ACTOR}" >> $GITHUB_ENV
       - run: |
+          task workspaces:setenv
           task ui-v2:ci
           if [ "$BRANCH" = "develop" ] || [ "$BRANCH" = "master" ]
           then
