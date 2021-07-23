@@ -11,6 +11,7 @@ docs/reference/capture-methods/browsers/*.mdx
 docs/reference/capture-methods/tools/*.mdx
 docs/reference/capture-methods/using-integration/*.mdx
 docs/reference/ci-providers/*
+docs/reference/scripts/*.mdx
 generate/results/*.js
 
 # Misc

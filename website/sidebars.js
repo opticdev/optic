@@ -1,6 +1,7 @@
 const allIntegrationDocs = require('./generate/generate-frameworks.js');
 const allBrowserIntegrationDocs = require('./generate/generate-browsers.js');
 const allToolsIntegrations = require('./generate/generate-tools.js');
+const allScriptsIntegrations = require('./generate/generate-scripts.js');
 
 const allUseCases = require('./use-cases');
 
@@ -98,6 +99,11 @@ module.exports = {
           type: 'category',
           label: 'API Tools',
           items: allToolsIntegrations,
+        },
+        {
+          type: 'category',
+          label: 'Scripts',
+          items: allScriptsIntegrations,
         },
         {
           type: 'category',
