@@ -49,10 +49,12 @@ const appConfig: OpticAppConfig = {
       sentryUrl: process.env.REACT_APP_SENTRY_URL,
     },
     backendApi: {
+      // Because we use the same docker image for both staging, and prod
+      // The UI needs to be context aware and know about _both_ staging and prod
       domain:
         window.location.hostname.indexOf('useoptic.com') >= 0
-          ? process.env.REACT_APP_PROD_API_BASE
-          : process.env.REACT_APP_STAGING_API_BASE,
+          ? 'https://spec.useoptic.com' // production
+          : 'https://api.o3c.info', // staging
     },
     sharing: { enabled: false },
   },

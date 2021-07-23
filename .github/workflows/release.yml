@@ -242,10 +242,6 @@ jobs:
     - name: Install Dependencies and Build Optic
       env:
         SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        REACT_APP_PROD_API_BASE: https://api.useoptic.com
-        REACT_APP_STAGING_API_BASE: https://api.o3c.info
-        REACT_APP_PROD_SPEC_VIEWER_BASE: https://spec.useoptic.com
-        REACT_APP_STAGING_SPEC_VIEWER_BASE: https://spec.o3c.info
       run: |
         if [ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ] && [ -n "${{ needs.release_logic.outputs.prerelease_tag }}" ]; then
           echo "Prelease with a tag detected. Staging any feature flags for '${{ needs.release_logic.outputs.prerelease_tag }}'."
