@@ -48,7 +48,8 @@ jobs:
           echo "DOCKER_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
           echo "TAG=${BRANCH}-b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
           echo "USER=${GITHUB_ACTOR}" >> $GITHUB_ENV
-      - run: |
+      - name: Build and push docker container
+        run: |
           task workspaces:setenv
           task ui-v2:ci
           if [ "$BRANCH" = "develop" ] || [ "$BRANCH" = "master" ]
