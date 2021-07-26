@@ -20,7 +20,7 @@ async fn get_request_with_query_params() {
 
   let mut learned_undocumented_bodies = LearnedUndocumentedBodiesProjection::default();
 
-  let learner_config = AnalyzeUndocumentedBodiesConfig::default().with_query_params(true);
+  let learner_config = AnalyzeUndocumentedBodiesConfig::default();
 
   let results = analyze_undocumented_bodies(&spec, interaction, &learner_config);
 
@@ -70,7 +70,7 @@ async fn get_request_with_object_query_params() {
 
   let mut learned_undocumented_bodies = LearnedUndocumentedBodiesProjection::default();
 
-  let learner_config = AnalyzeUndocumentedBodiesConfig::default().with_query_params(true);
+  let learner_config = AnalyzeUndocumentedBodiesConfig::default();
   let results = analyze_undocumented_bodies(&spec, interaction, &learner_config);
 
   for result in results {
@@ -99,7 +99,7 @@ async fn requests_with_and_without_query_params() {
 
   let mut learned_undocumented_bodies = LearnedUndocumentedBodiesProjection::default();
 
-  let learner_config = AnalyzeUndocumentedBodiesConfig::default().with_query_params(true);
+  let learner_config = AnalyzeUndocumentedBodiesConfig::default();
 
   for interaction in capture.session.samples {
     let results = analyze_undocumented_bodies(&spec, interaction, &learner_config);

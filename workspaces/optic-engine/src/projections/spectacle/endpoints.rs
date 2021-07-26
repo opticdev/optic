@@ -445,7 +445,7 @@ impl EndpointsProjection {
       });
 
     if let Some(Node::Endpoint(endpoint_node)) = self.graph.node_weight_mut(*endpoint_index) {
-      endpoint_node.is_removed = false;
+      endpoint_node.is_removed = true;
     }
   }
 

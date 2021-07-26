@@ -22,7 +22,7 @@ async fn query_param_required_but_missing() {
   let diff_results = diff_interaction(
     &spec,
     interaction.clone(),
-    &DiffInteractionConfig::default().with_query_params(true),
+    &DiffInteractionConfig::default(),
   );
 
   let mut learned_shape_diff_affordances =
@@ -83,7 +83,7 @@ async fn query_param_new_and_optional() {
       diff_interaction(
         &spec,
         interaction.clone(),
-        &DiffInteractionConfig::default().with_query_params(true),
+        &DiffInteractionConfig::default(),
       )
     })
     .collect::<Vec<_>>();

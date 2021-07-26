@@ -113,11 +113,9 @@ type Endpoint {
   responses: [HttpResponse!]!
 
   # Contributions which define descriptions
-  # TODO figure out what this currently maps to in the contributions list
   contributions: JSON!
 
   # Is the endpoint removed
-  # TODO figure out how this gets mapped
   isRemoved: Boolean!
 
   commands: EndpointCommands!

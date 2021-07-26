@@ -342,10 +342,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         endpointNode: endpoints.EndpointNodeWrapper;
         requestNode: endpoints.RequestNodeWrapper;
       }) => {
-        return process.env.REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS ===
-          'true'
-          ? parent.endpointNode.query()
-          : null;
+        return parent.endpointNode.query();
       },
       bodies: (parent: {
         endpointNode: endpoints.EndpointNodeWrapper;
@@ -423,10 +420,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return parent.path().absolutePathPatternWithParameterNames;
       },
       query: async (parent: endpoints.EndpointNodeWrapper) => {
-        return process.env.REACT_APP_FF_LEARN_UNDOCUMENTED_QUERY_PARAMETERS ===
-          'true'
-          ? parent.query()
-          : null;
+        return parent.query();
       },
       requests: async (parent: endpoints.EndpointNodeWrapper) => {
         return parent.requests().results;

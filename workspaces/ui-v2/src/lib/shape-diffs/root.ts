@@ -9,7 +9,6 @@ import {
 } from '../Interfaces';
 import sortBy from 'lodash.sortby';
 import { code, plain } from '<src>/pages/diffs/components/ICopyRender';
-import invariant from 'invariant';
 import { builderInnerShapeFromChoices } from './build-inner-shape';
 import {
   SetRequestBodyShape,
@@ -19,6 +18,7 @@ import {
   QueryParametersShapeDescriptor,
   CQRSCommand,
 } from '@useoptic/optic-domain';
+import { InvariantViolationError } from '<src>/errors';
 
 export function rootShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,
@@ -50,10 +50,11 @@ export function rootShapeDiffInterpreter(
     });
   }
 
-  invariant(
-    !isUnspecified,
-    'root object should never produce an unspecified diff'
-  );
+  if (isUnspecified) {
+    throw new InvariantViolationError(
+      'root object should never produce an unspecified diff'
+    );
+  }
 
   ////////////////
   const expectedShapes = expected.expectedShapes();

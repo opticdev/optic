@@ -54,8 +54,7 @@ pub fn diff_interaction(
   let options = DiffInteractionOptions::from(raw_options);
   let interaction: HttpInteraction = serde_json::from_str(&interaction_json).unwrap();
 
-  let diff_config =
-    DiffInteractionConfig::default().with_query_params(options.include_query_params);
+  let diff_config = DiffInteractionConfig::default();
 
   let results: Vec<ResultContainer<InteractionDiffResult>> = spec
     .diff_interaction(interaction, &diff_config)
@@ -68,16 +67,11 @@ pub fn diff_interaction(
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct DiffInteractionOptions {
-  #[serde(default)]
-  include_query_params: bool,
-}
+struct DiffInteractionOptions {}
 
 impl Default for DiffInteractionOptions {
   fn default() -> Self {
-    Self {
-      include_query_params: false,
-    }
+    Self {}
   }
 }
 
@@ -160,12 +154,10 @@ pub fn learn_undocumented_bodies(
   spec: &WasmSpecProjection,
   interactions_json: String,
   id_generator_strategy: String,
-  include_query_params: bool,
 ) -> Result<String, JsValue> {
   let interactions = serde_json::Deserializer::from_str(&interactions_json).into_iter();
 
-  let learner_config =
-    AnalyzeUndocumentedBodiesConfig::default().with_query_params(include_query_params);
+  let learner_config = AnalyzeUndocumentedBodiesConfig::default();
 
   let mut learned_undocumented_bodies = LearnedUndocumentedBodiesProjection::default();
   for interaction_parse_result in interactions {
