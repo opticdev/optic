@@ -138,6 +138,9 @@ type HttpRequestNew {
 
   contributions: JSON!
 
+  # Changes for the response based on the give batch commit ID
+  changes(sinceBatchCommitId: String): ChangesResult
+
   # Is the request removed
   isRemoved: Boolean!
 }
@@ -249,6 +252,9 @@ type HttpResponse {
   # HTTP response contributions which define descriptions
   contributions: JSON
 
+  # Changes for the response based on the give batch commit ID
+  changes(sinceBatchCommitId: String): ChangesResult
+
   # Is the response removed
   isRemoved: Boolean
 }
@@ -318,7 +324,6 @@ type ChangesResult {
   added: Boolean
   
   # Whether or not the change was one that was updated
-  # TODO @nic change this to updated
   changed: Boolean
 
   # Whether or not the change was one that was removed

@@ -6,7 +6,8 @@ import { ChangeType, IEndpoint } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 import groupBy from 'lodash.groupby';
 
-export const AllEndpointsQuery = `{
+export const AllEndpointsQuery = `
+query X($sinceBatchCommitId: String) {
   endpoints {
     id
     pathId
@@ -31,6 +32,11 @@ export const AllEndpointsQuery = `{
         contentType
         rootShapeId
       }
+      changes(sinceBatchCommitId: $sinceBatchCommitId) {
+        added
+        changed
+        removed
+      }
       contributions
       isRemoved
     }
@@ -41,6 +47,11 @@ export const AllEndpointsQuery = `{
       bodies {
         contentType
         rootShapeId
+      }
+      changes(sinceBatchCommitId: $sinceBatchCommitId) {
+        added
+        changed
+        removed
       }
       isRemoved
     }
@@ -80,6 +91,12 @@ type HttpBody = {
   rootShapeId: string;
 };
 
+type SpectacleChange = {
+  added: boolean;
+  changed: boolean;
+  removed: boolean;
+};
+
 export type EndpointQueryResults = {
   endpoints: {
     id: string;
@@ -103,12 +120,14 @@ export type EndpointQueryResults = {
       id: string;
       body?: HttpBody;
       contributions: Record<string, string>;
+      changes: SpectacleChange;
       isRemoved: boolean;
     }[];
     responses: {
       id: string;
       statusCode: number;
       contributions: Record<string, string>;
+      changes: SpectacleChange;
       bodies: HttpBody[];
       isRemoved: boolean;
     }[];
@@ -117,6 +136,17 @@ export type EndpointQueryResults = {
   }[];
 };
 
+const convertSpectacleChangeToChangeType = (
+  spectacleChange: SpectacleChange
+): ChangeType | null =>
+  spectacleChange.added
+    ? 'added'
+    : spectacleChange.changed
+    ? 'updated'
+    : spectacleChange.removed
+    ? 'removed'
+    : null;
+
 export const endpointQueryResultsToJson = (
   { endpoints }: EndpointQueryResults,
   endpointChanges: EndpointChangeQueryResults | null
@@ -124,6 +154,7 @@ export const endpointQueryResultsToJson = (
   endpoints: IEndpoint[];
   changes: Record<string, ChangeType>;
 } => {
+  console.log(endpoints);
   const changes: Record<string, ChangeType> = {};
   const mappedEndpoints = endpoints.map((endpoint) => ({
     id: endpoint.id,
@@ -153,7 +184,10 @@ export const endpointQueryResultsToJson = (
         }
       : null,
     requests: endpoint.requests.map((request) => {
-      // TODO add changes
+      const change = convertSpectacleChangeToChangeType(request.changes);
+      if (change) {
+        changes[request.id] = change;
+      }
       return {
         requestId: request.id,
         body: request.body
@@ -172,7 +206,10 @@ export const endpointQueryResultsToJson = (
     // Group by status code
     responsesByStatusCode: groupBy(
       endpoint.responses.map((response) => {
-        // TODO add changes
+        const change = convertSpectacleChangeToChangeType(response.changes);
+        if (change) {
+          changes[response.id] = change;
+        }
         return {
           responseId: response.id,
           statusCode: response.statusCode,
@@ -211,9 +248,16 @@ export const fetchEndpoints = createAsyncThunk<
   { spectacle: IForkableSpectacle; sinceBatchCommitId?: string }
 >('FETCH_ENDPOINTS', async ({ spectacle, sinceBatchCommitId }) => {
   try {
-    const resultsPromise = spectacle.query<EndpointQueryResults>({
+    const resultsPromise = spectacle.query<
+      EndpointQueryResults,
+      {
+        sinceBatchCommitId?: string;
+      }
+    >({
       query: AllEndpointsQuery,
-      variables: {},
+      variables: {
+        sinceBatchCommitId,
+      },
     });
 
     const endpointChangesPromise = sinceBatchCommitId

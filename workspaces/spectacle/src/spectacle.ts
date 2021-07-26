@@ -12,6 +12,7 @@ import {
   ContributionsProjection,
   getArrayChanges,
   getContributionsProjection,
+  getEndpointGraphNodeChange,
   getFieldChanges,
   CommandGenerator,
 } from './helpers';
@@ -468,6 +469,20 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           context.spectacleContext().contributionsProjection[requestId] || {}
         );
       },
+      changes: async (
+        parent: endpoints.RequestNodeWrapper,
+        args: {
+          sinceBatchCommitId?: string;
+        },
+        context: GraphQLContext
+      ) => {
+        const { requestId } = parent.value;
+        return getEndpointGraphNodeChange(
+          context.spectacleContext().endpointsQueries,
+          requestId,
+          args.sinceBatchCommitId
+        );
+      },
       isRemoved: async (parent: endpoints.RequestNodeWrapper) => {
         return parent.value.isRemoved;
       },
@@ -539,6 +554,21 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           context.spectacleContext().contributionsProjection[
             parent.value.responseId
           ] || {}
+        );
+      },
+
+      changes: async (
+        parent: endpoints.ResponseNodeWrapper,
+        args: {
+          sinceBatchCommitId?: string;
+        },
+        context: GraphQLContext
+      ) => {
+        const { responseId } = parent.value;
+        return getEndpointGraphNodeChange(
+          context.spectacleContext().endpointsQueries,
+          responseId,
+          args.sinceBatchCommitId
         );
       },
       isRemoved: (parent: endpoints.ResponseNodeWrapper) => {
