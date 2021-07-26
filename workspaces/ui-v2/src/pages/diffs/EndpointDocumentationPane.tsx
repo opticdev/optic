@@ -46,6 +46,19 @@ export const EndpointDocumentationPane: FC<
   const thisEndpoint = useAppSelector(
     selectors.getEndpoint({ pathId, method })
   );
+  const endpointChanges = useAppSelector(
+    (state) => state.endpoints.results.data?.changes || {}
+  );
+  const filteredRequestsWithChanges = selectors.filterRemovableItemsForChangelogAndMapChanges(
+    thisEndpoint ? thisEndpoint.requests : [],
+    endpointChanges,
+    (request) => request.requestId
+  );
+  const filteredResponsesByStatusCodeWithChanges = selectors.filterMapOfRemovableItemsForChangelogAndMapChanges(
+    thisEndpoint ? thisEndpoint.responsesByStatusCode : {},
+    endpointChanges,
+    (response) => response.responseId
+  );
 
   if (!thisEndpoint) {
     return <>no endpoint here</>;
@@ -81,8 +94,8 @@ export const EndpointDocumentationPane: FC<
         >
           <EndpointTOC
             query={thisEndpoint.query}
-            requests={thisEndpoint.requests}
-            responsesByStatusCode={thisEndpoint.responsesByStatusCode}
+            requests={filteredRequestsWithChanges}
+            responsesByStatusCode={filteredResponsesByStatusCodeWithChanges}
           />
         </div>
       </Panel>
@@ -111,7 +124,7 @@ export const EndpointDocumentationPane: FC<
         </HighlightedLocation>
       )}
 
-      {thisEndpoint.requests.length > 0 && (
+      {filteredRequestsWithChanges.length > 0 && (
         <HighlightedLocation
           className={classes.bodyContainer}
           targetLocation={highlightedLocation}
@@ -121,7 +134,7 @@ export const EndpointDocumentationPane: FC<
             <h6 className={classes.bodyHeader}>Request Body</h6>
             <div className={classes.bodyDetails}>
               <HttpBodySelector
-                items={thisEndpoint.requests}
+                items={filteredRequestsWithChanges}
                 getDisplayName={(request) =>
                   request.body?.contentType || 'No Body'
                 }
@@ -151,7 +164,7 @@ export const EndpointDocumentationPane: FC<
       )}
 
       {selectors
-        .getResponsesInSortedOrder(thisEndpoint.responsesByStatusCode)
+        .getResponsesInSortedOrder(filteredResponsesByStatusCodeWithChanges)
         .map(([statusCode, responses]) => {
           return (
             <React.Fragment key={statusCode}>
