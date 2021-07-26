@@ -112,6 +112,36 @@ const isNodeRemoved = (node: Node): boolean =>
   node.type !== NodeType.BatchCommit && node.data.isRemoved;
 
 ////////////////////////////////////////////////////////////////////////////////
+const getLatestCreatedNodeId = (
+  nodeList: NodeListWrapper,
+  endpointQueries: GraphQueries
+): string | null => {
+  const sortedNodes = nodeList.results
+    .map((node) => {
+      const batchCommitNodes = endpointQueries.listOutgoingNeighborsByEdgeType(
+        node.result.id,
+        EdgeType.CreatedIn
+      ).results;
+
+      return batchCommitNodes.length > 0 &&
+        batchCommitNodes[0].result.type === NodeType.BatchCommit
+        ? {
+            createdAt: batchCommitNodes[0].result.data.createdAt,
+            nodeId: node.result.id,
+          }
+        : null;
+    })
+    .filter((node) => !!node)
+    .sort((a, b) => {
+      return a!.createdAt < b!.createdAt ? 1 : -1;
+    });
+
+  return sortedNodes.length > 0 && sortedNodes[0]
+    ? sortedNodes[0].nodeId
+    : null;
+};
+
+////////////////////////////////////////////////////////////////////////////////
 
 export class GraphIndexer implements GraphCommandHandler<Node, NodeId, Edge> {
   readonly nodesById: Map<NodeId, Node>;
@@ -249,9 +279,22 @@ export class EndpointNodeWrapper implements NodeWrapper {
       this.result.id,
       NodeType.QueryParameters
     );
+    if (queryParameters.results.length === 0) {
+      return null;
+    }
 
-    return queryParameters.results.length >= 1
-      ? (queryParameters.results[0] as QueryParametersNodeWrapper)
+    const latestQueryParamNodeId = getLatestCreatedNodeId(
+      queryParameters,
+      this.queries
+    );
+    const queryParamNode = queryParameters.results.find(
+      (node) => node.result.id === latestQueryParamNodeId
+    );
+    console.log(queryParameters);
+    console.log(latestQueryParamNodeId, queryParamNode);
+
+    return latestQueryParamNodeId && queryParamNode
+      ? (queryParamNode as QueryParametersNodeWrapper)
       : null;
   }
 
