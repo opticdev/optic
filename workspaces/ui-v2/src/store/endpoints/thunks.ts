@@ -42,6 +42,7 @@ export const AllEndpointsQuery = `{
         contentType
         rootShapeId
       }
+      isRemoved
     }
     isRemoved
     contributions
@@ -109,6 +110,7 @@ export type EndpointQueryResults = {
       statusCode: number;
       contributions: Record<string, string>;
       bodies: HttpBody[];
+      isRemoved: boolean;
     }[];
     isRemoved: boolean;
     contributions: Record<string, string>;
@@ -138,6 +140,7 @@ export const endpointQueryResultsToJson = (
       description: path.contributions.description || '',
       endpointId: endpoint.id,
     })),
+    // TODO change this to multiple queries - since there can be removed queries
     query: endpoint.query
       ? {
           queryParametersId: endpoint.query.id,
@@ -149,22 +152,27 @@ export const endpointQueryResultsToJson = (
           method: endpoint.method,
         }
       : null,
-    requests: endpoint.requests.map((request) => ({
-      requestId: request.id,
-      body: request.body
-        ? {
-            rootShapeId: request.body.rootShapeId,
-            contentType: request.body.contentType,
-          }
-        : null,
-      description: request.contributions.description || '',
-      endpointId: endpoint.id,
-      pathId: endpoint.pathId,
-      method: endpoint.method,
-    })),
+    requests: endpoint.requests.map((request) => {
+      // TODO add changes
+      return {
+        requestId: request.id,
+        body: request.body
+          ? {
+              rootShapeId: request.body.rootShapeId,
+              contentType: request.body.contentType,
+            }
+          : null,
+        description: request.contributions.description || '',
+        endpointId: endpoint.id,
+        pathId: endpoint.pathId,
+        method: endpoint.method,
+        isRemoved: request.isRemoved,
+      };
+    }),
     // Group by status code
     responsesByStatusCode: groupBy(
       endpoint.responses.map((response) => {
+        // TODO add changes
         return {
           responseId: response.id,
           statusCode: response.statusCode,
@@ -172,6 +180,7 @@ export const endpointQueryResultsToJson = (
           endpointId: endpoint.id,
           pathId: endpoint.pathId,
           method: endpoint.method,
+          isRemoved: response.isRemoved,
           body:
             response.bodies.length >= 1
               ? {

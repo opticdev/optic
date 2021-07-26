@@ -64,9 +64,20 @@ const ChangelogRootComponent: FC<
   const endpointChanges = useAppSelector(
     (state) => state.endpoints.results.data?.changes || {}
   );
-  const endpointWithChanges = selectors.filterRemovedEndpointsForChangelogAndMapChanges(
+  const endpointWithChanges = selectors.filterRemovableItemsForChangelogAndMapChanges(
     thisEndpoint ? [thisEndpoint] : [],
-    endpointChanges
+    endpointChanges,
+    (endpoint) => getEndpointId(endpoint)
+  );
+  const filteredRequestsWithChanges = selectors.filterRemovableItemsForChangelogAndMapChanges(
+    thisEndpoint ? thisEndpoint.requests : [],
+    endpointChanges,
+    (request) => request.requestId
+  );
+  const filteredResponsesByStatusCodeWithChanges = selectors.filterMapOfRemovableItemsForChangelogAndMapChanges(
+    thisEndpoint ? thisEndpoint.responsesByStatusCode : {},
+    endpointChanges,
+    (response) => response.responseId
   );
 
   const isEndpointRemoved = thisEndpoint && endpointWithChanges.length === 0;
@@ -141,8 +152,10 @@ const ChangelogRootComponent: FC<
                 >
                   <EndpointTOC
                     query={thisEndpoint.query}
-                    requests={thisEndpoint.requests}
-                    responsesByStatusCode={thisEndpoint.responsesByStatusCode}
+                    requests={filteredRequestsWithChanges}
+                    responsesByStatusCode={
+                      filteredResponsesByStatusCodeWithChanges
+                    }
                   />
                 </div>
               </Panel>
@@ -201,14 +214,14 @@ const ChangelogRootComponent: FC<
           </div>
         )}
 
-        {thisEndpoint.requests.length > 0 && (
+        {filteredRequestsWithChanges.length > 0 && (
           <div className={classes.bodyContainer} id="request-body">
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Request Body</h6>
             </div>
 
             <HttpBodySelector
-              items={thisEndpoint.requests}
+              items={filteredRequestsWithChanges}
               getDisplayName={(request) =>
                 request.body?.contentType || 'No Body'
               }
@@ -271,7 +284,7 @@ const ChangelogRootComponent: FC<
           </div>
         )}
         {selectors
-          .getResponsesInSortedOrder(thisEndpoint.responsesByStatusCode)
+          .getResponsesInSortedOrder(filteredResponsesByStatusCodeWithChanges)
           .map(([statusCode, responses]) => (
             <div
               className={classes.bodyContainer}

@@ -120,6 +120,10 @@ export const EndpointRootPage: FC<
   const parameterizedPathParts = thisEndpoint.pathParameters.filter(
     (path) => path.isParameterized
   );
+  const filteredRequests = selectors.filterRemovedItems(thisEndpoint.requests);
+  const filteredResponsesByStatusCode = selectors.filterMapOfRemovedItems(
+    thisEndpoint.responsesByStatusCode
+  );
 
   return (
     <>
@@ -240,8 +244,8 @@ export const EndpointRootPage: FC<
                 >
                   <EndpointTOC
                     query={thisEndpoint.query}
-                    requests={thisEndpoint.requests}
-                    responsesByStatusCode={thisEndpoint.responsesByStatusCode}
+                    requests={filteredRequests}
+                    responsesByStatusCode={filteredResponsesByStatusCode}
                   />
                 </div>
               </Panel>
@@ -320,13 +324,13 @@ export const EndpointRootPage: FC<
             </div>
           </div>
         )}
-        {thisEndpoint.requests.length > 0 && (
+        {filteredRequests.length > 0 && (
           <div className={classes.bodyContainer} id="request-body">
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Request Body</h6>
             </div>
             <HttpBodySelector
-              items={thisEndpoint.requests}
+              items={filteredRequests}
               getDisplayName={(request) =>
                 request.body?.contentType || 'No Body'
               }
@@ -393,7 +397,7 @@ export const EndpointRootPage: FC<
           </div>
         )}
         {selectors
-          .getResponsesInSortedOrder(thisEndpoint.responsesByStatusCode)
+          .getResponsesInSortedOrder(filteredResponsesByStatusCode)
           .map(([statusCode, responses]) => (
             <div
               className={classes.bodyContainer}

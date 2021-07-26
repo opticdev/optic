@@ -74,8 +74,7 @@ export function DiffReviewPages(props: any) {
   }, [dispatch, capturesService, boundaryId, analytics]);
   const diffState = useAppSelector((state) => state.diff.state);
   const filteredEndpoints = useMemo(
-    () =>
-      selectors.filterRemovedEndpoints(endpointsState.data?.endpoints || []),
+    () => selectors.filterRemovedItems(endpointsState.data?.endpoints || []),
     [endpointsState.data]
   );
 

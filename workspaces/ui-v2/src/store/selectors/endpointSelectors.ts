@@ -1,32 +1,27 @@
-import {
-  IEndpoint,
-  IEndpointWithChanges,
-  ChangeType,
-  IResponse,
-} from '<src>/types';
+import { IEndpoint, ChangeType, IResponse } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 
 import { RootState } from '../root';
 
-const filterRemovedItems = <T extends { isRemoved: boolean }>(
+export const filterRemovedItems = <T extends { isRemoved: boolean }>(
   removableItems: T[]
 ): T[] => removableItems.filter((removableItem) => !removableItem.isRemoved);
 
-const filterRemovableItemsForChangelogAndMapChanges = <
+export const filterRemovableItemsForChangelogAndMapChanges = <
   T extends { isRemoved: boolean }
 >(
   removableItems: T[],
   changes: Record<string, ChangeType>,
   getId: (item: T) => string
 ): (T & { changes: ChangeType | null })[] => {
-  // Filter removed endpoints that have no changes to display
+  // Filter removed items that have no changes to display
   const filteredItems = removableItems.filter((item) => {
     const itemId = getId(item);
 
-    // Assumption - if an endpoint is removed, but this batch of changes contains _any_ change for this endpoint
-    // we should show this endpoint - the last change you could make is a removal
+    // Assumption - if an item is removed, but this batch of changes contains _any_ change for this item
+    // we should show this item - the last change you could make is a removal
     // Two assumptions:
-    // - You cannot un-remove a specific endpoint (with history, you can undo batches)
+    // - You cannot un-remove a specific item (with history, you can undo batches)
     // - You must always view changes compared to the latest version
     return !(item.isRemoved && !changes[itemId]);
   });
@@ -39,21 +34,41 @@ const filterRemovableItemsForChangelogAndMapChanges = <
   return itemsWithChanges;
 };
 
-export const filterRemovedEndpoints = (endpoints: IEndpoint[]): IEndpoint[] =>
-  filterRemovedItems(endpoints);
+export const filterMapOfRemovedItems = <T extends { isRemoved: boolean }>(
+  removableItemsMap: Record<string, T[]>
+): Record<string, T[]> => {
+  const filteredMap: Record<string, T[]> = {};
+  for (const [key, removableItems] of Object.entries(removableItemsMap)) {
+    const filteredItems = filterRemovedItems(removableItems);
+    if (filteredItems.length > 0) {
+      filteredMap[key] = filteredItems;
+    }
+  }
+  return filteredMap;
+};
 
-/**
- * Filters removed endpoints not removed in changes and joins changelog information
- */
-export const filterRemovedEndpointsForChangelogAndMapChanges = (
-  endpoints: IEndpoint[],
-  endpointChanges: Record<string, ChangeType>
-): IEndpointWithChanges[] => {
-  return filterRemovableItemsForChangelogAndMapChanges(
-    endpoints,
-    endpointChanges,
-    (endpoint) => getEndpointId(endpoint)
-  );
+export const filterMapOfRemovableItemsForChangelogAndMapChanges = <
+  T extends { isRemoved: boolean }
+>(
+  removableItemsMap: Record<string, T[]>,
+  changes: Record<string, ChangeType>,
+  getId: (item: T) => string
+): Record<string, (T & { changes: ChangeType | null })[]> => {
+  const filteredMap: Record<
+    string,
+    (T & { changes: ChangeType | null })[]
+  > = {};
+  for (const [key, removableItems] of Object.entries(removableItemsMap)) {
+    const filteredItems = filterRemovableItemsForChangelogAndMapChanges(
+      removableItems,
+      changes,
+      getId
+    );
+    if (filteredItems.length > 0) {
+      filteredMap[key] = filteredItems;
+    }
+  }
+  return filteredMap;
 };
 
 export const getEndpoint = ({
