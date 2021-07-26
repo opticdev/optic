@@ -110,12 +110,15 @@ impl BodyPrimitiveVisitor<ShapeDiffResult> for DiffPrimitiveVisitor {
         _ => unreachable!("should not call primitive visitor without a primitive value"),
       });
     if matched.is_empty() {
-      unmatched.iter().for_each(|&choice| {
-        self.results.push(ShapeDiffResult::UnmatchedShape {
-          json_trail: json_trail.clone(),
-          shape_trail: choice.shape_trail(),
+      unmatched
+        .iter()
+        .filter(|choice| !matches!(choice.core_shape_kind, ShapeKind::OptionalKind)) // prevent generating two diffs for optional primitives
+        .for_each(|&choice| {
+          self.results.push(ShapeDiffResult::UnmatchedShape {
+            json_trail: json_trail.clone(),
+            shape_trail: choice.shape_trail(),
+          });
         });
-      });
     }
   }
 }

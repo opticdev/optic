@@ -94,7 +94,7 @@ async fn optional_single_string_or_list_of_strings() {
   let diff_results = diff_interaction(
     &spec,
     interaction.clone(),
-    &DiffInteractionConfig::default().with_query_params(true),
+    &DiffInteractionConfig::default(),
   );
 
   assert_eq!(diff_results.len(), 1);
