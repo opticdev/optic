@@ -497,6 +497,20 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       isRemoved: (parent: endpoints.QueryParametersNodeWrapper) => {
         return parent.value.isRemoved;
       },
+      changes: async (
+        parent: endpoints.QueryParametersNodeWrapper,
+        args: {
+          sinceBatchCommitId?: string;
+        },
+        context: GraphQLContext
+      ) => {
+        const { queryParametersId } = parent.value;
+        return getEndpointGraphNodeChange(
+          context.spectacleContext().endpointsQueries,
+          queryParametersId,
+          args.sinceBatchCommitId
+        );
+      },
       contributions: (
         parent: endpoints.QueryParametersNodeWrapper,
         _: {},

@@ -69,6 +69,16 @@ const ChangelogRootComponent: FC<
     endpointChanges,
     (endpoint) => getEndpointId(endpoint)
   );
+  const filteredQuery =
+    thisEndpoint &&
+    thisEndpoint.query &&
+    selectors.isItemVisibleForChangelog(
+      thisEndpoint.query,
+      endpointChanges,
+      (query) => query.queryParametersId
+    )
+      ? thisEndpoint.query
+      : null;
   const filteredRequests = selectors.filterRemovedItemForChangelog(
     thisEndpoint ? thisEndpoint.requests : [],
     endpointChanges,
@@ -151,7 +161,7 @@ const ChangelogRootComponent: FC<
                   }}
                 >
                   <EndpointTOC
-                    query={thisEndpoint.query}
+                    query={filteredQuery}
                     requests={filteredRequests}
                     responsesByStatusCode={filteredResponsesByStatusCode}
                   />
@@ -161,19 +171,19 @@ const ChangelogRootComponent: FC<
           </div>
         </div>
 
-        {thisEndpoint.query && (
+        {filteredQuery && (
           <div className={classes.bodyContainer} id="query-parameters">
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Query Parameters</h6>
               <ReactMarkdown
                 className={classes.contents}
-                source={thisEndpoint.query.description}
+                source={filteredQuery.description}
               />
             </div>
             <div className={classes.bodyDetails}>
               <div>
                 <ContributionFetcher
-                  rootShapeId={thisEndpoint.query.rootShapeId}
+                  rootShapeId={filteredQuery.rootShapeId}
                   endpointId={endpointId}
                   changesSinceBatchCommit={batchId}
                 >
@@ -198,7 +208,7 @@ const ChangelogRootComponent: FC<
               </div>
               <div className={classes.panel}>
                 <ShapeFetcher
-                  rootShapeId={thisEndpoint.query.rootShapeId}
+                  rootShapeId={filteredQuery.rootShapeId}
                   changesSinceBatchCommit={batchId}
                 >
                   {(shapes) => (

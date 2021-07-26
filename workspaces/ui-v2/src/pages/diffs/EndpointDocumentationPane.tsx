@@ -49,6 +49,16 @@ export const EndpointDocumentationPane: FC<
   const endpointChanges = useAppSelector(
     (state) => state.endpoints.results.data?.changes || {}
   );
+  const filteredQuery =
+    thisEndpoint &&
+    thisEndpoint.query &&
+    selectors.isItemVisibleForChangelog(
+      thisEndpoint.query,
+      endpointChanges,
+      (query) => query.queryParametersId
+    )
+      ? thisEndpoint.query
+      : null;
   const filteredRequests = selectors.filterRemovedItemForChangelog(
     thisEndpoint ? thisEndpoint.requests : [],
     endpointChanges,
@@ -93,14 +103,14 @@ export const EndpointDocumentationPane: FC<
           }}
         >
           <EndpointTOC
-            query={thisEndpoint.query}
+            query={filteredQuery}
             requests={filteredRequests}
             responsesByStatusCode={filteredResponsesByStatusCode}
           />
         </div>
       </Panel>
 
-      {thisEndpoint.query && (
+      {filteredQuery && (
         <HighlightedLocation
           className={classes.bodyContainer}
           targetLocation={highlightedLocation}
@@ -110,7 +120,7 @@ export const EndpointDocumentationPane: FC<
             <h6 className={classes.bodyHeader}>Query Parameters</h6>
             <div className={classes.bodyDetails}>
               <ShapeFetcher
-                rootShapeId={thisEndpoint.query.rootShapeId}
+                rootShapeId={filteredQuery.rootShapeId}
                 changesSinceBatchCommit={lastBatchCommit}
               >
                 {(shapes) => (

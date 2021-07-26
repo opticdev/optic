@@ -290,8 +290,6 @@ export class EndpointNodeWrapper implements NodeWrapper {
     const queryParamNode = queryParameters.results.find(
       (node) => node.result.id === latestQueryParamNodeId
     );
-    console.log(queryParameters);
-    console.log(latestQueryParamNodeId, queryParamNode);
 
     return latestQueryParamNodeId && queryParamNode
       ? (queryParamNode as QueryParametersNodeWrapper)

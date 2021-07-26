@@ -139,7 +139,7 @@ type HttpRequestNew {
   contributions: JSON!
 
   # Changes for the response based on the give batch commit ID
-  changes(sinceBatchCommitId: String): ChangesResult
+  changes(sinceBatchCommitId: String): ChangesResult!
 
   # Is the request removed
   isRemoved: Boolean!
@@ -171,6 +171,9 @@ type QueryParameters {
 
   # Is the body removed
   isRemoved: Boolean!
+
+  # Changes for the query parameters based on the give batch commit ID
+  changes(sinceBatchCommitId: String): ChangesResult!
 
   # Contributions for the query parameter
   contributions: JSON!
@@ -253,7 +256,7 @@ type HttpResponse {
   contributions: JSON
 
   # Changes for the response based on the give batch commit ID
-  changes(sinceBatchCommitId: String): ChangesResult
+  changes(sinceBatchCommitId: String): ChangesResult!
 
   # Is the response removed
   isRemoved: Boolean

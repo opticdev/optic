@@ -120,6 +120,10 @@ export const EndpointRootPage: FC<
   const parameterizedPathParts = thisEndpoint.pathParameters.filter(
     (path) => path.isParameterized
   );
+  const filteredQuery =
+    thisEndpoint.query && selectors.isItemVisible(thisEndpoint.query)
+      ? thisEndpoint.query
+      : null;
   const filteredRequests = selectors.filterRemovedItems(thisEndpoint.requests);
   const filteredResponsesByStatusCode = selectors.filterMapOfRemovedItems(
     thisEndpoint.responsesByStatusCode
@@ -243,7 +247,7 @@ export const EndpointRootPage: FC<
                   }}
                 >
                   <EndpointTOC
-                    query={thisEndpoint.query}
+                    query={filteredQuery}
                     requests={filteredRequests}
                     responsesByStatusCode={filteredResponsesByStatusCode}
                   />
@@ -252,24 +256,24 @@ export const EndpointRootPage: FC<
             </div>
           </div>
         </div>
-        {thisEndpoint.query && (
+        {filteredQuery && (
           <div className={classes.bodyContainer} id="query-parameters">
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Query Parameters</h6>
             </div>
             <div className={classes.bodyContributionContainer}>
               <MarkdownBodyContribution
-                id={thisEndpoint.query.queryParametersId}
+                id={filteredQuery.queryParametersId}
                 contributionKey={'description'}
                 defaultText={'Add a description'}
-                initialValue={thisEndpoint.query.description}
+                initialValue={filteredQuery.description}
                 endpoint={thisEndpoint}
               />
             </div>
             <div className={classes.bodyDetails}>
               <div>
                 <ContributionFetcher
-                  rootShapeId={thisEndpoint.query.rootShapeId}
+                  rootShapeId={filteredQuery.rootShapeId}
                   endpointId={endpointId}
                 >
                   {(fields) => (
@@ -313,7 +317,7 @@ export const EndpointRootPage: FC<
                 </ContributionFetcher>
               </div>
               <div className={classes.panel}>
-                <ShapeFetcher rootShapeId={thisEndpoint.query.rootShapeId}>
+                <ShapeFetcher rootShapeId={filteredQuery.rootShapeId}>
                   {(shapes) => (
                     <QueryParametersPanel
                       parameters={convertShapeToQueryParameters(shapes)}
