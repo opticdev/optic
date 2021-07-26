@@ -13,7 +13,10 @@ import {
 import { EndpointName, SpinningOpticLogo } from '<src>/components';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
 import { IUndocumentedUrl } from '<src>/pages/diffs/contexts/SharedDiffState';
-import { makePattern, urlStringToPathComponents } from '<src>/utils';
+import {
+  createPathFromPathComponents,
+  urlStringToPathComponents,
+} from '<src>/utils';
 
 type BulkLearnModalProps = {
   undocumentedEndpointsToLearn: IUndocumentedUrl[];
@@ -82,7 +85,9 @@ export const BulkLearnModal: FC<BulkLearnModalProps> = ({
       // in wipPatterns
       if (wipPatterns[path + method]) {
         return {
-          pattern: makePattern(wipPatterns[path + method].components),
+          pattern: createPathFromPathComponents(
+            wipPatterns[path + method].components
+          ),
           method,
           pathComponents: wipPatterns[path + method].components,
         };

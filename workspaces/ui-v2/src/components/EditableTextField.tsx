@@ -100,7 +100,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 12,
     fontWeight: 400,
     fontFamily: 'Ubuntu',
-    pointerEvents: 'none',
     color: '#2a2f45',
   },
   fieldOrParam: {
