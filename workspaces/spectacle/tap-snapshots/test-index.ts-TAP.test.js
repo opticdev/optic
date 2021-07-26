@@ -100,7 +100,17 @@ exports[
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
-      "endpoints": Array [],
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "added",
+          },
+          "contributions": Object {},
+          "method": "GET",
+          "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
+        },
+      ],
     },
   },
 }

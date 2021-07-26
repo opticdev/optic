@@ -149,7 +149,8 @@ const convertSpectacleChangeToChangeType = (
 
 export const endpointQueryResultsToJson = (
   { endpoints }: EndpointQueryResults,
-  endpointChanges: EndpointChangeQueryResults | null
+  endpointChanges: EndpointChangeQueryResults | null,
+  includeChanges: boolean
 ): {
   endpoints: IEndpoint[];
   changes: Record<string, ChangeType>;
@@ -239,7 +240,7 @@ export const endpointQueryResultsToJson = (
     );
   }
 
-  return { endpoints: mappedEndpoints, changes };
+  return { endpoints: mappedEndpoints, changes: includeChanges ? changes : {} };
 };
 
 export const fetchEndpoints = createAsyncThunk<
@@ -286,7 +287,8 @@ export const fetchEndpoints = createAsyncThunk<
     }
     return endpointQueryResultsToJson(
       results.data!,
-      endpointChanges?.data || null
+      endpointChanges?.data || null,
+      sinceBatchCommitId !== undefined
     );
   } catch (e) {
     console.error(e);

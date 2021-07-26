@@ -87,7 +87,8 @@ export function buildEndpointChanges(
 ): EndpointChanges {
   const deltaBatchCommits = getDeltaBatchCommitsForEndpoints(
     endpointQueries,
-    sinceBatchCommitId
+    // In this case specifically, we want _all_ endpoint changes
+    sinceBatchCommitId || ALL_BATCH_COMMITS
   );
 
   const changes = new Changes();
@@ -396,6 +397,8 @@ type ChangeResult = {
   removed: boolean;
 };
 
+const ALL_BATCH_COMMITS = 'ALL_BATCH_COMMITS';
+
 function getDeltaBatchCommitsForEndpoints(
   endpointQueries: endpoints.GraphQueries,
   sinceBatchCommitId?: string
@@ -420,8 +423,9 @@ function getDeltaBatchCommitsForEndpoints(
   sortedBatchCommits
     .filter(
       (batchCommit: any) =>
+        sinceBatchCommitId === ALL_BATCH_COMMITS ||
         batchCommit.result.data.createdAt >
-        sinceBatchCommit!.result.data.createdAt
+          sinceBatchCommit!.result.data.createdAt
     )
     .forEach((batchCommit: any) => {
       deltaBatchCommits.set(batchCommit.result.id, batchCommit);
@@ -451,8 +455,9 @@ function getDeltaBatchCommitsForShapes(
   sortedBatchCommits
     .filter(
       (batchCommit: any) =>
+        sinceBatchCommitId === ALL_BATCH_COMMITS ||
         batchCommit.result.data.createdAt >
-        sinceBatchCommit!.result.data.createdAt
+          sinceBatchCommit!.result.data.createdAt
     )
     .forEach((batchCommit: any) => {
       deltaBatchCommits.set(batchCommit.result.id, batchCommit);
