@@ -147,7 +147,7 @@ export function buildEndpointChanges(
 
   // Gather batch commit neighbors
   const batchCommitNeighborIds = new Map();
-  deltaBatchCommits.forEach((batchCommit: any) => {
+  [...deltaBatchCommits.values()].forEach((batchCommit: any) => {
     const batchCommitId = batchCommit.result.id;
     // TODO: create query for neighbors of all types
     shapeQueries
