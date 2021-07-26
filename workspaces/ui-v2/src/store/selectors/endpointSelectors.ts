@@ -7,9 +7,7 @@ export const filterRemovedItems = <T extends { isRemoved: boolean }>(
   removableItems: T[]
 ): T[] => removableItems.filter((removableItem) => !removableItem.isRemoved);
 
-export const filterRemovableItemsForChangelogAndMapChanges = <
-  T extends { isRemoved: boolean }
->(
+export const filterRemovedItemForChangelog = <T extends { isRemoved: boolean }>(
   removableItems: T[],
   changes: Record<string, ChangeType>,
   getId: (item: T) => string
@@ -47,7 +45,7 @@ export const filterMapOfRemovedItems = <T extends { isRemoved: boolean }>(
   return filteredMap;
 };
 
-export const filterMapOfRemovableItemsForChangelogAndMapChanges = <
+export const filterMapOfRemovedItemForChangelog = <
   T extends { isRemoved: boolean }
 >(
   removableItemsMap: Record<string, T[]>,
@@ -59,7 +57,7 @@ export const filterMapOfRemovableItemsForChangelogAndMapChanges = <
     (T & { changes: ChangeType | null })[]
   > = {};
   for (const [key, removableItems] of Object.entries(removableItemsMap)) {
-    const filteredItems = filterRemovableItemsForChangelogAndMapChanges(
+    const filteredItems = filterRemovedItemForChangelog(
       removableItems,
       changes,
       getId
