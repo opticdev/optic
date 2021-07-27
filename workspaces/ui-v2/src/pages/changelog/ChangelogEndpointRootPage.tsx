@@ -64,9 +64,30 @@ const ChangelogRootComponent: FC<
   const endpointChanges = useAppSelector(
     (state) => state.endpoints.results.data?.changes || {}
   );
-  const endpointWithChanges = selectors.filterRemovedEndpointsForChangelogAndMapChanges(
+  const endpointWithChanges = selectors.filterRemovedItemForChangelog(
     thisEndpoint ? [thisEndpoint] : [],
-    endpointChanges
+    endpointChanges,
+    (endpoint) => getEndpointId(endpoint)
+  );
+  const visibleQueryParameters =
+    thisEndpoint &&
+    thisEndpoint.query &&
+    selectors.isItemVisibleForChangelog(
+      thisEndpoint.query,
+      endpointChanges,
+      (query) => query.queryParametersId
+    )
+      ? thisEndpoint.query
+      : null;
+  const visibleRequests = selectors.filterRemovedItemForChangelog(
+    thisEndpoint ? thisEndpoint.requests : [],
+    endpointChanges,
+    (request) => request.requestId
+  );
+  const visibleResponsesByStatusCode = selectors.filterMapOfRemovedItemsForChangelog(
+    thisEndpoint ? thisEndpoint.responsesByStatusCode : {},
+    endpointChanges,
+    (response) => response.responseId
   );
 
   const isEndpointRemoved = thisEndpoint && endpointWithChanges.length === 0;
@@ -140,9 +161,9 @@ const ChangelogRootComponent: FC<
                   }}
                 >
                   <EndpointTOC
-                    query={thisEndpoint.query}
-                    requests={thisEndpoint.requests}
-                    responsesByStatusCode={thisEndpoint.responsesByStatusCode}
+                    query={visibleQueryParameters}
+                    requests={visibleRequests}
+                    responsesByStatusCode={visibleResponsesByStatusCode}
                   />
                 </div>
               </Panel>
@@ -150,19 +171,19 @@ const ChangelogRootComponent: FC<
           </div>
         </div>
 
-        {thisEndpoint.query && (
+        {visibleQueryParameters && (
           <div className={classes.bodyContainer} id="query-parameters">
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Query Parameters</h6>
               <ReactMarkdown
                 className={classes.contents}
-                source={thisEndpoint.query.description}
+                source={visibleQueryParameters.description}
               />
             </div>
             <div className={classes.bodyDetails}>
               <div>
                 <ContributionFetcher
-                  rootShapeId={thisEndpoint.query.rootShapeId}
+                  rootShapeId={visibleQueryParameters.rootShapeId}
                   endpointId={endpointId}
                   changesSinceBatchCommit={batchId}
                 >
@@ -187,7 +208,7 @@ const ChangelogRootComponent: FC<
               </div>
               <div className={classes.panel}>
                 <ShapeFetcher
-                  rootShapeId={thisEndpoint.query.rootShapeId}
+                  rootShapeId={visibleQueryParameters.rootShapeId}
                   changesSinceBatchCommit={batchId}
                 >
                   {(shapes) => (
@@ -201,14 +222,14 @@ const ChangelogRootComponent: FC<
           </div>
         )}
 
-        {thisEndpoint.requests.length > 0 && (
+        {visibleRequests.length > 0 && (
           <div className={classes.bodyContainer} id="request-body">
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Request Body</h6>
             </div>
 
             <HttpBodySelector
-              items={thisEndpoint.requests}
+              items={visibleRequests}
               getDisplayName={(request) =>
                 request.body?.contentType || 'No Body'
               }
@@ -271,7 +292,7 @@ const ChangelogRootComponent: FC<
           </div>
         )}
         {selectors
-          .getResponsesInSortedOrder(thisEndpoint.responsesByStatusCode)
+          .getResponsesInSortedOrder(visibleResponsesByStatusCode)
           .map(([statusCode, responses]) => (
             <div
               className={classes.bodyContainer}

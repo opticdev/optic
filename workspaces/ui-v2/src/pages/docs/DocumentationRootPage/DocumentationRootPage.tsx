@@ -41,7 +41,7 @@ export function DocumentationRootPage() {
     );
   };
 
-  const filteredEndpoints = selectors.filterRemovedEndpoints(
+  const filteredEndpoints = selectors.filterRemovedItems(
     endpointsState.data?.endpoints || []
   );
 

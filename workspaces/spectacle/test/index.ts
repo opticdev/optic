@@ -170,8 +170,8 @@ specs.forEach(async (spec) => {
   const spectacle = await makeSpectacle(opticContext);
 
   Tap.test(`spectacle changelog query ${spec.name}`, async (test) => {
-    const query = `{
-      endpointChanges(sinceBatchCommitId: "${spec.sinceBatchCommitId || ''}") {
+    const query = `query X($sinceBatchCommitId: String) {
+      endpointChanges(sinceBatchCommitId: $sinceBatchCommitId) {
         endpoints {
           change {
             category
@@ -184,7 +184,10 @@ specs.forEach(async (spec) => {
       }
     }`;
 
-    const results = await spectacle.queryWrapper({ query, variables: {} });
+    const results = await spectacle.queryWrapper({
+      query,
+      variables: { sinceBatchCommitId: spec.sinceBatchCommitId },
+    });
     test.matchSnapshot(results);
   });
 
