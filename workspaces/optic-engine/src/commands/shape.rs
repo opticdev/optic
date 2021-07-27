@@ -699,8 +699,11 @@ mod test {
   pub fn can_handle_remove_field_command() {
     let initial_events: Vec<ShapeEvent> = serde_json::from_value(json!([
       {"ShapeAdded":{"shapeId":"object_shape_1","baseShapeId":"$object", "name": "" }},
-      {"ShapeAdded":{"shapeId":"string_shape_1","baseShapeId":"$number", "name": "" }},
-      {"FieldAdded":{"fieldId": "field_1", "shapeId": "object_shape_1", "name": "likesCount", "shapeDescriptor":{ "FieldShapeFromShape": { "shapeId": "string_shape_1", "fieldId": "field_1"}}}}
+      {"ShapeAdded":{"shapeId":"string_shape_1","baseShapeId":"$string", "name": "" }},
+      {"ShapeAdded":{"shapeId":"string_shape_2","baseShapeId":"$string", "name": "" }},
+      {"FieldAdded":{"fieldId": "field_1", "shapeId": "object_shape_1", "name": "firstName", "shapeDescriptor":{ "FieldShapeFromShape": { "shapeId": "string_shape_1", "fieldId": "field_1"}}}},
+      {"FieldAdded":{"fieldId": "field_2", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor":{ "FieldShapeFromShape": { "shapeId": "string_shape_2", "fieldId": "field_2"}}}},
+      {"FieldRemoved":{"fieldId": "field_2" }}
     ]))
     .expect("initial events should be valid shape events");
 
@@ -729,7 +732,16 @@ mod test {
     );
 
 
-    // @TODO: verify removed field can't be removed again
+    let already_removed_field: ShapeCommand = serde_json::from_value(json!(
+      {"RemoveField":{ "fieldId": "field_2" }}
+    ))
+    .unwrap();
+    let already_removed_field_result = projection.execute(already_removed_field);
+    assert!(already_removed_field_result.is_err());
+    assert_debug_snapshot!(
+      "already_removed_field_result",
+      already_removed_field_result.unwrap_err()
+    );
 
     for event in new_events {
       projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
