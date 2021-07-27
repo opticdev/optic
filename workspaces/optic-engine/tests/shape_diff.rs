@@ -437,7 +437,7 @@ fn can_diff_optional() {
   );
 
   assert_debug_snapshot!("can_diff_optional__results", results);
-  assert_eq!(results.len(), 2); //@BUG: this should be 1, right? and the trail looks wrong
+  assert_eq!(results.len(), 1);
 }
 
 #[test]
