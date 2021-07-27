@@ -59,6 +59,12 @@ impl ShapeCommand {
       })
     })
   }
+
+  pub fn remove_field(field_id: FieldId) -> Self {
+    Self::RemoveField(RemoveField {
+      field_id
+    })
+  }
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
@@ -151,7 +157,7 @@ pub struct RenameField {
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RemoveField {
-  field_id: FieldId,
+  pub field_id: FieldId,
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
@@ -314,6 +320,15 @@ impl AggregateCommand<ShapeProjection> for ShapeCommand {
           vec![ShapeEvent::from(shape_events::FieldShapeSet::from(command))]
         }
       },
+
+      ShapeCommand::RemoveField(command) => {
+        validation.require(
+          validation.field_id_exists(&command.field_id),
+          "field must exist to remove field"
+        )?;
+
+        vec![ShapeEvent::FieldRemoved(shape_events::FieldRemoved::from(command))]
+      }
 
       // Parameters
       // ----------
@@ -674,6 +689,47 @@ mod test {
       "can_handle_set_field_shape_command__unexisting_field_shape_result",
       unexisting_field_shape_result.unwrap_err()
     );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
+  pub fn can_handle_remove_field_command() {
+    let initial_events: Vec<ShapeEvent> = serde_json::from_value(json!([
+      {"ShapeAdded":{"shapeId":"object_shape_1","baseShapeId":"$object", "name": "" }},
+      {"ShapeAdded":{"shapeId":"string_shape_1","baseShapeId":"$number", "name": "" }},
+      {"FieldAdded":{"fieldId": "field_1", "shapeId": "object_shape_1", "name": "likesCount", "shapeDescriptor":{ "FieldShapeFromShape": { "shapeId": "string_shape_1", "fieldId": "field_1"}}}}
+    ]))
+    .expect("initial events should be valid shape events");
+
+    let mut projection = ShapeProjection::from(initial_events);
+
+    let valid_command: ShapeCommand = serde_json::from_value(json!(
+      {"RemoveField":{ "fieldId": "field_1" }}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!("can_handle_remove_field_command__new_events", new_events);
+
+    let unexisting_field: ShapeCommand = serde_json::from_value(json!(
+      {"RemoveField":{ "fieldId": "not_a_field" }}
+    ))
+    .unwrap();
+    let unexisting_field_result = projection.execute(unexisting_field);
+    assert!(unexisting_field_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_remove_field_command__unexisting_field_result",
+      unexisting_field_result.unwrap_err()
+    );
+
+
+    // @TODO: verify removed field can't be removed again
 
     for event in new_events {
       projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
