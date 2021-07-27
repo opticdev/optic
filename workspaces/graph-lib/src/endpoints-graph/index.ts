@@ -277,16 +277,16 @@ export class RequestNodeWrapper implements NodeWrapper {
     return this.result.data as RequestNode;
   }
 
-  endpoint(): EndpointNodeWrapper {
+  // A request node can be orphaned
+  endpoint(): EndpointNodeWrapper | null {
     const endpoints = this.queries.listOutgoingNeighborsByType(
       this.result.id,
       NodeType.Endpoint
     );
 
-    if (endpoints.results.length === 0) {
-      throw new Error('Expected request node to have an endpoint');
-    }
-    return endpoints.results[0] as EndpointNodeWrapper;
+    return endpoints.results.length > 0
+      ? (endpoints.results[0] as EndpointNodeWrapper)
+      : null;
   }
 
   body(): BodyNodeWrapper | null {
@@ -308,16 +308,16 @@ export class ResponseNodeWrapper implements NodeWrapper {
     return this.result.data as ResponseNode;
   }
 
-  endpoint(): EndpointNodeWrapper {
+  // A response node can be orphaned
+  endpoint(): EndpointNodeWrapper | null {
     const endpoints = this.queries.listOutgoingNeighborsByType(
       this.result.id,
       NodeType.Endpoint
     );
 
-    if (endpoints.results.length === 0) {
-      throw new Error('Expected response node to have an endpoint');
-    }
-    return endpoints.results[0] as EndpointNodeWrapper;
+    return endpoints.results.length > 0
+      ? (endpoints.results[0] as EndpointNodeWrapper)
+      : null;
   }
 
   bodies(): NodeListWrapper {
