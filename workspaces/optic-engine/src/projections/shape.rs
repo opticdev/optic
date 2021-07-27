@@ -614,6 +614,29 @@ impl ShapeProjection {
       .add_edge(field_node_index, object_node_index, Edge::IsFieldOf);
   }
 
+  pub fn without_field(&mut self, field_id: FieldId) {
+    let field_node_index = self
+      .get_field_node_index(&field_id)
+      .expect("expected field_id to have corresponding node");
+
+    let object_edge_index = self
+      .graph
+      .edges_directed(*field_node_index, petgraph::Direction::Outgoing)
+      .find(|parent_edge| matches!(parent_edge.weight(), Edge::IsFieldOf))
+      .map(|object_edge| object_edge.id());
+
+    if let Some(object_edge_index) = object_edge_index {
+      self.graph.remove_edge(object_edge_index); // prevents field to be resolved from the object shape node
+    }
+
+    self.node_id_to_index.remove(&field_id); // prevents field node to be looked up by field id
+
+    // GOTCHA: we're not deleting the field node itself, as that would invalidate self.node_id_to_index
+    // as the graph indexes shift.
+    // TODO: figure out the implications of the above, like correctness of queries and
+    // eventual garbage collection.
+  }
+
   pub fn get_shape_node_index(&self, node_id: &NodeId) -> Option<&NodeIndex> {
     let node_index = self.node_id_to_index.get(node_id)?;
     let node = self.graph.node_weight(*node_index);
@@ -799,6 +822,11 @@ impl AggregateEvent<ShapeProjection> for ShapeEvent {
           }
         }
       }
+      ShapeEvent::FieldRemoved(e) => {
+        projection.without_field(e.field_id);
+        // TODO: track removal history
+      }
+
       ShapeEvent::BaseShapeSet(e) => {
         projection.with_base_shape(e.shape_id.clone(), e.base_shape_id);
 
