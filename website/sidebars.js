@@ -1,6 +1,7 @@
 const allIntegrationDocs = require('./generate/generate-frameworks.js');
 const allBrowserIntegrationDocs = require('./generate/generate-browsers.js');
 const allToolsIntegrations = require('./generate/generate-tools.js');
+const allScriptsIntegrations = require('./generate/generate-scripts.js');
 
 const allUseCases = require('./use-cases');
 
@@ -60,16 +61,21 @@ module.exports = {
       ],
     },
     {
+      type: 'category',
+      label: allUseCases.Share.label,
+      collapsed: false,
+      items: [
+        'share/share',
+        'share/optic-cloud',
+        'share/openapi',
+        'share/scripts',
+      ],
+    },
+    {
       type: 'link',
       label: 'Reference Docs',
       href: '/reference',
     },
-    // {
-    //   type: 'category',
-    //   label: allUseCases.Share.label,
-    //   collapsed: false,
-    //   items: ['share/share', 'share/changelogs', 'share/openapi'],
-    // },
   ],
   referenceSideBar: [
     'reference/key-concepts',
@@ -93,6 +99,11 @@ module.exports = {
           type: 'category',
           label: 'API Tools',
           items: allToolsIntegrations,
+        },
+        {
+          type: 'category',
+          label: 'Scripts',
+          items: allScriptsIntegrations,
         },
         {
           type: 'category',

@@ -51,7 +51,12 @@ module.exports = {
         },
         {
           label: 'Use Cases',
-          items: [allUseCases.Document, allUseCases.Test, allUseCases.Change],
+          items: [
+            allUseCases.Document,
+            allUseCases.Test,
+            allUseCases.Change,
+            allUseCases.Share,
+          ],
           position: 'right',
         },
         {

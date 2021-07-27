@@ -1,0 +1,48 @@
+---
+title: Documentation in the Optic Cloud
+slug: /share/optic-cloud
+---
+
+import { Paper } from '@material-ui/core';
+
+Optic's documentation lives alongside your repository. Anyone who clones your API project also gets the latest documentation. To share documentation with a broader audience, a copy of the documentation needs to live somewhere accessible. Optic integrates with the Optic Cloud, allowing you to host your documentation at a URL that can be shared with your team and your consumers. Anyone with the URL can view your latest documentation without having to clone or pull your project repository.
+
+## Sharing API documentation via the Optic Cloud
+
+Documentation can be shared via the Optic Cloud by clicking the **Share** button at the upper-right hand corner of the documentation page.
+
+:::tip 
+The **Share** button is not available when comparing diffs of older documentation versions. If you don't see the **Share** button on the documentation page, check to see if the Compare Versions button reads **Latest...**. If so, click it and select **Latest** from the drop-down.
+:::
+
+<Paper elevation={3}>
+
+![The Share link on the upper-right corner of the Optic Dashboard's documentation page](/img/docs/share-document-page.png)
+
+</Paper>
+
+A modal dialog will pop up, asking you if you wish to share with your team or with external consumers. Both will give you a URL you can share with whomever needs to see your documentation. Click through either **Team** or **External Consumer** which will take you to the login flow.
+
+<Paper elevation={3} style={{width: "50%"}}>
+
+![Choose if you will share with your team or external consumers](/img/docs/share-with-whom.png)
+
+</Paper>
+
+Once completing the login flow, you'll see a new modal on the Optic dashboard. It providess a link to your Optic Cloud documentation, and a Markdown badge to add to your project's `README.md`. It will show how many endpoints in your API are documented, and link to the Optic Cloud documentation.
+
+<Paper elevation={3} style={{width: "50%"}}>
+
+![Share your documentation through the Optic Cloud](/img/docs/share-in-app-link.png)
+
+</Paper>
+
+## Updating your documentation in the Optic Cloud
+
+As your API changes, so will your documentation. Once you are ready to release your next version and share the documentation changes to go along with it, repeat the sharing process above. You will get a new Optic Cloud URL to the latest version of your specification, which can be shared and updated in your project's `README.md`.
+
+All of your documentation history will be available on every update to the Optic Cloud, and the latest documentation will be the best place to not only see your API's current documentation, but behavior changes that have been detected while using Optic.
+
+## What's Next
+
+If you have an existing process for updating your documentation, or other systems such as mocks that can make use of an up to date specification, check out [exporting an OpenAPI Specification](/share/openapi). Once you're comfortable with exporting your OpenAPI specification, automate your integrations with other systems using [Optic Scripts](/share/scripts)

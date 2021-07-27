@@ -4,9 +4,9 @@ import PreviewPageModal from './Modal';
 import { Grid, Link, Typography } from '@material-ui/core';
 import { SubtleBlueBackground } from './theme';
 
-const tools = require('../../generate/results/tools');
+const tools = require('../../generate/results/scripts');
 
-export function ShowAllTools() {
+export function ShowAllScripts() {
   return (
     <div style={{ marginTop: 20, marginBottom: 20 }}>
       <Grid
