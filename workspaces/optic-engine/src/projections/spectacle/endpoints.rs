@@ -563,7 +563,6 @@ impl EndpointsProjection {
             .edges_directed(request_node_index, petgraph::Direction::Incoming)
             .find_map(|request_child_edge| {
               let request_child_node = self.graph.node_weight(request_child_edge.source());
-              dbg!(request_child_node);
               // @GOTCHA we'll need to update this if request / response nodes are reused for
               // different content types - this currently will orphan any request node that contains
               // a body that matches the inserted content type - if we reuse request nodes, we'll need to
