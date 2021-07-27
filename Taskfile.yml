@@ -31,7 +31,7 @@ includes:
 tasks:
   # Set up a local environment
   postpull:
-    cmds: 
+    cmds:
       - task: 'workspaces:clean'
       - FLAGS_FILE=.env.local task workspaces:setenv
       - task: 'workspaces:build'
