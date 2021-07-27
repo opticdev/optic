@@ -49,7 +49,7 @@ export const EndpointDocumentationPane: FC<
   const endpointChanges = useAppSelector(
     (state) => state.endpoints.results.data?.changes || {}
   );
-  const filteredQuery =
+  const visibleQueryParameters =
     thisEndpoint &&
     thisEndpoint.query &&
     selectors.isItemVisibleForChangelog(
@@ -59,12 +59,12 @@ export const EndpointDocumentationPane: FC<
     )
       ? thisEndpoint.query
       : null;
-  const filteredRequests = selectors.filterRemovedItemForChangelog(
+  const visibleRequests = selectors.filterRemovedItemForChangelog(
     thisEndpoint ? thisEndpoint.requests : [],
     endpointChanges,
     (request) => request.requestId
   );
-  const filteredResponsesByStatusCode = selectors.filterMapOfRemovedItemsForChangelog(
+  const visibleResponsesByStatusCode = selectors.filterMapOfRemovedItemsForChangelog(
     thisEndpoint ? thisEndpoint.responsesByStatusCode : {},
     endpointChanges,
     (response) => response.responseId
@@ -103,14 +103,14 @@ export const EndpointDocumentationPane: FC<
           }}
         >
           <EndpointTOC
-            query={filteredQuery}
-            requests={filteredRequests}
-            responsesByStatusCode={filteredResponsesByStatusCode}
+            query={visibleQueryParameters}
+            requests={visibleRequests}
+            responsesByStatusCode={visibleResponsesByStatusCode}
           />
         </div>
       </Panel>
 
-      {filteredQuery && (
+      {visibleQueryParameters && (
         <HighlightedLocation
           className={classes.bodyContainer}
           targetLocation={highlightedLocation}
@@ -120,7 +120,7 @@ export const EndpointDocumentationPane: FC<
             <h6 className={classes.bodyHeader}>Query Parameters</h6>
             <div className={classes.bodyDetails}>
               <ShapeFetcher
-                rootShapeId={filteredQuery.rootShapeId}
+                rootShapeId={visibleQueryParameters.rootShapeId}
                 changesSinceBatchCommit={lastBatchCommit}
               >
                 {(shapes) => (
@@ -134,7 +134,7 @@ export const EndpointDocumentationPane: FC<
         </HighlightedLocation>
       )}
 
-      {filteredRequests.length > 0 && (
+      {visibleRequests.length > 0 && (
         <HighlightedLocation
           className={classes.bodyContainer}
           targetLocation={highlightedLocation}
@@ -144,7 +144,7 @@ export const EndpointDocumentationPane: FC<
             <h6 className={classes.bodyHeader}>Request Body</h6>
             <div className={classes.bodyDetails}>
               <HttpBodySelector
-                items={filteredRequests}
+                items={visibleRequests}
                 getDisplayName={(request) =>
                   request.body?.contentType || 'No Body'
                 }
@@ -174,7 +174,7 @@ export const EndpointDocumentationPane: FC<
       )}
 
       {selectors
-        .getResponsesInSortedOrder(filteredResponsesByStatusCode)
+        .getResponsesInSortedOrder(visibleResponsesByStatusCode)
         .map(([statusCode, responses]) => {
           return (
             <React.Fragment key={statusCode}>

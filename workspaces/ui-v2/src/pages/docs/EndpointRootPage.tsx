@@ -120,12 +120,12 @@ export const EndpointRootPage: FC<
   const parameterizedPathParts = thisEndpoint.pathParameters.filter(
     (path) => path.isParameterized
   );
-  const filteredQuery =
+  const visibleQueryParameters =
     thisEndpoint.query && selectors.isItemVisible(thisEndpoint.query)
       ? thisEndpoint.query
       : null;
-  const filteredRequests = selectors.filterRemovedItems(thisEndpoint.requests);
-  const filteredResponsesByStatusCode = selectors.filterMapOfRemovedItems(
+  const visibleRequests = selectors.filterRemovedItems(thisEndpoint.requests);
+  const visibleResponsesByStatusCode = selectors.filterMapOfRemovedItems(
     thisEndpoint.responsesByStatusCode
   );
 
@@ -247,33 +247,33 @@ export const EndpointRootPage: FC<
                   }}
                 >
                   <EndpointTOC
-                    query={filteredQuery}
-                    requests={filteredRequests}
-                    responsesByStatusCode={filteredResponsesByStatusCode}
+                    query={visibleQueryParameters}
+                    requests={visibleRequests}
+                    responsesByStatusCode={visibleResponsesByStatusCode}
                   />
                 </div>
               </Panel>
             </div>
           </div>
         </div>
-        {filteredQuery && (
+        {visibleQueryParameters && (
           <div className={classes.bodyContainer} id="query-parameters">
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Query Parameters</h6>
             </div>
             <div className={classes.bodyContributionContainer}>
               <MarkdownBodyContribution
-                id={filteredQuery.queryParametersId}
+                id={visibleQueryParameters.queryParametersId}
                 contributionKey={'description'}
                 defaultText={'Add a description'}
-                initialValue={filteredQuery.description}
+                initialValue={visibleQueryParameters.description}
                 endpoint={thisEndpoint}
               />
             </div>
             <div className={classes.bodyDetails}>
               <div>
                 <ContributionFetcher
-                  rootShapeId={filteredQuery.rootShapeId}
+                  rootShapeId={visibleQueryParameters.rootShapeId}
                   endpointId={endpointId}
                 >
                   {(fields) => (
@@ -317,7 +317,7 @@ export const EndpointRootPage: FC<
                 </ContributionFetcher>
               </div>
               <div className={classes.panel}>
-                <ShapeFetcher rootShapeId={filteredQuery.rootShapeId}>
+                <ShapeFetcher rootShapeId={visibleQueryParameters.rootShapeId}>
                   {(shapes) => (
                     <QueryParametersPanel
                       parameters={convertShapeToQueryParameters(shapes)}
@@ -328,13 +328,13 @@ export const EndpointRootPage: FC<
             </div>
           </div>
         )}
-        {filteredRequests.length > 0 && (
+        {visibleRequests.length > 0 && (
           <div className={classes.bodyContainer} id="request-body">
             <div className={classes.bodyHeaderContainer}>
               <h6 className={classes.bodyHeader}>Request Body</h6>
             </div>
             <HttpBodySelector
-              items={filteredRequests}
+              items={visibleRequests}
               getDisplayName={(request) =>
                 request.body?.contentType || 'No Body'
               }
@@ -401,7 +401,7 @@ export const EndpointRootPage: FC<
           </div>
         )}
         {selectors
-          .getResponsesInSortedOrder(filteredResponsesByStatusCode)
+          .getResponsesInSortedOrder(visibleResponsesByStatusCode)
           .map(([statusCode, responses]) => (
             <div
               className={classes.bodyContainer}
