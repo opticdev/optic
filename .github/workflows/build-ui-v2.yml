@@ -67,7 +67,7 @@ jobs:
         env:
           SKIP_ANNOUNCE: true
         run: |
-            docker tag \
-              "513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:${TAG}" \
-              513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:latest
-            TAG=latest task ui-v2:cloud-spec-viewer:docker:push
+          docker tag \
+            "513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:${TAG}" \
+            513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:latest
+          TAG=latest task ui-v2:cloud-spec-viewer:docker:push
