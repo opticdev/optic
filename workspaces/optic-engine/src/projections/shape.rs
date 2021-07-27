@@ -636,12 +636,17 @@ impl ShapeProjection {
   }
 
   pub fn get_field_node_index(&self, node_id: &NodeId) -> Option<&NodeIndex> {
-    let node_index = self.node_id_to_index.get(node_id)?;
-    let node = self.graph.node_weight(*node_index);
+    self
+      .get_field_node(node_id)
+      .map(|(node_index, _)| node_index)
+  }
+
+  pub fn get_field_node(&self, field_id: &FieldId) -> Option<(&NodeIndex, &FieldNode)> {
+    let node_index = self.node_id_to_index.get(field_id)?;
+    let node = self.graph.node_weight(*node_index)?;
     match node {
-      Some(&Node::Field(ref node)) => Some(node_index),
-      Some(_) => None,
-      None => None,
+      Node::Field(ref node) => Some((node_index, node)),
+      _ => None,
     }
   }
 
