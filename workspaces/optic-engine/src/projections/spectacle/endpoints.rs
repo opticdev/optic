@@ -540,10 +540,10 @@ impl EndpointsProjection {
       is_removed: false,
     });
 
-    // If there is already a set request body with a matching content type, we should remove it
+    // If there is already a set request body with a matching content type, we should orphan the old node
     // @GOTCHA - this only allows a single content type request parameter to be attached to an endpoint node
     // This means history is only visible to users for the latest request node with content type
-    // @GOTCHA - 2021/07/27 - event generation does not group together same path + method, meaning we need to search
+    // @GOTCHA - event generation does not group together same path + method, meaning we need to search
     // all request ids attached to an endpoint node (i.e. request -> body is 1:1 since request nodes are never reused)
     let maybe_request = self
       .graph
@@ -603,7 +603,7 @@ impl EndpointsProjection {
   ) {
     let endpoint_index = self.ensure_endpoint_node_index(path_id, http_method);
 
-    // If there is already a set query parameter, we should remove it
+    // If there is already a set query parameter, we should orphan the old node
     // @GOTCHA - this only allows a single query parameter to be attached to an endpoint node
     // This means history is only visible to users for the latest query parameter node
     let maybe_query_params = self
@@ -705,10 +705,10 @@ impl EndpointsProjection {
       }
       .expect("expected response node with response_id in the graph");
 
-    // If there is already a set response body with a matching status code and content type, we should remove it
+    // If there is already a set response body with a matching status code and content type, we should orphan the old node
     // @GOTCHA - this only allows a single status code and content type request parameter to be attached to an endpoint node
     // This means history is only visible to users for the latest response node with status code and content type
-    // @GOTCHA - 2021/07/27 - event generation does not group together same path + method, meaning we need to search
+    // @GOTCHA - event generation does not group together same path + method, meaning we need to search
     // all response ids attached to an endpoint node (i.e. response -> body is 1:1 since response nodes are never reused)
     let maybe_response = self
       .graph
