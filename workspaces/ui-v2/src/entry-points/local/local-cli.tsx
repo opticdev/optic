@@ -53,18 +53,11 @@ const appConfig: OpticAppConfig = {
       intercomAppId: process.env.REACT_APP_INTERCOM_APP_ID,
     },
     backendApi: {
-      domain:
-        (process.env.NODE_ENV === 'development'
-          ? process.env.REACT_APP_STAGING_API_BASE
-          : process.env.REACT_APP_PROD_API_BASE) || 'https://api.o3c.info',
+      domain: process.env.REACT_APP_BACKEND_API_BASE || '',
     },
     sharing: {
       enabled: true,
-      specViewerDomain:
-        (process.env.NODE_ENV === 'development'
-          ? process.env.REACT_APP_STAGING_SPEC_VIEWER_BASE
-          : process.env.REACT_APP_PROD_SPEC_VIEWER_BASE) ||
-        'https://spec.o3c.info',
+      specViewerDomain: process.env.REACT_APP_SPEC_VIEWER_BASE || '',
     },
   },
 };
