@@ -84,7 +84,7 @@ const ChangelogRootComponent: FC<
     endpointChanges,
     (request) => request.requestId
   );
-  const filteredResponsesByStatusCode = selectors.filterMapOfRemovedItemForChangelog(
+  const filteredResponsesByStatusCode = selectors.filterMapOfRemovedItemsForChangelog(
     thisEndpoint ? thisEndpoint.responsesByStatusCode : {},
     endpointChanges,
     (response) => response.responseId
