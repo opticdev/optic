@@ -1,4 +1,4 @@
-import { GraphCommandHandler, mapAppend } from '../shared';
+import { GraphCommandHandler, mapAppend, NodeListWrapper } from '../shared';
 import { BatchCommitData } from '../endpoints-graph';
 
 export type NodeId = string;
@@ -11,49 +11,76 @@ export enum NodeType {
   BatchCommit = 'BatchCommit',
 }
 
-export type Node = {
-  id: NodeId;
-} & (
-  | {
-      type: NodeType.CoreShape;
-      data: CoreShapeNode;
-    }
-  | {
-      type: NodeType.Shape;
-      data: ShapeNode;
-    }
-  | {
-      type: NodeType.ShapeParameter;
-      data: ShapeParameterNode;
-    }
-  | {
-      type: NodeType.Field;
-      data: FieldNode;
-    }
-  | {
-      type: NodeType.BatchCommit;
-      data: BatchCommitData;
-    }
-);
+export type Node =
+  | CoreShapeNode
+  | ShapeNode
+  | ShapeParameterNode
+  | FieldNode
+  | BatchCommitNode;
 
-export type CoreShapeNode = {
-  shapeId: string;
-  descriptor: {
-    kind: string;
+type CoreShapeNode = {
+  id: NodeId;
+  type: NodeType.CoreShape;
+  data: {
+    shapeId: string;
+    descriptor: {
+      kind: string;
+    };
   };
 };
-export type ShapeNode = {
-  shapeId: string;
-};
-export type ShapeParameterNode = {
-  parameterId: string;
-};
-export type FieldNode = {
-  fieldId: string;
-  descriptor: {
-    name: string;
+
+type ShapeNode = {
+  id: NodeId;
+  type: NodeType.Shape;
+  data: {
+    shapeId: string;
   };
 };
+
+type ShapeParameterNode = {
+  id: NodeId;
+  type: NodeType.ShapeParameter;
+  data: {
+    parameterId: string;
+  };
+};
+
+type FieldNode = {
+  id: NodeId;
+  type: NodeType.Field;
+  data: {
+    fieldId: string;
+    descriptor: {
+      name: string;
+    };
+  };
+};
+
+type BatchCommitNode = {
+  id: NodeId;
+  type: NodeType.BatchCommit;
+  data: BatchCommitData;
+};
+
+export type NodeWrapper =
+  | CoreShapeNodeWrapper
+  | ShapeNodeWrapper
+  | ShapeParameterNodeWrapper
+  | FieldNodeWrapper
+  | BatchCommitNodeWrapper;
+
+// Is there a better way of infering / mapping a type to another type?
+type NodeTypeToNodeWrapper<T extends NodeType> = T extends NodeType.BatchCommit
+  ? BatchCommitNodeWrapper
+  : T extends NodeType.Shape
+  ? ShapeNodeWrapper
+  : T extends NodeType.ShapeParameter
+  ? ShapeParameterNodeWrapper
+  : T extends NodeType.CoreShape
+  ? CoreShapeNodeWrapper
+  : T extends NodeType.Field
+  ? FieldNodeWrapper
+  : NodeWrapper;
 
 export enum EdgeType {
   IsParameterOf = 'IsParameterOf',
@@ -161,22 +188,11 @@ export class GraphIndexer implements GraphCommandHandler<Node, NodeId, Edge> {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// @TODO: this should be generic so we can do wrap<T> and know what type to expect?
-export interface NodeWrapper {
-  result: Node;
-}
-
-export interface NodeListWrapper {
-  results: NodeWrapper[];
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export class CoreShapeNodeWrapper implements NodeWrapper {
+export class CoreShapeNodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 }
 
-export class ShapeNodeWrapper implements NodeWrapper {
+export class ShapeNodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 
   coreShape(): NodeWrapper {
@@ -190,7 +206,7 @@ export class ShapeNodeWrapper implements NodeWrapper {
     return coreShapeNode;
   }
 
-  batchCommits(): NodeListWrapper {
+  batchCommits() {
     return this.queries.listOutgoingNeighborsByType(
       this.result.id,
       NodeType.BatchCommit
@@ -198,14 +214,14 @@ export class ShapeNodeWrapper implements NodeWrapper {
   }
 }
 
-export class ShapeParameterNodeWrapper implements NodeWrapper {
+export class ShapeParameterNodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 }
 
-export class FieldNodeWrapper implements NodeWrapper {
+export class FieldNodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 
-  batchCommits(): NodeListWrapper {
+  batchCommits() {
     return this.queries.listOutgoingNeighborsByType(
       this.result.id,
       NodeType.BatchCommit
@@ -213,7 +229,7 @@ export class FieldNodeWrapper implements NodeWrapper {
   }
 }
 
-export class BatchCommitNodeWrapper implements NodeWrapper {
+export class BatchCommitNodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
 }
 
@@ -230,8 +246,13 @@ export class GraphQueries {
     return this.wrap(node);
   }
 
-  listNodesByType(type: NodeType): NodeListWrapper {
-    return this.wrapList(type, this.index.nodesByType.get(type) || []);
+  listNodesByType<T extends NodeType>(
+    type: T
+  ): NodeListWrapper<NodeTypeToNodeWrapper<T>> {
+    return this.wrapList(
+      type,
+      this.index.nodesByType.get(type) || []
+    ) as NodeListWrapper<NodeTypeToNodeWrapper<T>>;
   }
 
   *descendantsIterator(
@@ -265,17 +286,22 @@ export class GraphQueries {
   }
 
   //@TODO add singular find* variant
-  listOutgoingNeighborsByType(
+  listOutgoingNeighborsByType<T extends NodeType>(
     id: NodeId,
-    outgoingNeighborType: NodeType
-  ): NodeListWrapper {
+    outgoingNeighborType: T
+  ): NodeListWrapper<NodeTypeToNodeWrapper<T>> {
     debugger;
     const neighbors = this.index.outboundNeighbors.get(id);
     if (!neighbors) {
-      return this.wrapList(outgoingNeighborType, []);
+      return this.wrapList(outgoingNeighborType, []) as NodeListWrapper<
+        NodeTypeToNodeWrapper<T>
+      >;
     }
     const neighborsOfType = neighbors.get(outgoingNeighborType);
-    return this.wrapList(outgoingNeighborType, neighborsOfType || []);
+    return this.wrapList(
+      outgoingNeighborType,
+      neighborsOfType || []
+    ) as NodeListWrapper<NodeTypeToNodeWrapper<T>>;
   }
 
   findOutgoingNeighborByEdgeType(
@@ -296,7 +322,7 @@ export class GraphQueries {
   listIncomingNeighborsByEdgeType(
     id: NodeId,
     edgeType: EdgeType
-  ): NodeListWrapper {
+  ): NodeListWrapper<NodeWrapper> {
     const neighbors = this.index.inboundNeighborsByEdgeType.get(id);
 
     if (!neighbors) {
@@ -311,7 +337,7 @@ export class GraphQueries {
   listOutgoingNeighborsByEdgeType(
     id: NodeId,
     edgeType: EdgeType
-  ): NodeListWrapper {
+  ): NodeListWrapper<NodeWrapper> {
     const neighbors = this.index.outboundNeighborsByEdgeType.get(id);
 
     if (!neighbors) {
@@ -324,6 +350,7 @@ export class GraphQueries {
   }
 
   //@TODO wrap() and wrapList() should be injected?
+  // TODO figure out how to make this generic
   wrap(node: Node): NodeWrapper {
     if (node.type === NodeType.CoreShape) {
       return new CoreShapeNodeWrapper(node, this);
@@ -340,7 +367,8 @@ export class GraphQueries {
   }
 
   //@TODO move away from null here
-  wrapList(type: NodeType | null, nodes: Node[]): NodeListWrapper {
+  // TODO figure out how to make this generic
+  wrapList(type: NodeType | null, nodes: Node[]): NodeListWrapper<NodeWrapper> {
     //@TODO add list helpers (map, etc.)
     return {
       results: nodes.map((node) => this.wrap(node)),

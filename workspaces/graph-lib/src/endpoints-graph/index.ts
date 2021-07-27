@@ -106,9 +106,7 @@ export type NodeWrapper =
   | BatchCommitNodeWrapper;
 
 // Is there a better way of infering / mapping a type to another type?
-type NodeTypeToNodeWrapper<
-  T extends NodeType | null
-> = T extends NodeType.BatchCommit
+type NodeTypeToNodeWrapper<T extends NodeType> = T extends NodeType.BatchCommit
   ? BatchCommitNodeWrapper
   : T extends NodeType.Body
   ? BodyNodeWrapper
