@@ -1,5 +1,5 @@
-import { GraphCommandHandler, mapAppend } from '../index';
-import { BatchCommitNode } from '../endpoints-graph';
+import { GraphCommandHandler, mapAppend } from '../shared';
+import { BatchCommitData } from '../endpoints-graph';
 
 export type NodeId = string;
 
@@ -32,7 +32,7 @@ export type Node = {
     }
   | {
       type: NodeType.BatchCommit;
-      data: BatchCommitNode;
+      data: BatchCommitData;
     }
 );
 

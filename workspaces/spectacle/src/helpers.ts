@@ -101,46 +101,28 @@ export function buildEndpointChanges(
       batchCommit
         .createdInEdgeNodes()
         .results.forEach((node: endpoints.NodeWrapper) => {
-          if (node.result.type === endpoints.NodeType.Request) {
-            changes.captureChange(
-              'added',
-              endpointFromRequest(node as endpoints.RequestNodeWrapper)
-            );
-          } else if (node.result.type === endpoints.NodeType.Response) {
-            changes.captureChange(
-              'updated',
-              endpointFromResponse(node as endpoints.ResponseNodeWrapper)
-            );
+          if (node instanceof endpoints.RequestNodeWrapper) {
+            changes.captureChange('added', endpointFromRequest(node));
+          } else if (node instanceof endpoints.ResponseNodeWrapper) {
+            changes.captureChange('updated', endpointFromResponse(node));
           }
         });
       batchCommit
         .removedInEdgeNodes()
         .results.forEach((node: endpoints.NodeWrapper) => {
-          if (node.result.type === endpoints.NodeType.Request) {
-            changes.captureChange(
-              'removed',
-              endpointFromRequest(node as endpoints.RequestNodeWrapper)
-            );
-          } else if (node.result.type === endpoints.NodeType.Response) {
-            changes.captureChange(
-              'updated',
-              endpointFromResponse(node as endpoints.ResponseNodeWrapper)
-            );
+          if (node instanceof endpoints.RequestNodeWrapper) {
+            changes.captureChange('removed', endpointFromRequest(node));
+          } else if (node instanceof endpoints.ResponseNodeWrapper) {
+            changes.captureChange('updated', endpointFromResponse(node));
           }
         });
       batchCommit
         .updatedInEdgeNodes()
         .results.forEach((node: endpoints.NodeWrapper) => {
-          if (node.result.type === endpoints.NodeType.Request) {
-            changes.captureChange(
-              'updated',
-              endpointFromRequest(node as endpoints.RequestNodeWrapper)
-            );
-          } else if (node.result.type === endpoints.NodeType.Response) {
-            changes.captureChange(
-              'updated',
-              endpointFromResponse(node as endpoints.ResponseNodeWrapper)
-            );
+          if (node instanceof endpoints.RequestNodeWrapper) {
+            changes.captureChange('updated', endpointFromRequest(node));
+          } else if (node instanceof endpoints.ResponseNodeWrapper) {
+            changes.captureChange('updated', endpointFromResponse(node));
           }
         });
     }
