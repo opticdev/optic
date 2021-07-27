@@ -577,6 +577,12 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       id: (parent: endpoints.PathNodeWrapper) => {
         return Promise.resolve(parent.value.pathId);
       },
+      name: async (parent: endpoints.PathNodeWrapper) => {
+        return parent.value.name;
+      },
+      isParameterized: async (parent: endpoints.PathNodeWrapper) => {
+        return parent.value.isParameterized;
+      },
       contributions: (
         parent: endpoints.PathNodeWrapper,
         _: {},
