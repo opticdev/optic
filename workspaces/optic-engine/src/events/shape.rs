@@ -36,7 +36,10 @@ pub enum ShapeEvent {
 pub struct ShapeAdded {
   pub shape_id: ShapeId,
   pub base_shape_id: ShapeId,
+
+  #[serde(default = "ShapeParametersDescriptor::empty_dynamic")]
   pub parameters: ShapeParametersDescriptor,
+
   pub name: String,
   pub event_context: Option<EventContext>,
 }
@@ -264,6 +267,12 @@ impl From<FieldShapeSet> for ShapeEvent {
   }
 }
 
+impl From<FieldRemoved> for ShapeEvent {
+  fn from(event: FieldRemoved) -> Self {
+    Self::FieldRemoved(event)
+  }
+}
+
 impl From<ShapeParameterAdded> for ShapeEvent {
   fn from(event: ShapeParameterAdded) -> Self {
     Self::ShapeParameterAdded(event)
@@ -285,6 +294,7 @@ impl From<ShapeCommand> for ShapeEvent {
       ShapeCommand::AddShape(command) => ShapeEvent::from(ShapeAdded::from(command)),
       ShapeCommand::SetBaseShape(command) => ShapeEvent::from(BaseShapeSet::from(command)),
       ShapeCommand::AddField(command) => ShapeEvent::from(FieldAdded::from(command)),
+      ShapeCommand::RemoveField(command) => ShapeEvent::from(FieldRemoved::from(command)),
       ShapeCommand::AddShapeParameter(command) => {
         ShapeEvent::from(ShapeParameterAdded::from(command))
       }
@@ -328,6 +338,15 @@ impl From<shape_commands::AddField> for FieldAdded {
       shape_id: command.shape_id,
       name: command.name,
       shape_descriptor: command.shape_descriptor,
+      event_context: None,
+    }
+  }
+}
+
+impl From<shape_commands::RemoveField> for FieldRemoved {
+  fn from(command: shape_commands::RemoveField) -> Self {
+    Self {
+      field_id: command.field_id,
       event_context: None,
     }
   }

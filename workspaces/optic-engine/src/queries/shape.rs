@@ -1,3 +1,4 @@
+use crate::commands::ShapeCommand;
 use crate::projections::shape::{CoreShapeNode, Edge, Node};
 use crate::projections::shape::{FieldNode, FieldNodeDescriptor, ShapeNode, ShapeProjection};
 use crate::shapes::traverser::{ShapeTrail, ShapeTrailPathComponent};
@@ -427,6 +428,16 @@ impl<'a> ShapeQueries<'a> {
         (field_id, &descriptor.name)
       })
   }
+
+  pub fn remove_field_commands(
+    &self,
+    field_id: &FieldId,
+  ) -> Option<impl Iterator<Item = ShapeCommand>> {
+    let (field_node_index, field_node) = self.shape_projection.get_field_node(field_id)?; // make sure the field is known
+
+    let command = ShapeCommand::remove_field(field_node.field_id.clone());
+    Some(std::iter::once(command))
+  }
 }
 
 #[derive(Clone, Debug)]
@@ -446,5 +457,55 @@ impl ChoiceOutput {
       root_shape_id: self.parent_trail.root_shape_id.clone(),
       path,
     }
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use crate::commands::SpecCommand;
+  use crate::events::SpecEvent;
+  use crate::projections::SpecProjection;
+  use crate::Aggregate;
+  use serde_json::json;
+
+  #[test]
+  pub fn can_generate_remove_field_commands() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "", "eventContext": null }},
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "", "eventContext": null }},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "string_shape_1"}}, "eventContext": null }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+
+    let shape_queries = ShapeQueries::new(spec_projection.shape());
+
+    let remove_field_commands = shape_queries
+      .remove_field_commands(&String::from("field_1"))
+      .expect("commands to remove fields should generate for existing field")
+      .map(SpecCommand::from)
+      .collect::<Vec<_>>();
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), remove_field_commands);
+  }
+
+  fn assert_valid_commands(
+    mut spec_projection: SpecProjection,
+    commands: impl IntoIterator<Item = SpecCommand>,
+  ) -> SpecProjection {
+    // let mut spec_projection = SpecProjection::default();
+    for command in commands {
+      let events = spec_projection
+        .execute(command)
+        .expect("generated commands must be valid");
+
+      for event in events {
+        spec_projection.apply(event)
+      }
+    }
+
+    spec_projection
   }
 }
