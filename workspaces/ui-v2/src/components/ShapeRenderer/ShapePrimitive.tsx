@@ -1,8 +1,8 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { useSharedStyles } from './SharedStyles';
-import { IShapeRenderer, JsonLike } from './ShapeRenderInterfaces';
 import { useShapeRenderContext } from './ShapeRenderContext';
+import { IShapeRenderer, JsonLike } from '<src>/types';
 import classNames from 'classnames';
 
 export const ShapePrimitiveRender = ({ jsonType, value }: IShapeRenderer) => {

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { ShapeRenderStore } from './ShapeRenderContext';
 import { RenderRootShape, OneOfRender } from './ShapeRowBase';
-import { IShapeRenderer } from './ShapeRenderInterfaces';
+import { IShapeRenderer } from '<src>/types';
 
 type ShapeRendererProps = {
   showExamples: boolean;

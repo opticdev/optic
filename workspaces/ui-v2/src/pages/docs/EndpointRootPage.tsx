@@ -7,8 +7,6 @@ import { Delete as DeleteIcon, Undo as UndoIcon } from '@material-ui/icons';
 import {
   EndpointName,
   PathParameters,
-  IShapeRenderer,
-  JsonLike,
   PageLayout,
   FullWidth,
   ContributionsList,
@@ -28,6 +26,7 @@ import {
   selectors,
   documentationEditActions,
 } from '<src>/store';
+import { IShapeRenderer, JsonLike } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {

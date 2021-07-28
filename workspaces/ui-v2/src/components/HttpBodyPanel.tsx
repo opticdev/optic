@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 
-import { IShapeRenderer, ShapeRenderer } from './ShapeRenderer';
+import { IShapeRenderer } from '<src>/types';
+import { ShapeRenderer } from './ShapeRenderer';
 import { Panel } from './Panel';
 
 type HttpBodyPanelProps = {

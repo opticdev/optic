@@ -3,7 +3,7 @@ import {
   JsonLike,
   IArrayRender,
   IObjectRender,
-} from '<src>/components';
+} from '<src>/types';
 import { SpectacleContext } from '<src>/contexts/spectacle-provider';
 import { useContext, useEffect, useState } from 'react';
 import sortBy from 'lodash.sortby';

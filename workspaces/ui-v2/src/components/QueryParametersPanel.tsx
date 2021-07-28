@@ -9,12 +9,8 @@ import {
   ChangedYellowBackground,
   RemovedRedBackground,
 } from '<src>/styles';
-import {
-  IFieldRenderer,
-  IShapeRenderer,
-  ShapeRenderer,
-  JsonLike,
-} from './ShapeRenderer';
+import { IFieldRenderer, IShapeRenderer, JsonLike } from '<src>/types';
+import { ShapeRenderer } from './ShapeRenderer';
 import { Panel } from './Panel';
 
 type QueryParameters = Record<string, IFieldRenderer>;

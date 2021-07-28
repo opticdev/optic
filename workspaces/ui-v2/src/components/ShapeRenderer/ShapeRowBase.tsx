@@ -1,11 +1,7 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { IndentSpaces, useSharedStyles } from './SharedStyles';
-import {
-  IFieldRenderer,
-  IShapeRenderer,
-  JsonLike,
-} from './ShapeRenderInterfaces';
+import { IFieldRenderer, IShapeRenderer, JsonLike } from '<src>/types';
 import { ShapePrimitiveRender, UnknownPrimitiveRender } from './ShapePrimitive';
 import { useDepth } from './DepthContext';
 import classNames from 'classnames';

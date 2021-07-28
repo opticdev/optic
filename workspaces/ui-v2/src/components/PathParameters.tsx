@@ -2,9 +2,8 @@ import React, { FC, ReactNode } from 'react';
 import { Divider, Typography, makeStyles } from '@material-ui/core';
 
 import { FieldOrParameter } from './FieldOrParameter';
-import { IShapeRenderer, JsonLike } from './ShapeRenderer';
 
-import { IPathParameter } from '<src>/types';
+import { IPathParameter, IShapeRenderer, JsonLike } from '<src>/types';
 
 export type PathParametersProps = {
   parameters: IPathParameter[];

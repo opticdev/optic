@@ -1,5 +1,5 @@
 import React from 'react';
-import { IShapeRenderer } from '<src>/components/ShapeRenderer/ShapeRenderInterfaces';
+import { IShapeRenderer } from '<src>/types';
 import Helmet from 'react-helmet';
 import {
   EditableTextField,
