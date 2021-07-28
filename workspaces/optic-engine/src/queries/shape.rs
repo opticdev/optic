@@ -1,4 +1,4 @@
-use crate::commands::ShapeCommand;
+use crate::commands::{shape as shape_commands, ShapeCommand};
 use crate::projections::shape::{CoreShapeNode, Edge, Node};
 use crate::projections::shape::{FieldNode, FieldNodeDescriptor, ShapeNode, ShapeProjection};
 use crate::shapes::traverser::{ShapeTrail, ShapeTrailPathComponent};
@@ -469,13 +469,52 @@ impl<'a> ShapeQueries<'a> {
       .difference(&required_kinds)
       .filter(|kind| togglable_kinds.contains(kind));
 
-    dbg!(
-      &current_kinds,
-      added_kinds.collect::<Vec<_>>(),
-      removed_kinds.collect::<Vec<_>>()
-    );
+    // TODO: find a more reliable way to figure out the root shape id, this relies
+    // on internal ordering from list_trail_choices
+    let mut root_shape_id = current_trail_choices
+      .first()
+      .map(|choice| choice.shape_id.clone())?;
 
-    Some(std::iter::empty())
+    let mut new_shape_prototypes = vec![];
+    for added_kind in added_kinds {
+      match added_kind {
+        ShapeKind::OptionalKind => {
+          let prototype = ShapePrototype {
+            id: id_generator.shape(),
+            prototype_descriptor: ShapePrototypeDescriptor::OptionalShape {
+              subject_shape_id: root_shape_id.clone(),
+            },
+          };
+
+          root_shape_id = prototype.id.clone();
+          new_shape_prototypes.push(prototype);
+        }
+        ShapeKind::NullableKind => unimplemented!(),
+        _ => unreachable!("only optional and nullable is togglable"),
+      }
+    }
+
+    dbg!(&new_shape_prototypes, &root_shape_id);
+
+    let shape_commands = new_shape_prototypes
+      .into_iter()
+      .flat_map(ShapePrototype::into_commands);
+
+    let additional_commands = if shape_trail.is_field() {
+      let field_id = shape_trail
+        .last_field_id()
+        .expect("there should be a last field id if the trail described a field");
+
+      vec![ShapeCommand::set_field_shape(
+        field_id.clone(),
+        root_shape_id,
+      )]
+    } else {
+      vec![]
+    };
+
+    let commands = shape_commands.chain(additional_commands);
+    Some(commands)
   }
 }
 
@@ -495,6 +534,43 @@ impl ChoiceOutput {
     ShapeTrail {
       root_shape_id: self.parent_trail.root_shape_id.clone(),
       path,
+    }
+  }
+}
+
+#[derive(Clone, Debug)]
+struct ShapePrototype {
+  id: ShapeId,
+  prototype_descriptor: ShapePrototypeDescriptor,
+}
+
+#[derive(Clone, Debug)]
+enum ShapePrototypeDescriptor {
+  OptionalShape { subject_shape_id: ShapeId },
+  NullableShape { subject_shape_id: ShapeId },
+  PrimitiveShape { base_shape_kind: ShapeKind },
+}
+
+impl ShapePrototype {
+  fn into_commands(self) -> Vec<ShapeCommand> {
+    match self.prototype_descriptor {
+      ShapePrototypeDescriptor::OptionalShape { subject_shape_id } => {
+        let parameter_id = ShapeKind::OptionalKind
+          .get_parameter_descriptor()
+          .unwrap()
+          .shape_parameter_id;
+
+        vec![
+          ShapeCommand::add_shape(self.id.clone(), ShapeKind::OptionalKind, String::from("")),
+          ShapeCommand::set_parameter_shape(
+            self.id.clone(),
+            parameter_id.to_owned(),
+            subject_shape_id,
+          ),
+        ]
+      }
+      ShapePrototypeDescriptor::NullableShape { subject_shape_id } => unimplemented!(),
+      ShapePrototypeDescriptor::PrimitiveShape { base_shape_kind } => unimplemented!(),
     }
   }
 }
@@ -551,8 +627,15 @@ mod test {
       },
     );
     let required_kinds = vec![ShapeKind::StringKind, ShapeKind::OptionalKind];
-    let edit_shape_commands =
-      shape_queries.edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator);
+    let edit_shape_commands = shape_queries
+      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .expect("field should be able to be made optional")
+      .map(SpecCommand::from)
+      .collect::<Vec<_>>();
+
+    dbg!(&edit_shape_commands);
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
   }
 
   fn assert_valid_commands(
