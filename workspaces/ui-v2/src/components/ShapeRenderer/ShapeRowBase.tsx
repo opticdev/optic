@@ -7,13 +7,13 @@ import { useDepth } from './DepthContext';
 import classNames from 'classnames';
 import { useShapeRenderContext } from './ShapeRenderContext';
 import { OneOfTabs, OneOfTabsProps } from './OneOfTabs';
-import { IChanges } from '<src>/pages/changelog/IChanges';
+import { ChangeType } from '<src>/types';
 
 type ShapeRowBaseProps = {
   children: any;
   depth: number;
   style?: any;
-  changes?: IChanges;
+  changes: ChangeType | null;
 };
 export const ShapeRowBase = ({
   children,
@@ -31,9 +31,9 @@ export const ShapeRowBase = ({
       <div
         className={classNames(
           classes.row,
-          { [sharedClasses.added]: changes && changes.added },
-          // { [sharedClasses.removed]: changes && changes.removed },
-          { [sharedClasses.changed]: changes && changes.changed }
+          { [sharedClasses.added]: changes === 'added' },
+          { [sharedClasses.changed]: changes === 'updated' },
+          { [sharedClasses.removed]: changes === 'removed' }
         )}
         style={{ paddingLeft: depth * IndentSpaces + 4 }}
       >
@@ -186,7 +186,7 @@ export const RenderFieldRowValues = ({
               <RenderField {...i} key={i.fieldId} parentId={shape.shapeId} />
             </Indent>
           ))}
-          <ShapeRowBase depth={depth}>
+          <ShapeRowBase changes={null} depth={depth}>
             <span className={sharedClasses.symbolFont}>{'}'}</span>
           </ShapeRowBase>
         </>
@@ -198,7 +198,7 @@ export const RenderFieldRowValues = ({
         return (
           <>
             <ShapePrimitiveRender {...shape} />
-            <ShapeRowBase depth={depth}>
+            <ShapeRowBase changes={null} depth={depth}>
               <span className={sharedClasses.symbolFont}>{']'}</span>
             </ShapeRowBase>
           </>
@@ -218,7 +218,7 @@ export const RenderFieldRowValues = ({
       return (
         <>
           <Indent>{inner}</Indent>
-          <ShapeRowBase depth={depth}>
+          <ShapeRowBase changes={null} depth={depth}>
             <span className={sharedClasses.symbolFont}>{']'}</span>
           </ShapeRowBase>
         </>

@@ -14,7 +14,7 @@ const defaultFieldRender = (param: IPathParameter): ReactNode => {
   const alwaysAString: IShapeRenderer = {
     shapeId: param.id + 'shape',
     jsonType: JsonLike.STRING,
-    value: undefined,
+    changes: null,
   };
   return (
     <FieldOrParameter

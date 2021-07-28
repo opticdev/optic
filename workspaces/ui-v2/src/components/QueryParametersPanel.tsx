@@ -61,8 +61,9 @@ export const QueryParametersPanel: FC<QueryParametersPanelProps> = ({
       {Object.entries(parameters).map(([key, field]) => (
         <div
           className={classnames(classes.queryComponentContainer, [
-            ...[field.changes?.added && classes.added],
-            ...[field.changes?.changed && classes.changed],
+            ...[field.changes === 'added' && classes.added],
+            ...[field.changes === 'updated' && classes.changed],
+            ...[field.changes === 'removed' && classes.removed],
           ])}
           key={key}
         >

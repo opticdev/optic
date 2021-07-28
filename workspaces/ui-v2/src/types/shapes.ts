@@ -1,4 +1,4 @@
-import { IChanges } from '<src>/pages/changelog/IChanges';
+import { ChangeType } from './changes';
 
 export interface IFieldRenderer {
   fieldId: string;
@@ -7,7 +7,7 @@ export interface IFieldRenderer {
   shapeId: string;
   shapeChoices: IShapeRenderer[];
   required: boolean;
-  changes?: IChanges;
+  changes: ChangeType | null;
   contributions: Record<string, string>;
   additionalAttributes?: string[];
 }
@@ -17,8 +17,7 @@ export interface IShapeRenderer {
   jsonType: JsonLike;
   asArray?: IArrayRender;
   asObject?: IObjectRender;
-  value?: any;
-  changes?: IChanges;
+  changes: ChangeType | null;
 }
 
 export interface IArrayRender {

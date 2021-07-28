@@ -216,11 +216,11 @@ export const EndpointRootPage: FC<
               >
                 <PathParameters
                   parameters={parameterizedPathParts}
-                  renderField={(param, index) => {
+                  renderField={(param) => {
                     const alwaysAString: IShapeRenderer = {
                       shapeId: param.id + 'shape',
                       jsonType: JsonLike.STRING,
-                      value: undefined,
+                      changes: null,
                     };
                     return (
                       <DocsFieldOrParameterContribution
