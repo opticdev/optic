@@ -1,4 +1,5 @@
 import { ChangeType } from './changes';
+import { IContribution } from './contributions';
 
 // Types for rendering shapes and fields
 export interface IFieldRenderer {
@@ -11,6 +12,14 @@ export interface IFieldRenderer {
   contributions: Record<string, string>;
   // TODO - move this into a different typing or figure out where this should live
   additionalAttributes?: string[];
+}
+
+// Used to render an objects field details and contributions
+export interface IFieldDetails {
+  name: string;
+  contribution: IContribution;
+  shapes: IShapeRenderer[];
+  depth: number;
 }
 
 export type IShapeRenderer =

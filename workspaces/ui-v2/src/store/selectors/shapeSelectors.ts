@@ -2,7 +2,12 @@ import { SerializedError } from '@reduxjs/toolkit';
 import * as Sentry from '@sentry/react';
 import sortBy from 'lodash.sortby';
 
-import { AsyncStatus, IShapeRenderer, JsonLike } from '<src>/types';
+import {
+  AsyncStatus,
+  IShapeRenderer,
+  IFieldDetails,
+  JsonLike,
+} from '<src>/types';
 import { RootState } from '../root';
 
 // TODO write a test for this
@@ -83,3 +88,40 @@ export const getShapeRenderer = (rootShapeId: string) => (
     data: resolveShape(rootShapeId),
   };
 };
+
+export function createFlatList(
+  shapes: IShapeRenderer[],
+  endpointId: string,
+  depth: number = 0
+): IFieldDetails[] {
+  const fieldDetails: IFieldDetails[] = [];
+
+  shapes.forEach((shape) => {
+    if (shape.asObject) {
+      shape.asObject.fields.forEach((field) => {
+        fieldDetails.push({
+          name: field.name,
+          contribution: {
+            id: field.fieldId,
+            contributionKey: 'description',
+            value: field.contributions.description || '',
+            endpointId: endpointId,
+          },
+          depth,
+          shapes: field.shapeChoices,
+        });
+
+        fieldDetails.push(
+          ...createFlatList(field.shapeChoices, endpointId, depth + 1)
+        );
+      });
+    }
+    if (shape.asArray) {
+      fieldDetails.push(
+        ...createFlatList(shape.asArray.shapeChoices, endpointId, depth + 1)
+      );
+    }
+  });
+
+  return fieldDetails;
+}

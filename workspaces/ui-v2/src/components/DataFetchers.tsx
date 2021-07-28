@@ -1,14 +1,12 @@
 import React, { FC, useEffect } from 'react';
-import { createFlatList } from '<src>/components/FieldOrParameter';
 import {
   shapeActions,
   selectors,
   useAppSelector,
   useAppDispatch,
 } from '<src>/store';
-import { IFieldDetails } from '<src>/components';
 import { useSpectacleContext } from '<src>/contexts/spectacle-provider';
-import { IShapeRenderer } from '<src>/types';
+import { IFieldDetails, IShapeRenderer } from '<src>/types';
 
 type ShapeFetcherProps = {
   rootShapeId: string;
@@ -45,6 +43,9 @@ export const ShapeFetcher: FC<ShapeFetcherProps> = ({
   ) : shapesState.error ? (
     <div>error</div>
   ) : (
-    children(shapesState.data, createFlatList(shapesState.data, endpointId))
+    children(
+      shapesState.data,
+      selectors.createFlatList(shapesState.data, endpointId)
+    )
   );
 };
