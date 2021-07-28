@@ -165,7 +165,6 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         }
       }
       EndpointEvent::RequestBodySet(e) => {
-        //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (request_id, http_content_type)
         projection.with_request_body(
           e.request_id,
           e.body_descriptor.http_content_type,
@@ -193,7 +192,6 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         }
       }
       EndpointEvent::ResponseBodySet(e) => {
-        //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (response_id, http_content_type)
         projection.with_response_body(
           e.response_id,
           e.body_descriptor.http_content_type,
@@ -529,11 +527,65 @@ impl EndpointsProjection {
       .domain_id_to_index
       .get(&request_id)
       .expect("expected node with domain_id $request_id to exist in the graph");
+
+    let endpoint_id = self.get_endpoint_id_from_node(&request_id);
+    let endpoint_index = *self
+      .domain_id_to_index
+      .get(&endpoint_id)
+      .expect("expected node to exist in graph");
+
     let node = Node::Body(BodyNode {
-      http_content_type: http_content_type,
+      http_content_type: http_content_type.clone(),
       root_shape_id: root_shape_id.clone(),
       is_removed: false,
     });
+
+    // If there is already a set request body with a matching content type, we should orphan the old node
+    // @GOTCHA - this only allows a single content type request parameter to be attached to an endpoint node
+    // This means history is only visible to users for the latest request node with content type
+    // @GOTCHA - event generation does not group together same path + method, meaning we need to search
+    // all request ids attached to an endpoint node (i.e. request -> body is 1:1 since request nodes are never reused)
+    let maybe_request = self
+      .graph
+      .edges_directed(endpoint_index, petgraph::Direction::Incoming)
+      .find_map(|child_edge| {
+        let node = self.graph.node_weight(child_edge.source());
+        if let Some(Node::Request(request_node)) = node {
+          let request_node_index = *self
+            .domain_id_to_index
+            .get(&request_node.request_id)
+            .expect("expected node with domain_id $request_id to exist in the graph");
+
+          // From this request node, see if there is a body that matches the
+          // content type that is currently being inserted
+          self
+            .graph
+            .edges_directed(request_node_index, petgraph::Direction::Incoming)
+            .find_map(|request_child_edge| {
+              let request_child_node = self.graph.node_weight(request_child_edge.source());
+              // @GOTCHA we'll need to update this if request / response nodes are reused for
+              // different content types - this currently will orphan any request node that contains
+              // a body that matches the inserted content type - if we reuse request nodes, we'll need to
+              // orphan the body node instead of the request node
+              match request_child_node {
+                Some(Node::Body(body_node))
+                  if &body_node.http_content_type == &http_content_type =>
+                {
+                  Some((child_edge.id(), request_node.request_id.clone()))
+                }
+                _ => None,
+              }
+            })
+        } else {
+          None
+        }
+      });
+
+    if let Some((request_edge, request_id)) = maybe_request {
+      self.graph.remove_edge(request_edge);
+      self.domain_id_to_index.remove(&request_id);
+    }
+
     let node_index = self.graph.add_node(node);
     self
       .domain_id_to_index
@@ -551,12 +603,35 @@ impl EndpointsProjection {
   ) {
     let endpoint_index = self.ensure_endpoint_node_index(path_id, http_method);
 
+    // If there is already a set query parameter, we should orphan the old node
+    // @GOTCHA - this only allows a single query parameter to be attached to an endpoint node
+    // This means history is only visible to users for the latest query parameter node
+    let maybe_query_params = self
+      .graph
+      .edges_directed(endpoint_index, petgraph::Direction::Incoming)
+      .find_map(|child_edge| {
+        let node = self.graph.node_weight(child_edge.source());
+
+        if let Some(Node::QueryParameters(query_param_node)) = node {
+          Some((
+            child_edge.id(),
+            query_param_node.query_parameters_id.clone(),
+          ))
+        } else {
+          None
+        }
+      });
+
+    if let Some((query_param_edge, query_param_id)) = maybe_query_params {
+      self.graph.remove_edge(query_param_edge);
+      self.domain_id_to_index.remove(&query_param_id);
+    }
+
     let node = Node::QueryParameters(QueryParametersNode {
       query_parameters_id: query_parameters_id.clone(),
       root_shape_id: None,
       is_removed: false,
     });
-
     let node_index = self.graph.add_node(node);
     self
       .graph
@@ -609,11 +684,77 @@ impl EndpointsProjection {
       .domain_id_to_index
       .get(&response_id)
       .expect("expected node with domain_id $response_id to exist in the graph");
+
+    let endpoint_id = self.get_endpoint_id_from_node(&response_id);
+    let endpoint_index = *self
+      .domain_id_to_index
+      .get(&endpoint_id)
+      .expect("expected node to exist in graph");
+
     let node = Node::Body(BodyNode {
-      http_content_type: http_content_type,
+      http_content_type: http_content_type.clone(),
       root_shape_id: root_shape_id.clone(),
       is_removed: false,
     });
+
+    let response_status_code =
+      if let Some(Node::Response(response_node)) = self.graph.node_weight(response_index) {
+        Some(response_node.http_status_code)
+      } else {
+        None
+      }
+      .expect("expected response node with response_id in the graph");
+
+    // If there is already a set response body with a matching status code and content type, we should orphan the old node
+    // @GOTCHA - this only allows a single status code and content type request parameter to be attached to an endpoint node
+    // This means history is only visible to users for the latest response node with status code and content type
+    // @GOTCHA - event generation does not group together same path + method, meaning we need to search
+    // all response ids attached to an endpoint node (i.e. response -> body is 1:1 since response nodes are never reused)
+    let maybe_response = self
+      .graph
+      .edges_directed(endpoint_index, petgraph::Direction::Incoming)
+      .find_map(|child_edge| {
+        let node = self.graph.node_weight(child_edge.source());
+
+        match node {
+          Some(Node::Response(response_node))
+            if response_node.http_status_code == response_status_code =>
+          {
+            let node_index = *self
+              .domain_id_to_index
+              .get(&response_node.response_id)
+              .expect("expected node with domain_id $response_id to exist in the graph");
+
+            // From this request node, see if there is a body that matches the
+            // content type that is currently being inserted
+            self
+              .graph
+              .edges_directed(node_index, petgraph::Direction::Incoming)
+              .find_map(|response_child_edge| {
+                let response_child_node = self.graph.node_weight(response_child_edge.source());
+                // @GOTCHA we'll need to update this if request / response nodes are reused for
+                // different content types - this currently will orphan any request node that contains
+                // a body that matches the inserted content type - if we reuse response nodes, we'll need to
+                // orphan the body node instead of the response node
+                match response_child_node {
+                  Some(Node::Body(body_node))
+                    if &body_node.http_content_type == &http_content_type =>
+                  {
+                    Some((child_edge.id(), response_node.response_id.clone()))
+                  }
+                  _ => None,
+                }
+              })
+          }
+          _ => None,
+        }
+      });
+
+    if let Some((response_edge, response_id)) = maybe_response {
+      self.graph.remove_edge(response_edge);
+      self.domain_id_to_index.remove(&response_id);
+    }
+
     let node_index = self.graph.add_node(node);
     self
       .domain_id_to_index

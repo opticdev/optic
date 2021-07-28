@@ -112,36 +112,6 @@ const isNodeRemoved = (node: Node): boolean =>
   node.type !== NodeType.BatchCommit && node.data.isRemoved;
 
 ////////////////////////////////////////////////////////////////////////////////
-const getLatestCreatedNodeId = (
-  nodeList: NodeListWrapper,
-  endpointQueries: GraphQueries
-): string | null => {
-  const sortedNodes = nodeList.results
-    .map((node) => {
-      const batchCommitNodes = endpointQueries.listOutgoingNeighborsByEdgeType(
-        node.result.id,
-        EdgeType.CreatedIn
-      ).results;
-
-      return batchCommitNodes.length > 0 &&
-        batchCommitNodes[0].result.type === NodeType.BatchCommit
-        ? {
-            createdAt: batchCommitNodes[0].result.data.createdAt,
-            nodeId: node.result.id,
-          }
-        : null;
-    })
-    .filter((node) => !!node)
-    .sort((a, b) => {
-      return a!.createdAt < b!.createdAt ? 1 : -1;
-    });
-
-  return sortedNodes.length > 0 && sortedNodes[0]
-    ? sortedNodes[0].nodeId
-    : null;
-};
-
-////////////////////////////////////////////////////////////////////////////////
 
 export class GraphIndexer implements GraphCommandHandler<Node, NodeId, Edge> {
   readonly nodesById: Map<NodeId, Node>;
@@ -279,20 +249,9 @@ export class EndpointNodeWrapper implements NodeWrapper {
       this.result.id,
       NodeType.QueryParameters
     );
-    if (queryParameters.results.length === 0) {
-      return null;
-    }
 
-    const latestQueryParamNodeId = getLatestCreatedNodeId(
-      queryParameters,
-      this.queries
-    );
-    const queryParamNode = queryParameters.results.find(
-      (node) => node.result.id === latestQueryParamNodeId
-    );
-
-    return latestQueryParamNodeId && queryParamNode
-      ? (queryParamNode as QueryParametersNodeWrapper)
+    return queryParameters.results.length > 0
+      ? (queryParameters.results[0] as QueryParametersNodeWrapper)
       : null;
   }
 
@@ -318,16 +277,16 @@ export class RequestNodeWrapper implements NodeWrapper {
     return this.result.data as RequestNode;
   }
 
-  endpoint(): EndpointNodeWrapper {
+  // A request node can be orphaned
+  endpoint(): EndpointNodeWrapper | null {
     const endpoints = this.queries.listOutgoingNeighborsByType(
       this.result.id,
       NodeType.Endpoint
     );
 
-    if (endpoints.results.length === 0) {
-      throw new Error('Expected request node to have an endpoint');
-    }
-    return endpoints.results[0] as EndpointNodeWrapper;
+    return endpoints.results.length > 0
+      ? (endpoints.results[0] as EndpointNodeWrapper)
+      : null;
   }
 
   body(): BodyNodeWrapper | null {
@@ -349,16 +308,16 @@ export class ResponseNodeWrapper implements NodeWrapper {
     return this.result.data as ResponseNode;
   }
 
-  endpoint(): EndpointNodeWrapper {
+  // A response node can be orphaned
+  endpoint(): EndpointNodeWrapper | null {
     const endpoints = this.queries.listOutgoingNeighborsByType(
       this.result.id,
       NodeType.Endpoint
     );
 
-    if (endpoints.results.length === 0) {
-      throw new Error('Expected response node to have an endpoint');
-    }
-    return endpoints.results[0] as EndpointNodeWrapper;
+    return endpoints.results.length > 0
+      ? (endpoints.results[0] as EndpointNodeWrapper)
+      : null;
   }
 
   bodies(): NodeListWrapper {

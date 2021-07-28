@@ -117,7 +117,7 @@ export type EndpointQueryResults = {
     }[];
     query?: {
       id: string;
-      rootShapeId: string;
+      rootShapeId?: string;
       isRemoved: boolean;
       changes: SpectacleChange;
       contributions: Record<string, string>;
@@ -184,17 +184,18 @@ export const endpointQueryResultsToJson = (
         description: path.contributions.description || '',
         endpointId: endpoint.id,
       })),
-      query: endpoint.query
-        ? {
-            queryParametersId: endpoint.query.id,
-            rootShapeId: endpoint.query.rootShapeId,
-            isRemoved: endpoint.query.isRemoved,
-            description: endpoint.query.contributions.description || '',
-            endpointId: endpoint.id,
-            pathId: endpoint.pathId,
-            method: endpoint.method,
-          }
-        : null,
+      query:
+        endpoint.query && endpoint.query.rootShapeId
+          ? {
+              queryParametersId: endpoint.query.id,
+              rootShapeId: endpoint.query.rootShapeId,
+              isRemoved: endpoint.query.isRemoved,
+              description: endpoint.query.contributions.description || '',
+              endpointId: endpoint.id,
+              pathId: endpoint.pathId,
+              method: endpoint.method,
+            }
+          : null,
       requests: endpoint.requests.map((request) => {
         const change = convertSpectacleChangeToChangeType(request.changes);
         if (change) {

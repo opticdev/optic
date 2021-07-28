@@ -133,10 +133,10 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     ],
     [
-      6,
-      4,
+      9,
+      1,
       {
-        "type": "IsChildOf"
+        "type": "CreatedIn"
       }
     ],
     [
@@ -179,13 +179,6 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       4,
       {
         "type": "IsChildOf"
-      }
-    ],
-    [
-      9,
-      1,
-      {
-        "type": "CreatedIn"
       }
     ],
     [
@@ -211,7 +204,6 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     "3": "62b05d70-c86b-4df6-a243-946e21c35820",
     "4": "path_2r0poc4Efl.GET",
     "5": "request_eaGDFPq9ha",
-    "6": "response_7XA4cz1Jq4",
     "7": "shape_KrxPAcTUDM",
     "8": "request_p8FwHVQwXH",
     "9": "response_fr6lmtes1c"

@@ -102,45 +102,57 @@ export function buildEndpointChanges(
         .createdInEdgeNodes()
         .results.forEach((node: endpoints.NodeWrapper) => {
           if (node.result.type === endpoints.NodeType.Request) {
-            changes.captureChange(
-              'added',
-              endpointFromRequest(node as endpoints.RequestNodeWrapper)
+            const endpoint = endpointFromRequest(
+              node as endpoints.RequestNodeWrapper
             );
+            if (endpoint) {
+              changes.captureChange('added', endpoint);
+            }
           } else if (node.result.type === endpoints.NodeType.Response) {
-            changes.captureChange(
-              'updated',
-              endpointFromResponse(node as endpoints.ResponseNodeWrapper)
+            const endpoint = endpointFromResponse(
+              node as endpoints.ResponseNodeWrapper
             );
+            if (endpoint) {
+              changes.captureChange('updated', endpoint);
+            }
           }
         });
       batchCommit
         .removedInEdgeNodes()
         .results.forEach((node: endpoints.NodeWrapper) => {
           if (node.result.type === endpoints.NodeType.Request) {
-            changes.captureChange(
-              'removed',
-              endpointFromRequest(node as endpoints.RequestNodeWrapper)
+            const endpoint = endpointFromRequest(
+              node as endpoints.RequestNodeWrapper
             );
+            if (endpoint) {
+              changes.captureChange('removed', endpoint);
+            }
           } else if (node.result.type === endpoints.NodeType.Response) {
-            changes.captureChange(
-              'updated',
-              endpointFromResponse(node as endpoints.ResponseNodeWrapper)
+            const endpoint = endpointFromResponse(
+              node as endpoints.ResponseNodeWrapper
             );
+            if (endpoint) {
+              changes.captureChange('updated', endpoint);
+            }
           }
         });
       batchCommit
         .updatedInEdgeNodes()
         .results.forEach((node: endpoints.NodeWrapper) => {
           if (node.result.type === endpoints.NodeType.Request) {
-            changes.captureChange(
-              'updated',
-              endpointFromRequest(node as endpoints.RequestNodeWrapper)
+            const endpoint = endpointFromRequest(
+              node as endpoints.RequestNodeWrapper
             );
+            if (endpoint) {
+              changes.captureChange('updated', endpoint);
+            }
           } else if (node.result.type === endpoints.NodeType.Response) {
-            changes.captureChange(
-              'updated',
-              endpointFromResponse(node as endpoints.ResponseNodeWrapper)
+            const endpoint = endpointFromResponse(
+              node as endpoints.ResponseNodeWrapper
             );
+            if (endpoint) {
+              changes.captureChange('updated', endpoint);
+            }
           }
         });
     }
@@ -183,13 +195,19 @@ export function buildEndpointChanges(
       const body: any = endpointQueries.findNodeById(changedRootShapeId);
       const response = body.response();
       if (response) {
-        if (changes.captureChange('updated', endpointFromResponse(response))) {
-          return;
+        const endpoint = endpointFromResponse(response);
+        if (endpoint) {
+          if (changes.captureChange('updated', endpoint)) {
+            return;
+          }
         }
       }
       const request = body.request();
       if (request) {
-        changes.captureChange('updated', endpointFromRequest(request));
+        const endpoint = endpointFromRequest(request);
+        if (endpoint) {
+          changes.captureChange('updated', endpoint);
+        }
       }
     });
 
@@ -233,8 +251,13 @@ class Changes {
   }
 }
 
-function endpointFromRequest(request: endpoints.RequestNodeWrapper): Endpoint {
+function endpointFromRequest(
+  request: endpoints.RequestNodeWrapper
+): Endpoint | null {
   const endpoint = request.endpoint();
+  if (!endpoint) {
+    return null;
+  }
   const pathNode = endpoint.path();
   const { id: endpointId, pathId, httpMethod: method } = endpoint.value;
   const path = pathNode.absolutePathPatternWithParameterNames;
@@ -243,8 +266,11 @@ function endpointFromRequest(request: endpoints.RequestNodeWrapper): Endpoint {
 
 function endpointFromResponse(
   response: endpoints.ResponseNodeWrapper
-): Endpoint {
+): Endpoint | null {
   const endpoint = response.endpoint();
+  if (!endpoint) {
+    return null;
+  }
   const pathNode = endpoint.path();
   const { id: endpointId, pathId, httpMethod: method } = endpoint.value;
   const path = pathNode.absolutePathPatternWithParameterNames;
