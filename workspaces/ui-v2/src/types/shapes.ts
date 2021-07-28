@@ -3,7 +3,6 @@ import { ChangeType } from './changes';
 export interface IFieldRenderer {
   fieldId: string;
   name: string;
-  parentId: string;
   shapeId: string;
   shapeChoices: IShapeRenderer[];
   required: boolean;
@@ -13,18 +12,34 @@ export interface IFieldRenderer {
   additionalAttributes?: string[];
 }
 
-export interface IShapeRenderer {
-  shapeId: string;
-  jsonType: JsonLike;
-  asArray?: IArrayRender;
-  asObject?: IObjectRender;
-}
+export type IShapeRenderer =
+  | {
+      shapeId: string;
+      jsonType: JsonLike.OBJECT;
+      asArray?: undefined;
+      asObject: {
+        fields: IFieldRenderer[];
+      };
+    }
+  | {
+      shapeId: string;
+      jsonType: JsonLike.ARRAY;
+      asArray: IArrayRender;
+      asObject?: undefined;
+    }
+  | {
+      shapeId: string;
+      jsonType: Exclude<JsonLike, JsonLike.OBJECT | JsonLike.ARRAY>;
+      asArray?: undefined;
+      asObject?: undefined;
+    };
 
 export interface IArrayRender {
   shapeChoices: IShapeRenderer[];
   shapeId: string;
 }
 
+// TODO remove this
 export interface IObjectRender {
   fields: IFieldRenderer[];
 }

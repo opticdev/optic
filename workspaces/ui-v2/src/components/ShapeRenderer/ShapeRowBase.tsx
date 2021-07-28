@@ -49,7 +49,7 @@ export const RenderField = ({
   required,
   parentId,
   changes,
-}: IFieldRenderer) => {
+}: IFieldRenderer & { parentId: string }) => {
   const sharedClasses = useSharedStyles();
   const { depth } = useDepth();
 
