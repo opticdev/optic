@@ -56,6 +56,7 @@ export interface IFieldDetails {
   depth: number;
 }
 
+// TODO mvoe this into redux selectors
 export function createFlatList(
   shapes: IShapeRenderer[],
   endpointId: string,

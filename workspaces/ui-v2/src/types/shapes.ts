@@ -1,5 +1,6 @@
 import { ChangeType } from './changes';
 
+// Types for rendering shapes and fields
 export interface IFieldRenderer {
   fieldId: string;
   name: string;

@@ -113,6 +113,8 @@ const fetchShapesAndChildren = async (
   rootShapeId: string,
   sinceBatchCommitId?: string
 ): Promise<Record<ShapeId, ReduxShape[]>> => {
+  // TODO we might want to have access to the current store to
+  // avoid fetching shapes we have already fetched
   const shapeMap: Record<ShapeId, ReduxShape[]> = {};
 
   let stack: ShapeId[] = [rootShapeId];
@@ -192,7 +194,7 @@ export const fetchShapes = createAsyncThunk<
     rootShapeId: string;
     sinceBatchCommitId?: string;
   }
->('FETCH_PATHS', async ({ spectacle, rootShapeId, sinceBatchCommitId }) => {
+>('FETCH_SHAPES', async ({ spectacle, rootShapeId, sinceBatchCommitId }) => {
   try {
     const shapeMap = await fetchShapesAndChildren(
       spectacle,

@@ -20,6 +20,7 @@ type QueryParametersPanelProps = {
 };
 
 // TODO QPB this should move into redux
+// TODO mvoe this into redux
 export const convertShapeToQueryParameters = (
   shapes: IShapeRenderer[]
 ): QueryParameters => {
