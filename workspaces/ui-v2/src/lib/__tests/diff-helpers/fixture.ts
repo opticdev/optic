@@ -190,7 +190,7 @@ export function ICopyToConsole(i: ICopy[]): string {
     .join(' ');
 }
 
-export async function logResult(preview: any) {
+export function logResult(preview: any) {
   const toLog = [];
 
   toLog.push(

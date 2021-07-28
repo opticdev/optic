@@ -11,7 +11,6 @@ import {
 } from '<src>/types';
 import { RootState } from '../root';
 
-// TODO write a test for this
 export const getShapeRenderer = (rootShapeId: string) => (
   state: RootState
 ): AsyncStatus<IShapeRenderer[], SerializedError> => {

@@ -1,9 +1,4 @@
-import {
-  IShapeDiffTestSnapshot,
-  logResult,
-  shapeDiffPreview,
-  testCase,
-} from './fixture';
+import { IShapeDiffTestSnapshot, shapeDiffPreview, testCase } from './fixture';
 
 const cases = testCase('shape-diff-engine');
 
@@ -36,7 +31,7 @@ test('a known field is missing.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -45,7 +40,7 @@ test('a known field is provided the wrong shape.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -54,7 +49,7 @@ test('a new field is provided as an array with any contents.managed', async () =
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -63,7 +58,7 @@ test('a new field is provided as an empty array.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -72,7 +67,7 @@ test('a new field is provided in a required nested object.managed', async () => 
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -81,7 +76,7 @@ test('a new field is provided in an optional nested object.managed', async () =>
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -90,7 +85,7 @@ test('a primitive type is provided to an optional object.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -105,7 +100,7 @@ test('a required array field is an object.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -114,7 +109,7 @@ test('a required array field of strings provided with an object.managed', async 
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -123,7 +118,7 @@ test('an array type is provided to an optional object.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -132,7 +127,7 @@ test('an extra field is provided as an object.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   // expect(result).toMatchSnapshot();
 });
 
@@ -141,7 +136,7 @@ test('an extra field is provided.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -150,7 +145,7 @@ test('an required object field is null, suggests nullable.managed', async () => 
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -159,7 +154,7 @@ test('an required object field is ommitted.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -168,7 +163,7 @@ test('an required object field is provided with a missing required field.managed
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -177,7 +172,7 @@ test('an required object field is provided with an array.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -187,7 +182,7 @@ test('an required object field is provided with an array.managed', async () => {
 //   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
 //   const result = await shapeDiffPreview(diff, universe.universe);
 //   commonAssertions(result);
-//   await logResult(result.preview);
+// logResult(result.preview);
 //   expect(result).toMatchSnapshot();
 // });
 
@@ -201,7 +196,7 @@ test('array with object listitem is provided an empty sub array.managed', async 
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -210,7 +205,7 @@ test('array with object listitem is provided an sub array of numbers.managed', a
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -224,7 +219,7 @@ test('array with object listitem is provided with one matching and one primitive
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -238,7 +233,7 @@ test('deeply nested fields inside of arrays.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -247,7 +242,7 @@ test('field is array of strings, and 1 item does not match expected type.managed
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -256,7 +251,7 @@ test('field is array of strings, and more than 1 items does not match expected t
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -276,7 +271,7 @@ test('root array is provided with object.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
 
@@ -285,6 +280,6 @@ test('when a nullable is provided with a concrete type.managed', async () => {
   const diff = universe.diffSet.groupedByEndpointAndShapeTrail()[0];
   const result = await shapeDiffPreview(diff, universe.universe);
   commonAssertions(result);
-  await logResult(result.preview);
+  // logResult(result.preview);
   expect(result).toMatchSnapshot();
 });
