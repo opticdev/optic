@@ -2,7 +2,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as Sentry from '@sentry/react';
 
 import { IForkableSpectacle } from '@useoptic/spectacle';
-import { JsonLike, ChangeType } from '<src>/types';
+import { JsonLike } from '<src>/types';
+import {
+  convertSpectacleChangeToChangeType,
+  SpectacleChange,
+} from '../spectacleUtils';
 import { ShapeId, ReduxShape } from './types';
 
 const ShapeQuery = `
@@ -67,25 +71,6 @@ type SpectacleShape =
 type SpectacleShapeResult = {
   shapeChoices: SpectacleShape[];
 };
-
-// TODO move this to shared file
-type SpectacleChange = {
-  added?: boolean;
-  changed?: boolean;
-  removed?: boolean;
-};
-
-// TODO move this to shared file
-const convertSpectacleChangeToChangeType = (
-  spectacleChange: SpectacleChange
-): ChangeType | null =>
-  spectacleChange.added
-    ? 'added'
-    : spectacleChange.changed
-    ? 'updated'
-    : spectacleChange.removed
-    ? 'removed'
-    : null;
 
 const fetchSpectacleShape = async (
   spectacle: IForkableSpectacle,

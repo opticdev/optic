@@ -49,11 +49,6 @@ export interface IArrayRender {
   shapeId: string;
 }
 
-// TODO remove this
-export interface IObjectRender {
-  fields: IFieldRenderer[];
-}
-
 export enum JsonLike {
   OBJECT = 'Object',
   ARRAY = 'Array',

@@ -5,6 +5,10 @@ import { IForkableSpectacle } from '@useoptic/spectacle';
 import { ChangeType, IEndpoint } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 import groupBy from 'lodash.groupby';
+import {
+  convertSpectacleChangeToChangeType,
+  SpectacleChange,
+} from '../spectacleUtils';
 
 export const AllEndpointsQuery = `
 query X($sinceBatchCommitId: String) {
@@ -96,12 +100,6 @@ type HttpBody = {
   rootShapeId: string;
 };
 
-type SpectacleChange = {
-  added: boolean;
-  changed: boolean;
-  removed: boolean;
-};
-
 export type EndpointQueryResults = {
   endpoints: {
     id: string;
@@ -141,17 +139,6 @@ export type EndpointQueryResults = {
     contributions: Record<string, string>;
   }[];
 };
-
-const convertSpectacleChangeToChangeType = (
-  spectacleChange: SpectacleChange
-): ChangeType | null =>
-  spectacleChange.added
-    ? 'added'
-    : spectacleChange.changed
-    ? 'updated'
-    : spectacleChange.removed
-    ? 'removed'
-    : null;
 
 export const endpointQueryResultsToJson = (
   { endpoints }: EndpointQueryResults,

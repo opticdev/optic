@@ -30,7 +30,6 @@ export const getShapeRenderer = (rootShapeId: string) => (
   const resolveShape = (shapeId: string): IShapeRenderer[] => {
     const reduxShapes = state.shapes.shapeMap[shapeId];
     if (!reduxShapes || reduxShapes.length === 0) {
-      // TODO sentry and console error
       console.error(`Could not find shape ${shapeId} in redux store`);
       Sentry.captureEvent({
         message: 'Could not find shape in redux store',
