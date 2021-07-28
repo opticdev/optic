@@ -70,7 +70,7 @@ export const initialize: AnalyticsStoreProps['initialize'] = async (
   if (window.Intercom && appConfig.analytics.intercomAppId) {
     window.Intercom('boot', {
       app_id: appConfig.analytics.intercomAppId,
-      user_id: clientId,
+      user_id: metadata.clientAgent,
     });
     window.Intercom('hide');
   }
