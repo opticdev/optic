@@ -1,4 +1,4 @@
-import { GraphCommandHandler, mapAppend } from '../index';
+import { GraphCommandHandler, mapAppend, NodeListWrapper } from '../shared';
 
 export type NodeId = string;
 
@@ -12,78 +12,115 @@ export enum NodeType {
   BatchCommit = 'BatchCommit',
 }
 
-export type Node = {
-  id: NodeId;
-} & (
-  | {
-      type: NodeType.Path;
-      data: PathNode;
-    }
-  | {
-      type: NodeType.Request;
-      data: RequestNode;
-    }
-  | {
-      type: NodeType.Response;
-      data: ResponseNode;
-    }
-  | {
-      type: NodeType.Endpoint;
-      data: EndpointNode;
-    }
-  | {
-      type: NodeType.Body;
-      data: BodyNode;
-    }
-  | {
-      type: NodeType.BatchCommit;
-      data: BatchCommitNode;
-    }
-  | {
-      type: NodeType.QueryParameters;
-      data: QueryParametersNode;
-    }
-);
+export type Node =
+  | PathNode
+  | RequestNode
+  | ResponseNode
+  | EndpointNode
+  | BodyNode
+  | BatchCommitNode
+  | QueryParametersNode;
 
 export type PathNode = {
-  absolutePathPattern: string;
-  pathId: string;
-  name: string;
-  isParameterized: boolean;
-  isRemoved: boolean;
+  id: NodeId;
+  type: NodeType.Path;
+  data: {
+    absolutePathPattern: string;
+    pathId: string;
+    name: string;
+    isParameterized: boolean;
+    isRemoved: boolean;
+  };
 };
+
 export type RequestNode = {
-  requestId: string;
-  isRemoved: boolean;
+  id: NodeId;
+  type: NodeType.Request;
+  data: {
+    requestId: string;
+    isRemoved: boolean;
+  };
 };
+
 export type ResponseNode = {
-  responseId: string;
-  httpStatusCode: number;
-  isRemoved: boolean;
+  id: NodeId;
+  type: NodeType.Response;
+  data: {
+    responseId: string;
+    httpStatusCode: number;
+    isRemoved: boolean;
+  };
 };
+
 export type EndpointNode = {
-  pathId: string;
-  httpMethod: string;
-  id: string;
-  isRemoved: boolean;
+  id: NodeId;
+  type: NodeType.Endpoint;
+  data: {
+    pathId: string;
+    httpMethod: string;
+    id: string;
+    isRemoved: boolean;
+  };
 };
-export type QueryParametersNode = {
-  queryParametersId: string;
-  rootShapeId: string | null;
-  httpMethod: string;
-  isRemoved: boolean;
-};
+
 export type BodyNode = {
-  httpContentType: string;
-  rootShapeId: string;
-  isRemoved: boolean;
+  id: NodeId;
+  type: NodeType.Body;
+  data: {
+    httpContentType: string;
+    rootShapeId: string;
+    isRemoved: boolean;
+  };
 };
 
 export type BatchCommitNode = {
+  id: NodeId;
+  type: NodeType.BatchCommit;
+  data: BatchCommitData;
+};
+
+export type QueryParametersNode = {
+  id: NodeId;
+  type: NodeType.QueryParameters;
+  data: {
+    queryParametersId: string;
+    rootShapeId: string | null;
+    httpMethod: string;
+    isRemoved: boolean;
+  };
+};
+
+export type BatchCommitData = {
   createdAt: string;
   batchId: string;
   commitMessage: string;
 };
+
+export type NodeWrapper =
+  | BodyNodeWrapper
+  | EndpointNodeWrapper
+  | RequestNodeWrapper
+  | ResponseNodeWrapper
+  | QueryParametersNodeWrapper
+  | PathNodeWrapper
+  | BatchCommitNodeWrapper;
+
+// Is there a better way of infering / mapping a type to another type?
+type NodeTypeToNodeWrapper<T extends NodeType> = T extends NodeType.BatchCommit
+  ? BatchCommitNodeWrapper
+  : T extends NodeType.Body
+  ? BodyNodeWrapper
+  : T extends NodeType.Path
+  ? PathNodeWrapper
+  : T extends NodeType.Request
+  ? RequestNodeWrapper
+  : T extends NodeType.QueryParameters
+  ? QueryParametersNodeWrapper
+  : T extends NodeType.Response
+  ? ResponseNodeWrapper
+  : T extends NodeType.Endpoint
+  ? EndpointNodeWrapper
+  : NodeWrapper;
 
 export enum EdgeType {
   IsChildOf = 'IsChildOf',
@@ -185,22 +222,11 @@ export class GraphIndexer implements GraphCommandHandler<Node, NodeId, Edge> {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// @TODO: this should be generic so we can do wrap<T> and know what type to expect?
-export interface NodeWrapper {
-  result: Node;
-}
+export class BodyNodeWrapper {
+  constructor(public result: BodyNode, private queries: GraphQueries) {}
 
-export interface NodeListWrapper {
-  results: NodeWrapper[];
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export class BodyNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {}
-
-  get value(): BodyNode {
-    return this.result.data as BodyNode;
+  get value() {
+    return this.result.data;
   }
 
   response(): ResponseNodeWrapper | null {
@@ -211,7 +237,7 @@ export class BodyNodeWrapper implements NodeWrapper {
     if (neighbors.results.length === 0) {
       return null;
     }
-    return neighbors.results[0] as ResponseNodeWrapper;
+    return neighbors.results[0];
   }
 
   request(): RequestNodeWrapper | null {
@@ -222,18 +248,18 @@ export class BodyNodeWrapper implements NodeWrapper {
     if (neighbors.results.length === 0) {
       return null;
     }
-    return neighbors.results[0] as RequestNodeWrapper;
+    return neighbors.results[0];
   }
 }
 
-export class EndpointNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {}
+export class EndpointNodeWrapper {
+  constructor(public result: EndpointNode, private queries: GraphQueries) {}
 
-  get value(): EndpointNode {
-    return this.result.data as EndpointNode;
+  get value() {
+    return this.result.data;
   }
 
-  path(): PathNodeWrapper {
+  path() {
     const neighbors = this.queries.listOutgoingNeighborsByType(
       this.result.id,
       NodeType.Path
@@ -241,7 +267,7 @@ export class EndpointNodeWrapper implements NodeWrapper {
     if (neighbors.results.length === 0) {
       throw new Error(`expected endpoint to have a parent Path`);
     }
-    return neighbors.results[0] as PathNodeWrapper;
+    return neighbors.results[0];
   }
 
   query(): QueryParametersNodeWrapper | null {
@@ -251,18 +277,18 @@ export class EndpointNodeWrapper implements NodeWrapper {
     );
 
     return queryParameters.results.length > 0
-      ? (queryParameters.results[0] as QueryParametersNodeWrapper)
+      ? queryParameters.results[0]
       : null;
   }
 
-  requests(): NodeListWrapper {
+  requests() {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
       NodeType.Request
     );
   }
 
-  responses(): NodeListWrapper {
+  responses() {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
       NodeType.Response
@@ -270,11 +296,11 @@ export class EndpointNodeWrapper implements NodeWrapper {
   }
 }
 
-export class RequestNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {}
+export class RequestNodeWrapper {
+  constructor(public result: RequestNode, private queries: GraphQueries) {}
 
-  get value(): RequestNode {
-    return this.result.data as RequestNode;
+  get value() {
+    return this.result.data;
   }
 
   // A request node can be orphaned
@@ -284,9 +310,7 @@ export class RequestNodeWrapper implements NodeWrapper {
       NodeType.Endpoint
     );
 
-    return endpoints.results.length > 0
-      ? (endpoints.results[0] as EndpointNodeWrapper)
-      : null;
+    return endpoints.results.length > 0 ? endpoints.results[0] : null;
   }
 
   body(): BodyNodeWrapper | null {
@@ -295,17 +319,15 @@ export class RequestNodeWrapper implements NodeWrapper {
       NodeType.Body
     );
 
-    return bodies.results.length >= 1
-      ? (bodies.results[0] as BodyNodeWrapper)
-      : null;
+    return bodies.results.length >= 1 ? bodies.results[0] : null;
   }
 }
 
-export class ResponseNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {}
+export class ResponseNodeWrapper {
+  constructor(public result: ResponseNode, private queries: GraphQueries) {}
 
-  get value(): ResponseNode {
-    return this.result.data as ResponseNode;
+  get value() {
+    return this.result.data;
   }
 
   // A response node can be orphaned
@@ -315,12 +337,10 @@ export class ResponseNodeWrapper implements NodeWrapper {
       NodeType.Endpoint
     );
 
-    return endpoints.results.length > 0
-      ? (endpoints.results[0] as EndpointNodeWrapper)
-      : null;
+    return endpoints.results.length > 0 ? endpoints.results[0] : null;
   }
 
-  bodies(): NodeListWrapper {
+  bodies() {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
       NodeType.Body
@@ -328,22 +348,25 @@ export class ResponseNodeWrapper implements NodeWrapper {
   }
 }
 
-export class QueryParametersNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {}
+export class QueryParametersNodeWrapper {
+  constructor(
+    public result: QueryParametersNode,
+    private queries: GraphQueries
+  ) {}
 
-  get value(): QueryParametersNode {
-    return this.result.data as QueryParametersNode;
+  get value() {
+    return this.result.data;
   }
 }
 
-export class PathNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {}
+export class PathNodeWrapper {
+  constructor(public result: PathNode, private queries: GraphQueries) {}
 
-  get value(): PathNode {
-    return this.result.data as PathNode;
+  get value() {
+    return this.result.data;
   }
 
-  parentPath(): PathNodeWrapper | null {
+  parentPath() {
     const parentPaths = this.queries.listOutgoingNeighborsByType(
       this.result.id,
       NodeType.Path
@@ -352,10 +375,10 @@ export class PathNodeWrapper implements NodeWrapper {
       return null;
     }
     const [parentPath] = parentPaths.results;
-    return parentPath as PathNodeWrapper;
+    return parentPath;
   }
 
-  endpoints(): NodeListWrapper {
+  endpoints() {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
       NodeType.Endpoint
@@ -397,42 +420,42 @@ export class PathNodeWrapper implements NodeWrapper {
   }
 }
 
-export class BatchCommitNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {}
+export class BatchCommitNodeWrapper {
+  constructor(public result: BatchCommitNode, private queries: GraphQueries) {}
 
-  get value(): BatchCommitNode {
-    return this.result.data as BatchCommitNode;
+  get value() {
+    return this.result.data;
   }
 
-  requests(): NodeListWrapper {
+  requests() {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
       NodeType.Request
     );
   }
 
-  responses(): NodeListWrapper {
+  responses() {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
       NodeType.Response
     );
   }
 
-  createdInEdgeNodes(): NodeListWrapper {
+  createdInEdgeNodes() {
     return this.queries.listIncomingNeighborsByEdgeType(
       this.result.id,
       EdgeType.CreatedIn
     );
   }
 
-  updatedInEdgeNodes(): NodeListWrapper {
+  updatedInEdgeNodes() {
     return this.queries.listIncomingNeighborsByEdgeType(
       this.result.id,
       EdgeType.UpdatedIn
     );
   }
 
-  removedInEdgeNodes(): NodeListWrapper {
+  removedInEdgeNodes() {
     return this.queries.listIncomingNeighborsByEdgeType(
       this.result.id,
       EdgeType.RemovedIn
@@ -453,69 +476,81 @@ export class GraphQueries {
     return this.wrap(node);
   }
 
-  listNodesByType(
-    type: NodeType,
+  listNodesByType<T extends NodeType>(
+    type: T,
     {
       includeRemoved = true,
     }: {
       includeRemoved?: boolean;
     } = {}
-  ): NodeListWrapper {
+  ): NodeListWrapper<NodeTypeToNodeWrapper<T>> {
     const nodesByType = this.index.nodesByType.get(type) || [];
     const filteredNodesByType = includeRemoved
       ? nodesByType
       : nodesByType.filter((node) => !isNodeRemoved(node));
-    return this.wrapList(type, filteredNodesByType);
+    return this.wrapList(type, filteredNodesByType) as NodeListWrapper<
+      NodeTypeToNodeWrapper<T>
+    >;
   }
 
   //@TODO add singular find* variant
-  listIncomingNeighborsByType(
+  listIncomingNeighborsByType<T extends NodeType>(
     id: NodeId,
-    incomingNeighborType: NodeType,
+    incomingNeighborType: T,
     {
       includeRemoved = true,
     }: {
       includeRemoved?: boolean;
     } = {}
-  ) {
+  ): NodeListWrapper<NodeTypeToNodeWrapper<T>> {
     const neighbors = this.index.inboundNeighbors.get(id);
     if (!neighbors) {
-      return this.wrapList(incomingNeighborType, []);
+      return this.wrapList(incomingNeighborType, []) as NodeListWrapper<
+        NodeTypeToNodeWrapper<T>
+      >;
     }
     const neighborsOfType = neighbors.get(incomingNeighborType) || [];
     const filteredNeighborsOfType = includeRemoved
       ? neighborsOfType
       : neighborsOfType.filter((node) => !isNodeRemoved(node));
 
-    return this.wrapList(incomingNeighborType, filteredNeighborsOfType);
+    return this.wrapList(
+      incomingNeighborType,
+      filteredNeighborsOfType
+    ) as NodeListWrapper<NodeTypeToNodeWrapper<T>>;
   }
 
   //@TODO add singular find* variant
-  listOutgoingNeighborsByType(
+  listOutgoingNeighborsByType<T extends NodeType>(
     id: NodeId,
-    outgoingNeighborType: NodeType,
+    outgoingNeighborType: T,
     {
       includeRemoved = true,
     }: {
       includeRemoved?: boolean;
     } = {}
-  ): NodeListWrapper {
+  ): NodeListWrapper<NodeTypeToNodeWrapper<T>> {
     const neighbors = this.index.outboundNeighbors.get(id);
     if (!neighbors) {
-      return this.wrapList(outgoingNeighborType, []);
+      return this.wrapList(outgoingNeighborType, []) as NodeListWrapper<
+        NodeTypeToNodeWrapper<T>
+      >;
     }
     const neighborsOfType = neighbors.get(outgoingNeighborType) || [];
     const filteredNeighborsOfType = includeRemoved
       ? neighborsOfType
       : neighborsOfType.filter((node) => !isNodeRemoved(node));
 
-    return this.wrapList(outgoingNeighborType, filteredNeighborsOfType);
+    return this.wrapList(
+      outgoingNeighborType,
+      filteredNeighborsOfType
+    ) as NodeListWrapper<NodeTypeToNodeWrapper<T>>;
   }
 
   listIncomingNeighborsByEdgeType(
     id: NodeId,
     edgeType: EdgeType
-  ): NodeListWrapper {
+  ): NodeListWrapper<NodeWrapper> {
     const neighbors = this.index.inboundNeighborsByEdgeType.get(id);
 
     if (!neighbors) {
@@ -530,7 +565,7 @@ export class GraphQueries {
   listOutgoingNeighborsByEdgeType(
     id: NodeId,
     edgeType: EdgeType
-  ): NodeListWrapper {
+  ): NodeListWrapper<NodeWrapper> {
     const neighbors = this.index.outboundNeighborsByEdgeType.get(id);
 
     if (!neighbors) {
@@ -570,6 +605,7 @@ export class GraphQueries {
   }
 
   //@TODO wrap() and wrapList() should be injected?
+  // TODO figure out how to make this generic
   wrap(node: Node): NodeWrapper {
     if (node.type === NodeType.Request) {
       return new RequestNodeWrapper(node, this);
@@ -590,7 +626,8 @@ export class GraphQueries {
   }
 
   //@TODO move away from null here
-  wrapList(type: NodeType | null, nodes: Node[]): NodeListWrapper {
+  // TODO figure out how to make this generic
+  wrapList(type: NodeType | null, nodes: Node[]): NodeListWrapper<NodeWrapper> {
     //@TODO add list helpers (map, etc.)
     return {
       results: nodes.map((node) => this.wrap(node)),

@@ -1,10 +1,12 @@
 use super::{EndpointCommand, SpecCommand, SpecCommandError};
-use crate::{events::shape as shape_events, shapehash::ShapeDescriptor, state::shape::ShapeProvider};
 use crate::events::ShapeEvent;
 use crate::projections::ShapeProjection;
 use crate::state::shape::{
-  FieldId, FieldShapeDescriptor, FieldShapeFromShape, ParameterShapeDescriptor, ProviderDescriptor, ProviderInShape, ShapeId, ShapeKind,
-  ShapeParameterId, ShapeParametersDescriptor,
+  FieldId, FieldShapeDescriptor, FieldShapeFromShape, ParameterShapeDescriptor, ProviderDescriptor,
+  ProviderInShape, ShapeId, ShapeKind, ShapeParameterId, ShapeParametersDescriptor,
+};
+use crate::{
+  events::shape as shape_events, shapehash::ShapeDescriptor, state::shape::ShapeProvider,
 };
 use cqrs_core::AggregateCommand;
 use serde::{Deserialize, Serialize};
@@ -31,39 +33,62 @@ pub enum ShapeCommand {
 
 impl ShapeCommand {
   pub fn add_shape(shape_id: ShapeId, shape_kind: ShapeKind, name: String) -> Self {
-    Self::AddShape(AddShape::new(shape_id, String::from(shape_kind.get_descriptor().base_shape_id), name))
+    Self::AddShape(AddShape::new(
+      shape_id,
+      String::from(shape_kind.get_descriptor().base_shape_id),
+      name,
+    ))
   }
 
-  pub fn add_shape_parameter(shape_parameter_id: ShapeParameterId, shape_id: ShapeId, name: String) -> Self {
-    Self::AddShapeParameter(AddShapeParameter { shape_parameter_id, shape_id, name })
+  pub fn add_shape_parameter(
+    shape_parameter_id: ShapeParameterId,
+    shape_id: ShapeId,
+    name: String,
+  ) -> Self {
+    Self::AddShapeParameter(AddShapeParameter {
+      shape_parameter_id,
+      shape_id,
+      name,
+    })
   }
 
-  pub fn set_parameter_shape(shape_id: ShapeId, consuming_parameter_id: ShapeParameterId, provided_shape_id: ShapeId) -> Self {
+  pub fn set_parameter_shape(
+    shape_id: ShapeId,
+    consuming_parameter_id: ShapeParameterId,
+    provided_shape_id: ShapeId,
+  ) -> Self {
     let provider = ProviderInShape {
       shape_id,
       consuming_parameter_id,
-      provider_descriptor: ProviderDescriptor::ShapeProvider(ShapeProvider { shape_id: provided_shape_id })
+      provider_descriptor: ProviderDescriptor::ShapeProvider(ShapeProvider {
+        shape_id: provided_shape_id,
+      }),
     };
 
-    Self::SetParameterShape(SetParameterShape { shape_descriptor: ParameterShapeDescriptor::ProviderInShape(provider) })
+    Self::SetParameterShape(SetParameterShape {
+      shape_descriptor: ParameterShapeDescriptor::ProviderInShape(provider),
+    })
   }
 
-  pub fn add_field(key: String, field_id: ShapeId, object_shape_id: ShapeId, field_shape_id: ShapeId) -> Self {
+  pub fn add_field(
+    key: String,
+    field_id: ShapeId,
+    object_shape_id: ShapeId,
+    field_shape_id: ShapeId,
+  ) -> Self {
     Self::AddField(AddField {
       shape_id: object_shape_id,
       field_id: field_id.clone(),
       name: key,
       shape_descriptor: FieldShapeDescriptor::FieldShapeFromShape(FieldShapeFromShape {
         field_id,
-        shape_id: field_shape_id
-      })
+        shape_id: field_shape_id,
+      }),
     })
   }
 
   pub fn remove_field(field_id: FieldId) -> Self {
-    Self::RemoveField(RemoveField {
-      field_id
-    })
+    Self::RemoveField(RemoveField { field_id })
   }
 }
 
@@ -246,7 +271,7 @@ impl AggregateCommand<ShapeProjection> for ShapeCommand {
         )?;
 
         vec![ShapeEvent::from(shape_events::ShapeAdded::from(command))]
-      }      
+      }
 
       ShapeCommand::SetBaseShape(command) => {
         validation.require(
@@ -324,10 +349,12 @@ impl AggregateCommand<ShapeProjection> for ShapeCommand {
       ShapeCommand::RemoveField(command) => {
         validation.require(
           validation.field_id_exists(&command.field_id),
-          "field must exist to remove field"
+          "field must exist to remove field",
         )?;
 
-        vec![ShapeEvent::FieldRemoved(shape_events::FieldRemoved::from(command))]
+        vec![ShapeEvent::FieldRemoved(shape_events::FieldRemoved::from(
+          command,
+        ))]
       }
 
       // Parameters
@@ -370,7 +397,7 @@ impl AggregateCommand<ShapeProjection> for ShapeCommand {
                 validation.shape_id_exists(&provider.shape_id),
                 "provided shape must exist to set shape parameter shape",
               )?;
-              
+
               vec![ShapeEvent::from(shape_events::ShapeParameterShapeSet::from(command))]
             }
           }
@@ -731,7 +758,6 @@ mod test {
       unexisting_field_result.unwrap_err()
     );
 
-
     let already_removed_field: ShapeCommand = serde_json::from_value(json!(
       {"RemoveField":{ "fieldId": "field_2" }}
     ))
@@ -816,14 +842,16 @@ mod test {
       .execute(valid_command)
       .expect("valid command should yield new events");
     assert_eq!(new_events.len(), 1);
-    assert_debug_snapshot!("can_handle_set_parameter_shape_command__new_events", new_events);
+    assert_debug_snapshot!(
+      "can_handle_set_parameter_shape_command__new_events",
+      new_events
+    );
 
     let unexisting_shape_parameter_id: ShapeCommand = serde_json::from_value(json!(
       {"SetParameterShape": {"shapeDescriptor": {"ProviderInShape": {"shapeId": "nullable_shape_1","providerDescriptor": {"ShapeProvider": { "shapeId": "string_shape_1" }},"consumingParameterId": "not-a-shape-parameter-id"}}}}
     ))
     .unwrap();
-    let unexisting_shape_parameter_id_result =
-      projection.execute(unexisting_shape_parameter_id);
+    let unexisting_shape_parameter_id_result = projection.execute(unexisting_shape_parameter_id);
     assert!(unexisting_shape_parameter_id_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_parameter_shape_command__unexisting_shape_parameter_id_result",
@@ -834,8 +862,7 @@ mod test {
       {"SetParameterShape": {"shapeDescriptor": {"ProviderInShape": {"shapeId": "not-a-shape-id","providerDescriptor": {"ShapeProvider": { "shapeId": "string_shape_1" }},"consumingParameterId": "$nullableInner"}}}}
     ))
     .unwrap();
-    let unexisting_shape_id_result =
-      projection.execute(unexisting_shape_id);
+    let unexisting_shape_id_result = projection.execute(unexisting_shape_id);
     assert!(unexisting_shape_id_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_parameter_shape_command__unexisting_shape_id_result",
@@ -846,8 +873,7 @@ mod test {
       {"SetParameterShape": {"shapeDescriptor": {"ProviderInShape": {"shapeId": "nullable_shape_1","providerDescriptor": {"ShapeProvider": { "shapeId": "not-a-shape-id" }},"consumingParameterId": "$nullableInner"}}}}
     ))
     .unwrap();
-    let unexisting_provided_shape_id_result =
-      projection.execute(unexisting_provided_shape_id);
+    let unexisting_provided_shape_id_result = projection.execute(unexisting_provided_shape_id);
     assert!(unexisting_provided_shape_id_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_parameter_shape_command__unexisting_provided_shape_id_result",
@@ -857,8 +883,7 @@ mod test {
       {"SetParameterShape": {"shapeDescriptor": {"ProviderInShape": {"shapeId": "nullable_shape_1","providerDescriptor": {"NoProvider": {}},"consumingParameterId": "$nullableInner"}}}}
     ))
     .unwrap();
-    let no_shape_provider_result =
-      projection.execute(no_shape_provider);
+    let no_shape_provider_result = projection.execute(no_shape_provider);
     assert!(no_shape_provider_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_parameter_shape_command__no_shape_provider_result",

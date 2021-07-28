@@ -101,14 +101,12 @@ export function buildEndpointChanges(
       batchCommit
         .createdInEdgeNodes()
         .results.forEach((node: endpoints.NodeWrapper) => {
-          if (node.result.type === endpoints.NodeType.Request) {
-            const endpoint = endpointFromRequest(
-              node as endpoints.RequestNodeWrapper
-            );
+          if (node instanceof endpoints.RequestNodeWrapper) {
+            const endpoint = endpointFromRequest(node);
             if (endpoint) {
               changes.captureChange('added', endpoint);
             }
-          } else if (node.result.type === endpoints.NodeType.Response) {
+          } else if (node instanceof endpoints.ResponseNodeWrapper) {
             const endpoint = endpointFromResponse(
               node as endpoints.ResponseNodeWrapper
             );
@@ -120,14 +118,12 @@ export function buildEndpointChanges(
       batchCommit
         .removedInEdgeNodes()
         .results.forEach((node: endpoints.NodeWrapper) => {
-          if (node.result.type === endpoints.NodeType.Request) {
-            const endpoint = endpointFromRequest(
-              node as endpoints.RequestNodeWrapper
-            );
+          if (node instanceof endpoints.RequestNodeWrapper) {
+            const endpoint = endpointFromRequest(node);
             if (endpoint) {
               changes.captureChange('removed', endpoint);
             }
-          } else if (node.result.type === endpoints.NodeType.Response) {
+          } else if (node instanceof endpoints.ResponseNodeWrapper) {
             const endpoint = endpointFromResponse(
               node as endpoints.ResponseNodeWrapper
             );
@@ -139,14 +135,12 @@ export function buildEndpointChanges(
       batchCommit
         .updatedInEdgeNodes()
         .results.forEach((node: endpoints.NodeWrapper) => {
-          if (node.result.type === endpoints.NodeType.Request) {
-            const endpoint = endpointFromRequest(
-              node as endpoints.RequestNodeWrapper
-            );
+          if (node instanceof endpoints.RequestNodeWrapper) {
+            const endpoint = endpointFromRequest(node);
             if (endpoint) {
               changes.captureChange('updated', endpoint);
             }
-          } else if (node.result.type === endpoints.NodeType.Response) {
+          } else if (node instanceof endpoints.ResponseNodeWrapper) {
             const endpoint = endpointFromResponse(
               node as endpoints.ResponseNodeWrapper
             );

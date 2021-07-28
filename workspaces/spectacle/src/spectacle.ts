@@ -180,15 +180,15 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       // TODO @nic deprecate this
       requests: (parent: any, _: {}, context: GraphQLContext) => {
         return Promise.resolve(
-          (context
+          context
             .spectacleContext()
             .endpointsQueries.listNodesByType(endpoints.NodeType.Endpoint)
-            .results as endpoints.EndpointNodeWrapper[]).flatMap((endpoint) => {
-            return endpoint.requests().results.map((request) => ({
-              endpointNode: endpoint,
-              requestNode: request,
-            }));
-          })
+            .results.flatMap((endpoint) => {
+              return endpoint.requests().results.map((request) => ({
+                endpointNode: endpoint,
+                requestNode: request,
+              }));
+            })
         );
       },
       shapeChoices: async (
@@ -323,15 +323,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         endpointNode: endpoints.EndpointNodeWrapper;
         requestNode: endpoints.RequestNodeWrapper;
       }) => {
-        let path = parent.endpointNode.path();
-        let parentPath = path.parentPath();
-        const components = [path.value];
-        while (parentPath !== null) {
-          components.push(parentPath.value);
-          path = parentPath;
-          parentPath = path.parentPath();
-        }
-        return Promise.resolve(components.reverse());
+        return Promise.resolve(parent.endpointNode.path().components());
       },
       method: (parent: {
         endpointNode: endpoints.EndpointNodeWrapper;
@@ -407,15 +399,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return parent.value.httpMethod;
       },
       pathComponents: async (parent: endpoints.EndpointNodeWrapper) => {
-        let path = parent.path();
-        let parentPath = path.parentPath();
-        const components = [path.value];
-        while (parentPath !== null) {
-          components.push(parentPath.value);
-          path = parentPath;
-          parentPath = path.parentPath();
-        }
-        return components.reverse();
+        return parent.path().components();
       },
       pathPattern: async (parent: endpoints.EndpointNodeWrapper) => {
         return parent.path().absolutePathPatternWithParameterNames;
@@ -590,21 +574,28 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     PathComponent: {
-      id: (parent: endpoints.PathNode) => {
-        return Promise.resolve(parent.pathId);
+      id: (parent: endpoints.PathNodeWrapper) => {
+        return Promise.resolve(parent.value.pathId);
+      },
+      name: async (parent: endpoints.PathNodeWrapper) => {
+        return parent.value.name;
+      },
+      isParameterized: async (parent: endpoints.PathNodeWrapper) => {
+        return parent.value.isParameterized;
       },
       contributions: (
-        parent: endpoints.PathNode,
+        parent: endpoints.PathNodeWrapper,
         _: {},
         context: GraphQLContext
       ) => {
         return Promise.resolve(
-          context.spectacleContext().contributionsProjection[parent.pathId] ||
-            {}
+          context.spectacleContext().contributionsProjection[
+            parent.value.pathId
+          ] || {}
         );
       },
-      isRemoved: (parent: endpoints.PathNode) => {
-        return Promise.resolve(parent.isRemoved);
+      isRemoved: (parent: endpoints.PathNodeWrapper) => {
+        return Promise.resolve(parent.value.isRemoved);
       },
     },
     HttpBody: {
