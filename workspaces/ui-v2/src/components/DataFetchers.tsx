@@ -8,6 +8,8 @@ import {
 import { useSpectacleContext } from '<src>/contexts/spectacle-provider';
 import { IFieldDetails, IShapeRenderer } from '<src>/types';
 
+import { Loader } from './loaders';
+
 type ShapeFetcherProps = {
   rootShapeId: string;
   changesSinceBatchCommit?: string;
@@ -38,8 +40,7 @@ export const ShapeFetcher: FC<ShapeFetcherProps> = ({
   const shapesState = useAppSelector(selectors.getShapeRenderer(rootShapeId));
 
   return shapesState.loading ? (
-    // todo update loading and error states
-    <div>loading</div>
+    <Loader title="Loading" />
   ) : shapesState.error ? (
     <div>error</div>
   ) : (
