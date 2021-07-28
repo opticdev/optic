@@ -13,7 +13,7 @@ type ShapeRowBaseProps = {
   children: any;
   depth: number;
   style?: any;
-  changes: ChangeType | null;
+  changes?: ChangeType | null;
 };
 export const ShapeRowBase = ({
   children,
@@ -121,7 +121,7 @@ export const RenderRootShape = ({
   const { depth } = useDepth();
   return (
     <>
-      <ShapeRowBase depth={depth} changes={shape.changes}>
+      <ShapeRowBase depth={depth}>
         <RenderFieldLeadingValue shapeRenderers={[shape]} />
         {right ? (
           <>
@@ -186,7 +186,7 @@ export const RenderFieldRowValues = ({
               <RenderField {...i} key={i.fieldId} parentId={shape.shapeId} />
             </Indent>
           ))}
-          <ShapeRowBase changes={null} depth={depth}>
+          <ShapeRowBase depth={depth}>
             <span className={sharedClasses.symbolFont}>{'}'}</span>
           </ShapeRowBase>
         </>
@@ -198,7 +198,7 @@ export const RenderFieldRowValues = ({
         return (
           <>
             <ShapePrimitiveRender {...shape} />
-            <ShapeRowBase changes={null} depth={depth}>
+            <ShapeRowBase depth={depth}>
               <span className={sharedClasses.symbolFont}>{']'}</span>
             </ShapeRowBase>
           </>
@@ -218,7 +218,7 @@ export const RenderFieldRowValues = ({
       return (
         <>
           <Indent>{inner}</Indent>
-          <ShapeRowBase changes={null} depth={depth}>
+          <ShapeRowBase depth={depth}>
             <span className={sharedClasses.symbolFont}>{']'}</span>
           </ShapeRowBase>
         </>

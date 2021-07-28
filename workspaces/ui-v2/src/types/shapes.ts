@@ -9,6 +9,7 @@ export interface IFieldRenderer {
   required: boolean;
   changes: ChangeType | null;
   contributions: Record<string, string>;
+  // TODO - move this into a different typing or figure out where this should live
   additionalAttributes?: string[];
 }
 
@@ -17,7 +18,6 @@ export interface IShapeRenderer {
   jsonType: JsonLike;
   asArray?: IArrayRender;
   asObject?: IObjectRender;
-  changes: ChangeType | null;
 }
 
 export interface IArrayRender {

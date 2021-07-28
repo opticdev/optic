@@ -220,7 +220,6 @@ export const EndpointRootPage: FC<
                     const alwaysAString: IShapeRenderer = {
                       shapeId: param.id + 'shape',
                       jsonType: JsonLike.STRING,
-                      changes: null,
                     };
                     return (
                       <DocsFieldOrParameterContribution
