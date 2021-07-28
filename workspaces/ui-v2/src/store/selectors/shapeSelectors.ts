@@ -7,6 +7,7 @@ import {
   IShapeRenderer,
   IFieldDetails,
   JsonLike,
+  QueryParameters,
 } from '<src>/types';
 import { RootState } from '../root';
 
@@ -124,3 +125,35 @@ export function createFlatList(
 
   return fieldDetails;
 }
+
+export const convertShapeToQueryParameters = (
+  shapes: IShapeRenderer[]
+): QueryParameters => {
+  const queryParameters: QueryParameters = {};
+  if (shapes.length !== 1 || !shapes[0].asObject) {
+    if (shapes.length > 1) {
+      console.error('unexpected format for query parameters');
+    }
+    // otherwise loading
+    return {};
+  }
+
+  for (const field of shapes[0].asObject.fields) {
+    let isArray = field.shapeChoices.findIndex(
+      (choice) => choice.jsonType === JsonLike.ARRAY
+    );
+
+    if (isArray > -1) {
+      field.additionalAttributes = ['multiple'];
+      if (field.shapeChoices.length > 1) {
+        field.shapeChoices.splice(isArray, 1);
+      } else {
+        field.shapeChoices = field.shapeChoices[isArray].asArray!.shapeChoices;
+      }
+    }
+
+    queryParameters[field.name] = field;
+  }
+
+  return queryParameters;
+};

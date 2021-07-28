@@ -10,7 +10,6 @@ export interface IFieldRenderer {
   required: boolean;
   changes: ChangeType | null;
   contributions: Record<string, string>;
-  // TODO - move this into a different typing or figure out where this should live
   additionalAttributes?: string[];
 }
 
@@ -21,6 +20,9 @@ export interface IFieldDetails {
   shapes: IShapeRenderer[];
   depth: number;
 }
+
+// Used to render query parameters
+export type QueryParameters = Record<string, IFieldRenderer>;
 
 export type IShapeRenderer =
   | {

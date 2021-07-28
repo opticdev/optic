@@ -14,7 +14,6 @@ import {
   ShapeFetcher,
   QueryParametersPanel,
   ContributionsList,
-  convertShapeToQueryParameters,
   HttpBodyPanel,
   HttpBodySelector,
   Panel,
@@ -205,7 +204,9 @@ const ChangelogRootComponent: FC<
                   </div>
                   <div className={classes.panel}>
                     <QueryParametersPanel
-                      parameters={convertShapeToQueryParameters(shapes)}
+                      parameters={selectors.convertShapeToQueryParameters(
+                        shapes
+                      )}
                     />
                   </div>
                 </div>

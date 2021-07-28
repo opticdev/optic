@@ -9,7 +9,6 @@ import {
   QueryParametersPanel,
   HttpBodyPanel,
   HttpBodySelector,
-  convertShapeToQueryParameters,
   Panel,
 } from '<src>/components';
 import { EndpointTOC } from '<src>/pages/docs/components/EndpointTOC';
@@ -127,7 +126,7 @@ export const EndpointDocumentationPane: FC<
               >
                 {(shapes) => (
                   <QueryParametersPanel
-                    parameters={convertShapeToQueryParameters(shapes)}
+                    parameters={selectors.convertShapeToQueryParameters(shapes)}
                   />
                 )}
               </ShapeFetcher>

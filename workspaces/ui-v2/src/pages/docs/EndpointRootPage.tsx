@@ -11,7 +11,6 @@ import {
   FullWidth,
   ContributionsList,
   QueryParametersPanel,
-  convertShapeToQueryParameters,
   ShapeFetcher,
   HttpBodyPanel,
   HttpBodySelector,
@@ -313,7 +312,9 @@ export const EndpointRootPage: FC<
                   </div>
                   <div className={classes.panel}>
                     <QueryParametersPanel
-                      parameters={convertShapeToQueryParameters(shapes)}
+                      parameters={selectors.convertShapeToQueryParameters(
+                        shapes
+                      )}
                     />
                   </div>
                 </div>
