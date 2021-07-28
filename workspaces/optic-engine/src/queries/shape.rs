@@ -3,7 +3,10 @@ use crate::projections::shape::{CoreShapeNode, Edge, Node};
 use crate::projections::shape::{FieldNode, FieldNodeDescriptor, ShapeNode, ShapeProjection};
 use crate::shapes::traverser::{ShapeTrail, ShapeTrailPathComponent};
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
+use crate::state::SpecIdGenerator;
 use petgraph::visit::EdgeRef;
+use std::collections::BTreeSet;
+use std::iter::FromIterator;
 
 pub struct ShapeQueries<'a> {
   pub shape_projection: &'a ShapeProjection,
@@ -438,6 +441,42 @@ impl<'a> ShapeQueries<'a> {
     let command = ShapeCommand::remove_field(field_node.field_id.clone());
     Some(std::iter::once(command))
   }
+
+  pub fn edit_shape_commands(
+    &'a self,
+    shape_trail: &ShapeTrail,
+    required_kinds: impl IntoIterator<Item = &'a ShapeKind>,
+    id_generator: &mut impl SpecIdGenerator,
+  ) -> Option<impl Iterator<Item = ShapeCommand>> {
+    // @TODO: valid types are dependent on the shape we're editing (only fields can be
+    // made optional, only objects turned into Maps, etc.)
+    let togglable_kinds =
+      BTreeSet::from_iter(vec![ShapeKind::OptionalKind, ShapeKind::NullableKind]);
+    let current_trail_choices = self.list_trail_choices(shape_trail);
+    let current_kinds: BTreeSet<_> = current_trail_choices
+      .iter()
+      .map(|choice| &choice.core_shape_kind)
+      .cloned()
+      .collect();
+    let required_kinds: BTreeSet<_> = required_kinds
+      .into_iter()
+      .filter(|kind| togglable_kinds.contains(kind))
+      .cloned()
+      .collect();
+
+    let added_kinds = required_kinds.difference(&current_kinds);
+    let removed_kinds = current_kinds
+      .difference(&required_kinds)
+      .filter(|kind| togglable_kinds.contains(kind));
+
+    dbg!(
+      &current_kinds,
+      added_kinds.collect::<Vec<_>>(),
+      removed_kinds.collect::<Vec<_>>()
+    );
+
+    Some(std::iter::empty())
+  }
 }
 
 #[derive(Clone, Debug)]
@@ -491,6 +530,31 @@ mod test {
     let updated_spec = assert_valid_commands(spec_projection.clone(), remove_field_commands);
   }
 
+  #[test]
+  pub fn can_generate_edit_shape_commands_to_make_field_optional() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "", "eventContext": null }},
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "", "eventContext": null }},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "string_shape_1"}}, "eventContext": null }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    let shape_queries = ShapeQueries::new(spec_projection.shape());
+    let mut id_generator = SequentialIdGenerator { next_id: 1093 }; // <3 primes
+
+    let shape_trail = ShapeTrail::new(String::from("object_shape_1")).with_component(
+      ShapeTrailPathComponent::ObjectFieldTrail {
+        field_id: String::from("field_1"),
+        field_shape_id: String::from("string_shape_1"),
+        parent_object_shape_id: String::from("object_shape_1"),
+      },
+    );
+    let required_kinds = vec![ShapeKind::StringKind, ShapeKind::OptionalKind];
+    let edit_shape_commands =
+      shape_queries.edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator);
+  }
+
   fn assert_valid_commands(
     mut spec_projection: SpecProjection,
     commands: impl IntoIterator<Item = SpecCommand>,
@@ -507,5 +571,16 @@ mod test {
     }
 
     spec_projection
+  }
+
+  #[derive(Debug, Default)]
+  struct SequentialIdGenerator {
+    next_id: u32,
+  }
+  impl SpecIdGenerator for SequentialIdGenerator {
+    fn generate_id(&mut self, prefix: &str) -> String {
+      self.next_id += 1;
+      format!("{}{}", prefix, self.next_id.to_string())
+    }
   }
 }
