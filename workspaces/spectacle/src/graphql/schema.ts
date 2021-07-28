@@ -167,7 +167,7 @@ type QueryParameters {
   id: String!
 
   # Root shape ID for the QueryParameter. Look at the shapeChoices query getting more information about the root shape
-  rootShapeId: String!
+  rootShapeId: String
 
   # Is the body removed
   isRemoved: Boolean!

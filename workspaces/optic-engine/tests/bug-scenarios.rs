@@ -1958,3 +1958,30 @@ fn scenario_34() {
     assert_debug_snapshot!("scenario_34__results", results)
   });
 }
+
+#[test]
+fn duplicated_nodes_with_deletion() {
+  let events = SpecEvent::from_file(
+    std::env::current_dir()
+      .unwrap()
+      .join("tests/fixtures/events-deleted-duplicated-nodes-spec.json")
+      .to_str()
+      .unwrap(),
+  )
+  .expect("ergast spec should deserialize");
+
+  let spec_projection = SpecProjection::from(events);
+
+  assert_debug_snapshot!(
+    "duplicated_nodes__shape_graph",
+    Dot::with_config(&spec_projection.shape().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "duplicated_nodes__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "duplicated_nodes__endpoints_graph",
+    Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+}

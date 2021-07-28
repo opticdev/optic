@@ -149,36 +149,6 @@ const isNodeRemoved = (node: Node): boolean =>
   node.type !== NodeType.BatchCommit && node.data.isRemoved;
 
 ////////////////////////////////////////////////////////////////////////////////
-const getLatestCreatedNodeId = (
-  nodeList: NodeListWrapper<NodeWrapper>,
-  endpointQueries: GraphQueries
-): string | null => {
-  const sortedNodes = nodeList.results
-    .map((node) => {
-      const batchCommitNodes = endpointQueries.listOutgoingNeighborsByEdgeType(
-        node.result.id,
-        EdgeType.CreatedIn
-      ).results;
-
-      return batchCommitNodes.length > 0 &&
-        batchCommitNodes[0].result.type === NodeType.BatchCommit
-        ? {
-            createdAt: batchCommitNodes[0].result.data.createdAt,
-            nodeId: node.result.id,
-          }
-        : null;
-    })
-    .filter((node) => !!node)
-    .sort((a, b) => {
-      return a!.createdAt < b!.createdAt ? 1 : -1;
-    });
-
-  return sortedNodes.length > 0 && sortedNodes[0]
-    ? sortedNodes[0].nodeId
-    : null;
-};
-
-////////////////////////////////////////////////////////////////////////////////
 
 export class GraphIndexer implements GraphCommandHandler<Node, NodeId, Edge> {
   readonly nodesById: Map<NodeId, Node>;
@@ -305,19 +275,10 @@ export class EndpointNodeWrapper {
       this.result.id,
       NodeType.QueryParameters
     );
-    if (queryParameters.results.length === 0) {
-      return null;
-    }
 
-    const latestQueryParamNodeId = getLatestCreatedNodeId(
-      queryParameters,
-      this.queries
-    );
-    const queryParamNode = queryParameters.results.find(
-      (node) => node.result.id === latestQueryParamNodeId
-    );
-
-    return latestQueryParamNodeId && queryParamNode ? queryParamNode : null;
+    return queryParameters.results.length > 0
+      ? queryParameters.results[0]
+      : null;
   }
 
   requests() {
@@ -342,16 +303,14 @@ export class RequestNodeWrapper {
     return this.result.data;
   }
 
-  endpoint(): EndpointNodeWrapper {
+  // A request node can be orphaned
+  endpoint(): EndpointNodeWrapper | null {
     const endpoints = this.queries.listOutgoingNeighborsByType(
       this.result.id,
       NodeType.Endpoint
     );
 
-    if (endpoints.results.length === 0) {
-      throw new Error('Expected request node to have an endpoint');
-    }
-    return endpoints.results[0];
+    return endpoints.results.length > 0 ? endpoints.results[0] : null;
   }
 
   body(): BodyNodeWrapper | null {
@@ -371,16 +330,14 @@ export class ResponseNodeWrapper {
     return this.result.data;
   }
 
-  endpoint(): EndpointNodeWrapper {
+  // A response node can be orphaned
+  endpoint(): EndpointNodeWrapper | null {
     const endpoints = this.queries.listOutgoingNeighborsByType(
       this.result.id,
       NodeType.Endpoint
     );
 
-    if (endpoints.results.length === 0) {
-      throw new Error('Expected response node to have an endpoint');
-    }
-    return endpoints.results[0];
+    return endpoints.results.length > 0 ? endpoints.results[0] : null;
   }
 
   bodies() {
