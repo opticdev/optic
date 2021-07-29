@@ -506,4 +506,11 @@ export class CommandGenerator {
       return JSON.parse(specEndpointDeleteCommands).commands;
     },
   };
+
+  public field = {
+    remove: (fieldId: string): CQRSCommand[] => {
+      // TODO FLEB connect up to optic-engine command generation
+      return [];
+    },
+  };
 }

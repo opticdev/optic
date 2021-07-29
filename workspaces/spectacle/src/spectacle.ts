@@ -17,12 +17,11 @@ import {
   CommandGenerator,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
-import { CQRSCommand, ShapeChoice, JsonLike } from '@useoptic/optic-domain';
+import { FieldShape, JsonLike, ShapeChoice } from '@useoptic/optic-domain';
 import {
   IOpticContext,
   IOpticDiffService,
   SpectacleInput,
-  FieldShape,
   ShapeViewerProjection,
   GraphQLContext,
 } from './types';
@@ -62,11 +61,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     shapeQueries: shapes.GraphQueries,
     shapeViewerProjection: ShapeViewerProjection,
     contributionsProjection: ContributionsProjection,
-    commandGenerator: {
-      endpoint: {
-        remove: (pathId: string, method: string) => CQRSCommand[];
-      };
-    };
+    commandGenerator: CommandGenerator;
 
   // TODO: consider debouncing reloads (head and tail?)
   async function reload(opticContext: IOpticContext) {
@@ -651,7 +646,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         );
       },
     },
-    ObjectFieldMetadata: {
+    ObjectField: {
       changes: (
         parent: FieldShape,
         args: {
@@ -673,6 +668,15 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           context.spectacleContext().contributionsProjection[parent.fieldId] ||
             {}
         );
+      },
+      isRemoved: (parent: FieldShape, _: {}, context: GraphQLContext) => {
+        // TODO FLEB - connect up to optic engine
+        return false;
+      },
+      commands: (parent: FieldShape) => {
+        return {
+          remove: commandGenerator.field.remove(parent.fieldId),
+        };
       },
     },
     EndpointChanges: {

@@ -37,6 +37,7 @@ export type FieldShape = {
   shapeId: string;
 };
 
+// Matches optic-engine/src/projections/spectacle/shapes
 export type ShapeChoice =
   | {
       shapeId: string;

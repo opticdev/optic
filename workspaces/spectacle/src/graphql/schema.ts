@@ -49,6 +49,8 @@ type Query {
 
   endpoint(pathId: ID!, method: String!): Endpoint
 
+  field(fieldId: ID!): ObjectField
+
   # Metadata about the current spec
   metadata: SpecMetadata
 }
@@ -265,20 +267,22 @@ type HttpResponse {
 """
 Object Field Metadata, which provides information about a field
 """
-type ObjectFieldMetadata {
-  name: String
+type ObjectField {
+  name: String!
   
   # Field ID for the given field
-  fieldId: ID
+  fieldId: ID!
   
   # Changes for the field based on the give batch commit ID
   changes(sinceBatchCommitId: String): ChangesResult
   
   # Shape ID of field. Use the shapeChoice query to get shape information.
-  shapeId: ID
+  shapeId: ID!
   
   # Field contributions which define descriptions
-  contributions: JSON
+  contributions: JSON!
+
+  isRemoved: Boolean!
 }
 
 """
@@ -286,7 +290,7 @@ Object Metadata, which provides information about an object
 """
 type ObjectMetadata {
   # Fields for the given object
-  fields: [ObjectFieldMetadata]
+  fields: [ObjectField]
 }
 
 """
