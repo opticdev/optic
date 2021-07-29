@@ -304,21 +304,10 @@ impl ShapeTrail {
     new_trail
   }
 
-  pub fn len(&self) -> usize {
-    self.path.len()
-  }
-
   pub fn is_field(&self) -> bool {
     matches!(
       self.path.last(),
       Some(ShapeTrailPathComponent::ObjectFieldTrail { .. })
-    )
-  }
-
-  pub fn is_optional_field(&self) -> bool {
-    matches!(
-      self.path.last(),
-      Some(ShapeTrailPathComponent::OptionalItemTrail { .. })
     )
   }
 
