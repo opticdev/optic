@@ -448,34 +448,67 @@ impl<'a> ShapeQueries<'a> {
     required_kinds: impl IntoIterator<Item = &'a ShapeKind>,
     id_generator: &mut impl SpecIdGenerator,
   ) -> Option<impl Iterator<Item = ShapeCommand>> {
-    // @TODO: valid types are dependent on the shape we're editing (only fields can be
-    // made optional, only objects turned into Maps, etc.)
-    let togglable_kinds =
-      BTreeSet::from_iter(vec![ShapeKind::OptionalKind, ShapeKind::NullableKind]);
     let current_trail_choices = self.list_trail_choices(shape_trail);
     let current_kinds: BTreeSet<_> = current_trail_choices
       .iter()
       .map(|choice| &choice.core_shape_kind)
       .cloned()
       .collect();
+
+    let togglable_kinds = if shape_trail.is_field() {
+      BTreeSet::from_iter(vec![ShapeKind::OptionalKind, ShapeKind::NullableKind])
+    } else {
+      BTreeSet::new() // only allow edits to fields for now
+    };
+
     let required_kinds: BTreeSet<_> = required_kinds
       .into_iter()
       .filter(|kind| togglable_kinds.contains(kind))
       .cloned()
       .collect();
 
-    let added_kinds = required_kinds.difference(&current_kinds);
-    let removed_kinds = current_kinds
+    let mut added_kinds: BTreeSet<_> = required_kinds.difference(&current_kinds).collect();
+    let removed_kinds: BTreeSet<_> = current_kinds
       .difference(&required_kinds)
-      .filter(|kind| togglable_kinds.contains(kind));
-
-    // TODO: find a more reliable way to figure out the root shape id, this relies
-    // on internal ordering from list_trail_choices
-    let mut root_shape_id = current_trail_choices
-      .first()
-      .map(|choice| choice.shape_id.clone())?;
+      .filter(|kind| togglable_kinds.contains(kind))
+      .collect();
 
     let mut new_shape_prototypes = vec![];
+
+    let mut target_trail = shape_trail.clone();
+    let mut root_shape_id = if shape_trail.is_field() {
+      let field_id = shape_trail.last_field_id()?;
+      self.resolve_field_shape_id(field_id)
+    } else {
+      None
+    }?; // only support editing fields for now
+
+    if current_kinds.contains(&ShapeKind::OptionalKind) && !removed_kinds.contains(&ShapeKind) {
+      // let optional_item_choice = current_trail_choices.
+    }
+
+    // Optional fields are special, as they should always be the direct child of a field
+    // and only work in the context of a field so we handle them separately
+    if shape_trail.is_field() {
+      if added_kinds.contains(&ShapeKind::OptionalKind) {
+        let subject_shape_id = root_shape_id.clone(); // wrapping the current shape
+        let prototype = ShapePrototype {
+          id: id_generator.shape(),
+          prototype_descriptor: ShapePrototypeDescriptor::OptionalShape {
+            subject_shape_id: subject_shape_id.clone(),
+          },
+        };
+
+        target_trail = target_trail.with_optional(prototype.id.clone(), subject_shape_id);
+        new_shape_prototypes.push(prototype);
+        added_kinds.remove(&ShapeKind::OptionalKind);
+      }
+    }
+
+    if shape_trail.is_field() && added_kinds.contains(ShapeKind::OptionalKind) {
+      // must not have been optional before,
+    }
+
     // Straight up iterating isn't going to work for optionals, as they need to be
     // a direct child of the field. Probably the same goes for nullable: they need to
     // wrap any primitive shapes / one offs (this would be easier if optionals and
@@ -483,17 +516,6 @@ impl<'a> ShapeQueries<'a> {
     // TODO: change to reflect above insight
     for added_kind in added_kinds {
       match added_kind {
-        ShapeKind::OptionalKind => {
-          let prototype = ShapePrototype {
-            id: id_generator.shape(),
-            prototype_descriptor: ShapePrototypeDescriptor::OptionalShape {
-              subject_shape_id: root_shape_id.clone(),
-            },
-          };
-
-          root_shape_id = prototype.id.clone();
-          new_shape_prototypes.push(prototype);
-        }
         ShapeKind::NullableKind => {
           let prototype = ShapePrototype {
             id: id_generator.shape(),
@@ -515,7 +537,7 @@ impl<'a> ShapeQueries<'a> {
       .into_iter()
       .flat_map(ShapePrototype::into_commands);
 
-    let additional_commands = if shape_trail.is_field() {
+    let additional_commands = if target_trail.is_field() {
       let field_id = shape_trail
         .last_field_id()
         .expect("there should be a last field id if the trail described a field");
@@ -524,8 +546,8 @@ impl<'a> ShapeQueries<'a> {
         field_id.clone(),
         root_shape_id,
       )]
-    } else {
-      vec![]
+    } else if target_trail.is_optional_field() {
+      vec![ShapeCommand::]
     };
 
     let commands = shape_commands.chain(additional_commands);
@@ -691,6 +713,40 @@ mod test {
     let edit_shape_commands = shape_queries
       .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
       .expect("field should be able to be made nullable")
+      .map(SpecCommand::from)
+      .collect::<Vec<_>>();
+
+    dbg!(&edit_shape_commands);
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+  }
+
+  #[test]
+  pub fn can_generate_edit_shape_commands_to_make_optional_field_optional() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
+      { "ShapeAdded": { "shapeId": "optional_shape_1", "baseShapeId": "$optional", "name": "" }},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "optional_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "string_shape_1"}},"consumingParameterId": "$optionalInner" }}}},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "string_shape_1"}} }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    let shape_queries = ShapeQueries::new(spec_projection.shape());
+    let mut id_generator = SequentialIdGenerator { next_id: 1093 }; // <3 primes
+
+    let shape_trail = ShapeTrail::new(String::from("object_shape_1")).with_component(
+      ShapeTrailPathComponent::ObjectFieldTrail {
+        field_id: String::from("field_1"),
+        field_shape_id: String::from("string_shape_1"),
+        parent_object_shape_id: String::from("object_shape_1"),
+      },
+    );
+    let required_kinds = vec![ShapeKind::StringKind, ShapeKind::NullableKind];
+    let edit_shape_commands = shape_queries
+      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .expect("field should be able to be made nullable and optional")
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
