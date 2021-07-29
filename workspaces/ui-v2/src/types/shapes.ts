@@ -1,3 +1,4 @@
+import { JsonLike } from '@useoptic/optic-domain';
 import { ChangeType } from './changes';
 import { IContribution } from './contributions';
 
@@ -49,14 +50,4 @@ export type IShapeRenderer =
 export interface IArrayRender {
   shapeChoices: IShapeRenderer[];
   shapeId: string;
-}
-
-export enum JsonLike {
-  OBJECT = 'Object',
-  ARRAY = 'Array',
-  NULL = 'Null',
-  STRING = 'String',
-  NUMBER = 'Number',
-  BOOLEAN = 'Boolean',
-  UNDEFINED = 'Undefined',
 }

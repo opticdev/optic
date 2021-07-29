@@ -1,9 +1,10 @@
 import React, { FC, ReactNode } from 'react';
 import { Divider, Typography, makeStyles } from '@material-ui/core';
+import { JsonLike } from '@useoptic/optic-domain';
 
 import { FieldOrParameter } from './FieldOrParameter';
 
-import { IPathParameter, IShapeRenderer, JsonLike } from '<src>/types';
+import { IPathParameter, IShapeRenderer } from '<src>/types';
 
 export type PathParametersProps = {
   parameters: IPathParameter[];

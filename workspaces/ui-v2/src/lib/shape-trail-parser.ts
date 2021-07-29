@@ -10,8 +10,7 @@ import {
   IShapeTrail,
   IShapeTrailComponent,
 } from '@useoptic/cli-shared/build/diffs/shape-trail';
-import { JsonLike } from '<src>/types';
-import { ICoreShapeKinds } from '@useoptic/optic-domain';
+import { ICoreShapeKinds, JsonLike } from '@useoptic/optic-domain';
 import { InvariantViolationError } from '<src>/errors';
 
 export interface IExpectationHelper {

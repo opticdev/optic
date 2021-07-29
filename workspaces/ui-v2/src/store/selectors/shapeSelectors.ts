@@ -1,12 +1,12 @@
 import { SerializedError } from '@reduxjs/toolkit';
 import * as Sentry from '@sentry/react';
 import sortBy from 'lodash.sortby';
+import { JsonLike } from '@useoptic/optic-domain';
 
 import {
   AsyncStatus,
   IShapeRenderer,
   IFieldDetails,
-  JsonLike,
   QueryParameters,
 } from '<src>/types';
 import { RootState } from '../root';

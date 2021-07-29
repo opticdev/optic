@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as Sentry from '@sentry/react';
 
 import { IForkableSpectacle } from '@useoptic/spectacle';
-import { JsonLike } from '<src>/types';
+import { JsonLike } from '@useoptic/optic-domain';
 import {
   convertSpectacleChangeToChangeType,
   SpectacleChange,
@@ -63,7 +63,6 @@ type SpectacleShape =
   | {
       id: string;
       jsonType: Exclude<JsonLike, JsonLike.OBJECT | JsonLike.ARRAY>;
-
       asArray?: undefined;
       asObject?: undefined;
     };

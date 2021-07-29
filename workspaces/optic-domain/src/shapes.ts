@@ -1,3 +1,4 @@
+// Shape events
 export enum ICoreShapeKinds {
   ObjectKind = '$object',
   ListKind = '$list',
@@ -11,8 +12,20 @@ export enum ICoreShapeKinds {
   OptionalKind = '$optional',
   UnknownKind = '$unknown',
 }
+
 export enum ICoreShapeInnerParameterNames {
   ListInner = '$listItem',
   NullableInner = '$nullableInner',
   OptionalInner = '$optionalInner',
+}
+
+// Optic engine shape types
+export enum JsonLike {
+  OBJECT = 'Object',
+  ARRAY = 'Array',
+  NULL = 'Null',
+  STRING = 'String',
+  NUMBER = 'Number',
+  BOOLEAN = 'Boolean',
+  UNDEFINED = 'Undefined',
 }

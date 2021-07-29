@@ -1,7 +1,9 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
+import { JsonLike } from '@useoptic/optic-domain';
+
 import { useSharedStyles } from './SharedStyles';
-import { IShapeRenderer, JsonLike } from '<src>/types';
+import { IShapeRenderer } from '<src>/types';
 import classNames from 'classnames';
 
 export const ShapePrimitiveRender = ({ jsonType }: IShapeRenderer) => {
