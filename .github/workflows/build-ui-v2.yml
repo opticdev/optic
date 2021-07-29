@@ -5,8 +5,6 @@ on:
     branches:
       - release
       - develop
-      - feature/cloud_spec_viewer
-      - feature/new-doc
     paths-ignore:
       - website/**
       - .github/**
@@ -21,6 +19,7 @@ jobs:
         uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # v2.3.3
         with:
           token: ${{ github.token }}
+
       - run: |
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]
           then
@@ -28,40 +27,47 @@ jobs:
           else
             echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
           fi
+
       - name: Install Task
         uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # they dont give us any tags :\
         with:
           version: 3.x
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Configure Node
         uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # v1.4.4
         with:
           node-version: 14
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@1417e62aeacec5e7fbe447bb7712d50847507342 # v1.5.4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: "us-east-1"
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@060516122e7b4cc1cc3d4614a998adbb93d3fbf2 # v1.2.2
+
       - run: |
           echo "DOCKER_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
           echo "TAG=${BRANCH}-b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
           echo "USER=${GITHUB_ACTOR}" >> $GITHUB_ENV
-      - run: |
-          task ui-v2:ci
-          if [ "$BRANCH" = "develop" ] || [ "$BRANCH" = "master" ]
-          then
-            docker tag \
-              "513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:${TAG}" \
-              513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:latest
-            TAG=latest task ui-v2:cloud-spec-viewer:docker:push
-          fi
+
+      - name: Build and push docker container
         env:
+          # TODO - for building the docker container, we should have staging and production builds to inject different env variables
+          FLAGS_FILE: '.env.latest'
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL }}
-          REACT_APP_PROD_API_BASE: https://api.useoptic.com
-          REACT_APP_STAGING_API_BASE: https://api.o3c.info
-          REACT_APP_PROD_SPEC_VIEWER_BASE: https://spec.useoptic.com
-          REACT_APP_STAGING_SPEC_VIEWER_BASE: https://spec.o3c.info
+        run: task workspaces:setenv ui-v2:ci
+
+      - name: Push 'latest'
+        if: env.BRANCH == 'develop' || env.BRANCH == 'master'
+        env:
+          SKIP_ANNOUNCE: true
+        run: |
+          docker tag \
+            "513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:${TAG}" \
+            513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:latest
+          TAG=latest task ui-v2:cloud-spec-viewer:docker:push

@@ -18,6 +18,7 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { useChangelogStyles } from '<src>/pages/changelog/components/ChangelogBackground';
 import { selectors, useAppSelector } from '<src>/store';
 import { IEndpointWithChanges } from '<src>/types';
+import { getEndpointId } from '<src>/utils';
 
 import {
   ChangelogPageAccessoryNavigation,
@@ -47,9 +48,10 @@ export function ChangelogRootPage(props: { changelogBatchId: string }) {
   const endpointChanges = useAppSelector(
     (state) => state.endpoints.results.data?.changes || {}
   );
-  const filteredAndMappedEndpoints = selectors.filterRemovedEndpointsForChangelogAndMapChanges(
+  const filteredAndMappedEndpoints = selectors.filterRemovedItemForChangelog(
     endpointsState.data?.endpoints || [],
-    endpointChanges
+    endpointChanges,
+    (endpoint) => getEndpointId(endpoint)
   );
   const history = useHistory();
   const match = useRouteMatch();

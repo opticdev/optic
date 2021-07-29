@@ -29,7 +29,7 @@ export interface IEndpoint {
   query: IQueryParameters | null;
   requests: IRequest[];
   // Grouped by status code
-  responsesByStatusCode: Record<number, IResponse[]>;
+  responsesByStatusCode: Record<string, IResponse[]>;
 }
 
 export interface IEndpointWithChanges extends IEndpoint {
@@ -52,6 +52,7 @@ export interface IRequest {
   endpointId: string;
   pathId: string;
   method: string;
+  isRemoved: boolean;
   body: IBody | null;
 }
 
@@ -62,6 +63,7 @@ export interface IResponse {
   pathId: string;
   method: string;
   description: string;
+  isRemoved: boolean;
   body: IBody | null;
 }
 

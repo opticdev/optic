@@ -12,6 +12,8 @@ Runs an Optic Script with the current specification. Scripts are defined in the 
 
 - `--install` will install any declared dependencies that are missing, using the provided command. By default, if a dependency is missing the Script task will stop and ask you to use the `--install` flag to proceed.
 
+While running commands, the environment variables `OPENAPI_JSON` and `OPENAPI_YAML` are both available. They will contain the value of the file location of the JSON and YAML versions of the generated OpenAPI file. You can use this to populate parameters in your command.
+
 ### Examples
 
 #### Run a script

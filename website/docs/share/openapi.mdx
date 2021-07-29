@@ -2,3 +2,28 @@
 title: Exporting OpenAPI
 slug: /share/openapi
 ---
+
+Optic allows you to share your API documentation via the Optic cloud, and through any system you currently use. There may be times when you just want an OpenAPI export of your current specification to share for some other purpose. You can export the latest version of your specification as an OpenAPI file at any time with:
+
+```sh
+api generate:oas
+```
+
+```sh title='Output'
+[optic] Generated OAS files
+[optic] .../.optic/generated/openapi.yaml
+```
+
+This generates an OAS file and writes it to your `.optic` folder as `.optic/generated/openapi.yaml`. Optic will give you the full path to the file on the command line for your reference. You can then import this file into any tool that recognizes OAS format. By default, Optic generates a YAML file. A JSON file may be generated instead with the `--json` flag:
+
+```sh
+api generate:oas --json
+```
+
+```sh title='Output'
+[optic] Generated OAS files .../.optic/generated/openapi.json
+```
+
+### Next Steps
+
+While there may be occasions where you want a one-off export of an OpenAPI file, usually this file will be used in some other system. You may have a documentation generator you use today that you wish to update, or perhaps the OpenAPI file will be used in some other system such as mocking for testing. Optic provides [Scripts](/share/scripts) to let you generate an OpenAPI file and process it for your system of choice.

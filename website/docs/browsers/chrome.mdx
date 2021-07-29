@@ -18,7 +18,7 @@ The `optic.yml` file tells Optic where to find your API. It is capable of config
 ```
 name: GitHub API
 environments:
-  production: 
+  production:
     host: https://api.github.com
     webUI: https://api.github.com/repos/opticdev/optic
 ```
@@ -31,7 +31,7 @@ The `host` parameter defines the host for which all traffic will be assumed to b
 
 
 <CodeBlock className="language-yml" children={`
-api intercept production ${frontMatter.flag} --verbose
+api intercept production ${frontMatter.flag}
 `.trim()}>
 </CodeBlock>
 

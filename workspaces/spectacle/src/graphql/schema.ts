@@ -138,6 +138,9 @@ type HttpRequestNew {
 
   contributions: JSON!
 
+  # Changes for the response based on the give batch commit ID
+  changes(sinceBatchCommitId: String): ChangesResult!
+
   # Is the request removed
   isRemoved: Boolean!
 }
@@ -164,10 +167,13 @@ type QueryParameters {
   id: String!
 
   # Root shape ID for the QueryParameter. Look at the shapeChoices query getting more information about the root shape
-  rootShapeId: String!
+  rootShapeId: String
 
   # Is the body removed
   isRemoved: Boolean!
+
+  # Changes for the query parameters based on the give batch commit ID
+  changes(sinceBatchCommitId: String): ChangesResult!
 
   # Contributions for the query parameter
   contributions: JSON!
@@ -249,6 +255,9 @@ type HttpResponse {
   # HTTP response contributions which define descriptions
   contributions: JSON
 
+  # Changes for the response based on the give batch commit ID
+  changes(sinceBatchCommitId: String): ChangesResult!
+
   # Is the response removed
   isRemoved: Boolean
 }
@@ -318,7 +327,6 @@ type ChangesResult {
   added: Boolean
   
   # Whether or not the change was one that was updated
-  # TODO @nic change this to updated
   changed: Boolean
 
   # Whether or not the change was one that was removed

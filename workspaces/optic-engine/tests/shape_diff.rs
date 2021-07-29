@@ -286,7 +286,7 @@ fn can_yield_unmatched_shape_for_field() {
 
       {"ShapeAdded":{"shapeId":"string_shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
       {"FieldAdded":{"fieldId":"field_1","shapeId":"object_1","name":"firstName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_1","shapeId":"string_shape_1"}}}},
-      
+
       {"ShapeAdded":{"shapeId":"string_shape_2","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
       {"FieldAdded":{"fieldId":"field_2","shapeId":"object_1","name":"lastName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_2","shapeId":"string_shape_2"}}}},
 
@@ -333,7 +333,7 @@ fn can_yield_unmatched_shape_for_missing_field() {
 
       {"ShapeAdded":{"shapeId":"string_shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
       {"FieldAdded":{"fieldId":"field_1","shapeId":"object_1","name":"firstName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_1","shapeId":"string_shape_1"}}}},
-      
+
       {"ShapeAdded":{"shapeId":"string_shape_2","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
       {"FieldAdded":{"fieldId":"field_2","shapeId":"object_1","name":"lastName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_2","shapeId":"string_shape_2"}}}},
 
@@ -412,7 +412,6 @@ fn can_diff_optional() {
       {"FieldAdded":{"fieldId":"field_1","shapeId":"object_1","name":"firstName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_1","shapeId":"optional_shape_1"}}}},
       {"ShapeAdded":{"shapeId":"list_1","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
       {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"list_1","providerDescriptor":{"ShapeProvider":{"shapeId":"object_1"}},"consumingParameterId":"$listItem"}}}},
-      
     ])
   ).expect("should be able to deserialize shape added events as spec events");
 
@@ -437,7 +436,7 @@ fn can_diff_optional() {
   );
 
   assert_debug_snapshot!("can_diff_optional__results", results);
-  assert_eq!(results.len(), 2); //@BUG: this should be 1, right? and the trail looks wrong
+  assert_eq!(results.len(), 1);
 }
 
 #[test]
@@ -457,7 +456,7 @@ fn can_diff_one_of() {
           "ProviderInShape":{"shapeId":"oneof_shape_1",
           "providerDescriptor":{"NoProvider":{}},
           "consumingParameterId":"oneof_parameter_1"}},
-        }},     
+        }},
          {"ShapeParameterAdded":{
           "shapeParameterId":"oneof_parameter_2",
           "shapeId":"oneof_shape_1",
@@ -472,7 +471,7 @@ fn can_diff_one_of() {
       {"FieldAdded":{"fieldId":"field_1","shapeId":"object_1","name":"firstName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_1","shapeId":"oneof_shape_1"}}}},
       {"ShapeAdded":{"shapeId":"list_1","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
       {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"list_1","providerDescriptor":{"ShapeProvider":{"shapeId":"object_1"}},"consumingParameterId":"$listItem"}}}},
-      
+
     ])
   ).expect("should be able to deserialize shape added events as spec events");
 

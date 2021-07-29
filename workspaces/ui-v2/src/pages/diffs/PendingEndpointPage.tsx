@@ -263,7 +263,7 @@ export function PendingEndpointPage(props: any) {
                     style={{ marginLeft: 10 }}
                     onClick={stageEndpoint}
                   >
-                    Add Endpoint
+                    {!!endpoint.staged ? 'Save Changes' : 'Add Endpoint'}
                   </Button>
                 </div>
               </div>

@@ -1468,10 +1468,8 @@ Object {
   "expectations": Object {
     "allowedCoreShapeKindsByShapeId": Object {
       "shape_5": "$object",
-      "shape_6": "$optional",
     },
     "allowedCoreShapes": Array [
-      "$optional",
       "$object",
     ],
     "lastField": "field_4",
@@ -1487,11 +1485,11 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (optional)",
+          "text": "Object",
         },
       ],
       "changeType": 1,
-      "diffHash": "179f9d4a33ca4658",
+      "diffHash": "4ab53c17dd731f76",
       "getJsonBodyToPreview": [Function],
       "location": DiffLocation {
         "descriptor": Object {
@@ -1518,7 +1516,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (optional)",
+          "text": "Object",
         },
       ],
     },
@@ -1531,7 +1529,7 @@ Object {
           },
           Object {
             "style": 1,
-            "text": "Object (optional)",
+            "text": "Object",
           },
         ],
         "interactionPointers": Array [

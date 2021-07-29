@@ -20,12 +20,14 @@ export function urlStringToPathComponents(
   return components;
 }
 
-export const makePattern = (components: PathComponentAuthoring[]) => {
+export const createPathFromPathComponents = (
+  components: PathComponentAuthoring[]
+) => {
   return (
     '/' +
     components
       .map((i) => {
-        return i.isParameter ? `:${i.name}` : i.originalName;
+        return i.isParameter ? `{${i.name}}` : i.originalName;
       })
       .join('/')
   );

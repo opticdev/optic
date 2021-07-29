@@ -13,7 +13,7 @@ import { IUndocumentedUrl } from '<src>/pages/diffs/contexts/SharedDiffState';
 import {
   PathComponentAuthoring,
   urlStringToPathComponents,
-  makePattern,
+  createPathFromPathComponents,
 } from '<src>/utils';
 
 export type UndocumentedUrlProps = {
@@ -113,7 +113,7 @@ export function UndocumentedUrl({
         isBulkMode
           ? handleBulkModeSelection(path, method)
           : handleSelection(
-              isKnownPath ? path : makePattern(components),
+              isKnownPath ? path : createPathFromPathComponents(components),
               method,
               components
             )

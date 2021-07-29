@@ -98,16 +98,16 @@ export default function () {
                       }
                     />
                   </Grid>
-                  {/*<Grid item xs={12} sm={6}>*/}
-                  {/*  <UseCaseCard*/}
-                  {/*    link={usecases.Share.href}*/}
-                  {/*    title={'**Share** your API'}*/}
-                  {/*    description={*/}
-                  {/*      'Share your API documentation, an auto-generated changelog, and examples with all of your consumers. Optic makes it easy to update these resources whenever the API changes.'*/}
-                  {/*    }*/}
-                  {/*  />*/}
-                  {/*</Grid>*/}
-                  <Grid item xs={6}>
+                  <Grid item xs={12} sm={6}>
+                    <UseCaseCard
+                      link={usecases.Share.href}
+                      title={'**Share** your API'}
+                      description={
+                        'Share your API documentation, an auto-generated changelog, and examples with all of your sumers. Optic makes it easy to update these resources whenever the API changes.'
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
                     <UseCaseCard
                       link={usecases.Change.href}
                       title={'**Change** your API, with confidence'}

@@ -1,4 +1,5 @@
 use insta::assert_debug_snapshot;
+use petgraph::dot::Dot;
 use serde::Deserialize;
 use std::collections::HashSet;
 use std::path::Path;
@@ -54,6 +55,52 @@ async fn deeply_nested_fields_inside_of_arrays() {
     &spec,
     interaction.clone(),
     &DiffInteractionConfig::default(),
+  );
+
+  let mut learned_shape_diff_affordances =
+    LearnedShapeDiffAffordancesProjection::from(diff_results);
+
+  let analysis = analyze_documented_bodies(&spec, interaction)
+    .collect::<Vec<_>>()
+    .pop()
+    .unwrap();
+
+  let tagged_analysis = TaggedInput(analysis, interaction_pointers);
+  learned_shape_diff_affordances.apply(tagged_analysis);
+
+  // TODO: add snapshot, once we figure out how to make the results order stable in a way
+  // that fits our performance budget.
+}
+
+#[tokio::main]
+#[test]
+async fn optional_single_string_or_list_of_strings() {
+  let mut capture = DebugCapture::from_name("optional single string or list of strings.json").await;
+
+  let spec = SpecProjection::from(capture.events);
+  let interaction = capture.session.samples.remove(0);
+  let interaction_pointers: HashSet<_> =
+    std::iter::once(String::from("test-interaction-1")).collect();
+
+  assert_debug_snapshot!(
+    "optional_single_string_or_list_of_strings__shape_graph",
+    Dot::with_config(&spec.shape().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "optional_single_string_or_list_of_strings__shape_choice_mapping",
+    &spec.shape().to_choice_mapping()
+  );
+
+  let diff_results = diff_interaction(
+    &spec,
+    interaction.clone(),
+    &DiffInteractionConfig::default(),
+  );
+
+  assert_eq!(diff_results.len(), 1);
+  assert_debug_snapshot!(
+    "optional_single_string_or_list_of_strings__diff_results",
+    &diff_results
   );
 
   let mut learned_shape_diff_affordances =

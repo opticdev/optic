@@ -6,7 +6,8 @@ import { ChangeType, IEndpoint } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 import groupBy from 'lodash.groupby';
 
-export const AllEndpointsQuery = `{
+export const AllEndpointsQuery = `
+query X($sinceBatchCommitId: String) {
   endpoints {
     id
     pathId
@@ -24,12 +25,22 @@ export const AllEndpointsQuery = `{
       rootShapeId
       isRemoved
       contributions
+      changes(sinceBatchCommitId: $sinceBatchCommitId) {
+        added
+        changed
+        removed
+      }
     }
     requests {
       id
       body {
         contentType
         rootShapeId
+      }
+      changes(sinceBatchCommitId: $sinceBatchCommitId) {
+        added
+        changed
+        removed
       }
       contributions
       isRemoved
@@ -42,6 +53,12 @@ export const AllEndpointsQuery = `{
         contentType
         rootShapeId
       }
+      changes(sinceBatchCommitId: $sinceBatchCommitId) {
+        added
+        changed
+        removed
+      }
+      isRemoved
     }
     isRemoved
     contributions
@@ -79,6 +96,12 @@ type HttpBody = {
   rootShapeId: string;
 };
 
+type SpectacleChange = {
+  added: boolean;
+  changed: boolean;
+  removed: boolean;
+};
+
 export type EndpointQueryResults = {
   endpoints: {
     id: string;
@@ -94,96 +117,133 @@ export type EndpointQueryResults = {
     }[];
     query?: {
       id: string;
-      rootShapeId: string;
+      rootShapeId?: string;
       isRemoved: boolean;
+      changes: SpectacleChange;
       contributions: Record<string, string>;
     };
     requests: {
       id: string;
       body?: HttpBody;
       contributions: Record<string, string>;
+      changes: SpectacleChange;
       isRemoved: boolean;
     }[];
     responses: {
       id: string;
       statusCode: number;
       contributions: Record<string, string>;
+      changes: SpectacleChange;
       bodies: HttpBody[];
+      isRemoved: boolean;
     }[];
     isRemoved: boolean;
     contributions: Record<string, string>;
   }[];
 };
 
+const convertSpectacleChangeToChangeType = (
+  spectacleChange: SpectacleChange
+): ChangeType | null =>
+  spectacleChange.added
+    ? 'added'
+    : spectacleChange.changed
+    ? 'updated'
+    : spectacleChange.removed
+    ? 'removed'
+    : null;
+
 export const endpointQueryResultsToJson = (
   { endpoints }: EndpointQueryResults,
-  endpointChanges: EndpointChangeQueryResults | null
+  endpointChanges: EndpointChangeQueryResults | null,
+  includeChanges: boolean
 ): {
   endpoints: IEndpoint[];
   changes: Record<string, ChangeType>;
 } => {
   const changes: Record<string, ChangeType> = {};
-  const mappedEndpoints = endpoints.map((endpoint) => ({
-    id: endpoint.id,
-    pathId: endpoint.pathId,
-    method: endpoint.method,
-    description: endpoint.contributions.description || '',
-    purpose: endpoint.contributions.purpose || '',
-    isRemoved: endpoint.isRemoved,
-    fullPath: endpoint.pathPattern,
-    pathParameters: endpoint.pathComponents.map((path) => ({
-      id: path.id,
-      name: path.name,
-      isParameterized: path.isParameterized,
-      description: path.contributions.description || '',
-      endpointId: endpoint.id,
-    })),
-    query: endpoint.query
-      ? {
-          queryParametersId: endpoint.query.id,
-          rootShapeId: endpoint.query.rootShapeId,
-          isRemoved: endpoint.query.isRemoved,
-          description: endpoint.query.contributions.description || '',
-          endpointId: endpoint.id,
-          pathId: endpoint.pathId,
-          method: endpoint.method,
-        }
-      : null,
-    requests: endpoint.requests.map((request) => ({
-      requestId: request.id,
-      body: request.body
-        ? {
-            rootShapeId: request.body.rootShapeId,
-            contentType: request.body.contentType,
-          }
-        : null,
-      description: request.contributions.description || '',
-      endpointId: endpoint.id,
+  const mappedEndpoints = endpoints.map((endpoint) => {
+    if (endpoint.query) {
+      const change = convertSpectacleChangeToChangeType(endpoint.query.changes);
+      if (change) {
+        changes[endpoint.query.id] = change;
+      }
+    }
+    return {
+      id: endpoint.id,
       pathId: endpoint.pathId,
       method: endpoint.method,
-    })),
-    // Group by status code
-    responsesByStatusCode: groupBy(
-      endpoint.responses.map((response) => {
+      description: endpoint.contributions.description || '',
+      purpose: endpoint.contributions.purpose || '',
+      isRemoved: endpoint.isRemoved,
+      fullPath: endpoint.pathPattern,
+      pathParameters: endpoint.pathComponents.map((path) => ({
+        id: path.id,
+        name: path.name,
+        isParameterized: path.isParameterized,
+        description: path.contributions.description || '',
+        endpointId: endpoint.id,
+      })),
+      query:
+        endpoint.query && endpoint.query.rootShapeId
+          ? {
+              queryParametersId: endpoint.query.id,
+              rootShapeId: endpoint.query.rootShapeId,
+              isRemoved: endpoint.query.isRemoved,
+              description: endpoint.query.contributions.description || '',
+              endpointId: endpoint.id,
+              pathId: endpoint.pathId,
+              method: endpoint.method,
+            }
+          : null,
+      requests: endpoint.requests.map((request) => {
+        const change = convertSpectacleChangeToChangeType(request.changes);
+        if (change) {
+          changes[request.id] = change;
+        }
         return {
-          responseId: response.id,
-          statusCode: response.statusCode,
-          description: response.contributions.description || '',
+          requestId: request.id,
+          body: request.body
+            ? {
+                rootShapeId: request.body.rootShapeId,
+                contentType: request.body.contentType,
+              }
+            : null,
+          description: request.contributions.description || '',
           endpointId: endpoint.id,
           pathId: endpoint.pathId,
           method: endpoint.method,
-          body:
-            response.bodies.length >= 1
-              ? {
-                  rootShapeId: response.bodies[0].rootShapeId,
-                  contentType: response.bodies[0].contentType,
-                }
-              : null,
+          isRemoved: request.isRemoved,
         };
       }),
-      'statusCode'
-    ),
-  }));
+      // Group by status code
+      responsesByStatusCode: groupBy(
+        endpoint.responses.map((response) => {
+          const change = convertSpectacleChangeToChangeType(response.changes);
+          if (change) {
+            changes[response.id] = change;
+          }
+          return {
+            responseId: response.id,
+            statusCode: response.statusCode,
+            description: response.contributions.description || '',
+            endpointId: endpoint.id,
+            pathId: endpoint.pathId,
+            method: endpoint.method,
+            isRemoved: response.isRemoved,
+            body:
+              response.bodies.length >= 1
+                ? {
+                    rootShapeId: response.bodies[0].rootShapeId,
+                    contentType: response.bodies[0].contentType,
+                  }
+                : null,
+          };
+        }),
+        'statusCode'
+      ),
+    };
+  });
 
   if (endpointChanges) {
     endpointChanges.endpointChanges.endpoints.forEach(
@@ -194,7 +254,7 @@ export const endpointQueryResultsToJson = (
     );
   }
 
-  return { endpoints: mappedEndpoints, changes };
+  return { endpoints: mappedEndpoints, changes: includeChanges ? changes : {} };
 };
 
 export const fetchEndpoints = createAsyncThunk<
@@ -202,9 +262,16 @@ export const fetchEndpoints = createAsyncThunk<
   { spectacle: IForkableSpectacle; sinceBatchCommitId?: string }
 >('FETCH_ENDPOINTS', async ({ spectacle, sinceBatchCommitId }) => {
   try {
-    const resultsPromise = spectacle.query<EndpointQueryResults>({
+    const resultsPromise = spectacle.query<
+      EndpointQueryResults,
+      {
+        sinceBatchCommitId?: string;
+      }
+    >({
       query: AllEndpointsQuery,
-      variables: {},
+      variables: {
+        sinceBatchCommitId,
+      },
     });
 
     const endpointChangesPromise = sinceBatchCommitId
@@ -234,7 +301,8 @@ export const fetchEndpoints = createAsyncThunk<
     }
     return endpointQueryResultsToJson(
       results.data!,
-      endpointChanges?.data || null
+      endpointChanges?.data || null,
+      sinceBatchCommitId !== undefined
     );
   } catch (e) {
     console.error(e);
