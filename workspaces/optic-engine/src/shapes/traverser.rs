@@ -304,6 +304,10 @@ impl ShapeTrail {
     new_trail
   }
 
+  pub fn len(&self) -> usize {
+    self.path.len()
+  }
+
   pub fn is_field(&self) -> bool {
     matches!(
       self.path.last(),
@@ -325,17 +329,6 @@ impl ShapeTrail {
       .rev()
       .find_map(|component| match component {
         ShapeTrailPathComponent::ObjectFieldTrail { field_id, .. } => Some(field_id),
-        _ => None,
-      })
-  }
-
-  pub fn optional_field_shape_id(&self) -> Option<&ShapeId> {
-    self
-      .path
-      .iter()
-      .rev()
-      .find_map(|component| match component {
-        ShapeTrailPathComponent::Op { field_id, .. } => Some(field_id),
         _ => None,
       })
   }
