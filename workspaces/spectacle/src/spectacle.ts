@@ -17,11 +17,13 @@ import {
   CommandGenerator,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
-import { CQRSCommand } from '@useoptic/optic-domain';
+import { CQRSCommand, ShapeChoice, JsonLike } from '@useoptic/optic-domain';
 import {
   IOpticContext,
   IOpticDiffService,
   SpectacleInput,
+  FieldShape,
+  ShapeViewerProjection,
   GraphQLContext,
 } from './types';
 
@@ -35,7 +37,7 @@ async function buildProjections(opticContext: IOpticContext) {
 
   const endpointsQueries = buildEndpointsGraph(spec, opticContext.opticEngine);
   const shapesQueries = buildShapesGraph(spec, opticContext.opticEngine);
-  const shapeViewerProjection = JSON.parse(
+  const shapeViewerProjection: ShapeViewerProjection = JSON.parse(
     opticContext.opticEngine.get_shape_viewer_projection(spec)
   );
   const contributionsProjection = getContributionsProjection(
@@ -58,7 +60,7 @@ async function buildProjections(opticContext: IOpticContext) {
 export async function makeSpectacle(opticContext: IOpticContext) {
   let endpointsQueries: endpoints.GraphQueries,
     shapeQueries: shapes.GraphQueries,
-    shapeViewerProjection: any,
+    shapeViewerProjection: ShapeViewerProjection,
     contributionsProjection: ContributionsProjection,
     commandGenerator: {
       endpoint: {
@@ -612,29 +614,29 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     OpticShape: {
-      id: (parent: any) => {
+      id: (parent: ShapeChoice) => {
         return Promise.resolve(parent.shapeId);
       },
-      jsonType: (parent: any) => {
+      jsonType: (parent: ShapeChoice) => {
         return Promise.resolve(parent.jsonType);
       },
-      asArray: (parent: any) => {
-        if (parent.jsonType === 'Array') {
+      asArray: (parent: ShapeChoice) => {
+        if (parent.jsonType === JsonLike.ARRAY) {
           return Promise.resolve(parent);
         }
       },
-      asObject: (parent: any) => {
-        if (parent.jsonType === 'Object') {
+      asObject: (parent: ShapeChoice) => {
+        if (parent.jsonType === JsonLike.OBJECT) {
           return Promise.resolve(parent);
         }
       },
     },
     ArrayMetadata: {
-      shapeId: (parent: any) => {
+      shapeId: (parent: Extract<ShapeChoice, { jsonType: JsonLike.ARRAY }>) => {
         return Promise.resolve(parent.itemShapeId);
       },
       changes: (
-        parent: any,
+        parent: Extract<ShapeChoice, { jsonType: JsonLike.ARRAY }>,
         args: {
           sinceBatchCommitId?: string;
         },
@@ -651,7 +653,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     },
     ObjectFieldMetadata: {
       changes: (
-        parent: any,
+        parent: FieldShape,
         args: {
           sinceBatchCommitId?: string;
         },
@@ -666,7 +668,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           )
         );
       },
-      contributions: (parent: any, _: {}, context: GraphQLContext) => {
+      contributions: (parent: FieldShape, _: {}, context: GraphQLContext) => {
         return Promise.resolve(
           context.spectacleContext().contributionsProjection[parent.fieldId] ||
             {}

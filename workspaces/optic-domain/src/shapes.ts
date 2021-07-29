@@ -29,3 +29,26 @@ export enum JsonLike {
   BOOLEAN = 'Boolean',
   UNDEFINED = 'Undefined',
 }
+
+// Matches optic-engine/src/projections/spectacle/shapes
+export type FieldShape = {
+  name: string;
+  fieldId: string;
+  shapeId: string;
+};
+
+export type ShapeChoice =
+  | {
+      shapeId: string;
+      jsonType: JsonLike.OBJECT;
+      fields: FieldShape[];
+    }
+  | {
+      shapeId: string;
+      jsonType: JsonLike.ARRAY;
+      itemShapeId: string;
+    }
+  | {
+      shapeId: string;
+      jsonType: Exclude<JsonLike, JsonLike.OBJECT | JsonLike.ARRAY>;
+    };

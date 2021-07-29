@@ -5,7 +5,7 @@ import {
   ILearnedBodies,
   IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { IHttpInteraction } from '@useoptic/optic-domain';
+import { IHttpInteraction, ShapeChoice } from '@useoptic/optic-domain';
 import { endpoints, shapes } from '@useoptic/graph-lib';
 import { CommandGenerator, ContributionsProjection } from './helpers';
 import { IOpticCommandContext } from './in-memory';
@@ -173,6 +173,9 @@ export interface IForkableSpectacle extends IBaseSpectacle {
   fork(): Promise<IBaseSpectacle>;
 }
 
+// Record<ShapeId, ShapeChoice[]>
+export type ShapeViewerProjection = Record<string, ShapeChoice[]>;
+
 export interface SpectacleInput<
   T extends {
     [key: string]: any;
@@ -188,7 +191,7 @@ export type GraphQLContext = {
     opticContext: IOpticContext;
     endpointsQueries: endpoints.GraphQueries;
     shapeQueries: shapes.GraphQueries;
-    shapeViewerProjection: any;
+    shapeViewerProjection: ShapeViewerProjection;
     contributionsProjection: ContributionsProjection;
     commandGenerator: CommandGenerator;
   };
