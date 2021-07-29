@@ -53,7 +53,7 @@ const appConfig: OpticAppConfig = {
       // The UI needs to be context aware and know about _both_ staging and prod
       domain:
         window.location.hostname.indexOf('useoptic.com') >= 0
-          ? 'https://spec.useoptic.com' // production
+          ? 'https://api.useoptic.com' // production
           : 'https://api.o3c.info', // staging
     },
     sharing: { enabled: false },
