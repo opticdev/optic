@@ -16,10 +16,10 @@ type EndpointProjection = {
     commands: {
       remove: CQRSCommand[];
     };
-  };
+  } | null;
 };
 
-const fetchDeleteEndpointCommands = async (
+const fetchRemoveEndpointCommands = async (
   spectacle: IForkableSpectacle,
   pathId: string,
   method: string
@@ -49,7 +49,12 @@ const fetchDeleteEndpointCommands = async (
       console.error(results.errors);
       throw new Error(JSON.stringify(results.errors));
     }
-    return results.data!.endpoint.commands.remove;
+    if (!results.data || !results.data.endpoint) {
+      const message = `Could not generate removal commands for endpoint path: ${pathId} and method: ${method}`;
+      console.error(message);
+      throw new Error(message);
+    }
+    return results.data.endpoint.commands.remove;
   } catch (e) {
     console.error(e);
     Sentry.captureException(e);
@@ -79,7 +84,7 @@ export const saveDocumentationChanges = createAsyncThunk<
     const deleteCommands: CQRSCommand[] = (
       await Promise.all(
         deletedEndpoints.map(({ pathId, method }) =>
-          fetchDeleteEndpointCommands(
+          fetchRemoveEndpointCommands(
             spectacle,
             pathId,
             method
