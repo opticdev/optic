@@ -1,11 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
-import { reducer as endpointsReducer } from './endpoints';
-import { reducer as pathsReducer } from './paths';
 import { reducer as diffReducer } from './diff';
 import { reducer as documentationEditReducer } from './documentationEdit';
+import { reducer as endpointsReducer } from './endpoints';
 import { reducer as metadataReducer } from './metadata';
+import { reducer as pathsReducer } from './paths';
+import { reducer as shapesReducer } from './shapes';
 
 export const createReduxStore = () =>
   configureStore({
@@ -15,6 +16,7 @@ export const createReduxStore = () =>
       metadata: metadataReducer,
       diff: diffReducer,
       paths: pathsReducer,
+      shapes: shapesReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

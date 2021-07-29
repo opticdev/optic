@@ -197,7 +197,9 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         args: any,
         context: GraphQLContext
       ) => {
-        return context.spectacleContext().shapeViewerProjection[args.shapeId];
+        return (
+          context.spectacleContext().shapeViewerProjection[args.shapeId] || []
+        );
       },
       endpoints: (parent: any, _: {}, context: GraphQLContext) => {
         return context

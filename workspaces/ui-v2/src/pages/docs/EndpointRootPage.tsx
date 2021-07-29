@@ -7,14 +7,10 @@ import { Delete as DeleteIcon, Undo as UndoIcon } from '@material-ui/icons';
 import {
   EndpointName,
   PathParameters,
-  IShapeRenderer,
-  JsonLike,
   PageLayout,
   FullWidth,
   ContributionsList,
   QueryParametersPanel,
-  convertShapeToQueryParameters,
-  ContributionFetcher,
   ShapeFetcher,
   HttpBodyPanel,
   HttpBodySelector,
@@ -28,6 +24,7 @@ import {
   selectors,
   documentationEditActions,
 } from '<src>/store';
+import { IShapeRenderer, JsonLike } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
@@ -217,11 +214,10 @@ export const EndpointRootPage: FC<
               >
                 <PathParameters
                   parameters={parameterizedPathParts}
-                  renderField={(param, index) => {
+                  renderField={(param) => {
                     const alwaysAString: IShapeRenderer = {
                       shapeId: param.id + 'shape',
                       jsonType: JsonLike.STRING,
-                      value: undefined,
                     };
                     return (
                       <DocsFieldOrParameterContribution
@@ -270,13 +266,13 @@ export const EndpointRootPage: FC<
                 endpoint={thisEndpoint}
               />
             </div>
-            <div className={classes.bodyDetails}>
-              <div>
-                <ContributionFetcher
-                  rootShapeId={visibleQueryParameters.rootShapeId}
-                  endpointId={endpointId}
-                >
-                  {(fields) => (
+            <ShapeFetcher
+              rootShapeId={visibleQueryParameters.rootShapeId}
+              endpointId={endpointId}
+            >
+              {(shapes, fields) => (
+                <div className={classes.bodyDetails}>
+                  <div>
                     <ContributionsList
                       renderField={(field) => {
                         let isArray = field.shapes.findIndex(
@@ -313,19 +309,17 @@ export const EndpointRootPage: FC<
                       }}
                       fieldDetails={fields}
                     />
-                  )}
-                </ContributionFetcher>
-              </div>
-              <div className={classes.panel}>
-                <ShapeFetcher rootShapeId={visibleQueryParameters.rootShapeId}>
-                  {(shapes) => (
+                  </div>
+                  <div className={classes.panel}>
                     <QueryParametersPanel
-                      parameters={convertShapeToQueryParameters(shapes)}
+                      parameters={selectors.convertShapeToQueryParameters(
+                        shapes
+                      )}
                     />
-                  )}
-                </ShapeFetcher>
-              </div>
-            </div>
+                  </div>
+                </div>
+              )}
+            </ShapeFetcher>
           </div>
         )}
         {visibleRequests.length > 0 && (
@@ -351,13 +345,13 @@ export const EndpointRootPage: FC<
                     />
                   </div>
                   {request.body ? (
-                    <div className={classes.bodyDetails}>
-                      <div>
-                        <ContributionFetcher
-                          rootShapeId={request.body.rootShapeId}
-                          endpointId={endpointId}
-                        >
-                          {(fields) => (
+                    <ShapeFetcher
+                      rootShapeId={request.body.rootShapeId}
+                      endpointId={endpointId}
+                    >
+                      {(shapes, fields) => (
+                        <div className={classes.bodyDetails}>
+                          <div>
                             <ContributionsList
                               renderField={(field) => (
                                 <DocsFieldOrParameterContribution
@@ -378,20 +372,16 @@ export const EndpointRootPage: FC<
                               )}
                               fieldDetails={fields}
                             />
-                          )}
-                        </ContributionFetcher>
-                      </div>
-                      <div className={classes.panel}>
-                        <ShapeFetcher rootShapeId={request.body.rootShapeId}>
-                          {(shapes) => (
+                          </div>
+                          <div className={classes.panel}>
                             <HttpBodyPanel
                               shapes={shapes}
                               location={request.body!.contentType}
                             />
-                          )}
-                        </ShapeFetcher>
-                      </div>
-                    </div>
+                          </div>
+                        </div>
+                      )}
+                    </ShapeFetcher>
                   ) : (
                     <>No Body Request</>
                   )}
@@ -429,13 +419,13 @@ export const EndpointRootPage: FC<
                       />
                     </div>
                     {response.body ? (
-                      <div className={classes.bodyDetails}>
-                        <div>
-                          <ContributionFetcher
-                            rootShapeId={response.body.rootShapeId}
-                            endpointId={endpointId}
-                          >
-                            {(fields) => (
+                      <ShapeFetcher
+                        rootShapeId={response.body.rootShapeId}
+                        endpointId={endpointId}
+                      >
+                        {(shapes, fields) => (
+                          <div className={classes.bodyDetails}>
+                            <div>
                               <ContributionsList
                                 renderField={(field) => (
                                   <DocsFieldOrParameterContribution
@@ -456,20 +446,16 @@ export const EndpointRootPage: FC<
                                 )}
                                 fieldDetails={fields}
                               />
-                            )}
-                          </ContributionFetcher>
-                        </div>
-                        <div className={classes.panel}>
-                          <ShapeFetcher rootShapeId={response.body.rootShapeId}>
-                            {(shapes) => (
+                            </div>
+                            <div className={classes.panel}>
                               <HttpBodyPanel
                                 shapes={shapes}
                                 location={response.body!.contentType}
                               />
-                            )}
-                          </ShapeFetcher>
-                        </div>
-                      </div>
+                            </div>
+                          </div>
+                        )}
+                      </ShapeFetcher>
                     ) : (
                       <>No Body Request</>
                     )}

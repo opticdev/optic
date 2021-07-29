@@ -1,8 +1,7 @@
 import React, { FC } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { IShapeRenderer } from './ShapeRenderer/ShapeRenderInterfaces';
+import { IShapeRenderer } from '<src>/types';
 import { EditableTextField, TextFieldVariant } from './EditableTextField';
-import { IContribution } from '<src>/types';
 
 export type FieldOrParameterProps = {
   shapes: IShapeRenderer[];
@@ -47,50 +46,6 @@ function summarizeTypes(shapes: IShapeRenderer[]) {
     const last = allShapes.pop();
     return allShapes.join(', ') + ' or ' + last;
   }
-}
-
-export interface IFieldDetails {
-  name: string;
-  contribution: IContribution;
-  shapes: IShapeRenderer[];
-  depth: number;
-}
-
-export function createFlatList(
-  shapes: IShapeRenderer[],
-  endpointId: string,
-  depth: number = 0
-): IFieldDetails[] {
-  const fieldDetails: IFieldDetails[] = [];
-
-  shapes.forEach((shape) => {
-    if (shape.asObject) {
-      shape.asObject.fields.forEach((field) => {
-        fieldDetails.push({
-          name: field.name,
-          contribution: {
-            id: field.fieldId,
-            contributionKey: 'description',
-            value: field.contributions.description || '',
-            endpointId: endpointId,
-          },
-          depth,
-          shapes: field.shapeChoices,
-        });
-
-        fieldDetails.push(
-          ...createFlatList(field.shapeChoices, endpointId, depth + 1)
-        );
-      });
-    }
-    if (shape.asArray) {
-      fieldDetails.push(
-        ...createFlatList(shape.asArray.shapeChoices, endpointId, depth + 1)
-      );
-    }
-  });
-
-  return fieldDetails;
 }
 
 const useStyles = makeStyles((theme) => ({

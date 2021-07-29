@@ -11,11 +11,9 @@ import {
   PageLayout,
   FullWidth,
   FieldOrParameter,
-  ContributionFetcher,
   ShapeFetcher,
   QueryParametersPanel,
   ContributionsList,
-  convertShapeToQueryParameters,
   HttpBodyPanel,
   HttpBodySelector,
   Panel,
@@ -180,14 +178,14 @@ const ChangelogRootComponent: FC<
                 source={visibleQueryParameters.description}
               />
             </div>
-            <div className={classes.bodyDetails}>
-              <div>
-                <ContributionFetcher
-                  rootShapeId={visibleQueryParameters.rootShapeId}
-                  endpointId={endpointId}
-                  changesSinceBatchCommit={batchId}
-                >
-                  {(fields) => (
+            <ShapeFetcher
+              rootShapeId={visibleQueryParameters.rootShapeId}
+              endpointId={endpointId}
+              changesSinceBatchCommit={batchId}
+            >
+              {(shapes, fields) => (
+                <div className={classes.bodyDetails}>
+                  <div>
                     <ContributionsList
                       renderField={(field) => (
                         <FieldOrParameter
@@ -203,22 +201,17 @@ const ChangelogRootComponent: FC<
                       )}
                       fieldDetails={fields}
                     />
-                  )}
-                </ContributionFetcher>
-              </div>
-              <div className={classes.panel}>
-                <ShapeFetcher
-                  rootShapeId={visibleQueryParameters.rootShapeId}
-                  changesSinceBatchCommit={batchId}
-                >
-                  {(shapes) => (
+                  </div>
+                  <div className={classes.panel}>
                     <QueryParametersPanel
-                      parameters={convertShapeToQueryParameters(shapes)}
+                      parameters={selectors.convertShapeToQueryParameters(
+                        shapes
+                      )}
                     />
-                  )}
-                </ShapeFetcher>
-              </div>
-            </div>
+                  </div>
+                </div>
+              )}
+            </ShapeFetcher>
           </div>
         )}
 
@@ -243,14 +236,14 @@ const ChangelogRootComponent: FC<
                     />
                   </div>
                   {request.body ? (
-                    <div className={classes.bodyDetails}>
-                      <div>
-                        <ContributionFetcher
-                          rootShapeId={request.body.rootShapeId}
-                          endpointId={endpointId}
-                          changesSinceBatchCommit={batchId}
-                        >
-                          {(fields) => (
+                    <ShapeFetcher
+                      rootShapeId={request.body.rootShapeId}
+                      endpointId={endpointId}
+                      changesSinceBatchCommit={batchId}
+                    >
+                      {(shapes, fields) => (
+                        <div className={classes.bodyDetails}>
+                          <div>
                             <ContributionsList
                               renderField={(field) => (
                                 <FieldOrParameter
@@ -266,23 +259,16 @@ const ChangelogRootComponent: FC<
                               )}
                               fieldDetails={fields}
                             />
-                          )}
-                        </ContributionFetcher>
-                      </div>
-                      <div className={classes.panel}>
-                        <ShapeFetcher
-                          rootShapeId={request.body.rootShapeId}
-                          changesSinceBatchCommit={batchId}
-                        >
-                          {(shapes) => (
+                          </div>
+                          <div className={classes.panel}>
                             <HttpBodyPanel
                               shapes={shapes}
                               location={request.body!.contentType}
                             />
-                          )}
-                        </ShapeFetcher>
-                      </div>
-                    </div>
+                          </div>
+                        </div>
+                      )}
+                    </ShapeFetcher>
                   ) : (
                     <>No Body Request</>
                   )}
@@ -318,14 +304,14 @@ const ChangelogRootComponent: FC<
                     </div>
                     <div className={classes.bodyDetails}>
                       {response.body ? (
-                        <>
-                          <div>
-                            <ContributionFetcher
-                              rootShapeId={response.body.rootShapeId}
-                              endpointId={endpointId}
-                              changesSinceBatchCommit={batchId}
-                            >
-                              {(fields) => (
+                        <ShapeFetcher
+                          rootShapeId={response.body.rootShapeId}
+                          endpointId={endpointId}
+                          changesSinceBatchCommit={batchId}
+                        >
+                          {(shapes, fields) => (
+                            <>
+                              <div>
                                 <ContributionsList
                                   renderField={(field) => (
                                     <FieldOrParameter
@@ -341,23 +327,16 @@ const ChangelogRootComponent: FC<
                                   )}
                                   fieldDetails={fields}
                                 />
-                              )}
-                            </ContributionFetcher>
-                          </div>
-                          <div className={classes.panel}>
-                            <ShapeFetcher
-                              rootShapeId={response.body.rootShapeId}
-                              changesSinceBatchCommit={batchId}
-                            >
-                              {(shapes) => (
+                              </div>
+                              <div className={classes.panel}>
                                 <HttpBodyPanel
                                   shapes={shapes}
                                   location={response.body!.contentType}
                                 />
-                              )}
-                            </ShapeFetcher>
-                          </div>
-                        </>
+                              </div>
+                            </>
+                          )}
+                        </ShapeFetcher>
                       ) : (
                         <>No Body Response</>
                       )}
