@@ -282,7 +282,15 @@ type ObjectField {
   # Field contributions which define descriptions
   contributions: JSON!
 
+  # Has the field been removed
   isRemoved: Boolean!
+
+  # Commands to mutate the field
+  commands: FieldCommands!
+}
+
+type FieldCommands {
+  remove: [JSON!]!
 }
 
 """
