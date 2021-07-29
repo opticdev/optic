@@ -1,0 +1,57 @@
+---
+source: workspaces/optic-engine/src/queries/shape.rs
+expression: choice_mapping
+---
+{
+    "object_shape_1": [
+        Object(
+            ObjectChoice {
+                shape_id: "object_shape_1",
+                json_type: Object,
+                fields: [
+                    ObjectFieldChoice {
+                        name: "lastName",
+                        field_id: "field_1",
+                        shape_id: "shape_1094",
+                    },
+                ],
+            },
+        ),
+    ],
+    "optional_shape_1": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "optional_shape_1",
+                json_type: Undefined,
+            },
+        ),
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "string_shape_1",
+                json_type: String,
+            },
+        ),
+    ],
+    "shape_1094": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "shape_1094",
+                json_type: Null,
+            },
+        ),
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "string_shape_1",
+                json_type: String,
+            },
+        ),
+    ],
+    "string_shape_1": [
+        Primitive(
+            PrimitiveChoice {
+                shape_id: "string_shape_1",
+                json_type: String,
+            },
+        ),
+    ],
+}

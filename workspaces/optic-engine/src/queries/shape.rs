@@ -450,8 +450,6 @@ impl<'a> ShapeQueries<'a> {
   ) -> Option<impl Iterator<Item = ShapeCommand>> {
     let current_trail_choices = self.list_trail_choices(shape_trail);
 
-    dbg!(&current_trail_choices);
-
     let current_kinds: BTreeSet<_> = current_trail_choices
       .iter()
       .map(|choice| &choice.core_shape_kind)
@@ -487,8 +485,6 @@ impl<'a> ShapeQueries<'a> {
       .filter(|kind| togglable_kinds.contains(kind))
       .cloned()
       .collect();
-
-    dbg!(subject_shape_id);
 
     let mut new_shape_prototypes = vec![];
     let mut root_shape_id = subject_shape_id.clone();
@@ -615,6 +611,7 @@ mod test {
   use crate::events::SpecEvent;
   use crate::projections::SpecProjection;
   use crate::Aggregate;
+  use insta::assert_debug_snapshot;
   use serde_json::json;
 
   #[test]
@@ -636,7 +633,18 @@ mod test {
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
+    assert_debug_snapshot!(
+      "can_generate_remove_field_commands__commands",
+      &remove_field_commands
+    );
+
     let updated_spec = assert_valid_commands(spec_projection.clone(), remove_field_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_remove_field_commands__choice_mapping",
+      choice_mapping
+    );
   }
 
   #[test]
@@ -666,9 +674,18 @@ mod test {
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
-    dbg!(&edit_shape_commands);
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_field_optional__commands",
+      &edit_shape_commands
+    );
 
     let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_field_optional__choice_mapping",
+      choice_mapping
+    );
   }
 
   #[test]
@@ -698,9 +715,18 @@ mod test {
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
-    dbg!(&edit_shape_commands);
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_field_nullable__commands",
+      &edit_shape_commands
+    );
 
     let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_field_nullable__choice_mapping",
+      choice_mapping
+    );
   }
 
   #[test]
@@ -732,9 +758,18 @@ mod test {
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
-    dbg!(&edit_shape_commands);
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_optional_field_nullable__commands",
+      &edit_shape_commands
+    );
 
     let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_optional_field_nullable__choice_mapping",
+      choice_mapping
+    );
   }
 
   #[test]
@@ -766,9 +801,18 @@ mod test {
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
-    dbg!(&edit_shape_commands);
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_optional_field_nullable_and_optional__commands",
+      &edit_shape_commands
+    );
 
     let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_optional_field_nullable_and_optional__choice_mapping",
+      choice_mapping
+    );
   }
 
   #[test]
@@ -804,9 +848,18 @@ mod test {
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
-    dbg!(&edit_shape_commands);
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_polymorphic_field_optional__commands",
+      &edit_shape_commands
+    );
 
     let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_polymorphic_field_optional__choice_mapping",
+      choice_mapping
+    );
   }
 
   #[test]
@@ -840,9 +893,18 @@ mod test {
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
-    dbg!(&edit_shape_commands);
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_optional_nullable_field_required__commands",
+      &edit_shape_commands
+    );
 
     let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_optional_nullable_field_required__choice_mapping",
+      choice_mapping
+    );
   }
 
   fn assert_valid_commands(
