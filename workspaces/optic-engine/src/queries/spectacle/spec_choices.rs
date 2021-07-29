@@ -165,30 +165,4 @@ impl<'a> ShapeChoiceQueries<'a> {
         }),
       })
   }
-
-  pub fn edit_shape_commands(
-    &'a self,
-    shape_trail: &ShapeTrail,
-    required_json_types: impl IntoIterator<Item = &'a JsonType>,
-  ) -> Option<impl Iterator<Item = ShapeCommand>> {
-    let current_json_types: BTreeSet<_> = self
-      .trail_choices(shape_trail)
-      .map(|choice| choice.json_type().cloned())
-      .flatten()
-      .collect();
-
-    let supported_required_json_types: BTreeSet<_> = required_json_types
-      .into_iter()
-      // we only support toggling null and undefined (optional) for now
-      .filter(|json_type| matches!(json_type, JsonType::Null | JsonType::Undefined))
-      .cloned()
-      .collect();
-
-    let added_json_types = supported_required_json_types.difference(&current_json_types);
-    let removed_json_types = current_json_types.difference(&supported_required_json_types);
-
-    todo!("return an iterator of shape commands");
-
-    Some(std::iter::empty())
-  }
 }
