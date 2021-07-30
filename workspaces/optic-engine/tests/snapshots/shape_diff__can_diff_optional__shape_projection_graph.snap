@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/shape_diff.rs
+source: workspaces/optic-engine/tests/shape_diff.rs
 expression: "Dot::with_config(&shape_projection.graph, &[])"
 ---
 digraph {
@@ -18,7 +18,7 @@ digraph {
     12 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"object_1\",\l    },\l)\l" ]
     13 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"string_shape_1\",\l    },\l)\l" ]
     14 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"optional_shape_1\",\l    },\l)\l" ]
-    15 [ label = "Field(\l    FieldNode {\l        field_id: \"field_1\",\l        descriptor: FieldNodeDescriptor {\l            name: \"firstName\",\l        },\l    },\l)\l" ]
+    15 [ label = "Field(\l    FieldNode {\l        field_id: \"field_1\",\l        descriptor: FieldNodeDescriptor {\l            name: \"firstName\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     16 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"list_1\",\l    },\l)\l" ]
     4 -> 3 [ label = "IsParameterOf\l" ]
     7 -> 6 [ label = "IsParameterOf\l" ]

@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+source: workspaces/optic-engine/tests/interaction-diff-use-cases.rs
 expression: "Dot::with_config(&spec_projection.shape().graph, &[])"
 ---
 digraph {
@@ -19,14 +19,14 @@ digraph {
     13 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"baseline-shape_10\",\l    },\l)\l" ]
     14 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"baseline-shape_8\",\l    },\l)\l" ]
     15 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"baseline-shape_2\",\l    },\l)\l" ]
-    16 [ label = "Field(\l    FieldNode {\l        field_id: \"baseline-field_1\",\l        descriptor: FieldNodeDescriptor {\l            name: \"age\",\l        },\l    },\l)\l" ]
+    16 [ label = "Field(\l    FieldNode {\l        field_id: \"baseline-field_1\",\l        descriptor: FieldNodeDescriptor {\l            name: \"age\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     17 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"baseline-shape_4\",\l    },\l)\l" ]
     18 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"baseline-shape_5\",\l    },\l)\l" ]
-    19 [ label = "Field(\l    FieldNode {\l        field_id: \"baseline-field_2\",\l        descriptor: FieldNodeDescriptor {\l            name: \"cities\",\l        },\l    },\l)\l" ]
+    19 [ label = "Field(\l    FieldNode {\l        field_id: \"baseline-field_2\",\l        descriptor: FieldNodeDescriptor {\l            name: \"cities\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     20 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"baseline-shape_6\",\l    },\l)\l" ]
-    21 [ label = "Field(\l    FieldNode {\l        field_id: \"baseline-field_3\",\l        descriptor: FieldNodeDescriptor {\l            name: \"firstName\",\l        },\l    },\l)\l" ]
+    21 [ label = "Field(\l    FieldNode {\l        field_id: \"baseline-field_3\",\l        descriptor: FieldNodeDescriptor {\l            name: \"firstName\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     22 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"baseline-shape_7\",\l    },\l)\l" ]
-    23 [ label = "Field(\l    FieldNode {\l        field_id: \"baseline-field_4\",\l        descriptor: FieldNodeDescriptor {\l            name: \"lastName\",\l        },\l    },\l)\l" ]
+    23 [ label = "Field(\l    FieldNode {\l        field_id: \"baseline-field_4\",\l        descriptor: FieldNodeDescriptor {\l            name: \"lastName\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     4 -> 3 [ label = "IsParameterOf\l" ]
     7 -> 6 [ label = "IsParameterOf\l" ]
     10 -> 9 [ label = "IsParameterOf\l" ]

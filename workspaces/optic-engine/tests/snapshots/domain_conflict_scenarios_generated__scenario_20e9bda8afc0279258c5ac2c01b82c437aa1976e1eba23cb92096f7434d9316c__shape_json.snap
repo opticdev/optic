@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+source: workspaces/optic-engine/tests/domain-conflict-scenarios-generated.rs
 expression: "&spec_projection.shapes_serializable()"
 ---
 {
@@ -137,7 +137,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_jvGuxAjlRn",
         "descriptor": {
           "name": "author"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -152,7 +153,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_gGefUJrPwF",
         "descriptor": {
           "name": "id"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -167,7 +169,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_iYJ7dR4ihV",
         "descriptor": {
           "name": "title"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -200,7 +203,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_KhuvysQCWY",
         "descriptor": {
           "name": "name"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -234,7 +238,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_OCXyZL2Lyp",
         "descriptor": {
           "name": "author"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -249,7 +254,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_CXHgTtjIPq",
         "descriptor": {
           "name": "id"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -264,7 +270,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_pb75z9dypc",
         "descriptor": {
           "name": "title"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -297,7 +304,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_tZbQYoQmxt",
         "descriptor": {
           "name": "body"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -312,7 +320,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_UMhLN288Z3",
         "descriptor": {
           "name": "id"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -327,7 +336,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_VMgg5gTvnO",
         "descriptor": {
           "name": "postId"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -360,7 +370,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_SXC48X1nmc",
         "descriptor": {
           "name": "name"
-        }
+        },
+        "isRemoved": false
       }
     }
   ],

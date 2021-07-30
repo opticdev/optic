@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/bug-scenarios.rs
+source: workspaces/optic-engine/tests/bug-scenarios.rs
 expression: "Dot::with_config(&spec_projection.shape().graph, &[])"
 ---
 digraph {
@@ -19,20 +19,20 @@ digraph {
     13 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_QDWTCba6JM\",\l    },\l)\l" ]
     14 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_eaAktz66rY\",\l    },\l)\l" ]
     15 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_pQvxnF8pzK\",\l    },\l)\l" ]
-    16 [ label = "Field(\l    FieldNode {\l        field_id: \"field_Tubl0dSyKp\",\l        descriptor: FieldNodeDescriptor {\l            name: \"driverId\",\l        },\l    },\l)\l" ]
+    16 [ label = "Field(\l    FieldNode {\l        field_id: \"field_Tubl0dSyKp\",\l        descriptor: FieldNodeDescriptor {\l            name: \"driverId\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     17 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_xjqKoYgnH6\",\l    },\l)\l" ]
     18 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_iJajSC9l5W\",\l    },\l)\l" ]
-    19 [ label = "Field(\l    FieldNode {\l        field_id: \"field_ZgQow0SS6x\",\l        descriptor: FieldNodeDescriptor {\l            name: \"driverId\",\l        },\l    },\l)\l" ]
+    19 [ label = "Field(\l    FieldNode {\l        field_id: \"field_ZgQow0SS6x\",\l        descriptor: FieldNodeDescriptor {\l            name: \"driverId\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     20 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_p5uOLpFNK8\",\l    },\l)\l" ]
     21 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_lhl794TnL5\",\l    },\l)\l" ]
-    22 [ label = "Field(\l    FieldNode {\l        field_id: \"field_dcJtyX4lH0\",\l        descriptor: FieldNodeDescriptor {\l            name: \"rating\",\l        },\l    },\l)\l" ]
+    22 [ label = "Field(\l    FieldNode {\l        field_id: \"field_dcJtyX4lH0\",\l        descriptor: FieldNodeDescriptor {\l            name: \"rating\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     23 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_GgIZ9GsJQm\",\l    },\l)\l" ]
     24 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_Z4UKWHMaIx\",\l    },\l)\l" ]
-    25 [ label = "Field(\l    FieldNode {\l        field_id: \"field_m1iuljZLRJ\",\l        descriptor: FieldNodeDescriptor {\l            name: \"error\",\l        },\l    },\l)\l" ]
+    25 [ label = "Field(\l    FieldNode {\l        field_id: \"field_m1iuljZLRJ\",\l        descriptor: FieldNodeDescriptor {\l            name: \"error\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     26 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_tavNflZKsw\",\l    },\l)\l" ]
-    27 [ label = "Field(\l    FieldNode {\l        field_id: \"field_dZ1hPWdKA3\",\l        descriptor: FieldNodeDescriptor {\l            name: \"message\",\l        },\l    },\l)\l" ]
+    27 [ label = "Field(\l    FieldNode {\l        field_id: \"field_dZ1hPWdKA3\",\l        descriptor: FieldNodeDescriptor {\l            name: \"message\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     28 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_T0WnrnVHU2\",\l    },\l)\l" ]
-    29 [ label = "Field(\l    FieldNode {\l        field_id: \"field_nZPLYXVLoE\",\l        descriptor: FieldNodeDescriptor {\l            name: \"statusCode\",\l        },\l    },\l)\l" ]
+    29 [ label = "Field(\l    FieldNode {\l        field_id: \"field_nZPLYXVLoE\",\l        descriptor: FieldNodeDescriptor {\l            name: \"statusCode\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     4 -> 3 [ label = "IsParameterOf\l" ]
     7 -> 6 [ label = "IsParameterOf\l" ]
     10 -> 9 [ label = "IsParameterOf\l" ]

@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+source: workspaces/optic-engine/tests/domain-conflict-scenarios-generated.rs
 expression: "&spec_projection.shapes_serializable()"
 ---
 {
@@ -137,7 +137,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_BbqlNm0IrO",
         "descriptor": {
           "name": "author"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -152,7 +153,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_agNCpLfAQW",
         "descriptor": {
           "name": "id"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -167,7 +169,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_eMDZZdHr0p",
         "descriptor": {
           "name": "title"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -189,7 +192,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_CqWz6xVFHb",
         "descriptor": {
           "name": "color"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -211,7 +215,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_vgnTR30nGU",
         "descriptor": {
           "name": "rank"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -233,7 +238,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_0Gsxw9zhsc",
         "descriptor": {
           "name": "color"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -261,7 +267,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_9JoXLW4PMX",
         "descriptor": {
           "name": "cars"
-        }
+        },
+        "isRemoved": false
       }
     }
   ],

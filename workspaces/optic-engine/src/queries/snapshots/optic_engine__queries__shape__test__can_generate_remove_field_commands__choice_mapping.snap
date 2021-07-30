@@ -8,7 +8,13 @@ expression: choice_mapping
             ObjectChoice {
                 shape_id: "object_shape_1",
                 json_type: Object,
-                fields: [],
+                fields: [
+                    ObjectFieldChoice {
+                        name: "lastName",
+                        field_id: "field_1",
+                        shape_id: "string_shape_1",
+                    },
+                ],
             },
         ),
     ],

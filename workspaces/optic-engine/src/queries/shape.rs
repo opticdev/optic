@@ -396,7 +396,7 @@ impl<'a> ShapeQueries<'a> {
     let projection = &self.shape_projection;
 
     let field_node_index = *projection
-      .get_field_node_index(field_id, false)
+      .get_field_node_index(field_id, true)
       .expect("field id to which field belongs should exist");
 
     projection

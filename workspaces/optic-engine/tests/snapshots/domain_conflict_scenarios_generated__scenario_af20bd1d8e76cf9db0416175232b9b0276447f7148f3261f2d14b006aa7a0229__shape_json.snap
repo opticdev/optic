@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+source: workspaces/optic-engine/tests/domain-conflict-scenarios-generated.rs
 expression: "&spec_projection.shapes_serializable()"
 ---
 {
@@ -144,7 +144,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_nDtKtB2KtJ",
         "descriptor": {
           "name": "assignedBy"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -165,7 +166,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_30c9L6fbQ3",
         "descriptor": {
           "name": "dueDate"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -186,7 +188,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_fXda473ILm",
         "descriptor": {
           "name": "hello"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -201,7 +204,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_mYQDOd3Y0i",
         "descriptor": {
           "name": "id"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -222,7 +226,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_AbzpZ0m9nF",
         "descriptor": {
           "name": "isDone"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -237,7 +242,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_GLsxCDU63N",
         "descriptor": {
           "name": "task"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -270,7 +276,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_QO5yNJDzl6",
         "descriptor": {
           "name": "assignedBy"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -291,7 +298,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_V93LVuyg6y",
         "descriptor": {
           "name": "dueDate"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -312,7 +320,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_MzT8sXrwIj",
         "descriptor": {
           "name": "hello"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -327,7 +336,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_GEBzgPSSgx",
         "descriptor": {
           "name": "id"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -348,7 +358,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_Wsvi8Mz3I8",
         "descriptor": {
           "name": "isDone"
-        }
+        },
+        "isRemoved": false
       }
     },
     {
@@ -363,7 +374,8 @@ expression: "&spec_projection.shapes_serializable()"
         "fieldId": "field_RkcLaQrvWP",
         "descriptor": {
           "name": "task"
-        }
+        },
+        "isRemoved": false
       }
     },
     {

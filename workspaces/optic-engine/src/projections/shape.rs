@@ -484,7 +484,7 @@ impl ShapeProjection {
     let node_index = self.node_id_to_index.get(field_id)?;
     let node = self.graph.node_weight(*node_index)?;
     match node {
-      Node::Field(ref node) if !include_removed || !node.is_removed => Some((node_index, node)),
+      Node::Field(ref node) if include_removed || !node.is_removed => Some((node_index, node)),
       _ => None,
     }
   }
@@ -556,7 +556,7 @@ impl ShapeProjection {
         .neighbors_directed(*node_index, petgraph::Direction::Incoming);
       let field_nodes = neighbours.filter_map(move |neighbour_index| {
         if let Some(Node::Field(node)) = graph.node_weight(neighbour_index.clone()) {
-          if !include_removed || !node.is_removed {
+          if include_removed || !node.is_removed {
             Some(node)
           } else {
             None

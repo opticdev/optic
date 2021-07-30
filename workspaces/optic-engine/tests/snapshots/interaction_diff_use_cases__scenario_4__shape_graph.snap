@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+source: workspaces/optic-engine/tests/interaction-diff-use-cases.rs
 expression: "Dot::with_config(&spec_projection.shape().graph, &[])"
 ---
 digraph {
@@ -20,17 +20,17 @@ digraph {
     14 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_10\",\l    },\l)\l" ]
     15 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_4\",\l    },\l)\l" ]
     16 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_2\",\l    },\l)\l" ]
-    17 [ label = "Field(\l    FieldNode {\l        field_id: \"field_1\",\l        descriptor: FieldNodeDescriptor {\l            name: \"first\",\l        },\l    },\l)\l" ]
+    17 [ label = "Field(\l    FieldNode {\l        field_id: \"field_1\",\l        descriptor: FieldNodeDescriptor {\l            name: \"first\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     18 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_3\",\l    },\l)\l" ]
-    19 [ label = "Field(\l    FieldNode {\l        field_id: \"field_2\",\l        descriptor: FieldNodeDescriptor {\l            name: \"last\",\l        },\l    },\l)\l" ]
-    20 [ label = "Field(\l    FieldNode {\l        field_id: \"field_3\",\l        descriptor: FieldNodeDescriptor {\l            name: \"name\",\l        },\l    },\l)\l" ]
+    19 [ label = "Field(\l    FieldNode {\l        field_id: \"field_2\",\l        descriptor: FieldNodeDescriptor {\l            name: \"last\",\l        },\l        is_removed: false,\l    },\l)\l" ]
+    20 [ label = "Field(\l    FieldNode {\l        field_id: \"field_3\",\l        descriptor: FieldNodeDescriptor {\l            name: \"name\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     21 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_6\",\l    },\l)\l" ]
     22 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_7\",\l    },\l)\l" ]
-    23 [ label = "Field(\l    FieldNode {\l        field_id: \"field_4\",\l        descriptor: FieldNodeDescriptor {\l            name: \"rivals\",\l        },\l    },\l)\l" ]
+    23 [ label = "Field(\l    FieldNode {\l        field_id: \"field_4\",\l        descriptor: FieldNodeDescriptor {\l            name: \"rivals\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     24 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_9\",\l    },\l)\l" ]
     25 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_8\",\l    },\l)\l" ]
-    26 [ label = "Field(\l    FieldNode {\l        field_id: \"field_5\",\l        descriptor: FieldNodeDescriptor {\l            name: \"rank\",\l        },\l    },\l)\l" ]
-    27 [ label = "Field(\l    FieldNode {\l        field_id: \"field_6\",\l        descriptor: FieldNodeDescriptor {\l            name: \"stats\",\l        },\l    },\l)\l" ]
+    26 [ label = "Field(\l    FieldNode {\l        field_id: \"field_5\",\l        descriptor: FieldNodeDescriptor {\l            name: \"rank\",\l        },\l        is_removed: false,\l    },\l)\l" ]
+    27 [ label = "Field(\l    FieldNode {\l        field_id: \"field_6\",\l        descriptor: FieldNodeDescriptor {\l            name: \"stats\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     4 -> 3 [ label = "IsParameterOf\l" ]
     7 -> 6 [ label = "IsParameterOf\l" ]
     10 -> 9 [ label = "IsParameterOf\l" ]

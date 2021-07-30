@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+source: workspaces/optic-engine/tests/domain-conflict-scenarios-generated.rs
 expression: "Dot::with_config(&spec_projection.shape().graph, &[])"
 ---
 digraph {
@@ -19,24 +19,24 @@ digraph {
     13 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_6jDgwnsBIS\",\l    },\l)\l" ]
     14 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_UzxFqwGJ8h\",\l    },\l)\l" ]
     15 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_MuzY5JgqlX\",\l    },\l)\l" ]
-    16 [ label = "Field(\l    FieldNode {\l        field_id: \"field_BbqlNm0IrO\",\l        descriptor: FieldNodeDescriptor {\l            name: \"author\",\l        },\l    },\l)\l" ]
+    16 [ label = "Field(\l    FieldNode {\l        field_id: \"field_BbqlNm0IrO\",\l        descriptor: FieldNodeDescriptor {\l            name: \"author\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     17 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_vjc8zOCKL7\",\l    },\l)\l" ]
-    18 [ label = "Field(\l    FieldNode {\l        field_id: \"field_agNCpLfAQW\",\l        descriptor: FieldNodeDescriptor {\l            name: \"id\",\l        },\l    },\l)\l" ]
+    18 [ label = "Field(\l    FieldNode {\l        field_id: \"field_agNCpLfAQW\",\l        descriptor: FieldNodeDescriptor {\l            name: \"id\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     19 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_N0zGjTOmjb\",\l    },\l)\l" ]
-    20 [ label = "Field(\l    FieldNode {\l        field_id: \"field_eMDZZdHr0p\",\l        descriptor: FieldNodeDescriptor {\l            name: \"title\",\l        },\l    },\l)\l" ]
+    20 [ label = "Field(\l    FieldNode {\l        field_id: \"field_eMDZZdHr0p\",\l        descriptor: FieldNodeDescriptor {\l            name: \"title\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     21 [ label = "BatchCommit(\l    BatchCommitNode {\l        batch_id: \"04ab0870-57bb-4314-a10f-30e94e57f814\",\l        created_at: \"2021-02-01T18:38:49.087Z\",\l    },\l)\l" ]
     22 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_KGAzNVDmp3\",\l    },\l)\l" ]
-    23 [ label = "Field(\l    FieldNode {\l        field_id: \"field_CqWz6xVFHb\",\l        descriptor: FieldNodeDescriptor {\l            name: \"color\",\l        },\l    },\l)\l" ]
+    23 [ label = "Field(\l    FieldNode {\l        field_id: \"field_CqWz6xVFHb\",\l        descriptor: FieldNodeDescriptor {\l            name: \"color\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     24 [ label = "BatchCommit(\l    BatchCommitNode {\l        batch_id: \"205b310c-5b54-4d06-84c4-459c49b8abda\",\l        created_at: \"2021-02-01T18:39:10.063Z\",\l    },\l)\l" ]
     25 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_oXDbLBSNB3\",\l    },\l)\l" ]
-    26 [ label = "Field(\l    FieldNode {\l        field_id: \"field_vgnTR30nGU\",\l        descriptor: FieldNodeDescriptor {\l            name: \"rank\",\l        },\l    },\l)\l" ]
+    26 [ label = "Field(\l    FieldNode {\l        field_id: \"field_vgnTR30nGU\",\l        descriptor: FieldNodeDescriptor {\l            name: \"rank\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     27 [ label = "BatchCommit(\l    BatchCommitNode {\l        batch_id: \"32ffa93c-1313-4ffe-9235-cb33f9798efc\",\l        created_at: \"2021-02-01T18:46:02.822Z\",\l    },\l)\l" ]
     28 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_UmdGwe9ZXw\",\l    },\l)\l" ]
-    29 [ label = "Field(\l    FieldNode {\l        field_id: \"field_0Gsxw9zhsc\",\l        descriptor: FieldNodeDescriptor {\l            name: \"color\",\l        },\l    },\l)\l" ]
+    29 [ label = "Field(\l    FieldNode {\l        field_id: \"field_0Gsxw9zhsc\",\l        descriptor: FieldNodeDescriptor {\l            name: \"color\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     30 [ label = "BatchCommit(\l    BatchCommitNode {\l        batch_id: \"cecab40a-c8c7-442e-8fa4-96728bcc3f1d\",\l        created_at: \"2021-02-01T18:46:15.868Z\",\l    },\l)\l" ]
     31 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_qw3EfisIOL\",\l    },\l)\l" ]
     32 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_m0tBaSSxY5\",\l    },\l)\l" ]
-    33 [ label = "Field(\l    FieldNode {\l        field_id: \"field_9JoXLW4PMX\",\l        descriptor: FieldNodeDescriptor {\l            name: \"cars\",\l        },\l    },\l)\l" ]
+    33 [ label = "Field(\l    FieldNode {\l        field_id: \"field_9JoXLW4PMX\",\l        descriptor: FieldNodeDescriptor {\l            name: \"cars\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     4 -> 3 [ label = "IsParameterOf\l" ]
     7 -> 6 [ label = "IsParameterOf\l" ]
     10 -> 9 [ label = "IsParameterOf\l" ]

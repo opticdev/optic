@@ -21,7 +21,7 @@ digraph {
     15 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_tV7F9sLXIi\",\l    },\l)\l" ]
     16 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_UBgQQWw_sp\",\l    },\l)\l" ]
     17 [ label = "Shape(\l    ShapeNode {\l        shape_id: \"shape_UFGsR-O9bt\",\l    },\l)\l" ]
-    18 [ label = "Field(\l    FieldNode {\l        field_id: \"field_wDHyYzkU0V\",\l        descriptor: FieldNodeDescriptor {\l            name: \"id\",\l        },\l    },\l)\l" ]
+    18 [ label = "Field(\l    FieldNode {\l        field_id: \"field_wDHyYzkU0V\",\l        descriptor: FieldNodeDescriptor {\l            name: \"id\",\l        },\l        is_removed: false,\l    },\l)\l" ]
     4 -> 3 [ label = "IsParameterOf\l" ]
     7 -> 6 [ label = "IsParameterOf\l" ]
     10 -> 9 [ label = "IsParameterOf\l" ]
