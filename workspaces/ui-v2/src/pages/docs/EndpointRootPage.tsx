@@ -3,6 +3,7 @@ import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Button, LinearProgress, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { Delete as DeleteIcon, Undo as UndoIcon } from '@material-ui/icons';
+import { JsonLike } from '@useoptic/optic-domain';
 
 import {
   EndpointName,
@@ -24,7 +25,7 @@ import {
   selectors,
   documentationEditActions,
 } from '<src>/store';
-import { IShapeRenderer, JsonLike } from '<src>/types';
+import { IShapeRenderer } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {

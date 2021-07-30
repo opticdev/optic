@@ -1,4 +1,5 @@
-import { ChangeType, JsonLike } from '<src>/types';
+import { JsonLike } from '@useoptic/optic-domain';
+import { ChangeType } from '<src>/types';
 
 export type ShapeId = string;
 
