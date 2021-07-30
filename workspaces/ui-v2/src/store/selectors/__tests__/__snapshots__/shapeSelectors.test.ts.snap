@@ -6,6 +6,7 @@ Object {
     "changes": null,
     "contributions": Object {},
     "fieldId": "field_hnI7P1UdbB",
+    "isRemoved": false,
     "name": "author",
     "required": true,
     "shapeChoices": Array [
@@ -83,22 +84,6 @@ Array [
       },
     ],
   },
-  Object {
-    "contribution": Object {
-      "contributionKey": "description",
-      "endpointId": "path_UOIsxzICu5.GET",
-      "id": "field_5GCvc8KB2p",
-      "value": "",
-    },
-    "depth": 1,
-    "name": "dueDate",
-    "shapes": Array [
-      Object {
-        "jsonType": "String",
-        "shapeId": "shape_owJFnZQJeS",
-      },
-    ],
-  },
 ]
 `;
 
@@ -114,6 +99,7 @@ Array [
                 "changes": null,
                 "contributions": Object {},
                 "fieldId": "field_LRYtHDYkVO",
+                "isRemoved": false,
                 "name": "task",
                 "required": true,
                 "shapeChoices": Array [
@@ -128,6 +114,7 @@ Array [
                 "changes": null,
                 "contributions": Object {},
                 "fieldId": "field_XM7KRqWOlV",
+                "isRemoved": false,
                 "name": "isDone",
                 "required": true,
                 "shapeChoices": Array [
@@ -139,9 +126,77 @@ Array [
                 "shapeId": "shape_9cUoBYpjJU",
               },
               Object {
-                "changes": null,
+                "changes": "updated",
                 "contributions": Object {},
                 "fieldId": "field_9mczOWgNnu",
+                "isRemoved": false,
+                "name": "id",
+                "required": true,
+                "shapeChoices": Array [
+                  Object {
+                    "jsonType": "String",
+                    "shapeId": "shape_R4cTQ1zpOs",
+                  },
+                ],
+                "shapeId": "shape_R4cTQ1zpOs",
+              },
+            ],
+          },
+          "jsonType": "Object",
+          "shapeId": "shape_f7gQgQ8p7G",
+        },
+      ],
+      "shapeId": "shape_f7gQgQ8p7G",
+    },
+    "jsonType": "Array",
+    "shapeId": "shape_cEkQAVQ3ib",
+  },
+]
+`;
+
+exports[`getShapeRenderer converts shapes to shape renderers with changelog 1`] = `
+Array [
+  Object {
+    "asArray": Object {
+      "shapeChoices": Array [
+        Object {
+          "asObject": Object {
+            "fields": Array [
+              Object {
+                "changes": null,
+                "contributions": Object {},
+                "fieldId": "field_LRYtHDYkVO",
+                "isRemoved": false,
+                "name": "task",
+                "required": true,
+                "shapeChoices": Array [
+                  Object {
+                    "jsonType": "String",
+                    "shapeId": "shape_tUQxsgursF",
+                  },
+                ],
+                "shapeId": "shape_tUQxsgursF",
+              },
+              Object {
+                "changes": null,
+                "contributions": Object {},
+                "fieldId": "field_XM7KRqWOlV",
+                "isRemoved": false,
+                "name": "isDone",
+                "required": true,
+                "shapeChoices": Array [
+                  Object {
+                    "jsonType": "Boolean",
+                    "shapeId": "shape_9cUoBYpjJU",
+                  },
+                ],
+                "shapeId": "shape_9cUoBYpjJU",
+              },
+              Object {
+                "changes": "updated",
+                "contributions": Object {},
+                "fieldId": "field_9mczOWgNnu",
+                "isRemoved": false,
                 "name": "id",
                 "required": true,
                 "shapeChoices": Array [
@@ -153,9 +208,10 @@ Array [
                 "shapeId": "shape_R4cTQ1zpOs",
               },
               Object {
-                "changes": null,
+                "changes": "removed",
                 "contributions": Object {},
                 "fieldId": "field_5GCvc8KB2p",
+                "isRemoved": true,
                 "name": "dueDate",
                 "required": true,
                 "shapeChoices": Array [

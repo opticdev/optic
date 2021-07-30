@@ -42,6 +42,15 @@ describe('getShapeRenderer', () => {
     expect(shapeState.loading).toBe(false);
     expect(shapeState.data).toMatchSnapshot();
   });
+
+  test('converts shapes to shape renderers with changelog', () => {
+    const shapeState = getShapeRenderer(
+      'shape_cEkQAVQ3ib',
+      'batchcommitid'
+    )(store);
+    expect(shapeState.loading).toBe(false);
+    expect(shapeState.data).toMatchSnapshot();
+  });
 });
 
 describe('createFlatList', () => {
