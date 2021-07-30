@@ -91,8 +91,8 @@ impl ShapeCommand {
     Self::SetFieldShape(SetFieldShape {
       shape_descriptor: FieldShapeDescriptor::FieldShapeFromShape(FieldShapeFromShape {
         field_id,
-        shape_id: field_shape_id
-      })
+        shape_id: field_shape_id,
+      }),
     })
   }
 
@@ -470,7 +470,7 @@ impl<'a> CommandValidationQueries<'a> {
   fn field_id_exists(&self, field_id: &FieldId) -> bool {
     self
       .shape_projection
-      .get_field_node_index(field_id)
+      .get_field_node_index(field_id, false)
       .is_some()
   }
 

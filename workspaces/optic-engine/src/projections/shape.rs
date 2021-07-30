@@ -40,6 +40,7 @@ pub struct CoreShapeNode {
 pub struct FieldNode {
   pub field_id: FieldId,
   pub descriptor: FieldNodeDescriptor,
+  pub is_removed: bool,
 }
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -65,6 +66,7 @@ pub enum Edge {
   HasBinding(ShapeParameterBinding),
   CreatedIn,
   UpdatedIn,
+  RemovedIn,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -186,6 +188,21 @@ impl ShapeProjection {
       self
         .graph
         .add_edge(*updated_node_index, *batch_node_index, Edge::UpdatedIn);
+    } else {
+      eprintln!("bad implicit batch id {}", &batch_id);
+    }
+  }
+  pub fn with_remove_history(&mut self, batch_id: &str, updated_node_id: &str) {
+    let updated_node_index = self
+      .node_id_to_index
+      .get(updated_node_id)
+      .expect("expected updated_node_id to exist");
+
+    let batch_node_index_option = self.node_id_to_index.get(batch_id);
+    if let Some(batch_node_index) = batch_node_index_option {
+      self
+        .graph
+        .add_edge(*updated_node_index, *batch_node_index, Edge::RemovedIn);
     } else {
       eprintln!("bad implicit batch id {}", &batch_id);
     }
@@ -343,7 +360,7 @@ impl ShapeProjection {
       _ => panic!("expected specs to only use FieldShapeDescriptor::FieldShapeFromShape"),
     };
     let field_node_index = *self
-      .get_field_node_index(&field_shape.field_id)
+      .get_field_node_index(&field_shape.field_id, false)
       .expect("expected field to exist");
     let field_node_weight = self
       .graph
@@ -398,6 +415,7 @@ impl ShapeProjection {
     let field_node = Node::Field(FieldNode {
       field_id: field_id.clone(),
       descriptor: FieldNodeDescriptor { name },
+      is_removed: false,
     });
     let field_node_index = self.graph.add_node(field_node);
     self
@@ -416,26 +434,15 @@ impl ShapeProjection {
   }
 
   pub fn without_field(&mut self, field_id: FieldId) {
-    let field_node_index = self
-      .get_field_node_index(&field_id)
-      .expect("expected field_id to have corresponding node");
+    let node_index = self
+      .node_id_to_index
+      .get(&field_id)
+      .expect("field to exist in node to index map");
 
-    let object_edge_index = self
-      .graph
-      .edges_directed(*field_node_index, petgraph::Direction::Outgoing)
-      .find(|parent_edge| matches!(parent_edge.weight(), Edge::IsFieldOf))
-      .map(|object_edge| object_edge.id());
-
-    if let Some(object_edge_index) = object_edge_index {
-      self.graph.remove_edge(object_edge_index); // prevents field to be resolved from the object shape node
+    match self.graph.node_weight_mut(*node_index) {
+      Some(Node::Field(field_node)) => field_node.is_removed = true,
+      _ => {}
     }
-
-    self.node_id_to_index.remove(&field_id); // prevents field node to be looked up by field id
-
-    // GOTCHA: we're not deleting the field node itself, as that would invalidate self.node_id_to_index
-    // as the graph indexes shift.
-    // TODO: figure out the implications of the above, like correctness of queries and
-    // eventual garbage collection.
   }
 
   pub fn get_shape_node_index(&self, node_id: &NodeId) -> Option<&NodeIndex> {
@@ -459,17 +466,25 @@ impl ShapeProjection {
     }
   }
 
-  pub fn get_field_node_index(&self, node_id: &NodeId) -> Option<&NodeIndex> {
+  pub fn get_field_node_index(
+    &self,
+    node_id: &NodeId,
+    include_removed: bool,
+  ) -> Option<&NodeIndex> {
     self
-      .get_field_node(node_id)
+      .get_field_node(node_id, include_removed)
       .map(|(node_index, _)| node_index)
   }
 
-  pub fn get_field_node(&self, field_id: &FieldId) -> Option<(&NodeIndex, &FieldNode)> {
+  pub fn get_field_node(
+    &self,
+    field_id: &FieldId,
+    include_removed: bool,
+  ) -> Option<(&NodeIndex, &FieldNode)> {
     let node_index = self.node_id_to_index.get(field_id)?;
     let node = self.graph.node_weight(*node_index)?;
     match node {
-      Node::Field(ref node) => Some((node_index, node)),
+      Node::Field(ref node) if !include_removed || !node.is_removed => Some((node_index, node)),
       _ => None,
     }
   }
@@ -531,6 +546,7 @@ impl ShapeProjection {
   pub fn get_shape_field_nodes(
     &self,
     node_index: &NodeIndex,
+    include_removed: bool,
   ) -> Option<impl Iterator<Item = &FieldNode>> {
     let graph = &self.graph;
     let node = graph.node_weight(*node_index);
@@ -540,7 +556,11 @@ impl ShapeProjection {
         .neighbors_directed(*node_index, petgraph::Direction::Incoming);
       let field_nodes = neighbours.filter_map(move |neighbour_index| {
         if let Some(Node::Field(node)) = graph.node_weight(neighbour_index.clone()) {
-          Some(node)
+          if !include_removed || !node.is_removed {
+            Some(node)
+          } else {
+            None
+          }
         } else {
           None
         }
@@ -624,8 +644,10 @@ impl AggregateEvent<ShapeProjection> for ShapeEvent {
         }
       }
       ShapeEvent::FieldRemoved(e) => {
-        projection.without_field(e.field_id);
-        // TODO: track removal history
+        projection.without_field(e.field_id.clone());
+        if let Some(c) = e.event_context {
+          projection.with_remove_history(&c.client_command_batch_id, &e.field_id);
+        }
       }
 
       ShapeEvent::BaseShapeSet(e) => {

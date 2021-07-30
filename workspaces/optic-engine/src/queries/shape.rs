@@ -365,6 +365,7 @@ impl<'a> ShapeQueries<'a> {
             let FieldNode {
               field_id,
               descriptor,
+              ..
             } = field_node;
             if descriptor.name == *field_name {
               Some(field_id.clone())
@@ -395,7 +396,7 @@ impl<'a> ShapeQueries<'a> {
     let projection = &self.shape_projection;
 
     let field_node_index = *projection
-      .get_field_node_index(field_id)
+      .get_field_node_index(field_id, false)
       .expect("field id to which field belongs should exist");
 
     projection
@@ -421,12 +422,13 @@ impl<'a> ShapeQueries<'a> {
       .expect("shape id for which to find field nodes should exist");
 
     projection
-      .get_shape_field_nodes(object_node_index)
+      .get_shape_field_nodes(object_node_index, false)
       .unwrap()
       .map(|field_node| {
         let FieldNode {
           field_id,
           descriptor,
+          ..
         } = field_node;
         (field_id, &descriptor.name)
       })
@@ -436,7 +438,7 @@ impl<'a> ShapeQueries<'a> {
     &self,
     field_id: &FieldId,
   ) -> Option<impl Iterator<Item = ShapeCommand>> {
-    let (field_node_index, field_node) = self.shape_projection.get_field_node(field_id)?; // make sure the field is known
+    let (field_node_index, field_node) = self.shape_projection.get_field_node(field_id, false)?; // make sure the field is known
 
     let command = ShapeCommand::remove_field(field_node.field_id.clone());
     Some(std::iter::once(command))

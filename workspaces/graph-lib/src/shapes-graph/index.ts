@@ -89,6 +89,7 @@ export enum EdgeType {
   HasBinding = 'HasBinding',
   CreatedIn = 'CreatedIn',
   UpdatedIn = 'UpdatedIn',
+  RemovedIn = 'RemovedIn',
 }
 
 export type Edge =
@@ -112,6 +113,9 @@ export type Edge =
     }
   | {
       type: EdgeType.UpdatedIn;
+    }
+  | {
+      type: EdgeType.RemovedIn;
     };
 
 ////////////////////////////////////////////////////////////////////////////////
