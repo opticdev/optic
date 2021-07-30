@@ -348,7 +348,12 @@ impl<'a> ShapeQueries<'a> {
       .collect()
   }
 
-  pub fn resolve_field_id(&self, shape_id: &ShapeId, field_name: &String) -> Option<FieldId> {
+  pub fn resolve_field_id(
+    &self,
+    shape_id: &ShapeId,
+    field_name: &String,
+    include_removed: bool,
+  ) -> Option<FieldId> {
     let projection = &self.shape_projection;
 
     let shape_node_index = *projection
@@ -367,7 +372,7 @@ impl<'a> ShapeQueries<'a> {
               descriptor,
               ..
             } = field_node;
-            if descriptor.name == *field_name {
+            if descriptor.name == *field_name && (include_removed || !field_node.is_removed) {
               Some(field_id.clone())
             } else {
               // eprintln!(
@@ -392,11 +397,15 @@ impl<'a> ShapeQueries<'a> {
       })
   }
 
-  pub fn resolve_field_shape_node(&self, field_id: &FieldId) -> Option<ShapeId> {
+  pub fn resolve_field_shape_node(
+    &self,
+    field_id: &FieldId,
+    include_removed: bool,
+  ) -> Option<ShapeId> {
     let projection = &self.shape_projection;
 
     let field_node_index = *projection
-      .get_field_node_index(field_id, true)
+      .get_field_node_index(field_id, include_removed)
       .expect("field id to which field belongs should exist");
 
     projection

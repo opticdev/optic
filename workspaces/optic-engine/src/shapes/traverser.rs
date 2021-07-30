@@ -139,7 +139,7 @@ impl<'a> Traverser<'a> {
                   .map(|field_node| {
                     let field_shape_id = self
                       .shape_queries
-                      .resolve_field_shape_node(&field_node.field_id)
+                      .resolve_field_shape_node(&field_node.field_id, false)
                       .unwrap();
                     let field_core_shape_kind =
                       self.shape_queries.resolve_to_core_shape(&field_shape_id);
@@ -172,9 +172,10 @@ impl<'a> Traverser<'a> {
               //dbg!("shape-traverser: object choice", choice);
               if let ShapeKind::ObjectKind = &choice.core_shape_kind {
                 // - find field node by key in object's field node edges
-                let field_id_option = self
-                  .shape_queries
-                  .resolve_field_id(&choice.shape_id, &field_key);
+                let field_id_option =
+                  self
+                    .shape_queries
+                    .resolve_field_id(&choice.shape_id, &field_key, false);
                 if let None = field_id_option {
                   //dbg!("shape-traverser: no field id could be resolved");
                   return vec![];
@@ -183,7 +184,7 @@ impl<'a> Traverser<'a> {
                 let field_id = field_id_option.unwrap();
                 let field_shape_id = self
                   .shape_queries
-                  .resolve_field_shape_node(&field_id)
+                  .resolve_field_shape_node(&field_id, false)
                   .expect("field node should have an edge to a shape node describing its value");
                 //dbg!("shape-traverser: field_shape_id", &field_shape_id);
 

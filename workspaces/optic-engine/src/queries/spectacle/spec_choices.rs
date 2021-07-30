@@ -103,7 +103,7 @@ impl<'a> ShapeChoiceQueries<'a> {
           let fields = object_fields
             .map(|field_node| {
               let field_shape_id = queries
-                .resolve_field_shape_node(&field_node.field_id)
+                .resolve_field_shape_node(&field_node.field_id, true)
                 .expect("expected field shape to resolve");
 
               ObjectFieldChoice {
