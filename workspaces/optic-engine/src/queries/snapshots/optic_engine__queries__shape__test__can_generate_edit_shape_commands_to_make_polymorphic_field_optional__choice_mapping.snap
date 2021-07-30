@@ -44,7 +44,7 @@ expression: choice_mapping
         Primitive(
             PrimitiveChoice {
                 shape_id: "shape_1094",
-                json_type: Null,
+                json_type: Undefined,
             },
         ),
         Primitive(

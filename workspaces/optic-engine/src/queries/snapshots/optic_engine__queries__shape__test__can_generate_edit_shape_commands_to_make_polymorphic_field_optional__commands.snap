@@ -7,7 +7,7 @@ expression: "&edit_shape_commands"
         AddShape(
             AddShape {
                 shape_id: "shape_1094",
-                base_shape_id: "$nullable",
+                base_shape_id: "$optional",
                 name: "",
             },
         ),
@@ -23,7 +23,7 @@ expression: "&edit_shape_commands"
                                 shape_id: "one_of_shape_1",
                             },
                         ),
-                        consuming_parameter_id: "$nullableInner",
+                        consuming_parameter_id: "$optionalInner",
                     },
                 ),
             },

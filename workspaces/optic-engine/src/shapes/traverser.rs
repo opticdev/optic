@@ -290,20 +290,6 @@ impl ShapeTrail {
     new_trail
   }
 
-  pub fn with_optional(&self, optional_shape_id: ShapeId, subject_shape_id: ShapeId) -> Self {
-    let mut new_trail = self.clone();
-    new_trail.path.push(ShapeTrailPathComponent::OptionalTrail {
-      shape_id: optional_shape_id.clone(),
-    });
-    new_trail
-      .path
-      .push(ShapeTrailPathComponent::OptionalItemTrail {
-        shape_id: optional_shape_id,
-        inner_shape_id: subject_shape_id,
-      });
-    new_trail
-  }
-
   pub fn is_field(&self) -> bool {
     matches!(
       self.path.last(),

@@ -445,7 +445,7 @@ impl<'a> ShapeQueries<'a> {
   pub fn edit_shape_commands(
     &'a self,
     shape_trail: &ShapeTrail,
-    required_kinds: impl IntoIterator<Item = &'a ShapeKind>,
+    requested_kinds: impl IntoIterator<Item = &'a ShapeKind>,
     id_generator: &mut impl SpecIdGenerator,
   ) -> Option<impl Iterator<Item = ShapeCommand>> {
     let current_trail_choices = self.list_trail_choices(shape_trail);
@@ -480,7 +480,7 @@ impl<'a> ShapeQueries<'a> {
       None
     }?; // nothing to update if there isn't a subject
 
-    let required_kinds: BTreeSet<_> = required_kinds
+    let required_kinds: BTreeSet<_> = requested_kinds
       .into_iter()
       .filter(|kind| togglable_kinds.contains(kind))
       .cloned()
@@ -751,7 +751,7 @@ mod test {
         parent_object_shape_id: String::from("object_shape_1"),
       },
     );
-    let required_kinds = vec![ShapeKind::StringKind, ShapeKind::NullableKind];
+    let required_kinds = vec![ShapeKind::StringKind, ShapeKind::NullableKind]; // string kind should be filtered out
     let edit_shape_commands = shape_queries
       .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
       .expect("field should be able to be made nullable and optional")
@@ -841,7 +841,7 @@ mod test {
         parent_object_shape_id: String::from("object_shape_1"),
       },
     );
-    let required_kinds = vec![ShapeKind::NullableKind];
+    let required_kinds = vec![ShapeKind::OptionalKind];
     let edit_shape_commands = shape_queries
       .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
       .expect("field should be able to be made nullable and optional")
@@ -889,7 +889,7 @@ mod test {
     let required_kinds = vec![];
     let edit_shape_commands = shape_queries
       .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
-      .expect("field should be able to be made nullable and optional")
+      .expect("field should be able to be made required")
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
