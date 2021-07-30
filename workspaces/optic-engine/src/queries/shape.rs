@@ -414,6 +414,7 @@ impl<'a> ShapeQueries<'a> {
   pub fn resolve_shape_field_id_and_names(
     &self,
     shape_id: &ShapeId,
+    include_removed: bool,
   ) -> impl Iterator<Item = (&FieldId, &String)> {
     let projection = &self.shape_projection;
 
@@ -422,7 +423,7 @@ impl<'a> ShapeQueries<'a> {
       .expect("shape id for which to find field nodes should exist");
 
     projection
-      .get_shape_field_nodes(object_node_index, false)
+      .get_shape_field_nodes(object_node_index, include_removed)
       .unwrap()
       .map(|field_node| {
         let FieldNode {

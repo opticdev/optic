@@ -131,7 +131,7 @@ impl<'a> Traverser<'a> {
               // - find field node by key in object's field node edges
               let field_ids = self
                 .shape_queries
-                .resolve_shape_field_id_and_names(&choice.shape_id);
+                .resolve_shape_field_id_and_names(&choice.shape_id, false);
 
               (
                 choice,

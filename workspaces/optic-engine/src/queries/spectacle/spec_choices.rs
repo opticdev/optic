@@ -98,7 +98,7 @@ impl<'a> ShapeChoiceQueries<'a> {
       .into_iter()
       .map(move |choice| match choice.core_shape_kind {
         ShapeKind::ObjectKind => {
-          let object_fields = queries.resolve_shape_field_id_and_names(&choice.shape_id);
+          let object_fields = queries.resolve_shape_field_id_and_names(&choice.shape_id, true);
           let fields = object_fields
             .map(|(field_id, name)| {
               let field_shape_id = queries
