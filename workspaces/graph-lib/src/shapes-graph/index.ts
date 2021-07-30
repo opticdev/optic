@@ -53,6 +53,7 @@ type FieldNode = {
     descriptor: {
       name: string;
     };
+    isRemoved: boolean; // TODO check that this is returned as we expect
   };
 };
 

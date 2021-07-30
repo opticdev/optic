@@ -30,6 +30,7 @@ pub struct ObjectFieldChoice {
   name: String,
   field_id: FieldId,
   shape_id: ShapeId,
+  is_removed: bool,
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -98,17 +99,18 @@ impl<'a> ShapeChoiceQueries<'a> {
       .into_iter()
       .map(move |choice| match choice.core_shape_kind {
         ShapeKind::ObjectKind => {
-          let object_fields = queries.resolve_shape_field_id_and_names(&choice.shape_id, true);
+          let object_fields = queries.resolve_shape_fields_nodes(&choice.shape_id, true);
           let fields = object_fields
-            .map(|(field_id, name)| {
+            .map(|field_node| {
               let field_shape_id = queries
-                .resolve_field_shape_node(field_id)
+                .resolve_field_shape_node(&field_node.field_id)
                 .expect("expected field shape to resolve");
 
               ObjectFieldChoice {
-                field_id: field_id.clone(),
+                field_id: field_node.field_id.clone(),
                 shape_id: field_shape_id,
-                name: name.clone(),
+                name: field_node.descriptor.name.clone(),
+                is_removed: field_node.is_removed,
               }
             })
             .collect();

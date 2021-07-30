@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+source: workspaces/optic-engine/tests/interaction-diff-use-cases.rs
 expression: "&spec_projection.shape().to_choice_mapping()"
 ---
 {
@@ -39,11 +39,13 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "price",
                         field_id: "baseline-field_4",
                         shape_id: "baseline-shape_7",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "address",
                         field_id: "baseline-field_3",
                         shape_id: "baseline-shape_5",
+                        is_removed: false,
                     },
                 ],
             },

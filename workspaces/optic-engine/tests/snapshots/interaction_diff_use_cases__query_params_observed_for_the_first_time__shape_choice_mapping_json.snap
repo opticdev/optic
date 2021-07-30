@@ -39,22 +39,26 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "task",
           "fieldId": "field_tToOrayR7C",
-          "shapeId": "shape_s59DPL1y4C"
+          "shapeId": "shape_s59DPL1y4C",
+          "isRemoved": false
         },
         {
           "name": "isDone",
           "fieldId": "field_ce28JLQRAU",
-          "shapeId": "shape_qvKmGxh-nZ"
+          "shapeId": "shape_qvKmGxh-nZ",
+          "isRemoved": false
         },
         {
           "name": "id",
           "fieldId": "field_Cu-cFjI4FI",
-          "shapeId": "shape_xXBDmbay66"
+          "shapeId": "shape_xXBDmbay66",
+          "isRemoved": false
         },
         {
           "name": "dueDate",
           "fieldId": "field_uOKkB-HlmR",
-          "shapeId": "shape_9CwetZOv0K"
+          "shapeId": "shape_9CwetZOv0K",
+          "isRemoved": false
         }
       ]
     }

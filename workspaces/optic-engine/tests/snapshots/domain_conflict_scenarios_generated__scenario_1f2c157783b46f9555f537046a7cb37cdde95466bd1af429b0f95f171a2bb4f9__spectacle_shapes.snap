@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+source: workspaces/optic-engine/tests/domain-conflict-scenarios-generated.rs
 expression: "&spec_projection.shape().to_choice_mapping()"
 ---
 {
@@ -54,36 +54,43 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "cars",
                         field_id: "field_9JoXLW4PMX",
                         shape_id: "shape_m0tBaSSxY5",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "color",
                         field_id: "field_0Gsxw9zhsc",
                         shape_id: "shape_UmdGwe9ZXw",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "rank",
                         field_id: "field_vgnTR30nGU",
                         shape_id: "shape_oXDbLBSNB3",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "color",
                         field_id: "field_CqWz6xVFHb",
                         shape_id: "shape_KGAzNVDmp3",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "title",
                         field_id: "field_eMDZZdHr0p",
                         shape_id: "shape_N0zGjTOmjb",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "id",
                         field_id: "field_agNCpLfAQW",
                         shape_id: "shape_vjc8zOCKL7",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "author",
                         field_id: "field_BbqlNm0IrO",
                         shape_id: "shape_MuzY5JgqlX",
+                        is_removed: false,
                     },
                 ],
             },

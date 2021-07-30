@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+source: workspaces/optic-engine/tests/interaction-diff-use-cases.rs
 expression: "&spec_projection.shape().to_choice_mapping()"
 ---
 {
@@ -13,6 +13,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "location",
                         field_id: "field_7",
                         shape_id: "shape_9",
+                        is_removed: false,
                     },
                 ],
             },
@@ -69,11 +70,13 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "long",
                         field_id: "field_3",
                         shape_id: "shape_4",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "lat",
                         field_id: "field_2",
                         shape_id: "shape_3",
+                        is_removed: false,
                     },
                 ],
             },
@@ -95,11 +98,13 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "long",
                         field_id: "field_3",
                         shape_id: "shape_4",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "lat",
                         field_id: "field_2",
                         shape_id: "shape_3",
+                        is_removed: false,
                     },
                 ],
             },
@@ -123,16 +128,19 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "population",
                         field_id: "field_5",
                         shape_id: "shape_7",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "coordinates",
                         field_id: "field_4",
                         shape_id: "shape_6",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "city",
                         field_id: "field_1",
                         shape_id: "shape_2",
+                        is_removed: false,
                     },
                 ],
             },
@@ -148,6 +156,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "principality",
                         field_id: "field_6",
                         shape_id: "shape_8",
+                        is_removed: false,
                     },
                 ],
             },

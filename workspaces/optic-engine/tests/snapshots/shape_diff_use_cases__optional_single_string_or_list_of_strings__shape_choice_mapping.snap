@@ -36,6 +36,7 @@ expression: "&spec.shape().to_choice_mapping()"
                         name: "id",
                         field_id: "field_wDHyYzkU0V",
                         shape_id: "shape_UBgQQWw_sp",
+                        is_removed: false,
                     },
                 ],
             },

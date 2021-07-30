@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+source: workspaces/optic-engine/tests/interaction-diff-use-cases.rs
 expression: "&spec_projection.shape().to_choice_mapping()"
 ---
 {
@@ -13,16 +13,19 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "stats",
                         field_id: "field_6",
                         shape_id: "shape_9",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "rivals",
                         field_id: "field_4",
                         shape_id: "shape_7",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "name",
                         field_id: "field_3",
                         shape_id: "shape_4",
+                        is_removed: false,
                     },
                 ],
             },
@@ -71,11 +74,13 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "last",
                         field_id: "field_2",
                         shape_id: "shape_3",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "first",
                         field_id: "field_1",
                         shape_id: "shape_2",
+                        is_removed: false,
                     },
                 ],
             },
@@ -116,6 +121,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "rank",
                         field_id: "field_5",
                         shape_id: "shape_8",
+                        is_removed: false,
                     },
                 ],
             },

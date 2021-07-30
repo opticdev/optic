@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+source: workspaces/optic-engine/tests/interaction-diff-use-cases.rs
 expression: "&spec_projection.shape().to_choice_mapping()"
 ---
 {
@@ -19,37 +19,44 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "xmlns",
           "fieldId": "field_u20HS5kyf1",
-          "shapeId": "shape_7bGGTfwuUs"
+          "shapeId": "shape_7bGGTfwuUs",
+          "isRemoved": false
         },
         {
           "name": "url",
           "fieldId": "field_bCm0zHsqCa",
-          "shapeId": "shape_4l2V7bUzNQ"
+          "shapeId": "shape_4l2V7bUzNQ",
+          "isRemoved": false
         },
         {
           "name": "total",
           "fieldId": "field_dlVIugfUjy",
-          "shapeId": "shape_7okUlcsfTe"
+          "shapeId": "shape_7okUlcsfTe",
+          "isRemoved": false
         },
         {
           "name": "series",
           "fieldId": "field_HHoUcbcxiY",
-          "shapeId": "shape_xMMQP7RnaR"
+          "shapeId": "shape_xMMQP7RnaR",
+          "isRemoved": false
         },
         {
           "name": "offset",
           "fieldId": "field_AJm7jNHyxN",
-          "shapeId": "shape_OsCK29Ako2"
+          "shapeId": "shape_OsCK29Ako2",
+          "isRemoved": false
         },
         {
           "name": "limit",
           "fieldId": "field_D2sd46FKwj",
-          "shapeId": "shape_0Z1KxFx3Q3"
+          "shapeId": "shape_0Z1KxFx3Q3",
+          "isRemoved": false
         },
         {
           "name": "RaceTable",
           "fieldId": "field_I25Vs4cAAF",
-          "shapeId": "shape_HBb7JQz6nd"
+          "shapeId": "shape_HBb7JQz6nd",
+          "isRemoved": false
         }
       ]
     }
@@ -63,42 +70,50 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "url",
           "fieldId": "field_5vrGHyf7ZM",
-          "shapeId": "shape_fj2yWpRDEh"
+          "shapeId": "shape_fj2yWpRDEh",
+          "isRemoved": false
         },
         {
           "name": "time",
           "fieldId": "field_EOHqqOsyYy",
-          "shapeId": "shape_vtcch5ZDVh"
+          "shapeId": "shape_vtcch5ZDVh",
+          "isRemoved": false
         },
         {
           "name": "season",
           "fieldId": "field_fxqkg1XvG1",
-          "shapeId": "shape_JqT7NUslk6"
+          "shapeId": "shape_JqT7NUslk6",
+          "isRemoved": false
         },
         {
           "name": "round",
           "fieldId": "field_tHi1Gwb8Ku",
-          "shapeId": "shape_i61BOAwOhw"
+          "shapeId": "shape_i61BOAwOhw",
+          "isRemoved": false
         },
         {
           "name": "raceName",
           "fieldId": "field_ITFL2jMB8x",
-          "shapeId": "shape_qqIHC6xDVH"
+          "shapeId": "shape_qqIHC6xDVH",
+          "isRemoved": false
         },
         {
           "name": "date",
           "fieldId": "field_Uh902Vk78C",
-          "shapeId": "shape_h8jdPLNKsp"
+          "shapeId": "shape_h8jdPLNKsp",
+          "isRemoved": false
         },
         {
           "name": "Results",
           "fieldId": "field_zOCRycvAZJ",
-          "shapeId": "shape_3qED1KRQhg"
+          "shapeId": "shape_3qED1KRQhg",
+          "isRemoved": false
         },
         {
           "name": "Circuit",
           "fieldId": "field_s68MXfY4fa",
-          "shapeId": "shape_SjcBKS9X84"
+          "shapeId": "shape_SjcBKS9X84",
+          "isRemoved": false
         }
       ]
     }
@@ -205,22 +220,26 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "rank",
           "fieldId": "field_WnKwfz5il8",
-          "shapeId": "shape_cqBVUMcF7a"
+          "shapeId": "shape_cqBVUMcF7a",
+          "isRemoved": false
         },
         {
           "name": "lap",
           "fieldId": "field_1LCpA0S0dv",
-          "shapeId": "shape_fzqDsTcmuM"
+          "shapeId": "shape_fzqDsTcmuM",
+          "isRemoved": false
         },
         {
           "name": "Time",
           "fieldId": "field_aTz005ocl8",
-          "shapeId": "shape_Hkes6mW059"
+          "shapeId": "shape_Hkes6mW059",
+          "isRemoved": false
         },
         {
           "name": "AverageSpeed",
           "fieldId": "field_dGAokm0W6a",
-          "shapeId": "shape_Mz0Bk8LJx4"
+          "shapeId": "shape_Mz0Bk8LJx4",
+          "isRemoved": false
         }
       ]
     }
@@ -241,7 +260,8 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "MRData",
           "fieldId": "field_AfS6EZ0kL3",
-          "shapeId": "shape_1K7h84XwT6"
+          "shapeId": "shape_1K7h84XwT6",
+          "isRemoved": false
         }
       ]
     }
@@ -269,17 +289,20 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "season",
           "fieldId": "field_twka43JljA",
-          "shapeId": "shape_Gs1LzYEfCQ"
+          "shapeId": "shape_Gs1LzYEfCQ",
+          "isRemoved": false
         },
         {
           "name": "driverId",
           "fieldId": "field_44RBXlpcQJ",
-          "shapeId": "shape_9nsoVJbTP1"
+          "shapeId": "shape_9nsoVJbTP1",
+          "isRemoved": false
         },
         {
           "name": "Races",
           "fieldId": "field_pwfcDq2meR",
-          "shapeId": "shape_oCz30NI4Be"
+          "shapeId": "shape_oCz30NI4Be",
+          "isRemoved": false
         }
       ]
     }
@@ -293,7 +316,8 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "time",
           "fieldId": "field_6ydB4IrZlc",
-          "shapeId": "shape_3Xq1EaSQkc"
+          "shapeId": "shape_3Xq1EaSQkc",
+          "isRemoved": false
         }
       ]
     }
@@ -321,22 +345,26 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "url",
           "fieldId": "field_TkpOoAcXqQ",
-          "shapeId": "shape_oHbu87Sp9N"
+          "shapeId": "shape_oHbu87Sp9N",
+          "isRemoved": false
         },
         {
           "name": "nationality",
           "fieldId": "field_rUJm7Tpubm",
-          "shapeId": "shape_Y8rkTAcuZE"
+          "shapeId": "shape_Y8rkTAcuZE",
+          "isRemoved": false
         },
         {
           "name": "name",
           "fieldId": "field_GSf561xjeR",
-          "shapeId": "shape_1j3n4HJX9Q"
+          "shapeId": "shape_1j3n4HJX9Q",
+          "isRemoved": false
         },
         {
           "name": "constructorId",
           "fieldId": "field_s6VsXMW0us",
-          "shapeId": "shape_kaSMMlXLVr"
+          "shapeId": "shape_kaSMMlXLVr",
+          "isRemoved": false
         }
       ]
     }
@@ -364,12 +392,14 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "units",
           "fieldId": "field_5Zv3SxFPOU",
-          "shapeId": "shape_iIDIvLCcfS"
+          "shapeId": "shape_iIDIvLCcfS",
+          "isRemoved": false
         },
         {
           "name": "speed",
           "fieldId": "field_o5ULX5rah5",
-          "shapeId": "shape_g4w0rcshvo"
+          "shapeId": "shape_g4w0rcshvo",
+          "isRemoved": false
         }
       ]
     }
@@ -397,42 +427,50 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "url",
           "fieldId": "field_81jKaGGrKR",
-          "shapeId": "shape_LogwGfZ6dt"
+          "shapeId": "shape_LogwGfZ6dt",
+          "isRemoved": false
         },
         {
           "name": "permanentNumber",
           "fieldId": "field_hVjqCtul7Q",
-          "shapeId": "shape_rJTgdHbZb7"
+          "shapeId": "shape_rJTgdHbZb7",
+          "isRemoved": false
         },
         {
           "name": "nationality",
           "fieldId": "field_jdFc2OsRqK",
-          "shapeId": "shape_dHPixDTUHS"
+          "shapeId": "shape_dHPixDTUHS",
+          "isRemoved": false
         },
         {
           "name": "givenName",
           "fieldId": "field_8H0yrYYep1",
-          "shapeId": "shape_y7BytS15uN"
+          "shapeId": "shape_y7BytS15uN",
+          "isRemoved": false
         },
         {
           "name": "familyName",
           "fieldId": "field_9snl3gNh4X",
-          "shapeId": "shape_hqbqzPsf3k"
+          "shapeId": "shape_hqbqzPsf3k",
+          "isRemoved": false
         },
         {
           "name": "driverId",
           "fieldId": "field_7J5ypaUHV9",
-          "shapeId": "shape_HA1BOdtyPQ"
+          "shapeId": "shape_HA1BOdtyPQ",
+          "isRemoved": false
         },
         {
           "name": "dateOfBirth",
           "fieldId": "field_IlsI9NRyiz",
-          "shapeId": "shape_O0T6r1aNzJ"
+          "shapeId": "shape_O0T6r1aNzJ",
+          "isRemoved": false
         },
         {
           "name": "code",
           "fieldId": "field_9SnD9jv8Tl",
-          "shapeId": "shape_hWdV0MH64c"
+          "shapeId": "shape_hWdV0MH64c",
+          "isRemoved": false
         }
       ]
     }
@@ -446,22 +484,26 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "url",
           "fieldId": "field_dw1hKLcEMo",
-          "shapeId": "shape_wlrayc7Z9k"
+          "shapeId": "shape_wlrayc7Z9k",
+          "isRemoved": false
         },
         {
           "name": "circuitName",
           "fieldId": "field_uvJluUP3ut",
-          "shapeId": "shape_TErEvQDRaw"
+          "shapeId": "shape_TErEvQDRaw",
+          "isRemoved": false
         },
         {
           "name": "circuitId",
           "fieldId": "field_ptSwJsy7tI",
-          "shapeId": "shape_K6Xw9fkWDL"
+          "shapeId": "shape_K6Xw9fkWDL",
+          "isRemoved": false
         },
         {
           "name": "Location",
           "fieldId": "field_qFQP5yfXhW",
-          "shapeId": "shape_mJS8YvoM93"
+          "shapeId": "shape_mJS8YvoM93",
+          "isRemoved": false
         }
       ]
     }
@@ -482,57 +524,68 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "status",
           "fieldId": "field_9dSuRtTTxG",
-          "shapeId": "shape_DHB4lACdul"
+          "shapeId": "shape_DHB4lACdul",
+          "isRemoved": false
         },
         {
           "name": "positionText",
           "fieldId": "field_VuPEcyF1vf",
-          "shapeId": "shape_9MGrgzPhOw"
+          "shapeId": "shape_9MGrgzPhOw",
+          "isRemoved": false
         },
         {
           "name": "position",
           "fieldId": "field_c0MactNj2A",
-          "shapeId": "shape_xlbP1rucqo"
+          "shapeId": "shape_xlbP1rucqo",
+          "isRemoved": false
         },
         {
           "name": "points",
           "fieldId": "field_vsB4s8Pe09",
-          "shapeId": "shape_txo6ZqOtpk"
+          "shapeId": "shape_txo6ZqOtpk",
+          "isRemoved": false
         },
         {
           "name": "number",
           "fieldId": "field_aCn1z3SwaT",
-          "shapeId": "shape_DEfFaB2sUk"
+          "shapeId": "shape_DEfFaB2sUk",
+          "isRemoved": false
         },
         {
           "name": "laps",
           "fieldId": "field_H4Pl7Ds9uR",
-          "shapeId": "shape_E3wIBYUTxz"
+          "shapeId": "shape_E3wIBYUTxz",
+          "isRemoved": false
         },
         {
           "name": "grid",
           "fieldId": "field_EctFv7oFaj",
-          "shapeId": "shape_M1u1THiLg5"
+          "shapeId": "shape_M1u1THiLg5",
+          "isRemoved": false
         },
         {
           "name": "Time",
           "fieldId": "field_jBer8hMnm5",
-          "shapeId": "shape_ZaQCM40d39"
+          "shapeId": "shape_ZaQCM40d39",
+          "isRemoved": false
         },
         {
           "name": "FastestLap",
           "fieldId": "field_lKkPHZp1kM",
-          "shapeId": "shape_DTHG1XLMPV"
+          "shapeId": "shape_DTHG1XLMPV",
+          "isRemoved": false
         },
         {
           "name": "Driver",
           "fieldId": "field_9NjjQ8XqiC",
-          "shapeId": "shape_Q1vmb3Yk2o"
+          "shapeId": "shape_Q1vmb3Yk2o",
+          "isRemoved": false
         },
         {
           "name": "Constructor",
           "fieldId": "field_oD4xnLYdGS",
-          "shapeId": "shape_KS7FqcnW2A"
+          "shapeId": "shape_KS7FqcnW2A",
+          "isRemoved": false
         }
       ]
     }
@@ -560,12 +613,14 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "time",
           "fieldId": "field_aI3iJKd8d8",
-          "shapeId": "shape_ixSsYcqP04"
+          "shapeId": "shape_ixSsYcqP04",
+          "isRemoved": false
         },
         {
           "name": "millis",
           "fieldId": "field_gOoqPkowDP",
-          "shapeId": "shape_5pwI4nMken"
+          "shapeId": "shape_5pwI4nMken",
+          "isRemoved": false
         }
       ]
     }
@@ -691,22 +746,26 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "long",
           "fieldId": "field_bucD5E3tTS",
-          "shapeId": "shape_6PiVFtClLo"
+          "shapeId": "shape_6PiVFtClLo",
+          "isRemoved": false
         },
         {
           "name": "locality",
           "fieldId": "field_f7TctEJF0J",
-          "shapeId": "shape_cnvPSZhe85"
+          "shapeId": "shape_cnvPSZhe85",
+          "isRemoved": false
         },
         {
           "name": "lat",
           "fieldId": "field_npavLXSDbj",
-          "shapeId": "shape_iTjHeinxZf"
+          "shapeId": "shape_iTjHeinxZf",
+          "isRemoved": false
         },
         {
           "name": "country",
           "fieldId": "field_rmmGg6vaf7",
-          "shapeId": "shape_dHCx3UqvZy"
+          "shapeId": "shape_dHCx3UqvZy",
+          "isRemoved": false
         }
       ]
     }

@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/e2e-scenarios.rs
+source: workspaces/optic-engine/tests/interaction-diff-use-cases.rs
 expression: "&spec_projection.shape().to_choice_mapping()"
 ---
 {
@@ -12,7 +12,8 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "location",
           "fieldId": "field_7",
-          "shapeId": "shape_9"
+          "shapeId": "shape_9",
+          "isRemoved": false
         }
       ]
     }
@@ -62,12 +63,14 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "long",
           "fieldId": "field_3",
-          "shapeId": "shape_4"
+          "shapeId": "shape_4",
+          "isRemoved": false
         },
         {
           "name": "lat",
           "fieldId": "field_2",
-          "shapeId": "shape_3"
+          "shapeId": "shape_3",
+          "isRemoved": false
         }
       ]
     }
@@ -86,12 +89,14 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "long",
           "fieldId": "field_3",
-          "shapeId": "shape_4"
+          "shapeId": "shape_4",
+          "isRemoved": false
         },
         {
           "name": "lat",
           "fieldId": "field_2",
-          "shapeId": "shape_3"
+          "shapeId": "shape_3",
+          "isRemoved": false
         }
       ]
     }
@@ -112,17 +117,20 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "population",
           "fieldId": "field_5",
-          "shapeId": "shape_7"
+          "shapeId": "shape_7",
+          "isRemoved": false
         },
         {
           "name": "coordinates",
           "fieldId": "field_4",
-          "shapeId": "shape_6"
+          "shapeId": "shape_6",
+          "isRemoved": false
         },
         {
           "name": "city",
           "fieldId": "field_1",
-          "shapeId": "shape_2"
+          "shapeId": "shape_2",
+          "isRemoved": false
         }
       ]
     }
@@ -136,7 +144,8 @@ expression: "&spec_projection.shape().to_choice_mapping()"
         {
           "name": "principality",
           "fieldId": "field_6",
-          "shapeId": "shape_8"
+          "shapeId": "shape_8",
+          "isRemoved": false
         }
       ]
     }

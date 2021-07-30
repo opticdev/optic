@@ -129,23 +129,23 @@ impl<'a> Traverser<'a> {
           .map(|choice| {
             if let ShapeKind::ObjectKind = &choice.core_shape_kind {
               // - find field node by key in object's field node edges
-              let field_ids = self
+              let field_nodes = self
                 .shape_queries
-                .resolve_shape_field_id_and_names(&choice.shape_id, false);
+                .resolve_shape_fields_nodes(&choice.shape_id, false);
 
               (
                 choice,
-                field_ids
-                  .map(|(field_id, field_name)| {
+                field_nodes
+                  .map(|field_node| {
                     let field_shape_id = self
                       .shape_queries
-                      .resolve_field_shape_node(&field_id)
+                      .resolve_field_shape_node(&field_node.field_id)
                       .unwrap();
                     let field_core_shape_kind =
                       self.shape_queries.resolve_to_core_shape(&field_shape_id);
                     (
-                      field_name.clone(),
-                      field_id.clone(),
+                      field_node.descriptor.name.clone(),
+                      field_node.field_id.clone(),
                       field_shape_id.clone(),
                       field_core_shape_kind,
                     )

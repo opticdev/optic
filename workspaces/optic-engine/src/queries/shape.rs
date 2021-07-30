@@ -411,11 +411,11 @@ impl<'a> ShapeQueries<'a> {
       })
   }
 
-  pub fn resolve_shape_field_id_and_names(
+  pub fn resolve_shape_fields_nodes(
     &self,
     shape_id: &ShapeId,
     include_removed: bool,
-  ) -> impl Iterator<Item = (&FieldId, &String)> {
+  ) -> impl Iterator<Item = &FieldNode> {
     let projection = &self.shape_projection;
 
     let object_node_index = &projection
@@ -425,14 +425,6 @@ impl<'a> ShapeQueries<'a> {
     projection
       .get_shape_field_nodes(object_node_index, include_removed)
       .unwrap()
-      .map(|field_node| {
-        let FieldNode {
-          field_id,
-          descriptor,
-          ..
-        } = field_node;
-        (field_id, &descriptor.name)
-      })
   }
 
   pub fn remove_field_commands(

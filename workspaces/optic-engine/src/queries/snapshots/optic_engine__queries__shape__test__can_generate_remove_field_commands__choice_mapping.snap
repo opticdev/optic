@@ -13,6 +13,7 @@ expression: choice_mapping
                         name: "lastName",
                         field_id: "field_1",
                         shape_id: "string_shape_1",
+                        is_removed: true,
                     },
                 ],
             },

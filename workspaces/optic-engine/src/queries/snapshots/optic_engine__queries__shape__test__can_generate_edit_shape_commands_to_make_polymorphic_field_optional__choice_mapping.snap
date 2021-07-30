@@ -21,6 +21,7 @@ expression: choice_mapping
                         name: "lastName",
                         field_id: "field_1",
                         shape_id: "shape_1094",
+                        is_removed: false,
                     },
                 ],
             },

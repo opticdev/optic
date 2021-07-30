@@ -1,5 +1,5 @@
 ---
-source: workspaces/optic-engine-native/tests/domain-conflict-scenarios-generated.rs
+source: workspaces/optic-engine/tests/domain-conflict-scenarios-generated.rs
 expression: "&spec_projection.shape().to_choice_mapping()"
 ---
 {
@@ -48,6 +48,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "name",
                         field_id: "field_KhuvysQCWY",
                         shape_id: "shape_sgKygyPuZL",
+                        is_removed: false,
                     },
                 ],
             },
@@ -113,6 +114,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "name",
                         field_id: "field_SXC48X1nmc",
                         shape_id: "shape_iQB4J3IWzb",
+                        is_removed: false,
                     },
                 ],
             },
@@ -162,16 +164,19 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "postId",
                         field_id: "field_VMgg5gTvnO",
                         shape_id: "shape_VXfig63hnr",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "id",
                         field_id: "field_UMhLN288Z3",
                         shape_id: "shape_If49etudqF",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "body",
                         field_id: "field_tZbQYoQmxt",
                         shape_id: "shape_6dDj0Z3HkT",
+                        is_removed: false,
                     },
                 ],
             },
@@ -187,16 +192,19 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "title",
                         field_id: "field_iYJ7dR4ihV",
                         shape_id: "shape_Mh5lZMGWAO",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "id",
                         field_id: "field_gGefUJrPwF",
                         shape_id: "shape_u6waaccsqU",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "author",
                         field_id: "field_jvGuxAjlRn",
                         shape_id: "shape_RvMMDY4eOD",
+                        is_removed: false,
                     },
                 ],
             },
@@ -228,16 +236,19 @@ expression: "&spec_projection.shape().to_choice_mapping()"
                         name: "title",
                         field_id: "field_pb75z9dypc",
                         shape_id: "shape_FIaVxhxPUW",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "id",
                         field_id: "field_CXHgTtjIPq",
                         shape_id: "shape_hnfXS9Vmns",
+                        is_removed: false,
                     },
                     ObjectFieldChoice {
                         name: "author",
                         field_id: "field_OCXyZL2Lyp",
                         shape_id: "shape_JH0cqjvNSd",
+                        is_removed: false,
                     },
                 ],
             },
