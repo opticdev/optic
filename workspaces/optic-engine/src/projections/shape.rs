@@ -449,6 +449,16 @@ impl ShapeProjection {
     }
   }
 
+  pub fn get_node_by_index(&self, node_index: &NodeIndex) -> Option<&Node> {
+    self.graph.node_weight(*node_index)
+  }
+
+  pub fn get_node_by_id(&self, node_id: &NodeId) -> Option<(NodeIndex, &Node)> {
+    let node_index = self.node_id_to_index.get(node_id)?;
+    let node = self.graph.node_weight(*node_index);
+    node.map(move |node| (*node_index, node))
+  }
+
   pub fn get_core_shape_node_index(&self, node_id: &NodeId) -> Option<&NodeIndex> {
     let node_index = self.node_id_to_index.get(node_id)?;
     let node = self.graph.node_weight(*node_index);
@@ -502,6 +512,29 @@ impl ShapeProjection {
     })?;
 
     Some(child_edge.source())
+  }
+
+  pub fn get_owner_node_index(&self, node_index: &NodeIndex) -> Option<NodeIndex> {
+    let mut edges = self
+      .graph
+      .edges_directed(*node_index, petgraph::Direction::Outgoing);
+    if let Some(owner_edge) = edges.find(|edge| match edge.weight() {
+      Edge::BelongsTo => true,
+      Edge::IsFieldOf => true,
+      _ => false,
+    }) {
+      Some(owner_edge.target())
+    } else {
+      None
+    }
+  }
+
+  pub fn get_owner_node(&self, node_index: &NodeIndex) -> Option<(NodeIndex, &Node)> {
+    let owner_node_index = self.get_owner_node_index(node_index)?;
+    self
+      .graph
+      .node_weight(owner_node_index)
+      .map(move |node| (owner_node_index, node))
   }
 
   //?

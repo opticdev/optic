@@ -432,6 +432,90 @@ impl<'a> ShapeQueries<'a> {
       })
   }
 
+  pub fn resolve_shape_trail(&self, shape_id: &ShapeId) -> Option<ShapeTrail> {
+    let mut next_node = self.shape_projection.get_node_by_id(shape_id);
+
+    let mut trail_components = vec![];
+    let mut root_shape_id = None;
+
+    while let Some((current_node_index, current_node)) = next_node.take() {
+      match current_node {
+        Node::Shape(shape_node) => {
+          let core_shape_kind = self.resolve_to_core_shape(&shape_node.shape_id);
+
+          match core_shape_kind {
+            ShapeKind::ListKind => {
+              unimplemented!("resolving of shape trail by list shape")
+            }
+            ShapeKind::ObjectKind => {
+              let shape_id = shape_node.shape_id.clone();
+              trail_components.push(ShapeTrailPathComponent::ObjectTrail { shape_id });
+            }
+            ShapeKind::OptionalKind => {
+              unimplemented!("resolving of shape trail by optional shape")
+            }
+            ShapeKind::OneOfKind => {
+              unimplemented!("resolving of shape trail by one of shape")
+            }
+            ShapeKind::NullableKind => {
+              unimplemented!("resolving of shape trail by nullable shape")
+            }
+
+            ShapeKind::BooleanKind
+            | ShapeKind::StringKind
+            | ShapeKind::NumberKind
+            | ShapeKind::UnknownKind => {
+              unimplemented!("resolving of shape trail by primitive shape")
+            }
+
+            ShapeKind::AnyKind
+            | ShapeKind::MapKind
+            | ShapeKind::IdentifierKind
+            | ShapeKind::ReferenceKind => {
+              unimplemented!("resolving of shape trail by complex typed shapes")
+            }
+          }
+
+          root_shape_id.replace(shape_node.shape_id.clone());
+          next_node = self.shape_projection.get_owner_node(&current_node_index);
+        }
+        Node::Field(field_node) => {
+          let field_id = field_node.field_id.clone();
+          let field_shape_id = self
+            .resolve_field_shape_node(&field_id)
+            .expect("a field should describe a shape");
+
+          let owner_node = self.shape_projection.get_owner_node(&current_node_index);
+          let parent_object_shape_id = match &owner_node {
+            Some((_, Node::Shape(object_shape_node))) => object_shape_node.shape_id.clone(),
+            _ => unreachable!("field nodes should be owned by their objects shape node"),
+          };
+
+          trail_components.push(ShapeTrailPathComponent::ObjectFieldTrail {
+            field_id,
+            field_shape_id,
+            parent_object_shape_id,
+          });
+
+          next_node = owner_node
+        }
+        Node::ShapeParameter(parameter_node) => {
+          unimplemented!("resolving of shape trail by shape parameter");
+          // TODO: consider supporting list items here
+
+          // next_node = self.shape_projection.get_owner_node(&current_node_index);
+        }
+        Node::BatchCommit(_) | Node::CoreShape(_) => {}
+      };
+    }
+
+    trail_components.reverse();
+    root_shape_id.map(move |root_shape_id| ShapeTrail {
+      root_shape_id,
+      path: trail_components,
+    })
+  }
+
   pub fn remove_field_commands(
     &self,
     field_id: &FieldId,
@@ -905,6 +989,85 @@ mod test {
       "can_generate_edit_shape_commands_to_make_optional_nullable_field_required__choice_mapping",
       choice_mapping
     );
+  }
+
+  #[test]
+  pub fn can_resolve_shape_trails_for_fields() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
+
+      // optional and nullable string field
+      { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
+      { "ShapeAdded": { "shapeId": "nullable_shape_1", "baseShapeId": "$nullable", "name": "" }},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "nullable_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "string_shape_1"}},"consumingParameterId": "$nullableInner" }}}},
+      { "ShapeAdded": { "shapeId": "optional_shape_1", "baseShapeId": "$optional", "name": "" }},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "optional_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "nullable_shape_1"}},"consumingParameterId": "$optionalInner" }}}},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "optional_shape_1"}} }},
+
+      // nested list of strings
+      { "ShapeAdded": { "shapeId": "list_shape_1", "baseShapeId": "$list", "name": "" }},
+      { "ShapeAdded": { "shapeId": "string_shape_2", "baseShapeId": "$string", "name": "" }},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "list_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "string_shape_2"}},"consumingParameterId": "$listItem" }}}},
+      { "FieldAdded": { "fieldId": "field_2", "shapeId": "object_shape_1", "name": "words", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_2", "shapeId": "list_shape_1"}} }},
+
+      // nested object
+      { "ShapeAdded": { "shapeId": "object_shape_2", "baseShapeId": "$object", "name": "" }},
+      { "ShapeAdded": { "shapeId": "boolean_shape_1", "baseShapeId": "$boolean", "name": "" }},
+      { "FieldAdded": { "fieldId": "field_3", "shapeId": "object_shape_2", "name": "flag", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_3", "shapeId": "boolean_shape_1"}} }},
+      { "FieldAdded": { "fieldId": "field_4", "shapeId": "object_shape_1", "name": "nestedObject", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_4", "shapeId": "object_shape_2"}} }},
+
+      // one of number or string
+      { "ShapeAdded": { "shapeId": "string_shape_3", "baseShapeId": "$string", "name": "" }},
+      { "ShapeAdded": { "shapeId": "number_shape_1", "baseShapeId": "$number", "name": "" }},
+      { "ShapeAdded": { "shapeId": "one_of_shape_1", "baseShapeId": "$oneOf", "name": "" }},
+      { "ShapeParameterAdded": { "shapeId": "one_of_shape_1", "shapeParameterId": "one_of_param_1", "name": "", "shapeDescriptor": { "ProviderInShape": {"shapeId": "one_of_shape_1","providerDescriptor": { "NoProvider": {} },"consumingParameterId": "one_of_param_1"}}}},
+      { "ShapeParameterAdded": { "shapeId": "one_of_shape_1", "shapeParameterId": "one_of_param_2", "name": "", "shapeDescriptor": { "ProviderInShape": {"shapeId": "one_of_shape_1","providerDescriptor": { "NoProvider": {} },"consumingParameterId": "one_of_param_2"}}}},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "one_of_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "string_shape_3"}},"consumingParameterId": "one_of_param_1" }}}},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "one_of_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "number_shape_1"}},"consumingParameterId": "one_of_param_2" }}}},
+      { "FieldAdded": { "fieldId": "field_5", "shapeId": "object_shape_1", "name": "nestedObject", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_5", "shapeId": "one_of_shape_1"}} }},
+
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    let shape_queries = ShapeQueries::new(spec_projection.shape());
+    dbg!(&petgraph::dot::Dot::with_config(
+      &spec_projection.shape().graph,
+      &[]
+    ));
+
+    let field_trail = shape_queries.resolve_shape_trail(&"field_1".to_owned());
+    assert_debug_snapshot!(
+      "can_resolve_shape_trails_for_fields__field_trail",
+      &field_trail
+    );
+
+    let nested_field_trail = shape_queries.resolve_shape_trail(&"field_3".to_owned());
+    assert_debug_snapshot!(
+      "can_resolve_shape_trails__nested_field_trail",
+      &nested_field_trail
+    );
+
+    // UNIMPLEMENTED
+    // let optional_shape_trail = shape_queries.resolve_shape_trail(&"optional_shape_1".to_owned());
+    // assert_debug_snapshot!(
+    //   "can_resolve_shape_trails__optional_shape_trail",
+    //   &optional_shape_trail
+    // );
+
+    // UNIMPLEMENTED
+    // let array_item_trail = shape_queries.resolve_shape_trail(&"string_shape_2".to_owned());
+    // assert_debug_snapshot!(
+    //   "can_resolve_shape_trails__array_item_trail",
+    //   &array_item_trail
+    // );
+
+    // UNIMPLEMENTED
+    // let one_of_trail = shape_queries.resolve_shape_trail(&"one_of_shape_1".to_owned());
+    // assert_debug_snapshot!(
+    //   "can_resolve_shape_trails__one_of_trail",
+    //   &one_of_trail
+    // );
   }
 
   fn assert_valid_commands(
