@@ -8,6 +8,7 @@ import {
   SpectacleChange,
 } from '../spectacleUtils';
 import { ShapeId, ReduxShape } from './types';
+import { ChangeType } from '<src>/types';
 
 const ShapeQuery = `
 query X($shapeId: ID! $sinceBatchCommitId: String) {
@@ -20,6 +21,7 @@ query X($shapeId: ID! $sinceBatchCommitId: String) {
         fieldId
         shapeId
         contributions
+        isRemoved
         changes(sinceBatchCommitId: $sinceBatchCommitId) {
           added
           changed
@@ -36,6 +38,7 @@ query X($shapeId: ID! $sinceBatchCommitId: String) {
 type SpectacleField = {
   name: string;
   fieldId: string;
+  isRemoved: boolean;
   shapeId: string;
   contributions: Record<string, string>;
   changes: SpectacleChange;
@@ -96,10 +99,14 @@ const fetchShapesAndChildren = async (
   spectacle: IForkableSpectacle,
   rootShapeId: string,
   sinceBatchCommitId?: string
-): Promise<Record<ShapeId, ReduxShape[]>> => {
+): Promise<{
+  shapeMap: Record<ShapeId, ReduxShape[]>;
+  changes: Record<string, ChangeType>;
+}> => {
   // TODO we might want to have access to the current store to
   // avoid fetching shapes we have already fetched
   const shapeMap: Record<ShapeId, ReduxShape[]> = {};
+  const changes: Record<string, ChangeType> = {};
 
   let stack: ShapeId[] = [rootShapeId];
 
@@ -129,13 +136,18 @@ const fetchShapesAndChildren = async (
             shapeId: shape.id,
             jsonType: JsonLike.OBJECT,
             asObject: {
-              fields: shape.asObject.fields.map((field) => ({
-                ...field,
-                changes:
-                  sinceBatchCommitId !== undefined
-                    ? convertSpectacleChangeToChangeType(field.changes)
-                    : null,
-              })),
+              fields: shape.asObject.fields.map((field) => {
+                const fieldChanges = convertSpectacleChangeToChangeType(
+                  field.changes
+                );
+                if (sinceBatchCommitId !== undefined && fieldChanges) {
+                  changes[field.fieldId] = fieldChanges;
+                }
+
+                return {
+                  ...field,
+                };
+              }),
             },
           };
           shapeMap[shape.id].push(reduxShape);
@@ -168,11 +180,14 @@ const fetchShapesAndChildren = async (
     }
   }
 
-  return shapeMap;
+  return { shapeMap, changes };
 };
 
 export const fetchShapes = createAsyncThunk<
-  Record<ShapeId, ReduxShape[]>,
+  {
+    shapeMap: Record<ShapeId, ReduxShape[]>;
+    changes: Record<string, ChangeType>;
+  },
   {
     spectacle: IForkableSpectacle;
     rootShapeId: string;
@@ -180,12 +195,12 @@ export const fetchShapes = createAsyncThunk<
   }
 >('FETCH_SHAPES', async ({ spectacle, rootShapeId, sinceBatchCommitId }) => {
   try {
-    const shapeMap = await fetchShapesAndChildren(
+    const shapes = await fetchShapesAndChildren(
       spectacle,
       rootShapeId,
       sinceBatchCommitId
     );
-    return shapeMap;
+    return shapes;
   } catch (e) {
     console.error(e);
     Sentry.captureException(e);

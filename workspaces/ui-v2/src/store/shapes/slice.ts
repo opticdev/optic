@@ -1,15 +1,17 @@
 import { createSlice, SerializedError } from '@reduxjs/toolkit';
 
-import { AsyncStatus } from '<src>/types';
+import { AsyncStatus, ChangeType } from '<src>/types';
 import { ShapeId, ReduxShape } from './types';
 import { fetchShapes } from './thunks';
 
 const initialState: {
   rootShapes: Record<ShapeId, AsyncStatus<ShapeId, SerializedError>>;
   shapeMap: Record<ShapeId, ReduxShape[]>;
+  changes: Record<string, ChangeType>;
 } = {
   rootShapes: {},
   shapeMap: {},
+  changes: {},
 };
 
 const shapesSlice = createSlice({
@@ -28,9 +30,11 @@ const shapesSlice = createSlice({
         loading: false,
         data: action.meta.arg.rootShapeId,
       };
-      for (const [shapeId, reduxShapes] of Object.entries(action.payload)) {
+      const { shapeMap, changes } = action.payload;
+      for (const [shapeId, reduxShapes] of Object.entries(shapeMap)) {
         state.shapeMap[shapeId] = reduxShapes;
       }
+      state.changes = changes;
     });
     builder.addCase(fetchShapes.rejected, (state, action) => {
       state.rootShapes[action.meta.arg.rootShapeId] = {

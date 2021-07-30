@@ -1,5 +1,4 @@
 import { JsonLike } from '@useoptic/optic-domain';
-import { ChangeType } from '<src>/types';
 
 export type ShapeId = string;
 
@@ -13,7 +12,7 @@ export type ReduxShape =
           fieldId: string;
           name: string;
           shapeId: string;
-          changes: ChangeType | null;
+          isRemoved: boolean;
           contributions: Record<string, string>;
         }[];
       };

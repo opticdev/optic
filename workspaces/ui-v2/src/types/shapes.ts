@@ -9,7 +9,7 @@ export interface IFieldRenderer {
   shapeId: string;
   shapeChoices: IShapeRenderer[];
   required: boolean;
-  changes: ChangeType | null;
+  changes?: ChangeType | null;
   contributions: Record<string, string>;
   additionalAttributes?: string[];
 }
