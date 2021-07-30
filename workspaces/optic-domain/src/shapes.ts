@@ -35,6 +35,7 @@ export type FieldShape = {
   name: string;
   fieldId: string;
   shapeId: string;
+  isRemoved: string;
 };
 
 // Matches optic-engine/src/projections/spectacle/shapes

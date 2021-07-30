@@ -669,9 +669,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             {}
         );
       },
-      isRemoved: (parent: FieldShape, _: {}, context: GraphQLContext) => {
-        // TODO FLEB - connect up to optic engine
-        return false;
+      isRemoved: (parent: FieldShape) => {
+        return parent.isRemoved;
       },
       commands: (parent: FieldShape) => {
         return {
