@@ -37,7 +37,9 @@ export const ShapeFetcher: FC<ShapeFetcherProps> = ({
       })
     );
   }, [dispatch, spectacle, rootShapeId, changesSinceBatchCommit]);
-  const shapesState = useAppSelector(selectors.getShapeRenderer(rootShapeId));
+  const shapesState = useAppSelector(
+    selectors.getShapeRenderer(rootShapeId, changesSinceBatchCommit)
+  );
 
   return shapesState.loading ? (
     <Loader title="Loading" />

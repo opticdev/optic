@@ -137,15 +137,17 @@ const fetchShapesAndChildren = async (
             jsonType: JsonLike.OBJECT,
             asObject: {
               fields: shape.asObject.fields.map((field) => {
-                const fieldChanges = convertSpectacleChangeToChangeType(
-                  field.changes
-                );
-                if (sinceBatchCommitId !== undefined && fieldChanges) {
+                const fieldChanges =
+                  sinceBatchCommitId !== undefined
+                    ? convertSpectacleChangeToChangeType(field.changes)
+                    : null;
+                if (fieldChanges) {
                   changes[field.fieldId] = fieldChanges;
                 }
 
                 return {
                   ...field,
+                  changes: fieldChanges,
                 };
               }),
             },

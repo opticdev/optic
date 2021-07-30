@@ -10,11 +10,17 @@ import {
   QueryParameters,
 } from '<src>/types';
 import { RootState } from '../root';
+import {
+  isItemVisible,
+  isItemVisibleForChangelog,
+} from './visibilitySelectors';
 
-export const getShapeRenderer = (rootShapeId: string) => (
-  state: RootState
-): AsyncStatus<IShapeRenderer[], SerializedError> => {
+export const getShapeRenderer = (
+  rootShapeId: string,
+  sinceBatchCommitId?: string
+) => (state: RootState): AsyncStatus<IShapeRenderer[], SerializedError> => {
   const shapeState = state.shapes.rootShapes[rootShapeId];
+  const isChangelogPage = sinceBatchCommitId !== undefined;
 
   if (!shapeState || shapeState.loading) {
     return {
@@ -46,23 +52,33 @@ export const getShapeRenderer = (rootShapeId: string) => (
           return {
             ...reduxShape,
             asObject: {
-              fields: reduxShape.asObject.fields.map((field) => {
-                const shapeChoices = resolveShape(field.shapeId);
-                const required = !shapeChoices.some(
-                  (i) => i.jsonType === JsonLike.UNDEFINED
-                );
-                return {
-                  ...field,
-                  shapeChoices: sortBy(
-                    shapeChoices.filter(
-                      (shapeChoice) =>
-                        shapeChoice.jsonType !== JsonLike.UNDEFINED
+              fields: reduxShape.asObject.fields
+                .map((field) => {
+                  const shapeChoices = resolveShape(field.shapeId);
+                  const required = !shapeChoices.some(
+                    (i) => i.jsonType === JsonLike.UNDEFINED
+                  );
+                  return {
+                    ...field,
+                    shapeChoices: sortBy(
+                      shapeChoices.filter(
+                        (shapeChoice) =>
+                          shapeChoice.jsonType !== JsonLike.UNDEFINED
+                      ),
+                      (shapeChoice) => shapeChoice.jsonType === JsonLike.NULL
                     ),
-                    (shapeChoice) => shapeChoice.jsonType === JsonLike.NULL
-                  ),
-                  required,
-                };
-              }),
+                    required,
+                  };
+                })
+                .filter((field) =>
+                  isChangelogPage
+                    ? isItemVisibleForChangelog(
+                        field,
+                        state.shapes.changes,
+                        (field) => field.fieldId
+                      )
+                    : isItemVisible(field)
+                ),
             },
           };
         } else if (reduxShape.jsonType === JsonLike.ARRAY) {

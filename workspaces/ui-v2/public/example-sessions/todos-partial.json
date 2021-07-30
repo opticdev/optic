@@ -2007,6 +2007,17 @@
       }
     },
     {
+      "FieldRemoved": {
+        "fieldId": "field_MxN4prqQaf",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "2cc302d2-c660-4362-9601-dc14fe69542c",
+          "createdAt": "2020-11-20T20:52:31.789Z"
+        }
+      }
+    },
+    {
       "BatchCommitEnded": {
         "batchId": "2cc302d2-c660-4362-9601-dc14fe69542c",
         "eventContext": {

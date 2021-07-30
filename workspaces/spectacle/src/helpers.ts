@@ -348,6 +348,15 @@ export function getFieldChanges(
     }
   }
 
+  for (const batchCommitId of deltaBatchCommits.keys()) {
+    for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
+      fieldId,
+      shapes.EdgeType.RemovedIn
+    ).results) {
+      if (node.result.id === batchCommitId)
+        return { ...results, removed: true };
+    }
+  }
   // If a field is an array, there may be changes related to the shape but not
   // the field itself.
   return checkForArrayChanges(
@@ -397,7 +406,6 @@ function checkForArrayChanges(
     }
   }
 
-  // This will not deal with array item changes
   for (const batchCommitId of deltaBatchCommits.keys()) {
     for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
       shapeId,
@@ -405,6 +413,16 @@ function checkForArrayChanges(
     ).results) {
       if (node.result.id === batchCommitId)
         return { ...results, changed: true };
+    }
+  }
+
+  for (const batchCommitId of deltaBatchCommits.keys()) {
+    for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
+      shapeId,
+      shapes.EdgeType.RemovedIn
+    ).results) {
+      if (node.result.id === batchCommitId)
+        return { ...results, removed: true };
     }
   }
 
