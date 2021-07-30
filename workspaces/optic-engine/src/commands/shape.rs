@@ -87,6 +87,15 @@ impl ShapeCommand {
     })
   }
 
+  pub fn set_field_shape(field_id: FieldId, field_shape_id: ShapeId) -> Self {
+    Self::SetFieldShape(SetFieldShape {
+      shape_descriptor: FieldShapeDescriptor::FieldShapeFromShape(FieldShapeFromShape {
+        field_id,
+        shape_id: field_shape_id
+      })
+    })
+  }
+
   pub fn remove_field(field_id: FieldId) -> Self {
     Self::RemoveField(RemoveField { field_id })
   }

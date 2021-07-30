@@ -1,9 +1,12 @@
-use crate::commands::ShapeCommand;
+use crate::commands::{shape as shape_commands, ShapeCommand};
 use crate::projections::shape::{CoreShapeNode, Edge, Node};
 use crate::projections::shape::{FieldNode, FieldNodeDescriptor, ShapeNode, ShapeProjection};
 use crate::shapes::traverser::{ShapeTrail, ShapeTrailPathComponent};
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
+use crate::state::SpecIdGenerator;
 use petgraph::visit::EdgeRef;
+use std::collections::BTreeSet;
+use std::iter::FromIterator;
 
 pub struct ShapeQueries<'a> {
   pub shape_projection: &'a ShapeProjection,
@@ -438,6 +441,96 @@ impl<'a> ShapeQueries<'a> {
     let command = ShapeCommand::remove_field(field_node.field_id.clone());
     Some(std::iter::once(command))
   }
+
+  pub fn edit_shape_commands(
+    &'a self,
+    shape_trail: &ShapeTrail,
+    requested_kinds: impl IntoIterator<Item = &'a ShapeKind>,
+    id_generator: &mut impl SpecIdGenerator,
+  ) -> Option<impl Iterator<Item = ShapeCommand>> {
+    let current_trail_choices = self.list_trail_choices(shape_trail);
+
+    let current_kinds: BTreeSet<_> = current_trail_choices
+      .iter()
+      .map(|choice| &choice.core_shape_kind)
+      .cloned()
+      .collect();
+
+    let togglable_kinds = if shape_trail.is_field() {
+      BTreeSet::from_iter(vec![ShapeKind::OptionalKind, ShapeKind::NullableKind])
+    } else {
+      BTreeSet::new() // only allow edits to fields for now
+    };
+
+    let primitive_choice = current_trail_choices
+      .into_iter()
+      .filter(|choice| !togglable_kinds.contains(&choice.core_shape_kind))
+      .next()?;
+
+    let subject_shape_id = if shape_trail.is_field() {
+      primitive_choice.parent_trail.path.iter().rev().find_map(
+        |path_component| match path_component {
+          ShapeTrailPathComponent::OptionalItemTrail { inner_shape_id, .. } => Some(inner_shape_id),
+          ShapeTrailPathComponent::NullableItemTrail { inner_shape_id, .. } => Some(inner_shape_id),
+          ShapeTrailPathComponent::ObjectFieldTrail { field_shape_id, .. } => Some(field_shape_id),
+          _ => None,
+        },
+      )
+    } else {
+      None
+    }?; // nothing to update if there isn't a subject
+
+    let required_kinds: BTreeSet<_> = requested_kinds
+      .into_iter()
+      .filter(|kind| togglable_kinds.contains(kind))
+      .cloned()
+      .collect();
+
+    let mut new_shape_prototypes = vec![];
+    let mut root_shape_id = subject_shape_id.clone();
+
+    if required_kinds.contains(&ShapeKind::NullableKind) {
+      let subject_shape_id = root_shape_id.clone(); // wrapping the current shape
+      let prototype = ShapePrototype {
+        id: id_generator.shape(),
+        prototype_descriptor: ShapePrototypeDescriptor::NullableShape { subject_shape_id },
+      };
+
+      root_shape_id = prototype.id.clone();
+      new_shape_prototypes.push(prototype);
+    }
+
+    if required_kinds.contains(&ShapeKind::OptionalKind) {
+      let subject_shape_id = root_shape_id.clone(); // wrapping the current shape
+      let prototype = ShapePrototype {
+        id: id_generator.shape(),
+        prototype_descriptor: ShapePrototypeDescriptor::OptionalShape { subject_shape_id },
+      };
+
+      root_shape_id = prototype.id.clone();
+      new_shape_prototypes.push(prototype);
+    }
+
+    let shape_commands = new_shape_prototypes
+      .into_iter()
+      .flat_map(ShapePrototype::into_commands);
+
+    let additional_commands = if shape_trail.is_field() {
+      let field_id = shape_trail
+        .last_field_id()
+        .expect("there should be a last field id if the trail described a field");
+
+      vec![ShapeCommand::set_field_shape(
+        field_id.clone(),
+        root_shape_id,
+      )]
+    } else {
+      vec![]
+    };
+
+    let commands = shape_commands.chain(additional_commands);
+    Some(commands)
+  }
 }
 
 #[derive(Clone, Debug)]
@@ -460,6 +553,57 @@ impl ChoiceOutput {
   }
 }
 
+#[derive(Clone, Debug)]
+struct ShapePrototype {
+  id: ShapeId,
+  prototype_descriptor: ShapePrototypeDescriptor,
+}
+
+#[derive(Clone, Debug)]
+enum ShapePrototypeDescriptor {
+  OptionalShape { subject_shape_id: ShapeId },
+  NullableShape { subject_shape_id: ShapeId },
+  PrimitiveShape { base_shape_kind: ShapeKind },
+}
+
+impl ShapePrototype {
+  fn into_commands(self) -> Vec<ShapeCommand> {
+    match self.prototype_descriptor {
+      ShapePrototypeDescriptor::OptionalShape { subject_shape_id } => {
+        let parameter_id = ShapeKind::OptionalKind
+          .get_parameter_descriptor()
+          .unwrap()
+          .shape_parameter_id;
+
+        vec![
+          ShapeCommand::add_shape(self.id.clone(), ShapeKind::OptionalKind, String::from("")),
+          ShapeCommand::set_parameter_shape(
+            self.id.clone(),
+            parameter_id.to_owned(),
+            subject_shape_id,
+          ),
+        ]
+      }
+      ShapePrototypeDescriptor::NullableShape { subject_shape_id } => {
+        let parameter_id = ShapeKind::NullableKind
+          .get_parameter_descriptor()
+          .unwrap()
+          .shape_parameter_id;
+
+        vec![
+          ShapeCommand::add_shape(self.id.clone(), ShapeKind::NullableKind, String::from("")),
+          ShapeCommand::set_parameter_shape(
+            self.id.clone(),
+            parameter_id.to_owned(),
+            subject_shape_id,
+          ),
+        ]
+      }
+      ShapePrototypeDescriptor::PrimitiveShape { base_shape_kind } => unimplemented!(),
+    }
+  }
+}
+
 #[cfg(test)]
 mod test {
   use super::*;
@@ -467,6 +611,7 @@ mod test {
   use crate::events::SpecEvent;
   use crate::projections::SpecProjection;
   use crate::Aggregate;
+  use insta::assert_debug_snapshot;
   use serde_json::json;
 
   #[test]
@@ -488,7 +633,278 @@ mod test {
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
+    assert_debug_snapshot!(
+      "can_generate_remove_field_commands__commands",
+      &remove_field_commands
+    );
+
     let updated_spec = assert_valid_commands(spec_projection.clone(), remove_field_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_remove_field_commands__choice_mapping",
+      choice_mapping
+    );
+  }
+
+  #[test]
+  pub fn can_generate_edit_shape_commands_to_make_field_optional() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "", "eventContext": null }},
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "", "eventContext": null }},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "string_shape_1"}}, "eventContext": null }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    let shape_queries = ShapeQueries::new(spec_projection.shape());
+    let mut id_generator = SequentialIdGenerator { next_id: 1093 }; // <3 primes
+
+    let shape_trail = ShapeTrail::new(String::from("object_shape_1")).with_component(
+      ShapeTrailPathComponent::ObjectFieldTrail {
+        field_id: String::from("field_1"),
+        field_shape_id: String::from("string_shape_1"),
+        parent_object_shape_id: String::from("object_shape_1"),
+      },
+    );
+    let required_kinds = vec![ShapeKind::OptionalKind];
+    let edit_shape_commands = shape_queries
+      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .expect("field should be able to be made optional")
+      .map(SpecCommand::from)
+      .collect::<Vec<_>>();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_field_optional__commands",
+      &edit_shape_commands
+    );
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_field_optional__choice_mapping",
+      choice_mapping
+    );
+  }
+
+  #[test]
+  pub fn can_generate_edit_shape_commands_to_make_field_nullable() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "string_shape_1"}} }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    let shape_queries = ShapeQueries::new(spec_projection.shape());
+    let mut id_generator = SequentialIdGenerator { next_id: 1093 }; // <3 primes
+
+    let shape_trail = ShapeTrail::new(String::from("object_shape_1")).with_component(
+      ShapeTrailPathComponent::ObjectFieldTrail {
+        field_id: String::from("field_1"),
+        field_shape_id: String::from("string_shape_1"),
+        parent_object_shape_id: String::from("object_shape_1"),
+      },
+    );
+    let required_kinds = vec![ShapeKind::NullableKind];
+    let edit_shape_commands = shape_queries
+      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .expect("field should be able to be made nullable")
+      .map(SpecCommand::from)
+      .collect::<Vec<_>>();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_field_nullable__commands",
+      &edit_shape_commands
+    );
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_field_nullable__choice_mapping",
+      choice_mapping
+    );
+  }
+
+  #[test]
+  pub fn can_generate_edit_shape_commands_to_make_optional_field_nullable() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
+      { "ShapeAdded": { "shapeId": "optional_shape_1", "baseShapeId": "$optional", "name": "" }},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "optional_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "string_shape_1"}},"consumingParameterId": "$optionalInner" }}}},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "optional_shape_1"}} }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    let shape_queries = ShapeQueries::new(spec_projection.shape());
+    let mut id_generator = SequentialIdGenerator { next_id: 1093 }; // <3 primes
+
+    let shape_trail = ShapeTrail::new(String::from("object_shape_1")).with_component(
+      ShapeTrailPathComponent::ObjectFieldTrail {
+        field_id: String::from("field_1"),
+        field_shape_id: String::from("optional_shape_1"),
+        parent_object_shape_id: String::from("object_shape_1"),
+      },
+    );
+    let required_kinds = vec![ShapeKind::StringKind, ShapeKind::NullableKind]; // string kind should be filtered out
+    let edit_shape_commands = shape_queries
+      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .expect("field should be able to be made nullable and optional")
+      .map(SpecCommand::from)
+      .collect::<Vec<_>>();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_optional_field_nullable__commands",
+      &edit_shape_commands
+    );
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_optional_field_nullable__choice_mapping",
+      choice_mapping
+    );
+  }
+
+  #[test]
+  pub fn can_generate_edit_shape_commands_to_make_optional_field_nullable_and_optional() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
+      { "ShapeAdded": { "shapeId": "optional_shape_1", "baseShapeId": "$optional", "name": "" }},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "optional_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "string_shape_1"}},"consumingParameterId": "$optionalInner" }}}},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "optional_shape_1"}} }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    let shape_queries = ShapeQueries::new(spec_projection.shape());
+    let mut id_generator = SequentialIdGenerator { next_id: 1093 }; // <3 primes
+
+    let shape_trail = ShapeTrail::new(String::from("object_shape_1")).with_component(
+      ShapeTrailPathComponent::ObjectFieldTrail {
+        field_id: String::from("field_1"),
+        field_shape_id: String::from("optional_shape_1"),
+        parent_object_shape_id: String::from("object_shape_1"),
+      },
+    );
+    let required_kinds = vec![ShapeKind::NullableKind, ShapeKind::OptionalKind];
+    let edit_shape_commands = shape_queries
+      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .expect("field should be able to be made nullable and optional")
+      .map(SpecCommand::from)
+      .collect::<Vec<_>>();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_optional_field_nullable_and_optional__commands",
+      &edit_shape_commands
+    );
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_optional_field_nullable_and_optional__choice_mapping",
+      choice_mapping
+    );
+  }
+
+  #[test]
+  pub fn can_generate_edit_shape_commands_to_make_polymorphic_field_optional() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
+      { "ShapeAdded": { "shapeId": "number_shape_1", "baseShapeId": "$number", "name": "" }},
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
+      { "ShapeAdded": { "shapeId": "one_of_shape_1", "baseShapeId": "$oneOf", "name": "" }},
+      { "ShapeParameterAdded": { "shapeId": "one_of_shape_1", "shapeParameterId": "one_of_param_1", "name": "", "shapeDescriptor": { "ProviderInShape": {"shapeId": "one_of_shape_1","providerDescriptor": { "NoProvider": {} },"consumingParameterId": "one_of_param_1"}}}},
+      { "ShapeParameterAdded": { "shapeId": "one_of_shape_1", "shapeParameterId": "one_of_param_2", "name": "", "shapeDescriptor": { "ProviderInShape": {"shapeId": "one_of_shape_1","providerDescriptor": { "NoProvider": {} },"consumingParameterId": "one_of_param_2"}}}},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "one_of_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "string_shape_1"}},"consumingParameterId": "one_of_param_1" }}}},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "one_of_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "number_shape_1"}},"consumingParameterId": "one_of_param_2" }}}},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "one_of_shape_1"}} }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    let shape_queries = ShapeQueries::new(spec_projection.shape());
+    let mut id_generator = SequentialIdGenerator { next_id: 1093 }; // <3 primes
+
+    let shape_trail = ShapeTrail::new(String::from("object_shape_1")).with_component(
+      ShapeTrailPathComponent::ObjectFieldTrail {
+        field_id: String::from("field_1"),
+        field_shape_id: String::from("one_of_shape_1"),
+        parent_object_shape_id: String::from("object_shape_1"),
+      },
+    );
+    let required_kinds = vec![ShapeKind::OptionalKind];
+    let edit_shape_commands = shape_queries
+      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .expect("field should be able to be made nullable and optional")
+      .map(SpecCommand::from)
+      .collect::<Vec<_>>();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_polymorphic_field_optional__commands",
+      &edit_shape_commands
+    );
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_polymorphic_field_optional__choice_mapping",
+      choice_mapping
+    );
+  }
+
+  #[test]
+  pub fn can_generate_edit_shape_commands_to_make_optional_nullable_field_required() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
+      { "ShapeAdded": { "shapeId": "nullable_shape_1", "baseShapeId": "$nullable", "name": "" }},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "nullable_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "string_shape_1"}},"consumingParameterId": "$nullableInner" }}}},
+      { "ShapeAdded": { "shapeId": "optional_shape_1", "baseShapeId": "$optional", "name": "" }},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "optional_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "nullable_shape_1"}},"consumingParameterId": "$optionalInner" }}}},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "optional_shape_1"}} }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    let shape_queries = ShapeQueries::new(spec_projection.shape());
+    let mut id_generator = SequentialIdGenerator { next_id: 1093 }; // <3 primes
+
+    let shape_trail = ShapeTrail::new(String::from("object_shape_1")).with_component(
+      ShapeTrailPathComponent::ObjectFieldTrail {
+        field_id: String::from("field_1"),
+        field_shape_id: String::from("optional_shape_1"),
+        parent_object_shape_id: String::from("object_shape_1"),
+      },
+    );
+    let required_kinds = vec![];
+    let edit_shape_commands = shape_queries
+      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .expect("field should be able to be made required")
+      .map(SpecCommand::from)
+      .collect::<Vec<_>>();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_optional_nullable_field_required__commands",
+      &edit_shape_commands
+    );
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_commands_to_make_optional_nullable_field_required__choice_mapping",
+      choice_mapping
+    );
   }
 
   fn assert_valid_commands(
@@ -507,5 +923,16 @@ mod test {
     }
 
     spec_projection
+  }
+
+  #[derive(Debug, Default)]
+  struct SequentialIdGenerator {
+    next_id: u32,
+  }
+  impl SpecIdGenerator for SequentialIdGenerator {
+    fn generate_id(&mut self, prefix: &str) -> String {
+      self.next_id += 1;
+      format!("{}{}", prefix, self.next_id.to_string())
+    }
   }
 }

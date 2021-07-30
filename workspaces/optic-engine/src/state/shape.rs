@@ -97,7 +97,7 @@ pub struct ShapeProvider {
 pub struct NoProvider {}
 ////////////////////////////////////////////////////////////////////////////////
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Ord, PartialOrd, Eq, PartialEq)]
 pub enum ShapeKind {
   ObjectKind,
   ListKind,
