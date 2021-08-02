@@ -526,7 +526,7 @@ impl<'a> ShapeQueries<'a> {
     Some(std::iter::once(command))
   }
 
-  pub fn edit_shape_commands(
+  pub fn edit_shape_trail_commands(
     &'a self,
     shape_trail: &ShapeTrail,
     requested_kinds: impl IntoIterator<Item = &'a ShapeKind>,
@@ -732,7 +732,7 @@ mod test {
   }
 
   #[test]
-  pub fn can_generate_edit_shape_commands_to_make_field_optional() {
+  pub fn can_generate_edit_shape_trail_commands_to_make_field_optional() {
     let events: Vec<SpecEvent> = serde_json::from_value(json!([
       { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "", "eventContext": null }},
       { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "", "eventContext": null }},
@@ -753,13 +753,13 @@ mod test {
     );
     let required_kinds = vec![ShapeKind::OptionalKind];
     let edit_shape_commands = shape_queries
-      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .edit_shape_trail_commands(&shape_trail, &required_kinds, &mut id_generator)
       .expect("field should be able to be made optional")
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
     assert_debug_snapshot!(
-      "can_generate_edit_shape_commands_to_make_field_optional__commands",
+      "can_generate_edit_shape_trail_commands_to_make_field_optional__commands",
       &edit_shape_commands
     );
 
@@ -767,13 +767,13 @@ mod test {
     let choice_mapping = updated_spec.shape().to_choice_mapping();
 
     assert_debug_snapshot!(
-      "can_generate_edit_shape_commands_to_make_field_optional__choice_mapping",
+      "can_generate_edit_shape_trail_commands_to_make_field_optional__choice_mapping",
       choice_mapping
     );
   }
 
   #[test]
-  pub fn can_generate_edit_shape_commands_to_make_field_nullable() {
+  pub fn can_generate_edit_shape_trail_commands_to_make_field_nullable() {
     let events: Vec<SpecEvent> = serde_json::from_value(json!([
       { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
       { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
@@ -794,13 +794,13 @@ mod test {
     );
     let required_kinds = vec![ShapeKind::NullableKind];
     let edit_shape_commands = shape_queries
-      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .edit_shape_trail_commands(&shape_trail, &required_kinds, &mut id_generator)
       .expect("field should be able to be made nullable")
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
     assert_debug_snapshot!(
-      "can_generate_edit_shape_commands_to_make_field_nullable__commands",
+      "can_generate_edit_shape_trail_commands_to_make_field_nullable__commands",
       &edit_shape_commands
     );
 
@@ -808,13 +808,13 @@ mod test {
     let choice_mapping = updated_spec.shape().to_choice_mapping();
 
     assert_debug_snapshot!(
-      "can_generate_edit_shape_commands_to_make_field_nullable__choice_mapping",
+      "can_generate_edit_shape_trail_commands_to_make_field_nullable__choice_mapping",
       choice_mapping
     );
   }
 
   #[test]
-  pub fn can_generate_edit_shape_commands_to_make_optional_field_nullable() {
+  pub fn can_generate_edit_shape_trail_commands_to_make_optional_field_nullable() {
     let events: Vec<SpecEvent> = serde_json::from_value(json!([
       { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
       { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
@@ -837,13 +837,13 @@ mod test {
     );
     let required_kinds = vec![ShapeKind::StringKind, ShapeKind::NullableKind]; // string kind should be filtered out
     let edit_shape_commands = shape_queries
-      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .edit_shape_trail_commands(&shape_trail, &required_kinds, &mut id_generator)
       .expect("field should be able to be made nullable and optional")
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
     assert_debug_snapshot!(
-      "can_generate_edit_shape_commands_to_make_optional_field_nullable__commands",
+      "can_generate_edit_shape_trail_commands_to_make_optional_field_nullable__commands",
       &edit_shape_commands
     );
 
@@ -851,13 +851,13 @@ mod test {
     let choice_mapping = updated_spec.shape().to_choice_mapping();
 
     assert_debug_snapshot!(
-      "can_generate_edit_shape_commands_to_make_optional_field_nullable__choice_mapping",
+      "can_generate_edit_shape_trail_commands_to_make_optional_field_nullable__choice_mapping",
       choice_mapping
     );
   }
 
   #[test]
-  pub fn can_generate_edit_shape_commands_to_make_optional_field_nullable_and_optional() {
+  pub fn can_generate_edit_shape_trail_commands_to_make_optional_field_nullable_and_optional() {
     let events: Vec<SpecEvent> = serde_json::from_value(json!([
       { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
       { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
@@ -880,13 +880,13 @@ mod test {
     );
     let required_kinds = vec![ShapeKind::NullableKind, ShapeKind::OptionalKind];
     let edit_shape_commands = shape_queries
-      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .edit_shape_trail_commands(&shape_trail, &required_kinds, &mut id_generator)
       .expect("field should be able to be made nullable and optional")
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
     assert_debug_snapshot!(
-      "can_generate_edit_shape_commands_to_make_optional_field_nullable_and_optional__commands",
+      "can_generate_edit_shape_trail_commands_to_make_optional_field_nullable_and_optional__commands",
       &edit_shape_commands
     );
 
@@ -894,13 +894,13 @@ mod test {
     let choice_mapping = updated_spec.shape().to_choice_mapping();
 
     assert_debug_snapshot!(
-      "can_generate_edit_shape_commands_to_make_optional_field_nullable_and_optional__choice_mapping",
+      "can_generate_edit_shape_trail_commands_to_make_optional_field_nullable_and_optional__choice_mapping",
       choice_mapping
     );
   }
 
   #[test]
-  pub fn can_generate_edit_shape_commands_to_make_polymorphic_field_optional() {
+  pub fn can_generate_edit_shape_trail_commands_to_make_polymorphic_field_optional() {
     let events: Vec<SpecEvent> = serde_json::from_value(json!([
       { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
       { "ShapeAdded": { "shapeId": "number_shape_1", "baseShapeId": "$number", "name": "" }},
@@ -927,13 +927,13 @@ mod test {
     );
     let required_kinds = vec![ShapeKind::OptionalKind];
     let edit_shape_commands = shape_queries
-      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .edit_shape_trail_commands(&shape_trail, &required_kinds, &mut id_generator)
       .expect("field should be able to be made nullable and optional")
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
     assert_debug_snapshot!(
-      "can_generate_edit_shape_commands_to_make_polymorphic_field_optional__commands",
+      "can_generate_edit_shape_trail_commands_to_make_polymorphic_field_optional__commands",
       &edit_shape_commands
     );
 
@@ -941,13 +941,13 @@ mod test {
     let choice_mapping = updated_spec.shape().to_choice_mapping();
 
     assert_debug_snapshot!(
-      "can_generate_edit_shape_commands_to_make_polymorphic_field_optional__choice_mapping",
+      "can_generate_edit_shape_trail_commands_to_make_polymorphic_field_optional__choice_mapping",
       choice_mapping
     );
   }
 
   #[test]
-  pub fn can_generate_edit_shape_commands_to_make_optional_nullable_field_required() {
+  pub fn can_generate_edit_shape_trail_commands_to_make_optional_nullable_field_required() {
     let events: Vec<SpecEvent> = serde_json::from_value(json!([
       { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
       { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
@@ -972,13 +972,13 @@ mod test {
     );
     let required_kinds = vec![];
     let edit_shape_commands = shape_queries
-      .edit_shape_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .edit_shape_trail_commands(&shape_trail, &required_kinds, &mut id_generator)
       .expect("field should be able to be made required")
       .map(SpecCommand::from)
       .collect::<Vec<_>>();
 
     assert_debug_snapshot!(
-      "can_generate_edit_shape_commands_to_make_optional_nullable_field_required__commands",
+      "can_generate_edit_shape_trail_commands_to_make_optional_nullable_field_required__commands",
       &edit_shape_commands
     );
 
@@ -986,7 +986,7 @@ mod test {
     let choice_mapping = updated_spec.shape().to_choice_mapping();
 
     assert_debug_snapshot!(
-      "can_generate_edit_shape_commands_to_make_optional_nullable_field_required__choice_mapping",
+      "can_generate_edit_shape_trail_commands_to_make_optional_nullable_field_required__choice_mapping",
       choice_mapping
     );
   }
