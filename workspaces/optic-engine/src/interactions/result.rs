@@ -30,7 +30,7 @@ impl InteractionDiffResult {
   pub fn fingerprint(&self) -> String {
     let s = serde_json::to_vec(&self).expect("InteractionDiffResult should be json serializable");
     let hashed = hash(&s);
-    hashed.to_string()
+    format!("{:x}", &hashed)
   }
 
   pub fn interaction_trail(&self) -> &InteractionTrail {

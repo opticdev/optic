@@ -4,7 +4,7 @@ expression: learned_shape_diff_affordances.into_iter()
 ---
 [
     (
-        "10911550423011535591",
+        "976d9d4c405daae7",
         ShapeDiffAffordances {
             affordances: [
                 TrailValues {

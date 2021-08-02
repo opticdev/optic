@@ -41,7 +41,7 @@ impl ShapeDiffResult {
     let normalized = self.normalized();
     let s = serde_json::to_vec(&normalized).expect("ShapeDiffResult should be json serializable");
     let hashed = hash(&s);
-    hashed.to_string()
+    format!("{:x}", &hashed)
   }
 }
 

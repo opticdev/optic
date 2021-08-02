@@ -3,6 +3,6 @@ source: workspaces/optic-engine/tests/shape_diff.rs
 expression: fingerprints
 ---
 [
-    "15054827763015378168",
-    "15054827763015378168",
+    "d0ed7e16293864f8",
+    "d0ed7e16293864f8",
 ]
