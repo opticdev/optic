@@ -105,17 +105,22 @@ const fetchShapesAndChildren = async (
 
   while (stack.length > 0) {
     const results = await Promise.all(
-      stack.map((shapeId) =>
-        fetchSpectacleShape(spectacle, shapeId, sinceBatchCommitId)
-      )
+      stack.map(async (shapeId) => ({
+        result: await fetchSpectacleShape(
+          spectacle,
+          shapeId,
+          sinceBatchCommitId
+        ),
+        shapeId,
+      }))
     );
     // Reset the stack and add in more shapes to fetch
     stack = [];
 
-    for (const result of results) {
+    for (const { result, shapeId: baseShapeId } of results) {
       for (const shape of result.shapeChoices) {
-        if (!(shape.id in shapeMap)) {
-          shapeMap[shape.id] = [];
+        if (!(baseShapeId in shapeMap)) {
+          shapeMap[baseShapeId] = [];
         }
 
         if (shape.jsonType === JsonLike.OBJECT) {
@@ -138,7 +143,7 @@ const fetchShapesAndChildren = async (
               })),
             },
           };
-          shapeMap[shape.id].push(reduxShape);
+          shapeMap[baseShapeId].push(reduxShape);
         } else if (shape.jsonType === JsonLike.ARRAY) {
           if (
             !(
@@ -156,13 +161,13 @@ const fetchShapesAndChildren = async (
               shapeId: shape.asArray.shapeId,
             },
           };
-          shapeMap[shape.id].push(reduxShape);
+          shapeMap[baseShapeId].push(reduxShape);
         } else {
           const reduxShape: ReduxShape = {
             shapeId: shape.id,
             jsonType: shape.jsonType,
           };
-          shapeMap[shape.id].push(reduxShape);
+          shapeMap[baseShapeId].push(reduxShape);
         }
       }
     }
