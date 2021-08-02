@@ -93,7 +93,7 @@ export const EndpointRootPage: FC<
   }, [analytics]);
 
   const isEndpointStagedForDeletion = useAppSelector(
-    selectors.isEndpointDeleted({ method, pathId })
+    selectors.isEndpointRemoved({ method, pathId })
   );
 
   const removeEndpoint = () =>

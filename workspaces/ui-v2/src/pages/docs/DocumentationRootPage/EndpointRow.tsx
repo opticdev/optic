@@ -44,7 +44,7 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const isEndpointStagedForDeletion = useAppSelector(
-    selectors.isEndpointDeleted({
+    selectors.isEndpointRemoved({
       method: endpoint.method,
       pathId: endpoint.pathId,
     })

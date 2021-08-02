@@ -65,13 +65,18 @@ export const getValidContributions = (state: RootState): IContribution[] => {
 };
 
 export const getDocumentationEditStagedCount = (state: RootState) => {
-  const { removedEndpoints } = state.documentationEdits;
+  const {
+    removedEndpoints,
+    fieldEdits: { removedFields },
+  } = state.documentationEdits;
   const validContributions = getValidContributions(state);
 
-  return validContributions.length + removedEndpoints.length;
+  return (
+    validContributions.length + removedEndpoints.length + removedFields.length
+  );
 };
 
-export const isEndpointDeleted = ({
+export const isEndpointRemoved = ({
   pathId,
   method,
 }: {

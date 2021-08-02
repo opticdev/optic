@@ -39,7 +39,6 @@ export function DocFieldContribution(
   const isFieldRemovedRoot = useAppSelector(
     selectors.isFieldRemovedRoot(props.id)
   );
-
   const dispatch = useAppDispatch();
   const removeField = () =>
     dispatch(documentationEditActions.removeField({ fieldId }));
