@@ -6,8 +6,8 @@ import { getEndpointId } from '<src>/utils';
 // - same contribution value as already set
 // - a deleted endpoint cannot have other changes
 export const getValidContributions = (state: RootState): IContribution[] => {
-  const { deletedEndpoints, contributions } = state.documentationEdits;
-  const deletedEndpointsSet = new Set(deletedEndpoints.map(getEndpointId));
+  const { removedEndpoints, contributions } = state.documentationEdits;
+  const removedEndpointsSet = new Set(removedEndpoints.map(getEndpointId));
   const filteredContributions: IContribution[] = [];
 
   // TODO filter out contributions with the same existing contributions value
@@ -15,7 +15,7 @@ export const getValidContributions = (state: RootState): IContribution[] => {
     for (const [contributionKey, { value, endpointId }] of Object.entries(
       idContributions
     )) {
-      if (!deletedEndpointsSet.has(endpointId)) {
+      if (!removedEndpointsSet.has(endpointId)) {
         filteredContributions.push({
           id,
           contributionKey,
@@ -30,10 +30,10 @@ export const getValidContributions = (state: RootState): IContribution[] => {
 };
 
 export const getDocumentationEditStagedCount = (state: RootState) => {
-  const { deletedEndpoints } = state.documentationEdits;
+  const { removedEndpoints } = state.documentationEdits;
   const validContributions = getValidContributions(state);
 
-  return validContributions.length + deletedEndpoints.length;
+  return validContributions.length + removedEndpoints.length;
 };
 
 export const isEndpointDeleted = ({
@@ -43,7 +43,7 @@ export const isEndpointDeleted = ({
   pathId: string;
   method: string;
 }) => (state: RootState) => {
-  return !!state.documentationEdits.deletedEndpoints.find(
+  return !!state.documentationEdits.removedEndpoints.find(
     (endpoint) => endpoint.method === method && endpoint.pathId === pathId
   );
 };
@@ -56,7 +56,7 @@ export const isEndpointEditable = ({
   method: string;
 }) => (state: RootState) => {
   return (
-    !state.documentationEdits.deletedEndpoints.find(
+    !state.documentationEdits.removedEndpoints.find(
       (endpoint) => endpoint.method === method && endpoint.pathId === pathId
     ) && state.documentationEdits.isEditing
   );

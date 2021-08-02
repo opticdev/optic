@@ -19,7 +19,11 @@ export type DocumentationEditState = {
       }
     >
   >;
-  deletedEndpoints: {
+  fieldEdits: {
+    // We don't use a set as state should be serializable
+    removedFields: Record<string, string>;
+  };
+  removedEndpoints: {
     pathId: string;
     method: string;
   }[];
@@ -29,7 +33,10 @@ export type DocumentationEditState = {
 
 const initialState: DocumentationEditState = {
   contributions: {},
-  deletedEndpoints: [],
+  removedEndpoints: [],
+  fieldEdits: {
+    removedFields: {},
+  },
   commitModalOpen: false,
   isEditing: false,
 };
@@ -62,16 +69,16 @@ const documentationEditSlice = createSlice({
         };
       }
     },
-    deleteEndpoint: (
+    removeEndpoint: (
       state,
       action: PayloadAction<{
         pathId: string;
         method: string;
       }>
     ) => {
-      state.deletedEndpoints.push(action.payload);
+      state.removedEndpoints.push(action.payload);
     },
-    undeleteEndpoint: (
+    unremoveEndpoint: (
       state,
       action: PayloadAction<{
         pathId: string;
@@ -79,12 +86,14 @@ const documentationEditSlice = createSlice({
       }>
     ) => {
       const { pathId, method } = action.payload;
-      const newDeletedEndpoints = state.deletedEndpoints.filter(
+      const newRemovedEndpoints = state.removedEndpoints.filter(
         (endpoint) =>
           !(pathId === endpoint.pathId && method === endpoint.method)
       );
-      state.deletedEndpoints = newDeletedEndpoints;
+      state.removedEndpoints = newRemovedEndpoints;
     },
+    removeField: (state, action) => {},
+    unremoveField: (state, action) => {},
     updateCommitModalState: (
       state,
       action: PayloadAction<{

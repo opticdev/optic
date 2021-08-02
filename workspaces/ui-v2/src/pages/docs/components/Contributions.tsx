@@ -1,4 +1,5 @@
 import React from 'react';
+import { makeStyles } from '@material-ui/core';
 import { IShapeRenderer } from '<src>/types';
 import Helmet from 'react-helmet';
 import {
@@ -25,6 +26,22 @@ export type DocsFieldOrParameterContributionProps = {
     pathId: string;
   };
 };
+
+export function DocFieldContribution(
+  props: DocsFieldOrParameterContributionProps
+) {
+  const classes = useStyles();
+  console.log(props.id);
+
+  return (
+    <div className={classes.fieldContainer}>
+      <div className={classes.contributionContainer}>
+        <DocsFieldOrParameterContribution {...props} />
+      </div>
+      <div>delete</div>
+    </div>
+  );
+}
 
 export function DocsFieldOrParameterContribution({
   name,
@@ -171,3 +188,12 @@ export function EndpointNameMiniContribution({
     />
   );
 }
+
+const useStyles = makeStyles((theme) => ({
+  fieldContainer: {
+    display: 'flex',
+  },
+  contributionContainer: {
+    flexGrow: 1,
+  },
+}));
