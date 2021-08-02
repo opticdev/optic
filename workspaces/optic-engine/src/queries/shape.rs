@@ -12,7 +12,7 @@ pub struct ShapeQueries<'a> {
   pub shape_projection: &'a ShapeProjection,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ResolvedTrail<'a> {
   pub core_shape_kind: &'a ShapeKind,
   pub shape_id: ShapeId,
@@ -34,9 +34,11 @@ impl<'a> ShapeQueries<'a> {
       shape_id: shape_trail.root_shape_id.clone(),
       core_shape_kind: self.resolve_to_core_shape(&shape_trail.root_shape_id),
     };
+
+    dbg!(&resolved);
     // eprintln!("{:?}", resolved);
     while let Some(trail_component) = trail_components.next() {
-      // eprintln!("{:?}", trail_component);
+      eprintln!("{:?}", trail_component);
       resolved = self.resolve_trail_to_core_shape_helper(&resolved, trail_component);
 
       parent_node_index = projection.get_shape_node_index(&resolved.shape_id);
@@ -244,6 +246,10 @@ impl<'a> ShapeQueries<'a> {
         ),
       },
       ShapeKind::ObjectKind => match path_component {
+        ShapeTrailPathComponent::ObjectTrail { shape_id } => ResolvedTrail {
+          shape_id: shape_id.clone(),
+          core_shape_kind: &ShapeKind::ObjectKind,
+        },
         ShapeTrailPathComponent::ObjectFieldTrail {
           field_id,
           field_shape_id,
