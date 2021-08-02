@@ -92,6 +92,7 @@ const documentationEditSlice = createSlice({
       state.removedEndpoints = newRemovedEndpoints;
     },
     removeField: (state, action: PayloadAction<{ fieldId: string }>) => {
+      // TODO filter any other removed fields that is now a child of the newly added field.
       state.fieldEdits.removedFields.push(action.payload.fieldId);
     },
     unremoveField: (state, action: PayloadAction<{ fieldId: string }>) => {
