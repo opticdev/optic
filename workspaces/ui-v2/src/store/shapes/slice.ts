@@ -7,9 +7,11 @@ import { fetchShapes } from './thunks';
 const initialState: {
   rootShapes: Record<ShapeId, AsyncStatus<ShapeId, SerializedError>>;
   shapeMap: Record<ShapeId, ReduxShape[]>;
+  fieldIdToShapeId: Record<string, ShapeId>;
 } = {
   rootShapes: {},
   shapeMap: {},
+  fieldIdToShapeId: {},
 };
 
 const shapesSlice = createSlice({
@@ -28,9 +30,11 @@ const shapesSlice = createSlice({
         loading: false,
         data: action.meta.arg.rootShapeId,
       };
-      for (const [shapeId, reduxShapes] of Object.entries(action.payload)) {
+      const { shapeMap, fieldIdToShapeId } = action.payload;
+      for (const [shapeId, reduxShapes] of Object.entries(shapeMap)) {
         state.shapeMap[shapeId] = reduxShapes;
       }
+      state.fieldIdToShapeId = fieldIdToShapeId;
     });
     builder.addCase(fetchShapes.rejected, (state, action) => {
       state.rootShapes[action.meta.arg.rootShapeId] = {

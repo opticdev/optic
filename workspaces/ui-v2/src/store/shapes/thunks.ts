@@ -96,10 +96,14 @@ const fetchShapesAndChildren = async (
   spectacle: IForkableSpectacle,
   rootShapeId: string,
   sinceBatchCommitId?: string
-): Promise<Record<ShapeId, ReduxShape[]>> => {
+): Promise<{
+  shapeMap: Record<ShapeId, ReduxShape[]>;
+  fieldIdToShapeId: Record<string, ShapeId>;
+}> => {
   // TODO we might want to have access to the current store to
   // avoid fetching shapes we have already fetched
   const shapeMap: Record<ShapeId, ReduxShape[]> = {};
+  const fieldIdToShapeId: Record<string, ShapeId> = {};
 
   let stack: ShapeId[] = [rootShapeId];
 
@@ -124,10 +128,11 @@ const fetchShapesAndChildren = async (
         }
 
         if (shape.jsonType === JsonLike.OBJECT) {
-          for (const { shapeId } of shape.asObject.fields) {
+          for (const { shapeId, fieldId } of shape.asObject.fields) {
             if (!(shapeId in shapeMap && !stack.includes(shape.id))) {
               stack.push(shapeId);
             }
+            fieldIdToShapeId[fieldId] = shapeId;
           }
 
           const reduxShape: ReduxShape = {
@@ -173,11 +178,14 @@ const fetchShapesAndChildren = async (
     }
   }
 
-  return shapeMap;
+  return { shapeMap, fieldIdToShapeId };
 };
 
 export const fetchShapes = createAsyncThunk<
-  Record<ShapeId, ReduxShape[]>,
+  {
+    shapeMap: Record<ShapeId, ReduxShape[]>;
+    fieldIdToShapeId: Record<string, ShapeId>;
+  },
   {
     spectacle: IForkableSpectacle;
     rootShapeId: string;
