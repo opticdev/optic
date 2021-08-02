@@ -465,7 +465,7 @@ impl<'a> ShapeQueries<'a> {
             | ShapeKind::StringKind
             | ShapeKind::NumberKind
             | ShapeKind::UnknownKind => {
-              unimplemented!("resolving of shape trail by primitive shape")
+              root_shape_id = None;
             }
 
             ShapeKind::AnyKind
