@@ -20,8 +20,7 @@ export type DocumentationEditState = {
     >
   >;
   fieldEdits: {
-    // We don't use a set as state should be serializable
-    removedFields: Record<string, string>;
+    removedFields: string[];
   };
   removedEndpoints: {
     pathId: string;
@@ -35,7 +34,7 @@ const initialState: DocumentationEditState = {
   contributions: {},
   removedEndpoints: [],
   fieldEdits: {
-    removedFields: {},
+    removedFields: [],
   },
   commitModalOpen: false,
   isEditing: false,
@@ -92,8 +91,14 @@ const documentationEditSlice = createSlice({
       );
       state.removedEndpoints = newRemovedEndpoints;
     },
-    removeField: (state, action) => {},
-    unremoveField: (state, action) => {},
+    removeField: (state, action: PayloadAction<{ fieldId: string }>) => {
+      state.fieldEdits.removedFields.push(action.payload.fieldId);
+    },
+    unremoveField: (state, action: PayloadAction<{ fieldId: string }>) => {
+      state.fieldEdits.removedFields = state.fieldEdits.removedFields.filter(
+        (removedFieldId) => removedFieldId !== action.payload.fieldId
+      );
+    },
     updateCommitModalState: (
       state,
       action: PayloadAction<{

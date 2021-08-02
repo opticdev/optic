@@ -32,6 +32,8 @@ export function DocFieldContribution(
 ) {
   const classes = useStyles();
   console.log(props.id);
+  // is root deleted
+  // is not root deleted
 
   return (
     <div className={classes.fieldContainer}>

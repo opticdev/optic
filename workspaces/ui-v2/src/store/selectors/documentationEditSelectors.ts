@@ -1,6 +1,39 @@
+import { createSelector } from 'reselect';
 import { RootState } from '../root';
 import { IContribution } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
+import { JsonLike } from '../../../../optic-domain/build';
+
+const memoizedGetAllRemovedFields = createSelector<
+  RootState,
+  RootState['shapes'],
+  string[],
+  Set<string>
+>(
+  (state) => state.shapes,
+  (state) => state.documentationEdits.fieldEdits.removedFields,
+  (shapes, removedFields) => {
+    const allRemovedFields = new Set<string>();
+    for (const fieldId of removedFields) {
+      allRemovedFields.add(fieldId);
+      const shapeId = shapes.fieldIdToShapeId[fieldId];
+      const stack = [shapeId];
+      while (stack.length > 0) {
+        const reduxShapes = shapes.shapeMap[shapeId];
+        for (const shape of reduxShapes) {
+          if (shape.jsonType === JsonLike.OBJECT) {
+            for (const field of shape.asObject.fields) {
+              stack.push(field.shapeId);
+              allRemovedFields.add(field.fieldId);
+            }
+          }
+        }
+      }
+    }
+
+    return allRemovedFields;
+  }
+);
 
 // Valid changes dedupes:
 // - same contribution value as already set
@@ -9,6 +42,8 @@ export const getValidContributions = (state: RootState): IContribution[] => {
   const { removedEndpoints, contributions } = state.documentationEdits;
   const removedEndpointsSet = new Set(removedEndpoints.map(getEndpointId));
   const filteredContributions: IContribution[] = [];
+
+  // TODO filter out contributions that are for deleted fields
 
   // TODO filter out contributions with the same existing contributions value
   for (const [id, idContributions] of Object.entries(contributions)) {
@@ -59,5 +94,34 @@ export const isEndpointEditable = ({
     !state.documentationEdits.removedEndpoints.find(
       (endpoint) => endpoint.method === method && endpoint.pathId === pathId
     ) && state.documentationEdits.isEditing
+  );
+};
+
+export const isFieldDeleted = (fieldId: string) => (state: RootState) => {
+  const memoizedFields = memoizedGetAllRemovedFields(state);
+
+  return memoizedFields.has(fieldId);
+};
+
+export const isFieldUserDeleted = (fieldId: string) => (
+  state: RootState
+): boolean => {
+  return !!state.documentationEdits.fieldEdits.removedFields.find(
+    (removedFieldId) => removedFieldId === fieldId
+  );
+};
+
+export const isEndpointFieldEditable = ({
+  pathId,
+  method,
+  fieldId,
+}: {
+  pathId: string;
+  method: string;
+  fieldId: string;
+}) => (state: RootState) => {
+  return (
+    isEndpointEditable({ pathId, method })(state) &&
+    isFieldDeleted(fieldId)(state)
   );
 };
