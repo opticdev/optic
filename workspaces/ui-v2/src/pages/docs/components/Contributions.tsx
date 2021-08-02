@@ -33,17 +33,34 @@ export function DocFieldContribution(
   const isEditing = useAppSelector(
     (state) => state.documentationEdits.isEditing
   );
+  const fieldId = props.id;
   const classes = useStyles();
-  // console.log(props.id);
-  // is root deleted
-  // is not root deleted
+  const isFieldRemoved = useAppSelector(selectors.isFieldRemoved(fieldId));
+  const isFieldRemovedRoot = useAppSelector(
+    selectors.isFieldRemovedRoot(props.id)
+  );
+
+  const dispatch = useAppDispatch();
+  const removeField = () =>
+    dispatch(documentationEditActions.removeField({ fieldId }));
+  const unremoveField = () =>
+    dispatch(documentationEditActions.unremoveField({ fieldId }));
 
   return process.env.REACT_APP_FF_FIELD_LEVEL_EDITS === 'true' ? (
     <div className={classes.fieldContainer}>
       <div className={classes.contributionContainer}>
         <DocsFieldOrParameterContribution {...props} />
       </div>
-      {isEditing && <div>delete</div>}
+      {isEditing &&
+        (isFieldRemoved ? (
+          isFieldRemovedRoot ? (
+            <div onClick={unremoveField}>unremove</div>
+          ) : (
+            <div>is removed</div>
+          )
+        ) : (
+          <div onClick={removeField}>remove</div>
+        ))}
     </div>
   ) : (
     <DocsFieldOrParameterContribution {...props} />

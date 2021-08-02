@@ -16,9 +16,9 @@ const memoizedGetAllRemovedFields = createSelector<
     const allRemovedFields = new Set<string>();
     for (const fieldId of removedFields) {
       allRemovedFields.add(fieldId);
-      const shapeId = shapes.fieldIdToShapeId[fieldId];
-      const stack = [shapeId];
+      const stack = [shapes.fieldIdToShapeId[fieldId]];
       while (stack.length > 0) {
+        const shapeId = stack.pop()!;
         const reduxShapes = shapes.shapeMap[shapeId];
         for (const shape of reduxShapes) {
           if (shape.jsonType === JsonLike.OBJECT) {
@@ -97,13 +97,13 @@ export const isEndpointEditable = ({
   );
 };
 
-export const isFieldDeleted = (fieldId: string) => (state: RootState) => {
+export const isFieldRemoved = (fieldId: string) => (state: RootState) => {
   const memoizedFields = memoizedGetAllRemovedFields(state);
 
   return memoizedFields.has(fieldId);
 };
 
-export const isFieldUserDeleted = (fieldId: string) => (
+export const isFieldRemovedRoot = (fieldId: string) => (
   state: RootState
 ): boolean => {
   return !!state.documentationEdits.fieldEdits.removedFields.find(
@@ -122,6 +122,6 @@ export const isEndpointFieldEditable = ({
 }) => (state: RootState) => {
   return (
     isEndpointEditable({ pathId, method })(state) &&
-    !isFieldDeleted(fieldId)(state)
+    !isFieldRemoved(fieldId)(state)
   );
 };
