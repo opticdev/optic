@@ -3,5 +3,5 @@ source: workspaces/optic-engine/tests/interaction_diff.rs
 expression: fingerprints
 ---
 [
-    "a10d7af6eb8b4b2a",
+    "ee34f198b2df5bfc",
 ]

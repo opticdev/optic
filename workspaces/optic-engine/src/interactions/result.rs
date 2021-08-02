@@ -2,10 +2,10 @@ use crate::events::http_interaction::HttpInteraction;
 use crate::learn_shape::TrailObservationsResult;
 use crate::shapes::{JsonTrail, ShapeDiffResult};
 use crate::state::endpoint::{PathComponentId, QueryParametersId, RequestId, ResponseId, ShapeId};
+use seahash::hash;
 use serde::{Deserialize, Serialize};
 use std::collections::hash_map::{DefaultHasher, HashMap};
 use std::hash::{Hash, Hasher};
-
 #[derive(Debug, Deserialize, Serialize, Hash)]
 pub enum InteractionDiffResult {
   UnmatchedQueryParameters(UnmatchedQueryParameters),
@@ -28,9 +28,9 @@ pub enum InteractionDiffResult {
 
 impl InteractionDiffResult {
   pub fn fingerprint(&self) -> String {
-    let mut hash_state = DefaultHasher::new();
-    Hash::hash(self, &mut hash_state);
-    format!("{:x}", hash_state.finish())
+    let s = serde_json::to_vec(&self).expect("InteractionDiffResult should be json serializable");
+    let hashed = hash(&s);
+    format!("{:x}", &hashed)
   }
 
   pub fn interaction_trail(&self) -> &InteractionTrail {

@@ -1,13 +1,13 @@
 ---
-source: workspaces/optic-engine-native/src/shapes/result.rs
+source: workspaces/optic-engine/src/shapes/result.rs
 expression: fingerprints
 ---
 [
-    "f47f0bc589141db7",
-    "f47f0bc589141db7",
-    "f47f0bc589141db7",
-    "3656d25b44e1a1fa",
-    "3cebd5e279fd7ab8",
-    "3cebd5e279fd7ab8",
-    "93744bbc085ac6cf",
+    "11f384a4e69c5c5e",
+    "11f384a4e69c5c5e",
+    "11f384a4e69c5c5e",
+    "5a6a9cb9e23689d6",
+    "88ecd37410203a7f",
+    "88ecd37410203a7f",
+    "c59fe9d3b08eabb0",
 ]
