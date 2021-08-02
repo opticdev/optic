@@ -30,18 +30,23 @@ export type DocsFieldOrParameterContributionProps = {
 export function DocFieldContribution(
   props: DocsFieldOrParameterContributionProps
 ) {
+  const isEditing = useAppSelector(
+    (state) => state.documentationEdits.isEditing
+  );
   const classes = useStyles();
-  console.log(props.id);
+  // console.log(props.id);
   // is root deleted
   // is not root deleted
 
-  return (
+  return process.env.REACT_APP_FF_FIELD_LEVEL_EDITS === 'true' ? (
     <div className={classes.fieldContainer}>
       <div className={classes.contributionContainer}>
         <DocsFieldOrParameterContribution {...props} />
       </div>
-      <div>delete</div>
+      {isEditing && <div>delete</div>}
     </div>
+  ) : (
+    <DocsFieldOrParameterContribution {...props} />
   );
 }
 
@@ -55,7 +60,12 @@ export function DocsFieldOrParameterContribution({
 }: DocsFieldOrParameterContributionProps) {
   const contributionKey = 'description';
   const endpointId = getEndpointId(endpoint);
-  const isEditable = useAppSelector(selectors.isEndpointEditable(endpoint));
+  const isEditable = useAppSelector(
+    selectors.isEndpointFieldEditable({
+      ...endpoint,
+      fieldId: id,
+    })
+  );
   const contributionValue = useAppSelector(
     (state) =>
       state.documentationEdits.contributions[id]?.[contributionKey]?.value

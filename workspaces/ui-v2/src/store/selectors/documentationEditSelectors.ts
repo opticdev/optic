@@ -122,6 +122,6 @@ export const isEndpointFieldEditable = ({
 }) => (state: RootState) => {
   return (
     isEndpointEditable({ pathId, method })(state) &&
-    isFieldDeleted(fieldId)(state)
+    !isFieldDeleted(fieldId)(state)
   );
 };
