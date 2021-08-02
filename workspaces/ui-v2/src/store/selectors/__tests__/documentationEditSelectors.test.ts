@@ -29,10 +29,10 @@ describe('getValidContributions', () => {
     expect(getValidContributions(store)).toMatchSnapshot();
   });
 
-  // TODO unskip when implemented
+  // TODO FLEB unskip when implemented
   test.skip('filters out contributions that are for deleted fields', () => {});
 
-  // TODO unskip when implemented
+  // TODO FLEB unskip when implemented
   test.skip('filters out contributions with the same existing contributions value', () => {});
 });
 
@@ -41,7 +41,7 @@ describe('getDocumentationEditStagedCount', () => {
     expect(getDocumentationEditStagedCount(store)).toBe(2);
   });
 
-  // TODO unskip when implemented filter contributions and filter endpoint removal
+  // TODO FLEB unskip when implemented filter contributions and filter endpoint removal
   test.skip('with deleted endpoints and fields', () => {
     store.documentationEdits.removedEndpoints.push({
       pathId: 'path_UOIsxzICu5',

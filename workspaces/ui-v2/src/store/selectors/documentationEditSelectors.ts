@@ -43,9 +43,9 @@ export const getValidContributions = (state: RootState): IContribution[] => {
   const removedEndpointsSet = new Set(removedEndpoints.map(getEndpointId));
   const filteredContributions: IContribution[] = [];
 
-  // TODO filter out contributions that are for deleted fields
+  // TODO FLEB filter out contributions that are for deleted fields
 
-  // TODO filter out contributions with the same existing contributions value
+  // TODO FLEB filter out contributions with the same existing contributions value
   for (const [id, idContributions] of Object.entries(contributions)) {
     for (const [contributionKey, { value, endpointId }] of Object.entries(
       idContributions
