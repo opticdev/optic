@@ -79,17 +79,20 @@ export const saveDocumentationChanges = createAsyncThunk<
     const clientId = state.metadata.data?.clientAgent || '';
     const clientSessionId = state.metadata.data?.sessionId || '';
 
-    const { deletedEndpoints } = state.documentationEdits;
+    const { removedEndpoints } = state.documentationEdits;
 
-    const deleteCommands: CQRSCommand[] = (
+    // TODO FLEB fetch remove field commands
+    // TODO FLEB filter out field remove commands if in deleted endpoint
+
+    const removeCommands: CQRSCommand[] = (
       await Promise.all(
-        deletedEndpoints.map(({ pathId, method }) =>
+        removedEndpoints.map(({ pathId, method }) =>
           fetchRemoveEndpointCommands(
             spectacle,
             pathId,
             method
-          ).then((deleteCommands) =>
-            deleteCommands.concat([PrunePathComponents()])
+          ).then((removeCommands) =>
+            removeCommands.concat([PrunePathComponents()])
           )
         )
       )
@@ -106,7 +109,7 @@ export const saveDocumentationChanges = createAsyncThunk<
         )
     );
 
-    const commands = [...deleteCommands, ...contributionCommands];
+    const commands = [...removeCommands, ...contributionCommands];
 
     if (commands.length > 0) {
       try {

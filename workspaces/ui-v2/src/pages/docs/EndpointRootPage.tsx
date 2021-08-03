@@ -30,6 +30,7 @@ import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
   EndpointTOC,
+  DocFieldContribution,
   DocsFieldOrParameterContribution,
   EndpointNameContribution,
   DocsPageAccessoryNavigation,
@@ -92,14 +93,14 @@ export const EndpointRootPage: FC<
   }, [analytics]);
 
   const isEndpointStagedForDeletion = useAppSelector(
-    selectors.isEndpointDeleted({ method, pathId })
+    selectors.isEndpointRemoved({ method, pathId })
   );
 
-  const deleteEndpoint = () =>
-    dispatch(documentationEditActions.deleteEndpoint({ method, pathId }));
+  const removeEndpoint = () =>
+    dispatch(documentationEditActions.removeEndpoint({ method, pathId }));
 
-  const undeleteEndpoint = () =>
-    dispatch(documentationEditActions.undeleteEndpoint({ method, pathId }));
+  const unremoveEndpoint = () =>
+    dispatch(documentationEditActions.unremoveEndpoint({ method, pathId }));
 
   const classes = useStyles();
 
@@ -134,7 +135,7 @@ export const EndpointRootPage: FC<
           endpoint={thisEndpoint}
           handleClose={() => setDeleteModalOpen(false)}
           handleConfirm={() => {
-            deleteEndpoint();
+            removeEndpoint();
             setDeleteModalOpen(false);
           }}
         />
@@ -171,7 +172,7 @@ export const EndpointRootPage: FC<
                 variant="outlined"
                 color="secondary"
                 onClick={() => {
-                  undeleteEndpoint();
+                  unremoveEndpoint();
                 }}
               >
                 Undelete <UndoIcon className={classes.icon} />
@@ -291,7 +292,7 @@ export const EndpointRootPage: FC<
                         }
 
                         return (
-                          <DocsFieldOrParameterContribution
+                          <DocFieldContribution
                             key={
                               field.contribution.id +
                               field.contribution.contributionKey
@@ -355,7 +356,7 @@ export const EndpointRootPage: FC<
                           <div>
                             <ContributionsList
                               renderField={(field) => (
-                                <DocsFieldOrParameterContribution
+                                <DocFieldContribution
                                   key={
                                     field.contribution.id +
                                     field.contribution.contributionKey
@@ -429,7 +430,7 @@ export const EndpointRootPage: FC<
                             <div>
                               <ContributionsList
                                 renderField={(field) => (
-                                  <DocsFieldOrParameterContribution
+                                  <DocFieldContribution
                                     key={
                                       field.contribution.id +
                                       field.contribution.contributionKey

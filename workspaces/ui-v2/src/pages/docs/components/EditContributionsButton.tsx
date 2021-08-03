@@ -35,8 +35,8 @@ export function EditContributionsButton() {
   const pendingCount = useAppSelector(
     selectors.getDocumentationEditStagedCount
   );
-  const deletedEndpointCount = useAppSelector(
-    (state) => state.documentationEdits.deletedEndpoints.length
+  const removedEndpointsCount = useAppSelector(
+    (state) => state.documentationEdits.removedEndpoints.length
   );
   const dispatch = useAppDispatch();
 
@@ -58,7 +58,7 @@ export function EditContributionsButton() {
   const save = (commitMessage: string) => {
     // If we are on endpoint root page and we just deleted the page, we want to redirect
     const shouldRedirect =
-      deletedEndpointCount > 0 &&
+      removedEndpointsCount > 0 &&
       history.location.pathname !== documentationPageRoute.path;
     dispatch(
       documentationEditActions.saveDocumentationChanges({
@@ -68,11 +68,11 @@ export function EditContributionsButton() {
     )
       .then(() => {
         analytics.userSavedDocChanges(
-          deletedEndpointCount,
-          pendingCount - deletedEndpointCount,
+          removedEndpointsCount,
+          pendingCount - removedEndpointsCount,
           specId
         );
-        if (deletedEndpointCount > 0) {
+        if (removedEndpointsCount > 0) {
           analytics.userDeletedEndpoint();
         }
         if (shouldRedirect) {

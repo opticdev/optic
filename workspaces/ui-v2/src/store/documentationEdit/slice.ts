@@ -19,7 +19,10 @@ export type DocumentationEditState = {
       }
     >
   >;
-  deletedEndpoints: {
+  fieldEdits: {
+    removedFields: string[];
+  };
+  removedEndpoints: {
     pathId: string;
     method: string;
   }[];
@@ -29,7 +32,10 @@ export type DocumentationEditState = {
 
 const initialState: DocumentationEditState = {
   contributions: {},
-  deletedEndpoints: [],
+  removedEndpoints: [],
+  fieldEdits: {
+    removedFields: [],
+  },
   commitModalOpen: false,
   isEditing: false,
 };
@@ -62,16 +68,16 @@ const documentationEditSlice = createSlice({
         };
       }
     },
-    deleteEndpoint: (
+    removeEndpoint: (
       state,
       action: PayloadAction<{
         pathId: string;
         method: string;
       }>
     ) => {
-      state.deletedEndpoints.push(action.payload);
+      state.removedEndpoints.push(action.payload);
     },
-    undeleteEndpoint: (
+    unremoveEndpoint: (
       state,
       action: PayloadAction<{
         pathId: string;
@@ -79,11 +85,20 @@ const documentationEditSlice = createSlice({
       }>
     ) => {
       const { pathId, method } = action.payload;
-      const newDeletedEndpoints = state.deletedEndpoints.filter(
+      const newRemovedEndpoints = state.removedEndpoints.filter(
         (endpoint) =>
           !(pathId === endpoint.pathId && method === endpoint.method)
       );
-      state.deletedEndpoints = newDeletedEndpoints;
+      state.removedEndpoints = newRemovedEndpoints;
+    },
+    removeField: (state, action: PayloadAction<{ fieldId: string }>) => {
+      // TODO FLEB filter any other removed fields that is now a child of the newly added field.
+      state.fieldEdits.removedFields.push(action.payload.fieldId);
+    },
+    unremoveField: (state, action: PayloadAction<{ fieldId: string }>) => {
+      state.fieldEdits.removedFields = state.fieldEdits.removedFields.filter(
+        (removedFieldId) => removedFieldId !== action.payload.fieldId
+      );
     },
     updateCommitModalState: (
       state,

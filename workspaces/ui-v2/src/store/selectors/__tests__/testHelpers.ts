@@ -1,7 +1,6 @@
 import deepCopy from 'deepcopy';
 import { RootState } from '<src>/store';
 
-// TODO provide overrides for this store
 export const getMockReduxStore = (): RootState =>
   deepCopy({
     endpoints: {
@@ -243,8 +242,24 @@ export const getMockReduxStore = (): RootState =>
       },
     },
     documentationEdits: {
-      contributions: {},
-      deletedEndpoints: [],
+      contributions: {
+        field_LRYtHDYkVO: {
+          description: {
+            value: 'hello',
+            endpointId: 'path_UOIsxzICu5.GET',
+          },
+        },
+        field_7u9pabP6VJ: {
+          description: {
+            value: 'goodbye',
+            endpointId: 'path_xhUZ8irdJO.GET',
+          },
+        },
+      },
+      removedEndpoints: [],
+      fieldEdits: {
+        removedFields: [],
+      },
       commitModalOpen: false,
       isEditing: false,
     },
@@ -579,8 +594,38 @@ export const getMockReduxStore = (): RootState =>
                   contributions: {},
                   changes: null,
                 },
+                {
+                  name: 'nested',
+                  fieldId: 'field_p1mYG7RoTV',
+                  shapeId: 'shape_1g2scOgFGF',
+                  contributions: {},
+                  changes: null,
+                },
               ],
             },
+          },
+        ],
+        shape_1g2scOgFGF: [
+          {
+            shapeId: 'shape_1g2scOgFGF',
+            jsonType: 'Object',
+            asObject: {
+              fields: [
+                {
+                  name: 'inner',
+                  fieldId: 'field_y1zK0XALx0',
+                  shapeId: 'shape_UmsvoMD123',
+                  contributions: {},
+                  changes: null,
+                },
+              ],
+            },
+          },
+        ],
+        shape_UmsvoMD123: [
+          {
+            shapeId: 'shape_UmsvoMD123',
+            jsonType: 'String',
           },
         ],
         shape_iT4Fjb9iYe: [
@@ -607,6 +652,24 @@ export const getMockReduxStore = (): RootState =>
             jsonType: 'String',
           },
         ],
+      },
+      fieldIdToShapeId: {
+        field_LRYtHDYkVO: 'shape_tUQxsgursF',
+        field_XM7KRqWOlV: 'shape_9cUoBYpjJU',
+        field_9mczOWgNnu: 'shape_R4cTQ1zpOs',
+        field_5GCvc8KB2p: 'shape_owJFnZQJeS',
+        field_NC2enngiGZ: 'shape_iT4Fjb9iYe',
+        field_PPgOBSHq9D: 'shape_a1n10Wzc6O',
+        field_yUzK0XALx0: 'shape_UmsvoMDzQ8',
+        field_cOmYY7RoTV: 'shape_FVWIcOgFGF',
+        field_7u9pabP6VJ: 'shape_CgzMTUdLrP',
+        field_WAgxB3TCIX: 'shape_eDApTnytqu',
+        field_I4kC8vgaOM: 'shape_z89HIEeyN0',
+        field_TxVlnhtLaa: 'shape_3Xt9wp5UxL',
+        field_W8dnCvOHU: 'shape_ZL8uOU2HQF',
+        field_hnI7P1UdbB: 'shape_qQT0krhOKn',
+        field_p1mYG7RoTV: 'shape_1g2scOgFGF',
+        field_y1zK0XALx0: 'shape_UmsvoMD123',
       },
     },
   } as RootState);
