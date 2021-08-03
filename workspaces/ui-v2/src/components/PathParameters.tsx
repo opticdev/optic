@@ -23,6 +23,7 @@ const defaultFieldRender = (param: IPathParameter): ReactNode => {
       shapes={[alwaysAString]}
       depth={0}
       value={param.description}
+      required
     />
   );
 };
