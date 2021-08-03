@@ -29,10 +29,12 @@ describe('getValidContributions', () => {
     expect(getValidContributions(store)).toMatchSnapshot();
   });
 
-  // TODO FLEB unskip when implemented
-  test.skip('filters out contributions that are for deleted fields', () => {});
+  test('filters out contributions that are for deleted fields', () => {
+    store.documentationEdits.fieldEdits.removedFields.push('field_LRYtHDYkVO');
+    expect(getValidContributions(store)).toMatchSnapshot();
+  });
 
-  // TODO FLEB unskip when implemented
+  // TODO unskip when implemented
   test.skip('filters out contributions with the same existing contributions value', () => {});
 });
 
@@ -41,12 +43,13 @@ describe('getDocumentationEditStagedCount', () => {
     expect(getDocumentationEditStagedCount(store)).toBe(2);
   });
 
-  // TODO FLEB unskip when implemented filter contributions and filter endpoint removal
-  test.skip('with deleted endpoints and fields', () => {
+  test('with deleted endpoints and fields', () => {
     store.documentationEdits.removedEndpoints.push({
       pathId: 'path_UOIsxzICu5',
       method: 'GET',
     });
+    store.documentationEdits.fieldEdits.removedFields.push('field_7u9pabP6VJ');
+    expect(getDocumentationEditStagedCount(store)).toBe(2);
   });
 });
 

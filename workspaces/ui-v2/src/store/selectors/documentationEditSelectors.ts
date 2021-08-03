@@ -16,7 +16,7 @@ const memoizedGetAllRemovedFields = createSelector<
     const allRemovedFields = new Set<string>();
     for (const fieldId of removedFields) {
       allRemovedFields.add(fieldId);
-      const stack = [shapes.fieldIdToShapeId[fieldId]];
+      const stack = [shapes.fieldMap[fieldId].shapeId];
       while (stack.length > 0) {
         const shapeId = stack.pop()!;
         const reduxShapes = shapes.shapeMap[shapeId];
@@ -43,14 +43,22 @@ export const getValidContributions = (state: RootState): IContribution[] => {
   const removedEndpointsSet = new Set(removedEndpoints.map(getEndpointId));
   const filteredContributions: IContribution[] = [];
 
-  // TODO FLEB filter out contributions that are for deleted fields
+  const removedFields = memoizedGetAllRemovedFields(state);
 
-  // TODO FLEB filter out contributions with the same existing contributions value
   for (const [id, idContributions] of Object.entries(contributions)) {
     for (const [contributionKey, { value, endpointId }] of Object.entries(
       idContributions
     )) {
-      if (!removedEndpointsSet.has(endpointId)) {
+      // TODO filter out contributions that have the same initial value
+      const isContributionsForRemovedEndpoint = removedEndpointsSet.has(
+        endpointId
+      );
+      const isContributionForRemovedField = removedFields.has(id);
+
+      if (
+        !isContributionsForRemovedEndpoint &&
+        !isContributionForRemovedField
+      ) {
         filteredContributions.push({
           id,
           contributionKey,

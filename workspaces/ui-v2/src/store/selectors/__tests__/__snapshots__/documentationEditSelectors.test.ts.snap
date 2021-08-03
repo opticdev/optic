@@ -11,6 +11,17 @@ Array [
 ]
 `;
 
+exports[`getValidContributions filters out contributions that are for deleted fields 1`] = `
+Array [
+  Object {
+    "contributionKey": "description",
+    "endpointId": "path_xhUZ8irdJO.GET",
+    "id": "field_7u9pabP6VJ",
+    "value": "goodbye",
+  },
+]
+`;
+
 exports[`getValidContributions returns all valid contributions 1`] = `
 Array [
   Object {

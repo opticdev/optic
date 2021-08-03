@@ -1,17 +1,17 @@
 import { createSlice, SerializedError } from '@reduxjs/toolkit';
 
 import { AsyncStatus } from '<src>/types';
-import { ShapeId, ReduxShape } from './types';
+import { ShapeId, ReduxField, ReduxShape } from './types';
 import { fetchShapes } from './thunks';
 
 const initialState: {
   rootShapes: Record<ShapeId, AsyncStatus<ShapeId, SerializedError>>;
   shapeMap: Record<ShapeId, ReduxShape[]>;
-  fieldIdToShapeId: Record<string, ShapeId>;
+  fieldMap: Record<string, ReduxField>;
 } = {
   rootShapes: {},
   shapeMap: {},
-  fieldIdToShapeId: {},
+  fieldMap: {},
 };
 
 const shapesSlice = createSlice({
@@ -30,11 +30,11 @@ const shapesSlice = createSlice({
         loading: false,
         data: action.meta.arg.rootShapeId,
       };
-      const { shapeMap, fieldIdToShapeId } = action.payload;
+      const { shapeMap, fieldMap } = action.payload;
       for (const [shapeId, reduxShapes] of Object.entries(shapeMap)) {
         state.shapeMap[shapeId] = reduxShapes;
       }
-      state.fieldIdToShapeId = fieldIdToShapeId;
+      state.fieldMap = fieldMap;
     });
     builder.addCase(fetchShapes.rejected, (state, action) => {
       state.rootShapes[action.meta.arg.rootShapeId] = {
