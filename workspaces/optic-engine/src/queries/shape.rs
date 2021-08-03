@@ -35,10 +35,9 @@ impl<'a> ShapeQueries<'a> {
       core_shape_kind: self.resolve_to_core_shape(&shape_trail.root_shape_id),
     };
 
-    dbg!(&resolved);
     // eprintln!("{:?}", resolved);
     while let Some(trail_component) = trail_components.next() {
-      eprintln!("{:?}", trail_component);
+      // eprintln!("{:?}", trail_component);
       resolved = self.resolve_trail_to_core_shape_helper(&resolved, trail_component);
 
       parent_node_index = projection.get_shape_node_index(&resolved.shape_id);
