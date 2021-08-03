@@ -175,8 +175,6 @@ impl<'a> ShapeChoiceQueries<'a> {
   ) -> Option<impl Iterator<Item = ShapeCommand> + 'a> {
     let field_shape_trail = self.shape_queries.resolve_shape_trail(field_id)?;
 
-    dbg!(&field_shape_trail);
-
     let requested_kinds =
       requested_json_types
         .into_iter()
