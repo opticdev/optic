@@ -235,7 +235,7 @@ mod test {
     let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
     let updated_queries = ShapeChoiceQueries::from(updated_spec.shape());
     let updated_choices = updated_queries
-      .trail_choices(&ShapeTrail::new("field_1".to_owned()))
+      .trail_choices(&ShapeTrail::new("object_shape_1".to_owned()))
       .collect::<Vec<_>>();
 
     assert_debug_snapshot!(

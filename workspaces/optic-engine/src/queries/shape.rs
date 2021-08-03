@@ -158,7 +158,7 @@ impl<'a> ShapeQueries<'a> {
     let shape_node_index = self
       .shape_projection
       .get_shape_node_index(shape_id)
-      .expect(shape_id);
+      .expect("shape node to exist for shape id");
     let core_shape_node_index = self
       .shape_projection
       .get_ancestor_shape_node_index(shape_node_index)

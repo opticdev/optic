@@ -1,0 +1,19 @@
+---
+source: workspaces/optic-engine/src/queries/spectacle/spec_choices.rs
+expression: updated_choices
+---
+[
+    Object(
+        ObjectChoice {
+            shape_id: "object_shape_1",
+            json_type: Object,
+            fields: [
+                ObjectFieldChoice {
+                    name: "lastName",
+                    field_id: "field_1",
+                    shape_id: "shape_1095",
+                },
+            ],
+        },
+    ),
+]
