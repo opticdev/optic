@@ -679,6 +679,19 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         };
       },
     },
+    FieldCommands: {
+      remove: (parent: FieldShape) => {
+        return commandGenerator.field.remove(parent.fieldId);
+      },
+      edit: async (
+        parent: FieldShape,
+        args: { requestedTypes: [JsonLike] },
+        context: GraphQLContext
+      ) => {
+        // TODO: query engine for actual commands
+        return [];
+      },
+    },
     EndpointChanges: {
       endpoints: (parent: EndpointChanges) => {
         return Promise.resolve(parent.data.endpoints);
