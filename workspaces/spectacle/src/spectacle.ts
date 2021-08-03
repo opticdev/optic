@@ -17,7 +17,12 @@ import {
   CommandGenerator,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
-import { FieldShape, JsonLike, ShapeChoice } from '@useoptic/optic-domain';
+import {
+  FieldShape,
+  FieldShapeFromShape,
+  JsonLike,
+  ShapeChoice,
+} from '@useoptic/optic-domain';
 import {
   IOpticContext,
   IOpticDiffService,
@@ -231,6 +236,49 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           sinceBatchCommitId
         );
         return Promise.resolve(endpointChanges);
+      },
+      field: (
+        parent: any,
+        { fieldId }: { fieldId: string },
+        context: GraphQLContext
+      ) => {
+        const fieldNodeWrapper = context
+          .spectacleContext()
+          .shapeQueries.findNodeById(fieldId);
+
+        if (
+          !fieldNodeWrapper ||
+          fieldNodeWrapper.result.type !== shapes.NodeType.Field
+        )
+          return Promise.resolve(null);
+
+        let fieldNode = fieldNodeWrapper.result;
+
+        let shapeNodeWrapper = context
+          .spectacleContext()
+          .shapeQueries.listIncomingNeighborsByType(
+            fieldId,
+            shapes.NodeType.Shape
+          )
+          .results.find((shapeNode) => {
+            return shapeNode.result.type === shapes.NodeType.Shape;
+          });
+
+        if (
+          !shapeNodeWrapper ||
+          shapeNodeWrapper.result.type !== shapes.NodeType.Shape
+        ) {
+          throw new Error('field should describe a shape');
+        }
+
+        let shapeNode = shapeNodeWrapper.result;
+
+        return Promise.resolve({
+          fieldId: fieldNode.data.fieldId,
+          shapeId: shapeNode.data.shapeId,
+          name: fieldNode.data.descriptor.name,
+          commands: {},
+        });
       },
       batchCommits: (parent: any, _: {}, context: GraphQLContext) => {
         return Promise.resolve(
@@ -673,14 +721,9 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         // TODO FLEB - connect up to optic engine
         return false;
       },
-      commands: (parent: FieldShape) => {
-        return {
-          remove: commandGenerator.field.remove(parent.fieldId),
-        };
-      },
     },
     FieldCommands: {
-      remove: (parent: FieldShape) => {
+      remove: async (parent: FieldShape) => {
         return commandGenerator.field.remove(parent.fieldId);
       },
       edit: async (
