@@ -62,6 +62,54 @@ const fetchRemoveEndpointCommands = async (
   }
 };
 
+type FieldCommands = {
+  field: {
+    commands: {
+      remove: CQRSCommand[];
+    };
+  } | null;
+};
+
+const fetchFieldRemoveCommands = async (
+  spectacle: IForkableSpectacle,
+  fieldId: string
+): Promise<CQRSCommand[]> => {
+  try {
+    const results = await spectacle.query<
+      FieldCommands,
+      {
+        fieldId: string;
+      }
+    >({
+      query: `
+      query X($fieldId: ID!) {
+        field(fieldId: $fieldId) {
+          commands {
+            remove
+          }
+        }
+      }`,
+      variables: {
+        fieldId,
+      },
+    });
+    if (results.errors) {
+      console.error(results.errors);
+      throw new Error(JSON.stringify(results.errors));
+    }
+    if (!results.data || !results.data.field) {
+      const message = `Could not generate removal commands for field: ${fieldId}`;
+      console.error(message);
+      throw new Error(message);
+    }
+    return results.data.field.commands.remove;
+  } catch (e) {
+    console.error(e);
+    Sentry.captureException(e);
+    throw e;
+  }
+};
+
 export const saveDocumentationChanges = createAsyncThunk<
   {},
   {
@@ -80,23 +128,30 @@ export const saveDocumentationChanges = createAsyncThunk<
     const clientSessionId = state.metadata.data?.sessionId || '';
 
     const { removedEndpoints } = state.documentationEdits;
+    const { removedFields } = state.documentationEdits.fieldEdits;
 
-    // TODO FLEB fetch remove field commands
-    // TODO FLEB filter out field remove commands if in deleted endpoint
+    const removeFieldCommandsPromise: Promise<CQRSCommand[]> = Promise.all(
+      removedFields.map((fieldId) =>
+        fetchFieldRemoveCommands(spectacle, fieldId)
+      )
+    ).then((fieldCommands) => fieldCommands.flatMap((x) => x));
 
-    const removeCommands: CQRSCommand[] = (
-      await Promise.all(
-        removedEndpoints.map(({ pathId, method }) =>
-          fetchRemoveEndpointCommands(
-            spectacle,
-            pathId,
-            method
-          ).then((removeCommands) =>
-            removeCommands.concat([PrunePathComponents()])
-          )
+    const removeEndpointCommandsPromise: Promise<CQRSCommand[]> = Promise.all(
+      removedEndpoints.map(({ pathId, method }) =>
+        fetchRemoveEndpointCommands(
+          spectacle,
+          pathId,
+          method
+        ).then((removeCommands) =>
+          removeCommands.concat([PrunePathComponents()])
         )
       )
-    ).flatMap((x) => x);
+    ).then((endpointCommands) => endpointCommands.flatMap((x) => x));
+
+    const [removeFieldCommands, removeEndpointCommands] = await Promise.all([
+      removeFieldCommandsPromise,
+      removeEndpointCommandsPromise,
+    ]);
 
     const validContributions = getValidContributions(state);
 
@@ -109,7 +164,13 @@ export const saveDocumentationChanges = createAsyncThunk<
         )
     );
 
-    const commands = [...removeCommands, ...contributionCommands];
+    // Apply these in order for consistency - we generate the commands in parallel and then apply them all at once
+    // To be safer, we could apply the commands sequentially before generating the next commands
+    const commands = [
+      ...contributionCommands,
+      ...removeFieldCommands,
+      ...removeEndpointCommands,
+    ];
 
     if (commands.length > 0) {
       try {
