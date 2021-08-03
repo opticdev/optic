@@ -36,6 +36,7 @@ import {
   DocsPageAccessoryNavigation,
   MarkdownBodyContribution,
   DeleteEndpointConfirmationModal,
+  SimulatedBody,
 } from '<src>/pages/docs/components';
 import { useAnalytics } from '<src>/contexts/analytics';
 
@@ -313,11 +314,26 @@ export const EndpointRootPage: FC<
                     />
                   </div>
                   <div className={classes.panel}>
-                    <QueryParametersPanel
-                      parameters={selectors.convertShapeToQueryParameters(
-                        shapes
-                      )}
-                    />
+                    {isEditing ? (
+                      <SimulatedBody
+                        rootShapeId={visibleQueryParameters.rootShapeId}
+                        endpointId={endpointId}
+                      >
+                        {(shapes) => (
+                          <QueryParametersPanel
+                            parameters={selectors.convertShapeToQueryParameters(
+                              shapes
+                            )}
+                          />
+                        )}
+                      </SimulatedBody>
+                    ) : (
+                      <QueryParametersPanel
+                        parameters={selectors.convertShapeToQueryParameters(
+                          shapes
+                        )}
+                      />
+                    )}
                   </div>
                 </div>
               )}
@@ -376,10 +392,24 @@ export const EndpointRootPage: FC<
                             />
                           </div>
                           <div className={classes.panel}>
-                            <HttpBodyPanel
-                              shapes={shapes}
-                              location={request.body!.contentType}
-                            />
+                            {isEditing ? (
+                              <SimulatedBody
+                                rootShapeId={request.body!.rootShapeId}
+                                endpointId={endpointId}
+                              >
+                                {(shapes) => (
+                                  <HttpBodyPanel
+                                    shapes={shapes}
+                                    location={request.body!.contentType}
+                                  />
+                                )}
+                              </SimulatedBody>
+                            ) : (
+                              <HttpBodyPanel
+                                shapes={shapes}
+                                location={request.body!.contentType}
+                              />
+                            )}
                           </div>
                         </div>
                       )}
@@ -450,10 +480,24 @@ export const EndpointRootPage: FC<
                               />
                             </div>
                             <div className={classes.panel}>
-                              <HttpBodyPanel
-                                shapes={shapes}
-                                location={response.body!.contentType}
-                              />
+                              {isEditing ? (
+                                <SimulatedBody
+                                  rootShapeId={response.body!.rootShapeId}
+                                  endpointId={endpointId}
+                                >
+                                  {(shapes) => (
+                                    <HttpBodyPanel
+                                      shapes={shapes}
+                                      location={response.body!.contentType}
+                                    />
+                                  )}
+                                </SimulatedBody>
+                              ) : (
+                                <HttpBodyPanel
+                                  shapes={shapes}
+                                  location={response.body!.contentType}
+                                />
+                              )}
                             </div>
                           </div>
                         )}

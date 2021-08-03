@@ -1,6 +1,5 @@
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import { RouteComponentProps } from 'react-router';
-import { IForkableSpectacle } from '@useoptic/spectacle';
 import { LinearProgress } from '@material-ui/core';
 import { useEndpointDiffs } from '<src>/pages/diffs/hooks/useEndpointDiffs';
 import {
@@ -8,7 +7,6 @@ import {
   useShapeDiffInterpretations,
 } from '<src>/pages/diffs/hooks/useDiffInterpretations';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
-import { SpectacleContext } from '<src>/contexts/spectacle-provider';
 import { PageLayout } from '<src>/components';
 import { DiffAccessoryNavigation } from '<src>/pages/diffs/components/DiffAccessoryNavigation';
 import { useAppSelector, selectors } from '<src>/store';
@@ -22,8 +20,6 @@ export const ReviewEndpointDiffContainer: FC<
   }>
 > = ({ match }) => {
   const { method, pathId } = match.params;
-
-  const spectacle = useContext(SpectacleContext)!;
 
   const endpointDiffs = useEndpointDiffs(pathId, method);
   const endpoint = useAppSelector(selectors.getEndpoint({ pathId, method }));
@@ -46,7 +42,6 @@ export const ReviewEndpointDiffContainer: FC<
         <ReviewEndpointDiffPage
           endpoint={endpoint}
           allDiffs={[...newRegionDiffs.results, ...shapeDiffs.results]}
-          spectacle={spectacle as IForkableSpectacle}
           method={method}
           pathId={pathId}
         />
