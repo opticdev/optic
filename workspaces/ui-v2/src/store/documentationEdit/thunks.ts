@@ -134,7 +134,7 @@ export const saveDocumentationChanges = createAsyncThunk<
       removedFields.map((fieldId) =>
         fetchFieldRemoveCommands(spectacle, fieldId)
       )
-    ).then((fieldCommands) => fieldCommands.flatMap((x) => x));
+    ).then((fieldCommands) => fieldCommands.flat());
 
     const removeEndpointCommandsPromise: Promise<CQRSCommand[]> = Promise.all(
       removedEndpoints.map(({ pathId, method }) =>
@@ -146,7 +146,7 @@ export const saveDocumentationChanges = createAsyncThunk<
           removeCommands.concat([PrunePathComponents()])
         )
       )
-    ).then((endpointCommands) => endpointCommands.flatMap((x) => x));
+    ).then((endpointCommands) => endpointCommands.flat());
 
     const [removeFieldCommands, removeEndpointCommands] = await Promise.all([
       removeFieldCommandsPromise,
