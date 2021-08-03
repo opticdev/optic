@@ -27,13 +27,18 @@ export const SimulatedBody = ({
 
   useEffect(() => {
     let isStale = false;
-
     (async () => {
       // TODO FLEB add in edited fields
       const removeFieldCommandsPromise: Promise<CQRSCommand[]> = Promise.all(
         removedFields.map((fieldId) => {
-          // TODO generate removed field id
-          return Promise.resolve([]);
+          // TODO FLEB generate removed field id via spectacle
+          return Promise.resolve([
+            {
+              RemoveField: {
+                fieldId,
+              },
+            },
+          ]);
         })
       ).then((fieldCommands) => fieldCommands.flat());
 
