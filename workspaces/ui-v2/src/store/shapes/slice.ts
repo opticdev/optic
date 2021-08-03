@@ -34,7 +34,10 @@ const shapesSlice = createSlice({
       for (const [shapeId, reduxShapes] of Object.entries(shapeMap)) {
         state.shapeMap[shapeId] = reduxShapes;
       }
-      state.fieldMap = fieldMap;
+      state.fieldMap = {
+        ...state.fieldMap,
+        ...fieldMap,
+      };
     });
     builder.addCase(fetchShapes.rejected, (state, action) => {
       state.rootShapes[action.meta.arg.rootShapeId] = {
