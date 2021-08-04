@@ -3,19 +3,21 @@ import { ChangeType } from '<src>/types';
 
 export type ShapeId = string;
 
+export type ReduxField = {
+  fieldId: string;
+  name: string;
+  shapeId: string;
+  changes: ChangeType | null;
+  contributions: Record<string, string>;
+};
+
 export type ReduxShape =
   | {
       shapeId: string;
       jsonType: JsonLike.OBJECT;
       asArray?: undefined;
       asObject: {
-        fields: {
-          fieldId: string;
-          name: string;
-          shapeId: string;
-          changes: ChangeType | null;
-          contributions: Record<string, string>;
-        }[];
+        fields: ReduxField[];
       };
     }
   | {

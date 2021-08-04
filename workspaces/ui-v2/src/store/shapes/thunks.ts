@@ -7,7 +7,7 @@ import {
   convertSpectacleChangeToChangeType,
   SpectacleChange,
 } from '../spectacleUtils';
-import { ShapeId, ReduxShape } from './types';
+import { ShapeId, ReduxField, ReduxShape } from './types';
 
 const ShapeQuery = `
 query X($shapeId: ID! $sinceBatchCommitId: String) {
@@ -98,12 +98,12 @@ const fetchShapesAndChildren = async (
   sinceBatchCommitId?: string
 ): Promise<{
   shapeMap: Record<ShapeId, ReduxShape[]>;
-  fieldIdToShapeId: Record<string, ShapeId>;
+  fieldMap: Record<string, ReduxField>;
 }> => {
   // TODO we might want to have access to the current store to
   // avoid fetching shapes we have already fetched
   const shapeMap: Record<ShapeId, ReduxShape[]> = {};
-  const fieldIdToShapeId: Record<string, ShapeId> = {};
+  const fieldMap: Record<string, ReduxField> = {};
 
   let stack: ShapeId[] = [rootShapeId];
 
@@ -128,24 +128,30 @@ const fetchShapesAndChildren = async (
         }
 
         if (shape.jsonType === JsonLike.OBJECT) {
-          for (const { shapeId, fieldId } of shape.asObject.fields) {
+          const reduxFields: ReduxField[] = [];
+          for (const field of shape.asObject.fields) {
+            const { shapeId, fieldId } = field;
+            const reduxField = {
+              ...field,
+              changes:
+                sinceBatchCommitId !== undefined
+                  ? convertSpectacleChangeToChangeType(field.changes)
+                  : null,
+            };
+            // Continue fetching nodes in shape
             if (!(shapeId in shapeMap && !stack.includes(shape.id))) {
               stack.push(shapeId);
             }
-            fieldIdToShapeId[fieldId] = shapeId;
+            // Add transformed reduxField into field map and redux fields
+            fieldMap[fieldId] = reduxField;
+            reduxFields.push(reduxField);
           }
 
           const reduxShape: ReduxShape = {
             shapeId: shape.id,
             jsonType: JsonLike.OBJECT,
             asObject: {
-              fields: shape.asObject.fields.map((field) => ({
-                ...field,
-                changes:
-                  sinceBatchCommitId !== undefined
-                    ? convertSpectacleChangeToChangeType(field.changes)
-                    : null,
-              })),
+              fields: reduxFields,
             },
           };
           shapeMap[baseShapeId].push(reduxShape);
@@ -178,13 +184,13 @@ const fetchShapesAndChildren = async (
     }
   }
 
-  return { shapeMap, fieldIdToShapeId };
+  return { shapeMap, fieldMap };
 };
 
 export const fetchShapes = createAsyncThunk<
   {
     shapeMap: Record<ShapeId, ReduxShape[]>;
-    fieldIdToShapeId: Record<string, ShapeId>;
+    fieldMap: Record<string, ReduxField>;
   },
   {
     spectacle: IForkableSpectacle;
