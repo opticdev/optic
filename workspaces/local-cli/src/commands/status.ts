@@ -112,6 +112,9 @@ export default class Status extends Command {
 
     const requestQuery = await spectacle.query<any>({
       query: `{
+        metadata {
+          id
+        }
         requests {
           id
           pathId
@@ -150,6 +153,8 @@ export default class Status extends Command {
       }`,
       variables: {},
     });
+
+    const specId = requestQuery.data?.metadata?.id;
 
     const endpoints = requestQuery.data.requests.map((request: any) => {
       return {
@@ -239,6 +244,7 @@ export default class Status extends Command {
 
     await trackUserEvent(
       config.name,
+      specId,
       StatusRun({
         captureId,
         diffCount: diffs.length,

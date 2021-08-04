@@ -10,6 +10,7 @@ import { Config } from '../config';
 
 export async function trackUserEvent(
   apiName: string,
+  specId: string,
   event: TrackingEventBase<any>
 ) {
   const daemonState = await ensureDaemonStarted(
@@ -21,7 +22,7 @@ export async function trackUserEvent(
     `http://localhost:${daemonState.port}/api`
   );
 
-  await cliServerClient.postTrackingEventsWithApi(apiName, [event]);
+  await cliServerClient.postTrackingEventsWithApi(apiName, specId, [event]);
 }
 
 export function opticTaskToProps(

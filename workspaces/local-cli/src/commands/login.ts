@@ -57,6 +57,7 @@ export default class Login extends Command {
 
       await trackUserEvent(
         '',
+        '',
         UserLoggedInFromCLI({ userId: decodedToken.sub })
       );
 

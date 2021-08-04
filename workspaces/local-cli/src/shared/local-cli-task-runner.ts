@@ -41,6 +41,8 @@ import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-speci
 import { linkToCapture, linkToDiffs } from './ui-links';
 import { RunTaskVerboseLogger } from './verbose/verbose';
 import { IHttpInteraction } from '@useoptic/optic-domain';
+import { LocalCliSpectacle } from '@useoptic/spectacle-shared';
+import * as opticEngine from '@useoptic/optic-engine-wasm';
 
 export const runCommandFlags = {
   'print-coverage': flags.boolean({
@@ -209,15 +211,6 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
 
     this.logger.logConfigMeaning(taskConfig);
 
-    await trackUserEvent(
-      config.name,
-      StartedTaskWithLocalCli({
-        inputs: opticTaskToProps(this.taskName, taskConfig),
-        cwd: this.paths.cwd,
-        captureId: this.captureId,
-      })
-    );
-
     ////////////////////////////////////////////////////////////////////////////////
 
     const blockers = await findProcess('port', taskConfig.proxyConfig.port);
@@ -241,6 +234,27 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
 
+    ////////////////////////////////////////////////////////////////////////////////
+    const spectacle = new LocalCliSpectacle(apiBaseUrl, opticEngine);
+    const requestQuery = await spectacle.query<any>({
+      query: `{
+        metadata {
+          id
+        }
+      }`,
+      variables: {},
+    });
+    const specId = requestQuery?.data?.metadata?.id;
+
+    await trackUserEvent(
+      config.name,
+      specId,
+      StartedTaskWithLocalCli({
+        inputs: opticTaskToProps(this.taskName, taskConfig),
+        cwd: this.paths.cwd,
+        captureId: this.captureId,
+      })
+    );
     ////////////////////////////////////////////////////////////////////////////////
     developerDebugLogger('finding matching daemon session');
 
@@ -340,6 +354,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
 
     await trackUserEvent(
       config.name,
+      specId,
       ExitedTaskWithLocalCli({
         interactionCount: sampleCount,
         inputs: opticTaskToProps('', taskConfig),
