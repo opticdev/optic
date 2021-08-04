@@ -730,11 +730,10 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       edit: async (
         parent: FieldShape,
-        args: { requestedTypes: [JsonLike] },
+        args: { requestedTypes: JsonLike[] },
         context: GraphQLContext
       ) => {
-        // TODO: query engine for actual commands
-        return [];
+        return commandGenerator.field.edit(parent.fieldId, args.requestedTypes);
       },
     },
     EndpointChanges: {

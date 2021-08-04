@@ -30,6 +30,8 @@ export enum JsonLike {
   UNDEFINED = 'Undefined',
 }
 
+export type JsonType = JsonLike;
+
 // Matches optic-engine/src/projections/spectacle/shapes
 export type FieldShape = {
   name: string;

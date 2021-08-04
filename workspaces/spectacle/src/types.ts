@@ -5,7 +5,11 @@ import {
   ILearnedBodies,
   IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { IHttpInteraction, ShapeChoice } from '@useoptic/optic-domain';
+import {
+  IHttpInteraction,
+  ShapeChoice,
+  JsonType,
+} from '@useoptic/optic-domain';
 import { endpoints, shapes } from '@useoptic/graph-lib';
 import { CommandGenerator, ContributionsProjection } from './helpers';
 import { IOpticCommandContext } from './in-memory';
@@ -53,6 +57,18 @@ export interface IOpticEngine {
   ): string;
 
   spec_field_remove_commands(spec: any, field_id: string): string;
+
+  spec_field_edit_commands(
+    spec: any,
+    field_id: string,
+    requestedTypes: JsonType[],
+    id_generator_strategy: IOpticEngineIdGenerationStrategy
+  ): string;
+}
+
+export enum IOpticEngineIdGenerationStrategy {
+  SEQUENTIAL = 'sequential',
+  UNIQUE = 'unique',
 }
 
 ////////////////////////////////////////////////////////////////////////////////
