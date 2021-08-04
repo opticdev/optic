@@ -291,7 +291,7 @@ type ObjectField {
 
 type FieldCommands {
   remove: [JSON!]!
-  edit(requestedTypes: [JsonType]!): [JSON!]!
+  edit(requestedTypes: [JsonType!]!): [JSON!]!
 }
 
 """
