@@ -98,7 +98,12 @@ test('isEndpointEditable', () => {
 test('isFieldRemoved', () => {
   store.documentationEdits.fieldEdits.removedFields.push('field_p1mYG7RoTV');
   // Fields and all nested fields should be removed
-  const removedFields = ['field_p1mYG7RoTV', 'field_y1zK0XALx0'];
+  const removedFields = [
+    'field_p1mYG7RoTV',
+    'field_y1zK0XALx0',
+    'field_a1zK0XALx0',
+    'field_qqzK0XALx0',
+  ];
   const nonRemovedFields = ['field_cOmYY7RoTV'];
   for (const fieldId of removedFields) {
     expect(isFieldRemoved(fieldId)(store)).toBe(true);

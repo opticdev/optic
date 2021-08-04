@@ -26,6 +26,8 @@ const memoizedGetAllRemovedFields = createSelector<
               stack.push(field.shapeId);
               allRemovedFields.add(field.fieldId);
             }
+          } else if (shape.jsonType === JsonLike.ARRAY) {
+            stack.push(shape.asArray.shapeId);
           }
         }
       }
