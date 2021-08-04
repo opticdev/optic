@@ -1,7 +1,15 @@
-import React, { FC, useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  FC,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { OpticUIEvents, TrackingEventBase } from '@useoptic/analytics';
 import { InvariantViolationError } from '<src>/errors';
 import { useAppConfig } from '../config/AppConfiguration';
+import { useAppSelector } from '<src>/store';
 
 const packageJson = require('../../../package.json');
 const clientId = `local_cli_${packageJson.version}`;
@@ -17,8 +25,9 @@ type AnalyticsMetadata = {
   clientId: string;
   clientAgent: string;
   apiName: string;
+  specId?: string;
 };
-const defaultMetadata = {
+const defaultMetadata: AnalyticsMetadata = {
   clientId,
   clientAgent: 'anon_id',
   apiName: '',
@@ -49,6 +58,10 @@ export const AnalyticsStore: FC<AnalyticsStoreProps> = ({
 
   const [metadata, setMetadata] = useState<AnalyticsMetadata>(defaultMetadata);
 
+  const specId = useAppSelector(
+    (state) => state.metadata.data?.specificationId!
+  );
+
   useEffect(() => {
     (async function () {
       if (appConfig.analytics.enabled) {
@@ -59,18 +72,16 @@ export const AnalyticsStore: FC<AnalyticsStoreProps> = ({
     })();
   }, [appConfig]);
 
-  const opticUITrackingEvents: React.MutableRefObject<OpticUIEvents> = useRef(
-    new OpticUIEvents(async (event) => {
+  const opticUITrackingEvents = useMemo(() => {
+    return new OpticUIEvents(async (event) => {
       if (appConfig.analytics.enabled) {
-        refTrack.current(event, metadata);
+        refTrack.current(event, { ...metadata, specId });
       }
-    })
-  );
+    });
+  }, [appConfig, metadata, specId]);
 
   return (
-    <AnalyticsContext.Provider
-      value={{ trackEvent: opticUITrackingEvents.current }}
-    >
+    <AnalyticsContext.Provider value={{ trackEvent: opticUITrackingEvents }}>
       {children}
     </AnalyticsContext.Provider>
   );
