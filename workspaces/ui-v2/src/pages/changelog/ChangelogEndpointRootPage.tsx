@@ -197,6 +197,7 @@ const ChangelogRootComponent: FC<
                           shapes={field.shapes}
                           depth={field.depth}
                           value={field.contribution.value}
+                          required={field.required}
                         />
                       )}
                       fieldDetails={fields}
@@ -255,6 +256,7 @@ const ChangelogRootComponent: FC<
                                   shapes={field.shapes}
                                   depth={field.depth}
                                   value={field.contribution.value}
+                                  required={field.required}
                                 />
                               )}
                               fieldDetails={fields}
@@ -323,6 +325,7 @@ const ChangelogRootComponent: FC<
                                       shapes={field.shapes}
                                       depth={field.depth}
                                       value={field.contribution.value}
+                                      required={field.required}
                                     />
                                   )}
                                   fieldDetails={fields}

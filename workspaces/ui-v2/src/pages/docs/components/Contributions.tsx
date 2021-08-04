@@ -25,6 +25,7 @@ export type DocsFieldOrParameterContributionProps = {
     method: string;
     pathId: string;
   };
+  required: boolean;
 };
 
 export function DocFieldContribution(
@@ -73,6 +74,7 @@ export function DocsFieldOrParameterContribution({
   depth,
   initialValue,
   endpoint,
+  required,
 }: DocsFieldOrParameterContributionProps) {
   const contributionKey = 'description';
   const endpointId = getEndpointId(endpoint);
@@ -107,6 +109,7 @@ export function DocsFieldOrParameterContribution({
         )
       }
       isEditing={isEditable}
+      required={required}
     />
   );
 }

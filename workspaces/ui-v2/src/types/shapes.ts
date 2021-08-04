@@ -20,6 +20,7 @@ export interface IFieldDetails {
   contribution: IContribution;
   shapes: IShapeRenderer[];
   depth: number;
+  required: boolean;
 }
 
 // Used to render query parameters

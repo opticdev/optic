@@ -118,7 +118,7 @@ export const RenderRootShape = ({
   right,
 }: {
   shape: IShapeRenderer;
-  right?: any[];
+  right?: React.ReactElement;
 }) => {
   const { depth } = useDepth();
   return (
@@ -263,9 +263,7 @@ export function OneOfRender({
   if (!shape) {
     throw new Error(`expected to find the chosen shape`);
   }
-  return (
-    <RenderRootShape right={[<OneOfTabs {...tabProps} />]} shape={shape} />
-  );
+  return <RenderRootShape right={<OneOfTabs {...tabProps} />} shape={shape} />;
 }
 
 const useStyles = makeStyles((theme) => ({

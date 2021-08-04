@@ -10,6 +10,7 @@ export type FieldOrParameterProps = {
   value: string;
   setValue?: (newValue: string) => void;
   isEditing?: boolean;
+  required: boolean;
 };
 
 export const FieldOrParameter: FC<FieldOrParameterProps> = ({
@@ -19,13 +20,14 @@ export const FieldOrParameter: FC<FieldOrParameterProps> = ({
   value,
   setValue = () => {},
   isEditing = false,
+  required,
 }) => {
   const classes = useStyles();
   return (
     <div className={classes.container} style={{ paddingLeft: depth * 14 }}>
       <div className={classes.topRow}>
         <div className={classes.keyName}>{name}</div>
-        <div className={classes.shape}>{summarizeTypes(shapes)}</div>
+        <div className={classes.shape}>{summarizeTypes(shapes, required)}</div>
       </div>
       <EditableTextField
         isEditing={isEditing}
@@ -38,13 +40,14 @@ export const FieldOrParameter: FC<FieldOrParameterProps> = ({
   );
 };
 
-function summarizeTypes(shapes: IShapeRenderer[]) {
+function summarizeTypes(shapes: IShapeRenderer[], required: boolean) {
+  const optionalText = required ? '' : ' (optional)';
   if (shapes.length === 1) {
-    return shapes[0].jsonType.toString().toLowerCase();
+    return shapes[0].jsonType.toString().toLowerCase() + optionalText;
   } else {
     const allShapes = shapes.map((i) => i.jsonType.toString().toLowerCase());
     const last = allShapes.pop();
-    return allShapes.join(', ') + ' or ' + last;
+    return allShapes.join(', ') + ' or ' + last + optionalText;
   }
 }
 

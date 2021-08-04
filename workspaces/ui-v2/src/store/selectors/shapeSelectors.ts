@@ -108,6 +108,7 @@ export function createFlatList(
           },
           depth,
           shapes: field.shapeChoices,
+          required: field.required,
         });
 
         fieldDetails.push(

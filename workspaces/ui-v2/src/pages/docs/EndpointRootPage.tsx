@@ -233,6 +233,7 @@ export const EndpointRootPage: FC<
                         shapes={[alwaysAString]}
                         depth={0}
                         initialValue={param.description}
+                        required
                       />
                     );
                   }}
@@ -306,6 +307,7 @@ export const EndpointRootPage: FC<
                             depth={field.depth}
                             id={field.contribution.id}
                             initialValue={field.contribution.value}
+                            required={field.required}
                           />
                         );
                       }}
@@ -370,6 +372,7 @@ export const EndpointRootPage: FC<
                                   depth={field.depth}
                                   id={field.contribution.id}
                                   initialValue={field.contribution.value}
+                                  required={field.required}
                                 />
                               )}
                               fieldDetails={fields}
@@ -444,6 +447,7 @@ export const EndpointRootPage: FC<
                                     depth={field.depth}
                                     id={field.contribution.id}
                                     initialValue={field.contribution.value}
+                                    required={field.required}
                                   />
                                 )}
                                 fieldDetails={fields}
