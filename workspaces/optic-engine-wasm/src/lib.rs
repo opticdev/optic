@@ -5,13 +5,14 @@ use nanoid::nanoid;
 use optic_engine::{
   analyze_undocumented_bodies, Aggregate, AnalyzeUndocumentedBodiesConfig, Body,
   BodyAnalysisResult, CommandContext, DiffInteractionConfig, EndpointQueries, HttpInteraction,
-  InteractionDiffResult, JsonTrail, LearnedShapeDiffAffordancesProjection,
-  LearnedUndocumentedBodiesProjection, ResponseBodyDescriptor, ResponseId, ShapeQueries,
-  SpecCommand, SpecEvent, SpecIdGenerator, SpecProjection, TaggedInput, TrailObservationsResult,
-  TrailValues,
+  InteractionDiffResult, JsonTrail, JsonType, LearnedShapeDiffAffordancesProjection,
+  LearnedUndocumentedBodiesProjection, ResponseBodyDescriptor, ResponseId, ShapeChoiceQueries,
+  ShapeQueries, SpecCommand, SpecEvent, SpecIdGenerator, SpecProjection, TaggedInput,
+  TrailObservationsResult, TrailValues,
 };
 use serde::Deserialize;
 use std::collections::HashMap;
+use std::convert::TryFrom;
 use uuid::Uuid;
 use wasm_bindgen::{__rt::WasmRefCell, prelude::*};
 
@@ -285,6 +286,10 @@ impl WasmSpecProjection {
   pub fn shape_queries(&self) -> ShapeQueries {
     ShapeQueries::new(self.projection.shape())
   }
+
+  pub fn shape_choice_queries(&self) -> ShapeChoiceQueries {
+    ShapeChoiceQueries::from(self.projection.shape())
+  }
 }
 
 impl From<SpecProjection> for WasmSpecProjection {
@@ -461,6 +466,95 @@ pub fn spec_field_remove_commands(
       err
     ))
   })
+}
+
+#[wasm_bindgen]
+pub fn spec_field_edit_commands(
+  spec: &WasmSpecProjection,
+  field_id: String,
+  requested_types_array: js_sys::Array,
+  id_generator_strategy: String,
+) -> Result<String, JsValue> {
+  let shape_choice_queries = spec.shape_choice_queries();
+
+  let mut requested_types: Vec<JsonType> = vec![];
+  for raw_requested_type in requested_types_array.iter() {
+    let parsed = WasmJsonType::try_from(raw_requested_type)
+      .map_err(|err| JsValue::from(format!("requested type could not be parsed: {}", err)))?;
+
+    requested_types.push(parsed.into());
+  }
+
+  let maybe_commands = if id_generator_strategy == "sequential" {
+    let mut id_generator = SequentialIdGenerator { next_id: 1063 };
+    shape_choice_queries
+      .edit_field_commands(&field_id, requested_types.iter(), &mut id_generator)
+      .map(|commands| commands.collect::<Vec<_>>())
+  } else {
+    let mut id_generator = NanoIdGenerator::default();
+
+    shape_choice_queries
+      .edit_field_commands(&field_id, requested_types.iter(), &mut id_generator)
+      .map(|commands| commands.collect::<Vec<_>>())
+  };
+
+  let commands = maybe_commands.ok_or_else(|| {
+    JsValue::from("edit field commands could not be generated for unexisting field")
+  })?;
+
+  serde_json::to_string(&commands).map_err(|err| {
+    JsValue::from(format!(
+      "edit field commands could not be serialized: {:?}",
+      err
+    ))
+  })
+}
+
+// We need an intermediary type, as we can implement traits on two structs we don't own
+#[wasm_bindgen]
+pub enum WasmJsonType {
+  String,
+  Number,
+  Boolean,
+  Array,
+  Object,
+  Null,
+  Undefined,
+}
+
+impl TryFrom<JsValue> for WasmJsonType {
+  type Error = String;
+
+  fn try_from(js_value: JsValue) -> Result<Self, Self::Error> {
+    let as_string = js_value
+      .as_string()
+      .ok_or_else(|| "JsonType can only be parsed from a string")?;
+
+    match as_string.as_str() {
+      "String" => Ok(WasmJsonType::String),
+      "Number" => Ok(WasmJsonType::Number),
+      "Boolean" => Ok(WasmJsonType::Boolean),
+      "Array" => Ok(WasmJsonType::Array),
+      "Object" => Ok(WasmJsonType::Object),
+      "Null" => Ok(WasmJsonType::Null),
+      "Undefined" => Ok(WasmJsonType::Undefined),
+      _ => Err(format!("unrecognized string '{}'", as_string)),
+    }
+  }
+}
+
+impl From<WasmJsonType> for JsonType {
+  fn from(json_type: WasmJsonType) -> Self {
+    match json_type {
+      WasmJsonType::String => JsonType::String,
+      WasmJsonType::Number => JsonType::Number,
+      WasmJsonType::Boolean => JsonType::Boolean,
+      WasmJsonType::Array => JsonType::Array,
+      WasmJsonType::Object => JsonType::Object,
+      WasmJsonType::Null => JsonType::Null,
+      WasmJsonType::Undefined => JsonType::Undefined,
+    }
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

@@ -91,8 +91,8 @@ impl ShapeCommand {
     Self::SetFieldShape(SetFieldShape {
       shape_descriptor: FieldShapeDescriptor::FieldShapeFromShape(FieldShapeFromShape {
         field_id,
-        shape_id: field_shape_id
-      })
+        shape_id: field_shape_id,
+      }),
     })
   }
 

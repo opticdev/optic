@@ -12,6 +12,7 @@ crate-type = ["cdylib"]
 [dependencies]
 chrono = { version = "0.4.19", features = ["serde", "wasmbind"] }
 console_error_panic_hook = "0.1.6"
+js-sys = "0.3.52"
 log = "0.4.6"
 nanoid = "0.4.0"
 serde = { version = "1.0.106", features = ["derive"] }
