@@ -21,7 +21,7 @@ import {
   IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IApiCliConfig } from '@useoptic/cli-config';
-import { IHttpInteraction } from '@useoptic/optic-domain';
+import { CQRSCommand, IHttpInteraction } from '@useoptic/optic-domain';
 import { EventEmitter } from 'events';
 
 export class LocalCliSpectacle implements IForkableSpectacle {
@@ -142,7 +142,7 @@ export class LocalCliDiffService implements IOpticDiffService {
   async learnUndocumentedBodies(
     pathId: string,
     method: string,
-    newPathCommands: any[]
+    newPathCommands: CQRSCommand[]
   ): Promise<ILearnedBodies> {
     return JsonHttpClient.postJson(
       `${this.dependencies.baseUrl}/captures/${this.dependencies.captureId}/initial-bodies`,
@@ -171,7 +171,7 @@ export class LocalCliDiffService implements IOpticDiffService {
       },
     });
     if (result.errors || !result.data) {
-      const errors = result.errors || 'result.data was unexpectedly undefined';
+      const errors = result.errors || 'result.data was unexpectedly falsy';
       console.error(errors);
       throw new Error(JSON.stringify(errors));
     }
@@ -199,7 +199,7 @@ export class LocalCliDiffService implements IOpticDiffService {
       },
     });
     if (result.errors || !result.data) {
-      const errors = result.errors || 'result.data was unexpectedly undefined';
+      const errors = result.errors || 'result.data was unexpectedly falsy';
       console.error(errors);
       throw new Error(JSON.stringify(errors));
     }
@@ -222,7 +222,7 @@ export class LocalCliConfigRepository implements IOpticConfigRepository {
   }
 
   async listIgnoreRules(): Promise<string[]> {
-    throw new Error('should never be called');
+    throw new Error('unimplemented');
   }
 
   async getApiName(): Promise<string> {
