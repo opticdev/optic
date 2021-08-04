@@ -3,6 +3,7 @@ use crate::projections::ShapeProjection;
 use crate::queries::ShapeQueries;
 use crate::shapes::ShapeTrail;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind};
+use crate::state::SpecIdGenerator;
 use serde::Serialize;
 use std::collections::BTreeSet;
 
@@ -164,5 +165,109 @@ impl<'a> ShapeChoiceQueries<'a> {
           json_type: JsonType::Undefined,
         }),
       })
+  }
+
+  pub fn edit_field_commands(
+    &'a self,
+    field_id: &FieldId,
+    requested_json_types: impl IntoIterator<Item = &'a JsonType> + 'a,
+    id_generator: &'a mut impl SpecIdGenerator,
+  ) -> Option<impl Iterator<Item = ShapeCommand> + 'a> {
+    let field_shape_trail = self.shape_queries.resolve_shape_trail(field_id)?;
+
+    let requested_kinds =
+      requested_json_types
+        .into_iter()
+        .filter_map(|json_type| match json_type {
+          JsonType::Undefined => Some(&ShapeKind::OptionalKind),
+          JsonType::Null => Some(&ShapeKind::NullableKind),
+          _ => None,
+        });
+
+    self
+      .shape_queries
+      .edit_shape_trail_commands(&field_shape_trail, requested_kinds, id_generator)
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use crate::commands::SpecCommand;
+  use crate::events::SpecEvent;
+  use crate::projections::SpecProjection;
+  use crate::Aggregate;
+  use insta::assert_debug_snapshot;
+  use serde_json::json;
+
+  #[test]
+  pub fn can_generate_edit_field_commands() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "", "eventContext": null }},
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "", "eventContext": null }},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "string_shape_1"}}, "eventContext": null }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    let queries = ShapeChoiceQueries::from(spec_projection.shape());
+
+    let mut id_generator = SequentialIdGenerator { next_id: 1093 }; // <3 primes
+    let required_json_types = vec![JsonType::Undefined, JsonType::Null];
+
+    let edit_shape_commands = queries
+      .edit_field_commands(
+        &"field_1".to_owned(),
+        &required_json_types,
+        &mut id_generator,
+      )
+      .expect("field should be able to be made required and nullable")
+      .map(SpecCommand::from)
+      .collect::<Vec<_>>();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_field_commands__commands",
+      &edit_shape_commands
+    );
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let updated_queries = ShapeChoiceQueries::from(updated_spec.shape());
+    let updated_choices = updated_queries
+      .trail_choices(&ShapeTrail::new("object_shape_1".to_owned()))
+      .collect::<Vec<_>>();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_field_commands__updated_choices",
+      updated_choices
+    );
+  }
+
+  fn assert_valid_commands(
+    mut spec_projection: SpecProjection,
+    commands: impl IntoIterator<Item = SpecCommand>,
+  ) -> SpecProjection {
+    // let mut spec_projection = SpecProjection::default();
+    for command in commands {
+      let events = spec_projection
+        .execute(command)
+        .expect("generated commands must be valid");
+
+      for event in events {
+        spec_projection.apply(event)
+      }
+    }
+
+    spec_projection
+  }
+
+  #[derive(Debug, Default)]
+  struct SequentialIdGenerator {
+    next_id: u32,
+  }
+  impl SpecIdGenerator for SequentialIdGenerator {
+    fn generate_id(&mut self, prefix: &str) -> String {
+      self.next_id += 1;
+      format!("{}{}", prefix, self.next_id.to_string())
+    }
   }
 }

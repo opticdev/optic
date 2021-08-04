@@ -1,0 +1,27 @@
+---
+source: workspaces/optic-engine/src/queries/shape.rs
+expression: "&nested_field_trail"
+---
+Some(
+    ShapeTrail {
+        root_shape_id: "object_shape_1",
+        path: [
+            ObjectTrail {
+                shape_id: "object_shape_1",
+            },
+            ObjectFieldTrail {
+                field_id: "field_4",
+                field_shape_id: "object_shape_2",
+                parent_object_shape_id: "object_shape_1",
+            },
+            ObjectTrail {
+                shape_id: "object_shape_2",
+            },
+            ObjectFieldTrail {
+                field_id: "field_3",
+                field_shape_id: "boolean_shape_1",
+                parent_object_shape_id: "object_shape_2",
+            },
+        ],
+    },
+)
