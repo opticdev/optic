@@ -92,7 +92,8 @@ const documentationEditSlice = createSlice({
       state.removedEndpoints = newRemovedEndpoints;
     },
     removeField: (state, action: PayloadAction<{ fieldId: string }>) => {
-      // TODO FLEB filter any other removed fields that is now a child of the newly added field.
+      // @GOTCHA - selecting a field, and then selecting a parent of this field (e.g. an object that contains this removed field)
+      // will count as a two selected fields. This is still correct, just extra commands
       state.fieldEdits.removedFields.push(action.payload.fieldId);
     },
     unremoveField: (state, action: PayloadAction<{ fieldId: string }>) => {
