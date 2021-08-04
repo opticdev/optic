@@ -1,5 +1,5 @@
-import { CQRSCommand } from '../../../optic-domain/build';
-import { IForkableSpectacle } from '../../../spectacle/build';
+import { CQRSCommand } from '@useoptic/optic-domain';
+import { IForkableSpectacle } from '@useoptic/spectacle';
 
 export class SpectacleClient {
   constructor(private spectacle: IForkableSpectacle) {}
