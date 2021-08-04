@@ -241,16 +241,21 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
         metadata {
           id
         }
+        batchCommits {
+          createdAt
+        }
       }`,
       variables: {},
     });
     const specId = requestQuery?.data?.metadata?.id;
+    const createdAt = requestQuery?.data?.batchCommits?.[0]?.createdAt;
 
     await trackUserEvent(
       config.name,
       specId,
       StartedTaskWithLocalCli({
         inputs: opticTaskToProps(this.taskName, taskConfig),
+        createdAt,
         cwd: this.paths.cwd,
         captureId: this.captureId,
       })
