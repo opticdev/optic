@@ -6,8 +6,9 @@ use optic_engine::{
   analyze_undocumented_bodies, Aggregate, AnalyzeUndocumentedBodiesConfig, Body,
   BodyAnalysisResult, CommandContext, DiffInteractionConfig, EndpointQueries, HttpInteraction,
   InteractionDiffResult, JsonTrail, LearnedShapeDiffAffordancesProjection,
-  LearnedUndocumentedBodiesProjection, ResponseBodyDescriptor, ResponseId, SpecCommand, SpecEvent,
-  SpecIdGenerator, SpecProjection, TaggedInput, TrailObservationsResult, TrailValues,
+  LearnedUndocumentedBodiesProjection, ResponseBodyDescriptor, ResponseId, ShapeQueries,
+  SpecCommand, SpecEvent, SpecIdGenerator, SpecProjection, TaggedInput, TrailObservationsResult,
+  TrailValues,
 };
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -280,6 +281,10 @@ impl WasmSpecProjection {
   pub fn endpoint_queries(&self) -> EndpointQueries {
     EndpointQueries::new(self.projection.endpoint())
   }
+
+  pub fn shape_queries(&self) -> ShapeQueries {
+    ShapeQueries::new(self.projection.shape())
+  }
 }
 
 impl From<SpecProjection> for WasmSpecProjection {
@@ -431,6 +436,28 @@ pub fn spec_endpoint_delete_commands(
   serde_json::to_string(&commands).map_err(|err| {
     JsValue::from(format!(
       "delete enpoints commands could not be serialized: {:?}",
+      err
+    ))
+  })
+}
+
+#[wasm_bindgen]
+pub fn spec_field_remove_commands(
+  spec: &WasmSpecProjection,
+  field_id: String,
+) -> Result<String, JsValue> {
+  let shape_queries = spec.shape_queries();
+
+  let commands = shape_queries
+    .remove_field_commands(&field_id)
+    .ok_or_else(|| {
+      JsValue::from("remove field commands could not be generated for unexisting field")
+    })?
+    .collect::<Vec<_>>();
+
+  serde_json::to_string(&commands).map_err(|err| {
+    JsValue::from(format!(
+      "remove field commands could not be serialized: {:?}",
       err
     ))
   })

@@ -32,6 +32,7 @@ pub use projections::{
 };
 pub use protos::shapehash;
 pub use queries::endpoint::EndpointQueries;
+pub use queries::shape::ShapeQueries;
 pub use shapes::{diff as diff_shape, JsonTrail};
 pub use spec::append_batch as append_batch_to_spec;
 pub use state::endpoint::ResponseId;

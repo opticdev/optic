@@ -277,7 +277,9 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           fieldId: fieldNode.data.fieldId,
           shapeId: shapeNode.data.shapeId,
           name: fieldNode.data.descriptor.name,
-          commands: {},
+          commands: {
+            fieldId: fieldNode.data.fieldId, // required for generation of commands
+          },
         });
       },
       batchCommits: (parent: any, _: {}, context: GraphQLContext) => {

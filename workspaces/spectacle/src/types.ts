@@ -51,6 +51,8 @@ export interface IOpticEngine {
     path_id: string,
     method: string
   ): string;
+
+  spec_field_remove_commands(spec: any, field_id: string): string;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -509,8 +509,11 @@ export class CommandGenerator {
 
   public field = {
     remove: (fieldId: string): CQRSCommand[] => {
-      // TODO FLEB connect up to optic-engine command generation
-      return [];
+      const fieldRemovalCommands = this.opticEngine.spec_field_remove_commands(
+        this.spec,
+        fieldId
+      );
+      return JSON.parse(fieldRemovalCommands);
     },
   };
 }
