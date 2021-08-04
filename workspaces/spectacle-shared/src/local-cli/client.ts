@@ -151,7 +151,16 @@ export class LocalCliDiffService implements IOpticDiffService {
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
-    const result = await this.dependencies.spectacle.query<any, any>({
+    const result = await this.dependencies.spectacle.query<
+      {
+        diff: {
+          diffs: IListDiffsResponse;
+        };
+      },
+      {
+        diffId: string;
+      }
+    >({
       query: `query X($diffId: ID!) {
         diff(diffId: $diffId) {
           diffs
@@ -161,11 +170,25 @@ export class LocalCliDiffService implements IOpticDiffService {
         diffId: this.dependencies.diffId,
       },
     });
-    return result.data!.diff.diffs;
+    if (result.errors || !result.data) {
+      const errors = result.errors || 'result.data was unexpectedly undefined';
+      console.error(errors);
+      throw new Error(JSON.stringify(errors));
+    }
+    return result.data.diff.diffs;
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-    const result = await this.dependencies.spectacle.query<any, any>({
+    const result = await this.dependencies.spectacle.query<
+      {
+        diff: {
+          unrecognizedUrls: IListUnrecognizedUrlsResponse;
+        };
+      },
+      {
+        diffId: string;
+      }
+    >({
       query: `query X($diffId: ID!) {
         diff(diffId: $diffId) {
           unrecognizedUrls
@@ -175,7 +198,12 @@ export class LocalCliDiffService implements IOpticDiffService {
         diffId: this.dependencies.diffId,
       },
     });
-    return result.data!.diff.unrecognizedUrls;
+    if (result.errors || !result.data) {
+      const errors = result.errors || 'result.data was unexpectedly undefined';
+      console.error(errors);
+      throw new Error(JSON.stringify(errors));
+    }
+    return result.data.diff.unrecognizedUrls;
   }
 }
 
