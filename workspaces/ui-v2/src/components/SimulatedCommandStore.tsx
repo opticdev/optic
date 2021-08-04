@@ -1,22 +1,22 @@
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Provider } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { LinearProgress } from '@material-ui/core';
 
+import { CQRSCommand } from '@useoptic/optic-domain';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { SpectacleStore } from '<src>/contexts/spectacle-provider';
 import { createReduxStore, useAppSelector } from '<src>/store';
-import { useFetchEndpoints } from '<src>/hooks/useFetchEndpoints';
 import { useLastBatchCommitId } from '<src>/hooks/useBatchCommits';
 
 type SimulatedCommandStoreProps = {
   spectacle: IForkableSpectacle;
-  previewCommands: any[];
-  children?: any;
+  previewCommands: CQRSCommand[];
+  children: (batchId: string | undefined) => React.ReactElement;
 };
 
 type SimulatedCommandContextValue = {
-  previewCommands: any[];
+  previewCommands: CQRSCommand[];
 };
 
 export const SimulatedCommandContext = React.createContext<SimulatedCommandContextValue>(
@@ -57,7 +57,7 @@ mutation X($commands: [JSON!]!, $batchCommitId: ID!, $commitMessage: String!, $c
       simulated.thiscontext = 'simulated';
       //@ts-ignore
       simulated.instanceId = uuidv4();
-      setSimulated(simulated as IForkableSpectacle);
+      setSimulated(simulated);
       setIsProcessing(false);
     }
 
@@ -74,23 +74,11 @@ mutation X($commands: [JSON!]!, $batchCommitId: ID!, $commitMessage: String!, $c
   return (
     <SimulatedCommandContext.Provider value={value}>
       <SpectacleStore spectacle={spectacleToUse}>
-        <Provider store={store}>
-          <DataFetcherComponent batchId={batchId}>
-            {props.children}
-          </DataFetcherComponent>
-        </Provider>
+        <Provider store={store}>{props.children(batchId)}</Provider>
       </SpectacleStore>
     </SimulatedCommandContext.Provider>
   );
 }
-
-const DataFetcherComponent: FC<{ batchId?: string }> = ({
-  children,
-  batchId,
-}) => {
-  useFetchEndpoints(batchId);
-  return <>{children}</>;
-};
 
 export function useSimulatedCommands() {
   const { previewCommands } = useContext(SimulatedCommandContext);

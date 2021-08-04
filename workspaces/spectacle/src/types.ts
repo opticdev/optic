@@ -170,7 +170,7 @@ export interface IBaseSpectacle {
 }
 
 export interface IForkableSpectacle extends IBaseSpectacle {
-  fork(): Promise<IBaseSpectacle>;
+  fork(): Promise<IForkableSpectacle>;
 }
 
 // Record<ShapeId, ShapeChoice[]>

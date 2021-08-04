@@ -1,12 +1,10 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { IForkableSpectacle } from '@useoptic/spectacle';
-
 import { TwoColumnFullWidth } from '<src>/components';
 import { DiffCard } from '<src>/pages/diffs/components/DiffCard';
-import { SimulatedCommandStore } from '<src>/pages/diffs/contexts/SimulatedCommandContext';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
+import { SimulatedDiffPreview } from '<src>/pages/diffs/components/SimulatedDiffPreview';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import { useDiffReviewCapturePageLink } from '<src>/components/navigation/Routes';
 import { IInterpretation } from '<src>/lib/Interfaces';
@@ -35,7 +33,6 @@ const useRedirectForDiffCompleted = (allDiffs: IInterpretation[]) => {
 
 type ReviewEndpointDiffPageProps = {
   endpoint: RenderedDiffHeaderProps['endpoint'];
-  spectacle: IForkableSpectacle;
   allDiffs: RenderedDiffHeaderProps['allDiffs'];
   method: string;
   pathId: string;
@@ -43,7 +40,6 @@ type ReviewEndpointDiffPageProps = {
 
 export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
   endpoint,
-  spectacle,
   allDiffs,
   method,
   pathId,
@@ -132,10 +128,7 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
         </>
       }
       right={
-        <SimulatedCommandStore
-          spectacle={spectacle}
-          previewCommands={previewCommands}
-        >
+        <SimulatedDiffPreview previewCommands={previewCommands}>
           <EndpointDocumentationPane
             method={method}
             pathId={pathId}
@@ -148,7 +141,7 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
             }
             onKeyPress={onKeyPress}
           />
-        </SimulatedCommandStore>
+        </SimulatedDiffPreview>
       }
     />
   );

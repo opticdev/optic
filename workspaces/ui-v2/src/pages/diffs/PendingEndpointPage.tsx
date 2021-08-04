@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { DiffHeader } from '<src>/pages/diffs/components/DiffHeader';
 import {
   ILearnedPendingEndpointStore,
@@ -27,9 +27,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/styles';
 import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '<src>/styles';
 import { useSharedDiffContext } from '<src>/pages/diffs/contexts/SharedDiffContext';
-import { SimulatedCommandStore } from '<src>/pages/diffs/contexts/SimulatedCommandContext';
-import { IForkableSpectacle } from '@useoptic/spectacle';
-import { SpectacleContext } from '<src>/contexts/spectacle-provider';
+import { SimulatedDiffPreview } from '<src>/pages/diffs/components/SimulatedDiffPreview';
 import { IIgnoreBody } from '<src>/pages/diffs/contexts/LearnInitialBodiesMachine';
 import {
   useDebouncedFn,
@@ -101,7 +99,6 @@ export function PendingEndpointPage(props: any) {
   } = useLearnedPendingEndpointContext();
 
   const classes = useStyles();
-  const spectacle = useContext(SpectacleContext)!;
   const debouncedSetName = useDebouncedFn(changeEndpointName, 200);
   const { value: name, setValue: setName } = useStateWithSideEffect({
     initialValue: endpointName,
@@ -272,23 +269,17 @@ export function PendingEndpointPage(props: any) {
         </>
       }
       right={
-        <>
-          <SimulatedCommandStore
-            key={JSON.stringify(newEndpointCommands)}
-            spectacle={spectacle as IForkableSpectacle}
-            previewCommands={newEndpointCommands}
-          >
-            {isLoading ? (
-              <LinearProgress variant="indeterminate" />
-            ) : (
-              <EndpointDocumentationPane
-                method={stagedCommandsIds.method}
-                pathId={stagedCommandsIds.pathId}
-                name={name === '' ? 'Unnamed Endpoint' : name}
-              />
-            )}
-          </SimulatedCommandStore>
-        </>
+        <SimulatedDiffPreview previewCommands={newEndpointCommands}>
+          {isLoading ? (
+            <LinearProgress variant="indeterminate" />
+          ) : (
+            <EndpointDocumentationPane
+              method={stagedCommandsIds.method}
+              pathId={stagedCommandsIds.pathId}
+              name={name === '' ? 'Unnamed Endpoint' : name}
+            />
+          )}
+        </SimulatedDiffPreview>
       }
     />
   );
