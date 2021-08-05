@@ -725,11 +725,11 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     FieldCommands: {
-      remove: async (parent: FieldShape) => {
+      remove: async (parent: { fieldId: string }) => {
         return commandGenerator.field.remove(parent.fieldId);
       },
       edit: async (
-        parent: FieldShape,
+        parent: { fieldId: string },
         args: { requestedTypes: JsonLike[] },
         context: GraphQLContext
       ) => {
