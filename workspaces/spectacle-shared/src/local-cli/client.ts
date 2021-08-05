@@ -21,7 +21,7 @@ import {
   IAffordanceTrailsDiffHashMap,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IApiCliConfig } from '@useoptic/cli-config';
-import { IHttpInteraction } from '@useoptic/optic-domain';
+import { CQRSCommand, IHttpInteraction } from '@useoptic/optic-domain';
 import { EventEmitter } from 'events';
 
 export class LocalCliSpectacle implements IForkableSpectacle {
@@ -142,7 +142,7 @@ export class LocalCliDiffService implements IOpticDiffService {
   async learnUndocumentedBodies(
     pathId: string,
     method: string,
-    newPathCommands: any[]
+    newPathCommands: CQRSCommand[]
   ): Promise<ILearnedBodies> {
     return JsonHttpClient.postJson(
       `${this.dependencies.baseUrl}/captures/${this.dependencies.captureId}/initial-bodies`,
@@ -151,7 +151,16 @@ export class LocalCliDiffService implements IOpticDiffService {
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
-    const result = await this.dependencies.spectacle.query<any, any>({
+    const result = await this.dependencies.spectacle.query<
+      {
+        diff: {
+          diffs: IListDiffsResponse;
+        };
+      },
+      {
+        diffId: string;
+      }
+    >({
       query: `query X($diffId: ID!) {
         diff(diffId: $diffId) {
           diffs
@@ -161,11 +170,25 @@ export class LocalCliDiffService implements IOpticDiffService {
         diffId: this.dependencies.diffId,
       },
     });
-    return result.data!.diff.diffs;
+    if (result.errors || !result.data) {
+      const errors = result.errors || 'result.data was unexpectedly falsy';
+      console.error(errors);
+      throw new Error(JSON.stringify(errors));
+    }
+    return result.data.diff.diffs;
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-    const result = await this.dependencies.spectacle.query<any, any>({
+    const result = await this.dependencies.spectacle.query<
+      {
+        diff: {
+          unrecognizedUrls: IListUnrecognizedUrlsResponse;
+        };
+      },
+      {
+        diffId: string;
+      }
+    >({
       query: `query X($diffId: ID!) {
         diff(diffId: $diffId) {
           unrecognizedUrls
@@ -175,7 +198,12 @@ export class LocalCliDiffService implements IOpticDiffService {
         diffId: this.dependencies.diffId,
       },
     });
-    return result.data!.diff.unrecognizedUrls;
+    if (result.errors || !result.data) {
+      const errors = result.errors || 'result.data was unexpectedly falsy';
+      console.error(errors);
+      throw new Error(JSON.stringify(errors));
+    }
+    return result.data.diff.unrecognizedUrls;
   }
 }
 
@@ -194,7 +222,7 @@ export class LocalCliConfigRepository implements IOpticConfigRepository {
   }
 
   async listIgnoreRules(): Promise<string[]> {
-    throw new Error('should never be called');
+    throw new Error('unimplemented');
   }
 
   async getApiName(): Promise<string> {
