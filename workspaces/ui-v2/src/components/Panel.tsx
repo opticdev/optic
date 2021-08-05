@@ -1,22 +1,25 @@
-import React, { FC } from 'react';
+import React, { FC, Ref } from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core';
 import { FontFamilyMono } from '<src>/styles';
 
 type PanelProps = {
   header: React.ReactNode;
+  contentRef?: Ref<HTMLDivElement>;
 };
 
 export const Panel: FC<
   PanelProps & React.HtmlHTMLAttributes<HTMLDivElement>
-> = ({ children, header, className, ...props }) => {
+> = ({ children, header, className, contentRef, ...props }) => {
   const classes = useStyles();
   return (
     <div {...props} className={classNames(classes.wrapper, className)}>
       <div className={classes.header}>
         <div>{header}</div>
       </div>
-      <div className={classes.content}>{children}</div>
+      <div className={classes.content} ref={contentRef}>
+        {children}
+      </div>
     </div>
   );
 };

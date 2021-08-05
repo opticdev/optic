@@ -4,6 +4,7 @@ import { DepthStore } from './DepthContext';
 import { OneOfTabsProps } from './OneOfTabs';
 
 type IShapeRenderContext = {
+  selectedFieldId?: string | null;
   showExamples: boolean;
   getChoice: (branch: OneOfTabsProps) => string;
   updateChoice: (parentShapeId: string, branchId: string) => void;
@@ -13,11 +14,16 @@ export const ShapeRenderContext = React.createContext<IShapeRenderContext | null
   null
 );
 
-type ShapeRenderContextProps = { children: any; showExamples: boolean };
+type ShapeRenderContextProps = {
+  children: React.ReactNode;
+  showExamples: boolean;
+  selectedFieldId?: string | null;
+};
 
 export const ShapeRenderStore = ({
   children,
   showExamples,
+  selectedFieldId,
 }: ShapeRenderContextProps) => {
   const [selectedOneOfChoices, updateSelectedOneOfChoices]: [
     { [key: string]: string },
@@ -41,7 +47,7 @@ export const ShapeRenderStore = ({
 
   return (
     <ShapeRenderContext.Provider
-      value={{ showExamples, getChoice, updateChoice }}
+      value={{ showExamples, getChoice, updateChoice, selectedFieldId }}
     >
       <DepthStore depth={0}>{children}</DepthStore>
     </ShapeRenderContext.Provider>

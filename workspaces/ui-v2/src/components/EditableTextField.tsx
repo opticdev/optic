@@ -19,7 +19,9 @@ export enum TextFieldVariant {
   FIELDORPARAM,
 }
 
-export const EditableTextField: FC<EditableTextFieldProps> = ({
+export const EditableTextField: FC<
+  EditableTextFieldProps & React.HtmlHTMLAttributes<HTMLInputElement>
+> = ({
   isEditing,
   setEditing,
   value,
@@ -27,6 +29,7 @@ export const EditableTextField: FC<EditableTextFieldProps> = ({
   helperText,
   defaultText,
   variant,
+  ...props
 }) => {
   const classes = useStyles();
   const isEmpty = !value.trim();
@@ -60,6 +63,7 @@ export const EditableTextField: FC<EditableTextFieldProps> = ({
   return isEditing ? (
     <TextField
       inputProps={{
+        ...props,
         className: variants[variant].className,
         ...variants[variant].inputProps,
       }}

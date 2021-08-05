@@ -16,6 +16,7 @@ export interface IFieldRenderer {
 
 // Used to render an objects field details and contributions
 export interface IFieldDetails {
+  fieldId: string;
   name: string;
   contribution: IContribution;
   shapes: IShapeRenderer[];
