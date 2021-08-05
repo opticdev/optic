@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/optic-engine-native",
-  "version": "10.2.2",
+  "version": "10.2.3",
   "scripts": {
     "postinstall": "node scripts/install",
     "preuninstall": "node scripts/uninstall",
@@ -17,7 +17,7 @@
   "types": "lib/index.d.ts",
   "dependencies": {
     "@iarna/toml": "^2.2.5",
-    "@useoptic/optic-domain": "10.2.2",
+    "@useoptic/optic-domain": "10.2.3",
     "bent": "^7.3.12",
     "dotenv": "^8.2.0",
     "execa": "^4.0.3",
