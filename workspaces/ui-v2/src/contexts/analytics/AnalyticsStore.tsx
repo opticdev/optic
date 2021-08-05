@@ -25,18 +25,20 @@ type AnalyticsMetadata = {
   clientId: string;
   clientAgent: string;
   apiName: string;
-  specId?: string;
+  specId: string;
 };
-const defaultMetadata: AnalyticsMetadata = {
+type InputAnalyticsMetadata = Omit<AnalyticsMetadata, 'specId'>;
+
+const defaultMetadata: InputAnalyticsMetadata = {
   clientId,
   clientAgent: 'anon_id',
   apiName: '',
 };
 
 export type AnalyticsStoreProps = {
-  getMetadata: () => Promise<AnalyticsMetadata>;
+  getMetadata: () => Promise<InputAnalyticsMetadata>;
   initialize: (
-    metadata: AnalyticsMetadata,
+    metadata: InputAnalyticsMetadata,
     appConfig: ReturnType<typeof useAppConfig>
   ) => Promise<void>;
   track: (
@@ -56,7 +58,9 @@ export const AnalyticsStore: FC<AnalyticsStoreProps> = ({
   const refInitialize = useRef(initialize);
   const refTrack = useRef(track);
 
-  const [metadata, setMetadata] = useState<AnalyticsMetadata>(defaultMetadata);
+  const [metadata, setMetadata] = useState<InputAnalyticsMetadata>(
+    defaultMetadata
+  );
 
   const specId = useAppSelector(
     (state) => state.metadata.data?.specificationId!
@@ -83,7 +87,7 @@ export const AnalyticsStore: FC<AnalyticsStoreProps> = ({
   }, [appConfig]);
 
   const opticUITrackingEvents = useRef(
-    new OpticUIEvents(async (event) => {
+    new OpticUIEvents(async (event: any) => {
       if (appConfig.analytics.enabled) {
         refTrack.current(event, {
           ...cfgRef.current.metadata,
