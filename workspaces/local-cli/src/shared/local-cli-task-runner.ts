@@ -236,19 +236,28 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
 
     ////////////////////////////////////////////////////////////////////////////////
     const spectacle = new LocalCliSpectacle(apiBaseUrl, opticEngine);
-    const requestQuery = await spectacle.query<any>({
+    const idQuery = await spectacle.query<any>({
       query: `{
         metadata {
           id
         }
+      }`,
+      variables: {},
+    });
+    const specId = idQuery?.data?.metadata?.id;
+
+    const batchCommitQuery = await spectacle.query<any>({
+      query: `{
         batchCommits {
           createdAt
         }
       }`,
       variables: {},
     });
-    const specId = requestQuery?.data?.metadata?.id;
-    const createdAt = requestQuery?.data?.batchCommits?.[0]?.createdAt;
+
+    const createdAt = batchCommitQuery?.data?.batchCommits
+      ?.map((commit: any) => commit?.createdAt)
+      ?.sort()?.[0]?.createdAt;
 
     await trackUserEvent(
       config.name,
