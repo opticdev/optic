@@ -28,7 +28,10 @@ export const HttpBodyPanel: FC<HttpBodyPanelProps> = ({
         const scrollTopDiff =
           fieldNode.getBoundingClientRect().top -
           contentRef.current.getBoundingClientRect().top;
-        contentRef.current.scrollTop += scrollTopDiff;
+
+        // set scroll position to the selected field being in the middle
+        contentRef.current.scrollTop +=
+          scrollTopDiff - contentRef.current.clientHeight / 2;
       }
     }
   }, [selectedFieldId]);
