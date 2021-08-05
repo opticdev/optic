@@ -3,7 +3,7 @@
   "version": "10.2.3",
   "scripts": {
     "ws:build": "tsc -b --verbose",
-    "ws:clean": "rm -rf build",
+    "ws:clean": "rm -rf build && rm -f tsconfig.tsbuildinfo",
     "ws:test": "echo cli-server"
   },
   "repository": {
