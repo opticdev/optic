@@ -7,6 +7,7 @@ import {
   TextFieldVariant,
   FieldOrParameter,
 } from '<src>/components';
+import { useAppConfig } from '<src>/contexts/config/AppConfiguration';
 import {
   useAppSelector,
   useAppDispatch,
@@ -134,6 +135,8 @@ export function EndpointNameContribution({
   endpoint,
 }: EndpointNameContributionProps) {
   const endpointId = getEndpointId(endpoint);
+  const appConfig = useAppConfig();
+
   const isEditable = useAppSelector(selectors.isEndpointEditable(endpoint));
   const contributionValue = useAppSelector(
     (state) =>
@@ -142,6 +145,18 @@ export function EndpointNameContribution({
   const dispatch = useAppDispatch();
   const value =
     contributionValue !== undefined ? contributionValue : initialValue;
+
+  if (!appConfig.allowEditing) {
+    return (
+      <EditableTextField
+        isEditing={false}
+        setEditing={() => {}}
+        value={initialValue || 'Unnamed Endpoint'}
+        setValue={() => {}}
+        variant={TextFieldVariant.REGULAR}
+      />
+    );
+  }
 
   return (
     <>
@@ -184,6 +199,7 @@ export function EndpointNameMiniContribution({
   endpoint,
 }: EndpointNameContributionProps) {
   const endpointId = getEndpointId(endpoint);
+  const appConfig = useAppConfig();
   const isEditable = useAppSelector(selectors.isEndpointEditable(endpoint));
   const contributionValue = useAppSelector(
     (state) =>
@@ -192,6 +208,18 @@ export function EndpointNameMiniContribution({
   const dispatch = useAppDispatch();
   const value =
     contributionValue !== undefined ? contributionValue : initialValue;
+
+  if (!appConfig.allowEditing) {
+    return (
+      <EditableTextField
+        isEditing={false}
+        setEditing={() => {}}
+        value={initialValue || 'Unnamed Endpoint'}
+        setValue={() => {}}
+        variant={TextFieldVariant.SMALL}
+      />
+    );
+  }
 
   return (
     <EditableTextField
