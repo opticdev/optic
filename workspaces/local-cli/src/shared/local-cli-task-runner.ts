@@ -260,7 +260,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
 
     const createdAt = batchCommitQuery?.data?.batchCommits
       ?.map((commit: any) => new Date(commit?.createdAt))
-      ?.sort()?.[0];
+      ?.sort((a: Date, b: Date) => a.getTime() - b.getTime())?.[0];
 
     await trackUserEvent({
       apiName: config.name,
