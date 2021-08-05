@@ -1,5 +1,5 @@
 {
-  "extends": "../config/tsconfig.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "build",
     "resolveJsonModule": true,
@@ -9,5 +9,16 @@
     "./typings",
     "./node_modules/@types",
     "../../node_modules/@types"
+  ],
+  "references": [
+    { "path": "../analytics" },
+    { "path": "../cli-client" },
+    { "path": "../cli-config" },
+    { "path": "../cli-scripts" },
+    { "path": "../cli-shared" },
+    { "path": "../optic-domain" },
+    { "path": "../saas-types" },
+    { "path": "../spectacle" },
+    { "path": "../ui-v2" }
   ]
 }

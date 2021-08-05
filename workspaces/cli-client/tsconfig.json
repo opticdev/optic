@@ -1,7 +1,12 @@
 {
-  "extends": "../config/tsconfig.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "build",
     "rootDir": "src"
-  }
+  },
+  "references": [
+    { "path": "../analytics" },
+    { "path": "../cli-config" },
+    { "path": "../client-utilities" }
+  ]
 }

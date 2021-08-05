@@ -10,5 +10,17 @@
     "strict": true,
     "target": "es2019"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../analytics" },
+    { "path": "../cli-client" },
+    { "path": "../cli-config" },
+    { "path": "../cli-scripts" },
+    { "path": "../cli-server" },
+    { "path": "../cli-shared" },
+    { "path": "../client-utilities" },
+    { "path": "../optic-domain" },
+    { "path": "../spectacle" },
+    { "path": "../spectacle-shared" }
+  ]
 }

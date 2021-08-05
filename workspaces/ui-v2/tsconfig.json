@@ -1,5 +1,5 @@
 {
-  "extends": "../config/tsconfig.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react",
     "outDir": "build",
@@ -9,5 +9,12 @@
     "paths": {
       "<src>/*": ["./src/*"]
     }
-  }
+  },
+  "references": [
+    { "path": "../analytics" },
+    { "path": "../cli-config" },
+    { "path": "../cli-shared" },
+    { "path": "../shape-hash" },
+    { "path": "../spectacle" }
+  ]
 }

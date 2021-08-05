@@ -128,7 +128,7 @@ export async function ensureDaemonStarted(
       throw new Error(`daemon exited prematurely`);
     });
 
-    await new Promise(async (resolve, reject) => {
+    await new Promise<void>(async (resolve, reject) => {
       developerDebugLogger(
         `waiting for lock from pid=${child.pid} sentinel file ${sentinelFilePath}`
       );
