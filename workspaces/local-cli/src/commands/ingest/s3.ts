@@ -67,14 +67,14 @@ export default class IngestS3 extends Command {
         captureId: Joi.string().required(),
         interactionCount: Joi.number().required()
       */
-      await trackUserEvent(
-        apiCfg.name,
+      await trackUserEvent({
+        apiName: apiCfg.name,
         specId,
-        LiveTrafficIngestedWithLocalCli({
+        event: LiveTrafficIngestedWithLocalCli({
           captureId,
           interactionCount,
-        })
-      );
+        }),
+      });
 
       cleanupAndExit();
     } catch (e) {

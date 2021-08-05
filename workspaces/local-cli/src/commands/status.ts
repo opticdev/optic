@@ -242,16 +242,16 @@ export default class Status extends Command {
       await printCoverage(paths, coverage.with_diffs, coverage.without_diffs);
     }
 
-    await trackUserEvent(
-      config.name,
+    await trackUserEvent({
+      apiName: config.name,
       specId,
-      StatusRun({
+      event: StatusRun({
         captureId,
         diffCount: diffs.length,
         undocumentedCount: urls.length,
         timeMs: Date.now() - timeStated,
-      })
-    );
+      }),
+    });
 
     const diffFound = diffs.length > 0 || urls.length > 0;
 

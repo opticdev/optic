@@ -107,18 +107,18 @@ export default class Init extends Command {
 
     const specId = await startInitFlow();
 
-    await trackUserEvent(
-      name,
+    await trackUserEvent({
+      apiName: name,
       specId,
-      ApiInitializedInProject({
+      event: ApiInitializedInProject({
         cwd: cwd,
         source:
           Object.entries(flags).length === 0
             ? 'documentation'
             : 'on-boarding-flow',
         apiName: name,
-      })
-    );
+      }),
+    });
     process.exit(0);
   }
 }

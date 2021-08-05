@@ -259,16 +259,16 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
       ?.map((commit: any) => commit?.createdAt)
       ?.sort()?.[0]?.createdAt;
 
-    await trackUserEvent(
-      config.name,
+    await trackUserEvent({
+      apiName: config.name,
       specId,
-      StartedTaskWithLocalCli({
+      event: StartedTaskWithLocalCli({
         inputs: opticTaskToProps(this.taskName, taskConfig),
         createdAt,
         cwd: this.paths.cwd,
         captureId: this.captureId,
-      })
-    );
+      }),
+    });
     ////////////////////////////////////////////////////////////////////////////////
     developerDebugLogger('finding matching daemon session');
 
@@ -366,15 +366,15 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     const sampleCount = summary.interactionsCount;
     const hasDiff = summary.diffsCount > 0;
 
-    await trackUserEvent(
-      config.name,
+    await trackUserEvent({
+      apiName: config.name,
       specId,
-      ExitedTaskWithLocalCli({
+      event: ExitedTaskWithLocalCli({
         interactionCount: sampleCount,
         inputs: opticTaskToProps('', taskConfig),
         captureId: this.captureId,
-      })
-    );
+      }),
+    });
 
     if (hasDiff) {
       const uiUrl = linkToCapture(uiBaseUrl, cliSession.session.id, captureId);

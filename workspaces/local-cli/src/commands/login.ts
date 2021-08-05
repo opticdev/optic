@@ -55,11 +55,11 @@ export default class Login extends Command {
       const decodedToken = await getUserFromCredentials(credentials!);
       cli.action.stop('Received Credentials');
 
-      await trackUserEvent(
-        '',
-        '',
-        UserLoggedInFromCLI({ userId: decodedToken.sub })
-      );
+      await trackUserEvent({
+        apiName: '',
+        specId: '',
+        event: UserLoggedInFromCLI({ userId: decodedToken.sub }),
+      });
 
       await server.stop();
       await ensureDaemonStarted(lockFilePath, Config.apiBaseUrl);
