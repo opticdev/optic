@@ -89,6 +89,7 @@ export const track: AnalyticsStoreProps['track'] = async (event, metadata) => {
         ...event.data,
         clientId,
         apiName: metadata.apiName,
+        specId: metadata.specId,
         uiVariant: 'publicExample',
       },
     });
