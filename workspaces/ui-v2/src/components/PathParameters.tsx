@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react';
 import { Divider, Typography, makeStyles } from '@material-ui/core';
-import { JsonLike } from '@useoptic/optic-domain';
+import { JsonType } from '@useoptic/optic-domain';
 
 import { FieldOrParameter } from './FieldOrParameter';
 
@@ -14,7 +14,7 @@ export type PathParametersProps = {
 const defaultFieldRender = (param: IPathParameter): ReactNode => {
   const alwaysAString: IShapeRenderer = {
     shapeId: param.id + 'shape',
-    jsonType: JsonLike.STRING,
+    jsonType: JsonType.STRING,
   };
   return (
     <FieldOrParameter

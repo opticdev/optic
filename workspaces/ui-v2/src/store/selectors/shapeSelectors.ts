@@ -1,7 +1,7 @@
 import { SerializedError } from '@reduxjs/toolkit';
 import * as Sentry from '@sentry/react';
 import sortBy from 'lodash.sortby';
-import { JsonLike } from '@useoptic/optic-domain';
+import { JsonType } from '@useoptic/optic-domain';
 
 import {
   AsyncStatus,
@@ -42,30 +42,30 @@ export const getShapeRenderer = (rootShapeId: string) => (
 
     return reduxShapes.map(
       (reduxShape): IShapeRenderer => {
-        if (reduxShape.jsonType === JsonLike.OBJECT) {
+        if (reduxShape.jsonType === JsonType.OBJECT) {
           return {
             ...reduxShape,
             asObject: {
               fields: reduxShape.asObject.fields.map((field) => {
                 const shapeChoices = resolveShape(field.shapeId);
                 const required = !shapeChoices.some(
-                  (i) => i.jsonType === JsonLike.UNDEFINED
+                  (i) => i.jsonType === JsonType.UNDEFINED
                 );
                 return {
                   ...field,
                   shapeChoices: sortBy(
                     shapeChoices.filter(
                       (shapeChoice) =>
-                        shapeChoice.jsonType !== JsonLike.UNDEFINED
+                        shapeChoice.jsonType !== JsonType.UNDEFINED
                     ),
-                    (shapeChoice) => shapeChoice.jsonType === JsonLike.NULL
+                    (shapeChoice) => shapeChoice.jsonType === JsonType.NULL
                   ),
                   required,
                 };
               }),
             },
           };
-        } else if (reduxShape.jsonType === JsonLike.ARRAY) {
+        } else if (reduxShape.jsonType === JsonType.ARRAY) {
           return {
             ...reduxShape,
             asArray: {
@@ -140,7 +140,7 @@ export const convertShapeToQueryParameters = (
 
   for (const field of shapes[0].asObject.fields) {
     let isArray = field.shapeChoices.findIndex(
-      (choice) => choice.jsonType === JsonLike.ARRAY
+      (choice) => choice.jsonType === JsonType.ARRAY
     );
 
     if (isArray > -1) {

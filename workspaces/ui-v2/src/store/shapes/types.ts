@@ -1,4 +1,4 @@
-import { JsonLike } from '@useoptic/optic-domain';
+import { JsonType } from '@useoptic/optic-domain';
 import { ChangeType } from '<src>/types';
 
 export type ShapeId = string;
@@ -14,7 +14,7 @@ export type ReduxField = {
 export type ReduxShape =
   | {
       shapeId: string;
-      jsonType: JsonLike.OBJECT;
+      jsonType: JsonType.OBJECT;
       asArray?: undefined;
       asObject: {
         fields: ReduxField[];
@@ -22,7 +22,7 @@ export type ReduxShape =
     }
   | {
       shapeId: string;
-      jsonType: JsonLike.ARRAY;
+      jsonType: JsonType.ARRAY;
       asArray: {
         shapeId: string;
       };
@@ -30,7 +30,7 @@ export type ReduxShape =
     }
   | {
       shapeId: string;
-      jsonType: Exclude<JsonLike, JsonLike.OBJECT | JsonLike.ARRAY>;
+      jsonType: Exclude<JsonType, JsonType.OBJECT | JsonType.ARRAY>;
       asArray?: undefined;
       asObject?: undefined;
     };

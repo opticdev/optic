@@ -1,6 +1,6 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { JsonLike } from '@useoptic/optic-domain';
+import { JsonType } from '@useoptic/optic-domain';
 
 import { useSharedStyles } from './SharedStyles';
 import { IShapeRenderer } from '<src>/types';
@@ -10,7 +10,7 @@ export const ShapePrimitiveRender = ({ jsonType }: IShapeRenderer) => {
   const classes = useStyles();
   const sharedClasses = useSharedStyles();
 
-  if (jsonType === JsonLike.STRING)
+  if (jsonType === JsonType.STRING)
     return (
       <span
         className={classNames(sharedClasses.valueFont, classes.stringClass)}
@@ -18,7 +18,7 @@ export const ShapePrimitiveRender = ({ jsonType }: IShapeRenderer) => {
         string
       </span>
     );
-  if (jsonType === JsonLike.NUMBER)
+  if (jsonType === JsonType.NUMBER)
     return (
       <span
         className={classNames(sharedClasses.valueFont, classes.numberClass)}
@@ -27,7 +27,7 @@ export const ShapePrimitiveRender = ({ jsonType }: IShapeRenderer) => {
       </span>
     );
 
-  if (jsonType === JsonLike.BOOLEAN)
+  if (jsonType === JsonType.BOOLEAN)
     return (
       <span
         className={classNames(sharedClasses.valueFont, classes.booleanClass)}
@@ -36,7 +36,7 @@ export const ShapePrimitiveRender = ({ jsonType }: IShapeRenderer) => {
       </span>
     );
 
-  if (jsonType === JsonLike.NULL)
+  if (jsonType === JsonType.NULL)
     return (
       <span className={classNames(sharedClasses.valueFont, classes.nullClass)}>
         null

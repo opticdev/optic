@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { RootState } from '../root';
 import { IContribution } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
-import { JsonLike } from '../../../../optic-domain/build';
+import { JsonType } from '@useoptic/optic-domain';
 
 const memoizedGetAllRemovedFields = createSelector<
   RootState,
@@ -21,7 +21,7 @@ const memoizedGetAllRemovedFields = createSelector<
         const shapeId = stack.pop()!;
         const reduxShapes = shapes.shapeMap[shapeId];
         for (const shape of reduxShapes) {
-          if (shape.jsonType === JsonLike.OBJECT) {
+          if (shape.jsonType === JsonType.OBJECT) {
             for (const field of shape.asObject.fields) {
               stack.push(field.shapeId);
               allRemovedFields.add(field.fieldId);

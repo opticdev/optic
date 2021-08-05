@@ -20,7 +20,7 @@ import { endpoints, shapes } from '@useoptic/graph-lib';
 import {
   FieldShape,
   FieldShapeFromShape,
-  JsonLike,
+  JsonType,
   ShapeChoice,
 } from '@useoptic/optic-domain';
 import {
@@ -666,22 +666,22 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return Promise.resolve(parent.jsonType);
       },
       asArray: (parent: ShapeChoice) => {
-        if (parent.jsonType === JsonLike.ARRAY) {
+        if (parent.jsonType === JsonType.ARRAY) {
           return Promise.resolve(parent);
         }
       },
       asObject: (parent: ShapeChoice) => {
-        if (parent.jsonType === JsonLike.OBJECT) {
+        if (parent.jsonType === JsonType.OBJECT) {
           return Promise.resolve(parent);
         }
       },
     },
     ArrayMetadata: {
-      shapeId: (parent: Extract<ShapeChoice, { jsonType: JsonLike.ARRAY }>) => {
+      shapeId: (parent: Extract<ShapeChoice, { jsonType: JsonType.ARRAY }>) => {
         return Promise.resolve(parent.itemShapeId);
       },
       changes: (
-        parent: Extract<ShapeChoice, { jsonType: JsonLike.ARRAY }>,
+        parent: Extract<ShapeChoice, { jsonType: JsonType.ARRAY }>,
         args: {
           sinceBatchCommitId?: string;
         },
@@ -730,7 +730,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       edit: async (
         parent: { fieldId: string },
-        args: { requestedTypes: JsonLike[] },
+        args: { requestedTypes: JsonType[] },
         context: GraphQLContext
       ) => {
         return commandGenerator.field.edit(parent.fieldId, args.requestedTypes);

@@ -10,7 +10,7 @@ import {
   IShapeTrail,
   IShapeTrailComponent,
 } from '@useoptic/cli-shared/build/diffs/shape-trail';
-import { ICoreShapeKinds, JsonLike } from '@useoptic/optic-domain';
+import { ICoreShapeKinds, JsonType } from '@useoptic/optic-domain';
 import { InvariantViolationError } from '<src>/errors';
 
 export interface IExpectationHelper {
@@ -219,7 +219,7 @@ async function getChoices(
 }
 
 export function JsonLikeToCoreShapeKinds(
-  jsonLikes: { id: string; jsonType: JsonLike }[],
+  jsonLikes: { id: string; jsonType: JsonType }[],
   rootShapeId: string
 ): { id: string; coreShapeKind: ICoreShapeKinds }[] {
   //@todo talk about how we will handle todos
@@ -227,21 +227,21 @@ export function JsonLikeToCoreShapeKinds(
     return [];
   }
 
-  function toCoreShapeKind(jsonLike: JsonLike): ICoreShapeKinds {
+  function toCoreShapeKind(jsonLike: JsonType): ICoreShapeKinds {
     switch (jsonLike) {
-      case JsonLike.OBJECT:
+      case JsonType.OBJECT:
         return ICoreShapeKinds.ObjectKind;
-      case JsonLike.STRING:
+      case JsonType.STRING:
         return ICoreShapeKinds.StringKind;
-      case JsonLike.BOOLEAN:
+      case JsonType.BOOLEAN:
         return ICoreShapeKinds.BooleanKind;
-      case JsonLike.NULL:
+      case JsonType.NULL:
         return ICoreShapeKinds.NullableKind;
-      case JsonLike.NUMBER:
+      case JsonType.NUMBER:
         return ICoreShapeKinds.NumberKind;
-      case JsonLike.UNDEFINED:
+      case JsonType.UNDEFINED:
         return ICoreShapeKinds.OptionalKind;
-      case JsonLike.ARRAY:
+      case JsonType.ARRAY:
         return ICoreShapeKinds.ListKind;
     }
   }
