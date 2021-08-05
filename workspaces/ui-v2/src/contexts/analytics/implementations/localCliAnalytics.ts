@@ -52,9 +52,15 @@ export const initialize: AnalyticsStoreProps['initialize'] = async (
 
   if (appConfig.analytics.fullStoryOrgId) {
     FullStory.init({ orgId: appConfig.analytics.fullStoryOrgId });
+    FullStory.setUserVars({
+      clientId: clientId,
+      anonId: metadata.clientAgent,
+      apiName: metadata.apiName,
+    });
     FullStory.event('Session', {
       clientId: clientId,
-      anon_id: metadata.clientAgent,
+      anonId: metadata.clientAgent,
+      apiName: metadata.apiName,
     });
   }
 
@@ -82,10 +88,10 @@ export const track: AnalyticsStoreProps['track'] = async (event, metadata) => {
   cliClient.postTrackingEvents([
     {
       type: event.type,
-      data: event.data,
+      data: { ...event.data, specId: metadata.specId },
     },
   ]);
   try {
-    FullStory.event(event.type, event.data);
+    FullStory.event(event.type, { ...event.data, specId: metadata.specId });
   } catch (e) {}
 };

@@ -94,15 +94,15 @@ export default function LocalCli() {
                     clientId={AUTH0_CLIENT_ID}
                     audience={appConfig.config.backendApi.domain}
                   >
-                    <AnalyticsStore
-                      getMetadata={getMetadata(() =>
-                        data.configRepository.getApiName()
-                      )}
-                      initialize={initialize}
-                      track={track}
-                    >
-                      <DebugOpticComponent />
-                      <MetadataLoader>
+                    <MetadataLoader>
+                      <AnalyticsStore
+                        getMetadata={getMetadata(() =>
+                          data.configRepository.getApiName()
+                        )}
+                        initialize={initialize}
+                        track={track}
+                      >
+                        <DebugOpticComponent />
                         <Switch>
                           <Route
                             path={`${match.path}/history`}
@@ -122,8 +122,8 @@ export default function LocalCli() {
                           />
                           <Redirect to={`${match.path}/documentation`} />
                         </Switch>
-                      </MetadataLoader>
-                    </AnalyticsStore>
+                      </AnalyticsStore>
+                    </MetadataLoader>
                   </Auth0Provider>
                 </BaseUrlProvider>
               </SpecRepositoryStore>

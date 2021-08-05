@@ -3,18 +3,15 @@ import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Button, LinearProgress, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { Delete as DeleteIcon, Undo as UndoIcon } from '@material-ui/icons';
+import { JsonType } from '@useoptic/optic-domain';
 
 import {
   EndpointName,
   PathParameters,
-  IShapeRenderer,
-  JsonLike,
   PageLayout,
   FullWidth,
   ContributionsList,
   QueryParametersPanel,
-  convertShapeToQueryParameters,
-  ContributionFetcher,
   ShapeFetcher,
   HttpBodyPanel,
   HttpBodySelector,
@@ -28,15 +25,18 @@ import {
   selectors,
   documentationEditActions,
 } from '<src>/store';
+import { IShapeRenderer } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
   EndpointTOC,
+  DocFieldContribution,
   DocsFieldOrParameterContribution,
   EndpointNameContribution,
   DocsPageAccessoryNavigation,
   MarkdownBodyContribution,
   DeleteEndpointConfirmationModal,
+  SimulatedBody,
 } from '<src>/pages/docs/components';
 import { useAnalytics } from '<src>/contexts/analytics';
 
@@ -94,14 +94,14 @@ export const EndpointRootPage: FC<
   }, [analytics]);
 
   const isEndpointStagedForDeletion = useAppSelector(
-    selectors.isEndpointDeleted({ method, pathId })
+    selectors.isEndpointRemoved({ method, pathId })
   );
 
-  const deleteEndpoint = () =>
-    dispatch(documentationEditActions.deleteEndpoint({ method, pathId }));
+  const removeEndpoint = () =>
+    dispatch(documentationEditActions.removeEndpoint({ method, pathId }));
 
-  const undeleteEndpoint = () =>
-    dispatch(documentationEditActions.undeleteEndpoint({ method, pathId }));
+  const unremoveEndpoint = () =>
+    dispatch(documentationEditActions.unremoveEndpoint({ method, pathId }));
 
   const classes = useStyles();
 
@@ -136,7 +136,7 @@ export const EndpointRootPage: FC<
           endpoint={thisEndpoint}
           handleClose={() => setDeleteModalOpen(false)}
           handleConfirm={() => {
-            deleteEndpoint();
+            removeEndpoint();
             setDeleteModalOpen(false);
           }}
         />
@@ -173,7 +173,7 @@ export const EndpointRootPage: FC<
                 variant="outlined"
                 color="secondary"
                 onClick={() => {
-                  undeleteEndpoint();
+                  unremoveEndpoint();
                 }}
               >
                 Undelete <UndoIcon className={classes.icon} />
@@ -217,11 +217,10 @@ export const EndpointRootPage: FC<
               >
                 <PathParameters
                   parameters={parameterizedPathParts}
-                  renderField={(param, index) => {
+                  renderField={(param) => {
                     const alwaysAString: IShapeRenderer = {
                       shapeId: param.id + 'shape',
-                      jsonType: JsonLike.STRING,
-                      value: undefined,
+                      jsonType: JsonType.STRING,
                     };
                     return (
                       <DocsFieldOrParameterContribution
@@ -235,6 +234,7 @@ export const EndpointRootPage: FC<
                         shapes={[alwaysAString]}
                         depth={0}
                         initialValue={param.description}
+                        required
                       />
                     );
                   }}
@@ -270,17 +270,17 @@ export const EndpointRootPage: FC<
                 endpoint={thisEndpoint}
               />
             </div>
-            <div className={classes.bodyDetails}>
-              <div>
-                <ContributionFetcher
-                  rootShapeId={visibleQueryParameters.rootShapeId}
-                  endpointId={endpointId}
-                >
-                  {(fields) => (
+            <ShapeFetcher
+              rootShapeId={visibleQueryParameters.rootShapeId}
+              endpointId={endpointId}
+            >
+              {(shapes, fields) => (
+                <div className={classes.bodyDetails}>
+                  <div>
                     <ContributionsList
                       renderField={(field) => {
                         let isArray = field.shapes.findIndex(
-                          (choice) => choice.jsonType === JsonLike.ARRAY
+                          (choice) => choice.jsonType === JsonType.ARRAY
                         );
 
                         if (isArray > -1) {
@@ -294,7 +294,7 @@ export const EndpointRootPage: FC<
                         }
 
                         return (
-                          <DocsFieldOrParameterContribution
+                          <DocFieldContribution
                             key={
                               field.contribution.id +
                               field.contribution.contributionKey
@@ -308,24 +308,38 @@ export const EndpointRootPage: FC<
                             depth={field.depth}
                             id={field.contribution.id}
                             initialValue={field.contribution.value}
+                            required={field.required}
                           />
                         );
                       }}
                       fieldDetails={fields}
                     />
-                  )}
-                </ContributionFetcher>
-              </div>
-              <div className={classes.panel}>
-                <ShapeFetcher rootShapeId={visibleQueryParameters.rootShapeId}>
-                  {(shapes) => (
-                    <QueryParametersPanel
-                      parameters={convertShapeToQueryParameters(shapes)}
-                    />
-                  )}
-                </ShapeFetcher>
-              </div>
-            </div>
+                  </div>
+                  <div className={classes.panel}>
+                    {isEditing ? (
+                      <SimulatedBody
+                        rootShapeId={visibleQueryParameters.rootShapeId}
+                        endpointId={endpointId}
+                      >
+                        {(shapes) => (
+                          <QueryParametersPanel
+                            parameters={selectors.convertShapeToQueryParameters(
+                              shapes
+                            )}
+                          />
+                        )}
+                      </SimulatedBody>
+                    ) : (
+                      <QueryParametersPanel
+                        parameters={selectors.convertShapeToQueryParameters(
+                          shapes
+                        )}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+            </ShapeFetcher>
           </div>
         )}
         {visibleRequests.length > 0 && (
@@ -351,16 +365,16 @@ export const EndpointRootPage: FC<
                     />
                   </div>
                   {request.body ? (
-                    <div className={classes.bodyDetails}>
-                      <div>
-                        <ContributionFetcher
-                          rootShapeId={request.body.rootShapeId}
-                          endpointId={endpointId}
-                        >
-                          {(fields) => (
+                    <ShapeFetcher
+                      rootShapeId={request.body.rootShapeId}
+                      endpointId={endpointId}
+                    >
+                      {(shapes, fields) => (
+                        <div className={classes.bodyDetails}>
+                          <div>
                             <ContributionsList
                               renderField={(field) => (
-                                <DocsFieldOrParameterContribution
+                                <DocFieldContribution
                                   key={
                                     field.contribution.id +
                                     field.contribution.contributionKey
@@ -374,24 +388,35 @@ export const EndpointRootPage: FC<
                                   depth={field.depth}
                                   id={field.contribution.id}
                                   initialValue={field.contribution.value}
+                                  required={field.required}
                                 />
                               )}
                               fieldDetails={fields}
                             />
-                          )}
-                        </ContributionFetcher>
-                      </div>
-                      <div className={classes.panel}>
-                        <ShapeFetcher rootShapeId={request.body.rootShapeId}>
-                          {(shapes) => (
-                            <HttpBodyPanel
-                              shapes={shapes}
-                              location={request.body!.contentType}
-                            />
-                          )}
-                        </ShapeFetcher>
-                      </div>
-                    </div>
+                          </div>
+                          <div className={classes.panel}>
+                            {isEditing ? (
+                              <SimulatedBody
+                                rootShapeId={request.body!.rootShapeId}
+                                endpointId={endpointId}
+                              >
+                                {(shapes) => (
+                                  <HttpBodyPanel
+                                    shapes={shapes}
+                                    location={request.body!.contentType}
+                                  />
+                                )}
+                              </SimulatedBody>
+                            ) : (
+                              <HttpBodyPanel
+                                shapes={shapes}
+                                location={request.body!.contentType}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </ShapeFetcher>
                   ) : (
                     <>No Body Request</>
                   )}
@@ -429,16 +454,16 @@ export const EndpointRootPage: FC<
                       />
                     </div>
                     {response.body ? (
-                      <div className={classes.bodyDetails}>
-                        <div>
-                          <ContributionFetcher
-                            rootShapeId={response.body.rootShapeId}
-                            endpointId={endpointId}
-                          >
-                            {(fields) => (
+                      <ShapeFetcher
+                        rootShapeId={response.body.rootShapeId}
+                        endpointId={endpointId}
+                      >
+                        {(shapes, fields) => (
+                          <div className={classes.bodyDetails}>
+                            <div>
                               <ContributionsList
                                 renderField={(field) => (
-                                  <DocsFieldOrParameterContribution
+                                  <DocFieldContribution
                                     key={
                                       field.contribution.id +
                                       field.contribution.contributionKey
@@ -452,24 +477,35 @@ export const EndpointRootPage: FC<
                                     depth={field.depth}
                                     id={field.contribution.id}
                                     initialValue={field.contribution.value}
+                                    required={field.required}
                                   />
                                 )}
                                 fieldDetails={fields}
                               />
-                            )}
-                          </ContributionFetcher>
-                        </div>
-                        <div className={classes.panel}>
-                          <ShapeFetcher rootShapeId={response.body.rootShapeId}>
-                            {(shapes) => (
-                              <HttpBodyPanel
-                                shapes={shapes}
-                                location={response.body!.contentType}
-                              />
-                            )}
-                          </ShapeFetcher>
-                        </div>
-                      </div>
+                            </div>
+                            <div className={classes.panel}>
+                              {isEditing ? (
+                                <SimulatedBody
+                                  rootShapeId={response.body!.rootShapeId}
+                                  endpointId={endpointId}
+                                >
+                                  {(shapes) => (
+                                    <HttpBodyPanel
+                                      shapes={shapes}
+                                      location={response.body!.contentType}
+                                    />
+                                  )}
+                                </SimulatedBody>
+                              ) : (
+                                <HttpBodyPanel
+                                  shapes={shapes}
+                                  location={response.body!.contentType}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </ShapeFetcher>
                     ) : (
                       <>No Body Request</>
                     )}

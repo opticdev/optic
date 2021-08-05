@@ -41,6 +41,8 @@ import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-speci
 import { linkToCapture, linkToDiffs } from './ui-links';
 import { RunTaskVerboseLogger } from './verbose/verbose';
 import { IHttpInteraction } from '@useoptic/optic-domain';
+import { LocalCliSpectacle } from '@useoptic/spectacle-shared';
+import * as opticEngine from '@useoptic/optic-engine-wasm';
 
 export const runCommandFlags = {
   'print-coverage': flags.boolean({
@@ -209,15 +211,6 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
 
     this.logger.logConfigMeaning(taskConfig);
 
-    await trackUserEvent(
-      config.name,
-      StartedTaskWithLocalCli({
-        inputs: opticTaskToProps(this.taskName, taskConfig),
-        cwd: this.paths.cwd,
-        captureId: this.captureId,
-      })
-    );
-
     ////////////////////////////////////////////////////////////////////////////////
 
     const blockers = await findProcess('port', taskConfig.proxyConfig.port);
@@ -251,6 +244,47 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
       this.captureId
     );
     developerDebugLogger({ cliSession });
+
+    const spectacleBaseUrl = `${apiBaseUrl}/specs/${cliSession.session.id}`;
+
+    ////////////////////////////////////////////////////////////////////////////////
+    const spectacle = new LocalCliSpectacle(spectacleBaseUrl, opticEngine);
+    const idQuery = await spectacle.query<any>({
+      query: `{
+        metadata {
+          id
+        }
+      }`,
+      variables: {},
+    });
+    const specId = idQuery?.data?.metadata?.id ?? 'anon-spec-id';
+
+    // See here for why this is split into separate queries: https://github.com/opticdev/optic/pull/1083#issuecomment-893522118
+    // TL;DR querying for specId will create if it doesn't exist (which adds a batch commit), and then reload spectacle
+    // but that could race with the `batchCommits` query, so better to serialize the queries to make sure things are loaded
+    const batchCommitQuery = await spectacle.query<any>({
+      query: `{
+        batchCommits {
+          createdAt
+        }
+      }`,
+      variables: {},
+    });
+
+    const createdAt = batchCommitQuery?.data?.batchCommits
+      ?.map((commit: any) => new Date(commit?.createdAt))
+      ?.sort((a: Date, b: Date) => a.getTime() - b.getTime())?.[0];
+
+    await trackUserEvent({
+      apiName: config.name,
+      specId,
+      event: StartedTaskWithLocalCli({
+        inputs: opticTaskToProps(this.taskName, taskConfig),
+        createdAt,
+        cwd: this.paths.cwd,
+        captureId: this.captureId,
+      }),
+    });
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -338,14 +372,15 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     const sampleCount = summary.interactionsCount;
     const hasDiff = summary.diffsCount > 0;
 
-    await trackUserEvent(
-      config.name,
-      ExitedTaskWithLocalCli({
+    await trackUserEvent({
+      apiName: config.name,
+      specId,
+      event: ExitedTaskWithLocalCli({
         interactionCount: sampleCount,
         inputs: opticTaskToProps('', taskConfig),
         captureId: this.captureId,
-      })
-    );
+      }),
+    });
 
     if (hasDiff) {
       const uiUrl = linkToCapture(uiBaseUrl, cliSession.session.id, captureId);

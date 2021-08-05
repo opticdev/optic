@@ -44,23 +44,23 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const isEndpointStagedForDeletion = useAppSelector(
-    selectors.isEndpointDeleted({
+    selectors.isEndpointRemoved({
       method: endpoint.method,
       pathId: endpoint.pathId,
     })
   );
 
-  const deleteEndpoint = () =>
+  const removeEndpoint = () =>
     dispatch(
-      documentationEditActions.deleteEndpoint({
+      documentationEditActions.removeEndpoint({
         method: endpoint.method,
         pathId: endpoint.pathId,
       })
     );
 
-  const undeleteEndpoint = () =>
+  const unremoveEndpoint = () =>
     dispatch(
-      documentationEditActions.undeleteEndpoint({
+      documentationEditActions.unremoveEndpoint({
         method: endpoint.method,
         pathId: endpoint.pathId,
       })
@@ -73,7 +73,7 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
           endpoint={endpoint}
           handleClose={() => setDeleteModalOpen(false)}
           handleConfirm={() => {
-            deleteEndpoint();
+            removeEndpoint();
             setDeleteModalOpen(false);
           }}
         />
@@ -120,7 +120,7 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
                 <Tooltip title="Unstage endpoint deletion">
                   <IconButton
                     onClick={() => {
-                      undeleteEndpoint();
+                      unremoveEndpoint();
                     }}
                   >
                     <UndoIcon fontSize="small" />

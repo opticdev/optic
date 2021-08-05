@@ -123,15 +123,15 @@ export default function CloudViewer() {
             <ReduxProvider store={store}>
               <SpecRepositoryStore specRepo={data.opticContext.specRepository}>
                 <BaseUrlProvider value={{ url: match.url }}>
-                  <AnalyticsStore
-                    getMetadata={getMetadata(() =>
-                      data.opticContext.configRepository.getApiName()
-                    )}
-                    initialize={initialize}
-                    track={track}
-                  >
-                    <DebugOpticComponent />
-                    <MetadataLoader>
+                  <MetadataLoader>
+                    <AnalyticsStore
+                      getMetadata={getMetadata(() =>
+                        data.opticContext.configRepository.getApiName()
+                      )}
+                      initialize={initialize}
+                      track={track}
+                    >
+                      <DebugOpticComponent />
                       <Switch>
                         <Route
                           path={`${match.path}/history`}
@@ -151,8 +151,8 @@ export default function CloudViewer() {
                         />
                         <Redirect to={`${match.path}/documentation`} />
                       </Switch>
-                    </MetadataLoader>
-                  </AnalyticsStore>
+                    </AnalyticsStore>
+                  </MetadataLoader>
                 </BaseUrlProvider>
               </SpecRepositoryStore>
             </ReduxProvider>

@@ -12,8 +12,8 @@ const initialState: {
   },
 };
 
-const endpointsSlice = createSlice({
-  name: 'endpoints',
+const pathsSlice = createSlice({
+  name: 'paths',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -42,4 +42,4 @@ const endpointsSlice = createSlice({
 export const actions = {
   fetchPaths,
 };
-export const reducer = endpointsSlice.reducer;
+export const reducer = pathsSlice.reducer;

@@ -8,10 +8,15 @@ import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from './paths';
 import { Config } from '../config';
 
-export async function trackUserEvent(
-  apiName: string,
-  event: TrackingEventBase<any>
-) {
+export async function trackUserEvent({
+  apiName,
+  specId,
+  event,
+}: {
+  apiName: string;
+  specId: string;
+  event: TrackingEventBase<any>;
+}) {
   const daemonState = await ensureDaemonStarted(
     lockFilePath,
     Config.apiBaseUrl
@@ -21,7 +26,7 @@ export async function trackUserEvent(
     `http://localhost:${daemonState.port}/api`
   );
 
-  await cliServerClient.postTrackingEventsWithApi(apiName, [event]);
+  await cliServerClient.postTrackingEventsWithApi(apiName, specId, [event]);
 }
 
 export function opticTaskToProps(

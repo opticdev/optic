@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import { IFieldDetails } from '<src>/components';
+import { IFieldDetails } from '<src>/types';
 
 type ContributionsListProps = {
   fieldDetails: IFieldDetails[];

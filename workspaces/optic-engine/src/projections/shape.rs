@@ -1,5 +1,4 @@
 use crate::events::{ShapeEvent, SpecEvent};
-use crate::projections::shape::ShapeChoice::Primitive;
 use crate::queries::shape::{ChoiceOutput, ShapeQueries};
 use crate::shapes::traverser::ShapeTrailPathComponent::ObjectFieldTrail;
 use crate::shapes::ShapeTrail;
@@ -7,7 +6,7 @@ use crate::state::shape::{
   FieldId, FieldShapeDescriptor, ParameterShapeDescriptor, ProviderDescriptor, ShapeId, ShapeIdRef,
   ShapeKind, ShapeKindDescriptor, ShapeParameterId, ShapeParameterIdRef, ShapeParametersDescriptor,
 };
-use crate::RfcEvent;
+use crate::{RfcEvent, SpecProjection};
 use cqrs_core::{Aggregate, AggregateEvent, Event};
 use petgraph::graph::{Graph, NodeIndex};
 use petgraph::visit::EdgeRef;
@@ -94,204 +93,6 @@ pub struct FieldNodeDescriptor {
 pub struct ShapeProjection {
   pub graph: Graph<Node, Edge>,
   pub node_id_to_index: HashMap<NodeId, petgraph::graph::NodeIndex>,
-}
-
-#[derive(Debug, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct GraphNodesAndEdges<N, E> {
-  nodes: Vec<N>,
-  edges: Vec<(usize, usize, E)>,
-  node_index_to_id: BTreeMap<String, String>,
-}
-
-#[derive(Debug, Serialize, Clone)]
-pub enum JsonType {
-  String,
-  Number,
-  Boolean,
-  Array,
-  Object,
-  Null,
-  Undefined,
-}
-
-#[derive(Debug, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct PrimitiveChoice {
-  shape_id: ShapeId,
-  json_type: JsonType,
-}
-
-#[derive(Debug, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct ObjectFieldChoice {
-  name: String,
-  field_id: FieldId,
-  shape_id: ShapeId,
-}
-
-#[derive(Debug, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct ObjectChoice {
-  shape_id: ShapeId,
-  json_type: JsonType,
-  fields: Vec<ObjectFieldChoice>,
-}
-
-#[derive(Debug, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct ArrayChoice {
-  json_type: JsonType,
-  shape_id: ShapeId,
-  item_shape_id: ShapeId,
-}
-
-#[derive(Debug, Serialize, Clone)]
-#[serde(tag = "type")]
-pub enum ShapeChoice {
-  Primitive(PrimitiveChoice),
-  Object(ObjectChoice),
-  Array(ArrayChoice),
-  Any,
-  Unknown,
-}
-pub type ShapeChoiceMapping = BTreeMap<ShapeId, Vec<ShapeChoice>>;
-impl From<&ShapeProjection> for ShapeChoiceMapping {
-  fn from(shape_projection: &ShapeProjection) -> Self {
-    let queries = ShapeQueries::new(shape_projection);
-    let shape_choices = shape_projection
-      .graph
-      .node_indices()
-      .filter_map(|i| {
-        let node = shape_projection
-          .graph
-          .node_weight(i)
-          .expect("node should exist");
-        match node {
-          Node::Shape(shape_node) => Some(shape_node),
-          _ => None,
-        }
-      })
-      .map(|shape_node| {
-        let trail = ShapeTrail::new(shape_node.shape_id.clone());
-        let trail_choices = queries.list_trail_choices(&trail);
-        let choices = trail_choices
-          .iter()
-          .filter_map(|choice| {
-            let x = match choice.core_shape_kind {
-              ShapeKind::ObjectKind => {
-                let object_fields = queries.resolve_shape_field_id_and_names(&choice.shape_id);
-                let fields = object_fields
-                  .map(|(field_id, name)| {
-                    let field_shape_id = queries
-                      .resolve_field_shape_node(field_id)
-                      .expect("expected field shape to resolve");
-
-                    ObjectFieldChoice {
-                      field_id: field_id.clone(),
-                      shape_id: field_shape_id,
-                      name: name.clone(),
-                    }
-                  })
-                  .collect();
-
-                let output = ObjectChoice {
-                  shape_id: choice.shape_id.clone(),
-                  json_type: JsonType::Object,
-                  fields,
-                };
-                ShapeChoice::Object(output)
-              }
-              ShapeKind::ListKind => {
-                let shape_parameter_id = &String::from(
-                  choice
-                    .core_shape_kind
-                    .get_parameter_descriptor()
-                    .expect("expected $list to have a parameter descriptor")
-                    .shape_parameter_id,
-                );
-                let list_item_shape_id =
-                  queries.resolve_parameter_to_shape(&choice.shape_id, shape_parameter_id);
-                let output = ArrayChoice {
-                  shape_id: choice.shape_id.clone(),
-                  json_type: JsonType::Array,
-                  item_shape_id: list_item_shape_id,
-                };
-                ShapeChoice::Array(output)
-              }
-              ShapeKind::MapKind => unimplemented!(),
-              ShapeKind::OneOfKind => unreachable!(),
-              ShapeKind::AnyKind => ShapeChoice::Any,
-              ShapeKind::UnknownKind => ShapeChoice::Unknown,
-              ShapeKind::StringKind => Primitive(PrimitiveChoice {
-                shape_id: choice.shape_id.clone(),
-                json_type: JsonType::String,
-              }),
-              ShapeKind::NumberKind => Primitive(PrimitiveChoice {
-                shape_id: choice.shape_id.clone(),
-                json_type: JsonType::Number,
-              }),
-              ShapeKind::BooleanKind => Primitive(PrimitiveChoice {
-                shape_id: choice.shape_id.clone(),
-                json_type: JsonType::Boolean,
-              }),
-              ShapeKind::NullableKind => Primitive(PrimitiveChoice {
-                shape_id: choice.shape_id.clone(),
-                json_type: JsonType::Null,
-              }),
-              ShapeKind::IdentifierKind => unimplemented!(),
-              ShapeKind::ReferenceKind => unimplemented!(),
-              ShapeKind::OptionalKind => Primitive(PrimitiveChoice {
-                shape_id: choice.shape_id.clone(),
-                json_type: JsonType::Undefined,
-              }),
-            };
-            Some(x)
-          })
-          .collect();
-        (shape_node.shape_id.clone(), choices)
-      });
-    BTreeMap::from_iter(shape_choices)
-  }
-}
-
-// duplicated in [projections/spectacle/endpoints.rs]
-pub type SerializableGraph = GraphNodesAndEdges<Node, Edge>;
-impl From<ShapeProjection> for SerializableGraph {
-  fn from(shape_projection: ShapeProjection) -> Self {
-    let (graph_nodes, graph_edges) = shape_projection.graph.into_nodes_edges();
-    let nodes = graph_nodes.into_iter().map(|x| x.weight).collect();
-    let edges = graph_edges
-      .into_iter()
-      .map(|x| (x.source().index(), x.target().index(), x.weight))
-      .collect();
-    let value: GraphNodesAndEdges<Node, Edge> = GraphNodesAndEdges {
-      nodes,
-      edges,
-      node_index_to_id: BTreeMap::from_iter(
-        shape_projection
-          .node_id_to_index
-          .into_iter()
-          .map(|(k, v)| (v.index().to_string(), k)),
-      ),
-    };
-    value
-  }
-}
-
-impl ShapeProjection {
-  pub fn to_json_string(&self) -> String {
-    serde_json::to_string(&self.to_serializable_graph()).expect("graph should serialize")
-  }
-
-  pub fn to_serializable_graph(&self) -> SerializableGraph {
-    let copy = self.clone();
-    copy.into()
-  }
-
-  pub fn to_choice_mapping(&self) -> ShapeChoiceMapping {
-    self.into()
-  }
 }
 
 impl Default for ShapeProjection {
@@ -648,6 +449,16 @@ impl ShapeProjection {
     }
   }
 
+  pub fn get_node_by_index(&self, node_index: &NodeIndex) -> Option<&Node> {
+    self.graph.node_weight(*node_index)
+  }
+
+  pub fn get_node_by_id(&self, node_id: &NodeId) -> Option<(NodeIndex, &Node)> {
+    let node_index = self.node_id_to_index.get(node_id)?;
+    let node = self.graph.node_weight(*node_index);
+    node.map(move |node| (*node_index, node))
+  }
+
   pub fn get_core_shape_node_index(&self, node_id: &NodeId) -> Option<&NodeIndex> {
     let node_index = self.node_id_to_index.get(node_id)?;
     let node = self.graph.node_weight(*node_index);
@@ -701,6 +512,29 @@ impl ShapeProjection {
     })?;
 
     Some(child_edge.source())
+  }
+
+  pub fn get_owner_node_index(&self, node_index: &NodeIndex) -> Option<NodeIndex> {
+    let mut edges = self
+      .graph
+      .edges_directed(*node_index, petgraph::Direction::Outgoing);
+    if let Some(owner_edge) = edges.find(|edge| match edge.weight() {
+      Edge::BelongsTo => true,
+      Edge::IsFieldOf => true,
+      _ => false,
+    }) {
+      Some(owner_edge.target())
+    } else {
+      None
+    }
+  }
+
+  pub fn get_owner_node(&self, node_index: &NodeIndex) -> Option<(NodeIndex, &Node)> {
+    let owner_node_index = self.get_owner_node_index(node_index)?;
+    self
+      .graph
+      .node_weight(owner_node_index)
+      .map(move |node| (owner_node_index, node))
   }
 
   //?

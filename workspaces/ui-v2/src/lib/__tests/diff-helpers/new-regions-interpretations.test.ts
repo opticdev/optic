@@ -38,7 +38,6 @@ test('new response body has correct commands', async () => {
     '123'
   );
 
-  console.log(diffs[0]);
   const preview = await newRegionPreview(
     diffs.find((i) => i.diffType === 'UnmatchedResponseBodyContentType')!,
     diffService,

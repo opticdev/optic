@@ -32,6 +32,13 @@ export class OpticUIEvents {
     });
   }
 
+  userLoggedIn(backendUserId: string) {
+    this.dispatch({
+      type: 'user_logged_in',
+      data: { backendUserId },
+    });
+  }
+
   userStartedSharing() {
     this.dispatch({
       type: 'user_started_sharing',

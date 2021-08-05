@@ -9,7 +9,6 @@ import {
   QueryParametersPanel,
   HttpBodyPanel,
   HttpBodySelector,
-  convertShapeToQueryParameters,
   Panel,
 } from '<src>/components';
 import { EndpointTOC } from '<src>/pages/docs/components/EndpointTOC';
@@ -21,6 +20,7 @@ import {
   Location,
 } from '<src>/pages/diffs/components/HighlightedLocation';
 import { selectors, useAppSelector } from '<src>/store';
+import { getEndpointId } from '<src>/utils';
 
 type EndpointDocumentationPaneProps = {
   name: string;
@@ -120,12 +120,13 @@ export const EndpointDocumentationPane: FC<
             <h6 className={classes.bodyHeader}>Query Parameters</h6>
             <div className={classes.bodyDetails}>
               <ShapeFetcher
+                endpointId={getEndpointId(thisEndpoint)}
                 rootShapeId={visibleQueryParameters.rootShapeId}
                 changesSinceBatchCommit={lastBatchCommit}
               >
                 {(shapes) => (
                   <QueryParametersPanel
-                    parameters={convertShapeToQueryParameters(shapes)}
+                    parameters={selectors.convertShapeToQueryParameters(shapes)}
                   />
                 )}
               </ShapeFetcher>
@@ -152,6 +153,7 @@ export const EndpointDocumentationPane: FC<
                 {(request) =>
                   request.body ? (
                     <ShapeFetcher
+                      endpointId={getEndpointId(thisEndpoint)}
                       rootShapeId={request.body.rootShapeId}
                       changesSinceBatchCommit={lastBatchCommit}
                     >
@@ -196,6 +198,7 @@ export const EndpointDocumentationPane: FC<
                       {(response) =>
                         response.body ? (
                           <ShapeFetcher
+                            endpointId={getEndpointId(thisEndpoint)}
                             rootShapeId={response.body.rootShapeId}
                             changesSinceBatchCommit={lastBatchCommit}
                           >

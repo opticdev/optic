@@ -1110,7 +1110,7 @@ exports[
 ] = `
 Object {
   "data": Null Object {
-    "shapeChoices": null,
+    "shapeChoices": Array [],
   },
 }
 `;

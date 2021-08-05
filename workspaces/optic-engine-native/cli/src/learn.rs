@@ -4,7 +4,6 @@ use clap::{App, Arg, ArgGroup, ArgMatches, SubCommand};
 use futures::{try_join, SinkExt, Stream, StreamExt, TryStreamExt};
 use nanoid::nanoid;
 use serde_json;
-use std::env;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout, AsyncWrite};
 use tokio::sync::mpsc;

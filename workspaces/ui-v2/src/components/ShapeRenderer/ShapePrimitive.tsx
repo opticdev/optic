@@ -1,52 +1,44 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
+import { JsonType } from '@useoptic/optic-domain';
+
 import { useSharedStyles } from './SharedStyles';
-import { IShapeRenderer, JsonLike } from './ShapeRenderInterfaces';
-import { useShapeRenderContext } from './ShapeRenderContext';
+import { IShapeRenderer } from '<src>/types';
 import classNames from 'classnames';
 
-export const ShapePrimitiveRender = ({ jsonType, value }: IShapeRenderer) => {
+export const ShapePrimitiveRender = ({ jsonType }: IShapeRenderer) => {
   const classes = useStyles();
   const sharedClasses = useSharedStyles();
 
-  const { showExamples } = useShapeRenderContext();
-
-  if (jsonType === JsonLike.STRING)
+  if (jsonType === JsonType.STRING)
     return (
       <span
         className={classNames(sharedClasses.valueFont, classes.stringClass)}
       >
-        {'"'}
-        {showExamples && typeof value === 'string' ? value : 'string'}
-        {'"'}
+        string
       </span>
     );
-  if (jsonType === JsonLike.NUMBER)
+  if (jsonType === JsonType.NUMBER)
     return (
       <span
         className={classNames(sharedClasses.valueFont, classes.numberClass)}
       >
-        {showExamples && typeof value === 'number'
-          ? value.toString()
-          : 'number'}
+        number
       </span>
     );
 
-  if (jsonType === JsonLike.BOOLEAN)
+  if (jsonType === JsonType.BOOLEAN)
     return (
       <span
         className={classNames(sharedClasses.valueFont, classes.booleanClass)}
       >
-        {showExamples && typeof value === 'boolean'
-          ? value.toString()
-          : 'boolean'}
+        boolean
       </span>
     );
 
-  if (jsonType === JsonLike.NULL)
+  if (jsonType === JsonType.NULL)
     return (
       <span className={classNames(sharedClasses.valueFont, classes.nullClass)}>
-        {/*{showExamples ? '' : 'boolean'}*/}
         null
       </span>
     );

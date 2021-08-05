@@ -1,4 +1,5 @@
 use crate::shapes::{JsonTrail, ShapeTrail};
+use seahash::hash;
 use serde::{Deserialize, Serialize};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
@@ -18,10 +19,29 @@ pub enum ShapeDiffResult {
 }
 
 impl ShapeDiffResult {
+  pub fn normalized(&self) -> Self {
+    match self {
+      ShapeDiffResult::UnmatchedShape {
+        json_trail,
+        shape_trail,
+      } => ShapeDiffResult::UnmatchedShape {
+        json_trail: json_trail.normalized(),
+        shape_trail: shape_trail.clone(),
+      },
+      ShapeDiffResult::UnspecifiedShape {
+        json_trail,
+        shape_trail,
+      } => ShapeDiffResult::UnspecifiedShape {
+        json_trail: json_trail.normalized(),
+        shape_trail: shape_trail.clone(),
+      },
+    }
+  }
   pub fn fingerprint(&self) -> String {
-    let mut hash_state = DefaultHasher::new();
-    Hash::hash(self, &mut hash_state);
-    format!("{:x}", hash_state.finish())
+    let normalized = self.normalized();
+    let s = serde_json::to_vec(&normalized).expect("ShapeDiffResult should be json serializable");
+    let hashed = hash(&s);
+    format!("{:x}", &hashed)
   }
 }
 

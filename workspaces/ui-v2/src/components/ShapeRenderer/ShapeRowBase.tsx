@@ -1,23 +1,21 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
+import { JsonType } from '@useoptic/optic-domain';
+
 import { IndentSpaces, useSharedStyles } from './SharedStyles';
-import {
-  IFieldRenderer,
-  IShapeRenderer,
-  JsonLike,
-} from './ShapeRenderInterfaces';
+import { IFieldRenderer, IShapeRenderer } from '<src>/types';
 import { ShapePrimitiveRender, UnknownPrimitiveRender } from './ShapePrimitive';
 import { useDepth } from './DepthContext';
 import classNames from 'classnames';
 import { useShapeRenderContext } from './ShapeRenderContext';
 import { OneOfTabs, OneOfTabsProps } from './OneOfTabs';
-import { IChanges } from '<src>/pages/changelog/IChanges';
+import { ChangeType } from '<src>/types';
 
 type ShapeRowBaseProps = {
   children: any;
   depth: number;
   style?: any;
-  changes?: IChanges;
+  changes?: ChangeType | null;
 };
 export const ShapeRowBase = ({
   children,
@@ -35,9 +33,9 @@ export const ShapeRowBase = ({
       <div
         className={classNames(
           classes.row,
-          { [sharedClasses.added]: changes && changes.added },
-          // { [sharedClasses.removed]: changes && changes.removed },
-          { [sharedClasses.changed]: changes && changes.changed }
+          { [sharedClasses.added]: changes === 'added' },
+          { [sharedClasses.changed]: changes === 'updated' },
+          { [sharedClasses.removed]: changes === 'removed' }
         )}
         style={{ paddingLeft: depth * IndentSpaces + 4 }}
       >
@@ -53,7 +51,7 @@ export const RenderField = ({
   required,
   parentId,
   changes,
-}: IFieldRenderer) => {
+}: IFieldRenderer & { parentId: string }) => {
   const sharedClasses = useSharedStyles();
   const { depth } = useDepth();
 
@@ -120,12 +118,12 @@ export const RenderRootShape = ({
   right,
 }: {
   shape: IShapeRenderer;
-  right?: any[];
+  right?: React.ReactElement;
 }) => {
   const { depth } = useDepth();
   return (
     <>
-      <ShapeRowBase depth={depth} changes={shape.changes}>
+      <ShapeRowBase depth={depth}>
         <RenderFieldLeadingValue shapeRenderers={[shape]} />
         {right ? (
           <>
@@ -153,14 +151,14 @@ export const RenderFieldLeadingValue = ({
     return null;
   }
 
-  if (shape.jsonType === JsonLike.OBJECT) {
+  if (shape.jsonType === JsonType.OBJECT) {
     return (
       <>
         <span className={sharedClasses.symbolFont}>{'{'}</span>
       </>
     );
   }
-  if (shape.jsonType === JsonLike.ARRAY && shape.asArray) {
+  if (shape.jsonType === JsonType.ARRAY && shape.asArray) {
     return (
       <>
         <span className={sharedClasses.symbolFont}>{'['}</span>
@@ -265,9 +263,7 @@ export function OneOfRender({
   if (!shape) {
     throw new Error(`expected to find the chosen shape`);
   }
-  return (
-    <RenderRootShape right={[<OneOfTabs {...tabProps} />]} shape={shape} />
-  );
+  return <RenderRootShape right={<OneOfTabs {...tabProps} />} shape={shape} />;
 }
 
 const useStyles = makeStyles((theme) => ({

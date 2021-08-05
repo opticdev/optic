@@ -1,10 +1,10 @@
 import React, { FC, ReactNode } from 'react';
 import { Divider, Typography, makeStyles } from '@material-ui/core';
+import { JsonType } from '@useoptic/optic-domain';
 
 import { FieldOrParameter } from './FieldOrParameter';
-import { IShapeRenderer, JsonLike } from './ShapeRenderer';
 
-import { IPathParameter } from '<src>/types';
+import { IPathParameter, IShapeRenderer } from '<src>/types';
 
 export type PathParametersProps = {
   parameters: IPathParameter[];
@@ -14,8 +14,7 @@ export type PathParametersProps = {
 const defaultFieldRender = (param: IPathParameter): ReactNode => {
   const alwaysAString: IShapeRenderer = {
     shapeId: param.id + 'shape',
-    jsonType: JsonLike.STRING,
-    value: undefined,
+    jsonType: JsonType.STRING,
   };
   return (
     <FieldOrParameter
@@ -24,6 +23,7 @@ const defaultFieldRender = (param: IPathParameter): ReactNode => {
       shapes={[alwaysAString]}
       depth={0}
       value={param.description}
+      required
     />
   );
 };

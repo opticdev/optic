@@ -3,7 +3,9 @@ use super::visitors::{
 };
 use crate::queries::shape::{ChoiceOutput, ShapeQueries};
 use crate::state::body::BodyDescriptor;
-use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
+use crate::state::shape::{
+  FieldId, FieldShapeDescriptor, FieldShapeFromShape, ShapeId, ShapeKind, ShapeParameterId,
+};
 use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 use std::fmt;
@@ -286,6 +288,24 @@ impl ShapeTrail {
     let mut new_trail = self.clone();
     new_trail.path.push(component);
     new_trail
+  }
+
+  pub fn is_field(&self) -> bool {
+    matches!(
+      self.path.last(),
+      Some(ShapeTrailPathComponent::ObjectFieldTrail { .. })
+    )
+  }
+
+  pub fn last_field_id(&self) -> Option<&FieldId> {
+    self
+      .path
+      .iter()
+      .rev()
+      .find_map(|component| match component {
+        ShapeTrailPathComponent::ObjectFieldTrail { field_id, .. } => Some(field_id),
+        _ => None,
+      })
   }
 }
 

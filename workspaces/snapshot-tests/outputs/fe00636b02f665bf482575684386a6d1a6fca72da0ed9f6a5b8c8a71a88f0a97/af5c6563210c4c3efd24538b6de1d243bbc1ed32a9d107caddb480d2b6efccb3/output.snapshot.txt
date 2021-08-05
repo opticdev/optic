@@ -1,7 +1,7 @@
 [
   [
     {
-      "UnmatchedRequestUrl": {
+      "UnmatchedRequestBodyContentType": {
         "interactionTrail": {
           "path": [
             {
@@ -17,10 +17,38 @@
           ]
         },
         "requestsTrail": {
-          "SpecRoot": {}
+          "SpecPath": {
+            "pathId": "root"
+          }
         }
       }
     },
-    "6005d492e893247f"
+    "42eb84cedc6490ed"
+  ],
+  [
+    {
+      "UnmatchedResponseBodyContentType": {
+        "interactionTrail": {
+          "path": [
+            {
+              "Method": {
+                "method": "GET"
+              }
+            },
+            {
+              "ResponseStatusCode": {
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecPath": {
+            "pathId": "root"
+          }
+        }
+      }
+    },
+    "7a30b8881179902"
   ]
 ]

@@ -67,7 +67,7 @@ impl SpecProjection {
   pub fn spectacle_endpoints(&self) -> &EndpointsProjection {
     &self.spectacle_endpoints
   }
-  pub fn shapes_serializable(&self) -> crate::projections::shape::SerializableGraph {
+  pub fn shapes_serializable(&self) -> crate::projections::spectacle::shape::SerializableGraph {
     self.shape.to_serializable_graph()
   }
   pub fn spectacle_endpoints_serializable(

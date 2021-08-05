@@ -112,6 +112,9 @@ export default class Status extends Command {
 
     const requestQuery = await spectacle.query<any>({
       query: `{
+        metadata {
+          id
+        }
         requests {
           id
           pathId
@@ -150,6 +153,8 @@ export default class Status extends Command {
       }`,
       variables: {},
     });
+
+    const specId = requestQuery.data?.metadata?.id ?? 'anon-spec-id';
 
     const endpoints = requestQuery.data.requests.map((request: any) => {
       return {
@@ -237,15 +242,16 @@ export default class Status extends Command {
       await printCoverage(paths, coverage.with_diffs, coverage.without_diffs);
     }
 
-    await trackUserEvent(
-      config.name,
-      StatusRun({
+    await trackUserEvent({
+      apiName: config.name,
+      specId,
+      event: StatusRun({
         captureId,
         diffCount: diffs.length,
         undocumentedCount: urls.length,
         timeMs: Date.now() - timeStated,
-      })
-    );
+      }),
+    });
 
     const diffFound = diffs.length > 0 || urls.length > 0;
 

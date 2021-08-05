@@ -33,7 +33,7 @@ tasks:
   postpull:
     cmds:
       - task: 'workspaces:clean'
-      - FLAGS_FILE=.env.local task workspaces:setenv
+      - FLAGS_FILE=.env task workspaces:setenv
       - task: 'workspaces:build'
 
   workspaces:setup:
@@ -59,7 +59,6 @@ tasks:
         if [[ -n "$FLAGS_FILE" ]]
         then
           echo "Feature flags found ($FLAGS_FILE), copying to packages for build and runtime."
-          cp $FLAGS_FILE .env
           cp $FLAGS_FILE workspaces/local-cli/.env
           cp $FLAGS_FILE workspaces/cli-server/.env
           cp $FLAGS_FILE workspaces/cli-scripts/.env
@@ -84,7 +83,7 @@ tasks:
       - yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
 
     sources:
-      - "!workspaces/*/build/**/*"
+      - '!workspaces/*/build/**/*'
     generates:
       - workspaces/optic-engine-wasm/browser/**/*
       - workspaces/optic-engine-wasm/build/**/*

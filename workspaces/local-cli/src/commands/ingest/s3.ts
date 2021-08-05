@@ -8,8 +8,10 @@ import { cleanupAndExit, makeUiBaseUrl } from '@useoptic/cli-shared';
 import { getPathsRelativeToConfig, readApiConfig } from '@useoptic/cli-config';
 import { Client } from '@useoptic/cli-client';
 import { trackUserEvent } from '../../shared/analytics';
+import * as opticEngine from '@useoptic/optic-engine-wasm';
 import openBrowser from 'react-dev-utils/openBrowser';
 import { linkToCapture } from '../../shared/ui-links';
+import { LocalCliSpectacle } from '@useoptic/spectacle-shared';
 export default class IngestS3 extends Command {
   static description = 'Ingest from S3';
   static hidden: boolean = true;
@@ -50,17 +52,32 @@ export default class IngestS3 extends Command {
 
       const apiCfg = await readApiConfig(paths.configPath);
 
+      const spectacle = new LocalCliSpectacle(
+        `${apiBaseUrl}/specs/${cliSession.session.id}`,
+        opticEngine
+      );
+      const requestQuery = await spectacle.query<any>({
+        query: `{
+          metadata {
+            id
+          }
+        }`,
+        variables: {},
+      });
+      const specId = requestQuery?.data?.metadata?.id ?? 'anon-spec-id';
+
       /*
         captureId: Joi.string().required(),
         interactionCount: Joi.number().required()
       */
-      await trackUserEvent(
-        apiCfg.name,
-        LiveTrafficIngestedWithLocalCli({
+      await trackUserEvent({
+        apiName: apiCfg.name,
+        specId,
+        event: LiveTrafficIngestedWithLocalCli({
           captureId,
           interactionCount,
-        })
-      );
+        }),
+      });
 
       cleanupAndExit();
     } catch (e) {

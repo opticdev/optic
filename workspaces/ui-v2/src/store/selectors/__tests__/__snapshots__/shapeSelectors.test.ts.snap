@@ -1,0 +1,185 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`convertShapeToQueryParameters converts a shape renderer into a query parameter 1`] = `
+Object {
+  "author": Object {
+    "changes": null,
+    "contributions": Object {},
+    "fieldId": "field_hnI7P1UdbB",
+    "name": "author",
+    "required": true,
+    "shapeChoices": Array [
+      Object {
+        "jsonType": "String",
+        "shapeId": "shape_qQT0krhOKn",
+      },
+    ],
+    "shapeId": "shape_qQT0krhOKn",
+  },
+  "status": Object {
+    "changes": "added",
+    "contributions": Object {},
+    "fieldId": "field_W8dnCvOHU",
+    "name": "status",
+    "required": true,
+    "shapeChoices": Array [
+      Object {
+        "jsonType": "String",
+        "shapeId": "shape_ZL8uOU2HQF",
+      },
+    ],
+    "shapeId": "shape_ZL8uOU2HQF",
+  },
+}
+`;
+
+exports[`createFlatList converts shape to a contribution list 1`] = `
+Array [
+  Object {
+    "contribution": Object {
+      "contributionKey": "description",
+      "endpointId": "path_UOIsxzICu5.GET",
+      "id": "field_LRYtHDYkVO",
+      "value": "",
+    },
+    "depth": 1,
+    "name": "task",
+    "required": true,
+    "shapes": Array [
+      Object {
+        "jsonType": "String",
+        "shapeId": "shape_tUQxsgursF",
+      },
+    ],
+  },
+  Object {
+    "contribution": Object {
+      "contributionKey": "description",
+      "endpointId": "path_UOIsxzICu5.GET",
+      "id": "field_XM7KRqWOlV",
+      "value": "",
+    },
+    "depth": 1,
+    "name": "isDone",
+    "required": true,
+    "shapes": Array [
+      Object {
+        "jsonType": "Boolean",
+        "shapeId": "shape_9cUoBYpjJU",
+      },
+    ],
+  },
+  Object {
+    "contribution": Object {
+      "contributionKey": "description",
+      "endpointId": "path_UOIsxzICu5.GET",
+      "id": "field_9mczOWgNnu",
+      "value": "",
+    },
+    "depth": 1,
+    "name": "id",
+    "required": true,
+    "shapes": Array [
+      Object {
+        "jsonType": "String",
+        "shapeId": "shape_R4cTQ1zpOs",
+      },
+    ],
+  },
+  Object {
+    "contribution": Object {
+      "contributionKey": "description",
+      "endpointId": "path_UOIsxzICu5.GET",
+      "id": "field_5GCvc8KB2p",
+      "value": "",
+    },
+    "depth": 1,
+    "name": "dueDate",
+    "required": true,
+    "shapes": Array [
+      Object {
+        "jsonType": "String",
+        "shapeId": "shape_owJFnZQJeS",
+      },
+    ],
+  },
+]
+`;
+
+exports[`getShapeRenderer converts shapes to shape renderers 1`] = `
+Array [
+  Object {
+    "asArray": Object {
+      "shapeChoices": Array [
+        Object {
+          "asObject": Object {
+            "fields": Array [
+              Object {
+                "changes": null,
+                "contributions": Object {},
+                "fieldId": "field_LRYtHDYkVO",
+                "name": "task",
+                "required": true,
+                "shapeChoices": Array [
+                  Object {
+                    "jsonType": "String",
+                    "shapeId": "shape_tUQxsgursF",
+                  },
+                ],
+                "shapeId": "shape_tUQxsgursF",
+              },
+              Object {
+                "changes": null,
+                "contributions": Object {},
+                "fieldId": "field_XM7KRqWOlV",
+                "name": "isDone",
+                "required": true,
+                "shapeChoices": Array [
+                  Object {
+                    "jsonType": "Boolean",
+                    "shapeId": "shape_9cUoBYpjJU",
+                  },
+                ],
+                "shapeId": "shape_9cUoBYpjJU",
+              },
+              Object {
+                "changes": null,
+                "contributions": Object {},
+                "fieldId": "field_9mczOWgNnu",
+                "name": "id",
+                "required": true,
+                "shapeChoices": Array [
+                  Object {
+                    "jsonType": "String",
+                    "shapeId": "shape_R4cTQ1zpOs",
+                  },
+                ],
+                "shapeId": "shape_R4cTQ1zpOs",
+              },
+              Object {
+                "changes": null,
+                "contributions": Object {},
+                "fieldId": "field_5GCvc8KB2p",
+                "name": "dueDate",
+                "required": true,
+                "shapeChoices": Array [
+                  Object {
+                    "jsonType": "String",
+                    "shapeId": "shape_owJFnZQJeS",
+                  },
+                ],
+                "shapeId": "shape_owJFnZQJeS",
+              },
+            ],
+          },
+          "jsonType": "Object",
+          "shapeId": "shape_f7gQgQ8p7G",
+        },
+      ],
+      "shapeId": "shape_f7gQgQ8p7G",
+    },
+    "jsonType": "Array",
+    "shapeId": "shape_cEkQAVQ3ib",
+  },
+]
+`;

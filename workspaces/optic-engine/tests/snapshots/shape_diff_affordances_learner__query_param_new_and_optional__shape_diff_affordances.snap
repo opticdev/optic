@@ -4,7 +4,7 @@ expression: "&shape_diff_affordances"
 ---
 [
     (
-        "58d16d73c72faea8",
+        "e5048ca864a271ac",
         ShapeDiffAffordances {
             affordances: [
                 TrailValues {

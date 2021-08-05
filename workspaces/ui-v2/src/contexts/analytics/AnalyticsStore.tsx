@@ -2,6 +2,7 @@ import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import { OpticUIEvents, TrackingEventBase } from '@useoptic/analytics';
 import { InvariantViolationError } from '<src>/errors';
 import { useAppConfig } from '../config/AppConfiguration';
+import { useAppSelector } from '<src>/store';
 
 const packageJson = require('../../../package.json');
 const clientId = `local_cli_${packageJson.version}`;
@@ -17,17 +18,20 @@ type AnalyticsMetadata = {
   clientId: string;
   clientAgent: string;
   apiName: string;
+  specId: string;
 };
-const defaultMetadata = {
+type InputAnalyticsMetadata = Omit<AnalyticsMetadata, 'specId'>;
+
+const defaultMetadata: InputAnalyticsMetadata = {
   clientId,
   clientAgent: 'anon_id',
   apiName: '',
 };
 
 export type AnalyticsStoreProps = {
-  getMetadata: () => Promise<AnalyticsMetadata>;
+  getMetadata: () => Promise<InputAnalyticsMetadata>;
   initialize: (
-    metadata: AnalyticsMetadata,
+    metadata: InputAnalyticsMetadata,
     appConfig: ReturnType<typeof useAppConfig>
   ) => Promise<void>;
   track: (
@@ -47,7 +51,23 @@ export const AnalyticsStore: FC<AnalyticsStoreProps> = ({
   const refInitialize = useRef(initialize);
   const refTrack = useRef(track);
 
-  const [metadata, setMetadata] = useState<AnalyticsMetadata>(defaultMetadata);
+  const [metadata, setMetadata] = useState<InputAnalyticsMetadata>(
+    defaultMetadata
+  );
+
+  const specId = useAppSelector(
+    (state) => state.metadata.data?.specificationId!
+  );
+
+  const cfgRef = useRef({
+    metadata,
+    specId,
+  });
+
+  useEffect(() => {
+    cfgRef.current.metadata = metadata;
+    cfgRef.current.specId = specId;
+  }, [metadata, specId, cfgRef]);
 
   useEffect(() => {
     (async function () {
@@ -59,10 +79,13 @@ export const AnalyticsStore: FC<AnalyticsStoreProps> = ({
     })();
   }, [appConfig]);
 
-  const opticUITrackingEvents: React.MutableRefObject<OpticUIEvents> = useRef(
-    new OpticUIEvents(async (event) => {
+  const opticUITrackingEvents = useRef(
+    new OpticUIEvents(async (event: any) => {
       if (appConfig.analytics.enabled) {
-        refTrack.current(event, metadata);
+        refTrack.current(event, {
+          ...cfgRef.current.metadata,
+          specId: cfgRef.current.specId ?? 'anon-spec-id',
+        });
       }
     })
   );
