@@ -62,6 +62,16 @@ export const AnalyticsStore: FC<AnalyticsStoreProps> = ({
     (state) => state.metadata.data?.specificationId!
   );
 
+  const cfgRef = useRef({
+    metadata,
+    specId,
+  });
+
+  useEffect(() => {
+    cfgRef.current.metadata = metadata;
+    cfgRef.current.specId = specId;
+  }, [metadata, specId, cfgRef]);
+
   useEffect(() => {
     (async function () {
       if (appConfig.analytics.enabled) {
@@ -72,16 +82,21 @@ export const AnalyticsStore: FC<AnalyticsStoreProps> = ({
     })();
   }, [appConfig]);
 
-  const opticUITrackingEvents = useMemo(() => {
-    return new OpticUIEvents(async (event) => {
+  const opticUITrackingEvents = useRef(
+    new OpticUIEvents(async (event) => {
       if (appConfig.analytics.enabled) {
-        refTrack.current(event, { ...metadata, specId });
+        refTrack.current(event, {
+          ...cfgRef.current.metadata,
+          specId: cfgRef.current.specId,
+        });
       }
-    });
-  }, [appConfig, metadata, specId]);
+    })
+  );
 
   return (
-    <AnalyticsContext.Provider value={{ trackEvent: opticUITrackingEvents }}>
+    <AnalyticsContext.Provider
+      value={{ trackEvent: opticUITrackingEvents.current }}
+    >
       {children}
     </AnalyticsContext.Provider>
   );
