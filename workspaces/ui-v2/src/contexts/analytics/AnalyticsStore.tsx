@@ -1,11 +1,4 @@
-import React, {
-  FC,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import { OpticUIEvents, TrackingEventBase } from '@useoptic/analytics';
 import { InvariantViolationError } from '<src>/errors';
 import { useAppConfig } from '../config/AppConfiguration';
