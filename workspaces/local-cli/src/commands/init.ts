@@ -93,7 +93,10 @@ export default class Init extends Command {
       const cliSession = await cliClient.findSession(paths.cwd, null, null);
       developerDebugLogger({ cliSession });
       openBrowser(linkToSetup(cliSession.session.id));
-      const spectacle = new LocalCliSpectacle(apiBaseUrl, opticEngine);
+      const spectacle = new LocalCliSpectacle(
+        `${apiBaseUrl}/specs/${cliSession.session.id}`,
+        opticEngine
+      );
       const requestQuery = await spectacle.query<any>({
         query: `{
           metadata {

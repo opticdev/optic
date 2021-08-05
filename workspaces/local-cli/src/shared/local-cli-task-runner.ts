@@ -235,7 +235,20 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     const cliClient = new Client(apiBaseUrl);
 
     ////////////////////////////////////////////////////////////////////////////////
-    const spectacle = new LocalCliSpectacle(apiBaseUrl, opticEngine);
+    developerDebugLogger('finding matching daemon session');
+
+    const { cwd } = this.paths;
+    const cliSession = await cliClient.findSession(
+      cwd,
+      taskConfig,
+      this.captureId
+    );
+    developerDebugLogger({ cliSession });
+
+    const spectacleBaseUrl = `${apiBaseUrl}/specs/${cliSession.session.id}`;
+
+    ////////////////////////////////////////////////////////////////////////////////
+    const spectacle = new LocalCliSpectacle(spectacleBaseUrl, opticEngine);
     const idQuery = await spectacle.query<any>({
       query: `{
         metadata {
@@ -272,16 +285,6 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
         captureId: this.captureId,
       }),
     });
-    ////////////////////////////////////////////////////////////////////////////////
-    developerDebugLogger('finding matching daemon session');
-
-    const { cwd } = this.paths;
-    const cliSession = await cliClient.findSession(
-      cwd,
-      taskConfig,
-      this.captureId
-    );
-    developerDebugLogger({ cliSession });
 
     ////////////////////////////////////////////////////////////////////////////////
 

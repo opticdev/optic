@@ -52,7 +52,10 @@ export default class IngestS3 extends Command {
 
       const apiCfg = await readApiConfig(paths.configPath);
 
-      const spectacle = new LocalCliSpectacle(apiBaseUrl, opticEngine);
+      const spectacle = new LocalCliSpectacle(
+        `${apiBaseUrl}/specs/${cliSession.session.id}`,
+        opticEngine
+      );
       const requestQuery = await spectacle.query<any>({
         query: `{
           metadata {
