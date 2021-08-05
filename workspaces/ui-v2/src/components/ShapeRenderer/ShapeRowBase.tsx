@@ -1,6 +1,6 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { JsonLike } from '@useoptic/optic-domain';
+import { JsonType } from '@useoptic/optic-domain';
 
 import { IndentSpaces, useSharedStyles } from './SharedStyles';
 import { IFieldRenderer, IShapeRenderer } from '<src>/types';
@@ -151,14 +151,14 @@ export const RenderFieldLeadingValue = ({
     return null;
   }
 
-  if (shape.jsonType === JsonLike.OBJECT) {
+  if (shape.jsonType === JsonType.OBJECT) {
     return (
       <>
         <span className={sharedClasses.symbolFont}>{'{'}</span>
       </>
     );
   }
-  if (shape.jsonType === JsonLike.ARRAY && shape.asArray) {
+  if (shape.jsonType === JsonType.ARRAY && shape.asArray) {
     return (
       <>
         <span className={sharedClasses.symbolFont}>{'['}</span>

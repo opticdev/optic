@@ -17,7 +17,12 @@ import {
   CommandGenerator,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
-import { FieldShape, JsonLike, ShapeChoice } from '@useoptic/optic-domain';
+import {
+  FieldShape,
+  FieldShapeFromShape,
+  JsonType,
+  ShapeChoice,
+} from '@useoptic/optic-domain';
 import {
   IOpticContext,
   IOpticDiffService,
@@ -231,6 +236,51 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           sinceBatchCommitId
         );
         return Promise.resolve(endpointChanges);
+      },
+      field: (
+        parent: any,
+        { fieldId }: { fieldId: string },
+        context: GraphQLContext
+      ) => {
+        const fieldNodeWrapper = context
+          .spectacleContext()
+          .shapeQueries.findNodeById(fieldId);
+
+        if (
+          !fieldNodeWrapper ||
+          fieldNodeWrapper.result.type !== shapes.NodeType.Field
+        )
+          return Promise.resolve(null);
+
+        let fieldNode = fieldNodeWrapper.result;
+
+        let shapeNodeWrapper = context
+          .spectacleContext()
+          .shapeQueries.listIncomingNeighborsByType(
+            fieldId,
+            shapes.NodeType.Shape
+          )
+          .results.find((shapeNode) => {
+            return shapeNode.result.type === shapes.NodeType.Shape;
+          });
+
+        if (
+          !shapeNodeWrapper ||
+          shapeNodeWrapper.result.type !== shapes.NodeType.Shape
+        ) {
+          throw new Error('field should describe a shape');
+        }
+
+        let shapeNode = shapeNodeWrapper.result;
+
+        return Promise.resolve({
+          fieldId: fieldNode.data.fieldId,
+          shapeId: shapeNode.data.shapeId,
+          name: fieldNode.data.descriptor.name,
+          commands: {
+            fieldId: fieldNode.data.fieldId, // required for generation of commands
+          },
+        });
       },
       batchCommits: (parent: any, _: {}, context: GraphQLContext) => {
         return Promise.resolve(
@@ -616,22 +666,22 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return Promise.resolve(parent.jsonType);
       },
       asArray: (parent: ShapeChoice) => {
-        if (parent.jsonType === JsonLike.ARRAY) {
+        if (parent.jsonType === JsonType.ARRAY) {
           return Promise.resolve(parent);
         }
       },
       asObject: (parent: ShapeChoice) => {
-        if (parent.jsonType === JsonLike.OBJECT) {
+        if (parent.jsonType === JsonType.OBJECT) {
           return Promise.resolve(parent);
         }
       },
     },
     ArrayMetadata: {
-      shapeId: (parent: Extract<ShapeChoice, { jsonType: JsonLike.ARRAY }>) => {
+      shapeId: (parent: Extract<ShapeChoice, { jsonType: JsonType.ARRAY }>) => {
         return Promise.resolve(parent.itemShapeId);
       },
       changes: (
-        parent: Extract<ShapeChoice, { jsonType: JsonLike.ARRAY }>,
+        parent: Extract<ShapeChoice, { jsonType: JsonType.ARRAY }>,
         args: {
           sinceBatchCommitId?: string;
         },
@@ -673,10 +723,17 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         // TODO FLEB - connect up to optic engine
         return false;
       },
-      commands: (parent: FieldShape) => {
-        return {
-          remove: commandGenerator.field.remove(parent.fieldId),
-        };
+    },
+    FieldCommands: {
+      remove: async (parent: { fieldId: string }) => {
+        return commandGenerator.field.remove(parent.fieldId);
+      },
+      edit: async (
+        parent: { fieldId: string },
+        args: { requestedTypes: JsonType[] },
+        context: GraphQLContext
+      ) => {
+        return commandGenerator.field.edit(parent.fieldId, args.requestedTypes);
       },
     },
     EndpointChanges: {

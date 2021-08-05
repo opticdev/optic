@@ -20,7 +20,7 @@ export enum ICoreShapeInnerParameterNames {
 }
 
 // Optic engine shape types
-export enum JsonLike {
+export enum JsonType {
   OBJECT = 'Object',
   ARRAY = 'Array',
   NULL = 'Null',
@@ -41,15 +41,15 @@ export type FieldShape = {
 export type ShapeChoice =
   | {
       shapeId: string;
-      jsonType: JsonLike.OBJECT;
+      jsonType: JsonType.OBJECT;
       fields: FieldShape[];
     }
   | {
       shapeId: string;
-      jsonType: JsonLike.ARRAY;
+      jsonType: JsonType.ARRAY;
       itemShapeId: string;
     }
   | {
       shapeId: string;
-      jsonType: Exclude<JsonLike, JsonLike.OBJECT | JsonLike.ARRAY>;
+      jsonType: Exclude<JsonType, JsonType.OBJECT | JsonType.ARRAY>;
     };

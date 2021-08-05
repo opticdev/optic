@@ -291,6 +291,7 @@ type ObjectField {
 
 type FieldCommands {
   remove: [JSON!]!
+  edit(requestedTypes: [JsonType!]!): [JSON!]!
 }
 
 """
@@ -329,6 +330,20 @@ type OpticShape {
   
   # changes(sinceBatchCommitId: String): ChangesResult
   # exampleValue: [JSON]
+}
+
+
+"""
+JsonType, describing the type of an OpticShape projected as a JSON type
+"""
+enum JsonType {
+  String,
+  Number,
+  Boolean,
+  Array,
+  Object,
+  Null,
+  Undefined,
 }
 
 """

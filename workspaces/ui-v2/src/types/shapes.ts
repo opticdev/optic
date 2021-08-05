@@ -1,4 +1,4 @@
-import { JsonLike } from '@useoptic/optic-domain';
+import { JsonType } from '@useoptic/optic-domain';
 import { ChangeType } from './changes';
 import { IContribution } from './contributions';
 
@@ -29,7 +29,7 @@ export type QueryParameters = Record<string, IFieldRenderer>;
 export type IShapeRenderer =
   | {
       shapeId: string;
-      jsonType: JsonLike.OBJECT;
+      jsonType: JsonType.OBJECT;
       asArray?: undefined;
       asObject: {
         fields: IFieldRenderer[];
@@ -37,13 +37,13 @@ export type IShapeRenderer =
     }
   | {
       shapeId: string;
-      jsonType: JsonLike.ARRAY;
+      jsonType: JsonType.ARRAY;
       asArray: IArrayRender;
       asObject?: undefined;
     }
   | {
       shapeId: string;
-      jsonType: Exclude<JsonLike, JsonLike.OBJECT | JsonLike.ARRAY>;
+      jsonType: Exclude<JsonType, JsonType.OBJECT | JsonType.ARRAY>;
       asArray?: undefined;
       asObject?: undefined;
     };

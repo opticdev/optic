@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as Sentry from '@sentry/react';
 
 import { IForkableSpectacle } from '@useoptic/spectacle';
-import { JsonLike } from '@useoptic/optic-domain';
+import { JsonType } from '@useoptic/optic-domain';
 import {
   convertSpectacleChangeToChangeType,
   SpectacleChange,
@@ -48,7 +48,7 @@ type SpectacleArray = {
 type SpectacleShape =
   | {
       id: string;
-      jsonType: JsonLike.OBJECT;
+      jsonType: JsonType.OBJECT;
       asArray?: undefined;
       asObject: {
         fields: SpectacleField[];
@@ -56,13 +56,13 @@ type SpectacleShape =
     }
   | {
       id: string;
-      jsonType: JsonLike.ARRAY;
+      jsonType: JsonType.ARRAY;
       asArray: SpectacleArray;
       asObject?: undefined;
     }
   | {
       id: string;
-      jsonType: Exclude<JsonLike, JsonLike.OBJECT | JsonLike.ARRAY>;
+      jsonType: Exclude<JsonType, JsonType.OBJECT | JsonType.ARRAY>;
       asArray?: undefined;
       asObject?: undefined;
     };
@@ -127,7 +127,7 @@ const fetchShapesAndChildren = async (
           shapeMap[baseShapeId] = [];
         }
 
-        if (shape.jsonType === JsonLike.OBJECT) {
+        if (shape.jsonType === JsonType.OBJECT) {
           const reduxFields: ReduxField[] = [];
           for (const field of shape.asObject.fields) {
             const { shapeId, fieldId } = field;
@@ -149,13 +149,13 @@ const fetchShapesAndChildren = async (
 
           const reduxShape: ReduxShape = {
             shapeId: shape.id,
-            jsonType: JsonLike.OBJECT,
+            jsonType: JsonType.OBJECT,
             asObject: {
               fields: reduxFields,
             },
           };
           shapeMap[baseShapeId].push(reduxShape);
-        } else if (shape.jsonType === JsonLike.ARRAY) {
+        } else if (shape.jsonType === JsonType.ARRAY) {
           if (
             !(
               shape.asArray.shapeId in shapeMap &&
@@ -167,7 +167,7 @@ const fetchShapesAndChildren = async (
 
           const reduxShape: ReduxShape = {
             shapeId: shape.id,
-            jsonType: JsonLike.ARRAY,
+            jsonType: JsonType.ARRAY,
             asArray: {
               shapeId: shape.asArray.shapeId,
             },

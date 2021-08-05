@@ -3,7 +3,7 @@ import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Button, LinearProgress, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { Delete as DeleteIcon, Undo as UndoIcon } from '@material-ui/icons';
-import { JsonLike } from '@useoptic/optic-domain';
+import { JsonType } from '@useoptic/optic-domain';
 
 import {
   EndpointName,
@@ -220,7 +220,7 @@ export const EndpointRootPage: FC<
                   renderField={(param) => {
                     const alwaysAString: IShapeRenderer = {
                       shapeId: param.id + 'shape',
-                      jsonType: JsonLike.STRING,
+                      jsonType: JsonType.STRING,
                     };
                     return (
                       <DocsFieldOrParameterContribution
@@ -280,7 +280,7 @@ export const EndpointRootPage: FC<
                     <ContributionsList
                       renderField={(field) => {
                         let isArray = field.shapes.findIndex(
-                          (choice) => choice.jsonType === JsonLike.ARRAY
+                          (choice) => choice.jsonType === JsonType.ARRAY
                         );
 
                         if (isArray > -1) {
