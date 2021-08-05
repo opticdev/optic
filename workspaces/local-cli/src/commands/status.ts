@@ -154,7 +154,7 @@ export default class Status extends Command {
       variables: {},
     });
 
-    const specId = requestQuery.data?.metadata?.id;
+    const specId = requestQuery.data?.metadata?.id ?? 'anon-spec-id';
 
     const endpoints = requestQuery.data.requests.map((request: any) => {
       return {

@@ -102,7 +102,7 @@ export default class Init extends Command {
         }`,
         variables: {},
       });
-      return requestQuery?.data?.metadata?.id;
+      return requestQuery?.data?.metadata?.id ?? 'anon-spec-id';
     }
 
     const specId = await startInitFlow();

@@ -244,7 +244,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
       }`,
       variables: {},
     });
-    const specId = idQuery?.data?.metadata?.id;
+    const specId = idQuery?.data?.metadata?.id ?? 'anon-spec-id';
 
     const batchCommitQuery = await spectacle.query<any>({
       query: `{
@@ -256,8 +256,8 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     });
 
     const createdAt = batchCommitQuery?.data?.batchCommits
-      ?.map((commit: any) => commit?.createdAt)
-      ?.sort()?.[0]?.createdAt;
+      ?.map((commit: any) => new Date(commit?.createdAt))
+      ?.sort()?.[0];
 
     await trackUserEvent({
       apiName: config.name,

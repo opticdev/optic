@@ -61,7 +61,7 @@ export default class IngestS3 extends Command {
         }`,
         variables: {},
       });
-      const specId = requestQuery?.data?.metadata?.id;
+      const specId = requestQuery?.data?.metadata?.id ?? 'anon-spec-id';
 
       /*
         captureId: Joi.string().required(),

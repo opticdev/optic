@@ -91,7 +91,7 @@ export const AnalyticsStore: FC<AnalyticsStoreProps> = ({
       if (appConfig.analytics.enabled) {
         refTrack.current(event, {
           ...cfgRef.current.metadata,
-          specId: cfgRef.current.specId,
+          specId: cfgRef.current.specId ?? 'anon-spec-id',
         });
       }
     })
