@@ -48,9 +48,10 @@ export const ShareButton: React.FC<{}> = (props) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const resp_data = await response.json();
+      analytics.userLoggedIn(resp_data.id);
       return resp_data.id;
     }
-  }, [getAccessTokenSilently, isAuthenticated, baseDomain]);
+  }, [getAccessTokenSilently, isAuthenticated, baseDomain, analytics]);
 
   const share = useCallback(
     async (target: ShareTarget) => {

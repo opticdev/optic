@@ -88,10 +88,10 @@ export const track: AnalyticsStoreProps['track'] = async (event, metadata) => {
   cliClient.postTrackingEvents([
     {
       type: event.type,
-      data: event.data,
+      data: { ...event.data, specId: metadata.specId },
     },
   ]);
   try {
-    FullStory.event(event.type, event.data);
+    FullStory.event(event.type, { ...event.data, specId: metadata.specId });
   } catch (e) {}
 };

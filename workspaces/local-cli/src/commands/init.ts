@@ -6,6 +6,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { developerDebugLogger, fromOptic } from '@useoptic/cli-shared';
 import { trackUserEvent } from '../shared/analytics';
+import * as opticEngine from '@useoptic/optic-engine-wasm';
 import { ApiInitializedInProject } from '@useoptic/analytics';
 import { buildTask } from '@useoptic/cli-config/build/helpers/initial-task';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
@@ -14,6 +15,7 @@ import { Config } from '../config';
 import { Client } from '@useoptic/cli-client';
 import openBrowser from 'react-dev-utils/openBrowser';
 import { linkToSetup } from '../shared/ui-links';
+import { LocalCliSpectacle } from '@useoptic/spectacle-shared';
 
 export default class Init extends Command {
   static description = 'add Optic to your API';
@@ -91,21 +93,35 @@ export default class Init extends Command {
       const cliSession = await cliClient.findSession(paths.cwd, null, null);
       developerDebugLogger({ cliSession });
       openBrowser(linkToSetup(cliSession.session.id));
+      const spectacle = new LocalCliSpectacle(
+        `${apiBaseUrl}/specs/${cliSession.session.id}`,
+        opticEngine
+      );
+      const requestQuery = await spectacle.query<any>({
+        query: `{
+          metadata {
+            id
+          }
+        }`,
+        variables: {},
+      });
+      return requestQuery?.data?.metadata?.id ?? 'anon-spec-id';
     }
 
-    await startInitFlow();
+    const specId = await startInitFlow();
 
-    await trackUserEvent(
-      name,
-      ApiInitializedInProject({
+    await trackUserEvent({
+      apiName: name,
+      specId,
+      event: ApiInitializedInProject({
         cwd: cwd,
         source:
           Object.entries(flags).length === 0
             ? 'documentation'
             : 'on-boarding-flow',
         apiName: name,
-      })
-    );
+      }),
+    });
     process.exit(0);
   }
 }

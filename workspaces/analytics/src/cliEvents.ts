@@ -49,6 +49,7 @@ export const ApiCheckCompleted = (
 type StartedTaskWithLocalCliProps = {
   captureId: string;
   cwd: string;
+  createdAt: string;
   inputs: {
     task: string;
   } & Record<string, string>;
