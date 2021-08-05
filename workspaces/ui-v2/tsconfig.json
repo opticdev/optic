@@ -7,7 +7,9 @@
     "rootDir": "src",
     "baseUrl": ".",
     "paths": {
-      "<src>/*": ["./src/*"]
+      "<src>/*": ["./src/*"],
+      "@useoptic/cli": ["./local-cli/src"],
+      "@useoptic/*": ["./*/src"]
     }
   },
   "references": [
