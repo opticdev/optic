@@ -246,6 +246,9 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     });
     const specId = idQuery?.data?.metadata?.id ?? 'anon-spec-id';
 
+    // See here for why this is split into separate queries: https://github.com/opticdev/optic/pull/1083#issuecomment-893522118
+    // TL;DR querying for specId will create if it doesn't exist (which adds a batch commit), and then reload spectacle
+    // but that could race with the `batchCommits` query, so better to serialize the queries to make sure things are loaded
     const batchCommitQuery = await spectacle.query<any>({
       query: `{
         batchCommits {
