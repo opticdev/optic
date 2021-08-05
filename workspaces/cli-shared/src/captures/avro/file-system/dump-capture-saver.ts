@@ -27,7 +27,7 @@ async function main(
     captureId,
   });
   await captureSaver.init();
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     oboe(input)
       .on('node', {
         // @ts-ignore

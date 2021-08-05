@@ -85,7 +85,7 @@ class CaptureSaver implements ICaptureSaver {
     developerDebugLogger('waiting for saving to finish...');
     try {
       await this.throttler.stop();
-      await new Promise((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         this.throttler.on('idle', resolve);
       });
     } catch (e) {
