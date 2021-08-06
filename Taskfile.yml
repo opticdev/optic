@@ -109,6 +109,17 @@ tasks:
     cmds:
       - yarn wsrun --report --fast-exit --exclude-missing ws:clean
 
+  workspaces:watch:
+    desc: Watch source files and build as they change
+    deps: [workspaces:watch:typescript]
+    cmds:
+      - echo "Watching ended"
+
+  workspaces:watch:typescript:
+    desc: Watch all the source of Typescripts workspaces and automatically recompile (with a single watcher)
+    cmds:
+      - yarn tsc -b --watch
+
   npm:publish:
     deps:
       - workspaces:build
