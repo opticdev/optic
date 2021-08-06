@@ -43,6 +43,7 @@ Array [
       "value": "",
     },
     "depth": 1,
+    "fieldId": "field_LRYtHDYkVO",
     "name": "task",
     "required": true,
     "shapes": Array [
@@ -60,6 +61,7 @@ Array [
       "value": "",
     },
     "depth": 1,
+    "fieldId": "field_XM7KRqWOlV",
     "name": "isDone",
     "required": true,
     "shapes": Array [
@@ -77,6 +79,7 @@ Array [
       "value": "",
     },
     "depth": 1,
+    "fieldId": "field_9mczOWgNnu",
     "name": "id",
     "required": true,
     "shapes": Array [
@@ -94,6 +97,7 @@ Array [
       "value": "",
     },
     "depth": 1,
+    "fieldId": "field_5GCvc8KB2p",
     "name": "dueDate",
     "required": true,
     "shapes": Array [
