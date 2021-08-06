@@ -1,5 +1,5 @@
 ---
-date: 2021-07-29
+date: 2021-08-06
 title: "Documenting a Go Mux API with Optic"
 author: Eze Sunday
 author_url: "https://twitter.com/ezesundayeze"
