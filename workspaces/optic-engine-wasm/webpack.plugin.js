@@ -5,9 +5,7 @@ module.exports = function createOpticEnginePlugin() {
   return new WasmPackPlugin({
     crateDirectory: path.resolve(__dirname),
 
-    watchDirectories: [
-      path.resolve(__dirname, '..', 'optic-engine-native', 'src'),
-    ],
+    watchDirectories: [path.resolve(__dirname, '..', 'optic-engine', 'src')],
 
     outDir: path.resolve(__dirname, 'browser'),
     outName: 'index',

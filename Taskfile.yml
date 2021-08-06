@@ -120,6 +120,11 @@ tasks:
     cmds:
       - yarn tsc -b --watch
 
+  workspaces:watch:wasm:
+    desc: Watch the source of WASM targets and automatically recompile
+    cmds:
+      - yarn wsrun --parallel --exclude-missing ws:watch-wasm
+
   npm:publish:
     deps:
       - workspaces:build
