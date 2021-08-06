@@ -1,5 +1,5 @@
 ---
-date: 2021-07-22
+date: 2021-08-05
 title: "Documenting an Express API with Optic"
 author: Amarachi Amaechi
 author_url: "https://twitter.com/AmarachiAmaechi"
