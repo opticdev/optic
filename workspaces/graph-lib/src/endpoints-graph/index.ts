@@ -357,6 +357,16 @@ export class QueryParametersNodeWrapper {
   get value() {
     return this.result.data;
   }
+
+  // A response node can be orphaned
+  endpoint(): EndpointNodeWrapper | null {
+    const endpoints = this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.Endpoint
+    );
+
+    return endpoints.results.length > 0 ? endpoints.results[0] : null;
+  }
 }
 
 export class PathNodeWrapper {
