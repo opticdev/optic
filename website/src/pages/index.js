@@ -5,6 +5,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
 import { SplashPage } from '../components/MuiIndexPage';
+import BrowserOnly from '@docusaurus/core/lib/client/exports/BrowserOnly';
 
 function Feature({ imageUrl, title, description }) {
   const imgUrl = useBaseUrl(imageUrl);
@@ -29,9 +30,15 @@ function Home() {
       title={`Optic | ${siteConfig.tagline}`}
       description="Optic is like Git, but for your APIs"
     >
-      <main style={{ backgroundColor: '#fafbfc !important' }}>
-        <SplashPage />
-      </main>
+      <BrowserOnly
+        children={() => {
+          return (
+            <main style={{ backgroundColor: '#fafbfc !important' }}>
+              <SplashPage />
+            </main>
+          );
+        }}
+      />
     </Layout>
   );
 }
