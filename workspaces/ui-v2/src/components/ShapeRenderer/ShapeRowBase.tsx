@@ -16,12 +16,15 @@ type ShapeRowBaseProps = {
   depth: number;
   style?: any;
   changes?: ChangeType | null;
-};
+  focused?: boolean;
+} & React.HtmlHTMLAttributes<HTMLDivElement>;
 export const ShapeRowBase = ({
   children,
   depth = 0,
   style,
   changes,
+  focused,
+  ...props
 }: ShapeRowBaseProps) => {
   const classes = useStyles();
   const sharedClasses = useSharedStyles();
@@ -31,11 +34,13 @@ export const ShapeRowBase = ({
       className={classNames(classes.rowWrap, { [classes.allowHover]: false })}
     >
       <div
+        {...props}
         className={classNames(
           classes.row,
           { [sharedClasses.added]: changes === 'added' },
           { [sharedClasses.changed]: changes === 'updated' },
-          { [sharedClasses.removed]: changes === 'removed' }
+          { [sharedClasses.removed]: changes === 'removed' },
+          { [classes.focused]: focused }
         )}
         style={{ paddingLeft: depth * IndentSpaces + 4 }}
       >
@@ -51,16 +56,22 @@ export const RenderField = ({
   required,
   parentId,
   changes,
+  fieldId,
 }: IFieldRenderer & { parentId: string }) => {
   const sharedClasses = useSharedStyles();
   const { depth } = useDepth();
 
-  const { getChoice } = useShapeRenderContext();
+  const { getChoice, selectedFieldId } = useShapeRenderContext();
 
   if (shapeChoices.length === 1) {
     return (
       <>
-        <ShapeRowBase depth={depth} changes={changes}>
+        <ShapeRowBase
+          depth={depth}
+          changes={changes}
+          focused={fieldId === selectedFieldId}
+          data-fieldId={fieldId}
+        >
           <span className={sharedClasses.shapeFont}>"{name}"</span>
           <span className={sharedClasses.symbolFont}>: </span>
           <RenderFieldLeadingValue shapeRenderers={shapeChoices} />
@@ -73,7 +84,12 @@ export const RenderField = ({
     );
   } else if (shapeChoices.length === 0) {
     return (
-      <ShapeRowBase depth={depth} changes={changes}>
+      <ShapeRowBase
+        depth={depth}
+        changes={changes}
+        focused={fieldId === selectedFieldId}
+        data-fieldId={fieldId}
+      >
         <span className={sharedClasses.shapeFont}>"{name}"</span>
         <span className={sharedClasses.symbolFont}>: </span>
         <UnknownPrimitiveRender />
@@ -93,7 +109,12 @@ export const RenderField = ({
     //one of
     return (
       <>
-        <ShapeRowBase depth={depth} changes={changes}>
+        <ShapeRowBase
+          depth={depth}
+          changes={changes}
+          focused={fieldId === selectedFieldId}
+          data-fieldId={fieldId}
+        >
           <span className={sharedClasses.shapeFont}>"{name}"</span>
           <span className={sharedClasses.symbolFont}>: </span>
           {toRenderShape && (
@@ -183,9 +204,9 @@ export const RenderFieldRowValues = ({
     if (shape.asObject) {
       return (
         <>
-          {shape.asObject.fields.map((i, index) => (
-            <Indent key={index}>
-              <RenderField {...i} key={i.fieldId} parentId={shape.shapeId} />
+          {shape.asObject.fields.map((field) => (
+            <Indent key={field.fieldId}>
+              <RenderField {...field} parentId={shape.shapeId} />
             </Indent>
           ))}
           <ShapeRowBase depth={depth}>
@@ -280,5 +301,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'flex-start',
     minHeight: 17,
+  },
+  focused: {
+    borderBottom: '1px solid black',
   },
 }));

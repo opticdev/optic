@@ -19,3 +19,4 @@ export * from './DataFetchers';
 export * from './HttpBodyPanel';
 export * from './HttpBodySelector';
 export * from './SimulatedCommandStore';
+export * from './HighlightController';

@@ -26,11 +26,13 @@ export type DocsFieldOrParameterContributionProps = {
     pathId: string;
   };
   required: boolean;
+  setSelectedField?: (selectedFieldId: string | null) => void;
 };
 
 export function DocFieldContribution(
   props: DocsFieldOrParameterContributionProps
 ) {
+  const { setSelectedField } = props;
   const isEditing = useAppSelector(
     (state) => state.documentationEdits.isEditing
   );
@@ -49,7 +51,15 @@ export function DocFieldContribution(
   return process.env.REACT_APP_FF_FIELD_LEVEL_EDITS === 'true' ? (
     <div className={classes.fieldContainer}>
       <div className={classes.contributionContainer}>
-        <DocsFieldOrParameterContribution {...props} />
+        <DocsFieldOrParameterContribution
+          {...props}
+          onFocus={() => {
+            setSelectedField && setSelectedField(fieldId);
+          }}
+          onBlur={() => {
+            setSelectedField && setSelectedField(null);
+          }}
+        />
       </div>
       {isEditing &&
         (isFieldRemoved ? (
@@ -75,7 +85,9 @@ export function DocsFieldOrParameterContribution({
   initialValue,
   endpoint,
   required,
-}: DocsFieldOrParameterContributionProps) {
+  ...props
+}: DocsFieldOrParameterContributionProps &
+  React.HtmlHTMLAttributes<HTMLInputElement>) {
   const contributionKey = 'description';
   const endpointId = getEndpointId(endpoint);
   const isEditable = useAppSelector(
@@ -94,6 +106,7 @@ export function DocsFieldOrParameterContribution({
 
   return (
     <FieldOrParameter
+      {...props}
       name={name}
       shapes={shapes}
       depth={depth}
