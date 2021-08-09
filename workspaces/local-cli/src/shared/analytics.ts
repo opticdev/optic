@@ -26,7 +26,9 @@ export async function trackUserEvent({
     `http://localhost:${daemonState.port}/api`
   );
 
-  await cliServerClient.postTrackingEventsWithApi(apiName, specId, [event]);
+  await cliServerClient.postTrackingEventsWithApi(apiName, [
+    { ...event, data: { ...event.data, specId } },
+  ]);
 }
 
 export function opticTaskToProps(
