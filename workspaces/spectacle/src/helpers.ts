@@ -93,64 +93,38 @@ export function buildEndpointChanges(
 
   const changes = new Changes();
 
-  [...deltaBatchCommits.values()].forEach(
-    (batchCommit: endpoints.BatchCommitNodeWrapper) => {
-      // Only createdIn and removedIn edges pointing to a request is treated as
-      // an added or removed change, everything else is updated.
-      // Bodies, and shape changes are handled below
-      batchCommit
-        .createdInEdgeNodes()
-        .results.forEach((node: endpoints.NodeWrapper) => {
-          if (node instanceof endpoints.RequestNodeWrapper) {
-            const endpoint = endpointFromRequest(node);
-            if (endpoint) {
-              changes.captureChange('added', endpoint);
+  for (const [_, batchCommit] of deltaBatchCommits) {
+    for (const { edgeType, nodes } of [
+      { edgeType: 'created', nodes: batchCommit.createdInEdgeNodes().results },
+      { edgeType: 'updated', nodes: batchCommit.updatedInEdgeNodes().results },
+      { edgeType: 'removed', nodes: batchCommit.removedInEdgeNodes().results },
+    ]) {
+      for (const node of nodes) {
+        if (
+          node instanceof endpoints.RequestNodeWrapper ||
+          node instanceof endpoints.ResponseNodeWrapper ||
+          node instanceof endpoints.QueryParametersNodeWrapper
+        ) {
+          const endpoint = node.endpoint();
+          if (endpoint) {
+            let changeType: ChangeCategory = 'updated';
+            if (
+              node instanceof endpoints.RequestNodeWrapper &&
+              edgeType === 'created'
+            ) {
+              changeType = 'added';
+            } else if (
+              node instanceof endpoints.RequestNodeWrapper &&
+              edgeType === 'removed'
+            ) {
+              changeType = 'removed';
             }
-          } else if (node instanceof endpoints.ResponseNodeWrapper) {
-            const endpoint = endpointFromResponse(
-              node as endpoints.ResponseNodeWrapper
-            );
-            if (endpoint) {
-              changes.captureChange('updated', endpoint);
-            }
+            changes.captureChange(changeType, endpoint);
           }
-        });
-      batchCommit
-        .removedInEdgeNodes()
-        .results.forEach((node: endpoints.NodeWrapper) => {
-          if (node instanceof endpoints.RequestNodeWrapper) {
-            const endpoint = endpointFromRequest(node);
-            if (endpoint) {
-              changes.captureChange('removed', endpoint);
-            }
-          } else if (node instanceof endpoints.ResponseNodeWrapper) {
-            const endpoint = endpointFromResponse(
-              node as endpoints.ResponseNodeWrapper
-            );
-            if (endpoint) {
-              changes.captureChange('updated', endpoint);
-            }
-          }
-        });
-      batchCommit
-        .updatedInEdgeNodes()
-        .results.forEach((node: endpoints.NodeWrapper) => {
-          if (node instanceof endpoints.RequestNodeWrapper) {
-            const endpoint = endpointFromRequest(node);
-            if (endpoint) {
-              changes.captureChange('updated', endpoint);
-            }
-          } else if (node instanceof endpoints.ResponseNodeWrapper) {
-            const endpoint = endpointFromResponse(
-              node as endpoints.ResponseNodeWrapper
-            );
-            if (endpoint) {
-              changes.captureChange('updated', endpoint);
-            }
-          }
-        });
+        }
+      }
     }
-  );
+  }
 
   // Gather batch commit neighbors
   const batchCommitNeighborIds = new Map();
@@ -169,51 +143,63 @@ export function buildEndpointChanges(
       });
   });
 
-  endpointQueries
-    .listNodesByType(endpoints.NodeType.Body)
-    .results.reduce((results: string[], bodyNode: any) => {
-      const { rootShapeId } = bodyNode.result.data;
+  // Both body nodes and query parameter nodes have rootShapeIds
+  const rootShapesWithEndpoint: {
+    rootShapeId: string;
+    endpoint: endpoints.EndpointNodeWrapper;
+  }[] = [];
+
+  for (const bodyNode of endpointQueries.listNodesByType(
+    endpoints.NodeType.Body
+  ).results) {
+    const rootShapeId = bodyNode.value.rootShapeId;
+    const endpoint =
+      bodyNode.response()?.endpoint() || bodyNode.request()?.endpoint();
+    if (endpoint) {
+      rootShapesWithEndpoint.push({
+        rootShapeId,
+        endpoint,
+      });
+    }
+  }
+
+  for (const queryParamaterNode of endpointQueries.listNodesByType(
+    endpoints.NodeType.QueryParameters
+  ).results) {
+    const rootShapeId = queryParamaterNode.value.rootShapeId;
+    const endpoint = queryParamaterNode.endpoint();
+
+    if (endpoint && rootShapeId) {
+      rootShapesWithEndpoint.push({
+        rootShapeId,
+        endpoint,
+      });
+    }
+  }
+
+  const filteredRootShapesWithEndpoint = rootShapesWithEndpoint.filter(
+    ({ rootShapeId }) => {
       if (batchCommitNeighborIds.has(rootShapeId)) {
-        results.push(rootShapeId);
-        return results;
+        return true;
       }
+      // TODO this does not handle array children and polymorphic type changes
       for (const descendant of shapeQueries.descendantsIterator(rootShapeId)) {
         if (batchCommitNeighborIds.has(descendant.id)) {
-          results.push(rootShapeId);
-          return results;
+          return true;
         }
       }
-      return results;
-    }, [])
-    .forEach((changedRootShapeId: any) => {
-      const body: any = endpointQueries.findNodeById(changedRootShapeId);
-      const response = body.response();
-      if (response) {
-        const endpoint = endpointFromResponse(response);
-        if (endpoint) {
-          if (changes.captureChange('updated', endpoint)) {
-            return;
-          }
-        }
-      }
-      const request = body.request();
-      if (request) {
-        const endpoint = endpointFromRequest(request);
-        if (endpoint) {
-          changes.captureChange('updated', endpoint);
-        }
-      }
-    });
+      return false;
+    }
+  );
+
+  filteredRootShapesWithEndpoint.forEach(({ endpoint }) => {
+    changes.captureChange('updated', endpoint);
+  });
 
   return changes.toEndpointChanges();
 }
 
-type Endpoint = {
-  endpointId: string;
-  pathId: string;
-  path: string;
-  method: string;
-};
+type ChangeCategory = 'added' | 'updated' | 'removed';
 
 class Changes {
   public changes: Map<string, EndpointChange>;
@@ -223,15 +209,15 @@ class Changes {
   }
 
   captureChange(
-    category: 'added' | 'updated' | 'removed',
-    endpoint: Endpoint
+    category: ChangeCategory,
+    endpoint: endpoints.EndpointNodeWrapper
   ): boolean {
-    if (this.changes.has(endpoint.endpointId)) return false;
-    this.changes.set(endpoint.endpointId, {
+    if (this.changes.has(endpoint.value.id)) return false;
+    this.changes.set(endpoint.value.id, {
       change: { category },
-      pathId: endpoint.pathId,
-      path: endpoint.path,
-      method: endpoint.method,
+      pathId: endpoint.path().value.pathId,
+      path: endpoint.path().absolutePathPatternWithParameterNames,
+      method: endpoint.value.httpMethod,
     });
     return true;
   }
@@ -243,32 +229,6 @@ class Changes {
       },
     };
   }
-}
-
-function endpointFromRequest(
-  request: endpoints.RequestNodeWrapper
-): Endpoint | null {
-  const endpoint = request.endpoint();
-  if (!endpoint) {
-    return null;
-  }
-  const pathNode = endpoint.path();
-  const { id: endpointId, pathId, httpMethod: method } = endpoint.value;
-  const path = pathNode.absolutePathPatternWithParameterNames;
-  return { endpointId, pathId, path, method };
-}
-
-function endpointFromResponse(
-  response: endpoints.ResponseNodeWrapper
-): Endpoint | null {
-  const endpoint = response.endpoint();
-  if (!endpoint) {
-    return null;
-  }
-  const pathNode = endpoint.path();
-  const { id: endpointId, pathId, httpMethod: method } = endpoint.value;
-  const path = pathNode.absolutePathPatternWithParameterNames;
-  return { endpointId, pathId, path, method };
 }
 
 export function getEndpointGraphNodeChange(

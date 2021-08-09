@@ -21,14 +21,14 @@ export const useChangelogStyles = makeStyles(() => ({
     backgroundColor: ChangedYellowBackground,
     borderLeft: `2px solid ${ChangedYellow}`,
     '&.Mui-focusVisible, &:hover': {
-      backgroundColor: darken(AddedGreenBackground, 0.2),
+      backgroundColor: darken(ChangedYellowBackground, 0.2),
     },
   },
   removed: {
     backgroundColor: RemovedRedBackground,
     borderLeft: `2px solid ${RemovedRed}`,
     '&.Mui-focusVisible, &:hover': {
-      backgroundColor: darken(AddedGreenBackground, 0.2),
+      backgroundColor: darken(RemovedRedBackground, 0.2),
     },
   },
 }));
