@@ -618,13 +618,56 @@ export const getMockReduxStore = (): RootState =>
                   contributions: {},
                   changes: null,
                 },
+                {
+                  name: 'polymorphic_array_with_objects',
+                  fieldId: 'field_a1zK0XALx0',
+                  shapeId: 'shape_qTsqoMD123',
+                  contributions: {},
+                  changes: null,
+                },
               ],
             },
+          },
+        ],
+        shape_Tsqo312a23: [
+          {
+            shapeId: 'shape_Tsqo312a23',
+            jsonType: 'Object',
+            asObject: {
+              fields: [
+                {
+                  name: 'ah',
+                  fieldId: 'field_qqzK0XALx0',
+                  shapeId: 'shape_amsvoMD123',
+                  contributions: {},
+                  changes: null,
+                },
+              ],
+            },
+          },
+        ],
+        shape_qTsqoMD123: [
+          {
+            shapeId: 'shape_qTsqoMD123',
+            jsonType: 'Array',
+            asArray: {
+              shapeId: 'shape_Tsqo312a23',
+            },
+          },
+          {
+            shapeId: 'shape_qTsqoMD123',
+            jsonType: 'String',
           },
         ],
         shape_UmsvoMD123: [
           {
             shapeId: 'shape_UmsvoMD123',
+            jsonType: 'String',
+          },
+        ],
+        shape_amsvoMD123: [
+          {
+            shapeId: 'shape_amsvoMD123',
             jsonType: 'String',
           },
         ],
