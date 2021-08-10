@@ -5,6 +5,10 @@ import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEv
 class Client {
   constructor(private baseUrl: string) {}
 
+  health() {
+    return JsonHttpClient.getJson(`${this.baseUrl}/health`);
+  }
+
   getIdentity() {
     const url = `${this.baseUrl}/identity`;
     return JsonHttpClient.getJsonWithoutHandlingResponse(url);

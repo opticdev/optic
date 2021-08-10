@@ -41,6 +41,7 @@ import { store } from '<src>/store';
 import { MetadataLoader } from '<src>/contexts/MetadataLoader';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { SpecRepositoryStore } from '<src>/contexts/SpecRepositoryContext';
+import { EnsureDaemonRunning } from './EnsureDaemonRunning';
 
 const appConfig: OpticAppConfig = {
   config: {
@@ -94,36 +95,38 @@ export default function LocalCli() {
                     clientId={AUTH0_CLIENT_ID}
                     audience={appConfig.config.backendApi.domain}
                   >
-                    <MetadataLoader>
-                      <AnalyticsStore
-                        getMetadata={getMetadata(() =>
-                          data.configRepository.getApiName()
-                        )}
-                        initialize={initialize}
-                        track={track}
-                      >
-                        <DebugOpticComponent />
-                        <Switch>
-                          <Route
-                            path={`${match.path}/history`}
-                            component={ChangelogHistory}
-                          />
-                          <Route
-                            path={`${match.path}/changes-since/:batchId`}
-                            component={ChangelogPages}
-                          />
-                          <Route
-                            path={`${match.path}/documentation`}
-                            component={DocumentationPages}
-                          />
-                          <Route
-                            path={`${match.path}/diffs`}
-                            component={DiffReviewEnvironments}
-                          />
-                          <Redirect to={`${match.path}/documentation`} />
-                        </Switch>
-                      </AnalyticsStore>
-                    </MetadataLoader>
+                    <EnsureDaemonRunning>
+                      <MetadataLoader>
+                        <AnalyticsStore
+                          getMetadata={getMetadata(() =>
+                            data.configRepository.getApiName()
+                          )}
+                          initialize={initialize}
+                          track={track}
+                        >
+                          <DebugOpticComponent />
+                          <Switch>
+                            <Route
+                              path={`${match.path}/history`}
+                              component={ChangelogHistory}
+                            />
+                            <Route
+                              path={`${match.path}/changes-since/:batchId`}
+                              component={ChangelogPages}
+                            />
+                            <Route
+                              path={`${match.path}/documentation`}
+                              component={DocumentationPages}
+                            />
+                            <Route
+                              path={`${match.path}/diffs`}
+                              component={DiffReviewEnvironments}
+                            />
+                            <Redirect to={`${match.path}/documentation`} />
+                          </Switch>
+                        </AnalyticsStore>
+                      </MetadataLoader>
+                    </EnsureDaemonRunning>
                   </Auth0Provider>
                 </BaseUrlProvider>
               </SpecRepositoryStore>

@@ -98,6 +98,10 @@ class CliServer {
 
     const anonIdPromise = getOrCreateAnonId();
 
+    app.get('/api/health', async (req, res) => {
+      res.json({ status: 'ok' });
+    });
+
     app.get('/api/identity', async (req, res: express.Response) => {
       res.json({ user, anonymousId: await anonIdPromise });
     });
