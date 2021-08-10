@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "ws:build": "tsc -b --verbose",
-    "ws:clean": "rm -rf build",
+    "ws:clean": "rm -rf build && rm -f tsconfig.tsbuildinfo",
     "ws:test": "echo \"saas-types\""
   },
   "dependencies": {}

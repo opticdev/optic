@@ -96,7 +96,7 @@ export class CaptureSaver implements ICaptureSaver {
 
     try {
       const encoder = avro.createFileEncoder(outputFile, schema);
-      await new Promise((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         encoder.write(output, (err) => {
           if (err) {
             return reject(err);
@@ -104,7 +104,7 @@ export class CaptureSaver implements ICaptureSaver {
           resolve();
         });
       });
-      await new Promise((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         encoder.end(() => {
           resolve();
         });
@@ -123,7 +123,7 @@ export class CaptureSaver implements ICaptureSaver {
   async cleanup() {
     developerDebugLogger('stopping capture saver');
 
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       const poll = () => {
         const interactionsReceivedCount = this.interactionsReceivedCount;
         const interactionsSavedCount = this.interactionsSavedCount;

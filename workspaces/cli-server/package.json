@@ -3,7 +3,7 @@
   "version": "10.2.3",
   "scripts": {
     "ws:build": "tsc -b --verbose",
-    "ws:clean": "rm -rf build",
+    "ws:clean": "rm -rf build && rm -f tsconfig.tsbuildinfo",
     "ws:test": "echo cli-server"
   },
   "repository": {
@@ -26,6 +26,7 @@
     "@useoptic/optic-engine-native": "10.2.3",
     "@useoptic/optic-engine-wasm": "10.2.3",
     "@useoptic/saas-types": "10.2.3",
+    "@useoptic/spectacle": "10.2.3",
     "@useoptic/ui-v2": "10.2.3",
     "analytics-node": "^3.4.0-beta.2",
     "avsc": "^5.4.18",

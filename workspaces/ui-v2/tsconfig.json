@@ -1,5 +1,5 @@
 {
-  "extends": "../config/tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react",
     "outDir": "build",
@@ -7,7 +7,16 @@
     "rootDir": "src",
     "baseUrl": ".",
     "paths": {
-      "<src>/*": ["./src/*"]
+      "<src>/*": ["./src/*"],
+      "@useoptic/cli": ["./local-cli/src"],
+      "@useoptic/*": ["./*/src"]
     }
-  }
+  },
+  "references": [
+    { "path": "../analytics" },
+    { "path": "../cli-config" },
+    { "path": "../cli-shared" },
+    { "path": "../shape-hash" },
+    { "path": "../spectacle" }
+  ]
 }
