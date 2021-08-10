@@ -19,8 +19,15 @@ export type DocumentationEditState = {
       }
     >
   >;
-  fieldEdits: {
-    removedFields: string[];
+  fields: {
+    edited: Record<
+      string,
+      {
+        isOptional: boolean;
+        isNullable: boolean;
+      }
+    >;
+    removed: string[];
   };
   removedEndpoints: {
     pathId: string;
@@ -33,8 +40,9 @@ export type DocumentationEditState = {
 const initialState: DocumentationEditState = {
   contributions: {},
   removedEndpoints: [],
-  fieldEdits: {
-    removedFields: [],
+  fields: {
+    edited: {},
+    removed: [],
   },
   commitModalOpen: false,
   isEditing: false,
@@ -68,6 +76,45 @@ const documentationEditSlice = createSlice({
         };
       }
     },
+    // TODO connect this up to the UI
+    removeContribution: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        contributionKey: string;
+      }>
+    ) => {
+      const { id, contributionKey } = action.payload;
+      if (state.contributions[id]?.[contributionKey]) {
+        delete state.contributions[id][contributionKey];
+      }
+    },
+    // TODO connect this up to the UI
+    addFieldEdit: (
+      state,
+      action: PayloadAction<{
+        fieldId: string;
+        options: {
+          isOptional: boolean;
+          isNullable: boolean;
+        };
+      }>
+    ) => {
+      const { fieldId, options } = action.payload;
+      state.fields.edited[fieldId] = options;
+    },
+    // TODO connect this up to the UI
+    removeFieldEdit: (
+      state,
+      action: PayloadAction<{
+        fieldId: string;
+      }>
+    ) => {
+      const { fieldId } = action.payload;
+      if (fieldId in state.fields.edited) {
+        delete state.fields.edited[fieldId];
+      }
+    },
     removeEndpoint: (
       state,
       action: PayloadAction<{
@@ -94,10 +141,10 @@ const documentationEditSlice = createSlice({
     removeField: (state, action: PayloadAction<{ fieldId: string }>) => {
       // @GOTCHA - selecting a field, and then selecting a parent of this field (e.g. an object that contains this removed field)
       // will count as a two selected fields. This is still correct, just extra commands
-      state.fieldEdits.removedFields.push(action.payload.fieldId);
+      state.fields.removed.push(action.payload.fieldId);
     },
     unremoveField: (state, action: PayloadAction<{ fieldId: string }>) => {
-      state.fieldEdits.removedFields = state.fieldEdits.removedFields.filter(
+      state.fields.removed = state.fields.removed.filter(
         (removedFieldId) => removedFieldId !== action.payload.fieldId
       );
     },

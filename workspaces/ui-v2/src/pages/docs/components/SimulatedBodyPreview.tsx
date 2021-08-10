@@ -26,7 +26,7 @@ export const SimulatedBody = ({
   const [previewCommands, setPreviewCommands] = useState<CQRSCommand[]>([]);
   // Commands that generate commands - removed fields
   const removedFields = useAppSelector(
-    (state) => state.documentationEdits.fieldEdits.removedFields
+    (state) => state.documentationEdits.fields.removed
   );
 
   useEffect(() => {

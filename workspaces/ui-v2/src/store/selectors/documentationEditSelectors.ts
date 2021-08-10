@@ -11,7 +11,7 @@ const memoizedGetAllRemovedFields = createSelector<
   Set<string>
 >(
   (state) => state.shapes,
-  (state) => state.documentationEdits.fieldEdits.removedFields,
+  (state) => state.documentationEdits.fields.removed,
   (shapes, removedFields) => {
     const allRemovedFields = new Set<string>();
     for (const fieldId of removedFields) {
@@ -77,7 +77,7 @@ export const getValidContributions = (state: RootState): IContribution[] => {
 export const getDocumentationEditStagedCount = (state: RootState) => {
   const {
     removedEndpoints,
-    fieldEdits: { removedFields },
+    fields: { removed: removedFields },
   } = state.documentationEdits;
   const validContributions = getValidContributions(state);
 
@@ -121,7 +121,7 @@ export const isFieldRemoved = (fieldId: string) => (state: RootState) => {
 export const isFieldRemovedRoot = (fieldId: string) => (
   state: RootState
 ): boolean => {
-  return !!state.documentationEdits.fieldEdits.removedFields.find(
+  return !!state.documentationEdits.fields.removed.find(
     (removedFieldId) => removedFieldId === fieldId
   );
 };

@@ -257,7 +257,7 @@ export const getMockReduxStore = (): RootState =>
         },
       },
       removedEndpoints: [],
-      fieldEdits: {
+      fields: {
         removedFields: [],
       },
       commitModalOpen: false,
