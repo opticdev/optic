@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, ThemeProvider } from '@material-ui/core';
 
 import { IFieldDetails, IShapeRenderer } from '<src>/types';
 import * as Theme from '<src>/styles/theme';
@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
   container: {},
   rowsList: {
     listStyleType: 'none',
+    paddingLeft: 0,
   },
   rowListItem: {},
   row: {},
@@ -62,7 +63,10 @@ const Field: FC<{
 
   return (
     <div className={classes.container}>
-      <header className={classes.header} style={{ paddingLeft: depth * 14 }}>
+      <header
+        className={classes.header}
+        style={{ marginLeft: depth * INDENT_WIDTH }}
+      >
         <div className={classes.description}>
           <div className={classes.fieldName}>{name}</div>
           <div className={classes.typesSummary}>
@@ -85,14 +89,19 @@ function summarizeTypes(shapes: IShapeRenderer[], required: boolean) {
   }
 }
 
+const INDENT_WIDTH = 8 * 3;
+const INDENT_MARKER_WIDTH = 1;
 const useFieldStyles = makeStyles((theme) => ({
   container: {
-    borderTop: `1px solid #e4e8ed`,
     fontFamily: Theme.FontFamily,
-    padding: theme.spacing(0, 1),
+    padding: theme.spacing(0, 0, 0, 1),
+    backgroundColor: '#fafafa',
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${INDENT_WIDTH}' height='1' viewBox='0 0 ${INDENT_WIDTH} 1'%3E%3Cg stroke='%23CCC' stroke-width='0' %3E%3Crect fill='%23E4E8ED' x='0' y='0' width='${INDENT_MARKER_WIDTH}' height='1'/%3E%3C/g%3E%3C/svg%3E")`,
+    backgroundPositionX: theme.spacing(1) + 1,
   },
   header: {
     display: 'flex',
+    backgroundColor: '#fafafa',
     padding: theme.spacing(1, 0),
   },
   description: {
