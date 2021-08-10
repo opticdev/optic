@@ -17,6 +17,7 @@
     { "path": "../cli-config" },
     { "path": "../cli-shared" },
     { "path": "../shape-hash" },
-    { "path": "../spectacle" }
+    { "path": "../spectacle" },
+    { "path": "../spectacle-shared" }
   ]
 }
