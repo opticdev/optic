@@ -63,8 +63,7 @@ const HasMismatchedVersionsError: FC = () => {
       </p>
       <p>
         To fix this, you can run <code>api daemon:stop</code> and then rerun{' '}
-        <code>api spec</code> or
-        <code>api start</code> to restart the server
+        <code>api spec</code> or <code>api start</code> to restart the server
       </p>
       <p>
         If this continues to happen, please reach out to{' '}
