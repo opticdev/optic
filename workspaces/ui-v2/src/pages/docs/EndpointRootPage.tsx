@@ -502,7 +502,6 @@ export const EndpointRootPage: FC<
                                   ) : (
                                     <ShapeEditor
                                       fields={fields}
-                                      shapes={shapes}
                                       selectedFieldId={selectedFieldId}
                                       setSelectedField={setSelectedFieldId}
                                     />
