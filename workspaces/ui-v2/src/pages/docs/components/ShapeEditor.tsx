@@ -63,7 +63,9 @@ const Row: FC<{
 const FieldEditor: FC<{
   field: IFieldDetails;
 }> = function ShapeEditorFieldEditor({ field }) {
-  return <div>Editor</div>;
+  const classes = useStyles();
+
+  return <div className={classes.editor}>Editor</div>;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -74,6 +76,11 @@ const useStyles = makeStyles((theme) => ({
   },
   rowListItem: {},
   row: {},
+
+  editor: {
+    padding: theme.spacing(2, 3),
+    minHeight: theme.spacing(10),
+  },
 }));
 
 const Field: FC<{
@@ -164,5 +171,7 @@ const useFieldStyles = makeStyles((theme) => ({
     color: '#8792a2',
   },
 
-  stage: {},
+  stage: {
+    background: '#fafafa',
+  },
 }));
