@@ -21,6 +21,7 @@
     "start:demo": "env OPTIC_WEBPACK_ENTRYPOINT=demo node scripts/start.js",
     "build": "yarn run build:local",
     "ws:test": "jest",
+    "ws:clean": "rm -rf build && rm -f tsconfig.tsbuildinfo",
     "ws:build": "yarn build:local"
   },
   "dependencies": {
