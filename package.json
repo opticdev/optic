@@ -40,7 +40,9 @@
     "wsrun": "^5.2.0"
   },
   "dependencies": {
-    "debug": "^4.1.1"
+    "@types/graphql": "^14.5.0",
+    "debug": "^4.1.1",
+    "graphql": "^15.5"
   },
   "lint-staged": {
     "**/*.+(js|jsx|ts|tsx|json|css)": [
