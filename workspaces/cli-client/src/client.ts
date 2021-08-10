@@ -5,8 +5,8 @@ import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEv
 class Client {
   constructor(private baseUrl: string) {}
 
-  health() {
-    return JsonHttpClient.getJson(`${this.baseUrl}/health`);
+  daemonStatus() {
+    return JsonHttpClient.getJson(`${this.baseUrl}/daemon/status`);
   }
 
   getIdentity() {
