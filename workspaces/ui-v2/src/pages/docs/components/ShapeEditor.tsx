@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { makeStyles, ThemeProvider } from '@material-ui/core';
 
 import { IFieldDetails, IShapeRenderer } from '<src>/types';
@@ -17,7 +17,11 @@ export const ShapeEditor: FC<{
         <ul className={classes.rowsList}>
           {fields.map((field) => (
             <li className={classes.rowListItem}>
-              <Row field={field} />
+              <Row
+                field={field}
+                selected={selectedFieldId == field.fieldId}
+                onSelect={setSelectedField}
+              />
             </li>
           ))}
         </ul>
@@ -28,8 +32,18 @@ export const ShapeEditor: FC<{
 
 const Row: FC<{
   field: IFieldDetails;
-}> = function ShapeEditorRow({ field }) {
+  selected: boolean;
+
+  onSelect?: (fieldId: string) => void;
+}> = function ShapeEditorRow({ field, selected, onSelect }) {
   const classes = useStyles();
+
+  const onClickFieldHeader = useMemo(
+    () => () => {
+      if (onSelect) onSelect(field.fieldId);
+    },
+    [onSelect, field.fieldId]
+  );
 
   return (
     <div className={classes.row}>
@@ -38,9 +52,18 @@ const Row: FC<{
         name={field.name}
         required={field.required}
         shapes={field.shapes}
-      />
+        onClickHeader={onClickFieldHeader}
+      >
+        {selected && <FieldEditor field={field} />}
+      </Field>
     </div>
   );
+};
+
+const FieldEditor: FC<{
+  field: IFieldDetails;
+}> = function ShapeEditorFieldEditor({ field }) {
+  return <div>Editor</div>;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -54,17 +77,36 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Field: FC<{
+  children?: React.ReactNode;
   depth: number;
   name: string;
   required: boolean;
   shapes: IShapeRenderer[];
-}> = function ShapeEditorField({ name, shapes, required, depth }) {
+
+  onClickHeader?: () => void;
+}> = function ShapeEditorField({
+  name,
+  shapes,
+  required,
+  depth,
+  children,
+  onClickHeader,
+}) {
   const classes = useFieldStyles();
+
+  const onClickHeaderHandler = useMemo(
+    () => (e: React.MouseEvent) => {
+      e.preventDefault();
+      if (onClickHeader) onClickHeader();
+    },
+    [onClickHeader]
+  );
 
   return (
     <div className={classes.container}>
       <header
         className={classes.header}
+        onClick={onClickHeaderHandler}
         style={{ marginLeft: depth * INDENT_WIDTH }}
       >
         <div className={classes.description}>
@@ -74,6 +116,8 @@ const Field: FC<{
           </div>
         </div>
       </header>
+
+      <div className={classes.stage}>{children}</div>
     </div>
   );
 };
@@ -119,4 +163,6 @@ const useFieldStyles = makeStyles((theme) => ({
     fontFamily: Theme.FontFamilyMono,
     color: '#8792a2',
   },
+
+  stage: {},
 }));
