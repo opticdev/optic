@@ -48,7 +48,15 @@ const CliDaemonUnreachableError: FC = () => {
       <p>
         If this continues to happen, please reach out to{' '}
         <a href={SupportLinks.Contact('Optic App crash report')}>our team</a>{' '}
-        for assistance.
+        for assistance. Further debug information can be found from our{' '}
+        <a
+          href="https://useoptic.com/reference/optic-cli/commands/debug"
+          target="_blank"
+          rel="noreferrer"
+        >
+          debugging instructions
+        </a>
+        .
       </p>
     </div>
   );
