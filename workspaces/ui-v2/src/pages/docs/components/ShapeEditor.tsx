@@ -67,7 +67,13 @@ const FieldEditor: FC<{
 }> = function ShapeEditorFieldEditor({ field }) {
   const classes = useStyles();
 
-  return <div className={classes.editor}>Editor</div>;
+  return (
+    <div className={classes.editor}>
+      <div>toggle for optional</div>
+      <div>toggle for nullable</div>
+      <div>field for updating description</div>
+    </div>
+  );
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -84,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
     minHeight: theme.spacing(10),
     marginBottom: theme.spacing(2),
 
-    color: '#6b7384',
+    color: lighten('#6b7384', 0.2),
 
     boxShadow: 'inset 0px 13px 10px -10px rgba(0, 0, 0, 0.07)',
   },
@@ -138,6 +144,9 @@ const Field: FC<{
           <div className={classes.typesSummary}>
             {summarizeTypes(shapes, required)}
           </div>
+        </div>
+        <div className={classes.controls}>
+          <div>remove</div>
         </div>
       </header>
 
@@ -194,10 +203,11 @@ const useFieldStyles = makeStyles((theme) => ({
 
   header: {
     display: 'flex',
+    justifyContent: 'space-between',
+    cursor: 'pointer',
     backgroundPositionX: 0,
     backgroundRepeat: 'repeat-y',
     padding: 0,
-    cursor: 'pointer',
 
     '$isSelected &': {
       borderBottom: `1px solid ${lighten(Theme.OpticBlueReadable, 0.5)}`,
@@ -207,6 +217,12 @@ const useFieldStyles = makeStyles((theme) => ({
       },
     },
   },
+
+  controls: {
+    display: 'flex',
+    color: '#ccc',
+  },
+
   description: {
     display: 'flex',
     padding: theme.spacing(1, 0),
