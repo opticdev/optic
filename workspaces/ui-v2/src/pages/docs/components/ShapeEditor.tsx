@@ -1,7 +1,8 @@
 import React, { FC, useMemo } from 'react';
-import { makeStyles, darken, lighten } from '@material-ui/core';
+import { makeStyles, darken, lighten, IconButton } from '@material-ui/core';
 import ClassNames from 'classnames';
 import Color from 'color';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 
 import { IFieldDetails, IShapeRenderer } from '<src>/types';
 import * as Theme from '<src>/styles/theme';
@@ -125,6 +126,15 @@ const Field: FC<{
     [onClickHeader]
   );
 
+  const onClickRemove = useMemo(
+    () => (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('clicked remove');
+    },
+    []
+  );
+
   return (
     <div
       className={ClassNames(classes.container, {
@@ -147,7 +157,15 @@ const Field: FC<{
           </div>
         </div>
         <div className={classes.controls}>
-          <div>remove</div>
+          {selected && (
+            <IconButton
+              className={classes.removeControl}
+              size="small"
+              onClick={onClickRemove}
+            >
+              <DeleteOutlineIcon />
+            </IconButton>
+          )}
         </div>
       </header>
 
@@ -197,7 +215,19 @@ function indentsImageUrl(depth: number = 0) {
 const useFieldStyles = makeStyles((theme) => ({
   container: {
     fontFamily: Theme.FontFamily,
-    padding: theme.spacing(0, 0, 0, 1),
+
+    '&$isSelected': {
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
+      marginLeft: -1, // account for the added border
+      boxShadow: '0px 2px 1px -1px rgb(0 0 0 / 20%)',
+      borderRadius: theme.shape.borderRadius,
+      border: `1px solid ${Color(Theme.OpticBlueReadable)
+        .saturate(0.8)
+        .lighten(0.58)
+        .hsl()
+        .string()}`,
+    },
   },
   isSelected: {},
   isIndented: {},
@@ -214,9 +244,14 @@ const useFieldStyles = makeStyles((theme) => ({
     },
 
     '$isSelected &': {
+      background: `${Color(Theme.OpticBlueReadable)
+        .saturate(0.8)
+        .lighten(0.63)
+        .hsl()
+        .string()} !important`,
       borderBottom: `1px solid ${Color(Theme.OpticBlueReadable)
         .saturate(0.8)
-        .lighten(0.58)
+        .lighten(0.55)
         .hsl()
         .string()}`,
 
@@ -224,12 +259,6 @@ const useFieldStyles = makeStyles((theme) => ({
       //   borderBottom: `1px solid ${lighten(Theme.OpticBlueReadable, 0.2)}`,
       // },
     },
-  },
-
-  controls: {
-    display: 'flex',
-    color: '#ccc',
-    marginRight: theme.spacing(1),
   },
 
   description: {
@@ -246,12 +275,20 @@ const useFieldStyles = makeStyles((theme) => ({
     },
 
     '$isIndented $header:hover &': {
-      borderLeftColor: darken(INDENT_COLOR, 0.3),
+      borderLeftColor: Color(Theme.OpticBlueReadable)
+        .saturate(0.8)
+        .lighten(0.43)
+        .hsl()
+        .string(),
     },
 
     '$isIndented$isSelected &': {
       borderLeftWidth: '1px',
-      borderLeftColor: lighten(Theme.OpticBlueReadable, 0.5),
+      borderLeftColor: Color(Theme.OpticBlueReadable)
+        .saturate(0.8)
+        .lighten(0.53)
+        .hsl()
+        .string(),
     },
   },
 
@@ -264,6 +301,22 @@ const useFieldStyles = makeStyles((theme) => ({
   typesSummary: {
     fontFamily: Theme.FontFamilyMono,
     color: '#8792a2',
+  },
+
+  // Controls
+  //
+  controls: {
+    display: 'flex',
+    color: '#ccc',
+    marginRight: theme.spacing(1),
+  },
+
+  removeControl: {
+    color: Color(Theme.OpticBlueReadable)
+      .saturate(0.8)
+      .lighten(0.2)
+      .hsl()
+      .string(),
   },
 
   stage: {},
