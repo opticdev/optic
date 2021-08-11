@@ -1,4 +1,5 @@
 const docsBaseLink = 'https://www.useoptic.com/docs';
+const referneceBaseLink = 'https://www.useoptic.com/reference';
 
 export const OpticDocs = docsBaseLink + '/';
 export const AddOpticLink = docsBaseLink + '/get-started/config';
@@ -13,3 +14,4 @@ export const RunTestsLink = docsBaseLink + '/get-started/testing';
 export const InterceptWithChromeLink =
   docsBaseLink + '/get-started/config/intercept';
 export const LiveTrafficLink = docsBaseLink + '/deploy/live';
+export const DebugLink = `${referneceBaseLink}/optic-cli/commands/debug`;
