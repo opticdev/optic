@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback } from 'react';
 import {
   makeStyles,
   lighten,
@@ -23,8 +23,8 @@ export const ShapeEditor: FC<{
 }> = ({ fields, selectedFieldId, setSelectedField }) => {
   const classes = useStyles();
 
-  let onChangeFieldDescription = useMemo(
-    () => (fieldId: string, description: string) => {
+  let onChangeFieldDescription = useCallback(
+    (fieldId: string, description: string) => {
       console.log('description changed for field', fieldId, description);
     },
     []
@@ -67,22 +67,19 @@ const Row: FC<{
 }) {
   const classes = useStyles();
 
-  const onClickFieldHeader = useMemo(
-    () => () => {
-      if (onSelect) onSelect(field.fieldId);
-    },
-    [onSelect, field.fieldId]
-  );
+  const onClickFieldHeader = useCallback(() => {
+    if (onSelect) onSelect(field.fieldId);
+  }, [onSelect, field.fieldId]);
 
-  const onChangeType = useMemo(
-    () => (type: JsonType, enabled: boolean) => {
+  const onChangeType = useCallback(
+    (type: JsonType, enabled: boolean) => {
       console.log('changed type for field', type, enabled, field.fieldId);
     },
     [field.fieldId]
   );
 
-  const onChangeDescriptionHandler = useMemo(
-    () => (description: string) => {
+  const onChangeDescriptionHandler = useCallback(
+    (description: string) => {
       if (onChangeDescription) onChangeDescription(field.fieldId, description);
     },
     [field.fieldId, onChangeDescription]
@@ -131,19 +128,19 @@ const FieldEditor: FC<{
     (jsonType) => jsonType !== JsonType.UNDEFINED && jsonType !== JsonType.NULL
   );
 
-  let onClickTypeButton = useMemo(
-    () => (type: JsonType) => (e: React.MouseEvent) => {
+  let onClickTypeButton = useCallback(
+    (type: JsonType) => (e: React.MouseEvent) => {
       e.preventDefault();
       if (onChangeType) onChangeType(type, !currentJsonTypes.includes(type));
     },
-    [field.fieldId, currentJsonTypes, onChangeType]
+    [currentJsonTypes, onChangeType]
   );
 
-  let onChangeDescriptionField = useMemo(
-    () => (e: React.ChangeEvent<HTMLInputElement>) => {
+  let onChangeDescriptionField = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       if (onChangeDescription) onChangeDescription(e.target.value);
     },
-    [field.fieldId, currentJsonTypes, onChangeDescription]
+    [onChangeDescription]
   );
 
   return (
@@ -244,22 +241,19 @@ const Field: FC<{
 }) {
   const classes = useFieldStyles();
 
-  const onClickHeaderHandler = useMemo(
-    () => (e: React.MouseEvent) => {
+  const onClickHeaderHandler = useCallback(
+    (e: React.MouseEvent) => {
       e.preventDefault();
       if (onClickHeader) onClickHeader();
     },
     [onClickHeader]
   );
 
-  const onClickRemove = useMemo(
-    () => (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('clicked remove');
-    },
-    []
-  );
+  const onClickRemove = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('clicked remove');
+  }, []);
 
   return (
     <div
