@@ -362,7 +362,7 @@ const useFieldStyles = makeStyles((theme) => ({
       marginTop: theme.spacing(1),
       marginBottom: theme.spacing(1),
       marginLeft: -1, // account for the added border
-      boxShadow: '0px 2px 1px -1px rgb(0 0 0 / 20%)',
+      boxShadow: '0px 8px 8px -5px rgb(0 0 0 / 12%)',
       borderRadius: theme.shape.borderRadius,
       border: `1px solid ${Color(Theme.OpticBlueReadable)
         .saturate(0.8)
