@@ -23,12 +23,19 @@ export const ShapeEditor: FC<{
 }> = ({ fields, selectedFieldId, setSelectedField }) => {
   const classes = useStyles();
 
-  let onChangeFieldDescription = useCallback(
+  const onChangeFieldDescription = useCallback(
     (fieldId: string, description: string) => {
       console.log('description changed for field', fieldId, description);
     },
     []
   );
+
+  const onFieldSelect = (fieldId: string) => () => {
+    if (setSelectedField) {
+      // Deselect the field if the field is already the currently selected field
+      setSelectedField(fieldId === selectedFieldId ? null : fieldId);
+    }
+  };
 
   return (
     <div className={classes.container}>
@@ -41,7 +48,7 @@ export const ShapeEditor: FC<{
                 description={''} // TODO FLEB: wire me in
                 selected={selectedFieldId === field.fieldId}
                 onChangeDescription={onChangeFieldDescription}
-                onSelect={setSelectedField}
+                onSelect={onFieldSelect(field.fieldId)}
               />
             </li>
           ))}
@@ -57,7 +64,7 @@ const Row: FC<{
   selected: boolean;
 
   onChangeDescription?: (fieldId: string, description: string) => void;
-  onSelect?: (fieldId: string) => void;
+  onSelect?: () => void;
 }> = function ShapeEditorRow({
   field,
   description,
@@ -66,10 +73,6 @@ const Row: FC<{
   onSelect,
 }) {
   const classes = useStyles();
-
-  const onClickFieldHeader = useCallback(() => {
-    if (onSelect) onSelect(field.fieldId);
-  }, [onSelect, field.fieldId]);
 
   const onChangeType = useCallback(
     (type: JsonType, enabled: boolean) => {
@@ -93,7 +96,7 @@ const Row: FC<{
         required={field.required}
         shapes={field.shapes}
         selected={selected}
-        onClickHeader={onClickFieldHeader}
+        onClickHeader={onSelect}
       >
         {selected && (
           <FieldEditor
