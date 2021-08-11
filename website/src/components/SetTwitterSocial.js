@@ -6,11 +6,13 @@ export function SetTwitterSocial() {
   return (
     <BrowserOnly
       children={() => {
-        <Helmet>
-          <meta property="twitter:card" content="summary_large_image" />
-          <meta property="twitter:site	" content="@useoptic" />
-          <meta property="twitter:creator	" content="@aidandcunniffe" />
-        </Helmet>;
+        return (
+          <Helmet>
+            <meta property="twitter:card" content="summary_large_image" />
+            <meta property="twitter:site	" content="@useoptic" />
+            <meta property="twitter:creator	" content="@aidandcunniffe" />
+          </Helmet>
+        );
       }}
     />
   );
