@@ -6,6 +6,7 @@ import {
   IconButton,
   ButtonGroup,
   Button,
+  TextField,
 } from '@material-ui/core';
 import { Check as CheckIcon } from '@material-ui/icons';
 import ClassNames from 'classnames';
@@ -23,6 +24,13 @@ export const ShapeEditor: FC<{
 }> = ({ fields, selectedFieldId, setSelectedField }) => {
   const classes = useStyles();
 
+  let onChangeFieldDescription = useMemo(
+    () => (fieldId: string, description: string) => {
+      console.log('description changed for field', fieldId, description);
+    },
+    []
+  );
+
   return (
     <div className={classes.container}>
       {fields.length > 0 && (
@@ -31,7 +39,9 @@ export const ShapeEditor: FC<{
             <li className={classes.rowListItem}>
               <Row
                 field={field}
+                description={''} // TODO FLEB: wire me in
                 selected={selectedFieldId === field.fieldId}
+                onChangeDescription={onChangeFieldDescription}
                 onSelect={setSelectedField}
               />
             </li>
@@ -44,10 +54,18 @@ export const ShapeEditor: FC<{
 
 const Row: FC<{
   field: IFieldDetails;
+  description: string;
   selected: boolean;
 
+  onChangeDescription?: (fieldId: string, description: string) => void;
   onSelect?: (fieldId: string) => void;
-}> = function ShapeEditorRow({ field, selected, onSelect }) {
+}> = function ShapeEditorRow({
+  field,
+  description,
+  selected,
+  onChangeDescription,
+  onSelect,
+}) {
   const classes = useStyles();
 
   const onClickFieldHeader = useMemo(
@@ -64,6 +82,13 @@ const Row: FC<{
     [field.fieldId]
   );
 
+  const onChangeDescriptionHandler = useMemo(
+    () => (description: string) => {
+      if (onChangeDescription) onChangeDescription(field.fieldId, description);
+    },
+    [field.fieldId]
+  );
+
   return (
     <div className={classes.row}>
       <Field
@@ -74,7 +99,14 @@ const Row: FC<{
         selected={selected}
         onClickHeader={onClickFieldHeader}
       >
-        {selected && <FieldEditor field={field} onChangeType={onChangeType} />}
+        {selected && (
+          <FieldEditor
+            field={field}
+            description={description}
+            onChangeType={onChangeType}
+            onChangeDescription={onChangeDescriptionHandler}
+          />
+        )}
       </Field>
     </div>
   );
@@ -82,8 +114,16 @@ const Row: FC<{
 
 const FieldEditor: FC<{
   field: IFieldDetails;
+  description: string;
+
+  onChangeDescription?: (description: string) => void;
   onChangeType?: (type: JsonType, enabled: boolean) => void;
-}> = function ShapeEditorFieldEditor({ field, onChangeType }) {
+}> = function ShapeEditorFieldEditor({
+  field,
+  description,
+  onChangeDescription,
+  onChangeType,
+}) {
   const classes = useStyles();
 
   let currentJsonTypes = field.shapes.map(({ jsonType }) => jsonType);
@@ -100,9 +140,16 @@ const FieldEditor: FC<{
     [field.fieldId, currentJsonTypes]
   );
 
+  let onChangeDescriptionField = useMemo(
+    () => (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (onChangeDescription) onChangeDescription(e.target.value);
+    },
+    [field.fieldId, currentJsonTypes]
+  );
+
   return (
     <div className={classes.editor}>
-      <ButtonGroup>
+      <ButtonGroup className={classes.typeSelector}>
         <Button
           disableElevation
           variant={
@@ -136,7 +183,15 @@ const FieldEditor: FC<{
           </Button>
         ))}
       </ButtonGroup>
-      <div>field for updating description</div>
+
+      <TextField
+        defaultValue={description}
+        label="Field description"
+        placeholder={`What is ${field.name}? How is it used?`}
+        variant="outlined"
+        InputLabelProps={{ shrink: true }}
+        onChange={onChangeDescriptionField}
+      />
     </div>
   );
 };
@@ -151,13 +206,17 @@ const useStyles = makeStyles((theme) => ({
   row: {},
 
   editor: {
-    padding: theme.spacing(2, 3),
-    minHeight: theme.spacing(10),
-    marginBottom: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'column',
+    padding: theme.spacing(3, 2),
 
     color: lighten('#6b7384', 0.2),
 
     boxShadow: 'inset 0px 13px 10px -10px rgba(0, 0, 0, 0.07)',
+  },
+
+  typeSelector: {
+    marginBottom: theme.spacing(4),
   },
 }));
 
