@@ -2,15 +2,16 @@ import React from 'react';
 import Helmet from 'react-helmet';
 import BrowserOnly from '@docusaurus/core/lib/client/exports/BrowserOnly';
 
-export function SetTwitterSocial() {
+export function SetTwitterSocial(props) {
   return (
     <BrowserOnly
       children={() => {
         return (
           <Helmet>
-            <meta property="twitter:card" content="summary_large_image" />
-            <meta property="twitter:site	" content="@useoptic" />
-            <meta property="twitter:creator	" content="@aidandcunniffe" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:image" content={props.image} />
+            <meta name="twitter:site	" content="@useoptic" />
+            <meta name="twitter:creator	" content="@aidandcunniffe" />
           </Helmet>
         );
       }}
