@@ -6,7 +6,7 @@ export function SetTwitterSocial() {
   return (
     <NoSsr>
       <Helmet>
-        <head name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
     </NoSsr>
   );
