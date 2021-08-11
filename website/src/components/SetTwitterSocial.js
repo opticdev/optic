@@ -7,6 +7,8 @@ export function SetTwitterSocial() {
     <NoSsr>
       <Helmet>
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site	" content="@useoptic" />
+        <meta name="twitter:creator	" content="@aidandcunniffe" />
       </Helmet>
     </NoSsr>
   );
