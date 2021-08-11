@@ -5,6 +5,7 @@ import Color from 'color';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 
 import { IFieldDetails, IShapeRenderer } from '<src>/types';
+import { JsonType } from '@useoptic/optic-domain';
 import * as Theme from '<src>/styles/theme';
 
 export const ShapeEditor: FC<{
@@ -176,12 +177,27 @@ const Field: FC<{
 
 function summarizeTypes(shapes: IShapeRenderer[], required: boolean) {
   const optionalText = required ? '' : ' (optional)';
+  let components = shapes.map(({ jsonType }: { jsonType: JsonType }) => (
+    <span style={{ color: Theme.jsonTypeColors[jsonType] }}>
+      {jsonType.toString().toLowerCase()}
+    </span>
+  ));
   if (shapes.length === 1) {
-    return shapes[0].jsonType.toString().toLowerCase() + optionalText;
+    return (
+      <>
+        {components} {optionalText}
+      </>
+    );
   } else {
-    const allShapes = shapes.map((i) => i.jsonType.toString().toLowerCase());
-    const last = allShapes.pop();
-    return allShapes.join(', ') + ' or ' + last + optionalText;
+    const last = components.pop();
+    return (
+      <>
+        {components.map((component, i) => (
+          <span key={i}>{component},</span>
+        ))}{' '}
+        or {last} {optionalText}
+      </>
+    );
   }
 }
 

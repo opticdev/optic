@@ -1,4 +1,6 @@
 import { createMuiTheme } from '@material-ui/core';
+import { JsonType } from '@useoptic/optic-domain';
+
 export const primary = '#31366f';
 export const secondary = '#ea4a61';
 export const UpdatedBlue = '#2b7bd1';
@@ -32,6 +34,16 @@ export const methodColorsDark: { [key: string]: string | undefined } = {
   PUT: '#69340a',
   PATCH: '#796384',
   DELETE: '#be5353',
+};
+
+export const jsonTypeColors = {
+  [JsonType.STRING]: '#09825d',
+  [JsonType.NUMBER]: '#e56f4a',
+  [JsonType.UNDEFINED]: '#857b79',
+  [JsonType.BOOLEAN]: '#067ab8',
+  [JsonType.NULL]: '#8792a2',
+  [JsonType.OBJECT]: 'inherit',
+  [JsonType.ARRAY]: 'inherit',
 };
 
 export const FontFamily =
