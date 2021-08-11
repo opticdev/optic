@@ -57,6 +57,13 @@ const Row: FC<{
     [onSelect, field.fieldId]
   );
 
+  const onChangeType = useMemo(
+    () => (type: JsonType, enabled: boolean) => {
+      console.log('changed type for field', type, enabled, field.fieldId);
+    },
+    [field.fieldId]
+  );
+
   return (
     <div className={classes.row}>
       <Field
@@ -67,7 +74,7 @@ const Row: FC<{
         selected={selected}
         onClickHeader={onClickFieldHeader}
       >
-        {selected && <FieldEditor field={field} />}
+        {selected && <FieldEditor field={field} onChangeType={onChangeType} />}
       </Field>
     </div>
   );
@@ -75,12 +82,22 @@ const Row: FC<{
 
 const FieldEditor: FC<{
   field: IFieldDetails;
-}> = function ShapeEditorFieldEditor({ field }) {
+  onChangeType?: (type: JsonType, enabled: boolean) => void;
+}> = function ShapeEditorFieldEditor({ field, onChangeType }) {
   const classes = useStyles();
 
   let currentJsonTypes = field.shapes.map(({ jsonType }) => jsonType);
+  if (!field.required) currentJsonTypes.push(JsonType.UNDEFINED);
   let nonEditableTypes = currentJsonTypes.filter(
     (jsonType) => jsonType !== JsonType.UNDEFINED && jsonType !== JsonType.NULL
+  );
+
+  let onClickTypeButton = useMemo(
+    () => (type: JsonType) => (e: React.MouseEvent) => {
+      e.preventDefault();
+      if (onChangeType) onChangeType(type, !currentJsonTypes.includes(type));
+    },
+    [field.fieldId, currentJsonTypes]
   );
 
   return (
@@ -88,8 +105,13 @@ const FieldEditor: FC<{
       <ButtonGroup>
         <Button
           disableElevation
-          variant={!field.required ? 'contained' : 'outlined'}
+          variant={
+            currentJsonTypes.includes(JsonType.UNDEFINED)
+              ? 'contained'
+              : 'outlined'
+          }
           startIcon={<CheckIcon />}
+          onClick={onClickTypeButton(JsonType.UNDEFINED)}
         >
           Optional
         </Button>
@@ -98,6 +120,7 @@ const FieldEditor: FC<{
           variant={
             currentJsonTypes.includes(JsonType.NULL) ? 'contained' : 'outlined'
           }
+          onClick={onClickTypeButton(JsonType.NULL)}
         >
           Null
         </Button>
