@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import { makeStyles, darken, lighten } from '@material-ui/core';
 import ClassNames from 'classnames';
+import Color from 'color';
 
 import { IFieldDetails, IShapeRenderer } from '<src>/types';
 import * as Theme from '<src>/styles/theme';
@@ -205,27 +206,36 @@ const useFieldStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     cursor: 'pointer',
-    backgroundPositionX: 0,
+    backgroundPositionX: theme.spacing(1),
     backgroundRepeat: 'repeat-y',
-    padding: 0,
+
+    '&:hover': {
+      backgroundColor: lighten(Theme.OpticBlueReadable, 0.9),
+    },
 
     '$isSelected &': {
-      borderBottom: `1px solid ${lighten(Theme.OpticBlueReadable, 0.5)}`,
+      borderBottom: `1px solid ${Color(Theme.OpticBlueReadable)
+        .saturate(0.8)
+        .lighten(0.58)
+        .hsl()
+        .string()}`,
 
-      '&:hover': {
-        borderBottom: `1px solid ${lighten(Theme.OpticBlueReadable, 0.2)}`,
-      },
+      // '&:hover': {
+      //   borderBottom: `1px solid ${lighten(Theme.OpticBlueReadable, 0.2)}`,
+      // },
     },
   },
 
   controls: {
     display: 'flex',
     color: '#ccc',
+    marginRight: theme.spacing(1),
   },
 
   description: {
     display: 'flex',
     padding: theme.spacing(1, 0),
+    marginLeft: theme.spacing(1),
     alignItems: 'baseline',
     borderLeft: `1px solid #E4E8ED`,
     borderLeftWidth: 0,
