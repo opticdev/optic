@@ -36,7 +36,7 @@ export const methodColorsDark: { [key: string]: string | undefined } = {
   DELETE: '#be5353',
 };
 
-export const jsonTypeColors = {
+export const jsonTypeColors: Record<JsonType, string> = {
   [JsonType.STRING]: '#09825d',
   [JsonType.NUMBER]: '#e56f4a',
   [JsonType.UNDEFINED]: '#857b79',

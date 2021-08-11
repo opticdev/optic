@@ -295,7 +295,8 @@ export const EndpointRootPage: FC<
                           }
                         }
 
-                        return (
+                        return process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
+                          'true' ? (
                           <DocFieldContribution
                             key={
                               field.contribution.id +
@@ -312,6 +313,8 @@ export const EndpointRootPage: FC<
                             initialValue={field.contribution.value}
                             required={field.required}
                           />
+                        ) : (
+                          <ShapeEditor fields={fields} />
                         );
                       }}
                       fieldDetails={fields}
@@ -376,28 +379,37 @@ export const EndpointRootPage: FC<
                           {(selectedFieldId, setSelectedFieldId) => (
                             <div className={classes.bodyDetails}>
                               <div>
-                                <ContributionsList
-                                  renderField={(field) => (
-                                    <DocFieldContribution
-                                      key={
-                                        field.contribution.id +
-                                        field.contribution.contributionKey
-                                      }
-                                      endpoint={{
-                                        pathId,
-                                        method,
-                                      }}
-                                      name={field.name}
-                                      shapes={field.shapes}
-                                      depth={field.depth}
-                                      id={field.fieldId}
-                                      initialValue={field.contribution.value}
-                                      required={field.required}
-                                      setSelectedField={setSelectedFieldId}
-                                    />
-                                  )}
-                                  fieldDetails={fields}
-                                />
+                                {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
+                                'true' ? (
+                                  <ContributionsList
+                                    renderField={(field) => (
+                                      <DocFieldContribution
+                                        key={
+                                          field.contribution.id +
+                                          field.contribution.contributionKey
+                                        }
+                                        endpoint={{
+                                          pathId,
+                                          method,
+                                        }}
+                                        name={field.name}
+                                        shapes={field.shapes}
+                                        depth={field.depth}
+                                        id={field.fieldId}
+                                        initialValue={field.contribution.value}
+                                        required={field.required}
+                                        setSelectedField={setSelectedFieldId}
+                                      />
+                                    )}
+                                    fieldDetails={fields}
+                                  />
+                                ) : (
+                                  <ShapeEditor
+                                    fields={fields}
+                                    selectedFieldId={selectedFieldId}
+                                    setSelectedField={setSelectedFieldId}
+                                  />
+                                )}
                               </div>
                               <div className={classes.panel}>
                                 {isEditing ? (

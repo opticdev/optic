@@ -18,8 +18,8 @@ import * as Theme from '<src>/styles/theme';
 
 export const ShapeEditor: FC<{
   fields: IFieldDetails[];
-  selectedFieldId: string | null;
-  setSelectedField: (fieldId: string | null) => void;
+  selectedFieldId?: string | null;
+  setSelectedField?: (fieldId: string | null) => void;
 }> = ({ fields, selectedFieldId, setSelectedField }) => {
   const classes = useStyles();
 
