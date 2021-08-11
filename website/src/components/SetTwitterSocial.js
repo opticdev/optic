@@ -1,13 +1,20 @@
 import React from 'react';
-import { NoSsr } from '@material-ui/core';
 import Helmet from 'react-helmet';
+import BrowserOnly from '@docusaurus/core/lib/client/exports/BrowserOnly';
 
-export function SetTwitterSocial() {
+export function SetTwitterSocial(props) {
   return (
-    <NoSsr>
-      <Helmet>
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
-    </NoSsr>
+    <BrowserOnly
+      children={() => {
+        return (
+          <Helmet>
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:image" content={props.image} />
+            <meta name="twitter:site	" content="@useoptic" />
+            <meta name="twitter:creator	" content="@aidandcunniffe" />
+          </Helmet>
+        );
+      }}
+    />
   );
 }

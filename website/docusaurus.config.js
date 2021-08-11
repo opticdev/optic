@@ -12,6 +12,11 @@ module.exports = {
   organizationName: 'opticdev', // Usually your GitHub org/user name.
   projectName: 'optic', // Usually your repo name.
   themeConfig: {
+    metadatas: [
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:site', content: '@useoptic' },
+      { name: 'twitter:creator', content: '@aidandcunniffe' },
+    ],
     googleAnalytics: {
       trackingID: 'UA-137236875-1',
     },
