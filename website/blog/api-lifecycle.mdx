@@ -1,0 +1,123 @@
+---
+date: 2021-08-11
+title: "The API Lifecycle and Optic"
+author: Aidan Cunniffe
+author_url: "https://github.com/acunniffe"
+author_image_url: "/img/team/aidan.jpg"
+category: Community
+---
+
+# The API Lifecycle and Optic
+
+![alt](/img/blog-content/social-for-lifecycle.png)
+
+Since the early days of Optic, there's always been this tension between inferring API specifications from traffic (how we got our start), and teams wanting more mature "design-first" workflows.
+
+<!-- truncate -->
+
+"Code-first" or "design-first" — we think that's the wrong question.
+
+A better question, which we ask users, is simple: "How do you make sure every API change is documented, [code] reviewed and approved before getting released?"
+
+There are so many ways to get there (many unlisted), each with tradeoffs (that's par for the course):
+
+- A design-first workflow, backed by comprehensive contract tests
+- OpenAPI validators in the application or Gateway that forces compliance to an API spec
+- Using Optic to maintain an accurate API spec, and blocking builds or deploys if unexpected diffs show up in tests or staging
+
+## Bringing "design-first" to Optic
+
+> Everybody wants to be [design-first], nobody wants to put in the work
+- Kevin Hart *(misquoted, he said "famous")*
+
+Everybody wants to be design-first, but in reality there are very few teams that work this way. At best we're "design-first-first" or "design-fist, the first time".
+
+There's a lot of promise in the design-first ideas, but the workflows required to do it right are far too difficult for mass adoption from the world's developers. Internal tooling helps, most companies who use OpenAPI at scale have built / bought a lot of tools to make it work, but the good stuff is still on the top shelf, out of reach to most.
+
+We want to see good ideas get adopted and help teams be thoughtful about their API changes, before they get made — that's the triple-distilled, savory essence of what "design-first" is all about.
+
+In fact, some of the most effective design-first teams we met don't even use OpenAPI or Postman to do it, they dump JSON examples into Google Docs or Notion, and iterate (with comments and suggestions) until it's ready to be built.
+
+tl;dr — Let's make the best practices, accessible, and developer-friendly. As Ali Inzana put it to me the other day, it's important that the API space gets to the point where we "actually do what's on the tin".
+
+We're bringing design-first to Optic, but not in the way you'd expect.
+
+## Hey, API specifications, meet evidence
+
+At first we were thinking of creating two complimentary modes for Optic, code-first mode and design-first mode. Our product-spidey-sense went off though when someone (rightly) reframed that approach as "encoding a decade old debate into your product". In a well designed workflow, we thought those distinctions would melt away.
+
+In Optic's new workflow, there are 3 concepts that you build your team's API Workflow around:
+
+- **Changelog specification —** describes current API behaviors, and a full history of every change ever made to the API
+- **Proposals —** think of proposals as "API Pull Requests", they are WIP changes the team is discussing / revising until they're ready to be "Approved", after which they show up as the latest version for an endpoint in the Specification
+- **Evidence —** The link between your specification and reality. Evidence is real traffic, used to verify certain API behaviors across specific commits, builds and environments.
+
+In this workflow, every API change starts as a Proposal
+
+- which can be discussed, iterated upon, and eventually approved / closed
+- governance / design rules can automatically apply to them. ie "field names must be camelCase" or "no breaking changes to public endpoints"
+
+When a Proposal is approved, the new version for each of the modified endpoints is tagged (automatically) as `Latest` . Since the changelog specification keeps history (like Git), it's able to keep track of what version of each endpoint is running in each environment. The ability to describe multiple versions of each API at the same time is something that's difficult to do in OpenAPI, but easy to do with a specification designed to model the history, maturity, and evolution of an API.
+
+- Your public docs can accumulate all the `Production` versions, and filter down to only the endpoints marked `Public`
+- Your internal development docs can accumulate all the `Staging` versions.
+- Your team can track proposals all the way from Design → Production, and even subscribe to changes in status, or set up webhooks to alert your consumers, rebuild your docs portals, send the latest production spec to your security tools, etc.
+
+![alt](/img/blog-content/stages.png)
+
+How are these version tags updated? With Evidence. Optic is watching your API in development, tests, CI, staging and production. When it sees a new version of an endpoint appear in each environment (by observing traffic), it automatically emits and event that will change the tags in your API specification ie `ci: v3, staging: v3, production: **v2 -> v3**`
+
+![alt](/img/blog-content/versions.svg)
+
+## A unified workflow
+
+Proposals and Evidence encompass many stages of the API lifecycle today.
+
+Proposals are where design, review, and govern our changes. It is also where most of the collaboration between Engineering and product and/or the consumers takes place.
+
+Evidence, paired with a changelog spec gives us a new framework for thinking about environments, testing/validation, reporting, and versioning. Evidence can also come from the development process, as a way for developers to include "proof-of-work" that they built the correct behaviors into their APIs.
+
+### Blurring the line between code-first and design-first
+
+When your team makes an API change before documenting them (code-first), a new Proposal and the corresponding Evidence are automatically created and linked to the code that changed in a Pull Request.
+
+- since you are working code first, merging the PR will mark the Proposal as `Approved`
+- if the team requests changes to this API contract, you can set up your CI / Git Host to block the merge until Evidence the changes have been implemented are observed.
+
+When your team plans an API change before coding it (design-first), Proposals are created in the Optic cloud and can be revised until the team feels ready to mark it as `Approved`. What then? Well a developer has to implement the API change and collect Evidence as "proof-of-work", and link it to the original proposal.
+
+- since you are working design-first, Optic Cloud will automatically track the status of this Proposal from `Approval` → `Pull Request` → `Staging` and all the way through to `Production`
+- you can trigger notifications, and other webhooks, based on these transitions. Ie, when this proposal hits `Production` "notify our consumers on Slack"
+
+![alt](/img/blog-content/timeline.svg)
+
+### Simplifying the API Lifecycle
+
+What excited us about this workflow is how simplifying it is. The API Lifecycle becomes easier for everyone to comprehend and contribute tooling towards.
+
+- Proposals provide a central place (like the GitHub PR) for collaboration, governance and design.
+- Evidence gives a more defined purpose to our various methods of testing and monitoring our APIs, by automatically tying everything we see in the real world, back to our source of truth.
+- The distinctions between the tooling you need for Design-first / code-first melt away. The same tool can support either both, natively.
+- Evidence makes versioning, environments, and maturity transparent. At any moment you can see what version of each endpoint, is running in each environment, without anyone needing to change tags in the OpenAPI file.
+
+And of course, there's an API for your API, bringing all the data for use cases to the surface:
+
+- Optic will make all the information about your proposals, versions, and evidence accessible over an API so you can set up your own workflows.
+- API Design Checks will be powered by webhooks so vendors can provide strong feedback into the API design process
+
+### Next Steps
+
+This work to rethink and reform the API Lifeycle around specs, proposals and evidence is our nth iteration, but it's the first one where the story got dramatically simpler. If you want to talk about this idea, show us how you do your API Lifecycle or give the new version of Optic a try, throw you email down here:
+
+
+import { Typeform } from '../src/components/Typeform'
+import {Paper} from '@material-ui/core'
+
+<Paper elevation={2} style={{marginBottom: 50}}>
+<Typeform formId={'H0L7i5Vf'} />
+</Paper>
+
+We're going to give access to 10 Teams / month as we continue learning, and smooth out the rough edges. Apply here, and consider us your internal API tooling team :)
+
+> Special thanks to [Stephen Mizell](https://twitter.com/stephen_mizell?lang=en), [Mike Amundsen](https://twitter.com/mamund), [Kin Lane](https://twitter.com/kinlane) for feedback along the way, and lots of good synthesis that appears throughout.
+
