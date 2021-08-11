@@ -26,7 +26,7 @@ import {
   selectors,
   documentationEditActions,
 } from '<src>/store';
-import { IShapeRenderer, IFieldDetails } from '<src>/types';
+import { IShapeRenderer } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {

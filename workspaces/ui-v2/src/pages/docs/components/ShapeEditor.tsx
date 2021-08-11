@@ -1,7 +1,6 @@
 import React, { FC, useMemo } from 'react';
 import {
   makeStyles,
-  darken,
   lighten,
   IconButton,
   ButtonGroup,
@@ -86,7 +85,7 @@ const Row: FC<{
     () => (description: string) => {
       if (onChangeDescription) onChangeDescription(field.fieldId, description);
     },
-    [field.fieldId]
+    [field.fieldId, onChangeDescription]
   );
 
   return (
@@ -137,14 +136,14 @@ const FieldEditor: FC<{
       e.preventDefault();
       if (onChangeType) onChangeType(type, !currentJsonTypes.includes(type));
     },
-    [field.fieldId, currentJsonTypes]
+    [field.fieldId, currentJsonTypes, onChangeType]
   );
 
   let onChangeDescriptionField = useMemo(
     () => (e: React.ChangeEvent<HTMLInputElement>) => {
       if (onChangeDescription) onChangeDescription(e.target.value);
     },
-    [field.fieldId, currentJsonTypes]
+    [field.fieldId, currentJsonTypes, onChangeDescription]
   );
 
   return (
