@@ -1,5 +1,13 @@
 import React, { FC, useMemo } from 'react';
-import { makeStyles, darken, lighten, IconButton } from '@material-ui/core';
+import {
+  makeStyles,
+  darken,
+  lighten,
+  IconButton,
+  ButtonGroup,
+  Button,
+} from '@material-ui/core';
+import { Check as CheckIcon } from '@material-ui/icons';
 import ClassNames from 'classnames';
 import Color from 'color';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
@@ -70,10 +78,41 @@ const FieldEditor: FC<{
 }> = function ShapeEditorFieldEditor({ field }) {
   const classes = useStyles();
 
+  let currentJsonTypes = field.shapes.map(({ jsonType }) => jsonType);
+  let nonEditableTypes = currentJsonTypes.filter(
+    (jsonType) => jsonType !== JsonType.UNDEFINED && jsonType !== JsonType.NULL
+  );
+
   return (
     <div className={classes.editor}>
-      <div>toggle for optional</div>
-      <div>toggle for nullable</div>
+      <ButtonGroup>
+        <Button
+          disableElevation
+          variant={!field.required ? 'contained' : 'outlined'}
+          startIcon={<CheckIcon />}
+        >
+          Optional
+        </Button>
+        <Button
+          disableElevation
+          variant={
+            currentJsonTypes.includes(JsonType.NULL) ? 'contained' : 'outlined'
+          }
+        >
+          Null
+        </Button>
+
+        {nonEditableTypes.map((jsonType) => (
+          <Button
+            color="primary"
+            variant="contained"
+            disabled
+            startIcon={<CheckIcon />}
+          >
+            {jsonType}
+          </Button>
+        ))}
+      </ButtonGroup>
       <div>field for updating description</div>
     </div>
   );
