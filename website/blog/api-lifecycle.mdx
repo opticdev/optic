@@ -31,7 +31,7 @@ There are so many ways to get there (many unlisted), each with tradeoffs (that's
 > Everybody wants to be [design-first], nobody wants to put in the work
 - Kevin Hart *(misquoted, he said "famous")*
 
-Everybody wants to be design-first, but in reality there are very few teams that work this way. At best we're "design-first-first" or "design-fist, the first time".
+Everybody wants to be design-first, but in reality there are very few teams that work this way. At best we're "design-first-first" or "design-fist, the first time". We do upfront design until we release our API to the public. Then our design-first practices go out the window when we face real-world challenges, and the need to make changes to our existing APIs.
 
 There's a lot of promise in the design-first ideas, but the workflows required to do it right are far too difficult for mass adoption from the world's developers. Internal tooling helps, most companies who use OpenAPI at scale have built / bought a lot of tools to make it work, but the good stuff is still on the top shelf, out of reach to most.
 
@@ -50,7 +50,7 @@ At first we were thinking of creating two complimentary modes for Optic, code-fi
 In Optic's new workflow, there are 3 concepts that you build your team's API Workflow around:
 
 - **Changelog specification —** describes current API behaviors, and a full history of every change ever made to the API
-- **Proposals —** think of proposals as "API Pull Requests", they are WIP changes the team is discussing / revising until they're ready to be "Approved", after which they show up as the latest version for an endpoint in the Specification
+- **Proposals —** think of proposals as "API Pull Requests", they are a set of changes the team is discussing / revising. They may not have been built or released yet. When a proposal is approved, the latest version for an endpoint in the Specification will include them.
 - **Evidence —** The link between your specification and reality. Evidence is real traffic, used to verify certain API behaviors across specific commits, builds and environments.
 
 In this workflow, every API change starts as a Proposal
@@ -58,7 +58,7 @@ In this workflow, every API change starts as a Proposal
 - which can be discussed, iterated upon, and eventually approved / closed
 - governance / design rules can automatically apply to them. ie "field names must be camelCase" or "no breaking changes to public endpoints"
 
-When a Proposal is approved, the new version for each of the modified endpoints is tagged (automatically) as `Latest` . Since the changelog specification keeps history (like Git), it's able to keep track of what version of each endpoint is running in each environment. The ability to describe multiple versions of each API at the same time is something that's difficult to do in OpenAPI, but easy to do with a specification designed to model the history, maturity, and evolution of an API.
+When a Proposal gets approved, the new version for each of the modified endpoints is tagged (automatically) as `Latest` . Since the changelog specification keeps history (like Git), it's able to keep track of what version of each endpoint is running in each environment. The ability to describe multiple versions of each API at the same time is something that's difficult to do in OpenAPI, but easy to do with a specification designed to model the history, maturity, and evolution of an API.
 
 - Your public docs can accumulate all the `Production` versions, and filter down to only the endpoints marked `Public`
 - Your internal development docs can accumulate all the `Staging` versions.
