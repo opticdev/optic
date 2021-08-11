@@ -157,7 +157,9 @@ const FieldEditor: FC<{
               ? 'contained'
               : 'outlined'
           }
-          startIcon={<CheckIcon />}
+          startIcon={
+            currentJsonTypes.includes(JsonType.UNDEFINED) ? <CheckIcon /> : null
+          }
           onClick={onClickTypeButton(JsonType.UNDEFINED)}
         >
           Optional
@@ -166,6 +168,9 @@ const FieldEditor: FC<{
           disableElevation
           variant={
             currentJsonTypes.includes(JsonType.NULL) ? 'contained' : 'outlined'
+          }
+          startIcon={
+            currentJsonTypes.includes(JsonType.NULL) ? <CheckIcon /> : null
           }
           onClick={onClickTypeButton(JsonType.NULL)}
         >
