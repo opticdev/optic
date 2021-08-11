@@ -70,7 +70,7 @@ export const RenderField = ({
           depth={depth}
           changes={changes}
           focused={fieldId === selectedFieldId}
-          data-fieldId={fieldId}
+          data-fieldid={fieldId}
         >
           <span className={sharedClasses.shapeFont}>"{name}"</span>
           <span className={sharedClasses.symbolFont}>: </span>
@@ -88,7 +88,7 @@ export const RenderField = ({
         depth={depth}
         changes={changes}
         focused={fieldId === selectedFieldId}
-        data-fieldId={fieldId}
+        data-fieldid={fieldId}
       >
         <span className={sharedClasses.shapeFont}>"{name}"</span>
         <span className={sharedClasses.symbolFont}>: </span>
@@ -113,7 +113,7 @@ export const RenderField = ({
           depth={depth}
           changes={changes}
           focused={fieldId === selectedFieldId}
-          data-fieldId={fieldId}
+          data-fieldid={fieldId}
         >
           <span className={sharedClasses.shapeFont}>"{name}"</span>
           <span className={sharedClasses.symbolFont}>: </span>

@@ -22,7 +22,7 @@ export const HttpBodyPanel: FC<HttpBodyPanelProps> = ({
       const isContainerScrollable =
         contentRef.current.scrollHeight > contentRef.current.clientHeight;
       const fieldNode = contentRef.current.querySelector(
-        `[data-fieldId='${selectedFieldId}']`
+        `[data-fieldid='${selectedFieldId}']`
       );
       if (isContainerScrollable && fieldNode) {
         const scrollTopDiff =

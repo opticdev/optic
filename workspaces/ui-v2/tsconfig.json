@@ -16,6 +16,7 @@
     { "path": "../analytics" },
     { "path": "../cli-config" },
     { "path": "../cli-shared" },
+    { "path": "../optic-domain" },
     { "path": "../shape-hash" },
     { "path": "../spectacle" },
     { "path": "../spectacle-shared" }
