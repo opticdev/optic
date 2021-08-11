@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { ExecutionResult } from 'graphql';
 import {
   IBaseSpectacle,
   ICapture,
@@ -539,11 +540,15 @@ export class InMemorySpectacle
 
   async mutate<Result, Input = {}>(options: SpectacleInput<Input>) {
     const spectacle = await this.spectaclePromise;
-    return spectacle.queryWrapper<Result, Input>(options);
+    return spectacle.queryWrapper<Input>(options) as Promise<
+      ExecutionResult<Result>
+    >;
   }
 
   async query<Result, Input = {}>(options: SpectacleInput<Input>) {
     const spectacle = await this.spectaclePromise;
-    return spectacle.queryWrapper<Result, Input>(options);
+    return spectacle.queryWrapper<Input>(options) as Promise<
+      ExecutionResult<Result>
+    >;
   }
 }

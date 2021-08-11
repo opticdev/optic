@@ -23,7 +23,7 @@
     "@useoptic/optic-engine-wasm": "10.2.3",
     "@useoptic/graph-lib": "10.2.3",
     "@useoptic/optic-domain": "10.2.3",
-    "graphql": "14 || ^15.5",
+    "graphql": "^15.5",
     "graphql-type-json": "^0.3.2",
     "uuid": "^8.3.2"
   },

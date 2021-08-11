@@ -802,10 +802,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       commandGenerator,
     };
   };
-  const queryWrapper = function <Result, Input = {}>(
-    input: SpectacleInput<Input>
-  ) {
-    return graphql<Result>({
+  const queryWrapper = function <Input = {}>(input: SpectacleInput<Input>) {
+    return graphql({
       schema: executableSchema,
       source: input.query,
       variableValues: input.variables,
