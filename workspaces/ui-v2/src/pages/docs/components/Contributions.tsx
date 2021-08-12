@@ -112,7 +112,16 @@ export function DocsFieldOrParameterContribution({
       shapes={shapes}
       depth={depth}
       value={value}
-      setValue={(value) =>
+      setValue={(value) => {
+        if (value === initialValue) {
+          dispatch(
+            documentationEditActions.removeContribution({
+              id,
+              contributionKey,
+            })
+          );
+        } else {
+        }
         dispatch(
           documentationEditActions.addContribution({
             id,
@@ -120,8 +129,8 @@ export function DocsFieldOrParameterContribution({
             value,
             endpointId,
           })
-        )
-      }
+        );
+      }}
       isEditing={isEditable}
       required={required}
     />
@@ -186,7 +195,16 @@ export function EndpointNameContribution({
           )
         }
         value={value}
-        setValue={(value) =>
+        setValue={(value) => {
+          if (value === initialValue) {
+            dispatch(
+              documentationEditActions.removeContribution({
+                id,
+                contributionKey,
+              })
+            );
+          } else {
+          }
           dispatch(
             documentationEditActions.addContribution({
               id,
@@ -194,8 +212,8 @@ export function EndpointNameContribution({
               value,
               endpointId,
             })
-          )
-        }
+          );
+        }}
         helperText="Help consumers by naming this endpoint"
         defaultText={defaultText}
         variant={TextFieldVariant.REGULAR}
@@ -245,7 +263,16 @@ export function EndpointNameMiniContribution({
         )
       }
       value={value}
-      setValue={(value) =>
+      setValue={(value) => {
+        if (value === initialValue) {
+          dispatch(
+            documentationEditActions.removeContribution({
+              id,
+              contributionKey,
+            })
+          );
+        } else {
+        }
         dispatch(
           documentationEditActions.addContribution({
             id,
@@ -253,8 +280,8 @@ export function EndpointNameMiniContribution({
             value,
             endpointId,
           })
-        )
-      }
+        );
+      }}
       defaultText={defaultText}
       variant={TextFieldVariant.SMALL}
     />
