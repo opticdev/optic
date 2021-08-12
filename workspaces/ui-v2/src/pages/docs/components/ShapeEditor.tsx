@@ -17,7 +17,6 @@ import {
   Check as CheckIcon,
   UndoOutlined as UndoOutlinedIcon,
   DeleteOutline as DeleteOutlineIcon,
-  RemoveOutlined as RemoveOutlinedIcon,
 } from '@material-ui/icons';
 import ClassNames from 'classnames';
 import Color from 'color';
@@ -183,16 +182,13 @@ const Row: FC<{
         removedState={fieldRemovedState}
         onToggleRemove={onToggleRemoveHandler}
       >
-        {/* TODO implement removed state */}
-        {selected && (
-          <FieldEditor
-            field={field}
-            description={description}
-            currentJsonTypes={[...jsonTypes]}
-            onChangeType={onChangeTypeHandler}
-            onChangeDescription={onChangeDescriptionHandler}
-          />
-        )}
+        <FieldEditor
+          field={field}
+          description={description}
+          currentJsonTypes={[...jsonTypes]}
+          onChangeType={onChangeTypeHandler}
+          onChangeDescription={onChangeDescriptionHandler}
+        />
       </Field>
     </div>
   );
@@ -342,6 +338,8 @@ const Field: FC<{
     [removedState, onToggleRemove]
   );
 
+  const isRemoved = removedState !== 'not_removed';
+
   return (
     <div
       className={ClassNames(classes.container, {
@@ -357,14 +355,18 @@ const Field: FC<{
           backgroundImage: `url("${indentsImageUrl(depth - 1)}")`,
         }}
       >
-        <div className={classes.description}>
+        <div
+          className={ClassNames(classes.description, {
+            [classes.removed]: isRemoved,
+          })}
+        >
           <div className={classes.fieldName}>{name}</div>
           <div className={classes.typesSummary}>
             {summarizeTypes(shapes, required)}
           </div>
         </div>
         <div className={classes.controls}>
-          {selected && onToggleRemove && (
+          {selected && onToggleRemove && removedState !== 'removed' && (
             <IconButton
               className={classes.removeControl}
               size="small"
@@ -372,17 +374,24 @@ const Field: FC<{
             >
               {removedState === 'not_removed' ? (
                 <DeleteOutlineIcon />
-              ) : removedState === 'root_removed' ? (
-                <UndoOutlinedIcon />
               ) : (
-                <RemoveOutlinedIcon />
+                <UndoOutlinedIcon />
               )}
             </IconButton>
           )}
         </div>
       </header>
-
-      <div className={classes.stage}>{children}</div>
+      {selected && (
+        <div className={classes.stage}>
+          {isRemoved ? (
+            <div className={classes.fieldRemovedInfo}>
+              Field is staged to be removed
+            </div>
+          ) : (
+            <>{children}</>
+          )}
+        </div>
+      )}
     </div>
   );
 };
@@ -517,6 +526,17 @@ const useFieldStyles = makeStyles((theme) => ({
         .hsl()
         .string(),
     },
+  },
+
+  removed: {
+    textDecoration: 'line-through',
+  },
+
+  fieldRemovedInfo: {
+    fontFamily: Theme.FontFamily,
+    fontSize: theme.typography.fontSize - 1,
+    fontWeight: theme.typography.fontWeightLight,
+    padding: theme.spacing(3, 2),
   },
 
   fieldName: {
