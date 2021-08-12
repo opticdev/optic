@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { ComponentProps, FC, useCallback, useState } from 'react';
 import {
   makeStyles,
   lighten,
@@ -12,22 +12,32 @@ import ClassNames from 'classnames';
 import Color from 'color';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 
+import { setEquals } from '<src>/lib/set-ops';
 import { IFieldDetails, IShapeRenderer } from '<src>/types';
 import { JsonType } from '@useoptic/optic-domain';
 import * as Theme from '<src>/styles/theme';
-
-type onChangeDescription = (
-  fieldId: string,
-  description: string,
-  isDescriptionDifferent: boolean
-) => void;
 
 export const ShapeEditor: FC<{
   fields: IFieldDetails[];
   selectedFieldId?: string | null;
   setSelectedField?: (fieldId: string | null) => void;
-  onChangeDescription?: onChangeDescription;
-}> = ({ fields, selectedFieldId, setSelectedField, onChangeDescription }) => {
+  onChangeDescription?: (
+    fieldId: string,
+    description: string,
+    isDescriptionDifferent: boolean
+  ) => void;
+  onChangeFieldType?: (
+    fieldId: string,
+    requestedFieldTypes: Set<JsonType>,
+    isFieldTypeDifferent: boolean
+  ) => void;
+}> = ({
+  fields,
+  selectedFieldId,
+  setSelectedField,
+  onChangeDescription,
+  onChangeFieldType,
+}) => {
   const classes = useStyles();
 
   const onFieldSelect = (fieldId: string) => () => {
@@ -42,12 +52,13 @@ export const ShapeEditor: FC<{
       {fields.length > 0 && (
         <ul className={classes.rowsList}>
           {fields.map((field) => (
-            <li className={classes.rowListItem}>
+            <li key={field.fieldId} className={classes.rowListItem}>
               <Row
                 field={field}
                 selected={selectedFieldId === field.fieldId}
                 onChangeDescription={onChangeDescription}
                 onSelect={onFieldSelect(field.fieldId)}
+                onChangeFieldType={onChangeFieldType}
               />
             </li>
           ))}
@@ -57,28 +68,62 @@ export const ShapeEditor: FC<{
   );
 };
 
+const editableTypes: Set<JsonType> = new Set([
+  JsonType.UNDEFINED,
+  JsonType.NULL,
+]);
+const getInitialTypes = (fields: IFieldDetails): Set<JsonType> => {
+  const initialTypes: Set<JsonType> = new Set();
+  for (const type of editableTypes) {
+    if (type === JsonType.UNDEFINED && !fields.required) {
+      initialTypes.add(type);
+    } else if (fields.shapes.find((shape) => shape.jsonType === type)) {
+      initialTypes.add(type);
+    }
+  }
+  return initialTypes;
+};
+
 const Row: FC<{
   field: IFieldDetails;
   selected: boolean;
 
-  onChangeDescription?: onChangeDescription;
+  onChangeDescription?: ComponentProps<
+    typeof ShapeEditor
+  >['onChangeDescription'];
+  onChangeFieldType?: ComponentProps<typeof ShapeEditor>['onChangeFieldType'];
   onSelect?: () => void;
 }> = function ShapeEditorRow({
   field,
   selected,
   onChangeDescription,
+  onChangeFieldType,
   onSelect,
 }) {
   const classes = useStyles();
   const initialDescription = field.contribution['value'];
+  const initialFieldTypes = getInitialTypes(field);
   const [description, setDescription] = useState(initialDescription);
+  const [jsonTypes, setJsonTypes] = useState<Set<JsonType>>(initialFieldTypes);
 
-  // TODO hook this up
-  const onChangeType = useCallback(
+  const onChangeTypeHandler = useCallback(
     (type: JsonType, enabled: boolean) => {
-      console.log('changed type for field', type, enabled, field.fieldId);
+      const newJsonTypes = new Set(jsonTypes);
+      if (enabled) {
+        newJsonTypes.add(type);
+      } else {
+        newJsonTypes.delete(type);
+      }
+      setJsonTypes(newJsonTypes);
+
+      onChangeFieldType &&
+        onChangeFieldType(
+          field.fieldId,
+          newJsonTypes,
+          !setEquals(initialFieldTypes, newJsonTypes)
+        );
     },
-    [field.fieldId]
+    [field.fieldId, onChangeFieldType, initialFieldTypes, jsonTypes]
   );
 
   const onChangeDescriptionHandler = useCallback(
@@ -109,7 +154,8 @@ const Row: FC<{
           <FieldEditor
             field={field}
             description={description}
-            onChangeType={onChangeType}
+            currentJsonTypes={[...jsonTypes]}
+            onChangeType={onChangeTypeHandler}
             onChangeDescription={onChangeDescriptionHandler}
           />
         )}
@@ -121,22 +167,21 @@ const Row: FC<{
 const FieldEditor: FC<{
   field: IFieldDetails;
   description: string;
+  currentJsonTypes: JsonType[];
 
   onChangeDescription?: (description: string) => void;
   onChangeType?: (type: JsonType, enabled: boolean) => void;
 }> = function ShapeEditorFieldEditor({
   field,
   description,
+  currentJsonTypes,
   onChangeDescription,
   onChangeType,
 }) {
   const classes = useStyles();
-
-  let currentJsonTypes = field.shapes.map(({ jsonType }) => jsonType);
-  if (!field.required) currentJsonTypes.push(JsonType.UNDEFINED);
-  let nonEditableTypes = currentJsonTypes.filter(
-    (jsonType) => jsonType !== JsonType.UNDEFINED && jsonType !== JsonType.NULL
-  );
+  const nonEditableTypes = field.shapes
+    .map((shape) => shape.jsonType)
+    .filter((jsonType) => !editableTypes.has(jsonType));
 
   let onClickTypeButton = useCallback(
     (type: JsonType) => (e: React.MouseEvent) => {
@@ -156,32 +201,21 @@ const FieldEditor: FC<{
   return (
     <div className={classes.editor}>
       <ButtonGroup className={classes.typeSelector}>
-        <Button
-          disableElevation
-          variant={
-            currentJsonTypes.includes(JsonType.UNDEFINED)
-              ? 'contained'
-              : 'outlined'
-          }
-          startIcon={
-            currentJsonTypes.includes(JsonType.UNDEFINED) ? <CheckIcon /> : null
-          }
-          onClick={onClickTypeButton(JsonType.UNDEFINED)}
-        >
-          Optional
-        </Button>
-        <Button
-          disableElevation
-          variant={
-            currentJsonTypes.includes(JsonType.NULL) ? 'contained' : 'outlined'
-          }
-          startIcon={
-            currentJsonTypes.includes(JsonType.NULL) ? <CheckIcon /> : null
-          }
-          onClick={onClickTypeButton(JsonType.NULL)}
-        >
-          Null
-        </Button>
+        {[...editableTypes].map((editableType) => (
+          <Button
+            key={editableType}
+            disableElevation
+            variant={
+              currentJsonTypes.includes(editableType) ? 'contained' : 'outlined'
+            }
+            startIcon={
+              currentJsonTypes.includes(editableType) ? <CheckIcon /> : null
+            }
+            onClick={onClickTypeButton(editableType)}
+          >
+            {editableType === JsonType.UNDEFINED ? 'Optional' : editableType}
+          </Button>
+        ))}
 
         {nonEditableTypes.map((jsonType) => (
           <Button
@@ -307,7 +341,7 @@ const Field: FC<{
 function summarizeTypes(shapes: IShapeRenderer[], required: boolean) {
   const optionalText = required ? '' : ' (optional)';
   let components = shapes.map(({ jsonType }: { jsonType: JsonType }) => (
-    <span style={{ color: Theme.jsonTypeColors[jsonType] }}>
+    <span key={jsonType} style={{ color: Theme.jsonTypeColors[jsonType] }}>
       {jsonType.toString().toLowerCase()}
     </span>
   ));
@@ -322,7 +356,7 @@ function summarizeTypes(shapes: IShapeRenderer[], required: boolean) {
     return (
       <>
         {components.map((component, i) => (
-          <span key={i}>{component},</span>
+          <span key={component.key}>{component},</span>
         ))}{' '}
         or {last} {optionalText}
       </>

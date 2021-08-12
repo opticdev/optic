@@ -105,6 +105,33 @@ export const EndpointRootPage: FC<
   const unremoveEndpoint = () =>
     dispatch(documentationEditActions.unremoveEndpoint({ method, pathId }));
 
+  const onChangeFieldType = useCallback(
+    (
+      fieldId: string,
+      requestedFieldTypes: Set<JsonType>,
+      isFieldTypeDifferent: boolean
+    ) => {
+      if (isFieldTypeDifferent) {
+        dispatch(
+          documentationEditActions.addFieldEdit({
+            fieldId,
+            options: {
+              isOptional: requestedFieldTypes.has(JsonType.UNDEFINED),
+              isNullable: requestedFieldTypes.has(JsonType.NULL),
+            },
+          })
+        );
+      } else {
+        dispatch(
+          documentationEditActions.removeFieldEdit({
+            fieldId,
+          })
+        );
+      }
+    },
+    [dispatch]
+  );
+
   const onFieldDescriptionChanged = useCallback(
     (fieldId: string, description: string, isDescriptionDifferent: boolean) => {
       if (isDescriptionDifferent) {
@@ -302,49 +329,52 @@ export const EndpointRootPage: FC<
               {(shapes, fields) => (
                 <div className={classes.bodyDetails}>
                   <div>
-                    <ContributionsList
-                      renderField={(field) => {
-                        let isArray = field.shapes.findIndex(
-                          (choice) => choice.jsonType === JsonType.ARRAY
-                        );
+                    {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !== 'true' ||
+                    !isEditing ? (
+                      <ContributionsList
+                        renderField={(field) => {
+                          let isArray = field.shapes.findIndex(
+                            (choice) => choice.jsonType === JsonType.ARRAY
+                          );
 
-                        if (isArray > -1) {
-                          if (field.shapes.length > 1) {
-                            field.shapes.splice(isArray, 1);
-                          } else {
-                            field.shapes = field.shapes[
-                              isArray
-                            ].asArray!.shapeChoices;
-                          }
-                        }
-
-                        return process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
-                          'true' || !isEditing ? (
-                          <DocFieldContribution
-                            key={
-                              field.contribution.id +
-                              field.contribution.contributionKey
+                          if (isArray > -1) {
+                            if (field.shapes.length > 1) {
+                              field.shapes.splice(isArray, 1);
+                            } else {
+                              field.shapes = field.shapes[
+                                isArray
+                              ].asArray!.shapeChoices;
                             }
-                            endpoint={{
-                              pathId,
-                              method,
-                            }}
-                            name={field.name}
-                            shapes={field.shapes}
-                            depth={field.depth}
-                            id={field.contribution.id}
-                            initialValue={field.contribution.value}
-                            required={field.required}
-                          />
-                        ) : (
-                          <ShapeEditor
-                            fields={fields}
-                            onChangeDescription={onFieldDescriptionChanged}
-                          />
-                        );
-                      }}
-                      fieldDetails={fields}
-                    />
+                          }
+
+                          return (
+                            <DocFieldContribution
+                              key={
+                                field.contribution.id +
+                                field.contribution.contributionKey
+                              }
+                              endpoint={{
+                                pathId,
+                                method,
+                              }}
+                              name={field.name}
+                              shapes={field.shapes}
+                              depth={field.depth}
+                              id={field.contribution.id}
+                              initialValue={field.contribution.value}
+                              required={field.required}
+                            />
+                          );
+                        }}
+                        fieldDetails={fields}
+                      />
+                    ) : (
+                      <ShapeEditor
+                        fields={fields}
+                        onChangeDescription={onFieldDescriptionChanged}
+                        onChangeFieldType={onChangeFieldType}
+                      />
+                    )}
                   </div>
                   <div className={classes.panel}>
                     {isEditing ? (
@@ -437,6 +467,7 @@ export const EndpointRootPage: FC<
                                     onChangeDescription={
                                       onFieldDescriptionChanged
                                     }
+                                    onChangeFieldType={onChangeFieldType}
                                   />
                                 )}
                               </div>
@@ -547,6 +578,7 @@ export const EndpointRootPage: FC<
                                       onChangeDescription={
                                         onFieldDescriptionChanged
                                       }
+                                      onChangeFieldType={onChangeFieldType}
                                     />
                                   )}
                                 </div>
