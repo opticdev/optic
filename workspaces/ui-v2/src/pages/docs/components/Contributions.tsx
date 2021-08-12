@@ -1,5 +1,4 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
 import { IShapeRenderer } from '<src>/types';
 import Helmet from 'react-helmet';
 import {
@@ -29,54 +28,6 @@ export type DocsFieldOrParameterContributionProps = {
   required: boolean;
   setSelectedField?: (selectedFieldId: string | null) => void;
 };
-
-export function DocFieldContribution(
-  props: DocsFieldOrParameterContributionProps
-) {
-  const { setSelectedField } = props;
-  const isEditing = useAppSelector(
-    (state) => state.documentationEdits.isEditing
-  );
-  const fieldId = props.id;
-  const classes = useStyles();
-  const isFieldRemoved = useAppSelector(selectors.isFieldRemoved(fieldId));
-  const isFieldRemovedRoot = useAppSelector(
-    selectors.isFieldRemovedRoot(props.id)
-  );
-  const dispatch = useAppDispatch();
-  const removeField = () =>
-    dispatch(documentationEditActions.removeField({ fieldId }));
-  const unremoveField = () =>
-    dispatch(documentationEditActions.unremoveField({ fieldId }));
-
-  return process.env.REACT_APP_FF_FIELD_LEVEL_EDITS === 'true' ? (
-    <div className={classes.fieldContainer}>
-      <div className={classes.contributionContainer}>
-        <DocsFieldOrParameterContribution
-          {...props}
-          onFocus={() => {
-            setSelectedField && setSelectedField(fieldId);
-          }}
-          onBlur={() => {
-            setSelectedField && setSelectedField(null);
-          }}
-        />
-      </div>
-      {isEditing &&
-        (isFieldRemoved ? (
-          isFieldRemovedRoot ? (
-            <div onClick={unremoveField}>unremove</div>
-          ) : (
-            <div>is removed</div>
-          )
-        ) : (
-          <div onClick={removeField}>remove</div>
-        ))}
-    </div>
-  ) : (
-    <DocsFieldOrParameterContribution {...props} />
-  );
-}
 
 export function DocsFieldOrParameterContribution({
   name,
@@ -287,12 +238,3 @@ export function EndpointNameMiniContribution({
     />
   );
 }
-
-const useStyles = makeStyles((theme) => ({
-  fieldContainer: {
-    display: 'flex',
-  },
-  contributionContainer: {
-    flexGrow: 1,
-  },
-}));
