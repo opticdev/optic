@@ -84,12 +84,13 @@ const Row: FC<{
   const onChangeDescriptionHandler = useCallback(
     (description: string) => {
       setDescription(description);
-      if (onChangeDescription)
+      if (onChangeDescription) {
         onChangeDescription(
           field.fieldId,
           description,
           description !== initialDescription
         );
+      }
     },
     [field.fieldId, onChangeDescription, initialDescription]
   );
@@ -336,7 +337,6 @@ function indentsImageUrl(depth: number = 0) {
   let range = Array(Math.max(depth, 0))
     .fill(0)
     .map((val, n) => n);
-  console.log(range);
   let width = INDENT_WIDTH * depth;
   return (
     'data:image/svg+xml,' +

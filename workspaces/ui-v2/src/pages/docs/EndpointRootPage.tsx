@@ -116,6 +116,13 @@ export const EndpointRootPage: FC<
             endpointId: endpointId,
           })
         );
+      } else {
+        dispatch(
+          documentationEditActions.removeContribution({
+            id: fieldId,
+            contributionKey: 'description',
+          })
+        );
       }
     },
     [endpointId, dispatch]
