@@ -8,7 +8,7 @@ type ShapeRendererProps = {
   shapes: IShapeRenderer[];
   selectedFieldId?: string | null;
 
-  selectableFields?: boolean;
+  fieldsAreSelectable?: boolean;
   setSelectedField?: (fieldId: string) => void;
 };
 
@@ -17,14 +17,14 @@ export const ShapeRenderer: FC<ShapeRendererProps> = ({
   shapes,
   selectedFieldId,
 
-  selectableFields,
+  fieldsAreSelectable,
   setSelectedField,
 }) => {
   return (
     <ShapeRenderStore
       showExamples={showExamples}
       selectedFieldId={selectedFieldId}
-      selectableFields={selectableFields}
+      fieldsAreSelectable={fieldsAreSelectable}
       setSelectedField={setSelectedField}
     >
       {shapes.length > 1 ? (

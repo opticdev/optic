@@ -6,7 +6,7 @@ import { OneOfTabsProps } from './OneOfTabs';
 type IShapeRenderContext = {
   selectedFieldId?: string | null;
   showExamples: boolean;
-  selectableFields: boolean;
+  fieldsAreSelectable: boolean;
   getChoice: (branch: OneOfTabsProps) => string;
   updateChoice: (parentShapeId: string, branchId: string) => void;
   selectField: (fieldId: string) => void;
@@ -20,7 +20,7 @@ type ShapeRenderContextProps = {
   children: React.ReactNode;
   showExamples: boolean;
   selectedFieldId?: string | null;
-  selectableFields?: boolean;
+  fieldsAreSelectable?: boolean;
   setSelectedField?: (fieldId: string) => void;
 };
 
@@ -28,7 +28,7 @@ export const ShapeRenderStore = ({
   children,
   showExamples,
   selectedFieldId,
-  selectableFields,
+  fieldsAreSelectable,
   setSelectedField,
 }: ShapeRenderContextProps) => {
   const [selectedOneOfChoices, updateSelectedOneOfChoices]: [
@@ -55,7 +55,7 @@ export const ShapeRenderStore = ({
     (fieldId) => {
       if (setSelectedField) setSelectedField(fieldId);
     },
-    [selectedFieldId, setSelectedField]
+    [setSelectedField]
   );
 
   return (
@@ -66,7 +66,7 @@ export const ShapeRenderStore = ({
         updateChoice,
         selectedFieldId,
         selectField,
-        selectableFields: !!selectableFields,
+        fieldsAreSelectable: !!fieldsAreSelectable,
       }}
     >
       <DepthStore depth={0}>{children}</DepthStore>

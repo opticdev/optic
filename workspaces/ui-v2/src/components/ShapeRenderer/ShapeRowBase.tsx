@@ -83,7 +83,7 @@ export const RenderField = ({
   const {
     getChoice,
     selectedFieldId,
-    selectableFields,
+    fieldsAreSelectable,
     selectField,
   } = useShapeRenderContext();
 
@@ -97,7 +97,7 @@ export const RenderField = ({
         <ShapeRowBase
           depth={depth}
           changes={changes}
-          clickable={selectableFields}
+          clickable={fieldsAreSelectable}
           focused={!selectedFieldId || fieldId === selectedFieldId}
           data-fieldid={fieldId}
           onClick={onClickRow}
@@ -117,7 +117,7 @@ export const RenderField = ({
       <ShapeRowBase
         depth={depth}
         changes={changes}
-        clickable={selectableFields}
+        clickable={fieldsAreSelectable}
         focused={!selectedFieldId || fieldId === selectedFieldId}
         data-fieldid={fieldId}
         onClick={onClickRow}
@@ -144,7 +144,7 @@ export const RenderField = ({
         <ShapeRowBase
           depth={depth}
           changes={changes}
-          clickable={selectableFields}
+          clickable={fieldsAreSelectable}
           focused={!selectedFieldId || fieldId === selectedFieldId}
           data-fieldid={fieldId}
           onClick={onClickRow}

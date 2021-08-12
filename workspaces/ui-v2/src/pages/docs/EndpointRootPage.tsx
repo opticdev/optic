@@ -529,7 +529,7 @@ export const EndpointRootPage: FC<
                                           shapes={shapes}
                                           location={response.body!.contentType}
                                           selectedFieldId={selectedFieldId}
-                                          selectableFields={true}
+                                          fieldsAreSelectable={true}
                                           setSelectedField={setSelectedFieldId}
                                         />
                                       )}
