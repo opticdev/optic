@@ -9,6 +9,10 @@ import * as SupportLinks from '<src>/constants/SupportLinks';
 const packageJson = require('../../../package.json');
 const uiPackageVersion = packageJson.version;
 
+// TODO remove this and make sure the UI gets the latest side channel version attached when being built
+const trimPrereleaseVersions = (version: string): string =>
+  version.split('-')[0];
+
 export const EnsureDaemonRunning: FC = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -19,12 +23,17 @@ export const EnsureDaemonRunning: FC = ({ children }) => {
       const cliClient = new Client('/api');
       try {
         const { version } = await cliClient.daemonStatus();
-        if (version !== uiPackageVersion) {
+        if (
+          trimPrereleaseVersions(version) !==
+          trimPrereleaseVersions(uiPackageVersion)
+        ) {
           Sentry.captureEvent({
             message: 'Mismatched UI and daemon versions',
             extra: {
               uiVersion: uiPackageVersion,
               daemonVersion: version,
+              trimmedUiVersion: trimPrereleaseVersions(uiPackageVersion),
+              trimmedDaemonVersion: trimPrereleaseVersions(version),
             },
           });
           setHasMismatchedVersions(true);
