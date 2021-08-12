@@ -296,7 +296,7 @@ export const EndpointRootPage: FC<
                         }
 
                         return process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
-                          'true' ? (
+                          'true' || !isEditing ? (
                           <DocFieldContribution
                             key={
                               field.contribution.id +
@@ -380,7 +380,7 @@ export const EndpointRootPage: FC<
                             <div className={classes.bodyDetails}>
                               <div>
                                 {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
-                                'true' ? (
+                                  'true' || !isEditing ? (
                                   <ContributionsList
                                     renderField={(field) => (
                                       <DocFieldContribution
@@ -429,7 +429,6 @@ export const EndpointRootPage: FC<
                                   <HttpBodyPanel
                                     shapes={shapes}
                                     location={request.body!.contentType}
-                                    selectedFieldId={selectedFieldId}
                                   />
                                 )}
                               </div>
@@ -486,7 +485,7 @@ export const EndpointRootPage: FC<
                                 <div>
                                   {process.env
                                     .REACT_APP_FF_FIELD_LEVEL_EDITS !==
-                                  'true' ? (
+                                    'true' || !isEditing ? (
                                     <ContributionsList
                                       renderField={(field) => (
                                         <DocFieldContribution
@@ -537,7 +536,6 @@ export const EndpointRootPage: FC<
                                     <HttpBodyPanel
                                       shapes={shapes}
                                       location={response.body!.contentType}
-                                      selectedFieldId={selectedFieldId}
                                     />
                                   )}
                                 </div>
