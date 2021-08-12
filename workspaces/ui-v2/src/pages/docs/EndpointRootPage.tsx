@@ -376,8 +376,17 @@ export const EndpointRootPage: FC<
                     >
                       {(shapes, fields) => (
                         <HighlightController>
-                          {(selectedFieldId, setSelectedFieldId) => (
-                            <div className={classes.bodyDetails}>
+                          {(
+                            selectedFieldId,
+                            setSelectedFieldId,
+                            rootElementRef
+                          ) => (
+                            <div
+                              className={classes.bodyDetails}
+                              ref={
+                                rootElementRef as React.RefObject<HTMLDivElement>
+                              }
+                            >
                               <div>
                                 {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
                                   'true' || !isEditing ? (
@@ -480,8 +489,17 @@ export const EndpointRootPage: FC<
                       >
                         {(shapes, fields) => (
                           <HighlightController>
-                            {(selectedFieldId, setSelectedFieldId) => (
-                              <div className={classes.bodyDetails}>
+                            {(
+                              selectedFieldId,
+                              setSelectedFieldId,
+                              rootElementRef
+                            ) => (
+                              <div
+                                className={classes.bodyDetails}
+                                ref={
+                                  rootElementRef as React.RefObject<HTMLDivElement>
+                                }
+                              >
                                 <div>
                                   {process.env
                                     .REACT_APP_FF_FIELD_LEVEL_EDITS !==

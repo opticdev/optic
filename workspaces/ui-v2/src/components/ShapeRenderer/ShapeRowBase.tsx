@@ -38,6 +38,7 @@ export const ShapeRowBase = ({
     (e: React.MouseEvent) => {
       if (!clickable) return;
       e.preventDefault();
+      e.stopPropagation();
       if (onClick) onClick();
     },
     [clickable, onClick]
