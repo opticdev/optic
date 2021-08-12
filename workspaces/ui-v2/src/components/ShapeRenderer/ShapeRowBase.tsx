@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { JsonType } from '@useoptic/optic-domain';
 
@@ -17,6 +18,8 @@ type ShapeRowBaseProps = {
   style?: any;
   changes?: ChangeType | null;
   focused?: boolean;
+  clickable?: boolean;
+  onClick?: () => void;
 } & React.HtmlHTMLAttributes<HTMLDivElement>;
 export const ShapeRowBase = ({
   children,
@@ -24,17 +27,31 @@ export const ShapeRowBase = ({
   style,
   changes,
   focused,
+  clickable,
+  onClick,
   ...props
 }: ShapeRowBaseProps) => {
   const classes = useStyles();
   const sharedClasses = useSharedStyles();
+
+  const onClickWrap = useCallback(
+    (e: React.MouseEvent) => {
+      if (!clickable) return;
+      e.preventDefault();
+      if (onClick) onClick();
+    },
+    [clickable, onClick]
+  );
+
   return (
     <div
       style={style}
       className={classNames(classes.rowWrap, {
         [classes.allowHover]: false,
         [classes.isFocused]: focused,
+        [classes.isClickable]: clickable,
       })}
+      onClick={onClickWrap}
     >
       <div
         {...props}
@@ -63,7 +80,16 @@ export const RenderField = ({
   const sharedClasses = useSharedStyles();
   const { depth } = useDepth();
 
-  const { getChoice, selectedFieldId } = useShapeRenderContext();
+  const {
+    getChoice,
+    selectedFieldId,
+    selectableFields,
+    selectField,
+  } = useShapeRenderContext();
+
+  const onClickRow = useCallback(() => {
+    selectField(fieldId);
+  }, [selectField, fieldId]);
 
   if (shapeChoices.length === 1) {
     return (
@@ -71,8 +97,10 @@ export const RenderField = ({
         <ShapeRowBase
           depth={depth}
           changes={changes}
+          clickable={selectableFields}
           focused={!selectedFieldId || fieldId === selectedFieldId}
           data-fieldid={fieldId}
+          onClick={onClickRow}
         >
           <span className={sharedClasses.shapeFont}>"{name}"</span>
           <span className={sharedClasses.symbolFont}>: </span>
@@ -89,8 +117,10 @@ export const RenderField = ({
       <ShapeRowBase
         depth={depth}
         changes={changes}
+        clickable={selectableFields}
         focused={!selectedFieldId || fieldId === selectedFieldId}
         data-fieldid={fieldId}
+        onClick={onClickRow}
       >
         <span className={sharedClasses.shapeFont}>"{name}"</span>
         <span className={sharedClasses.symbolFont}>: </span>
@@ -114,8 +144,10 @@ export const RenderField = ({
         <ShapeRowBase
           depth={depth}
           changes={changes}
+          clickable={selectableFields}
           focused={!selectedFieldId || fieldId === selectedFieldId}
           data-fieldid={fieldId}
+          onClick={onClickRow}
         >
           <span className={sharedClasses.shapeFont}>"{name}"</span>
           <span className={sharedClasses.symbolFont}>: </span>
@@ -296,10 +328,6 @@ export function OneOfRender({
 const useStyles = makeStyles((theme) => ({
   rowWrap: {
     display: 'flex',
-
-    '&:not($isFocused)': {
-      opacity: 0.3,
-    },
   },
   allowHover: {
     '&:hover $row': {
@@ -311,6 +339,20 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'flex-start',
     minHeight: 17,
+
+    '$rowWrap:not($isFocused) &': {
+      opacity: 0.3,
+    },
+
+    '$isClickable &:hover': {
+      backgroundColor: '#e4ebf1',
+      cursor: 'pointer',
+    },
+
+    '$isClickable:not($isFocused) &:hover': {
+      opacity: 0.6,
+    },
   },
+  isClickable: {},
   isFocused: {},
 }));

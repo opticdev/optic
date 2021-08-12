@@ -8,12 +8,18 @@ type HttpBodyPanelProps = {
   shapes: IShapeRenderer[];
   location: string;
   selectedFieldId?: string | null;
+
+  selectableFields?: boolean;
+  setSelectedField?: (fieldId: string) => void;
 };
 
 export const HttpBodyPanel: FC<HttpBodyPanelProps> = ({
   shapes,
   location,
   selectedFieldId,
+
+  selectableFields,
+  setSelectedField,
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -42,6 +48,8 @@ export const HttpBodyPanel: FC<HttpBodyPanelProps> = ({
         showExamples={false}
         shapes={shapes}
         selectedFieldId={selectedFieldId}
+        selectableFields={selectableFields}
+        setSelectedField={setSelectedField}
       />
     </Panel>
   );

@@ -7,17 +7,25 @@ type ShapeRendererProps = {
   showExamples: boolean;
   shapes: IShapeRenderer[];
   selectedFieldId?: string | null;
+
+  selectableFields?: boolean;
+  setSelectedField?: (fieldId: string) => void;
 };
 
 export const ShapeRenderer: FC<ShapeRendererProps> = ({
   showExamples,
   shapes,
   selectedFieldId,
+
+  selectableFields,
+  setSelectedField,
 }) => {
   return (
     <ShapeRenderStore
       showExamples={showExamples}
       selectedFieldId={selectedFieldId}
+      selectableFields={selectableFields}
+      setSelectedField={setSelectedField}
     >
       {shapes.length > 1 ? (
         <OneOfRender shapes={shapes} parentShapeId={'root'} />

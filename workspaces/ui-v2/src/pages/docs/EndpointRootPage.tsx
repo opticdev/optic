@@ -529,6 +529,8 @@ export const EndpointRootPage: FC<
                                           shapes={shapes}
                                           location={response.body!.contentType}
                                           selectedFieldId={selectedFieldId}
+                                          selectableFields={true}
+                                          setSelectedField={setSelectedFieldId}
                                         />
                                       )}
                                     </SimulatedBody>
