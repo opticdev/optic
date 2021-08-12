@@ -4,7 +4,7 @@ import { IContribution } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 import { JsonType } from '@useoptic/optic-domain';
 
-const memoizedGetAllRemovedFields = createSelector<
+export const memoizedGetAllRemovedFields = createSelector<
   RootState,
   RootState['shapes'],
   string[],

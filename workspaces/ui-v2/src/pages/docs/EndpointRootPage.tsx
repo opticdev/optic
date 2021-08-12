@@ -31,7 +31,6 @@ import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
   EndpointTOC,
-  DocFieldContribution,
   DocsFieldOrParameterContribution,
   EndpointNameContribution,
   DocsPageAccessoryNavigation,
@@ -71,6 +70,12 @@ export const EndpointRootPage: FC<
   const thisEndpoint = useAppSelector(
     selectors.getEndpoint({ pathId, method })
   );
+  const userRemovedFields = useAppSelector(
+    (state) => state.documentationEdits.fields.removed
+  );
+  const allRemovedFields = useAppSelector(
+    selectors.memoizedGetAllRemovedFields
+  );
 
   const isEndpointRemoved = thisEndpoint ? thisEndpoint.isRemoved : false;
 
@@ -104,6 +109,30 @@ export const EndpointRootPage: FC<
 
   const unremoveEndpoint = () =>
     dispatch(documentationEditActions.unremoveEndpoint({ method, pathId }));
+
+  const isFieldRemoved = useCallback(
+    (fieldId: string) => {
+      if (userRemovedFields.includes(fieldId)) {
+        return 'root_removed';
+      } else if (allRemovedFields.has(fieldId)) {
+        return 'removed';
+      } else {
+        return 'not_removed';
+      }
+    },
+    [userRemovedFields, allRemovedFields]
+  );
+
+  const onToggleRemovedField = useCallback(
+    (fieldId: string) => {
+      if (userRemovedFields.includes(fieldId)) {
+        dispatch(documentationEditActions.unremoveField({ fieldId }));
+      } else {
+        dispatch(documentationEditActions.removeField({ fieldId }));
+      }
+    },
+    [userRemovedFields, dispatch]
+  );
 
   const onChangeFieldType = useCallback(
     (
@@ -333,6 +362,7 @@ export const EndpointRootPage: FC<
                     !isEditing ? (
                       <ContributionsList
                         renderField={(field) => {
+                          // TODO apply this to the shapeEditor component
                           let isArray = field.shapes.findIndex(
                             (choice) => choice.jsonType === JsonType.ARRAY
                           );
@@ -348,7 +378,7 @@ export const EndpointRootPage: FC<
                           }
 
                           return (
-                            <DocFieldContribution
+                            <DocsFieldOrParameterContribution
                               key={
                                 field.contribution.id +
                                 field.contribution.contributionKey
@@ -373,6 +403,8 @@ export const EndpointRootPage: FC<
                         fields={fields}
                         onChangeDescription={onFieldDescriptionChanged}
                         onChangeFieldType={onChangeFieldType}
+                        isFieldRemoved={isFieldRemoved}
+                        onToggleRemove={onToggleRemovedField}
                       />
                     )}
                   </div>
@@ -439,7 +471,7 @@ export const EndpointRootPage: FC<
                                   'true' || !isEditing ? (
                                   <ContributionsList
                                     renderField={(field) => (
-                                      <DocFieldContribution
+                                      <DocsFieldOrParameterContribution
                                         key={
                                           field.contribution.id +
                                           field.contribution.contributionKey
@@ -468,6 +500,8 @@ export const EndpointRootPage: FC<
                                       onFieldDescriptionChanged
                                     }
                                     onChangeFieldType={onChangeFieldType}
+                                    isFieldRemoved={isFieldRemoved}
+                                    onToggleRemove={onToggleRemovedField}
                                   />
                                 )}
                               </div>
@@ -482,6 +516,8 @@ export const EndpointRootPage: FC<
                                         shapes={shapes}
                                         location={request.body!.contentType}
                                         selectedFieldId={selectedFieldId}
+                                        fieldsAreSelectable={true}
+                                        setSelectedField={setSelectedFieldId}
                                       />
                                     )}
                                   </SimulatedBody>
@@ -548,7 +584,7 @@ export const EndpointRootPage: FC<
                                     'true' || !isEditing ? (
                                     <ContributionsList
                                       renderField={(field) => (
-                                        <DocFieldContribution
+                                        <DocsFieldOrParameterContribution
                                           key={
                                             field.contribution.id +
                                             field.contribution.contributionKey
@@ -579,6 +615,8 @@ export const EndpointRootPage: FC<
                                         onFieldDescriptionChanged
                                       }
                                       onChangeFieldType={onChangeFieldType}
+                                      isFieldRemoved={isFieldRemoved}
+                                      onToggleRemove={onToggleRemovedField}
                                     />
                                   )}
                                 </div>

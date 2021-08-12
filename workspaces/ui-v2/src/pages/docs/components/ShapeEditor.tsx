@@ -1,4 +1,10 @@
-import React, { ComponentProps, FC, useCallback, useState } from 'react';
+import React, {
+  ComponentProps,
+  FC,
+  useCallback,
+  useState,
+  useMemo,
+} from 'react';
 import {
   makeStyles,
   lighten,
@@ -7,20 +13,28 @@ import {
   Button,
   TextField,
 } from '@material-ui/core';
-import { Check as CheckIcon } from '@material-ui/icons';
+import {
+  Check as CheckIcon,
+  UndoOutlined as UndoOutlinedIcon,
+  DeleteOutline as DeleteOutlineIcon,
+  RemoveOutlined as RemoveOutlinedIcon,
+} from '@material-ui/icons';
 import ClassNames from 'classnames';
 import Color from 'color';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 
 import { setEquals } from '<src>/lib/set-ops';
 import { IFieldDetails, IShapeRenderer } from '<src>/types';
 import { JsonType } from '@useoptic/optic-domain';
 import * as Theme from '<src>/styles/theme';
 
+type FieldRemovedStatus = 'removed' | 'root_removed' | 'not_removed';
+
 export const ShapeEditor: FC<{
   fields: IFieldDetails[];
+  isFieldRemoved?: (fieldId: string) => FieldRemovedStatus;
   selectedFieldId?: string | null;
   setSelectedField?: (fieldId: string | null) => void;
+  onToggleRemove?: (fieldId: string) => void;
   onChangeDescription?: (
     fieldId: string,
     description: string,
@@ -33,6 +47,8 @@ export const ShapeEditor: FC<{
   ) => void;
 }> = ({
   fields,
+  isFieldRemoved,
+  onToggleRemove,
   selectedFieldId,
   setSelectedField,
   onChangeDescription,
@@ -55,6 +71,8 @@ export const ShapeEditor: FC<{
             <li key={field.fieldId} className={classes.rowListItem}>
               <Row
                 field={field}
+                isFieldRemoved={isFieldRemoved}
+                onToggleRemove={onToggleRemove}
                 selected={selectedFieldId === field.fieldId}
                 onChangeDescription={onChangeDescription}
                 onSelect={onFieldSelect(field.fieldId)}
@@ -88,6 +106,8 @@ const Row: FC<{
   field: IFieldDetails;
   selected: boolean;
 
+  isFieldRemoved?: ComponentProps<typeof ShapeEditor>['isFieldRemoved'];
+  onToggleRemove?: ComponentProps<typeof ShapeEditor>['onToggleRemove'];
   onChangeDescription?: ComponentProps<
     typeof ShapeEditor
   >['onChangeDescription'];
@@ -99,12 +119,23 @@ const Row: FC<{
   onChangeDescription,
   onChangeFieldType,
   onSelect,
+  isFieldRemoved,
+  onToggleRemove,
 }) {
   const classes = useStyles();
   const initialDescription = field.contribution['value'];
   const initialFieldTypes = getInitialTypes(field);
   const [description, setDescription] = useState(initialDescription);
   const [jsonTypes, setJsonTypes] = useState<Set<JsonType>>(initialFieldTypes);
+  const fieldRemovedState = useMemo(
+    () => (isFieldRemoved ? isFieldRemoved(field.fieldId) : 'not_removed'),
+    [isFieldRemoved, field.fieldId]
+  );
+
+  const onToggleRemoveHandler = useMemo(
+    () => onToggleRemove && onToggleRemove.bind(null, field.fieldId),
+    [field.fieldId, onToggleRemove]
+  );
 
   const onChangeTypeHandler = useCallback(
     (type: JsonType, enabled: boolean) => {
@@ -149,7 +180,10 @@ const Row: FC<{
         shapes={field.shapes}
         selected={selected}
         onClickHeader={onSelect}
+        removedState={fieldRemovedState}
+        onToggleRemove={onToggleRemoveHandler}
       >
+        {/* TODO implement removed state */}
         {selected && (
           <FieldEditor
             field={field}
@@ -272,7 +306,9 @@ const Field: FC<{
   required: boolean;
   selected: boolean;
   shapes: IShapeRenderer[];
+  removedState: FieldRemovedStatus;
 
+  onToggleRemove?: () => void;
   onClickHeader?: () => void;
 }> = function ShapeEditorField({
   name,
@@ -282,6 +318,8 @@ const Field: FC<{
   children,
   selected,
   onClickHeader,
+  removedState,
+  onToggleRemove,
 }) {
   const classes = useFieldStyles();
 
@@ -293,11 +331,16 @@ const Field: FC<{
     [onClickHeader]
   );
 
-  const onClickRemove = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log('clicked remove');
-  }, []);
+  const onClickRemove = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (removedState !== 'removed' && onToggleRemove) {
+        onToggleRemove();
+      }
+    },
+    [removedState, onToggleRemove]
+  );
 
   return (
     <div
@@ -321,13 +364,19 @@ const Field: FC<{
           </div>
         </div>
         <div className={classes.controls}>
-          {selected && (
+          {selected && onToggleRemove && (
             <IconButton
               className={classes.removeControl}
               size="small"
               onClick={onClickRemove}
             >
-              <DeleteOutlineIcon />
+              {removedState === 'not_removed' ? (
+                <DeleteOutlineIcon />
+              ) : removedState === 'root_removed' ? (
+                <UndoOutlinedIcon />
+              ) : (
+                <RemoveOutlinedIcon />
+              )}
             </IconButton>
           )}
         </div>
