@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import {
   makeStyles,
   lighten,
@@ -16,19 +16,19 @@ import { IFieldDetails, IShapeRenderer } from '<src>/types';
 import { JsonType } from '@useoptic/optic-domain';
 import * as Theme from '<src>/styles/theme';
 
+type onChangeDescription = (
+  fieldId: string,
+  description: string,
+  isDescriptionDifferent: boolean
+) => void;
+
 export const ShapeEditor: FC<{
   fields: IFieldDetails[];
   selectedFieldId?: string | null;
   setSelectedField?: (fieldId: string | null) => void;
-}> = ({ fields, selectedFieldId, setSelectedField }) => {
+  onChangeDescription?: onChangeDescription;
+}> = ({ fields, selectedFieldId, setSelectedField, onChangeDescription }) => {
   const classes = useStyles();
-
-  const onChangeFieldDescription = useCallback(
-    (fieldId: string, description: string) => {
-      console.log('description changed for field', fieldId, description);
-    },
-    []
-  );
 
   const onFieldSelect = (fieldId: string) => () => {
     if (setSelectedField) {
@@ -45,9 +45,8 @@ export const ShapeEditor: FC<{
             <li className={classes.rowListItem}>
               <Row
                 field={field}
-                description={''} // TODO FLEB: wire me in
                 selected={selectedFieldId === field.fieldId}
-                onChangeDescription={onChangeFieldDescription}
+                onChangeDescription={onChangeDescription}
                 onSelect={onFieldSelect(field.fieldId)}
               />
             </li>
@@ -60,20 +59,21 @@ export const ShapeEditor: FC<{
 
 const Row: FC<{
   field: IFieldDetails;
-  description: string;
   selected: boolean;
 
-  onChangeDescription?: (fieldId: string, description: string) => void;
+  onChangeDescription?: onChangeDescription;
   onSelect?: () => void;
 }> = function ShapeEditorRow({
   field,
-  description,
   selected,
   onChangeDescription,
   onSelect,
 }) {
   const classes = useStyles();
+  const initialDescription = field.contribution['value'];
+  const [description, setDescription] = useState(initialDescription);
 
+  // TODO hook this up
   const onChangeType = useCallback(
     (type: JsonType, enabled: boolean) => {
       console.log('changed type for field', type, enabled, field.fieldId);
@@ -83,9 +83,15 @@ const Row: FC<{
 
   const onChangeDescriptionHandler = useCallback(
     (description: string) => {
-      if (onChangeDescription) onChangeDescription(field.fieldId, description);
+      setDescription(description);
+      if (onChangeDescription)
+        onChangeDescription(
+          field.fieldId,
+          description,
+          description !== initialDescription
+        );
     },
-    [field.fieldId, onChangeDescription]
+    [field.fieldId, onChangeDescription, initialDescription]
   );
 
   return (
@@ -189,7 +195,7 @@ const FieldEditor: FC<{
       </ButtonGroup>
 
       <TextField
-        defaultValue={description}
+        value={description}
         label="Field description"
         placeholder={`What is ${field.name}? How is it used?`}
         variant="outlined"

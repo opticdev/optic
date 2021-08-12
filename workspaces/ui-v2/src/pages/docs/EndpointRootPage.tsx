@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Button, LinearProgress, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
@@ -104,6 +104,22 @@ export const EndpointRootPage: FC<
 
   const unremoveEndpoint = () =>
     dispatch(documentationEditActions.unremoveEndpoint({ method, pathId }));
+
+  const onFieldDescriptionChanged = useCallback(
+    (fieldId: string, description: string, isDescriptionDifferent: boolean) => {
+      if (isDescriptionDifferent) {
+        dispatch(
+          documentationEditActions.addContribution({
+            id: fieldId,
+            contributionKey: 'description',
+            value: description,
+            endpointId: endpointId,
+          })
+        );
+      }
+    },
+    [endpointId, dispatch]
+  );
 
   const classes = useStyles();
 
@@ -314,7 +330,10 @@ export const EndpointRootPage: FC<
                             required={field.required}
                           />
                         ) : (
-                          <ShapeEditor fields={fields} />
+                          <ShapeEditor
+                            fields={fields}
+                            onChangeDescription={onFieldDescriptionChanged}
+                          />
                         );
                       }}
                       fieldDetails={fields}
@@ -408,6 +427,9 @@ export const EndpointRootPage: FC<
                                     fields={fields}
                                     selectedFieldId={selectedFieldId}
                                     setSelectedField={setSelectedFieldId}
+                                    onChangeDescription={
+                                      onFieldDescriptionChanged
+                                    }
                                   />
                                 )}
                               </div>
@@ -515,6 +537,9 @@ export const EndpointRootPage: FC<
                                       fields={fields}
                                       selectedFieldId={selectedFieldId}
                                       setSelectedField={setSelectedFieldId}
+                                      onChangeDescription={
+                                        onFieldDescriptionChanged
+                                      }
                                     />
                                   )}
                                 </div>
