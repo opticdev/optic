@@ -137,7 +137,7 @@ export default function () {
                 <Grid container spacing={4}>
                   <Grid item xs={6}>
                     <UseCaseCard
-                      link={workflows.CIGitBot.href}
+                      link={'/blog/api-lifecycle'}
                       title={workflows.CIGitBot.label}
                       description={
                         'Monitor your test, development and staging environments.API Coverage + Diff Reports help you confidently release new code.'
@@ -155,7 +155,7 @@ export default function () {
                   {/*</Grid>*/}
                   <Grid item xs={6}>
                     <UseCaseCard
-                      link={workflows.TeamDesignFirst.href}
+                      link={'/blog/api-lifecycle'}
                       title={workflows.TeamDesignFirst.label}
                       description={
                         'Optic provides an accurate API changelog in each PR. Start working API-first, have a conversation every time the API is changing'

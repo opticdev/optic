@@ -1,9 +1,9 @@
 {
   "name": "@useoptic/api-checks",
-  "version": "10.2.3",
+  "version": "10.2.4",
   "scripts": {
     "ws:build": "tsc -b --verbose",
-    "ws:clean": "rm -rf build",
+    "ws:clean": "rm -rf build && rm -f tsconfig.tsbuildinfo",
     "ws:test": "tap",
     "test": "tap"
   },
@@ -19,8 +19,8 @@
     "/.env"
   ],
   "dependencies": {
-    "@useoptic/optic-engine-wasm": "10.2.3",
-    "@useoptic/spectacle": "10.2.3"
+    "@useoptic/optic-engine-wasm": "10.2.4",
+    "@useoptic/spectacle": "10.2.4"
   },
   "devDependencies": {
     "@types/node": "^12.12.6",

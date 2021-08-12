@@ -1,9 +1,9 @@
 {
   "name": "@useoptic/spectacle-shared",
-  "version": "10.2.3",
+  "version": "10.2.4",
   "scripts": {
     "ws:build": "tsc -b --verbose",
-    "ws:clean": "rm -rf build"
+    "ws:clean": "rm -rf build && rm -f tsconfig.tsbuildinfo"
   },
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
     "/build"
   ],
   "dependencies": {
-    "@useoptic/spectacle": "10.2.3"
+    "@useoptic/spectacle": "10.2.4"
   },
   "devDependencies": {}
 }

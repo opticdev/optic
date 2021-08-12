@@ -1,10 +1,10 @@
 {
   "name": "@useoptic/cli-shared",
-  "version": "10.2.3",
+  "version": "10.2.4",
   "scripts": {
     "test": "cd test && tap tests",
     "ws:build": "tsc -b --verbose",
-    "ws:clean": "rm -rf build",
+    "ws:clean": "rm -rf build && rm -f tsconfig.tsbuildinfo",
     "ws:test": "yarn run test"
   },
   "repository": {
@@ -16,14 +16,14 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@oclif/command": "^1.6.1",
-    "@useoptic/cli-client": "10.2.3",
-    "@useoptic/cli-config": "10.2.3",
-    "@useoptic/client-utilities": "10.2.3",
-    "@useoptic/optic-domain": "10.2.3",
-    "@useoptic/optic-engine-native": "10.2.3",
-    "@useoptic/optic-engine-wasm": "10.2.3",
-    "@useoptic/saas-types": "10.2.3",
-    "@useoptic/shape-hash": "10.2.3",
+    "@useoptic/cli-client": "10.2.4",
+    "@useoptic/cli-config": "10.2.4",
+    "@useoptic/client-utilities": "10.2.4",
+    "@useoptic/optic-domain": "10.2.4",
+    "@useoptic/optic-engine-native": "10.2.4",
+    "@useoptic/optic-engine-wasm": "10.2.4",
+    "@useoptic/saas-types": "10.2.4",
+    "@useoptic/shape-hash": "10.2.4",
     "avsc": "^5.4.21",
     "aws-sdk": "^2.889.0",
     "axax": "^0.2.2",

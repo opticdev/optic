@@ -99,6 +99,7 @@ export function createFlatList(
     if (shape.asObject) {
       shape.asObject.fields.forEach((field) => {
         fieldDetails.push({
+          fieldId: field.fieldId,
           name: field.name,
           contribution: {
             id: field.fieldId,

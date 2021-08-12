@@ -16,6 +16,7 @@ import {
   HttpBodyPanel,
   HttpBodySelector,
   Panel,
+  HighlightController,
 } from '<src>/components';
 import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
 import { FontFamily, SubtleBlueBackground } from '<src>/styles';
@@ -37,6 +38,7 @@ import {
   MarkdownBodyContribution,
   DeleteEndpointConfirmationModal,
   SimulatedBody,
+  ShapeEditor,
 } from '<src>/pages/docs/components';
 import { useAnalytics } from '<src>/contexts/analytics';
 
@@ -293,7 +295,8 @@ export const EndpointRootPage: FC<
                           }
                         }
 
-                        return (
+                        return process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
+                          'true' ? (
                           <DocFieldContribution
                             key={
                               field.contribution.id +
@@ -310,6 +313,8 @@ export const EndpointRootPage: FC<
                             initialValue={field.contribution.value}
                             required={field.required}
                           />
+                        ) : (
+                          <ShapeEditor fields={fields} />
                         );
                       }}
                       fieldDetails={fields}
@@ -370,51 +375,67 @@ export const EndpointRootPage: FC<
                       endpointId={endpointId}
                     >
                       {(shapes, fields) => (
-                        <div className={classes.bodyDetails}>
-                          <div>
-                            <ContributionsList
-                              renderField={(field) => (
-                                <DocFieldContribution
-                                  key={
-                                    field.contribution.id +
-                                    field.contribution.contributionKey
-                                  }
-                                  endpoint={{
-                                    pathId,
-                                    method,
-                                  }}
-                                  name={field.name}
-                                  shapes={field.shapes}
-                                  depth={field.depth}
-                                  id={field.contribution.id}
-                                  initialValue={field.contribution.value}
-                                  required={field.required}
-                                />
-                              )}
-                              fieldDetails={fields}
-                            />
-                          </div>
-                          <div className={classes.panel}>
-                            {isEditing ? (
-                              <SimulatedBody
-                                rootShapeId={request.body!.rootShapeId}
-                                endpointId={endpointId}
-                              >
-                                {(shapes) => (
+                        <HighlightController>
+                          {(selectedFieldId, setSelectedFieldId) => (
+                            <div className={classes.bodyDetails}>
+                              <div>
+                                {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
+                                'true' ? (
+                                  <ContributionsList
+                                    renderField={(field) => (
+                                      <DocFieldContribution
+                                        key={
+                                          field.contribution.id +
+                                          field.contribution.contributionKey
+                                        }
+                                        endpoint={{
+                                          pathId,
+                                          method,
+                                        }}
+                                        name={field.name}
+                                        shapes={field.shapes}
+                                        depth={field.depth}
+                                        id={field.fieldId}
+                                        initialValue={field.contribution.value}
+                                        required={field.required}
+                                        setSelectedField={setSelectedFieldId}
+                                      />
+                                    )}
+                                    fieldDetails={fields}
+                                  />
+                                ) : (
+                                  <ShapeEditor
+                                    fields={fields}
+                                    selectedFieldId={selectedFieldId}
+                                    setSelectedField={setSelectedFieldId}
+                                  />
+                                )}
+                              </div>
+                              <div className={classes.panel}>
+                                {isEditing ? (
+                                  <SimulatedBody
+                                    rootShapeId={request.body!.rootShapeId}
+                                    endpointId={endpointId}
+                                  >
+                                    {(shapes) => (
+                                      <HttpBodyPanel
+                                        shapes={shapes}
+                                        location={request.body!.contentType}
+                                        selectedFieldId={selectedFieldId}
+                                      />
+                                    )}
+                                  </SimulatedBody>
+                                ) : (
                                   <HttpBodyPanel
                                     shapes={shapes}
                                     location={request.body!.contentType}
+                                    selectedFieldId={selectedFieldId}
                                   />
                                 )}
-                              </SimulatedBody>
-                            ) : (
-                              <HttpBodyPanel
-                                shapes={shapes}
-                                location={request.body!.contentType}
-                              />
-                            )}
-                          </div>
-                        </div>
+                              </div>
+                            </div>
+                          )}
+                        </HighlightController>
                       )}
                     </ShapeFetcher>
                   ) : (
@@ -459,51 +480,70 @@ export const EndpointRootPage: FC<
                         endpointId={endpointId}
                       >
                         {(shapes, fields) => (
-                          <div className={classes.bodyDetails}>
-                            <div>
-                              <ContributionsList
-                                renderField={(field) => (
-                                  <DocFieldContribution
-                                    key={
-                                      field.contribution.id +
-                                      field.contribution.contributionKey
-                                    }
-                                    endpoint={{
-                                      pathId,
-                                      method,
-                                    }}
-                                    name={field.name}
-                                    shapes={field.shapes}
-                                    depth={field.depth}
-                                    id={field.contribution.id}
-                                    initialValue={field.contribution.value}
-                                    required={field.required}
-                                  />
-                                )}
-                                fieldDetails={fields}
-                              />
-                            </div>
-                            <div className={classes.panel}>
-                              {isEditing ? (
-                                <SimulatedBody
-                                  rootShapeId={response.body!.rootShapeId}
-                                  endpointId={endpointId}
-                                >
-                                  {(shapes) => (
+                          <HighlightController>
+                            {(selectedFieldId, setSelectedFieldId) => (
+                              <div className={classes.bodyDetails}>
+                                <div>
+                                  {process.env
+                                    .REACT_APP_FF_FIELD_LEVEL_EDITS !==
+                                  'true' ? (
+                                    <ContributionsList
+                                      renderField={(field) => (
+                                        <DocFieldContribution
+                                          key={
+                                            field.contribution.id +
+                                            field.contribution.contributionKey
+                                          }
+                                          endpoint={{
+                                            pathId,
+                                            method,
+                                          }}
+                                          name={field.name}
+                                          shapes={field.shapes}
+                                          depth={field.depth}
+                                          id={field.fieldId}
+                                          initialValue={
+                                            field.contribution.value
+                                          }
+                                          required={field.required}
+                                          setSelectedField={setSelectedFieldId}
+                                        />
+                                      )}
+                                      fieldDetails={fields}
+                                    />
+                                  ) : (
+                                    <ShapeEditor
+                                      fields={fields}
+                                      selectedFieldId={selectedFieldId}
+                                      setSelectedField={setSelectedFieldId}
+                                    />
+                                  )}
+                                </div>
+                                <div className={classes.panel}>
+                                  {isEditing ? (
+                                    <SimulatedBody
+                                      rootShapeId={response.body!.rootShapeId}
+                                      endpointId={endpointId}
+                                    >
+                                      {(shapes) => (
+                                        <HttpBodyPanel
+                                          shapes={shapes}
+                                          location={response.body!.contentType}
+                                          selectedFieldId={selectedFieldId}
+                                        />
+                                      )}
+                                    </SimulatedBody>
+                                  ) : (
                                     <HttpBodyPanel
                                       shapes={shapes}
                                       location={response.body!.contentType}
+                                      selectedFieldId={selectedFieldId}
                                     />
                                   )}
-                                </SimulatedBody>
-                              ) : (
-                                <HttpBodyPanel
-                                  shapes={shapes}
-                                  location={response.body!.contentType}
-                                />
-                              )}
-                            </div>
-                          </div>
+                                </div>
+                              </div>
+                            )}
+                          </HighlightController>
                         )}
                       </ShapeFetcher>
                     ) : (

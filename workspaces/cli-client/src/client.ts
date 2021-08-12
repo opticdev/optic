@@ -5,6 +5,10 @@ import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEv
 class Client {
   constructor(private baseUrl: string) {}
 
+  daemonStatus() {
+    return JsonHttpClient.getJson(`${this.baseUrl}/daemon/status`);
+  }
+
   getIdentity() {
     const url = `${this.baseUrl}/identity`;
     return JsonHttpClient.getJsonWithoutHandlingResponse(url);
@@ -15,13 +19,9 @@ class Client {
     return JsonHttpClient.postJson(url, { events });
   }
 
-  postTrackingEventsWithApi(
-    apiName: string,
-    specId: string,
-    events: TrackingEventBase<any>[]
-  ) {
+  postTrackingEventsWithApi(apiName: string, events: TrackingEventBase<any>[]) {
     const url = `${this.baseUrl}/tracking/events/apiname`;
-    return JsonHttpClient.postJson(url, { apiName, specId, events });
+    return JsonHttpClient.postJson(url, { apiName, events });
   }
 
   findSession(

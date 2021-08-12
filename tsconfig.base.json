@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "composite": true,
+    "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
     "module": "commonjs",
@@ -8,6 +10,12 @@
     "strict": true,
     "skipLibCheck": true,
     "target": "es2017",
-    "lib": ["es2017", "dom", "es2019"]
+    "lib": ["es2017", "dom", "es2019"],
+
+    "baseUrl": "./workspaces",
+    "paths": {
+      "@useoptic/cli": ["./local-cli/src"],
+      "@useoptic/*": ["./*/src"]
+    }
   }
 }

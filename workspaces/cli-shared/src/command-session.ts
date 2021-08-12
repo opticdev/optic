@@ -9,7 +9,7 @@ export interface ICommandSessionConfig {
 }
 
 class CommandSession {
-  public exitCode: number | null = null
+  public exitCode: number | null = null;
   private child?: ChildProcess;
   private isRunning: boolean = false;
   public events: EventEmitter = new EventEmitter();
@@ -33,7 +33,7 @@ class CommandSession {
       this.isRunning = false;
     });
     this.child.on('exit', (code, signal) => {
-      this.exitCode = code
+      this.exitCode = code;
       developerDebugLogger(
         `command process exited with code ${code} and signal ${signal}`
       );
@@ -46,7 +46,7 @@ class CommandSession {
   stop() {
     if (this.isRunning && this.child) {
       const pid = this.child.pid;
-      return new Promise((resolve) => {
+      return new Promise<void>((resolve) => {
         treeKill(pid, (e) => {
           if (e) {
             developerDebugLogger(`Issue killing child process: ${e}`);

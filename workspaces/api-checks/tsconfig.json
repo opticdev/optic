@@ -1,5 +1,5 @@
 {
-  "extends": "../config/tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "build",
     "resolveJsonModule": true,
@@ -11,5 +11,6 @@
     "./typings",
     "./node_modules/@types",
     "../../node_modules/@types"
-  ]
+  ],
+  "references": [{ "path": "../spectacle" }]
 }

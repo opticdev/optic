@@ -30,7 +30,7 @@ describe('getValidContributions', () => {
   });
 
   test('filters out contributions that are for deleted fields', () => {
-    store.documentationEdits.fieldEdits.removedFields.push('field_LRYtHDYkVO');
+    store.documentationEdits.fields.removed.push('field_LRYtHDYkVO');
     expect(getValidContributions(store)).toMatchSnapshot();
   });
 
@@ -48,7 +48,7 @@ describe('getDocumentationEditStagedCount', () => {
       pathId: 'path_UOIsxzICu5',
       method: 'GET',
     });
-    store.documentationEdits.fieldEdits.removedFields.push('field_7u9pabP6VJ');
+    store.documentationEdits.fields.removed.push('field_7u9pabP6VJ');
     expect(getDocumentationEditStagedCount(store)).toBe(2);
   });
 });
@@ -96,9 +96,14 @@ test('isEndpointEditable', () => {
 });
 
 test('isFieldRemoved', () => {
-  store.documentationEdits.fieldEdits.removedFields.push('field_p1mYG7RoTV');
+  store.documentationEdits.fields.removed.push('field_p1mYG7RoTV');
   // Fields and all nested fields should be removed
-  const removedFields = ['field_p1mYG7RoTV', 'field_y1zK0XALx0'];
+  const removedFields = [
+    'field_p1mYG7RoTV',
+    'field_y1zK0XALx0',
+    'field_a1zK0XALx0',
+    'field_qqzK0XALx0',
+  ];
   const nonRemovedFields = ['field_cOmYY7RoTV'];
   for (const fieldId of removedFields) {
     expect(isFieldRemoved(fieldId)(store)).toBe(true);
@@ -109,7 +114,7 @@ test('isFieldRemoved', () => {
 });
 
 test('isFieldRemovedRoot', () => {
-  store.documentationEdits.fieldEdits.removedFields.push('field_p1mYG7RoTV');
+  store.documentationEdits.fields.removed.push('field_p1mYG7RoTV');
   // Fields and all nested fields should be removed
   const removedRootFields = ['field_p1mYG7RoTV'];
   const nonRemovedRootFields = ['field_cOmYY7RoTV', 'field_y1zK0XALx0'];
@@ -122,7 +127,7 @@ test('isFieldRemovedRoot', () => {
 });
 
 test('isEndpointFieldEditable', () => {
-  store.documentationEdits.fieldEdits.removedFields.push('field_p1mYG7RoTV');
+  store.documentationEdits.fields.removed.push('field_p1mYG7RoTV');
   store.documentationEdits.isEditing = true;
 
   for (const endpointDeleted of [false, true]) {

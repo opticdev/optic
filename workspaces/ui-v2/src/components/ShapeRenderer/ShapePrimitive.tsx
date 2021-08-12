@@ -1,6 +1,7 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { JsonType } from '@useoptic/optic-domain';
+import * as Theme from '<src>/styles/theme';
 
 import { useSharedStyles } from './SharedStyles';
 import { IShapeRenderer } from '<src>/types';
@@ -59,20 +60,20 @@ export const UnknownPrimitiveRender = ({ props }: any) => {
 
 const useStyles = makeStyles((theme) => ({
   stringClass: {
-    color: '#09825d',
+    color: Theme.jsonTypeColors[JsonType.STRING],
     whiteSpace: 'pre-line',
   },
   numberClass: {
-    color: '#e56f4a',
+    color: Theme.jsonTypeColors[JsonType.NUMBER],
   },
   unknownClass: {
-    color: '#857b79',
+    color: Theme.jsonTypeColors[JsonType.UNDEFINED],
   },
   booleanClass: {
-    color: '#067ab8',
+    color: Theme.jsonTypeColors[JsonType.BOOLEAN],
     fontWeight: 600,
   },
   nullClass: {
-    color: '#8792a2',
+    color: Theme.jsonTypeColors[JsonType.NULL],
   },
 }));

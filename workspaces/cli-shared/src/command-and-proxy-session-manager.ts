@@ -114,7 +114,7 @@ class CommandAndProxySessionManager {
         await commandSession.stop();
       }
 
-      const commandStoppedPromise = new Promise((resolve) => {
+      const commandStoppedPromise = new Promise<void>((resolve) => {
         commandSession.events.on('stopped', ({ state }) => {
           developerDebugLogger(`command session stopped (${state})`);
           resolve();
@@ -128,7 +128,7 @@ class CommandAndProxySessionManager {
       }
     }
 
-    const processInterruptedPromise = new Promise((resolve) => {
+    const processInterruptedPromise = new Promise<void>((resolve) => {
       process.on('SIGINT', () => {
         resolve();
       });

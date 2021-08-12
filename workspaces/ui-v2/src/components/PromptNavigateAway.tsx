@@ -6,7 +6,8 @@ type PromptNavigateAwayProps = {
   shouldPrompt: boolean;
 };
 
-const isDiffsPage = (pathname: string) => /diffs/i.test(pathname);
+// the root diff page (i.e. /diffs) causes diffs to be regenerated
+const isDiffsPage = (pathname: string) => /diffs.+/i.test(pathname);
 
 const isNavigatingToSamePage = (locationToNavigateTo: string) => {
   const pageTesters = [isDiffsPage];

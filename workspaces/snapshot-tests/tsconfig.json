@@ -1,7 +1,12 @@
 {
-  "extends": "../config/tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "build",
     "rootDir": "src"
-  }
+  },
+  "references": [
+    { "path": "../cli-shared" },
+    { "path": "../client-utilities" },
+    { "path": "../spectacle-shared" }
+  ]
 }

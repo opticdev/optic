@@ -1,5 +1,5 @@
 {
-  "extends": "../config/tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "build",
     "rootDir": "src"
@@ -9,5 +9,13 @@
     "./typings",
     "./node_modules/@types",
     "../../node_modules/@types"
+  ],
+  "references": [
+    { "path": "../cli-client" },
+    { "path": "../cli-config" },
+    { "path": "../client-utilities" },
+    { "path": "../optic-domain" },
+    { "path": "../saas-types" },
+    { "path": "../shape-hash" }
   ]
 }

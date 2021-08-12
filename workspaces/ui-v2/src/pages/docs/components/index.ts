@@ -5,3 +5,4 @@ export * from './EditContributionsButton';
 export * from './EndpointTOC';
 export * from './MarkdownBodyContribution';
 export * from './SimulatedBodyPreview';
+export * from './ShapeEditor';

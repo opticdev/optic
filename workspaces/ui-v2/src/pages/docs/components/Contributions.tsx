@@ -7,6 +7,7 @@ import {
   TextFieldVariant,
   FieldOrParameter,
 } from '<src>/components';
+import { useAppConfig } from '<src>/contexts/config/AppConfiguration';
 import {
   useAppSelector,
   useAppDispatch,
@@ -26,11 +27,13 @@ export type DocsFieldOrParameterContributionProps = {
     pathId: string;
   };
   required: boolean;
+  setSelectedField?: (selectedFieldId: string | null) => void;
 };
 
 export function DocFieldContribution(
   props: DocsFieldOrParameterContributionProps
 ) {
+  const { setSelectedField } = props;
   const isEditing = useAppSelector(
     (state) => state.documentationEdits.isEditing
   );
@@ -49,7 +52,15 @@ export function DocFieldContribution(
   return process.env.REACT_APP_FF_FIELD_LEVEL_EDITS === 'true' ? (
     <div className={classes.fieldContainer}>
       <div className={classes.contributionContainer}>
-        <DocsFieldOrParameterContribution {...props} />
+        <DocsFieldOrParameterContribution
+          {...props}
+          onFocus={() => {
+            setSelectedField && setSelectedField(fieldId);
+          }}
+          onBlur={() => {
+            setSelectedField && setSelectedField(null);
+          }}
+        />
       </div>
       {isEditing &&
         (isFieldRemoved ? (
@@ -75,7 +86,9 @@ export function DocsFieldOrParameterContribution({
   initialValue,
   endpoint,
   required,
-}: DocsFieldOrParameterContributionProps) {
+  ...props
+}: DocsFieldOrParameterContributionProps &
+  React.HtmlHTMLAttributes<HTMLInputElement>) {
   const contributionKey = 'description';
   const endpointId = getEndpointId(endpoint);
   const isEditable = useAppSelector(
@@ -94,6 +107,7 @@ export function DocsFieldOrParameterContribution({
 
   return (
     <FieldOrParameter
+      {...props}
       name={name}
       shapes={shapes}
       depth={depth}
@@ -134,6 +148,8 @@ export function EndpointNameContribution({
   endpoint,
 }: EndpointNameContributionProps) {
   const endpointId = getEndpointId(endpoint);
+  const appConfig = useAppConfig();
+
   const isEditable = useAppSelector(selectors.isEndpointEditable(endpoint));
   const contributionValue = useAppSelector(
     (state) =>
@@ -142,6 +158,18 @@ export function EndpointNameContribution({
   const dispatch = useAppDispatch();
   const value =
     contributionValue !== undefined ? contributionValue : initialValue;
+
+  if (!appConfig.allowEditing) {
+    return (
+      <EditableTextField
+        isEditing={false}
+        setEditing={() => {}}
+        value={initialValue || 'Unnamed Endpoint'}
+        setValue={() => {}}
+        variant={TextFieldVariant.REGULAR}
+      />
+    );
+  }
 
   return (
     <>
@@ -184,6 +212,7 @@ export function EndpointNameMiniContribution({
   endpoint,
 }: EndpointNameContributionProps) {
   const endpointId = getEndpointId(endpoint);
+  const appConfig = useAppConfig();
   const isEditable = useAppSelector(selectors.isEndpointEditable(endpoint));
   const contributionValue = useAppSelector(
     (state) =>
@@ -192,6 +221,18 @@ export function EndpointNameMiniContribution({
   const dispatch = useAppDispatch();
   const value =
     contributionValue !== undefined ? contributionValue : initialValue;
+
+  if (!appConfig.allowEditing) {
+    return (
+      <EditableTextField
+        isEditing={false}
+        setEditing={() => {}}
+        value={initialValue || 'Unnamed Endpoint'}
+        setValue={() => {}}
+        variant={TextFieldVariant.SMALL}
+      />
+    );
+  }
 
   return (
     <EditableTextField

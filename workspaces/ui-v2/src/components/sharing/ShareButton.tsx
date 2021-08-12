@@ -14,6 +14,7 @@ import { useSpecRepository } from '<src>/contexts/SpecRepositoryContext';
 import { useAppConfig } from '<src>/contexts/config/AppConfiguration';
 import { useAsyncMemo } from 'use-async-memo';
 import { useAnalytics } from '<src>/contexts/analytics';
+import { useAppSelector } from '<src>/store';
 
 export enum ShareTarget {
   TEAM = 'team',
@@ -38,6 +39,10 @@ export const ShareButton: React.FC<{}> = (props) => {
     sharing,
   } = useAppConfig();
 
+  const specId = useAppSelector(
+    (state) => state.metadata.data?.specificationId!
+  );
+
   const analytics = useAnalytics();
 
   const personId = useAsyncMemo(async () => {
@@ -58,7 +63,7 @@ export const ShareButton: React.FC<{}> = (props) => {
       const token = await getAccessTokenSilently();
 
       let newSpecResp = await fetch(
-        `${baseDomain}/api/person/public-specs-v2`,
+        `${baseDomain}/api/person/public-specs-v3`,
         {
           method: 'POST',
           headers: {
@@ -66,11 +71,14 @@ export const ShareButton: React.FC<{}> = (props) => {
             'content-type': 'application/json',
           },
           body: JSON.stringify({
-            sharing_context: {
-              local_ui_v1: {
-                with: target.toString(),
+            metadata: {
+              sharing_context: {
+                local_ui_v1: {
+                  with: target.toString(),
+                },
               },
             },
+            analytics_id: specId,
           }),
         }
       );
@@ -113,7 +121,15 @@ export const ShareButton: React.FC<{}> = (props) => {
         }
       }
     },
-    [getAccessTokenSilently, specRepo, baseDomain, personId, sharing, analytics]
+    [
+      getAccessTokenSilently,
+      specRepo,
+      baseDomain,
+      personId,
+      specId,
+      sharing,
+      analytics,
+    ]
   );
 
   const [isOpen, setIsOpen] = useState(false);

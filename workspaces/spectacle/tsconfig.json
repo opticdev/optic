@@ -1,10 +1,15 @@
 {
-  "extends": "../config/tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "build",
     "resolveJsonModule": true,
     "rootDir": "src"
   },
   "include": ["src/**/*"],
-  "exclude": ["test"]
+  "exclude": ["test"],
+  "references": [
+    { "path": "../cli-shared" },
+    { "path": "../graph-lib" },
+    { "path": "../optic-domain" }
+  ]
 }

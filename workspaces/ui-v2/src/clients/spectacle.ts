@@ -1,4 +1,4 @@
-import { CQRSCommand } from '@useoptic/optic-domain';
+import { CQRSCommand, JsonType } from '@useoptic/optic-domain';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 
 export class SpectacleClient {
@@ -45,6 +45,50 @@ export class SpectacleClient {
       throw new Error(message);
     }
     return results.data.endpoint.commands.remove;
+  };
+
+  public fetchFieldEditCommands = async (
+    fieldId: string,
+    requestedTypes: JsonType[]
+  ): Promise<CQRSCommand[]> => {
+    type FieldCommands = {
+      field: {
+        commands: {
+          edit: CQRSCommand[];
+        };
+      } | null;
+    };
+
+    const results = await this.spectacle.query<
+      FieldCommands,
+      {
+        fieldId: string;
+        requestedTypes: JsonType[];
+      }
+    >({
+      query: `
+      query X($fieldId: ID!, $requestedTypes: [JsonType!]!) {
+        field(fieldId: $fieldId) {
+          commands {
+            edit(requestedTypes: $requestedTypes)
+          }
+        }
+      }`,
+      variables: {
+        fieldId,
+        requestedTypes,
+      },
+    });
+    if (results.errors) {
+      console.error(results.errors);
+      throw new Error(JSON.stringify(results.errors));
+    }
+    if (!results.data || !results.data.field) {
+      const message = `Could not generate edit commands for field: ${fieldId}`;
+      console.error(message);
+      throw new Error(message);
+    }
+    return results.data.field.commands.edit;
   };
 
   public fetchFieldRemoveCommands = async (

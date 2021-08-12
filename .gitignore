@@ -13,6 +13,7 @@ node_modules
 *.log
 build/
 .nyc_output
+tsconfig.tsbuildinfo
 
 
 .yarn/*

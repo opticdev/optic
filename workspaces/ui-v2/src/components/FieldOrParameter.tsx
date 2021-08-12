@@ -13,7 +13,9 @@ export type FieldOrParameterProps = {
   required: boolean;
 };
 
-export const FieldOrParameter: FC<FieldOrParameterProps> = ({
+export const FieldOrParameter: FC<
+  FieldOrParameterProps & React.HtmlHTMLAttributes<HTMLInputElement>
+> = ({
   name,
   shapes,
   depth,
@@ -21,6 +23,7 @@ export const FieldOrParameter: FC<FieldOrParameterProps> = ({
   setValue = () => {},
   isEditing = false,
   required,
+  ...props
 }) => {
   const classes = useStyles();
   return (
@@ -30,6 +33,7 @@ export const FieldOrParameter: FC<FieldOrParameterProps> = ({
         <div className={classes.shape}>{summarizeTypes(shapes, required)}</div>
       </div>
       <EditableTextField
+        {...props}
         isEditing={isEditing}
         value={value}
         setValue={setValue}

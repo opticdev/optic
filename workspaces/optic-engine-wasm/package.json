@@ -1,10 +1,11 @@
 {
   "name": "@useoptic/optic-engine-wasm",
-  "version": "10.2.3",
+  "version": "10.2.4",
   "scripts": {
     "build:node": "wasm-pack build --target nodejs --out-dir build --out-name index",
     "build:browser": "wasm-pack build --target bundler --out-dir browser --out-name index",
     "ws:build": "yarn run build:node && yarn run build:browser && rm -rf build/.gitignore",
+    "ws:watch-rust": "node scripts/watch.js",
     "ws:clean": "cargo clean && rm -rf build browser target",
     "ws:test": "echo No workspace tests specified for optic-engine-wasm"
   },
