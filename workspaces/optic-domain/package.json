@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/optic-domain",
-  "version": "10.2.3",
+  "version": "10.2.4",
   "scripts": {
     "build": "tsc -b --verbose",
     "test": "cd test && tap tests",
