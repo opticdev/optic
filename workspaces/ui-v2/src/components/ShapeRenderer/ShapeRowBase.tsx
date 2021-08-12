@@ -1,5 +1,5 @@
 import * as React from 'react';
-import makeStyles from '@material-ui/styles/makeStyles';
+import { makeStyles } from '@material-ui/core';
 import { JsonType } from '@useoptic/optic-domain';
 
 import { IndentSpaces, useSharedStyles } from './SharedStyles';
@@ -31,7 +31,10 @@ export const ShapeRowBase = ({
   return (
     <div
       style={style}
-      className={classNames(classes.rowWrap, { [classes.allowHover]: false })}
+      className={classNames(classes.rowWrap, {
+        [classes.allowHover]: false,
+        [classes.isFocused]: focused,
+      })}
     >
       <div
         {...props}
@@ -39,8 +42,7 @@ export const ShapeRowBase = ({
           classes.row,
           { [sharedClasses.added]: changes === 'added' },
           { [sharedClasses.changed]: changes === 'updated' },
-          { [sharedClasses.removed]: changes === 'removed' },
-          { [classes.focused]: focused }
+          { [sharedClasses.removed]: changes === 'removed' }
         )}
         style={{ paddingLeft: depth * IndentSpaces + 4 }}
       >
@@ -69,7 +71,7 @@ export const RenderField = ({
         <ShapeRowBase
           depth={depth}
           changes={changes}
-          focused={fieldId === selectedFieldId}
+          focused={!selectedFieldId || fieldId === selectedFieldId}
           data-fieldid={fieldId}
         >
           <span className={sharedClasses.shapeFont}>"{name}"</span>
@@ -87,7 +89,7 @@ export const RenderField = ({
       <ShapeRowBase
         depth={depth}
         changes={changes}
-        focused={fieldId === selectedFieldId}
+        focused={!selectedFieldId || fieldId === selectedFieldId}
         data-fieldid={fieldId}
       >
         <span className={sharedClasses.shapeFont}>"{name}"</span>
@@ -112,7 +114,7 @@ export const RenderField = ({
         <ShapeRowBase
           depth={depth}
           changes={changes}
-          focused={fieldId === selectedFieldId}
+          focused={!selectedFieldId || fieldId === selectedFieldId}
           data-fieldid={fieldId}
         >
           <span className={sharedClasses.shapeFont}>"{name}"</span>
@@ -142,9 +144,11 @@ export const RenderRootShape = ({
   right?: React.ReactElement;
 }) => {
   const { depth } = useDepth();
+  const { selectedFieldId } = useShapeRenderContext();
+
   return (
     <>
-      <ShapeRowBase depth={depth}>
+      <ShapeRowBase depth={depth} focused={!selectedFieldId}>
         <RenderFieldLeadingValue shapeRenderers={[shape]} />
         {right ? (
           <>
@@ -199,6 +203,8 @@ export const RenderFieldRowValues = ({
 }: RenderFieldValueProps) => {
   const sharedClasses = useSharedStyles();
   const { Indent, depth } = useDepth();
+  const { selectedFieldId } = useShapeRenderContext();
+
   if (shapeRenderers.length === 1) {
     const shape = shapeRenderers[0];
     if (shape.asObject) {
@@ -209,7 +215,7 @@ export const RenderFieldRowValues = ({
               <RenderField {...field} parentId={shape.shapeId} />
             </Indent>
           ))}
-          <ShapeRowBase depth={depth}>
+          <ShapeRowBase depth={depth} focused={!selectedFieldId}>
             <span className={sharedClasses.symbolFont}>{'}'}</span>
           </ShapeRowBase>
         </>
@@ -221,7 +227,7 @@ export const RenderFieldRowValues = ({
         return (
           <>
             <ShapePrimitiveRender {...shape} />
-            <ShapeRowBase depth={depth}>
+            <ShapeRowBase depth={depth} focused={!selectedFieldId}>
               <span className={sharedClasses.symbolFont}>{']'}</span>
             </ShapeRowBase>
           </>
@@ -241,7 +247,7 @@ export const RenderFieldRowValues = ({
       return (
         <>
           <Indent>{inner}</Indent>
-          <ShapeRowBase depth={depth}>
+          <ShapeRowBase depth={depth} focused={!selectedFieldId}>
             <span className={sharedClasses.symbolFont}>{']'}</span>
           </ShapeRowBase>
         </>
@@ -290,6 +296,10 @@ export function OneOfRender({
 const useStyles = makeStyles((theme) => ({
   rowWrap: {
     display: 'flex',
+
+    '&:not($isFocused)': {
+      opacity: 0.3,
+    },
   },
   allowHover: {
     '&:hover $row': {
@@ -302,7 +312,5 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'flex-start',
     minHeight: 17,
   },
-  focused: {
-    borderBottom: '1px solid black',
-  },
+  isFocused: {},
 }));
