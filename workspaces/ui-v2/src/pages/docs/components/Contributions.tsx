@@ -72,15 +72,15 @@ export function DocsFieldOrParameterContribution({
             })
           );
         } else {
+          dispatch(
+            documentationEditActions.addContribution({
+              id,
+              contributionKey,
+              value,
+              endpointId,
+            })
+          );
         }
-        dispatch(
-          documentationEditActions.addContribution({
-            id,
-            contributionKey,
-            value,
-            endpointId,
-          })
-        );
       }}
       isEditing={isEditable}
       required={required}
@@ -223,15 +223,15 @@ export function EndpointNameMiniContribution({
             })
           );
         } else {
+          dispatch(
+            documentationEditActions.addContribution({
+              id,
+              contributionKey,
+              value,
+              endpointId,
+            })
+          );
         }
-        dispatch(
-          documentationEditActions.addContribution({
-            id,
-            contributionKey,
-            value,
-            endpointId,
-          })
-        );
       }}
       defaultText={defaultText}
       variant={TextFieldVariant.SMALL}
