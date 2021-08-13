@@ -364,37 +364,29 @@ export const EndpointRootPage: FC<
                           'true' || !isEditing ? (
                           <ContributionsList
                             renderField={(field) => {
-                              // TODO apply this to the shapeEditor component
-                              let isArray = field.shapes.findIndex(
-                                (choice) => choice.jsonType === JsonType.ARRAY
+                              const fieldWithoutArrayShape = selectors.removeArrayShapeFromField(
+                                field
                               );
-
-                              if (isArray > -1) {
-                                if (field.shapes.length > 1) {
-                                  field.shapes.splice(isArray, 1);
-                                } else {
-                                  field.shapes = field.shapes[
-                                    isArray
-                                  ].asArray!.shapeChoices;
-                                }
-                              }
 
                               return (
                                 <DocsFieldOrParameterContribution
                                   key={
-                                    field.contribution.id +
-                                    field.contribution.contributionKey
+                                    fieldWithoutArrayShape.contribution.id +
+                                    fieldWithoutArrayShape.contribution
+                                      .contributionKey
                                   }
                                   endpoint={{
                                     pathId,
                                     method,
                                   }}
-                                  name={field.name}
-                                  shapes={field.shapes}
-                                  depth={field.depth}
-                                  id={field.contribution.id}
-                                  initialValue={field.contribution.value}
-                                  required={field.required}
+                                  name={fieldWithoutArrayShape.name}
+                                  shapes={fieldWithoutArrayShape.shapes}
+                                  depth={fieldWithoutArrayShape.depth}
+                                  id={fieldWithoutArrayShape.contribution.id}
+                                  initialValue={
+                                    fieldWithoutArrayShape.contribution.value
+                                  }
+                                  required={fieldWithoutArrayShape.required}
                                 />
                               );
                             }}
@@ -402,7 +394,9 @@ export const EndpointRootPage: FC<
                           />
                         ) : (
                           <ShapeEditor
-                            fields={fields}
+                            fields={fields.map(
+                              selectors.removeArrayShapeFromField
+                            )}
                             selectedFieldId={selectedFieldId}
                             setSelectedField={setSelectedFieldId}
                             nonEditableTypes={new Set([JsonType.NULL])}
