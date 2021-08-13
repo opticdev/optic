@@ -21,7 +21,7 @@ import {
 import ClassNames from 'classnames';
 import Color from 'color';
 
-import { setEquals } from '<src>/lib/set-ops';
+import { setEquals, setDifference } from '<src>/lib/set-ops';
 import { IFieldDetails, IShapeRenderer } from '<src>/types';
 import { JsonType } from '@useoptic/optic-domain';
 import * as Theme from '<src>/styles/theme';
@@ -30,9 +30,10 @@ type FieldRemovedStatus = 'removed' | 'root_removed' | 'not_removed';
 
 export const ShapeEditor: FC<{
   fields: IFieldDetails[];
+  selectedFieldId: string | null;
+  setSelectedField: (fieldId: string | null) => void;
+  nonEditableTypes?: Set<JsonType>;
   isFieldRemoved?: (fieldId: string) => FieldRemovedStatus;
-  selectedFieldId?: string | null;
-  setSelectedField?: (fieldId: string | null) => void;
   onToggleRemove?: (fieldId: string) => void;
   onChangeDescription?: (
     fieldId: string,
@@ -52,14 +53,13 @@ export const ShapeEditor: FC<{
   setSelectedField,
   onChangeDescription,
   onChangeFieldType,
+  nonEditableTypes = new Set(),
 }) => {
   const classes = useStyles();
 
   const onFieldSelect = (fieldId: string) => () => {
-    if (setSelectedField) {
-      // Deselect the field if the field is already the currently selected field
-      setSelectedField(fieldId === selectedFieldId ? null : fieldId);
-    }
+    // Deselect the field if the field is already the currently selected field
+    setSelectedField(fieldId === selectedFieldId ? null : fieldId);
   };
 
   return (
@@ -76,6 +76,7 @@ export const ShapeEditor: FC<{
                 onChangeDescription={onChangeDescription}
                 onSelect={onFieldSelect(field.fieldId)}
                 onChangeFieldType={onChangeFieldType}
+                nonEditableTypes={nonEditableTypes}
               />
             </li>
           ))}
@@ -104,6 +105,7 @@ const getInitialTypes = (fields: IFieldDetails): Set<JsonType> => {
 const Row: FC<{
   field: IFieldDetails;
   selected: boolean;
+  nonEditableTypes: Set<JsonType>;
 
   isFieldRemoved?: ComponentProps<typeof ShapeEditor>['isFieldRemoved'];
   onToggleRemove?: ComponentProps<typeof ShapeEditor>['onToggleRemove'];
@@ -120,6 +122,7 @@ const Row: FC<{
   onSelect,
   isFieldRemoved,
   onToggleRemove,
+  nonEditableTypes,
 }) {
   const classes = useStyles();
   const initialDescription = field.contribution['value'];
@@ -188,6 +191,7 @@ const Row: FC<{
           currentJsonTypes={[...jsonTypes]}
           onChangeType={onChangeTypeHandler}
           onChangeDescription={onChangeDescriptionHandler}
+          nonEditableTypes={nonEditableTypes}
         />
       </Field>
     </div>
@@ -198,6 +202,7 @@ const FieldEditor: FC<{
   field: IFieldDetails;
   description: string;
   currentJsonTypes: JsonType[];
+  nonEditableTypes: Set<JsonType>;
 
   onChangeDescription?: (description: string) => void;
   onChangeType?: (type: JsonType, enabled: boolean) => void;
@@ -205,13 +210,15 @@ const FieldEditor: FC<{
   field,
   description,
   currentJsonTypes,
+  nonEditableTypes,
   onChangeDescription,
   onChangeType,
 }) {
   const classes = useStyles();
-  const nonEditableTypes = field.shapes
+  const fieldEditableTypes = setDifference(editableTypes, nonEditableTypes);
+  const fieldNonEditableTypes = field.shapes
     .map((shape) => shape.jsonType)
-    .filter((jsonType) => !editableTypes.has(jsonType));
+    .filter((jsonType) => !fieldEditableTypes.has(jsonType));
 
   let onClickTypeButton = useCallback(
     (type: JsonType) => (e: React.MouseEvent) => {
@@ -231,7 +238,7 @@ const FieldEditor: FC<{
   return (
     <div className={classes.editor}>
       <ButtonGroup className={classes.typeSelector}>
-        {[...editableTypes].map((editableType) => (
+        {[...fieldEditableTypes].map((editableType) => (
           <Button
             key={editableType}
             disableElevation
@@ -247,8 +254,9 @@ const FieldEditor: FC<{
           </Button>
         ))}
 
-        {nonEditableTypes.map((jsonType) => (
+        {fieldNonEditableTypes.map((jsonType) => (
           <Button
+            key={jsonType}
             color="primary"
             variant="contained"
             disabled

@@ -356,81 +356,82 @@ export const EndpointRootPage: FC<
               endpointId={endpointId}
             >
               {(shapes, fields) => (
-                <div className={classes.bodyDetails}>
-                  <div>
-                    {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !== 'true' ||
-                    !isEditing ? (
-                      <ContributionsList
-                        renderField={(field) => {
-                          // TODO apply this to the shapeEditor component
-                          let isArray = field.shapes.findIndex(
-                            (choice) => choice.jsonType === JsonType.ARRAY
-                          );
+                <HighlightController>
+                  {(selectedFieldId, setSelectedFieldId) => (
+                    <div className={classes.bodyDetails}>
+                      <div>
+                        {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
+                          'true' || !isEditing ? (
+                          <ContributionsList
+                            renderField={(field) => {
+                              const fieldWithoutArrayShape = selectors.removeArrayShapeFromField(
+                                field
+                              );
 
-                          if (isArray > -1) {
-                            if (field.shapes.length > 1) {
-                              field.shapes.splice(isArray, 1);
-                            } else {
-                              field.shapes = field.shapes[
-                                isArray
-                              ].asArray!.shapeChoices;
-                            }
-                          }
-
-                          return (
-                            <DocsFieldOrParameterContribution
-                              key={
-                                field.contribution.id +
-                                field.contribution.contributionKey
-                              }
-                              endpoint={{
-                                pathId,
-                                method,
-                              }}
-                              name={field.name}
-                              shapes={field.shapes}
-                              depth={field.depth}
-                              id={field.contribution.id}
-                              initialValue={field.contribution.value}
-                              required={field.required}
-                            />
-                          );
-                        }}
-                        fieldDetails={fields}
-                      />
-                    ) : (
-                      <ShapeEditor
-                        fields={fields}
-                        onChangeDescription={onFieldDescriptionChanged}
-                        onChangeFieldType={onChangeFieldType}
-                        isFieldRemoved={isFieldRemoved}
-                        onToggleRemove={onToggleRemovedField}
-                      />
-                    )}
-                  </div>
-                  <div className={classes.panel}>
-                    {isEditing ? (
-                      <SimulatedBody
-                        rootShapeId={visibleQueryParameters.rootShapeId}
-                        endpointId={endpointId}
-                      >
-                        {(shapes) => (
+                              return (
+                                <DocsFieldOrParameterContribution
+                                  key={
+                                    fieldWithoutArrayShape.contribution.id +
+                                    fieldWithoutArrayShape.contribution
+                                      .contributionKey
+                                  }
+                                  endpoint={{
+                                    pathId,
+                                    method,
+                                  }}
+                                  name={fieldWithoutArrayShape.name}
+                                  shapes={fieldWithoutArrayShape.shapes}
+                                  depth={fieldWithoutArrayShape.depth}
+                                  id={fieldWithoutArrayShape.contribution.id}
+                                  initialValue={
+                                    fieldWithoutArrayShape.contribution.value
+                                  }
+                                  required={fieldWithoutArrayShape.required}
+                                />
+                              );
+                            }}
+                            fieldDetails={fields}
+                          />
+                        ) : (
+                          <ShapeEditor
+                            fields={fields.map(
+                              selectors.removeArrayShapeFromField
+                            )}
+                            selectedFieldId={selectedFieldId}
+                            setSelectedField={setSelectedFieldId}
+                            nonEditableTypes={new Set([JsonType.NULL])}
+                            onChangeDescription={onFieldDescriptionChanged}
+                            onChangeFieldType={onChangeFieldType}
+                            isFieldRemoved={isFieldRemoved}
+                            onToggleRemove={onToggleRemovedField}
+                          />
+                        )}
+                      </div>
+                      <div className={classes.panel}>
+                        {isEditing ? (
+                          <SimulatedBody
+                            rootShapeId={visibleQueryParameters.rootShapeId}
+                            endpointId={endpointId}
+                          >
+                            {(shapes) => (
+                              <QueryParametersPanel
+                                parameters={selectors.convertShapeToQueryParameters(
+                                  shapes
+                                )}
+                              />
+                            )}
+                          </SimulatedBody>
+                        ) : (
                           <QueryParametersPanel
                             parameters={selectors.convertShapeToQueryParameters(
                               shapes
                             )}
                           />
                         )}
-                      </SimulatedBody>
-                    ) : (
-                      <QueryParametersPanel
-                        parameters={selectors.convertShapeToQueryParameters(
-                          shapes
-                        )}
-                      />
-                    )}
-                  </div>
-                </div>
+                      </div>
+                    </div>
+                  )}
+                </HighlightController>
               )}
             </ShapeFetcher>
           </div>
