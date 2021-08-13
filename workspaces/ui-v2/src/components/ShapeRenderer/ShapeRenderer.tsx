@@ -22,6 +22,7 @@ export const ShapeRenderer: FC<ShapeRendererProps> = ({
 }) => {
   return (
     <ShapeRenderStore
+      shapes={shapes}
       showExamples={showExamples}
       selectedFieldId={selectedFieldId}
       fieldsAreSelectable={fieldsAreSelectable}
