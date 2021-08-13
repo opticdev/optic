@@ -26,6 +26,8 @@ type ShapeRenderContextProps = {
   setSelectedField?: (fieldId: string) => void;
 };
 
+// Returns the choices that should be made for a field to be visible
+// This is for polymorphic shapes where it's not immediately obvious how a field is nested
 const getChoicesFromSelectedField = (
   fieldId: string,
   shapes: IShapeRenderer[]
