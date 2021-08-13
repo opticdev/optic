@@ -28,7 +28,7 @@ export const ShapeRenderer: FC<ShapeRendererProps> = ({
       setSelectedField={setSelectedField}
     >
       {shapes.length > 1 ? (
-        <OneOfRender shapes={shapes} parentShapeId={'root'} />
+        <OneOfRender shapes={shapes} shapeId={'root'} />
       ) : shapes.length === 1 ? (
         <RenderRootShape shape={shapes[0]} />
       ) : null}

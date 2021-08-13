@@ -8,7 +8,7 @@ type IShapeRenderContext = {
   showExamples: boolean;
   fieldsAreSelectable: boolean;
   getChoice: (branch: OneOfTabsProps) => string;
-  updateChoice: (parentShapeId: string, branchId: string) => void;
+  updateChoice: (shapeId: string, branchId: string) => void;
   selectField: (fieldId: string) => void;
 };
 
@@ -31,24 +31,26 @@ export const ShapeRenderStore = ({
   fieldsAreSelectable,
   setSelectedField,
 }: ShapeRenderContextProps) => {
-  const [selectedOneOfChoices, updateSelectedOneOfChoices]: [
-    { [key: string]: string },
-    any
-  ] = useState({});
+  const [selectedOneOfChoices, updateSelectedOneOfChoices] = useState<{
+    [key: string]: string;
+  }>({});
+  console.log(selectedOneOfChoices);
 
   const getChoice = (branch: OneOfTabsProps) => {
-    if (selectedOneOfChoices[branch.parentShapeId]) {
-      return selectedOneOfChoices[branch.parentShapeId]!;
+    if (selectedOneOfChoices[branch.shapeId]) {
+      return selectedOneOfChoices[branch.shapeId];
     } else {
       return branch.choices[0].id;
     }
   };
 
   const updateChoice = (parentShapeId: string, branchId: string) => {
-    updateSelectedOneOfChoices((i: { [key: string]: string }) => ({
-      ...i,
-      [parentShapeId]: branchId,
-    }));
+    updateSelectedOneOfChoices(
+      (previousChoices: { [key: string]: string }) => ({
+        ...previousChoices,
+        [parentShapeId]: branchId,
+      })
+    );
   };
 
   const selectField = useCallback(
