@@ -26,7 +26,7 @@
   <a href="#license">License</a>
 </p>
 
-## [Click here for a Live Demo](https://useoptic.com/docs/demo)
+## [Check out our Live Demo of GitHub's API](https://useoptic.com/)
 
 ## Try Optic
 > Similar to `git init`
@@ -75,11 +75,11 @@ api start
 [optic] Starting My API API on Port: 3005, with npm run server-start
 ```
 
-- [Document your API with Optic](https://useoptic.com/docs/using/baseline)
+- [Document your API with Optic](https://useoptic.com/document/baseline/)
 - [Video: Quinn Slack from Sourcegraph documenting GitHub's API in 10 minutes](https://www.youtube.com/watch?v=UQ4TYUvTrok&t=2s)
 
 
-![The api documentation](https://github.com/opticdev/optic/raw/develop/website/static/img/document-your-api.png)
+![The api documentation](https://github.com/opticdev/optic/raw/develop/website/static/img/optic-image.png)
 
 
 ## Detect API Changes
@@ -87,7 +87,7 @@ api start
 
 While you develop your API and run tests locally, Optic diffs the traffic to find new endpoints, or changes to existing endpoints. These API diffs are listed when you run `api status`:
 
-- [Learn more about detecting + reviewing API Diffs](https://useoptic.com/docs/using/reviewing-diffs)
+- [Learn more about detecting + reviewing API Diffs](https://useoptic.com/change/diff-review/)
 
 <img src="https://github.com/opticdev/optic/raw/develop/website/static/img/status.svg" alt="Optic" height="350">
 
@@ -120,7 +120,7 @@ Adding explicit API changelogs in PRs facilitates discussion and leads to better
 
 No more doc drift. When you approve an API change Optic also updates the specification.
 
-[Install & Set up the GitBot](https://useoptic.com/docs/apiops/pull-requests)
+[Install & Set up the GitBot](https://useoptic.com/reference/ci/changelog)
 
 ![changelog](https://github.com/opticdev/optic/raw/develop/website/static/img/gitbot-large.png)
 
@@ -140,7 +140,6 @@ No more doc drift. When you approve an API change Optic also updates the specifi
   ](https://apievangelist.com/2019/12/12/automatically-generate-openapi-for-your-apis-just-by-using-them/)**
 
 - **[Join Community](https://useoptic.com/docs/community)**
-- **[Book Maintainer Office Hours](https://calendly.com/opticlabs/maintainer-office-hours?month=2021-01)**
 
 Want to help us design the next features? [Book Maintainer Office Hours](https://calendly.com/opticlabs/maintainer-office-hours?month=2021-01)
 
