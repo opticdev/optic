@@ -1,43 +1,46 @@
 import React, { FC, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core';
-import * as Sentry from '@sentry/react';
+// import * as Sentry from '@sentry/react';
 
 import { Client } from '@useoptic/cli-client';
 
 import { FullPageLoader } from '<src>/components';
 import * as SupportLinks from '<src>/constants/SupportLinks';
-const packageJson = require('../../../package.json');
-const uiPackageVersion = packageJson.version;
+// const packageJson = require('../../../package.json');
+// const uiPackageVersion = packageJson.version;
 
 // TODO remove this and make sure the UI gets the latest side channel version attached when being built
-const trimPrereleaseVersions = (version: string): string =>
-  version.split('-')[0];
+// const trimPrereleaseVersions = (version: string): string =>
+//   version.split('-')[0];
 
 export const EnsureDaemonRunning: FC = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [hasMismatchedVersion, setHasMismatchedVersions] = useState(false);
+  const [hasMismatchedVersion] = useState(false);
 
   useEffect(() => {
     (async () => {
       const cliClient = new Client('/api');
       try {
-        const { version } = await cliClient.daemonStatus();
-        if (
-          trimPrereleaseVersions(version) !==
-          trimPrereleaseVersions(uiPackageVersion)
-        ) {
-          Sentry.captureEvent({
-            message: 'Mismatched UI and daemon versions',
-            extra: {
-              uiVersion: uiPackageVersion,
-              daemonVersion: version,
-              trimmedUiVersion: trimPrereleaseVersions(uiPackageVersion),
-              trimmedDaemonVersion: trimPrereleaseVersions(version),
-            },
-          });
-          setHasMismatchedVersions(true);
-        }
+        await cliClient.daemonStatus();
+        // TODO - uncomment - there is currently an issue where chrome appears to aggressively cache
+        // package.json or some other file where there is version mismatches from the UI - even if
+        // the UI is correct - this is unvalidated and only from observations - not quite sure what's happening here
+        // if (
+        //   trimPrereleaseVersions(version) !==
+        //   trimPrereleaseVersions(uiPackageVersion)
+        // ) {
+        //   Sentry.captureEvent({
+        //     message: 'Mismatched UI and daemon versions',
+        //     extra: {
+        //       uiVersion: uiPackageVersion,
+        //       daemonVersion: version,
+        //       trimmedUiVersion: trimPrereleaseVersions(uiPackageVersion),
+        //       trimmedDaemonVersion: trimPrereleaseVersions(version),
+        //     },
+        //   });
+        //   setHasMismatchedVersions(true);
+        // }
         setLoading(false);
       } catch (e) {
         setError(true);
