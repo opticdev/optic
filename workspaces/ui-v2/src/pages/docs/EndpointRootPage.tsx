@@ -405,6 +405,7 @@ export const EndpointRootPage: FC<
                             fields={fields}
                             selectedFieldId={selectedFieldId}
                             setSelectedField={setSelectedFieldId}
+                            nonEditableTypes={new Set([JsonType.NULL])}
                             onChangeDescription={onFieldDescriptionChanged}
                             onChangeFieldType={onChangeFieldType}
                             isFieldRemoved={isFieldRemoved}
