@@ -256,6 +256,7 @@ const FieldEditor: FC<{
 
         {fieldNonEditableTypes.map((jsonType) => (
           <Button
+            key={jsonType}
             color="primary"
             variant="contained"
             disabled
