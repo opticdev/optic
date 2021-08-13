@@ -53,14 +53,23 @@ export function MarkdownBodyContribution({
       placeholder={defaultText}
       value={value}
       onChange={({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
-        dispatch(
-          documentationEditActions.addContribution({
-            id,
-            contributionKey,
-            value,
-            endpointId,
-          })
-        );
+        if (initialValue === value) {
+          dispatch(
+            documentationEditActions.removeContribution({
+              id,
+              contributionKey,
+            })
+          );
+        } else {
+          dispatch(
+            documentationEditActions.addContribution({
+              id,
+              contributionKey,
+              value,
+              endpointId,
+            })
+          );
+        }
       }}
     />
   ) : (

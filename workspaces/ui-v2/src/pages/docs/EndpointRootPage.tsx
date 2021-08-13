@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Button, LinearProgress, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
@@ -31,7 +31,6 @@ import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
   EndpointTOC,
-  DocFieldContribution,
   DocsFieldOrParameterContribution,
   EndpointNameContribution,
   DocsPageAccessoryNavigation,
@@ -71,6 +70,12 @@ export const EndpointRootPage: FC<
   const thisEndpoint = useAppSelector(
     selectors.getEndpoint({ pathId, method })
   );
+  const userRemovedFields = useAppSelector(
+    (state) => state.documentationEdits.fields.removed
+  );
+  const allRemovedFields = useAppSelector(
+    selectors.memoizedGetAllRemovedFields
+  );
 
   const isEndpointRemoved = thisEndpoint ? thisEndpoint.isRemoved : false;
 
@@ -104,6 +109,80 @@ export const EndpointRootPage: FC<
 
   const unremoveEndpoint = () =>
     dispatch(documentationEditActions.unremoveEndpoint({ method, pathId }));
+
+  const isFieldRemoved = useCallback(
+    (fieldId: string) => {
+      if (userRemovedFields.includes(fieldId)) {
+        return 'root_removed';
+      } else if (allRemovedFields.has(fieldId)) {
+        return 'removed';
+      } else {
+        return 'not_removed';
+      }
+    },
+    [userRemovedFields, allRemovedFields]
+  );
+
+  const onToggleRemovedField = useCallback(
+    (fieldId: string) => {
+      if (userRemovedFields.includes(fieldId)) {
+        dispatch(documentationEditActions.unremoveField({ fieldId }));
+      } else {
+        dispatch(documentationEditActions.removeField({ fieldId }));
+      }
+    },
+    [userRemovedFields, dispatch]
+  );
+
+  const onChangeFieldType = useCallback(
+    (
+      fieldId: string,
+      requestedFieldTypes: Set<JsonType>,
+      isFieldTypeDifferent: boolean
+    ) => {
+      if (isFieldTypeDifferent) {
+        dispatch(
+          documentationEditActions.addFieldEdit({
+            fieldId,
+            options: {
+              isOptional: requestedFieldTypes.has(JsonType.UNDEFINED),
+              isNullable: requestedFieldTypes.has(JsonType.NULL),
+            },
+          })
+        );
+      } else {
+        dispatch(
+          documentationEditActions.removeFieldEdit({
+            fieldId,
+          })
+        );
+      }
+    },
+    [dispatch]
+  );
+
+  const onFieldDescriptionChanged = useCallback(
+    (fieldId: string, description: string, isDescriptionDifferent: boolean) => {
+      if (isDescriptionDifferent) {
+        dispatch(
+          documentationEditActions.addContribution({
+            id: fieldId,
+            contributionKey: 'description',
+            value: description,
+            endpointId: endpointId,
+          })
+        );
+      } else {
+        dispatch(
+          documentationEditActions.removeContribution({
+            id: fieldId,
+            contributionKey: 'description',
+          })
+        );
+      }
+    },
+    [endpointId, dispatch]
+  );
 
   const classes = useStyles();
 
@@ -279,46 +358,55 @@ export const EndpointRootPage: FC<
               {(shapes, fields) => (
                 <div className={classes.bodyDetails}>
                   <div>
-                    <ContributionsList
-                      renderField={(field) => {
-                        let isArray = field.shapes.findIndex(
-                          (choice) => choice.jsonType === JsonType.ARRAY
-                        );
+                    {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !== 'true' ||
+                    !isEditing ? (
+                      <ContributionsList
+                        renderField={(field) => {
+                          // TODO apply this to the shapeEditor component
+                          let isArray = field.shapes.findIndex(
+                            (choice) => choice.jsonType === JsonType.ARRAY
+                          );
 
-                        if (isArray > -1) {
-                          if (field.shapes.length > 1) {
-                            field.shapes.splice(isArray, 1);
-                          } else {
-                            field.shapes = field.shapes[
-                              isArray
-                            ].asArray!.shapeChoices;
-                          }
-                        }
-
-                        return process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
-                          'true' || !isEditing ? (
-                          <DocFieldContribution
-                            key={
-                              field.contribution.id +
-                              field.contribution.contributionKey
+                          if (isArray > -1) {
+                            if (field.shapes.length > 1) {
+                              field.shapes.splice(isArray, 1);
+                            } else {
+                              field.shapes = field.shapes[
+                                isArray
+                              ].asArray!.shapeChoices;
                             }
-                            endpoint={{
-                              pathId,
-                              method,
-                            }}
-                            name={field.name}
-                            shapes={field.shapes}
-                            depth={field.depth}
-                            id={field.contribution.id}
-                            initialValue={field.contribution.value}
-                            required={field.required}
-                          />
-                        ) : (
-                          <ShapeEditor fields={fields} />
-                        );
-                      }}
-                      fieldDetails={fields}
-                    />
+                          }
+
+                          return (
+                            <DocsFieldOrParameterContribution
+                              key={
+                                field.contribution.id +
+                                field.contribution.contributionKey
+                              }
+                              endpoint={{
+                                pathId,
+                                method,
+                              }}
+                              name={field.name}
+                              shapes={field.shapes}
+                              depth={field.depth}
+                              id={field.contribution.id}
+                              initialValue={field.contribution.value}
+                              required={field.required}
+                            />
+                          );
+                        }}
+                        fieldDetails={fields}
+                      />
+                    ) : (
+                      <ShapeEditor
+                        fields={fields}
+                        onChangeDescription={onFieldDescriptionChanged}
+                        onChangeFieldType={onChangeFieldType}
+                        isFieldRemoved={isFieldRemoved}
+                        onToggleRemove={onToggleRemovedField}
+                      />
+                    )}
                   </div>
                   <div className={classes.panel}>
                     {isEditing ? (
@@ -383,7 +471,7 @@ export const EndpointRootPage: FC<
                                   'true' || !isEditing ? (
                                   <ContributionsList
                                     renderField={(field) => (
-                                      <DocFieldContribution
+                                      <DocsFieldOrParameterContribution
                                         key={
                                           field.contribution.id +
                                           field.contribution.contributionKey
@@ -408,6 +496,12 @@ export const EndpointRootPage: FC<
                                     fields={fields}
                                     selectedFieldId={selectedFieldId}
                                     setSelectedField={setSelectedFieldId}
+                                    onChangeDescription={
+                                      onFieldDescriptionChanged
+                                    }
+                                    onChangeFieldType={onChangeFieldType}
+                                    isFieldRemoved={isFieldRemoved}
+                                    onToggleRemove={onToggleRemovedField}
                                   />
                                 )}
                               </div>
@@ -422,6 +516,8 @@ export const EndpointRootPage: FC<
                                         shapes={shapes}
                                         location={request.body!.contentType}
                                         selectedFieldId={selectedFieldId}
+                                        fieldsAreSelectable={true}
+                                        setSelectedField={setSelectedFieldId}
                                       />
                                     )}
                                   </SimulatedBody>
@@ -488,7 +584,7 @@ export const EndpointRootPage: FC<
                                     'true' || !isEditing ? (
                                     <ContributionsList
                                       renderField={(field) => (
-                                        <DocFieldContribution
+                                        <DocsFieldOrParameterContribution
                                           key={
                                             field.contribution.id +
                                             field.contribution.contributionKey
@@ -515,6 +611,12 @@ export const EndpointRootPage: FC<
                                       fields={fields}
                                       selectedFieldId={selectedFieldId}
                                       setSelectedField={setSelectedFieldId}
+                                      onChangeDescription={
+                                        onFieldDescriptionChanged
+                                      }
+                                      onChangeFieldType={onChangeFieldType}
+                                      isFieldRemoved={isFieldRemoved}
+                                      onToggleRemove={onToggleRemovedField}
                                     />
                                   )}
                                 </div>
