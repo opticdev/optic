@@ -29,23 +29,24 @@ There are other paths to test, and our goal is to have everything work as expect
 
 - [ ] Run `api init`
 	- [ ] Enter `no`: Expect an error `Optic must be initialized in your API's root directory. Change your working directory and then run api init again`
-- [ ] Run `api init` for **Start Command**
+- [ ] Run `api init` again
 	- [ ] Enter `yes`
 	- [ ] Enter an API name
 	- [ ] Optic advises that configuration is added to `optic.yml`
 	- [ ] Optic opens browser to the docs, configuration page
 - [ ] In `optic.yml`
-	- [ ] Add an incorrect command (`"false"` works on POSIX-y systems).
-	- [ ] Run `api check start`: Expect:
-		- [ ] a command line error, does not start a long-running process.
+	- [ ] Add an incorrect command to the start task (`"false"` works on POSIX-y systems though a bad command that throws a visible error may be clearer.)
+	- [ ] Run `api start --verbose`: Expect:
+		- [ ] Optic terminates, error messages from the incorrect command (if present) are logged to terminal.
 	- [ ] Resolve issue by entering a valid start command.
 	- [ ] Occupy the inboundUrl port. For example, `nc -kl 4000` should bind `netcat` to port 4000.
-	- [ ] Run `api check start`: Expect:
-		- [ ] A command line error, Optic is not able to start its proxy
+	- [ ] Run `api start --verbose`: Expect:
+		- [ ] Port conflict error logged (such as `[optic-verbose] ⚠️   Something is already running on port 3001. Can not start Optic Proxy there.`)
+		- [ ] Process using the Optic inboundUrl port is enumerated by name, PID (such as `[optic]  [pid 97353]: nc -kl 3001`)
 	- [ ] Resolve issue by unbinding the inboundUrl port.
-	- [ ] Run `api check start`: Expect checks to pass.
+	- [ ] Run `api start --verbose` and then stop with `CTRL+c`: Expect no errors.
 - [ ] Test the default **Environment**
-	- [ ] `api init` should provide a sample environment, production, to intercept traffic to GitHub's API
+	- [ ] `api init` should have set up a sample environment in `optic.yml`, production, to intercept traffic to GitHub's API.
 	- [ ] Run `api intercept production --chrome`. Expect:
 		- [ ] A new Chrome browser session opens.
 		- [ ] The Chrome browser session is configured with:
@@ -53,28 +54,30 @@ There are other paths to test, and our goal is to have everything work as expect
 			- [ ] Optic's self-signed certificate fingerprint (trusted).
 	- [ ] Using this new Chrome browser session, request a few GitHub API endpoints.
 	- [ ] Confirm the CLI shows and counts requests.
-	- [ ] Stop the CLI with `ctrl+c`. The Optic Dashboard should open in a browser tab.
+	- [ ] Stop the CLI with `CTRL+c`. The Optic Dashboard should open in a browser tab.
 	- [ ] Confirm traffic shows up as undocumented endpoints. *N.B.* there is no need to document these endpoints unless you are focusing on Intercept: we'll test baselining and diffs in later tests.
 - [ ] Set up a **Proxy** configuration --or-- skip to **Generate API baseline documentation**
-	- [ ] Run `api check start` without starting the service to test: Expect:
+	- [ ] Run `api start --verbose` without starting the service to test: Expect:
 		- [ ] a command line error after timeout, is not resolvable.
 	- [ ] Resolve issue by entering a valid start command.
 	- [ ] Occupy the inboundUrl port. For example, `nc -kl 4000` should bind `netcat` to port 4000.
 *Note* if this was tested successfully earlier, this can be skipped.
-	- [ ] Run `api check start`: Expect:
+	- [ ] Run `api start --verbose`: Expect:
 		- [ ] A command line error, Optic is not able to start its proxy
 	- [ ] Resolve issue by unbinding the inboundUrl port.
 	- [ ] Set targetUrl to the URL of the service under test. (*e.g.* http://localhost:5000)
-	- [ ] Start the service to test and run `api check start`: Expect checks to pass.
+	- [ ] Start the service to test and run `api start --verbose`, then stop with `CTRL+c`: Expect no errors.
 ### Generate API baseline documentation.
 
+- [ ] Run `api daemon:stop`.
+- [ ] Remove previous testing captures by running `rm -rf .optic/captures/*` from the root of the project.
 - [ ] Run `api start` to start the project under test.
 - [ ] Run traffic through the API project:
 	- [ ] One request must be to a default ignored endpoint (a root HEAD/OPTIONS request, or one to an asset (*e.g.* .html, .css) will work). The latest default rules are in `.optic/ignore`.
 	- [ ] One request must be to an endpoint that will be ignored, but is not ignored by the default rules. This lets us test the ignore feature.
-- [ ] `Ctrl+c` to end the Optic proxy. Optic should report unexpected behavior, prompt to run `api status`.
+- [ ] `CTRL+c` to end the Optic proxy. Optic should report unexpected behavior, prompt to run `api status`.
 - [ ] `api status` should report all traffic observed above as new, and suggest running `api status --review`.
-- [ ] `api status --review` should open the review page (/apis/1/diffs).
+- [ ] `api status --review` should open the review page (`http://localhost:34444/apis/1/diffs/local/{uuid}}/review`).
 - [ ] The review page shows a summary of diffs and undocumented URLs.
 	- [ ] Diffs handled is 0/0.
 	- [ ] Show remaining diffs is 0. Undocumented URLs depend on requests sent.
@@ -134,7 +137,7 @@ There are other paths to test, and our goal is to have everything work as expect
 
 ### Commit specification changes to the project
 
-- [ ] Terminate the Optic session with `ctrl+c`.
+- [ ] Terminate the Optic session with `CTRL+c`.
 - [ ] Run `git status --untracked-files .`: Expect:
 	- [ ] `.gitignore`, `ignore`, `api/specification.json` are present under the `.optic` folder.
 	- [ ] `optic.yml` is present at the project root.
@@ -158,7 +161,7 @@ This requires an automated test suite to run, such as a Newman script.
 	    command:  newman run <collection> --environment <environment>
 	    useTask:  start
 	```
-- [ ] Run `api check start-tests`. This should pass, and will help troubleshoot any errors in the task definition.
+- [ ] Run `api run start-tests --verbose`. This should pass, and if not will help troubleshoot any errors in the task definition.
 - [ ] Run `api run start-tests --print-coverage`: Expect
 	- [ ] The tests run successfully (if not, verify that your tests run without Optic).
 	- [ ] After completing tests, an API Coverage Report is generated.
@@ -226,6 +229,6 @@ Need another platform or architecture? [Let us know](https://github.com/opticdev
 And of course, we support multiple browsers. Testing should rotate through:
 
 - **Chrome** is the most commonly used workstation browser today. We should have good coverage of Chrome.
-- **Firefox** is in the top three most commonly used workstation browser that we support, and should also have some test coverage.
-- **Safari** is in the top three, though until recently we didn't support it because it caused complications during setup. This suppressed user engagement with Safari, pushing it down our list. That shouldn't be the case any longer, and we can test and bring this into rotation. It may need to move above Firefox eventually.
+- **Safari** is quite popular on MacOS, which appears to be our most common workstation platform.
+- **Firefox** rounds out the top three most commonly used workstation browsers that we support, and should also have some test coverage.
 
