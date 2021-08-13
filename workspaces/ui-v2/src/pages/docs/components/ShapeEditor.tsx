@@ -21,9 +21,10 @@ import {
 import ClassNames from 'classnames';
 import Color from 'color';
 
+import { JsonType } from '@useoptic/optic-domain';
+import { ShapeTypeSummary } from '<src>/components';
 import { setEquals, setDifference } from '<src>/lib/set-ops';
 import { IFieldDetails, IShapeRenderer } from '<src>/types';
-import { JsonType } from '@useoptic/optic-domain';
 import * as Theme from '<src>/styles/theme';
 
 type FieldRemovedStatus = 'removed' | 'root_removed' | 'not_removed';
@@ -370,7 +371,7 @@ const Field: FC<{
         >
           <div className={classes.fieldName}>{name}</div>
           <div className={classes.typesSummary}>
-            {summarizeTypes(shapes, required)}
+            <ShapeTypeSummary shapes={shapes} required={required} />
           </div>
         </div>
         <div className={classes.controls}>
@@ -403,32 +404,6 @@ const Field: FC<{
     </div>
   );
 };
-
-function summarizeTypes(shapes: IShapeRenderer[], required: boolean) {
-  const optionalText = required ? '' : ' (optional)';
-  let components = shapes.map(({ jsonType }: { jsonType: JsonType }) => (
-    <span key={jsonType} style={{ color: Theme.jsonTypeColors[jsonType] }}>
-      {jsonType.toString().toLowerCase()}
-    </span>
-  ));
-  if (shapes.length === 1) {
-    return (
-      <>
-        {components} {optionalText}
-      </>
-    );
-  } else {
-    const last = components.pop();
-    return (
-      <>
-        {components.map((component, i) => (
-          <span key={component.key}>{component},</span>
-        ))}{' '}
-        or {last} {optionalText}
-      </>
-    );
-  }
-}
 
 const INDENT_WIDTH = 8 * 3;
 const INDENT_MARKER_WIDTH = 1;

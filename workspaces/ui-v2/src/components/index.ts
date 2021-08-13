@@ -20,3 +20,5 @@ export * from './HttpBodyPanel';
 export * from './HttpBodySelector';
 export * from './SimulatedCommandStore';
 export * from './HighlightController';
+export * from './ShapeTypeSummary';
+export * from './FieldViewer';
