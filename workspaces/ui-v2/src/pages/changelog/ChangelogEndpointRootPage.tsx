@@ -17,6 +17,7 @@ import {
   HttpBodyPanel,
   HttpBodySelector,
   Panel,
+  FieldViewer,
 } from '<src>/components';
 import { useChangelogPages } from '<src>/components/navigation/Routes';
 import { SubtleBlueBackground, FontFamily } from '<src>/styles';
@@ -186,22 +187,26 @@ const ChangelogRootComponent: FC<
               {(shapes, fields) => (
                 <div className={classes.bodyDetails}>
                   <div>
-                    <ContributionsList
-                      renderField={(field) => (
-                        <FieldOrParameter
-                          key={
-                            field.contribution.id +
-                            field.contribution.contributionKey
-                          }
-                          name={field.name}
-                          shapes={field.shapes}
-                          depth={field.depth}
-                          value={field.contribution.value}
-                          required={field.required}
-                        />
-                      )}
-                      fieldDetails={fields}
-                    />
+                    {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !== 'true' ? (
+                      <ContributionsList
+                        renderField={(field) => (
+                          <FieldOrParameter
+                            key={
+                              field.contribution.id +
+                              field.contribution.contributionKey
+                            }
+                            name={field.name}
+                            shapes={field.shapes}
+                            depth={field.depth}
+                            value={field.contribution.value}
+                            required={field.required}
+                          />
+                        )}
+                        fieldDetails={fields}
+                      />
+                    ) : (
+                      <FieldViewer fields={fields} />
+                    )}
                   </div>
                   <div className={classes.panel}>
                     <QueryParametersPanel
@@ -245,22 +250,27 @@ const ChangelogRootComponent: FC<
                       {(shapes, fields) => (
                         <div className={classes.bodyDetails}>
                           <div>
-                            <ContributionsList
-                              renderField={(field) => (
-                                <FieldOrParameter
-                                  key={
-                                    field.contribution.id +
-                                    field.contribution.contributionKey
-                                  }
-                                  name={field.name}
-                                  shapes={field.shapes}
-                                  depth={field.depth}
-                                  value={field.contribution.value}
-                                  required={field.required}
-                                />
-                              )}
-                              fieldDetails={fields}
-                            />
+                            {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
+                            'true' ? (
+                              <ContributionsList
+                                renderField={(field) => (
+                                  <FieldOrParameter
+                                    key={
+                                      field.contribution.id +
+                                      field.contribution.contributionKey
+                                    }
+                                    name={field.name}
+                                    shapes={field.shapes}
+                                    depth={field.depth}
+                                    value={field.contribution.value}
+                                    required={field.required}
+                                  />
+                                )}
+                                fieldDetails={fields}
+                              />
+                            ) : (
+                              <FieldViewer fields={fields} />
+                            )}
                           </div>
                           <div className={classes.panel}>
                             <HttpBodyPanel
@@ -314,22 +324,27 @@ const ChangelogRootComponent: FC<
                           {(shapes, fields) => (
                             <>
                               <div>
-                                <ContributionsList
-                                  renderField={(field) => (
-                                    <FieldOrParameter
-                                      key={
-                                        field.contribution.id +
-                                        field.contribution.contributionKey
-                                      }
-                                      name={field.name}
-                                      shapes={field.shapes}
-                                      depth={field.depth}
-                                      value={field.contribution.value}
-                                      required={field.required}
-                                    />
-                                  )}
-                                  fieldDetails={fields}
-                                />
+                                {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
+                                'true' ? (
+                                  <ContributionsList
+                                    renderField={(field) => (
+                                      <FieldOrParameter
+                                        key={
+                                          field.contribution.id +
+                                          field.contribution.contributionKey
+                                        }
+                                        name={field.name}
+                                        shapes={field.shapes}
+                                        depth={field.depth}
+                                        value={field.contribution.value}
+                                        required={field.required}
+                                      />
+                                    )}
+                                    fieldDetails={fields}
+                                  />
+                                ) : (
+                                  <FieldViewer fields={fields} />
+                                )}
                               </div>
                               <div className={classes.panel}>
                                 <HttpBodyPanel
