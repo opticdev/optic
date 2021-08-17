@@ -1,5 +1,5 @@
 ---
-date: 2021-08-12
+date: 2021-08-17
 title: "Making Design First and Code First Work for Everyone"
 author: Stephen Mizell
 author_url: "https://github.com/smizell"
