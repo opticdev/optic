@@ -22,20 +22,25 @@ import GetToken from '../ci/get-token.mdx'
 - GitHub Actions Enabled
 - Optic initialized for your API project and checked in on the default branch of your repository for this to start working.
 
-Once that's set up, just add the following GitHub Actions workflow file:
+Once that's set up, use the following template to define a workflow in your repository's `.github/workflows` folder:
 
 ```yaml title=".github/workflows/optic-changelog.yml"
+name: Optic Changelog
+
+on: [pull_request,workflow_dispatch]
+
 jobs:
-# ...
-changelog:
-runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v2
-- uses: opticdev/optic-changelog@main
-with:
-GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-OPTIC_API_KEY: ${{secrets.OPTIC_API_KEY}}
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: opticdev/optic-changelog@main
+        with:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          OPTIC_API_KEY: ${{secrets.OPTIC_API_KEY}}
 ```
+
+Note, you may wish to modify the conditions on which the workflow will run, or modify it to meet your project's needs. If so, please review the [GitHub workflow syntax](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions)
 
 You'll need to add two environment variables, `GITHUB_TOKEN` which is automatically provided as a secret, and `OPTIC_API_KEY`. We **highly recommend** you add this API key as a secret in your repository and access it with the `secrets` variable as shown in the example. Otherwise, you risk leaking your key in your build environment.
 
@@ -58,11 +63,6 @@ Once set up, this action will run and add a comment into your pull request, show
 - Open a Pull Request
 
 </TabItem>
-
-
-
-
-
 
 <TabItem value="gitlab">
   <iframe

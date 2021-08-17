@@ -2,12 +2,10 @@ import { CurrentSpecContext } from '<src>/lib/Interfaces';
 import {
   AllEndpointsQuery,
   endpointQueryResultsToJson,
-  EndpointQueryResults,
 } from '<src>/store/endpoints/thunks';
-import { IBaseSpectacle } from '@useoptic/spectacle';
 import { newDeterministicIdGenerator } from '<src>/lib/domain-id-generator';
 import * as opticEngine from '@useoptic/optic-engine-wasm';
-import { AllPathsQuery, PathQueryResponse } from '<src>/store/paths/thunks';
+import { AllPathsQuery } from '<src>/store/paths/thunks';
 
 //@GOTCHA: for some reason, probably because of jest, our wasm code thinks it is running in the browser even though it is running in node because of the presence of global.self:
 //@REF: https://github.com/rust-random/getrandom/issues/214
@@ -16,11 +14,11 @@ delete global.self;
 
 export async function makeCurrentSpecContext(
   events: any[],
-  query: IBaseSpectacle['query']
+  query: any
 ): Promise<CurrentSpecContext> {
   const { endpoints } = endpointQueryResultsToJson(
     (
-      await query<EndpointQueryResults>({
+      await query({
         query: AllEndpointsQuery,
         variables: {},
       })
@@ -31,7 +29,7 @@ export async function makeCurrentSpecContext(
     false
   );
   const { paths } = (
-    await query<PathQueryResponse>({
+    await query({
       query: AllPathsQuery,
       variables: {},
     })

@@ -6,6 +6,7 @@ import { IForkableSpectacle } from '@useoptic/spectacle';
 import {
   AddContribution,
   CQRSCommand,
+  JsonType,
   PrunePathComponents,
 } from '@useoptic/optic-domain';
 import { SpectacleClient } from '<src>/clients';
@@ -20,6 +21,21 @@ const fetchRemoveEndpointCommands = async (
   const spectacleClient = new SpectacleClient(spectacle);
   try {
     return spectacleClient.fetchRemoveEndpointCommands(pathId, method);
+  } catch (e) {
+    console.error(e);
+    Sentry.captureException(e);
+    throw e;
+  }
+};
+
+const fetchFieldEditCommands = async (
+  spectacle: IForkableSpectacle,
+  fieldId: string,
+  requestedTypes: JsonType[]
+): Promise<CQRSCommand[]> => {
+  const spectacleClient = new SpectacleClient(spectacle);
+  try {
+    return spectacleClient.fetchFieldEditCommands(fieldId, requestedTypes);
   } catch (e) {
     console.error(e);
     Sentry.captureException(e);
@@ -59,7 +75,25 @@ export const saveDocumentationChanges = createAsyncThunk<
     const clientSessionId = state.metadata.data?.sessionId || '';
 
     const { removedEndpoints } = state.documentationEdits;
-    const { removedFields } = state.documentationEdits.fieldEdits;
+    const {
+      removed: removedFields,
+      edited: editedFields,
+    } = state.documentationEdits.fields;
+
+    const editFieldCommandsPromise: Promise<CQRSCommand[]> = Promise.all(
+      Object.entries(editedFields).map(([fieldId, options]) => {
+        const requestedTypes: JsonType[] = [];
+
+        if (options.isNullable) {
+          requestedTypes.push(JsonType.NULL);
+        }
+        if (options.isOptional) {
+          requestedTypes.push(JsonType.UNDEFINED);
+        }
+
+        return fetchFieldEditCommands(spectacle, fieldId, requestedTypes);
+      })
+    ).then((fieldCommands) => fieldCommands.flat());
 
     const removeFieldCommandsPromise: Promise<CQRSCommand[]> = Promise.all(
       removedFields.map((fieldId) =>
@@ -79,7 +113,12 @@ export const saveDocumentationChanges = createAsyncThunk<
       )
     ).then((endpointCommands) => endpointCommands.flat());
 
-    const [removeFieldCommands, removeEndpointCommands] = await Promise.all([
+    const [
+      editFieldCommands,
+      removeFieldCommands,
+      removeEndpointCommands,
+    ] = await Promise.all([
+      editFieldCommandsPromise,
       removeFieldCommandsPromise,
       removeEndpointCommandsPromise,
     ]);
@@ -99,6 +138,7 @@ export const saveDocumentationChanges = createAsyncThunk<
     // To be safer, we could apply the commands sequentially before generating the next commands
     const commands = [
       ...contributionCommands,
+      ...editFieldCommands,
       ...removeFieldCommands,
       ...removeEndpointCommands,
     ];

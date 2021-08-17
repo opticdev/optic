@@ -8,12 +8,18 @@ type HttpBodyPanelProps = {
   shapes: IShapeRenderer[];
   location: string;
   selectedFieldId?: string | null;
+
+  fieldsAreSelectable?: boolean;
+  setSelectedField?: (fieldId: string) => void;
 };
 
 export const HttpBodyPanel: FC<HttpBodyPanelProps> = ({
   shapes,
   location,
   selectedFieldId,
+
+  fieldsAreSelectable,
+  setSelectedField,
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -22,7 +28,7 @@ export const HttpBodyPanel: FC<HttpBodyPanelProps> = ({
       const isContainerScrollable =
         contentRef.current.scrollHeight > contentRef.current.clientHeight;
       const fieldNode = contentRef.current.querySelector(
-        `[data-fieldId='${selectedFieldId}']`
+        `[data-fieldid='${selectedFieldId}']`
       );
       if (isContainerScrollable && fieldNode) {
         const scrollTopDiff =
@@ -42,6 +48,8 @@ export const HttpBodyPanel: FC<HttpBodyPanelProps> = ({
         showExamples={false}
         shapes={shapes}
         selectedFieldId={selectedFieldId}
+        fieldsAreSelectable={fieldsAreSelectable}
+        setSelectedField={setSelectedField}
       />
     </Panel>
   );

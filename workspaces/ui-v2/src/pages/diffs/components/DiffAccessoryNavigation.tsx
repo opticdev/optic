@@ -18,11 +18,16 @@ export function DiffAccessoryNavigation() {
     handledCount,
     hasDiffChanges,
     getUndocumentedUrls,
+    wipPatterns,
   } = useSharedDiffContext();
   const diffReviewCapturePage = useDiffReviewCapturePageLink();
   const undocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
   const history = useHistory();
   const [handled, total] = handledCount;
+  const hasChanges =
+    hasDiffChanges() ||
+    Object.values(wipPatterns).filter((pattern) => pattern.isParameterized)
+      .length > 0;
 
   const numberOfUndocumented = getUndocumentedUrls().filter((i) => !i.hide)
     .length;
@@ -72,7 +77,7 @@ export function DiffAccessoryNavigation() {
       </div>
       <div className={classes.content}>
         <div className={classes.counter} style={{ marginRight: 10 }}>
-          <AskForCommitMessage hasChanges={hasDiffChanges()} />
+          <AskForCommitMessage hasChanges={hasChanges} />
         </div>
       </div>
     </div>

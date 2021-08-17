@@ -48,6 +48,8 @@ Another common issue is if the start task cannot run. The output of the command,
 [optic-verbose] Task finished with 0 samples in latest capture
 ```
 
+If you're on Windows, make sure you're using `%PORT%` to expand the `PORT` environment variable, as opposed to `$PORT`, if this is part of your start command. There are tools that can make this portable between shells, such as [cross-env on NPM](https://o3c.info/reference)
+
 </ExpandDocs>
 
 <ExpandDocs title="Potential issue: the project does not start on the correct port" defaultOpen={false}>

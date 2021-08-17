@@ -4,14 +4,14 @@ import { IContribution } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 import { JsonType } from '@useoptic/optic-domain';
 
-const memoizedGetAllRemovedFields = createSelector<
+export const memoizedGetAllRemovedFields = createSelector<
   RootState,
   RootState['shapes'],
   string[],
   Set<string>
 >(
   (state) => state.shapes,
-  (state) => state.documentationEdits.fieldEdits.removedFields,
+  (state) => state.documentationEdits.fields.removed,
   (shapes, removedFields) => {
     const allRemovedFields = new Set<string>();
     for (const fieldId of removedFields) {
@@ -77,12 +77,15 @@ export const getValidContributions = (state: RootState): IContribution[] => {
 export const getDocumentationEditStagedCount = (state: RootState) => {
   const {
     removedEndpoints,
-    fieldEdits: { removedFields },
+    fields: { edited: editedFields, removed: removedFields },
   } = state.documentationEdits;
   const validContributions = getValidContributions(state);
 
   return (
-    validContributions.length + removedEndpoints.length + removedFields.length
+    validContributions.length +
+    removedEndpoints.length +
+    removedFields.length +
+    Object.keys(editedFields).length
   );
 };
 
@@ -121,7 +124,7 @@ export const isFieldRemoved = (fieldId: string) => (state: RootState) => {
 export const isFieldRemovedRoot = (fieldId: string) => (
   state: RootState
 ): boolean => {
-  return !!state.documentationEdits.fieldEdits.removedFields.find(
+  return !!state.documentationEdits.fields.removed.find(
     (removedFieldId) => removedFieldId === fieldId
   );
 };
