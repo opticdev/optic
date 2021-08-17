@@ -17,6 +17,7 @@ import {
   HttpBodySelector,
   Panel,
   HighlightController,
+  FieldViewer,
 } from '<src>/components';
 import { useDocumentationPageLink } from '<src>/components/navigation/Routes';
 import { FontFamily, SubtleBlueBackground } from '<src>/styles';
@@ -361,7 +362,7 @@ export const EndpointRootPage: FC<
                     <div className={classes.bodyDetails}>
                       <div>
                         {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
-                          'true' || !isEditing ? (
+                        'true' ? (
                           <ContributionsList
                             renderField={(field) => {
                               const fieldWithoutArrayShape = selectors.removeArrayShapeFromField(
@@ -392,7 +393,7 @@ export const EndpointRootPage: FC<
                             }}
                             fieldDetails={fields}
                           />
-                        ) : (
+                        ) : isEditing ? (
                           <ShapeEditor
                             fields={fields.map(
                               selectors.removeArrayShapeFromField
@@ -405,6 +406,8 @@ export const EndpointRootPage: FC<
                             isFieldRemoved={isFieldRemoved}
                             onToggleRemove={onToggleRemovedField}
                           />
+                        ) : (
+                          <FieldViewer fields={fields} />
                         )}
                       </div>
                       <div className={classes.panel}>
@@ -469,7 +472,7 @@ export const EndpointRootPage: FC<
                             <div className={classes.bodyDetails}>
                               <div>
                                 {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
-                                  'true' || !isEditing ? (
+                                'true' ? (
                                   <ContributionsList
                                     renderField={(field) => (
                                       <DocsFieldOrParameterContribution
@@ -492,7 +495,7 @@ export const EndpointRootPage: FC<
                                     )}
                                     fieldDetails={fields}
                                   />
-                                ) : (
+                                ) : isEditing ? (
                                   <ShapeEditor
                                     fields={fields}
                                     selectedFieldId={selectedFieldId}
@@ -504,6 +507,8 @@ export const EndpointRootPage: FC<
                                     isFieldRemoved={isFieldRemoved}
                                     onToggleRemove={onToggleRemovedField}
                                   />
+                                ) : (
+                                  <FieldViewer fields={fields} />
                                 )}
                               </div>
                               <div className={classes.panel}>
@@ -582,7 +587,7 @@ export const EndpointRootPage: FC<
                                 <div>
                                   {process.env
                                     .REACT_APP_FF_FIELD_LEVEL_EDITS !==
-                                    'true' || !isEditing ? (
+                                  'true' ? (
                                     <ContributionsList
                                       renderField={(field) => (
                                         <DocsFieldOrParameterContribution
@@ -607,7 +612,7 @@ export const EndpointRootPage: FC<
                                       )}
                                       fieldDetails={fields}
                                     />
-                                  ) : (
+                                  ) : isEditing ? (
                                     <ShapeEditor
                                       fields={fields}
                                       selectedFieldId={selectedFieldId}
@@ -619,6 +624,8 @@ export const EndpointRootPage: FC<
                                       isFieldRemoved={isFieldRemoved}
                                       onToggleRemove={onToggleRemovedField}
                                     />
+                                  ) : (
+                                    <FieldViewer fields={fields} />
                                   )}
                                 </div>
                                 <div className={classes.panel}>
