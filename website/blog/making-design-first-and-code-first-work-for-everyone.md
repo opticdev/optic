@@ -1,6 +1,6 @@
 ---
 date: 2021-08-12
-title: "An API Strategy that Works for Everyone"
+title: "Making Design First and Code First Work for Everyone"
 author: Stephen Mizell
 author_url: "https://github.com/smizell"
 author_image_url: "/img/team/smizell.jpg"
