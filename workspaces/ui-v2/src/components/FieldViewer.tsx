@@ -83,6 +83,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: Theme.FontFamilyMono,
     fontWeight: theme.typography.fontWeightLight,
     fontSize: theme.typography.fontSize - 2,
+    color: Theme.GrayText,
   },
   fieldContribution: {
     padding: theme.spacing(1, 0, 0, 1),

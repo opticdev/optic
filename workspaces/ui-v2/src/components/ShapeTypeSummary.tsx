@@ -7,10 +7,18 @@ import * as Theme from '<src>/styles/theme';
 export const ShapeTypeSummary: FC<{
   shapes: IShapeRenderer[];
   required: boolean;
-}> = ({ shapes, required }) => {
+  hasColoredFields?: boolean;
+}> = ({ shapes, required, hasColoredFields }) => {
   const optionalText = required ? '' : ' (optional)';
   const components = shapes.map(({ jsonType }: { jsonType: JsonType }) => (
-    <span key={jsonType} style={{ color: Theme.jsonTypeColors[jsonType] }}>
+    <span
+      key={jsonType}
+      style={{
+        color: hasColoredFields
+          ? Theme.jsonTypeColors[jsonType]
+          : Theme.GrayText,
+      }}
+    >
       {jsonType.toString().toLowerCase()}
     </span>
   ));

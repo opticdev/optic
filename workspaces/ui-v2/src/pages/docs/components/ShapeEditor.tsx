@@ -371,7 +371,11 @@ const Field: FC<{
         >
           <div className={classes.fieldName}>{name}</div>
           <div className={classes.typesSummary}>
-            <ShapeTypeSummary shapes={shapes} required={required} />
+            <ShapeTypeSummary
+              shapes={shapes}
+              required={required}
+              hasColoredFields
+            />
           </div>
         </div>
         <div className={classes.controls}>
@@ -530,7 +534,7 @@ const useFieldStyles = makeStyles((theme) => ({
   },
   typesSummary: {
     fontFamily: Theme.FontFamilyMono,
-    color: '#8792a2',
+    color: Theme.GrayText,
   },
 
   // Controls
