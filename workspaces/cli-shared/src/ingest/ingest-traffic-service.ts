@@ -47,7 +47,7 @@ export class IngestTrafficService {
     samples.forEach((sample: any) => {
       developerDebugLogger('saw sample', sample);
       try {
-        ecsToHttpInteraction(sample);
+        this.captureSaver.save(ecsToHttpInteraction(sample));
       } catch (e) {
         developerDebugLogger(
           'could not transform ecs sample -> interaction format',
