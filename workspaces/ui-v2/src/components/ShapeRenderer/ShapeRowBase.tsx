@@ -73,10 +73,10 @@ export const RenderField = ({
   name,
   shapeChoices,
   required,
-  parentId,
+  shapeId,
   changes,
   fieldId,
-}: IFieldRenderer & { parentId: string }) => {
+}: IFieldRenderer) => {
   const sharedClasses = useSharedStyles();
   const { depth } = useDepth();
 
@@ -129,7 +129,7 @@ export const RenderField = ({
     );
   } else {
     const tabprops: OneOfTabsProps = {
-      parentShapeId: parentId,
+      shapeId,
       choices: shapeChoices.map((i) => ({
         label: i.jsonType,
         id: i.shapeId,
@@ -244,7 +244,7 @@ export const RenderFieldRowValues = ({
         <>
           {shape.asObject.fields.map((field) => (
             <Indent key={field.fieldId}>
-              <RenderField {...field} parentId={shape.shapeId} />
+              <RenderField {...field} />
             </Indent>
           ))}
           <ShapeRowBase depth={depth} focused={!selectedFieldId}>
@@ -269,7 +269,7 @@ export const RenderFieldRowValues = ({
       const inner =
         shape.asArray.shapeChoices.length > 1 ? (
           <OneOfRender
-            parentShapeId={shape.shapeId}
+            shapeId={shape.asArray.shapeId}
             shapes={shape.asArray.shapeChoices}
           />
         ) : shape.asArray.shapeChoices.length === 1 ? (
@@ -294,10 +294,10 @@ export const RenderFieldRowValues = ({
 
 export function OneOfRender({
   shapes,
-  parentShapeId,
+  shapeId,
 }: {
   shapes: IShapeRenderer[];
-  parentShapeId: string;
+  shapeId: string;
 }) {
   const { getChoice } = useShapeRenderContext();
   if (shapes.length === 1) {
@@ -311,7 +311,7 @@ export function OneOfRender({
 
   const tabProps = {
     choices,
-    parentShapeId,
+    shapeId,
   };
 
   const chosenShapeToRender = choices.find((i) => i.id === getChoice(tabProps));

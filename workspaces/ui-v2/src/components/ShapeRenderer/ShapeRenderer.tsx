@@ -22,13 +22,14 @@ export const ShapeRenderer: FC<ShapeRendererProps> = ({
 }) => {
   return (
     <ShapeRenderStore
+      shapes={shapes}
       showExamples={showExamples}
       selectedFieldId={selectedFieldId}
       fieldsAreSelectable={fieldsAreSelectable}
       setSelectedField={setSelectedField}
     >
       {shapes.length > 1 ? (
-        <OneOfRender shapes={shapes} parentShapeId={'root'} />
+        <OneOfRender shapes={shapes} shapeId={'root'} />
       ) : shapes.length === 1 ? (
         <RenderRootShape shape={shapes[0]} />
       ) : null}
