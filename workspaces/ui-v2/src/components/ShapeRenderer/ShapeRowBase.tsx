@@ -1,5 +1,6 @@
 import * as React from 'react';
-import makeStyles from '@material-ui/styles/makeStyles';
+import { useCallback } from 'react';
+import { makeStyles } from '@material-ui/core';
 import { JsonType } from '@useoptic/optic-domain';
 
 import { IndentSpaces, useSharedStyles } from './SharedStyles';
@@ -17,6 +18,8 @@ type ShapeRowBaseProps = {
   style?: any;
   changes?: ChangeType | null;
   focused?: boolean;
+  clickable?: boolean;
+  onClick?: () => void;
 } & React.HtmlHTMLAttributes<HTMLDivElement>;
 export const ShapeRowBase = ({
   children,
@@ -24,14 +27,31 @@ export const ShapeRowBase = ({
   style,
   changes,
   focused,
+  clickable,
+  onClick,
   ...props
 }: ShapeRowBaseProps) => {
   const classes = useStyles();
   const sharedClasses = useSharedStyles();
+
+  const onClickWrap = useCallback(
+    (e: React.MouseEvent) => {
+      if (!clickable) return;
+      e.preventDefault();
+      if (onClick) onClick();
+    },
+    [clickable, onClick]
+  );
+
   return (
     <div
       style={style}
-      className={classNames(classes.rowWrap, { [classes.allowHover]: false })}
+      className={classNames(classes.rowWrap, {
+        [classes.allowHover]: false,
+        [classes.isFocused]: focused,
+        [classes.isClickable]: clickable,
+      })}
+      onClick={onClickWrap}
     >
       <div
         {...props}
@@ -39,8 +59,7 @@ export const ShapeRowBase = ({
           classes.row,
           { [sharedClasses.added]: changes === 'added' },
           { [sharedClasses.changed]: changes === 'updated' },
-          { [sharedClasses.removed]: changes === 'removed' },
-          { [classes.focused]: focused }
+          { [sharedClasses.removed]: changes === 'removed' }
         )}
         style={{ paddingLeft: depth * IndentSpaces + 4 }}
       >
@@ -61,7 +80,16 @@ export const RenderField = ({
   const sharedClasses = useSharedStyles();
   const { depth } = useDepth();
 
-  const { getChoice, selectedFieldId } = useShapeRenderContext();
+  const {
+    getChoice,
+    selectedFieldId,
+    fieldsAreSelectable,
+    selectField,
+  } = useShapeRenderContext();
+
+  const onClickRow = useCallback(() => {
+    selectField(fieldId);
+  }, [selectField, fieldId]);
 
   if (shapeChoices.length === 1) {
     return (
@@ -69,8 +97,10 @@ export const RenderField = ({
         <ShapeRowBase
           depth={depth}
           changes={changes}
-          focused={fieldId === selectedFieldId}
-          data-fieldId={fieldId}
+          clickable={fieldsAreSelectable}
+          focused={!selectedFieldId || fieldId === selectedFieldId}
+          data-fieldid={fieldId}
+          onClick={onClickRow}
         >
           <span className={sharedClasses.shapeFont}>"{name}"</span>
           <span className={sharedClasses.symbolFont}>: </span>
@@ -87,8 +117,10 @@ export const RenderField = ({
       <ShapeRowBase
         depth={depth}
         changes={changes}
-        focused={fieldId === selectedFieldId}
-        data-fieldId={fieldId}
+        clickable={fieldsAreSelectable}
+        focused={!selectedFieldId || fieldId === selectedFieldId}
+        data-fieldid={fieldId}
+        onClick={onClickRow}
       >
         <span className={sharedClasses.shapeFont}>"{name}"</span>
         <span className={sharedClasses.symbolFont}>: </span>
@@ -112,8 +144,10 @@ export const RenderField = ({
         <ShapeRowBase
           depth={depth}
           changes={changes}
-          focused={fieldId === selectedFieldId}
-          data-fieldId={fieldId}
+          clickable={fieldsAreSelectable}
+          focused={!selectedFieldId || fieldId === selectedFieldId}
+          data-fieldid={fieldId}
+          onClick={onClickRow}
         >
           <span className={sharedClasses.shapeFont}>"{name}"</span>
           <span className={sharedClasses.symbolFont}>: </span>
@@ -142,9 +176,11 @@ export const RenderRootShape = ({
   right?: React.ReactElement;
 }) => {
   const { depth } = useDepth();
+  const { selectedFieldId } = useShapeRenderContext();
+
   return (
     <>
-      <ShapeRowBase depth={depth}>
+      <ShapeRowBase depth={depth} focused={!selectedFieldId}>
         <RenderFieldLeadingValue shapeRenderers={[shape]} />
         {right ? (
           <>
@@ -199,6 +235,8 @@ export const RenderFieldRowValues = ({
 }: RenderFieldValueProps) => {
   const sharedClasses = useSharedStyles();
   const { Indent, depth } = useDepth();
+  const { selectedFieldId } = useShapeRenderContext();
+
   if (shapeRenderers.length === 1) {
     const shape = shapeRenderers[0];
     if (shape.asObject) {
@@ -209,7 +247,7 @@ export const RenderFieldRowValues = ({
               <RenderField {...field} parentId={shape.shapeId} />
             </Indent>
           ))}
-          <ShapeRowBase depth={depth}>
+          <ShapeRowBase depth={depth} focused={!selectedFieldId}>
             <span className={sharedClasses.symbolFont}>{'}'}</span>
           </ShapeRowBase>
         </>
@@ -221,7 +259,7 @@ export const RenderFieldRowValues = ({
         return (
           <>
             <ShapePrimitiveRender {...shape} />
-            <ShapeRowBase depth={depth}>
+            <ShapeRowBase depth={depth} focused={!selectedFieldId}>
               <span className={sharedClasses.symbolFont}>{']'}</span>
             </ShapeRowBase>
           </>
@@ -241,7 +279,7 @@ export const RenderFieldRowValues = ({
       return (
         <>
           <Indent>{inner}</Indent>
-          <ShapeRowBase depth={depth}>
+          <ShapeRowBase depth={depth} focused={!selectedFieldId}>
             <span className={sharedClasses.symbolFont}>{']'}</span>
           </ShapeRowBase>
         </>
@@ -301,8 +339,20 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'flex-start',
     minHeight: 17,
+
+    '$rowWrap:not($isFocused) &': {
+      opacity: 0.3,
+    },
+
+    '$isClickable &:hover': {
+      backgroundColor: '#e4ebf1',
+      cursor: 'pointer',
+    },
+
+    '$isClickable:not($isFocused) &:hover': {
+      opacity: 0.6,
+    },
   },
-  focused: {
-    borderBottom: '1px solid black',
-  },
+  isClickable: {},
+  isFocused: {},
 }));

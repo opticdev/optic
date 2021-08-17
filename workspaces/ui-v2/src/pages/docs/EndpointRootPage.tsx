@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Button, LinearProgress, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
@@ -31,13 +31,13 @@ import { getEndpointId } from '<src>/utils';
 import { useRunOnKeypress } from '<src>/hooks/util';
 import {
   EndpointTOC,
-  DocFieldContribution,
   DocsFieldOrParameterContribution,
   EndpointNameContribution,
   DocsPageAccessoryNavigation,
   MarkdownBodyContribution,
   DeleteEndpointConfirmationModal,
   SimulatedBody,
+  ShapeEditor,
 } from '<src>/pages/docs/components';
 import { useAnalytics } from '<src>/contexts/analytics';
 
@@ -69,6 +69,12 @@ export const EndpointRootPage: FC<
   const { pathId, method } = match.params;
   const thisEndpoint = useAppSelector(
     selectors.getEndpoint({ pathId, method })
+  );
+  const userRemovedFields = useAppSelector(
+    (state) => state.documentationEdits.fields.removed
+  );
+  const allRemovedFields = useAppSelector(
+    selectors.memoizedGetAllRemovedFields
   );
 
   const isEndpointRemoved = thisEndpoint ? thisEndpoint.isRemoved : false;
@@ -103,6 +109,80 @@ export const EndpointRootPage: FC<
 
   const unremoveEndpoint = () =>
     dispatch(documentationEditActions.unremoveEndpoint({ method, pathId }));
+
+  const isFieldRemoved = useCallback(
+    (fieldId: string) => {
+      if (userRemovedFields.includes(fieldId)) {
+        return 'root_removed';
+      } else if (allRemovedFields.has(fieldId)) {
+        return 'removed';
+      } else {
+        return 'not_removed';
+      }
+    },
+    [userRemovedFields, allRemovedFields]
+  );
+
+  const onToggleRemovedField = useCallback(
+    (fieldId: string) => {
+      if (userRemovedFields.includes(fieldId)) {
+        dispatch(documentationEditActions.unremoveField({ fieldId }));
+      } else {
+        dispatch(documentationEditActions.removeField({ fieldId }));
+      }
+    },
+    [userRemovedFields, dispatch]
+  );
+
+  const onChangeFieldType = useCallback(
+    (
+      fieldId: string,
+      requestedFieldTypes: Set<JsonType>,
+      isFieldTypeDifferent: boolean
+    ) => {
+      if (isFieldTypeDifferent) {
+        dispatch(
+          documentationEditActions.addFieldEdit({
+            fieldId,
+            options: {
+              isOptional: requestedFieldTypes.has(JsonType.UNDEFINED),
+              isNullable: requestedFieldTypes.has(JsonType.NULL),
+            },
+          })
+        );
+      } else {
+        dispatch(
+          documentationEditActions.removeFieldEdit({
+            fieldId,
+          })
+        );
+      }
+    },
+    [dispatch]
+  );
+
+  const onFieldDescriptionChanged = useCallback(
+    (fieldId: string, description: string, isDescriptionDifferent: boolean) => {
+      if (isDescriptionDifferent) {
+        dispatch(
+          documentationEditActions.addContribution({
+            id: fieldId,
+            contributionKey: 'description',
+            value: description,
+            endpointId: endpointId,
+          })
+        );
+      } else {
+        dispatch(
+          documentationEditActions.removeContribution({
+            id: fieldId,
+            contributionKey: 'description',
+          })
+        );
+      }
+    },
+    [endpointId, dispatch]
+  );
 
   const classes = useStyles();
 
@@ -276,69 +356,82 @@ export const EndpointRootPage: FC<
               endpointId={endpointId}
             >
               {(shapes, fields) => (
-                <div className={classes.bodyDetails}>
-                  <div>
-                    <ContributionsList
-                      renderField={(field) => {
-                        let isArray = field.shapes.findIndex(
-                          (choice) => choice.jsonType === JsonType.ARRAY
-                        );
+                <HighlightController>
+                  {(selectedFieldId, setSelectedFieldId) => (
+                    <div className={classes.bodyDetails}>
+                      <div>
+                        {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
+                          'true' || !isEditing ? (
+                          <ContributionsList
+                            renderField={(field) => {
+                              const fieldWithoutArrayShape = selectors.removeArrayShapeFromField(
+                                field
+                              );
 
-                        if (isArray > -1) {
-                          if (field.shapes.length > 1) {
-                            field.shapes.splice(isArray, 1);
-                          } else {
-                            field.shapes = field.shapes[
-                              isArray
-                            ].asArray!.shapeChoices;
-                          }
-                        }
-
-                        return (
-                          <DocFieldContribution
-                            key={
-                              field.contribution.id +
-                              field.contribution.contributionKey
-                            }
-                            endpoint={{
-                              pathId,
-                              method,
+                              return (
+                                <DocsFieldOrParameterContribution
+                                  key={
+                                    fieldWithoutArrayShape.contribution.id +
+                                    fieldWithoutArrayShape.contribution
+                                      .contributionKey
+                                  }
+                                  endpoint={{
+                                    pathId,
+                                    method,
+                                  }}
+                                  name={fieldWithoutArrayShape.name}
+                                  shapes={fieldWithoutArrayShape.shapes}
+                                  depth={fieldWithoutArrayShape.depth}
+                                  id={fieldWithoutArrayShape.contribution.id}
+                                  initialValue={
+                                    fieldWithoutArrayShape.contribution.value
+                                  }
+                                  required={fieldWithoutArrayShape.required}
+                                />
+                              );
                             }}
-                            name={field.name}
-                            shapes={field.shapes}
-                            depth={field.depth}
-                            id={field.contribution.id}
-                            initialValue={field.contribution.value}
-                            required={field.required}
+                            fieldDetails={fields}
                           />
-                        );
-                      }}
-                      fieldDetails={fields}
-                    />
-                  </div>
-                  <div className={classes.panel}>
-                    {isEditing ? (
-                      <SimulatedBody
-                        rootShapeId={visibleQueryParameters.rootShapeId}
-                        endpointId={endpointId}
-                      >
-                        {(shapes) => (
+                        ) : (
+                          <ShapeEditor
+                            fields={fields.map(
+                              selectors.removeArrayShapeFromField
+                            )}
+                            selectedFieldId={selectedFieldId}
+                            setSelectedField={setSelectedFieldId}
+                            nonEditableTypes={new Set([JsonType.NULL])}
+                            onChangeDescription={onFieldDescriptionChanged}
+                            onChangeFieldType={onChangeFieldType}
+                            isFieldRemoved={isFieldRemoved}
+                            onToggleRemove={onToggleRemovedField}
+                          />
+                        )}
+                      </div>
+                      <div className={classes.panel}>
+                        {isEditing ? (
+                          <SimulatedBody
+                            rootShapeId={visibleQueryParameters.rootShapeId}
+                            endpointId={endpointId}
+                          >
+                            {(shapes) => (
+                              <QueryParametersPanel
+                                parameters={selectors.convertShapeToQueryParameters(
+                                  shapes
+                                )}
+                              />
+                            )}
+                          </SimulatedBody>
+                        ) : (
                           <QueryParametersPanel
                             parameters={selectors.convertShapeToQueryParameters(
                               shapes
                             )}
                           />
                         )}
-                      </SimulatedBody>
-                    ) : (
-                      <QueryParametersPanel
-                        parameters={selectors.convertShapeToQueryParameters(
-                          shapes
-                        )}
-                      />
-                    )}
-                  </div>
-                </div>
+                      </div>
+                    </div>
+                  )}
+                </HighlightController>
               )}
             </ShapeFetcher>
           </div>
@@ -375,28 +468,43 @@ export const EndpointRootPage: FC<
                           {(selectedFieldId, setSelectedFieldId) => (
                             <div className={classes.bodyDetails}>
                               <div>
-                                <ContributionsList
-                                  renderField={(field) => (
-                                    <DocFieldContribution
-                                      key={
-                                        field.contribution.id +
-                                        field.contribution.contributionKey
-                                      }
-                                      endpoint={{
-                                        pathId,
-                                        method,
-                                      }}
-                                      name={field.name}
-                                      shapes={field.shapes}
-                                      depth={field.depth}
-                                      id={field.fieldId}
-                                      initialValue={field.contribution.value}
-                                      required={field.required}
-                                      setSelectedField={setSelectedFieldId}
-                                    />
-                                  )}
-                                  fieldDetails={fields}
-                                />
+                                {process.env.REACT_APP_FF_FIELD_LEVEL_EDITS !==
+                                  'true' || !isEditing ? (
+                                  <ContributionsList
+                                    renderField={(field) => (
+                                      <DocsFieldOrParameterContribution
+                                        key={
+                                          field.contribution.id +
+                                          field.contribution.contributionKey
+                                        }
+                                        endpoint={{
+                                          pathId,
+                                          method,
+                                        }}
+                                        name={field.name}
+                                        shapes={field.shapes}
+                                        depth={field.depth}
+                                        id={field.fieldId}
+                                        initialValue={field.contribution.value}
+                                        required={field.required}
+                                        setSelectedField={setSelectedFieldId}
+                                      />
+                                    )}
+                                    fieldDetails={fields}
+                                  />
+                                ) : (
+                                  <ShapeEditor
+                                    fields={fields}
+                                    selectedFieldId={selectedFieldId}
+                                    setSelectedField={setSelectedFieldId}
+                                    onChangeDescription={
+                                      onFieldDescriptionChanged
+                                    }
+                                    onChangeFieldType={onChangeFieldType}
+                                    isFieldRemoved={isFieldRemoved}
+                                    onToggleRemove={onToggleRemovedField}
+                                  />
+                                )}
                               </div>
                               <div className={classes.panel}>
                                 {isEditing ? (
@@ -409,6 +517,8 @@ export const EndpointRootPage: FC<
                                         shapes={shapes}
                                         location={request.body!.contentType}
                                         selectedFieldId={selectedFieldId}
+                                        fieldsAreSelectable={true}
+                                        setSelectedField={setSelectedFieldId}
                                       />
                                     )}
                                   </SimulatedBody>
@@ -416,7 +526,6 @@ export const EndpointRootPage: FC<
                                   <HttpBodyPanel
                                     shapes={shapes}
                                     location={request.body!.contentType}
-                                    selectedFieldId={selectedFieldId}
                                   />
                                 )}
                               </div>
@@ -471,28 +580,46 @@ export const EndpointRootPage: FC<
                             {(selectedFieldId, setSelectedFieldId) => (
                               <div className={classes.bodyDetails}>
                                 <div>
-                                  <ContributionsList
-                                    renderField={(field) => (
-                                      <DocFieldContribution
-                                        key={
-                                          field.contribution.id +
-                                          field.contribution.contributionKey
-                                        }
-                                        endpoint={{
-                                          pathId,
-                                          method,
-                                        }}
-                                        name={field.name}
-                                        shapes={field.shapes}
-                                        depth={field.depth}
-                                        id={field.fieldId}
-                                        initialValue={field.contribution.value}
-                                        required={field.required}
-                                        setSelectedField={setSelectedFieldId}
-                                      />
-                                    )}
-                                    fieldDetails={fields}
-                                  />
+                                  {process.env
+                                    .REACT_APP_FF_FIELD_LEVEL_EDITS !==
+                                    'true' || !isEditing ? (
+                                    <ContributionsList
+                                      renderField={(field) => (
+                                        <DocsFieldOrParameterContribution
+                                          key={
+                                            field.contribution.id +
+                                            field.contribution.contributionKey
+                                          }
+                                          endpoint={{
+                                            pathId,
+                                            method,
+                                          }}
+                                          name={field.name}
+                                          shapes={field.shapes}
+                                          depth={field.depth}
+                                          id={field.fieldId}
+                                          initialValue={
+                                            field.contribution.value
+                                          }
+                                          required={field.required}
+                                          setSelectedField={setSelectedFieldId}
+                                        />
+                                      )}
+                                      fieldDetails={fields}
+                                    />
+                                  ) : (
+                                    <ShapeEditor
+                                      fields={fields}
+                                      selectedFieldId={selectedFieldId}
+                                      setSelectedField={setSelectedFieldId}
+                                      onChangeDescription={
+                                        onFieldDescriptionChanged
+                                      }
+                                      onChangeFieldType={onChangeFieldType}
+                                      isFieldRemoved={isFieldRemoved}
+                                      onToggleRemove={onToggleRemovedField}
+                                    />
+                                  )}
                                 </div>
                                 <div className={classes.panel}>
                                   {isEditing ? (
@@ -505,6 +632,8 @@ export const EndpointRootPage: FC<
                                           shapes={shapes}
                                           location={response.body!.contentType}
                                           selectedFieldId={selectedFieldId}
+                                          fieldsAreSelectable={true}
+                                          setSelectedField={setSelectedFieldId}
                                         />
                                       )}
                                     </SimulatedBody>
@@ -512,7 +641,6 @@ export const EndpointRootPage: FC<
                                     <HttpBodyPanel
                                       shapes={shapes}
                                       location={response.body!.contentType}
-                                      selectedFieldId={selectedFieldId}
                                     />
                                   )}
                                 </div>

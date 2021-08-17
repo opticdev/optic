@@ -40,6 +40,7 @@
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/bojan88"><img src="https://avatars.githubusercontent.com/u/1783133?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bojan Đurđević</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=bojan88" title="Code">💻</a></td>
+    <td align="center"><a href="http://twitter.com/tarasm"><img src="https://avatars.githubusercontent.com/u/74687?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Taras Mankovski</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=taras" title="Documentation">📖</a></td>
   </tr>
 </table>
 

@@ -5,8 +5,7 @@
   "repoHost": "https://github.com",
   "files": [
     "Readme.md",
-    "Contributors.md",
-    "website/docs/optic/community.mdx"
+    "Contributors.md"
   ],
   "imageSize": 100,
   "commit": true,
@@ -282,6 +281,15 @@
       "profile": "https://github.com/bojan88",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "taras",
+      "name": "Taras Mankovski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/74687?v=4",
+      "profile": "http://twitter.com/tarasm",
+      "contributions": [
+        "doc"
       ]
     }
   ],
