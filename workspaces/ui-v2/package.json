@@ -68,7 +68,7 @@
     "react-markdown": "^5.0.3",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
-    "react-scroll-into-view-if-needed": "^3.0",
+    "react-scroll-into-view-if-needed": "^2.1.7",
     "react-virtualized-auto-sizer": "^1.0.5",
     "react-window": "^1.8.6",
     "reselect": "^4.0.0",
