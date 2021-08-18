@@ -1031,6 +1031,11 @@ mod test {
       { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "one_of_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "number_shape_1"}},"consumingParameterId": "one_of_param_2" }}}},
       { "FieldAdded": { "fieldId": "field_5", "shapeId": "object_shape_1", "name": "nestedObject", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_5", "shapeId": "one_of_shape_1"}} }},
 
+      // unknown nullable field
+      { "ShapeAdded": { "shapeId": "unknown_shape_1", "baseShapeId": "$string", "name": "" }},
+      { "ShapeAdded": { "shapeId": "nullable_shape_2", "baseShapeId": "$nullable", "name": "" }},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "nullable_shape_2","providerDescriptor": {"ShapeProvider": {"shapeId": "unknown_shape_1"}},"consumingParameterId": "$nullableInner" }}}},
+      { "FieldAdded": { "fieldId": "field_6", "shapeId": "object_shape_1", "name": "unknownField", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_6", "shapeId": "nullable_shape_2"}} }},
     ]))
     .expect("should be able to deserialize test events");
 
@@ -1073,6 +1078,12 @@ mod test {
     //   "can_resolve_shape_trails__one_of_trail",
     //   &one_of_trail
     // );
+
+    let unknown_nullable_trail = shape_queries.resolve_shape_trail(&"field_6".to_owned());
+    assert_debug_snapshot!(
+      "can_resolve_shape_trails__unknown_nullable_trail",
+      &unknown_nullable_trail
+    );
   }
 
   fn assert_valid_commands(
