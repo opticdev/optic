@@ -440,6 +440,8 @@ impl<'a> ShapeQueries<'a> {
   pub fn resolve_shape_trail(&self, shape_id: &ShapeId) -> Option<ShapeTrail> {
     let mut next_node = self.shape_projection.get_node_by_id(shape_id);
 
+    log::debug!("{:#?}", &next_node);
+
     let mut trail_components = vec![];
     let mut root_shape_id = None;
 
@@ -814,6 +816,51 @@ mod test {
 
     assert_debug_snapshot!(
       "can_generate_edit_shape_trail_commands_to_make_field_nullable__choice_mapping",
+      choice_mapping
+    );
+  }
+
+  #[test]
+  pub fn can_generate_edit_shape_trail_commands_to_make_unknown_nullable_field_optional() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
+      { "ShapeAdded": { "shapeId": "unknown_shape_1", "baseShapeId": "$unknown", "name": "" }},
+      { "ShapeAdded": { "shapeId": "nullable_shape_1", "baseShapeId": "$nullable", "name": "" }},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "nullable_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "unknown_shape_1"}},"consumingParameterId": "$nullableInner" }}}},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "nullable_shape_1"}} }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    let shape_queries = ShapeQueries::new(spec_projection.shape());
+    let mut id_generator = SequentialIdGenerator { next_id: 1093 }; // <3 primes
+
+    let shape_trail = ShapeTrail::new(String::from("object_shape_1"))
+      .with_component(ShapeTrailPathComponent::ObjectTrail {
+        shape_id: String::from("object_shape_1"),
+      })
+      .with_component(ShapeTrailPathComponent::ObjectFieldTrail {
+        field_id: String::from("field_1"),
+        field_shape_id: String::from("nullable_shape_1"),
+        parent_object_shape_id: String::from("object_shape_1"),
+      });
+    let required_kinds = vec![ShapeKind::OptionalKind, ShapeKind::NullableKind];
+    let edit_shape_commands = shape_queries
+      .edit_shape_trail_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .expect("field should be able to be made optional")
+      .map(SpecCommand::from)
+      .collect::<Vec<_>>();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_trail_commands_to_make_unknown_nullable_field_optional__commands",
+      &edit_shape_commands
+    );
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_trail_commands_to_make_unknown_nullable_field_optional__choice_mapping",
       choice_mapping
     );
   }
