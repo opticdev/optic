@@ -92,7 +92,7 @@ impl<'a> ShapeChoiceQueries<'a> {
     &'a self,
     shape_trail: &ShapeTrail,
   ) -> impl Iterator<Item = ShapeChoice> + 'a {
-    let trail_choices = self.shape_queries.list_trail_choices(&shape_trail);
+    let trail_choices = self.shape_queries.list_known_trail_choices(&shape_trail);
     let queries = &self.shape_queries;
 
     trail_choices

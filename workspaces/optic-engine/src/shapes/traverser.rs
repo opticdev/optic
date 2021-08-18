@@ -29,7 +29,7 @@ impl<'a> Traverser<'a> {
   ) {
     let body_trail = JsonTrail::empty();
     let trail_origin = ShapeTrail::new(shape_id.clone());
-    let choices: Vec<ChoiceOutput> = self.shape_queries.list_trail_choices(&trail_origin);
+    let choices: Vec<ChoiceOutput> = self.shape_queries.list_known_trail_choices(&trail_origin);
     self.traverse(body_option, body_trail, trail_origin, &choices, visitors)
   }
 
@@ -77,7 +77,7 @@ impl<'a> Traverser<'a> {
                     list_shape_id: choice.shape_id.clone(),
                     item_shape_id: item_shape_id,
                   });
-              self.shape_queries.list_trail_choices(&item_trail)
+              self.shape_queries.list_known_trail_choices(&item_trail)
             } else {
               unreachable!("should only contain items of list kind");
             }
@@ -195,7 +195,7 @@ impl<'a> Traverser<'a> {
                       field_shape_id: field_shape_id,
                       parent_object_shape_id: choice.shape_id.clone(),
                     });
-                self.shape_queries.list_trail_choices(&field_trail)
+                self.shape_queries.list_known_trail_choices(&field_trail)
               } else {
                 unreachable!("should only contain choices of object kind");
               }
