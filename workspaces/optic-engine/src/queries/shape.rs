@@ -62,7 +62,6 @@ impl<'a> ShapeQueries<'a> {
           _ => unreachable!("expected to be a core shape node"),
         };
         let trails: Vec<ChoiceOutput> = match core_shape_node.descriptor.kind {
-          // ShapeKind::UnknownKind => vec![],
           ShapeKind::NullableKind => {
             let nullable_parameter_id = core_shape_node
               .descriptor
@@ -447,8 +446,6 @@ impl<'a> ShapeQueries<'a> {
 
   pub fn resolve_shape_trail(&self, shape_id: &ShapeId) -> Option<ShapeTrail> {
     let mut next_node = self.shape_projection.get_node_by_id(shape_id);
-
-    log::debug!("{:#?}", &next_node);
 
     let mut trail_components = vec![];
     let mut root_shape_id = None;
