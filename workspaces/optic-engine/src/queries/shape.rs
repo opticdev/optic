@@ -62,7 +62,6 @@ impl<'a> ShapeQueries<'a> {
           _ => unreachable!("expected to be a core shape node"),
         };
         let trails: Vec<ChoiceOutput> = match core_shape_node.descriptor.kind {
-          ShapeKind::UnknownKind => vec![],
           ShapeKind::NullableKind => {
             let nullable_parameter_id = core_shape_node
               .descriptor
@@ -150,6 +149,14 @@ impl<'a> ShapeQueries<'a> {
       .flatten()
       .collect();
     result
+  }
+
+  pub fn list_known_trail_choices(&self, shape_trail: &ShapeTrail) -> Vec<ChoiceOutput> {
+    self
+      .list_trail_choices(shape_trail)
+      .into_iter()
+      .filter(|choice| !matches!(choice.core_shape_kind, ShapeKind::UnknownKind))
+      .collect()
   }
 
   pub fn resolve_to_core_shape(&self, shape_id: &ShapeId) -> &ShapeKind {
@@ -819,6 +826,51 @@ mod test {
   }
 
   #[test]
+  pub fn can_generate_edit_shape_trail_commands_to_make_unknown_nullable_field_optional() {
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      { "ShapeAdded": { "shapeId": "object_shape_1", "baseShapeId": "$object", "name": "" }},
+      { "ShapeAdded": { "shapeId": "unknown_shape_1", "baseShapeId": "$unknown", "name": "" }},
+      { "ShapeAdded": { "shapeId": "nullable_shape_1", "baseShapeId": "$nullable", "name": "" }},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "nullable_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "unknown_shape_1"}},"consumingParameterId": "$nullableInner" }}}},
+      { "FieldAdded": { "fieldId": "field_1", "shapeId": "object_shape_1", "name": "lastName", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_1", "shapeId": "nullable_shape_1"}} }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    let shape_queries = ShapeQueries::new(spec_projection.shape());
+    let mut id_generator = SequentialIdGenerator { next_id: 1093 }; // <3 primes
+
+    let shape_trail = ShapeTrail::new(String::from("object_shape_1"))
+      .with_component(ShapeTrailPathComponent::ObjectTrail {
+        shape_id: String::from("object_shape_1"),
+      })
+      .with_component(ShapeTrailPathComponent::ObjectFieldTrail {
+        field_id: String::from("field_1"),
+        field_shape_id: String::from("nullable_shape_1"),
+        parent_object_shape_id: String::from("object_shape_1"),
+      });
+    let required_kinds = vec![ShapeKind::OptionalKind, ShapeKind::NullableKind];
+    let edit_shape_commands = shape_queries
+      .edit_shape_trail_commands(&shape_trail, &required_kinds, &mut id_generator)
+      .expect("field should be able to be made optional")
+      .map(SpecCommand::from)
+      .collect::<Vec<_>>();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_trail_commands_to_make_unknown_nullable_field_optional__commands",
+      &edit_shape_commands
+    );
+
+    let updated_spec = assert_valid_commands(spec_projection.clone(), edit_shape_commands);
+    let choice_mapping = updated_spec.shape().to_choice_mapping();
+
+    assert_debug_snapshot!(
+      "can_generate_edit_shape_trail_commands_to_make_unknown_nullable_field_optional__choice_mapping",
+      choice_mapping
+    );
+  }
+
+  #[test]
   pub fn can_generate_edit_shape_trail_commands_to_make_optional_field_nullable() {
     let events: Vec<SpecEvent> = serde_json::from_value(json!([
       { "ShapeAdded": { "shapeId": "string_shape_1", "baseShapeId": "$string", "name": "" }},
@@ -1031,6 +1083,11 @@ mod test {
       { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "one_of_shape_1","providerDescriptor": {"ShapeProvider": {"shapeId": "number_shape_1"}},"consumingParameterId": "one_of_param_2" }}}},
       { "FieldAdded": { "fieldId": "field_5", "shapeId": "object_shape_1", "name": "nestedObject", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_5", "shapeId": "one_of_shape_1"}} }},
 
+      // unknown nullable field
+      { "ShapeAdded": { "shapeId": "unknown_shape_1", "baseShapeId": "$string", "name": "" }},
+      { "ShapeAdded": { "shapeId": "nullable_shape_2", "baseShapeId": "$nullable", "name": "" }},
+      { "ShapeParameterShapeSet": { "shapeDescriptor": { "ProviderInShape": { "shapeId": "nullable_shape_2","providerDescriptor": {"ShapeProvider": {"shapeId": "unknown_shape_1"}},"consumingParameterId": "$nullableInner" }}}},
+      { "FieldAdded": { "fieldId": "field_6", "shapeId": "object_shape_1", "name": "unknownField", "shapeDescriptor": { "FieldShapeFromShape": { "fieldId": "field_6", "shapeId": "nullable_shape_2"}} }},
     ]))
     .expect("should be able to deserialize test events");
 
@@ -1073,6 +1130,12 @@ mod test {
     //   "can_resolve_shape_trails__one_of_trail",
     //   &one_of_trail
     // );
+
+    let unknown_nullable_trail = shape_queries.resolve_shape_trail(&"field_6".to_owned());
+    assert_debug_snapshot!(
+      "can_resolve_shape_trails__unknown_nullable_trail",
+      &unknown_nullable_trail
+    );
   }
 
   fn assert_valid_commands(
