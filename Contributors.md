@@ -43,6 +43,7 @@
     <td align="center"><a href="http://twitter.com/tarasm"><img src="https://avatars.githubusercontent.com/u/74687?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Taras Mankovski</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=taras" title="Documentation">📖</a></td>
     <td align="center"><a href="https://bandism.net/"><img src="https://avatars.githubusercontent.com/u/22633385?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ikko Ashimine</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=eltociear" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/silentninja"><img src="https://avatars.githubusercontent.com/u/4469754?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mukesh</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=silentninja" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.aquicore.com/"><img src="https://avatars.githubusercontent.com/u/14347319?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tony Knight</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=tony-aq" title="Documentation">📖</a></td>
   </tr>
 </table>
 

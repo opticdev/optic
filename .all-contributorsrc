@@ -310,6 +310,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "tony-aq",
+      "name": "Tony Knight",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14347319?v=4",
+      "profile": "http://www.aquicore.com/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
