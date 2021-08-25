@@ -64,7 +64,7 @@ pub struct ArbitraryData {
 #[derive(Clone, Deserialize, Serialize, Debug, Default)]
 pub struct QueryParametersData {
   #[serde(flatten)]
-  data: ArbitraryData,
+  pub data: ArbitraryData,
 }
 
 impl From<&ArbitraryData> for Option<serde_json::value::Value> {
