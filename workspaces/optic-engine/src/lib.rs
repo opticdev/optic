@@ -17,7 +17,9 @@ pub mod streams;
 pub use commands::{CommandContext, EndpointCommand, RfcCommand, SpecCommand, SpecCommandHandler};
 pub use cqrs_core::Aggregate;
 pub use events::{
-  http_interaction::{ArbitraryData, Body, HttpInteraction, Request, Response},
+  http_interaction::{
+    ArbitraryData, Body, HttpInteraction, QueryParametersData, Request, Response,
+  },
   RfcEvent, SpecChunkEvent, SpecEvent,
 };
 pub use interactions::result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
