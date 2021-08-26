@@ -19,6 +19,7 @@ export const OpticBlueReadable = '#868da4';
 export const SubtleBlueBackground = '#F5F6FA';
 export const LightBlueBackground = '#edeff6';
 export const SubtleGreyBackground = '#eaeaea';
+export const GrayText = '#8792a2';
 export const methodColors = {
   OPTIONS: '#686868',
   GET: '#52e2a3',
@@ -41,7 +42,7 @@ export const jsonTypeColors: Record<JsonType, string> = {
   [JsonType.NUMBER]: '#e56f4a',
   [JsonType.UNDEFINED]: '#857b79',
   [JsonType.BOOLEAN]: '#067ab8',
-  [JsonType.NULL]: '#8792a2',
+  [JsonType.NULL]: GrayText,
   [JsonType.OBJECT]: 'inherit',
   [JsonType.ARRAY]: 'inherit',
 };

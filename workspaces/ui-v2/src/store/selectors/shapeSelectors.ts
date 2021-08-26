@@ -127,6 +127,23 @@ export function createFlatList(
   return fieldDetails;
 }
 
+export const removeArrayShapeFromField = (
+  field: IFieldDetails
+): IFieldDetails => {
+  const isArray = !!field.shapes.find(
+    (choice) => choice.jsonType === JsonType.ARRAY
+  );
+  const hasMultipleShapes = field.shapes.length > 1;
+
+  return {
+    ...field,
+    shapes:
+      isArray && hasMultipleShapes
+        ? field.shapes.filter((choice) => choice.jsonType === JsonType.ARRAY)
+        : field.shapes,
+  };
+};
+
 export const convertShapeToQueryParameters = (
   shapes: IShapeRenderer[]
 ): QueryParameters => {

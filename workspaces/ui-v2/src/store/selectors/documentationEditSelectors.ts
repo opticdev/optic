@@ -4,7 +4,7 @@ import { IContribution } from '<src>/types';
 import { getEndpointId } from '<src>/utils';
 import { JsonType } from '@useoptic/optic-domain';
 
-const memoizedGetAllRemovedFields = createSelector<
+export const memoizedGetAllRemovedFields = createSelector<
   RootState,
   RootState['shapes'],
   string[],
@@ -77,12 +77,15 @@ export const getValidContributions = (state: RootState): IContribution[] => {
 export const getDocumentationEditStagedCount = (state: RootState) => {
   const {
     removedEndpoints,
-    fields: { removed: removedFields },
+    fields: { edited: editedFields, removed: removedFields },
   } = state.documentationEdits;
   const validContributions = getValidContributions(state);
 
   return (
-    validContributions.length + removedEndpoints.length + removedFields.length
+    validContributions.length +
+    removedEndpoints.length +
+    removedFields.length +
+    Object.keys(editedFields).length
   );
 };
 

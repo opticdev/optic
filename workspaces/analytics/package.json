@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/analytics",
-  "version": "10.2.4",
+  "version": "10.3.0",
   "scripts": {
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf lib && rm -f tsconfig.tsbuildinfo",

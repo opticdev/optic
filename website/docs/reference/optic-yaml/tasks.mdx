@@ -18,7 +18,7 @@ There are four parameters available when configuring a task. No task configurati
 
   - `inboundURL`: Where will Optic listen for incoming traffic? We recommend starting this on the port your project usually starts on, as Optic will provide an environment variable, `PORT`, for the application to start on. That way, no changes need to be made to your local workflow. This is required for all tasks except [api exec](/reference/optic-cli/commands/exec) tasks.
   - `command`: How Optic can start your API project. 
-    - Optic will provide the `PORT` enviornment variable to the application at startup. 
+    - Optic will provide the `PORT` environment variable to the application at startup. 
     - If this is the only parameter present, it is treated as an [api exec](/reference/optic-cli/commands/exec) task. 
     - This parameter is optional when defining both `inboundURL` and `targetUrl`, as these provide Optic the information it needs to proxy to your project if it is already running.
   - `targetUrl`: Where Optic will point traffic, if Optic will not be starting the application with `command`. 

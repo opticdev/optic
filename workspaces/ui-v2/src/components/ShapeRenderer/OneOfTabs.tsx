@@ -6,7 +6,7 @@ import { useShapeRenderContext } from './ShapeRenderContext';
 
 export type OneOfTabsProps = {
   choices: { label: string; id: string }[];
-  parentShapeId: string;
+  shapeId: string;
 };
 
 export function OneOfTabs(oneOfTabsProps: OneOfTabsProps) {
@@ -23,7 +23,7 @@ export function OneOfTabs(oneOfTabsProps: OneOfTabsProps) {
           {...i}
           active={current === i.id}
           setActive={() => {
-            updateChoice(oneOfTabsProps.parentShapeId, i.id);
+            updateChoice(oneOfTabsProps.shapeId, i.id);
           }}
         />
       ))}

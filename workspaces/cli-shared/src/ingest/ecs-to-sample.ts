@@ -8,7 +8,8 @@ export function ecsToHttpInteraction(
 ): IHttpInteraction {
   const { request, response } = ecs.http;
   const { path, domain } = ecs.url;
-
+  const lowerCasedRequestHeaders = convertObjKeysToLower(request.headers);
+  const lowerCasedResponseHeaders = convertObjKeysToLower(response.headers);
   function extractBody(message: any) {
     const content =
       message.body && message.body.content ? message.body.content : '';
@@ -45,8 +46,8 @@ export function ecsToHttpInteraction(
       },
       body: {
         contentType:
-          request.headers && request.headers['content-type']
-            ? request.headers['content-type']
+          request.headers && lowerCasedRequestHeaders['content-type']
+            ? lowerCasedRequestHeaders['content-type']
             : null,
         value: extractBody(request),
       },
@@ -60,8 +61,8 @@ export function ecsToHttpInteraction(
       },
       body: {
         contentType:
-          response.headers && response.headers['content-type']
-            ? response.headers['content-type']
+          response.headers && lowerCasedResponseHeaders['content-type']
+            ? lowerCasedResponseHeaders['content-type']
             : null,
         value: extractBody(response),
       },
@@ -77,4 +78,9 @@ function tryParseJson(json: string) {
   } catch (e) {
     return null;
   }
+}
+function convertObjKeysToLower(obj: Object) {
+  return Object.fromEntries(
+    Object.entries(obj).map(([k, v]) => [k.toLowerCase(), v])
+  );
 }

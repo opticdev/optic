@@ -55,6 +55,7 @@ export const initialize: AnalyticsStoreProps['initialize'] = async (
       dsn: appConfig.analytics.sentryUrl,
       release: clientId,
       logLevel: LogLevel.Debug,
+      normalizeDepth: 10,
     });
     Sentry.setUser({ id: metadata.clientAgent });
   }
