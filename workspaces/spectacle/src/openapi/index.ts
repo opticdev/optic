@@ -5,6 +5,7 @@ export async function generateOpenApi(spectacle: any) {
   const requests = await spectacle.queryWrapper({
     query: `{
       requests {
+        isRemoved
         id
         pathId
         pathComponents {
@@ -44,6 +45,9 @@ export async function generateOpenApi(spectacle: any) {
   };
 
   for (const request of requests.data.requests) {
+    if (request.isRemoved) {
+      continue;
+    }
     const path = request.absolutePathPatternWithParameterNames;
 
     if (!(path in openapi.paths)) {
