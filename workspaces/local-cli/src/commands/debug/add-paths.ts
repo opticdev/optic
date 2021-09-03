@@ -18,7 +18,7 @@ import {
 import { Config } from '../../config';
 import { SpectacleInput } from '@useoptic/spectacle';
 import { v4 as uuidv4 } from 'uuid';
-import { getOrCreateAnonId } from '@useoptic/cli-config/src/opticrc/optic-rc';
+import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
 import fetch from 'cross-fetch';
 
 export default class DebugPaths extends Command {
