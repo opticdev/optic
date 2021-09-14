@@ -12,6 +12,14 @@ module.exports = {
   organizationName: 'opticdev', // Usually your GitHub org/user name.
   projectName: 'optic', // Usually your repo name.
   themeConfig: {
+    announcementBar: {
+      id: 'optic-cloud',
+      content:
+        '<b>Optic Cloud is now in Beta.</b> Track, plan and discuss API changes with your team. <a target="_blank" rel="noopener noreferrer" href="https://cloud.useoptic.com">Learn More</a>',
+      backgroundColor: '#31366f',
+      textColor: 'white',
+      isCloseable: false,
+    },
     metadatas: [
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:site', content: '@useoptic' },
