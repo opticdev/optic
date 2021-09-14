@@ -1,4 +1,8 @@
 
+> **Announcement:** Interested in more advanced team workflows? An easier way to run Optic in real environments? Check out [Optic Cloud, now in Beta.](https://cloud.useoptic.com)
+
+---
+
 <img src="https://raw.githubusercontent.com/opticdev/optic/develop/website/static/img/optic-svg.svg" alt="Optic">
 
 # Optic uses real traffic to document and test your APIs
