@@ -2,7 +2,7 @@ use super::{CommandContext, SpecCommand, SpecCommandError};
 use serde::{Deserialize, Serialize};
 
 use crate::events::EndpointEvent;
-use crate::projections::endpoint::ROOT_PATH_ID;
+use crate::projections::endpoint::{Node, ROOT_PATH_ID};
 use crate::projections::EndpointProjection;
 use crate::queries::EndpointQueries;
 use crate::state::endpoint::{
@@ -424,6 +424,11 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
           "path id must be assignable to add path component",
         )?;
 
+        validation.require(
+          !validation.child_path_component_exists(&command.parent_path_id, &command.name),
+          "path component must not already exist",
+        )?;
+
         vec![EndpointEvent::from(
           endpoint_events::PathComponentAdded::from(command),
         )]
@@ -500,6 +505,11 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         validation.require(
           !validation.path_component_id_exists(&command.path_id),
           "path id must be assignable to add path parameter",
+        )?;
+
+        validation.require(
+          !validation.child_path_parameter_exists(&command.parent_path_id),
+          "path parameter must not already exist",
         )?;
 
         vec![EndpointEvent::from(
@@ -716,6 +726,45 @@ impl<'a> CommandValidationQueries<'a> {
     path_component_id == ROOT_PATH_ID
   }
 
+  pub fn child_path_component_exists(
+    &self,
+    parent_path_component_id: &PathComponentId,
+    path_component_name: &String,
+  ) -> bool {
+    let children_iter = self
+      .endpoint_projection
+      .get_child_path_component_nodes(parent_path_component_id);
+    match children_iter {
+      Some(mut children) => children
+        .find(|child| {
+          if let Node::PathComponent(path_id, info) = *child {
+            !info.is_parameter && info.name == *path_component_name
+          } else {
+            false
+          }
+        })
+        .is_some(),
+      None => false,
+    }
+  }
+  pub fn child_path_parameter_exists(&self, parent_path_component_id: &PathComponentId) -> bool {
+    let children_iter = self
+      .endpoint_projection
+      .get_child_path_component_nodes(parent_path_component_id);
+    match children_iter {
+      Some(mut children) => children
+        .find(|child| {
+          if let Node::PathComponent(path_id, info) = *child {
+            info.is_parameter
+          } else {
+            false
+          }
+        })
+        .is_some(),
+      None => false,
+    }
+  }
+
   pub fn path_component_unused(&self, path_component_id: &PathComponentId) -> bool {
     let first_path_component_node = self
       .endpoint_projection
@@ -837,6 +886,18 @@ mod test {
     assert_debug_snapshot!(
       "can_handle_add_path_component__unexisting_parent_result",
       unexisting_parent_result.unwrap_err()
+    );
+
+    let conflicting_path: EndpointCommand = serde_json::from_value(json!(
+      { "AddPathComponent": {"pathId": "path_2", "parentPathId": "root", "name": "todos"}}
+    ))
+    .unwrap();
+
+    let conflicting_path_result = projection.execute(conflicting_path);
+    assert!(conflicting_path_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_path_component__conflicting_path_result",
+      conflicting_path_result.unwrap_err()
     );
 
     for event in new_events {
@@ -989,6 +1050,18 @@ mod test {
     for event in new_events {
       projection.apply(event);
     }
+
+    let conflicting_path: EndpointCommand = serde_json::from_value(json!(
+      { "AddPathParameter": {"pathId": "path_3", "parentPathId": "path_1", "name": "notTodoId"}}
+    ))
+    .unwrap();
+    let conflicting_path_result = projection.execute(conflicting_path);
+    assert!(conflicting_path_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_path_parameter__conflicting_path_result",
+      conflicting_path_result.unwrap_err()
+    );
+
   }
 
   #[test]
