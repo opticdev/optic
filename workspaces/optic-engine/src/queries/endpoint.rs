@@ -13,10 +13,18 @@ use petgraph::visit::{
   depth_first_search, Control, DfsEvent, EdgeFilteredNeighborsDirected, Reversed,
 };
 use serde::Serialize;
+use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
 
 pub struct EndpointQueries<'a> {
   pub endpoint_projection: &'a EndpointProjection,
+}
+
+#[derive(Debug)]
+struct ParentPathInfo {
+  depth: usize,
+  is_match: bool,
+  is_parameter: bool,
 }
 
 impl<'a> EndpointQueries<'a> {
@@ -36,6 +44,126 @@ impl<'a> EndpointQueries<'a> {
     }
   }
 
+  pub fn resolve_interaction_path_v2(
+    &self,
+    interaction: &HttpInteraction,
+  ) -> Option<PathComponentIdRef> {
+    self.resolve_path_v2(&interaction.request.path)
+  }
+
+  pub fn resolve_path_v2(&self, path: &str) -> Option<PathComponentIdRef> {
+    if path.eq("/") {
+      return Some(ROOT_PATH_ID);
+    }
+
+    let root_path_node_index = self
+      .graph_get_index(ROOT_PATH_ID)
+      .expect("a root path component node should exist");
+    let mut parents: HashMap<usize, ParentPathInfo> = HashMap::new();
+    parents.insert(
+      root_path_node_index.index(),
+      ParentPathInfo {
+        depth: 0,
+        is_match: true,
+        is_parameter: false,
+      },
+    );
+
+    let path = Self::extract_normalized_path(path);
+    let path_components: Vec<&str> = path.split('/').collect();
+    let max_depth = path_components.len() - 1;
+    let mut matches: Vec<(usize, &str)> = vec![];
+
+    let reversed_graph = Reversed(&self.endpoint_projection.graph);
+    let result: Control<Option<&String>> =
+      depth_first_search(&reversed_graph, Some(*root_path_node_index), |event| {
+        match event {
+          DfsEvent::Discover(node_index, _) => {
+            let node = self.endpoint_projection.graph.node_weight(node_index);
+            // dbg!(&node);
+            if let Some(Node::PathComponent(_, _)) = node {
+              Control::Continue
+            } else {
+              Control::Prune
+            }
+          }
+          DfsEvent::TreeEdge(parent_node_index, child_node_index) => {
+            let child = self.endpoint_projection.graph.node_weight(child_node_index);
+            if let Some(Node::PathComponent(path_id, info)) = child {
+              let parent_path_info = parents
+                .get(&parent_node_index.index())
+                .expect("expected parent info to be populated");
+              let depth = parent_path_info.depth + 1;
+              // dbg!("checking", &path_id, &info);
+              match depth.cmp(&max_depth) {
+                Ordering::Greater => Control::Prune,
+                leq => {
+                  let path_component = path_components[depth];
+                  if info.is_parameter || info.name == path_component {
+                    // dbg!("match!");
+
+                    parents.insert(
+                      child_node_index.index(),
+                      ParentPathInfo {
+                        is_match: true,
+                        depth,
+                        is_parameter: info.is_parameter,
+                      },
+                    );
+
+                    match leq {
+                      Ordering::Equal => matches.push((child_node_index.index(), path_id)),
+                      _ => {}
+                    }
+
+                    Control::Continue
+                  } else {
+                    // dbg!("no match!");
+
+                    parents.insert(
+                      child_node_index.index(),
+                      ParentPathInfo {
+                        is_match: false,
+                        depth,
+                        is_parameter: info.is_parameter,
+                      },
+                    );
+
+                    Control::Prune
+                  }
+                }
+              }
+            } else {
+              // only explore path component nodes
+              Control::Prune
+            }
+          }
+          x => {
+            // dbg!("Non-TreeEdge", x);
+            Control::Continue
+          }
+        }
+      });
+    if matches.len() == 0 {
+      None
+    } else {
+      // dbg!(&matches);
+      // dbg!(&parents);
+      let static_match = matches.iter().find(|x| {
+        let (node_index, path_id) = **x;
+        let parent_info = parents
+          .get(&node_index)
+          .expect("expected info to be present");
+        !parent_info.is_parameter
+      });
+      // dbg!(&static_match);
+      static_match.map_or(Some(matches[0].1), |m| Some(m.1))
+    }
+  }
+
+  #[deprecated(
+    note = "this will not work as expected if the spec has multiple ambiguous path parameters. use resolve_interaction_path_v2"
+  )]
   pub fn resolve_interaction_path(
     &self,
     interaction: &HttpInteraction,
@@ -43,6 +171,9 @@ impl<'a> EndpointQueries<'a> {
     self.resolve_path(&interaction.request.path)
   }
 
+  #[deprecated(
+    note = "this will not work as expected if the spec has multiple ambiguous path parameters. use resolve_path_v2"
+  )]
   pub fn resolve_path(&self, path: &str) -> Option<PathComponentIdRef> {
     if path.eq("/") {
       return Some(ROOT_PATH_ID);
@@ -566,6 +697,72 @@ mod test {
 
     assert_eq!(endpoint_queries.resolve_path("/").unwrap(), "root");
   }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  #[test]
+  pub fn resolve_path_v2_can_resolve_ambiguous_paths() {
+    // /sports/sport1
+    // /sports/sport2
+    // /sports/sport2/games
+    // /sports/sport2/games/{gameId}
+    // /sports/sport2/games/{gameId}/stats
+    // /sports/sport2/games/{year}
+    // /sports/sport2/games/{year}/{month}
+    // /sports/sport2/games/{year}/{month}/{day}
+    // /sports/sport2/games/{year}/{month}/{day}/stats
+    let events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": { "pathId": "path_1", "parentPathId": "root", "name": "sports" }},
+      {"PathComponentAdded": { "pathId": "path_2", "parentPathId": "path_1", "name": "sport1" }},
+      {"PathComponentAdded": { "pathId": "path_3", "parentPathId": "path_1", "name": "sport2" }},
+      {"PathComponentAdded": { "pathId": "path_4", "parentPathId": "path_3", "name": "games" }},
+      // gameId and year are the ambiguous path parameters
+      {"PathParameterAdded": { "pathId": "path_5", "parentPathId": "path_4", "name": "gameId" }},
+      {"PathParameterAdded": { "pathId": "path_6", "parentPathId": "path_4", "name": "year" }},
+      {"PathParameterAdded": { "pathId": "path_7", "parentPathId": "path_6", "name": "month" }},
+      {"PathParameterAdded": { "pathId": "path_8", "parentPathId": "path_7", "name": "day" }},
+      {"PathComponentAdded": { "pathId": "path_9", "parentPathId": "path_8", "name": "stats" }},
+      {"PathComponentAdded": { "pathId": "path_10", "parentPathId": "path_5", "name": "stats" }},
+      {"RequestAdded": { "requestId": "request_1", "pathId": "root", "httpMethod": "GET"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_1", "pathId": "root", "httpMethod": "GET", "httpStatusCode": 200 }},
+    ]))
+    .expect("should be able to deserialize test events");
+
+    let spec_projection = SpecProjection::from(events);
+    // dbg!(Dot::with_config(&spec_projection.endpoint().graph, &[]));
+
+    let endpoint_queries = EndpointQueries::new(spec_projection.endpoint());
+
+    assert_eq!(endpoint_queries.resolve_path_v2("/").unwrap(), "root");
+    assert_eq!(
+      endpoint_queries.resolve_path_v2("/sports/sport1").unwrap(),
+      "path_2"
+    );
+    assert_eq!(
+      endpoint_queries.resolve_path_v2("/sports/sport2").unwrap(),
+      "path_3"
+    );
+    assert_eq!(
+      endpoint_queries.resolve_path_v2("/sports/sport1/games"),
+      None
+    );
+    assert_eq!(
+      endpoint_queries
+        .resolve_path_v2("/sports/sport2/games/123/stats")
+        .unwrap(),
+      "path_10"
+    );
+    assert_eq!(
+      endpoint_queries.resolve_path_v2("/sports/sport2/games/123/winners"),
+      Some("path_7")
+    );
+    assert_eq!(
+      endpoint_queries.resolve_path_v2("/sports/sport2/games/123/456/789/stats"),
+      Some("path_9")
+    );
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
 
   #[test]
   pub fn resolve_path_should_resolve_against_an_empty_spec() {

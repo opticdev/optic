@@ -23,7 +23,9 @@ impl<'a> Traverser<'a> {
     visitors: &mut impl InteractionVisitors<R>,
   ) {
     let path_visitor = visitors.path();
-    let resolved_path = self.endpoint_queries.resolve_interaction_path(&interaction);
+    let resolved_path = self
+      .endpoint_queries
+      .resolve_interaction_path_v2(&interaction);
     let path_context = PathVisitorContext {
       path: resolved_path,
     };
