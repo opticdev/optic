@@ -144,6 +144,13 @@ pub fn analyze_undocumented_bodies<'a>(
       }
     }
     InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
+      if interaction.request.method == "GET" {
+        eprintln!(
+          "skipping GET request with content-type header and body {}",
+          &interaction.request.path
+        );
+        return vec![];
+      }
       let body = &interaction.request.body;
       let body_trail_observations = observe_body_trails(&body.value);
 
