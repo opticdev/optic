@@ -6,6 +6,7 @@ author_url: "https://github.com/acunniffe"
 author_image_url: "/img/team/aidan.jpg"
 image: "https://i.imgur.com/NFvEChJ.png"
 category: Announcement
+description: Hey all, it's Aidan, one of Optic's creators 👋. I'm here to share a preview of the cloud version of Optic
 ---
 
 ![alt](/img/blog-content/opticcloud.svg)
