@@ -4,7 +4,7 @@ title: "Introducing Optic Cloud"
 author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"
 author_image_url: "/img/team/aidan.jpg"
-image: "/img/blog-content/opticcloud.svg"
+image: "https://i.imgur.com/NFvEChJ.png"
 category: Announcement
 ---
 
