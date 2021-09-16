@@ -21,9 +21,6 @@ wasm-bindgen = { version = "0.2.74", features = ["serde-serialize"] }
 wasm-logger = "0.2.0"
 uuid = { version = "0.8.2", features = ["v4", "wasm-bindgen"] }
 
-[dependencies.getrandom]
-features = ["js"]
-
 [dependencies.optic_engine]
 path = "../optic-engine" 
 default-features = false
