@@ -101,6 +101,8 @@ tasks:
         env:
           FLAGS_FILE: '{{.FLAGS_FILE}}'
       - task: workspaces:build
+        env:
+          CI: 'FALSE'
       - task: workspaces:test
       - task: flush-to-disk
 
