@@ -8,9 +8,7 @@ export function OpticEngineStore(props: { children: ReactNode }) {
   const [opticEngine, setOpticEngine] = useState<IOpticEngine | null>(null);
   useEffect(() => {
     async function task() {
-      const opticEngine = await import(
-        /* webpackIgnore: true */ '@useoptic/optic-engine-wasm/browser'
-      );
+      const opticEngine = await import('@useoptic/optic-engine-wasm/browser');
       setOpticEngine(opticEngine);
     }
 
