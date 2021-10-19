@@ -22,7 +22,7 @@
     "build": "yarn run build:local",
     "ws:test": "jest",
     "ws:clean": "rm -rf build && rm -f tsconfig.tsbuildinfo",
-    "ws:build": "yarn build:local"
+    "ws:build": "CI=false yarn build:local"
   },
   "dependencies": {
     "@auth0/auth0-react": "^1.5.0",
