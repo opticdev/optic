@@ -79,6 +79,8 @@ tasks:
   workspaces:build:
     desc: Build Yarn workspaces
     deps: ['workspaces:setup']
+    env:
+      CI: 'FALSE'
     cmds:
       - yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
 
@@ -101,8 +103,6 @@ tasks:
         env:
           FLAGS_FILE: '{{.FLAGS_FILE}}'
       - task: workspaces:build
-        env:
-          CI: 'FALSE'
       - task: workspaces:test
       - task: flush-to-disk
 
