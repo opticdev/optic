@@ -140,6 +140,6 @@ Aside from code reviews, there are plenty of other ways to give yourself an adva
 
 ---
 
-import OpticCloudFooter from './_optic-cloud-footer.mdx';
+import OpticCloudFooter from '../src/pages/_optic-cloud-footer.mdx';
 
 <OpticCloudFooter />
