@@ -1,6 +1,6 @@
 import tap = require("tap");
-import { jsonFromFile } from "../../pipeline/SpecFrom";
-import { OpenAPITraverser } from "./OpenAPITraverser";
+import { jsonFromFile } from "../../pipeline/spec-from";
+import { OpenAPITraverser } from "./openapi-traverser";
 
 tap.test("can flatten specs", async () => {
   const traverser = new OpenAPITraverser();

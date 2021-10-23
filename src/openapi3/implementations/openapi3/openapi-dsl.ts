@@ -6,7 +6,7 @@ import {
   DSL,
 } from "../../sdk/types";
 import { EventEmitter } from "events";
-import { OpenApiEndpointFact } from "./OpenAPITraverser";
+import { OpenApiEndpointFact } from "./openapi-traverser";
 
 const KEYS = {
   ENDPOINT_ADDED: "endpoint.added",

@@ -1,6 +1,6 @@
 import assert from "assert";
 import { Traverse } from "../sdk/types";
-import { SpecFrom } from "../pipeline/SpecFrom";
+import { SpecFrom } from "../pipeline/spec-from";
 import { DSL } from "../sdk/types";
 import { Newable } from "../types";
 import { factsToChangelog } from "../sdk/facts-to-changelog";

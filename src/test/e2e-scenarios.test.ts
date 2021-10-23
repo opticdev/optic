@@ -1,8 +1,8 @@
 import tap = require('tap');
-import { OpenAPIDSL } from '../openapi3/implementations/openapi3/OpenAPIDSL';
-import { OpenAPITraverser } from '../openapi3/implementations/openapi3/OpenAPITraverser';
+import { OpenAPIDSL } from '../openapi3/implementations/openapi3/openapi-dsl';
+import { OpenAPITraverser } from '../openapi3/implementations/openapi3/openapi-traverser';
 import { Check } from '../openapi3/pipeline/check';
-import { jsonFromFile } from '../openapi3/pipeline/SpecFrom';
+import { jsonFromFile } from '../openapi3/pipeline/spec-from';
 import { factsToChangelog } from '../openapi3/sdk/facts-to-changelog';
 import { ComposableGuide, Issue, Warning } from '../openapi3/sdk/types';
 
