@@ -10,3 +10,5 @@
 /.pnp.*
 node_modules
 build
+.idea/
+.nyc_output

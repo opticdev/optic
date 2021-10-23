@@ -2955,6 +2955,7 @@ fsevents@~2.3.2:
     openapi-types: ^9.3.0
     swagger-client: ^3.17.0
     tap: ^15.0.10
+    ts-invariant: ^0.9.3
     ts-node: ^10.3.1
     typescript: ^4.4.4
     yaml-ast-parser: ^0.0.43
@@ -3803,6 +3804,15 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"ts-invariant@npm:^0.9.3":
+  version: 0.9.3
+  resolution: "ts-invariant@npm:0.9.3"
+  dependencies:
+    tslib: ^2.1.0
+  checksum: 593c096b8ae21073eb6a0faa76db76752c1e929ca9042b02cedab64dd78d67b8b73fb4b965857e889a2df492fdfb2f9737b486640e212d32dc6b39d188c9151c
+  languageName: node
+  linkType: hard
+
 "ts-node@npm:^10.3.1":
   version: 10.3.1
   resolution: "ts-node@npm:10.3.1"
@@ -3839,7 +3849,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.2.0":
+"tslib@npm:^2.1.0, tslib@npm:^2.2.0":
   version: 2.3.1
   resolution: "tslib@npm:2.3.1"
   checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9

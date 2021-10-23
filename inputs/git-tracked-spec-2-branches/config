@@ -1,0 +1,8 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+	ignorecase = true
+	precomposeunicode = true
+[remote "origin"]
+	url = /Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/inputs/git-tracked-spec/

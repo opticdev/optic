@@ -3,6 +3,7 @@
   "packageManager": "yarn@3.0.2",
   "scripts": {
     "dev:test": "yarn tap --ts src",
+    "dev:test-watch": "yarn tap --ts src --watch",
     "ci:test": "yarn tsc && yarn tap build"
   },
   "devDependencies": {
@@ -19,6 +20,7 @@
     "json-ptr": "^2.2.0",
     "openapi-types": "^9.3.0",
     "swagger-client": "^3.17.0",
+    "ts-invariant": "^0.9.3",
     "yaml-ast-parser": "^0.0.43"
   }
 }

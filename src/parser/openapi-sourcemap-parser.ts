@@ -27,7 +27,7 @@ export async function parseOpenAPIWithSourcemap(path: string) {
     sourcemap
   );
 
-  return { jsonLike: resolver.schema, sourcemap: sourcemap.serialize() };
+  return { jsonLike: resolver.schema as any, sourcemap: sourcemap.serialize() };
 }
 
 type JsonPath = string;
@@ -35,7 +35,7 @@ type FileReference = number;
 
 type DerefToSource = [JsonPath, LocationRecord];
 
-interface JsonSchemaSourcemapOutput {
+export interface JsonSchemaSourcemapOutput {
   files: Array<{
     path: string;
     index: number;
