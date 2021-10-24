@@ -45,8 +45,9 @@ export async function parseOpenAPIFromRepoWithSourcemap(name: string, repoPath: 
   await Promise.all(
     resolverResults
       .paths()
-      // @todo make this work properly via git
-      .map((filePath) => sourcemap.addFileIfMissing(filePath))
+      .map(async (filePath) => {
+        return await sourcemap.addFileIfMissingFromContents(filePath, await inGitResolver.read({url: filePath}))
+      })
   );
 
   dereference(
@@ -85,6 +86,21 @@ export class JsonSchemaSourcemap {
       // add the ast to the cache
       const yamlAst: YAMLNode = YAML.safeLoad(
         (await fs.readFile(filePath)).toString()
+      );
+
+      this._files.push({
+        path: filePath,
+        index: this._files.length,
+        ast: yamlAst,
+      });
+    }
+  }
+
+  async addFileIfMissingFromContents(filePath: string, contents: string) {
+    if (!this._files.find((i) => i.path === filePath)) {
+      // add the ast to the cache
+      const yamlAst: YAMLNode = YAML.safeLoad(
+        contents
       );
 
       this._files.push({

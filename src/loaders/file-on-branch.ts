@@ -26,6 +26,17 @@ tap.test("can parse an OpenAPI spec repo branches", async () => {
   }
 });
 
+tap.only("can parse an OpenAPI spec with references in repo branches", async () => {
+  const gitRepo = await inGit(path.resolve(__dirname, "../../inputs/git-repo/external-multiple.yaml"))
+  console.log(gitRepo)
+  if (gitRepo) {
+    const onFeature = await loadSpecFromBranch("external-multiple.yaml", gitRepo, "feature/1", {})
+    tap.matchSnapshot(onFeature)
+    const onMain = await loadSpecFromBranch("external-multiple.yaml", gitRepo, "main", {})
+    tap.matchSnapshot(onMain)
+  }
+});
+
 // helpers
 
 
