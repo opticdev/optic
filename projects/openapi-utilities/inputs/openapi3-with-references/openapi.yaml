@@ -10,4 +10,4 @@ paths:
           description: "some thing"
           content:
             application/json:
-              schema: {$ref 'external-multiple.yaml'}
+              schema: {$ref: external-multiple.yaml}

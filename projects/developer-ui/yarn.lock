@@ -2854,7 +2854,7 @@ __metadata:
 
 "@useoptic/openapi-utilities@file:../openapi-utilities::locator=developer-ui%40workspace%3A.":
   version: 0.0.0
-  resolution: "@useoptic/openapi-utilities@file:../openapi-utilities#../openapi-utilities::hash=00bc9b&locator=developer-ui%40workspace%3A."
+  resolution: "@useoptic/openapi-utilities@file:../openapi-utilities#../openapi-utilities::hash=c60667&locator=developer-ui%40workspace%3A."
   dependencies:
     "@apidevtools/json-schema-ref-parser": ^9.0.9
     "@jsdevtools/ono": ^7.1.3
@@ -2866,7 +2866,7 @@ __metadata:
     swagger-client: ^3.17.0
     ts-invariant: ^0.9.3
     yaml-ast-parser: ^0.0.43
-  checksum: f1dc0bda9178ab9260a530550aa2c9aacd884c275593a266bcf0567c8f33f66b67ce2b96875acd118c097c830a0302d563489f704994965709b29b37cc3f5e80
+  checksum: 7e6dec394bc29283d3e16f4b4cb57d737571344888ab91c2cbe13123561d225262331a804cefc3406c25d18767f0864e9e155d4ef32c2a044fcd8039157e378f
   languageName: node
   linkType: hard
 
