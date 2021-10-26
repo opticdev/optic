@@ -7,9 +7,11 @@
     "dev:test": "yarn tap --no-timeout --ts src",
     "dev:test-file": "yarn tap --ts --no-timeout $FILE",
     "dev:test-watch": "yarn tap --ts src --watch",
-    "ci:test": "yarn tsc && yarn tap build"
+    "ci:test": "yarn tsc && yarn tap build",
+    "build": "yarn tsc --build --verbose && copyfiles -u 1 src/**/*.js build/"
   },
   "devDependencies": {
+    "@types/copyfiles": "^2",
     "@types/fs-extra": "^9.0.13",
     "@types/tap": "^15.0.5",
     "prettier": "^2.4.1",
@@ -21,6 +23,7 @@
     "@apidevtools/json-schema-ref-parser": "^9.0.9",
     "@jsdevtools/ono": "^7.1.3",
     "commander": "^8.3.0",
+    "copyfiles": "^2.4.1",
     "fast-deep-equal": "^3.1.3",
     "fs-extra": "^10.0.0",
     "json-ptr": "^2.2.0",

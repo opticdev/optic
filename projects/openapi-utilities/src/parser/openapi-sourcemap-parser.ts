@@ -7,7 +7,6 @@ import { YAMLMapping, YAMLNode, YAMLSequence } from "yaml-ast-parser";
 // @ts-ignore
 import { dereference } from "./insourced-dereference";
 import * as pointer from "json-ptr";
-const newGitBranchResolver = require("./git-branch-file-resolver")
 import path from 'path'
 
 
@@ -65,6 +64,8 @@ export async function parseOpenAPIWithSourcemap(path: string) {
 }
 
 export async function parseOpenAPIFromRepoWithSourcemap(name: string, repoPath: string, branch: string) {
+  const newGitBranchResolver = require("./git-branch-file-resolver.js")
+
   const inGitResolver = newGitBranchResolver(repoPath, branch)
   const resolver = new $RefParser();
   const fileName = path.join(repoPath, name)
