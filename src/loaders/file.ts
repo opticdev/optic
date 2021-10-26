@@ -12,7 +12,7 @@ export async function loadSpecFromFile(specFilePath: string): Promise<SpecLoader
   }
 }
 
-tap.only("can parse an OpenAPI spec with external references", async () => {
+tap.test("can parse an OpenAPI spec with external references", async () => {
   const results = await loadSpecFromFile(
       path.join(__dirname, "../../inputs/openapi3-with-references/external-multiple.yaml")
   )

@@ -2,7 +2,7 @@
   "name": "optic",
   "packageManager": "yarn@3.0.2",
   "scripts": {
-    "dev:test": "yarn tap --ts src",
+    "dev:test": "yarn tap --no-timeout --ts src",
     "dev:test-file": "yarn tap --ts --no-timeout --only $FILE",
     "dev:test-watch": "yarn tap --ts src --watch",
     "ci:test": "yarn tsc && yarn tap build"

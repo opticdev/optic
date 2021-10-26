@@ -54,8 +54,8 @@ Object {
       Array [
         "#",
         Object {
-          "f": 0,
-          "n": Array [
+          "file": 0,
+          "node": Array [
             0,
             198,
           ],
@@ -64,16 +64,16 @@ Object {
       Array [
         "#/type",
         Object {
-          "f": 0,
-          "k": Array [
+          "file": 0,
+          "key": Array [
             0,
             4,
           ],
-          "n": Array [
+          "node": Array [
             0,
             12,
           ],
-          "v": Array [
+          "value": Array [
             6,
             12,
           ],
@@ -82,16 +82,16 @@ Object {
       Array [
         "#/required",
         Object {
-          "f": 0,
-          "k": Array [
+          "file": 0,
+          "key": Array [
             13,
             21,
           ],
-          "n": Array [
+          "node": Array [
             13,
             36,
           ],
-          "v": Array [
+          "value": Array [
             23,
             36,
           ],
@@ -100,8 +100,8 @@ Object {
       Array [
         "#/required/0",
         Object {
-          "f": 0,
-          "n": Array [
+          "file": 0,
+          "node": Array [
             24,
             28,
           ],
@@ -110,8 +110,8 @@ Object {
       Array [
         "#/required/1",
         Object {
-          "f": 0,
-          "n": Array [
+          "file": 0,
+          "node": Array [
             30,
             35,
           ],
@@ -120,16 +120,16 @@ Object {
       Array [
         "#/properties",
         Object {
-          "f": 0,
-          "k": Array [
+          "file": 0,
+          "key": Array [
             37,
             47,
           ],
-          "n": Array [
+          "node": Array [
             37,
             117,
           ],
-          "v": Array [
+          "value": Array [
             51,
             117,
           ],
@@ -138,16 +138,16 @@ Object {
       Array [
         "#/properties/token",
         Object {
-          "f": 0,
-          "k": Array [
+          "file": 0,
+          "key": Array [
             51,
             56,
           ],
-          "n": Array [
+          "node": Array [
             51,
             74,
           ],
-          "v": Array [
+          "value": Array [
             62,
             74,
           ],
@@ -156,16 +156,16 @@ Object {
       Array [
         "#/properties/token/type",
         Object {
-          "f": 0,
-          "k": Array [
+          "file": 0,
+          "key": Array [
             62,
             66,
           ],
-          "n": Array [
+          "node": Array [
             62,
             74,
           ],
-          "v": Array [
+          "value": Array [
             68,
             74,
           ],
@@ -174,16 +174,16 @@ Object {
       Array [
         "#/properties/user",
         Object {
-          "f": 1,
-          "k": Array [
+          "file": 1,
+          "key": Array [
             0,
             4,
           ],
-          "n": Array [
+          "node": Array [
             0,
             111,
           ],
-          "v": Array [
+          "value": Array [
             8,
             111,
           ],
@@ -192,16 +192,16 @@ Object {
       Array [
         "#/properties/user/type",
         Object {
-          "f": 1,
-          "k": Array [
+          "file": 1,
+          "key": Array [
             8,
             12,
           ],
-          "n": Array [
+          "node": Array [
             8,
             20,
           ],
-          "v": Array [
+          "value": Array [
             14,
             20,
           ],
@@ -210,16 +210,16 @@ Object {
       Array [
         "#/properties/user/required",
         Object {
-          "f": 1,
-          "k": Array [
+          "file": 1,
+          "key": Array [
             23,
             31,
           ],
-          "n": Array [
+          "node": Array [
             23,
             39,
           ],
-          "v": Array [
+          "value": Array [
             33,
             39,
           ],
@@ -228,8 +228,8 @@ Object {
       Array [
         "#/properties/user/required/0",
         Object {
-          "f": 1,
-          "n": Array [
+          "file": 1,
+          "node": Array [
             34,
             38,
           ],
@@ -238,16 +238,16 @@ Object {
       Array [
         "#/properties/user/properties",
         Object {
-          "f": 1,
-          "k": Array [
+          "file": 1,
+          "key": Array [
             42,
             52,
           ],
-          "n": Array [
+          "node": Array [
             42,
             82,
           ],
-          "v": Array [
+          "value": Array [
             58,
             82,
           ],
@@ -256,16 +256,16 @@ Object {
       Array [
         "#/properties/user/properties/name",
         Object {
-          "f": 1,
-          "k": Array [
+          "file": 1,
+          "key": Array [
             58,
             62,
           ],
-          "n": Array [
+          "node": Array [
             58,
             82,
           ],
-          "v": Array [
+          "value": Array [
             70,
             82,
           ],
@@ -274,16 +274,16 @@ Object {
       Array [
         "#/properties/user/properties/name/type",
         Object {
-          "f": 1,
-          "k": Array [
+          "file": 1,
+          "key": Array [
             70,
             74,
           ],
-          "n": Array [
+          "node": Array [
             70,
             82,
           ],
-          "v": Array [
+          "value": Array [
             76,
             82,
           ],
@@ -292,16 +292,16 @@ Object {
       Array [
         "#/properties/user/example",
         Object {
-          "f": 1,
-          "k": Array [
+          "file": 1,
+          "key": Array [
             85,
             92,
           ],
-          "n": Array [
+          "node": Array [
             85,
             111,
           ],
-          "v": Array [
+          "value": Array [
             98,
             111,
           ],
@@ -310,16 +310,16 @@ Object {
       Array [
         "#/properties/user/example/name",
         Object {
-          "f": 1,
-          "k": Array [
+          "file": 1,
+          "key": Array [
             98,
             102,
           ],
-          "n": Array [
+          "node": Array [
             98,
             111,
           ],
-          "v": Array [
+          "value": Array [
             104,
             111,
           ],
@@ -328,16 +328,16 @@ Object {
       Array [
         "#/example",
         Object {
-          "f": 0,
-          "k": Array [
+          "file": 0,
+          "key": Array [
             118,
             125,
           ],
-          "n": Array [
+          "node": Array [
             118,
             197,
           ],
-          "v": Array [
+          "value": Array [
             129,
             197,
           ],
@@ -346,16 +346,16 @@ Object {
       Array [
         "#/example/token",
         Object {
-          "f": 0,
-          "k": Array [
+          "file": 0,
+          "key": Array [
             129,
             134,
           ],
-          "n": Array [
+          "node": Array [
             129,
             146,
           ],
-          "v": Array [
+          "value": Array [
             136,
             146,
           ],
@@ -364,16 +364,16 @@ Object {
       Array [
         "#/example/user",
         Object {
-          "f": 1,
-          "k": Array [
+          "file": 1,
+          "key": Array [
             85,
             92,
           ],
-          "n": Array [
+          "node": Array [
             85,
             111,
           ],
-          "v": Array [
+          "value": Array [
             98,
             111,
           ],

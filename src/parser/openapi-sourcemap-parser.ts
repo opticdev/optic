@@ -116,7 +116,6 @@ export class JsonSchemaSourcemap {
     if (thisFile) {
       const jsonPointer = path.split(thisFile.path)[1].substring(1) || "/";
       // @todo remove this try catch, we want errors, but this is going to help us dev
-      try {
         const sourceMapping = resolveJsonPointerInYamlAst(
           thisFile.ast,
           jsonPointer,
@@ -125,9 +124,6 @@ export class JsonSchemaSourcemap {
         if (sourceMapping) {
           this._mappings.push([pathFromRoot, sourceMapping]);
         }
-      } catch (e) {
-        console.error("source mapping failure ", e)
-      }
     }
   }
 
@@ -152,19 +148,17 @@ export function resolveJsonPointerInYamlAst(
   if (isEmpty) return { node: [node.startPosition, node.endPosition], file: file };
 
   const found: YAMLNode | undefined = decoded.reduce((current, path) => {
-    const isFieldKey = isNaN(Number(path));
     if (!current) return undefined;
-
     const node: YAMLNode = current.key ? current.value : current;
+    const isNumericalKey = !isNaN(Number(path)) &&  (node as any).hasOwnProperty("items");
 
-    if (isFieldKey) {
+    if (isNumericalKey) {
+      return (node as YAMLSequence).items[Number(path)];
+    } else {
       const field = node.mappings.find(
         (i: YAMLMapping) => i.key.value === path
       );
       return field;
-    } else {
-      // is number
-      return (node as YAMLSequence).items[Number(path)];
     }
   }, node as YAMLNode | undefined);
 
