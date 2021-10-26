@@ -1,0 +1,13 @@
+openapi: "3.0.1"
+info:
+    title: "some thing"
+    version: "v0"
+paths:
+  /example:
+    get:
+      responses:
+        200:
+          description: "some thing"
+          content:
+            application/json:
+              schema: {$ref 'external-multiple.yaml'}

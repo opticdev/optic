@@ -1,7 +1,13 @@
 import tap from 'tap'
-import {parseOpenAPIWithSourcemap} from "./openapi-sourcemap-parser";
+import { parseOpenAPIWithSourcemap } from "./openapi-sourcemap-parser";
 import path from "path";
 
+const cwd = process.cwd();
+tap.cleanSnapshot = (s: string) => {
+  console.log(cwd);
+  console.log(s);
+  return s.replace(cwd, '{cwd}')
+}
 tap.test("can parse an OpenAPI spec with external references", async () => {
 
   const results = await parseOpenAPIWithSourcemap(

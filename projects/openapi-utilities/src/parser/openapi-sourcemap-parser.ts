@@ -11,6 +11,37 @@ const newGitBranchResolver = require("./git-branch-file-resolver")
 import path from 'path'
 
 
+export async function parseOpenAPIFromUrlWithSourcemap(url: string) {
+  const resolver = new $RefParser();
+
+  const sourcemap = new JsonSchemaSourcemap();
+  const resolverResults: $RefParser.$Refs = await resolver.resolve(url, {
+    resolve: {
+      http: {
+        headers: {
+          accept: '*/*'
+        }
+      },
+      file: false
+    }
+  });
+
+  // parse all asts
+  await Promise.all(
+    resolverResults
+      .paths()
+      .map((filePath) => sourcemap.addFileIfMissing(filePath))
+  );
+
+  dereference(
+    resolver,
+    { ...$RefParserOptions.defaults, path: url },
+    sourcemap
+  );
+
+  return { jsonLike: resolver.schema as any, sourcemap: sourcemap.serialize() };
+}
+
 export async function parseOpenAPIWithSourcemap(path: string) {
   const resolver = new $RefParser();
 
@@ -39,20 +70,20 @@ export async function parseOpenAPIFromRepoWithSourcemap(name: string, repoPath: 
   const fileName = path.join(repoPath, name)
 
   const sourcemap = new JsonSchemaSourcemap();
-  const resolverResults: $RefParser.$Refs = await resolver.resolve(fileName, {resolve: {file: inGitResolver}});
+  const resolverResults: $RefParser.$Refs = await resolver.resolve(fileName, { resolve: { file: inGitResolver } });
 
   // parse all asts
   await Promise.all(
     resolverResults
       .paths()
       .map(async (filePath) => {
-        return await sourcemap.addFileIfMissingFromContents(filePath, await inGitResolver.read({url: filePath}))
+        return await sourcemap.addFileIfMissingFromContents(filePath, await inGitResolver.read({ url: filePath }))
       })
   );
 
   dereference(
     resolver,
-    { ...$RefParserOptions.defaults, path: fileName, resolve: {file: inGitResolver} },
+    { ...$RefParserOptions.defaults, path: fileName, resolve: { file: inGitResolver } },
     sourcemap
   );
 
@@ -116,14 +147,14 @@ export class JsonSchemaSourcemap {
     if (thisFile) {
       const jsonPointer = path.split(thisFile.path)[1].substring(1) || "/";
       // @todo remove this try catch, we want errors, but this is going to help us dev
-        const sourceMapping = resolveJsonPointerInYamlAst(
-          thisFile.ast,
-          jsonPointer,
-          thisFile.index
-        );
-        if (sourceMapping) {
-          this._mappings.push([pathFromRoot, sourceMapping]);
-        }
+      const sourceMapping = resolveJsonPointerInYamlAst(
+        thisFile.ast,
+        jsonPointer,
+        thisFile.index
+      );
+      if (sourceMapping) {
+        this._mappings.push([pathFromRoot, sourceMapping]);
+      }
     }
   }
 
@@ -150,7 +181,7 @@ export function resolveJsonPointerInYamlAst(
   const found: YAMLNode | undefined = decoded.reduce((current, path) => {
     if (!current) return undefined;
     const node: YAMLNode = current.key ? current.value : current;
-    const isNumericalKey = !isNaN(Number(path)) &&  (node as any).hasOwnProperty("items");
+    const isNumericalKey = !isNaN(Number(path)) && (node as any).hasOwnProperty("items");
 
     if (isNumericalKey) {
       return (node as YAMLSequence).items[Number(path)];

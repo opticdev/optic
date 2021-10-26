@@ -43,11 +43,11 @@ Object {
     "files": Array [
       Object {
         "index": 0,
-        "path": "/Users/dev/work/poc-typescript4-node16-yarn2-tap-boilerplate/projects/openapi-utilities/inputs/openapi3-with-references/external-multiple.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3-with-references/external-multiple.yaml",
       },
       Object {
         "index": 1,
-        "path": "/Users/dev/work/poc-typescript4-node16-yarn2-tap-boilerplate/projects/openapi-utilities/inputs/openapi3-with-references/definitions.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3-with-references/definitions.yaml",
       },
     ],
     "map": Array [
@@ -382,5 +382,12 @@ Object {
     ],
   },
   "success": true,
+}
+`
+
+exports[`src/loaders/file.ts TAP > must match snapshot 2`] = `
+Object {
+  "error": "ENOENT: no such file or directory, open 'http://localhost:5000/openapi.yaml'",
+  "success": false,
 }
 `

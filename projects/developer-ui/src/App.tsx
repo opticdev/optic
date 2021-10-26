@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { OpenAPITraverser, factsToChangelog, OpenAPIV3 } from '@useoptic/openapi-utilities'
+import { OpenAPITraverser, factsToChangelog, OpenAPIV3, parseOpenAPIWithSourcemap } from '@useoptic/openapi-utilities'
 import * as yaml from 'js-yaml';
 
 interface OpenApiViewerProps {
@@ -52,15 +52,21 @@ function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
   const [changes, setChanges] = useState<any[]>([]);
   useEffect(() => {
     async function task() {
-      const parsed1 = yaml.load(props.beforeContents)
+      const baseUrl = `http://localhost:5000`;
+      
+      // const parsed1 = yaml.load(props.beforeContents)
+      const resolved1 = await parseOpenAPIWithSourcemap(`${baseUrl}${props.before}`)
+      debugger
       const traverser1 = new OpenAPITraverser();
-      traverser1.traverse(parsed1 as OpenAPIV3.Document);
+      traverser1.traverse(resolved1.jsonLike as OpenAPIV3.Document);
       const facts1 = traverser1.accumulator.allFacts();
       setFacts(facts1);
 
-      const parsed2 = yaml.load(props.afterContents);
+      // const parsed2 = yaml.load(props.afterContents);
+      const resolved2 = await parseOpenAPIWithSourcemap(`${baseUrl}${props.after}`)
+      debugger
       const traverser2 = new OpenAPITraverser();
-      traverser2.traverse(parsed2 as OpenAPIV3.Document);
+      traverser2.traverse(resolved2.jsonLike as OpenAPIV3.Document);
       const facts2 = traverser2.accumulator.allFacts();
 
       const changes = factsToChangelog(facts1, facts2)
