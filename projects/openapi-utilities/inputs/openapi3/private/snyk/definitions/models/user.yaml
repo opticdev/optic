@@ -1,0 +1,33 @@
+User:
+  type: object
+  properties:
+    type:
+      type: string
+      description: Content type.
+      example: 'user'
+    id:
+      type: string
+      description: The Snyk ID corresponding to this user
+      format: uuid
+      example: '55a348e2-c3ad-4bbc-b40e-9b232d1f4121'
+    attributes:
+      type: object
+      properties:
+        name:
+            type: string
+            nullable: false
+            description: The name of the user.
+            example: 'user'
+        email:
+            type: string
+            nullable: false
+            description: The email of the user.
+            example: 'user@someorg.com'
+        username:
+            type: string
+            nullable: false
+            description: The username of the user.
+            example: 'username'
+      additionalProperties: false
+  required: ['type', 'id', 'attributes']
+  additionalProperties: false
