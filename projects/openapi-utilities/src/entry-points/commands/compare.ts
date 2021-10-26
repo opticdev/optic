@@ -1,15 +1,15 @@
-// // import {
-// //   SpecFromInput,
-// //   SpecVersionFrom,
-// // } from "../input-helpers/compare-input-parser";
+// import {
+//   SpecFromInput,
+//   SpecVersionFrom,
+// } from "../input-helpers/compare-input-parser";
 // import {
 //   parseOpenAPIFromRepoWithSourcemap,
 //   parseOpenAPIWithSourcemap,
+//   Result,
 // } from "../../parser/openapi-sourcemap-parser";
-// import {SpecFromIn}
 // import { inGit } from "../../loaders/file-on-branch";
 // import * as path from "path";
-
+//
 // export async function compare(
 //   from: SpecFromInput,
 //   to: SpecFromInput,
@@ -19,7 +19,7 @@
 //   const toSpec = await specFromInputToResults(to, process.cwd());
 //   console.log(fromSpec, toSpec);
 // }
-
+//
 // async function specFromInputToResults(
 //   input: SpecFromInput,
 //   workingDir: string = process.cwd()

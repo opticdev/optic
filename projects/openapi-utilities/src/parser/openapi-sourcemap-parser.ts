@@ -8,44 +8,21 @@ import { YAMLMapping, YAMLNode, YAMLSequence } from "yaml-ast-parser";
 import { dereference } from "./insourced-dereference";
 import * as pointer from "json-ptr";
 import path from 'path'
-
-
-export async function parseOpenAPIFromUrlWithSourcemap(url: string) {
-  const resolver = new $RefParser();
-
-  const sourcemap = new JsonSchemaSourcemap();
-  const resolverResults: $RefParser.$Refs = await resolver.resolve(url, {
-    resolve: {
-      http: {
-        headers: {
-          accept: '*/*'
-        }
-      },
-      file: false
-    }
-  });
-
-  // parse all asts
-  await Promise.all(
-    resolverResults
-      .paths()
-      .map((filePath) => sourcemap.addFileIfMissing(filePath))
-  );
-
-  dereference(
-    resolver,
-    { ...$RefParserOptions.defaults, path: url },
-    sourcemap
-  );
-
-  return { jsonLike: resolver.schema as any, sourcemap: sourcemap.serialize() };
-}
+import fetch from 'node-fetch';
 
 export async function parseOpenAPIWithSourcemap(path: string) {
   const resolver = new $RefParser();
 
   const sourcemap = new JsonSchemaSourcemap();
-  const resolverResults: $RefParser.$Refs = await resolver.resolve(path);
+  const resolverResults: $RefParser.$Refs = await resolver.resolve(path, {
+    resolve: {
+      http: {
+        headers: {
+          "accept": "*/*"
+        }
+      }
+    }
+  });
 
   // parse all asts
   await Promise.all(
@@ -114,17 +91,32 @@ export class JsonSchemaSourcemap {
   private _mappings: Array<DerefToSource> = [];
 
   async addFileIfMissing(filePath: string) {
-    if (!this._files.find((i) => i.path === filePath)) {
-      // add the ast to the cache
-      const yamlAst: YAMLNode = YAML.safeLoad(
-        (await fs.readFile(filePath)).toString()
-      );
+
+    if (filePath.startsWith("http")) {
+      const response = await fetch(filePath);
+      const asText = await response.text();
+
+      const yamlAst: YAMLNode = YAML.safeLoad(asText);
 
       this._files.push({
         path: filePath,
         index: this._files.length,
         ast: yamlAst,
       });
+
+    } else {
+      if (!this._files.find((i) => i.path === filePath)) {
+        // add the ast to the cache
+        const yamlAst: YAMLNode = YAML.safeLoad(
+          (await fs.readFile(filePath)).toString()
+        );
+
+        this._files.push({
+          path: filePath,
+          index: this._files.length,
+          ast: yamlAst,
+        });
+      }
     }
   }
 
