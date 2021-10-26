@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { OpenAPITraverser, factsToChangelog, OpenAPIV3, parseOpenAPIWithSourcemap } from '@useoptic/openapi-utilities'
+import { OpenAPITraverser, factsToChangelog, OpenAPIV3 } from '@useoptic/openapi-utilities'
 import * as yaml from 'js-yaml';
+
+const staticServerBaseUrl = `http://localhost:5000`;
+const resolverServiceBaseUrl = `http://localhost:5001`;
 
 interface OpenApiViewerProps {
   choices: string[]
@@ -12,8 +15,7 @@ function OpenApiViewer(props: OpenApiViewerProps) {
   const [text, setText] = useState<string>('');
   useEffect(() => {
     async function task() {
-      const baseUrl = `http://localhost:5000`;
-      const response = await fetch(`${baseUrl}${props.selected}`)
+      const response = await fetch(`${staticServerBaseUrl}${props.selected}`)
       const text = await response.text();
       setText(text);
     }
@@ -47,14 +49,26 @@ interface OpenApiChangeViewerProps {
   after?: string
   afterContents: string
 }
+
+async function getJson<T>(url: string) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(await response.text())
+  }
+  const body = await response.json();
+  return body as T;
+}
+
 function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
   const [facts, setFacts] = useState<any[]>([]);
   const [changes, setChanges] = useState<any[]>([]);
   useEffect(() => {
     async function task() {
-      const baseUrl = `http://localhost:5000`;
 
-      const resolved1 = yaml.load(props.beforeContents)
+      // const resolved1 = yaml.load(props.beforeContents)
+      const target1 = new URL(resolverServiceBaseUrl);
+      target1.searchParams.set("filePath", `${staticServerBaseUrl}${props.before}`)
+      const resolved1 = (await getJson<any>(target1.toString())).jsonLike;
       //const resolved1 = (await parseOpenAPIWithSourcemap(`${baseUrl}${props.before}`)).jsonLike
       debugger
       const traverser1 = new OpenAPITraverser();
@@ -62,7 +76,10 @@ function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
       const facts1 = traverser1.accumulator.allFacts();
       setFacts(facts1);
 
-      const resolved2 = yaml.load(props.afterContents);
+      // const resolved2 = yaml.load(props.afterContents);
+      const target2 = new URL(resolverServiceBaseUrl);
+      target2.searchParams.set("filePath", `${staticServerBaseUrl}${props.before}`)
+      const resolved2 = (await getJson<any>(target2.toString())).jsonLike;
       //const resolved2 = (await parseOpenAPIWithSourcemap(`${baseUrl}${props.after}`)).jsonLike
       debugger
       const traverser2 = new OpenAPITraverser();
