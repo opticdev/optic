@@ -47,7 +47,7 @@ Object {
       },
       Object {
         "index": 1,
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3-with-references/definitions.yaml",
+        "path": "{cwd}/inputs/openapi3-with-references/definitions.yaml",
       },
     ],
     "map": Array [

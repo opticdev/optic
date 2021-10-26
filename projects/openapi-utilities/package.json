@@ -4,10 +4,10 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
-    "dev:test": "yarn tap --no-timeout --ts src",
+    "dev:test": "yarn tap --no-timeout --ts src/**/*.test.ts",
     "dev:test-file": "yarn tap --ts --no-timeout $FILE",
     "dev:test-watch": "yarn tap --ts src --watch",
-    "ci:test": "yarn tsc && yarn tap build",
+    "ci:test": "yarn build && yarn tap build/**/*.test.js",
     "build": "yarn tsc --build --verbose && copyfiles -u 1 src/**/*.js build/"
   },
   "devDependencies": {

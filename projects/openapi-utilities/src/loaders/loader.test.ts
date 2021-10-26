@@ -3,6 +3,13 @@ import tap from "tap";
 import {loadSpecFromFile, loadSpecFromUrl} from "./file";
 import { inGit, loadSpecFromBranch } from "./file-on-branch";
 
+const cwd = process.cwd();
+tap.cleanSnapshot = (s: string) => {
+  console.log(cwd);
+  console.log(s);
+  return s.replace(new RegExp(cwd, 'gi'), '{cwd}')
+}
+
 tap.test("can parse an OpenAPI spec with external references", async () => {
   const results = await loadSpecFromFile(
     path.join(__dirname, "../../inputs/openapi3-with-references/external-multiple.yaml")

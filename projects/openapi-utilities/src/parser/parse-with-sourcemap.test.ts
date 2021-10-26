@@ -6,7 +6,7 @@ const cwd = process.cwd();
 tap.cleanSnapshot = (s: string) => {
   console.log(cwd);
   console.log(s);
-  return s.replace(cwd, '{cwd}')
+  return s.replace(new RegExp(cwd, 'gi'), '{cwd}')
 }
 tap.test("can parse an OpenAPI spec with external references", async () => {
 
