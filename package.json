@@ -2,6 +2,7 @@
     "private": true,
     "workspaces": [
         "projects/openapi-utilities",
-        "projects/developer-ui"
+        "projects/developer-ui",
+        "projects/ci-cli"
     ]
 }

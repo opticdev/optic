@@ -9,8 +9,14 @@ import { dereference } from "./insourced-dereference";
 import * as pointer from "json-ptr";
 import path from 'path'
 import fetch from 'node-fetch';
+import {OpenAPIV3} from "openapi-types";
 
-export async function parseOpenAPIWithSourcemap(path: string) {
+export type ParseOpenAPIResult = {
+  jsonLike: OpenAPIV3.Document,
+  sourcemap: JsonSchemaSourcemapOutput
+}
+
+export async function parseOpenAPIWithSourcemap(path: string): Promise<ParseOpenAPIResult> {
   const resolver = new $RefParser();
 
   const sourcemap = new JsonSchemaSourcemap();
@@ -40,7 +46,7 @@ export async function parseOpenAPIWithSourcemap(path: string) {
   return { jsonLike: resolver.schema as any, sourcemap: sourcemap.serialize() };
 }
 
-export async function parseOpenAPIFromRepoWithSourcemap(name: string, repoPath: string, branch: string) {
+export async function parseOpenAPIFromRepoWithSourcemap(name: string, repoPath: string, branch: string): Promise<ParseOpenAPIResult> {
   const newGitBranchResolver = require("./git-branch-file-resolver.js")
 
   const inGitResolver = newGitBranchResolver(repoPath, branch)

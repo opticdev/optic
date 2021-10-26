@@ -1,39 +1,47 @@
+import { useEffect } from "react";
+import React from "react";
 import * as path from "path";
-import {inGit} from "@useoptic/openapi-utilities/build/loaders/file-on-branch";
-import {SpecFromInput, SpecVersionFrom} from "../input-helpers/compare-input-parser";
-import {render, Text} from 'ink';
+import { inGit } from "@useoptic/openapi-utilities/build/loaders/file-on-branch";
+import {
+  SpecFromInput,
+  SpecVersionFrom,
+} from "../input-helpers/compare-input-parser";
+import { render, Text, useApp } from "ink";
 
 import {
   parseOpenAPIFromRepoWithSourcemap,
-  ParseOpenAPIResult, parseOpenAPIWithSourcemap
+  ParseOpenAPIResult,
+  parseOpenAPIWithSourcemap,
 } from "@useoptic/openapi-utilities/build/parser/openapi-sourcemap-parser";
+import { useAsync } from "react-use";
 
-export async function compare(
-  from: SpecFromInput,
-  to: SpecFromInput,
-  rules: string
-) {
-  const fromSpec = await specFromInputToResults(from, process.cwd());
-  const toSpec = await specFromInputToResults(to, process.cwd());
+export function Compare(props: {
+  from: SpecFromInput;
+  to: SpecFromInput;
+  rules: string;
+}) {
+  const loadFrom = useAsync(
+    async () => await specFromInputToResults(props.from, process.cwd())
+  );
+  const loadTo = useAsync(
+    async () => await specFromInputToResults(props.from, process.cwd())
+  );
 
+  const { exit } = useApp();
 
-  const Example = () => (
+  useEffect(() => {
+    if (!loadFrom.loading && !loadTo.loading) {
+      setTimeout(() => exit(), 200);
+    }
+  }, [loadFrom, loadTo]);
+
+  return (
     <>
-      <Text color="green">I am green</Text>
-  <Text color="black" backgroundColor="white">
-    I am black on white
-  </Text>
-  <Text color="#ffffff">I am white</Text>
-  <Text bold>I am bold</Text>
-  <Text italic>I am italic</Text>
-  <Text underline>I am underline</Text>
-  <Text strikethrough>I am strikethrough</Text>
-  <Text inverse>I am inversed</Text>
-  </>
-);
-
-  render(<Example />);
-
+      <Text color="green">
+        is loading from spec {loadFrom.loading.toString()}
+      </Text>
+    </>
+  );
 }
 
 async function specFromInputToResults(
