@@ -43,11 +43,11 @@ Object {
     "files": Array [
       Object {
         "index": 0,
-        "path": "/Users/aidancunniffe/Desktop/optic/poc-governance-tools/projects/openapi-utilities/inputs/openapi3-with-references/external-multiple.yaml",
+        "path": "{cwd}/inputs/openapi3-with-references/external-multiple.yaml",
       },
       Object {
         "index": 1,
-        "path": "/Users/aidancunniffe/Desktop/optic/poc-governance-tools/projects/openapi-utilities/inputs/openapi3-with-references/definitions.yaml",
+        "path": "{cwd}/inputs/openapi3-with-references/definitions.yaml",
       },
     ],
     "map": Array [
