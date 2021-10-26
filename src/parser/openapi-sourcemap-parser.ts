@@ -149,7 +149,7 @@ export function resolveJsonPointerInYamlAst(
   const isEmpty =
     decoded.length === 0 || (decoded.length === 1 && decoded[0] === "");
 
-  if (isEmpty) return { n: [node.startPosition, node.endPosition], f: file };
+  if (isEmpty) return { node: [node.startPosition, node.endPosition], file: file };
 
   const found: YAMLNode | undefined = decoded.reduce((current, path) => {
     const isFieldKey = isNaN(Number(path));
@@ -172,21 +172,21 @@ export function resolveJsonPointerInYamlAst(
     if (found.key) {
       // is a field
       return {
-        k: [found.key.startPosition, found.key.endPosition],
-        v: [found.value.startPosition, found.value.endPosition],
-        n: [found.startPosition, found.endPosition],
-        f: file,
+        key: [found.key.startPosition, found.key.endPosition],
+        value: [found.value.startPosition, found.value.endPosition],
+        node: [found.startPosition, found.endPosition],
+        file: file,
       };
     } else {
-      return { n: [found.startPosition, found.endPosition], f: file };
+      return { node: [found.startPosition, found.endPosition], file: file };
     }
   }
 }
 
 type AstLocation = [number, number];
 interface LocationRecord {
-  k?: AstLocation;
-  v?: AstLocation;
-  n: AstLocation;
-  f: number;
+  key?: AstLocation;
+  value?: AstLocation;
+  node: AstLocation;
+  file: number;
 }

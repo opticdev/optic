@@ -1,5 +1,5 @@
 {
-  "name": "poc-typescript4-node16-yarn2-tap-boilerplate",
+  "name": "optic",
   "packageManager": "yarn@3.0.2",
   "scripts": {
     "dev:test": "yarn tap --ts src",
@@ -17,6 +17,7 @@
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.9",
     "@jsdevtools/ono": "^7.1.3",
+    "commander": "^8.3.0",
     "fast-deep-equal": "^3.1.3",
     "fs-extra": "^10.0.0",
     "json-ptr": "^2.2.0",

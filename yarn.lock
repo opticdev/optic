@@ -1194,6 +1194,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^8.3.0":
+  version: 8.3.0
+  resolution: "commander@npm:8.3.0"
+  checksum: 0f82321821fc27b83bd409510bb9deeebcfa799ff0bf5d102128b500b7af22872c0c92cb6a0ebc5a4cf19c6b550fba9cedfa7329d18c6442a625f851377bacf0
+  languageName: node
+  linkType: hard
+
 "commondir@npm:^1.0.1":
   version: 1.0.1
   resolution: "commondir@npm:1.0.1"
@@ -2813,6 +2820,28 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"optic@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "optic@workspace:."
+  dependencies:
+    "@apidevtools/json-schema-ref-parser": ^9.0.9
+    "@jsdevtools/ono": ^7.1.3
+    "@types/fs-extra": ^9.0.13
+    "@types/tap": ^15.0.5
+    commander: ^8.3.0
+    fast-deep-equal: ^3.1.3
+    fs-extra: ^10.0.0
+    json-ptr: ^2.2.0
+    openapi-types: ^9.3.0
+    swagger-client: ^3.17.0
+    tap: ^15.0.10
+    ts-invariant: ^0.9.3
+    ts-node: ^10.3.1
+    typescript: ^4.4.4
+    yaml-ast-parser: ^0.0.43
+  languageName: unknown
+  linkType: soft
+
 "own-or-env@npm:^1.0.2":
   version: 1.0.2
   resolution: "own-or-env@npm:1.0.2"
@@ -2941,27 +2970,6 @@ fsevents@~2.3.2:
   checksum: 9863e3f35132bf99ae1636d31ff1e1e3501251d480336edb1c211133c8d58906bed80f154a1d723652df1fda91e01c7442c2eeaf9dc83157c7ae89087e43c8d6
   languageName: node
   linkType: hard
-
-"poc-typescript4-node16-yarn2-tap-boilerplate@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "poc-typescript4-node16-yarn2-tap-boilerplate@workspace:."
-  dependencies:
-    "@apidevtools/json-schema-ref-parser": ^9.0.9
-    "@jsdevtools/ono": ^7.1.3
-    "@types/fs-extra": ^9.0.13
-    "@types/tap": ^15.0.5
-    fast-deep-equal: ^3.1.3
-    fs-extra: ^10.0.0
-    json-ptr: ^2.2.0
-    openapi-types: ^9.3.0
-    swagger-client: ^3.17.0
-    tap: ^15.0.10
-    ts-invariant: ^0.9.3
-    ts-node: ^10.3.1
-    typescript: ^4.4.4
-    yaml-ast-parser: ^0.0.43
-  languageName: unknown
-  linkType: soft
 
 "process-nextick-args@npm:~2.0.0":
   version: 2.0.1
