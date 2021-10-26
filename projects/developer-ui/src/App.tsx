@@ -53,20 +53,20 @@ function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
   useEffect(() => {
     async function task() {
       const baseUrl = `http://localhost:5000`;
-      
-      // const parsed1 = yaml.load(props.beforeContents)
-      const resolved1 = await parseOpenAPIWithSourcemap(`${baseUrl}${props.before}`)
+
+      const resolved1 = yaml.load(props.beforeContents)
+      //const resolved1 = (await parseOpenAPIWithSourcemap(`${baseUrl}${props.before}`)).jsonLike
       debugger
       const traverser1 = new OpenAPITraverser();
-      traverser1.traverse(resolved1.jsonLike as OpenAPIV3.Document);
+      traverser1.traverse(resolved1 as OpenAPIV3.Document);
       const facts1 = traverser1.accumulator.allFacts();
       setFacts(facts1);
 
-      // const parsed2 = yaml.load(props.afterContents);
-      const resolved2 = await parseOpenAPIWithSourcemap(`${baseUrl}${props.after}`)
+      const resolved2 = yaml.load(props.afterContents);
+      //const resolved2 = (await parseOpenAPIWithSourcemap(`${baseUrl}${props.after}`)).jsonLike
       debugger
       const traverser2 = new OpenAPITraverser();
-      traverser2.traverse(resolved2.jsonLike as OpenAPIV3.Document);
+      traverser2.traverse(resolved2 as OpenAPIV3.Document);
       const facts2 = traverser2.accumulator.allFacts();
 
       const changes = factsToChangelog(facts1, facts2)
