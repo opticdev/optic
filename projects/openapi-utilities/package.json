@@ -5,7 +5,7 @@
   "types": "build/index.d.ts",
   "scripts": {
     "dev:test": "yarn tap --no-timeout --ts src",
-    "dev:test-file": "yarn tap --ts  --only --no-timeout $FILE",
+    "dev:test-file": "yarn tap --ts --no-timeout $FILE",
     "dev:test-watch": "yarn tap --ts src --watch",
     "ci:test": "yarn tsc && yarn tap build"
   },

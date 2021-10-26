@@ -10,15 +10,6 @@ tap.test("can parse an OpenAPI spec with external references", async () => {
   tap.matchSnapshot(results);
 });
 
-
-tap.only("can parse an OpenAPI spec from url with external references", async () => {
-  const results = await loadSpecFromUrl(
-    `http://localhost:5000/openapi.yaml`
-  )
-  tap.matchSnapshot(results);
-});
-
-
 tap.test("can parse an OpenAPI spec repo branches", async () => {
   const gitRepo = await inGit(
     path.resolve(__dirname, "../../inputs/git-repo/petstore0.json")
