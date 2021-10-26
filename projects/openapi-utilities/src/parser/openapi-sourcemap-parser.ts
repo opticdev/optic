@@ -9,7 +9,7 @@ import { dereference } from "./insourced-dereference";
 import * as pointer from "json-ptr";
 const newGitBranchResolver = require("./git-branch-file-resolver")
 import path from 'path'
-import fetch from 'node-fetch';
+// import fetch from 'node-fetch';
 
 export async function parseOpenAPIWithSourcemap(path: string) {
   const resolver = new $RefParser();
@@ -92,12 +92,10 @@ export class JsonSchemaSourcemap {
   async addFileIfMissing(filePath: string) {
 
     if (filePath.startsWith("http")) {
-      const response = await fetch(filePath);
-      const asText = await response.text();
+      // const response = await fetch(filePath);
+      // const asText = await response.text();
 
-      const yamlAst: YAMLNode = YAML.safeLoad(
-        (await fs.readFile(asText)).toString()
-      );
+      const yamlAst: YAMLNode = YAML.safeLoad("{}");
 
       this._files.push({
         path: filePath,
