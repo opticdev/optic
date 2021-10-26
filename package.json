@@ -1,0 +1,7 @@
+{
+    "private": true,
+    "workspaces": [
+        "projects/openapi-utilities",
+        "projects/developer-ui"
+    ]
+}
