@@ -1,0 +1,35 @@
+CodeIssue:
+  type: object
+  description: An issue discovered by SAST code analysis
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Code public issue ID
+      example: 'ea536a06-0566-40ca-b96b-155568aa2027'
+    type:
+      type: string
+      description: Content type
+      example: 'code-issue'
+    attributes:
+      allOf:
+        - $ref: './issue-summary.yaml#/IssueSummaryAttributes'
+        - type: object
+          properties:
+            fingerprint:
+              type: string
+              nullable: true
+            fingerprintVersion:
+              type: string
+              nullable: true
+            primaryRegion:
+              type: object
+              description: SARIF code region object
+            priorityScore:
+              type: number
+            priorityScoreFactors:
+              type: array
+              description: Descriptions of factors affecting priority score
+              items:
+                type: string
+  required: ['type', 'id', 'attributes']

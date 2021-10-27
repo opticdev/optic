@@ -1,0 +1,39 @@
+Target:
+  type: object
+  properties:
+    type:
+      type: string
+      description: Content type.
+      example: 'target'
+    id:
+      type: string
+      description: The Snyk ID corresponding to this target
+      format: uuid
+      example: '55a348e2-c3ad-4bbc-b40e-9b232d1f4121'
+    attributes:
+      type: object
+      properties:
+        displayName:
+          type: string
+          nullable: false
+          description: A human readable name for this target
+          example: snyk-fixtures/goof
+        isPrivate:
+          type: boolean
+          nullable: false
+          description: If the resource is private, or publicly accessible
+          example: false
+        origin:
+          type: string
+          nullable: false
+          description: The origin that this target relates to
+          example: github
+        remoteUrl:
+          type: string
+          nullable: true
+          description: The url for the resource. Currently only set for targets imported from the CLI
+      required: [displayName, isPrivate, origin, remoteUrl]
+      additionalProperties: false
+    relationships: { $ref: '../common.yaml#/Relationships' }
+  required: ['type', 'id', 'attributes']
+  additionalProperties: false
