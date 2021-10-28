@@ -18,6 +18,7 @@
     "@types/micro-cors": "^0",
     "@types/node-fetch": "2.5.12",
     "@types/tap": "^15.0.5",
+    "chai": "^4.3.4",
     "prettier": "^2.4.1",
     "tap": "^15.0.10",
     "ts-node": "^10.3.1",

@@ -68,7 +68,7 @@ export class OpenAPITraverser
         body,
         contentType,
         [...jsonPath, "content", contentType, "body"],
-        [...conceptualPath, contentType],
+        [...conceptualPath, contentType]
       );
     });
   }
@@ -81,7 +81,11 @@ export class OpenAPITraverser
   ) {
     if (body.schema && Object.keys(body.schema).length) {
       this.onContentForBody(body, contentType, jsonPath, conceptualPath);
-      this.traverseSchema(body.schema as OpenAPIV3.SchemaObject, jsonPath, conceptualPath);
+      this.traverseSchema(
+        body.schema as OpenAPIV3.SchemaObject,
+        jsonPath,
+        conceptualPath
+      );
     }
   }
 
@@ -104,7 +108,7 @@ export class OpenAPITraverser
     console.log(schema);
     if (schema.oneOf || schema.anyOf || schema.allOf) {
       // iterate these, multiple branches at path
-      const e = new Error(`unsupported schema ${JSON.stringify(schema)}`)
+      const e = new Error(`unsupported schema ${JSON.stringify(schema)}`);
       console.error(e);
       return;
     }
@@ -156,17 +160,15 @@ export class OpenAPITraverser
     conceptualPath: IPathComponent[],
     schema: OpenAPIV3.SchemaObject
   ) {
-    const value: OpenApiObjectFact = {
-
-    }
+    const value: OpenApiObjectFact = {};
     this.accumulator.log({
       location: {
         jsonPath,
         conceptualPath,
-        kind: "object"
+        kind: "object",
       },
-      value
-    })
+      value,
+    });
   }
   onField(
     key: string,
@@ -177,7 +179,7 @@ export class OpenAPITraverser
   ) {
     const value: OpenApiFieldFact = {
       required,
-      schemaTypes: [schema.type ?? 'any']
+      schemaTypes: [schema.type ?? "any"],
     };
     this.accumulator.log({
       location: {
@@ -199,6 +201,7 @@ export class OpenAPITraverser
     const value: OpenApiEndpointFact = {
       method,
       pathPattern,
+      operationId: operation.operationId || "",
     };
     this.accumulator.log({
       location: {
@@ -238,6 +241,7 @@ type OpenAPIFacts =
 export interface OpenApiEndpointFact {
   pathPattern: string;
   method: string;
+  operationId: string;
   // summary: string;
 }
 
@@ -252,9 +256,7 @@ export interface OpenApiFieldFact {
   schemaTypes: string[];
   // schema: OpenAPIV3.SchemaObject;
 }
-export interface OpenApiObjectFact {
-
-}
+export interface OpenApiObjectFact {}
 export interface OpenApiResponseFact {
   statusCode: number;
 }
