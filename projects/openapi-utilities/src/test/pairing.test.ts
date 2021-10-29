@@ -1,6 +1,6 @@
 import { OpenAPIV3 } from "openapi-types";
 import tap from "tap";
-import { OpenAPITraverser } from "../openapi3/implementations/openapi3/OpenAPITraverser";
+import { OpenAPITraverser } from "../openapi3/implementations/openapi3/openapi-traverser";
 import { factsToChangelog } from "../openapi3/sdk/facts-to-changelog";
 
 async function checkAdvancedSchemaUsage() {
