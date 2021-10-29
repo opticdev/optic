@@ -1,0 +1,8 @@
+SnapshotID:
+  name: snapshot
+  description: Project Snapshot ID
+  in: query
+  required: false
+  schema:
+    type: string
+    format: uuid

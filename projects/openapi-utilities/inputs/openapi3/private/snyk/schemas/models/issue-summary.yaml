@@ -1,0 +1,33 @@
+IssueSummary:
+  type: object
+  description: Summary description of an issue.
+  properties:
+    type:
+      type: string
+      description: Content type
+      example: 'issue-summary'
+    id:
+      type: string
+      description: The Issue ID
+      format: uuid
+      example: '2bcd80a9-e343-4601-9393-f820d51ab713'
+    attributes:
+      $ref: '#/IssueSummaryAttributes'
+    links:
+      # Links to type-specific details about this issue
+      $ref: '../../schemas/common.yaml#/Links'
+  required: ['type', 'id', 'attributes', 'links']
+
+IssueSummaryAttributes:
+  type: object
+  properties:
+    issueType: { $ref: '../../schemas/shared/issue-type.yaml#/IssueType' }
+    title:
+      type: string
+      description: The name of the issue
+    severity:
+      { $ref: '../../schemas/shared/issue-severity.yaml#/IssueSeverity' }
+    ignored:
+      type: boolean
+      description: Whether the issue has been ignored
+  required: ['issueType', 'title', 'severity', 'ignored']
