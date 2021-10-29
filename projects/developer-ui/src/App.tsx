@@ -78,7 +78,7 @@ function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
 
       // const resolved2 = yaml.load(props.afterContents);
       const target2 = new URL(resolverServiceBaseUrl);
-      target2.searchParams.set("filePath", `${staticServerBaseUrl}${props.before}`)
+      target2.searchParams.set("filePath", `${staticServerBaseUrl}${props.after}`)
       const resolved2 = (await getJson<any>(target2.toString())).jsonLike;
       //const resolved2 = (await parseOpenAPIWithSourcemap(`${baseUrl}${props.after}`)).jsonLike
       debugger
@@ -98,6 +98,7 @@ function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
       setChanges([]);
     }
   }, [props.before, props.after, props.beforeContents, props.afterContents])
+  
   return (
     <div>
       <div>observations</div>
