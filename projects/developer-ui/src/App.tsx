@@ -108,8 +108,8 @@ function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
         setFactsAfter(facts2);
         const changes = factsToChangelog(facts1, facts2)
         setChanges(changes);
-        console.table(flat(facts1))
-        console.table(flat(facts2))
+        // console.table(flat(facts1))
+        // console.table(flat(facts2))
         console.log({ facts1, facts2, changes })
 
       }
