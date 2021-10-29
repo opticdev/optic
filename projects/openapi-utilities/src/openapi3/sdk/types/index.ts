@@ -1,58 +1,56 @@
-
 export class FactAccumulator<KindSchema> {
-  constructor(private facts: IFact<KindSchema>[]) {
-  }
+  constructor(private facts: IFact<KindSchema>[]) {}
   log(fact: IFact<KindSchema>) {
-    this.facts.push(fact)
+    this.facts.push(fact);
   }
 
   allFacts() {
-    return this.facts
+    return this.facts;
   }
-
 }
 
 export interface Traverse<DocSchema, FactSchema> {
-  format: string
-  prepare(input: any): Promise<DocSchema>
-  traverse(input: DocSchema): void
-  accumulator: FactAccumulator<FactSchema>
+  format: string;
+  prepare(input: any): Promise<DocSchema>;
+  traverse(input: DocSchema): void;
+  accumulator: FactAccumulator<FactSchema>;
 }
 
 export interface IFact<KindSchema> {
   location: {
-    jsonPath: IPathComponent[]
-    conceptualPath: IPathComponent[]
-    stableId?: string
-    kind: string
-  }
-  value: KindSchema
+    jsonPath: IPathComponent[];
+    conceptualPath: IPathComponent[];
+    stableId?: string;
+    kind: string;
+  };
+  value: KindSchema;
 }
 
-export type IPathComponent = string | number
-export type I = string | number
+export type IPathComponent = string | number;
+export type I = string | number;
 
 enum IChangeType {
-  Added, Removed, Changed
+  Added,
+  Removed,
+  Changed,
 }
 
 export interface ILocation {
-    jsonPath: IPathComponent[]
-    conceptualPath: IPathComponent[]
-    stableId?: string
-    kind: string
+  jsonPath: IPathComponent[];
+  conceptualPath: IPathComponent[];
+  stableId?: string;
+  kind: string;
 }
 
-export interface IChange {
-  location: ILocation
-  added?: any;
+export interface IChange<T> {
+  location: ILocation;
+  added?: T;
   changed?: {
-    before: any;
-    after: any;
-  }
+    before: T;
+    after: T;
+  };
   removed?: boolean;
 }
-
 
 export interface ICheckResult {
   isIssue: boolean;
@@ -110,54 +108,3 @@ export type RemovedHandler<A, B> = (
   location: ILocation,
   report: ReportFromHandler
 ) => void;
-
-export class DSL {
-  private issues: IIssue[] = [];
-  private warnings: IWarning[] = [];
-
-  reset() {
-    this.issues = [];
-    this.warnings = [];
-  }
-
-  report: ReportFromHandler = (input, location?: ILocation) => {
-    if (Array.isArray(input) && input.length > 0 && input[0].isIssue) {
-      this.issues = [
-        ...this.issues,
-        ...(input as IIssue[]).map((i) => ({ ...i, location })),
-      ];
-    } else if (Array.isArray(input) && input.length > 0 && input[0].isWarning) {
-      this.warnings = [
-        ...this.warnings,
-        ...(input as IWarning[]).map((i) => ({ ...i, location })),
-      ];
-    } else if (!Array.isArray(input)) {
-      if ((input as ICheckResult).isIssue) {
-        this.issues.push({ ...(input as IIssue), location });
-      } else if ((input as ICheckResult).isWarning) {
-        this.warnings.push({ ...(input as IWarning), location });
-      }
-    }
-  };
-  constructor() {}
-
-  toHumanReadableChange(change: IChange): string | undefined {
-    return undefined;
-  }
-  run(changes: IChange[]): void {
-    this.reset();
-  }
-
-  results() {
-    return {
-      warnings: this.warnings,
-      issues: this.issues,
-    };
-  }
-
-  uses(attach: (guide: DSL) => void) {
-    attach(this);
-  }
-}
-
-export type ComposableGuide = (guide: any) => void;
