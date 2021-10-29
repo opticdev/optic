@@ -13,9 +13,9 @@ paths:
       operationId: getOrgsProjects
       parameters:
         - { $ref: '../../schemas/parameters/version.yaml#/Version' }
-        - { $ref: '../../schemas/parameters/pagination.yaml#/parameters/starting_after' }
-        - { $ref: '../../schemas/parameters/pagination.yaml#/parameters/ending_before' }
-        - { $ref: '../../schemas/parameters/pagination.yaml#/parameters/limit' }
+        - { $ref: '../../schemas/pagination.yaml#/parameters/StartingAfter' }
+        - { $ref: '../../schemas/pagination.yaml#/parameters/EndingBefore' }
+        - { $ref: '../../schemas/pagination.yaml#/parameters/Limit' }
         - name: orgId
           in: path
           required: true
@@ -108,13 +108,13 @@ paths:
         '500': { $ref: '../../schemas/responses/500.yaml#/500' }
         '200':
           description: 'A list of projects is returned for the targeted org'
-          x-snyk-include-headers: { $ref: '../../schemas/headers/responses.yaml#/Common' }
+          # x-snyk-include-headers: { $ref: '../../schemas/headers/responses.yaml#/Common' }
           content:
             application/vnd.api+json:
               schema:
                 type: object
                 properties:
-                  jsonapi: { $ref: '../../schemas/common.yaml#/JSONAPI' }
+                  jsonapi: { $ref: '../../schemas/common.yaml#/JsonApi' }
                   data:
                     type: array
                     items: { $ref: '../../schemas/models/project.yaml#/Project' }

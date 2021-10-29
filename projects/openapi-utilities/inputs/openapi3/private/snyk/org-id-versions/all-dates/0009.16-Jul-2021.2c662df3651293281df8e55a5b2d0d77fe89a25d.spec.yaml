@@ -13,9 +13,9 @@ paths:
       operationId: getOrgsProjects
       parameters:
         - { $ref: '../../schemas/parameters/version.yaml#/Version' }
-        - { $ref: '../../schemas/parameters/pagination.yaml#/parameters/starting_after' }
-        - { $ref: '../../schemas/parameters/pagination.yaml#/parameters/ending_before' }
-        - { $ref: '../../schemas/parameters/pagination.yaml#/parameters/limit' }
+        - { $ref: '../../schemas/pagination.yaml#/parameters/StartingAfter' }
+        - { $ref: '../../schemas/pagination.yaml#/parameters/EndingBefore' }
+        - { $ref: '../../schemas/pagination.yaml#/parameters/Limit' }
         - name: orgId
           in: path
           required: true
@@ -111,18 +111,18 @@ paths:
           headers:
             snyk-version-requested: { $ref: '../../schemas/headers/headers.yaml#/VersionRequestedResponseHeader' }
             snyk-version-served: { $ref: '../../schemas/headers/headers.yaml#/VersionServedResponseHeader' }
-            snyk-request-id: { $ref: '../../schemas/headers/headers.yaml#/RequestIDResponseHeader' }
+            snyk-request-id: { $ref: '../../schemas/headers/headers.yaml#/RequestIdResponseHeader' }
             snyk-version-lifecycle-stage: { $ref: '../../schemas/headers/headers.yaml#/VersionStageResponseHeader' }
             deprecation: { $ref: '../../schemas/headers/headers.yaml#/DeprecationHeader' }
             sunset: { $ref: '../../schemas/headers/headers.yaml#/SunsetHeader' }
             x-envoy-to-remove-normalized-request-path: { $ref: '../../schemas/headers/headers.yaml#/InternalGlooNormalizedPathHeader' }
-            x-envoy-to-remove-org-public-id: { $ref: '../../schemas/headers/headers.yaml#/InternalGlooOrgIDHeader' }
+            x-envoy-to-remove-org-public-id: { $ref: '../../schemas/headers/headers.yaml#/InternalGlooOrgIdHeader' }
           content:
             application/vnd.api+json:
               schema:
                 type: object
                 properties:
-                  jsonapi: { $ref: '../../schemas/common.yaml#/JSONAPI' }
+                  jsonapi: { $ref: '../../schemas/common.yaml#/JsonApi' }
                   data:
                     type: array
                     items: { $ref: '../../schemas/models/project.yaml#/Project' }

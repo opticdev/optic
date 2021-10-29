@@ -142,10 +142,10 @@ export class JsonSchemaSourcemap {
   }
 
   log(path: string, pathFromRoot: string) {
+    // this seems to assume that paths will be in order, why not check for equality?
     const thisFile = this._files.find((i) => path.startsWith(i.path));
     if (thisFile) {
       const jsonPointer = path.split(thisFile.path)[1].substring(1) || "/";
-      // @todo remove this try catch, we want errors, but this is going to help us dev
       const sourceMapping = resolveJsonPointerInYamlAst(
         thisFile.ast,
         jsonPointer,
