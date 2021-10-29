@@ -5,6 +5,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
+    "dev:test": "yarn tap --no-timeout --ts src/**/*.test.ts",
     "build": "yarn tsc --build --verbose && copyfiles -u 1 src/**/*.js build/"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 import tap from "tap";
-import { Checker } from "./checker";
+import { Checker } from "../checker";
 const { assert } = require("chai"); // Using Assert style
 
 tap.test(

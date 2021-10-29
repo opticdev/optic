@@ -3112,9 +3112,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@useoptic/cli@workspace:projects/ci-cli":
+"@useoptic/ci-cli@workspace:projects/ci-cli":
   version: 0.0.0-use.local
-  resolution: "@useoptic/cli@workspace:projects/ci-cli"
+  resolution: "@useoptic/ci-cli@workspace:projects/ci-cli"
   dependencies:
     "@types/copyfiles": ^2
     "@types/fs-extra": ^9.0.13

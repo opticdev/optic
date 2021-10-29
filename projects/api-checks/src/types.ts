@@ -1,8 +1,3 @@
-import {
-  IChange,
-  IFact,
-} from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
-
 export interface ShouldOrMust<G> {
   must: G;
   should: G;
@@ -54,5 +49,5 @@ export async function runCheck(
 }
 
 export interface ApiCheckDsl {
-  run: (facts: IFact<any>[], changelog: IChange[]) => Promise<Result[]>;
+  checkPromises: () => Promise<Result>[];
 }
