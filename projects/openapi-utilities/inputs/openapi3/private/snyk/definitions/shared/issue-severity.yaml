@@ -1,8 +1,0 @@
-IssueSeverity:
-  type: string
-  description: Severity of an issue
-  enum:
-    - low
-    - medium
-    - high
-    - critical
