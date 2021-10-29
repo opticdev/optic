@@ -3,6 +3,7 @@ import { ApiCheckDsl, Result, runCheck, ShouldOrMust } from "../types";
 import { OpenApiEndpointFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/OpenAPITraverser";
 import flatten from "lodash.flatten";
 import events from "events";
+import { IChange } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
 
 export interface SimpleExampleDsl extends ApiCheckDsl {
   operations: {
@@ -26,74 +27,74 @@ export function createSimpleExampleDsl(): SimpleExampleDsl {
     must: boolean;
   }[] = [];
 
+  const a: SimpleExampleDsl["operations"]["added"]["must"] = (
+    statement,
+    handler
+  ) => {};
+
+  const helper = (
+    key: string,
+    statement: string,
+    handler: any,
+    must: boolean
+  ) => {
+    handlers.push({
+      statement,
+      handler,
+      key,
+      must,
+    });
+  };
+
   return {
     operations: {
       added: {
-        must: (statement, handler) => {
-          handlers.push({
-            statement,
-            handler,
-            key: "operation.added",
-            must: true,
-          });
-        },
-        should: (statement, handler) => {
-          handlers.push({
-            statement,
-            handler,
-            key: "operation.added",
-            must: false,
-          });
-        },
+        must: (statement, handler) =>
+          helper("operation.added", statement, handler, true),
+        should: (statement, handler) =>
+          helper("operation.added", statement, handler, false),
       },
       changed: {
-        must: (statement, handler) => {
-          handlers.push({
-            statement,
-            handler,
-            key: "changed.added",
-            must: true,
-          });
-        },
-        should: (statement, handler) => {
-          handlers.push({
-            statement,
-            handler,
-            key: "changed.added",
-            must: false,
-          });
-        },
+        must: (statement, handler) =>
+          helper("operation.changed", statement, handler, true),
+        should: (statement, handler) =>
+          helper("operation.changed", statement, handler, false),
       },
     },
     run: async (facts, changelog) => {
-      const addedEndpointResults: Result[] = await Promise.all(
-        flatten(
-          changelog
-            .filter((i) => i.added && i.location.kind === "endpoint")
-            .map((endpointAdded) => {
-              return handlers
-                .filter((i) => i.key === "operation.added")
-                .map((checks) => {
-                  const handler = checks.handler as (
-                    operationId: string
-                  ) => void;
-                  const value = endpointAdded.added as OpenApiEndpointFact;
-                  return runCheck(
-                    `added endpoint ${value.method} ${value.pathPattern}`,
-                    checks.statement,
-                    checks.must,
-                    () => {
-                      handler(
-                        (endpointAdded.added as OpenApiEndpointFact).operationId
-                      );
-                    }
-                  );
-                });
-            })
-        )
-      );
+      const checks: Promise<Result>[] = [];
 
-      return [...addedEndpointResults];
+      // collect and run endpoint added checks
+      handlers
+        .filter((i) => i.key === "operation.added")
+        .forEach(({ handler, must, statement }) => {
+          const addedEndpoints = collectAdded<OpenApiEndpointFact>(
+            facts,
+            (change) =>
+              change.location.kind === "endpoint" && Boolean(change.added)
+          );
+          addedEndpoints.forEach((added) => {
+            checks.push(
+              runCheck(
+                `operation added ${added.added!.method} ${
+                  added.added!.pathPattern
+                }`,
+                statement,
+                must,
+                () => handler(added.added!.operationId)
+              )
+            );
+          });
+        });
+
+      return await Promise.all(checks);
     },
   };
+}
+
+function collectAdded<T>(
+  changelog: IChange<T>[],
+  predicate: (change: IChange<T>) => boolean
+) {
+  return changelog.filter(predicate);
 }

@@ -6,7 +6,7 @@ import equals from "fast-deep-equal";
 export function factsToChangelog(
   past: IFact<any>[],
   current: IFact<any>[]
-): IChange[] {
+): IChange<any>[] {
   // @todo from dev, make sure this assumption (one entity per location) holds re: polymorphism and json schema
   const added = current.filter(
     (i) => !past.some((fact) => equals(fact.location, i.location))
