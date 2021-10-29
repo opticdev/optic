@@ -10,17 +10,17 @@ export const defaultEmptySpec: OpenAPIV3.Document = {
   info: { version: "0.0.0", title: "Empty" },
 };
 
+function completenessApiRules(dsl: SnykApiDSL) {
+  dsl.operations.changed.must(
+    "have consistent operationIds",
+    ({ current, next }) => {
+      expect(current.operationId).equal(next.operationId);
+    }
+  );
+}
+
 tap.test("can run dsl rules through check service", async () => {
   const checker = new ApiCheckService<SnykContext>();
-
-  function completenessApiRules(dsl: SnykApiDSL) {
-    dsl.operations.changed.must(
-      "have consistent operationIds",
-      ({ current, next }) => {
-        expect(current.operationId).equal(next.operationId);
-      }
-    );
-  }
 
   checker.useDsl(
     (input) => new SnykApiDSL(input.nextFacts, input.changelog),
@@ -56,5 +56,3 @@ tap.test("can run dsl rules through check service", async () => {
 
   tap.matchSnapshot(results);
 });
-
-const baseOpenAPI = defaultEmptySpec;
