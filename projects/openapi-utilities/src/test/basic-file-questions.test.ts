@@ -1,5 +1,5 @@
 import tap from "tap";
-import { OpenAPITraverser } from "../openapi3/implementations/openapi3/OpenAPITraverser";
+import { OpenAPITraverser } from "../openapi3/implementations/openapi3/openapi-traverser";
 import { jsonFromFile } from "../openapi3/pipeline/SpecFrom";
 
 

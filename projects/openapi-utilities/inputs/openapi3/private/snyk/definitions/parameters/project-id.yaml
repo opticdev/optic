@@ -1,8 +1,0 @@
-ProjectID:
-  name: projectId
-  description: Project ID
-  in: query
-  required: false
-  schema:
-    type: string
-    format: uuid
