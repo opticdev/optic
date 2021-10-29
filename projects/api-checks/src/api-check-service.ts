@@ -107,46 +107,6 @@ export class ApiCheckService<Context> {
   }
 }
 
-// export function createApiCheckService(port: number): ApiCheckService {
-//   const app: Express = express();
-//   const dsls: ApiCheckDsl[] = [];
-//
-//   app.use(bodyParser.json({ limit: "10mb" }));
-//   app.post("/openapi/v3/checks", async (req, res) => {
-//     const { currentJsonLike, nextJsonLike } =
-//       req.body as ApiCheckServiceRequestBody;
-//
-//     const currentTraverser = new OpenAPITraverser();
-//     const nextTraverser = new OpenAPITraverser();
-//
-//     await currentTraverser.traverse(currentJsonLike);
-//     await nextTraverser.traverse(nextJsonLike);
-//
-//     const changelog = factsToChangelog(
-//       currentTraverser.accumulator.allFacts(),
-//       nextTraverser.accumulator.allFacts()
-//     );
-//
-//     const results: Result[][] = await Promise.all(
-//       dsls.map(async (dsl) =>
-//         dsl.run(nextTraverser.accumulator.allFacts(), changelog)
-//       )
-//     );
-//     res.json({ checkResults: flatten(results) });
-//   });
-//
-//   app.listen(port, () => {
-//     console.log("Running api-check service on port " + port);
-//   });
-//
-//   return {
-//     useDsl: (dsl) => {
-//       dsls.push(dsl);
-//       return dsl;
-//     },
-//   };
-// }
-
 export interface ApiCheckServiceRequestBody<Context> {
   currentJsonLike: OpenAPIV3.Document;
   nextJsonLike: OpenAPIV3.Document;
