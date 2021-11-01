@@ -9,13 +9,6 @@ export class OpenAPITraverser
   format = "openapi3";
   accumulator = new FactAccumulator<OpenAPIFacts>([]);
 
-  async prepare(input: any): Promise<OpenAPIV3.Document> {
-    const client = require("swagger-client");
-    console.log({input})
-    const result = await client.resolve({ spec: input });
-    return result.spec as OpenAPIV3.Document;
-  }
-
   traverse(input: OpenAPIV3.Document): void {
     Object.entries(input.paths).forEach(([pathPattern, paths]) => {
       if (paths?.get) this.traverseOperations(paths?.get!, "get", pathPattern);

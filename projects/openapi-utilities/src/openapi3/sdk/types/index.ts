@@ -11,7 +11,6 @@ export class FactAccumulator<KindSchema> {
 
 export interface Traverse<DocSchema, FactSchema> {
   format: string;
-  prepare(input: any): Promise<DocSchema>;
   traverse(input: DocSchema): void;
   accumulator: FactAccumulator<FactSchema>;
 }
