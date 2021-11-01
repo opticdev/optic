@@ -4,7 +4,6 @@ import * as yaml from 'js-yaml';
 import { IChange } from '@useoptic/openapi-utilities/build/openapi3/sdk/types';
 
 const staticServerBaseUrl = `http://localhost:5000`;
-const resolverServiceBaseUrl = `http://localhost:5001`;
 
 interface OpenApiViewerProps {
   choices: string[]
@@ -70,49 +69,22 @@ function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
   const [factsBefore, setFactsBefore] = useState<any[]>([]);
   const [factsAfter, setFactsAfter] = useState<any[]>([]);
   const [changes, setChanges] = useState<any[]>([]);
-  const needsResolver = false;
   useEffect(() => {
     async function task() {
-      if (needsResolver) {
 
-        // const resolved1 = yaml.load(props.beforeContents)
-        const target1 = new URL(resolverServiceBaseUrl);
-        target1.searchParams.set("filePath", `${staticServerBaseUrl}${props.before}`)
-        const resolved1 = (await getJson<any>(target1.toString())).jsonLike;
-        //const resolved1 = (await parseOpenAPIWithSourcemap(`${baseUrl}${props.before}`)).jsonLike
-        const traverser1 = new OpenAPITraverser();
-        traverser1.traverse(resolved1 as OpenAPIV3.Document);
-        const facts1 = traverser1.accumulator.allFacts();
+      const traverser1 = new OpenAPITraverser();
+      traverser1.traverse(yaml.load(props.beforeContents) as OpenAPIV3.Document);
+      const facts1 = traverser1.accumulator.allFacts();
+      setFactsBefore(facts1)
 
-        // const resolved2 = yaml.load(props.afterContents);
-        const target2 = new URL(resolverServiceBaseUrl);
-        target2.searchParams.set("filePath", `${staticServerBaseUrl}${props.after}`)
-        const resolved2 = (await getJson<any>(target2.toString())).jsonLike;
-        //const resolved2 = (await parseOpenAPIWithSourcemap(`${baseUrl}${props.after}`)).jsonLike
-        const traverser2 = new OpenAPITraverser();
-        traverser2.traverse(resolved2 as OpenAPIV3.Document);
-        const facts2 = traverser2.accumulator.allFacts();
+      const traverser2 = new OpenAPITraverser();
+      traverser2.traverse(yaml.load(props.afterContents) as OpenAPIV3.Document);
+      const facts2 = traverser2.accumulator.allFacts();
+      setFactsAfter(facts2);
+      const changes = factsToChangelog(facts1, facts2)
+      setChanges(changes);
+      console.log({ facts1, facts2, changes })
 
-        const changes = factsToChangelog(facts1, facts2)
-        setChanges(changes);
-        console.log({ facts1, facts2, changes })
-      } else {
-        const traverser1 = new OpenAPITraverser();
-        traverser1.traverse(yaml.load(props.beforeContents) as OpenAPIV3.Document);
-        const facts1 = traverser1.accumulator.allFacts();
-        setFactsBefore(facts1)
-
-        const traverser2 = new OpenAPITraverser();
-        traverser2.traverse(yaml.load(props.afterContents) as OpenAPIV3.Document);
-        const facts2 = traverser2.accumulator.allFacts();
-        setFactsAfter(facts2);
-        const changes = factsToChangelog(facts1, facts2)
-        setChanges(changes);
-        // console.table(flat(facts1))
-        // console.table(flat(facts2))
-        console.log({ facts1, facts2, changes })
-
-      }
     }
     if (props.before && props.after && props.beforeContents && props.afterContents) {
       task();
