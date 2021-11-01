@@ -1,0 +1,5760 @@
+{
+  "jsonLike": {
+    "openapi": "3.0.3",
+    "x-snyk-api-stability": "experimental",
+    "info": {
+      "title": "Registry",
+      "version": "3.0.0"
+    },
+    "servers": [
+      {
+        "url": "/api/v3",
+        "description": "Snyk Registry"
+      }
+    ],
+    "paths": {
+      "/orgs/{orgId}/projects": {
+        "get": {
+          "description": "Get a list of an organization's projects.",
+          "operationId": "getOrgsProjects",
+          "parameters": [
+            {
+              "name": "version",
+              "in": "query",
+              "required": true,
+              "description": "The requested version of the endpoint to process the request",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "starting_after",
+              "in": "query",
+              "description": "Return the page of results immediately after this cursor",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "ending_before",
+              "in": "query",
+              "description": "Return the page of results immediately before this cursor",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "description": "Number of results to return per page",
+              "schema": {
+                "type": "integer",
+                "minimum": 10,
+                "maximum": 100,
+                "default": 10,
+                "multipleOf": 10,
+                "format": "int32"
+              }
+            },
+            {
+              "name": "orgId",
+              "in": "path",
+              "required": true,
+              "description": "The id of the org to return a list of projects",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "in": "query",
+              "name": "name",
+              "description": "Return projects that prefix-match the provided name",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "in": "query",
+              "name": "origin",
+              "description": "Return projects that match the provided origin",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "in": "query",
+              "description": "Return projects that match the provided type",
+              "name": "type",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "in": "query",
+              "name": "status",
+              "description": "Return projects that match the provided status",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "inactive"
+                ]
+              }
+            },
+            {
+              "in": "query",
+              "name": "tags",
+              "description": "Return projects that match all provided tags",
+              "style": "form",
+              "explode": false,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9_-]+:[a-zA-Z0-9_-]+$"
+                }
+              }
+            },
+            {
+              "in": "query",
+              "name": "businessCriticality",
+              "description": "Return projects that have at least 1 option",
+              "style": "form",
+              "explode": false,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "critical",
+                    "high",
+                    "medium",
+                    "low"
+                  ]
+                }
+              }
+            },
+            {
+              "in": "query",
+              "name": "environment",
+              "description": "Return projects that have at least 1 option",
+              "style": "form",
+              "explode": false,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "frontend",
+                    "backend",
+                    "internal",
+                    "external",
+                    "mobile",
+                    "saas",
+                    "onprem",
+                    "hosted",
+                    "distributed"
+                  ]
+                }
+              }
+            },
+            {
+              "in": "query",
+              "name": "lifecycle",
+              "description": "Return projects that have at least 1 option",
+              "style": "form",
+              "explode": false,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "production",
+                    "development",
+                    "sandbox"
+                  ]
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "A list of projects is returned for the targeted org",
+              "headers": {
+                "snyk-version-requested": {
+                  "description": "A header containing the version of the endpoint requested by the caller.",
+                  "schema": {
+                    "name": "version",
+                    "in": "query",
+                    "required": true,
+                    "description": "The requested version of the endpoint to process the request",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "snyk-version-served": {
+                  "description": "A header containing the version of the endpoint that was served by the API.",
+                  "schema": {
+                    "name": "version",
+                    "in": "query",
+                    "required": true,
+                    "description": "The requested version of the endpoint to process the request",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "snyk-request-id": {
+                  "description": "A header containing a unique id used for tracking this request. If you are reporting an issue to Snyk it's very helpful to provide this ID.\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "snyk-version-lifecycle-stage": {
+                  "description": "A header containing the version stage of the endpoint. This stage describes the guarantees snyk provides surrounding stability of the endpoint.\n",
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "wip",
+                      "experimental",
+                      "beta",
+                      "ga",
+                      "deprecated",
+                      "sunset"
+                    ]
+                  }
+                },
+                "deprecation": {
+                  "description": "A header containing the deprecation date of the underlying endpoint. For more information, please refer to the deprecation header RFC:\nhttps://tools.ietf.org/id/draft-dalal-deprecation-header-01.html\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "sunset": {
+                  "description": "A header containing the date of when the underlying endpoint will be removed. This header is only present if the endpoint has been deprecated. Please refer to the RFC for more information:\nhttps://datatracker.ietf.org/doc/html/rfc8594\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "x-envoy-to-remove-normalized-request-path": {
+                  "description": "An internal header used by Snyk's API-Gateway for analytics.\n",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "x-envoy-to-remove-org-public-id": {
+                  "description": "An internal header used by Snyk's API-Gateway for analytics.\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "jsonapi": {
+                        "type": "object",
+                        "properties": {
+                          "version": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "version"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "description": "Content type.",
+                              "example": "projects"
+                            },
+                            "id": {
+                              "type": "string",
+                              "description": "The ID.",
+                              "format": "uuid",
+                              "example": "331ede0a-de94-456f-b788-166caeca58bf"
+                            },
+                            "attributes": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "created": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "description": "The date that the project was created on",
+                                  "example": "2021-05-29T09:50:54.014Z"
+                                },
+                                "origin": {
+                                  "type": "string",
+                                  "description": "The origin the project was added from",
+                                  "example": "github"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "description": "The package manager of the project",
+                                  "example": "maven"
+                                },
+                                "status": {
+                                  "type": "string",
+                                  "description": "Describes if a project is currently monitored or it is de-activated",
+                                  "example": "active"
+                                },
+                                "hostname": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "description": "The hostname for a CLI project, null if not set"
+                                },
+                                "targetReference": {
+                                  "type": "string",
+                                  "nullable": true
+                                },
+                                "businessCriticality": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "lifecycle": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "environment": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "tags": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "key": {
+                                        "type": "string"
+                                      },
+                                      "value": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "key",
+                                      "value"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "created",
+                                "origin",
+                                "type",
+                                "status"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "relationships": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "object",
+                                "properties": {
+                                  "data": {
+                                    "properties": {
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                      },
+                                      "links": {
+                                        "type": "object",
+                                        "properties": {
+                                          "self": {
+                                            "oneOf": [
+                                              {
+                                                "type": "string"
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "href": {
+                                                    "type": "string"
+                                                  },
+                                                  "meta": {
+                                                    "type": "object",
+                                                    "additionalProperties": true
+                                                  }
+                                                },
+                                                "required": [
+                                                  "href",
+                                                  "meta"
+                                                ],
+                                                "additionalProperties": false
+                                              }
+                                            ]
+                                          },
+                                          "related": {
+                                            "oneOf": [
+                                              {
+                                                "type": "string"
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "href": {
+                                                    "type": "string"
+                                                  },
+                                                  "meta": {
+                                                    "type": "object",
+                                                    "additionalProperties": true
+                                                  }
+                                                },
+                                                "required": [
+                                                  "href",
+                                                  "meta"
+                                                ],
+                                                "additionalProperties": false
+                                              }
+                                            ]
+                                          },
+                                          "first": {
+                                            "oneOf": [
+                                              {
+                                                "type": "string"
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "href": {
+                                                    "type": "string"
+                                                  },
+                                                  "meta": {
+                                                    "type": "object",
+                                                    "additionalProperties": true
+                                                  }
+                                                },
+                                                "required": [
+                                                  "href",
+                                                  "meta"
+                                                ],
+                                                "additionalProperties": false
+                                              }
+                                            ]
+                                          },
+                                          "last": {
+                                            "oneOf": [
+                                              {
+                                                "type": "string"
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "href": {
+                                                    "type": "string"
+                                                  },
+                                                  "meta": {
+                                                    "type": "object",
+                                                    "additionalProperties": true
+                                                  }
+                                                },
+                                                "required": [
+                                                  "href",
+                                                  "meta"
+                                                ],
+                                                "additionalProperties": false
+                                              }
+                                            ]
+                                          },
+                                          "prev": {
+                                            "oneOf": [
+                                              {
+                                                "type": "string"
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "href": {
+                                                    "type": "string"
+                                                  },
+                                                  "meta": {
+                                                    "type": "object",
+                                                    "additionalProperties": true
+                                                  }
+                                                },
+                                                "required": [
+                                                  "href",
+                                                  "meta"
+                                                ],
+                                                "additionalProperties": false
+                                              }
+                                            ]
+                                          },
+                                          "next": {
+                                            "oneOf": [
+                                              {
+                                                "type": "string"
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "href": {
+                                                    "type": "string"
+                                                  },
+                                                  "meta": {
+                                                    "type": "object",
+                                                    "additionalProperties": true
+                                                  }
+                                                },
+                                                "required": [
+                                                  "href",
+                                                  "meta"
+                                                ],
+                                                "additionalProperties": false
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "required": [
+                                      "type",
+                                      "id"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "data"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "id",
+                            "attributes"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "links": {
+                        "type": "object",
+                        "properties": {
+                          "self": {
+                            "oneOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "href": {
+                                    "type": "string"
+                                  },
+                                  "meta": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "href",
+                                  "meta"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "related": {
+                            "oneOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "href": {
+                                    "type": "string"
+                                  },
+                                  "meta": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "href",
+                                  "meta"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "first": {
+                            "oneOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "href": {
+                                    "type": "string"
+                                  },
+                                  "meta": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "href",
+                                  "meta"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "last": {
+                            "oneOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "href": {
+                                    "type": "string"
+                                  },
+                                  "meta": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "href",
+                                  "meta"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "prev": {
+                            "oneOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "href": {
+                                    "type": "string"
+                                  },
+                                  "meta": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "href",
+                                  "meta"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "next": {
+                            "oneOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "href": {
+                                    "type": "string"
+                                  },
+                                  "meta": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "href",
+                                  "meta"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "jsonapi",
+                      "data",
+                      "links"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request: A parameter provided as a part of the request was invalid.",
+              "headers": {
+                "snyk-version-requested": {
+                  "description": "A header containing the version of the endpoint requested by the caller.",
+                  "schema": {
+                    "name": "version",
+                    "in": "query",
+                    "required": true,
+                    "description": "The requested version of the endpoint to process the request",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "snyk-version-served": {
+                  "description": "A header containing the version of the endpoint that was served by the API.",
+                  "schema": {
+                    "name": "version",
+                    "in": "query",
+                    "required": true,
+                    "description": "The requested version of the endpoint to process the request",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "snyk-request-id": {
+                  "description": "A header containing a unique id used for tracking this request. If you are reporting an issue to Snyk it's very helpful to provide this ID.\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "snyk-version-lifecycle-stage": {
+                  "description": "A header containing the version stage of the endpoint. This stage describes the guarantees snyk provides surrounding stability of the endpoint.\n",
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "wip",
+                      "experimental",
+                      "beta",
+                      "ga",
+                      "deprecated",
+                      "sunset"
+                    ]
+                  }
+                },
+                "deprecation": {
+                  "description": "A header containing the deprecation date of the underlying endpoint. For more information, please refer to the deprecation header RFC:\nhttps://tools.ietf.org/id/draft-dalal-deprecation-header-01.html\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "sunset": {
+                  "description": "A header containing the date of when the underlying endpoint will be removed. This header is only present if the endpoint has been deprecated. Please refer to the RFC for more information:\nhttps://datatracker.ietf.org/doc/html/rfc8594\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "jsonapi": {
+                        "type": "object",
+                        "properties": {
+                          "version": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "version"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "errors": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "detail": {
+                              "type": "string"
+                            },
+                            "source": {
+                              "type": "object",
+                              "properties": {
+                                "pointer": {
+                                  "type": "string"
+                                },
+                                "parameter": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            "meta": {
+                              "type": "object",
+                              "additionalProperties": true
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "detail"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "jsonapi",
+                      "errors"
+                    ]
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized: the request requires an authentication token or a token with more permissions.",
+              "headers": {
+                "snyk-version-requested": {
+                  "description": "A header containing the version of the endpoint requested by the caller.",
+                  "schema": {
+                    "name": "version",
+                    "in": "query",
+                    "required": true,
+                    "description": "The requested version of the endpoint to process the request",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "snyk-version-served": {
+                  "description": "A header containing the version of the endpoint that was served by the API.",
+                  "schema": {
+                    "name": "version",
+                    "in": "query",
+                    "required": true,
+                    "description": "The requested version of the endpoint to process the request",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "snyk-request-id": {
+                  "description": "A header containing a unique id used for tracking this request. If you are reporting an issue to Snyk it's very helpful to provide this ID.\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "snyk-version-lifecycle-stage": {
+                  "description": "A header containing the version stage of the endpoint. This stage describes the guarantees snyk provides surrounding stability of the endpoint.\n",
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "wip",
+                      "experimental",
+                      "beta",
+                      "ga",
+                      "deprecated",
+                      "sunset"
+                    ]
+                  }
+                },
+                "deprecation": {
+                  "description": "A header containing the deprecation date of the underlying endpoint. For more information, please refer to the deprecation header RFC:\nhttps://tools.ietf.org/id/draft-dalal-deprecation-header-01.html\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "sunset": {
+                  "description": "A header containing the date of when the underlying endpoint will be removed. This header is only present if the endpoint has been deprecated. Please refer to the RFC for more information:\nhttps://datatracker.ietf.org/doc/html/rfc8594\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "jsonapi": {
+                        "type": "object",
+                        "properties": {
+                          "version": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "version"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "errors": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "detail": {
+                              "type": "string"
+                            },
+                            "source": {
+                              "type": "object",
+                              "properties": {
+                                "pointer": {
+                                  "type": "string"
+                                },
+                                "parameter": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            "meta": {
+                              "type": "object",
+                              "additionalProperties": true
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "detail"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "jsonapi",
+                      "errors"
+                    ]
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found: The resource being operated on could not be found.",
+              "headers": {
+                "snyk-version-requested": {
+                  "description": "A header containing the version of the endpoint requested by the caller.",
+                  "schema": {
+                    "name": "version",
+                    "in": "query",
+                    "required": true,
+                    "description": "The requested version of the endpoint to process the request",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "snyk-version-served": {
+                  "description": "A header containing the version of the endpoint that was served by the API.",
+                  "schema": {
+                    "name": "version",
+                    "in": "query",
+                    "required": true,
+                    "description": "The requested version of the endpoint to process the request",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "snyk-request-id": {
+                  "description": "A header containing a unique id used for tracking this request. If you are reporting an issue to Snyk it's very helpful to provide this ID.\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "snyk-version-lifecycle-stage": {
+                  "description": "A header containing the version stage of the endpoint. This stage describes the guarantees snyk provides surrounding stability of the endpoint.\n",
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "wip",
+                      "experimental",
+                      "beta",
+                      "ga",
+                      "deprecated",
+                      "sunset"
+                    ]
+                  }
+                },
+                "deprecation": {
+                  "description": "A header containing the deprecation date of the underlying endpoint. For more information, please refer to the deprecation header RFC:\nhttps://tools.ietf.org/id/draft-dalal-deprecation-header-01.html\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "sunset": {
+                  "description": "A header containing the date of when the underlying endpoint will be removed. This header is only present if the endpoint has been deprecated. Please refer to the RFC for more information:\nhttps://datatracker.ietf.org/doc/html/rfc8594\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "jsonapi": {
+                        "type": "object",
+                        "properties": {
+                          "version": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "version"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "errors": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "detail": {
+                              "type": "string"
+                            },
+                            "source": {
+                              "type": "object",
+                              "properties": {
+                                "pointer": {
+                                  "type": "string"
+                                },
+                                "parameter": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            "meta": {
+                              "type": "object",
+                              "additionalProperties": true
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "detail"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "jsonapi",
+                      "errors"
+                    ]
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error: An error was encountered while attempting to process the request.",
+              "headers": {
+                "snyk-version-requested": {
+                  "description": "A header containing the version of the endpoint requested by the caller.",
+                  "schema": {
+                    "name": "version",
+                    "in": "query",
+                    "required": true,
+                    "description": "The requested version of the endpoint to process the request",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "snyk-version-served": {
+                  "description": "A header containing the version of the endpoint that was served by the API.",
+                  "schema": {
+                    "name": "version",
+                    "in": "query",
+                    "required": true,
+                    "description": "The requested version of the endpoint to process the request",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "snyk-request-id": {
+                  "description": "A header containing a unique id used for tracking this request. If you are reporting an issue to Snyk it's very helpful to provide this ID.\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "snyk-version-lifecycle-stage": {
+                  "description": "A header containing the version stage of the endpoint. This stage describes the guarantees snyk provides surrounding stability of the endpoint.\n",
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "wip",
+                      "experimental",
+                      "beta",
+                      "ga",
+                      "deprecated",
+                      "sunset"
+                    ]
+                  }
+                },
+                "deprecation": {
+                  "description": "A header containing the deprecation date of the underlying endpoint. For more information, please refer to the deprecation header RFC:\nhttps://tools.ietf.org/id/draft-dalal-deprecation-header-01.html\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "sunset": {
+                  "description": "A header containing the date of when the underlying endpoint will be removed. This header is only present if the endpoint has been deprecated. Please refer to the RFC for more information:\nhttps://datatracker.ietf.org/doc/html/rfc8594\n",
+                  "schema": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "jsonapi": {
+                        "type": "object",
+                        "properties": {
+                          "version": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "version"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "errors": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "detail": {
+                              "type": "string"
+                            },
+                            "source": {
+                              "type": "object",
+                              "properties": {
+                                "pointer": {
+                                  "type": "string"
+                                },
+                                "parameter": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            "meta": {
+                              "type": "object",
+                              "additionalProperties": true
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "detail"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "jsonapi",
+                      "errors"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "sourcemap": {
+    "files": [
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/org-id-versions/all-dates/0009.16-Jul-2021.2c662df3651293281df8e55a5b2d0d77fe89a25d.spec.yaml",
+        "index": 0
+      },
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/headers/headers.yaml",
+        "index": 1
+      },
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/parameters/version.yaml",
+        "index": 2
+      },
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/common.yaml",
+        "index": 3
+      },
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/models/project.yaml",
+        "index": 4
+      },
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/responses/400.yaml",
+        "index": 5
+      },
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/responses/401.yaml",
+        "index": 6
+      },
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/responses/404.yaml",
+        "index": 7
+      },
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/responses/500.yaml",
+        "index": 8
+      },
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/pagination.yaml",
+        "index": 9
+      },
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/version.yaml",
+        "index": 10
+      },
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/errors.yaml",
+        "index": 11
+      },
+      {
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/shared/tag.yaml",
+        "index": 12
+      }
+    ],
+    "map": [
+      [
+        "#",
+        {
+          "node": [
+            0,
+            4779
+          ],
+          "file": 0
+        }
+      ],
+      [
+        "#/openapi",
+        {
+          "key": [
+            0,
+            7
+          ],
+          "value": [
+            9,
+            14
+          ],
+          "node": [
+            0,
+            14
+          ],
+          "file": 0
+        }
+      ],
+      [
+        "#/x-snyk-api-stability",
+        {
+          "key": [
+            15,
+            35
+          ],
+          "value": [
+            37,
+            49
+          ],
+          "node": [
+            15,
+            49
+          ],
+          "file": 0
+        }
+      ],
+      [
+        "#/info",
+        {
+          "key": [
+            50,
+            54
+          ],
+          "value": [
+            58,
+            90
+          ],
+          "node": [
+            50,
+            90
+          ],
+          "file": 0
+        }
+      ],
+      [
+        "#/info/title",
+        {
+          "key": [
+            58,
+            63
+          ],
+          "value": [
+            65,
+            73
+          ],
+          "node": [
+            58,
+            73
+          ],
+          "file": 0
+        }
+      ],
+      [
+        "#/info/version",
+        {
+          "key": [
+            76,
+            83
+          ],
+          "value": [
+            85,
+            90
+          ],
+          "node": [
+            76,
+            90
+          ],
+          "file": 0
+        }
+      ],
+      [
+        "#/servers",
+        {
+          "key": [
+            91,
+            98
+          ],
+          "value": [
+            102,
+            148
+          ],
+          "node": [
+            91,
+            148
+          ],
+          "file": 0
+        }
+      ],
+      [
+        "#/servers/0",
+        {
+          "node": [
+            104,
+            147
+          ],
+          "file": 0
+        }
+      ],
+      [
+        "#/servers/0/url",
+        {
+          "key": [
+            104,
+            107
+          ],
+          "value": [
+            109,
+            116
+          ],
+          "node": [
+            104,
+            116
+          ],
+          "file": 0
+        }
+      ],
+      [
+        "#/servers/0/description",
+        {
+          "key": [
+            121,
+            132
+          ],
+          "value": [
+            134,
+            147
+          ],
+          "node": [
+            121,
+            147
+          ],
+          "file": 0
+        }
+      ],
+      [
+        "#/paths",
+        {
+          "key": [
+            148,
+            153
+          ],
+          "value": [
+            157,
+            4778
+          ],
+          "node": [
+            148,
+            4778
+          ],
+          "file": 0
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/0",
+        {
+          "key": [
+            0,
+            7
+          ],
+          "value": [
+            11,
+            156
+          ],
+          "node": [
+            0,
+            156
+          ],
+          "file": 2
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/0/name",
+        {
+          "key": [
+            11,
+            15
+          ],
+          "value": [
+            17,
+            24
+          ],
+          "node": [
+            11,
+            24
+          ],
+          "file": 2
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/0/in",
+        {
+          "key": [
+            27,
+            29
+          ],
+          "value": [
+            31,
+            36
+          ],
+          "node": [
+            27,
+            36
+          ],
+          "file": 2
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/0/required",
+        {
+          "key": [
+            39,
+            47
+          ],
+          "value": [
+            49,
+            53
+          ],
+          "node": [
+            39,
+            53
+          ],
+          "file": 2
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/0/description",
+        {
+          "key": [
+            56,
+            67
+          ],
+          "value": [
+            69,
+            129
+          ],
+          "node": [
+            56,
+            129
+          ],
+          "file": 2
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/0/schema",
+        {
+          "key": [
+            132,
+            138
+          ],
+          "value": [
+            144,
+            156
+          ],
+          "node": [
+            132,
+            156
+          ],
+          "file": 2
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/0/schema/type",
+        {
+          "key": [
+            144,
+            148
+          ],
+          "value": [
+            150,
+            156
+          ],
+          "node": [
+            144,
+            156
+          ],
+          "file": 2
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/1",
+        {
+          "key": [
+            14,
+            27
+          ],
+          "value": [
+            33,
+            172
+          ],
+          "node": [
+            14,
+            172
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/1/name",
+        {
+          "key": [
+            33,
+            37
+          ],
+          "value": [
+            39,
+            53
+          ],
+          "node": [
+            33,
+            53
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/1/in",
+        {
+          "key": [
+            58,
+            60
+          ],
+          "value": [
+            62,
+            67
+          ],
+          "node": [
+            58,
+            67
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/1/description",
+        {
+          "key": [
+            72,
+            83
+          ],
+          "value": [
+            85,
+            141
+          ],
+          "node": [
+            72,
+            141
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/1/schema",
+        {
+          "key": [
+            146,
+            152
+          ],
+          "value": [
+            160,
+            172
+          ],
+          "node": [
+            146,
+            172
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/1/schema/type",
+        {
+          "key": [
+            160,
+            164
+          ],
+          "value": [
+            166,
+            172
+          ],
+          "node": [
+            160,
+            172
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/2",
+        {
+          "key": [
+            175,
+            187
+          ],
+          "value": [
+            193,
+            332
+          ],
+          "node": [
+            175,
+            332
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/2/name",
+        {
+          "key": [
+            193,
+            197
+          ],
+          "value": [
+            199,
+            212
+          ],
+          "node": [
+            193,
+            212
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/2/in",
+        {
+          "key": [
+            217,
+            219
+          ],
+          "value": [
+            221,
+            226
+          ],
+          "node": [
+            217,
+            226
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/2/description",
+        {
+          "key": [
+            231,
+            242
+          ],
+          "value": [
+            244,
+            301
+          ],
+          "node": [
+            231,
+            301
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/2/schema",
+        {
+          "key": [
+            306,
+            312
+          ],
+          "value": [
+            320,
+            332
+          ],
+          "node": [
+            306,
+            332
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/2/schema/type",
+        {
+          "key": [
+            320,
+            324
+          ],
+          "value": [
+            326,
+            332
+          ],
+          "node": [
+            320,
+            332
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/3",
+        {
+          "key": [
+            335,
+            340
+          ],
+          "value": [
+            346,
+            553
+          ],
+          "node": [
+            335,
+            553
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/3/name",
+        {
+          "key": [
+            346,
+            350
+          ],
+          "value": [
+            352,
+            357
+          ],
+          "node": [
+            346,
+            357
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/3/in",
+        {
+          "key": [
+            362,
+            364
+          ],
+          "value": [
+            366,
+            371
+          ],
+          "node": [
+            362,
+            371
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/3/description",
+        {
+          "key": [
+            376,
+            387
+          ],
+          "value": [
+            389,
+            425
+          ],
+          "node": [
+            376,
+            425
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/3/schema",
+        {
+          "key": [
+            430,
+            436
+          ],
+          "value": [
+            444,
+            553
+          ],
+          "node": [
+            430,
+            553
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/3/schema/type",
+        {
+          "key": [
+            444,
+            448
+          ],
+          "value": [
+            450,
+            457
+          ],
+          "node": [
+            444,
+            457
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/3/schema/minimum",
+        {
+          "key": [
+            464,
+            471
+          ],
+          "value": [
+            473,
+            475
+          ],
+          "node": [
+            464,
+            475
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/3/schema/maximum",
+        {
+          "key": [
+            482,
+            489
+          ],
+          "value": [
+            491,
+            494
+          ],
+          "node": [
+            482,
+            494
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/3/schema/default",
+        {
+          "key": [
+            501,
+            508
+          ],
+          "value": [
+            510,
+            512
+          ],
+          "node": [
+            501,
+            512
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/3/schema/multipleOf",
+        {
+          "key": [
+            519,
+            529
+          ],
+          "value": [
+            531,
+            533
+          ],
+          "node": [
+            519,
+            533
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/parameters/3/schema/format",
+        {
+          "key": [
+            540,
+            546
+          ],
+          "value": [
+            548,
+            553
+          ],
+          "node": [
+            540,
+            553
+          ],
+          "file": 9
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-requested",
+        {
+          "key": [
+            0,
+            30
+          ],
+          "value": [
+            34,
+            166
+          ],
+          "node": [
+            0,
+            166
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-requested/description",
+        {
+          "key": [
+            34,
+            45
+          ],
+          "value": [
+            47,
+            119
+          ],
+          "node": [
+            34,
+            119
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-requested/schema",
+        {
+          "key": [
+            0,
+            7
+          ],
+          "value": [
+            11,
+            156
+          ],
+          "node": [
+            0,
+            156
+          ],
+          "file": 10
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-requested/schema/name",
+        {
+          "key": [
+            11,
+            15
+          ],
+          "value": [
+            17,
+            24
+          ],
+          "node": [
+            11,
+            24
+          ],
+          "file": 10
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-requested/schema/in",
+        {
+          "key": [
+            27,
+            29
+          ],
+          "value": [
+            31,
+            36
+          ],
+          "node": [
+            27,
+            36
+          ],
+          "file": 10
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-requested/schema/required",
+        {
+          "key": [
+            39,
+            47
+          ],
+          "value": [
+            49,
+            53
+          ],
+          "node": [
+            39,
+            53
+          ],
+          "file": 10
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-requested/schema/description",
+        {
+          "key": [
+            56,
+            67
+          ],
+          "value": [
+            69,
+            129
+          ],
+          "node": [
+            56,
+            129
+          ],
+          "file": 10
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-requested/schema/schema",
+        {
+          "key": [
+            132,
+            138
+          ],
+          "value": [
+            144,
+            156
+          ],
+          "node": [
+            132,
+            156
+          ],
+          "file": 10
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-requested/schema/schema/type",
+        {
+          "key": [
+            144,
+            148
+          ],
+          "value": [
+            150,
+            156
+          ],
+          "node": [
+            144,
+            156
+          ],
+          "file": 10
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-served",
+        {
+          "key": [
+            168,
+            195
+          ],
+          "value": [
+            199,
+            334
+          ],
+          "node": [
+            168,
+            334
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-served/description",
+        {
+          "key": [
+            199,
+            210
+          ],
+          "value": [
+            212,
+            287
+          ],
+          "node": [
+            199,
+            287
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-request-id",
+        {
+          "key": [
+            1294,
+            1317
+          ],
+          "value": [
+            1321,
+            1527
+          ],
+          "node": [
+            1294,
+            1527
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-request-id/description",
+        {
+          "key": [
+            1321,
+            1332
+          ],
+          "value": [
+            1334,
+            1483
+          ],
+          "node": [
+            1321,
+            1483
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-request-id/schema",
+        {
+          "key": [
+            1486,
+            1492
+          ],
+          "value": [
+            1498,
+            1527
+          ],
+          "node": [
+            1486,
+            1527
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-request-id/schema/type",
+        {
+          "key": [
+            1498,
+            1502
+          ],
+          "value": [
+            1504,
+            1510
+          ],
+          "node": [
+            1498,
+            1510
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-request-id/schema/format",
+        {
+          "key": [
+            1515,
+            1521
+          ],
+          "value": [
+            1523,
+            1527
+          ],
+          "node": [
+            1515,
+            1527
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-lifecycle-stage",
+        {
+          "key": [
+            336,
+            362
+          ],
+          "value": [
+            366,
+            662
+          ],
+          "node": [
+            336,
+            662
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-lifecycle-stage/description",
+        {
+          "key": [
+            366,
+            377
+          ],
+          "value": [
+            379,
+            532
+          ],
+          "node": [
+            366,
+            532
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-lifecycle-stage/schema",
+        {
+          "key": [
+            535,
+            541
+          ],
+          "value": [
+            547,
+            662
+          ],
+          "node": [
+            535,
+            662
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-lifecycle-stage/schema/type",
+        {
+          "key": [
+            547,
+            551
+          ],
+          "value": [
+            553,
+            559
+          ],
+          "node": [
+            547,
+            559
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-lifecycle-stage/schema/enum",
+        {
+          "key": [
+            564,
+            568
+          ],
+          "value": [
+            576,
+            662
+          ],
+          "node": [
+            564,
+            662
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-lifecycle-stage/schema/enum/0",
+        {
+          "node": [
+            578,
+            581
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-lifecycle-stage/schema/enum/1",
+        {
+          "node": [
+            590,
+            602
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-lifecycle-stage/schema/enum/2",
+        {
+          "node": [
+            611,
+            615
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-lifecycle-stage/schema/enum/3",
+        {
+          "node": [
+            624,
+            626
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-lifecycle-stage/schema/enum/4",
+        {
+          "node": [
+            635,
+            645
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/snyk-version-lifecycle-stage/schema/enum/5",
+        {
+          "node": [
+            654,
+            660
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/deprecation",
+        {
+          "key": [
+            662,
+            679
+          ],
+          "value": [
+            683,
+            959
+          ],
+          "node": [
+            662,
+            959
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/deprecation/description",
+        {
+          "key": [
+            683,
+            694
+          ],
+          "value": [
+            696,
+            910
+          ],
+          "node": [
+            683,
+            910
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/deprecation/schema",
+        {
+          "key": [
+            913,
+            919
+          ],
+          "value": [
+            925,
+            959
+          ],
+          "node": [
+            913,
+            959
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/deprecation/schema/type",
+        {
+          "key": [
+            925,
+            929
+          ],
+          "value": [
+            931,
+            937
+          ],
+          "node": [
+            925,
+            937
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/deprecation/schema/format",
+        {
+          "key": [
+            942,
+            948
+          ],
+          "value": [
+            950,
+            959
+          ],
+          "node": [
+            942,
+            959
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/sunset",
+        {
+          "key": [
+            961,
+            973
+          ],
+          "value": [
+            977,
+            1292
+          ],
+          "node": [
+            961,
+            1292
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/sunset/description",
+        {
+          "key": [
+            977,
+            988
+          ],
+          "value": [
+            990,
+            1243
+          ],
+          "node": [
+            977,
+            1243
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/sunset/schema",
+        {
+          "key": [
+            1246,
+            1252
+          ],
+          "value": [
+            1258,
+            1292
+          ],
+          "node": [
+            1246,
+            1292
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/sunset/schema/type",
+        {
+          "key": [
+            1258,
+            1262
+          ],
+          "value": [
+            1264,
+            1270
+          ],
+          "node": [
+            1258,
+            1270
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/sunset/schema/format",
+        {
+          "key": [
+            1275,
+            1281
+          ],
+          "value": [
+            1283,
+            1292
+          ],
+          "node": [
+            1275,
+            1292
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/x-envoy-to-remove-normalized-request-path",
+        {
+          "key": [
+            1529,
+            1561
+          ],
+          "value": [
+            1565,
+            1671
+          ],
+          "node": [
+            1529,
+            1671
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/x-envoy-to-remove-normalized-request-path/description",
+        {
+          "key": [
+            1565,
+            1576
+          ],
+          "value": [
+            1578,
+            1644
+          ],
+          "node": [
+            1565,
+            1644
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/x-envoy-to-remove-normalized-request-path/schema",
+        {
+          "key": [
+            1647,
+            1653
+          ],
+          "value": [
+            1659,
+            1671
+          ],
+          "node": [
+            1647,
+            1671
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/x-envoy-to-remove-normalized-request-path/schema/type",
+        {
+          "key": [
+            1659,
+            1663
+          ],
+          "value": [
+            1665,
+            1671
+          ],
+          "node": [
+            1659,
+            1671
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/x-envoy-to-remove-org-public-id",
+        {
+          "key": [
+            1673,
+            1696
+          ],
+          "value": [
+            1700,
+            1823
+          ],
+          "node": [
+            1673,
+            1823
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/x-envoy-to-remove-org-public-id/description",
+        {
+          "key": [
+            1700,
+            1711
+          ],
+          "value": [
+            1713,
+            1779
+          ],
+          "node": [
+            1700,
+            1779
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/x-envoy-to-remove-org-public-id/schema",
+        {
+          "key": [
+            1782,
+            1788
+          ],
+          "value": [
+            1794,
+            1823
+          ],
+          "node": [
+            1782,
+            1823
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/x-envoy-to-remove-org-public-id/schema/type",
+        {
+          "key": [
+            1794,
+            1798
+          ],
+          "value": [
+            1800,
+            1806
+          ],
+          "node": [
+            1794,
+            1806
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/headers/x-envoy-to-remove-org-public-id/schema/format",
+        {
+          "key": [
+            1811,
+            1817
+          ],
+          "value": [
+            1819,
+            1823
+          ],
+          "node": [
+            1811,
+            1823
+          ],
+          "file": 1
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/jsonapi",
+        {
+          "key": [
+            0,
+            7
+          ],
+          "value": [
+            11,
+            123
+          ],
+          "node": [
+            0,
+            123
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/jsonapi/type",
+        {
+          "key": [
+            11,
+            15
+          ],
+          "value": [
+            17,
+            23
+          ],
+          "node": [
+            11,
+            23
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/jsonapi/properties",
+        {
+          "key": [
+            26,
+            36
+          ],
+          "value": [
+            42,
+            69
+          ],
+          "node": [
+            26,
+            69
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/jsonapi/properties/version",
+        {
+          "key": [
+            42,
+            49
+          ],
+          "value": [
+            57,
+            69
+          ],
+          "node": [
+            42,
+            69
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/jsonapi/properties/version/type",
+        {
+          "key": [
+            57,
+            61
+          ],
+          "value": [
+            63,
+            69
+          ],
+          "node": [
+            57,
+            69
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/jsonapi/required",
+        {
+          "key": [
+            72,
+            80
+          ],
+          "value": [
+            82,
+            93
+          ],
+          "node": [
+            72,
+            93
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/jsonapi/required/0",
+        {
+          "node": [
+            83,
+            92
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/jsonapi/additionalProperties",
+        {
+          "key": [
+            96,
+            116
+          ],
+          "value": [
+            118,
+            123
+          ],
+          "node": [
+            96,
+            123
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items",
+        {
+          "key": [
+            0,
+            7
+          ],
+          "value": [
+            11,
+            1702
+          ],
+          "node": [
+            0,
+            1702
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/type",
+        {
+          "key": [
+            11,
+            15
+          ],
+          "value": [
+            17,
+            23
+          ],
+          "node": [
+            11,
+            23
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties",
+        {
+          "key": [
+            26,
+            36
+          ],
+          "value": [
+            42,
+            1631
+          ],
+          "node": [
+            26,
+            1631
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/type",
+        {
+          "key": [
+            42,
+            46
+          ],
+          "value": [
+            54,
+            125
+          ],
+          "node": [
+            42,
+            125
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/type/type",
+        {
+          "key": [
+            54,
+            58
+          ],
+          "value": [
+            60,
+            66
+          ],
+          "node": [
+            54,
+            66
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/type/description",
+        {
+          "key": [
+            73,
+            84
+          ],
+          "value": [
+            86,
+            99
+          ],
+          "node": [
+            73,
+            99
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/type/example",
+        {
+          "key": [
+            106,
+            113
+          ],
+          "value": [
+            115,
+            125
+          ],
+          "node": [
+            106,
+            125
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/id",
+        {
+          "key": [
+            130,
+            132
+          ],
+          "value": [
+            140,
+            252
+          ],
+          "node": [
+            130,
+            252
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/id/type",
+        {
+          "key": [
+            140,
+            144
+          ],
+          "value": [
+            146,
+            152
+          ],
+          "node": [
+            140,
+            152
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/id/description",
+        {
+          "key": [
+            159,
+            170
+          ],
+          "value": [
+            172,
+            179
+          ],
+          "node": [
+            159,
+            179
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/id/format",
+        {
+          "key": [
+            186,
+            192
+          ],
+          "value": [
+            194,
+            198
+          ],
+          "node": [
+            186,
+            198
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/id/example",
+        {
+          "key": [
+            205,
+            212
+          ],
+          "value": [
+            214,
+            252
+          ],
+          "node": [
+            205,
+            252
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes",
+        {
+          "key": [
+            257,
+            267
+          ],
+          "value": [
+            275,
+            1570
+          ],
+          "node": [
+            257,
+            1570
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/type",
+        {
+          "key": [
+            275,
+            279
+          ],
+          "value": [
+            281,
+            287
+          ],
+          "node": [
+            275,
+            287
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties",
+        {
+          "key": [
+            294,
+            304
+          ],
+          "value": [
+            314,
+            1482
+          ],
+          "node": [
+            294,
+            1482
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/name",
+        {
+          "key": [
+            314,
+            318
+          ],
+          "value": [
+            330,
+            342
+          ],
+          "node": [
+            314,
+            342
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/name/type",
+        {
+          "key": [
+            330,
+            334
+          ],
+          "value": [
+            336,
+            342
+          ],
+          "node": [
+            330,
+            342
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/created",
+        {
+          "key": [
+            351,
+            358
+          ],
+          "value": [
+            370,
+            520
+          ],
+          "node": [
+            351,
+            520
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/created/type",
+        {
+          "key": [
+            370,
+            374
+          ],
+          "value": [
+            376,
+            382
+          ],
+          "node": [
+            370,
+            382
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/created/format",
+        {
+          "key": [
+            393,
+            399
+          ],
+          "value": [
+            401,
+            410
+          ],
+          "node": [
+            393,
+            410
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/created/description",
+        {
+          "key": [
+            421,
+            432
+          ],
+          "value": [
+            434,
+            474
+          ],
+          "node": [
+            421,
+            474
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/created/example",
+        {
+          "key": [
+            485,
+            492
+          ],
+          "value": [
+            494,
+            520
+          ],
+          "node": [
+            485,
+            520
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/origin",
+        {
+          "key": [
+            529,
+            535
+          ],
+          "value": [
+            547,
+            646
+          ],
+          "node": [
+            529,
+            646
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/origin/type",
+        {
+          "key": [
+            547,
+            551
+          ],
+          "value": [
+            553,
+            559
+          ],
+          "node": [
+            547,
+            559
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/origin/description",
+        {
+          "key": [
+            570,
+            581
+          ],
+          "value": [
+            583,
+            620
+          ],
+          "node": [
+            570,
+            620
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/origin/example",
+        {
+          "key": [
+            631,
+            638
+          ],
+          "value": [
+            640,
+            646
+          ],
+          "node": [
+            631,
+            646
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/type",
+        {
+          "key": [
+            655,
+            659
+          ],
+          "value": [
+            671,
+            766
+          ],
+          "node": [
+            655,
+            766
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/type/type",
+        {
+          "key": [
+            671,
+            675
+          ],
+          "value": [
+            677,
+            683
+          ],
+          "node": [
+            671,
+            683
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/type/description",
+        {
+          "key": [
+            694,
+            705
+          ],
+          "value": [
+            707,
+            741
+          ],
+          "node": [
+            694,
+            741
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/type/example",
+        {
+          "key": [
+            752,
+            759
+          ],
+          "value": [
+            761,
+            766
+          ],
+          "node": [
+            752,
+            766
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/status",
+        {
+          "key": [
+            775,
+            781
+          ],
+          "value": [
+            793,
+            922
+          ],
+          "node": [
+            775,
+            922
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/status/type",
+        {
+          "key": [
+            793,
+            797
+          ],
+          "value": [
+            799,
+            805
+          ],
+          "node": [
+            793,
+            805
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/status/description",
+        {
+          "key": [
+            816,
+            827
+          ],
+          "value": [
+            829,
+            896
+          ],
+          "node": [
+            816,
+            896
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/status/example",
+        {
+          "key": [
+            907,
+            914
+          ],
+          "value": [
+            916,
+            922
+          ],
+          "node": [
+            907,
+            922
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/hostname",
+        {
+          "key": [
+            931,
+            939
+          ],
+          "value": [
+            951,
+            1059
+          ],
+          "node": [
+            931,
+            1059
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/hostname/type",
+        {
+          "key": [
+            951,
+            955
+          ],
+          "value": [
+            957,
+            963
+          ],
+          "node": [
+            951,
+            963
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/hostname/nullable",
+        {
+          "key": [
+            974,
+            982
+          ],
+          "value": [
+            984,
+            988
+          ],
+          "node": [
+            974,
+            988
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/hostname/description",
+        {
+          "key": [
+            999,
+            1010
+          ],
+          "value": [
+            1012,
+            1059
+          ],
+          "node": [
+            999,
+            1059
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/targetReference",
+        {
+          "key": [
+            1068,
+            1083
+          ],
+          "value": [
+            1095,
+            1132
+          ],
+          "node": [
+            1068,
+            1132
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/targetReference/type",
+        {
+          "key": [
+            1095,
+            1099
+          ],
+          "value": [
+            1101,
+            1107
+          ],
+          "node": [
+            1095,
+            1107
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/targetReference/nullable",
+        {
+          "key": [
+            1118,
+            1126
+          ],
+          "value": [
+            1128,
+            1132
+          ],
+          "node": [
+            1118,
+            1132
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/businessCriticality",
+        {
+          "key": [
+            1141,
+            1160
+          ],
+          "value": [
+            1172,
+            1225
+          ],
+          "node": [
+            1141,
+            1225
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/businessCriticality/type",
+        {
+          "key": [
+            1172,
+            1176
+          ],
+          "value": [
+            1178,
+            1183
+          ],
+          "node": [
+            1172,
+            1183
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/businessCriticality/items",
+        {
+          "key": [
+            1194,
+            1199
+          ],
+          "value": [
+            1213,
+            1225
+          ],
+          "node": [
+            1194,
+            1225
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/businessCriticality/items/type",
+        {
+          "key": [
+            1213,
+            1217
+          ],
+          "value": [
+            1219,
+            1225
+          ],
+          "node": [
+            1213,
+            1225
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/lifecycle",
+        {
+          "key": [
+            1234,
+            1243
+          ],
+          "value": [
+            1255,
+            1308
+          ],
+          "node": [
+            1234,
+            1308
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/lifecycle/type",
+        {
+          "key": [
+            1255,
+            1259
+          ],
+          "value": [
+            1261,
+            1266
+          ],
+          "node": [
+            1255,
+            1266
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/lifecycle/items",
+        {
+          "key": [
+            1277,
+            1282
+          ],
+          "value": [
+            1296,
+            1308
+          ],
+          "node": [
+            1277,
+            1308
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/lifecycle/items/type",
+        {
+          "key": [
+            1296,
+            1300
+          ],
+          "value": [
+            1302,
+            1308
+          ],
+          "node": [
+            1296,
+            1308
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/environment",
+        {
+          "key": [
+            1317,
+            1328
+          ],
+          "value": [
+            1340,
+            1393
+          ],
+          "node": [
+            1317,
+            1393
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/environment/type",
+        {
+          "key": [
+            1340,
+            1344
+          ],
+          "value": [
+            1346,
+            1351
+          ],
+          "node": [
+            1340,
+            1351
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/environment/items",
+        {
+          "key": [
+            1362,
+            1367
+          ],
+          "value": [
+            1381,
+            1393
+          ],
+          "node": [
+            1362,
+            1393
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/environment/items/type",
+        {
+          "key": [
+            1381,
+            1385
+          ],
+          "value": [
+            1387,
+            1393
+          ],
+          "node": [
+            1381,
+            1393
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags",
+        {
+          "key": [
+            1402,
+            1406
+          ],
+          "value": [
+            1418,
+            1482
+          ],
+          "node": [
+            1402,
+            1482
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags/type",
+        {
+          "key": [
+            1418,
+            1422
+          ],
+          "value": [
+            1424,
+            1429
+          ],
+          "node": [
+            1418,
+            1429
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags/items",
+        {
+          "key": [
+            0,
+            3
+          ],
+          "value": [
+            7,
+            146
+          ],
+          "node": [
+            0,
+            146
+          ],
+          "file": 12
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags/items/type",
+        {
+          "key": [
+            7,
+            11
+          ],
+          "value": [
+            13,
+            19
+          ],
+          "node": [
+            7,
+            19
+          ],
+          "file": 12
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags/items/properties",
+        {
+          "key": [
+            22,
+            32
+          ],
+          "value": [
+            38,
+            91
+          ],
+          "node": [
+            22,
+            91
+          ],
+          "file": 12
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags/items/properties/key",
+        {
+          "key": [
+            38,
+            41
+          ],
+          "value": [
+            49,
+            61
+          ],
+          "node": [
+            38,
+            61
+          ],
+          "file": 12
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags/items/properties/key/type",
+        {
+          "key": [
+            49,
+            53
+          ],
+          "value": [
+            55,
+            61
+          ],
+          "node": [
+            49,
+            61
+          ],
+          "file": 12
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags/items/properties/value",
+        {
+          "key": [
+            66,
+            71
+          ],
+          "value": [
+            79,
+            91
+          ],
+          "node": [
+            66,
+            91
+          ],
+          "file": 12
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags/items/properties/value/type",
+        {
+          "key": [
+            79,
+            83
+          ],
+          "value": [
+            85,
+            91
+          ],
+          "node": [
+            79,
+            91
+          ],
+          "file": 12
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags/items/required",
+        {
+          "key": [
+            94,
+            102
+          ],
+          "value": [
+            104,
+            116
+          ],
+          "node": [
+            94,
+            116
+          ],
+          "file": 12
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags/items/required/0",
+        {
+          "node": [
+            105,
+            108
+          ],
+          "file": 12
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags/items/required/1",
+        {
+          "node": [
+            110,
+            115
+          ],
+          "file": 12
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/properties/tags/items/additionalProperties",
+        {
+          "key": [
+            119,
+            139
+          ],
+          "value": [
+            141,
+            146
+          ],
+          "node": [
+            119,
+            146
+          ],
+          "file": 12
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/required",
+        {
+          "key": [
+            1489,
+            1497
+          ],
+          "value": [
+            1499,
+            1536
+          ],
+          "node": [
+            1489,
+            1536
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/required/0",
+        {
+          "node": [
+            1500,
+            1504
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/required/1",
+        {
+          "node": [
+            1506,
+            1513
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/required/2",
+        {
+          "node": [
+            1515,
+            1521
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/required/3",
+        {
+          "node": [
+            1523,
+            1527
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/required/4",
+        {
+          "node": [
+            1529,
+            1535
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/attributes/additionalProperties",
+        {
+          "key": [
+            1543,
+            1563
+          ],
+          "value": [
+            1565,
+            1570
+          ],
+          "node": [
+            1543,
+            1570
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships",
+        {
+          "key": [
+            678,
+            691
+          ],
+          "value": [
+            695,
+            992
+          ],
+          "node": [
+            678,
+            992
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/type",
+        {
+          "key": [
+            695,
+            699
+          ],
+          "value": [
+            701,
+            707
+          ],
+          "node": [
+            695,
+            707
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties",
+        {
+          "key": [
+            710,
+            730
+          ],
+          "value": [
+            736,
+            992
+          ],
+          "node": [
+            710,
+            992
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/type",
+        {
+          "key": [
+            736,
+            740
+          ],
+          "value": [
+            742,
+            748
+          ],
+          "node": [
+            736,
+            748
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties",
+        {
+          "key": [
+            753,
+            763
+          ],
+          "value": [
+            771,
+            971
+          ],
+          "node": [
+            753,
+            971
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data",
+        {
+          "key": [
+            771,
+            775
+          ],
+          "value": [
+            785,
+            971
+          ],
+          "node": [
+            771,
+            971
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties",
+        {
+          "key": [
+            785,
+            795
+          ],
+          "value": [
+            807,
+            938
+          ],
+          "node": [
+            785,
+            938
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/type",
+        {
+          "key": [
+            807,
+            811
+          ],
+          "value": [
+            825,
+            837
+          ],
+          "node": [
+            807,
+            837
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/type/type",
+        {
+          "key": [
+            825,
+            829
+          ],
+          "value": [
+            831,
+            837
+          ],
+          "node": [
+            825,
+            837
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/id",
+        {
+          "key": [
+            848,
+            850
+          ],
+          "value": [
+            864,
+            901
+          ],
+          "node": [
+            848,
+            901
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/id/type",
+        {
+          "key": [
+            864,
+            868
+          ],
+          "value": [
+            870,
+            876
+          ],
+          "node": [
+            864,
+            876
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/id/format",
+        {
+          "key": [
+            889,
+            895
+          ],
+          "value": [
+            897,
+            901
+          ],
+          "node": [
+            889,
+            901
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links",
+        {
+          "key": [
+            125,
+            130
+          ],
+          "value": [
+            134,
+            416
+          ],
+          "node": [
+            125,
+            416
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/type",
+        {
+          "key": [
+            134,
+            138
+          ],
+          "value": [
+            140,
+            146
+          ],
+          "node": [
+            134,
+            146
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties",
+        {
+          "key": [
+            149,
+            159
+          ],
+          "value": [
+            165,
+            386
+          ],
+          "node": [
+            149,
+            386
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self",
+        {
+          "key": [
+            418,
+            430
+          ],
+          "value": [
+            434,
+            678
+          ],
+          "node": [
+            418,
+            678
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf",
+        {
+          "key": [
+            434,
+            439
+          ],
+          "value": [
+            445,
+            678
+          ],
+          "node": [
+            434,
+            678
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/0",
+        {
+          "node": [
+            447,
+            459
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/0/type",
+        {
+          "key": [
+            447,
+            451
+          ],
+          "value": [
+            453,
+            459
+          ],
+          "node": [
+            447,
+            459
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/1",
+        {
+          "node": [
+            466,
+            676
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/1/type",
+        {
+          "key": [
+            466,
+            470
+          ],
+          "value": [
+            472,
+            478
+          ],
+          "node": [
+            466,
+            478
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/1/properties",
+        {
+          "key": [
+            485,
+            495
+          ],
+          "value": [
+            505,
+            607
+          ],
+          "node": [
+            485,
+            607
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/1/properties/href",
+        {
+          "key": [
+            505,
+            509
+          ],
+          "value": [
+            521,
+            533
+          ],
+          "node": [
+            505,
+            533
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/1/properties/href/type",
+        {
+          "key": [
+            521,
+            525
+          ],
+          "value": [
+            527,
+            533
+          ],
+          "node": [
+            521,
+            533
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/1/properties/meta",
+        {
+          "key": [
+            542,
+            546
+          ],
+          "value": [
+            558,
+            607
+          ],
+          "node": [
+            542,
+            607
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/1/properties/meta/type",
+        {
+          "key": [
+            558,
+            562
+          ],
+          "value": [
+            564,
+            570
+          ],
+          "node": [
+            558,
+            570
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/1/properties/meta/additionalProperties",
+        {
+          "key": [
+            581,
+            601
+          ],
+          "value": [
+            603,
+            607
+          ],
+          "node": [
+            581,
+            607
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/1/required",
+        {
+          "key": [
+            614,
+            622
+          ],
+          "value": [
+            624,
+            642
+          ],
+          "node": [
+            614,
+            642
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/1/required/0",
+        {
+          "node": [
+            626,
+            632
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/1/required/1",
+        {
+          "node": [
+            634,
+            640
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/properties/self/oneOf/1/additionalProperties",
+        {
+          "key": [
+            649,
+            669
+          ],
+          "value": [
+            671,
+            676
+          ],
+          "node": [
+            649,
+            676
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/properties/links/additionalProperties",
+        {
+          "key": [
+            389,
+            409
+          ],
+          "value": [
+            411,
+            416
+          ],
+          "node": [
+            389,
+            416
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/required",
+        {
+          "key": [
+            947,
+            955
+          ],
+          "value": [
+            957,
+            971
+          ],
+          "node": [
+            947,
+            971
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/required/0",
+        {
+          "node": [
+            958,
+            964
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/properties/data/required/1",
+        {
+          "node": [
+            966,
+            970
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/required",
+        {
+          "key": [
+            976,
+            984
+          ],
+          "value": [
+            986,
+            992
+          ],
+          "node": [
+            976,
+            992
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/properties/relationships/additionalProperties/required/0",
+        {
+          "node": [
+            987,
+            991
+          ],
+          "file": 3
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/required",
+        {
+          "key": [
+            1634,
+            1642
+          ],
+          "value": [
+            1644,
+            1672
+          ],
+          "node": [
+            1634,
+            1672
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/required/0",
+        {
+          "node": [
+            1645,
+            1651
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/required/1",
+        {
+          "node": [
+            1653,
+            1657
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/required/2",
+        {
+          "node": [
+            1659,
+            1671
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/200/content/application~1vnd.api%2Bjson/schema/properties/data/items/additionalProperties",
+        {
+          "key": [
+            1675,
+            1695
+          ],
+          "value": [
+            1697,
+            1702
+          ],
+          "node": [
+            1675,
+            1702
+          ],
+          "file": 4
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400",
+        {
+          "key": [
+            0,
+            5
+          ],
+          "value": [
+            9,
+            703
+          ],
+          "node": [
+            0,
+            703
+          ],
+          "file": 5
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/description",
+        {
+          "key": [
+            9,
+            20
+          ],
+          "value": [
+            22,
+            95
+          ],
+          "node": [
+            9,
+            95
+          ],
+          "file": 5
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/headers",
+        {
+          "key": [
+            98,
+            105
+          ],
+          "value": [
+            111,
+            606
+          ],
+          "node": [
+            98,
+            606
+          ],
+          "file": 5
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content",
+        {
+          "key": [
+            609,
+            616
+          ],
+          "value": [
+            622,
+            703
+          ],
+          "node": [
+            609,
+            703
+          ],
+          "file": 5
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema",
+        {
+          "key": [
+            0,
+            13
+          ],
+          "value": [
+            17,
+            237
+          ],
+          "node": [
+            0,
+            237
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/type",
+        {
+          "key": [
+            17,
+            21
+          ],
+          "value": [
+            23,
+            29
+          ],
+          "node": [
+            17,
+            29
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties",
+        {
+          "key": [
+            32,
+            42
+          ],
+          "value": [
+            48,
+            172
+          ],
+          "node": [
+            32,
+            172
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors",
+        {
+          "key": [
+            96,
+            102
+          ],
+          "value": [
+            110,
+            172
+          ],
+          "node": [
+            96,
+            172
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/type",
+        {
+          "key": [
+            110,
+            114
+          ],
+          "value": [
+            116,
+            121
+          ],
+          "node": [
+            110,
+            121
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items",
+        {
+          "key": [
+            239,
+            244
+          ],
+          "value": [
+            248,
+            672
+          ],
+          "node": [
+            239,
+            672
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/type",
+        {
+          "key": [
+            248,
+            252
+          ],
+          "value": [
+            254,
+            260
+          ],
+          "node": [
+            248,
+            260
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties",
+        {
+          "key": [
+            263,
+            273
+          ],
+          "value": [
+            279,
+            609
+          ],
+          "node": [
+            263,
+            609
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/id",
+        {
+          "key": [
+            279,
+            281
+          ],
+          "value": [
+            289,
+            320
+          ],
+          "node": [
+            279,
+            320
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/id/type",
+        {
+          "key": [
+            289,
+            293
+          ],
+          "value": [
+            295,
+            301
+          ],
+          "node": [
+            289,
+            301
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/id/format",
+        {
+          "key": [
+            308,
+            314
+          ],
+          "value": [
+            316,
+            320
+          ],
+          "node": [
+            308,
+            320
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/status",
+        {
+          "key": [
+            325,
+            331
+          ],
+          "value": [
+            339,
+            351
+          ],
+          "node": [
+            325,
+            351
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/status/type",
+        {
+          "key": [
+            339,
+            343
+          ],
+          "value": [
+            345,
+            351
+          ],
+          "node": [
+            339,
+            351
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/detail",
+        {
+          "key": [
+            356,
+            362
+          ],
+          "value": [
+            370,
+            382
+          ],
+          "node": [
+            356,
+            382
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/detail/type",
+        {
+          "key": [
+            370,
+            374
+          ],
+          "value": [
+            376,
+            382
+          ],
+          "node": [
+            370,
+            382
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/source",
+        {
+          "key": [
+            387,
+            393
+          ],
+          "value": [
+            401,
+            547
+          ],
+          "node": [
+            387,
+            547
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/source/type",
+        {
+          "key": [
+            401,
+            405
+          ],
+          "value": [
+            407,
+            413
+          ],
+          "node": [
+            401,
+            413
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/source/properties",
+        {
+          "key": [
+            420,
+            430
+          ],
+          "value": [
+            440,
+            513
+          ],
+          "node": [
+            420,
+            513
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/source/properties/pointer",
+        {
+          "key": [
+            440,
+            447
+          ],
+          "value": [
+            459,
+            471
+          ],
+          "node": [
+            440,
+            471
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/source/properties/pointer/type",
+        {
+          "key": [
+            459,
+            463
+          ],
+          "value": [
+            465,
+            471
+          ],
+          "node": [
+            459,
+            471
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/source/properties/parameter",
+        {
+          "key": [
+            480,
+            489
+          ],
+          "value": [
+            501,
+            513
+          ],
+          "node": [
+            480,
+            513
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/source/properties/parameter/type",
+        {
+          "key": [
+            501,
+            505
+          ],
+          "value": [
+            507,
+            513
+          ],
+          "node": [
+            501,
+            513
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/source/additionalProperties",
+        {
+          "key": [
+            520,
+            540
+          ],
+          "value": [
+            542,
+            547
+          ],
+          "node": [
+            520,
+            547
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/meta",
+        {
+          "key": [
+            552,
+            556
+          ],
+          "value": [
+            564,
+            609
+          ],
+          "node": [
+            552,
+            609
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/meta/type",
+        {
+          "key": [
+            564,
+            568
+          ],
+          "value": [
+            570,
+            576
+          ],
+          "node": [
+            564,
+            576
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/properties/meta/additionalProperties",
+        {
+          "key": [
+            583,
+            603
+          ],
+          "value": [
+            605,
+            609
+          ],
+          "node": [
+            583,
+            609
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/required",
+        {
+          "key": [
+            612,
+            620
+          ],
+          "value": [
+            622,
+            642
+          ],
+          "node": [
+            612,
+            642
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/required/0",
+        {
+          "node": [
+            623,
+            631
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/required/1",
+        {
+          "node": [
+            633,
+            641
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/items/additionalProperties",
+        {
+          "key": [
+            645,
+            665
+          ],
+          "value": [
+            667,
+            672
+          ],
+          "node": [
+            645,
+            672
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/properties/errors/minItems",
+        {
+          "key": [
+            161,
+            169
+          ],
+          "value": [
+            171,
+            172
+          ],
+          "node": [
+            161,
+            172
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/additionalProperties",
+        {
+          "key": [
+            175,
+            195
+          ],
+          "value": [
+            197,
+            202
+          ],
+          "node": [
+            175,
+            202
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/required",
+        {
+          "key": [
+            205,
+            213
+          ],
+          "value": [
+            215,
+            237
+          ],
+          "node": [
+            205,
+            237
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/required/0",
+        {
+          "node": [
+            217,
+            226
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/400/content/application~1vnd.api%2Bjson/schema/required/1",
+        {
+          "node": [
+            228,
+            236
+          ],
+          "file": 11
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/401",
+        {
+          "key": [
+            0,
+            5
+          ],
+          "value": [
+            9,
+            724
+          ],
+          "node": [
+            0,
+            724
+          ],
+          "file": 6
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/401/description",
+        {
+          "key": [
+            9,
+            20
+          ],
+          "value": [
+            22,
+            116
+          ],
+          "node": [
+            9,
+            116
+          ],
+          "file": 6
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/401/headers",
+        {
+          "key": [
+            119,
+            126
+          ],
+          "value": [
+            132,
+            627
+          ],
+          "node": [
+            119,
+            627
+          ],
+          "file": 6
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/401/content",
+        {
+          "key": [
+            630,
+            637
+          ],
+          "value": [
+            643,
+            724
+          ],
+          "node": [
+            630,
+            724
+          ],
+          "file": 6
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/404",
+        {
+          "key": [
+            0,
+            5
+          ],
+          "value": [
+            9,
+            693
+          ],
+          "node": [
+            0,
+            693
+          ],
+          "file": 7
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/404/description",
+        {
+          "key": [
+            9,
+            20
+          ],
+          "value": [
+            22,
+            85
+          ],
+          "node": [
+            9,
+            85
+          ],
+          "file": 7
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/404/headers",
+        {
+          "key": [
+            88,
+            95
+          ],
+          "value": [
+            101,
+            596
+          ],
+          "node": [
+            88,
+            596
+          ],
+          "file": 7
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/404/content",
+        {
+          "key": [
+            599,
+            606
+          ],
+          "value": [
+            612,
+            693
+          ],
+          "node": [
+            599,
+            693
+          ],
+          "file": 7
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/500",
+        {
+          "key": [
+            0,
+            5
+          ],
+          "value": [
+            9,
+            720
+          ],
+          "node": [
+            0,
+            720
+          ],
+          "file": 8
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/500/description",
+        {
+          "key": [
+            9,
+            20
+          ],
+          "value": [
+            22,
+            112
+          ],
+          "node": [
+            9,
+            112
+          ],
+          "file": 8
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/500/headers",
+        {
+          "key": [
+            115,
+            122
+          ],
+          "value": [
+            128,
+            623
+          ],
+          "node": [
+            115,
+            623
+          ],
+          "file": 8
+        }
+      ],
+      [
+        "#/paths/~1orgs~1%7BorgId%7D~1projects/get/responses/500/content",
+        {
+          "key": [
+            626,
+            633
+          ],
+          "value": [
+            639,
+            720
+          ],
+          "node": [
+            626,
+            720
+          ],
+          "file": 8
+        }
+      ]
+    ]
+  }
+}

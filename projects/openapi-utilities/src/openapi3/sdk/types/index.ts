@@ -19,7 +19,6 @@ export interface IFact<KindSchema> {
   location: {
     jsonPath: IPathComponent[];
     conceptualPath: IPathComponent[];
-    stableId?: string;
     kind: string;
   };
   value: KindSchema;
@@ -37,7 +36,6 @@ enum IChangeType {
 export interface ILocation {
   jsonPath: IPathComponent[];
   conceptualPath: IPathComponent[];
-  stableId?: string;
   kind: string;
 }
 

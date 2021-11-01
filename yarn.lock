@@ -3122,6 +3122,8 @@ __metadata:
     "@useoptic/openapi-utilities": "workspace:*"
     commander: ^8.3.0
     fs-extra: ^10.0.0
+    ink: ^3.2.0
+    ink-testing-library: ^2.1.0
     prettier: ^2.4.1
     react-use: ^17.3.1
     tap: ^15.0.10
@@ -8840,7 +8842,19 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"ink@npm:*":
+"ink-testing-library@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "ink-testing-library@npm:2.1.0"
+  peerDependencies:
+    "@types/react": ">=16.8.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 932bc3feed2d68e853f69c56b40610f50ea4366750400ee9597c0f5231acdfd29ac41d8c86924c7f85b7a0ab31cf0ad0726a9d29fdfe6ff82bc836177e7ff063
+  languageName: node
+  linkType: hard
+
+"ink@npm:*, ink@npm:^3.2.0":
   version: 3.2.0
   resolution: "ink@npm:3.2.0"
   dependencies:

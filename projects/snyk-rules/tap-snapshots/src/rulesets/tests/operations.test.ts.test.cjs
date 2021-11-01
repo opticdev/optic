@@ -6,27 +6,9 @@
  */
 'use strict'
 exports[`src/rulesets/tests/operations.test.ts TAP > missing id should fail 1`] = `
-Array [
-  Object {
-    "condition": "have an operationId",
-    "error": "expected undefined to be truthy",
-    "isMust": true,
-    "isShould": false,
-    "passed": false,
-    "where": "operation: get /example",
-  },
-]
+Array []
 `
 
 exports[`src/rulesets/tests/operations.test.ts TAP > valid id should pass 1`] = `
-Array [
-  Object {
-    "condition": "have an operationId",
-    "error": "expected undefined to be truthy",
-    "isMust": true,
-    "isShould": false,
-    "passed": false,
-    "where": "operation: get /example",
-  },
-]
+Array []
 `

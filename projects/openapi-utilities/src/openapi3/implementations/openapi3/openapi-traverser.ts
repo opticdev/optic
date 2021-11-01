@@ -1,13 +1,12 @@
 import { FactAccumulator, Traverse } from "../../sdk/types";
 import { IPathComponent } from "../../sdk/types";
-import { OpenAPIV3, OpenAPIV3_1 } from "openapi-types";
-import ResponseObject = OpenAPIV3_1.ResponseObject;
+import { OpenAPIV3 } from "openapi-types";
 
 export class OpenAPITraverser
-  implements Traverse<OpenAPIV3.Document, OpenAPIFacts>
+  implements Traverse<OpenAPIV3.Document, OpenApiFact>
 {
   format = "openapi3";
-  accumulator = new FactAccumulator<OpenAPIFacts>([]);
+  accumulator = new FactAccumulator<OpenApiFact>([]);
 
   traverse(input: OpenAPIV3.Document): void {
     Object.entries(input.paths).forEach(([pathPattern, paths]) => {
@@ -33,13 +32,27 @@ export class OpenAPITraverser
       operation,
       pathPattern,
       method,
-      ["paths", pathPattern, method],
-      ["operations", pathPattern, method]
+      jsonPath,
+      conceptualPath,
     );
+
+    this.traverseParameters(operation, [...jsonPath, "parameters"], [...conceptualPath, "parameters"])
+
+    if (operation.requestBody) {
+      const requestBody = operation.requestBody as OpenAPIV3.RequestBodyObject;
+      Object.entries(requestBody.content || {}).forEach(([contentType, body]) => {
+        this.traverseBody(
+          body,
+          contentType,
+          [...jsonPath, "content", contentType, "body"],
+          [...conceptualPath, contentType]
+        );
+      })
+    }
 
     Object.entries(operation.responses).forEach(([statusCode, response]) => {
       this.traverseResponse(
-        response as ResponseObject,
+        response as OpenAPIV3.ResponseObject,
         statusCode,
         [...jsonPath, "responses", statusCode],
         [...conceptualPath, "responses", statusCode]
@@ -51,8 +64,11 @@ export class OpenAPITraverser
     response: OpenAPIV3.ResponseObject,
     statusCode: string,
     jsonPath: IPathComponent[],
-    conceptualPath: IPathComponent[]
+    conceptualPath: IPathComponent[],
   ): void {
+
+    this.traverseResponseHeaders(response, jsonPath, conceptualPath);
+
     Object.entries(response.content || {}).forEach(([contentType, body]) => {
       this.traverseBody(
         body,
@@ -61,7 +77,73 @@ export class OpenAPITraverser
         [...conceptualPath, contentType]
       );
     });
+
     this.onResponse(response, statusCode, jsonPath, conceptualPath);
+  }
+
+  traverseParameters(
+    operation: OpenAPIV3.OperationObject,
+    jsonPath: IPathComponent[],
+    conceptualPath: IPathComponent[],
+  ) {
+    if (operation.parameters) {
+      operation.parameters.forEach((p, i) => {
+        const parameter = p as OpenAPIV3.ParameterObject;
+        this.onRequestParameter(
+          parameter,
+          [...jsonPath, i],
+          [...conceptualPath, parameter.in, parameter.name]
+        )
+      })
+    }
+  }
+  onRequestParameter(parameter: OpenAPIV3.ParameterObject, jsonPath: IPathComponent[], conceptualPath: IPathComponent[]) {
+    const value: OpenApiRequestParameterFact = {
+      //@TODO: aidan decide what we need from here
+      ...parameter
+    }
+    this.accumulator.log({
+      location: {
+        jsonPath,
+        conceptualPath,
+        kind: parameter.in,
+      },
+      value
+    })
+  }
+
+  traverseResponseHeaders(
+    response: OpenAPIV3.ResponseObject,
+    jsonPath: IPathComponent[],
+    conceptualPath: IPathComponent[],
+  ) {
+    if (response.headers) {
+      Object.entries(response.headers).forEach(([name, value]) => {
+        const header = value as OpenAPIV3.HeaderObject;
+        this.onResponseHeader(header,
+          [...jsonPath, 'headers', name],
+          [...conceptualPath, 'headers', name])
+      })
+    }
+  }
+
+  onResponseHeader(header: OpenAPIV3.HeaderObject, jsonPath: IPathComponent[], conceptualPath: IPathComponent[]) {
+    const value: OpenApiHeaderFact = {
+      //@TODO: aidan decide what we need from here
+      ...header
+    }
+    this.accumulator.log({
+      location: {
+        jsonPath,
+        conceptualPath,
+        kind: OpenApiKind.HeaderParameter,
+      },
+      value
+    })
+  }
+
+  traverseLinks() {
+
   }
 
   traverseBody(
@@ -70,9 +152,10 @@ export class OpenAPITraverser
     jsonPath: IPathComponent[],
     conceptualPath: IPathComponent[]
   ) {
+    //@TODO: not sure if we need to check the body.schema key count
     if (body.schema && Object.keys(body.schema).length) {
       this.onContentForBody(body, contentType, jsonPath, conceptualPath);
-      this.traverseSchema(body, jsonPath, conceptualPath);
+      this.traverseSchema(body.schema as OpenAPIV3.SchemaObject, jsonPath, conceptualPath);
     }
   }
 
@@ -97,6 +180,7 @@ export class OpenAPITraverser
     }
     switch (schema.type) {
       case "object":
+        // this.onObject(...)
         Object.entries(schema.properties || {}).forEach(([key, fieldSchema]) =>
           this.traverseField(
             key,
@@ -108,6 +192,12 @@ export class OpenAPITraverser
         );
         break;
       case "array":
+        // this.onArray()
+        this.traverseSchema(
+          schema.items as OpenAPIV3.SchemaObject,
+          [...jsonPath, "items"],
+          [...conceptualPath, "items"],
+        )
         break;
       case "string":
       case "number":
@@ -132,7 +222,7 @@ export class OpenAPITraverser
       location: {
         jsonPath,
         conceptualPath,
-        kind: "body",
+        kind: OpenApiKind.Body,
       },
       value,
     });
@@ -154,7 +244,7 @@ export class OpenAPITraverser
       location: {
         jsonPath,
         conceptualPath,
-        kind: "field",
+        kind: OpenApiKind.Field,
       },
       value,
     });
@@ -167,20 +257,19 @@ export class OpenAPITraverser
     jsonPath: IPathComponent[],
     conceptualPath: IPathComponent[]
   ) {
-    const maturity: string | undefined =
-      (operation as any)["x-maturity"] || undefined;
-    const value: OpenApiEndpointFact = {
+    const value: OpenApiOperationFact = {
+      operationId: operation.operationId || '',
       summary: operation.summary || "",
+      description: operation.description || "",
+      tags: operation.tags || [],
       method,
       pathPattern,
-      maturity,
     };
     this.accumulator.log({
       location: {
         jsonPath,
         conceptualPath,
-        kind: "endpoint",
-        stableId: operation.operationId,
+        kind: OpenApiKind.Operation,
       },
       value,
     });
@@ -198,25 +287,42 @@ export class OpenAPITraverser
       location: {
         jsonPath,
         conceptualPath,
-        kind: "response",
-        stableId: JSON.stringify(conceptualPath),
+        kind: OpenApiKind.Response,
       },
       value,
     });
   }
 }
 
-type OpenAPIFacts =
-  | OpenApiEndpointFact
+export enum OpenApiKind {
+  Operation = "operation",
+  Request = "request",
+  QueryParameter = "query-parameter",
+  HeaderParameter = "header-parameter",
+  Response = "response",
+  Body = "body",
+  Object = "object",
+  Field = "field",
+  Array = "array",
+  Primitive = "primitive"
+}
+
+type OpenApiFact =
+  | OpenApiOperationFact
+  | OpenApiRequestFact
+  | OpenApiRequestParameterFact
   | OpenApiResponseFact
+  | OpenApiHeaderFact
   | OpenApiBodyFact
   | OpenApiFieldFact;
 
-export interface OpenApiEndpointFact {
+export interface OpenApiOperationFact {
+  operationId: string;
   pathPattern: string;
   method: string;
   summary: string;
-  maturity?: string;
+  description: string;
+  tags: string[];
 }
 
 export interface OpenApiBodyFact {
@@ -231,4 +337,14 @@ export interface OpenApiFieldFact {
 }
 export interface OpenApiResponseFact {
   statusCode: number;
+}
+export interface OpenApiRequestFact {
+
+}
+export interface OpenApiHeaderFact {
+
+}
+
+export interface OpenApiRequestParameterFact {
+
 }

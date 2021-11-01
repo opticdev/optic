@@ -1,13 +1,11 @@
-import { OpenApiEndpointFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/OpenAPITraverser";
 import { ApiCheckDsl, EntityRule, Result } from "@useoptic/api-checks";
+import { runCheck } from "@useoptic/api-checks/build/types";
+import { OpenApiOperationFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
 import {
   IChange,
   IFact,
   ILocation,
 } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
-import { runCheck } from "@useoptic/api-checks/build/types";
-import { SnykContext } from "@useoptic/api-checks/build/test/dsl";
-import { end } from "tap";
 
 export interface SynkApiCheckContext {}
 
@@ -20,7 +18,7 @@ export interface SnykEntityRule<T>
   extends EntityRule<T, ApiChangeLocationContext, SynkApiCheckContext> {}
 
 export interface ISnykApiCheckDsl extends ApiCheckDsl {
-  operations: SnykEntityRule<OpenApiEndpointFact>;
+  operations: SnykEntityRule<OpenApiOperationFact>;
 }
 
 export class SnykApiCheckDsl implements ISnykApiCheckDsl {
@@ -49,25 +47,25 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
     };
   }
 
-  get operations(): SnykEntityRule<OpenApiEndpointFact> {
+  get operations(): SnykEntityRule<OpenApiOperationFact> {
     const operations = this.changelog.filter(
       (i) => i.location.kind === "endpoint"
     );
 
     const added = operations.filter((i) =>
       Boolean(i.added)
-    ) as IChange<OpenApiEndpointFact>[];
+    ) as IChange<OpenApiOperationFact>[];
     const changes = operations.filter((i) =>
       Boolean(i.changed)
-    ) as IChange<OpenApiEndpointFact>[];
+    ) as IChange<OpenApiOperationFact>[];
 
-    const requirements: IFact<OpenApiEndpointFact>[] = this.nextFacts.filter(
+    const requirements: IFact<OpenApiOperationFact>[] = this.nextFacts.filter(
       (i) => i.location.kind === "endpoint"
     );
 
     const addedHandler: (
       must: boolean
-    ) => SnykEntityRule<OpenApiEndpointFact>["added"]["must"] = (
+    ) => SnykEntityRule<OpenApiOperationFact>["added"]["must"] = (
       must: boolean
     ) => {
       return (statement, handler) => {
@@ -86,7 +84,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
 
     const changedHandler: (
       must: boolean
-    ) => SnykEntityRule<OpenApiEndpointFact>["changed"]["must"] = (
+    ) => SnykEntityRule<OpenApiOperationFact>["changed"]["must"] = (
       must: boolean
     ) => {
       return (statement, handler) => {
@@ -109,7 +107,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
 
     const requirementsHandler: (
       must: boolean
-    ) => SnykEntityRule<OpenApiEndpointFact>["requirement"]["must"] = (
+    ) => SnykEntityRule<OpenApiOperationFact>["requirement"]["must"] = (
       must: boolean
     ) => {
       return (statement, handler) => {

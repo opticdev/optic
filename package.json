@@ -6,5 +6,8 @@
         "projects/api-checks",
         "projects/ci-cli",
         "projects/snyk-rules"
-    ]
+    ],
+    "scripts": {
+        "ws:build": "echo 'skipping'"
+    }
 }

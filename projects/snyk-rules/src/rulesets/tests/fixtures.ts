@@ -1,7 +1,6 @@
 import { SnykApiCheckDsl, SynkApiCheckContext } from "../../dsl";
 import { ApiCheckService } from "@useoptic/api-checks";
 import { OpenAPIV3 } from "@useoptic/openapi-utilities";
-import { defaultEmptySpec } from "@useoptic/ci-cli/build/constants";
 import path from "path";
 export async function rulesFixture(
   before: OpenAPIV3.Document,
