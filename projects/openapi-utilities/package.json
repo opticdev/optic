@@ -9,7 +9,8 @@
     "dev:test-watch": "yarn tap --ts src --watch",
     "ci:test": "yarn build && yarn tap build/**/*.test.js",
     "build": "yarn tsc --build --verbose && copyfiles -u 1 src/**/*.js build/",
-    "resolver:start": "yarn build && micro -l tcp://localhost:5001 build/entry-points/servers/resolver.js"
+    "resolver:start": "yarn build && micro -l tcp://localhost:5001 build/entry-points/servers/resolver.js",
+    "ws:build": "yarn build"
   },
   "devDependencies": {
     "@types/copyfiles": "^2",

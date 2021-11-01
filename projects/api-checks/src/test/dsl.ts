@@ -3,7 +3,7 @@ import {
   IFact,
 } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
 import { ApiCheckDsl, Result, runCheck, ShouldOrMust } from "../types";
-import { OpenApiEndpointFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/OpenAPITraverser";
+import { OpenApiOperationFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
 
 export type SnykContext = {
   maturity: "wip" | "beta" | "ga";
@@ -13,7 +13,7 @@ type OperationsAddedDsl = ShouldOrMust<
   (
     statement: string,
     handler: (input: {
-      operation: OpenApiEndpointFact;
+      operation: OpenApiOperationFact;
       context: SnykContext;
     }) => void
   ) => void
@@ -22,8 +22,8 @@ type OperationsChangedDsl = ShouldOrMust<
   (
     statement: string,
     handler: (input: {
-      current: OpenApiEndpointFact;
-      next: OpenApiEndpointFact;
+      current: OpenApiOperationFact;
+      next: OpenApiOperationFact;
       context: SnykContext;
     }) => void
   ) => void
@@ -54,7 +54,7 @@ export class SnykApiDSL implements ApiCheckDsl {
       get added(): OperationsAddedDsl {
         const added = operations.filter((i) =>
           Boolean(i.added)
-        ) as IChange<OpenApiEndpointFact>[];
+        ) as IChange<OpenApiOperationFact>[];
         const where = added.map(
           (endpoint) =>
             `new operation: ${endpoint.location.conceptualPath.join(",")}`
@@ -83,7 +83,7 @@ export class SnykApiDSL implements ApiCheckDsl {
       get changed(): OperationsChangedDsl {
         const changes = operations.filter((i) =>
           Boolean(i.changed)
-        ) as IChange<OpenApiEndpointFact>[];
+        ) as IChange<OpenApiOperationFact>[];
         const where = changes.map(
           (endpoint) =>
             `updated operation: ${endpoint.location.conceptualPath.join(",")}`

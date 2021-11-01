@@ -5,5 +5,8 @@
         "projects/developer-ui",
         "projects/api-checks",
         "projects/ci-cli"
-    ]
+    ],
+    "scripts": {
+        "ws:build": "echo 'skipping'"
+    }
 }

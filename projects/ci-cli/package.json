@@ -6,8 +6,9 @@
   "types": "build/index.d.ts",
   "scripts": {
     "cli": "ts-node src/index.tsx",
-    "dev:test": "yarn tap --no-timeout --ts src/**/*.test.*",
-    "build": "yarn tsc --build --verbose && copyfiles -u 1 src/**/*.js build/"
+    "build": "yarn tsc --build --verbose",
+    "ws:build": "yarn build",
+    "dev:test": "yarn tap --no-timeout --ts src/**/*.test.*"
   },
   "devDependencies": {
     "@types/copyfiles": "^2",

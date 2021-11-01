@@ -11,7 +11,6 @@ export class FactAccumulator<KindSchema> {
 
 export interface Traverse<DocSchema, FactSchema> {
   format: string;
-  prepare(input: any): Promise<DocSchema>;
   traverse(input: DocSchema): void;
   accumulator: FactAccumulator<FactSchema>;
 }
@@ -20,7 +19,6 @@ export interface IFact<KindSchema> {
   location: {
     jsonPath: IPathComponent[];
     conceptualPath: IPathComponent[];
-    stableId?: string;
     kind: string;
   };
   value: KindSchema;
@@ -38,7 +36,6 @@ enum IChangeType {
 export interface ILocation {
   jsonPath: IPathComponent[];
   conceptualPath: IPathComponent[];
-  stableId?: string;
   kind: string;
 }
 
