@@ -6,6 +6,7 @@
   "types": "build/index.d.ts",
   "scripts": {
     "cli": "ts-node src/index.tsx",
+    "dev:test": "yarn tap --no-timeout --ts src/**/*.test.*",
     "build": "yarn tsc --build --verbose && copyfiles -u 1 src/**/*.js build/"
   },
   "devDependencies": {
@@ -21,6 +22,8 @@
     "@useoptic/openapi-utilities": "workspace:*",
     "commander": "^8.3.0",
     "fs-extra": "^10.0.0",
+    "ink": "^3.2.0",
+    "ink-testing-library": "^2.1.0",
     "react-use": "^17.3.1"
   }
 }
