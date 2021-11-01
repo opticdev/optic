@@ -19,7 +19,8 @@ Array [
         "/example",
         "get",
       ],
-      "kind": "endpoint",
+      "kind": "operation",
+      "location": "inRequest",
     },
     "value": Object {
       "method": "get",
@@ -47,32 +48,14 @@ Array [
         "body",
       ],
       "kind": "body",
+      "location": "inResponse",
     },
-    "value": Object {},
-  },
-  Object {
-    "location": Object {
-      "conceptualPath": Array [
-        "operations",
-        "/example",
-        "get",
-        "responses",
-        "200",
-        "application/json",
-      ],
-      "jsonPath": Array [
-        "paths",
-        "/example",
-        "get",
-        "responses",
-        "200",
-        "content",
-        "application/json",
-        "body",
-      ],
-      "kind": "object",
+    "value": Object {
+      "contentType": "application/json",
+      "flatSchema": Object {
+        "type": "object",
+      },
     },
-    "value": Object {},
   },
   Object {
     "location": Object {
@@ -98,12 +81,38 @@ Array [
         "s",
       ],
       "kind": "field",
+      "location": "inResponse",
     },
     "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "s",
       "required": false,
-      "schemaTypes": Array [
-        "string",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
       ],
+      "jsonPath": Array [
+        "paths",
+        "/example",
+        "get",
+        "responses",
+        "200",
+      ],
+      "kind": "response",
+      "location": "inResponse",
+    },
+    "value": Object {
+      "description": "d",
+      "statusCode": 200,
     },
   },
 ]
@@ -114,16 +123,18 @@ Array [
   Object {
     "changed": Object {
       "after": Object {
+        "flatSchema": Object {
+          "type": "boolean",
+        },
+        "key": "s",
         "required": false,
-        "schemaTypes": Array [
-          "boolean",
-        ],
       },
       "before": Object {
+        "flatSchema": Object {
+          "type": "string",
+        },
+        "key": "s",
         "required": false,
-        "schemaTypes": Array [
-          "string",
-        ],
       },
     },
     "location": Object {
@@ -149,6 +160,7 @@ Array [
         "s",
       ],
       "kind": "field",
+      "location": "inResponse",
     },
   },
 ]
