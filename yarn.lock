@@ -2538,13 +2538,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/flat@npm:^5":
-  version: 5.0.2
-  resolution: "@types/flat@npm:5.0.2"
-  checksum: e21d51d872e788bdb381887c2880f717ba4377beb4055078136127134858efd15044655610f1fce4832d9a103ded468a25335203fc53f36db08edd5ab5a8b3db
-  languageName: node
-  linkType: hard
-
 "@types/fs-extra@npm:^9.0.13":
   version: 9.0.13
   resolution: "@types/fs-extra@npm:9.0.13"
@@ -6294,7 +6287,6 @@ __metadata:
     "@testing-library/jest-dom": ^5.11.4
     "@testing-library/react": ^11.1.0
     "@testing-library/user-event": ^12.1.10
-    "@types/flat": ^5
     "@types/jest": ^26.0.15
     "@types/js-yaml": ^4
     "@types/node": ^12.0.0
@@ -6302,7 +6294,6 @@ __metadata:
     "@types/react-dom": ^17.0.0
     "@types/testing-library__jest-dom": ^5
     "@useoptic/openapi-utilities": "workspace:*"
-    flat: ^5.0.2
     js-yaml: ^4.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -7661,15 +7652,6 @@ __metadata:
     flatted: ^3.1.0
     rimraf: ^3.0.2
   checksum: 4fdd10ecbcbf7d520f9040dd1340eb5dfe951e6f0ecf2252edeec03ee68d989ec8b9a20f4434270e71bcfd57800dc09b3344fca3966b2eb8f613072c7d9a2365
-  languageName: node
-  linkType: hard
-
-"flat@npm:^5.0.2":
-  version: 5.0.2
-  resolution: "flat@npm:5.0.2"
-  bin:
-    flat: cli.js
-  checksum: 12a1536ac746db74881316a181499a78ef953632ddd28050b7a3a43c62ef5462e3357c8c29d76072bb635f147f7a9a1f0c02efef6b4be28f8db62ceb3d5c7f5d
   languageName: node
   linkType: hard
 
