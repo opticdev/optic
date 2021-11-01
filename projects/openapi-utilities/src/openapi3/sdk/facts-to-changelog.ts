@@ -7,16 +7,15 @@ export function factsToChangelog(
   past: IFact<any>[],
   current: IFact<any>[]
 ): IChange<any>[] {
-  // @todo from dev, make sure this assumption (one entity per location) holds re: polymorphism and json schema
   const added = current.filter(
-    (i) => !past.some((fact) => equals(fact.location, i.location))
+    (i) => !past.some((fact) => equals(fact.location.conceptualPath, i.location.conceptualPath))
   );
   const removed = past.filter(
-    (i) => !current.some((fact) => equals(fact.location, i.location))
+    (i) => !current.some((fact) => equals(fact.location.conceptualPath, i.location.conceptualPath))
   );
   const updated = past.filter((i) => {
     const currentVersion = current.find((fact) =>
-      equals(fact.location, i.location)
+      equals(fact.location.conceptualPath, i.location.conceptualPath)
     );
     if (currentVersion) {
       if (equals(i.value, currentVersion.value)) {
@@ -36,7 +35,7 @@ export function factsToChangelog(
     })),
     ...updated.map((past) => {
       const after = current.find((fact) =>
-        equals(fact.location, past.location)
+        equals(fact.location.conceptualPath, past.location.conceptualPath)
       )!;
       return {
         location: past.location,

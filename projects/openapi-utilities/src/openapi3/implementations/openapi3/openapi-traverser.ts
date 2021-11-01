@@ -2,6 +2,18 @@ import { FactAccumulator, Traverse } from "../../sdk/types";
 import { IPathComponent } from "../../sdk/types";
 import { OpenAPIV3 } from "openapi-types";
 
+export function normalizeOpenApiPath(path: string): string {
+  return path
+    .split('/')
+    .map(pathComponent => {
+      if (pathComponent.startsWith('{') && pathComponent.endsWith('}')) {
+        return '{}'
+      }
+      return pathComponent
+    })
+    .join('/');
+}
+
 export class OpenAPITraverser
   implements Traverse<OpenAPIV3.Document, OpenApiFact>
 {
@@ -27,7 +39,8 @@ export class OpenAPITraverser
     pathPattern: string
   ): void {
     const jsonPath = ["paths", pathPattern, method];
-    const conceptualPath = ["operations", pathPattern, method];
+    const normalizedPath = normalizeOpenApiPath(pathPattern);
+    const conceptualPath = ["operations", normalizedPath, method];
     this.onOperation(
       operation,
       pathPattern,
@@ -45,7 +58,8 @@ export class OpenAPITraverser
           body,
           contentType,
           [...jsonPath, "content", contentType, "body"],
-          [...conceptualPath, contentType]
+          [...conceptualPath, contentType],
+          LocationMetadata.inRequest,
         );
       })
     }
@@ -74,7 +88,8 @@ export class OpenAPITraverser
         body,
         contentType,
         [...jsonPath, "content", contentType, "body"],
-        [...conceptualPath, contentType]
+        [...conceptualPath, contentType],
+        LocationMetadata.inResponse,
       );
     });
 
@@ -107,6 +122,7 @@ export class OpenAPITraverser
         jsonPath,
         conceptualPath,
         kind: parameter.in,
+        location: LocationMetadata.inRequest,
       },
       value
     })
@@ -137,6 +153,7 @@ export class OpenAPITraverser
         jsonPath,
         conceptualPath,
         kind: OpenApiKind.HeaderParameter,
+        location: LocationMetadata.inRequest,
       },
       value
     })
@@ -150,12 +167,13 @@ export class OpenAPITraverser
     body: OpenAPIV3.MediaTypeObject,
     contentType: string,
     jsonPath: IPathComponent[],
-    conceptualPath: IPathComponent[]
+    conceptualPath: IPathComponent[],
+    location: LocationMetadata,
   ) {
     //@TODO: not sure if we need to check the body.schema key count
     if (body.schema && Object.keys(body.schema).length) {
-      this.onContentForBody(body, contentType, jsonPath, conceptualPath);
-      this.traverseSchema(body.schema as OpenAPIV3.SchemaObject, jsonPath, conceptualPath);
+      this.onContentForBody(body, contentType, jsonPath, conceptualPath, location);
+      this.traverseSchema(body.schema as OpenAPIV3.SchemaObject, jsonPath, conceptualPath, location);
     }
   }
 
@@ -164,16 +182,19 @@ export class OpenAPITraverser
     schema: OpenAPIV3.SchemaObject,
     required: boolean,
     jsonPath: IPathComponent[],
-    conceptualPath: IPathComponent[]
+    conceptualPath: IPathComponent[],
+    location: LocationMetadata,
   ) {
-    this.onField(key, schema, required, jsonPath, conceptualPath);
-    this.traverseSchema(schema, jsonPath, conceptualPath);
+    this.onField(key, schema, required, jsonPath, conceptualPath, location);
+    this.traverseSchema(schema, jsonPath, conceptualPath, location);
   }
 
   traverseSchema(
     schema: OpenAPIV3.SchemaObject,
     jsonPath: IPathComponent[],
-    conceptualPath: IPathComponent[]
+    conceptualPath: IPathComponent[],
+    location: LocationMetadata,
+
   ) {
     if (schema.oneOf || schema.anyOf || schema.allOf) {
       // iterate these, multiple branches at path
@@ -187,7 +208,8 @@ export class OpenAPITraverser
             fieldSchema as OpenAPIV3.SchemaObject,
             (schema.required || []).includes(key),
             [...jsonPath, "properties", key],
-            [...conceptualPath, key]
+            [...conceptualPath, key],
+            location,
           )
         );
         break;
@@ -197,6 +219,7 @@ export class OpenAPITraverser
           schema.items as OpenAPIV3.SchemaObject,
           [...jsonPath, "items"],
           [...conceptualPath, "items"],
+          location,
         )
         break;
       case "string":
@@ -208,21 +231,32 @@ export class OpenAPITraverser
 
   ///////////////////////////////////////////////////////////////////////////////////
 
+  getSchemaWithoutNestedThings(schema: OpenAPIV3.SchemaObject) {
+    //@ts-ignore
+    const { items, required, properties, ...schemaWithoutNestedThings } = schema;
+    return schemaWithoutNestedThings as OpenAPIV3.SchemaObject
+  }
+
   onContentForBody(
     body: OpenAPIV3.MediaTypeObject,
     contentType: string,
     jsonPath: IPathComponent[],
-    conceptualPath: IPathComponent[]
+    conceptualPath: IPathComponent[],
+    location: LocationMetadata,
+
   ) {
+    const schema = (body.schema!) as OpenAPIV3.SchemaObject
+    const flatSchema = this.getSchemaWithoutNestedThings(schema);
     const value: OpenApiBodyFact = {
       contentType,
-      schema: (body.schema || {}) as OpenAPIV3.SchemaObject,
+      flatSchema,
     };
     this.accumulator.log({
       location: {
         jsonPath,
         conceptualPath,
         kind: OpenApiKind.Body,
+        location,
       },
       value,
     });
@@ -233,11 +267,14 @@ export class OpenAPITraverser
     schema: OpenAPIV3.SchemaObject,
     required: boolean,
     jsonPath: IPathComponent[],
-    conceptualPath: IPathComponent[]
+    conceptualPath: IPathComponent[],
+    location: LocationMetadata,
   ) {
+    const flatSchema = this.getSchemaWithoutNestedThings(schema);
+
     const value: OpenApiFieldFact = {
       key,
-      schema,
+      flatSchema,
       required,
     };
     this.accumulator.log({
@@ -245,9 +282,19 @@ export class OpenAPITraverser
         jsonPath,
         conceptualPath,
         kind: OpenApiKind.Field,
+        location,
       },
       value,
     });
+  }
+
+  getOperationWithoutNestedThings(operation: OpenAPIV3.OperationObject): OpenAPIV3.OperationObject {
+    const {
+      parameters,
+      responses,
+      ...operationWithoutNestedThings
+    } = operation;
+    return operationWithoutNestedThings as OpenAPIV3.OperationObject;
   }
 
   onOperation(
@@ -257,11 +304,9 @@ export class OpenAPITraverser
     jsonPath: IPathComponent[],
     conceptualPath: IPathComponent[]
   ) {
+    const flatOperation = this.getOperationWithoutNestedThings(operation);
     const value: OpenApiOperationFact = {
-      operationId: operation.operationId || '',
-      summary: operation.summary || "",
-      description: operation.description || "",
-      tags: operation.tags || [],
+      ...flatOperation,
       method,
       pathPattern,
     };
@@ -270,6 +315,7 @@ export class OpenAPITraverser
         jsonPath,
         conceptualPath,
         kind: OpenApiKind.Operation,
+        location: LocationMetadata.inRequest,
       },
       value,
     });
@@ -280,7 +326,9 @@ export class OpenAPITraverser
     jsonPath: IPathComponent[],
     conceptualPath: IPathComponent[]
   ) {
+    const flatResponse = this.getResponseWithoutNestedThings(response);
     const value: OpenApiResponseFact = {
+      ...flatResponse,
       statusCode: parseInt(statusCode),
     };
     this.accumulator.log({
@@ -288,12 +336,22 @@ export class OpenAPITraverser
         jsonPath,
         conceptualPath,
         kind: OpenApiKind.Response,
+        location: LocationMetadata.inResponse,
       },
       value,
     });
   }
+  getResponseWithoutNestedThings(response: OpenAPIV3.ResponseObject): OpenAPIV3.ResponseObject {
+    const { headers, content, ...responseWithoutNestedThings } = response;
+    return responseWithoutNestedThings as OpenAPIV3.ResponseObject;
+  }
 }
 
+//@TODO: figure out what other info downstream tools will need
+export enum LocationMetadata {
+  inRequest = 'inRequest',
+  inResponse = 'inResponse',
+}
 export enum OpenApiKind {
   Operation = "operation",
   Request = "request",
@@ -316,24 +374,20 @@ type OpenApiFact =
   | OpenApiBodyFact
   | OpenApiFieldFact;
 
-export interface OpenApiOperationFact {
-  operationId: string;
+export interface OpenApiOperationFact extends OpenAPIV3.OperationObject {
   pathPattern: string;
   method: string;
-  summary: string;
-  description: string;
-  tags: string[];
 }
 
 export interface OpenApiBodyFact {
   contentType: string;
-  schema: OpenAPIV3.SchemaObject;
+  flatSchema: OpenAPIV3.SchemaObject;
 }
 
 export interface OpenApiFieldFact {
   key: string;
   required: boolean;
-  schema: OpenAPIV3.SchemaObject;
+  flatSchema: OpenAPIV3.SchemaObject;
 }
 export interface OpenApiResponseFact {
   statusCode: number;
