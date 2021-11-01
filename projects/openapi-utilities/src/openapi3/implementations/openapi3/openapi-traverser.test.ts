@@ -2,10 +2,16 @@ import tap = require("tap");
 import { jsonFromFile } from "../../pipeline/spec-from";
 import { LocationMetadata, OpenAPITraverser } from "./openapi-traverser";
 
+tap.test("can flatten specs", async () => {
+  const traverser = new OpenAPITraverser();
+  const spec = await jsonFromFile("./inputs/openapi3/petstore0.json")();
+  tap.matchSnapshot(spec);
+});
 
 tap.test("can extract facts from specs", async () => {
   const traverser = new OpenAPITraverser();
-  const spec = traverser.traverse(await jsonFromFile("./inputs/openapi3/petstore0.json")());
+  const spec = await jsonFromFile("./inputs/openapi3/petstore0.json")();
+  traverser.traverse(spec);
   tap.matchSnapshot(traverser.accumulator.allFacts());
 });
 

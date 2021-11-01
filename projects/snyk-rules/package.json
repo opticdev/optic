@@ -1,0 +1,24 @@
+{
+  "name": "snyk-api-checks",
+  "packageManager": "yarn@3.0.2",
+  "version": "0.1.0",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "dev:test": "yarn tap --no-timeout --ts src/**/*.test.ts",
+    "build": "yarn tsc --build --verbose"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
+    "@types/tap": "^15.0.5",
+    "chai": "^4.3.4",
+    "prettier": "^2.4.1",
+    "tap": "^15.0.10",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@useoptic/api-checks": "workspace:*",
+    "@useoptic/openapi-utilities": "workspace:*",
+    "fs-extra": "^10.0.0"
+  }
+}

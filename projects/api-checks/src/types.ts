@@ -1,6 +1,22 @@
 export interface ShouldOrMust<G> {
-  must: G;
-  should: G;
+  must: (statement: string, handler: G) => void;
+  should: (statement: string, handler: G) => void;
+}
+
+export interface EntityRule<G, ApiContext, DSLContext> {
+  added: ShouldOrMust<
+    (added: G, context: ApiContext & DSLContext) => Promise<void> | void
+  >;
+  changed: ShouldOrMust<
+    (
+      before: G,
+      after: G,
+      context: ApiContext & DSLContext
+    ) => Promise<void> | void
+  >;
+  requirement: ShouldOrMust<
+    (value: G, context: ApiContext & DSLContext) => Promise<void> | void
+  >;
 }
 
 export interface Result {
