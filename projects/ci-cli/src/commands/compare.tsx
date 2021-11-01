@@ -6,14 +6,16 @@ import {
   SpecFromInput,
   SpecVersionFrom,
 } from "../input-helpers/compare-input-parser";
-import { render, Text, useApp } from "ink";
+import { render, Text, Newline, useApp } from "ink";
 
 import {
   parseOpenAPIFromRepoWithSourcemap,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
 } from "@useoptic/openapi-utilities/build/parser/openapi-sourcemap-parser";
-import { useAsync } from "react-use";
+import { useAsync, useAsyncFn } from "react-use";
+import { FunctionReturningPromise } from "react-use/lib/misc/types";
+import { AsyncState } from "react-use/lib/useAsyncFn";
 
 export function Compare(props: {
   from: SpecFromInput;
@@ -24,22 +26,71 @@ export function Compare(props: {
     async () => await specFromInputToResults(props.from, process.cwd())
   );
   const loadTo = useAsync(
-    async () => await specFromInputToResults(props.from, process.cwd())
+    async () => await specFromInputToResults(props.to, process.cwd())
   );
+
+  const specsLoaded = !loadFrom.loading && !loadFrom.loading;
+
+  const [state, sendCheckRequest] = useAsyncFn(() => {
+    return Promise.resolve();
+  }, []);
 
   const { exit } = useApp();
 
   useEffect(() => {
-    if (!loadFrom.loading && !loadTo.loading) {
+    if (loadFrom.error || loadTo.error) {
       setTimeout(() => exit(), 200);
     }
   }, [loadFrom, loadTo]);
 
+  const errorLoadingSpec = loadFrom.error || loadTo.error;
+
+  const loadStatus = (spec: string, promise: AsyncState<any>) => {
+    return (
+      <Text color="black">
+        {spec} specification:{" "}
+        {promise.loading && (
+          <Text color="green" bold>
+            loading...
+          </Text>
+        )}
+        {promise.error && (
+          <Text color="red" bold>
+            {promise.error.message.split("\n")[0]}
+          </Text>
+        )}
+        {!promise.loading && !promise.error && (
+          <Text color="green" bold>
+            done
+          </Text>
+        )}
+      </Text>
+    );
+  };
+
+  useEffect(() => {
+    if (specsLoaded) sendCheckRequest();
+  }, [loadFrom, loadTo]);
+
   return (
     <>
-      <Text color="green">
-        is loading from spec {loadFrom.loading.toString()}
+      <Text color="blue" bold>
+        Loading specifications for comparison:
       </Text>
+
+      {loadStatus("Current", loadFrom)}
+      {loadStatus("Next", loadTo)}
+
+      {errorLoadingSpec && (
+        <Text color="red">
+          Stopping. Could not load two specifications to compare
+        </Text>
+      )}
+      {specsLoaded && (
+        <>
+          <Text>{JSON.stringify(state)}</Text>
+        </>
+      )}
     </>
   );
 }
