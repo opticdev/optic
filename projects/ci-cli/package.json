@@ -7,7 +7,8 @@
   "scripts": {
     "cli": "ts-node src/index.tsx",
     "build": "yarn tsc --build --verbose",
-    "ws:build": "yarn build"
+    "ws:build": "yarn build",
+    "dev:test": "yarn tap --no-timeout --ts src/**/*.test.*"
   },
   "devDependencies": {
     "@types/copyfiles": "^2",
@@ -22,6 +23,8 @@
     "@useoptic/openapi-utilities": "workspace:*",
     "commander": "^8.3.0",
     "fs-extra": "^10.0.0",
+    "ink": "^3.2.0",
+    "ink-testing-library": "^2.1.0",
     "react-use": "^17.3.1"
   }
 }
