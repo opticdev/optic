@@ -6,6 +6,7 @@ import {
   IFact,
   ILocation,
 } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
+import { OpenApiKind } from "@useoptic/openapi-utilities";
 
 export interface SynkApiCheckContext {}
 
@@ -28,11 +29,9 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
     private nextFacts: IFact<any>[],
     private changelog: IChange<any>[],
     private context: SynkApiCheckContext
-  ) {
-    null;
-  }
+  ) {}
 
-  checkPromises(): Promise<Result>[] {
+  checkPromises() {
     return this.checks;
   }
 
@@ -49,7 +48,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
 
   get operations(): SnykEntityRule<OpenApiOperationFact> {
     const operations = this.changelog.filter(
-      (i) => i.location.kind === "endpoint"
+      (i) => i.location.kind === OpenApiKind.Operation
     );
 
     const added = operations.filter((i) =>
@@ -60,7 +59,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
     ) as IChange<OpenApiOperationFact>[];
 
     const requirements: IFact<OpenApiOperationFact>[] = this.nextFacts.filter(
-      (i) => i.location.kind === "endpoint"
+      (i) => i.location.kind === OpenApiKind.Operation
     );
 
     const addedHandler: (

@@ -1,3 +1,5 @@
+import { OpenApiKind } from "../../implementations/openapi3/openapi-traverser";
+
 export class FactAccumulator<KindSchema> {
   constructor(private facts: IFact<KindSchema>[]) {}
   log(fact: IFact<KindSchema>) {

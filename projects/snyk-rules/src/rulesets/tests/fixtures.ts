@@ -8,14 +8,10 @@ export async function rulesFixture(
   context: SynkApiCheckContext,
   rules: (dsl: SnykApiCheckDsl) => void
 ) {
-  const a = new ApiCheckService<string>();
-
   const checker = new ApiCheckService<SynkApiCheckContext>();
-  checker.useDsl<SnykApiCheckDsl>(
-    (input) =>
-      new SnykApiCheckDsl(input.nextFacts, input.changelog, input.context),
-    rules
-  );
+  checker.useDsl<SnykApiCheckDsl>((input) => {
+    return new SnykApiCheckDsl(input.nextFacts, input.changelog, input.context);
+  }, rules);
   const results = await checker.runRules(before, after, context);
   return results;
 }

@@ -37,6 +37,7 @@ export class ApiCheckService<Context> {
       rules.forEach((i) => i(dsl));
       return dsl.checkPromises();
     };
+
     this.rules.push(runner);
     return this;
   }
