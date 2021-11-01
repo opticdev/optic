@@ -6,7 +6,8 @@
   "types": "build/index.d.ts",
   "scripts": {
     "cli": "ts-node src/index.tsx",
-    "build": "yarn tsc --build --verbose && copyfiles -u 1 src/**/*.js build/"
+    "build": "yarn tsc --build --verbose",
+    "ws:build": "yarn build"
   },
   "devDependencies": {
     "@types/copyfiles": "^2",
