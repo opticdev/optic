@@ -13,7 +13,7 @@ export const defaultEmptySpec: OpenAPIV3.Document = {
 function completenessApiRules(dsl: SnykApiDSL) {
   dsl.operations.changed.must(
     "have consistent operationIds",
-    ({ current, next }) => {
+    (current, next) => {
       expect(current.operationId).equal(next.operationId);
     }
   );

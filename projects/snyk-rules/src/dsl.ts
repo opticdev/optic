@@ -1,5 +1,5 @@
-import { EntityRule } from "@useoptic/api-checks/build/types";
 import { OpenApiEndpointFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/OpenAPITraverser";
+import { EntityRule } from "@useoptic/api-checks";
 
 export interface SynkApiCheckContext {}
 
@@ -17,4 +17,6 @@ export interface SnykApiCheckDsl {
 
 const a = {} as SnykApiCheckDsl;
 
-a.operations.requirement.must();
+// a.operations.requirement.must("have a thing happen to them", (op) => {
+//   op.
+// });
