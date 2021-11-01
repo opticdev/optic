@@ -9,7 +9,7 @@ import {
   runCheck,
   ShouldOrMust,
 } from "../types";
-import { OpenApiEndpointFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/OpenAPITraverser";
+import { OpenApiOperationFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
 
 export type SnykContext = {
   maturity: "wip" | "beta" | "ga";
@@ -29,7 +29,7 @@ export class SnykApiDSL implements ApiCheckDsl {
     };
   }
 
-  get operations(): EntityRule<OpenApiEndpointFact, {}, SnykContext> {
+  get operations(): EntityRule<OpenApiOperationFact, {}, SnykContext> {
     const operations = this.changelog.filter(
       (i) => i.location.kind === "endpoint"
     );
@@ -38,7 +38,7 @@ export class SnykApiDSL implements ApiCheckDsl {
 
     const added = operations.filter((i) =>
       Boolean(i.added)
-    ) as IChange<OpenApiEndpointFact>[];
+    ) as IChange<OpenApiOperationFact>[];
     const addedWhere = added.map(
       (endpoint) =>
         `new operation: ${endpoint.location.conceptualPath.join(",")}`
@@ -46,7 +46,7 @@ export class SnykApiDSL implements ApiCheckDsl {
 
     const changes = operations.filter((i) =>
       Boolean(i.changed)
-    ) as IChange<OpenApiEndpointFact>[];
+    ) as IChange<OpenApiOperationFact>[];
     const changedWhere = changes.map(
       (endpoint) =>
         `updated operation: ${endpoint.location.conceptualPath.join(",")}`
