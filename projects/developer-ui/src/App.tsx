@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { OpenAPITraverser, factsToChangelog, OpenAPIV3 } from '@useoptic/openapi-utilities'
 import * as yaml from 'js-yaml';
 import { IChange } from '@useoptic/openapi-utilities/build/openapi3/sdk/types';
+import openapiDiff from 'openapi-diff';
 
 const staticServerBaseUrl = `http://localhost:5000`;
 
@@ -69,6 +70,13 @@ function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
   const [factsBefore, setFactsBefore] = useState<any[]>([]);
   const [factsAfter, setFactsAfter] = useState<any[]>([]);
   const [changes, setChanges] = useState<any[]>([]);
+  //@ts-ignore
+  global.optic = {
+    ...props,
+    factsBefore,
+    factsAfter,
+    changes,
+  }
   useEffect(() => {
     async function task() {
 
@@ -81,6 +89,24 @@ function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
       traverser2.traverse(yaml.load(props.afterContents) as OpenAPIV3.Document);
       const facts2 = traverser2.accumulator.allFacts();
       setFactsAfter(facts2);
+      
+      try {
+        const otherDiff = await openapiDiff.diffSpecs({
+          sourceSpec: {
+            content: props.beforeContents,
+            location: 'source.json',
+            format: 'openapi3'
+          },
+          destinationSpec: {
+            content: props.afterContents,
+            location: 'destination.json',
+            format: 'openapi3'
+          }
+        });
+      } catch (e) {
+        console.error(e);
+      }
+      
       const changes = factsToChangelog(facts1, facts2)
       setChanges(changes);
       console.log({ facts1, facts2, changes })
@@ -95,19 +121,17 @@ function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
 
   return (
     <div style={{ display: 'flex' }}>
-      <div>observations
-        <div>
-          { }
-        </div>
-      </div>
-      <div>changes
+      <div>
+        <h3>changes (click to see them open in the console)</h3>
         <div>
           {changes.map((change: IChange<any>) => {
             return (
-              <div style={{ display: 'flex' }} onClick={() => console.log(change)}>
+              <div style={{ display: 'flex' }} onClick={() => {
+                console.clear();
+                console.log(change)
+              }}>
                 <div><ChangeTypeIndicator change={change} /></div>
                 <div>{JSON.stringify(change.location.conceptualPath)}</div>
-                <div></div>
               </div>
             )
           })}
@@ -123,7 +147,7 @@ function ChangeTypeIndicator(props: { change: IChange<any> }) {
   if (props.change.removed) {
     return <span>-</span>
   }
-  return <span>{'&nbsp;'}</span>
+  return <span>&nbsp;</span>
 }
 
 function App() {

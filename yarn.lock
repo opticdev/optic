@@ -5,7 +5,7 @@ __metadata:
   version: 4
   cacheKey: 8
 
-"@apidevtools/json-schema-ref-parser@npm:^9.0.9":
+"@apidevtools/json-schema-ref-parser@npm:9.0.9, @apidevtools/json-schema-ref-parser@npm:^9.0.6, @apidevtools/json-schema-ref-parser@npm:^9.0.9":
   version: 9.0.9
   resolution: "@apidevtools/json-schema-ref-parser@npm:9.0.9"
   dependencies:
@@ -14,6 +14,36 @@ __metadata:
     call-me-maybe: ^1.0.1
     js-yaml: ^4.1.0
   checksum: b21f6bdd37d2942c3967ee77569bc74fadd1b922f688daf5ef85057789a2c3a7f4afc473aa2f3a93ec950dabb6ef365f8bd9cf51e4e062a1ee1e59b989f8f9b4
+  languageName: node
+  linkType: hard
+
+"@apidevtools/openapi-schemas@npm:^2.0.4":
+  version: 2.1.0
+  resolution: "@apidevtools/openapi-schemas@npm:2.1.0"
+  checksum: 4a8f64935b9049ef21e41fa4b188f39f6bc3f5291cebd451701db1115451ccb246a739e46cc5ce9ecdec781671431db40db7851acdac84a990a45756e0f32de3
+  languageName: node
+  linkType: hard
+
+"@apidevtools/swagger-methods@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@apidevtools/swagger-methods@npm:3.0.2"
+  checksum: d06b1ac5c1956613c4c6be695612ef860cd4e962b93a509ca551735a328a856cae1e33399cac1dcbf8333ba22b231746f3586074769ef0e172cf549ec9e7eaae
+  languageName: node
+  linkType: hard
+
+"@apidevtools/swagger-parser@npm:10.0.3":
+  version: 10.0.3
+  resolution: "@apidevtools/swagger-parser@npm:10.0.3"
+  dependencies:
+    "@apidevtools/json-schema-ref-parser": ^9.0.6
+    "@apidevtools/openapi-schemas": ^2.0.4
+    "@apidevtools/swagger-methods": ^3.0.2
+    "@jsdevtools/ono": ^7.1.3
+    call-me-maybe: ^1.0.1
+    z-schema: ^5.0.1
+  peerDependencies:
+    openapi-types: ">=7"
+  checksum: 580a86d4c2a667e825dae80d2ed115c282e6210e3cb0ffc39b3bf5fc5b4fcb576cce3fc3d0519b6c4de8fa617ab0dbee1adeac134d0c1364e0a0f7d394b28796
   languageName: node
   linkType: hard
 
@@ -3525,7 +3555,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.0.1":
+"ajv@npm:^8.0.1, ajv@npm:^8.6.0":
   version: 8.6.3
   resolution: "ajv@npm:8.6.3"
   dependencies:
@@ -5246,7 +5276,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^2.20.0":
+"commander@npm:^2.20.0, commander@npm:^2.7.1":
   version: 2.20.3
   resolution: "commander@npm:2.20.3"
   checksum: ab8c07884e42c3a8dbc5dd9592c606176c7eb5c1ca5ff274bcf907039b2c41de3626f684ea75ccf4d361ba004bbaff1f577d5384c155f3871e456bdf27becf9e
@@ -5260,7 +5290,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^8.3.0":
+"commander@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "commander@npm:7.2.0"
+  checksum: 53501cbeee61d5157546c0bef0fedb6cdfc763a882136284bed9a07225f09a14b82d2a84e7637edfd1a679fb35ed9502fd58ef1d091e6287f60d790147f68ddc
+  languageName: node
+  linkType: hard
+
+"commander@npm:^8.2.0, commander@npm:^8.3.0":
   version: 8.3.0
   resolution: "commander@npm:8.3.0"
   checksum: 0f82321821fc27b83bd409510bb9deeebcfa799ff0bf5d102128b500b7af22872c0c92cb6a0ebc5a4cf19c6b550fba9cedfa7329d18c6442a625f851377bacf0
@@ -6297,6 +6334,7 @@ __metadata:
     "@types/testing-library__jest-dom": ^5
     "@useoptic/openapi-utilities": "workspace:*"
     js-yaml: ^4.1.0
+    openapi-diff: ^0.23.5
     react: ^17.0.2
     react-dom: ^17.0.2
     react-scripts: 4.0.3
@@ -10173,7 +10211,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:^4.1.0":
+"js-yaml@npm:^4.0.0, js-yaml@npm:^4.1.0":
   version: 4.1.0
   resolution: "js-yaml@npm:4.1.0"
   dependencies:
@@ -10272,6 +10310,38 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"json-schema-diff@npm:^0.17.1":
+  version: 0.17.1
+  resolution: "json-schema-diff@npm:0.17.1"
+  dependencies:
+    ajv: ^8.6.0
+    commander: ^7.2.0
+    json-schema-ref-parser: ^9.0.6
+    json-schema-spec-types: ^0.1.2
+    lodash: ^4.17.20
+    verror: ^1.10.0
+  bin:
+    json-schema-diff: bin/json-schema-diff
+  checksum: 9e54cf6f46bd3c0f41d3379a0979dcbf8b9766362f9e3f4f55c0bdd40a768be6f27ab9b53c96a7cf9157c9b9f803b21da3ebc208e6a9e087b7f29b720f542e3d
+  languageName: node
+  linkType: hard
+
+"json-schema-ref-parser@npm:^9.0.6":
+  version: 9.0.9
+  resolution: "json-schema-ref-parser@npm:9.0.9"
+  dependencies:
+    "@apidevtools/json-schema-ref-parser": 9.0.9
+  checksum: e05166a84c702f54f192edb2eb2e39236c3b03c30561777d63fd156ecd3aa3d2fffc0806a5703384bfba3c78800b1dc05f8da1ea25e6470b35a823210f7d48c4
+  languageName: node
+  linkType: hard
+
+"json-schema-spec-types@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "json-schema-spec-types@npm:0.1.2"
+  checksum: 062ddc4e5d06c5fc772e1930853e5c6ba6f2e4d5b39fc8f7553f9996f5ecb202f6a920a1a85bb603775b775723777368db4a55dbd263de16185a1d13d66ab3b4
+  languageName: node
+  linkType: hard
+
 "json-schema-traverse@npm:^0.4.1":
   version: 0.4.1
   resolution: "json-schema-traverse@npm:0.4.1"
@@ -10358,6 +10428,13 @@ fsevents@^1.2.7:
     graceful-fs:
       optional: true
   checksum: 7af3b8e1ac8fe7f1eccc6263c6ca14e1966fcbc74b618d3c78a0a2075579487547b94f72b7a1114e844a1e15bb00d440e5d1720bfc4612d790a6f285d5ea8354
+  languageName: node
+  linkType: hard
+
+"jsonpointer@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "jsonpointer@npm:4.1.0"
+  checksum: ffc3e8937380989934676b339718d3213ecf5f6b7ce637b1ce5669a22f45dc61a86463e28abbe8c743d62f87ae790253c50cce0f586cb8e7623a21a7f811a444
   languageName: node
   linkType: hard
 
@@ -10628,6 +10705,20 @@ fsevents@^1.2.7:
   version: 4.4.0
   resolution: "lodash.flattendeep@npm:4.4.0"
   checksum: 8521c919acac3d4bcf0aaf040c1ca9cb35d6c617e2d72e9b4d51c9a58b4366622cd6077441a18be626c3f7b28227502b3bf042903d447b056ee7e0b11d45c722
+  languageName: node
+  linkType: hard
+
+"lodash.get@npm:^4.4.2":
+  version: 4.4.2
+  resolution: "lodash.get@npm:4.4.2"
+  checksum: e403047ddb03181c9d0e92df9556570e2b67e0f0a930fcbbbd779370972368f5568e914f913e93f3b08f6d492abc71e14d4e9b7a18916c31fa04bd2306efe545
+  languageName: node
+  linkType: hard
+
+"lodash.isequal@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "lodash.isequal@npm:4.5.0"
+  checksum: da27515dc5230eb1140ba65ff8de3613649620e8656b19a6270afe4866b7bd461d9ba2ac8a48dcc57f7adac4ee80e1de9f965d89d4d81a0ad52bb3eec2609644
   languageName: node
   linkType: hard
 
@@ -11879,10 +11970,38 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"openapi-diff@npm:^0.23.5":
+  version: 0.23.5
+  resolution: "openapi-diff@npm:0.23.5"
+  dependencies:
+    commander: ^8.2.0
+    js-yaml: ^4.0.0
+    json-schema-diff: ^0.17.1
+    jsonpointer: ^4.1.0
+    lodash: ^4.17.20
+    openapi3-ts: ^2.0.0
+    request: ^2.88.2
+    swagger-parser: ^10.0.2
+    verror: ^1.10.0
+  bin:
+    openapi-diff: bin/openapi-diff
+  checksum: f7289b46006605a9ae1daae6f797012c3fb035fa26b0ac8c9b325dd20dae3a5727adbe970bb98ddda7b80f9a448f308bfe891b229685a011a71caa497c10a16f
+  languageName: node
+  linkType: hard
+
 "openapi-types@npm:^9.3.0":
   version: 9.3.0
   resolution: "openapi-types@npm:9.3.0"
   checksum: 071b002403df1f86deec10658c636a95d8f02c1469b58f5b5db02b24d4da3ce4343b6c3b30a466982205149211051d66717b497650ee097f33a19ae02fd85de0
+  languageName: node
+  linkType: hard
+
+"openapi3-ts@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "openapi3-ts@npm:2.0.1"
+  dependencies:
+    yaml: ^1.10.0
+  checksum: 11114b44366c8f9a2466fc2053513286c516681548eac37a57964510bdca95e0a1e625306a0dc6a2457391b770e16d22da88d6e2886bad745e6b990f403f8a09
   languageName: node
   linkType: hard
 
@@ -15777,6 +15896,15 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"swagger-parser@npm:^10.0.2":
+  version: 10.0.3
+  resolution: "swagger-parser@npm:10.0.3"
+  dependencies:
+    "@apidevtools/swagger-parser": 10.0.3
+  checksum: bd99d94543b9bdc6bf062ea211f70d4fa004e6e8ce97ee47a388a046f3cc2839e7349970e8a0b11136b55a674e1cc7b0bbdfbe4fb40adf0c68bc70736eedb8b7
+  languageName: node
+  linkType: hard
+
 "symbol-tree@npm:^3.2.4":
   version: 3.2.4
   resolution: "symbol-tree@npm:3.2.4"
@@ -16791,6 +16919,13 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"validator@npm:^13.6.0":
+  version: 13.6.0
+  resolution: "validator@npm:13.6.0"
+  checksum: 1f9f813228a709d993b965813ad9d8ce009717bec64f57a0ac40d5f50ef781ee47260f85741e125775823fb31aa3beb7f974e0f5fb1afe9bc4615b7fadd7f8bb
+  languageName: node
+  linkType: hard
+
 "vary@npm:~1.1.2":
   version: 1.1.2
   resolution: "vary@npm:1.1.2"
@@ -16805,7 +16940,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"verror@npm:1.10.0":
+"verror@npm:1.10.0, verror@npm:^1.10.0":
   version: 1.10.0
   resolution: "verror@npm:1.10.0"
   dependencies:
@@ -17637,5 +17772,22 @@ resolve@^2.0.0-next.3:
   dependencies:
     "@types/yoga-layout": 1.9.2
   checksum: 6954c7c7b04c585a1c974391bea4734611adb85702b5e9131549a1d3dc5b94e69bcfea34121cdaeb5e702663bf290fcce5374910128e54d1031503a57c062865
+  languageName: node
+  linkType: hard
+
+"z-schema@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "z-schema@npm:5.0.1"
+  dependencies:
+    commander: ^2.7.1
+    lodash.get: ^4.4.2
+    lodash.isequal: ^4.5.0
+    validator: ^13.6.0
+  dependenciesMeta:
+    commander:
+      optional: true
+  bin:
+    z-schema: bin/z-schema
+  checksum: 9e825d3c426efe65291c84178139b1a3dd08f9e70a6ba2844c3125d97c140abedf5f6799e05c22e9dc4ce005b49db3ca916e9dc6d98d903086a75fe256fef067
   languageName: node
   linkType: hard
