@@ -1,6 +1,6 @@
 import tap from "tap";
 import { rulesFixture } from "./fixtures";
-import { operationsRules, rules } from "../operations";
+import { rules } from "../operations";
 // import { op001_with_path_and_valid_prefix, op001_with_path_and_invalid_case, op001_with_path_and_invalid_prefix } from "./inputs/operationIds";
 
 tap.test("op-001 - operations must have operation ids", async () => {
@@ -19,7 +19,7 @@ tap.test("op-001 - operations must have operation ids", async () => {
       op001_before,
       op001_with_path_and_no_op_id,
       {},
-      operationsRules
+      rules.operationId
     ),
     "missing id should fail"
   );
@@ -29,7 +29,7 @@ tap.test("op-001 - operations must have operation ids", async () => {
       op001_before,
       op001_with_path_and_invalid_prefix,
       {},
-      operationsRules
+      rules.operationId
     ),
     "invalid operation ID prefix should fail"
   );
@@ -39,7 +39,7 @@ tap.test("op-001 - operations must have operation ids", async () => {
       op001_before,
       op001_with_path_and_invalid_case,
       {},
-      operationsRules
+      rules.operationId
     ),
     "invalid operation ID case should fail"
   );
@@ -49,7 +49,7 @@ tap.test("op-001 - operations must have operation ids", async () => {
       op001_before,
       op001_with_path_and_valid_prefix,
       {},
-      operationsRules
+      rules.operationId
     ),
     "valid operation ID prefix should pass"
   );
@@ -74,23 +74,23 @@ tap.test("op-001 - operations must have operation ids", async () => {
     "without tags should fail"
   );
 
-  // tap.matchSnapshot(
-  //   await rulesFixture(
-  //     op001_before,
-  //     op001_with_tags_and_summary,
-  //     {},
-  //     operationsRules
-  //   ),
-  //   "with summary should pass"
-  // );
+  tap.matchSnapshot(
+    await rulesFixture(
+      op001_before,
+      op001_with_tags_and_summary,
+      {},
+      rules.summary
+    ),
+    "with summary should pass"
+  );
 
-  // tap.matchSnapshot(
-  //   await rulesFixture(
-  //     op001_before,
-  //     op001_without_tags_and_summary,
-  //     {},
-  //     operationsRules
-  //   ),
-  //   "without summary should fail"
-  // );
+  tap.matchSnapshot(
+    await rulesFixture(
+      op001_before,
+      op001_without_tags_and_summary,
+      {},
+      rules.summary
+    ),
+    "without summary should fail"
+  );
 });
