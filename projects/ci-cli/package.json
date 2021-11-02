@@ -8,6 +8,7 @@
     "cli": "ts-node src/index.tsx",
     "build": "yarn tsc --build --verbose",
     "ws:build": "yarn build",
+    "ws:clean": "rm -rf build",
     "dev:test": "yarn tap --no-timeout --ts src/**/*.test.*"
   },
   "devDependencies": {

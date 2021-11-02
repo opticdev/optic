@@ -8,6 +8,7 @@
         "projects/snyk-rules"
     ],
     "scripts": {
-        "ws:build": "echo 'skipping'"
+        "ws:build": "echo 'skipping'",
+        "ws:clean": "echo 'skipping'"
     }
 }

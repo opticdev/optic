@@ -2,16 +2,18 @@
 
 
 ## Quick start
+We use [`Task`](https://taskfile.dev) to run tasks. Install `Task`.
 ```
-$ yarn install
-$ yarn workspaces foreach -ptvA run ws:build
+$ task postpull
 ```
+which runs tasks from [`Taskfile.yml`](Taskfile.yml)
 
-Please read the docs for [`yarn workspaces foreach`](https://yarnpkg.com/cli/workspaces/foreach) to see the different options you have available, for example, only running against changed workspaces.
 
 
 ## Project Structure
 This is a yarn v2 workspace (https://yarnpkg.com/features/workspaces)
+
+Please read the docs for [`yarn workspaces foreach`](https://yarnpkg.com/cli/workspaces/foreach) to see the different options you have available, for example, only running against changed workspaces.
 
 We are using the following plugins which you can see in the [`.yarnrc.yml`](.yarnrc.yml)
 - `yarn plugin import workspace-tools` (enables helpers like `yarn workspaces foreach -ptvA run build`) https://yarnpkg.com/cli/workspaces/foreach
