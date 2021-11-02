@@ -18,7 +18,7 @@ export const rules = {
     });
   },
   summary: ({ operations }: SnykApiCheckDsl) => {
-    operations.requirement.must("have tags", (operation) => {
+    operations.requirement.must("have a summary", (operation) => {
       expect(operation.summary).to.exist;
     });
   },

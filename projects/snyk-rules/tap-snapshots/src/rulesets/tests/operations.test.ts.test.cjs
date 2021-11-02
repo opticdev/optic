@@ -59,7 +59,7 @@ Array [
 exports[`src/rulesets/tests/operations.test.ts TAP > with summary should pass 1`] = `
 Array [
   Object {
-    "condition": "have tags",
+    "condition": "have a summary",
     "isMust": true,
     "isShould": false,
     "passed": true,
@@ -83,7 +83,7 @@ Array [
 exports[`src/rulesets/tests/operations.test.ts TAP > without summary should fail 1`] = `
 Array [
   Object {
-    "condition": "have tags",
+    "condition": "have a summary",
     "error": "expected undefined to exist",
     "isMust": true,
     "isShould": false,
