@@ -170,7 +170,7 @@ export class OpenAPITraverser
     });
   }
 
-  traverseLinks() {}
+  traverseLinks() { }
 
   traverseBody(
     body: OpenAPIV3.MediaTypeObject,
@@ -361,7 +361,7 @@ export class OpenAPITraverser
   }
   getResponseWithoutNestedThings(
     response: OpenAPIV3.ResponseObject
-  ): OpenAPIV3.ResponseObject {
+  ): Omit<OpenAPIV3.ResponseObject, "headers" | "content"> {
     const { headers, content, ...responseWithoutNestedThings } = response;
     return responseWithoutNestedThings as OpenAPIV3.ResponseObject;
   }
@@ -409,13 +409,13 @@ export interface OpenApiFieldFact {
   required: boolean;
   flatSchema: OpenAPIV3.SchemaObject;
 }
-export interface OpenApiResponseFact {
+export interface OpenApiResponseFact extends ReturnType<OpenAPITraverser['getResponseWithoutNestedThings']> {
   statusCode: number;
 }
-export interface OpenApiRequestFact {}
+export interface OpenApiRequestFact { }
 
 export interface OpenApiHeaderFact extends OpenAPIV3.HeaderObject {
   name: string;
 }
 
-export interface OpenApiRequestParameterFact {}
+export interface OpenApiRequestParameterFact { }
