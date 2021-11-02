@@ -1,7 +1,6 @@
 import tap from "tap";
 import { rulesFixture } from "./fixtures";
 import { rules } from "../operations";
-// import { op001_with_path_and_valid_prefix, op001_with_path_and_invalid_case, op001_with_path_and_invalid_prefix } from "./inputs/operationIds";
 
 tap.test("op-001 - operations must have operation ids", async () => {
   const {
