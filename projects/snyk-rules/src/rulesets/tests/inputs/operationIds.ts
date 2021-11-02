@@ -52,3 +52,17 @@ export const op001_with_path_and_valid_prefix: OpenAPIV3.Document = {
   },
   info: { version: "0.0.0", title: "Empty" },
 };
+export const op001_with_tags_and_summary: OpenAPIV3.Document = {
+  openapi: "3.0.1",
+  paths: {
+    "/example": {
+      get: {
+        tags: ["Example"],
+        summary: "Retrieve example",
+        responses: {},
+      },
+    },
+  },
+  info: { version: "0.0.0", title: "Empty" },
+};
+export const op001_without_tags_and_summary: OpenAPIV3.Document = op001_with_path_and_valid_prefix;

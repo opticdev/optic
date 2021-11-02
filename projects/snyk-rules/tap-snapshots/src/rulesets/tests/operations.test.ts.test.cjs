@@ -55,3 +55,28 @@ Array [
   },
 ]
 `
+
+exports[`src/rulesets/tests/operations.test.ts TAP > with tags should pass 1`] = `
+Array [
+  Object {
+    "condition": "have tags",
+    "isMust": true,
+    "isShould": false,
+    "passed": true,
+    "where": "operation: get /example",
+  },
+]
+`
+
+exports[`src/rulesets/tests/operations.test.ts TAP > without tags should fail 1`] = `
+Array [
+  Object {
+    "condition": "have tags",
+    "error": "Target cannot be null or undefined.",
+    "isMust": true,
+    "isShould": false,
+    "passed": false,
+    "where": "operation: get /example",
+  },
+]
+`
