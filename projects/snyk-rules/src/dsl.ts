@@ -1,12 +1,15 @@
 import { ApiCheckDsl, EntityRule, Result } from "@useoptic/api-checks";
 import { runCheck } from "@useoptic/api-checks/build/types";
-import { OpenApiOperationFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
 import {
   IChange,
   IFact,
   ILocation,
 } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
-import { OpenApiKind } from "@useoptic/openapi-utilities";
+import {
+  OpenApiKind,
+  OpenApiOperationFact,
+  OpenApiHeaderFact,
+} from "@useoptic/openapi-utilities";
 
 export interface SynkApiCheckContext {}
 
@@ -115,6 +118,95 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
             const where = `operation: ${endpoint.value.method} ${endpoint.value.pathPattern}`;
             return runCheck(where, statement, must, () =>
               handler(endpoint.value, this.getContext(endpoint.location))
+            );
+          })
+        );
+      };
+    };
+
+    return {
+      added: {
+        must: addedHandler(true),
+        should: addedHandler(false),
+      },
+      changed: {
+        must: changedHandler(true),
+        should: changedHandler(false),
+      },
+      requirement: {
+        must: requirementsHandler(true),
+        should: requirementsHandler(false),
+      },
+    };
+  }
+
+  get headers(): SnykEntityRule<OpenApiOperationFact> {
+    const headers = this.changelog.filter(
+      (i) => i.location.kind === OpenApiKind.HeaderParameter
+    );
+
+    const added = headers.filter((i) =>
+      Boolean(i.added)
+    ) as IChange<OpenApiHeaderFact>[];
+    const changes = headers.filter((i) =>
+      Boolean(i.changed)
+    ) as IChange<OpenApiHeaderFact>[];
+
+    const requirements: IFact<OpenApiHeaderFact>[] = this.nextFacts.filter(
+      (i) => i.location.kind === OpenApiKind.HeaderParameter
+    );
+
+    const addedHandler: (
+      must: boolean
+    ) => SnykEntityRule<OpenApiHeaderFact>["added"]["must"] = (
+      must: boolean
+    ) => {
+      return (statement, handler) => {
+        this.checks.push(
+          ...added.map((header, index) => {
+            const addedWhere = `added header: ${header.added.name}`;
+            return runCheck(addedWhere, statement, must, () =>
+              handler(header.added!, this.getContext(header.location))
+            );
+          })
+        );
+      };
+    };
+
+    const changedHandler: (
+      must: boolean
+    ) => SnykEntityRule<OpenApiHeaderFact>["changed"]["must"] = (
+      must: boolean
+    ) => {
+      return (statement, handler) => {
+        this.checks.push(
+          ...added.map((header, index) => {
+            const updatedWhere = `updated header: ${
+              header.changed!.after.name
+            }`;
+            return runCheck(updatedWhere, statement, must, () =>
+              handler(
+                header.changed!.before,
+                header.changed!.after,
+                this.getContext(header.location)
+              )
+            );
+          })
+        );
+      };
+    };
+
+    const requirementsHandler: (
+      must: boolean
+    ) => SnykEntityRule<OpenApiOperationFact>["requirement"]["must"] = (
+      must: boolean
+    ) => {
+      return (statement, handler) => {
+        this.checks.push(
+          ...requirements.map((header, index) => {
+            const where = `header: ${header.value.name} `;
+            return runCheck(where, statement, must, () =>
+              handler(header.value, this.getContext(header.location))
             );
           })
         );

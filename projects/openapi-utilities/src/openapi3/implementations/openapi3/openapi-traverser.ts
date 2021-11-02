@@ -4,14 +4,14 @@ import { OpenAPIV3 } from "openapi-types";
 
 export function normalizeOpenApiPath(path: string): string {
   return path
-    .split('/')
-    .map(pathComponent => {
-      if (pathComponent.startsWith('{') && pathComponent.endsWith('}')) {
-        return '{}'
+    .split("/")
+    .map((pathComponent) => {
+      if (pathComponent.startsWith("{") && pathComponent.endsWith("}")) {
+        return "{}";
       }
-      return pathComponent
+      return pathComponent;
     })
-    .join('/');
+    .join("/");
 }
 
 export class OpenAPITraverser
@@ -41,27 +41,27 @@ export class OpenAPITraverser
     const jsonPath = ["paths", pathPattern, method];
     const normalizedPath = normalizeOpenApiPath(pathPattern);
     const conceptualPath = ["operations", normalizedPath, method];
-    this.onOperation(
-      operation,
-      pathPattern,
-      method,
-      jsonPath,
-      conceptualPath,
-    );
+    this.onOperation(operation, pathPattern, method, jsonPath, conceptualPath);
 
-    this.traverseParameters(operation, [...jsonPath, "parameters"], [...conceptualPath, "parameters"])
+    this.traverseParameters(
+      operation,
+      [...jsonPath, "parameters"],
+      [...conceptualPath, "parameters"]
+    );
 
     if (operation.requestBody) {
       const requestBody = operation.requestBody as OpenAPIV3.RequestBodyObject;
-      Object.entries(requestBody.content || {}).forEach(([contentType, body]) => {
-        this.traverseBody(
-          body,
-          contentType,
-          [...jsonPath, "content", contentType, "body"],
-          [...conceptualPath, contentType],
-          LocationMetadata.inRequest,
-        );
-      })
+      Object.entries(requestBody.content || {}).forEach(
+        ([contentType, body]) => {
+          this.traverseBody(
+            body,
+            contentType,
+            [...jsonPath, "content", contentType, "body"],
+            [...conceptualPath, contentType],
+            LocationMetadata.inRequest
+          );
+        }
+      );
     }
 
     Object.entries(operation.responses).forEach(([statusCode, response]) => {
@@ -78,9 +78,8 @@ export class OpenAPITraverser
     response: OpenAPIV3.ResponseObject,
     statusCode: string,
     jsonPath: IPathComponent[],
-    conceptualPath: IPathComponent[],
+    conceptualPath: IPathComponent[]
   ): void {
-
     this.traverseResponseHeaders(response, jsonPath, conceptualPath);
 
     Object.entries(response.content || {}).forEach(([contentType, body]) => {
@@ -89,7 +88,7 @@ export class OpenAPITraverser
         contentType,
         [...jsonPath, "content", contentType, "body"],
         [...conceptualPath, contentType],
-        LocationMetadata.inResponse,
+        LocationMetadata.inResponse
       );
     });
 
@@ -99,7 +98,7 @@ export class OpenAPITraverser
   traverseParameters(
     operation: OpenAPIV3.OperationObject,
     jsonPath: IPathComponent[],
-    conceptualPath: IPathComponent[],
+    conceptualPath: IPathComponent[]
   ) {
     if (operation.parameters) {
       operation.parameters.forEach((p, i) => {
@@ -108,15 +107,19 @@ export class OpenAPITraverser
           parameter,
           [...jsonPath, i],
           [...conceptualPath, parameter.in, parameter.name]
-        )
-      })
+        );
+      });
     }
   }
-  onRequestParameter(parameter: OpenAPIV3.ParameterObject, jsonPath: IPathComponent[], conceptualPath: IPathComponent[]) {
+  onRequestParameter(
+    parameter: OpenAPIV3.ParameterObject,
+    jsonPath: IPathComponent[],
+    conceptualPath: IPathComponent[]
+  ) {
     const value: OpenApiRequestParameterFact = {
       //@TODO: aidan decide what we need from here
-      ...parameter
-    }
+      ...parameter,
+    };
     this.accumulator.log({
       location: {
         jsonPath,
@@ -124,30 +127,38 @@ export class OpenAPITraverser
         kind: parameter.in,
         location: LocationMetadata.inRequest,
       },
-      value
-    })
+      value,
+    });
   }
 
   traverseResponseHeaders(
     response: OpenAPIV3.ResponseObject,
     jsonPath: IPathComponent[],
-    conceptualPath: IPathComponent[],
+    conceptualPath: IPathComponent[]
   ) {
     if (response.headers) {
       Object.entries(response.headers).forEach(([name, value]) => {
         const header = value as OpenAPIV3.HeaderObject;
-        this.onResponseHeader(header,
-          [...jsonPath, 'headers', name],
-          [...conceptualPath, 'headers', name])
-      })
+        this.onResponseHeader(
+          name,
+          header,
+          [...jsonPath, "headers", name],
+          [...conceptualPath, "headers", name]
+        );
+      });
     }
   }
 
-  onResponseHeader(header: OpenAPIV3.HeaderObject, jsonPath: IPathComponent[], conceptualPath: IPathComponent[]) {
+  onResponseHeader(
+    name: string,
+    header: OpenAPIV3.HeaderObject,
+    jsonPath: IPathComponent[],
+    conceptualPath: IPathComponent[]
+  ) {
     const value: OpenApiHeaderFact = {
-      //@TODO: aidan decide what we need from here
-      ...header
-    }
+      name,
+      ...header,
+    };
     this.accumulator.log({
       location: {
         jsonPath,
@@ -155,25 +166,34 @@ export class OpenAPITraverser
         kind: OpenApiKind.HeaderParameter,
         location: LocationMetadata.inRequest,
       },
-      value
-    })
+      value,
+    });
   }
 
-  traverseLinks() {
-
-  }
+  traverseLinks() {}
 
   traverseBody(
     body: OpenAPIV3.MediaTypeObject,
     contentType: string,
     jsonPath: IPathComponent[],
     conceptualPath: IPathComponent[],
-    location: LocationMetadata,
+    location: LocationMetadata
   ) {
     //@TODO: not sure if we need to check the body.schema key count
     if (body.schema && Object.keys(body.schema).length) {
-      this.onContentForBody(body, contentType, jsonPath, conceptualPath, location);
-      this.traverseSchema(body.schema as OpenAPIV3.SchemaObject, jsonPath, conceptualPath, location);
+      this.onContentForBody(
+        body,
+        contentType,
+        jsonPath,
+        conceptualPath,
+        location
+      );
+      this.traverseSchema(
+        body.schema as OpenAPIV3.SchemaObject,
+        jsonPath,
+        conceptualPath,
+        location
+      );
     }
   }
 
@@ -183,7 +203,7 @@ export class OpenAPITraverser
     required: boolean,
     jsonPath: IPathComponent[],
     conceptualPath: IPathComponent[],
-    location: LocationMetadata,
+    location: LocationMetadata
   ) {
     this.onField(key, schema, required, jsonPath, conceptualPath, location);
     this.traverseSchema(schema, jsonPath, conceptualPath, location);
@@ -193,8 +213,7 @@ export class OpenAPITraverser
     schema: OpenAPIV3.SchemaObject,
     jsonPath: IPathComponent[],
     conceptualPath: IPathComponent[],
-    location: LocationMetadata,
-
+    location: LocationMetadata
   ) {
     if (schema.oneOf || schema.anyOf || schema.allOf) {
       // iterate these, multiple branches at path
@@ -209,7 +228,7 @@ export class OpenAPITraverser
             (schema.required || []).includes(key),
             [...jsonPath, "properties", key],
             [...conceptualPath, key],
-            location,
+            location
           )
         );
         break;
@@ -219,8 +238,8 @@ export class OpenAPITraverser
           schema.items as OpenAPIV3.SchemaObject,
           [...jsonPath, "items"],
           [...conceptualPath, "items"],
-          location,
-        )
+          location
+        );
         break;
       case "string":
       case "number":
@@ -233,8 +252,9 @@ export class OpenAPITraverser
 
   getSchemaWithoutNestedThings(schema: OpenAPIV3.SchemaObject) {
     //@ts-ignore
-    const { items, required, properties, ...schemaWithoutNestedThings } = schema;
-    return schemaWithoutNestedThings as OpenAPIV3.SchemaObject
+    const { items, required, properties, ...schemaWithoutNestedThings } =
+      schema;
+    return schemaWithoutNestedThings as OpenAPIV3.SchemaObject;
   }
 
   onContentForBody(
@@ -242,10 +262,9 @@ export class OpenAPITraverser
     contentType: string,
     jsonPath: IPathComponent[],
     conceptualPath: IPathComponent[],
-    location: LocationMetadata,
-
+    location: LocationMetadata
   ) {
-    const schema = (body.schema!) as OpenAPIV3.SchemaObject
+    const schema = body.schema! as OpenAPIV3.SchemaObject;
     const flatSchema = this.getSchemaWithoutNestedThings(schema);
     const value: OpenApiBodyFact = {
       contentType,
@@ -268,7 +287,7 @@ export class OpenAPITraverser
     required: boolean,
     jsonPath: IPathComponent[],
     conceptualPath: IPathComponent[],
-    location: LocationMetadata,
+    location: LocationMetadata
   ) {
     const flatSchema = this.getSchemaWithoutNestedThings(schema);
 
@@ -288,12 +307,11 @@ export class OpenAPITraverser
     });
   }
 
-  getOperationWithoutNestedThings(operation: OpenAPIV3.OperationObject): OpenAPIV3.OperationObject {
-    const {
-      parameters,
-      responses,
-      ...operationWithoutNestedThings
-    } = operation;
+  getOperationWithoutNestedThings(
+    operation: OpenAPIV3.OperationObject
+  ): OpenAPIV3.OperationObject {
+    const { parameters, responses, ...operationWithoutNestedThings } =
+      operation;
     return operationWithoutNestedThings as OpenAPIV3.OperationObject;
   }
 
@@ -341,7 +359,9 @@ export class OpenAPITraverser
       value,
     });
   }
-  getResponseWithoutNestedThings(response: OpenAPIV3.ResponseObject): OpenAPIV3.ResponseObject {
+  getResponseWithoutNestedThings(
+    response: OpenAPIV3.ResponseObject
+  ): OpenAPIV3.ResponseObject {
     const { headers, content, ...responseWithoutNestedThings } = response;
     return responseWithoutNestedThings as OpenAPIV3.ResponseObject;
   }
@@ -349,8 +369,8 @@ export class OpenAPITraverser
 
 //@TODO: figure out what other info downstream tools will need
 export enum LocationMetadata {
-  inRequest = 'inRequest',
-  inResponse = 'inResponse',
+  inRequest = "inRequest",
+  inResponse = "inResponse",
 }
 export enum OpenApiKind {
   Operation = "operation",
@@ -362,7 +382,7 @@ export enum OpenApiKind {
   Object = "object",
   Field = "field",
   Array = "array",
-  Primitive = "primitive"
+  Primitive = "primitive",
 }
 
 type OpenApiFact =
@@ -392,13 +412,10 @@ export interface OpenApiFieldFact {
 export interface OpenApiResponseFact {
   statusCode: number;
 }
-export interface OpenApiRequestFact {
+export interface OpenApiRequestFact {}
 
+export interface OpenApiHeaderFact extends OpenAPIV3.HeaderObject {
+  name: string;
 }
-export interface OpenApiHeaderFact {
 
-}
-
-export interface OpenApiRequestParameterFact {
-
-}
+export interface OpenApiRequestParameterFact {}
