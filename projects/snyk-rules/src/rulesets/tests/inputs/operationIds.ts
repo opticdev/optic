@@ -16,12 +16,36 @@ export const op001_with_path_and_no_op_id: OpenAPIV3.Document = {
   },
   info: { version: "0.0.0", title: "Empty" },
 };
-export const op001_with_path_and_valid_op_id: OpenAPIV3.Document = {
+export const op001_with_path_and_invalid_prefix: OpenAPIV3.Document = {
   openapi: "3.0.1",
   paths: {
     "/example": {
       get: {
-        operationId: "hello-world",
+        operationId: "badPrefix",
+        responses: {},
+      },
+    },
+  },
+  info: { version: "0.0.0", title: "Empty" },
+};
+export const op001_with_path_and_invalid_case: OpenAPIV3.Document = {
+  openapi: "3.0.1",
+  paths: {
+    "/example": {
+      get: {
+        operationId: "get-hello-world",
+        responses: {},
+      },
+    },
+  },
+  info: { version: "0.0.0", title: "Empty" },
+};
+export const op001_with_path_and_valid_prefix: OpenAPIV3.Document = {
+  openapi: "3.0.1",
+  paths: {
+    "/example": {
+      get: {
+        operationId: "getHelloWorld",
         responses: {},
       },
     },
