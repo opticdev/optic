@@ -6,14 +6,5 @@
  */
 'use strict'
 exports[`src/test/api-check-service.test.ts TAP > must match snapshot 1`] = `
-Array [
-  Object {
-    "condition": "have consistent operationIds",
-    "error": "expected 'getExample' to equal 'get_example'",
-    "isMust": false,
-    "isShould": true,
-    "passed": false,
-    "where": "updated operation: operations,/example,get",
-  },
-]
+Array []
 `

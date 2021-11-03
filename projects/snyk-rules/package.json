@@ -1,14 +1,18 @@
 {
-  "name": "snyk-api-checks",
+  "name": "@useoptic/example-snyk-api-checks",
   "packageManager": "yarn@3.0.2",
   "version": "0.1.0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "files": [
+    "/build"
+  ],
   "scripts": {
-    "dev:test": "yarn tap --no-timeout --ts src/**/*.test.ts",
+    "dev:test": "yarn tap --no-check-coverage --no-timeout --ts src/**/*.test.ts",
     "build": "yarn tsc --build --verbose",
     "ws:build": "yarn build",
-    "ws:clean": "rm -rf build"
+    "ws:clean": "rm -rf build",
+    "ws:test": "yarn dev:test"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
