@@ -1252,11 +1252,11 @@
         "index": 1
       },
       {
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/headers/headers.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/pagination.yaml",
         "index": 2
       },
       {
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/pagination.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/headers/headers.yaml",
         "index": 3
       },
       {
@@ -1280,7 +1280,7 @@
         "index": 8
       },
       {
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/version.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/responses/500.yaml",
         "index": 9
       },
       {
@@ -1288,7 +1288,7 @@
         "index": 10
       },
       {
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/responses/500.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/version.yaml",
         "index": 11
       },
       {
@@ -1620,7 +1620,7 @@
             14,
             172
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1638,7 +1638,7 @@
             33,
             53
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1656,7 +1656,7 @@
             58,
             67
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1674,7 +1674,7 @@
             72,
             141
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1692,7 +1692,7 @@
             146,
             172
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1710,7 +1710,7 @@
             160,
             172
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1728,7 +1728,7 @@
             175,
             332
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1746,7 +1746,7 @@
             193,
             212
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1764,7 +1764,7 @@
             217,
             226
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1782,7 +1782,7 @@
             231,
             301
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1800,7 +1800,7 @@
             306,
             332
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1818,7 +1818,7 @@
             320,
             332
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1836,7 +1836,7 @@
             335,
             553
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1854,7 +1854,7 @@
             346,
             357
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1872,7 +1872,7 @@
             362,
             371
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1890,7 +1890,7 @@
             376,
             425
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1908,7 +1908,7 @@
             430,
             553
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1926,7 +1926,7 @@
             444,
             457
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1944,7 +1944,7 @@
             464,
             475
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1962,7 +1962,7 @@
             482,
             494
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1980,7 +1980,7 @@
             501,
             512
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1998,7 +1998,7 @@
             519,
             533
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -2016,7 +2016,7 @@
             540,
             553
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -2034,7 +2034,7 @@
             0,
             166
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2052,7 +2052,7 @@
             34,
             119
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2070,7 +2070,7 @@
             0,
             156
           ],
-          "file": 9
+          "file": 11
         }
       ],
       [
@@ -2088,7 +2088,7 @@
             11,
             24
           ],
-          "file": 9
+          "file": 11
         }
       ],
       [
@@ -2106,7 +2106,7 @@
             27,
             36
           ],
-          "file": 9
+          "file": 11
         }
       ],
       [
@@ -2124,7 +2124,7 @@
             39,
             53
           ],
-          "file": 9
+          "file": 11
         }
       ],
       [
@@ -2142,7 +2142,7 @@
             56,
             129
           ],
-          "file": 9
+          "file": 11
         }
       ],
       [
@@ -2160,7 +2160,7 @@
             132,
             156
           ],
-          "file": 9
+          "file": 11
         }
       ],
       [
@@ -2178,7 +2178,7 @@
             144,
             156
           ],
-          "file": 9
+          "file": 11
         }
       ],
       [
@@ -2196,7 +2196,7 @@
             168,
             334
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2214,7 +2214,7 @@
             199,
             287
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2232,7 +2232,7 @@
             1294,
             1527
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2250,7 +2250,7 @@
             1321,
             1483
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2268,7 +2268,7 @@
             1486,
             1527
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2286,7 +2286,7 @@
             1498,
             1510
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2304,7 +2304,7 @@
             1515,
             1527
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2322,7 +2322,7 @@
             336,
             662
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2340,7 +2340,7 @@
             366,
             532
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2358,7 +2358,7 @@
             535,
             662
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2376,7 +2376,7 @@
             547,
             559
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2394,7 +2394,7 @@
             564,
             662
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2404,7 +2404,7 @@
             578,
             581
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2414,7 +2414,7 @@
             590,
             602
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2424,7 +2424,7 @@
             611,
             615
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2434,7 +2434,7 @@
             624,
             626
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2444,7 +2444,7 @@
             635,
             645
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2454,7 +2454,7 @@
             654,
             660
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2472,7 +2472,7 @@
             662,
             959
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2490,7 +2490,7 @@
             683,
             910
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2508,7 +2508,7 @@
             913,
             959
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2526,7 +2526,7 @@
             925,
             937
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2544,7 +2544,7 @@
             942,
             959
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2562,7 +2562,7 @@
             961,
             1292
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2580,7 +2580,7 @@
             977,
             1243
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2598,7 +2598,7 @@
             1246,
             1292
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2616,7 +2616,7 @@
             1258,
             1270
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2634,7 +2634,7 @@
             1275,
             1292
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2652,7 +2652,7 @@
             1529,
             1671
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2670,7 +2670,7 @@
             1565,
             1644
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2688,7 +2688,7 @@
             1647,
             1671
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2706,7 +2706,7 @@
             1659,
             1671
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2724,7 +2724,7 @@
             1673,
             1823
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2742,7 +2742,7 @@
             1700,
             1779
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2760,7 +2760,7 @@
             1782,
             1823
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2778,7 +2778,7 @@
             1794,
             1806
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -2796,7 +2796,7 @@
             1811,
             1823
           ],
-          "file": 2
+          "file": 3
         }
       ],
       [
@@ -5698,7 +5698,7 @@
             0,
             720
           ],
-          "file": 11
+          "file": 9
         }
       ],
       [
@@ -5716,7 +5716,7 @@
             9,
             112
           ],
-          "file": 11
+          "file": 9
         }
       ],
       [
@@ -5734,7 +5734,7 @@
             115,
             623
           ],
-          "file": 11
+          "file": 9
         }
       ],
       [
@@ -5752,7 +5752,7 @@
             626,
             720
           ],
-          "file": 11
+          "file": 9
         }
       ]
     ]

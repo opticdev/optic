@@ -1174,15 +1174,15 @@
         "index": 0
       },
       {
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/common.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/parameters/version.yaml",
         "index": 1
       },
       {
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/parameters/version.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/pagination.yaml",
         "index": 2
       },
       {
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/pagination.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/common.yaml",
         "index": 3
       },
       {
@@ -1194,11 +1194,11 @@
         "index": 5
       },
       {
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/responses/401.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/responses/404.yaml",
         "index": 6
       },
       {
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/responses/404.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/responses/401.yaml",
         "index": 7
       },
       {
@@ -1206,11 +1206,11 @@
         "index": 8
       },
       {
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/headers/headers.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/shared/tag.yaml",
         "index": 9
       },
       {
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/version.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/headers/headers.yaml",
         "index": 10
       },
       {
@@ -1218,7 +1218,7 @@
         "index": 11
       },
       {
-        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/shared/tag.yaml",
+        "path": "/Users/dev/work/poc-governance-tools/projects/openapi-utilities/inputs/openapi3/private/snyk/schemas/version.yaml",
         "index": 12
       }
     ],
@@ -1420,7 +1420,7 @@
             0,
             156
           ],
-          "file": 2
+          "file": 1
         }
       ],
       [
@@ -1438,7 +1438,7 @@
             11,
             24
           ],
-          "file": 2
+          "file": 1
         }
       ],
       [
@@ -1456,7 +1456,7 @@
             27,
             36
           ],
-          "file": 2
+          "file": 1
         }
       ],
       [
@@ -1474,7 +1474,7 @@
             39,
             53
           ],
-          "file": 2
+          "file": 1
         }
       ],
       [
@@ -1492,7 +1492,7 @@
             56,
             129
           ],
-          "file": 2
+          "file": 1
         }
       ],
       [
@@ -1510,7 +1510,7 @@
             132,
             156
           ],
-          "file": 2
+          "file": 1
         }
       ],
       [
@@ -1528,7 +1528,7 @@
             144,
             156
           ],
-          "file": 2
+          "file": 1
         }
       ],
       [
@@ -1546,7 +1546,7 @@
             14,
             172
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1564,7 +1564,7 @@
             33,
             53
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1582,7 +1582,7 @@
             58,
             67
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1600,7 +1600,7 @@
             72,
             141
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1618,7 +1618,7 @@
             146,
             172
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1636,7 +1636,7 @@
             160,
             172
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1654,7 +1654,7 @@
             175,
             332
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1672,7 +1672,7 @@
             193,
             212
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1690,7 +1690,7 @@
             217,
             226
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1708,7 +1708,7 @@
             231,
             301
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1726,7 +1726,7 @@
             306,
             332
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1744,7 +1744,7 @@
             320,
             332
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1762,7 +1762,7 @@
             335,
             553
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1780,7 +1780,7 @@
             346,
             357
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1798,7 +1798,7 @@
             362,
             371
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1816,7 +1816,7 @@
             376,
             425
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1834,7 +1834,7 @@
             430,
             553
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1852,7 +1852,7 @@
             444,
             457
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1870,7 +1870,7 @@
             464,
             475
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1888,7 +1888,7 @@
             482,
             494
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1906,7 +1906,7 @@
             501,
             512
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1924,7 +1924,7 @@
             519,
             533
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1942,7 +1942,7 @@
             540,
             553
           ],
-          "file": 3
+          "file": 2
         }
       ],
       [
@@ -1960,7 +1960,7 @@
             0,
             123
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -1978,7 +1978,7 @@
             11,
             23
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -1996,7 +1996,7 @@
             26,
             69
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -2014,7 +2014,7 @@
             42,
             69
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -2032,7 +2032,7 @@
             57,
             69
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -2050,7 +2050,7 @@
             72,
             93
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -2060,7 +2060,7 @@
             83,
             92
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -2078,7 +2078,7 @@
             96,
             123
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3086,7 +3086,7 @@
             0,
             146
           ],
-          "file": 12
+          "file": 9
         }
       ],
       [
@@ -3104,7 +3104,7 @@
             7,
             19
           ],
-          "file": 12
+          "file": 9
         }
       ],
       [
@@ -3122,7 +3122,7 @@
             22,
             91
           ],
-          "file": 12
+          "file": 9
         }
       ],
       [
@@ -3140,7 +3140,7 @@
             38,
             61
           ],
-          "file": 12
+          "file": 9
         }
       ],
       [
@@ -3158,7 +3158,7 @@
             49,
             61
           ],
-          "file": 12
+          "file": 9
         }
       ],
       [
@@ -3176,7 +3176,7 @@
             66,
             91
           ],
-          "file": 12
+          "file": 9
         }
       ],
       [
@@ -3194,7 +3194,7 @@
             79,
             91
           ],
-          "file": 12
+          "file": 9
         }
       ],
       [
@@ -3212,7 +3212,7 @@
             94,
             116
           ],
-          "file": 12
+          "file": 9
         }
       ],
       [
@@ -3222,7 +3222,7 @@
             105,
             108
           ],
-          "file": 12
+          "file": 9
         }
       ],
       [
@@ -3232,7 +3232,7 @@
             110,
             115
           ],
-          "file": 12
+          "file": 9
         }
       ],
       [
@@ -3250,7 +3250,7 @@
             119,
             146
           ],
-          "file": 12
+          "file": 9
         }
       ],
       [
@@ -3354,7 +3354,7 @@
             678,
             992
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3372,7 +3372,7 @@
             695,
             707
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3390,7 +3390,7 @@
             710,
             992
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3408,7 +3408,7 @@
             736,
             748
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3426,7 +3426,7 @@
             753,
             971
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3444,7 +3444,7 @@
             771,
             971
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3462,7 +3462,7 @@
             785,
             938
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3480,7 +3480,7 @@
             807,
             837
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3498,7 +3498,7 @@
             825,
             837
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3516,7 +3516,7 @@
             848,
             901
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3534,7 +3534,7 @@
             864,
             876
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3552,7 +3552,7 @@
             889,
             901
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3570,7 +3570,7 @@
             125,
             416
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3588,7 +3588,7 @@
             134,
             146
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3606,7 +3606,7 @@
             149,
             386
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3624,7 +3624,7 @@
             418,
             678
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3642,7 +3642,7 @@
             434,
             678
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3652,7 +3652,7 @@
             447,
             459
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3670,7 +3670,7 @@
             447,
             459
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3680,7 +3680,7 @@
             466,
             676
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3698,7 +3698,7 @@
             466,
             478
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3716,7 +3716,7 @@
             485,
             607
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3734,7 +3734,7 @@
             505,
             533
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3752,7 +3752,7 @@
             521,
             533
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3770,7 +3770,7 @@
             542,
             607
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3788,7 +3788,7 @@
             558,
             570
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3806,7 +3806,7 @@
             581,
             607
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3824,7 +3824,7 @@
             614,
             642
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3834,7 +3834,7 @@
             626,
             632
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3844,7 +3844,7 @@
             634,
             640
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3862,7 +3862,7 @@
             649,
             676
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3880,7 +3880,7 @@
             389,
             416
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3898,7 +3898,7 @@
             947,
             971
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3908,7 +3908,7 @@
             958,
             964
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3918,7 +3918,7 @@
             966,
             970
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3936,7 +3936,7 @@
             976,
             992
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -3946,7 +3946,7 @@
             987,
             991
           ],
-          "file": 1
+          "file": 3
         }
       ],
       [
@@ -4084,7 +4084,7 @@
             0,
             166
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4102,7 +4102,7 @@
             34,
             119
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4120,7 +4120,7 @@
             0,
             156
           ],
-          "file": 10
+          "file": 12
         }
       ],
       [
@@ -4138,7 +4138,7 @@
             11,
             24
           ],
-          "file": 10
+          "file": 12
         }
       ],
       [
@@ -4156,7 +4156,7 @@
             27,
             36
           ],
-          "file": 10
+          "file": 12
         }
       ],
       [
@@ -4174,7 +4174,7 @@
             39,
             53
           ],
-          "file": 10
+          "file": 12
         }
       ],
       [
@@ -4192,7 +4192,7 @@
             56,
             129
           ],
-          "file": 10
+          "file": 12
         }
       ],
       [
@@ -4210,7 +4210,7 @@
             132,
             156
           ],
-          "file": 10
+          "file": 12
         }
       ],
       [
@@ -4228,7 +4228,7 @@
             144,
             156
           ],
-          "file": 10
+          "file": 12
         }
       ],
       [
@@ -4246,7 +4246,7 @@
             168,
             334
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4264,7 +4264,7 @@
             199,
             287
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4282,7 +4282,7 @@
             1294,
             1527
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4300,7 +4300,7 @@
             1321,
             1483
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4318,7 +4318,7 @@
             1486,
             1527
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4336,7 +4336,7 @@
             1498,
             1510
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4354,7 +4354,7 @@
             1515,
             1527
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4372,7 +4372,7 @@
             336,
             662
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4390,7 +4390,7 @@
             366,
             532
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4408,7 +4408,7 @@
             535,
             662
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4426,7 +4426,7 @@
             547,
             559
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4444,7 +4444,7 @@
             564,
             662
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4454,7 +4454,7 @@
             578,
             581
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4464,7 +4464,7 @@
             590,
             602
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4474,7 +4474,7 @@
             611,
             615
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4484,7 +4484,7 @@
             624,
             626
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4494,7 +4494,7 @@
             635,
             645
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4504,7 +4504,7 @@
             654,
             660
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4522,7 +4522,7 @@
             662,
             959
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4540,7 +4540,7 @@
             683,
             910
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4558,7 +4558,7 @@
             913,
             959
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4576,7 +4576,7 @@
             925,
             937
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4594,7 +4594,7 @@
             942,
             959
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4612,7 +4612,7 @@
             961,
             1292
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4630,7 +4630,7 @@
             977,
             1243
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4648,7 +4648,7 @@
             1246,
             1292
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4666,7 +4666,7 @@
             1258,
             1270
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -4684,7 +4684,7 @@
             1275,
             1292
           ],
-          "file": 9
+          "file": 10
         }
       ],
       [
@@ -5318,7 +5318,7 @@
             0,
             724
           ],
-          "file": 6
+          "file": 7
         }
       ],
       [
@@ -5336,7 +5336,7 @@
             9,
             116
           ],
-          "file": 6
+          "file": 7
         }
       ],
       [
@@ -5354,7 +5354,7 @@
             119,
             627
           ],
-          "file": 6
+          "file": 7
         }
       ],
       [
@@ -5372,7 +5372,7 @@
             630,
             724
           ],
-          "file": 6
+          "file": 7
         }
       ],
       [
@@ -5390,7 +5390,7 @@
             0,
             693
           ],
-          "file": 7
+          "file": 6
         }
       ],
       [
@@ -5408,7 +5408,7 @@
             9,
             85
           ],
-          "file": 7
+          "file": 6
         }
       ],
       [
@@ -5426,7 +5426,7 @@
             88,
             596
           ],
-          "file": 7
+          "file": 6
         }
       ],
       [
@@ -5444,7 +5444,7 @@
             599,
             693
           ],
-          "file": 7
+          "file": 6
         }
       ],
       [

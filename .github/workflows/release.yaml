@@ -1,0 +1,26 @@
+name: Node.js Package
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install Task
+        run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
+      - name: Build
+        run: task ci:build
+      - name: Test
+        run: task ci:test
+      - name: Set NPM publishing credentials for Yarn
+        run: yarn config set 'npmScopes.useoptic.npmAuthToken' "${{ secrets.PUBLISH_NPM_OPTIC_BOT }}"
+      - name: Publish
+        run: task ci:publish
