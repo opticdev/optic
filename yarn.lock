@@ -2669,6 +2669,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/json-stable-stringify@npm:^1.0.33":
+  version: 1.0.33
+  resolution: "@types/json-stable-stringify@npm:1.0.33"
+  checksum: 5fb2b6761d7079396372239366afbb4d454bdf2c78fb26a78214b1c3f7a94e131910b1fe0607aae90f8a49dd71972d8a10d74088145b92d3fcb5b38fb1359e30
+  languageName: node
+  linkType: hard
+
 "@types/json5@npm:^0.0.29":
   version: 0.0.29
   resolution: "@types/json5@npm:0.0.29"
@@ -10370,6 +10377,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"json-stable-stringify@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "json-stable-stringify@npm:1.0.1"
+  dependencies:
+    jsonify: ~0.0.0
+  checksum: 65d6cbf0fca72a4136999f65f4401cf39a129f7aeff0fdd987ac3d3423a2113659294045fb8377e6e20d865cac32b1b8d70f3d87346c9786adcee60661d96ca5
+  languageName: node
+  linkType: hard
+
 "json-stringify-safe@npm:~5.0.1":
   version: 5.0.1
   resolution: "json-stringify-safe@npm:5.0.1"
@@ -10428,6 +10444,13 @@ fsevents@^1.2.7:
     graceful-fs:
       optional: true
   checksum: 7af3b8e1ac8fe7f1eccc6263c6ca14e1966fcbc74b618d3c78a0a2075579487547b94f72b7a1114e844a1e15bb00d440e5d1720bfc4612d790a6f285d5ea8354
+  languageName: node
+  linkType: hard
+
+"jsonify@npm:~0.0.0":
+  version: 0.0.0
+  resolution: "jsonify@npm:0.0.0"
+  checksum: d8d4ed476c116e6987a460dcb82f22284686caae9f498ac87b0502c1765ac1522f4f450a4cad4cc368d202fd3b27a3860735140a82867fc6d558f5f199c38bce
   languageName: node
   linkType: hard
 
@@ -15172,11 +15195,13 @@ resolve@^2.0.0-next.3:
   resolution: "snyk-api-checks@workspace:projects/snyk-rules"
   dependencies:
     "@types/fs-extra": ^9.0.13
+    "@types/json-stable-stringify": ^1.0.33
     "@types/tap": ^15.0.5
     "@useoptic/api-checks": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
     chai: ^4.3.4
     fs-extra: ^10.0.0
+    json-stable-stringify: ^1.0.1
     prettier: ^2.4.1
     tap: ^15.0.10
     typescript: ^4.4.4

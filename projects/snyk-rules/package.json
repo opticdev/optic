@@ -12,8 +12,10 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
+    "@types/json-stable-stringify": "^1.0.33",
     "@types/tap": "^15.0.5",
     "chai": "^4.3.4",
+    "json-stable-stringify": "^1.0.1",
     "prettier": "^2.4.1",
     "tap": "^15.0.10",
     "typescript": "^4.4.4"

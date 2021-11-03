@@ -44,6 +44,85 @@ Array [
 ]
 `
 
+exports[`src/rulesets/tests/operations.test.ts TAP > must match snapshot 1`] = `
+Object {
+  "base": String(
+    {
+       "info": {
+          "title": "Empty",
+          "version": "0.0.0"
+       },
+       "openapi": "3.0.1",
+       "paths": {
+          "/example": {
+             "get": {
+                "responses": {
+                }
+             }
+          }
+       }
+    }
+  ),
+  "changelog": Array [
+    Object {
+      "changed": Object {
+        "after": Object {
+          "method": "get",
+          "operationId": "",
+          "pathPattern": "/example",
+        },
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/example",
+        },
+      },
+      "location": Object {
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+        ],
+        "kind": "operation",
+        "location": "inRequest",
+      },
+    },
+  ],
+  "next": String(
+    {
+       "info": {
+          "title": "Empty",
+          "version": "0.0.0"
+       },
+       "openapi": "3.0.1",
+       "paths": {
+          "/example": {
+             "get": {
+                "operationId": "",
+                "responses": {
+                }
+             }
+          }
+       }
+    }
+  ),
+  "results": Array [
+    Object {
+      "condition": "have the correct operationId format",
+      "error": "expected '' to be truthy",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "operation: get /example",
+    },
+  ],
+}
+`
+
 exports[`src/rulesets/tests/operations.test.ts TAP > valid operation ID prefix should pass 1`] = `
 Array [
   Object {

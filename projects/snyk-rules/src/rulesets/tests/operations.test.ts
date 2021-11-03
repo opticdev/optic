@@ -1,6 +1,39 @@
 import tap from "tap";
 import { rulesFixture } from "./fixtures";
 import { rules } from "../operations";
+import { createDslFixture } from "./test-rule-fixture";
+import { SnykApiCheckDsl, SynkApiCheckContext } from "../../dsl";
+import { op001_before } from "./inputs/operationIds";
+
+const { compare } = createDslFixture<SnykApiCheckDsl, SynkApiCheckContext>(
+  (input) => {
+    return new SnykApiCheckDsl(input.nextFacts, input.changelog, input.context);
+  }
+);
+
+const baseForTests = {
+  openapi: "3.0.1",
+  paths: {
+    "/example": {
+      get: {
+        responses: {},
+      },
+    },
+  },
+  info: { version: "0.0.0", title: "Empty" },
+};
+
+tap.test("op-001 - empty strings for operationId are invalid", async () => {
+  const result = await compare(baseForTests)
+    .to((spec) => {
+      spec.paths!["/example"]!.get!.operationId = "";
+      return spec;
+    })
+    .withRule(rules.operationId, {});
+
+  console.log(result);
+  tap.matchSnapshot(result);
+});
 
 tap.test("op-001 - operations must have operation ids", async () => {
   const {
