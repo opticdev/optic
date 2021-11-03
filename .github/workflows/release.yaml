@@ -20,6 +20,8 @@ jobs:
         run: task ci:build
       - name: Test
         run: task ci:test
+        continue-on-error: true
+
       - name: Set NPM publishing credentials for Yarn
         run: yarn config set 'npmScopes.useoptic.npmAuthToken' "${{ secrets.PUBLISH_NPM_OPTIC_BOT }}"
       - name: Publish
