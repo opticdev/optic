@@ -1,9 +1,6 @@
-import tap from "tap";
-import { rulesFixture } from "./fixtures";
 import { rules } from "../operations";
 import { createDslFixture } from "./test-rule-fixture";
 import { SnykApiCheckDsl, SynkApiCheckContext } from "../../dsl";
-import { op001_before } from "./inputs/operationIds";
 
 const { compare } = createDslFixture<SnykApiCheckDsl, SynkApiCheckContext>(
   (input) => {
@@ -11,7 +8,7 @@ const { compare } = createDslFixture<SnykApiCheckDsl, SynkApiCheckContext>(
   }
 );
 
-const baseForTests = {
+const baseForOperationIdTests = {
   openapi: "3.0.1",
   paths: {
     "/example": {
@@ -23,106 +20,110 @@ const baseForTests = {
   info: { version: "0.0.0", title: "Empty" },
 };
 
-tap.test("op-001 - empty strings for operationId are invalid", async () => {
-  const result = await compare(baseForTests)
+it("empty string operationId is invalid", async () => {
+  const result = await compare(baseForOperationIdTests)
     .to((spec) => {
       spec.paths!["/example"]!.get!.operationId = "";
       return spec;
     })
     .withRule(rules.operationId, {});
 
-  console.log(result);
-  tap.matchSnapshot(result);
+  expect(result.results[0].passed).toBeFalsy();
+  expect(result).toMatchSnapshot();
 });
 
-tap.test("op-001 - operations must have operation ids", async () => {
-  const {
-    op001_before,
-    op001_with_path_and_no_op_id,
-    op001_with_path_and_valid_prefix,
-    op001_with_path_and_invalid_case,
-    op001_with_path_and_invalid_prefix,
-    op001_with_tags_and_summary,
-    op001_without_tags_and_summary,
-  } = require("./inputs/operationIds");
+it("undefined operationId is invalid", async () => {
+  const result = await compare(baseForOperationIdTests)
+    .to((spec) => {
+      delete spec.paths!["/example"]!.get!.operationId;
+      return spec;
+    })
+    .withRule(rules.operationId, {});
 
-  tap.matchSnapshot(
-    await rulesFixture(
-      op001_before,
-      op001_with_path_and_no_op_id,
-      {},
-      rules.operationId
-    ),
-    "missing id should fail"
-  );
+  expect(result.results[0].passed).toBeFalsy();
+  expect(result).toMatchSnapshot();
+});
 
-  tap.matchSnapshot(
-    await rulesFixture(
-      op001_before,
-      op001_with_path_and_invalid_prefix,
-      {},
-      rules.operationId
-    ),
-    "invalid operation ID prefix should fail"
-  );
+it("invalid operationId prefix should fail", async () => {
+  const result = await compare(baseForOperationIdTests)
+    .to((spec) => {
+      spec.paths!["/example"]!.get!.operationId = "findHelloWorld";
+      return spec;
+    })
+    .withRule(rules.operationId, {});
 
-  tap.matchSnapshot(
-    await rulesFixture(
-      op001_before,
-      op001_with_path_and_invalid_case,
-      {},
-      rules.operationId
-    ),
-    "invalid operation ID case should fail"
-  );
+  expect(result.results[0].passed).toBeFalsy();
+  expect(result).toMatchSnapshot();
+});
 
-  tap.matchSnapshot(
-    await rulesFixture(
-      op001_before,
-      op001_with_path_and_valid_prefix,
-      {},
-      rules.operationId
-    ),
-    "valid operation ID prefix should pass"
-  );
+it("invalid operationId case should fail", async () => {
+  const result = await compare(baseForOperationIdTests)
+    .to((spec) => {
+      spec.paths!["/example"]!.get!.operationId = "get-hello-world";
+      return spec;
+    })
+    .withRule(rules.operationId, {});
 
-  tap.matchSnapshot(
-    await rulesFixture(
-      op001_before,
-      op001_with_tags_and_summary,
-      {},
-      rules.tags
-    ),
-    "with tags should pass"
-  );
+  expect(result.results[0].passed).toBeFalsy();
+  expect(result).toMatchSnapshot();
+});
 
-  tap.matchSnapshot(
-    await rulesFixture(
-      op001_before,
-      op001_without_tags_and_summary,
-      {},
-      rules.tags
-    ),
-    "without tags should fail"
-  );
+const baseForOperationMetadataTests = {
+  openapi: "3.0.1",
+  paths: {
+    "/example": {
+      get: {
+        tags: ["Example"],
+        operationId: "getExample",
+        summary: "Retrieve example",
+        responses: {},
+      },
+    },
+  },
+  info: { version: "0.0.0", title: "Empty" },
+};
 
-  tap.matchSnapshot(
-    await rulesFixture(
-      op001_before,
-      op001_with_tags_and_summary,
-      {},
-      rules.summary
-    ),
-    "with summary should pass"
-  );
+it("missing summary should fail", async () => {
+  const result = await compare(baseForOperationMetadataTests)
+    .to((spec) => {
+      delete spec.paths!["/example"]!.get!.summary;
+      return spec;
+    })
+    .withRule(rules.summary, {});
 
-  tap.matchSnapshot(
-    await rulesFixture(
-      op001_before,
-      op001_without_tags_and_summary,
-      {},
-      rules.summary
-    ),
-    "without summary should fail"
-  );
+  expect(result.results[0].passed).toBeFalsy();
+  expect(result).toMatchSnapshot();
+});
+
+it("with summary passes", async () => {
+  const result = await compare(baseForOperationMetadataTests)
+    .to((spec) => {
+      spec.paths!["/example"]!.get!.summary = "I have a summary";
+      return spec;
+    })
+    .withRule(rules.summary, {});
+
+  expect(result.results[0].passed).toBeTruthy();
+  expect(result).toMatchSnapshot();
+});
+
+it("with tags passes", async () => {
+  const result = await compare(baseForOperationMetadataTests)
+    .to((spec) => spec)
+    .withRule(rules.tags, {});
+
+  expect(result.results[0].passed).toBeTruthy();
+  expect(result).toMatchSnapshot();
+});
+
+it("missing tags should fail", async () => {
+  const result = await compare(baseForOperationMetadataTests)
+    .to((spec) => {
+      delete spec.paths!["/example"]!.get!.tags;
+      return spec;
+    })
+    .withRule(rules.tags, {});
+
+  expect(result.results[0].passed).toBeFalsy();
+  expect(result).toMatchSnapshot();
 });

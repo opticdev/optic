@@ -44,8 +44,8 @@ export function createDslFixture<DSL extends ApiCheckDsl, Context>(
             const nextFacts = nextTraverser.accumulator.allFacts();
             return {
               results,
-              base: stringify(base, { space: 3 }),
-              next: stringify(next, { space: 3 }),
+              base: base,
+              next: next,
               changelog: factsToChangelog(currentFacts, nextFacts),
             };
           },
