@@ -1,4 +1,4 @@
-import { LocationMetadata } from "../../implementations/openapi3/openapi-traverser";
+import { ConceptualLocation } from "../../implementations/openapi3/openapi-traverser";
 export class FactAccumulator<KindSchema> {
   constructor(private facts: IFact<KindSchema>[]) {}
   log(fact: IFact<KindSchema>) {
@@ -21,7 +21,7 @@ export interface IFact<KindSchema> {
     jsonPath: IPathComponent[];
     conceptualPath: IPathComponent[];
     kind: string;
-    location: LocationMetadata
+    location: ConceptualLocation;
   };
   value: KindSchema;
 }
