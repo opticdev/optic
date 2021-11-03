@@ -1,6 +1,6 @@
 import tap = require("tap");
 import { jsonFromFile } from "../../pipeline/spec-from";
-import { LocationMetadata, OpenAPITraverser } from "./openapi-traverser";
+import { OpenAPITraverser } from "./openapi-traverser";
 
 tap.test("can flatten specs", async () => {
   const traverser = new OpenAPITraverser();
@@ -53,7 +53,7 @@ tap.test("can produce valid facts from json schema", async () => {
     },
     [],
     [],
-    LocationMetadata.inResponse
+    { path: "", method: "get", inResponse: { statusCode: "200" } }
   );
 
   console.log(traverser.accumulator.allFacts());
