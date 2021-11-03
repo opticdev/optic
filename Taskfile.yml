@@ -1,3 +1,4 @@
+# https://taskfile.dev/#/installation
 version: "3"
 
 tasks:
@@ -7,10 +8,13 @@ tasks:
       - yarn install
       - yarn workspaces foreach -pv run ws:clean
       - yarn workspaces foreach -ptvA run ws:build
+  ci:setup:
+    desc: "Install dependencies"
+    cmds:
+      - yarn install
   ci:build:
     desc: "Build assuming CI environment"
     cmds:
-      - yarn install
       - yarn workspaces foreach -ptv --no-private run ws:build
   ci:test:
     desc: "Test built artifacts"
@@ -20,3 +24,7 @@ tasks:
     desc: "Publish built artifacts"
     cmds:
       - yarn workspaces foreach -v --no-private npm publish --tolerate-republish --access public
+  ci:version:
+    desc: "Bump ('decline', 'major', 'minor', 'patch', 'prerelease') or Set the version of all packages"
+    cmds:
+      - yarn workspaces foreach -v --no-private version {{.CLI_ARGS}}
