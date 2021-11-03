@@ -140,7 +140,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
     };
   }
 
-  get headers(): SnykEntityRule<OpenApiOperationFact> {
+  get headers(): SnykEntityRule<OpenApiHeaderFact> {
     const headers = this.changelog.filter(
       (i) => i.location.kind === OpenApiKind.HeaderParameter
     );
@@ -164,7 +164,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
       return (statement, handler) => {
         this.checks.push(
           ...added.map((header, index) => {
-            const addedWhere = `added header: ${header.added.name}`;
+            const addedWhere = `added header: ${header.added!.name}`;
             return runCheck(addedWhere, statement, must, () =>
               handler(header.added!, this.getContext(header.location))
             );
@@ -198,7 +198,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
 
     const requirementsHandler: (
       must: boolean
-    ) => SnykEntityRule<OpenApiOperationFact>["requirement"]["must"] = (
+    ) => SnykEntityRule<OpenApiHeaderFact>["requirement"]["must"] = (
       must: boolean
     ) => {
       return (statement, handler) => {
