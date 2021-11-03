@@ -27,7 +27,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "ws:build": "echo 'skipping'"
+    "ws:build": "echo 'skipping'",
+    "ws:clean": "rm -rf build"
   },
   "eslintConfig": {
     "extends": [

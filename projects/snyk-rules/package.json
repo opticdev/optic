@@ -6,7 +6,9 @@
   "types": "build/index.d.ts",
   "scripts": {
     "dev:test": "yarn tap --no-timeout --ts src/**/*.test.ts",
-    "build": "yarn tsc --build --verbose"
+    "build": "yarn tsc --build --verbose",
+    "ws:build": "yarn build",
+    "ws:clean": "rm -rf build"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",

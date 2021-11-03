@@ -1,0 +1,11 @@
+version: '3'
+
+tasks:
+  postpull:
+    desc: Run after pulling new code
+    cmds: 
+      - yarn install
+      - yarn workspaces foreach -pv run ws:clean
+      - yarn workspaces foreach -ptvA run ws:build
+
+  

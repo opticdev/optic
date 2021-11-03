@@ -7,7 +7,8 @@
   "scripts": {
     "dev:test": "yarn tap --no-timeout --ts src/**/*.test.ts",
     "build": "yarn tsc --build --verbose",
-    "ws:build": "yarn build"
+    "ws:build": "yarn build",
+    "ws:clean": "rm -rf build"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.1",
