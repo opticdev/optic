@@ -8,6 +8,16 @@ const { compare } = createDslFixture<SnykApiCheckDsl, SynkApiCheckContext>(
   }
 );
 
+const emptyContext: SynkApiCheckContext = {
+  changeDate: "2021-10-10",
+  changeResource: "Example",
+  changeVersion: {
+    date: "2021-10-10",
+    stability: "ga",
+  },
+  resourceVersions: {},
+};
+
 describe("operationId", () => {
   const baseForOperationIdTests = {
     openapi: "3.0.1",
@@ -28,7 +38,7 @@ describe("operationId", () => {
           spec.paths!["/example"]!.get!.operationId = "";
           return spec;
         })
-        .withRule(rules.operationId, {});
+        .withRule(rules.operationId, emptyContext);
 
       expect(result.results[0].passed).toBeFalsy();
       expect(result).toMatchSnapshot();
@@ -40,7 +50,7 @@ describe("operationId", () => {
           delete spec.paths!["/example"]!.get!.operationId;
           return spec;
         })
-        .withRule(rules.operationId, {});
+        .withRule(rules.operationId, emptyContext);
 
       expect(result.results[0].passed).toBeFalsy();
       expect(result).toMatchSnapshot();
@@ -54,7 +64,7 @@ describe("operationId", () => {
           spec.paths!["/example"]!.get!.operationId = "findHelloWorld";
           return spec;
         })
-        .withRule(rules.operationId, {});
+        .withRule(rules.operationId, emptyContext);
 
       expect(result.results[0].passed).toBeFalsy();
       expect(result).toMatchSnapshot();
@@ -66,7 +76,7 @@ describe("operationId", () => {
           spec.paths!["/example"]!.get!.operationId = "get-hello-world";
           return spec;
         })
-        .withRule(rules.operationId, {});
+        .withRule(rules.operationId, emptyContext);
 
       expect(result.results[0].passed).toBeFalsy();
       expect(result).toMatchSnapshot();
@@ -97,7 +107,7 @@ describe("operation metadata", () => {
           delete spec.paths!["/example"]!.get!.summary;
           return spec;
         })
-        .withRule(rules.summary, {});
+        .withRule(rules.summary, emptyContext);
 
       expect(result.results[0].passed).toBeFalsy();
       expect(result).toMatchSnapshot();
@@ -109,7 +119,7 @@ describe("operation metadata", () => {
           spec.paths!["/example"]!.get!.summary = "I have a summary";
           return spec;
         })
-        .withRule(rules.summary, {});
+        .withRule(rules.summary, emptyContext);
 
       expect(result.results[0].passed).toBeTruthy();
       expect(result).toMatchSnapshot();
@@ -120,7 +130,7 @@ describe("operation metadata", () => {
     it("passes if > 1 tag provided", async () => {
       const result = await compare(baseForOperationMetadataTests)
         .to((spec) => spec)
-        .withRule(rules.tags, {});
+        .withRule(rules.tags, emptyContext);
 
       expect(result.results[0].passed).toBeTruthy();
       expect(result).toMatchSnapshot();
@@ -132,7 +142,7 @@ describe("operation metadata", () => {
           delete spec.paths!["/example"]!.get!.tags;
           return spec;
         })
-        .withRule(rules.tags, {});
+        .withRule(rules.tags, emptyContext);
 
       expect(result.results[0].passed).toBeFalsy();
       expect(result).toMatchSnapshot();

@@ -17,20 +17,28 @@ export function makeCiCli<T>(
 
   const compareCommand = cli
     .command("compare")
-    .requiredOption("--from <from>", "from file or rev:file")
+    .option("--from <from>", "from file or rev:file, defaults empty spec")
     .option("--to <to>", "to file or rev:file, defaults empty spec")
-    .requiredOption("--rules <spec>", "rules service URL")
-    .action(async (options: { from: string; to?: string; rules: string }) => {
-      const { waitUntilExit } = render(
-        <Compare
-          from={parseSpecVersion(options.from, defaultEmptySpec)}
-          to={parseSpecVersion(options.to, defaultEmptySpec)}
-          rules={options.rules}
-        />,
-        { exitOnCtrlC: true }
-      );
-      await waitUntilExit();
-    });
+    .option("--context <context>", "json of context")
+    .action(
+      async (options: {
+        from: string;
+        to?: string;
+        rules: string;
+        context: T;
+      }) => {
+        const { waitUntilExit } = render(
+          <Compare
+            apiCheckService={checkService}
+            from={parseSpecVersion(options.from, defaultEmptySpec)}
+            to={parseSpecVersion(options.to, defaultEmptySpec)}
+            context={options.context}
+          />,
+          { exitOnCtrlC: true }
+        );
+        await waitUntilExit();
+      }
+    );
 
   return cli;
 }

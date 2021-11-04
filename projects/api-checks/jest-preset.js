@@ -1,3 +1,3 @@
 module.exports = {
-  "preset": "babel-jest"
+  preset: "babel-jest",
 };

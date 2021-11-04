@@ -1,3 +1,6 @@
+import { ConceptualLocation } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
+import { IChange } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
+
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;
   should: (statement: string, handler: G) => void;
@@ -5,17 +8,26 @@ export interface ShouldOrMust<G> {
 
 export interface EntityRule<G, ApiContext, DSLContext> {
   added: ShouldOrMust<
-    (added: G, context: ApiContext & DSLContext) => Promise<void> | void
+    (
+      added: G,
+      context: ApiContext & DSLContext,
+      docs: DocsLinkHelper
+    ) => Promise<void> | void
   >;
   changed: ShouldOrMust<
     (
       before: G,
       after: G,
-      context: ApiContext & DSLContext
+      context: ApiContext & DSLContext,
+      docs: DocsLinkHelper
     ) => Promise<void> | void
   >;
   requirement: ShouldOrMust<
-    (value: G, context: ApiContext & DSLContext) => Promise<void> | void
+    (
+      value: G,
+      context: ApiContext & DSLContext,
+      docs: DocsLinkHelper
+    ) => Promise<void> | void
   >;
 }
 
@@ -26,6 +38,8 @@ export interface Result {
   isShould: boolean;
   error?: string;
   passed: boolean;
+  change: IChange<any>;
+  docsLink?: string;
 }
 
 export interface Passed extends Result {
@@ -37,7 +51,23 @@ export interface Failed extends Result {
   error: string;
 }
 
+export type DocsLinkHelper = {
+  includeDocsLink: (link: string) => void;
+  getDocsLink: () => string | undefined;
+};
+
+export function newDocsLinkHelper(): DocsLinkHelper {
+  let docsLink: string | undefined = undefined;
+
+  return {
+    includeDocsLink: (link: string) => (docsLink = link),
+    getDocsLink: () => docsLink,
+  };
+}
+
 export async function runCheck(
+  change: IChange<any>,
+  docsLink: DocsLinkHelper,
   where: string,
   condition: string,
   must: boolean,
@@ -51,6 +81,8 @@ export async function runCheck(
       where,
       isMust: must,
       isShould: !must,
+      change,
+      docsLink: docsLink.getDocsLink(),
     };
   } catch (e: any) {
     return {
@@ -60,6 +92,8 @@ export async function runCheck(
       isMust: must,
       isShould: !must,
       error: e.message,
+      change,
+      docsLink: docsLink.getDocsLink(),
     };
   }
 }

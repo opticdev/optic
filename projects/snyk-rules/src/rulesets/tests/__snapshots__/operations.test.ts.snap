@@ -43,6 +43,10 @@ Object {
         },
       },
       "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/example",
+        },
         "conceptualPath": Array [
           "operations",
           "/example",
@@ -54,10 +58,6 @@ Object {
           "get",
         ],
         "kind": "operation",
-        "location": Object {
-          "method": "get",
-          "path": "/example",
-        },
       },
     },
   ],
@@ -81,7 +81,35 @@ Object {
   },
   "results": Array [
     Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+          ],
+          "jsonPath": Array [
+            "paths",
+            "/example",
+            "get",
+          ],
+          "kind": "operation",
+        },
+        "value": Object {
+          "method": "get",
+          "operationId": "getExample",
+          "pathPattern": "/example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
       "condition": "have a summary",
+      "docsLink": undefined,
       "error": "expected undefined to exist",
       "isMust": true,
       "isShould": false,
@@ -136,6 +164,10 @@ Object {
         },
       },
       "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/example",
+        },
         "conceptualPath": Array [
           "operations",
           "/example",
@@ -147,10 +179,6 @@ Object {
           "get",
         ],
         "kind": "operation",
-        "location": Object {
-          "method": "get",
-          "path": "/example",
-        },
       },
     },
   ],
@@ -175,7 +203,36 @@ Object {
   },
   "results": Array [
     Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+          ],
+          "jsonPath": Array [
+            "paths",
+            "/example",
+            "get",
+          ],
+          "kind": "operation",
+        },
+        "value": Object {
+          "method": "get",
+          "operationId": "getExample",
+          "pathPattern": "/example",
+          "summary": "I have a summary",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
       "condition": "have a summary",
+      "docsLink": undefined,
       "isMust": true,
       "isShould": false,
       "passed": true,
@@ -226,6 +283,10 @@ Object {
         },
       },
       "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/example",
+        },
         "conceptualPath": Array [
           "operations",
           "/example",
@@ -237,10 +298,6 @@ Object {
           "get",
         ],
         "kind": "operation",
-        "location": Object {
-          "method": "get",
-          "path": "/example",
-        },
       },
     },
   ],
@@ -262,7 +319,33 @@ Object {
   },
   "results": Array [
     Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+          ],
+          "jsonPath": Array [
+            "paths",
+            "/example",
+            "get",
+          ],
+          "kind": "operation",
+        },
+        "value": Object {
+          "method": "get",
+          "operationId": "getExample",
+          "pathPattern": "/example",
+          "summary": "Retrieve example",
+        },
+      },
       "condition": "have tags",
+      "docsLink": undefined,
       "error": "tags [] must be set on each operation: expected undefined to exist",
       "isMust": true,
       "isShould": false,
@@ -316,7 +399,36 @@ Object {
   },
   "results": Array [
     Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+          ],
+          "jsonPath": Array [
+            "paths",
+            "/example",
+            "get",
+          ],
+          "kind": "operation",
+        },
+        "value": Object {
+          "method": "get",
+          "operationId": "getExample",
+          "pathPattern": "/example",
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
       "condition": "have tags",
+      "docsLink": undefined,
       "isMust": true,
       "isShould": false,
       "passed": true,
@@ -356,6 +468,10 @@ Object {
         },
       },
       "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/example",
+        },
         "conceptualPath": Array [
           "operations",
           "/example",
@@ -367,10 +483,6 @@ Object {
           "get",
         ],
         "kind": "operation",
-        "location": Object {
-          "method": "get",
-          "path": "/example",
-        },
       },
     },
   ],
@@ -391,7 +503,32 @@ Object {
   },
   "results": Array [
     Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+          ],
+          "jsonPath": Array [
+            "paths",
+            "/example",
+            "get",
+          ],
+          "kind": "operation",
+        },
+        "value": Object {
+          "method": "get",
+          "operationId": "",
+          "pathPattern": "/example",
+        },
+      },
       "condition": "have the correct operationId format",
+      "docsLink": undefined,
       "error": "expected '' to be truthy",
       "isMust": true,
       "isShould": false,
@@ -435,7 +572,31 @@ Object {
   },
   "results": Array [
     Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+          ],
+          "jsonPath": Array [
+            "paths",
+            "/example",
+            "get",
+          ],
+          "kind": "operation",
+        },
+        "value": Object {
+          "method": "get",
+          "pathPattern": "/example",
+        },
+      },
       "condition": "have the correct operationId format",
+      "docsLink": undefined,
       "error": "expected undefined to be truthy",
       "isMust": true,
       "isShould": false,
@@ -476,6 +637,10 @@ Object {
         },
       },
       "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/example",
+        },
         "conceptualPath": Array [
           "operations",
           "/example",
@@ -487,10 +652,6 @@ Object {
           "get",
         ],
         "kind": "operation",
-        "location": Object {
-          "method": "get",
-          "path": "/example",
-        },
       },
     },
   ],
@@ -511,7 +672,32 @@ Object {
   },
   "results": Array [
     Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+          ],
+          "jsonPath": Array [
+            "paths",
+            "/example",
+            "get",
+          ],
+          "kind": "operation",
+        },
+        "value": Object {
+          "method": "get",
+          "operationId": "get-hello-world",
+          "pathPattern": "/example",
+        },
+      },
       "condition": "have the correct operationId format",
+      "docsLink": undefined,
       "error": "operationId \\"get-hello-world\\" must be formatted [get|create|list|update|delete]camelCaseResource: expected false to be truthy",
       "isMust": true,
       "isShould": false,
@@ -552,6 +738,10 @@ Object {
         },
       },
       "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/example",
+        },
         "conceptualPath": Array [
           "operations",
           "/example",
@@ -563,10 +753,6 @@ Object {
           "get",
         ],
         "kind": "operation",
-        "location": Object {
-          "method": "get",
-          "path": "/example",
-        },
       },
     },
   ],
@@ -587,7 +773,32 @@ Object {
   },
   "results": Array [
     Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+          ],
+          "jsonPath": Array [
+            "paths",
+            "/example",
+            "get",
+          ],
+          "kind": "operation",
+        },
+        "value": Object {
+          "method": "get",
+          "operationId": "findHelloWorld",
+          "pathPattern": "/example",
+        },
+      },
       "condition": "have the correct operationId format",
+      "docsLink": undefined,
       "error": "operationId \\"findHelloWorld\\" must be formatted [get|create|list|update|delete]camelCaseResource: expected false to be truthy",
       "isMust": true,
       "isShould": false,

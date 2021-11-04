@@ -3,7 +3,19 @@
 exports[`checks can run / fail using off-the-shelf test helpers 1`] = `
 Array [
   Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/simulated",
+        },
+        "conceptualPath": Array [],
+        "jsonPath": Array [],
+        "kind": "simulated",
+      },
+    },
     "condition": "is a thing",
+    "docsLink": "https://gitlab.com",
     "error": "it's broken!!!",
     "isMust": true,
     "isShould": false,
@@ -11,7 +23,19 @@ Array [
     "where": "location",
   },
   Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/simulated",
+        },
+        "conceptualPath": Array [],
+        "jsonPath": Array [],
+        "kind": "simulated",
+      },
+    },
     "condition": "is a an ok thing",
+    "docsLink": "https://github.com",
     "isMust": true,
     "isShould": false,
     "passed": true,

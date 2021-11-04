@@ -9,6 +9,10 @@ exports[`src/test/pairing.test.ts TAP nested requires > must match snapshot 1`] 
 Array [
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/example",
+      },
       "conceptualPath": Array [
         "operations",
         "/example",
@@ -20,10 +24,6 @@ Array [
         "get",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "get",
-        "path": "/example",
-      },
     },
     "value": Object {
       "method": "get",
@@ -32,6 +32,16 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/example",
+      },
       "conceptualPath": Array [
         "operations",
         "/example",
@@ -51,16 +61,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/json",
-          },
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/example",
-      },
     },
     "value": Object {
       "contentType": "application/json",
@@ -71,6 +71,19 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "s",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
       "conceptualPath": Array [
         "operations",
         "/example",
@@ -93,19 +106,6 @@ Array [
         "s",
       ],
       "kind": "field",
-      "location": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/json",
-          },
-          "statusCode": "200",
-        },
-        "jsonSchemaTrail": Array [
-          "s",
-        ],
-        "method": "get",
-        "path": "/example",
-      },
     },
     "value": Object {
       "flatSchema": Object {
@@ -117,6 +117,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/example",
+      },
       "conceptualPath": Array [
         "operations",
         "/example",
@@ -132,13 +139,6 @@ Array [
         "200",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/example",
-      },
     },
     "value": Object {
       "description": "d",
@@ -168,6 +168,19 @@ Array [
       },
     },
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "s",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
       "conceptualPath": Array [
         "operations",
         "/example",
@@ -190,19 +203,6 @@ Array [
         "s",
       ],
       "kind": "field",
-      "location": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/json",
-          },
-          "statusCode": "200",
-        },
-        "jsonSchemaTrail": Array [
-          "s",
-        ],
-        "method": "get",
-        "path": "/example",
-      },
     },
   },
 ]

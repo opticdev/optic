@@ -174,7 +174,7 @@ export class OpenAPITraverser
         jsonPath,
         conceptualPath,
         kind: parameter.in,
-        location,
+        conceptualLocation: location,
       },
       value,
     });
@@ -222,7 +222,7 @@ export class OpenAPITraverser
         jsonPath,
         conceptualPath,
         kind: OpenApiKind.HeaderParameter,
-        location,
+        conceptualLocation: location,
       },
       value,
     });
@@ -339,7 +339,7 @@ export class OpenAPITraverser
         jsonPath,
         conceptualPath,
         kind: OpenApiKind.Body,
-        location,
+        conceptualLocation: location,
       },
       value,
     });
@@ -365,7 +365,7 @@ export class OpenAPITraverser
         jsonPath,
         conceptualPath,
         kind: OpenApiKind.Field,
-        location,
+        conceptualLocation: location,
       },
       value,
     });
@@ -402,7 +402,7 @@ export class OpenAPITraverser
         jsonPath,
         conceptualPath,
         kind: OpenApiKind.Operation,
-        location,
+        conceptualLocation: location,
       },
       value,
     });
@@ -424,7 +424,7 @@ export class OpenAPITraverser
         jsonPath,
         conceptualPath,
         kind: OpenApiKind.Response,
-        location,
+        conceptualLocation: location,
       },
       value,
     });

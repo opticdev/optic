@@ -3682,6 +3682,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.groupby@npm:^4.6.6":
+  version: 4.6.6
+  resolution: "@types/lodash.groupby@npm:4.6.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: d1c3bf09b5da403d4c8923422d4aba1b1747d0233d1fdcdbb7f179e34a022c50e7dc0993ec7fea049a09f7913cbfd9494dea7d5ae2a5b404bbc83eb8b0a2ab30
+  languageName: node
+  linkType: hard
+
 "@types/lodash@npm:*":
   version: 4.14.176
   resolution: "@types/lodash@npm:4.14.176"
@@ -4094,15 +4103,18 @@ __metadata:
     "@types/fs-extra": ^9.0.13
     "@types/jest": ^26.0.24
     "@types/lodash.flatten": ^4.4.6
+    "@types/lodash.groupby": ^4.6.6
     "@useoptic/openapi-utilities": "workspace:*"
     babel-jest: 26.6.0
     chai: ^4.3.4
     commander: ^8.3.0
     fs-extra: ^10.0.0
     ink: ^3.2.0
+    ink-link: ^2.0.0
     ink-testing-library: ^2.1.0
     jest: ^26.6.0
     lodash.flatten: ^4.4.0
+    lodash.groupby: ^4.6.0
     prettier: ^2.4.1
     react: ^17.0.2
     react-use: ^17.3.1
@@ -9944,6 +9956,19 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"ink-link@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "ink-link@npm:2.0.0"
+  dependencies:
+    prop-types: ^15.7.2
+    terminal-link: ^2.1.1
+  peerDependencies:
+    ink: ">=3.0.0"
+    react: ">=16.8.0"
+  checksum: cde7b0c4051ecc8fc8ca978f70e17348f24faed413dc72489ee7cc3a515eced03ec51471a092bd3aca549fcc4af29d0619e0e5230553a38dd2e79df653955b80
+  languageName: node
+  linkType: hard
+
 "ink-testing-library@npm:^2.1.0":
   version: 2.1.0
   resolution: "ink-testing-library@npm:2.1.0"
@@ -11805,6 +11830,13 @@ fsevents@^1.2.7:
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
   checksum: e403047ddb03181c9d0e92df9556570e2b67e0f0a930fcbbbd779370972368f5568e914f913e93f3b08f6d492abc71e14d4e9b7a18916c31fa04bd2306efe545
+  languageName: node
+  linkType: hard
+
+"lodash.groupby@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "lodash.groupby@npm:4.6.0"
+  checksum: e2d4d13d12790a1cacab3f5f120b7c072a792224e83b2f403218866d18efde76024b2579996dfebb230a61ce06469332e16639103669a35a605287e19ced6b9b
   languageName: node
   linkType: hard
 
@@ -17155,7 +17187,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"terminal-link@npm:^2.0.0":
+"terminal-link@npm:^2.0.0, terminal-link@npm:^2.1.1":
   version: 2.1.1
   resolution: "terminal-link@npm:2.1.1"
   dependencies:

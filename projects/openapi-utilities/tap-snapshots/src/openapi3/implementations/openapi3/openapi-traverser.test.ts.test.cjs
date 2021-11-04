@@ -753,6 +753,10 @@ exports[`src/openapi3/implementations/openapi3/openapi-traverser.test.ts TAP > m
 Array [
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
       "conceptualPath": Array [
         "operations",
         "/pet/{}/uploadImage",
@@ -764,10 +768,6 @@ Array [
         "post",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "post",
-        "path": "/pet/{petId}/uploadImage",
-      },
     },
     "value": Object {
       "method": "post",
@@ -808,6 +808,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "path": "petId",
+        },
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
       "conceptualPath": Array [
         "operations",
         "/pet/{}/uploadImage",
@@ -824,13 +831,6 @@ Array [
         0,
       ],
       "kind": "path",
-      "location": Object {
-        "inRequest": Object {
-          "path": "petId",
-        },
-        "method": "post",
-        "path": "/pet/{petId}/uploadImage",
-      },
     },
     "value": Object {
       "description": "ID of pet to update",
@@ -845,22 +845,7 @@ Array [
   },
   Object {
     "location": Object {
-      "conceptualPath": Array [
-        "operations",
-        "/pet/{}/uploadImage",
-        "post",
-        "multipart/form-data",
-      ],
-      "jsonPath": Array [
-        "paths",
-        "/pet/{petId}/uploadImage",
-        "post",
-        "content",
-        "multipart/form-data",
-        "body",
-      ],
-      "kind": "body",
-      "location": Object {
+      "conceptualLocation": Object {
         "inRequest": Object {
           "body": Object {
             "contentType": "multipart/form-data",
@@ -869,6 +854,21 @@ Array [
         "method": "post",
         "path": "/pet/{petId}/uploadImage",
       },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "multipart/form-data",
+      ],
+      "jsonPath": Array [
+        "paths",
+        "/pet/{petId}/uploadImage",
+        "post",
+        "content",
+        "multipart/form-data",
+        "body",
+      ],
+      "kind": "body",
     },
     "value": Object {
       "contentType": "multipart/form-data",
@@ -877,26 +877,7 @@ Array [
   },
   Object {
     "location": Object {
-      "conceptualPath": Array [
-        "operations",
-        "/pet/{}/uploadImage",
-        "post",
-        "responses",
-        "200",
-        "application/json",
-      ],
-      "jsonPath": Array [
-        "paths",
-        "/pet/{petId}/uploadImage",
-        "post",
-        "responses",
-        "200",
-        "content",
-        "application/json",
-        "body",
-      ],
-      "kind": "body",
-      "location": Object {
+      "conceptualLocation": Object {
         "inResponse": Object {
           "body": Object {
             "contentType": "application/json",
@@ -906,6 +887,25 @@ Array [
         "method": "post",
         "path": "/pet/{petId}/uploadImage",
       },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": Array [
+        "paths",
+        "/pet/{petId}/uploadImage",
+        "post",
+        "responses",
+        "200",
+        "content",
+        "application/json",
+        "body",
+      ],
+      "kind": "body",
     },
     "value": Object {
       "contentType": "application/json",
@@ -916,6 +916,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
       "conceptualPath": Array [
         "operations",
         "/pet/{}/uploadImage",
@@ -931,13 +938,6 @@ Array [
         "200",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "method": "post",
-        "path": "/pet/{petId}/uploadImage",
-      },
     },
     "value": Object {
       "description": "successful operation",
@@ -946,6 +946,10 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/store/inventory",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/inventory",
@@ -957,10 +961,6 @@ Array [
         "get",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "get",
-        "path": "/store/inventory",
-      },
     },
     "value": Object {
       "description": "Returns a map of status codes to quantities",
@@ -980,6 +980,16 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/store/inventory",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/inventory",
@@ -999,16 +1009,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/json",
-          },
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/store/inventory",
-      },
     },
     "value": Object {
       "contentType": "application/json",
@@ -1023,6 +1023,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/store/inventory",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/inventory",
@@ -1038,13 +1045,6 @@ Array [
         "200",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/store/inventory",
-      },
     },
     "value": Object {
       "description": "successful operation",
@@ -1053,6 +1053,10 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "post",
+        "path": "/store/order",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order",
@@ -1064,10 +1068,6 @@ Array [
         "post",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "post",
-        "path": "/store/order",
-      },
     },
     "value": Object {
       "method": "post",
@@ -1093,6 +1093,15 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "method": "post",
+        "path": "/store/order",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order",
@@ -1108,15 +1117,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inRequest": Object {
-          "body": Object {
-            "contentType": "*/*",
-          },
-        },
-        "method": "post",
-        "path": "/store/order",
-      },
     },
     "value": Object {
       "contentType": "*/*",
@@ -1127,6 +1127,16 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/store/order",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order",
@@ -1146,16 +1156,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/xml",
-          },
-          "statusCode": "200",
-        },
-        "method": "post",
-        "path": "/store/order",
-      },
     },
     "value": Object {
       "contentType": "application/xml",
@@ -1166,6 +1166,16 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/store/order",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order",
@@ -1185,16 +1195,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/json",
-          },
-          "statusCode": "200",
-        },
-        "method": "post",
-        "path": "/store/order",
-      },
     },
     "value": Object {
       "contentType": "application/json",
@@ -1205,6 +1205,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/store/order",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order",
@@ -1220,13 +1227,6 @@ Array [
         "200",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "method": "post",
-        "path": "/store/order",
-      },
     },
     "value": Object {
       "description": "successful operation",
@@ -1235,6 +1235,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "post",
+        "path": "/store/order",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order",
@@ -1250,13 +1257,6 @@ Array [
         "400",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "400",
-        },
-        "method": "post",
-        "path": "/store/order",
-      },
     },
     "value": Object {
       "description": "Invalid Order",
@@ -1265,6 +1265,10 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order/{}",
@@ -1276,10 +1280,6 @@ Array [
         "get",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "get",
-        "path": "/store/order/{orderId}",
-      },
     },
     "value": Object {
       "description": "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions",
@@ -1294,6 +1294,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "path": "orderId",
+        },
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order/{}",
@@ -1310,13 +1317,6 @@ Array [
         0,
       ],
       "kind": "path",
-      "location": Object {
-        "inRequest": Object {
-          "path": "orderId",
-        },
-        "method": "get",
-        "path": "/store/order/{orderId}",
-      },
     },
     "value": Object {
       "description": "ID of pet that needs to be fetched",
@@ -1333,6 +1333,16 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order/{}",
@@ -1352,16 +1362,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/xml",
-          },
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/store/order/{orderId}",
-      },
     },
     "value": Object {
       "contentType": "application/xml",
@@ -1372,6 +1372,16 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order/{}",
@@ -1391,16 +1401,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/json",
-          },
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/store/order/{orderId}",
-      },
     },
     "value": Object {
       "contentType": "application/json",
@@ -1411,6 +1411,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order/{}",
@@ -1426,13 +1433,6 @@ Array [
         "200",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/store/order/{orderId}",
-      },
     },
     "value": Object {
       "description": "successful operation",
@@ -1441,6 +1441,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order/{}",
@@ -1456,13 +1463,6 @@ Array [
         "400",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "400",
-        },
-        "method": "get",
-        "path": "/store/order/{orderId}",
-      },
     },
     "value": Object {
       "description": "Invalid ID supplied",
@@ -1471,6 +1471,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "404",
+        },
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order/{}",
@@ -1486,13 +1493,6 @@ Array [
         "404",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "404",
-        },
-        "method": "get",
-        "path": "/store/order/{orderId}",
-      },
     },
     "value": Object {
       "description": "Order not found",
@@ -1501,6 +1501,10 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "delete",
+        "path": "/store/order/{orderId}",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order/{}",
@@ -1512,10 +1516,6 @@ Array [
         "delete",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "delete",
-        "path": "/store/order/{orderId}",
-      },
     },
     "value": Object {
       "description": "For valid response try integer IDs with positive integer value.         Negative or non-integer values will generate API errors",
@@ -1530,6 +1530,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "path": "orderId",
+        },
+        "method": "delete",
+        "path": "/store/order/{orderId}",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order/{}",
@@ -1546,13 +1553,6 @@ Array [
         0,
       ],
       "kind": "path",
-      "location": Object {
-        "inRequest": Object {
-          "path": "orderId",
-        },
-        "method": "delete",
-        "path": "/store/order/{orderId}",
-      },
     },
     "value": Object {
       "description": "ID of the order that needs to be deleted",
@@ -1568,6 +1568,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "delete",
+        "path": "/store/order/{orderId}",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order/{}",
@@ -1583,13 +1590,6 @@ Array [
         "400",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "400",
-        },
-        "method": "delete",
-        "path": "/store/order/{orderId}",
-      },
     },
     "value": Object {
       "description": "Invalid ID supplied",
@@ -1598,6 +1598,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "404",
+        },
+        "method": "delete",
+        "path": "/store/order/{orderId}",
+      },
       "conceptualPath": Array [
         "operations",
         "/store/order/{}",
@@ -1613,13 +1620,6 @@ Array [
         "404",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "404",
-        },
-        "method": "delete",
-        "path": "/store/order/{orderId}",
-      },
     },
     "value": Object {
       "description": "Order not found",
@@ -1628,6 +1628,10 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "post",
+        "path": "/user",
+      },
       "conceptualPath": Array [
         "operations",
         "/user",
@@ -1639,10 +1643,6 @@ Array [
         "post",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "post",
-        "path": "/user",
-      },
     },
     "value": Object {
       "description": "This can only be done by the logged in user.",
@@ -1669,6 +1669,15 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "method": "post",
+        "path": "/user",
+      },
       "conceptualPath": Array [
         "operations",
         "/user",
@@ -1684,15 +1693,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inRequest": Object {
-          "body": Object {
-            "contentType": "*/*",
-          },
-        },
-        "method": "post",
-        "path": "/user",
-      },
     },
     "value": Object {
       "contentType": "*/*",
@@ -1703,6 +1703,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "default",
+        },
+        "method": "post",
+        "path": "/user",
+      },
       "conceptualPath": Array [
         "operations",
         "/user",
@@ -1718,13 +1725,6 @@ Array [
         "default",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "default",
-        },
-        "method": "post",
-        "path": "/user",
-      },
     },
     "value": Object {
       "description": "successful operation",
@@ -1733,6 +1733,10 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/createWithArray",
@@ -1744,10 +1748,6 @@ Array [
         "post",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "post",
-        "path": "/user/createWithArray",
-      },
     },
     "value": Object {
       "method": "post",
@@ -1776,6 +1776,15 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/createWithArray",
@@ -1791,15 +1800,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inRequest": Object {
-          "body": Object {
-            "contentType": "*/*",
-          },
-        },
-        "method": "post",
-        "path": "/user/createWithArray",
-      },
     },
     "value": Object {
       "contentType": "*/*",
@@ -1810,6 +1810,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "default",
+        },
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/createWithArray",
@@ -1825,13 +1832,6 @@ Array [
         "default",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "default",
-        },
-        "method": "post",
-        "path": "/user/createWithArray",
-      },
     },
     "value": Object {
       "description": "successful operation",
@@ -1840,6 +1840,10 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "post",
+        "path": "/user/createWithList",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/createWithList",
@@ -1851,10 +1855,6 @@ Array [
         "post",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "post",
-        "path": "/user/createWithList",
-      },
     },
     "value": Object {
       "method": "post",
@@ -1883,6 +1883,15 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "method": "post",
+        "path": "/user/createWithList",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/createWithList",
@@ -1898,15 +1907,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inRequest": Object {
-          "body": Object {
-            "contentType": "*/*",
-          },
-        },
-        "method": "post",
-        "path": "/user/createWithList",
-      },
     },
     "value": Object {
       "contentType": "*/*",
@@ -1917,6 +1917,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "default",
+        },
+        "method": "post",
+        "path": "/user/createWithList",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/createWithList",
@@ -1932,13 +1939,6 @@ Array [
         "default",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "default",
-        },
-        "method": "post",
-        "path": "/user/createWithList",
-      },
     },
     "value": Object {
       "description": "successful operation",
@@ -1947,6 +1947,10 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/user/login",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/login",
@@ -1958,10 +1962,6 @@ Array [
         "get",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "get",
-        "path": "/user/login",
-      },
     },
     "value": Object {
       "method": "get",
@@ -1975,6 +1975,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "query": "username",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/login",
@@ -1991,13 +1998,6 @@ Array [
         0,
       ],
       "kind": "query",
-      "location": Object {
-        "inRequest": Object {
-          "query": "username",
-        },
-        "method": "get",
-        "path": "/user/login",
-      },
     },
     "value": Object {
       "description": "The user name for login",
@@ -2011,6 +2011,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "query": "password",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/login",
@@ -2027,13 +2034,6 @@ Array [
         1,
       ],
       "kind": "query",
-      "location": Object {
-        "inRequest": Object {
-          "query": "password",
-        },
-        "method": "get",
-        "path": "/user/login",
-      },
     },
     "value": Object {
       "description": "The password for login in clear text",
@@ -2047,6 +2047,14 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "header": "X-Rate-Limit",
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/login",
@@ -2066,14 +2074,6 @@ Array [
         "X-Rate-Limit",
       ],
       "kind": "header-parameter",
-      "location": Object {
-        "inResponse": Object {
-          "header": "X-Rate-Limit",
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/user/login",
-      },
     },
     "value": Object {
       "description": "calls per hour allowed by the user",
@@ -2086,6 +2086,14 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "header": "X-Expires-After",
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/login",
@@ -2105,14 +2113,6 @@ Array [
         "X-Expires-After",
       ],
       "kind": "header-parameter",
-      "location": Object {
-        "inResponse": Object {
-          "header": "X-Expires-After",
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/user/login",
-      },
     },
     "value": Object {
       "description": "date in UTC when token expires",
@@ -2125,6 +2125,16 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/login",
@@ -2144,16 +2154,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/xml",
-          },
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/user/login",
-      },
     },
     "value": Object {
       "contentType": "application/xml",
@@ -2164,6 +2164,16 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/login",
@@ -2183,16 +2193,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/json",
-          },
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/user/login",
-      },
     },
     "value": Object {
       "contentType": "application/json",
@@ -2203,6 +2203,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/login",
@@ -2218,13 +2225,6 @@ Array [
         "200",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/user/login",
-      },
     },
     "value": Object {
       "description": "successful operation",
@@ -2233,6 +2233,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/login",
@@ -2248,13 +2255,6 @@ Array [
         "400",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "400",
-        },
-        "method": "get",
-        "path": "/user/login",
-      },
     },
     "value": Object {
       "description": "Invalid username/password supplied",
@@ -2263,6 +2263,10 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/user/logout",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/logout",
@@ -2274,10 +2278,6 @@ Array [
         "get",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "get",
-        "path": "/user/logout",
-      },
     },
     "value": Object {
       "method": "get",
@@ -2291,6 +2291,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "default",
+        },
+        "method": "get",
+        "path": "/user/logout",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/logout",
@@ -2306,13 +2313,6 @@ Array [
         "default",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "default",
-        },
-        "method": "get",
-        "path": "/user/logout",
-      },
     },
     "value": Object {
       "description": "successful operation",
@@ -2321,6 +2321,10 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2332,10 +2336,6 @@ Array [
         "get",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "get",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "method": "get",
@@ -2349,6 +2349,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "path": "username",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2365,13 +2372,6 @@ Array [
         0,
       ],
       "kind": "path",
-      "location": Object {
-        "inRequest": Object {
-          "path": "username",
-        },
-        "method": "get",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "description": "The name that needs to be fetched. Use user1 for testing. ",
@@ -2385,6 +2385,16 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2404,16 +2414,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/xml",
-          },
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "contentType": "application/xml",
@@ -2424,6 +2424,16 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2443,16 +2453,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/json",
-          },
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "contentType": "application/json",
@@ -2463,6 +2463,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2478,13 +2485,6 @@ Array [
         "200",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "method": "get",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "description": "successful operation",
@@ -2493,6 +2493,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2508,13 +2515,6 @@ Array [
         "400",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "400",
-        },
-        "method": "get",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "description": "Invalid username supplied",
@@ -2523,6 +2523,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "404",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2538,13 +2545,6 @@ Array [
         "404",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "404",
-        },
-        "method": "get",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "description": "User not found",
@@ -2553,6 +2553,10 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "put",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2564,10 +2568,6 @@ Array [
         "put",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "put",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "description": "This can only be done by the logged in user.",
@@ -2594,6 +2594,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "path": "username",
+        },
+        "method": "put",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2610,13 +2617,6 @@ Array [
         0,
       ],
       "kind": "path",
-      "location": Object {
-        "inRequest": Object {
-          "path": "username",
-        },
-        "method": "put",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "description": "name that need to be updated",
@@ -2630,6 +2630,15 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "method": "put",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2645,15 +2654,6 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": Object {
-        "inRequest": Object {
-          "body": Object {
-            "contentType": "*/*",
-          },
-        },
-        "method": "put",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "contentType": "*/*",
@@ -2664,6 +2664,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "put",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2679,13 +2686,6 @@ Array [
         "400",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "400",
-        },
-        "method": "put",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "description": "Invalid user supplied",
@@ -2694,6 +2694,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "404",
+        },
+        "method": "put",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2709,13 +2716,6 @@ Array [
         "404",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "404",
-        },
-        "method": "put",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "description": "User not found",
@@ -2724,6 +2724,10 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "method": "delete",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2735,10 +2739,6 @@ Array [
         "delete",
       ],
       "kind": "operation",
-      "location": Object {
-        "method": "delete",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "description": "This can only be done by the logged in user.",
@@ -2753,6 +2753,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "path": "username",
+        },
+        "method": "delete",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2769,13 +2776,6 @@ Array [
         0,
       ],
       "kind": "path",
-      "location": Object {
-        "inRequest": Object {
-          "path": "username",
-        },
-        "method": "delete",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "description": "The name that needs to be deleted",
@@ -2789,6 +2789,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "delete",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2804,13 +2811,6 @@ Array [
         "400",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "400",
-        },
-        "method": "delete",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "description": "Invalid username supplied",
@@ -2819,6 +2819,13 @@ Array [
   },
   Object {
     "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "404",
+        },
+        "method": "delete",
+        "path": "/user/{username}",
+      },
       "conceptualPath": Array [
         "operations",
         "/user/{}",
@@ -2834,13 +2841,6 @@ Array [
         "404",
       ],
       "kind": "response",
-      "location": Object {
-        "inResponse": Object {
-          "statusCode": "404",
-        },
-        "method": "delete",
-        "path": "/user/{username}",
-      },
     },
     "value": Object {
       "description": "User not found",

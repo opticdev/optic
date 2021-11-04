@@ -8,7 +8,7 @@
     "/build"
   ],
   "scripts": {
-    "dev:test": "jest",
+    "dev:test": "jest --colors",
     "build": "yarn tsc --build --verbose",
     "ws:build": "yarn build",
     "ws:clean": "rm -rf build",
@@ -34,6 +34,8 @@
     "fs-extra": "^10.0.0"
   },
   "jest": {
-    "testPathIgnorePatterns": ["build"]
+    "testPathIgnorePatterns": [
+      "build"
+    ]
   }
 }
