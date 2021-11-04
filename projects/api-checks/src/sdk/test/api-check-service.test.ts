@@ -1,8 +1,7 @@
-import tap from "tap";
 import { ApiCheckService } from "../api-check-service";
-import { SnykApiDSL, SnykContext } from "./dsl";
+import { ExampleDsl, ExampleDslContext } from "./example-dsl";
 import { OpenAPIV3 } from "@useoptic/openapi-utilities";
-const expect = require("chai").expect;
+const { assert } = require("chai"); // Using Assert style
 
 export const defaultEmptySpec: OpenAPIV3.Document = {
   openapi: "3.0.1",
@@ -10,20 +9,20 @@ export const defaultEmptySpec: OpenAPIV3.Document = {
   info: { version: "0.0.0", title: "Empty" },
 };
 
-function completenessApiRules(dsl: SnykApiDSL) {
+function completenessApiRules(dsl: ExampleDsl) {
   dsl.operations.changed.must(
     "have consistent operationIds",
     (current, next) => {
-      expect(current.operationId).equal(next.operationId);
+      assert(current.operationId === next.operationId);
     }
   );
 }
 
-tap.test("can run dsl rules through check service", async () => {
-  const checker = new ApiCheckService<SnykContext>();
+it("can run dsl rules through check service", async (done) => {
+  const checker = new ApiCheckService<ExampleDslContext>();
 
   checker.useDsl(
-    (input) => new SnykApiDSL(input.nextFacts, input.changelog),
+    (input) => new ExampleDsl(input.nextFacts, input.changelog),
     completenessApiRules
   );
 
@@ -54,5 +53,6 @@ tap.test("can run dsl rules through check service", async () => {
     { maturity: "wip" }
   );
 
-  tap.matchSnapshot(results);
+  expect(results).toMatchSnapshot();
+  done();
 });

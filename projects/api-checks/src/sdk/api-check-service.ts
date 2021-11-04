@@ -1,17 +1,15 @@
 import { ApiCheckDsl, Result } from "./types";
-import express, { Express } from "express";
-import bodyParser from "body-parser";
 import { OpenAPIV3 } from "openapi-types";
 import flatten from "lodash.flatten";
 import {
   factsToChangelog,
   OpenAPITraverser,
 } from "@useoptic/openapi-utilities";
-import * as http from "http";
 import {
   IChange,
   IFact,
 } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
+import { makeCiCli } from "../ci-cli/make-cli";
 
 export type DslConstructorInput<Context> = {
   context: Context;
@@ -21,9 +19,6 @@ export type DslConstructorInput<Context> = {
 };
 
 export class ApiCheckService<Context> {
-  private app: Express | undefined;
-  private server: http.Server | undefined;
-
   private rules: ((
     input: DslConstructorInput<Context>
   ) => Promise<Result>[])[] = [];
@@ -71,46 +66,7 @@ export class ApiCheckService<Context> {
     return results;
   }
 
-  // service
-  async start(port: number) {
-    this.app = express();
-    this.app.use(bodyParser.json({ limit: "20mb" }));
-    this.app.post("/openapi/v3/checks", async (req, res) => {
-      const { currentJsonLike, nextJsonLike, context } =
-        req.body as ApiCheckServiceRequestBody<Context>;
-
-      const results = await this.runRules(
-        currentJsonLike,
-        nextJsonLike,
-        context
-      );
-      // const results: Result[][] = await Promise.all(
-      //   dsls.map(async (dsl) =>
-      //     dsl.run(nextTraverser.accumulator.allFacts(), changelog)
-      //   )
-      // );
-      res.json({ checkResults: results });
-    });
-
-    this.server = this.app.listen(port, () => {
-      console.log("Running api-check service on port " + port);
-    });
+  cli(name: string = "optic-ci") {
+    makeCiCli(name, this);
   }
-
-  stop() {
-    if (this.app && this.server) {
-      this.server.close(() => {
-        this.app = undefined;
-        this.server = undefined;
-        console.log("shut down api-check service");
-      });
-    }
-  }
-}
-
-export interface ApiCheckServiceRequestBody<Context> {
-  currentJsonLike: OpenAPIV3.Document;
-  nextJsonLike: OpenAPIV3.Document;
-  gitContext: {};
-  context: Context;
 }

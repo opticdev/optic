@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`checks can run / fail using off-the-shelf test helpers 1`] = `
+Array [
+  Object {
+    "condition": "is a thing",
+    "error": "it's broken!!!",
+    "isMust": true,
+    "isShould": false,
+    "passed": false,
+    "where": "location",
+  },
+  Object {
+    "condition": "is a an ok thing",
+    "isMust": true,
+    "isShould": false,
+    "passed": true,
+    "where": "location",
+  },
+]
+`;

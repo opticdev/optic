@@ -1,5 +1,9 @@
-import { ApiCheckDsl, EntityRule, Result } from "@useoptic/api-checks";
-import { runCheck } from "@useoptic/api-checks/build/types";
+import {
+  ApiCheckDsl,
+  EntityRule,
+  Result,
+  runCheck,
+} from "@useoptic/api-checks";
 import {
   IChange,
   IFact,
