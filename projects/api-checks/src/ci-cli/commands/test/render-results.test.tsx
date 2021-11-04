@@ -6,9 +6,12 @@ import { Result } from "../../../sdk/types";
 describe("list of checks", () => {
   it("renders empty list of checks", async () => {
     const { lastFrame } = render(<RenderCheckResults results={results} />);
+    const output = lastFrame()!;
+    const stringified = Buffer.from(output).toString('base64');
     // console.log(lastFrame());
     // jest complains for some reason, and the snapshots aren't consistent.
-    expect(lastFrame()).toMatchSnapshot();
+    expect(stringified).toMatchSnapshot();
+    expect(output).toMatchSnapshot();
   });
 });
 
