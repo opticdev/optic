@@ -6,9 +6,8 @@ import {
 import {
   ApiCheckService,
   DslConstructorInput,
-} from "@useoptic/api-checks/build/api-check-service";
-import { ApiCheckDsl } from "@useoptic/api-checks";
-import stringify from "json-stable-stringify";
+  ApiCheckDsl,
+} from "@useoptic/api-checks";
 
 type OpenApiInput =
   | OpenAPIV3.Document
