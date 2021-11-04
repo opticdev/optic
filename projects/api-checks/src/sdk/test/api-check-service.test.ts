@@ -1,8 +1,7 @@
-import tap from "tap";
 import { ApiCheckService } from "../api-check-service";
 import { ExampleDsl, ExampleDslContext } from "./example-dsl";
 import { OpenAPIV3 } from "@useoptic/openapi-utilities";
-const expect = require("chai").expect;
+const { assert } = require("chai"); // Using Assert style
 
 export const defaultEmptySpec: OpenAPIV3.Document = {
   openapi: "3.0.1",
@@ -14,12 +13,12 @@ function completenessApiRules(dsl: ExampleDsl) {
   dsl.operations.changed.must(
     "have consistent operationIds",
     (current, next) => {
-      expect(current.operationId).equal(next.operationId);
+      assert(current.operationId === next.operationId);
     }
   );
 }
 
-tap.test("can run dsl rules through check service", async () => {
+it("can run dsl rules through check service", async (done) => {
   const checker = new ApiCheckService<ExampleDslContext>();
 
   checker.useDsl(
@@ -54,5 +53,6 @@ tap.test("can run dsl rules through check service", async () => {
     { maturity: "wip" }
   );
 
-  tap.matchSnapshot(results);
+  expect(results).toMatchSnapshot();
+  done();
 });
