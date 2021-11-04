@@ -5,11 +5,13 @@ import {
 import {
   ApiCheckDsl,
   EntityRule,
+  newDocsLinkHelper,
   Result,
   runCheck,
   ShouldOrMust,
 } from "../types";
 import { OpenApiOperationFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
+import { OpenApiKind } from "@useoptic/openapi-utilities";
 
 export type ExampleDslContext = {
   maturity: "wip" | "beta" | "ga";
@@ -31,7 +33,7 @@ export class ExampleDsl implements ApiCheckDsl {
 
   get operations(): EntityRule<OpenApiOperationFact, {}, ExampleDslContext> {
     const operations = this.changelog.filter(
-      (i) => i.location.kind === "endpoint"
+      (i) => i.location.kind === OpenApiKind.Operation
     );
     const context = this.getContext();
     const checks = this.checks;
@@ -57,25 +59,29 @@ export class ExampleDsl implements ApiCheckDsl {
         must: async (statement, handler) => {
           checks.push(
             ...added.map((endpoint, index) => {
+              const docsLinkHelper = newDocsLinkHelper();
               return runCheck(
                 endpoint,
+                docsLinkHelper,
                 addedWhere[index],
                 statement,
                 true,
-                () => handler(endpoint.added!, context)
+                () => handler(endpoint.added!, context, docsLinkHelper)
               );
             })
           );
         },
         should: async (statement, handler) => {
+          const docsLinkHelper = newDocsLinkHelper();
           checks.push(
             ...added.map((endpoint, index) => {
               return runCheck(
                 endpoint,
+                docsLinkHelper,
                 addedWhere[index],
                 statement,
                 false,
-                () => handler(endpoint.added!, context)
+                () => handler(endpoint.added!, context, docsLinkHelper)
               );
             })
           );
@@ -86,8 +92,10 @@ export class ExampleDsl implements ApiCheckDsl {
         must: async (statement, handler) => {
           checks.push(
             ...changes.map((endpoint, index) => {
+              const docsLinkHelper = newDocsLinkHelper();
               return runCheck(
                 endpoint,
+                docsLinkHelper,
                 changedWhere[index],
                 statement,
                 true,
@@ -95,7 +103,8 @@ export class ExampleDsl implements ApiCheckDsl {
                   handler(
                     endpoint.changed!.before,
                     endpoint.changed!.after,
-                    context
+                    context,
+                    docsLinkHelper
                   )
               );
             })
@@ -104,8 +113,10 @@ export class ExampleDsl implements ApiCheckDsl {
         should: async (statement, handler) => {
           checks.push(
             ...changes.map((endpoint, index) => {
+              const docsLinkHelper = newDocsLinkHelper();
               return runCheck(
                 endpoint,
+                docsLinkHelper,
                 changedWhere[index],
                 statement,
                 false,
@@ -113,7 +124,8 @@ export class ExampleDsl implements ApiCheckDsl {
                   handler(
                     endpoint.changed!.before,
                     endpoint.changed!.after,
-                    context
+                    context,
+                    docsLinkHelper
                   )
               );
             })

@@ -1,6 +1,7 @@
 import {
   ApiCheckDsl,
   EntityRule,
+  newDocsLinkHelper,
   Result,
   runCheck,
 } from "@useoptic/api-checks";
@@ -72,8 +73,19 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
             const addedWhere = `added operation: ${endpoint.added!.method} ${
               endpoint.added!.pathPattern
             }`;
-            return runCheck(endpoint, addedWhere, statement, must, () =>
-              handler(endpoint.added!, this.getContext(endpoint.location))
+            const docsHelper = newDocsLinkHelper();
+            return runCheck(
+              endpoint,
+              docsHelper,
+              addedWhere,
+              statement,
+              must,
+              () =>
+                handler(
+                  endpoint.added!,
+                  this.getContext(endpoint.location),
+                  docsHelper
+                )
             );
           })
         );
@@ -91,12 +103,20 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
             const updatedWhere = `updated operation: ${
               endpoint.changed!.after.method
             } ${endpoint.changed!.after.pathPattern}`;
-            return runCheck(endpoint, updatedWhere, statement, must, () =>
-              handler(
-                endpoint.changed!.before,
-                endpoint.changed!.after,
-                this.getContext(endpoint.location)
-              )
+            const docsHelper = newDocsLinkHelper();
+            return runCheck(
+              endpoint,
+              docsHelper,
+              updatedWhere,
+              statement,
+              must,
+              () =>
+                handler(
+                  endpoint.changed!.before,
+                  endpoint.changed!.after,
+                  this.getContext(endpoint.location),
+                  docsHelper
+                )
             );
           })
         );
@@ -112,8 +132,13 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
         this.checks.push(
           ...requirements.map((endpoint, index) => {
             const where = `operation: ${endpoint.value.method} ${endpoint.value.pathPattern}`;
-            return runCheck(endpoint, where, statement, must, () =>
-              handler(endpoint.value, this.getContext(endpoint.location))
+            const docsHelper = newDocsLinkHelper();
+            return runCheck(endpoint, docsHelper, where, statement, must, () =>
+              handler(
+                endpoint.value,
+                this.getContext(endpoint.location),
+                docsHelper
+              )
             );
           })
         );
@@ -161,8 +186,19 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
         this.checks.push(
           ...added.map((header, index) => {
             const addedWhere = `added header: ${header.added!.name}`;
-            return runCheck(header, addedWhere, statement, must, () =>
-              handler(header.added!, this.getContext(header.location))
+            const docsHelper = newDocsLinkHelper();
+            return runCheck(
+              header,
+              docsHelper,
+              addedWhere,
+              statement,
+              must,
+              () =>
+                handler(
+                  header.added!,
+                  this.getContext(header.location),
+                  docsHelper
+                )
             );
           })
         );
@@ -180,12 +216,20 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
             const updatedWhere = `updated header: ${
               header.changed!.after.name
             }`;
-            return runCheck(header, updatedWhere, statement, must, () =>
-              handler(
-                header.changed!.before,
-                header.changed!.after,
-                this.getContext(header.location)
-              )
+            const docsHelper = newDocsLinkHelper();
+            return runCheck(
+              header,
+              docsHelper,
+              updatedWhere,
+              statement,
+              must,
+              () =>
+                handler(
+                  header.changed!.before,
+                  header.changed!.after,
+                  this.getContext(header.location),
+                  docsHelper
+                )
             );
           })
         );
@@ -201,8 +245,13 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
         this.checks.push(
           ...requirements.map((header, index) => {
             const where = `header: ${header.value.name} `;
-            return runCheck(header, where, statement, must, () =>
-              handler(header.value, this.getContext(header.location))
+            const docsHelper = newDocsLinkHelper();
+            return runCheck(header, docsHelper, where, statement, must, () =>
+              handler(
+                header.value,
+                this.getContext(header.location),
+                docsHelper
+              )
             );
           })
         );

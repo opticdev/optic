@@ -6,7 +6,7 @@ import {
   SpecFromInput,
   SpecVersionFrom,
 } from "../input-helpers/compare-input-parser";
-import { render, Text, Newline, useApp } from "ink";
+import { render, Text, Newline, useApp, Box } from "ink";
 
 import {
   parseOpenAPIFromRepoWithSourcemap,
@@ -15,11 +15,14 @@ import {
 } from "@useoptic/openapi-utilities/build/parser/openapi-sourcemap-parser";
 import { useAsync, useAsyncFn } from "react-use";
 import { AsyncState } from "react-use/lib/useAsyncFn";
+import { ApiCheckService } from "../../sdk/api-check-service";
+import { RenderCheckResults } from "./render-results";
 
-export function Compare(props: {
+export function Compare<T>(props: {
   from: SpecFromInput;
   to: SpecFromInput;
-  rules: string;
+  context: T;
+  apiCheckService: ApiCheckService<T>;
 }) {
   const loadFrom = useAsync(
     async () => await specFromInputToResults(props.from, process.cwd())
@@ -30,9 +33,13 @@ export function Compare(props: {
 
   const specsLoaded = !loadFrom.loading && !loadFrom.loading;
 
-  const [state, sendCheckRequest] = useAsyncFn(() => {
-    return Promise.resolve();
-  }, []);
+  const [results, sendCheckRequest] = useAsyncFn(async () => {
+    return await props.apiCheckService.runRules(
+      loadFrom.value!.jsonLike!,
+      loadTo.value!.jsonLike!,
+      props.context
+    );
+  }, [loadFrom, loadTo, props.context]);
 
   const { exit } = useApp();
 
@@ -46,7 +53,7 @@ export function Compare(props: {
 
   const loadStatus = (spec: string, promise: AsyncState<any>) => {
     return (
-      <Text color="black">
+      <Text color="white">
         {spec} specification:{" "}
         {promise.loading && (
           <Text color="green" bold>
@@ -85,10 +92,15 @@ export function Compare(props: {
           Stopping. Could not load two specifications to compare
         </Text>
       )}
-      {specsLoaded && (
+      {specsLoaded && results.loading && (
         <>
-          <Text>{JSON.stringify(state)}</Text>
+          <Text>running rules...</Text>
         </>
+      )}
+      {results.value && (
+        <Box marginTop={1}>
+          <RenderCheckResults results={results.value || []} />
+        </Box>
       )}
     </>
   );

@@ -1,7 +1,8 @@
 import { ApiCheckService } from "../api-check-service";
 import { ExampleDsl, ExampleDslContext } from "./example-dsl";
 import { OpenAPIV3 } from "@useoptic/openapi-utilities";
-const { assert } = require("chai"); // Using Assert style
+import { doc } from "prettier";
+const { expect } = require("chai"); // Using Assert style
 
 export const defaultEmptySpec: OpenAPIV3.Document = {
   openapi: "3.0.1",
@@ -12,8 +13,11 @@ export const defaultEmptySpec: OpenAPIV3.Document = {
 function completenessApiRules(dsl: ExampleDsl) {
   dsl.operations.changed.must(
     "have consistent operationIds",
-    (current, next) => {
-      assert(current.operationId === next.operationId);
+    (current, next, context, docs) => {
+      expect(current.operationId).to.equal(
+        next.operationId || "",
+        "operation ids must be consistent"
+      );
     }
   );
 }

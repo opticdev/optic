@@ -1,5 +1,6 @@
 import { Checker } from "../checker";
 import { IChange } from "@useoptic/openapi-utilities";
+import { newDocsLinkHelper } from "../types";
 const { assert } = require("chai"); // Using Assert style
 
 const change: IChange<any> = {
@@ -16,12 +17,30 @@ const change: IChange<any> = {
 
 it("checks can run / fail using off-the-shelf test helpers", async (done) => {
   const check = new Checker();
-  await check.runCheck(change, "location", "is a thing", true, () => {
-    assert(false, "it's broken!!!");
-  });
-  await check.runCheck(change, "location", "is a an ok thing", true, () => {
-    assert(true, "it's broken if you see this");
-  });
+  const docsHelper = newDocsLinkHelper();
+  await check.runCheck(
+    change,
+    docsHelper,
+    "location",
+    "is a thing",
+    true,
+    () => {
+      docsHelper.includeDocsLink("https://gitlab.com");
+      assert(false, "it's broken!!!");
+    }
+  );
+  const docsHelper2 = newDocsLinkHelper();
+  await check.runCheck(
+    change,
+    docsHelper2,
+    "location",
+    "is a an ok thing",
+    true,
+    () => {
+      docsHelper2.includeDocsLink("https://github.com");
+      assert(true, "it's broken if you see this");
+    }
+  );
 
   expect(check.listResults()).toMatchSnapshot();
   done();

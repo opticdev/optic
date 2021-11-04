@@ -8,17 +8,26 @@ export interface ShouldOrMust<G> {
 
 export interface EntityRule<G, ApiContext, DSLContext> {
   added: ShouldOrMust<
-    (added: G, context: ApiContext & DSLContext) => Promise<void> | void
+    (
+      added: G,
+      context: ApiContext & DSLContext,
+      docs: DocsLinkHelper
+    ) => Promise<void> | void
   >;
   changed: ShouldOrMust<
     (
       before: G,
       after: G,
-      context: ApiContext & DSLContext
+      context: ApiContext & DSLContext,
+      docs: DocsLinkHelper
     ) => Promise<void> | void
   >;
   requirement: ShouldOrMust<
-    (value: G, context: ApiContext & DSLContext) => Promise<void> | void
+    (
+      value: G,
+      context: ApiContext & DSLContext,
+      docs: DocsLinkHelper
+    ) => Promise<void> | void
   >;
 }
 
@@ -30,6 +39,7 @@ export interface Result {
   error?: string;
   passed: boolean;
   change: IChange<any>;
+  docsLink?: string;
 }
 
 export interface Passed extends Result {
@@ -41,8 +51,23 @@ export interface Failed extends Result {
   error: string;
 }
 
+export type DocsLinkHelper = {
+  includeDocsLink: (link: string) => void;
+  getDocsLink: () => string | undefined;
+};
+
+export function newDocsLinkHelper(): DocsLinkHelper {
+  let docsLink: string | undefined = undefined;
+
+  return {
+    includeDocsLink: (link: string) => (docsLink = link),
+    getDocsLink: () => docsLink,
+  };
+}
+
 export async function runCheck(
   change: IChange<any>,
+  docsLink: DocsLinkHelper,
   where: string,
   condition: string,
   must: boolean,
@@ -57,6 +82,7 @@ export async function runCheck(
       isMust: must,
       isShould: !must,
       change,
+      docsLink: docsLink.getDocsLink(),
     };
   } catch (e: any) {
     return {
@@ -67,6 +93,7 @@ export async function runCheck(
       isShould: !must,
       error: e.message,
       change,
+      docsLink: docsLink.getDocsLink(),
     };
   }
 }
