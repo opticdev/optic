@@ -17,9 +17,9 @@ export function makeCiCli<T>(
 
   const compareCommand = cli
     .command("compare")
-    .requiredOption("--from <from>", "from file or rev:file")
+    .option("--from <from>", "from file or rev:file, defaults empty spec")
     .option("--to <to>", "to file or rev:file, defaults empty spec")
-    .option("--context <to>", "json of context")
+    .option("--context <context>", "json of context")
     .action(
       async (options: {
         from: string;
