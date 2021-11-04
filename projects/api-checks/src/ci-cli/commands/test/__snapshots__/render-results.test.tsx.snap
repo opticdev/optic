@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`list of checks renders empty list of checks 1`] = `
+"[1m[41m FAIL [49m[22m [37m[1mGET[22m /example[39m
+       [31mx [39moperation must have tags
+         [31mtags [] must be set on each operation: expected undefined to exist[39m
+         [4m[34mRead more in our API guide[39m[24m (​https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#tags​)
+       [31mx [39moperation must have an operation id
+         [31moperation id is missing[39m
+         [4m[34mRead more in our API guide[39m[24m (​https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#operation-ids​)
+[1m[42m PASS [49m[22m [37m[1mPATCH[22m /example/{}[39m
+       [32m✔ [39moperation must have an operation id
+         [4m[34mRead more in our API guide[39m[24m (​https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#operation-ids​)"
+`;
