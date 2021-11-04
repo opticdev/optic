@@ -17,7 +17,43 @@ import {
   ConceptualLocation,
 } from "@useoptic/openapi-utilities";
 
-export interface SynkApiCheckContext {}
+type SnykStablity = "wip" | "experimental" | "beta" | "ga";
+type DateString = string; // YYYY-mm-dd
+type ResourceName = string;
+
+export interface SynkApiCheckContext {
+  // Vervet provides context about the change itself. Since
+  // Optic is analyzing two OpenAPI spec files, we need to tell it
+  // when the change is supposed to happen, and the resource/version info
+  // determined by the file's location in a directory structure.
+  changeDate: DateString; // when the change did (or would, if proposed) occur
+  changeResource: ResourceName; // the spec resource being changed
+  changeVersion: {
+    // the spec version being changed
+    date: DateString;
+    stability: SnykStablity;
+  };
+
+  // Vervet provides a mapping that indicates the resource version deprecation.
+  // It has this information because it processes the entire source tree of
+  // spec files.
+  resourceVersions: {
+    [ResourceName: string]: {
+      // changeResource used to match this
+      [DateString: string]: {
+        // changeVersion.date used to match this
+        [SnykStablity: string]: {
+          // changeVersion.stability matches this
+          deprecatedBy: {
+            // the spec version that deprecates this one (if any) or null
+            date: DateString;
+            stability: SnykStablity; // could be higher stability than changed!
+          } | null;
+        };
+      };
+    };
+  };
+}
 
 export interface SnykEntityRule<T>
   extends EntityRule<T, ConceptualLocation, SynkApiCheckContext> {}
