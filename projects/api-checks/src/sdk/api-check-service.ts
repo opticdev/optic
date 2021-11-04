@@ -9,7 +9,6 @@ import {
   IChange,
   IFact,
 } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
-import { makeCiCli } from "../ci-cli/make-cli";
 
 export type DslConstructorInput<Context> = {
   context: Context;
@@ -64,9 +63,5 @@ export class ApiCheckService<Context> {
     const results: Result[] = await Promise.all(checkPromises);
 
     return results;
-  }
-
-  cli(name: string = "optic-ci") {
-    makeCiCli(name, this);
   }
 }

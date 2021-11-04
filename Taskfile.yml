@@ -6,8 +6,8 @@ tasks:
     desc: Run after pulling new code
     cmds:
       - yarn install
-      - yarn workspaces foreach -pv run ws:clean
-      - yarn workspaces foreach -ptvA run ws:build
+      - yarn workspaces foreach -pv --no-private run ws:clean
+      - yarn workspaces foreach -ptv --no-private run ws:build
   ci:setup:
     desc: "Install dependencies"
     cmds:

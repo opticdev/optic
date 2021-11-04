@@ -14,7 +14,6 @@ import {
   parseOpenAPIWithSourcemap,
 } from "@useoptic/openapi-utilities/build/parser/openapi-sourcemap-parser";
 import { useAsync, useAsyncFn } from "react-use";
-import { FunctionReturningPromise } from "react-use/lib/misc/types";
 import { AsyncState } from "react-use/lib/useAsyncFn";
 
 export function Compare(props: {
