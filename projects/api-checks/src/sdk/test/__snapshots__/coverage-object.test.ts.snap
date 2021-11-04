@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`object tracking its coverage can return json paths 1`] = `
+Array [
+  Array [
+    "0",
+  ],
+  Array [
+    "0",
+    "lat",
+  ],
+  Array [
+    "0",
+    "stats",
+  ],
+  Array [
+    "0",
+    "stats",
+    "population",
+  ],
+]
+`;
