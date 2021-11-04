@@ -4185,6 +4185,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@useoptic/example-snyk-api-checks@workspace:projects/snyk-rules":
+  version: 0.0.0-use.local
+  resolution: "@useoptic/example-snyk-api-checks@workspace:projects/snyk-rules"
+  dependencies:
+    "@types/fs-extra": ^9.0.13
+    "@types/tap": ^15.0.5
+    "@useoptic/api-checks": "workspace:*"
+    "@useoptic/openapi-utilities": "workspace:*"
+    chai: ^4.3.4
+    fs-extra: ^10.0.0
+    prettier: ^2.4.1
+    tap: ^15.0.10
+    typescript: ^4.4.4
+  languageName: unknown
+  linkType: soft
+
 "@useoptic/openapi-utilities@workspace:*, @useoptic/openapi-utilities@workspace:projects/openapi-utilities":
   version: 0.0.0-use.local
   resolution: "@useoptic/openapi-utilities@workspace:projects/openapi-utilities"
@@ -16328,7 +16344,6 @@ resolve@^2.0.0-next.3:
   checksum: a197f242a8f48b11036563065b2487e9b7068f50a20dd81d9161eca6af422174fc158b8beeadbe59ce5ef172aa5718143312b3aebaae551c124b7824387c8312
   languageName: node
   linkType: hard
-
 "snyk-api-checks@workspace:projects/snyk-rules":
   version: 0.0.0-use.local
   resolution: "snyk-api-checks@workspace:projects/snyk-rules"
@@ -16348,7 +16363,6 @@ resolve@^2.0.0-next.3:
     typescript: ^4.4.4
   languageName: unknown
   linkType: soft
-
 "sockjs-client@npm:^1.5.0":
   version: 1.5.2
   resolution: "sockjs-client@npm:1.5.2"

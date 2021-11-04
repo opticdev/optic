@@ -4,12 +4,16 @@
   "version": "0.1.0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "files": [
+    "/build"
+  ],
   "scripts": {
     "cli": "ts-node src/index.tsx",
     "build": "yarn tsc --build --verbose",
     "ws:build": "yarn build",
     "ws:clean": "rm -rf build",
-    "dev:test": "yarn tap --no-timeout --ts src/**/*.test.*"
+    "ws:test": "yarn dev:test",
+    "dev:test": "yarn tap --no-check-coverage --no-timeout --ts src/**/*.test.*"
   },
   "devDependencies": {
     "@types/copyfiles": "^2",

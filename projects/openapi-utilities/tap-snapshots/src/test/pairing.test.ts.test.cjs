@@ -20,7 +20,10 @@ Array [
         "get",
       ],
       "kind": "operation",
-      "location": "inRequest",
+      "location": Object {
+        "method": "get",
+        "path": "/example",
+      },
     },
     "value": Object {
       "method": "get",
@@ -48,7 +51,16 @@ Array [
         "body",
       ],
       "kind": "body",
-      "location": "inResponse",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/example",
+      },
     },
     "value": Object {
       "contentType": "application/json",
@@ -81,7 +93,19 @@ Array [
         "s",
       ],
       "kind": "field",
-      "location": "inResponse",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "s",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
     },
     "value": Object {
       "flatSchema": Object {
@@ -108,7 +132,13 @@ Array [
         "200",
       ],
       "kind": "response",
-      "location": "inResponse",
+      "location": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/example",
+      },
     },
     "value": Object {
       "description": "d",
@@ -160,7 +190,19 @@ Array [
         "s",
       ],
       "kind": "field",
-      "location": "inResponse",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "s",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
     },
   },
 ]

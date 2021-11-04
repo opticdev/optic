@@ -1,6 +1,10 @@
 {
   "name": "developer-ui",
+  "private": true,
   "version": "0.1.0",
+  "files": [
+    "/build"
+  ],
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -28,7 +32,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "ws:build": "echo 'skipping'",
-    "ws:clean": "rm -rf build"
+    "ws:clean": "echo 'skipping'",
+    "ws:test": "echo 'skipping'"
   },
   "eslintConfig": {
     "extends": [

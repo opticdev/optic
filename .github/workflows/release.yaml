@@ -1,0 +1,32 @@
+name: Release NPM packages
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'enter a version that is one semver step newer than the current one, or one of ["decline", "major", "minor", "patch", "prerelease"] to bump'
+        required: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install Task
+        run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
+      - name: Setup
+        run: task ci:setup
+      - name: Bump version
+        run: task ci:version -- "${{ github.event.inputs.version }}"
+      - name: Build
+        run: task ci:build
+      - name: Test
+        run: task ci:test
+        continue-on-error: true
+      - name: Set NPM publishing credentials for Yarn
+        run: yarn config set 'npmScopes.useoptic.npmAuthToken' "${{ secrets.PUBLISH_NPM_OPTIC_BOT }}"
+      - name: Publish
+        run: task ci:publish

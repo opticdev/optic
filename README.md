@@ -18,6 +18,7 @@ Please read the docs for [`yarn workspaces foreach`](https://yarnpkg.com/cli/wor
 We are using the following plugins which you can see in the [`.yarnrc.yml`](.yarnrc.yml)
 - `yarn plugin import workspace-tools` (enables helpers like `yarn workspaces foreach -ptvA run build`) https://yarnpkg.com/cli/workspaces/foreach
 - `yarn plugin import typescript` (automatically adds `@types/$x` when you use `yarn workspace $workspacePackage add $x`) https://yarnpkg.com/api/modules/plugin_typescript.html
+- `yarn plugin import version` (lets you bump the version of workspace projects) https://yarnpkg.com/cli/version/ (if you run into issues, `rm .yarn/versions/*` and try again)
 
 
 ## Developer Workflow
