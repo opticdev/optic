@@ -13,7 +13,7 @@ import {
   IFact,
 } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
 
-type DslConstructorInput<Context> = {
+export type DslConstructorInput<Context> = {
   context: Context;
   nextFacts: IFact<any>[];
   currentFacts: IFact<any>[];
