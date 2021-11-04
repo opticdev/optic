@@ -54,7 +54,10 @@ Object {
           "get",
         ],
         "kind": "operation",
-        "location": "inRequest",
+        "location": Object {
+          "method": "get",
+          "path": "/example",
+        },
       },
     },
   ],
@@ -80,6 +83,187 @@ Object {
     Object {
       "condition": "have a summary",
       "error": "expected undefined to exist",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "operation: get /example",
+    },
+  ],
+}
+`;
+
+exports[`operation metadata summary passes if provided 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "changed": Object {
+        "after": Object {
+          "method": "get",
+          "operationId": "getExample",
+          "pathPattern": "/example",
+          "summary": "I have a summary",
+          "tags": Array [
+            "Example",
+          ],
+        },
+        "before": Object {
+          "method": "get",
+          "operationId": "getExample",
+          "pathPattern": "/example",
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+      "location": Object {
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+        ],
+        "kind": "operation",
+        "location": Object {
+          "method": "get",
+          "path": "/example",
+        },
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "responses": Object {},
+          "summary": "I have a summary",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "condition": "have a summary",
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "operation: get /example",
+    },
+  ],
+}
+`;
+
+exports[`operation metadata tags fail is not provided 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "changed": Object {
+        "after": Object {
+          "method": "get",
+          "operationId": "getExample",
+          "pathPattern": "/example",
+          "summary": "Retrieve example",
+        },
+        "before": Object {
+          "method": "get",
+          "operationId": "getExample",
+          "pathPattern": "/example",
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+      "location": Object {
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+        ],
+        "kind": "operation",
+        "location": Object {
+          "method": "get",
+          "path": "/example",
+        },
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "responses": Object {},
+          "summary": "Retrieve example",
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "condition": "have tags",
+      "error": "tags [] must be set on each operation: expected undefined to exist",
       "isMust": true,
       "isShould": false,
       "passed": false,
@@ -183,7 +367,10 @@ Object {
           "get",
         ],
         "kind": "operation",
-        "location": "inRequest",
+        "location": Object {
+          "method": "get",
+          "path": "/example",
+        },
       },
     },
   ],
@@ -300,7 +487,10 @@ Object {
           "get",
         ],
         "kind": "operation",
-        "location": "inRequest",
+        "location": Object {
+          "method": "get",
+          "path": "/example",
+        },
       },
     },
   ],
@@ -373,7 +563,10 @@ Object {
           "get",
         ],
         "kind": "operation",
-        "location": "inRequest",
+        "location": Object {
+          "method": "get",
+          "path": "/example",
+        },
       },
     },
   ],
