@@ -8,7 +8,7 @@
     "/build"
   ],
   "scripts": {
-    "dev:test": "jest"
+    "dev:test": "jest",
     "build": "yarn tsc --build --verbose",
     "ws:build": "yarn build",
     "ws:clean": "rm -rf build",
