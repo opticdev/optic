@@ -29,8 +29,8 @@ export function makeCiCli<T>(
         />,
         { exitOnCtrlC: true }
       );
-      await waitUntilExit;
+      await waitUntilExit();
     });
 
-  cli.parse(process.argv);
+  return cli;
 }
