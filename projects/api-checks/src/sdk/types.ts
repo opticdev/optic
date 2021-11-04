@@ -1,3 +1,6 @@
+import { ConceptualLocation } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
+import { IChange } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
+
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;
   should: (statement: string, handler: G) => void;
@@ -26,6 +29,7 @@ export interface Result {
   isShould: boolean;
   error?: string;
   passed: boolean;
+  change: IChange<any>;
 }
 
 export interface Passed extends Result {
@@ -38,6 +42,7 @@ export interface Failed extends Result {
 }
 
 export async function runCheck(
+  change: IChange<any>,
   where: string,
   condition: string,
   must: boolean,
@@ -51,6 +56,7 @@ export async function runCheck(
       where,
       isMust: must,
       isShould: !must,
+      change,
     };
   } catch (e: any) {
     return {
@@ -60,6 +66,7 @@ export async function runCheck(
       isMust: must,
       isShould: !must,
       error: e.message,
+      change,
     };
   }
 }

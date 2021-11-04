@@ -34,6 +34,8 @@
     "fs-extra": "^10.0.0"
   },
   "jest": {
-    "testPathIgnorePatterns": ["build"]
+    "testPathIgnorePatterns": [
+      "build"
+    ]
   }
 }

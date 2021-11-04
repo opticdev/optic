@@ -57,8 +57,12 @@ export class ExampleDsl implements ApiCheckDsl {
         must: async (statement, handler) => {
           checks.push(
             ...added.map((endpoint, index) => {
-              return runCheck(addedWhere[index], statement, true, () =>
-                handler(endpoint.added!, context)
+              return runCheck(
+                endpoint,
+                addedWhere[index],
+                statement,
+                true,
+                () => handler(endpoint.added!, context)
               );
             })
           );
@@ -66,8 +70,12 @@ export class ExampleDsl implements ApiCheckDsl {
         should: async (statement, handler) => {
           checks.push(
             ...added.map((endpoint, index) => {
-              return runCheck(addedWhere[index], statement, false, () =>
-                handler(endpoint.added!, context)
+              return runCheck(
+                endpoint,
+                addedWhere[index],
+                statement,
+                false,
+                () => handler(endpoint.added!, context)
               );
             })
           );
@@ -78,12 +86,17 @@ export class ExampleDsl implements ApiCheckDsl {
         must: async (statement, handler) => {
           checks.push(
             ...changes.map((endpoint, index) => {
-              return runCheck(changedWhere[index], statement, true, () =>
-                handler(
-                  endpoint.changed!.before,
-                  endpoint.changed!.after,
-                  context
-                )
+              return runCheck(
+                endpoint,
+                changedWhere[index],
+                statement,
+                true,
+                () =>
+                  handler(
+                    endpoint.changed!.before,
+                    endpoint.changed!.after,
+                    context
+                  )
               );
             })
           );
@@ -91,12 +104,17 @@ export class ExampleDsl implements ApiCheckDsl {
         should: async (statement, handler) => {
           checks.push(
             ...changes.map((endpoint, index) => {
-              return runCheck(changedWhere[index], statement, false, () =>
-                handler(
-                  endpoint.changed!.before,
-                  endpoint.changed!.after,
-                  context
-                )
+              return runCheck(
+                endpoint,
+                changedWhere[index],
+                statement,
+                false,
+                () =>
+                  handler(
+                    endpoint.changed!.before,
+                    endpoint.changed!.after,
+                    context
+                  )
               );
             })
           );

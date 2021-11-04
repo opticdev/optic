@@ -17,12 +17,7 @@ export interface Traverse<DocSchema, FactSchema> {
 }
 
 export interface IFact<KindSchema> {
-  location: {
-    jsonPath: IPathComponent[];
-    conceptualPath: IPathComponent[];
-    kind: string;
-    location: ConceptualLocation;
-  };
+  location: ILocation;
   value: KindSchema;
 }
 
@@ -38,6 +33,7 @@ enum IChangeType {
 export interface ILocation {
   jsonPath: IPathComponent[];
   conceptualPath: IPathComponent[];
+  conceptualLocation: ConceptualLocation;
   kind: string;
 }
 
