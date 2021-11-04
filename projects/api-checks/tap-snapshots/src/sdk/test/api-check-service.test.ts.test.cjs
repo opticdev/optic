@@ -5,6 +5,6 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`src/test/api-check-service.test.ts TAP > must match snapshot 1`] = `
+exports[`src/sdk/test/api-check-service.test.ts TAP > must match snapshot 1`] = `
 Array []
 `

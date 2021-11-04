@@ -11,11 +11,11 @@ import {
 } from "../types";
 import { OpenApiOperationFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
 
-export type SnykContext = {
+export type ExampleDslContext = {
   maturity: "wip" | "beta" | "ga";
 };
 
-export class SnykApiDSL implements ApiCheckDsl {
+export class ExampleDsl implements ApiCheckDsl {
   private checks: Promise<Result>[] = [];
 
   constructor(
@@ -23,13 +23,13 @@ export class SnykApiDSL implements ApiCheckDsl {
     private changelog: IChange<any>[]
   ) {}
 
-  getContext(): SnykContext {
+  getContext(): ExampleDslContext {
     return {
       maturity: "wip",
     };
   }
 
-  get operations(): EntityRule<OpenApiOperationFact, {}, SnykContext> {
+  get operations(): EntityRule<OpenApiOperationFact, {}, ExampleDslContext> {
     const operations = this.changelog.filter(
       (i) => i.location.kind === "endpoint"
     );

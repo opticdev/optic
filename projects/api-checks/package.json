@@ -8,16 +8,15 @@
     "/build"
   ],
   "scripts": {
-    "dev:test": "yarn tap --no-check-coverage --no-timeout --ts src/**/*.test.ts",
     "build": "yarn tsc --build --verbose",
     "ws:build": "yarn build",
     "ws:clean": "rm -rf build",
-    "ws:test": "yarn dev:test"
+    "ws:test": "yarn dev:test",
+    "dev:test": "yarn tap --no-check-coverage --no-timeout --ts src/**/*.test.*"
   },
   "devDependencies": {
-    "@types/body-parser": "^1.19.1",
     "@types/chai": "^4.2.22",
-    "@types/express": "^4.17.13",
+    "@types/copyfiles": "^2",
     "@types/fs-extra": "^9.0.13",
     "@types/lodash.flatten": "^4.4.6",
     "@types/tap": "^15.0.5",
@@ -29,9 +28,12 @@
   },
   "dependencies": {
     "@useoptic/openapi-utilities": "workspace:*",
-    "body-parser": "^1.19.0",
-    "express": "^4.17.1",
+    "commander": "^8.3.0",
     "fs-extra": "^10.0.0",
-    "lodash.flatten": "^4.4.0"
+    "ink": "^3.2.0",
+    "ink-testing-library": "^2.1.0",
+    "lodash.flatten": "^4.4.0",
+    "react": "^17.0.2",
+    "react-use": "^17.3.1"
   }
 }

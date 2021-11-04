@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`src/test/checkers.test.ts TAP > must match snapshot 1`] = `
+exports[`src/sdk/test/checkers.test.ts TAP > must match snapshot 1`] = `
 Array [
   Object {
     "condition": "is a thing",

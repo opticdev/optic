@@ -9,7 +9,6 @@
         "projects/openapi-utilities",
         "projects/developer-ui",
         "projects/api-checks",
-        "projects/ci-cli",
         "projects/snyk-rules"
     ]
 }
