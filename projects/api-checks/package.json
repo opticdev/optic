@@ -12,7 +12,7 @@
     "ws:build": "yarn build",
     "ws:clean": "rm -rf build",
     "ws:test": "yarn dev:test",
-    "dev:test": "jest"
+    "dev:test": "jest --colors"
   },
   "devDependencies": {
     "@types/chai": "^4.2.22",
