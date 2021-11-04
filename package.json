@@ -1,10 +1,5 @@
 {
     "private": true,
-    "scripts": {
-        "ws:clean": "",
-        "ws:build": "",
-        "ws:test": ""
-    },
     "workspaces": [
         "projects/openapi-utilities",
         "projects/developer-ui",
