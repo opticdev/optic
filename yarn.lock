@@ -3691,6 +3691,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.sortby@npm:^4.7.6":
+  version: 4.7.6
+  resolution: "@types/lodash.sortby@npm:4.7.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: d7ec1aad2de3cf839c2572f331859e229b6aae25da198bf8452c544aae4c8756e1aa5af293e878e6ff4d7504a336b0ccf208cab7ff0ef6fd6fc236a101370b09
+  languageName: node
+  linkType: hard
+
 "@types/lodash@npm:*":
   version: 4.14.176
   resolution: "@types/lodash@npm:4.14.176"
@@ -4145,6 +4154,7 @@ __metadata:
     "@types/copyfiles": ^2
     "@types/fs-extra": ^9.0.13
     "@types/jest": ^26.0.24
+    "@types/lodash.sortby": ^4.7.6
     "@types/micro": ^7.3.6
     "@types/micro-cors": ^0
     "@types/node-fetch": 2.5.12
@@ -4155,6 +4165,7 @@ __metadata:
     fs-extra: ^10.0.0
     jest: ^26.6.0
     json-ptr: ^2.2.0
+    lodash.sortby: ^4.7.0
     micro: ^9.3.4
     micro-cors: ^0.1.1
     node-fetch: 2.6.5
@@ -11533,6 +11544,13 @@ fsevents@^1.2.7:
   version: 4.6.2
   resolution: "lodash.merge@npm:4.6.2"
   checksum: ad580b4bdbb7ca1f7abf7e1bce63a9a0b98e370cf40194b03380a46b4ed799c9573029599caebc1b14e3f24b111aef72b96674a56cfa105e0f5ac70546cdc005
+  languageName: node
+  linkType: hard
+
+"lodash.sortby@npm:^4.7.0":
+  version: 4.7.0
+  resolution: "lodash.sortby@npm:4.7.0"
+  checksum: db170c9396d29d11fe9a9f25668c4993e0c1331bcb941ddbd48fb76f492e732add7f2a47cfdf8e9d740fa59ac41bbfaf931d268bc72aab3ab49e9f89354d718c
   languageName: node
   linkType: hard
 
