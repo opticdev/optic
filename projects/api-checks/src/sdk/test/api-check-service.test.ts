@@ -1,7 +1,6 @@
 import { ApiCheckService } from "../api-check-service";
 import { ExampleDsl, ExampleDslContext } from "./example-dsl";
 import { OpenAPIV3 } from "@useoptic/openapi-utilities";
-import { doc } from "prettier";
 export const defaultEmptySpec: OpenAPIV3.Document = {
   openapi: "3.0.1",
   paths: {},

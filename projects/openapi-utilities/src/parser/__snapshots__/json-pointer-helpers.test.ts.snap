@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`json schema pointer assumptions can be trusted to escape symbols common in OpenAPI 1`] = `"/1/~1example~1{todo}/200"`;
+
+exports[`json schema pointer assumptions compiling an empty array returns an empty path 1`] = `""`;
+
+exports[`json schema pointer assumptions decoding an empty string returns an empty path 1`] = `Array []`;
+
+exports[`json schema pointer helpers appends are escaped 1`] = `"/paths/~1example~1{todoId}/get"`;
+
+exports[`json schema pointer helpers can cleanup stoplights mess 1`] = `"#/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json/schema/properties"`;

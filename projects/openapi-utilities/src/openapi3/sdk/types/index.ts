@@ -31,7 +31,7 @@ enum IChangeType {
 }
 
 export interface ILocation {
-  jsonPath: IPathComponent[];
+  jsonPath: string;
   conceptualPath: IPathComponent[];
   conceptualLocation: ConceptualLocation;
   kind: string;

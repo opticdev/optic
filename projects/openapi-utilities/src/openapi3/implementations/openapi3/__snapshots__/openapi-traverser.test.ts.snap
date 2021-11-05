@@ -13,11 +13,7 @@ Array [
         "/pet/{}/uploadImage",
         "post",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/pet/{petId}/uploadImage",
-        "post",
-      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post",
       "kind": "operation",
     },
     "value": Object {
@@ -74,13 +70,7 @@ Array [
         "path",
         "petId",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/pet/{petId}/uploadImage",
-        "post",
-        "parameters",
-        0,
-      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/parameters/0",
       "kind": "path",
     },
     "value": Object {
@@ -111,14 +101,7 @@ Array [
         "post",
         "multipart/form-data",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/pet/{petId}/uploadImage",
-        "post",
-        "content",
-        "multipart/form-data",
-        "body",
-      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/content/multipart~1form-data/body",
       "kind": "body",
     },
     "value": Object {
@@ -146,16 +129,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/pet/{petId}/uploadImage",
-        "post",
-        "responses",
-        "200",
-        "content",
-        "application/json",
-        "body",
-      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json/body",
       "kind": "body",
     },
     "value": Object {
@@ -181,13 +155,7 @@ Array [
         "responses",
         "200",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/pet/{petId}/uploadImage",
-        "post",
-        "responses",
-        "200",
-      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200",
       "kind": "response",
     },
     "value": Object {
@@ -206,11 +174,7 @@ Array [
         "/store/inventory",
         "get",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/inventory",
-        "get",
-      ],
+      "jsonPath": "/paths/~1store~1inventory/get",
       "kind": "operation",
     },
     "value": Object {
@@ -249,16 +213,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/inventory",
-        "get",
-        "responses",
-        "200",
-        "content",
-        "application/json",
-        "body",
-      ],
+      "jsonPath": "/paths/~1store~1inventory/get/responses/200/content/application~1json/body",
       "kind": "body",
     },
     "value": Object {
@@ -288,13 +243,7 @@ Array [
         "responses",
         "200",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/inventory",
-        "get",
-        "responses",
-        "200",
-      ],
+      "jsonPath": "/paths/~1store~1inventory/get/responses/200",
       "kind": "response",
     },
     "value": Object {
@@ -313,11 +262,7 @@ Array [
         "/store/order",
         "post",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order",
-        "post",
-      ],
+      "jsonPath": "/paths/~1store~1order/post",
       "kind": "operation",
     },
     "value": Object {
@@ -359,14 +304,7 @@ Array [
         "post",
         "*/*",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order",
-        "post",
-        "content",
-        "*/*",
-        "body",
-      ],
+      "jsonPath": "/paths/~1store~1order/post/content/*~1*/body",
       "kind": "body",
     },
     "value": Object {
@@ -396,16 +334,7 @@ Array [
         "200",
         "application/xml",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order",
-        "post",
-        "responses",
-        "200",
-        "content",
-        "application/xml",
-        "body",
-      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/body",
       "kind": "body",
     },
     "value": Object {
@@ -435,16 +364,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order",
-        "post",
-        "responses",
-        "200",
-        "content",
-        "application/json",
-        "body",
-      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/body",
       "kind": "body",
     },
     "value": Object {
@@ -470,13 +390,7 @@ Array [
         "responses",
         "200",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order",
-        "post",
-        "responses",
-        "200",
-      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200",
       "kind": "response",
     },
     "value": Object {
@@ -500,13 +414,7 @@ Array [
         "responses",
         "400",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order",
-        "post",
-        "responses",
-        "400",
-      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/400",
       "kind": "response",
     },
     "value": Object {
@@ -525,11 +433,7 @@ Array [
         "/store/order/{}",
         "get",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order/{orderId}",
-        "get",
-      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get",
       "kind": "operation",
     },
     "value": Object {
@@ -560,13 +464,7 @@ Array [
         "path",
         "orderId",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order/{orderId}",
-        "get",
-        "parameters",
-        0,
-      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/parameters/0",
       "kind": "path",
     },
     "value": Object {
@@ -602,16 +500,7 @@ Array [
         "200",
         "application/xml",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order/{orderId}",
-        "get",
-        "responses",
-        "200",
-        "content",
-        "application/xml",
-        "body",
-      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/body",
       "kind": "body",
     },
     "value": Object {
@@ -641,16 +530,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order/{orderId}",
-        "get",
-        "responses",
-        "200",
-        "content",
-        "application/json",
-        "body",
-      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/body",
       "kind": "body",
     },
     "value": Object {
@@ -676,13 +556,7 @@ Array [
         "responses",
         "200",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order/{orderId}",
-        "get",
-        "responses",
-        "200",
-      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200",
       "kind": "response",
     },
     "value": Object {
@@ -706,13 +580,7 @@ Array [
         "responses",
         "400",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order/{orderId}",
-        "get",
-        "responses",
-        "400",
-      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/400",
       "kind": "response",
     },
     "value": Object {
@@ -736,13 +604,7 @@ Array [
         "responses",
         "404",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order/{orderId}",
-        "get",
-        "responses",
-        "404",
-      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404",
       "kind": "response",
     },
     "value": Object {
@@ -761,11 +623,7 @@ Array [
         "/store/order/{}",
         "delete",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order/{orderId}",
-        "delete",
-      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/delete",
       "kind": "operation",
     },
     "value": Object {
@@ -796,13 +654,7 @@ Array [
         "path",
         "orderId",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order/{orderId}",
-        "delete",
-        "parameters",
-        0,
-      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/delete/parameters/0",
       "kind": "path",
     },
     "value": Object {
@@ -833,13 +685,7 @@ Array [
         "responses",
         "400",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order/{orderId}",
-        "delete",
-        "responses",
-        "400",
-      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/delete/responses/400",
       "kind": "response",
     },
     "value": Object {
@@ -863,13 +709,7 @@ Array [
         "responses",
         "404",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/store/order/{orderId}",
-        "delete",
-        "responses",
-        "404",
-      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/delete/responses/404",
       "kind": "response",
     },
     "value": Object {
@@ -888,11 +728,7 @@ Array [
         "/user",
         "post",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user",
-        "post",
-      ],
+      "jsonPath": "/paths/~1user/post",
       "kind": "operation",
     },
     "value": Object {
@@ -935,14 +771,7 @@ Array [
         "post",
         "*/*",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user",
-        "post",
-        "content",
-        "*/*",
-        "body",
-      ],
+      "jsonPath": "/paths/~1user/post/content/*~1*/body",
       "kind": "body",
     },
     "value": Object {
@@ -968,13 +797,7 @@ Array [
         "responses",
         "default",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user",
-        "post",
-        "responses",
-        "default",
-      ],
+      "jsonPath": "/paths/~1user/post/responses/default",
       "kind": "response",
     },
     "value": Object {
@@ -993,11 +816,7 @@ Array [
         "/user/createWithArray",
         "post",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/createWithArray",
-        "post",
-      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post",
       "kind": "operation",
     },
     "value": Object {
@@ -1042,14 +861,7 @@ Array [
         "post",
         "*/*",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/createWithArray",
-        "post",
-        "content",
-        "*/*",
-        "body",
-      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/content/*~1*/body",
       "kind": "body",
     },
     "value": Object {
@@ -1075,13 +887,7 @@ Array [
         "responses",
         "default",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/createWithArray",
-        "post",
-        "responses",
-        "default",
-      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/responses/default",
       "kind": "response",
     },
     "value": Object {
@@ -1100,11 +906,7 @@ Array [
         "/user/createWithList",
         "post",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/createWithList",
-        "post",
-      ],
+      "jsonPath": "/paths/~1user~1createWithList/post",
       "kind": "operation",
     },
     "value": Object {
@@ -1149,14 +951,7 @@ Array [
         "post",
         "*/*",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/createWithList",
-        "post",
-        "content",
-        "*/*",
-        "body",
-      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/content/*~1*/body",
       "kind": "body",
     },
     "value": Object {
@@ -1182,13 +977,7 @@ Array [
         "responses",
         "default",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/createWithList",
-        "post",
-        "responses",
-        "default",
-      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/responses/default",
       "kind": "response",
     },
     "value": Object {
@@ -1207,11 +996,7 @@ Array [
         "/user/login",
         "get",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/login",
-        "get",
-      ],
+      "jsonPath": "/paths/~1user~1login/get",
       "kind": "operation",
     },
     "value": Object {
@@ -1241,13 +1026,7 @@ Array [
         "query",
         "username",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/login",
-        "get",
-        "parameters",
-        0,
-      ],
+      "jsonPath": "/paths/~1user~1login/get/parameters/0",
       "kind": "query",
     },
     "value": Object {
@@ -1277,13 +1056,7 @@ Array [
         "query",
         "password",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/login",
-        "get",
-        "parameters",
-        1,
-      ],
+      "jsonPath": "/paths/~1user~1login/get/parameters/1",
       "kind": "query",
     },
     "value": Object {
@@ -1315,16 +1088,8 @@ Array [
         "headers",
         "X-Rate-Limit",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/login",
-        "get",
-        "responses",
-        "200",
-        "headers",
-        "X-Rate-Limit",
-      ],
-      "kind": "header-parameter",
+      "jsonPath": "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit",
+      "kind": "response-header",
     },
     "value": Object {
       "description": "calls per hour allowed by the user",
@@ -1354,16 +1119,8 @@ Array [
         "headers",
         "X-Expires-After",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/login",
-        "get",
-        "responses",
-        "200",
-        "headers",
-        "X-Expires-After",
-      ],
-      "kind": "header-parameter",
+      "jsonPath": "/paths/~1user~1login/get/responses/200/headers/X-Expires-After",
+      "kind": "response-header",
     },
     "value": Object {
       "description": "date in UTC when token expires",
@@ -1394,16 +1151,7 @@ Array [
         "200",
         "application/xml",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/login",
-        "get",
-        "responses",
-        "200",
-        "content",
-        "application/xml",
-        "body",
-      ],
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml/body",
       "kind": "body",
     },
     "value": Object {
@@ -1433,16 +1181,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/login",
-        "get",
-        "responses",
-        "200",
-        "content",
-        "application/json",
-        "body",
-      ],
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1json/body",
       "kind": "body",
     },
     "value": Object {
@@ -1468,13 +1207,7 @@ Array [
         "responses",
         "200",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/login",
-        "get",
-        "responses",
-        "200",
-      ],
+      "jsonPath": "/paths/~1user~1login/get/responses/200",
       "kind": "response",
     },
     "value": Object {
@@ -1498,13 +1231,7 @@ Array [
         "responses",
         "400",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/login",
-        "get",
-        "responses",
-        "400",
-      ],
+      "jsonPath": "/paths/~1user~1login/get/responses/400",
       "kind": "response",
     },
     "value": Object {
@@ -1523,11 +1250,7 @@ Array [
         "/user/logout",
         "get",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/logout",
-        "get",
-      ],
+      "jsonPath": "/paths/~1user~1logout/get",
       "kind": "operation",
     },
     "value": Object {
@@ -1556,13 +1279,7 @@ Array [
         "responses",
         "default",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/logout",
-        "get",
-        "responses",
-        "default",
-      ],
+      "jsonPath": "/paths/~1user~1logout/get/responses/default",
       "kind": "response",
     },
     "value": Object {
@@ -1581,11 +1298,7 @@ Array [
         "/user/{}",
         "get",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "get",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/get",
       "kind": "operation",
     },
     "value": Object {
@@ -1615,13 +1328,7 @@ Array [
         "path",
         "username",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "get",
-        "parameters",
-        0,
-      ],
+      "jsonPath": "/paths/~1user~1{username}/get/parameters/0",
       "kind": "path",
     },
     "value": Object {
@@ -1654,16 +1361,7 @@ Array [
         "200",
         "application/xml",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "get",
-        "responses",
-        "200",
-        "content",
-        "application/xml",
-        "body",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/body",
       "kind": "body",
     },
     "value": Object {
@@ -1693,16 +1391,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "get",
-        "responses",
-        "200",
-        "content",
-        "application/json",
-        "body",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/body",
       "kind": "body",
     },
     "value": Object {
@@ -1728,13 +1417,7 @@ Array [
         "responses",
         "200",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "get",
-        "responses",
-        "200",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200",
       "kind": "response",
     },
     "value": Object {
@@ -1758,13 +1441,7 @@ Array [
         "responses",
         "400",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "get",
-        "responses",
-        "400",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/400",
       "kind": "response",
     },
     "value": Object {
@@ -1788,13 +1465,7 @@ Array [
         "responses",
         "404",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "get",
-        "responses",
-        "404",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/404",
       "kind": "response",
     },
     "value": Object {
@@ -1813,11 +1484,7 @@ Array [
         "/user/{}",
         "put",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "put",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/put",
       "kind": "operation",
     },
     "value": Object {
@@ -1860,13 +1527,7 @@ Array [
         "path",
         "username",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "put",
-        "parameters",
-        0,
-      ],
+      "jsonPath": "/paths/~1user~1{username}/put/parameters/0",
       "kind": "path",
     },
     "value": Object {
@@ -1896,14 +1557,7 @@ Array [
         "put",
         "*/*",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "put",
-        "content",
-        "*/*",
-        "body",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/put/content/*~1*/body",
       "kind": "body",
     },
     "value": Object {
@@ -1929,13 +1583,7 @@ Array [
         "responses",
         "400",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "put",
-        "responses",
-        "400",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/put/responses/400",
       "kind": "response",
     },
     "value": Object {
@@ -1959,13 +1607,7 @@ Array [
         "responses",
         "404",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "put",
-        "responses",
-        "404",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/put/responses/404",
       "kind": "response",
     },
     "value": Object {
@@ -1984,11 +1626,7 @@ Array [
         "/user/{}",
         "delete",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "delete",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/delete",
       "kind": "operation",
     },
     "value": Object {
@@ -2019,13 +1657,7 @@ Array [
         "path",
         "username",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "delete",
-        "parameters",
-        0,
-      ],
+      "jsonPath": "/paths/~1user~1{username}/delete/parameters/0",
       "kind": "path",
     },
     "value": Object {
@@ -2054,13 +1686,7 @@ Array [
         "responses",
         "400",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "delete",
-        "responses",
-        "400",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/delete/responses/400",
       "kind": "response",
     },
     "value": Object {
@@ -2084,13 +1710,7 @@ Array [
         "responses",
         "404",
       ],
-      "jsonPath": Array [
-        "paths",
-        "/user/{username}",
-        "delete",
-        "responses",
-        "404",
-      ],
+      "jsonPath": "/paths/~1user~1{username}/delete/responses/404",
       "kind": "response",
     },
     "value": Object {
@@ -2862,10 +2482,7 @@ Array [
       "conceptualPath": Array [
         "id",
       ],
-      "jsonPath": Array [
-        "properties",
-        "id",
-      ],
+      "jsonPath": "/properties/id",
       "kind": "field",
     },
     "value": Object {
@@ -2892,10 +2509,7 @@ Array [
       "conceptualPath": Array [
         "petId",
       ],
-      "jsonPath": Array [
-        "properties",
-        "petId",
-      ],
+      "jsonPath": "/properties/petId",
       "kind": "field",
     },
     "value": Object {
@@ -2922,10 +2536,7 @@ Array [
       "conceptualPath": Array [
         "quantity",
       ],
-      "jsonPath": Array [
-        "properties",
-        "quantity",
-      ],
+      "jsonPath": "/properties/quantity",
       "kind": "field",
     },
     "value": Object {
@@ -2952,10 +2563,7 @@ Array [
       "conceptualPath": Array [
         "shipDate",
       ],
-      "jsonPath": Array [
-        "properties",
-        "shipDate",
-      ],
+      "jsonPath": "/properties/shipDate",
       "kind": "field",
     },
     "value": Object {
@@ -2982,10 +2590,7 @@ Array [
       "conceptualPath": Array [
         "status",
       ],
-      "jsonPath": Array [
-        "properties",
-        "status",
-      ],
+      "jsonPath": "/properties/status",
       "kind": "field",
     },
     "value": Object {
@@ -3017,10 +2622,7 @@ Array [
       "conceptualPath": Array [
         "complete",
       ],
-      "jsonPath": Array [
-        "properties",
-        "complete",
-      ],
+      "jsonPath": "/properties/complete",
       "kind": "field",
     },
     "value": Object {

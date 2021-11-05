@@ -52,11 +52,7 @@ Object {
           "/example",
           "get",
         ],
-        "jsonPath": Array [
-          "paths",
-          "/example",
-          "get",
-        ],
+        "jsonPath": "/paths/~1example/get",
         "kind": "operation",
       },
     },
@@ -92,11 +88,7 @@ Object {
             "/example",
             "get",
           ],
-          "jsonPath": Array [
-            "paths",
-            "/example",
-            "get",
-          ],
+          "jsonPath": "/paths/~1example/get",
           "kind": "operation",
         },
         "value": Object {
@@ -173,11 +165,7 @@ Object {
           "/example",
           "get",
         ],
-        "jsonPath": Array [
-          "paths",
-          "/example",
-          "get",
-        ],
+        "jsonPath": "/paths/~1example/get",
         "kind": "operation",
       },
     },
@@ -214,11 +202,7 @@ Object {
             "/example",
             "get",
           ],
-          "jsonPath": Array [
-            "paths",
-            "/example",
-            "get",
-          ],
+          "jsonPath": "/paths/~1example/get",
           "kind": "operation",
         },
         "value": Object {
@@ -292,11 +276,7 @@ Object {
           "/example",
           "get",
         ],
-        "jsonPath": Array [
-          "paths",
-          "/example",
-          "get",
-        ],
+        "jsonPath": "/paths/~1example/get",
         "kind": "operation",
       },
     },
@@ -330,11 +310,7 @@ Object {
             "/example",
             "get",
           ],
-          "jsonPath": Array [
-            "paths",
-            "/example",
-            "get",
-          ],
+          "jsonPath": "/paths/~1example/get",
           "kind": "operation",
         },
         "value": Object {
@@ -410,11 +386,7 @@ Object {
             "/example",
             "get",
           ],
-          "jsonPath": Array [
-            "paths",
-            "/example",
-            "get",
-          ],
+          "jsonPath": "/paths/~1example/get",
           "kind": "operation",
         },
         "value": Object {
@@ -477,11 +449,7 @@ Object {
           "/example",
           "get",
         ],
-        "jsonPath": Array [
-          "paths",
-          "/example",
-          "get",
-        ],
+        "jsonPath": "/paths/~1example/get",
         "kind": "operation",
       },
     },
@@ -514,11 +482,7 @@ Object {
             "/example",
             "get",
           ],
-          "jsonPath": Array [
-            "paths",
-            "/example",
-            "get",
-          ],
+          "jsonPath": "/paths/~1example/get",
           "kind": "operation",
         },
         "value": Object {
@@ -583,11 +547,7 @@ Object {
             "/example",
             "get",
           ],
-          "jsonPath": Array [
-            "paths",
-            "/example",
-            "get",
-          ],
+          "jsonPath": "/paths/~1example/get",
           "kind": "operation",
         },
         "value": Object {
@@ -646,11 +606,7 @@ Object {
           "/example",
           "get",
         ],
-        "jsonPath": Array [
-          "paths",
-          "/example",
-          "get",
-        ],
+        "jsonPath": "/paths/~1example/get",
         "kind": "operation",
       },
     },
@@ -683,11 +639,7 @@ Object {
             "/example",
             "get",
           ],
-          "jsonPath": Array [
-            "paths",
-            "/example",
-            "get",
-          ],
+          "jsonPath": "/paths/~1example/get",
           "kind": "operation",
         },
         "value": Object {
@@ -747,11 +699,7 @@ Object {
           "/example",
           "get",
         ],
-        "jsonPath": Array [
-          "paths",
-          "/example",
-          "get",
-        ],
+        "jsonPath": "/paths/~1example/get",
         "kind": "operation",
       },
     },
@@ -784,11 +732,7 @@ Object {
             "/example",
             "get",
           ],
-          "jsonPath": Array [
-            "paths",
-            "/example",
-            "get",
-          ],
+          "jsonPath": "/paths/~1example/get",
           "kind": "operation",
         },
         "value": Object {

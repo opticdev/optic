@@ -3652,6 +3652,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/json-pointer@npm:^1.0.31":
+  version: 1.0.31
+  resolution: "@types/json-pointer@npm:1.0.31"
+  checksum: 1d24390dbd54a738968439de01a25b4cc646b0b3a43a318dae882b193321c7975ca465350f9e0cad0bf2222e0a0927c9652db625d2be50f09e35577477d5cd07
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:*, @types/json-schema@npm:^7.0.3, @types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.6, @types/json-schema@npm:^7.0.7, @types/json-schema@npm:^7.0.8":
   version: 7.0.9
   resolution: "@types/json-schema@npm:7.0.9"
@@ -4154,6 +4161,7 @@ __metadata:
     "@types/copyfiles": ^2
     "@types/fs-extra": ^9.0.13
     "@types/jest": ^26.0.24
+    "@types/json-pointer": ^1.0.31
     "@types/lodash.sortby": ^4.7.6
     "@types/micro": ^7.3.6
     "@types/micro-cors": ^0
@@ -4164,6 +4172,7 @@ __metadata:
     fast-deep-equal: ^3.1.3
     fs-extra: ^10.0.0
     jest: ^26.6.0
+    json-pointer: ^0.6.1
     json-ptr: ^2.2.0
     lodash.sortby: ^4.7.0
     micro: ^9.3.4
@@ -8659,6 +8668,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"foreach@npm:^2.0.4":
+  version: 2.0.5
+  resolution: "foreach@npm:2.0.5"
+  checksum: dab4fbfef0b40b69ee5eab81bcb9626b8fa8b3469c8cfa26480f3e5e1ee08c40eae07048c9a967c65aeda26e774511ccc70b3f10a604c01753c6ef24361f0fc8
+  languageName: node
+  linkType: hard
+
 "forever-agent@npm:~0.6.1":
   version: 0.6.1
   resolution: "forever-agent@npm:0.6.1"
@@ -11124,6 +11140,15 @@ fsevents@^1.2.7:
   version: 2.3.1
   resolution: "json-parse-even-better-errors@npm:2.3.1"
   checksum: 798ed4cf3354a2d9ccd78e86d2169515a0097a5c133337807cdf7f1fc32e1391d207ccfc276518cc1d7d8d4db93288b8a50ba4293d212ad1336e52a8ec0a941f
+  languageName: node
+  linkType: hard
+
+"json-pointer@npm:^0.6.1":
+  version: 0.6.1
+  resolution: "json-pointer@npm:0.6.1"
+  dependencies:
+    foreach: ^2.0.4
+  checksum: 882b4b24b515fd866f8c228ed1381c129a40bdbfec578b73882be86a52bbcac15aaa87579c548167d4d8d9e3fc60e35aefead473df95c463553bede2b957f79c
   languageName: node
   linkType: hard
 

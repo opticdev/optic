@@ -10,6 +10,8 @@ import * as pointer from "json-ptr";
 import path from "path";
 import fetch from "node-fetch";
 import { OpenAPIV3 } from "openapi-types";
+import jsonPointer from "json-pointer";
+import jsonPointerHelpers from "./json-pointer-helpers";
 
 export type ParseOpenAPIResult = {
   jsonLike: OpenAPIV3.Document;
@@ -152,7 +154,9 @@ export class JsonSchemaSourcemap {
     // this seems to assume that paths will be in order, why not check for equality?
     const thisFile = this.files.find((i) => path.startsWith(i.path));
     if (thisFile) {
-      const jsonPointer = path.split(thisFile.path)[1].substring(1) || "/";
+      const jsonPointer = jsonPointerHelpers.unescapeUriSafePointer(
+        path.split(thisFile.path)[1].substring(1) || "/"
+      );
       const sourceMapping = resolveJsonPointerInYamlAst(
         thisFile.ast,
         jsonPointer,
@@ -167,10 +171,10 @@ export class JsonSchemaSourcemap {
 
 export function resolveJsonPointerInYamlAst(
   node: YAMLNode,
-  jsonPointer: string,
+  pointer: string,
   file: number
 ): DerefToSource | undefined {
-  const decoded = pointer.decodePointer(jsonPointer);
+  const decoded = jsonPointer.parse(pointer);
 
   const isEmpty =
     decoded.length === 0 || (decoded.length === 1 && decoded[0] === "");

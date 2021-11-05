@@ -2,7 +2,6 @@ import { jsonFromFile } from "../../pipeline/spec-from";
 import { OpenAPITraverser } from "./openapi-traverser";
 
 it("can flatten specs", async () => {
-  const traverser = new OpenAPITraverser();
   const spec = await jsonFromFile("./inputs/openapi3/petstore0.json")();
   expect(spec).toMatchSnapshot();
 });
@@ -50,7 +49,7 @@ it("can produce valid facts from json schema", async () => {
         name: "Order",
       },
     },
-    [],
+    "",
     [],
     { path: "", method: "get", inResponse: { statusCode: "200" } }
   );

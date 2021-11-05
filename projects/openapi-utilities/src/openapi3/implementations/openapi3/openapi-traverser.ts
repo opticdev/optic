@@ -1,6 +1,7 @@
 import { FactAccumulator, Traverse } from "../../sdk/types";
 import { IPathComponent } from "../../sdk/types";
 import { OpenAPIV3 } from "openapi-types";
+import jsonPointer from "../../../parser/json-pointer-helpers";
 
 export function normalizeOpenApiPath(path: string): string {
   return path
@@ -56,7 +57,7 @@ export class OpenAPITraverser
     pathPattern: string,
     location: ConceptualLocation
   ): void {
-    const jsonPath = ["paths", pathPattern, method];
+    const jsonPath = jsonPointer.append("", "paths", pathPattern, method);
     const normalizedPath = normalizeOpenApiPath(pathPattern);
     const conceptualPath = ["operations", normalizedPath, method];
     this.onOperation(
@@ -70,7 +71,7 @@ export class OpenAPITraverser
 
     this.traverseParameters(
       operation,
-      [...jsonPath, "parameters"],
+      jsonPointer.append(jsonPath, "parameters"),
       [...conceptualPath, "parameters"],
       location
     );
@@ -82,7 +83,7 @@ export class OpenAPITraverser
           this.traverseBody(
             body,
             contentType,
-            [...jsonPath, "content", contentType, "body"],
+            jsonPointer.append(jsonPath, "content", contentType, "body"),
             [...conceptualPath, contentType],
             { ...location, inRequest: { body: { contentType } } }
           );
@@ -94,7 +95,7 @@ export class OpenAPITraverser
       this.traverseResponse(
         response as OpenAPIV3.ResponseObject,
         statusCode,
-        [...jsonPath, "responses", statusCode],
+        jsonPointer.append(jsonPath, "responses", statusCode),
         [...conceptualPath, "responses", statusCode],
         { ...location, inResponse: { statusCode } }
       );
@@ -104,7 +105,7 @@ export class OpenAPITraverser
   traverseResponse(
     response: OpenAPIV3.ResponseObject,
     statusCode: string,
-    jsonPath: IPathComponent[],
+    jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ConceptualLocation
   ): void {
@@ -114,7 +115,7 @@ export class OpenAPITraverser
       this.traverseBody(
         body,
         contentType,
-        [...jsonPath, "content", contentType, "body"],
+        jsonPointer.append(jsonPath, "content", contentType, "body"),
         [...conceptualPath, contentType],
         {
           ...location,
@@ -131,7 +132,7 @@ export class OpenAPITraverser
 
   traverseParameters(
     operation: OpenAPIV3.OperationObject,
-    jsonPath: IPathComponent[],
+    jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ConceptualLocation
   ) {
@@ -152,7 +153,7 @@ export class OpenAPITraverser
 
         this.onRequestParameter(
           parameter,
-          [...jsonPath, i],
+          jsonPointer.append(jsonPath, i.toString()),
           [...conceptualPath, parameter.in, parameter.name],
           locationForParameter
         );
@@ -161,7 +162,7 @@ export class OpenAPITraverser
   }
   onRequestParameter(
     parameter: OpenAPIV3.ParameterObject,
-    jsonPath: IPathComponent[],
+    jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ConceptualLocation
   ) {
@@ -182,7 +183,7 @@ export class OpenAPITraverser
 
   traverseResponseHeaders(
     response: OpenAPIV3.ResponseObject,
-    jsonPath: IPathComponent[],
+    jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ConceptualLocation
   ) {
@@ -192,7 +193,7 @@ export class OpenAPITraverser
         this.onResponseHeader(
           name,
           header,
-          [...jsonPath, "headers", name],
+          jsonPointer.append(jsonPath, "headers", name),
           [...conceptualPath, "headers", name],
           {
             ...location,
@@ -209,7 +210,7 @@ export class OpenAPITraverser
   onResponseHeader(
     name: string,
     header: OpenAPIV3.HeaderObject,
-    jsonPath: IPathComponent[],
+    jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ConceptualLocation
   ) {
@@ -233,7 +234,7 @@ export class OpenAPITraverser
   traverseBody(
     body: OpenAPIV3.MediaTypeObject,
     contentType: string,
-    jsonPath: IPathComponent[],
+    jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ConceptualLocation
   ) {
@@ -259,7 +260,7 @@ export class OpenAPITraverser
     key: string,
     schema: OpenAPIV3.SchemaObject,
     required: boolean,
-    jsonPath: IPathComponent[],
+    jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ConceptualLocation
   ) {
@@ -269,7 +270,7 @@ export class OpenAPITraverser
 
   traverseSchema(
     schema: OpenAPIV3.SchemaObject,
-    jsonPath: IPathComponent[],
+    jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ConceptualLocation
   ) {
@@ -284,7 +285,7 @@ export class OpenAPITraverser
             key,
             fieldSchema as OpenAPIV3.SchemaObject,
             (schema.required || []).includes(key),
-            [...jsonPath, "properties", key],
+            jsonPointer.append(jsonPath, "properties", key),
             [...conceptualPath, key],
             {
               ...location,
@@ -297,7 +298,7 @@ export class OpenAPITraverser
         // this.onArray()
         this.traverseSchema(
           schema.items as OpenAPIV3.SchemaObject,
-          [...jsonPath, "items"],
+          jsonPointer.append(jsonPath, "items"),
           [...conceptualPath, "items"],
           {
             ...location,
@@ -324,7 +325,7 @@ export class OpenAPITraverser
   onContentForBody(
     body: OpenAPIV3.MediaTypeObject,
     contentType: string,
-    jsonPath: IPathComponent[],
+    jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ConceptualLocation
   ) {
@@ -349,7 +350,7 @@ export class OpenAPITraverser
     key: string,
     schema: OpenAPIV3.SchemaObject,
     required: boolean,
-    jsonPath: IPathComponent[],
+    jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ConceptualLocation
   ) {
@@ -384,7 +385,7 @@ export class OpenAPITraverser
     operation: OpenAPIV3.OperationObject,
     pathPattern: string,
     method: string,
-    jsonPath: IPathComponent[],
+    jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ConceptualLocation
   ) {
@@ -410,7 +411,7 @@ export class OpenAPITraverser
   onResponse(
     response: OpenAPIV3.ResponseObject,
     statusCode: string,
-    jsonPath: IPathComponent[],
+    jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ConceptualLocation
   ) {
