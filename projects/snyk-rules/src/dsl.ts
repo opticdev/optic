@@ -18,7 +18,6 @@ import {
   newDocsLinkHelper,
   runCheck,
 } from "@useoptic/api-checks/src/sdk/types";
-import { BaseSchemaObject } from "openapi-types";
 
 type SnykStablity = "wip" | "experimental" | "beta" | "ga";
 type DateString = string; // YYYY-mm-dd
@@ -58,14 +57,10 @@ export interface SynkApiCheckContext {
   };
 }
 
-export interface SnykEntityRule<T>
-  extends EntityRule<T, ConceptualLocation, SynkApiCheckContext> {}
+export interface SnykEntityRule<T, A>
+  extends EntityRule<T, ConceptualLocation, SynkApiCheckContext, A> {}
 
-export interface ISnykApiCheckDsl extends ApiCheckDsl {
-  operations: SnykEntityRule<OpenApiOperationFact>;
-}
-
-export class SnykApiCheckDsl implements ISnykApiCheckDsl {
+export class SnykApiCheckDsl implements ApiCheckDsl {
   private checks: Promise<Result>[] = [];
 
   constructor(
@@ -149,7 +144,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
   get responses() {
     const dsl = this;
     return {
-      get headers(): SnykEntityRule<OpenApiHeaderFact> {
+      get headers(): SnykEntityRule<OpenApiHeaderFact, OpenAPIV3.HeaderObject> {
         return genericEntityRuleImpl<
           OpenApiHeaderFact,
           ConceptualLocation,
@@ -168,7 +163,10 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
     };
   }
 
-  get bodyProperties(): SnykEntityRule<OpenApiFieldFact> {
+  get bodyProperties(): SnykEntityRule<
+    OpenApiFieldFact,
+    OpenAPIV3.SchemaObject
+  > {
     const dsl = this;
     return genericEntityRuleImpl<
       OpenApiFieldFact,
