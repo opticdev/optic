@@ -1,6 +1,7 @@
 import { SnykApiCheckDsl } from "../dsl";
 const chai = require("chai");
 const { expect } = chai;
+// todo: fix copy/paste
 // @ts-ignore
 chai.use(function (_chai, _) {
   // @ts-ignore
