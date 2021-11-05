@@ -17,4 +17,9 @@ export const rules = {
       expect(camelCaseRe.test(key)).to.be.ok;
     });
   },
+  propertyExample: ({ bodyProperties }: SnykApiCheckDsl) => {
+    bodyProperties.requirement.must("be camel case", ({ flatSchema }) => {
+      expect(flatSchema.example).to.exist;
+    });
+  },
 };

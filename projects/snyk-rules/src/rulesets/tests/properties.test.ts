@@ -20,7 +20,7 @@ const emptyContext: SynkApiCheckContext = {
   resourceVersions: {},
 };
 
-describe("property names", () => {
+describe("property", () => {
   const baseOpenAPI = {
     openapi: "3.0.1",
     paths: {
@@ -33,65 +33,111 @@ describe("property names", () => {
     info: { version: "0.0.0", title: "Empty" },
   };
 
-  it("passes when camel case", async () => {
-    const result = await compare(baseOpenAPI)
-      .to((spec) => {
-        // spec.components = {
-        //   schemas: {
-        //     Example: {
-        //       type: "object",
-        //       properties: {
-        //         isCamelCase: { type: "string" },
-        //       },
-        //     },
-        //   },
-        // };
-        spec.paths!["/example"]!.get!.responses = {
-          "200": {
-            description: "",
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  properties: {
-                    isCamelCase: { type: "string" },
+  describe("key", () => {
+    it("passes when camel case", async () => {
+      const result = await compare(baseOpenAPI)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.responses = {
+            "200": {
+              description: "",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      isCamelCase: { type: "string" },
+                    },
                   },
                 },
               },
             },
-          },
-        };
-        return spec;
-      })
-      .withRule(rules.propertyKey, emptyContext);
+          };
+          return spec;
+        })
+        .withRule(rules.propertyKey, emptyContext);
 
-    expect(result.results[0].passed).toBeTruthy();
-    expect(result).toMatchSnapshot();
+      expect(result.results[0].passed).toBeTruthy();
+      expect(result).toMatchSnapshot();
+    });
+
+    it("fails when not camel case", async () => {
+      const result = await compare(baseOpenAPI)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.responses = {
+            "200": {
+              description: "",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      "not-camel-case": { type: "string" },
+                    },
+                  },
+                },
+              },
+            },
+          };
+          return spec;
+        })
+        .withRule(rules.propertyKey, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
   });
 
-  it("fails when not camel case", async () => {
-    const result = await compare(baseOpenAPI)
-      .to((spec) => {
-        spec.paths!["/example"]!.get!.responses = {
-          "200": {
-            description: "",
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  properties: {
-                    "not-camel-case": { type: "string" },
+  describe("example", () => {
+    it("passes if exists", async () => {
+      const result = await compare(baseOpenAPI)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.responses = {
+            "200": {
+              description: "",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string", example: "Jane Doe" },
+                    },
                   },
                 },
               },
             },
-          },
-        };
-        return spec;
-      })
-      .withRule(rules.propertyKey, emptyContext);
+          };
+          return spec;
+        })
+        .withRule(rules.propertyExample, emptyContext);
 
-    expect(result.results[0].passed).toBeFalsy();
-    expect(result).toMatchSnapshot();
+      expect(result.results[0].passed).toBeTruthy();
+      expect(result).toMatchSnapshot();
+    });
+
+    it("fails if doesn't exist", async () => {
+      const result = await compare(baseOpenAPI)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.responses = {
+            "200": {
+              description: "",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string" },
+                    },
+                  },
+                },
+              },
+            },
+          };
+          return spec;
+        })
+        .withRule(rules.propertyExample, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
   });
 });
