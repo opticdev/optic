@@ -11,7 +11,7 @@ chai.use(function (_chai, _) {
 });
 
 export const rules = {
-  operationId: ({ operations }: SnykApiCheckDsl) => {
+  operationId: ({ operations, responses }: SnykApiCheckDsl) => {
     operations.requirement.must(
       "have the correct operationId format",
       (operation) => {

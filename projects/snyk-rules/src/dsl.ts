@@ -8,6 +8,7 @@ import {
   IFact,
   OpenApiFieldFact,
   ILocation,
+  OpenAPIV3,
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
 
@@ -62,6 +63,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
   constructor(
     private nextFacts: IFact<any>[],
     private changelog: IChange<any>[],
+    private nextJsonLike: OpenAPIV3.Document,
     private context: SynkApiCheckContext
   ) {}
 
@@ -104,6 +106,26 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
       (location) => this.getContext(location),
       (...items) => this.checks.push(...items)
     );
+  }
+
+  get responses() {
+    const dsl = this;
+    return {
+      get headers(): SnykEntityRule<OpenApiHeaderFact> {
+        return genericEntityRuleImpl<
+          OpenApiHeaderFact,
+          ConceptualLocation,
+          SynkApiCheckContext
+        >(
+          OpenApiKind.ResponseHeader,
+          dsl.changelog,
+          dsl.nextFacts,
+          (header) => `response header ${header.name}`,
+          (location) => dsl.getContext(location),
+          (...items) => dsl.checks.push(...items)
+        );
+      },
+    };
   }
 
   get bodyProperties(): SnykEntityRule<OpenApiFieldFact> {

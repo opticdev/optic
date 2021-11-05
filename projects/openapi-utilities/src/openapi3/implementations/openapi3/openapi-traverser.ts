@@ -221,7 +221,7 @@ export class OpenAPITraverser
       location: {
         jsonPath,
         conceptualPath,
-        kind: OpenApiKind.HeaderParameter,
+        kind: OpenApiKind.ResponseHeader,
         conceptualLocation: location,
       },
       value,
@@ -465,6 +465,7 @@ export enum OpenApiKind {
   Request = "request",
   QueryParameter = "query-parameter",
   HeaderParameter = "header-parameter",
+  ResponseHeader = "response-header",
   Response = "response",
   Body = "body",
   Object = "object",

@@ -113,6 +113,29 @@ export function genericEntityRuleImpl<Type, ApiContext, DslContext>(
     };
   };
 
+  // const requirementOfSpecHandler: (
+  //   must: boolean
+  // ) => EntityRule<Type, ApiContext, DslContext>["requirement"]["must"] = (
+  //   must: boolean
+  // ) => {
+  //   return (statement, handler) => {
+  //     pushCheck(
+  //       ...requirements.map((item, index) => {
+  //         const where = `requirement for ${openApiKind.toString()}: ${describeWhere(
+  //           item.value
+  //         )}`;
+  //
+  //         console.log(item.location.jsonPath);
+  //
+  //         const docsHelper = newDocsLinkHelper();
+  //         return runCheck(item, docsHelper, where, statement, must, () =>
+  //           handler(item.value, getContext(item.location), docsHelper)
+  //         );
+  //       })
+  //     );
+  //   };
+  // };
+
   return {
     added: {
       must: addedHandler(true),
@@ -129,6 +152,7 @@ export function genericEntityRuleImpl<Type, ApiContext, DslContext>(
     requirement: {
       must: requirementsHandler(true),
       should: requirementsHandler(false),
+      // spec: {},
     },
   };
 }
