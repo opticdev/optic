@@ -7,7 +7,7 @@ import {
 } from "./openapi3/implementations/openapi3/openapi-traverser";
 import { factsToChangelog } from "./openapi3/sdk/facts-to-changelog";
 import { OpenAPIV3 } from "openapi-types";
-import { IChange } from "./openapi3/sdk/types";
+import { IChange, IFact, ILocation } from "./openapi3/sdk/types";
 
 export {
   OpenAPITraverser,
@@ -18,4 +18,6 @@ export {
   OpenApiKind,
   OpenApiOperationFact,
   OpenApiHeaderFact,
+  IFact,
+  ILocation,
 };

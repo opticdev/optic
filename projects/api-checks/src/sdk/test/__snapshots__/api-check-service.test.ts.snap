@@ -40,7 +40,7 @@ Array [
     "isMust": true,
     "isShould": false,
     "passed": false,
-    "where": "updated operation: operations,/example,get",
+    "where": "updated operation: GET /example",
   },
 ]
 `;

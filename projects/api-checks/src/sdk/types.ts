@@ -22,6 +22,13 @@ export interface EntityRule<G, ApiContext, DSLContext> {
       docs: DocsLinkHelper
     ) => Promise<void> | void
   >;
+  removed: ShouldOrMust<
+    (
+      before: G,
+      context: ApiContext & DSLContext,
+      docs: DocsLinkHelper
+    ) => Promise<void> | void
+  >;
   requirement: ShouldOrMust<
     (
       value: G,

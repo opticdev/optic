@@ -8,10 +8,16 @@ export function factsToChangelog(
   current: IFact<any>[]
 ): IChange<any>[] {
   const added = current.filter(
-    (i) => !past.some((fact) => equals(fact.location.conceptualPath, i.location.conceptualPath))
+    (i) =>
+      !past.some((fact) =>
+        equals(fact.location.conceptualPath, i.location.conceptualPath)
+      )
   );
   const removed = past.filter(
-    (i) => !current.some((fact) => equals(fact.location.conceptualPath, i.location.conceptualPath))
+    (i) =>
+      !current.some((fact) =>
+        equals(fact.location.conceptualPath, i.location.conceptualPath)
+      )
   );
   const updated = past.filter((i) => {
     const currentVersion = current.find((fact) =>
@@ -29,9 +35,11 @@ export function factsToChangelog(
       location: added.location,
       added: added.value,
     })),
-    ...removed.map((added) => ({
-      location: added.location,
-      removed: true,
+    ...removed.map((removed) => ({
+      location: removed.location,
+      removed: {
+        before: removed,
+      },
     })),
     ...updated.map((past) => {
       const after = current.find((fact) =>

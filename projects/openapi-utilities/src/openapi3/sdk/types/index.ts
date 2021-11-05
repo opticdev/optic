@@ -44,62 +44,7 @@ export interface IChange<T> {
     before: T;
     after: T;
   };
-  removed?: boolean;
+  removed?: {
+    before: T;
+  };
 }
-
-export interface ICheckResult {
-  isIssue: boolean;
-  isWarning: boolean;
-}
-
-export interface IWarning extends ICheckResult {
-  message: string;
-  location?: ILocation;
-  isIssue: false;
-  isWarning: true;
-}
-
-export interface IIssue extends ICheckResult {
-  message: string;
-  location?: ILocation;
-  isIssue: true;
-  isWarning: false;
-}
-
-export function Warning(message: string): IWarning {
-  return { message, isWarning: true, isIssue: false };
-}
-export function Issue(message: string): IIssue {
-  return { message, isIssue: true, isWarning: false };
-}
-
-export type ReportFromHandler = (
-  report: IWarning | IIssue | IWarning[] | IIssue[],
-  location?: ILocation
-) => void;
-
-export type AddedHandler<A, B> = (
-  node: A,
-  context: B,
-  location: ILocation,
-  report: ReportFromHandler
-) => void;
-
-export type AlwaysHandler<A, B> = (
-  node: A,
-  context: B,
-  location: ILocation,
-  report: ReportFromHandler
-) => void;
-export type ChangedHandler<A, B> = (
-  last: A,
-  current: A,
-  context: B,
-  location: ILocation,
-  report: ReportFromHandler
-) => void;
-export type RemovedHandler<A, B> = (
-  context: B,
-  location: ILocation,
-  report: ReportFromHandler
-) => void;
