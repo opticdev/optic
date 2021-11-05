@@ -11,6 +11,12 @@ import {
   OpenAPIV3,
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
+import { ShouldOrMust } from "@useoptic/api-checks/build/sdk/types";
+import {
+  DocsLinkHelper,
+  newDocsLinkHelper,
+  runCheck,
+} from "@useoptic/api-checks/src/sdk/types";
 
 type SnykStablity = "wip" | "experimental" | "beta" | "ga";
 type DateString = string; // YYYY-mm-dd
@@ -64,7 +70,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
     private nextFacts: IFact<any>[],
     private changelog: IChange<any>[],
     private nextJsonLike: OpenAPIV3.Document,
-    private context: SynkApiCheckContext
+    private providedContext: SynkApiCheckContext
   ) {}
 
   checkPromises() {
@@ -74,7 +80,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
   getContext(location: ILocation): ConceptualLocation & SynkApiCheckContext {
     return {
       ...location.conceptualLocation,
-      ...this.context,
+      ...this.providedContext,
     };
   }
 
@@ -91,6 +97,49 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
       (location) => this.getContext(location),
       (...items) => this.checks.push(...items)
     );
+  }
+
+  get context() {
+    const change: IChange<SnykApiCheckDsl> = {
+      location: {
+        conceptualLocation: { path: "This Specification", method: "" },
+        jsonPath: "/",
+        conceptualPath: [],
+        kind: "API",
+      },
+    };
+
+    const value: ShouldOrMust<
+      (
+        context: SynkApiCheckContext,
+        docs: DocsLinkHelper
+      ) => Promise<void> | void
+    > = {
+      must: (statement, handler) => {
+        const docsHelper = newDocsLinkHelper();
+        return runCheck(
+          change,
+          docsHelper,
+          "this specification: ",
+          statement,
+          true,
+          () => handler(this.providedContext, docsHelper)
+        );
+      },
+      should: (statement, handler) => {
+        const docsHelper = newDocsLinkHelper();
+        return runCheck(
+          change,
+          docsHelper,
+          "this specification: ",
+          statement,
+          false,
+          () => handler(this.providedContext, docsHelper)
+        );
+      },
+    };
+
+    return value;
   }
 
   get headers(): SnykEntityRule<OpenApiHeaderFact> {
