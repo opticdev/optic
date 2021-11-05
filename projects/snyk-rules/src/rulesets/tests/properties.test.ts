@@ -5,7 +5,12 @@ import { SnykApiCheckDsl, SynkApiCheckContext } from "../../dsl";
 // todo: fix copy/paste
 const { compare } = createTestDslFixture<SnykApiCheckDsl, SynkApiCheckContext>(
   (input) => {
-    return new SnykApiCheckDsl(input.nextFacts, input.changelog, input.context);
+    return new SnykApiCheckDsl(
+      input.nextFacts,
+      input.changelog,
+      input.nextJsonLike,
+      input.context
+    );
   }
 );
 
