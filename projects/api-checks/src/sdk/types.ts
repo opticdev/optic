@@ -6,7 +6,7 @@ export interface ShouldOrMust<G> {
   should: (statement: string, handler: G) => void;
 }
 
-export interface EntityRule<G, ApiContext, DSLContext> {
+export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
   added: ShouldOrMust<
     (
       added: G,
@@ -33,7 +33,8 @@ export interface EntityRule<G, ApiContext, DSLContext> {
     (
       value: G,
       context: ApiContext & DSLContext,
-      docs: DocsLinkHelper
+      docs: DocsLinkHelper,
+      specItem: OpenApiEntityType
     ) => Promise<void> | void
   >;
 }

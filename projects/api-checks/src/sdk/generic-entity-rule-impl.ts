@@ -6,14 +6,20 @@ import {
 } from "@useoptic/openapi-utilities";
 import { EntityRule, newDocsLinkHelper, Result, runCheck } from "./types";
 
-export function genericEntityRuleImpl<Type, ApiContext, DslContext>(
+export function genericEntityRuleImpl<
+  Type,
+  ApiContext,
+  DslContext,
+  OpenApiEntityType
+>(
   openApiKind: OpenApiKind,
   changelog: IChange<any>[],
   nextFacts: IFact<any>[],
   describeWhere: (fact: Type) => string,
   getContext: (location: ILocation) => ApiContext & DslContext,
-  pushCheck: (...check: Promise<Result>[]) => void
-): EntityRule<Type, ApiContext, DslContext> {
+  pushCheck: (...check: Promise<Result>[]) => void,
+  getSpecItem: (pointer: string) => OpenApiEntityType
+): EntityRule<Type, ApiContext, DslContext, OpenApiEntityType> {
   const operations = changelog.filter((i) => i.location.kind === openApiKind);
 
   const added = operations.filter((i) => Boolean(i.added)) as IChange<Type>[];
@@ -30,9 +36,12 @@ export function genericEntityRuleImpl<Type, ApiContext, DslContext>(
 
   const addedHandler: (
     must: boolean
-  ) => EntityRule<Type, ApiContext, DslContext>["added"]["must"] = (
-    must: boolean
-  ) => {
+  ) => EntityRule<
+    Type,
+    ApiContext,
+    DslContext,
+    OpenApiEntityType
+  >["added"]["must"] = (must: boolean) => {
     return (statement, handler) => {
       pushCheck(
         ...added.map((item, index) => {
@@ -50,9 +59,12 @@ export function genericEntityRuleImpl<Type, ApiContext, DslContext>(
 
   const removedHandler: (
     must: boolean
-  ) => EntityRule<Type, ApiContext, DslContext>["removed"]["must"] = (
-    must: boolean
-  ) => {
+  ) => EntityRule<
+    Type,
+    ApiContext,
+    DslContext,
+    OpenApiEntityType
+  >["removed"]["must"] = (must: boolean) => {
     return (statement, handler) => {
       pushCheck(
         ...removed.map((item, index) => {
@@ -70,9 +82,12 @@ export function genericEntityRuleImpl<Type, ApiContext, DslContext>(
 
   const changedHandler: (
     must: boolean
-  ) => EntityRule<Type, ApiContext, DslContext>["changed"]["must"] = (
-    must: boolean
-  ) => {
+  ) => EntityRule<
+    Type,
+    ApiContext,
+    DslContext,
+    OpenApiEntityType
+  >["changed"]["must"] = (must: boolean) => {
     return (statement, handler) => {
       pushCheck(
         ...changes.map((item, index) => {
@@ -95,9 +110,12 @@ export function genericEntityRuleImpl<Type, ApiContext, DslContext>(
 
   const requirementsHandler: (
     must: boolean
-  ) => EntityRule<Type, ApiContext, DslContext>["requirement"]["must"] = (
-    must: boolean
-  ) => {
+  ) => EntityRule<
+    Type,
+    ApiContext,
+    DslContext,
+    OpenApiEntityType
+  >["requirement"]["must"] = (must: boolean) => {
     return (statement, handler) => {
       pushCheck(
         ...requirements.map((item, index) => {
@@ -106,7 +124,12 @@ export function genericEntityRuleImpl<Type, ApiContext, DslContext>(
           )}`;
           const docsHelper = newDocsLinkHelper();
           return runCheck(item, docsHelper, where, statement, must, () =>
-            handler(item.value, getContext(item.location), docsHelper)
+            handler(
+              item.value,
+              getContext(item.location),
+              docsHelper,
+              getSpecItem(item.location.jsonPath)
+            )
           );
         })
       );

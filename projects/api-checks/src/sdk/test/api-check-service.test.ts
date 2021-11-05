@@ -19,13 +19,20 @@ function completenessApiRules(dsl: ExampleDsl) {
       );
     }
   );
+  dsl.operations.requirement.must(
+    "be able to see spec",
+    (value, context, docs, specItem) => {
+      expect(specItem).toBeTruthy();
+    }
+  );
 }
 
 it("can run dsl rules through check service", async (done) => {
   const checker = new ApiCheckService<ExampleDslContext>();
 
   checker.useDsl(
-    (input) => new ExampleDsl(input.nextFacts, input.changelog),
+    (input) =>
+      new ExampleDsl(input.nextFacts, input.nextJsonLike, input.changelog),
     completenessApiRules
   );
 

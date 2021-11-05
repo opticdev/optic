@@ -12,4 +12,5 @@ function unescapeUriSafePointer(inputFromApiToolkit: string): string {
 export default {
   append,
   unescapeUriSafePointer,
+  get: jsonPointer.get,
 };
