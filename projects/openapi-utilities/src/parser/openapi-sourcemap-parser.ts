@@ -10,11 +10,10 @@ import * as pointer from "json-ptr";
 import path from "path";
 import fetch from "node-fetch";
 import { OpenAPIV3 } from "openapi-types";
-import sortBy from "lodash.sortby";
 
 export type ParseOpenAPIResult = {
   jsonLike: OpenAPIV3.Document;
-  sourcemap: JsonSchemaSourcemapOutput;
+  sourcemap: JsonSchemaSourcemap;
 };
 
 export async function parseOpenAPIWithSourcemap(
@@ -46,7 +45,7 @@ export async function parseOpenAPIWithSourcemap(
     sourcemap
   );
 
-  return { jsonLike: resolver.schema as any, sourcemap: sourcemap.serialize() };
+  return { jsonLike: resolver.schema as any, sourcemap: sourcemap };
 }
 
 export async function parseOpenAPIFromRepoWithSourcemap(
@@ -86,30 +85,23 @@ export async function parseOpenAPIFromRepoWithSourcemap(
     sourcemap
   );
 
-  return { jsonLike: resolver.schema as any, sourcemap: sourcemap.serialize() };
+  return { jsonLike: resolver.schema as any, sourcemap: sourcemap };
 }
 
-type JsonPath = string;
-type FileReference = number;
+export type JsonPath = string;
+export type FileReference = number;
 
-type DerefToSource = [JsonPath, LocationRecord];
+export type DerefToSource = [YAMLNode, FileReference];
 
-export interface JsonSchemaSourcemapOutput {
-  files: Array<{
-    path: string;
-    index: number;
-  }>;
-  map: DerefToSource[];
-}
-
+// assumptions change because not serializing
 export class JsonSchemaSourcemap {
-  private _files: Array<{
+  public files: Array<{
     path: string;
     index: number;
     ast: YAMLNode;
   }> = [];
 
-  private _mappings: Array<DerefToSource> = [];
+  public mappings: { [key: JsonPath]: DerefToSource } = {};
 
   async addFileIfMissing(filePath: string, fileIndex: number) {
     if (filePath.startsWith("http")) {
@@ -118,19 +110,19 @@ export class JsonSchemaSourcemap {
 
       const yamlAst: YAMLNode = YAML.safeLoad(asText);
 
-      this._files.push({
+      this.files.push({
         path: filePath,
         index: fileIndex,
         ast: yamlAst,
       });
     } else {
-      if (!this._files.find((i) => i.path === filePath)) {
+      if (!this.files.find((i) => i.path === filePath)) {
         // add the ast to the cache
         const yamlAst: YAMLNode = YAML.safeLoad(
           (await fs.readFile(filePath)).toString()
         );
 
-        this._files.push({
+        this.files.push({
           path: filePath,
           index: fileIndex,
           ast: yamlAst,
@@ -144,11 +136,11 @@ export class JsonSchemaSourcemap {
     contents: string,
     fileIndex: number
   ) {
-    if (!this._files.find((i) => i.path === filePath)) {
+    if (!this.files.find((i) => i.path === filePath)) {
       // add the ast to the cache
       const yamlAst: YAMLNode = YAML.safeLoad(contents);
 
-      this._files.push({
+      this.files.push({
         path: filePath,
         index: fileIndex,
         ast: yamlAst,
@@ -158,7 +150,7 @@ export class JsonSchemaSourcemap {
 
   log(path: string, pathFromRoot: string) {
     // this seems to assume that paths will be in order, why not check for equality?
-    const thisFile = this._files.find((i) => path.startsWith(i.path));
+    const thisFile = this.files.find((i) => path.startsWith(i.path));
     if (thisFile) {
       const jsonPointer = path.split(thisFile.path)[1].substring(1) || "/";
       const sourceMapping = resolveJsonPointerInYamlAst(
@@ -167,19 +159,9 @@ export class JsonSchemaSourcemap {
         thisFile.index
       );
       if (sourceMapping) {
-        this._mappings.push([pathFromRoot, sourceMapping]);
+        this.mappings[pathFromRoot] = sourceMapping;
       }
     }
-  }
-
-  public serialize(): JsonSchemaSourcemapOutput {
-    return {
-      files: sortBy(
-        this._files.map((i) => ({ path: i.path, index: i.index })),
-        "index"
-      ),
-      map: this._mappings,
-    };
   }
 }
 
@@ -187,14 +169,13 @@ export function resolveJsonPointerInYamlAst(
   node: YAMLNode,
   jsonPointer: string,
   file: number
-): LocationRecord | undefined {
+): DerefToSource | undefined {
   const decoded = pointer.decodePointer(jsonPointer);
 
   const isEmpty =
     decoded.length === 0 || (decoded.length === 1 && decoded[0] === "");
 
-  if (isEmpty)
-    return { node: [node.startPosition, node.endPosition], file: file };
+  if (isEmpty) return [node, file];
 
   const found: YAMLNode | undefined = decoded.reduce((current, path) => {
     if (!current) return undefined;
@@ -213,17 +194,7 @@ export function resolveJsonPointerInYamlAst(
   }, node as YAMLNode | undefined);
 
   if (found) {
-    if (found.key) {
-      // is a field
-      return {
-        key: [found.key.startPosition, found.key.endPosition],
-        value: [found.value.startPosition, found.value.endPosition],
-        node: [found.startPosition, found.endPosition],
-        file: file,
-      };
-    } else {
-      return { node: [found.startPosition, found.endPosition], file: file };
-    }
+    return [found, file];
   }
 }
 

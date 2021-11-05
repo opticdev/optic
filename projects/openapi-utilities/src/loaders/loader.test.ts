@@ -19,7 +19,8 @@ it("can parse an OpenAPI spec with external references", async () => {
     path.join(
       __dirname,
       "../../inputs/openapi3-with-references/external-multiple.yaml"
-    )
+    ),
+    false
   );
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
@@ -33,14 +34,16 @@ it("can parse an OpenAPI spec repo branches", async () => {
       "petstore0.json",
       gitRepo,
       "feature/1",
-      {}
+      {},
+      false
     );
     expect(prepSnapshot(onFeature)).toMatchSnapshot();
     const onMain = await loadSpecFromBranch(
       "petstore0.json",
       gitRepo,
       "main",
-      {}
+      {},
+      false
     );
     expect(prepSnapshot(onMain)).toMatchSnapshot();
   }
@@ -55,14 +58,16 @@ it("can parse an OpenAPI spec with references in repo branches", async () => {
       "external-multiple.yaml",
       gitRepo,
       "feature/1",
-      {}
+      {},
+      false
     );
     expect(prepSnapshot(onFeature)).toMatchSnapshot();
     const onMain = await loadSpecFromBranch(
       "external-multiple.yaml",
       gitRepo,
       "main",
-      {}
+      {},
+      false
     );
     expect(prepSnapshot(onMain)).toMatchSnapshot();
   }

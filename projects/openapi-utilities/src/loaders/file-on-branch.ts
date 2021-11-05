@@ -1,6 +1,9 @@
-import {SpecLoaderResult} from "./types";
+import { SpecLoaderResult } from "./types";
 import * as path from "path";
-import {parseOpenAPIFromRepoWithSourcemap} from "../parser/openapi-sourcemap-parser";
+import {
+  JsonSchemaSourcemap,
+  parseOpenAPIFromRepoWithSourcemap,
+} from "../parser/openapi-sourcemap-parser";
 
 const util = require("util");
 const exec = util.promisify(require("child_process").exec);
@@ -9,7 +12,8 @@ export async function loadSpecFromBranch(
   fileNameInRepo: string,
   repoPath: string,
   branch: string,
-  defaultValue: any
+  defaultValue: any,
+  includeSourcemap: boolean = true
 ): Promise<SpecLoaderResult> {
   try {
     const results = await parseOpenAPIFromRepoWithSourcemap(
@@ -20,7 +24,9 @@ export async function loadSpecFromBranch(
     return {
       success: true,
       flattened: results.jsonLike,
-      sourcemap: results.sourcemap,
+      sourcemap: includeSourcemap
+        ? results.sourcemap
+        : new JsonSchemaSourcemap(),
     };
   } catch (e: any) {
     return { success: false, error: e.message };
