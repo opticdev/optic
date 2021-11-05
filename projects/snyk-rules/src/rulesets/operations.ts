@@ -41,4 +41,12 @@ export const rules = {
       expect(operation.summary).to.exist;
     });
   },
+  removingOperationId: ({ operations }: SnykApiCheckDsl) => {
+    operations.changed.must(
+      "have consistent operation IDs",
+      (current, next) => {
+        expect(current.operationId).to.equal(next.operationId);
+      }
+    );
+  },
 };

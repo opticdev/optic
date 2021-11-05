@@ -1,0 +1,322 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`headers name fails if not kebab case 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {},
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "added": Object {
+        "name": "badHeader",
+        "schema": Object {
+          "type": "string",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "badHeader",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "badHeader",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "badHeader",
+        ],
+        "kind": "header-parameter",
+      },
+    },
+    Object {
+      "added": Object {
+        "description": "",
+        "statusCode": 200,
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "kind": "response",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {
+            "200": Object {
+              "description": "",
+              "headers": Object {
+                "badHeader": Object {
+                  "schema": Object {
+                    "type": "string",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "header": "badHeader",
+              "statusCode": "200",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "headers",
+            "badHeader",
+          ],
+          "jsonPath": Array [
+            "paths",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "headers",
+            "badHeader",
+          ],
+          "kind": "header-parameter",
+        },
+        "value": Object {
+          "name": "badHeader",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
+      "condition": "be kebab case",
+      "docsLink": undefined,
+      "error": "expected false to be true",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "requirement for header-parameter: header badHeader",
+    },
+  ],
+}
+`;
+
+exports[`headers name passes if kebab case 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {},
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "added": Object {
+        "name": "good-header",
+        "schema": Object {
+          "type": "string",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "good-header",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "good-header",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "good-header",
+        ],
+        "kind": "header-parameter",
+      },
+    },
+    Object {
+      "added": Object {
+        "description": "",
+        "statusCode": 200,
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "kind": "response",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {
+            "200": Object {
+              "description": "",
+              "headers": Object {
+                "good-header": Object {
+                  "schema": Object {
+                    "type": "string",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "header": "good-header",
+              "statusCode": "200",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "headers",
+            "good-header",
+          ],
+          "jsonPath": Array [
+            "paths",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "headers",
+            "good-header",
+          ],
+          "kind": "header-parameter",
+        },
+        "value": Object {
+          "name": "good-header",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
+      "condition": "be kebab case",
+      "docsLink": undefined,
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "requirement for header-parameter: header good-header",
+    },
+  ],
+}
+`;
