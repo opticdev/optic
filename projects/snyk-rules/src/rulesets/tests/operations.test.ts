@@ -96,6 +96,20 @@ describe("operationId", () => {
     expect(result.results[0].passed).toBeFalsy();
     expect(result).toMatchSnapshot();
   });
+
+  it("fails if changed", async () => {
+    const baseCopy = JSON.parse(JSON.stringify(baseForOperationIdTests));
+    baseCopy.paths["/example"].get.operationId = "example";
+    const result = await compare(baseCopy)
+      .to((spec) => {
+        spec.paths!["/example"]!.get!.operationId = "example2";
+        return spec;
+      })
+      .withRule(rules.removingOperationId, emptyContext);
+
+    expect(result.results[0].passed).toBeFalsy();
+    expect(result).toMatchSnapshot();
+  });
 });
 
 const baseForOperationMetadataTests = {
