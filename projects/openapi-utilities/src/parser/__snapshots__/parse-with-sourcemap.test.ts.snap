@@ -38,18 +38,18 @@ Object {
     "files": Array [
       Object {
         "index": 0,
-        "path": "/inputs/openapi3-with-references/definitions.yaml",
+        "path": "/inputs/openapi3-with-references/external-multiple.yaml",
       },
       Object {
         "index": 1,
-        "path": "/inputs/openapi3-with-references/external-multiple.yaml",
+        "path": "/inputs/openapi3-with-references/definitions.yaml",
       },
     ],
     "map": Array [
       Array [
         "#",
         Object {
-          "file": 1,
+          "file": 0,
           "node": Array [
             0,
             198,
@@ -59,7 +59,7 @@ Object {
       Array [
         "#/type",
         Object {
-          "file": 1,
+          "file": 0,
           "key": Array [
             0,
             4,
@@ -77,7 +77,7 @@ Object {
       Array [
         "#/required",
         Object {
-          "file": 1,
+          "file": 0,
           "key": Array [
             13,
             21,
@@ -95,7 +95,7 @@ Object {
       Array [
         "#/required/0",
         Object {
-          "file": 1,
+          "file": 0,
           "node": Array [
             24,
             28,
@@ -105,7 +105,7 @@ Object {
       Array [
         "#/required/1",
         Object {
-          "file": 1,
+          "file": 0,
           "node": Array [
             30,
             35,
@@ -115,7 +115,7 @@ Object {
       Array [
         "#/properties",
         Object {
-          "file": 1,
+          "file": 0,
           "key": Array [
             37,
             47,
@@ -133,7 +133,7 @@ Object {
       Array [
         "#/properties/token",
         Object {
-          "file": 1,
+          "file": 0,
           "key": Array [
             51,
             56,
@@ -151,7 +151,7 @@ Object {
       Array [
         "#/properties/token/type",
         Object {
-          "file": 1,
+          "file": 0,
           "key": Array [
             62,
             66,
@@ -169,7 +169,7 @@ Object {
       Array [
         "#/properties/user",
         Object {
-          "file": 0,
+          "file": 1,
           "key": Array [
             0,
             4,
@@ -187,7 +187,7 @@ Object {
       Array [
         "#/properties/user/type",
         Object {
-          "file": 0,
+          "file": 1,
           "key": Array [
             8,
             12,
@@ -205,7 +205,7 @@ Object {
       Array [
         "#/properties/user/required",
         Object {
-          "file": 0,
+          "file": 1,
           "key": Array [
             23,
             31,
@@ -223,7 +223,7 @@ Object {
       Array [
         "#/properties/user/required/0",
         Object {
-          "file": 0,
+          "file": 1,
           "node": Array [
             34,
             38,
@@ -233,7 +233,7 @@ Object {
       Array [
         "#/properties/user/properties",
         Object {
-          "file": 0,
+          "file": 1,
           "key": Array [
             42,
             52,
@@ -251,7 +251,7 @@ Object {
       Array [
         "#/properties/user/properties/name",
         Object {
-          "file": 0,
+          "file": 1,
           "key": Array [
             58,
             62,
@@ -269,7 +269,7 @@ Object {
       Array [
         "#/properties/user/properties/name/type",
         Object {
-          "file": 0,
+          "file": 1,
           "key": Array [
             70,
             74,
@@ -287,7 +287,7 @@ Object {
       Array [
         "#/properties/user/example",
         Object {
-          "file": 0,
+          "file": 1,
           "key": Array [
             85,
             92,
@@ -305,7 +305,7 @@ Object {
       Array [
         "#/properties/user/example/name",
         Object {
-          "file": 0,
+          "file": 1,
           "key": Array [
             98,
             102,
@@ -323,7 +323,7 @@ Object {
       Array [
         "#/example",
         Object {
-          "file": 1,
+          "file": 0,
           "key": Array [
             118,
             125,
@@ -341,7 +341,7 @@ Object {
       Array [
         "#/example/token",
         Object {
-          "file": 1,
+          "file": 0,
           "key": Array [
             129,
             134,
@@ -359,7 +359,7 @@ Object {
       Array [
         "#/example/user",
         Object {
-          "file": 0,
+          "file": 1,
           "key": Array [
             85,
             92,
