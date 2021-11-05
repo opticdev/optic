@@ -3,17 +3,14 @@ import {
   OpenAPITraverser,
   OpenAPIV3,
 } from "@useoptic/openapi-utilities";
-import {
-  ApiCheckService,
-  DslConstructorInput,
-  ApiCheckDsl,
-} from "@useoptic/api-checks";
+import { ApiCheckDsl } from "./types";
+import { ApiCheckService, DslConstructorInput } from "./api-check-service";
 
 type OpenApiInput =
   | OpenAPIV3.Document
   | ((old: OpenAPIV3.Document) => OpenAPIV3.Document);
 
-export function createDslFixture<DSL extends ApiCheckDsl, Context>(
+export function createTestDslFixture<DSL extends ApiCheckDsl, Context>(
   dslConstructor: (input: DslConstructorInput<Context>) => DSL
 ) {
   function compare(input: OpenApiInput) {
