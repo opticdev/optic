@@ -98,6 +98,7 @@ describe("operationId", () => {
   });
 
   it("fails if changed", async () => {
+    // todo: fix copy/paste
     const baseCopy = JSON.parse(JSON.stringify(baseForOperationIdTests));
     baseCopy.paths["/example"].get.operationId = "example";
     const result = await compare(baseCopy)
