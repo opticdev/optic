@@ -1,0 +1,446 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`property names fails when not camel case 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {},
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "added": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "object",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "content",
+          "application/json",
+          "body",
+        ],
+        "kind": "body",
+      },
+    },
+    Object {
+      "added": Object {
+        "flatSchema": Object {
+          "type": "string",
+        },
+        "key": "not-camel-case",
+        "required": false,
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": Array [
+            "not-camel-case",
+          ],
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "not-camel-case",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "content",
+          "application/json",
+          "body",
+          "properties",
+          "not-camel-case",
+        ],
+        "kind": "field",
+      },
+    },
+    Object {
+      "added": Object {
+        "description": "",
+        "statusCode": 200,
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "kind": "response",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {
+            "200": Object {
+              "content": Object {
+                "application/json": Object {
+                  "schema": Object {
+                    "properties": Object {
+                      "not-camel-case": Object {
+                        "type": "string",
+                      },
+                    },
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "",
+            },
+          },
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+              "statusCode": "200",
+            },
+            "jsonSchemaTrail": Array [
+              "not-camel-case",
+            ],
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "application/json",
+            "not-camel-case",
+          ],
+          "jsonPath": Array [
+            "paths",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "content",
+            "application/json",
+            "body",
+            "properties",
+            "not-camel-case",
+          ],
+          "kind": "field",
+        },
+        "value": Object {
+          "flatSchema": Object {
+            "type": "string",
+          },
+          "key": "not-camel-case",
+          "required": false,
+        },
+      },
+      "condition": "be camel case",
+      "docsLink": undefined,
+      "error": "expected false to be truthy",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "requirement for field: field not-camel-case",
+    },
+  ],
+}
+`;
+
+exports[`property names passes when camel case 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {},
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "added": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "object",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "content",
+          "application/json",
+          "body",
+        ],
+        "kind": "body",
+      },
+    },
+    Object {
+      "added": Object {
+        "flatSchema": Object {
+          "type": "string",
+        },
+        "key": "isCamelCase",
+        "required": false,
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": Array [
+            "isCamelCase",
+          ],
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "isCamelCase",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "content",
+          "application/json",
+          "body",
+          "properties",
+          "isCamelCase",
+        ],
+        "kind": "field",
+      },
+    },
+    Object {
+      "added": Object {
+        "description": "",
+        "statusCode": 200,
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": Array [
+          "paths",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "kind": "response",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {
+            "200": Object {
+              "content": Object {
+                "application/json": Object {
+                  "schema": Object {
+                    "properties": Object {
+                      "isCamelCase": Object {
+                        "type": "string",
+                      },
+                    },
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "",
+            },
+          },
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+              "statusCode": "200",
+            },
+            "jsonSchemaTrail": Array [
+              "isCamelCase",
+            ],
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "application/json",
+            "isCamelCase",
+          ],
+          "jsonPath": Array [
+            "paths",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "content",
+            "application/json",
+            "body",
+            "properties",
+            "isCamelCase",
+          ],
+          "kind": "field",
+        },
+        "value": Object {
+          "flatSchema": Object {
+            "type": "string",
+          },
+          "key": "isCamelCase",
+          "required": false,
+        },
+      },
+      "condition": "be camel case",
+      "docsLink": undefined,
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "requirement for field: field isCamelCase",
+    },
+  ],
+}
+`;
