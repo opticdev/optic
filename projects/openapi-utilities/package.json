@@ -8,9 +8,7 @@
     "/build"
   ],
   "scripts": {
-    "dev:test": "yarn tap --no-check-coverage --no-timeout --ts src/**/*.test.ts",
-    "dev:test-file": "yarn tap --ts --no-timeout $FILE",
-    "dev:test-watch": "yarn tap --ts src --watch",
+    "dev:test": "jest --colors",
     "build": "yarn tsc --build --verbose && copyfiles -u 1 src/**/*.js build/",
     "resolver:start": "yarn build && micro -l tcp://localhost:5001 build/entry-points/servers/resolver.js",
     "ws:build": "yarn build",
@@ -20,13 +18,14 @@
   "devDependencies": {
     "@types/copyfiles": "^2",
     "@types/fs-extra": "^9.0.13",
+    "@types/jest": "^26.0.24",
     "@types/micro": "^7.3.6",
     "@types/micro-cors": "^0",
     "@types/node-fetch": "2.5.12",
-    "@types/tap": "^15.0.5",
+    "babel-jest": "26.6.0",
     "chai": "^4.3.4",
+    "jest": "^26.6.0",
     "prettier": "^2.4.1",
-    "tap": "^15.0.10",
     "ts-node": "^10.3.1",
     "typescript": "^4.4.4"
   },
@@ -43,5 +42,10 @@
     "openapi-types": "^9.3.0",
     "ts-invariant": "^0.9.3",
     "yaml-ast-parser": "^0.0.43"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "build"
+    ]
   }
 }

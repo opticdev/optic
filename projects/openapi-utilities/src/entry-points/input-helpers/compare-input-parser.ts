@@ -1,4 +1,3 @@
-import tap from "tap";
 import path from "path";
 import { inGit, loadSpecFromBranch } from "../../loaders/file-on-branch";
 
@@ -34,19 +33,3 @@ export function parseSpecVersion(raw: string): FromFile | FromGit {
     };
   }
 }
-
-tap.test("can parse a file ", async () => {
-  tap.matchSnapshot(parseSpecVersion("/path/to/spec.json"), "file");
-});
-
-tap.test("can parse a git rev-file ", async () => {
-  tap.matchSnapshot(parseSpecVersion("main:/path/to/spec.json"), "rev-main");
-  tap.matchSnapshot(
-    parseSpecVersion("feature/1:spec.json"),
-    "rev with / in it"
-  );
-  tap.matchSnapshot(
-    parseSpecVersion("feature/1/define-spc:path/to/spec.json"),
-    "file without leading slash"
-  );
-});

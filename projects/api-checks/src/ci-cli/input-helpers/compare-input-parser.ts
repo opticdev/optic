@@ -1,9 +1,9 @@
-import {OpenAPIV3} from "@useoptic/openapi-utilities";
+import { OpenAPIV3 } from "@useoptic/openapi-utilities";
 
 export enum SpecVersionFrom {
   file,
   git,
-  empty
+  empty,
 }
 
 interface FromGit {
@@ -18,13 +18,16 @@ interface FromFile {
 }
 
 interface FromEmpty {
-  from: SpecVersionFrom.empty
-  value: OpenAPIV3.Document
+  from: SpecVersionFrom.empty;
+  value: OpenAPIV3.Document;
 }
 
-export type SpecFromInput = FromFile | FromGit | FromEmpty
+export type SpecFromInput = FromFile | FromGit | FromEmpty;
 
-export function parseSpecVersion(raw: string | undefined, defaultSpec: OpenAPIV3.Document): SpecFromInput {
+export function parseSpecVersion(
+  raw: string | undefined,
+  defaultSpec: OpenAPIV3.Document
+): SpecFromInput {
   if (raw) {
     if (raw.includes(":")) {
       const [rev, name] = raw.split(":");
@@ -43,23 +46,7 @@ export function parseSpecVersion(raw: string | undefined, defaultSpec: OpenAPIV3
   } else {
     return {
       from: SpecVersionFrom.empty,
-      value: defaultSpec
-    }
+      value: defaultSpec,
+    };
   }
 }
-//
-// tap.test("can parse a file ", async () => {
-//   tap.matchSnapshot(parseSpecVersion("/path/to/spec.json"), "file");
-// });
-//
-// tap.test("can parse a git rev-file ", async () => {
-//   tap.matchSnapshot(parseSpecVersion("main:/path/to/spec.json"), "rev-main");
-//   tap.matchSnapshot(
-//     parseSpecVersion("feature/1:spec.json"),
-//     "rev with / in it"
-//   );
-//   tap.matchSnapshot(
-//     parseSpecVersion("feature/1/define-spc:path/to/spec.json"),
-//     "file without leading slash"
-//   );
-// });

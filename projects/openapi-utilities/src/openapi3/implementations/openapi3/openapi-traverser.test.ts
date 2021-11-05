@@ -1,21 +1,20 @@
-import tap = require("tap");
 import { jsonFromFile } from "../../pipeline/spec-from";
 import { OpenAPITraverser } from "./openapi-traverser";
 
-tap.test("can flatten specs", async () => {
+it("can flatten specs", async () => {
   const traverser = new OpenAPITraverser();
   const spec = await jsonFromFile("./inputs/openapi3/petstore0.json")();
-  tap.matchSnapshot(spec);
+  expect(spec).toMatchSnapshot();
 });
 
-tap.test("can extract facts from specs", async () => {
+it("can extract facts from specs", async () => {
   const traverser = new OpenAPITraverser();
   const spec = await jsonFromFile("./inputs/openapi3/petstore0.json")();
   traverser.traverse(spec);
-  tap.matchSnapshot(traverser.accumulator.allFacts());
+  expect(traverser.accumulator.allFacts()).toMatchSnapshot();
 });
 
-tap.test("can produce valid facts from json schema", async () => {
+it("can produce valid facts from json schema", async () => {
   const traverser = new OpenAPITraverser();
   traverser.traverseSchema(
     {
@@ -56,5 +55,5 @@ tap.test("can produce valid facts from json schema", async () => {
     { path: "", method: "get", inResponse: { statusCode: "200" } }
   );
 
-  console.log(traverser.accumulator.allFacts());
+  expect(traverser.accumulator.allFacts()).toMatchSnapshot();
 });
