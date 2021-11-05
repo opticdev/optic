@@ -1,13 +1,8 @@
-/* IMPORTANT
- * This snapshot file is auto-generated, but designed for humans.
- * It should be checked into source control and tracked carefully.
- * Re-generate by setting TAP_SNAPSHOT=1 and running tests.
- * Make sure to inspect the output below.  Do not ignore changes!
- */
-'use strict'
-exports[`src/parser/parse-with-sourcemap.test.ts TAP > must match snapshot 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can parse an OpenAPI spec with external references 1`] = `
 Object {
-  "jsonLike": Object {
+  "flattened": Object {
     "example": Object {
       "token": "11111111",
       "user": Object {
@@ -43,11 +38,11 @@ Object {
     "files": Array [
       Object {
         "index": 0,
-        "path": "{cwd}/inputs/openapi3-with-references/external-multiple.yaml",
+        "path": "/inputs/openapi3-with-references/external-multiple.yaml",
       },
       Object {
         "index": 1,
-        "path": "{cwd}/inputs/openapi3-with-references/definitions.yaml",
+        "path": "/inputs/openapi3-with-references/definitions.yaml",
       },
     ],
     "map": Array [
@@ -381,5 +376,6 @@ Object {
       ],
     ],
   },
+  "success": true,
 }
-`
+`;
