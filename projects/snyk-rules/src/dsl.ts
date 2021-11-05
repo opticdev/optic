@@ -9,6 +9,7 @@ import {
   ILocation,
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
+import { OpenApiFieldFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
 
 type SnykStablity = "wip" | "experimental" | "beta" | "ga";
 type DateString = string; // YYYY-mm-dd
@@ -100,6 +101,21 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
       this.changelog,
       this.nextFacts,
       (header) => `header ${header.name}`,
+      (location) => this.getContext(location),
+      (...items) => this.checks.push(...items)
+    );
+  }
+
+  get bodyProperties(): SnykEntityRule<OpenApiHeaderFact> {
+    return genericEntityRuleImpl<
+      OpenApiFieldFact,
+      ConceptualLocation,
+      SynkApiCheckContext
+    >(
+      OpenApiKind.Field,
+      this.changelog,
+      this.nextFacts,
+      (field) => `field ${field.name}`,
       (location) => this.getContext(location),
       (...items) => this.checks.push(...items)
     );
