@@ -20,7 +20,7 @@ const emptyContext: SynkApiCheckContext = {
   resourceVersions: {},
 };
 
-describe("property", () => {
+describe("body properties", () => {
   const baseOpenAPI = {
     openapi: "3.0.1",
     paths: {
@@ -137,6 +137,61 @@ describe("property", () => {
         .withRule(rules.propertyExample, emptyContext);
 
       expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
+  });
+
+  describe("format", () => {
+    it("fails if format doesn't exist", async () => {
+      const result = await compare(baseOpenAPI)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.responses = {
+            "200": {
+              description: "",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string" },
+                    },
+                  },
+                },
+              },
+            },
+          };
+          return spec;
+        })
+        .withRule(rules.propertyFormat, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result.results[0].isShould).toBeTruthy();
+      expect(result).toMatchSnapshot();
+    });
+
+    it("passes if not a string", async () => {
+      const result = await compare(baseOpenAPI)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.responses = {
+            "200": {
+              description: "",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      count: { type: "number" },
+                    },
+                  },
+                },
+              },
+            },
+          };
+          return spec;
+        })
+        .withRule(rules.propertyFormat, emptyContext);
+
+      expect(result.results[0].isShould).toBeTruthy();
       expect(result).toMatchSnapshot();
     });
   });
