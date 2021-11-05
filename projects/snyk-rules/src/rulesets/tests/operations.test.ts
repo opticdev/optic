@@ -82,6 +82,20 @@ describe("operationId", () => {
       expect(result).toMatchSnapshot();
     });
   });
+
+  it("fails if removed", async () => {
+    const baseCopy = JSON.parse(JSON.stringify(baseForOperationIdTests));
+    baseCopy.paths["/example"].get.operationId = "example";
+    const result = await compare(baseCopy)
+      .to((spec) => {
+        delete spec.paths!["/example"]!.get!.operationId;
+        return spec;
+      })
+      .withRule(rules.removingOperationId, emptyContext);
+
+    expect(result.results[0].passed).toBeFalsy();
+    expect(result).toMatchSnapshot();
+  });
 });
 
 const baseForOperationMetadataTests = {
