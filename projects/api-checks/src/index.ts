@@ -3,7 +3,7 @@ import { makeCiCli } from "./ci-cli/make-cli";
 import { ApiCheckService, DslConstructorInput } from "./sdk/api-check-service";
 import { ApiCheckDsl, Result, Passed, Failed, EntityRule } from "./sdk/types";
 import { runCheck, newDocsLinkHelper, DocsLinkHelper } from "./sdk/types";
-
+import { createTestDslFixture } from "./sdk/test-rule-fixture";
 export {
   ApiCheckService,
   DslConstructorInput,
@@ -16,4 +16,5 @@ export {
   EntityRule,
   runCheck,
   makeCiCli,
+  createTestDslFixture,
 };

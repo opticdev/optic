@@ -1,8 +1,8 @@
 import { rules } from "../operations";
-import { createDslFixture } from "./test-rule-fixture";
+import { createTestDslFixture } from "@useoptic/api-checks";
 import { SnykApiCheckDsl, SynkApiCheckContext } from "../../dsl";
 
-const { compare } = createDslFixture<SnykApiCheckDsl, SynkApiCheckContext>(
+const { compare } = createTestDslFixture<SnykApiCheckDsl, SynkApiCheckContext>(
   (input) => {
     return new SnykApiCheckDsl(input.nextFacts, input.changelog, input.context);
   }
