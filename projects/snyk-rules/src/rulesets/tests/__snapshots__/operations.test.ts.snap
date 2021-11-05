@@ -114,7 +114,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "operation: get /example",
+      "where": "requirement for operation: GET /example",
     },
   ],
 }
@@ -236,7 +236,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": true,
-      "where": "operation: get /example",
+      "where": "requirement for operation: GET /example",
     },
   ],
 }
@@ -350,7 +350,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "operation: get /example",
+      "where": "requirement for operation: GET /example",
     },
   ],
 }
@@ -432,7 +432,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": true,
-      "where": "operation: get /example",
+      "where": "requirement for operation: GET /example",
     },
   ],
 }
@@ -533,7 +533,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "operation: get /example",
+      "where": "requirement for operation: GET /example",
     },
   ],
 }
@@ -601,7 +601,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "operation: get /example",
+      "where": "requirement for operation: GET /example",
     },
   ],
 }
@@ -702,7 +702,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "operation: get /example",
+      "where": "requirement for operation: GET /example",
     },
   ],
 }
@@ -803,7 +803,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "operation: get /example",
+      "where": "requirement for operation: GET /example",
     },
   ],
 }
