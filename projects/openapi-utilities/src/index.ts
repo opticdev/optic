@@ -3,6 +3,7 @@ import {
   OpenApiKind,
   OpenApiOperationFact,
   OpenApiHeaderFact,
+  OpenApiFieldFact,
   ConceptualLocation,
 } from "./openapi3/implementations/openapi3/openapi-traverser";
 import { factsToChangelog } from "./openapi3/sdk/facts-to-changelog";
@@ -14,6 +15,7 @@ export {
   factsToChangelog,
   ConceptualLocation,
   IChange,
+  OpenApiFieldFact,
   OpenAPIV3,
   OpenApiKind,
   OpenApiOperationFact,

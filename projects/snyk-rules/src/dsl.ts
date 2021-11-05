@@ -6,10 +6,10 @@ import {
   OpenApiOperationFact,
   IChange,
   IFact,
+  OpenApiFieldFact,
   ILocation,
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
-import { OpenApiFieldFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
 
 type SnykStablity = "wip" | "experimental" | "beta" | "ga";
 type DateString = string; // YYYY-mm-dd
@@ -106,7 +106,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
     );
   }
 
-  get bodyProperties(): SnykEntityRule<OpenApiHeaderFact> {
+  get bodyProperties(): SnykEntityRule<OpenApiFieldFact> {
     return genericEntityRuleImpl<
       OpenApiFieldFact,
       ConceptualLocation,
