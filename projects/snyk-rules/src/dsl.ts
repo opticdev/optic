@@ -115,7 +115,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
       OpenApiKind.Field,
       this.changelog,
       this.nextFacts,
-      (field) => `field ${field.name}`,
+      (field) => `field ${field.key}`,
       (location) => this.getContext(location),
       (...items) => this.checks.push(...items)
     );
