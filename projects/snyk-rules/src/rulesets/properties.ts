@@ -22,4 +22,14 @@ export const rules = {
       expect(flatSchema.example).to.exist;
     });
   },
+  propertyFormat: ({ bodyProperties }: SnykApiCheckDsl) => {
+    bodyProperties.requirement.should(
+      "have a format when a string",
+      ({ flatSchema }) => {
+        if (flatSchema.type === "string") {
+          expect(flatSchema.format).to.exist;
+        }
+      }
+    );
+  },
 };
