@@ -7,9 +7,17 @@ import {
   IChange,
   IFact,
   OpenApiFieldFact,
+  jsonPointerHelper,
   ILocation,
+  OpenAPIV3,
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
+import { ShouldOrMust } from "@useoptic/api-checks/build/sdk/types";
+import {
+  DocsLinkHelper,
+  newDocsLinkHelper,
+  runCheck,
+} from "@useoptic/api-checks/src/sdk/types";
 
 type SnykStablity = "wip" | "experimental" | "beta" | "ga";
 type DateString = string; // YYYY-mm-dd
@@ -49,20 +57,17 @@ export interface SynkApiCheckContext {
   };
 }
 
-export interface SnykEntityRule<T>
-  extends EntityRule<T, ConceptualLocation, SynkApiCheckContext> {}
+export interface SnykEntityRule<T, A>
+  extends EntityRule<T, ConceptualLocation, SynkApiCheckContext, A> {}
 
-export interface ISnykApiCheckDsl extends ApiCheckDsl {
-  operations: SnykEntityRule<OpenApiOperationFact>;
-}
-
-export class SnykApiCheckDsl implements ISnykApiCheckDsl {
+export class SnykApiCheckDsl implements ApiCheckDsl {
   private checks: Promise<Result>[] = [];
 
   constructor(
     private nextFacts: IFact<any>[],
     private changelog: IChange<any>[],
-    private context: SynkApiCheckContext
+    private nextJsonLike: OpenAPIV3.Document,
+    private providedContext: SynkApiCheckContext
   ) {}
 
   checkPromises() {
@@ -72,7 +77,7 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
   getContext(location: ILocation): ConceptualLocation & SynkApiCheckContext {
     return {
       ...location.conceptualLocation,
-      ...this.context,
+      ...this.providedContext,
     };
   }
 
@@ -80,44 +85,102 @@ export class SnykApiCheckDsl implements ISnykApiCheckDsl {
     return genericEntityRuleImpl<
       OpenApiOperationFact,
       ConceptualLocation,
-      SynkApiCheckContext
+      SynkApiCheckContext,
+      OpenAPIV3.OperationObject
     >(
       OpenApiKind.Operation,
       this.changelog,
       this.nextFacts,
       (opFact) => `${opFact.method.toUpperCase()} ${opFact.pathPattern}`,
       (location) => this.getContext(location),
-      (...items) => this.checks.push(...items)
+      (...items) => this.checks.push(...items),
+      (pointer: string) => jsonPointerHelper.get(this.nextJsonLike, pointer)
     );
   }
 
-  get headers(): SnykEntityRule<OpenApiHeaderFact> {
-    return genericEntityRuleImpl<
-      OpenApiHeaderFact,
-      ConceptualLocation,
-      SynkApiCheckContext
-    >(
-      OpenApiKind.HeaderParameter,
-      this.changelog,
-      this.nextFacts,
-      (header) => `header ${header.name}`,
-      (location) => this.getContext(location),
-      (...items) => this.checks.push(...items)
-    );
+  get context() {
+    const change: IChange<SnykApiCheckDsl> = {
+      location: {
+        conceptualLocation: { path: "This Specification", method: "" },
+        jsonPath: "/",
+        conceptualPath: [],
+        kind: "API",
+      },
+    };
+
+    const value: ShouldOrMust<
+      (
+        context: SynkApiCheckContext,
+        docs: DocsLinkHelper
+      ) => Promise<void> | void
+    > = {
+      must: (statement, handler) => {
+        const docsHelper = newDocsLinkHelper();
+        return runCheck(
+          change,
+          docsHelper,
+          "this specification: ",
+          statement,
+          true,
+          () => handler(this.providedContext, docsHelper)
+        );
+      },
+      should: (statement, handler) => {
+        const docsHelper = newDocsLinkHelper();
+        return runCheck(
+          change,
+          docsHelper,
+          "this specification: ",
+          statement,
+          false,
+          () => handler(this.providedContext, docsHelper)
+        );
+      },
+    };
+
+    return value;
   }
 
-  get bodyProperties(): SnykEntityRule<OpenApiFieldFact> {
+  get responses() {
+    const dsl = this;
+    return {
+      get headers(): SnykEntityRule<OpenApiHeaderFact, OpenAPIV3.HeaderObject> {
+        return genericEntityRuleImpl<
+          OpenApiHeaderFact,
+          ConceptualLocation,
+          SynkApiCheckContext,
+          OpenAPIV3.HeaderObject
+        >(
+          OpenApiKind.ResponseHeader,
+          dsl.changelog,
+          dsl.nextFacts,
+          (header) => `response header ${header.name}`,
+          (location) => dsl.getContext(location),
+          (...items) => dsl.checks.push(...items),
+          (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
+        );
+      },
+    };
+  }
+
+  get bodyProperties(): SnykEntityRule<
+    OpenApiFieldFact,
+    OpenAPIV3.SchemaObject
+  > {
+    const dsl = this;
     return genericEntityRuleImpl<
       OpenApiFieldFact,
       ConceptualLocation,
-      SynkApiCheckContext
+      SynkApiCheckContext,
+      OpenAPIV3.SchemaObject
     >(
       OpenApiKind.Field,
-      this.changelog,
-      this.nextFacts,
+      dsl.changelog,
+      dsl.nextFacts,
       (field) => `field ${field.key}`,
-      (location) => this.getContext(location),
-      (...items) => this.checks.push(...items)
+      (location) => dsl.getContext(location),
+      (...items) => dsl.checks.push(...items),
+      (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
     );
   }
 }

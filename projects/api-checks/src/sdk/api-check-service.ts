@@ -15,6 +15,8 @@ export type DslConstructorInput<Context> = {
   nextFacts: IFact<any>[];
   currentFacts: IFact<any>[];
   changelog: IChange<any>[];
+  nextJsonLike: OpenAPIV3.Document;
+  currentJsonLike: OpenAPIV3.Document;
 };
 
 export class ApiCheckService<Context> {
@@ -51,6 +53,8 @@ export class ApiCheckService<Context> {
 
     const input: DslConstructorInput<Context> = {
       currentFacts,
+      nextJsonLike: nextJsonLike,
+      currentJsonLike: currentJsonLike,
       nextFacts,
       changelog: factsToChangelog(currentFacts, nextFacts),
       context,

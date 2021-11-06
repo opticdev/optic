@@ -1,21 +1,51 @@
-import tap from 'tap'
-import { parseOpenAPIWithSourcemap } from "./openapi-sourcemap-parser";
+import {
+  ParseOpenAPIResult,
+  parseOpenAPIWithSourcemap,
+} from "./openapi-sourcemap-parser";
 import path from "path";
+import sortBy from "lodash.sortby";
 
 const cwd = process.cwd();
-tap.cleanSnapshot = (s: string) => {
-  console.log(cwd);
-  console.log(s);
-  return s.replace(new RegExp(cwd, 'gi'), '{cwd}')
-}
-tap.test("can parse an OpenAPI spec with external references", async () => {
 
+// asts are circular and very expensive to snapshot / not useful to make our own rep that's smaller
+function prepSnapshot(result: ParseOpenAPIResult) {
+  result.sourcemap.files.forEach((i) => {
+    i.path = i.path.split(cwd)[1];
+
+    // @ts-ignore
+    i.ast = null;
+  });
+
+  result.sourcemap.files = sortBy(result.sourcemap.files, "index");
+
+  const mini = {};
+
+  Object.entries(result.sourcemap.mappings).map(([key, value]) => {
+    // @ts-ignore
+    mini[key] = [null, value[1]];
+  });
+
+  result.sourcemap.mappings = mini;
+
+  return result;
+}
+
+it("can parse a json schema spec with external references", async () => {
   const results = await parseOpenAPIWithSourcemap(
     path.resolve(
-      path.join(__dirname, "../../inputs/openapi3-with-references/external-multiple.yaml")
+      path.join(
+        __dirname,
+        "../../inputs/openapi3-with-references/external-multiple.yaml"
+      )
     )
   );
 
-  tap.matchSnapshot(results);
+  expect(prepSnapshot(results)).toMatchSnapshot();
+});
+it("can parse an OpenAPI file and have valid sourcemap", async () => {
+  const results = await parseOpenAPIWithSourcemap(
+    path.resolve(path.join(__dirname, "../../inputs/openapi3/petstore0.json"))
+  );
 
+  expect(prepSnapshot(results)).toMatchSnapshot();
 });

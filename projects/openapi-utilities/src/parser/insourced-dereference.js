@@ -61,6 +61,7 @@ function crawl(
     value: obj,
     circular: false,
   };
+
   sourcemap.log(path, pathFromRoot);
 
   if (options.dereference.circular === "ignore" || !processedObjects.has(obj)) {

@@ -12,8 +12,8 @@ chai.use(function (_chai, _) {
 });
 
 export const rules = {
-  headerNameCase: ({ headers }: SnykApiCheckDsl) => {
-    headers.requirement.must("be kebab case", ({ name }) => {
+  headerNameCase: ({ responses }: SnykApiCheckDsl) => {
+    responses.headers.requirement.must("be kebab case", ({ name }) => {
       const kebabCase = /^[a-z]+(-[a-z]+)+$/g;
       expect(kebabCase.test(name)).to.be.true;
     });

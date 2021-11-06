@@ -1,7 +1,6 @@
 import { ApiCheckService } from "../api-check-service";
 import { ExampleDsl, ExampleDslContext } from "./example-dsl";
 import { OpenAPIV3 } from "@useoptic/openapi-utilities";
-import { doc } from "prettier";
 export const defaultEmptySpec: OpenAPIV3.Document = {
   openapi: "3.0.1",
   paths: {},
@@ -20,13 +19,20 @@ function completenessApiRules(dsl: ExampleDsl) {
       );
     }
   );
+  dsl.operations.requirement.must(
+    "be able to see spec",
+    (value, context, docs, specItem) => {
+      expect(specItem).toBeTruthy();
+    }
+  );
 }
 
 it("can run dsl rules through check service", async (done) => {
   const checker = new ApiCheckService<ExampleDslContext>();
 
   checker.useDsl(
-    (input) => new ExampleDsl(input.nextFacts, input.changelog),
+    (input) =>
+      new ExampleDsl(input.nextFacts, input.nextJsonLike, input.changelog),
     completenessApiRules
   );
 

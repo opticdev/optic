@@ -7,16 +7,20 @@ import { YAMLMapping, YAMLNode, YAMLSequence } from "yaml-ast-parser";
 // @ts-ignore
 import { dereference } from "./insourced-dereference";
 import * as pointer from "json-ptr";
-import path from 'path'
-import fetch from 'node-fetch';
-import {OpenAPIV3} from "openapi-types";
+import path from "path";
+import fetch from "node-fetch";
+import { OpenAPIV3 } from "openapi-types";
+import jsonPointer from "json-pointer";
+import jsonPointerHelpers from "./json-pointer-helpers";
 
 export type ParseOpenAPIResult = {
-  jsonLike: OpenAPIV3.Document,
-  sourcemap: JsonSchemaSourcemapOutput
-}
+  jsonLike: OpenAPIV3.Document;
+  sourcemap: JsonSchemaSourcemap;
+};
 
-export async function parseOpenAPIWithSourcemap(path: string): Promise<ParseOpenAPIResult> {
+export async function parseOpenAPIWithSourcemap(
+  path: string
+): Promise<ParseOpenAPIResult> {
   const resolver = new $RefParser();
 
   const sourcemap = new JsonSchemaSourcemap();
@@ -24,17 +28,17 @@ export async function parseOpenAPIWithSourcemap(path: string): Promise<ParseOpen
     resolve: {
       http: {
         headers: {
-          "accept": "*/*"
-        }
-      }
-    }
+          accept: "*/*",
+        },
+      },
+    },
   });
 
   // parse all asts
   await Promise.all(
     resolverResults
       .paths()
-      .map((filePath) => sourcemap.addFileIfMissing(filePath))
+      .map((filePath, index) => sourcemap.addFileIfMissing(filePath, index))
   );
 
   dereference(
@@ -43,99 +47,104 @@ export async function parseOpenAPIWithSourcemap(path: string): Promise<ParseOpen
     sourcemap
   );
 
-  return { jsonLike: resolver.schema as any, sourcemap: sourcemap.serialize() };
+  return { jsonLike: resolver.schema as any, sourcemap: sourcemap };
 }
 
-export async function parseOpenAPIFromRepoWithSourcemap(name: string, repoPath: string, branch: string): Promise<ParseOpenAPIResult> {
-  const newGitBranchResolver = require("./git-branch-file-resolver.js")
+export async function parseOpenAPIFromRepoWithSourcemap(
+  name: string,
+  repoPath: string,
+  branch: string
+): Promise<ParseOpenAPIResult> {
+  const newGitBranchResolver = require("./git-branch-file-resolver.js");
 
-  const inGitResolver = newGitBranchResolver(repoPath, branch)
+  const inGitResolver = newGitBranchResolver(repoPath, branch);
   const resolver = new $RefParser();
-  const fileName = path.join(repoPath, name)
+  const fileName = path.join(repoPath, name);
 
   const sourcemap = new JsonSchemaSourcemap();
-  const resolverResults: $RefParser.$Refs = await resolver.resolve(fileName, { resolve: { file: inGitResolver } });
+  const resolverResults: $RefParser.$Refs = await resolver.resolve(fileName, {
+    resolve: { file: inGitResolver },
+  });
 
   // parse all asts
   await Promise.all(
-    resolverResults
-      .paths()
-      .map(async (filePath) => {
-        return await sourcemap.addFileIfMissingFromContents(filePath, await inGitResolver.read({ url: filePath }))
-      })
+    resolverResults.paths().map(async (filePath, index) => {
+      return await sourcemap.addFileIfMissingFromContents(
+        filePath,
+        await inGitResolver.read({ url: filePath }),
+        index
+      );
+    })
   );
 
   dereference(
     resolver,
-    { ...$RefParserOptions.defaults, path: fileName, resolve: { file: inGitResolver } },
+    {
+      ...$RefParserOptions.defaults,
+      path: fileName,
+      resolve: { file: inGitResolver },
+    },
     sourcemap
   );
 
-  return { jsonLike: resolver.schema as any, sourcemap: sourcemap.serialize() };
+  return { jsonLike: resolver.schema as any, sourcemap: sourcemap };
 }
 
-type JsonPath = string;
-type FileReference = number;
+export type JsonPath = string;
+export type FileReference = number;
 
-type DerefToSource = [JsonPath, LocationRecord];
+export type DerefToSource = [YAMLNode, FileReference];
 
-export interface JsonSchemaSourcemapOutput {
-  files: Array<{
-    path: string;
-    index: number;
-  }>;
-  map: DerefToSource[];
-}
-
+// assumptions change because not serializing
 export class JsonSchemaSourcemap {
-  private _files: Array<{
+  public files: Array<{
     path: string;
     index: number;
     ast: YAMLNode;
   }> = [];
 
-  private _mappings: Array<DerefToSource> = [];
+  public mappings: { [key: JsonPath]: DerefToSource } = {};
 
-  async addFileIfMissing(filePath: string) {
-
+  async addFileIfMissing(filePath: string, fileIndex: number) {
     if (filePath.startsWith("http")) {
       const response = await fetch(filePath);
       const asText = await response.text();
 
       const yamlAst: YAMLNode = YAML.safeLoad(asText);
 
-      this._files.push({
+      this.files.push({
         path: filePath,
-        index: this._files.length,
+        index: fileIndex,
         ast: yamlAst,
       });
-
     } else {
-      if (!this._files.find((i) => i.path === filePath)) {
+      if (!this.files.find((i) => i.path === filePath)) {
         // add the ast to the cache
         const yamlAst: YAMLNode = YAML.safeLoad(
           (await fs.readFile(filePath)).toString()
         );
 
-        this._files.push({
+        this.files.push({
           path: filePath,
-          index: this._files.length,
+          index: fileIndex,
           ast: yamlAst,
         });
       }
     }
   }
 
-  async addFileIfMissingFromContents(filePath: string, contents: string) {
-    if (!this._files.find((i) => i.path === filePath)) {
+  async addFileIfMissingFromContents(
+    filePath: string,
+    contents: string,
+    fileIndex: number
+  ) {
+    if (!this.files.find((i) => i.path === filePath)) {
       // add the ast to the cache
-      const yamlAst: YAMLNode = YAML.safeLoad(
-        contents
-      );
+      const yamlAst: YAMLNode = YAML.safeLoad(contents);
 
-      this._files.push({
+      this.files.push({
         path: filePath,
-        index: this._files.length,
+        index: fileIndex,
         ast: yamlAst,
       });
     }
@@ -143,44 +152,40 @@ export class JsonSchemaSourcemap {
 
   log(path: string, pathFromRoot: string) {
     // this seems to assume that paths will be in order, why not check for equality?
-    const thisFile = this._files.find((i) => path.startsWith(i.path));
+    const thisFile = this.files.find((i) => path.startsWith(i.path));
     if (thisFile) {
-      const jsonPointer = path.split(thisFile.path)[1].substring(1) || "/";
+      const jsonPointer = jsonPointerHelpers.unescapeUriSafePointer(
+        path.split(thisFile.path)[1].substring(1) || "/"
+      );
       const sourceMapping = resolveJsonPointerInYamlAst(
         thisFile.ast,
         jsonPointer,
         thisFile.index
       );
       if (sourceMapping) {
-        this._mappings.push([pathFromRoot, sourceMapping]);
+        this.mappings[pathFromRoot] = sourceMapping;
       }
     }
-  }
-
-  public serialize(): JsonSchemaSourcemapOutput {
-    return {
-      files: this._files.map((i) => ({ path: i.path, index: i.index })),
-      map: this._mappings,
-    };
   }
 }
 
 export function resolveJsonPointerInYamlAst(
   node: YAMLNode,
-  jsonPointer: string,
+  pointer: string,
   file: number
-): LocationRecord | undefined {
-  const decoded = pointer.decodePointer(jsonPointer);
+): DerefToSource | undefined {
+  const decoded = jsonPointer.parse(pointer);
 
   const isEmpty =
     decoded.length === 0 || (decoded.length === 1 && decoded[0] === "");
 
-  if (isEmpty) return { node: [node.startPosition, node.endPosition], file: file };
+  if (isEmpty) return [node, file];
 
   const found: YAMLNode | undefined = decoded.reduce((current, path) => {
     if (!current) return undefined;
     const node: YAMLNode = current.key ? current.value : current;
-    const isNumericalKey = !isNaN(Number(path)) && (node as any).hasOwnProperty("items");
+    const isNumericalKey =
+      !isNaN(Number(path)) && (node as any).hasOwnProperty("items");
 
     if (isNumericalKey) {
       return (node as YAMLSequence).items[Number(path)];
@@ -193,17 +198,7 @@ export function resolveJsonPointerInYamlAst(
   }, node as YAMLNode | undefined);
 
   if (found) {
-    if (found.key) {
-      // is a field
-      return {
-        key: [found.key.startPosition, found.key.endPosition],
-        value: [found.value.startPosition, found.value.endPosition],
-        node: [found.startPosition, found.endPosition],
-        file: file,
-      };
-    } else {
-      return { node: [found.startPosition, found.endPosition], file: file };
-    }
+    return [found, file];
   }
 }
 

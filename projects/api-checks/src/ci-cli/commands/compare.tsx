@@ -9,6 +9,7 @@ import {
 import { render, Text, Newline, useApp, Box } from "ink";
 
 import {
+  JsonSchemaSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
@@ -114,7 +115,7 @@ async function specFromInputToResults(
     case SpecVersionFrom.empty:
       return {
         jsonLike: input.value,
-        sourcemap: { files: [], map: [] },
+        sourcemap: new JsonSchemaSourcemap(),
       };
     case SpecVersionFrom.git: {
       const gitRepo = await inGit(path.join(workingDir, input.name));

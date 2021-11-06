@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can parse an OpenAPI spec with external references 1`] = `
+Object {
+  "flattened": Object {
+    "example": Object {
+      "token": "11111111",
+      "user": Object {
+        "name": "Homer",
+      },
+    },
+    "properties": Object {
+      "token": Object {
+        "type": "string",
+      },
+      "user": Object {
+        "example": Object {
+          "name": "Homer",
+        },
+        "properties": Object {
+          "name": Object {
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "name",
+        ],
+        "type": "object",
+      },
+    },
+    "required": Array [
+      "user",
+      "token",
+    ],
+    "type": "object",
+  },
+  "sourcemap": JsonSchemaSourcemap {
+    "files": Array [],
+    "mappings": Object {},
+  },
+  "success": true,
+}
+`;

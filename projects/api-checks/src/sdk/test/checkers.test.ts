@@ -6,7 +6,7 @@ const { assert } = require("chai"); // Using Assert style
 const change: IChange<any> = {
   location: {
     kind: "simulated",
-    jsonPath: [],
+    jsonPath: "/",
     conceptualPath: [],
     conceptualLocation: {
       path: "/simulated",

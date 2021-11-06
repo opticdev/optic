@@ -22,7 +22,8 @@ function completenessApiRules(dsl: ExampleDsl) {
 }
 
 checker.useDsl(
-  (input) => new ExampleDsl(input.nextFacts, input.changelog),
+  (input) =>
+    new ExampleDsl(input.nextFacts, input.nextJsonLike, input.changelog),
   completenessApiRules
 );
 

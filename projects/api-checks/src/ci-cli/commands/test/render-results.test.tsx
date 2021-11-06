@@ -7,7 +7,7 @@ describe("list of checks", () => {
   it("renders empty list of checks", async () => {
     const { lastFrame } = render(<RenderCheckResults results={results} />);
     const output = lastFrame()!;
-    const stringified = Buffer.from(output).toString('base64');
+    const stringified = Buffer.from(output).toString("base64");
     // console.log(lastFrame());
     // jest complains for some reason, and the snapshots aren't consistent.
     expect(stringified).toMatchSnapshot();
@@ -15,7 +15,7 @@ describe("list of checks", () => {
   });
 });
 
-const results = [
+const results: Result[] = [
   {
     passed: false,
     condition: "have tags",
@@ -27,11 +27,12 @@ const results = [
     error: "tags [] must be set on each operation: expected undefined to exist",
     change: {
       location: {
-        jsonPath: ["paths", "/example", "get"],
+        jsonPath: "/paths/example/get",
         conceptualPath: ["operations", "/example", "get"],
         kind: "operation",
         conceptualLocation: { method: "get", path: "/example" },
       },
+      // @ts-ignore
       value: {
         operationId: "",
         summary: "Retrieve example",
@@ -51,11 +52,12 @@ const results = [
       "https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#operation-ids",
     change: {
       location: {
-        jsonPath: ["paths", "/example", "get"],
+        jsonPath: "/paths/example/get",
         conceptualPath: ["operations", "/example", "get"],
         kind: "operation",
         conceptualLocation: { method: "get", path: "/example" },
       },
+      // @ts-ignore
       value: {
         operationId: "",
         summary: "Retrieve example",
@@ -75,11 +77,12 @@ const results = [
       "https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#operation-ids",
     change: {
       location: {
-        jsonPath: ["paths", "/example", "get"],
+        jsonPath: "/paths/example/paths",
         conceptualPath: ["operations", "/example", "get"],
         kind: "operation",
         conceptualLocation: { method: "patch", path: "/example/{}" },
       },
+      // @ts-ignore
       value: {
         operationId: "",
         summary: "Retrieve example",

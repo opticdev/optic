@@ -26,11 +26,7 @@ Array [
           "/example",
           "get",
         ],
-        "jsonPath": Array [
-          "paths",
-          "/example",
-          "get",
-        ],
+        "jsonPath": "/paths/~1example/get",
         "kind": "operation",
       },
     },
@@ -41,6 +37,34 @@ Array [
     "isShould": false,
     "passed": false,
     "where": "updated operation: GET /example",
+  },
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+        ],
+        "jsonPath": "/paths/~1example/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "operationId": "get_example",
+        "pathPattern": "/example",
+      },
+    },
+    "condition": "be able to see spec",
+    "docsLink": undefined,
+    "isMust": true,
+    "isShould": false,
+    "passed": true,
+    "where": "requirement for operation: GET /example",
   },
 ]
 `;
