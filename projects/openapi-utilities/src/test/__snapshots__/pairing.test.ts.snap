@@ -41,7 +41,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/body",
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json",
       "kind": "body",
     },
     "value": Object {
@@ -75,7 +75,7 @@ Array [
         "application/json",
         "s",
       ],
-      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/body/properties/s",
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/s",
       "kind": "field",
     },
     "value": Object {
@@ -155,7 +155,7 @@ Array [
         "application/json",
         "s",
       ],
-      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/body/properties/s",
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/s",
       "kind": "field",
     },
   },

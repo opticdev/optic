@@ -123,41 +123,28 @@ export function genericEntityRuleImpl<
             item.value
           )}`;
           const docsHelper = newDocsLinkHelper();
+
+          let specItem: OpenApiEntityType | undefined;
+          try {
+            specItem = getSpecItem(item.location.jsonPath);
+          } catch (e) {
+            throw new Error(
+              "JSON trail does not resolve " + item.location.jsonPath
+            );
+          }
+
           return runCheck(item, docsHelper, where, statement, must, () =>
             handler(
               item.value,
               getContext(item.location),
               docsHelper,
-              getSpecItem(item.location.jsonPath)
+              specItem || ({} as OpenApiEntityType)
             )
           );
         })
       );
     };
   };
-
-  // const requirementOfSpecHandler: (
-  //   must: boolean
-  // ) => EntityRule<Type, ApiContext, DslContext>["requirement"]["must"] = (
-  //   must: boolean
-  // ) => {
-  //   return (statement, handler) => {
-  //     pushCheck(
-  //       ...requirements.map((item, index) => {
-  //         const where = `requirement for ${openApiKind.toString()}: ${describeWhere(
-  //           item.value
-  //         )}`;
-  //
-  //         console.log(item.location.jsonPath);
-  //
-  //         const docsHelper = newDocsLinkHelper();
-  //         return runCheck(item, docsHelper, where, statement, must, () =>
-  //           handler(item.value, getContext(item.location), docsHelper)
-  //         );
-  //       })
-  //     );
-  //   };
-  // };
 
   return {
     added: {
@@ -175,7 +162,6 @@ export function genericEntityRuleImpl<
     requirement: {
       must: requirementsHandler(true),
       should: requirementsHandler(false),
-      // spec: {},
     },
   };
 }

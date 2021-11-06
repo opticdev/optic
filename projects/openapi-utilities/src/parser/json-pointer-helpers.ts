@@ -1,7 +1,7 @@
 import * as jsonPointer from "json-pointer";
 
 function append(pointer: string, ...property: string[]): string {
-  const parsed = jsonPointer.parse(pointer) || [];
+  const parsed = jsonPointer.parse(pointer.toString()) || [];
   return jsonPointer.compile([...parsed, ...property]);
 }
 

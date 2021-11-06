@@ -101,7 +101,7 @@ Array [
         "post",
         "multipart/form-data",
       ],
-      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/content/multipart~1form-data/body",
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data",
       "kind": "body",
     },
     "value": Object {
@@ -129,7 +129,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json/body",
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json",
       "kind": "body",
     },
     "value": Object {
@@ -213,7 +213,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1store~1inventory/get/responses/200/content/application~1json/body",
+      "jsonPath": "/paths/~1store~1inventory/get/responses/200/content/application~1json",
       "kind": "body",
     },
     "value": Object {
@@ -304,7 +304,7 @@ Array [
         "post",
         "*/*",
       ],
-      "jsonPath": "/paths/~1store~1order/post/content/*~1*/body",
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*",
       "kind": "body",
     },
     "value": Object {
@@ -334,7 +334,7 @@ Array [
         "200",
         "application/xml",
       ],
-      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/body",
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml",
       "kind": "body",
     },
     "value": Object {
@@ -364,7 +364,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/body",
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json",
       "kind": "body",
     },
     "value": Object {
@@ -500,7 +500,7 @@ Array [
         "200",
         "application/xml",
       ],
-      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/body",
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml",
       "kind": "body",
     },
     "value": Object {
@@ -530,7 +530,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/body",
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json",
       "kind": "body",
     },
     "value": Object {
@@ -771,7 +771,7 @@ Array [
         "post",
         "*/*",
       ],
-      "jsonPath": "/paths/~1user/post/content/*~1*/body",
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*",
       "kind": "body",
     },
     "value": Object {
@@ -861,7 +861,7 @@ Array [
         "post",
         "*/*",
       ],
-      "jsonPath": "/paths/~1user~1createWithArray/post/content/*~1*/body",
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*",
       "kind": "body",
     },
     "value": Object {
@@ -951,7 +951,7 @@ Array [
         "post",
         "*/*",
       ],
-      "jsonPath": "/paths/~1user~1createWithList/post/content/*~1*/body",
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*",
       "kind": "body",
     },
     "value": Object {
@@ -1151,7 +1151,7 @@ Array [
         "200",
         "application/xml",
       ],
-      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml/body",
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml",
       "kind": "body",
     },
     "value": Object {
@@ -1181,7 +1181,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1json/body",
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1json",
       "kind": "body",
     },
     "value": Object {
@@ -1361,7 +1361,7 @@ Array [
         "200",
         "application/xml",
       ],
-      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/body",
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml",
       "kind": "body",
     },
     "value": Object {
@@ -1391,7 +1391,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/body",
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json",
       "kind": "body",
     },
     "value": Object {
@@ -1557,7 +1557,7 @@ Array [
         "put",
         "*/*",
       ],
-      "jsonPath": "/paths/~1user~1{username}/put/content/*~1*/body",
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*",
       "kind": "body",
     },
     "value": Object {
@@ -2463,176 +2463,4 @@ Object {
     },
   ],
 }
-`;
-
-exports[`can produce valid facts from json schema 1`] = `
-Array [
-  Object {
-    "location": Object {
-      "conceptualLocation": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "jsonSchemaTrail": Array [
-          "id",
-        ],
-        "method": "get",
-        "path": "",
-      },
-      "conceptualPath": Array [
-        "id",
-      ],
-      "jsonPath": "/properties/id",
-      "kind": "field",
-    },
-    "value": Object {
-      "flatSchema": Object {
-        "format": "int64",
-        "type": "integer",
-      },
-      "key": "id",
-      "required": false,
-    },
-  },
-  Object {
-    "location": Object {
-      "conceptualLocation": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "jsonSchemaTrail": Array [
-          "petId",
-        ],
-        "method": "get",
-        "path": "",
-      },
-      "conceptualPath": Array [
-        "petId",
-      ],
-      "jsonPath": "/properties/petId",
-      "kind": "field",
-    },
-    "value": Object {
-      "flatSchema": Object {
-        "format": "int64",
-        "type": "integer",
-      },
-      "key": "petId",
-      "required": false,
-    },
-  },
-  Object {
-    "location": Object {
-      "conceptualLocation": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "jsonSchemaTrail": Array [
-          "quantity",
-        ],
-        "method": "get",
-        "path": "",
-      },
-      "conceptualPath": Array [
-        "quantity",
-      ],
-      "jsonPath": "/properties/quantity",
-      "kind": "field",
-    },
-    "value": Object {
-      "flatSchema": Object {
-        "format": "int32",
-        "type": "integer",
-      },
-      "key": "quantity",
-      "required": false,
-    },
-  },
-  Object {
-    "location": Object {
-      "conceptualLocation": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "jsonSchemaTrail": Array [
-          "shipDate",
-        ],
-        "method": "get",
-        "path": "",
-      },
-      "conceptualPath": Array [
-        "shipDate",
-      ],
-      "jsonPath": "/properties/shipDate",
-      "kind": "field",
-    },
-    "value": Object {
-      "flatSchema": Object {
-        "format": "date-time",
-        "type": "string",
-      },
-      "key": "shipDate",
-      "required": false,
-    },
-  },
-  Object {
-    "location": Object {
-      "conceptualLocation": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "jsonSchemaTrail": Array [
-          "status",
-        ],
-        "method": "get",
-        "path": "",
-      },
-      "conceptualPath": Array [
-        "status",
-      ],
-      "jsonPath": "/properties/status",
-      "kind": "field",
-    },
-    "value": Object {
-      "flatSchema": Object {
-        "description": "Order Status",
-        "enum": Array [
-          "placed",
-          "approved",
-          "delivered",
-        ],
-        "type": "string",
-      },
-      "key": "status",
-      "required": false,
-    },
-  },
-  Object {
-    "location": Object {
-      "conceptualLocation": Object {
-        "inResponse": Object {
-          "statusCode": "200",
-        },
-        "jsonSchemaTrail": Array [
-          "complete",
-        ],
-        "method": "get",
-        "path": "",
-      },
-      "conceptualPath": Array [
-        "complete",
-      ],
-      "jsonPath": "/properties/complete",
-      "kind": "field",
-    },
-    "value": Object {
-      "flatSchema": Object {
-        "default": false,
-        "type": "boolean",
-      },
-      "key": "complete",
-      "required": false,
-    },
-  },
-]
 `;
