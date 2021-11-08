@@ -1,7 +1,7 @@
 import { render } from "ink-testing-library";
 import React from "react";
 import { RenderCheckResults } from "../render-results";
-import { Result } from "../../../sdk/types";
+import { ResultWithSourcemap } from "../../../sdk/types";
 
 describe("list of checks", () => {
   it("renders empty list of checks", async () => {
@@ -15,8 +15,9 @@ describe("list of checks", () => {
   });
 });
 
-const results: Result[] = [
+const results: ResultWithSourcemap[] = [
   {
+    sourcemap: undefined,
     passed: false,
     condition: "have tags",
     where: "operation",
@@ -42,6 +43,7 @@ const results: Result[] = [
     },
   },
   {
+    sourcemap: undefined,
     passed: false,
     condition: "have an operation id",
     where: "operation",
@@ -67,6 +69,7 @@ const results: Result[] = [
     },
   },
   {
+    sourcemap: undefined,
     passed: true,
     condition: "have an operation id",
     where: "operation",

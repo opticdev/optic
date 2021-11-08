@@ -10,6 +10,10 @@ import { factsToChangelog } from "./openapi3/sdk/facts-to-changelog";
 import { OpenAPIV3 } from "openapi-types";
 import { IChange, IFact, ILocation } from "./openapi3/sdk/types";
 import jsonPointerHelper from "./parser/json-pointer-helpers";
+import {
+  ILookupLinePreviewResult,
+  sourcemapReader,
+} from "./parser/sourcemap-reader";
 
 export {
   OpenAPITraverser,
@@ -24,4 +28,6 @@ export {
   IFact,
   ILocation,
   jsonPointerHelper,
+  ILookupLinePreviewResult,
+  sourcemapReader,
 };

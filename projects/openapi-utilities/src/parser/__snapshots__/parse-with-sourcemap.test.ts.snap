@@ -48,85 +48,105 @@ Object {
       },
     ],
     "mappings": Object {
-      "#": Array [
+      "": Array [
         null,
         0,
+        "/",
       ],
-      "#/example": Array [
+      "/example": Array [
         null,
         0,
+        "/example",
       ],
-      "#/example/token": Array [
+      "/example/token": Array [
         null,
         0,
+        "/example/token",
       ],
-      "#/example/user": Array [
+      "/example/user": Array [
         null,
         1,
+        "/User/example",
       ],
-      "#/properties": Array [
+      "/properties": Array [
         null,
         0,
+        "/properties",
       ],
-      "#/properties/token": Array [
+      "/properties/token": Array [
         null,
         0,
+        "/properties/token",
       ],
-      "#/properties/token/type": Array [
+      "/properties/token/type": Array [
         null,
         0,
+        "/properties/token/type",
       ],
-      "#/properties/user": Array [
+      "/properties/user": Array [
         null,
         1,
+        "/User",
       ],
-      "#/properties/user/example": Array [
+      "/properties/user/example": Array [
         null,
         1,
+        "/User/example",
       ],
-      "#/properties/user/example/name": Array [
+      "/properties/user/example/name": Array [
         null,
         1,
+        "/User/example/name",
       ],
-      "#/properties/user/properties": Array [
+      "/properties/user/properties": Array [
         null,
         1,
+        "/User/properties",
       ],
-      "#/properties/user/properties/name": Array [
+      "/properties/user/properties/name": Array [
         null,
         1,
+        "/User/properties/name",
       ],
-      "#/properties/user/properties/name/type": Array [
+      "/properties/user/properties/name/type": Array [
         null,
         1,
+        "/User/properties/name/type",
       ],
-      "#/properties/user/required": Array [
+      "/properties/user/required": Array [
         null,
         1,
+        "/User/required",
       ],
-      "#/properties/user/required/0": Array [
+      "/properties/user/required/0": Array [
         null,
         1,
+        "/User/required/0",
       ],
-      "#/properties/user/type": Array [
+      "/properties/user/type": Array [
         null,
         1,
+        "/User/type",
       ],
-      "#/required": Array [
+      "/required": Array [
         null,
         0,
+        "/required",
       ],
-      "#/required/0": Array [
+      "/required/0": Array [
         null,
         0,
+        "/required/0",
       ],
-      "#/required/1": Array [
+      "/required/1": Array [
         null,
         0,
+        "/required/1",
       ],
-      "#/type": Array [
+      "/type": Array [
         null,
         0,
+        "/type",
       ],
     },
   },
@@ -1283,1941 +1303,2425 @@ Object {
       },
     ],
     "mappings": Object {
-      "#": Array [
+      "": Array [
         null,
         0,
+        "/",
       ],
-      "#/components": Array [
+      "/components": Array [
         null,
         0,
+        "/components",
       ],
-      "#/components/schemas": Array [
+      "/components/schemas": Array [
         null,
         0,
+        "/components/schemas",
       ],
-      "#/components/schemas/ApiResponse": Array [
+      "/components/schemas/ApiResponse": Array [
         null,
         0,
+        "/components/schemas/ApiResponse",
       ],
-      "#/components/schemas/Category": Array [
+      "/components/schemas/Category": Array [
         null,
         0,
+        "/components/schemas/Category",
       ],
-      "#/components/schemas/Category/properties": Array [
+      "/components/schemas/Category/properties": Array [
         null,
         0,
+        "/components/schemas/Category/properties",
       ],
-      "#/components/schemas/Category/properties/id": Array [
+      "/components/schemas/Category/properties/id": Array [
         null,
         0,
+        "/components/schemas/Category/properties/id",
       ],
-      "#/components/schemas/Category/properties/id/format": Array [
+      "/components/schemas/Category/properties/id/format": Array [
         null,
         0,
+        "/components/schemas/Category/properties/id/format",
       ],
-      "#/components/schemas/Category/properties/id/type": Array [
+      "/components/schemas/Category/properties/id/type": Array [
         null,
         0,
+        "/components/schemas/Category/properties/id/type",
       ],
-      "#/components/schemas/Category/properties/name": Array [
+      "/components/schemas/Category/properties/name": Array [
         null,
         0,
+        "/components/schemas/Category/properties/name",
       ],
-      "#/components/schemas/Category/properties/name/type": Array [
+      "/components/schemas/Category/properties/name/type": Array [
         null,
         0,
+        "/components/schemas/Category/properties/name/type",
       ],
-      "#/components/schemas/Category/type": Array [
+      "/components/schemas/Category/type": Array [
         null,
         0,
+        "/components/schemas/Category/type",
       ],
-      "#/components/schemas/Category/xml": Array [
+      "/components/schemas/Category/xml": Array [
         null,
         0,
+        "/components/schemas/Category/xml",
       ],
-      "#/components/schemas/Category/xml/name": Array [
+      "/components/schemas/Category/xml/name": Array [
         null,
         0,
+        "/components/schemas/Category/xml/name",
       ],
-      "#/components/schemas/Order": Array [
+      "/components/schemas/Order": Array [
         null,
         0,
+        "/components/schemas/Order",
       ],
-      "#/components/schemas/Pet": Array [
+      "/components/schemas/Pet": Array [
         null,
         0,
+        "/components/schemas/Pet",
       ],
-      "#/components/schemas/Pet/properties": Array [
+      "/components/schemas/Pet/properties": Array [
         null,
         0,
+        "/components/schemas/Pet/properties",
       ],
-      "#/components/schemas/Pet/properties/category": Array [
+      "/components/schemas/Pet/properties/category": Array [
         null,
         0,
+        "/components/schemas/Category",
       ],
-      "#/components/schemas/Pet/properties/id": Array [
+      "/components/schemas/Pet/properties/id": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/id",
       ],
-      "#/components/schemas/Pet/properties/id/format": Array [
+      "/components/schemas/Pet/properties/id/format": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/id/format",
       ],
-      "#/components/schemas/Pet/properties/id/type": Array [
+      "/components/schemas/Pet/properties/id/type": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/id/type",
       ],
-      "#/components/schemas/Pet/properties/name": Array [
+      "/components/schemas/Pet/properties/name": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/name",
       ],
-      "#/components/schemas/Pet/properties/name/example": Array [
+      "/components/schemas/Pet/properties/name/example": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/name/example",
       ],
-      "#/components/schemas/Pet/properties/name/type": Array [
+      "/components/schemas/Pet/properties/name/type": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/name/type",
       ],
-      "#/components/schemas/Pet/properties/photoUrls": Array [
+      "/components/schemas/Pet/properties/photoUrls": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/photoUrls",
       ],
-      "#/components/schemas/Pet/properties/photoUrls/items": Array [
+      "/components/schemas/Pet/properties/photoUrls/items": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/photoUrls/items",
       ],
-      "#/components/schemas/Pet/properties/photoUrls/items/type": Array [
+      "/components/schemas/Pet/properties/photoUrls/items/type": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/photoUrls/items/type",
       ],
-      "#/components/schemas/Pet/properties/photoUrls/type": Array [
+      "/components/schemas/Pet/properties/photoUrls/type": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/photoUrls/type",
       ],
-      "#/components/schemas/Pet/properties/photoUrls/xml": Array [
+      "/components/schemas/Pet/properties/photoUrls/xml": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/photoUrls/xml",
       ],
-      "#/components/schemas/Pet/properties/photoUrls/xml/name": Array [
+      "/components/schemas/Pet/properties/photoUrls/xml/name": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/photoUrls/xml/name",
       ],
-      "#/components/schemas/Pet/properties/photoUrls/xml/wrapped": Array [
+      "/components/schemas/Pet/properties/photoUrls/xml/wrapped": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/photoUrls/xml/wrapped",
       ],
-      "#/components/schemas/Pet/properties/status": Array [
+      "/components/schemas/Pet/properties/status": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/status",
       ],
-      "#/components/schemas/Pet/properties/status/description": Array [
+      "/components/schemas/Pet/properties/status/description": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/status/description",
       ],
-      "#/components/schemas/Pet/properties/status/enum": Array [
+      "/components/schemas/Pet/properties/status/enum": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/status/enum",
       ],
-      "#/components/schemas/Pet/properties/status/enum/0": Array [
+      "/components/schemas/Pet/properties/status/enum/0": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/status/enum/0",
       ],
-      "#/components/schemas/Pet/properties/status/enum/1": Array [
+      "/components/schemas/Pet/properties/status/enum/1": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/status/enum/1",
       ],
-      "#/components/schemas/Pet/properties/status/enum/2": Array [
+      "/components/schemas/Pet/properties/status/enum/2": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/status/enum/2",
       ],
-      "#/components/schemas/Pet/properties/status/type": Array [
+      "/components/schemas/Pet/properties/status/type": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/status/type",
       ],
-      "#/components/schemas/Pet/properties/tags": Array [
+      "/components/schemas/Pet/properties/tags": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/tags",
       ],
-      "#/components/schemas/Pet/properties/tags/items": Array [
+      "/components/schemas/Pet/properties/tags/items": Array [
         null,
         0,
+        "/components/schemas/Tag",
       ],
-      "#/components/schemas/Pet/properties/tags/type": Array [
+      "/components/schemas/Pet/properties/tags/type": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/tags/type",
       ],
-      "#/components/schemas/Pet/properties/tags/xml": Array [
+      "/components/schemas/Pet/properties/tags/xml": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/tags/xml",
       ],
-      "#/components/schemas/Pet/properties/tags/xml/name": Array [
+      "/components/schemas/Pet/properties/tags/xml/name": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/tags/xml/name",
       ],
-      "#/components/schemas/Pet/properties/tags/xml/wrapped": Array [
+      "/components/schemas/Pet/properties/tags/xml/wrapped": Array [
         null,
         0,
+        "/components/schemas/Pet/properties/tags/xml/wrapped",
       ],
-      "#/components/schemas/Pet/required": Array [
+      "/components/schemas/Pet/required": Array [
         null,
         0,
+        "/components/schemas/Pet/required",
       ],
-      "#/components/schemas/Pet/required/0": Array [
+      "/components/schemas/Pet/required/0": Array [
         null,
         0,
+        "/components/schemas/Pet/required/0",
       ],
-      "#/components/schemas/Pet/required/1": Array [
+      "/components/schemas/Pet/required/1": Array [
         null,
         0,
+        "/components/schemas/Pet/required/1",
       ],
-      "#/components/schemas/Pet/type": Array [
+      "/components/schemas/Pet/type": Array [
         null,
         0,
+        "/components/schemas/Pet/type",
       ],
-      "#/components/schemas/Pet/xml": Array [
+      "/components/schemas/Pet/xml": Array [
         null,
         0,
+        "/components/schemas/Pet/xml",
       ],
-      "#/components/schemas/Pet/xml/name": Array [
+      "/components/schemas/Pet/xml/name": Array [
         null,
         0,
+        "/components/schemas/Pet/xml/name",
       ],
-      "#/components/schemas/Tag": Array [
+      "/components/schemas/Tag": Array [
         null,
         0,
+        "/components/schemas/Tag",
       ],
-      "#/components/schemas/Tag/properties": Array [
+      "/components/schemas/Tag/properties": Array [
         null,
         0,
+        "/components/schemas/Tag/properties",
       ],
-      "#/components/schemas/Tag/properties/id": Array [
+      "/components/schemas/Tag/properties/id": Array [
         null,
         0,
+        "/components/schemas/Tag/properties/id",
       ],
-      "#/components/schemas/Tag/properties/id/format": Array [
+      "/components/schemas/Tag/properties/id/format": Array [
         null,
         0,
+        "/components/schemas/Tag/properties/id/format",
       ],
-      "#/components/schemas/Tag/properties/id/type": Array [
+      "/components/schemas/Tag/properties/id/type": Array [
         null,
         0,
+        "/components/schemas/Tag/properties/id/type",
       ],
-      "#/components/schemas/Tag/properties/name": Array [
+      "/components/schemas/Tag/properties/name": Array [
         null,
         0,
+        "/components/schemas/Tag/properties/name",
       ],
-      "#/components/schemas/Tag/properties/name/type": Array [
+      "/components/schemas/Tag/properties/name/type": Array [
         null,
         0,
+        "/components/schemas/Tag/properties/name/type",
       ],
-      "#/components/schemas/Tag/type": Array [
+      "/components/schemas/Tag/type": Array [
         null,
         0,
+        "/components/schemas/Tag/type",
       ],
-      "#/components/schemas/Tag/xml": Array [
+      "/components/schemas/Tag/xml": Array [
         null,
         0,
+        "/components/schemas/Tag/xml",
       ],
-      "#/components/schemas/Tag/xml/name": Array [
+      "/components/schemas/Tag/xml/name": Array [
         null,
         0,
+        "/components/schemas/Tag/xml/name",
       ],
-      "#/components/schemas/User": Array [
+      "/components/schemas/User": Array [
         null,
         0,
+        "/components/schemas/User",
       ],
-      "#/components/securitySchemes": Array [
+      "/components/securitySchemes": Array [
         null,
         0,
+        "/components/securitySchemes",
       ],
-      "#/components/securitySchemes/api_key": Array [
+      "/components/securitySchemes/api_key": Array [
         null,
         0,
+        "/components/securitySchemes/api_key",
       ],
-      "#/components/securitySchemes/api_key/in": Array [
+      "/components/securitySchemes/api_key/in": Array [
         null,
         0,
+        "/components/securitySchemes/api_key/in",
       ],
-      "#/components/securitySchemes/api_key/name": Array [
+      "/components/securitySchemes/api_key/name": Array [
         null,
         0,
+        "/components/securitySchemes/api_key/name",
       ],
-      "#/components/securitySchemes/api_key/type": Array [
+      "/components/securitySchemes/api_key/type": Array [
         null,
         0,
+        "/components/securitySchemes/api_key/type",
       ],
-      "#/components/securitySchemes/petstore_auth": Array [
+      "/components/securitySchemes/petstore_auth": Array [
         null,
         0,
+        "/components/securitySchemes/petstore_auth",
       ],
-      "#/components/securitySchemes/petstore_auth/flows": Array [
+      "/components/securitySchemes/petstore_auth/flows": Array [
         null,
         0,
+        "/components/securitySchemes/petstore_auth/flows",
       ],
-      "#/components/securitySchemes/petstore_auth/flows/implicit": Array [
+      "/components/securitySchemes/petstore_auth/flows/implicit": Array [
         null,
         0,
+        "/components/securitySchemes/petstore_auth/flows/implicit",
       ],
-      "#/components/securitySchemes/petstore_auth/flows/implicit/authorizationUrl": Array [
+      "/components/securitySchemes/petstore_auth/flows/implicit/authorizationUrl": Array [
         null,
         0,
+        "/components/securitySchemes/petstore_auth/flows/implicit/authorizationUrl",
       ],
-      "#/components/securitySchemes/petstore_auth/flows/implicit/scopes": Array [
+      "/components/securitySchemes/petstore_auth/flows/implicit/scopes": Array [
         null,
         0,
+        "/components/securitySchemes/petstore_auth/flows/implicit/scopes",
       ],
-      "#/components/securitySchemes/petstore_auth/flows/implicit/scopes/read%3Apets": Array [
+      "/components/securitySchemes/petstore_auth/flows/implicit/scopes/read%3Apets": Array [
         null,
         0,
+        "/components/securitySchemes/petstore_auth/flows/implicit/scopes/read:pets",
       ],
-      "#/components/securitySchemes/petstore_auth/flows/implicit/scopes/write%3Apets": Array [
+      "/components/securitySchemes/petstore_auth/flows/implicit/scopes/write%3Apets": Array [
         null,
         0,
+        "/components/securitySchemes/petstore_auth/flows/implicit/scopes/write:pets",
       ],
-      "#/components/securitySchemes/petstore_auth/type": Array [
+      "/components/securitySchemes/petstore_auth/type": Array [
         null,
         0,
+        "/components/securitySchemes/petstore_auth/type",
       ],
-      "#/externalDocs": Array [
+      "/externalDocs": Array [
         null,
         0,
+        "/externalDocs",
       ],
-      "#/externalDocs/description": Array [
+      "/externalDocs/description": Array [
         null,
         0,
+        "/externalDocs/description",
       ],
-      "#/externalDocs/url": Array [
+      "/externalDocs/url": Array [
         null,
         0,
+        "/externalDocs/url",
       ],
-      "#/info": Array [
+      "/info": Array [
         null,
         0,
+        "/info",
       ],
-      "#/info/contact": Array [
+      "/info/contact": Array [
         null,
         0,
+        "/info/contact",
       ],
-      "#/info/contact/email": Array [
+      "/info/contact/email": Array [
         null,
         0,
+        "/info/contact/email",
       ],
-      "#/info/description": Array [
+      "/info/description": Array [
         null,
         0,
+        "/info/description",
       ],
-      "#/info/license": Array [
+      "/info/license": Array [
         null,
         0,
+        "/info/license",
       ],
-      "#/info/license/name": Array [
+      "/info/license/name": Array [
         null,
         0,
+        "/info/license/name",
       ],
-      "#/info/license/url": Array [
+      "/info/license/url": Array [
         null,
         0,
+        "/info/license/url",
       ],
-      "#/info/termsOfService": Array [
+      "/info/termsOfService": Array [
         null,
         0,
+        "/info/termsOfService",
       ],
-      "#/info/title": Array [
+      "/info/title": Array [
         null,
         0,
+        "/info/title",
       ],
-      "#/info/version": Array [
+      "/info/version": Array [
         null,
         0,
+        "/info/version",
       ],
-      "#/openapi": Array [
+      "/openapi": Array [
         null,
         0,
+        "/openapi",
       ],
-      "#/paths": Array [
+      "/paths": Array [
         null,
         0,
+        "/paths",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/operationId": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/operationId": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/operationId",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/parameters",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/parameters/0",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/description": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/description": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/parameters/0/description",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/in": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/in": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/parameters/0/in",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/name": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/name": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/parameters/0/name",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/required": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/required": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/parameters/0/required",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/schema": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/schema": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/parameters/0/schema",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/schema/format": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/schema/format": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/parameters/0/schema/format",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/schema/type": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/parameters/0/schema/type": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/parameters/0/schema/type",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/requestBody",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data/schema",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/additionalMetadata": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/additionalMetadata": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/additionalMetadata",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/additionalMetadata/description": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/additionalMetadata/description": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/additionalMetadata/description",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/additionalMetadata/type": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/additionalMetadata/type": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/additionalMetadata/type",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/file": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/file": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/file",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/file/description": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/file/description": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/file/description",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/file/format": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/file/format": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/file/format",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/file/type": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/file/type": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data/schema/properties/file/type",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/responses",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/responses/200",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema": Array [
         null,
         0,
+        "/components/schemas/ApiResponse",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties": Array [
         null,
         0,
+        "/components/schemas/ApiResponse/properties",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/code": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/code": Array [
         null,
         0,
+        "/components/schemas/ApiResponse/properties/code",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/code/format": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/code/format": Array [
         null,
         0,
+        "/components/schemas/ApiResponse/properties/code/format",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/code/type": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/code/type": Array [
         null,
         0,
+        "/components/schemas/ApiResponse/properties/code/type",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/message": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/message": Array [
         null,
         0,
+        "/components/schemas/ApiResponse/properties/message",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/message/type": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/message/type": Array [
         null,
         0,
+        "/components/schemas/ApiResponse/properties/message/type",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/type": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/type": Array [
         null,
         0,
+        "/components/schemas/ApiResponse/properties/type",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/type/type": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/properties/type/type": Array [
         null,
         0,
+        "/components/schemas/ApiResponse/properties/type/type",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/type": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/content/application~1json/schema/type": Array [
         null,
         0,
+        "/components/schemas/ApiResponse/type",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/description": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/responses/200/description": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/description",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/security": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/security": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/security",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/security/0": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/security/0": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/security/0",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/security/0/petstore_auth": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/security/0/petstore_auth": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/security/0/petstore_auth",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/security/0/petstore_auth/0": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/security/0/petstore_auth/0": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/security/0/petstore_auth/0",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/security/0/petstore_auth/1": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/security/0/petstore_auth/1": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/security/0/petstore_auth/1",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/summary": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/summary": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/summary",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/tags": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/tags": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/tags",
       ],
-      "#/paths/~1pet~1%7BpetId%7D~1uploadImage/post/tags/0": Array [
+      "/paths/~1pet~1%7BpetId%7D~1uploadImage/post/tags/0": Array [
         null,
         0,
+        "/paths/~1pet~1{petId}~1uploadImage/post/tags/0",
       ],
-      "#/paths/~1store~1inventory": Array [
+      "/paths/~1store~1inventory": Array [
         null,
         0,
+        "/paths/~1store~1inventory",
       ],
-      "#/paths/~1store~1inventory/get": Array [
+      "/paths/~1store~1inventory/get": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get",
       ],
-      "#/paths/~1store~1inventory/get/description": Array [
+      "/paths/~1store~1inventory/get/description": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/description",
       ],
-      "#/paths/~1store~1inventory/get/operationId": Array [
+      "/paths/~1store~1inventory/get/operationId": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/operationId",
       ],
-      "#/paths/~1store~1inventory/get/responses": Array [
+      "/paths/~1store~1inventory/get/responses": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/responses",
       ],
-      "#/paths/~1store~1inventory/get/responses/200": Array [
+      "/paths/~1store~1inventory/get/responses/200": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/responses/200",
       ],
-      "#/paths/~1store~1inventory/get/responses/200/content": Array [
+      "/paths/~1store~1inventory/get/responses/200/content": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/responses/200/content",
       ],
-      "#/paths/~1store~1inventory/get/responses/200/content/application~1json": Array [
+      "/paths/~1store~1inventory/get/responses/200/content/application~1json": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/responses/200/content/application~1json",
       ],
-      "#/paths/~1store~1inventory/get/responses/200/content/application~1json/schema": Array [
+      "/paths/~1store~1inventory/get/responses/200/content/application~1json/schema": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/responses/200/content/application~1json/schema",
       ],
-      "#/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/additionalProperties": Array [
+      "/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/additionalProperties": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/additionalProperties",
       ],
-      "#/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/additionalProperties/format": Array [
+      "/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/additionalProperties/format": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/additionalProperties/format",
       ],
-      "#/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/additionalProperties/type": Array [
+      "/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/additionalProperties/type": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/additionalProperties/type",
       ],
-      "#/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/type": Array [
+      "/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/type": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/responses/200/content/application~1json/schema/type",
       ],
-      "#/paths/~1store~1inventory/get/responses/200/description": Array [
+      "/paths/~1store~1inventory/get/responses/200/description": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/responses/200/description",
       ],
-      "#/paths/~1store~1inventory/get/security": Array [
+      "/paths/~1store~1inventory/get/security": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/security",
       ],
-      "#/paths/~1store~1inventory/get/security/0": Array [
+      "/paths/~1store~1inventory/get/security/0": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/security/0",
       ],
-      "#/paths/~1store~1inventory/get/security/0/api_key": Array [
+      "/paths/~1store~1inventory/get/security/0/api_key": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/security/0/api_key",
       ],
-      "#/paths/~1store~1inventory/get/summary": Array [
+      "/paths/~1store~1inventory/get/summary": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/summary",
       ],
-      "#/paths/~1store~1inventory/get/tags": Array [
+      "/paths/~1store~1inventory/get/tags": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/tags",
       ],
-      "#/paths/~1store~1inventory/get/tags/0": Array [
+      "/paths/~1store~1inventory/get/tags/0": Array [
         null,
         0,
+        "/paths/~1store~1inventory/get/tags/0",
       ],
-      "#/paths/~1store~1order": Array [
+      "/paths/~1store~1order": Array [
         null,
         0,
+        "/paths/~1store~1order",
       ],
-      "#/paths/~1store~1order/post": Array [
+      "/paths/~1store~1order/post": Array [
         null,
         0,
+        "/paths/~1store~1order/post",
       ],
-      "#/paths/~1store~1order/post/operationId": Array [
+      "/paths/~1store~1order/post/operationId": Array [
         null,
         0,
+        "/paths/~1store~1order/post/operationId",
       ],
-      "#/paths/~1store~1order/post/requestBody": Array [
+      "/paths/~1store~1order/post/requestBody": Array [
         null,
         0,
+        "/paths/~1store~1order/post/requestBody",
       ],
-      "#/paths/~1store~1order/post/requestBody/content": Array [
+      "/paths/~1store~1order/post/requestBody/content": Array [
         null,
         0,
+        "/paths/~1store~1order/post/requestBody/content",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*": Array [
         null,
         0,
+        "/paths/~1store~1order/post/requestBody/content/*~1*",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema": Array [
         null,
         0,
+        "/components/schemas/Order",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties": Array [
         null,
         0,
+        "/components/schemas/Order/properties",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/complete": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/complete": Array [
         null,
         0,
+        "/components/schemas/Order/properties/complete",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/complete/default": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/complete/default": Array [
         null,
         0,
+        "/components/schemas/Order/properties/complete/default",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/complete/type": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/complete/type": Array [
         null,
         0,
+        "/components/schemas/Order/properties/complete/type",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/id": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/id": Array [
         null,
         0,
+        "/components/schemas/Order/properties/id",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/id/format": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/id/format": Array [
         null,
         0,
+        "/components/schemas/Order/properties/id/format",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/id/type": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/id/type": Array [
         null,
         0,
+        "/components/schemas/Order/properties/id/type",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/petId": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/petId": Array [
         null,
         0,
+        "/components/schemas/Order/properties/petId",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/petId/format": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/petId/format": Array [
         null,
         0,
+        "/components/schemas/Order/properties/petId/format",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/petId/type": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/petId/type": Array [
         null,
         0,
+        "/components/schemas/Order/properties/petId/type",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/quantity": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/quantity": Array [
         null,
         0,
+        "/components/schemas/Order/properties/quantity",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/quantity/format": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/quantity/format": Array [
         null,
         0,
+        "/components/schemas/Order/properties/quantity/format",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/quantity/type": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/quantity/type": Array [
         null,
         0,
+        "/components/schemas/Order/properties/quantity/type",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/shipDate": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/shipDate": Array [
         null,
         0,
+        "/components/schemas/Order/properties/shipDate",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/shipDate/format": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/shipDate/format": Array [
         null,
         0,
+        "/components/schemas/Order/properties/shipDate/format",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/shipDate/type": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/shipDate/type": Array [
         null,
         0,
+        "/components/schemas/Order/properties/shipDate/type",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status": Array [
         null,
         0,
+        "/components/schemas/Order/properties/status",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/description": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/description": Array [
         null,
         0,
+        "/components/schemas/Order/properties/status/description",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/enum": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/enum": Array [
         null,
         0,
+        "/components/schemas/Order/properties/status/enum",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/enum/0": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/enum/0": Array [
         null,
         0,
+        "/components/schemas/Order/properties/status/enum/0",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/enum/1": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/enum/1": Array [
         null,
         0,
+        "/components/schemas/Order/properties/status/enum/1",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/enum/2": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/enum/2": Array [
         null,
         0,
+        "/components/schemas/Order/properties/status/enum/2",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/type": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status/type": Array [
         null,
         0,
+        "/components/schemas/Order/properties/status/type",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/type": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/type": Array [
         null,
         0,
+        "/components/schemas/Order/type",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/xml": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/xml": Array [
         null,
         0,
+        "/components/schemas/Order/xml",
       ],
-      "#/paths/~1store~1order/post/requestBody/content/*~1*/schema/xml/name": Array [
+      "/paths/~1store~1order/post/requestBody/content/*~1*/schema/xml/name": Array [
         null,
         0,
+        "/components/schemas/Order/xml/name",
       ],
-      "#/paths/~1store~1order/post/requestBody/description": Array [
+      "/paths/~1store~1order/post/requestBody/description": Array [
         null,
         0,
+        "/paths/~1store~1order/post/requestBody/description",
       ],
-      "#/paths/~1store~1order/post/requestBody/required": Array [
+      "/paths/~1store~1order/post/requestBody/required": Array [
         null,
         0,
+        "/paths/~1store~1order/post/requestBody/required",
       ],
-      "#/paths/~1store~1order/post/responses": Array [
+      "/paths/~1store~1order/post/responses": Array [
         null,
         0,
+        "/paths/~1store~1order/post/responses",
       ],
-      "#/paths/~1store~1order/post/responses/200": Array [
+      "/paths/~1store~1order/post/responses/200": Array [
         null,
         0,
+        "/paths/~1store~1order/post/responses/200",
       ],
-      "#/paths/~1store~1order/post/responses/200/content": Array [
+      "/paths/~1store~1order/post/responses/200/content": Array [
         null,
         0,
+        "/paths/~1store~1order/post/responses/200/content",
       ],
-      "#/paths/~1store~1order/post/responses/200/content/application~1json": Array [
+      "/paths/~1store~1order/post/responses/200/content/application~1json": Array [
         null,
         0,
+        "/paths/~1store~1order/post/responses/200/content/application~1json",
       ],
-      "#/paths/~1store~1order/post/responses/200/content/application~1xml": Array [
+      "/paths/~1store~1order/post/responses/200/content/application~1xml": Array [
         null,
         0,
+        "/paths/~1store~1order/post/responses/200/content/application~1xml",
       ],
-      "#/paths/~1store~1order/post/responses/200/description": Array [
+      "/paths/~1store~1order/post/responses/200/description": Array [
         null,
         0,
+        "/paths/~1store~1order/post/responses/200/description",
       ],
-      "#/paths/~1store~1order/post/responses/400": Array [
+      "/paths/~1store~1order/post/responses/400": Array [
         null,
         0,
+        "/paths/~1store~1order/post/responses/400",
       ],
-      "#/paths/~1store~1order/post/responses/400/content": Array [
+      "/paths/~1store~1order/post/responses/400/content": Array [
         null,
         0,
+        "/paths/~1store~1order/post/responses/400/content",
       ],
-      "#/paths/~1store~1order/post/responses/400/description": Array [
+      "/paths/~1store~1order/post/responses/400/description": Array [
         null,
         0,
+        "/paths/~1store~1order/post/responses/400/description",
       ],
-      "#/paths/~1store~1order/post/summary": Array [
+      "/paths/~1store~1order/post/summary": Array [
         null,
         0,
+        "/paths/~1store~1order/post/summary",
       ],
-      "#/paths/~1store~1order/post/tags": Array [
+      "/paths/~1store~1order/post/tags": Array [
         null,
         0,
+        "/paths/~1store~1order/post/tags",
       ],
-      "#/paths/~1store~1order/post/tags/0": Array [
+      "/paths/~1store~1order/post/tags/0": Array [
         null,
         0,
+        "/paths/~1store~1order/post/tags/0",
       ],
-      "#/paths/~1store~1order/post/x-codegen-request-body-name": Array [
+      "/paths/~1store~1order/post/x-codegen-request-body-name": Array [
         null,
         0,
+        "/paths/~1store~1order/post/x-codegen-request-body-name",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D": Array [
+      "/paths/~1store~1order~1%7BorderId%7D": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/description": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/description": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/description",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/operationId": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/operationId": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/operationId",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/parameters": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/parameters": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/parameters",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/parameters/0",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/description": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/description": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/parameters/0/description",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/in": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/in": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/parameters/0/in",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/name": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/name": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/parameters/0/name",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/required": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/required": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/parameters/0/required",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/schema": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/schema": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/parameters/0/schema",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/schema/format": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/schema/format": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/parameters/0/schema/format",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/schema/minimum": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/schema/minimum": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/parameters/0/schema/minimum",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/schema/type": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/parameters/0/schema/type": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/parameters/0/schema/type",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/responses": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/responses": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/responses",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/responses/400": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/responses/400": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/responses/400",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/responses/400/content": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/responses/400/content": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/responses/400/content",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/responses/400/description": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/responses/400/description": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/responses/400/description",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/responses/404": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/responses/404": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/responses/404",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/responses/404/content": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/responses/404/content": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/responses/404/content",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/responses/404/description": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/responses/404/description": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/responses/404/description",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/summary": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/summary": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/summary",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/tags": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/tags": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/tags",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/delete/tags/0": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/delete/tags/0": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/delete/tags/0",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/description": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/description": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/description",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/operationId": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/operationId": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/operationId",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/parameters": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/parameters": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/parameters",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/parameters/0": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/parameters/0": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/parameters/0",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/description": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/description": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/parameters/0/description",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/in": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/in": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/parameters/0/in",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/name": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/name": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/parameters/0/name",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/required": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/required": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/parameters/0/required",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/schema": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/schema": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/parameters/0/schema",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/schema/format": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/schema/format": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/parameters/0/schema/format",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/schema/maximum": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/schema/maximum": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/parameters/0/schema/maximum",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/schema/minimum": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/schema/minimum": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/parameters/0/schema/minimum",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/schema/type": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/parameters/0/schema/type": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/parameters/0/schema/type",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/responses": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/responses": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/responses",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/responses/200": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/responses/200": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/responses/200",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/responses/200/content": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/responses/200/content": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/responses/200/content/application~1json": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/responses/200/content/application~1json": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/responses/200/content/application~1xml": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/responses/200/content/application~1xml": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/responses/200/description": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/responses/200/description": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/responses/200/description",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/responses/400": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/responses/400": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/responses/400",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/responses/400/content": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/responses/400/content": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/responses/400/content",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/responses/400/description": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/responses/400/description": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/responses/400/description",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/responses/404": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/responses/404": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/responses/404",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/responses/404/content": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/responses/404/content": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/responses/404/content",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/responses/404/description": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/responses/404/description": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/responses/404/description",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/summary": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/summary": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/summary",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/tags": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/tags": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/tags",
       ],
-      "#/paths/~1store~1order~1%7BorderId%7D/get/tags/0": Array [
+      "/paths/~1store~1order~1%7BorderId%7D/get/tags/0": Array [
         null,
         0,
+        "/paths/~1store~1order~1{orderId}/get/tags/0",
       ],
-      "#/paths/~1user": Array [
+      "/paths/~1user": Array [
         null,
         0,
+        "/paths/~1user",
       ],
-      "#/paths/~1user/post": Array [
+      "/paths/~1user/post": Array [
         null,
         0,
+        "/paths/~1user/post",
       ],
-      "#/paths/~1user/post/description": Array [
+      "/paths/~1user/post/description": Array [
         null,
         0,
+        "/paths/~1user/post/description",
       ],
-      "#/paths/~1user/post/operationId": Array [
+      "/paths/~1user/post/operationId": Array [
         null,
         0,
+        "/paths/~1user/post/operationId",
       ],
-      "#/paths/~1user/post/requestBody": Array [
+      "/paths/~1user/post/requestBody": Array [
         null,
         0,
+        "/paths/~1user/post/requestBody",
       ],
-      "#/paths/~1user/post/requestBody/content": Array [
+      "/paths/~1user/post/requestBody/content": Array [
         null,
         0,
+        "/paths/~1user/post/requestBody/content",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*": Array [
+      "/paths/~1user/post/requestBody/content/*~1*": Array [
         null,
         0,
+        "/paths/~1user/post/requestBody/content/*~1*",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema": Array [
         null,
         0,
+        "/components/schemas/User",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties": Array [
         null,
         0,
+        "/components/schemas/User/properties",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/email": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/email": Array [
         null,
         0,
+        "/components/schemas/User/properties/email",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/email/type": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/email/type": Array [
         null,
         0,
+        "/components/schemas/User/properties/email/type",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/firstName": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/firstName": Array [
         null,
         0,
+        "/components/schemas/User/properties/firstName",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/firstName/type": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/firstName/type": Array [
         null,
         0,
+        "/components/schemas/User/properties/firstName/type",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/id": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/id": Array [
         null,
         0,
+        "/components/schemas/User/properties/id",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/id/format": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/id/format": Array [
         null,
         0,
+        "/components/schemas/User/properties/id/format",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/id/type": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/id/type": Array [
         null,
         0,
+        "/components/schemas/User/properties/id/type",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/lastName": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/lastName": Array [
         null,
         0,
+        "/components/schemas/User/properties/lastName",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/lastName/type": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/lastName/type": Array [
         null,
         0,
+        "/components/schemas/User/properties/lastName/type",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/password": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/password": Array [
         null,
         0,
+        "/components/schemas/User/properties/password",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/password/type": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/password/type": Array [
         null,
         0,
+        "/components/schemas/User/properties/password/type",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/phone": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/phone": Array [
         null,
         0,
+        "/components/schemas/User/properties/phone",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/phone/type": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/phone/type": Array [
         null,
         0,
+        "/components/schemas/User/properties/phone/type",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus": Array [
         null,
         0,
+        "/components/schemas/User/properties/userStatus",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus/description": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus/description": Array [
         null,
         0,
+        "/components/schemas/User/properties/userStatus/description",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus/format": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus/format": Array [
         null,
         0,
+        "/components/schemas/User/properties/userStatus/format",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus/type": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus/type": Array [
         null,
         0,
+        "/components/schemas/User/properties/userStatus/type",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/username": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/username": Array [
         null,
         0,
+        "/components/schemas/User/properties/username",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/properties/username/type": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/properties/username/type": Array [
         null,
         0,
+        "/components/schemas/User/properties/username/type",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/type": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/type": Array [
         null,
         0,
+        "/components/schemas/User/type",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/xml": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/xml": Array [
         null,
         0,
+        "/components/schemas/User/xml",
       ],
-      "#/paths/~1user/post/requestBody/content/*~1*/schema/xml/name": Array [
+      "/paths/~1user/post/requestBody/content/*~1*/schema/xml/name": Array [
         null,
         0,
+        "/components/schemas/User/xml/name",
       ],
-      "#/paths/~1user/post/requestBody/description": Array [
+      "/paths/~1user/post/requestBody/description": Array [
         null,
         0,
+        "/paths/~1user/post/requestBody/description",
       ],
-      "#/paths/~1user/post/requestBody/required": Array [
+      "/paths/~1user/post/requestBody/required": Array [
         null,
         0,
+        "/paths/~1user/post/requestBody/required",
       ],
-      "#/paths/~1user/post/responses": Array [
+      "/paths/~1user/post/responses": Array [
         null,
         0,
+        "/paths/~1user/post/responses",
       ],
-      "#/paths/~1user/post/responses/default": Array [
+      "/paths/~1user/post/responses/default": Array [
         null,
         0,
+        "/paths/~1user/post/responses/default",
       ],
-      "#/paths/~1user/post/responses/default/content": Array [
+      "/paths/~1user/post/responses/default/content": Array [
         null,
         0,
+        "/paths/~1user/post/responses/default/content",
       ],
-      "#/paths/~1user/post/responses/default/description": Array [
+      "/paths/~1user/post/responses/default/description": Array [
         null,
         0,
+        "/paths/~1user/post/responses/default/description",
       ],
-      "#/paths/~1user/post/summary": Array [
+      "/paths/~1user/post/summary": Array [
         null,
         0,
+        "/paths/~1user/post/summary",
       ],
-      "#/paths/~1user/post/tags": Array [
+      "/paths/~1user/post/tags": Array [
         null,
         0,
+        "/paths/~1user/post/tags",
       ],
-      "#/paths/~1user/post/tags/0": Array [
+      "/paths/~1user/post/tags/0": Array [
         null,
         0,
+        "/paths/~1user/post/tags/0",
       ],
-      "#/paths/~1user/post/x-codegen-request-body-name": Array [
+      "/paths/~1user/post/x-codegen-request-body-name": Array [
         null,
         0,
+        "/paths/~1user/post/x-codegen-request-body-name",
       ],
-      "#/paths/~1user~1%7Busername%7D": Array [
+      "/paths/~1user~1%7Busername%7D": Array [
         null,
         0,
+        "/paths/~1user~1{username}",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete": Array [
+      "/paths/~1user~1%7Busername%7D/delete": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/description": Array [
+      "/paths/~1user~1%7Busername%7D/delete/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/operationId": Array [
+      "/paths/~1user~1%7Busername%7D/delete/operationId": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/operationId",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/parameters": Array [
+      "/paths/~1user~1%7Busername%7D/delete/parameters": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/parameters",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/parameters/0": Array [
+      "/paths/~1user~1%7Busername%7D/delete/parameters/0": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/parameters/0",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/parameters/0/description": Array [
+      "/paths/~1user~1%7Busername%7D/delete/parameters/0/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/parameters/0/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/parameters/0/in": Array [
+      "/paths/~1user~1%7Busername%7D/delete/parameters/0/in": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/parameters/0/in",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/parameters/0/name": Array [
+      "/paths/~1user~1%7Busername%7D/delete/parameters/0/name": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/parameters/0/name",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/parameters/0/required": Array [
+      "/paths/~1user~1%7Busername%7D/delete/parameters/0/required": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/parameters/0/required",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/parameters/0/schema": Array [
+      "/paths/~1user~1%7Busername%7D/delete/parameters/0/schema": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/parameters/0/schema",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/parameters/0/schema/type": Array [
+      "/paths/~1user~1%7Busername%7D/delete/parameters/0/schema/type": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/parameters/0/schema/type",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/responses": Array [
+      "/paths/~1user~1%7Busername%7D/delete/responses": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/responses",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/responses/400": Array [
+      "/paths/~1user~1%7Busername%7D/delete/responses/400": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/responses/400",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/responses/400/content": Array [
+      "/paths/~1user~1%7Busername%7D/delete/responses/400/content": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/responses/400/content",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/responses/400/description": Array [
+      "/paths/~1user~1%7Busername%7D/delete/responses/400/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/responses/400/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/responses/404": Array [
+      "/paths/~1user~1%7Busername%7D/delete/responses/404": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/responses/404",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/responses/404/content": Array [
+      "/paths/~1user~1%7Busername%7D/delete/responses/404/content": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/responses/404/content",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/responses/404/description": Array [
+      "/paths/~1user~1%7Busername%7D/delete/responses/404/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/responses/404/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/summary": Array [
+      "/paths/~1user~1%7Busername%7D/delete/summary": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/summary",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/tags": Array [
+      "/paths/~1user~1%7Busername%7D/delete/tags": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/tags",
       ],
-      "#/paths/~1user~1%7Busername%7D/delete/tags/0": Array [
+      "/paths/~1user~1%7Busername%7D/delete/tags/0": Array [
         null,
         0,
+        "/paths/~1user~1{username}/delete/tags/0",
       ],
-      "#/paths/~1user~1%7Busername%7D/get": Array [
+      "/paths/~1user~1%7Busername%7D/get": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/operationId": Array [
+      "/paths/~1user~1%7Busername%7D/get/operationId": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/operationId",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/parameters": Array [
+      "/paths/~1user~1%7Busername%7D/get/parameters": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/parameters",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/parameters/0": Array [
+      "/paths/~1user~1%7Busername%7D/get/parameters/0": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/parameters/0",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/parameters/0/description": Array [
+      "/paths/~1user~1%7Busername%7D/get/parameters/0/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/parameters/0/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/parameters/0/in": Array [
+      "/paths/~1user~1%7Busername%7D/get/parameters/0/in": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/parameters/0/in",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/parameters/0/name": Array [
+      "/paths/~1user~1%7Busername%7D/get/parameters/0/name": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/parameters/0/name",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/parameters/0/required": Array [
+      "/paths/~1user~1%7Busername%7D/get/parameters/0/required": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/parameters/0/required",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/parameters/0/schema": Array [
+      "/paths/~1user~1%7Busername%7D/get/parameters/0/schema": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/parameters/0/schema",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/parameters/0/schema/type": Array [
+      "/paths/~1user~1%7Busername%7D/get/parameters/0/schema/type": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/parameters/0/schema/type",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/responses": Array [
+      "/paths/~1user~1%7Busername%7D/get/responses": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/responses",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/responses/200": Array [
+      "/paths/~1user~1%7Busername%7D/get/responses/200": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/responses/200",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/responses/200/content": Array [
+      "/paths/~1user~1%7Busername%7D/get/responses/200/content": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/responses/200/content",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/responses/200/content/application~1json": Array [
+      "/paths/~1user~1%7Busername%7D/get/responses/200/content/application~1json": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/responses/200/content/application~1json",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/responses/200/content/application~1xml": Array [
+      "/paths/~1user~1%7Busername%7D/get/responses/200/content/application~1xml": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/responses/200/content/application~1xml",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/responses/200/description": Array [
+      "/paths/~1user~1%7Busername%7D/get/responses/200/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/responses/200/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/responses/400": Array [
+      "/paths/~1user~1%7Busername%7D/get/responses/400": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/responses/400",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/responses/400/content": Array [
+      "/paths/~1user~1%7Busername%7D/get/responses/400/content": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/responses/400/content",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/responses/400/description": Array [
+      "/paths/~1user~1%7Busername%7D/get/responses/400/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/responses/400/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/responses/404": Array [
+      "/paths/~1user~1%7Busername%7D/get/responses/404": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/responses/404",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/responses/404/content": Array [
+      "/paths/~1user~1%7Busername%7D/get/responses/404/content": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/responses/404/content",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/responses/404/description": Array [
+      "/paths/~1user~1%7Busername%7D/get/responses/404/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/responses/404/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/summary": Array [
+      "/paths/~1user~1%7Busername%7D/get/summary": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/summary",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/tags": Array [
+      "/paths/~1user~1%7Busername%7D/get/tags": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/tags",
       ],
-      "#/paths/~1user~1%7Busername%7D/get/tags/0": Array [
+      "/paths/~1user~1%7Busername%7D/get/tags/0": Array [
         null,
         0,
+        "/paths/~1user~1{username}/get/tags/0",
       ],
-      "#/paths/~1user~1%7Busername%7D/put": Array [
+      "/paths/~1user~1%7Busername%7D/put": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/description": Array [
+      "/paths/~1user~1%7Busername%7D/put/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/operationId": Array [
+      "/paths/~1user~1%7Busername%7D/put/operationId": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/operationId",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/parameters": Array [
+      "/paths/~1user~1%7Busername%7D/put/parameters": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/parameters",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/parameters/0": Array [
+      "/paths/~1user~1%7Busername%7D/put/parameters/0": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/parameters/0",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/parameters/0/description": Array [
+      "/paths/~1user~1%7Busername%7D/put/parameters/0/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/parameters/0/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/parameters/0/in": Array [
+      "/paths/~1user~1%7Busername%7D/put/parameters/0/in": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/parameters/0/in",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/parameters/0/name": Array [
+      "/paths/~1user~1%7Busername%7D/put/parameters/0/name": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/parameters/0/name",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/parameters/0/required": Array [
+      "/paths/~1user~1%7Busername%7D/put/parameters/0/required": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/parameters/0/required",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/parameters/0/schema": Array [
+      "/paths/~1user~1%7Busername%7D/put/parameters/0/schema": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/parameters/0/schema",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/parameters/0/schema/type": Array [
+      "/paths/~1user~1%7Busername%7D/put/parameters/0/schema/type": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/parameters/0/schema/type",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/requestBody": Array [
+      "/paths/~1user~1%7Busername%7D/put/requestBody": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/requestBody",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/requestBody/content": Array [
+      "/paths/~1user~1%7Busername%7D/put/requestBody/content": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/requestBody/content",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/requestBody/content/*~1*": Array [
+      "/paths/~1user~1%7Busername%7D/put/requestBody/content/*~1*": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/requestBody/content/*~1*",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/requestBody/description": Array [
+      "/paths/~1user~1%7Busername%7D/put/requestBody/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/requestBody/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/requestBody/required": Array [
+      "/paths/~1user~1%7Busername%7D/put/requestBody/required": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/requestBody/required",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/responses": Array [
+      "/paths/~1user~1%7Busername%7D/put/responses": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/responses",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/responses/400": Array [
+      "/paths/~1user~1%7Busername%7D/put/responses/400": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/responses/400",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/responses/400/content": Array [
+      "/paths/~1user~1%7Busername%7D/put/responses/400/content": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/responses/400/content",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/responses/400/description": Array [
+      "/paths/~1user~1%7Busername%7D/put/responses/400/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/responses/400/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/responses/404": Array [
+      "/paths/~1user~1%7Busername%7D/put/responses/404": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/responses/404",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/responses/404/content": Array [
+      "/paths/~1user~1%7Busername%7D/put/responses/404/content": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/responses/404/content",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/responses/404/description": Array [
+      "/paths/~1user~1%7Busername%7D/put/responses/404/description": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/responses/404/description",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/summary": Array [
+      "/paths/~1user~1%7Busername%7D/put/summary": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/summary",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/tags": Array [
+      "/paths/~1user~1%7Busername%7D/put/tags": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/tags",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/tags/0": Array [
+      "/paths/~1user~1%7Busername%7D/put/tags/0": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/tags/0",
       ],
-      "#/paths/~1user~1%7Busername%7D/put/x-codegen-request-body-name": Array [
+      "/paths/~1user~1%7Busername%7D/put/x-codegen-request-body-name": Array [
         null,
         0,
+        "/paths/~1user~1{username}/put/x-codegen-request-body-name",
       ],
-      "#/paths/~1user~1createWithArray": Array [
+      "/paths/~1user~1createWithArray": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray",
       ],
-      "#/paths/~1user~1createWithArray/post": Array [
+      "/paths/~1user~1createWithArray/post": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post",
       ],
-      "#/paths/~1user~1createWithArray/post/operationId": Array [
+      "/paths/~1user~1createWithArray/post/operationId": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/operationId",
       ],
-      "#/paths/~1user~1createWithArray/post/requestBody": Array [
+      "/paths/~1user~1createWithArray/post/requestBody": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/requestBody",
       ],
-      "#/paths/~1user~1createWithArray/post/requestBody/content": Array [
+      "/paths/~1user~1createWithArray/post/requestBody/content": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/requestBody/content",
       ],
-      "#/paths/~1user~1createWithArray/post/requestBody/content/*~1*": Array [
+      "/paths/~1user~1createWithArray/post/requestBody/content/*~1*": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/requestBody/content/*~1*",
       ],
-      "#/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema": Array [
+      "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema",
       ],
-      "#/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/type": Array [
+      "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/type": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/type",
       ],
-      "#/paths/~1user~1createWithArray/post/requestBody/description": Array [
+      "/paths/~1user~1createWithArray/post/requestBody/description": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/requestBody/description",
       ],
-      "#/paths/~1user~1createWithArray/post/requestBody/required": Array [
+      "/paths/~1user~1createWithArray/post/requestBody/required": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/requestBody/required",
       ],
-      "#/paths/~1user~1createWithArray/post/responses": Array [
+      "/paths/~1user~1createWithArray/post/responses": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/responses",
       ],
-      "#/paths/~1user~1createWithArray/post/responses/default": Array [
+      "/paths/~1user~1createWithArray/post/responses/default": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/responses/default",
       ],
-      "#/paths/~1user~1createWithArray/post/responses/default/content": Array [
+      "/paths/~1user~1createWithArray/post/responses/default/content": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/responses/default/content",
       ],
-      "#/paths/~1user~1createWithArray/post/responses/default/description": Array [
+      "/paths/~1user~1createWithArray/post/responses/default/description": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/responses/default/description",
       ],
-      "#/paths/~1user~1createWithArray/post/summary": Array [
+      "/paths/~1user~1createWithArray/post/summary": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/summary",
       ],
-      "#/paths/~1user~1createWithArray/post/tags": Array [
+      "/paths/~1user~1createWithArray/post/tags": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/tags",
       ],
-      "#/paths/~1user~1createWithArray/post/tags/0": Array [
+      "/paths/~1user~1createWithArray/post/tags/0": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/tags/0",
       ],
-      "#/paths/~1user~1createWithArray/post/x-codegen-request-body-name": Array [
+      "/paths/~1user~1createWithArray/post/x-codegen-request-body-name": Array [
         null,
         0,
+        "/paths/~1user~1createWithArray/post/x-codegen-request-body-name",
       ],
-      "#/paths/~1user~1createWithList": Array [
+      "/paths/~1user~1createWithList": Array [
         null,
         0,
+        "/paths/~1user~1createWithList",
       ],
-      "#/paths/~1user~1createWithList/post": Array [
+      "/paths/~1user~1createWithList/post": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post",
       ],
-      "#/paths/~1user~1createWithList/post/operationId": Array [
+      "/paths/~1user~1createWithList/post/operationId": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/operationId",
       ],
-      "#/paths/~1user~1createWithList/post/requestBody": Array [
+      "/paths/~1user~1createWithList/post/requestBody": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/requestBody",
       ],
-      "#/paths/~1user~1createWithList/post/requestBody/content": Array [
+      "/paths/~1user~1createWithList/post/requestBody/content": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/requestBody/content",
       ],
-      "#/paths/~1user~1createWithList/post/requestBody/content/*~1*": Array [
+      "/paths/~1user~1createWithList/post/requestBody/content/*~1*": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/requestBody/content/*~1*",
       ],
-      "#/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema": Array [
+      "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema",
       ],
-      "#/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/type": Array [
+      "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/type": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/type",
       ],
-      "#/paths/~1user~1createWithList/post/requestBody/description": Array [
+      "/paths/~1user~1createWithList/post/requestBody/description": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/requestBody/description",
       ],
-      "#/paths/~1user~1createWithList/post/requestBody/required": Array [
+      "/paths/~1user~1createWithList/post/requestBody/required": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/requestBody/required",
       ],
-      "#/paths/~1user~1createWithList/post/responses": Array [
+      "/paths/~1user~1createWithList/post/responses": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/responses",
       ],
-      "#/paths/~1user~1createWithList/post/responses/default": Array [
+      "/paths/~1user~1createWithList/post/responses/default": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/responses/default",
       ],
-      "#/paths/~1user~1createWithList/post/responses/default/content": Array [
+      "/paths/~1user~1createWithList/post/responses/default/content": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/responses/default/content",
       ],
-      "#/paths/~1user~1createWithList/post/responses/default/description": Array [
+      "/paths/~1user~1createWithList/post/responses/default/description": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/responses/default/description",
       ],
-      "#/paths/~1user~1createWithList/post/summary": Array [
+      "/paths/~1user~1createWithList/post/summary": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/summary",
       ],
-      "#/paths/~1user~1createWithList/post/tags": Array [
+      "/paths/~1user~1createWithList/post/tags": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/tags",
       ],
-      "#/paths/~1user~1createWithList/post/tags/0": Array [
+      "/paths/~1user~1createWithList/post/tags/0": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/tags/0",
       ],
-      "#/paths/~1user~1createWithList/post/x-codegen-request-body-name": Array [
+      "/paths/~1user~1createWithList/post/x-codegen-request-body-name": Array [
         null,
         0,
+        "/paths/~1user~1createWithList/post/x-codegen-request-body-name",
       ],
-      "#/paths/~1user~1login": Array [
+      "/paths/~1user~1login": Array [
         null,
         0,
+        "/paths/~1user~1login",
       ],
-      "#/paths/~1user~1login/get": Array [
+      "/paths/~1user~1login/get": Array [
         null,
         0,
+        "/paths/~1user~1login/get",
       ],
-      "#/paths/~1user~1login/get/operationId": Array [
+      "/paths/~1user~1login/get/operationId": Array [
         null,
         0,
+        "/paths/~1user~1login/get/operationId",
       ],
-      "#/paths/~1user~1login/get/parameters": Array [
+      "/paths/~1user~1login/get/parameters": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters",
       ],
-      "#/paths/~1user~1login/get/parameters/0": Array [
+      "/paths/~1user~1login/get/parameters/0": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/0",
       ],
-      "#/paths/~1user~1login/get/parameters/0/description": Array [
+      "/paths/~1user~1login/get/parameters/0/description": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/0/description",
       ],
-      "#/paths/~1user~1login/get/parameters/0/in": Array [
+      "/paths/~1user~1login/get/parameters/0/in": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/0/in",
       ],
-      "#/paths/~1user~1login/get/parameters/0/name": Array [
+      "/paths/~1user~1login/get/parameters/0/name": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/0/name",
       ],
-      "#/paths/~1user~1login/get/parameters/0/required": Array [
+      "/paths/~1user~1login/get/parameters/0/required": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/0/required",
       ],
-      "#/paths/~1user~1login/get/parameters/0/schema": Array [
+      "/paths/~1user~1login/get/parameters/0/schema": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/0/schema",
       ],
-      "#/paths/~1user~1login/get/parameters/0/schema/type": Array [
+      "/paths/~1user~1login/get/parameters/0/schema/type": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/0/schema/type",
       ],
-      "#/paths/~1user~1login/get/parameters/1": Array [
+      "/paths/~1user~1login/get/parameters/1": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/1",
       ],
-      "#/paths/~1user~1login/get/parameters/1/description": Array [
+      "/paths/~1user~1login/get/parameters/1/description": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/1/description",
       ],
-      "#/paths/~1user~1login/get/parameters/1/in": Array [
+      "/paths/~1user~1login/get/parameters/1/in": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/1/in",
       ],
-      "#/paths/~1user~1login/get/parameters/1/name": Array [
+      "/paths/~1user~1login/get/parameters/1/name": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/1/name",
       ],
-      "#/paths/~1user~1login/get/parameters/1/required": Array [
+      "/paths/~1user~1login/get/parameters/1/required": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/1/required",
       ],
-      "#/paths/~1user~1login/get/parameters/1/schema": Array [
+      "/paths/~1user~1login/get/parameters/1/schema": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/1/schema",
       ],
-      "#/paths/~1user~1login/get/parameters/1/schema/type": Array [
+      "/paths/~1user~1login/get/parameters/1/schema/type": Array [
         null,
         0,
+        "/paths/~1user~1login/get/parameters/1/schema/type",
       ],
-      "#/paths/~1user~1login/get/responses": Array [
+      "/paths/~1user~1login/get/responses": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses",
       ],
-      "#/paths/~1user~1login/get/responses/200": Array [
+      "/paths/~1user~1login/get/responses/200": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200",
       ],
-      "#/paths/~1user~1login/get/responses/200/content": Array [
+      "/paths/~1user~1login/get/responses/200/content": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/content",
       ],
-      "#/paths/~1user~1login/get/responses/200/content/application~1json": Array [
+      "/paths/~1user~1login/get/responses/200/content/application~1json": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/content/application~1json",
       ],
-      "#/paths/~1user~1login/get/responses/200/content/application~1json/schema": Array [
+      "/paths/~1user~1login/get/responses/200/content/application~1json/schema": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/content/application~1json/schema",
       ],
-      "#/paths/~1user~1login/get/responses/200/content/application~1json/schema/type": Array [
+      "/paths/~1user~1login/get/responses/200/content/application~1json/schema/type": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/content/application~1json/schema/type",
       ],
-      "#/paths/~1user~1login/get/responses/200/content/application~1xml": Array [
+      "/paths/~1user~1login/get/responses/200/content/application~1xml": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/content/application~1xml",
       ],
-      "#/paths/~1user~1login/get/responses/200/content/application~1xml/schema": Array [
+      "/paths/~1user~1login/get/responses/200/content/application~1xml/schema": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/content/application~1xml/schema",
       ],
-      "#/paths/~1user~1login/get/responses/200/content/application~1xml/schema/type": Array [
+      "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/type": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/content/application~1xml/schema/type",
       ],
-      "#/paths/~1user~1login/get/responses/200/description": Array [
+      "/paths/~1user~1login/get/responses/200/description": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/description",
       ],
-      "#/paths/~1user~1login/get/responses/200/headers": Array [
+      "/paths/~1user~1login/get/responses/200/headers": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/headers",
       ],
-      "#/paths/~1user~1login/get/responses/200/headers/X-Expires-After": Array [
+      "/paths/~1user~1login/get/responses/200/headers/X-Expires-After": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/headers/X-Expires-After",
       ],
-      "#/paths/~1user~1login/get/responses/200/headers/X-Expires-After/description": Array [
+      "/paths/~1user~1login/get/responses/200/headers/X-Expires-After/description": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/headers/X-Expires-After/description",
       ],
-      "#/paths/~1user~1login/get/responses/200/headers/X-Expires-After/schema": Array [
+      "/paths/~1user~1login/get/responses/200/headers/X-Expires-After/schema": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/headers/X-Expires-After/schema",
       ],
-      "#/paths/~1user~1login/get/responses/200/headers/X-Expires-After/schema/format": Array [
+      "/paths/~1user~1login/get/responses/200/headers/X-Expires-After/schema/format": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/headers/X-Expires-After/schema/format",
       ],
-      "#/paths/~1user~1login/get/responses/200/headers/X-Expires-After/schema/type": Array [
+      "/paths/~1user~1login/get/responses/200/headers/X-Expires-After/schema/type": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/headers/X-Expires-After/schema/type",
       ],
-      "#/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit": Array [
+      "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit",
       ],
-      "#/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/description": Array [
+      "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/description": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/description",
       ],
-      "#/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/schema": Array [
+      "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/schema": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/schema",
       ],
-      "#/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/schema/format": Array [
+      "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/schema/format": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/schema/format",
       ],
-      "#/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/schema/type": Array [
+      "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/schema/type": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit/schema/type",
       ],
-      "#/paths/~1user~1login/get/responses/400": Array [
+      "/paths/~1user~1login/get/responses/400": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/400",
       ],
-      "#/paths/~1user~1login/get/responses/400/content": Array [
+      "/paths/~1user~1login/get/responses/400/content": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/400/content",
       ],
-      "#/paths/~1user~1login/get/responses/400/description": Array [
+      "/paths/~1user~1login/get/responses/400/description": Array [
         null,
         0,
+        "/paths/~1user~1login/get/responses/400/description",
       ],
-      "#/paths/~1user~1login/get/summary": Array [
+      "/paths/~1user~1login/get/summary": Array [
         null,
         0,
+        "/paths/~1user~1login/get/summary",
       ],
-      "#/paths/~1user~1login/get/tags": Array [
+      "/paths/~1user~1login/get/tags": Array [
         null,
         0,
+        "/paths/~1user~1login/get/tags",
       ],
-      "#/paths/~1user~1login/get/tags/0": Array [
+      "/paths/~1user~1login/get/tags/0": Array [
         null,
         0,
+        "/paths/~1user~1login/get/tags/0",
       ],
-      "#/paths/~1user~1logout": Array [
+      "/paths/~1user~1logout": Array [
         null,
         0,
+        "/paths/~1user~1logout",
       ],
-      "#/paths/~1user~1logout/get": Array [
+      "/paths/~1user~1logout/get": Array [
         null,
         0,
+        "/paths/~1user~1logout/get",
       ],
-      "#/paths/~1user~1logout/get/operationId": Array [
+      "/paths/~1user~1logout/get/operationId": Array [
         null,
         0,
+        "/paths/~1user~1logout/get/operationId",
       ],
-      "#/paths/~1user~1logout/get/responses": Array [
+      "/paths/~1user~1logout/get/responses": Array [
         null,
         0,
+        "/paths/~1user~1logout/get/responses",
       ],
-      "#/paths/~1user~1logout/get/responses/default": Array [
+      "/paths/~1user~1logout/get/responses/default": Array [
         null,
         0,
+        "/paths/~1user~1logout/get/responses/default",
       ],
-      "#/paths/~1user~1logout/get/responses/default/content": Array [
+      "/paths/~1user~1logout/get/responses/default/content": Array [
         null,
         0,
+        "/paths/~1user~1logout/get/responses/default/content",
       ],
-      "#/paths/~1user~1logout/get/responses/default/description": Array [
+      "/paths/~1user~1logout/get/responses/default/description": Array [
         null,
         0,
+        "/paths/~1user~1logout/get/responses/default/description",
       ],
-      "#/paths/~1user~1logout/get/summary": Array [
+      "/paths/~1user~1logout/get/summary": Array [
         null,
         0,
+        "/paths/~1user~1logout/get/summary",
       ],
-      "#/paths/~1user~1logout/get/tags": Array [
+      "/paths/~1user~1logout/get/tags": Array [
         null,
         0,
+        "/paths/~1user~1logout/get/tags",
       ],
-      "#/paths/~1user~1logout/get/tags/0": Array [
+      "/paths/~1user~1logout/get/tags/0": Array [
         null,
         0,
+        "/paths/~1user~1logout/get/tags/0",
       ],
-      "#/servers": Array [
+      "/servers": Array [
         null,
         0,
+        "/servers",
       ],
-      "#/servers/0": Array [
+      "/servers/0": Array [
         null,
         0,
+        "/servers/0",
       ],
-      "#/servers/0/url": Array [
+      "/servers/0/url": Array [
         null,
         0,
+        "/servers/0/url",
       ],
-      "#/servers/1": Array [
+      "/servers/1": Array [
         null,
         0,
+        "/servers/1",
       ],
-      "#/servers/1/url": Array [
+      "/servers/1/url": Array [
         null,
         0,
+        "/servers/1/url",
       ],
-      "#/tags": Array [
+      "/tags": Array [
         null,
         0,
+        "/tags",
       ],
-      "#/tags/0": Array [
+      "/tags/0": Array [
         null,
         0,
+        "/tags/0",
       ],
-      "#/tags/0/description": Array [
+      "/tags/0/description": Array [
         null,
         0,
+        "/tags/0/description",
       ],
-      "#/tags/0/externalDocs": Array [
+      "/tags/0/externalDocs": Array [
         null,
         0,
+        "/tags/0/externalDocs",
       ],
-      "#/tags/0/externalDocs/description": Array [
+      "/tags/0/externalDocs/description": Array [
         null,
         0,
+        "/tags/0/externalDocs/description",
       ],
-      "#/tags/0/externalDocs/url": Array [
+      "/tags/0/externalDocs/url": Array [
         null,
         0,
+        "/tags/0/externalDocs/url",
       ],
-      "#/tags/0/name": Array [
+      "/tags/0/name": Array [
         null,
         0,
+        "/tags/0/name",
       ],
-      "#/tags/1": Array [
+      "/tags/1": Array [
         null,
         0,
+        "/tags/1",
       ],
-      "#/tags/1/description": Array [
+      "/tags/1/description": Array [
         null,
         0,
+        "/tags/1/description",
       ],
-      "#/tags/1/name": Array [
+      "/tags/1/name": Array [
         null,
         0,
+        "/tags/1/name",
       ],
-      "#/tags/2": Array [
+      "/tags/2": Array [
         null,
         0,
+        "/tags/2",
       ],
-      "#/tags/2/description": Array [
+      "/tags/2/description": Array [
         null,
         0,
+        "/tags/2/description",
       ],
-      "#/tags/2/externalDocs": Array [
+      "/tags/2/externalDocs": Array [
         null,
         0,
+        "/tags/2/externalDocs",
       ],
-      "#/tags/2/externalDocs/description": Array [
+      "/tags/2/externalDocs/description": Array [
         null,
         0,
+        "/tags/2/externalDocs/description",
       ],
-      "#/tags/2/externalDocs/url": Array [
+      "/tags/2/externalDocs/url": Array [
         null,
         0,
+        "/tags/2/externalDocs/url",
       ],
-      "#/tags/2/name": Array [
+      "/tags/2/name": Array [
         null,
         0,
+        "/tags/2/name",
       ],
     },
   },
