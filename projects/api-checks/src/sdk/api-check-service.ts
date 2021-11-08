@@ -38,6 +38,21 @@ export class ApiCheckService<Context> {
     return this;
   }
 
+  useDslWithNamedRules<DSL extends ApiCheckDsl>(
+    dslConstructor: (input: DslConstructorInput<Context>) => DSL,
+    rulesMap: { [key: string]: (dsl: DSL) => void }
+  ) {
+    const runner = (input: DslConstructorInput<Context>) => {
+      const dsl = dslConstructor(input);
+      const rules = Object.values(rulesMap);
+      rules.forEach((i) => i(dsl));
+      return dsl.checkPromises();
+    };
+
+    this.rules.push(runner);
+    return this;
+  }
+
   async runRules(
     currentJsonLike: OpenAPIV3.Document,
     nextJsonLike: OpenAPIV3.Document,
