@@ -1,4 +1,11 @@
-import { ApiCheckDsl, EntityRule, Result } from "@useoptic/api-checks";
+import {
+  ApiCheckDsl,
+  EntityRule,
+  Result,
+  DocsLinkHelper,
+  newDocsLinkHelper,
+  runCheck,
+} from "@useoptic/api-checks";
 import {
   ConceptualLocation,
   OpenApiHeaderFact,
@@ -13,11 +20,6 @@ import {
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
 import { ShouldOrMust } from "@useoptic/api-checks/build/sdk/types";
-import {
-  DocsLinkHelper,
-  newDocsLinkHelper,
-  runCheck,
-} from "@useoptic/api-checks/src/sdk/types";
 
 type SnykStablity = "wip" | "experimental" | "beta" | "ga";
 type DateString = string; // YYYY-mm-dd
@@ -163,6 +165,42 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
     };
   }
 
+  get checkApiContext(): ShouldOrMust<
+    (context: SynkApiCheckContext, docs: DocsLinkHelper) => void
+  > {
+    const contextChangedHandler: (must: boolean) => ContextChangedRule["must"] =
+      (must: boolean) => {
+        return (statement, handler) => {
+          const docsHelper = newDocsLinkHelper();
+          const syntheticChange = {
+            added: this.providedContext,
+            location: {
+              jsonPath: "/",
+              conceptualPath: [],
+              conceptualLocation: {
+                path: "Entire Resource",
+                method: "",
+              },
+              kind: "ContextRule",
+            },
+          };
+          return runCheck(
+            syntheticChange,
+            docsHelper,
+            "api lifeycle: ",
+            statement,
+            must,
+            () => handler(this.providedContext, docsHelper)
+          );
+        };
+      };
+
+    return {
+      must: contextChangedHandler(true),
+      should: contextChangedHandler(false),
+    };
+  }
+
   get bodyProperties(): SnykEntityRule<
     OpenApiFieldFact,
     OpenAPIV3.SchemaObject
@@ -184,3 +222,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
     );
   }
 }
+
+type ContextChangedRule = ShouldOrMust<
+  (context: SynkApiCheckContext, docs: DocsLinkHelper) => void
+>;
