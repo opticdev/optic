@@ -45,6 +45,8 @@ describe("reading sourcemaps", () => {
       "/properties/user/example/name"
     );
 
+    node!.filePath = stripCwd(node!.filePath);
+
     expect(node).toMatchSnapshot();
   });
 
@@ -55,6 +57,7 @@ describe("reading sourcemaps", () => {
       "/properties"
     );
 
+    node!.filePath = stripCwd(node!.filePath);
     expect(node).toMatchSnapshot();
   });
 });

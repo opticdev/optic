@@ -8,7 +8,7 @@ exports[`reading sourcemaps lines in affected file for sub-property 1`] = `
 Object {
   "endLine": 8,
   "endPosition": 111,
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/openapi-utilities/inputs/openapi3-with-references/definitions.yaml",
+  "filePath": "/inputs/openapi3-with-references/definitions.yaml",
   "preview": "    name: 'Homer'",
   "startLine": 8,
   "startPosition": 98,
@@ -19,7 +19,7 @@ exports[`reading sourcemaps lines in affected for object 1`] = `
 Object {
   "endLine": 7,
   "endPosition": 117,
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/openapi-utilities/inputs/openapi3-with-references/external-multiple.yaml",
+  "filePath": "/inputs/openapi3-with-references/external-multiple.yaml",
   "preview": "properties:
   token:
     type: string
