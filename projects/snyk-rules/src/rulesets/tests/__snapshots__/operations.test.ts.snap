@@ -322,7 +322,7 @@ Object {
       },
       "condition": "have tags",
       "docsLink": undefined,
-      "error": "tags [] must be set on each operation: expected undefined to exist",
+      "error": "expected undefined to exist",
       "isMust": true,
       "isShould": false,
       "passed": false,
