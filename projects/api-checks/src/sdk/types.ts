@@ -1,5 +1,5 @@
-import { ConceptualLocation } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
 import { IChange } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
+import { ILookupLinePreviewResult } from "@useoptic/openapi-utilities";
 
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;
@@ -49,6 +49,10 @@ export interface Result {
   change: IChange<any>;
   docsLink?: string;
 }
+
+export type ResultWithSourcemap = Result & {
+  sourcemap: ILookupLinePreviewResult;
+};
 
 export interface Passed extends Result {
   passed: true;

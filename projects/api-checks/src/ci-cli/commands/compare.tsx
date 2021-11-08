@@ -18,6 +18,8 @@ import { useAsync, useAsyncFn } from "react-use";
 import { AsyncState } from "react-use/lib/useAsyncFn";
 import { ApiCheckService } from "../../sdk/api-check-service";
 import { RenderCheckResults } from "./render-results";
+import { sourcemapReader } from "@useoptic/openapi-utilities";
+import { ResultWithSourcemap } from "../../sdk/types";
 
 export function Compare<T>(props: {
   from: SpecFromInput;
@@ -35,10 +37,22 @@ export function Compare<T>(props: {
   const specsLoaded = !loadFrom.loading && !loadFrom.loading;
 
   const [results, sendCheckRequest] = useAsyncFn(async () => {
-    return await props.apiCheckService.runRules(
+    const checkResults = await props.apiCheckService.runRules(
       loadFrom.value!.jsonLike!,
       loadTo.value!.jsonLike!,
       props.context
+    );
+
+    const { findFileAndLines } = sourcemapReader(loadTo.value!.sourcemap);
+    return await Promise.all(
+      checkResults.map(async (checkResult) => {
+        return {
+          ...checkResult,
+          sourcemap: await findFileAndLines(
+            checkResult.change.location.jsonPath
+          ),
+        } as ResultWithSourcemap;
+      })
     );
   }, [loadFrom, loadTo, props.context]);
 

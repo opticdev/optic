@@ -1,10 +1,10 @@
-import { Box, Newline, Text } from "ink";
-import React, { useMemo } from "react";
-import { Result } from "../../sdk/types";
+import { Box, Text } from "ink";
+import React from "react";
+import { Result, ResultWithSourcemap } from "../../sdk/types";
 import groupBy from "lodash.groupby";
 import Link from "ink-link";
 
-export function RenderCheckResults(props: { results: Result[] }) {
+export function RenderCheckResults(props: { results: ResultWithSourcemap[] }) {
   const groupedResults = groupBy(
     props.results,
     (result) =>
@@ -16,7 +16,7 @@ export function RenderCheckResults(props: { results: Result[] }) {
       {Object.keys(groupedResults)
         .sort()
         .map((key) => {
-          const operationResults = groupedResults[key] as Result[];
+          const operationResults = groupedResults[key] as ResultWithSourcemap[];
           const { method, path } =
             operationResults[0]!.change.location.conceptualLocation;
 
@@ -73,6 +73,13 @@ export function RenderCheckResults(props: { results: Result[] }) {
                               Read more in our API guide
                             </Text>
                           </Link>
+                        </Box>
+                      ) : null}
+                      {result.sourcemap ? (
+                        <Box paddingLeft={2}>
+                          <Text underline color="blue">
+                            {`at (${result.sourcemap.filePath}:${result.sourcemap.startLine}:${result.sourcemap.startPosition})`}
+                          </Text>
                         </Box>
                       ) : null}
                     </Box>

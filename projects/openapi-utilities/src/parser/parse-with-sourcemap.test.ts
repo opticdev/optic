@@ -22,7 +22,7 @@ function prepSnapshot(result: ParseOpenAPIResult) {
 
   Object.entries(result.sourcemap.mappings).map(([key, value]) => {
     // @ts-ignore
-    mini[key] = [null, value[1]];
+    mini[key] = [null, value[1], value[2]];
   });
 
   result.sourcemap.mappings = mini;

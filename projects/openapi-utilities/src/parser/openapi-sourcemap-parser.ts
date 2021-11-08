@@ -93,7 +93,7 @@ export async function parseOpenAPIFromRepoWithSourcemap(
 export type JsonPath = string;
 export type FileReference = number;
 
-export type DerefToSource = [YAMLNode, FileReference];
+export type DerefToSource = [YAMLNode, FileReference, JsonPath];
 
 // assumptions change because not serializing
 export class JsonSchemaSourcemap {
@@ -153,6 +153,8 @@ export class JsonSchemaSourcemap {
   log(path: string, pathFromRoot: string) {
     // this seems to assume that paths will be in order, why not check for equality?
     const thisFile = this.files.find((i) => path.startsWith(i.path));
+    // strip pound sign
+    const rootKey = pathFromRoot.substring(1);
     if (thisFile) {
       const jsonPointer = jsonPointerHelpers.unescapeUriSafePointer(
         path.split(thisFile.path)[1].substring(1) || "/"
@@ -163,7 +165,7 @@ export class JsonSchemaSourcemap {
         thisFile.index
       );
       if (sourceMapping) {
-        this.mappings[pathFromRoot] = sourceMapping;
+        this.mappings[rootKey] = sourceMapping;
       }
     }
   }
@@ -179,7 +181,7 @@ export function resolveJsonPointerInYamlAst(
   const isEmpty =
     decoded.length === 0 || (decoded.length === 1 && decoded[0] === "");
 
-  if (isEmpty) return [node, file];
+  if (isEmpty) return [node, file, "/"];
 
   const found: YAMLNode | undefined = decoded.reduce((current, path) => {
     if (!current) return undefined;
@@ -198,7 +200,7 @@ export function resolveJsonPointerInYamlAst(
   }, node as YAMLNode | undefined);
 
   if (found) {
-    return [found, file];
+    return [found, file, pointer];
   }
 }
 
