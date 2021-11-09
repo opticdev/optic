@@ -276,3 +276,362 @@ Object {
   ],
 }
 `;
+
+exports[`headers passes if it has all the headers 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {},
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "added": Object {
+        "name": "snyk-request-id",
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "snyk-request-id",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "snyk-request-id",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200/headers/snyk-request-id",
+        "kind": "response-header",
+      },
+    },
+    Object {
+      "added": Object {
+        "name": "snyk-version-lifecycle-stage",
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "snyk-version-lifecycle-stage",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "snyk-version-lifecycle-stage",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200/headers/snyk-version-lifecycle-stage",
+        "kind": "response-header",
+      },
+    },
+    Object {
+      "added": Object {
+        "name": "snyk-version-requested",
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "snyk-version-requested",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "snyk-version-requested",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200/headers/snyk-version-requested",
+        "kind": "response-header",
+      },
+    },
+    Object {
+      "added": Object {
+        "name": "snyk-version-served",
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "snyk-version-served",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "snyk-version-served",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200/headers/snyk-version-served",
+        "kind": "response-header",
+      },
+    },
+    Object {
+      "added": Object {
+        "name": "sunset",
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "sunset",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "sunset",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200/headers/sunset",
+        "kind": "response-header",
+      },
+    },
+    Object {
+      "added": Object {
+        "name": "deprecation",
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "deprecation",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "deprecation",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200/headers/deprecation",
+        "kind": "response-header",
+      },
+    },
+    Object {
+      "added": Object {
+        "description": "With headers",
+        "statusCode": 200,
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200",
+        "kind": "response",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {
+            "200": Object {
+              "description": "With headers",
+              "headers": Object {
+                "deprecation": Object {},
+                "snyk-request-id": Object {},
+                "snyk-version-lifecycle-stage": Object {},
+                "snyk-version-requested": Object {},
+                "snyk-version-served": Object {},
+                "sunset": Object {},
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "statusCode": "200",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200",
+          "kind": "response",
+        },
+        "value": Object {
+          "description": "With headers",
+          "statusCode": 200,
+        },
+      },
+      "condition": "have all headers",
+      "docsLink": undefined,
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "requirement for response: response 200",
+    },
+  ],
+}
+`;
+
+exports[`headers responses fails if it's missing headers 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {},
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "added": Object {
+        "description": "No headers",
+        "statusCode": 200,
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200",
+        "kind": "response",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {
+            "200": Object {
+              "description": "No headers",
+            },
+          },
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "statusCode": "200",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200",
+          "kind": "response",
+        },
+        "value": Object {
+          "description": "No headers",
+          "statusCode": 200,
+        },
+      },
+      "condition": "have all headers",
+      "docsLink": undefined,
+      "error": "expected [] to include 'snyk-request-id'",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "requirement for response: response 200",
+    },
+  ],
+}
+`;

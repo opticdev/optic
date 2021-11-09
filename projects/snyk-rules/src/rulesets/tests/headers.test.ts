@@ -82,4 +82,46 @@ describe("headers", () => {
       expect(result).toMatchSnapshot();
     });
   });
+
+  describe("responses", () => {
+    it("fails if it's missing headers", async () => {
+      const result = await compare(baseOpenAPI)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.responses = {
+            "200": {
+              description: "No headers",
+            },
+          };
+          return spec;
+        })
+        .withRule(rules.responseHeaders, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
+  });
+
+  it("passes if it has all the headers", async () => {
+    const result = await compare(baseOpenAPI)
+      .to((spec) => {
+        spec.paths!["/example"]!.get!.responses = {
+          "200": {
+            description: "With headers",
+            headers: {
+              "snyk-request-id": {},
+              "snyk-version-lifecycle-stage": {},
+              "snyk-version-requested": {},
+              "snyk-version-served": {},
+              sunset: {},
+              deprecation: {},
+            },
+          },
+        };
+        return spec;
+      })
+      .withRule(rules.responseHeaders, emptyContext);
+
+    expect(result.results[0].passed).toBeTruthy();
+    expect(result).toMatchSnapshot();
+  });
 });
