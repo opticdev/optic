@@ -183,3 +183,57 @@ describe("operation metadata", () => {
     });
   });
 });
+
+describe("operation parameters", () => {
+  describe("names", () => {
+    it("fails if the case isn't correct", async () => {
+      const result = await compare(baseForOperationMetadataTests)
+        .to((spec) => {
+          delete spec.paths!["/example"];
+          spec.paths!["/example/{pathParameter}"] = {
+            get: {
+              parameters: [
+                {
+                  in: "path",
+                  name: "pathParameter",
+                },
+              ],
+              responses: {},
+            },
+          };
+          return spec;
+        })
+        .withRule(rules.parameterCase, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
+
+    it("passes if the case is correct", async () => {
+      const result = await compare(baseForOperationMetadataTests)
+        .to((spec) => {
+          delete spec.paths!["/example"];
+          spec.paths!["/example/{path_parameter}"] = {
+            get: {
+              parameters: [
+                {
+                  in: "path",
+                  name: "path_parameter",
+                },
+                // {
+                //   in: "query",
+                //   name: "query_parameter",
+                // },
+              ],
+              responses: {},
+            },
+          };
+          return spec;
+        })
+        .withRule(rules.parameterCase, emptyContext);
+
+      expect(result.results[0].passed).toBeTruthy();
+      expect(result).toMatchSnapshot();
+    });
+  });
+});
