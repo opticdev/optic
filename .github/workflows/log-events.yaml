@@ -1,6 +1,7 @@
+name: Log Pull Request Events
 on:
   pull_request:
-    types: [opened, closed, reopened]
+    types: [opened, closed, reopened ]
 
 jobs:
   printJob:
