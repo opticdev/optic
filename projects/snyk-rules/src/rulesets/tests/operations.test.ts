@@ -220,14 +220,38 @@ describe("operation parameters", () => {
                   in: "path",
                   name: "path_parameter",
                 },
-                // {
-                //   in: "query",
-                //   name: "query_parameter",
-                // },
               ],
               responses: {},
             },
           };
+          return spec;
+        })
+        .withRule(rules.parameterCase, emptyContext);
+
+      expect(result.results[0].passed).toBeTruthy();
+      expect(result).toMatchSnapshot();
+    });
+  });
+
+  describe("version parameter", () => {
+    it("fails when there is no version parameter", async () => {
+      const result = await compare(baseForOperationMetadataTests)
+        .to((spec) => spec)
+        .withRule(rules.versionParameter, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
+
+    it("passes if there is a version parameter", async () => {
+      const result = await compare(baseForOperationMetadataTests)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.parameters = [
+            {
+              in: "query",
+              name: "version",
+            },
+          ];
           return spec;
         })
         .withRule(rules.parameterCase, emptyContext);
