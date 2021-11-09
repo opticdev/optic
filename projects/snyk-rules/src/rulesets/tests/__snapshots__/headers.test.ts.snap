@@ -452,7 +452,7 @@ Object {
     },
     Object {
       "added": Object {
-        "description": "No headers",
+        "description": "With headers",
         "statusCode": 200,
       },
       "location": Object {
@@ -486,7 +486,7 @@ Object {
         "get": Object {
           "responses": Object {
             "200": Object {
-              "description": "No headers",
+              "description": "With headers",
               "headers": Object {
                 "deprecation": Object {},
                 "snyk-request-id": Object {},
@@ -523,7 +523,7 @@ Object {
           "kind": "response",
         },
         "value": Object {
-          "description": "No headers",
+          "description": "With headers",
           "statusCode": 200,
         },
       },

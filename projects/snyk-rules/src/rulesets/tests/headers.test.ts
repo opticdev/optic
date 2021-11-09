@@ -96,9 +96,6 @@ describe("headers", () => {
         })
         .withRule(rules.responseHeaders, emptyContext);
 
-      // for (const ruleResult of result.results) {
-      //   expect(ruleResult.passed).toBe(true);
-      // }
       expect(result.results[0].passed).toBeFalsy();
       expect(result).toMatchSnapshot();
     });
@@ -109,7 +106,7 @@ describe("headers", () => {
       .to((spec) => {
         spec.paths!["/example"]!.get!.responses = {
           "200": {
-            description: "No headers",
+            description: "With headers",
             headers: {
               "snyk-request-id": {},
               "snyk-version-lifecycle-stage": {},
@@ -124,9 +121,6 @@ describe("headers", () => {
       })
       .withRule(rules.responseHeaders, emptyContext);
 
-    // for (const ruleResult of result.results) {
-    //   expect(ruleResult.passed).toBe(true);
-    // }
     expect(result.results[0].passed).toBeTruthy();
     expect(result).toMatchSnapshot();
   });
