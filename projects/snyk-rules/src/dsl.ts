@@ -20,6 +20,7 @@ import {
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
 import { ShouldOrMust } from "@useoptic/api-checks/build/sdk/types";
+import { OpenApiResponseFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
 
 type SnykStablity = "wip" | "experimental" | "beta" | "ga";
 type DateString = string; // YYYY-mm-dd
@@ -145,23 +146,36 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
 
   get responses() {
     const dsl = this;
+
     return {
-      get headers(): SnykEntityRule<OpenApiHeaderFact, OpenAPIV3.HeaderObject> {
-        return genericEntityRuleImpl<
-          OpenApiHeaderFact,
-          ConceptualLocation,
-          SynkApiCheckContext,
-          OpenAPIV3.HeaderObject
+      ...genericEntityRuleImpl<
+        OpenApiResponseFact,
+        ConceptualLocation,
+        SynkApiCheckContext,
+        OpenAPIV3.ResponsesObject
+      >(
+        OpenApiKind.Response,
+        dsl.changelog,
+        dsl.nextFacts,
+        (response) => `response ${response.statusCode}`,
+        (location) => dsl.getContext(location),
+        (...items) => dsl.checks.push(...items),
+        (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
+      ),
+      headers: genericEntityRuleImpl<
+        OpenApiHeaderFact,
+        ConceptualLocation,
+        SynkApiCheckContext,
+        OpenAPIV3.HeaderObject
         >(
-          OpenApiKind.ResponseHeader,
-          dsl.changelog,
-          dsl.nextFacts,
-          (header) => `response header ${header.name}`,
-          (location) => dsl.getContext(location),
-          (...items) => dsl.checks.push(...items),
-          (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
-        );
-      },
+        OpenApiKind.ResponseHeader,
+        dsl.changelog,
+        dsl.nextFacts,
+        (header) => `response header ${header.name}`,
+        (location) => dsl.getContext(location),
+        (...items) => dsl.checks.push(...items),
+        (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
+      );
     };
   }
 
