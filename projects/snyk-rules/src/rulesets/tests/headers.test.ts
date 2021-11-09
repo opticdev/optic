@@ -116,6 +116,7 @@ describe("headers", () => {
               "snyk-version-requested": {},
               "snyk-version-served": {},
               sunset: {},
+              deprecation: {},
             },
           },
         };

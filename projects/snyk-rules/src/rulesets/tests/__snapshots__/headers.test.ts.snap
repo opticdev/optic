@@ -426,6 +426,32 @@ Object {
     },
     Object {
       "added": Object {
+        "name": "deprecation",
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "deprecation",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "deprecation",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200/headers/deprecation",
+        "kind": "response-header",
+      },
+    },
+    Object {
+      "added": Object {
         "description": "No headers",
         "statusCode": 200,
       },
@@ -462,6 +488,7 @@ Object {
             "200": Object {
               "description": "No headers",
               "headers": Object {
+                "deprecation": Object {},
                 "snyk-request-id": Object {},
                 "snyk-version-lifecycle-stage": Object {},
                 "snyk-version-requested": Object {},

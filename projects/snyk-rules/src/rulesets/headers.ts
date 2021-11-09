@@ -14,6 +14,7 @@ export const rules = {
       (response, context, docs, specItem) => {
         const requiredHeaders = [
           "snyk-request-id",
+          "deprecation",
           "snyk-version-lifecycle-stage",
           "snyk-version-requested",
           "snyk-version-served",
