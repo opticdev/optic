@@ -167,7 +167,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         ConceptualLocation,
         SynkApiCheckContext,
         OpenAPIV3.HeaderObject
-        >(
+      >(
         OpenApiKind.ResponseHeader,
         dsl.changelog,
         dsl.nextFacts,
@@ -175,7 +175,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
-      );
+      ),
     };
   }
 
