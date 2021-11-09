@@ -36,4 +36,33 @@ export const rules = {
       }
     );
   },
+  parameterCase: ({ operations }: SnykApiCheckDsl) => {
+    operations.requirement.must(
+      "use the correct case",
+      (operation, context, docs, specItem) => {
+        const snakeCase = /^[a-z]+(?:_[a-z]+)*$/g;
+        for (const parameter of specItem.parameters || []) {
+          if ("in" in parameter && ["path", "query"].includes(parameter.in)) {
+            expect(
+              snakeCase.test(parameter.name),
+              `expected parameter name ${parameter.name} to be snake case`
+            ).to.be.ok;
+          }
+        }
+      }
+    );
+  },
+  versionParameter: ({ operations }: SnykApiCheckDsl) => {
+    operations.requirement.must(
+      "include a version parameter",
+      (operation, context, docs, specItem) => {
+        const parameterNames = (specItem.parameters || [])
+          .filter((parameter) => "in" in parameter && parameter.in === "query")
+          .map((parameter) => {
+            if ("name" in parameter) return parameter.name;
+          });
+        expect(parameterNames).to.include("version");
+      }
+    );
+  },
 };
