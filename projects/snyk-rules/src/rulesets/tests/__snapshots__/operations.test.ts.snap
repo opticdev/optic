@@ -731,6 +731,158 @@ Object {
 }
 `;
 
+exports[`operation parameters status codes fails when a status codes is removed 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "responses": Object {
+            "200": Object {
+              "description": "Example response",
+            },
+          },
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200",
+        "kind": "response",
+      },
+      "removed": Object {
+        "before": Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "statusCode": "200",
+              },
+              "method": "get",
+              "path": "/example",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/example",
+              "get",
+              "responses",
+              "200",
+            ],
+            "jsonPath": "/paths/~1example/get/responses/200",
+            "kind": "response",
+          },
+          "value": Object {
+            "description": "Example response",
+            "statusCode": 200,
+          },
+        },
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "statusCode": "200",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200",
+          "kind": "response",
+        },
+        "removed": Object {
+          "before": Object {
+            "location": Object {
+              "conceptualLocation": Object {
+                "inResponse": Object {
+                  "statusCode": "200",
+                },
+                "method": "get",
+                "path": "/example",
+              },
+              "conceptualPath": Array [
+                "operations",
+                "/example",
+                "get",
+                "responses",
+                "200",
+              ],
+              "jsonPath": "/paths/~1example/get/responses/200",
+              "kind": "response",
+            },
+            "value": Object {
+              "description": "Example response",
+              "statusCode": 200,
+            },
+          },
+        },
+      },
+      "condition": "not be removed",
+      "docsLink": undefined,
+      "error": "Cannot read property 'statusCode' of undefined",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "removed response: response undefined",
+    },
+  ],
+}
+`;
+
 exports[`operation parameters version parameter fails when there is no version parameter 1`] = `
 Object {
   "base": Object {

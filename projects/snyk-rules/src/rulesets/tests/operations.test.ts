@@ -244,6 +244,26 @@ describe("operation parameters", () => {
     });
   });
 
+  describe("status codes", () => {
+    it("fails when a status codes is removed", async () => {
+      const base = JSON.parse(JSON.stringify(baseForOperationMetadataTests));
+      base.paths["/example"].get.responses = {
+        "200": {
+          description: "Example response",
+        },
+      };
+      const result = await compare(base)
+        .to((spec) => {
+          delete spec.paths!["/example"]!.get!.responses!["200"];
+          return spec;
+        })
+        .withRule(rules.preventRemovingStatusCodes, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
+  });
+
   describe("version parameter", () => {
     it("fails when there is no version parameter", async () => {
       const result = await compare(baseForOperationMetadataTests)

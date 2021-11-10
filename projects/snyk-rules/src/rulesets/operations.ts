@@ -70,4 +70,9 @@ export const rules = {
       expect(queryParameter.required).to.not.be.true;
     });
   },
+  preventRemovingStatusCodes: ({ responses }: SnykApiCheckDsl) => {
+    responses.removed.must("not be removed", (response) => {
+      expect(false, `expected ${response.statusCode} to be present`).to.be.true;
+    });
+  },
 };
