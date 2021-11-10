@@ -243,7 +243,7 @@ describe("operation parameters", () => {
       expect(result).toMatchSnapshot();
     });
 
-    it.skip("fails if the default value is changed", async () => {
+    it("fails if the default value is changed", async () => {
       const base = JSON.parse(JSON.stringify(baseForOperationMetadataTests));
       base.paths!["/example"]!.get!.parameters = [
         {

@@ -75,5 +75,14 @@ export const rules = {
       expect(false, `expected ${response.statusCode} to be present`).to.be.true;
     });
   },
-  preventChangingParameterDefaultValue: ({ request }: SnykApiCheckDsl) => {},
+  preventChangingParameterDefaultValue: ({ request }: SnykApiCheckDsl) => {
+    request.queryParameter.changed.must(
+      "not change the default value",
+      (parameterBefore, parameterAfter) => {
+        let beforeDefault = parameterBefore.schema?.default;
+        let afterDefault = parameterAfter.schema?.default;
+        expect(beforeDefault).to.equal(afterDefault);
+      }
+    );
+  },
 };

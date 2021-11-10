@@ -473,7 +473,7 @@ Object {
           "pathParameter",
         ],
         "jsonPath": "/paths/~1example~1{pathParameter}/get/parameters/0",
-        "kind": "path",
+        "kind": "path-parameter",
       },
     },
     Object {
@@ -566,6 +566,160 @@ Object {
       "isShould": false,
       "passed": false,
       "where": "requirement for operation: GET /example/{pathParameter}",
+    },
+  ],
+}
+`;
+
+exports[`operation parameters names fails if the default value is changed 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "parameters": Array [
+            Object {
+              "in": "query",
+              "name": "query_parameter",
+              "schema": Object {
+                "default": "before",
+                "type": "string",
+              },
+            },
+          ],
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "changed": Object {
+        "after": Object {
+          "in": "query",
+          "name": "query_parameter",
+          "schema": Object {
+            "default": "after",
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "query",
+          "name": "query_parameter",
+          "schema": Object {
+            "default": "before",
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "query_parameter",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "parameters",
+          "query",
+          "query_parameter",
+        ],
+        "jsonPath": "/paths/~1example/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "parameters": Array [
+            Object {
+              "in": "query",
+              "name": "query_parameter",
+              "schema": Object {
+                "default": "after",
+                "type": "string",
+              },
+            },
+          ],
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "changed": Object {
+          "after": Object {
+            "in": "query",
+            "name": "query_parameter",
+            "schema": Object {
+              "default": "after",
+              "type": "string",
+            },
+          },
+          "before": Object {
+            "in": "query",
+            "name": "query_parameter",
+            "schema": Object {
+              "default": "before",
+              "type": "string",
+            },
+          },
+        },
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "query": "query_parameter",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "query",
+            "query_parameter",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "query-parameter",
+        },
+      },
+      "condition": "not change the default value",
+      "docsLink": undefined,
+      "error": "expected 'before' to equal 'after'",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "updated query-parameter: query parameter query_parameter",
     },
   ],
 }
@@ -749,7 +903,7 @@ Object {
           "path_parameter",
         ],
         "jsonPath": "/paths/~1example~1{path_parameter}/get/parameters/0",
-        "kind": "path",
+        "kind": "path-parameter",
       },
     },
     Object {
@@ -1121,7 +1275,7 @@ Object {
           "version",
         ],
         "jsonPath": "/paths/~1example/get/parameters/0",
-        "kind": "query",
+        "kind": "query-parameter",
       },
     },
   ],
