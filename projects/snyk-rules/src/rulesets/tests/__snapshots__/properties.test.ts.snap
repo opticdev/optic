@@ -215,19 +215,17 @@ Object {
     "paths": Object {
       "/example": Object {
         "get": Object {
-          "responses": Object {
-            "200": Object {
-              "content": Object {
-                "application/json": Object {
-                  "schema": Object {
-                    "properties": Object {},
-                    "type": "object",
-                  },
+          "requestBody": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {},
+                  "type": "object",
                 },
               },
-              "description": "",
             },
           },
+          "responses": Object {},
         },
       },
     },
@@ -243,11 +241,10 @@ Object {
       },
       "location": Object {
         "conceptualLocation": Object {
-          "inResponse": Object {
+          "inRequest": Object {
             "body": Object {
               "contentType": "application/json",
             },
-            "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
             "count",
@@ -259,13 +256,63 @@ Object {
           "operations",
           "/example",
           "get",
-          "responses",
-          "200",
           "application/json",
           "count",
         ],
-        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/count",
+        "jsonPath": "/paths/~1example/get/requestBody/content/application~1json/schema/properties/count",
         "kind": "field",
+      },
+    },
+    Object {
+      "changed": Object {
+        "after": Object {
+          "method": "get",
+          "pathPattern": "/example",
+          "requestBody": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "count": Object {
+                      "type": "number",
+                    },
+                  },
+                  "required": Array [
+                    "count",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/example",
+          "requestBody": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {},
+                  "type": "object",
+                },
+              },
+            },
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+        ],
+        "jsonPath": "/paths/~1example/get",
+        "kind": "operation",
       },
     },
   ],
@@ -278,26 +325,24 @@ Object {
     "paths": Object {
       "/example": Object {
         "get": Object {
-          "responses": Object {
-            "200": Object {
-              "content": Object {
-                "application/json": Object {
-                  "schema": Object {
-                    "properties": Object {
-                      "count": Object {
-                        "type": "number",
-                      },
+          "requestBody": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "count": Object {
+                      "type": "number",
                     },
-                    "required": Array [
-                      "count",
-                    ],
-                    "type": "object",
                   },
+                  "required": Array [
+                    "count",
+                  ],
+                  "type": "object",
                 },
               },
-              "description": "",
             },
           },
+          "responses": Object {},
         },
       },
     },
@@ -314,11 +359,10 @@ Object {
         },
         "location": Object {
           "conceptualLocation": Object {
-            "inResponse": Object {
+            "inRequest": Object {
               "body": Object {
                 "contentType": "application/json",
               },
-              "statusCode": "200",
             },
             "jsonSchemaTrail": Array [
               "count",
@@ -330,12 +374,10 @@ Object {
             "operations",
             "/example",
             "get",
-            "responses",
-            "200",
             "application/json",
             "count",
           ],
-          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/count",
+          "jsonPath": "/paths/~1example/get/requestBody/content/application~1json/schema/properties/count",
           "kind": "field",
         },
       },

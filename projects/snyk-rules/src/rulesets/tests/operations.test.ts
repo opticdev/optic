@@ -222,6 +222,26 @@ describe("operation parameters", () => {
       expect(result.results[0].passed).toBeTruthy();
       expect(result).toMatchSnapshot();
     });
+
+    it.skip("fails when adding a required query parameter", async () => {
+      // const base = JSON.parse(JSON.stringify(baseForOperationMetadataTests));
+      // base.paths!["/example"]!.get!.parameters = [];
+      const result = await compare(baseForOperationMetadataTests)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.parameters = [
+            {
+              in: "query",
+              name: "query_parameter",
+              required: true,
+            },
+          ];
+          return spec;
+        })
+        .withRule(rules.preventAddingRequiredQueryParameters, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
   });
 
   describe("version parameter", () => {

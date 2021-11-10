@@ -28,7 +28,8 @@ export const rules = {
     });
   },
   preventAddingRequiredProperties: ({ bodyProperties }: SnykApiCheckDsl) => {
-    bodyProperties.added.must("not be required", (property) => {
+    bodyProperties.added.must("not be required", (property, context) => {
+      if (!context.inRequest) return;
       expect(property.required).to.not.be.true;
     });
   },

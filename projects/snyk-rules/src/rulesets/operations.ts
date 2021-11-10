@@ -65,4 +65,9 @@ export const rules = {
       }
     );
   },
+  preventAddingRequiredQueryParameters: ({ request }: SnykApiCheckDsl) => {
+    request.queryParameter.added.must("not be required", (queryParameter) => {
+      expect(queryParameter.required).to.not.be.true;
+    });
+  },
 };
