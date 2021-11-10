@@ -29,7 +29,7 @@ describe("body properties", () => {
   };
 
   describe("key", () => {
-    it("passes when camel case", async () => {
+    it("passes when snake case", async () => {
       const result = await compare(baseOpenAPI)
         .to((spec) => {
           spec.paths!["/example"]!.get!.responses = {
@@ -40,7 +40,7 @@ describe("body properties", () => {
                   schema: {
                     type: "object",
                     properties: {
-                      isCamelCase: { type: "string" },
+                      is_snake_case: { type: "string" },
                     },
                   },
                 },
@@ -55,7 +55,7 @@ describe("body properties", () => {
       expect(result).toMatchSnapshot();
     });
 
-    it("fails when not camel case", async () => {
+    it("fails when not snake case", async () => {
       const result = await compare(baseOpenAPI)
         .to((spec) => {
           spec.paths!["/example"]!.get!.responses = {
@@ -66,7 +66,7 @@ describe("body properties", () => {
                   schema: {
                     type: "object",
                     properties: {
-                      "not-camel-case": { type: "string" },
+                      "not-snake-case": { type: "string" },
                     },
                   },
                 },
