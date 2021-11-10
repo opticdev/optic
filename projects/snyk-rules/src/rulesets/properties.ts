@@ -3,8 +3,8 @@ const { expect } = require("chai");
 export const rules = {
   propertyKey: ({ bodyProperties }: SnykApiCheckDsl) => {
     bodyProperties.requirement.must("have camel case keys", ({ key }) => {
-      const camelCaseRe = /^[a-z]+([A-Z][a-z]+)+$/g;
-      expect(camelCaseRe.test(key)).to.be.ok;
+      const snakeCase = /^[a-z]+(?:_[a-z]+)*$/g;
+      expect(snakeCase.test(key)).to.be.ok;
     });
   },
   propertyExample: ({ bodyProperties }: SnykApiCheckDsl) => {

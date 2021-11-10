@@ -1138,7 +1138,7 @@ Object {
 }
 `;
 
-exports[`body properties key fails when not camel case 1`] = `
+exports[`body properties key fails when not snake case 1`] = `
 Object {
   "base": Object {
     "info": Object {
@@ -1190,7 +1190,7 @@ Object {
         "flatSchema": Object {
           "type": "string",
         },
-        "key": "not-camel-case",
+        "key": "not-snake-case",
         "required": false,
       },
       "location": Object {
@@ -1202,7 +1202,7 @@ Object {
             "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
-            "not-camel-case",
+            "not-snake-case",
           ],
           "method": "get",
           "path": "/example",
@@ -1214,9 +1214,9 @@ Object {
           "responses",
           "200",
           "application/json",
-          "not-camel-case",
+          "not-snake-case",
         ],
-        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/not-camel-case",
+        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/not-snake-case",
         "kind": "field",
       },
     },
@@ -1260,7 +1260,7 @@ Object {
                 "application/json": Object {
                   "schema": Object {
                     "properties": Object {
-                      "not-camel-case": Object {
+                      "not-snake-case": Object {
                         "type": "string",
                       },
                     },
@@ -1287,7 +1287,7 @@ Object {
               "statusCode": "200",
             },
             "jsonSchemaTrail": Array [
-              "not-camel-case",
+              "not-snake-case",
             ],
             "method": "get",
             "path": "/example",
@@ -1299,16 +1299,16 @@ Object {
             "responses",
             "200",
             "application/json",
-            "not-camel-case",
+            "not-snake-case",
           ],
-          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/not-camel-case",
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/not-snake-case",
           "kind": "field",
         },
         "value": Object {
           "flatSchema": Object {
             "type": "string",
           },
-          "key": "not-camel-case",
+          "key": "not-snake-case",
           "required": false,
         },
       },
@@ -1318,13 +1318,13 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "requirement for field: field not-camel-case",
+      "where": "requirement for field: field not-snake-case",
     },
   ],
 }
 `;
 
-exports[`body properties key passes when camel case 1`] = `
+exports[`body properties key passes when snake case 1`] = `
 Object {
   "base": Object {
     "info": Object {
@@ -1376,7 +1376,7 @@ Object {
         "flatSchema": Object {
           "type": "string",
         },
-        "key": "isCamelCase",
+        "key": "is_camel_case",
         "required": false,
       },
       "location": Object {
@@ -1388,7 +1388,7 @@ Object {
             "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
-            "isCamelCase",
+            "is_camel_case",
           ],
           "method": "get",
           "path": "/example",
@@ -1400,9 +1400,9 @@ Object {
           "responses",
           "200",
           "application/json",
-          "isCamelCase",
+          "is_camel_case",
         ],
-        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/isCamelCase",
+        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/is_camel_case",
         "kind": "field",
       },
     },
@@ -1446,7 +1446,7 @@ Object {
                 "application/json": Object {
                   "schema": Object {
                     "properties": Object {
-                      "isCamelCase": Object {
+                      "is_camel_case": Object {
                         "type": "string",
                       },
                     },
@@ -1473,7 +1473,7 @@ Object {
               "statusCode": "200",
             },
             "jsonSchemaTrail": Array [
-              "isCamelCase",
+              "is_camel_case",
             ],
             "method": "get",
             "path": "/example",
@@ -1485,16 +1485,16 @@ Object {
             "responses",
             "200",
             "application/json",
-            "isCamelCase",
+            "is_camel_case",
           ],
-          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/isCamelCase",
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/is_camel_case",
           "kind": "field",
         },
         "value": Object {
           "flatSchema": Object {
             "type": "string",
           },
-          "key": "isCamelCase",
+          "key": "is_camel_case",
           "required": false,
         },
       },
@@ -1503,7 +1503,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": true,
-      "where": "requirement for field: field isCamelCase",
+      "where": "requirement for field: field is_camel_case",
     },
   ],
 }
