@@ -4,6 +4,7 @@ import { ApiCheckService, DslConstructorInput } from "./sdk/api-check-service";
 import { ApiCheckDsl, Result, Passed, Failed, EntityRule } from "./sdk/types";
 import { runCheck, newDocsLinkHelper, DocsLinkHelper } from "./sdk/types";
 import { createTestDslFixture } from "./sdk/test-rule-fixture";
+import { createSelectJsonPathHelper } from "./sdk/select-when-rule";
 export {
   ApiCheckService,
   DslConstructorInput,
@@ -18,4 +19,5 @@ export {
   makeCiCli,
   createTestDslFixture,
   OpenAPIV3,
+  createSelectJsonPathHelper,
 };

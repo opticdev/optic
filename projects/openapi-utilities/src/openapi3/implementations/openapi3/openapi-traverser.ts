@@ -175,7 +175,6 @@ export class OpenAPITraverser
   ) {
     this.checkJsonTrail(jsonPath, parameter);
     const value: OpenApiRequestParameterFact = {
-      //@TODO: aidan decide what we need from here
       ...parameter,
     };
     this.accumulator.log({
@@ -533,4 +532,5 @@ export interface OpenApiHeaderFact extends OpenAPIV3.HeaderObject {
   name: string;
 }
 
-export interface OpenApiRequestParameterFact {}
+export interface OpenApiRequestParameterFact
+  extends OpenAPIV3.ParameterObject {}

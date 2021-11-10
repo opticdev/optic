@@ -1,5 +1,5 @@
 import { SnykApiCheckDsl, SynkApiCheckContext } from "../../dsl";
-import { ApiCheckService } from "@useoptic/api-checks";
+import { ApiCheckService, createTestDslFixture } from "@useoptic/api-checks";
 import { OpenAPIV3 } from "@useoptic/openapi-utilities";
 import path from "path";
 export async function rulesFixture(
@@ -13,6 +13,7 @@ export async function rulesFixture(
     return new SnykApiCheckDsl(
       input.nextFacts,
       input.changelog,
+      input.currentJsonLike,
       input.nextJsonLike,
       input.context
     );
@@ -24,4 +25,16 @@ export async function rulesFixture(
 export async function inputFrom(dir: string, name: string) {
   const inputs = path.join(__dirname, "inputs", dir, name);
   return path.resolve(inputs);
+}
+
+export function createSnykTestFixture() {
+  return createTestDslFixture<SnykApiCheckDsl, SynkApiCheckContext>((input) => {
+    return new SnykApiCheckDsl(
+      input.nextFacts,
+      input.changelog,
+      input.currentJsonLike,
+      input.nextJsonLike,
+      input.context
+    );
+  });
 }
