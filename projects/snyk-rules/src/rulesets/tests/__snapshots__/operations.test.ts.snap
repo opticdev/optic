@@ -571,6 +571,121 @@ Object {
 }
 `;
 
+exports[`operation parameters names fails when adding a required query parameter 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "added": Object {
+        "in": "query",
+        "name": "query_parameter",
+        "required": true,
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "query_parameter",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "parameters",
+          "query",
+          "query_parameter",
+        ],
+        "jsonPath": "/paths/~1example/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "parameters": Array [
+            Object {
+              "in": "query",
+              "name": "query_parameter",
+              "required": true,
+            },
+          ],
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "added": Object {
+          "in": "query",
+          "name": "query_parameter",
+          "required": true,
+        },
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "query": "query_parameter",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "query",
+            "query_parameter",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "query-parameter",
+        },
+      },
+      "condition": "not be required",
+      "docsLink": undefined,
+      "error": "expected true to be false",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "added query-parameter: query parameter query_parameter",
+    },
+  ],
+}
+`;
+
 exports[`operation parameters names passes if the case is correct 1`] = `
 Object {
   "base": Object {

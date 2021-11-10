@@ -71,7 +71,7 @@ Array [
         "petId",
       ],
       "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/parameters/0",
-      "kind": "path",
+      "kind": "path-parameter",
     },
     "value": Object {
       "description": "ID of pet to update",
@@ -465,7 +465,7 @@ Array [
         "orderId",
       ],
       "jsonPath": "/paths/~1store~1order~1{orderId}/get/parameters/0",
-      "kind": "path",
+      "kind": "path-parameter",
     },
     "value": Object {
       "description": "ID of pet that needs to be fetched",
@@ -655,7 +655,7 @@ Array [
         "orderId",
       ],
       "jsonPath": "/paths/~1store~1order~1{orderId}/delete/parameters/0",
-      "kind": "path",
+      "kind": "path-parameter",
     },
     "value": Object {
       "description": "ID of the order that needs to be deleted",
@@ -1027,7 +1027,7 @@ Array [
         "username",
       ],
       "jsonPath": "/paths/~1user~1login/get/parameters/0",
-      "kind": "query",
+      "kind": "query-parameter",
     },
     "value": Object {
       "description": "The user name for login",
@@ -1057,7 +1057,7 @@ Array [
         "password",
       ],
       "jsonPath": "/paths/~1user~1login/get/parameters/1",
-      "kind": "query",
+      "kind": "query-parameter",
     },
     "value": Object {
       "description": "The password for login in clear text",
@@ -1329,7 +1329,7 @@ Array [
         "username",
       ],
       "jsonPath": "/paths/~1user~1{username}/get/parameters/0",
-      "kind": "path",
+      "kind": "path-parameter",
     },
     "value": Object {
       "description": "The name that needs to be fetched. Use user1 for testing. ",
@@ -1528,7 +1528,7 @@ Array [
         "username",
       ],
       "jsonPath": "/paths/~1user~1{username}/put/parameters/0",
-      "kind": "path",
+      "kind": "path-parameter",
     },
     "value": Object {
       "description": "name that need to be updated",
@@ -1658,7 +1658,7 @@ Array [
         "username",
       ],
       "jsonPath": "/paths/~1user~1{username}/delete/parameters/0",
-      "kind": "path",
+      "kind": "path-parameter",
     },
     "value": Object {
       "description": "The name that needs to be deleted",

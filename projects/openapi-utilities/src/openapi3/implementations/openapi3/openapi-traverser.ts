@@ -177,15 +177,31 @@ export class OpenAPITraverser
     const value: OpenApiRequestParameterFact = {
       ...parameter,
     };
-    this.accumulator.log({
-      location: {
-        jsonPath,
-        conceptualPath,
-        kind: parameter.in,
-        conceptualLocation: location,
-      },
-      value,
-    });
+
+    const inToType = (() => {
+      switch (parameter.in) {
+        case "query":
+          return OpenApiKind.QueryParameter;
+        case "header":
+          return OpenApiKind.HeaderParameter;
+        case "path":
+          return OpenApiKind.PathParameter;
+        default:
+          return;
+      }
+    })();
+
+    if (inToType) {
+      this.accumulator.log({
+        location: {
+          jsonPath,
+          conceptualPath,
+          kind: inToType,
+          conceptualLocation: location,
+        },
+        value,
+      });
+    }
   }
 
   traverseResponseHeaders(
@@ -488,6 +504,7 @@ export enum OpenApiKind {
   Operation = "operation",
   Request = "request",
   QueryParameter = "query-parameter",
+  PathParameter = "path-parameter",
   HeaderParameter = "header-parameter",
   ResponseHeader = "response-header",
   Response = "response",
