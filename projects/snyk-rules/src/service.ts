@@ -8,6 +8,7 @@ export function newSnykApiCheckService() {
     return new SnykApiCheckDsl(
       input.nextFacts,
       input.changelog,
+      input.currentJsonLike,
       input.nextJsonLike,
       input.context
     );

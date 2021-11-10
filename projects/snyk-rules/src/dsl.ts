@@ -5,7 +5,11 @@ import {
   DocsLinkHelper,
   newDocsLinkHelper,
   runCheck,
+  createSelectJsonPathHelper,
 } from "@useoptic/api-checks";
+
+import niceTry from "nice-try";
+
 import {
   ConceptualLocation,
   OpenApiHeaderFact,
@@ -72,6 +76,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
   constructor(
     private nextFacts: IFact<any>[],
     private changelog: IChange<any>[],
+    private currentJsonLike: OpenAPIV3.Document,
     private nextJsonLike: OpenAPIV3.Document,
     private providedContext: SynkApiCheckContext
   ) {}
@@ -88,20 +93,58 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
   }
 
   get operations() {
-    return genericEntityRuleImpl<
-      OpenApiOperationFact,
-      ConceptualLocation,
-      SynkApiCheckContext,
-      OpenAPIV3.OperationObject
-    >(
-      OpenApiKind.Operation,
-      this.changelog,
-      this.nextFacts,
-      (opFact) => `${opFact.method.toUpperCase()} ${opFact.pathPattern}`,
-      (location) => this.getContext(location),
-      (...items) => this.checks.push(...items),
-      (pointer: string) => jsonPointerHelper.get(this.nextJsonLike, pointer)
+    const operations = this.changelog.filter(
+      (i) => i.location.kind === OpenApiKind.Operation
     );
+
+    const added = operations.filter((i) =>
+      Boolean(i.added)
+    ) as IChange<OpenApiOperationFact>[];
+    const removed = operations.filter((i) =>
+      Boolean(i.removed)
+    ) as IChange<OpenApiOperationFact>[];
+    const changes = operations.filter((i) =>
+      Boolean(i.changed)
+    ) as IChange<OpenApiOperationFact>[];
+
+    const locations = [
+      ...added.map((i) => i.location),
+      ...changes.map((i) => i.location),
+      ...removed.map((i) => i.location),
+    ];
+
+    const pathsSelectorsInputs = locations.map((i) => {
+      return {
+        conceptualLocation: i.conceptualLocation,
+        current:
+          niceTry(() =>
+            jsonPointerHelper.get(this.currentJsonLike, i.jsonPath)
+          ) || {},
+        next:
+          niceTry(() => jsonPointerHelper.get(this.nextJsonLike, i.jsonPath)) ||
+          {},
+      };
+    });
+
+    const { selectJsonPath } = createSelectJsonPathHelper(pathsSelectorsInputs);
+
+    return {
+      selectJsonPath,
+      ...genericEntityRuleImpl<
+        OpenApiOperationFact,
+        ConceptualLocation,
+        SynkApiCheckContext,
+        OpenAPIV3.OperationObject
+      >(
+        OpenApiKind.Operation,
+        this.changelog,
+        this.nextFacts,
+        (opFact) => `${opFact.method.toUpperCase()} ${opFact.pathPattern}`,
+        (location) => this.getContext(location),
+        (...items) => this.checks.push(...items),
+        (pointer: string) => jsonPointerHelper.get(this.nextJsonLike, pointer)
+      ),
+    };
   }
 
   get context() {

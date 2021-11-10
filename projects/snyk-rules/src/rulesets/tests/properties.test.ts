@@ -1,19 +1,9 @@
 import { rules } from "../properties";
-import { createTestDslFixture } from "@useoptic/api-checks";
 import { SnykApiCheckDsl, SynkApiCheckContext } from "../../dsl";
 
-// todo: fix copy/paste
-const { compare } = createTestDslFixture<SnykApiCheckDsl, SynkApiCheckContext>(
-  (input) => {
-    return new SnykApiCheckDsl(
-      input.nextFacts,
-      input.changelog,
-      input.nextJsonLike,
-      input.context
-    );
-  }
-);
+import { createSnykTestFixture } from "./fixtures";
 
+const { compare } = createSnykTestFixture();
 // todo: fix copy/paste
 const emptyContext: SynkApiCheckContext = {
   changeDate: "2021-10-10",
