@@ -40,7 +40,7 @@ describe("body properties", () => {
                   schema: {
                     type: "object",
                     properties: {
-                      is_camel_case: { type: "string" },
+                      is_snake_case: { type: "string" },
                     },
                   },
                 },

@@ -1376,7 +1376,7 @@ Object {
         "flatSchema": Object {
           "type": "string",
         },
-        "key": "is_camel_case",
+        "key": "is_snake_case",
         "required": false,
       },
       "location": Object {
@@ -1388,7 +1388,7 @@ Object {
             "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
-            "is_camel_case",
+            "is_snake_case",
           ],
           "method": "get",
           "path": "/example",
@@ -1400,9 +1400,9 @@ Object {
           "responses",
           "200",
           "application/json",
-          "is_camel_case",
+          "is_snake_case",
         ],
-        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/is_camel_case",
+        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/is_snake_case",
         "kind": "field",
       },
     },
@@ -1446,7 +1446,7 @@ Object {
                 "application/json": Object {
                   "schema": Object {
                     "properties": Object {
-                      "is_camel_case": Object {
+                      "is_snake_case": Object {
                         "type": "string",
                       },
                     },
@@ -1473,7 +1473,7 @@ Object {
               "statusCode": "200",
             },
             "jsonSchemaTrail": Array [
-              "is_camel_case",
+              "is_snake_case",
             ],
             "method": "get",
             "path": "/example",
@@ -1485,16 +1485,16 @@ Object {
             "responses",
             "200",
             "application/json",
-            "is_camel_case",
+            "is_snake_case",
           ],
-          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/is_camel_case",
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/is_snake_case",
           "kind": "field",
         },
         "value": Object {
           "flatSchema": Object {
             "type": "string",
           },
-          "key": "is_camel_case",
+          "key": "is_snake_case",
           "required": false,
         },
       },
@@ -1503,7 +1503,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": true,
-      "where": "requirement for field: field is_camel_case",
+      "where": "requirement for field: field is_snake_case",
     },
   ],
 }
