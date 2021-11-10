@@ -242,6 +242,38 @@ describe("operation parameters", () => {
       expect(result.results[0].passed).toBeFalsy();
       expect(result).toMatchSnapshot();
     });
+
+    it.skip("fails if the default value is changed", async () => {
+      const base = JSON.parse(JSON.stringify(baseForOperationMetadataTests));
+      base.paths!["/example"]!.get!.parameters = [
+        {
+          in: "query",
+          name: "query_parameter",
+          schema: {
+            type: "string",
+            default: "before",
+          },
+        },
+      ];
+      const result = await compare(base)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.parameters = [
+            {
+              in: "query",
+              name: "query_parameter",
+              schema: {
+                type: "string",
+                default: "after",
+              },
+            },
+          ];
+          return spec;
+        })
+        .withRule(rules.preventChangingParameterDefaultValue, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
   });
 
   describe("status codes", () => {

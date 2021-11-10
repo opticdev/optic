@@ -75,4 +75,5 @@ export const rules = {
       expect(false, `expected ${response.statusCode} to be present`).to.be.true;
     });
   },
+  preventChangingParameterDefaultValue: ({ request }: SnykApiCheckDsl) => {},
 };
