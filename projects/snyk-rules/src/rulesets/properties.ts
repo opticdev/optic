@@ -26,13 +26,10 @@ export const rules = {
     bodyProperties.removed.must("not be removed", (property) => {
       expect(false, `expected ${property.key} to be present`).to.be.ok;
     });
-    //   .requirement.should(
-    //   'have a format when a string',
-    //   ({ flatSchema }) => {
-    //     if (flatSchema.type === 'string') {
-    //       expect(flatSchema.format).to.exist;
-    //     }
-    //   },
-    // );
+  },
+  preventAddingRequiredProperties: ({ bodyProperties }: SnykApiCheckDsl) => {
+    bodyProperties.added.must("not be required", (property) => {
+      expect(property.required).to.not.be.true;
+    });
   },
 };

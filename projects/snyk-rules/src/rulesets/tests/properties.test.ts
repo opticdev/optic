@@ -231,5 +231,45 @@ describe("body properties", () => {
       expect(result.results[0].passed).toBeFalsy();
       expect(result).toMatchSnapshot();
     });
+    it("fails if a required property is added", async () => {
+      const base = JSON.parse(JSON.stringify(baseOpenAPI));
+      base.paths!["/example"]!.get!.responses = {
+        "200": {
+          description: "",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {},
+              },
+            },
+          },
+        },
+      };
+      const result = await compare(base)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.responses = {
+            "200": {
+              description: "",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      count: { type: "number" },
+                    },
+                    required: ["count"],
+                  },
+                },
+              },
+            },
+          };
+          return spec;
+        })
+        .withRule(rules.preventAddingRequiredProperties, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
   });
 });
