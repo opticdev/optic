@@ -222,6 +222,106 @@ describe("operation parameters", () => {
       expect(result.results[0].passed).toBeTruthy();
       expect(result).toMatchSnapshot();
     });
+
+    it("fails when adding a required query parameter", async () => {
+      // const base = JSON.parse(JSON.stringify(baseForOperationMetadataTests));
+      // base.paths!["/example"]!.get!.parameters = [];
+      const result = await compare(baseForOperationMetadataTests)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.parameters = [
+            {
+              in: "query",
+              name: "query_parameter",
+              required: true,
+            },
+          ];
+          return spec;
+        })
+        .withRule(rules.preventAddingRequiredQueryParameters, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
+
+    it("fails when changing optional to required query parameter", async () => {
+      const base = JSON.parse(JSON.stringify(baseForOperationMetadataTests));
+      base.paths!["/example"]!.get!.parameters = [
+        {
+          in: "query",
+          name: "query_parameter",
+        },
+      ];
+      const result = await compare(base)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.parameters = [
+            {
+              in: "query",
+              name: "query_parameter",
+              required: true,
+            },
+          ];
+          return spec;
+        })
+        .withRule(
+          rules.preventChangingOptionalToRequiredQueryParameters,
+          emptyContext
+        );
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
+
+    it("fails if the default value is changed", async () => {
+      const base = JSON.parse(JSON.stringify(baseForOperationMetadataTests));
+      base.paths!["/example"]!.get!.parameters = [
+        {
+          in: "query",
+          name: "query_parameter",
+          schema: {
+            type: "string",
+            default: "before",
+          },
+        },
+      ];
+      const result = await compare(base)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.parameters = [
+            {
+              in: "query",
+              name: "query_parameter",
+              schema: {
+                type: "string",
+                default: "after",
+              },
+            },
+          ];
+          return spec;
+        })
+        .withRule(rules.preventChangingParameterDefaultValue, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
+  });
+
+  describe("status codes", () => {
+    it("fails when a status codes is removed", async () => {
+      const base = JSON.parse(JSON.stringify(baseForOperationMetadataTests));
+      base.paths["/example"].get.responses = {
+        "200": {
+          description: "Example response",
+        },
+      };
+      const result = await compare(base)
+        .to((spec) => {
+          delete spec.paths!["/example"]!.get!.responses!["200"];
+          return spec;
+        })
+        .withRule(rules.preventRemovingStatusCodes, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
   });
 
   describe("version parameter", () => {

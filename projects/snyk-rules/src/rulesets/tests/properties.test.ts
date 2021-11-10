@@ -190,4 +190,80 @@ describe("body properties", () => {
       expect(result).toMatchSnapshot();
     });
   });
+
+  describe("breaking changes", () => {
+    it("fails if a property is removed", async () => {
+      const base = JSON.parse(JSON.stringify(baseOpenAPI));
+      base.paths!["/example"]!.get!.responses = {
+        "200": {
+          description: "",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  count: { type: "number" },
+                },
+              },
+            },
+          },
+        },
+      };
+      const result = await compare(base)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.responses = {
+            "200": {
+              description: "",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {},
+                  },
+                },
+              },
+            },
+          };
+          return spec;
+        })
+        .withRule(rules.preventRemoval, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
+    it("fails if a required property is added", async () => {
+      const base = JSON.parse(JSON.stringify(baseOpenAPI));
+      base.paths!["/example"]!.get!.requestBody = {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {},
+            },
+          },
+        },
+      };
+      const result = await compare(base)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.requestBody = {
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    count: { type: "number" },
+                  },
+                  required: ["count"],
+                },
+              },
+            },
+          };
+          return spec;
+        })
+        .withRule(rules.preventAddingRequiredRequestProperties, emptyContext);
+
+      expect(result.results[0].passed).toBeFalsy();
+      expect(result).toMatchSnapshot();
+    });
+  });
 });

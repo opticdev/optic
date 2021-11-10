@@ -65,4 +65,38 @@ export const rules = {
       }
     );
   },
+  preventAddingRequiredQueryParameters: ({ request }: SnykApiCheckDsl) => {
+    request.queryParameter.added.must("not be required", (queryParameter) => {
+      expect(queryParameter.required).to.not.be.true;
+    });
+  },
+  preventChangingOptionalToRequiredQueryParameters: ({
+    request,
+  }: SnykApiCheckDsl) => {
+    request.queryParameter.changed.must(
+      "not be optional then required",
+      (queryParameterBefore, queryParameterAfter) => {
+        if (!queryParameterBefore.required) {
+          expect(queryParameterAfter.required).to.not.be.true;
+        }
+      }
+    );
+  },
+  preventRemovingStatusCodes: ({ responses }: SnykApiCheckDsl) => {
+    responses.removed.must("not be removed", (response) => {
+      expect(false, `expected ${response.statusCode} to be present`).to.be.true;
+    });
+  },
+  preventChangingParameterDefaultValue: ({ request }: SnykApiCheckDsl) => {
+    request.queryParameter.changed.must(
+      "not change the default value",
+      (parameterBefore, parameterAfter) => {
+        let beforeSchema = parameterBefore.schema || {};
+        let afterSchema = parameterAfter.schema || {};
+        if ("default" in beforeSchema && "default" in afterSchema) {
+          expect(beforeSchema.default).to.equal(afterSchema.default);
+        }
+      }
+    );
+  },
 };

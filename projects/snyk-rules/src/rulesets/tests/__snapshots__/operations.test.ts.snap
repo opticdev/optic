@@ -473,7 +473,7 @@ Object {
           "pathParameter",
         ],
         "jsonPath": "/paths/~1example~1{pathParameter}/get/parameters/0",
-        "kind": "path",
+        "kind": "path-parameter",
       },
     },
     Object {
@@ -571,6 +571,408 @@ Object {
 }
 `;
 
+exports[`operation parameters names fails if the default value is changed 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "parameters": Array [
+            Object {
+              "in": "query",
+              "name": "query_parameter",
+              "schema": Object {
+                "default": "before",
+                "type": "string",
+              },
+            },
+          ],
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "changed": Object {
+        "after": Object {
+          "in": "query",
+          "name": "query_parameter",
+          "schema": Object {
+            "default": "after",
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "query",
+          "name": "query_parameter",
+          "schema": Object {
+            "default": "before",
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "query_parameter",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "parameters",
+          "query",
+          "query_parameter",
+        ],
+        "jsonPath": "/paths/~1example/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "parameters": Array [
+            Object {
+              "in": "query",
+              "name": "query_parameter",
+              "schema": Object {
+                "default": "after",
+                "type": "string",
+              },
+            },
+          ],
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "changed": Object {
+          "after": Object {
+            "in": "query",
+            "name": "query_parameter",
+            "schema": Object {
+              "default": "after",
+              "type": "string",
+            },
+          },
+          "before": Object {
+            "in": "query",
+            "name": "query_parameter",
+            "schema": Object {
+              "default": "before",
+              "type": "string",
+            },
+          },
+        },
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "query": "query_parameter",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "query",
+            "query_parameter",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "query-parameter",
+        },
+      },
+      "condition": "not change the default value",
+      "docsLink": undefined,
+      "error": "expected 'before' to equal 'after'",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "updated query-parameter: query parameter query_parameter",
+    },
+  ],
+}
+`;
+
+exports[`operation parameters names fails when adding a required query parameter 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "added": Object {
+        "in": "query",
+        "name": "query_parameter",
+        "required": true,
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "query_parameter",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "parameters",
+          "query",
+          "query_parameter",
+        ],
+        "jsonPath": "/paths/~1example/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "parameters": Array [
+            Object {
+              "in": "query",
+              "name": "query_parameter",
+              "required": true,
+            },
+          ],
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "added": Object {
+          "in": "query",
+          "name": "query_parameter",
+          "required": true,
+        },
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "query": "query_parameter",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "query",
+            "query_parameter",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "query-parameter",
+        },
+      },
+      "condition": "not be required",
+      "docsLink": undefined,
+      "error": "expected true to be false",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "added query-parameter: query parameter query_parameter",
+    },
+  ],
+}
+`;
+
+exports[`operation parameters names fails when changing optional to required query parameter 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "parameters": Array [
+            Object {
+              "in": "query",
+              "name": "query_parameter",
+            },
+          ],
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "changed": Object {
+        "after": Object {
+          "in": "query",
+          "name": "query_parameter",
+          "required": true,
+        },
+        "before": Object {
+          "in": "query",
+          "name": "query_parameter",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "query_parameter",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "parameters",
+          "query",
+          "query_parameter",
+        ],
+        "jsonPath": "/paths/~1example/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "parameters": Array [
+            Object {
+              "in": "query",
+              "name": "query_parameter",
+              "required": true,
+            },
+          ],
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "changed": Object {
+          "after": Object {
+            "in": "query",
+            "name": "query_parameter",
+            "required": true,
+          },
+          "before": Object {
+            "in": "query",
+            "name": "query_parameter",
+          },
+        },
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "query": "query_parameter",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "query",
+            "query_parameter",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "query-parameter",
+        },
+      },
+      "condition": "not be optional then required",
+      "docsLink": undefined,
+      "error": "expected true to be false",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "updated query-parameter: query parameter query_parameter",
+    },
+  ],
+}
+`;
+
 exports[`operation parameters names passes if the case is correct 1`] = `
 Object {
   "base": Object {
@@ -634,7 +1036,7 @@ Object {
           "path_parameter",
         ],
         "jsonPath": "/paths/~1example~1{path_parameter}/get/parameters/0",
-        "kind": "path",
+        "kind": "path-parameter",
       },
     },
     Object {
@@ -726,6 +1128,158 @@ Object {
       "isShould": false,
       "passed": true,
       "where": "requirement for operation: GET /example/{path_parameter}",
+    },
+  ],
+}
+`;
+
+exports[`operation parameters status codes fails when a status codes is removed 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "responses": Object {
+            "200": Object {
+              "description": "Example response",
+            },
+          },
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200",
+        "kind": "response",
+      },
+      "removed": Object {
+        "before": Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "statusCode": "200",
+              },
+              "method": "get",
+              "path": "/example",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/example",
+              "get",
+              "responses",
+              "200",
+            ],
+            "jsonPath": "/paths/~1example/get/responses/200",
+            "kind": "response",
+          },
+          "value": Object {
+            "description": "Example response",
+            "statusCode": 200,
+          },
+        },
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "statusCode": "200",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200",
+          "kind": "response",
+        },
+        "removed": Object {
+          "before": Object {
+            "location": Object {
+              "conceptualLocation": Object {
+                "inResponse": Object {
+                  "statusCode": "200",
+                },
+                "method": "get",
+                "path": "/example",
+              },
+              "conceptualPath": Array [
+                "operations",
+                "/example",
+                "get",
+                "responses",
+                "200",
+              ],
+              "jsonPath": "/paths/~1example/get/responses/200",
+              "kind": "response",
+            },
+            "value": Object {
+              "description": "Example response",
+              "statusCode": 200,
+            },
+          },
+        },
+      },
+      "condition": "not be removed",
+      "docsLink": undefined,
+      "error": "Cannot read property 'statusCode' of undefined",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "removed response: response undefined",
     },
   ],
 }
@@ -854,7 +1408,7 @@ Object {
           "version",
         ],
         "jsonPath": "/paths/~1example/get/parameters/0",
-        "kind": "query",
+        "kind": "query-parameter",
       },
     },
   ],
