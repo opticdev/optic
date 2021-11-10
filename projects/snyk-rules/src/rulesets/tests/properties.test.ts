@@ -260,7 +260,7 @@ describe("body properties", () => {
           };
           return spec;
         })
-        .withRule(rules.preventAddingRequiredProperties, emptyContext);
+        .withRule(rules.preventAddingRequiredRequestProperties, emptyContext);
 
       expect(result.results[0].passed).toBeFalsy();
       expect(result).toMatchSnapshot();

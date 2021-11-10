@@ -27,7 +27,9 @@ export const rules = {
       expect(false, `expected ${property.key} to be present`).to.be.ok;
     });
   },
-  preventAddingRequiredProperties: ({ bodyProperties }: SnykApiCheckDsl) => {
+  preventAddingRequiredRequestProperties: ({
+    bodyProperties,
+  }: SnykApiCheckDsl) => {
     bodyProperties.added.must("not be required", (property, context) => {
       if (!context.inRequest) return;
       expect(property.required).to.not.be.true;
