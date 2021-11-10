@@ -20,7 +20,10 @@ import {
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
 import { ShouldOrMust } from "@useoptic/api-checks/build/sdk/types";
-import { OpenApiResponseFact } from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
+import {
+  OpenApiRequestParameterFact,
+  OpenApiResponseFact,
+} from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
 
 type SnykStablity = "wip" | "experimental" | "beta" | "ga";
 type DateString = string; // YYYY-mm-dd
@@ -142,6 +145,41 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
     };
 
     return value;
+  }
+
+  get request() {
+    const dsl = this;
+
+    return {
+      queryParameter: genericEntityRuleImpl<
+        OpenApiRequestParameterFact,
+        ConceptualLocation,
+        SynkApiCheckContext,
+        OpenAPIV3.ParameterObject
+      >(
+        OpenApiKind.QueryParameter,
+        dsl.changelog,
+        dsl.nextFacts,
+        (query) => `query parameter ${query.name}`,
+        (location) => dsl.getContext(location),
+        (...items) => dsl.checks.push(...items),
+        (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
+      ),
+      header: genericEntityRuleImpl<
+        OpenApiRequestParameterFact,
+        ConceptualLocation,
+        SynkApiCheckContext,
+        OpenAPIV3.ParameterObject
+      >(
+        OpenApiKind.HeaderParameter,
+        dsl.changelog,
+        dsl.nextFacts,
+        (header) => `header parameter ${header.name}`,
+        (location) => dsl.getContext(location),
+        (...items) => dsl.checks.push(...items),
+        (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
+      ),
+    };
   }
 
   get responses() {
