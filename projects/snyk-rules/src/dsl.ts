@@ -208,6 +208,20 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
       ),
+      pathParameter: genericEntityRuleImpl<
+        OpenApiRequestParameterFact,
+        ConceptualLocation,
+        SynkApiCheckContext,
+        OpenAPIV3.ParameterObject
+      >(
+        OpenApiKind.PathParameter,
+        dsl.changelog,
+        dsl.nextFacts,
+        (path) => `path parameter ${path.name}`,
+        (location) => dsl.getContext(location),
+        (...items) => dsl.checks.push(...items),
+        (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
+      ),
       header: genericEntityRuleImpl<
         OpenApiRequestParameterFact,
         ConceptualLocation,

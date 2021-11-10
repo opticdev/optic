@@ -223,7 +223,7 @@ describe("operation parameters", () => {
       expect(result).toMatchSnapshot();
     });
 
-    it.skip("fails when adding a required query parameter", async () => {
+    it("fails when adding a required query parameter", async () => {
       // const base = JSON.parse(JSON.stringify(baseForOperationMetadataTests));
       // base.paths!["/example"]!.get!.parameters = [];
       const result = await compare(baseForOperationMetadataTests)
