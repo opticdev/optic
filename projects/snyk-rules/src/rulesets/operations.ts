@@ -91,9 +91,11 @@ export const rules = {
     request.queryParameter.changed.must(
       "not change the default value",
       (parameterBefore, parameterAfter) => {
-        let beforeDefault = parameterBefore.schema?.default;
-        let afterDefault = parameterAfter.schema?.default;
-        expect(beforeDefault).to.equal(afterDefault);
+        let beforeSchema = parameterBefore.schema || {};
+        let afterSchema = parameterAfter.schema || {};
+        if ("default" in beforeSchema && "default" in afterSchema) {
+          expect(beforeSchema.default).to.equal(afterSchema.default);
+        }
       }
     );
   },
