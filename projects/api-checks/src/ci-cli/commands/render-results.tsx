@@ -4,7 +4,10 @@ import { Result, ResultWithSourcemap } from "../../sdk/types";
 import groupBy from "lodash.groupby";
 import Link from "ink-link";
 
-export function RenderCheckResults(props: { results: ResultWithSourcemap[] }) {
+export function RenderCheckResults(props: {
+  results: ResultWithSourcemap[];
+  verbose: boolean;
+}) {
   const groupedResults = groupBy(
     props.results,
     (result) =>
@@ -42,8 +45,12 @@ export function RenderCheckResults(props: { results: ResultWithSourcemap[] }) {
                   <Text bold>{method.toUpperCase()}</Text> {path}
                 </Text>
               </Box>
-              <Box flexDirection="column" paddingLeft={7}>
+              <Box flexDirection="column">
                 {operationResults.map((result, index) => {
+                  if (result.passed && !props.verbose) {
+                    return null;
+                  }
+
                   return (
                     <Box
                       key={index}
@@ -62,12 +69,12 @@ export function RenderCheckResults(props: { results: ResultWithSourcemap[] }) {
                         </Text>
                       </Text>
                       {!result.passed && (
-                        <Box paddingLeft={2}>
+                        <Box>
                           <Text color="red">{result.error}</Text>
                         </Box>
                       )}
                       {result.docsLink ? (
-                        <Box paddingLeft={2}>
+                        <Box>
                           <Link url={result.docsLink} fallback={true}>
                             <Text underline color="blue">
                               Read more in our API guide
@@ -76,7 +83,7 @@ export function RenderCheckResults(props: { results: ResultWithSourcemap[] }) {
                         </Box>
                       ) : null}
                       {result.sourcemap ? (
-                        <Box paddingLeft={2}>
+                        <Box>
                           <Text underline color="blue">
                             {`at (${result.sourcemap.filePath}:${result.sourcemap.startLine}:${result.sourcemap.startPosition})`}
                           </Text>
