@@ -4191,7 +4191,6 @@ __metadata:
     fs-extra: ^10.0.0
     jest: ^26.6.0
     json-pointer: ^0.6.1
-    json-ptr: ^2.2.0
     lodash.sortby: ^4.7.0
     micro: ^9.3.4
     micro-cors: ^0.1.1
@@ -11199,15 +11198,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"json-ptr@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "json-ptr@npm:2.2.0"
-  dependencies:
-    tslib: ^2.2.0
-  checksum: 8a3f4730a281ae644e3b7bc6c11bf8cd98e7b93f5bb1e7f2bee253d9f7312611be01393916b494f536c8937c5141b9382007ee620bb354c1e870ecc54707e823
-  languageName: node
-  linkType: hard
-
 "json-schema-diff@npm:^0.17.1":
   version: 0.17.1
   resolution: "json-schema-diff@npm:0.17.1"
@@ -16973,7 +16963,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.2.0":
+"tslib@npm:^2.0.3, tslib@npm:^2.1.0":
   version: 2.3.1
   resolution: "tslib@npm:2.3.1"
   checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
