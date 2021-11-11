@@ -6,7 +6,6 @@ import * as fs from "fs-extra";
 import { YAMLMapping, YAMLNode, YAMLSequence } from "yaml-ast-parser";
 // @ts-ignore
 import { dereference } from "./insourced-dereference";
-import * as pointer from "json-ptr";
 import path from "path";
 import fetch from "node-fetch";
 import { OpenAPIV3 } from "openapi-types";
