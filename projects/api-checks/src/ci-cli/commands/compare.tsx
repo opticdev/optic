@@ -1,12 +1,11 @@
-import { useEffect } from "react";
-import React from "react";
+import React, { useEffect } from "react";
 import * as path from "path";
 import { inGit } from "@useoptic/openapi-utilities/build/loaders/file-on-branch";
 import {
   SpecFromInput,
   SpecVersionFrom,
 } from "../input-helpers/compare-input-parser";
-import { render, Text, Newline, useApp, Box } from "ink";
+import { Box, Text, useApp } from "ink";
 
 import {
   JsonSchemaSourcemap,
@@ -25,6 +24,7 @@ export function Compare<T>(props: {
   from: SpecFromInput;
   to: SpecFromInput;
   context: T;
+  verbose: boolean;
   apiCheckService: ApiCheckService<T>;
 }) {
   const loadFrom = useAsync(
@@ -63,6 +63,16 @@ export function Compare<T>(props: {
       setTimeout(() => exit(), 200);
     }
   }, [loadFrom, loadTo]);
+
+  useEffect(() => {
+    if (results.value && results.value.some((i) => !i.passed)) {
+      setTimeout(() => {
+        exit();
+        console.log("\n");
+        process.exit(1);
+      }, 200);
+    }
+  }, [results.value]);
 
   const errorLoadingSpec = loadFrom.error || loadTo.error;
 
@@ -113,9 +123,28 @@ export function Compare<T>(props: {
         </>
       )}
       {results.value && (
-        <Box marginTop={1}>
-          <RenderCheckResults results={results.value || []} />
-        </Box>
+        <>
+          <Box marginTop={1}>
+            <RenderCheckResults
+              results={results.value || []}
+              verbose={props.verbose}
+            />
+          </Box>
+          <Box alignItems="flex-start" flexDirection="column" marginTop={3}>
+            <Text bold color="green">
+              {results.value.filter((i) => i.passed).length} checks passed
+              {props.verbose && results.value.some((i) => i.passed) && (
+                <Text color="grey">
+                  {" "}
+                  run with --verbose flag to see results
+                </Text>
+              )}
+            </Text>
+            <Text bold color="red">
+              {results.value.filter((i) => !i.passed).length} checks failed
+            </Text>
+          </Box>
+        </>
       )}
     </>
   );
