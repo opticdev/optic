@@ -1,16 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`list of checks renders empty list of checks 1`] = `"G1sxbRtbNDFtIEZBSUwgG1s0OW0bWzIybSAbWzM3bRtbMW1HRVQbWzIybSAvZXhhbXBsZRtbMzltCiAgICAgICAbWzMxbXggG1szOW1vcGVyYXRpb24gbXVzdCBoYXZlIHRhZ3MKICAgICAgICAgG1szMW10YWdzIFtdIG11c3QgYmUgc2V0IG9uIGVhY2ggb3BlcmF0aW9uOiBleHBlY3RlZCB1bmRlZmluZWQgdG8gZXhpc3QbWzM5bQogICAgICAgICAbWzRtG1szNG1SZWFkIG1vcmUgaW4gb3VyIEFQSSBndWlkZRtbMzltG1syNG0gKOKAi2h0dHBzOi8vZ2l0aHViLmNvbS9zbnlrL3N3ZWF0ZXItY29tYi9ibG9iL21haW4vZG9jcy9zdGFuZGFyZHMubWQjdGFnc+KAiykKICAgICAgIBtbMzFteCAbWzM5bW9wZXJhdGlvbiBtdXN0IGhhdmUgYW4gb3BlcmF0aW9uIGlkCiAgICAgICAgIBtbMzFtb3BlcmF0aW9uIGlkIGlzIG1pc3NpbmcbWzM5bQogICAgICAgICAbWzRtG1szNG1SZWFkIG1vcmUgaW4gb3VyIEFQSSBndWlkZRtbMzltG1syNG0gKOKAi2h0dHBzOi8vZ2l0aHViLmNvbS9zbnlrL3N3ZWF0ZXItY29tYi9ibG9iL21haW4vZG9jcy9zdGFuZGFyZHMubWQjb3BlcmF0aW9uLWlkc+KAiykKG1sxbRtbNDJtIFBBU1MgG1s0OW0bWzIybSAbWzM3bRtbMW1QQVRDSBtbMjJtIC9leGFtcGxlL3t9G1szOW0KICAgICAgIBtbMzJt4pyUIBtbMzltb3BlcmF0aW9uIG11c3QgaGF2ZSBhbiBvcGVyYXRpb24gaWQKICAgICAgICAgG1s0bRtbMzRtUmVhZCBtb3JlIGluIG91ciBBUEkgZ3VpZGUbWzM5bRtbMjRtICjigItodHRwczovL2dpdGh1Yi5jb20vc255ay9zd2VhdGVyLWNvbWIvYmxvYi9tYWluL2RvY3Mvc3RhbmRhcmRzLm1kI29wZXJhdGlvbi1pZHPigIsp"`;
+exports[`list of checks renders empty list of checks 1`] = `"G1sxbRtbNDFtIEZBSUwgG1s0OW0bWzIybSAbWzM3bRtbMW1HRVQbWzIybSAvZXhhbXBsZRtbMzltChtbMzFteCAbWzM5bW9wZXJhdGlvbiBtdXN0IGhhdmUgdGFncwobWzMxbXRhZ3MgW10gbXVzdCBiZSBzZXQgb24gZWFjaCBvcGVyYXRpb246IGV4cGVjdGVkIHVuZGVmaW5lZCB0byBleGlzdBtbMzltChtbNG0bWzM0bVJlYWQgbW9yZSBpbiBvdXIgQVBJIGd1aWRlG1szOW0bWzI0bSAo4oCLaHR0cHM6Ly9naXRodWIuY29tL3NueWsvc3dlYXRlci1jb21iL2Jsb2IvbWFpbi9kb2NzL3N0YW5kYXJkcy5tZCN0YWdz4oCLKQobWzMxbXggG1szOW1vcGVyYXRpb24gbXVzdCBoYXZlIGFuIG9wZXJhdGlvbiBpZAobWzMxbW9wZXJhdGlvbiBpZCBpcyBtaXNzaW5nG1szOW0KG1s0bRtbMzRtUmVhZCBtb3JlIGluIG91ciBBUEkgZ3VpZGUbWzM5bRtbMjRtICjigItodHRwczovL2dpdGh1Yi5jb20vc255ay9zd2VhdGVyLWNvbWIvYmxvYi9tYWluL2RvY3Mvc3RhbmRhcmRzLm1kI29wZXJhdGlvbi1pZHPigIspChtbMW0bWzQybSBQQVNTIBtbNDltG1syMm0gG1szN20bWzFtUEFUQ0gbWzIybSAvZXhhbXBsZS97fRtbMzltChtbMzJt4pyUIBtbMzltb3BlcmF0aW9uIG11c3QgaGF2ZSBhbiBvcGVyYXRpb24gaWQKG1s0bRtbMzRtUmVhZCBtb3JlIGluIG91ciBBUEkgZ3VpZGUbWzM5bRtbMjRtICjigItodHRwczovL2dpdGh1Yi5jb20vc255ay9zd2VhdGVyLWNvbWIvYmxvYi9tYWluL2RvY3Mvc3RhbmRhcmRzLm1kI29wZXJhdGlvbi1pZHPigIsp"`;
 
 exports[`list of checks renders empty list of checks 2`] = `
 "[1m[41m FAIL [49m[22m [37m[1mGET[22m /example[39m
-       [31mx [39moperation must have tags
-         [31mtags [] must be set on each operation: expected undefined to exist[39m
-         [4m[34mRead more in our API guide[39m[24m (​https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#tags​)
-       [31mx [39moperation must have an operation id
-         [31moperation id is missing[39m
-         [4m[34mRead more in our API guide[39m[24m (​https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#operation-ids​)
+[31mx [39moperation must have tags
+[31mtags [] must be set on each operation: expected undefined to exist[39m
+[4m[34mRead more in our API guide[39m[24m (​https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#tags​)
+[31mx [39moperation must have an operation id
+[31moperation id is missing[39m
+[4m[34mRead more in our API guide[39m[24m (​https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#operation-ids​)
 [1m[42m PASS [49m[22m [37m[1mPATCH[22m /example/{}[39m
-       [32m✔ [39moperation must have an operation id
-         [4m[34mRead more in our API guide[39m[24m (​https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#operation-ids​)"
+[32m✔ [39moperation must have an operation id
+[4m[34mRead more in our API guide[39m[24m (​https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#operation-ids​)"
 `;

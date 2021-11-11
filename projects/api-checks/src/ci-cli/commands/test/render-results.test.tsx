@@ -5,7 +5,9 @@ import { ResultWithSourcemap } from "../../../sdk/types";
 
 describe("list of checks", () => {
   it("renders empty list of checks", async () => {
-    const { lastFrame } = render(<RenderCheckResults results={results} />);
+    const { lastFrame } = render(
+      <RenderCheckResults results={results} verbose={true} />
+    );
     const output = lastFrame()!;
     const stringified = Buffer.from(output).toString("base64");
     // console.log(lastFrame());
