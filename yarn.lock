@@ -4123,6 +4123,7 @@ __metadata:
     "@types/copyfiles": ^2
     "@types/fs-extra": ^9.0.13
     "@types/jest": ^26.0.24
+    "@types/json-stable-stringify": ^1.0.33
     "@types/jsonpath": ^0.2.0
     "@types/lodash.flatten": ^4.4.6
     "@types/lodash.groupby": ^4.6.6
@@ -4135,6 +4136,7 @@ __metadata:
     ink-link: ^2.0.0
     ink-testing-library: ^2.1.0
     jest: ^26.6.0
+    json-stable-stringify: ^1.0.1
     jsonpath: ^1.1.1
     lodash.flatten: ^4.4.0
     lodash.groupby: ^4.6.0

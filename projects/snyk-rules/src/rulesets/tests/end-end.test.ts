@@ -17,21 +17,43 @@ describe("end-end-tests", () => {
     path.join(inputsDir, "resources", resource, date);
 
   it("fails when operation is removed", async () => {
-    await snapshotScenario(
-      "000-baseline.yaml",
-      "001-fail-operation-removed.yaml",
-      resourceDate("thing", "2021-11-10"),
-      {
-        changeDate: "2021-11-11",
-        changeResource: "thing",
-        changeVersion: {
-          date: "2021-11-10",
-          stability: "beta",
+    expect(
+      await snapshotScenario(
+        "000-baseline.yaml",
+        "001-fail-operation-removed.yaml",
+        resourceDate("thing", "2021-11-10"),
+        {
+          changeDate: "2021-11-11",
+          changeResource: "thing",
+          changeVersion: {
+            date: "2021-11-10",
+            stability: "beta",
+          },
+          resourceVersions: {},
         },
-        resourceVersions: {},
-      },
-      false
-    );
+        false
+      )
+    ).toMatchSnapshot();
+  });
+
+  it("passes when property field added to response", async () => {
+    expect(
+      await snapshotScenario(
+        "000-baseline.yaml",
+        "001-ok-add-property-field.yaml",
+        resourceDate("thing", "2021-11-10"),
+        {
+          changeDate: "2021-11-11",
+          changeResource: "thing",
+          changeVersion: {
+            date: "2021-11-10",
+            stability: "beta",
+          },
+          resourceVersions: {},
+        },
+        true
+      )
+    ).toMatchSnapshot();
   });
 
   async function snapshotScenario(
@@ -66,12 +88,10 @@ describe("end-end-tests", () => {
             preview: "",
             filePath: sourcemap?.filePath.split("end-end-tests")[1],
           },
+          change: null as any,
         } as ResultWithSourcemap;
       })
     );
-    expect(result).toMatchSnapshot();
-    if (shouldPass)
-      expect(result.some((testCase) => !testCase.passed)).toBeFalsy();
-    expect(result.every((i) => i.sourcemap?.filePath || "")).toBe(true);
+    return result;
   }
 });

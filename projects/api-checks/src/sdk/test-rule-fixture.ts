@@ -2,9 +2,12 @@ import {
   factsToChangelog,
   OpenAPITraverser,
   OpenAPIV3,
+  sourcemapReader,
 } from "@useoptic/openapi-utilities";
-import { ApiCheckDsl } from "./types";
+import { ApiCheckDsl, ResultWithSourcemap } from "./types";
 import { ApiCheckService, DslConstructorInput } from "./api-check-service";
+import { JsonSchemaSourcemap } from "@useoptic/openapi-utilities/build/parser/openapi-sourcemap-parser";
+import stringify from "json-stable-stringify";
 
 type OpenApiInput =
   | OpenAPIV3.Document
@@ -31,6 +34,21 @@ export function createTestDslFixture<DSL extends ApiCheckDsl, Context>(
             checker.useDsl<DSL>((input) => dslConstructor(input), rule);
             const results = await checker.runRules(base, next, context);
 
+            // const createMock = async (json: any) => {
+            //   const mock = new JsonSchemaSourcemap();
+            //   await mock.addFileIfMissingFromContents(
+            //     "openapi.json",
+            //     stringify(json),
+            //     0
+            //   );
+            //   return {
+            //     flattened: json,
+            //     sourcemap: mock,
+            //   };
+            // };
+
+            // const nextSourcemap = await createMock(next);
+
             const currentTraverser = new OpenAPITraverser();
             const nextTraverser = new OpenAPITraverser();
 
@@ -38,6 +56,30 @@ export function createTestDslFixture<DSL extends ApiCheckDsl, Context>(
             const currentFacts = currentTraverser.accumulator.allFacts();
             await nextTraverser.traverse(next);
             const nextFacts = nextTraverser.accumulator.allFacts();
+
+            // const { findFileAndLines } = sourcemapReader(
+            //   nextSourcemap.sourcemap
+            // );
+            //
+            // const resultWithSourcemap: ResultWithSourcemap[] =
+            //   await Promise.all(
+            //     results.map(async (checkResult) => {
+            //       const sourcemap = await findFileAndLines(
+            //         checkResult.change.location.jsonPath
+            //       );
+            //
+            //       const splitFilePath = (sourcemap?.filePath || "").split("/");
+            //       return {
+            //         ...checkResult,
+            //         sourcemap: {
+            //           ...sourcemap,
+            //           preview: "",
+            //           filePath: splitFilePath.shift(),
+            //         },
+            //       } as ResultWithSourcemap;
+            //     })
+            //   );
+
             return {
               results,
               base: base,
