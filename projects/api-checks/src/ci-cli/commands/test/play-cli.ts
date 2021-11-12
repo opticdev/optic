@@ -19,6 +19,90 @@ function completenessApiRules(dsl: ExampleDsl) {
       );
     }
   );
+  dsl.operations.changed.must(
+    "have consistent operationIds",
+    (current, next, context, docs) => {
+      docs.includeDocsLink(
+        "https://github.com/apis/guide/our-rules#operations"
+      );
+      expect(current.operationId).to.equal(
+        next.operationId || "",
+        "operation ids must be consistent"
+      );
+    }
+  );
+  dsl.operations.changed.must(
+    "have consistent operationIds",
+    (current, next, context, docs) => {
+      docs.includeDocsLink(
+        "https://github.com/apis/guide/our-rules#operations"
+      );
+      expect(current.operationId).to.equal(
+        next.operationId || "",
+        "operation ids must be consistent"
+      );
+    }
+  );
+  dsl.operations.changed.must(
+    "have consistent operationIds",
+    (current, next, context, docs) => {
+      docs.includeDocsLink(
+        "https://github.com/apis/guide/our-rules#operations"
+      );
+      expect(current.operationId).to.equal(
+        next.operationId || "",
+        "operation ids must be consistent"
+      );
+    }
+  );
+  dsl.operations.changed.must(
+    "have consistent operationIds",
+    (current, next, context, docs) => {
+      docs.includeDocsLink(
+        "https://github.com/apis/guide/our-rules#operations"
+      );
+      expect(current.operationId).to.equal(
+        next.operationId || "",
+        "operation ids must be consistent"
+      );
+    }
+  );
+  dsl.operations.changed.must(
+    "have consistent operationIds",
+    (current, next, context, docs) => {
+      docs.includeDocsLink(
+        "https://github.com/apis/guide/our-rules#operations"
+      );
+      expect(current.operationId).to.equal(
+        next.operationId || "",
+        "operation ids must be consistent"
+      );
+    }
+  );
+  dsl.operations.changed.must(
+    "have consistent operationIds",
+    (current, next, context, docs) => {
+      docs.includeDocsLink(
+        "https://github.com/apis/guide/our-rules#operations"
+      );
+      expect(current.operationId).to.equal(
+        next.operationId || "",
+        "operation ids must be consistent"
+      );
+    }
+  );
+  dsl.operations.changed.must(
+    "have consistent operationIds",
+    (current, next, context, docs) => {
+      docs.includeDocsLink(
+        "https://github.com/apis/guide/our-rules#operations"
+      );
+      expect(current.operationId).to.equal(
+        next.operationId || "",
+        "operation ids must be consistent"
+      );
+    }
+  );
 }
 
 checker.useDsl(
