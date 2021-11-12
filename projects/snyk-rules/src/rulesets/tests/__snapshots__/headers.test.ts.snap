@@ -129,11 +129,11 @@ Object {
       },
       "condition": "be kebab case",
       "docsLink": undefined,
-      "error": "expected false to be true",
+      "error": "expected 'bad-header' to equal 'badHeader'",
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "requirement for response-header: response header badHeader",
+      "where": "requirement for response-header: badHeader",
     },
   ],
 }
@@ -271,7 +271,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": true,
-      "where": "requirement for response-header: response header good-header",
+      "where": "requirement for response-header: good-header",
     },
   ],
 }
@@ -532,7 +532,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": true,
-      "where": "requirement for response: response 200",
+      "where": "requirement for response: 200",
     },
   ],
 }
@@ -630,7 +630,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "requirement for response: response 200",
+      "where": "requirement for response: 200",
     },
   ],
 }
