@@ -153,6 +153,86 @@ Object {
 }
 `;
 
+exports[`can parse a json schema spec with external references to the same file 1`] = `
+Object {
+  "jsonLike": Object {
+    "example": Object {
+      "token": "11111111",
+      "user": Object {
+        "name": "Homer",
+      },
+      "user2": Object {
+        "name": "Homer",
+      },
+    },
+    "properties": Object {},
+    "required": Array [],
+    "type": "object",
+  },
+  "sourcemap": JsonSchemaSourcemap {
+    "files": Array [
+      Object {
+        "ast": null,
+        "index": 0,
+        "path": "/inputs/openapi3-with-references/external-multiple-branches.yaml",
+      },
+      Object {
+        "ast": null,
+        "index": 1,
+        "path": "/inputs/openapi3-with-references/definitions.yaml",
+      },
+    ],
+    "mappings": Object {
+      "": Array [
+        null,
+        0,
+        "/",
+      ],
+      "/example": Array [
+        null,
+        0,
+        "/example",
+      ],
+      "/example/token": Array [
+        null,
+        0,
+        "/example/token",
+      ],
+      "/example/user": Array [
+        null,
+        1,
+        "/User/example",
+      ],
+      "/example/user/name": Array [
+        null,
+        1,
+        "/User/example/name",
+      ],
+      "/example/user2": Array [
+        null,
+        0,
+        "/example/user2",
+      ],
+      "/properties": Array [
+        null,
+        0,
+        "/properties",
+      ],
+      "/required": Array [
+        null,
+        0,
+        "/required",
+      ],
+      "/type": Array [
+        null,
+        0,
+        "/type",
+      ],
+    },
+  },
+}
+`;
+
 exports[`can parse a real schema spec with external references, resolved in any order 1`] = `
 Object {
   "jsonLike": Object {

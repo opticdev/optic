@@ -42,6 +42,22 @@ it("can parse a json schema spec with external references", async () => {
 
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
+
+it("can parse a json schema spec with external references to the same file", async () => {
+  const results = await parseOpenAPIWithSourcemap(
+    path.resolve(
+      path.join(
+        __dirname,
+        "../../inputs/openapi3-with-references/external-multiple-branches.yaml"
+      )
+    )
+  );
+  console.log(Object.keys(results.sourcemap.mappings));
+
+  expect(results.sourcemap.mappings).toHaveProperty("/example/user2/name");
+  expect(prepSnapshot(results)).toMatchSnapshot();
+});
+
 it("can parse an OpenAPI file and have valid sourcemap", async () => {
   const results = await parseOpenAPIWithSourcemap(
     path.resolve(path.join(__dirname, "../../inputs/openapi3/petstore0.json"))
