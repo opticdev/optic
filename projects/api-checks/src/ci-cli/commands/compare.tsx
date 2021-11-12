@@ -5,7 +5,7 @@ import {
   SpecFromInput,
   SpecVersionFrom,
 } from "../input-helpers/compare-input-parser";
-import { Box, Text, useApp } from "ink";
+import { Box, Newline, Text, useApp } from "ink";
 
 import {
   JsonSchemaSourcemap,
@@ -105,7 +105,7 @@ export function Compare<T>(props: {
   }, [loadFrom, loadTo]);
 
   return (
-    <>
+    <Box flexDirection="column">
       <Text color="blue" bold>
         Loading specifications for comparison:
       </Text>
@@ -124,13 +124,12 @@ export function Compare<T>(props: {
         </>
       )}
       {results.value && (
-        <>
-          <Box marginTop={1}>
-            <RenderCheckResults
-              results={results.value || []}
-              verbose={props.verbose}
-            />
-          </Box>
+        <Box flexDirection="column">
+          <Newline />
+          <RenderCheckResults
+            results={results.value || []}
+            verbose={props.verbose}
+          />
           <Box alignItems="flex-start" flexDirection="column" marginTop={3}>
             <Text bold color="green">
               {results.value.filter((i) => i.passed).length} checks passed
@@ -145,8 +144,8 @@ export function Compare<T>(props: {
               {results.value.filter((i) => !i.passed).length} checks failed
             </Text>
           </Box>
-        </>
+        </Box>
       )}
-    </>
+    </Box>
   );
 }

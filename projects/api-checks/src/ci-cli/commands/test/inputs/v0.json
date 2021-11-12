@@ -5,6 +5,18 @@
       "get": {
         "operationId": "my-op-original",
         "responses": {}
+      },
+      "post": {
+        "operationId": "postOriginal",
+        "responses": {}
+      },
+      "put": {
+        "operationId": "putOriginal",
+        "responses": {}
+      },
+      "patch": {
+        "operationId": "putOriginal",
+        "responses": {}
       }
     }
   },

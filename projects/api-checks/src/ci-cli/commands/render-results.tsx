@@ -15,7 +15,7 @@ export function RenderCheckResults(props: {
   );
 
   return (
-    <>
+    <Box alignItems="flex-start" flexDirection="column">
       {Object.keys(groupedResults)
         .sort()
         .map((key) => {
@@ -27,7 +27,7 @@ export function RenderCheckResults(props: {
 
           return (
             <Box key={key} alignItems="flex-start" flexDirection="column">
-              <Box marginBottom={0} height={1}>
+              <Box paddingLeft={1} paddingRight={2}>
                 <Box width={7}>
                   {allPasses ? (
                     <Text backgroundColor="green" bold>
@@ -45,7 +45,7 @@ export function RenderCheckResults(props: {
                   <Text bold>{method.toUpperCase()}</Text> {path}
                 </Text>
               </Box>
-              <Box flexDirection="column">
+              <Box flexDirection="column" marginBottom={2}>
                 {operationResults.map((result, index) => {
                   if (result.passed && !props.verbose) {
                     return null;
@@ -56,6 +56,7 @@ export function RenderCheckResults(props: {
                       key={index}
                       alignItems="flex-start"
                       flexDirection="column"
+                      paddingLeft={2}
                     >
                       <Text>
                         {result.passed ? (
@@ -69,12 +70,12 @@ export function RenderCheckResults(props: {
                         </Text>
                       </Text>
                       {!result.passed && (
-                        <Box>
+                        <Box paddingLeft={2}>
                           <Text color="red">{result.error}</Text>
                         </Box>
                       )}
                       {result.docsLink ? (
-                        <Box>
+                        <Box paddingLeft={2}>
                           <Link url={result.docsLink} fallback={true}>
                             <Text underline color="blue">
                               Read more in our API guide
@@ -83,7 +84,7 @@ export function RenderCheckResults(props: {
                         </Box>
                       ) : null}
                       {result.sourcemap ? (
-                        <Box>
+                        <Box paddingLeft={2}>
                           <Text underline color="blue">
                             {`at (${result.sourcemap.filePath}:${result.sourcemap.startLine}:${result.sourcemap.startPosition})`}
                           </Text>
@@ -96,6 +97,6 @@ export function RenderCheckResults(props: {
             </Box>
           );
         })}
-    </>
+    </Box>
   );
 }
