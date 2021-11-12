@@ -164,7 +164,8 @@ export class JsonSchemaSourcemap {
         thisFile.index
       );
       if (sourceMapping) {
-        this.mappings[rootKey] = sourceMapping;
+        this.mappings[jsonPointerHelpers.unescapeUriSafePointer(rootKey)] =
+          sourceMapping;
       }
     }
   }

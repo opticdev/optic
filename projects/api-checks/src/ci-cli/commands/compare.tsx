@@ -19,6 +19,7 @@ import { ApiCheckService } from "../../sdk/api-check-service";
 import { RenderCheckResults } from "./render-results";
 import { sourcemapReader } from "@useoptic/openapi-utilities";
 import { ResultWithSourcemap } from "../../sdk/types";
+import { specFromInputToResults } from "../input-helpers/load-spec";
 
 export function Compare<T>(props: {
   from: SpecFromInput;
@@ -148,30 +149,4 @@ export function Compare<T>(props: {
       )}
     </>
   );
-}
-
-async function specFromInputToResults(
-  input: SpecFromInput,
-  workingDir: string = process.cwd()
-): Promise<ParseOpenAPIResult> {
-  switch (input.from) {
-    case SpecVersionFrom.empty:
-      return {
-        jsonLike: input.value,
-        sourcemap: new JsonSchemaSourcemap(),
-      };
-    case SpecVersionFrom.git: {
-      const gitRepo = await inGit(path.join(workingDir, input.name));
-      if (!gitRepo) {
-        throw new Error(`${input.name} is not in a git repo`);
-      }
-      return await parseOpenAPIFromRepoWithSourcemap(
-        input.name,
-        gitRepo,
-        input.branch
-      );
-    }
-    case SpecVersionFrom.file:
-      return await parseOpenAPIWithSourcemap(input.filePath);
-  }
 }
