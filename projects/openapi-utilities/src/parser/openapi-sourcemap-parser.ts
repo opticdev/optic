@@ -152,6 +152,7 @@ export class JsonSchemaSourcemap {
   log(path: string, pathFromRoot: string) {
     // this seems to assume that paths will be in order, why not check for equality?
     const thisFile = this.files.find((i) => path.startsWith(i.path));
+
     // strip pound sign
     const rootKey = pathFromRoot.substring(1);
     if (thisFile) {
@@ -163,6 +164,7 @@ export class JsonSchemaSourcemap {
         jsonPointer,
         thisFile.index
       );
+
       if (sourceMapping) {
         this.mappings[jsonPointerHelpers.unescapeUriSafePointer(rootKey)] =
           sourceMapping;

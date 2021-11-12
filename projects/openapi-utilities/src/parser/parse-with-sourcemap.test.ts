@@ -49,3 +49,39 @@ it("can parse an OpenAPI file and have valid sourcemap", async () => {
 
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
+
+it("can parse a real schema spec with external references, resolved in any order", async () => {
+  const results = await parseOpenAPIWithSourcemap(
+    path.resolve(
+      path.join(
+        __dirname,
+        "../../../snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/001-ok-add-property-field.yaml"
+      )
+    )
+  );
+
+  const keys = Object.keys(results.sourcemap.mappings);
+
+  // expect(
+  //   keys.includes(
+  //     "/paths/~1thing/post/responses/401/headers/snyk-version-lifecycle-stage"
+  //   )
+  // ).toBeTruthy();
+  // // expect(
+  // //   keys.includes(
+  // //     "/paths/~1thing/post/responses/403/content/application~1vnd.api+json/schema/properties/errors/items/properties/source"
+  // //   )
+  // // ).toBeTruthy();
+  // expect(
+  //   keys.includes(
+  //     "/paths/~1thing~1{thing_id}/get/responses/200/content/application~1vnd.api+json/schema/properties/data/properties/relationships/properties/example/properties/data"
+  //   )
+  // ).toBeTruthy();
+  // expect(
+  //   keys.includes(
+  //     "/paths/~1thing/get/responses/404/content/application~1vnd.api+json/schema/properties/errors/items/properties/meta"
+  //   )
+  // ).toBeTruthy();
+
+  expect(prepSnapshot(results)).toMatchSnapshot();
+});

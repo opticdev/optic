@@ -4,6 +4,7 @@ const $Ref = require("@apidevtools/json-schema-ref-parser/lib/ref");
 const Pointer = require("@apidevtools/json-schema-ref-parser/lib/pointer");
 const { ono } = require("@jsdevtools/ono");
 const url = require("@apidevtools/json-schema-ref-parser/lib/util/url");
+const jsonPointerHelpers = require("./json-pointer-helpers");
 
 module.exports = { dereference };
 
@@ -169,6 +170,7 @@ function dereference$Ref(
   // console.log('Dereferencing $ref pointer "%s" at %s', $ref.$ref, path);
 
   let $refPath = url.resolve(path, $ref.$ref);
+  sourcemap.log(path, pathFromRoot);
 
   const cache = dereferencedCache.get($refPath);
   if (cache) {
