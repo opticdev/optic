@@ -13,9 +13,10 @@ export const rules = {
       (operation) => {
         expect(operation.operationId).to.be.ok;
         if (operation.operationId !== undefined) {
+          const normalized = camelCase(operation.operationId);
           expect(
-            camelCase(operation.operationId) === operation.operationId && prefixRegex.test(operation.operationId),
-            `operationId "${operation.operationId}" must be camelCased and start with get|create|list|update|delete`
+            normalized === operation.operationId && prefixRegex.test(operation.operationId),
+            `operationId "${operation.operationId}" must be camelCase (${normalized}) and start with get|create|list|update|delete`
           ).to.be.ok;
         }
       }

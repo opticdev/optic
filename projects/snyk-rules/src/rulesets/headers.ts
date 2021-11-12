@@ -4,7 +4,7 @@ import {paramCase} from 'change-case';
 
 export const rules = {
   headerNameCase: ({ responses }: SnykApiCheckDsl) => {
-    responses.headers.requirement.must("be kebab case", ({ name }) => {
+    responses.headers.requirement.must("be kebab-case", ({ name }) => {
 
       expect(paramCase(name)).to.equal(name)
     });
