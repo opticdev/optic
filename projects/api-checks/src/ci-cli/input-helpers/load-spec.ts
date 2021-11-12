@@ -31,7 +31,7 @@ export async function specFromInputToResults(
     }
     case SpecVersionFrom.file:
       return await parseOpenAPIWithSourcemap(
-        path.join(workingDir, input.filePath)
+        path.resolve(workingDir, input.filePath)
       );
   }
 }
