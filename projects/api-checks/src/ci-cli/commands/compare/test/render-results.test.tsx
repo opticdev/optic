@@ -1,7 +1,7 @@
 import { render } from "ink-testing-library";
 import React from "react";
 import { RenderCheckResults } from "../render-results";
-import { ResultWithSourcemap } from "../../../sdk/types";
+import { ResultWithSourcemap } from "../../../../sdk/types";
 
 describe("list of checks", () => {
   it("renders empty list of checks", async () => {

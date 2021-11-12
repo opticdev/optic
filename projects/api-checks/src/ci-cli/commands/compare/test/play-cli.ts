@@ -1,7 +1,7 @@
-import { ApiCheckService } from "../../../sdk/api-check-service";
-import { ExampleDsl, ExampleDslContext } from "../../../sdk/test/example-dsl";
+import { ApiCheckService } from "../../../../sdk/api-check-service";
+import { ExampleDsl, ExampleDslContext } from "../../../../sdk/test/example-dsl";
 import { expect } from "chai";
-import { makeCiCli } from "../../make-cli";
+import { makeCiCli } from "../../../../ci-cli/make-cli";
 import path from "path";
 const checker: ApiCheckService<ExampleDslContext> =
   new ApiCheckService<ExampleDslContext>();

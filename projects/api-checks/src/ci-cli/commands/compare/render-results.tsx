@@ -1,6 +1,6 @@
 import { Box, Text } from "ink";
 import React from "react";
-import { Result, ResultWithSourcemap } from "../../sdk/types";
+import { Result, ResultWithSourcemap } from "../../../sdk/types";
 import groupBy from "lodash.groupby";
 import Link from "ink-link";
 

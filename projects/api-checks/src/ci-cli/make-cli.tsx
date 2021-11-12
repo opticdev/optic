@@ -6,6 +6,7 @@ import { defaultEmptySpec } from "./constants";
 const packageJson = require("../../package.json");
 import { render } from "ink";
 import { ApiCheckService } from "../sdk/api-check-service";
+import { registerUpload } from "./commands/upload";
 
 export function makeCiCli<T>(
   forProject: string,
@@ -15,7 +16,7 @@ export function makeCiCli<T>(
     `for ${forProject}, running optic api-check ${packageJson.version}`
   );
 
-  const compareCommand = cli
+  cli
     .command("compare")
     .option("--from <from>", "from file or rev:file, defaults empty spec")
     .option("--to <to>", "to file or rev:file, defaults empty spec")
@@ -42,6 +43,8 @@ export function makeCiCli<T>(
         await waitUntilExit();
       }
     );
+
+  registerUpload(cli);
 
   return cli;
 }
