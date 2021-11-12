@@ -42,7 +42,10 @@ export async function parseOpenAPIWithSourcemap(
 
   dereference(
     resolver,
-    { ...$RefParserOptions.defaults, path: path },
+    {
+      ...$RefParserOptions.defaults,
+      path: path,
+    },
     sourcemap
   );
 

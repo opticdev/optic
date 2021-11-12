@@ -4,7 +4,6 @@ const $Ref = require("@apidevtools/json-schema-ref-parser/lib/ref");
 const Pointer = require("@apidevtools/json-schema-ref-parser/lib/pointer");
 const { ono } = require("@jsdevtools/ono");
 const url = require("@apidevtools/json-schema-ref-parser/lib/util/url");
-const jsonPointerHelpers = require("./json-pointer-helpers");
 
 module.exports = { dereference };
 

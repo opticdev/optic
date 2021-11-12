@@ -62,26 +62,64 @@ it("can parse a real schema spec with external references, resolved in any order
 
   const keys = Object.keys(results.sourcemap.mappings);
 
-  // expect(
-  //   keys.includes(
-  //     "/paths/~1thing/post/responses/401/headers/snyk-version-lifecycle-stage"
-  //   )
-  // ).toBeTruthy();
-  // // expect(
-  // //   keys.includes(
-  // //     "/paths/~1thing/post/responses/403/content/application~1vnd.api+json/schema/properties/errors/items/properties/source"
-  // //   )
-  // // ).toBeTruthy();
-  // expect(
-  //   keys.includes(
-  //     "/paths/~1thing~1{thing_id}/get/responses/200/content/application~1vnd.api+json/schema/properties/data/properties/relationships/properties/example/properties/data"
-  //   )
-  // ).toBeTruthy();
-  // expect(
-  //   keys.includes(
-  //     "/paths/~1thing/get/responses/404/content/application~1vnd.api+json/schema/properties/errors/items/properties/meta"
-  //   )
-  // ).toBeTruthy();
+  const knownValid = [
+    "/paths/~1thing~1{thing_id}/patch/responses/200/content/application~1vnd.api+json/schema/properties/data/properties/attributes/properties/description",
+    "/paths/~1thing~1{thing_id}/patch/responses/200/content/application~1vnd.api+json/schema/properties/data/properties/attributes/properties/created",
+    "/paths/~1thing~1{thing_id}/patch/responses/409/content/application~1vnd.api+json/schema/properties/jsonapi",
+    "/paths/~1thing~1{thing_id}/patch/responses/400/content/application~1vnd.api+json/schema/properties/jsonapi",
+    "/paths/~1thing/get/responses/404/content/application~1vnd.api+json/schema/properties/errors",
+    "/paths/~1thing~1{thing_id}/delete/responses/401/content/application~1vnd.api+json/schema/properties/errors",
+    "/paths/~1thing~1{thing_id}/delete/responses/403/content/application~1vnd.api+json/schema/properties/jsonapi/properties/version",
+    "/paths/~1thing~1{thing_id}/get/responses/400/headers/snyk-version-served",
+    "/paths/~1thing~1{thing_id}/patch/responses/404/content/application~1vnd.api+json/schema/properties/errors/items/properties/id",
+    "/paths/~1thing~1{thing_id}/delete/responses/401/content/application~1vnd.api+json/schema/properties/jsonapi",
+    "/paths/~1thing/get/responses/500/content/application~1vnd.api+json/schema/properties/errors",
+    "/paths/~1thing/post/responses/409/content/application~1vnd.api+json/schema/properties/jsonapi",
+    "/paths/~1thing~1{thing_id}/patch/responses/401/content/application~1vnd.api+json/schema/properties/errors/items/properties/status",
+    "/paths/~1thing~1{thing_id}/get/responses/403/content/application~1vnd.api+json/schema/properties/errors/items/properties/source/properties/pointer",
+    "/paths/~1thing/get/responses/200/content/application~1vnd.api+json/schema/properties/data/items/properties/attributes/properties/description",
+    "/paths/~1thing~1{thing_id}/delete/responses/403/content/application~1vnd.api+json/schema/properties/errors/items/properties/detail",
+    "/paths/~1thing~1{thing_id}/patch/responses/500/content/application~1vnd.api+json/schema/properties/errors/items/properties/source/properties/parameter",
+    "/paths/~1thing/get/responses/200/content/application~1vnd.api+json/schema/properties/data/items/properties/relationships",
+    "/paths/~1thing~1{thing_id}/get/responses/500/content/application~1vnd.api+json/schema/properties/errors/items/properties/id",
+    "/paths/~1thing~1{thing_id}/patch/responses/404/content/application~1vnd.api+json/schema/properties/errors/items/properties/detail",
+    "/paths/~1thing~1{thing_id}/patch/responses/500/content/application~1vnd.api+json/schema/properties/errors/items/properties/source",
+    "/paths/~1thing~1{thing_id}/delete/responses/404/content/application~1vnd.api+json/schema/properties/errors/items/properties/id",
+    "/paths/~1thing~1{thing_id}/get/responses/403/headers/snyk-version-served",
+    "/paths/~1thing/post/responses/403/content/application~1vnd.api+json/schema/properties/errors/items/properties/source/properties/parameter",
+    "/paths/~1thing/get/responses/404/content/application~1vnd.api+json/schema/properties/errors/items/properties/source/properties/pointer",
+    "/paths/~1thing~1{thing_id}/get/responses/400/headers/snyk-request-id",
+    "/paths/~1thing/post/responses/404/content/application~1vnd.api+json/schema/properties/errors/items/properties/detail",
+    "/paths/~1thing~1{thing_id}/get/responses/500/content/application~1vnd.api+json/schema/properties/jsonapi/properties/version",
+    "/paths/~1thing~1{thing_id}/get/responses/500/content/application~1vnd.api+json/schema/properties/errors",
+    "/paths/~1thing~1{thing_id}/delete/responses/400/content/application~1vnd.api+json/schema/properties/jsonapi",
+    "/paths/~1thing~1{thing_id}/patch/responses/401/content/application~1vnd.api+json/schema/properties/errors/items/properties/source",
+    "/paths/~1thing/get/responses/200/content/application~1vnd.api+json/schema/properties/data/items/properties/relationships/properties/example",
+    "/paths/~1thing~1{thing_id}/get/responses/200/content/application~1vnd.api+json/schema/properties/data/properties/relationships/properties/example/properties/links/properties/related",
+    "/paths/~1thing~1{thing_id}/delete/responses/500/content/application~1vnd.api+json/schema/properties/errors/items/properties/status",
+    "/paths/~1thing~1{thing_id}/patch/responses/401/content/application~1vnd.api+json/schema/properties/jsonapi/properties/version",
+    "/paths/~1thing~1{thing_id}/delete/responses/500/headers/deprecation",
+    "/paths/~1thing/get/responses/404/content/application~1vnd.api+json/schema/properties/errors/items/properties/id",
+    "/paths/~1thing~1{thing_id}/patch/responses/403/headers/snyk-version-served",
+    "/paths/~1thing~1{thing_id}/delete/responses/403/content/application~1vnd.api+json/schema/properties/errors/items/properties/meta",
+    "/paths/~1thing~1{thing_id}/patch/responses/401/content/application~1vnd.api+json/schema/properties/errors/items/properties/source/properties/pointer",
+    "/paths/~1thing~1{thing_id}/delete/responses/500/content/application~1vnd.api+json/schema/properties/errors/items/properties/source/properties/pointer",
+    "/paths/~1thing~1{thing_id}/delete/responses/400/content/application~1vnd.api+json/schema/properties/errors/items/properties/id",
+    "/paths/~1thing/get/responses/404/headers/deprecation",
+    "/paths/~1thing~1{thing_id}/patch/responses/404/content/application~1vnd.api+json/schema/properties/errors/items/properties/detail",
+    "/paths/~1thing/get/responses/400/headers/snyk-version-lifecycle-stage",
+    "/paths/~1thing~1{thing_id}/get/responses/404/headers/snyk-request-id",
+    "/paths/~1thing/post/responses/409/content/application~1vnd.api+json/schema/properties/errors/items/properties/source/properties/pointer",
+    "/paths/~1thing~1{thing_id}/delete/responses/400/content/application~1vnd.api+json/schema/properties/errors/items/properties/id",
+    "/paths/~1thing/post/responses/404/content/application~1vnd.api+json/schema/properties/errors",
+    "/paths/~1thing~1{thing_id}/get/responses/401/content/application~1vnd.api+json/schema/properties/jsonapi/properties/version",
+  ];
+
+  console.log(keys.length);
+  knownValid.forEach((i) => {
+    console.log(i);
+    expect(keys.includes(i)).toBeTruthy();
+  });
 
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
