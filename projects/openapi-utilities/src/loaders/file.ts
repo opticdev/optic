@@ -33,7 +33,7 @@ export async function loadSpecFromUrl(
       flattened: results.jsonLike,
       sourcemap: includeSourcemap
         ? results.sourcemap
-        : new JsonSchemaSourcemap(specFilePath),
+        : new JsonSchemaSourcemap(url),
     };
   } catch (e: any) {
     return { success: false, error: e.message };
