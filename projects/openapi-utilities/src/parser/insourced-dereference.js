@@ -62,7 +62,7 @@ function crawl(
     circular: false,
   };
 
-  sourcemap.log(path, pathFromRoot);
+  // sourcemap.log(path, pathFromRoot);
 
   if (options.dereference.circular === "ignore" || !processedObjects.has(obj)) {
     if (obj && typeof obj === "object" && !ArrayBuffer.isView(obj)) {
@@ -169,7 +169,9 @@ function dereference$Ref(
   // console.log('Dereferencing $ref pointer "%s" at %s', $ref.$ref, path);
 
   let $refPath = url.resolve(path, $ref.$ref);
-  sourcemap.log(path, pathFromRoot);
+  // console.log(pathFromRoot);
+
+  sourcemap.logRef($refPath, pathFromRoot);
 
   const cache = dereferencedCache.get($refPath);
   if (cache) {
