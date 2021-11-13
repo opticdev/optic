@@ -29,7 +29,7 @@ describe("body properties", () => {
   };
 
   describe("key", () => {
-    it("passes when snake case", async () => {
+    it("passes when snake case with more than one component", async () => {
       const result = await compare(baseOpenAPI)
         .to((spec) => {
           spec.paths!["/example"]!.get!.responses = {
@@ -41,6 +41,31 @@ describe("body properties", () => {
                     type: "object",
                     properties: {
                       is_snake_case: { type: "string" },
+                    },
+                  },
+                },
+              },
+            },
+          };
+          return spec;
+        })
+        .withRule(rules.propertyKey, emptyContext);
+
+      expect(result.results[0].passed).toBeTruthy();
+      expect(result).toMatchSnapshot();
+    });
+    it("passes when snake case with one component", async () => {
+      const result = await compare(baseOpenAPI)
+        .to((spec) => {
+          spec.paths!["/example"]!.get!.responses = {
+            "200": {
+              description: "",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      technicallysnakecase: { type: "string" },
                     },
                   },
                 },

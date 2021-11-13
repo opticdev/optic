@@ -34,6 +34,7 @@
   "dependencies": {
     "@useoptic/api-checks": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
+    "change-case": "^4.1.2",
     "fs-extra": "^10.0.0",
     "nice-try": "^3.0.0"
   },

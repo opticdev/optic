@@ -79,6 +79,30 @@ describe("operationId", () => {
     });
   });
 
+  it("fails when camel case and valid prefix but no suffix", async () => {
+    const result = await compare(baseForOperationIdTests)
+      .to((spec) => {
+        spec.paths!["/example"]!.get!.operationId = "get";
+        return spec;
+      })
+      .withRule(rules.operationId, emptyContext);
+
+    expect(result.results[0].passed).toBeFalsy();
+    expect(result).toMatchSnapshot();
+  });
+
+  it("passes when camel case and has a hump", async () => {
+    const result = await compare(baseForOperationIdTests)
+      .to((spec) => {
+        spec.paths!["/example"]!.get!.operationId = 'getYesHump';
+        return spec;
+      })
+      .withRule(rules.operationId, emptyContext);
+
+    expect(result.results[0].passed).toBeTruthy();
+    expect(result).toMatchSnapshot();
+  });
+
   it("fails if removed", async () => {
     const baseCopy = JSON.parse(JSON.stringify(baseForOperationIdTests));
     baseCopy.paths["/example"].get.operationId = "example";

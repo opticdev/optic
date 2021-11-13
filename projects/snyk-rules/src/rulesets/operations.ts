@@ -1,5 +1,10 @@
 import { SnykApiCheckDsl } from "../dsl";
+import {camelCase, snakeCase} from 'change-case';
+import {OpenAPIV3} from '@useoptic/api-checks';
+
 const { expect } = require("chai");
+
+const prefixRegex = /^(get|create|list|update|delete)[A-Z]+.*/; // alternatively we could split at camelCase boundaries and assert on the first item
 
 export const rules = {
   operationId: ({ operations }: SnykApiCheckDsl) => {
@@ -7,13 +12,13 @@ export const rules = {
       "have the correct operationId format",
       (operation) => {
         expect(operation.operationId).to.be.ok;
-        const camelCaseRe = /^(get|create|list|update|delete)([A-Z][a-z]+)+$/g;
-        expect(
-          camelCaseRe.test(operation.operationId || ""),
-          `operationId "${
-            operation.operationId || ""
-          }" must be formatted [get|create|list|update|delete]camelCaseResource`
-        ).to.be.ok;
+        if (operation.operationId !== undefined) {
+          const normalized = camelCase(operation.operationId);
+          expect(
+            normalized === operation.operationId && prefixRegex.test(operation.operationId),
+            `operationId "${operation.operationId}" must be camelCase (${normalized}) and start with get|create|list|update|delete`
+          ).to.be.ok;
+        }
       }
     );
   },
@@ -40,12 +45,15 @@ export const rules = {
     operations.requirement.must(
       "use the correct case",
       (operation, context, docs, specItem) => {
-        const snakeCase = /^[a-z]+(?:_[a-z]+)*$/g;
-        for (const parameter of specItem.parameters || []) {
-          if ("in" in parameter && ["path", "query"].includes(parameter.in)) {
+
+        for (const p  of specItem.parameters || []) {
+          const parameter = p as OpenAPIV3.ParameterObject;
+          if (["path", "query"].includes(parameter.in)) {
+            const normalized = snakeCase(parameter.name);
+
             expect(
-              snakeCase.test(parameter.name),
-              `expected parameter name ${parameter.name} to be snake case`
+               normalized === parameter.name,
+              `expected parameter name "${parameter.name}" to be snake_case (${normalized})`
             ).to.be.ok;
           }
         }
@@ -56,10 +64,11 @@ export const rules = {
     operations.requirement.must(
       "include a version parameter",
       (operation, context, docs, specItem) => {
-        const parameterNames = (specItem.parameters || [])
-          .filter((parameter) => "in" in parameter && parameter.in === "query")
+        const parameters = (specItem.parameters || []) as OpenAPIV3.ParameterObject[];
+        const parameterNames = parameters
+          .filter((parameter) => parameter.in === "query")
           .map((parameter) => {
-            if ("name" in parameter) return parameter.name;
+            return parameter.name;
           });
         expect(parameterNames).to.include("version");
       }
@@ -91,11 +100,9 @@ export const rules = {
     request.queryParameter.changed.must(
       "not change the default value",
       (parameterBefore, parameterAfter) => {
-        let beforeSchema = parameterBefore.schema || {};
-        let afterSchema = parameterAfter.schema || {};
-        if ("default" in beforeSchema && "default" in afterSchema) {
-          expect(beforeSchema.default).to.equal(afterSchema.default);
-        }
+        let beforeSchema = (parameterBefore.schema || {}) as OpenAPIV3.SchemaObject;
+        let afterSchema = (parameterAfter.schema || {}) as OpenAPIV3.SchemaObject;
+        expect(beforeSchema.default).to.equal(afterSchema.default);
       }
     );
   },
