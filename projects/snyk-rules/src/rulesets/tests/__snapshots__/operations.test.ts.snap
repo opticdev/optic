@@ -1275,7 +1275,7 @@ Object {
       },
       "condition": "not be removed",
       "docsLink": undefined,
-      "error": "Cannot read properties of undefined (reading 'statusCode')",
+      "error": "Cannot read property 'statusCode' of undefined",
       "isMust": true,
       "isShould": false,
       "passed": false,

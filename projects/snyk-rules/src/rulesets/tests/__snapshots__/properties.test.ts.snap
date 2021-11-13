@@ -194,7 +194,7 @@ Object {
       },
       "condition": "not be removed",
       "docsLink": undefined,
-      "error": "Cannot read properties of undefined (reading 'key')",
+      "error": "Cannot read property 'key' of undefined",
       "isMust": true,
       "isShould": false,
       "passed": false,

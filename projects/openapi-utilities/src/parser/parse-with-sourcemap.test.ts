@@ -55,16 +55,16 @@ it("can parse an OpenAPI file and have valid sourcemap", async () => {
   );
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
-
-it("can parse a real schema spec with external references, resolved in any order", async () => {
-  const results = await parseOpenAPIWithSourcemap(
-    path.resolve(
-      path.join(
-        __dirname,
-        "../../../snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/001-ok-add-property-field.yaml"
-      )
-    )
-  );
-
-  expect(prepSnapshot(results)).toMatchSnapshot();
-});
+//
+// it("can parse a real schema spec with external references, resolved in any order", async () => {
+//   const results = await parseOpenAPIWithSourcemap(
+//     path.resolve(
+//       path.join(
+//         __dirname,
+//         "../../../snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/001-ok-add-property-field.yaml"
+//       )
+//     )
+//   );
+//
+//   expect(prepSnapshot(results)).toMatchSnapshot();
+// });
