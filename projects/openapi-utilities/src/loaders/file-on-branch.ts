@@ -26,7 +26,7 @@ export async function loadSpecFromBranch(
       flattened: results.jsonLike,
       sourcemap: includeSourcemap
         ? results.sourcemap
-        : new JsonSchemaSourcemap(),
+        : new JsonSchemaSourcemap(fileNameInRepo),
     };
   } catch (e: any) {
     return { success: false, error: e.message };

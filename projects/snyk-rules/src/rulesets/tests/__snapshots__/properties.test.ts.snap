@@ -198,7 +198,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "removed field: field undefined",
+      "where": "removed field: undefined",
     },
   ],
 }
@@ -387,7 +387,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "added field: field count",
+      "where": "added field: count",
     },
   ],
 }
@@ -573,7 +573,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "requirement for field: field name",
+      "where": "requirement for field: name",
     },
   ],
 }
@@ -761,7 +761,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": true,
-      "where": "requirement for field: field name",
+      "where": "requirement for field: name",
     },
   ],
 }
@@ -947,7 +947,7 @@ Object {
       "isMust": false,
       "isShould": true,
       "passed": false,
-      "where": "requirement for field: field name",
+      "where": "requirement for field: name",
     },
   ],
 }
@@ -1132,7 +1132,7 @@ Object {
       "isMust": false,
       "isShould": true,
       "passed": true,
-      "where": "requirement for field: field count",
+      "where": "requirement for field: count",
     },
   ],
 }
@@ -1318,13 +1318,13 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "requirement for field: field not-snake-case",
+      "where": "requirement for field: not-snake-case",
     },
   ],
 }
 `;
 
-exports[`body properties key passes when snake case 1`] = `
+exports[`body properties key passes when snake case with more than one component 1`] = `
 Object {
   "base": Object {
     "info": Object {
@@ -1503,7 +1503,192 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": true,
-      "where": "requirement for field: field is_snake_case",
+      "where": "requirement for field: is_snake_case",
+    },
+  ],
+}
+`;
+
+exports[`body properties key passes when snake case with one component 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {},
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "added": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "object",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+    },
+    Object {
+      "added": Object {
+        "flatSchema": Object {
+          "type": "string",
+        },
+        "key": "technicallysnakecase",
+        "required": false,
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": Array [
+            "technicallysnakecase",
+          ],
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "technicallysnakecase",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/technicallysnakecase",
+        "kind": "field",
+      },
+    },
+    Object {
+      "added": Object {
+        "description": "",
+        "statusCode": 200,
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200",
+        "kind": "response",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {
+            "200": Object {
+              "content": Object {
+                "application/json": Object {
+                  "schema": Object {
+                    "properties": Object {
+                      "technicallysnakecase": Object {
+                        "type": "string",
+                      },
+                    },
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "",
+            },
+          },
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+              "statusCode": "200",
+            },
+            "jsonSchemaTrail": Array [
+              "technicallysnakecase",
+            ],
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "application/json",
+            "technicallysnakecase",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/technicallysnakecase",
+          "kind": "field",
+        },
+        "value": Object {
+          "flatSchema": Object {
+            "type": "string",
+          },
+          "key": "technicallysnakecase",
+          "required": false,
+        },
+      },
+      "condition": "have camel case keys",
+      "docsLink": undefined,
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "requirement for field: technicallysnakecase",
     },
   ],
 }

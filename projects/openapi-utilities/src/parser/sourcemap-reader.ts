@@ -2,27 +2,73 @@ import {
   DerefToSource,
   JsonPath,
   JsonSchemaSourcemap,
+  resolveJsonPointerInYamlAst,
+  ToSource,
 } from "./openapi-sourcemap-parser";
 import fs from "fs-extra";
 import { Kind, YamlMap, YAMLNode, YAMLSequence } from "yaml-ast-parser";
+import { jsonPointerHelper } from "../index";
+import equals from "fast-deep-equal";
 
 export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
+  const rootFileNumber = sourcemap.files.find(
+    (i) => i.path === sourcemap.rootFilePath
+  )!.index;
+
   const findFile = (jsonPathFromRoot: JsonPath): ILookupPathResult => {
-    const result: DerefToSource | undefined =
-      sourcemap.mappings[jsonPathFromRoot];
-    if (result) {
-      const [source, file] = result;
+    const decoded = jsonPointerHelper.decode(jsonPathFromRoot);
+
+    let cursor: {
+      currentFile: number;
+      pathInRoot: string[];
+      pathInCurrentFile: string[];
+    } = {
+      currentFile: rootFileNumber,
+      pathInRoot: [],
+      pathInCurrentFile: [],
+    };
+
+    decoded.forEach((component, index) => {
+      const path = jsonPointerHelper.compile([
+        ...cursor.pathInCurrentFile,
+        component,
+      ]);
+
+      cursor.pathInRoot.push(component);
+      const hitRef = sourcemap.refMappings[path] as ToSource | undefined;
+
+      // console.log(path, hitRef ? "GOT HIT" : "no HIT");
+
+      if (hitRef) {
+        const [file, startingPath] = hitRef;
+        cursor.currentFile = file;
+        cursor.pathInCurrentFile = jsonPointerHelper.decode(startingPath);
+      } else {
+        cursor.pathInCurrentFile.push(component);
+      }
+
+      // console.log(cursor);
+    });
+
+    const file = sourcemap.files.find((i) => i.index === cursor.currentFile)!;
+
+    const pathInFile = jsonPointerHelper.compile(cursor.pathInCurrentFile);
+
+    const node = resolveJsonPointerInYamlAst(file.ast, pathInFile);
+
+    if (node)
       return {
-        filePath: sourcemap.files.find((i) => i.index === file)!.path,
+        filePath: file.path,
+        astNode: node,
+        startsAt: pathInFile,
       };
-    }
   };
 
   const findFileAndLines = async (jsonPathFromRoot: JsonPath) => {
-    const filePath = findFile(jsonPathFromRoot);
-    if (filePath) {
-      const [astNode] = sourcemap.mappings[jsonPathFromRoot] as DerefToSource;
-      const contents = (await fs.readFile(filePath.filePath)).toString();
+    const lookupResult = findFile(jsonPathFromRoot);
+    if (lookupResult) {
+      const astNode = lookupResult.astNode;
+      const contents = (await fs.readFile(lookupResult.filePath)).toString();
 
       const [startPosition, endPosition] = astNodesToStartEndPosition(astNode);
 
@@ -32,7 +78,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
         endPosition
       );
       const result: ILookupLinePreviewResult = {
-        filePath: filePath.filePath,
+        filePath: lookupResult.filePath,
         startLine,
         endLine,
         preview,
@@ -49,7 +95,9 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
   };
 }
 
-type ILookupPathResult = undefined | { filePath: string };
+type ILookupPathResult =
+  | undefined
+  | { filePath: string; startsAt: JsonPath; astNode: YAMLNode };
 export type ILookupLinePreviewResult =
   | undefined
   | {

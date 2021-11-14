@@ -203,7 +203,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         OpenApiKind.QueryParameter,
         dsl.changelog,
         dsl.nextFacts,
-        (query) => `query parameter ${query.name}`,
+        (query) => `${query.name}`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
@@ -217,7 +217,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         OpenApiKind.PathParameter,
         dsl.changelog,
         dsl.nextFacts,
-        (path) => `path parameter ${path.name}`,
+        (path) => `${path.name}`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
@@ -231,7 +231,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         OpenApiKind.HeaderParameter,
         dsl.changelog,
         dsl.nextFacts,
-        (header) => `header parameter ${header.name}`,
+        (header) => `${header.name}`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
@@ -252,7 +252,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         OpenApiKind.Response,
         dsl.changelog,
         dsl.nextFacts,
-        (response) => `response ${response.statusCode}`,
+        (response) => `${response.statusCode}`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
@@ -266,7 +266,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         OpenApiKind.ResponseHeader,
         dsl.changelog,
         dsl.nextFacts,
-        (header) => `response header ${header.name}`,
+        (header) => `${header.name}`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
@@ -324,7 +324,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
       OpenApiKind.Field,
       dsl.changelog,
       dsl.nextFacts,
-      (field) => `field ${field.key}`,
+      (field) => `${field.key}`,
       (location) => dsl.getContext(location),
       (...items) => dsl.checks.push(...items),
       (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)

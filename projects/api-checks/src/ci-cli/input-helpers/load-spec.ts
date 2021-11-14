@@ -16,7 +16,7 @@ export async function specFromInputToResults(
     case SpecVersionFrom.empty:
       return {
         jsonLike: input.value,
-        sourcemap: new JsonSchemaSourcemap(),
+        sourcemap: new JsonSchemaSourcemap("empty.json"),
       };
     case SpecVersionFrom.git: {
       const gitRepo = await inGit(path.join(workingDir, input.name));

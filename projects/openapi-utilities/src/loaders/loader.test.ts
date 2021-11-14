@@ -11,6 +11,8 @@ function prepSnapshot(result: SpecLoaderResult) {
   result.sourcemap?.files.forEach((i) => {
     i.path = i.path.split(cwd)[1];
   });
+  // @ts-ignore
+  result.sourcemap!.rootFilePath = result.sourcemap?.rootFilePath.split(cwd)[1];
   return result;
 }
 

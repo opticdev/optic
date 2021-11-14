@@ -2,15 +2,15 @@ import $RefParser from "@apidevtools/json-schema-ref-parser";
 // @ts-ignore
 import * as $RefParserOptions from "@apidevtools/json-schema-ref-parser/lib/options";
 import * as YAML from "yaml-ast-parser";
-import * as fs from "fs-extra";
 import { YAMLMapping, YAMLNode, YAMLSequence } from "yaml-ast-parser";
+import * as fs from "fs-extra";
 // @ts-ignore
 import { dereference } from "./insourced-dereference";
 import path from "path";
 import fetch from "node-fetch";
 import { OpenAPIV3 } from "openapi-types";
-import jsonPointer from "json-pointer";
 import jsonPointerHelpers from "./json-pointer-helpers";
+import { jsonPointerHelper } from "../index";
 
 export type ParseOpenAPIResult = {
   jsonLike: OpenAPIV3.Document;
@@ -22,7 +22,7 @@ export async function parseOpenAPIWithSourcemap(
 ): Promise<ParseOpenAPIResult> {
   const resolver = new $RefParser();
 
-  const sourcemap = new JsonSchemaSourcemap();
+  const sourcemap = new JsonSchemaSourcemap(path);
   const resolverResults: $RefParser.$Refs = await resolver.resolve(path, {
     resolve: {
       http: {
@@ -37,12 +37,17 @@ export async function parseOpenAPIWithSourcemap(
   await Promise.all(
     resolverResults
       .paths()
-      .map((filePath, index) => sourcemap.addFileIfMissing(filePath, index))
+      .map(async (filePath, index) =>
+        sourcemap.addFileIfMissing(filePath, index)
+      )
   );
 
   dereference(
     resolver,
-    { ...$RefParserOptions.defaults, path: path },
+    {
+      ...$RefParserOptions.defaults,
+      path: path,
+    },
     sourcemap
   );
 
@@ -60,7 +65,7 @@ export async function parseOpenAPIFromRepoWithSourcemap(
   const resolver = new $RefParser();
   const fileName = path.join(repoPath, name);
 
-  const sourcemap = new JsonSchemaSourcemap();
+  const sourcemap = new JsonSchemaSourcemap(fileName);
   const resolverResults: $RefParser.$Refs = await resolver.resolve(fileName, {
     resolve: { file: inGitResolver },
   });
@@ -90,19 +95,23 @@ export async function parseOpenAPIFromRepoWithSourcemap(
 }
 
 export type JsonPath = string;
+export type JsonPathExploded = string[];
 export type FileReference = number;
 
 export type DerefToSource = [YAMLNode, FileReference, JsonPath];
+export type ToSource = [FileReference, JsonPath];
 
 // assumptions change because not serializing
 export class JsonSchemaSourcemap {
+  constructor(public rootFilePath: string) {}
+
   public files: Array<{
     path: string;
     index: number;
     ast: YAMLNode;
   }> = [];
 
-  public mappings: { [key: JsonPath]: DerefToSource } = {};
+  public refMappings: { [key: JsonPath]: ToSource } = {};
 
   async addFileIfMissing(filePath: string, fileIndex: number) {
     if (filePath.startsWith("http")) {
@@ -149,39 +158,37 @@ export class JsonSchemaSourcemap {
     }
   }
 
-  log(path: string, pathFromRoot: string) {
-    // this seems to assume that paths will be in order, why not check for equality?
-    const thisFile = this.files.find((i) => path.startsWith(i.path));
-    // strip pound sign
-    const rootKey = pathFromRoot.substring(1);
+  logPointer(pathRelativeToFile: string, pathRelativeToRoot: string) {
+    // console.log(pathRelativeToFile, pathRelativeToRoot);
+    const thisFile = this.files.find((i) =>
+      pathRelativeToFile.startsWith(i.path)
+    );
+
     if (thisFile) {
+      const rootKey = jsonPointerHelpers.unescapeUriSafePointer(
+        pathRelativeToRoot.substring(1)
+      );
+
       const jsonPointer = jsonPointerHelpers.unescapeUriSafePointer(
-        path.split(thisFile.path)[1].substring(1) || "/"
+        pathRelativeToFile.split(thisFile.path)[1].substring(1) || "/"
       );
-      const sourceMapping = resolveJsonPointerInYamlAst(
-        thisFile.ast,
-        jsonPointer,
-        thisFile.index
-      );
-      if (sourceMapping) {
-        this.mappings[jsonPointerHelpers.unescapeUriSafePointer(rootKey)] =
-          sourceMapping;
-      }
+
+      if (rootKey === jsonPointer) return;
+
+      this.refMappings[rootKey] = [thisFile.index, jsonPointer];
     }
   }
 }
 
 export function resolveJsonPointerInYamlAst(
-  node: YAMLNode,
-  pointer: string,
-  file: number
-): DerefToSource | undefined {
-  const decoded = jsonPointer.parse(pointer);
-
+  node: YAMLNode, // root ast
+  pointer: string
+): YAMLNode | undefined {
+  const decoded = jsonPointerHelper.decode(pointer);
   const isEmpty =
     decoded.length === 0 || (decoded.length === 1 && decoded[0] === "");
 
-  if (isEmpty) return [node, file, "/"];
+  if (isEmpty) return node;
 
   const found: YAMLNode | undefined = decoded.reduce((current, path) => {
     if (!current) return undefined;
@@ -199,9 +206,7 @@ export function resolveJsonPointerInYamlAst(
     }
   }, node as YAMLNode | undefined);
 
-  if (found) {
-    return [found, file, pointer];
-  }
+  return found;
 }
 
 type AstLocation = [number, number];

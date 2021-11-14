@@ -1,11 +1,12 @@
 import { SnykApiCheckDsl } from "../dsl";
 const { expect } = require("chai");
+import {paramCase} from 'change-case';
 
 export const rules = {
   headerNameCase: ({ responses }: SnykApiCheckDsl) => {
-    responses.headers.requirement.must("be kebab case", ({ name }) => {
-      const kebabCase = /^[a-z]+(-[a-z]+)+$/g;
-      expect(kebabCase.test(name)).to.be.true;
+    responses.headers.requirement.must("be kebab-case", ({ name }) => {
+
+      expect(paramCase(name)).to.equal(name)
     });
   },
   responseHeaders: ({ responses }: SnykApiCheckDsl) => {

@@ -81,12 +81,20 @@ describe("end-end-tests", () => {
         const sourcemap = await findFileAndLines(
           checkResult.change.location.jsonPath
         );
+
+        const filePath = sourcemap?.filePath.split("end-end-tests")[1];
+
+        // if (!filePath) {
+        //   console.log(checkResult.change.location.jsonPath);
+        //   console.log("not found");
+        // }
+
         return {
           ...checkResult,
           sourcemap: {
             ...sourcemap,
             preview: "",
-            filePath: sourcemap?.filePath.split("end-end-tests")[1],
+            filePath,
           },
           change: null as any,
         } as ResultWithSourcemap;
