@@ -36,6 +36,26 @@ describe("end-end-tests", () => {
     ).toMatchSnapshot();
   });
 
+  it("fails when breaking param change", async () => {
+    expect(
+      await snapshotScenario(
+        "000-baseline.yaml",
+        "001-fail-breaking-param-change.yaml",
+        resourceDate("thing", "2021-11-10"),
+        {
+          changeDate: "2021-11-11",
+          changeResource: "thing",
+          changeVersion: {
+            date: "2021-11-10",
+            stability: "beta",
+          },
+          resourceVersions: {},
+        },
+        true
+      )
+    ).toMatchSnapshot();
+  });
+
   it("passes when property field added to response", async () => {
     expect(
       await snapshotScenario(
@@ -54,6 +74,27 @@ describe("end-end-tests", () => {
         true
       )
     ).toMatchSnapshot();
+  });
+
+  it("passes when property operation added", async () => {
+    const results = await snapshotScenario(
+      "000-baseline.yaml",
+      "002-ok-add-operation.yaml",
+      resourceDate("thing", "2021-11-10"),
+      {
+        changeDate: "2021-11-11",
+        changeResource: "thing",
+        changeVersion: {
+          date: "2021-11-10",
+          stability: "beta",
+        },
+        resourceVersions: {},
+      },
+      true
+    );
+
+    // expect(results.filter((i) => !i.passed)).toHaveLength(0);
+    expect(results).toMatchSnapshot();
   });
 
   async function snapshotScenario(
