@@ -35,7 +35,7 @@ Array [
   Object {
     "endLine": 210,
     "endPosition": 9637,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/001-ok-add-property-field.yaml",
+    "filePath": "/001-ok-add-property-field.yaml",
     "preview": "",
     "startLine": 205,
     "startPosition": 9476,
@@ -43,7 +43,7 @@ Array [
   Object {
     "endLine": 209,
     "endPosition": 9278,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/001-ok-add-property-field.yaml",
+    "filePath": "/001-ok-add-property-field.yaml",
     "preview": "",
     "startLine": 195,
     "startPosition": 9103,
@@ -51,7 +51,7 @@ Array [
   Object {
     "endLine": 64,
     "endPosition": 123,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/common.yaml",
+    "filePath": "/common.yaml",
     "preview": "",
     "startLine": 1,
     "startPosition": 0,
@@ -59,7 +59,7 @@ Array [
   Object {
     "endLine": 64,
     "endPosition": 123,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/common.yaml",
+    "filePath": "/common.yaml",
     "preview": "",
     "startLine": 1,
     "startPosition": 0,
@@ -67,7 +67,7 @@ Array [
   Object {
     "endLine": 31,
     "endPosition": 172,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 5,
     "startPosition": 96,
@@ -75,7 +75,7 @@ Array [
   Object {
     "endLine": 31,
     "endPosition": 172,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 5,
     "startPosition": 96,
@@ -83,7 +83,7 @@ Array [
   Object {
     "endLine": 69,
     "endPosition": 69,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/common.yaml",
+    "filePath": "/common.yaml",
     "preview": "",
     "startLine": 4,
     "startPosition": 42,
@@ -91,7 +91,7 @@ Array [
   Object {
     "endLine": 61,
     "endPosition": 334,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/headers/headers.yaml",
+    "filePath": "/headers.yaml",
     "preview": "",
     "startLine": 5,
     "startPosition": 168,
@@ -99,7 +99,7 @@ Array [
   Object {
     "endLine": 32,
     "endPosition": 320,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 15,
     "startPosition": 279,
@@ -107,7 +107,7 @@ Array [
   Object {
     "endLine": 64,
     "endPosition": 123,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/common.yaml",
+    "filePath": "/common.yaml",
     "preview": "",
     "startLine": 1,
     "startPosition": 0,
@@ -115,7 +115,7 @@ Array [
   Object {
     "endLine": 31,
     "endPosition": 172,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 5,
     "startPosition": 96,
@@ -123,7 +123,7 @@ Array [
   Object {
     "endLine": 64,
     "endPosition": 123,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/common.yaml",
+    "filePath": "/common.yaml",
     "preview": "",
     "startLine": 1,
     "startPosition": 0,
@@ -131,7 +131,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 351,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 18,
     "startPosition": 325,
@@ -139,7 +139,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 471,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 25,
     "startPosition": 440,
@@ -147,7 +147,7 @@ Array [
   Object {
     "endLine": 210,
     "endPosition": 9637,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/001-ok-add-property-field.yaml",
+    "filePath": "/001-ok-add-property-field.yaml",
     "preview": "",
     "startLine": 205,
     "startPosition": 9476,
@@ -155,7 +155,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 382,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 20,
     "startPosition": 356,
@@ -163,7 +163,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 513,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 27,
     "startPosition": 480,
@@ -171,7 +171,7 @@ Array [
   Object {
     "endLine": 209,
     "endPosition": 8818,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/001-ok-add-property-field.yaml",
+    "filePath": "/001-ok-add-property-field.yaml",
     "preview": "",
     "startLine": 178,
     "startPosition": 8653,
@@ -179,7 +179,7 @@ Array [
   Object {
     "endLine": 32,
     "endPosition": 320,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 15,
     "startPosition": 279,
@@ -187,7 +187,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 382,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 20,
     "startPosition": 356,
@@ -195,7 +195,7 @@ Array [
   Object {
     "endLine": 27,
     "endPosition": 547,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 22,
     "startPosition": 387,
@@ -203,7 +203,7 @@ Array [
   Object {
     "endLine": 32,
     "endPosition": 320,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 15,
     "startPosition": 279,
@@ -211,7 +211,7 @@ Array [
   Object {
     "endLine": 61,
     "endPosition": 334,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/headers/headers.yaml",
+    "filePath": "/headers.yaml",
     "preview": "",
     "startLine": 5,
     "startPosition": 168,
@@ -219,7 +219,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 513,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 27,
     "startPosition": 480,
@@ -227,7 +227,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 471,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 25,
     "startPosition": 440,
@@ -235,7 +235,7 @@ Array [
   Object {
     "endLine": 57,
     "endPosition": 1527,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/headers/headers.yaml",
+    "filePath": "/headers.yaml",
     "preview": "",
     "startLine": 44,
     "startPosition": 1294,
@@ -243,7 +243,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 382,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 20,
     "startPosition": 356,
@@ -251,7 +251,7 @@ Array [
   Object {
     "endLine": 69,
     "endPosition": 69,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/common.yaml",
+    "filePath": "/common.yaml",
     "preview": "",
     "startLine": 4,
     "startPosition": 42,
@@ -259,7 +259,7 @@ Array [
   Object {
     "endLine": 31,
     "endPosition": 172,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 5,
     "startPosition": 96,
@@ -267,7 +267,7 @@ Array [
   Object {
     "endLine": 64,
     "endPosition": 123,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/common.yaml",
+    "filePath": "/common.yaml",
     "preview": "",
     "startLine": 1,
     "startPosition": 0,
@@ -275,7 +275,7 @@ Array [
   Object {
     "endLine": 27,
     "endPosition": 547,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 22,
     "startPosition": 387,
@@ -283,7 +283,7 @@ Array [
   Object {
     "endLine": 56,
     "endPosition": 1447,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/common.yaml",
+    "filePath": "/common.yaml",
     "preview": "",
     "startLine": 56,
     "startPosition": 1125,
@@ -291,7 +291,7 @@ Array [
   Object {
     "endLine": 59,
     "endPosition": 1074,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/common.yaml",
+    "filePath": "/common.yaml",
     "preview": "",
     "startLine": 41,
     "startPosition": 863,
@@ -299,7 +299,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 351,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 18,
     "startPosition": 325,
@@ -307,7 +307,7 @@ Array [
   Object {
     "endLine": 69,
     "endPosition": 69,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/common.yaml",
+    "filePath": "/common.yaml",
     "preview": "",
     "startLine": 4,
     "startPosition": 42,
@@ -315,7 +315,7 @@ Array [
   Object {
     "endLine": 55,
     "endPosition": 959,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/headers/headers.yaml",
+    "filePath": "/headers.yaml",
     "preview": "",
     "startLine": 23,
     "startPosition": 662,
@@ -323,7 +323,7 @@ Array [
   Object {
     "endLine": 32,
     "endPosition": 320,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 15,
     "startPosition": 279,
@@ -331,7 +331,7 @@ Array [
   Object {
     "endLine": 61,
     "endPosition": 334,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/headers/headers.yaml",
+    "filePath": "/headers.yaml",
     "preview": "",
     "startLine": 5,
     "startPosition": 168,
@@ -339,7 +339,7 @@ Array [
   Object {
     "endLine": 32,
     "endPosition": 609,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 30,
     "startPosition": 552,
@@ -347,7 +347,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 471,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 25,
     "startPosition": 440,
@@ -355,7 +355,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 471,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 25,
     "startPosition": 440,
@@ -363,7 +363,7 @@ Array [
   Object {
     "endLine": 32,
     "endPosition": 320,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 15,
     "startPosition": 279,
@@ -371,7 +371,7 @@ Array [
   Object {
     "endLine": 55,
     "endPosition": 959,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/headers/headers.yaml",
+    "filePath": "/headers.yaml",
     "preview": "",
     "startLine": 23,
     "startPosition": 662,
@@ -379,7 +379,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 382,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 20,
     "startPosition": 356,
@@ -387,7 +387,7 @@ Array [
   Object {
     "endLine": 49,
     "endPosition": 662,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/headers/headers.yaml",
+    "filePath": "/headers.yaml",
     "preview": "",
     "startLine": 9,
     "startPosition": 336,
@@ -395,7 +395,7 @@ Array [
   Object {
     "endLine": 57,
     "endPosition": 1527,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/headers/headers.yaml",
+    "filePath": "/headers.yaml",
     "preview": "",
     "startLine": 44,
     "startPosition": 1294,
@@ -403,7 +403,7 @@ Array [
   Object {
     "endLine": 33,
     "endPosition": 471,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 25,
     "startPosition": 440,
@@ -411,7 +411,7 @@ Array [
   Object {
     "endLine": 32,
     "endPosition": 320,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 15,
     "startPosition": 279,
@@ -419,7 +419,7 @@ Array [
   Object {
     "endLine": 31,
     "endPosition": 172,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/errors.yaml",
+    "filePath": "/errors.yaml",
     "preview": "",
     "startLine": 5,
     "startPosition": 96,
@@ -427,7 +427,7 @@ Array [
   Object {
     "endLine": 69,
     "endPosition": 69,
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/snyk-rules/end-end-tests/api-standards/components/common.yaml",
+    "filePath": "/common.yaml",
     "preview": "",
     "startLine": 4,
     "startPosition": 42,

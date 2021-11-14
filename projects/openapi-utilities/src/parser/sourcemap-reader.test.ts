@@ -125,10 +125,9 @@ describe("reading sourcemaps", () => {
     const allResolved = await Promise.all(
       knownValid.map(async (i) => {
         const a = await sourcemapReader(results.sourcemap).findFileAndLines(i);
-        if (a) {
-          // @ts-ignore
-          a.preview = "";
-        }
+        const lastIndex = a!.filePath.lastIndexOf("/");
+        a!.filePath = a!.filePath.substring(lastIndex);
+        a!.preview = "";
         return a;
       })
     );
