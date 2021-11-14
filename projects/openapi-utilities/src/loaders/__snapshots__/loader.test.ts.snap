@@ -37,7 +37,7 @@ Object {
   "sourcemap": JsonSchemaSourcemap {
     "files": Array [],
     "refMappings": Object {},
-    "rootFilePath": "/Users/aidancunniffe/Developer/openapi-optic/poc-governance-tools/projects/openapi-utilities/inputs/openapi3-with-references/external-multiple.yaml",
+    "rootFilePath": "/inputs/openapi3-with-references/external-multiple.yaml",
   },
   "success": true,
 }
