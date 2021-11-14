@@ -133,21 +133,25 @@ function positionToLine(
 }
 
 function astNodesToStartEndPosition(astNode: YAMLNode): [number, number] {
-  switch (astNode.kind) {
-    case Kind.MAP: {
-      const map = astNode as YamlMap;
-      const end =
-        map.value.mappings[map.value.mappings.length - 1]?.endPosition ||
-        astNode.endPosition;
-      return [map.startPosition, end];
+  try {
+    switch (astNode.kind) {
+      case Kind.MAP: {
+        const map = astNode as YamlMap;
+        const end =
+          map.value.mappings[map.value.mappings.length - 1]?.endPosition ||
+          astNode.endPosition;
+        return [map.startPosition, end];
+      }
+      case Kind.SEQ: {
+        const seq = astNode as YAMLSequence;
+        const end =
+          seq.items[seq.items.length - 1]?.endPosition || astNode.endPosition;
+        return [seq.startPosition, end];
+      }
+      default:
+        return [astNode.startPosition, astNode.endPosition];
     }
-    case Kind.SEQ: {
-      const seq = astNode as YAMLSequence;
-      const end =
-        seq.items[seq.items.length - 1]?.endPosition || astNode.endPosition;
-      return [seq.startPosition, end];
-    }
-    default:
-      return [astNode.startPosition, astNode.endPosition];
+  } catch {
+    return [astNode.startPosition, astNode.endPosition];
   }
 }

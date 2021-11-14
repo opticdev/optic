@@ -3,6 +3,7 @@ import {
   OpenApiKind,
   IFact,
   ILocation,
+  ConceptualLocation,
 } from "@useoptic/openapi-utilities";
 import { EntityRule, newDocsLinkHelper, Result, runCheck } from "./types";
 
@@ -20,13 +21,28 @@ export function genericEntityRuleImpl<
   pushCheck: (...check: Promise<Result>[]) => void,
   getSpecItem: (pointer: string) => OpenApiEntityType
 ): EntityRule<Type, ApiContext, DslContext, OpenApiEntityType> {
-  const operations = changelog.filter((i) => i.location.kind === openApiKind);
+  const operationsAdded = changelog
+    .filter((i) => i.location.kind === OpenApiKind.Operation && i.added)
+    .map((i) => i.location.conceptualLocation);
 
-  const added = operations.filter((i) => Boolean(i.added)) as IChange<Type>[];
-  const removed = operations.filter((i) =>
+  const skipIfParentOperationAdded = (location: ConceptualLocation) => {
+    if (openApiKind === OpenApiKind.Operation) return false;
+    return operationsAdded.some(
+      (i) => i.path === location.path && i.method === location.method
+    );
+  };
+
+  const changesForKind = changelog.filter(
+    (i) => i.location.kind === openApiKind
+  );
+
+  const added = changesForKind.filter((i) =>
+    Boolean(i.added)
+  ) as IChange<Type>[];
+  const removed = changesForKind.filter((i) =>
     Boolean(i.removed)
   ) as IChange<Type>[];
-  const changes = operations.filter((i) =>
+  const changes = changesForKind.filter((i) =>
     Boolean(i.changed)
   ) as IChange<Type>[];
 
@@ -44,15 +60,22 @@ export function genericEntityRuleImpl<
   >["added"]["must"] = (must: boolean) => {
     return (statement, handler) => {
       pushCheck(
-        ...added.map((item, index) => {
-          const addedWhere = `added ${openApiKind.toString()}: ${describeWhere(
-            item.added!
-          )}`;
-          const docsHelper = newDocsLinkHelper();
-          return runCheck(item, docsHelper, addedWhere, statement, must, () =>
-            handler(item.added!, getContext(item.location), docsHelper)
-          );
-        })
+        ...added
+          .filter((addRule) => {
+            // should not run added rule if the parent operation was also added.
+            return !skipIfParentOperationAdded(
+              addRule.location.conceptualLocation
+            );
+          })
+          .map((item, index) => {
+            const addedWhere = `added ${openApiKind.toString()}: ${describeWhere(
+              item.added!
+            )}`;
+            const docsHelper = newDocsLinkHelper();
+            return runCheck(item, docsHelper, addedWhere, statement, must, () =>
+              handler(item.added!, getContext(item.location), docsHelper)
+            );
+          })
       );
     };
   };
