@@ -12,12 +12,14 @@ function prepSnapshot(result: ParseOpenAPIResult) {
   result.sourcemap.files.forEach((i) => {
     i.path = i.path.split(cwd)[1];
     // @ts-ignore
+    i.index = null;
+    // @ts-ignore
     i.ast = null;
   });
 
   result.sourcemap.rootFilePath = result.sourcemap.rootFilePath.split(cwd)[1];
 
-  result.sourcemap.files = sortBy(result.sourcemap.files, "index");
+  result.sourcemap.files = sortBy(result.sourcemap.files, "path");
 
   return result;
 }

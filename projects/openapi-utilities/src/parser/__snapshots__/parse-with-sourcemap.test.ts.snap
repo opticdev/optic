@@ -38,13 +38,13 @@ Object {
     "files": Array [
       Object {
         "ast": null,
-        "index": 0,
-        "path": "/inputs/openapi3-with-references/external-multiple.yaml",
+        "index": null,
+        "path": "/inputs/openapi3-with-references/definitions.yaml",
       },
       Object {
         "ast": null,
-        "index": 1,
-        "path": "/inputs/openapi3-with-references/definitions.yaml",
+        "index": null,
+        "path": "/inputs/openapi3-with-references/external-multiple.yaml",
       },
     ],
     "refMappings": Object {
@@ -81,13 +81,13 @@ Object {
     "files": Array [
       Object {
         "ast": null,
-        "index": 0,
-        "path": "/inputs/openapi3-with-references/external-multiple-branches.yaml",
+        "index": null,
+        "path": "/inputs/openapi3-with-references/definitions.yaml",
       },
       Object {
         "ast": null,
-        "index": 1,
-        "path": "/inputs/openapi3-with-references/definitions.yaml",
+        "index": null,
+        "path": "/inputs/openapi3-with-references/external-multiple-branches.yaml",
       },
     ],
     "refMappings": Object {
@@ -178,13 +178,13 @@ Object {
     "files": Array [
       Object {
         "ast": null,
-        "index": 0,
-        "path": "/inputs/openapi3-with-references/internal-multiple.yaml",
+        "index": null,
+        "path": "/inputs/openapi3-with-references/definitions.yaml",
       },
       Object {
         "ast": null,
-        "index": 1,
-        "path": "/inputs/openapi3-with-references/definitions.yaml",
+        "index": null,
+        "path": "/inputs/openapi3-with-references/internal-multiple.yaml",
       },
     ],
     "refMappings": Object {
@@ -5718,72 +5718,72 @@ https://datatracker.ietf.org/doc/html/rfc8594
     "files": Array [
       Object {
         "ast": null,
-        "index": 0,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 1,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 2,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 3,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 4,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 5,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 6,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 7,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 8,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 9,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 10,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 11,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 12,
+        "index": null,
         "path": undefined,
       },
       Object {
         "ast": null,
-        "index": 13,
+        "index": null,
         "path": undefined,
       },
     ],
@@ -5813,7 +5813,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/SunsetHeader",
       ],
       "/400/content/application~1vnd.api+json/schema": Array [
-        12,
+        13,
         "/ErrorDocument",
       ],
       "/400/headers/deprecation": Array [
@@ -5841,7 +5841,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/SunsetHeader",
       ],
       "/401/content/application~1vnd.api+json/schema": Array [
-        12,
+        13,
         "/ErrorDocument",
       ],
       "/401/headers/deprecation": Array [
@@ -5869,7 +5869,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/SunsetHeader",
       ],
       "/403/content/application~1vnd.api+json/schema": Array [
-        12,
+        13,
         "/ErrorDocument",
       ],
       "/403/headers/deprecation": Array [
@@ -5897,7 +5897,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/SunsetHeader",
       ],
       "/404/content/application~1vnd.api+json/schema": Array [
-        12,
+        13,
         "/ErrorDocument",
       ],
       "/404/headers/deprecation": Array [
@@ -5925,7 +5925,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/SunsetHeader",
       ],
       "/409/content/application~1vnd.api+json/schema": Array [
-        12,
+        13,
         "/ErrorDocument",
       ],
       "/409/headers/deprecation": Array [
@@ -5953,7 +5953,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/SunsetHeader",
       ],
       "/500/content/application~1vnd.api+json/schema": Array [
-        12,
+        13,
         "/ErrorDocument",
       ],
       "/500/headers/deprecation": Array [
@@ -5981,7 +5981,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/SunsetHeader",
       ],
       "/ErrorDocument/properties/errors/items": Array [
-        12,
+        13,
         "/Error",
       ],
       "/ErrorDocument/properties/jsonapi": Array [
@@ -6025,11 +6025,11 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/LinkProperty",
       ],
       "/VersionRequestedResponseHeader/schema": Array [
-        13,
+        12,
         "/Version",
       ],
       "/VersionServedResponseHeader/schema": Array [
-        13,
+        12,
         "/Version",
       ],
       "/components/schemas/ThingCollection/items": Array [
@@ -6233,7 +6233,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/VersionRequestedResponseHeader",
       ],
       "/paths/~1thing/post/responses/201/headers/snyk-version-requested/schema": Array [
-        13,
+        12,
         "/Version",
       ],
       "/paths/~1thing/post/responses/201/headers/snyk-version-served": Array [
@@ -6241,7 +6241,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/VersionServedResponseHeader",
       ],
       "/paths/~1thing/post/responses/201/headers/snyk-version-served/schema": Array [
-        13,
+        12,
         "/Version",
       ],
       "/paths/~1thing/post/responses/201/headers/sunset": Array [
@@ -6253,11 +6253,11 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/400",
       ],
       "/paths/~1thing/post/responses/400/content/application~1vnd.api+json/schema": Array [
-        12,
+        13,
         "/ErrorDocument",
       ],
       "/paths/~1thing/post/responses/400/content/application~1vnd.api+json/schema/properties/errors/items": Array [
-        12,
+        13,
         "/Error",
       ],
       "/paths/~1thing/post/responses/400/content/application~1vnd.api+json/schema/properties/jsonapi": Array [
@@ -6293,7 +6293,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/401",
       ],
       "/paths/~1thing/post/responses/401/content/application~1vnd.api+json/schema": Array [
-        12,
+        13,
         "/ErrorDocument",
       ],
       "/paths/~1thing/post/responses/401/headers/deprecation": Array [
@@ -6325,7 +6325,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/403",
       ],
       "/paths/~1thing/post/responses/403/content/application~1vnd.api+json/schema": Array [
-        12,
+        13,
         "/ErrorDocument",
       ],
       "/paths/~1thing/post/responses/403/headers/deprecation": Array [
@@ -6357,7 +6357,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/404",
       ],
       "/paths/~1thing/post/responses/404/content/application~1vnd.api+json/schema": Array [
-        12,
+        13,
         "/ErrorDocument",
       ],
       "/paths/~1thing/post/responses/404/headers/deprecation": Array [
@@ -6389,7 +6389,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/409",
       ],
       "/paths/~1thing/post/responses/409/content/application~1vnd.api+json/schema": Array [
-        12,
+        13,
         "/ErrorDocument",
       ],
       "/paths/~1thing/post/responses/409/headers/deprecation": Array [
@@ -6421,7 +6421,7 @@ https://datatracker.ietf.org/doc/html/rfc8594
         "/500",
       ],
       "/paths/~1thing/post/responses/500/content/application~1vnd.api+json/schema": Array [
-        12,
+        13,
         "/ErrorDocument",
       ],
       "/paths/~1thing/post/responses/500/headers/deprecation": Array [
@@ -7779,7 +7779,7 @@ Object {
     "files": Array [
       Object {
         "ast": null,
-        "index": 0,
+        "index": null,
         "path": "/inputs/openapi3/petstore0.json",
       },
     ],
