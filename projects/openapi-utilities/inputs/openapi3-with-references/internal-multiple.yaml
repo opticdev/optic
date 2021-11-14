@@ -1,0 +1,17 @@
+type: object
+required: [user, token]
+properties:
+  token:
+    type: string
+  user:
+    $ref: 'definitions.yaml#/User'
+example:
+  internalRef:
+    $ref: '#/components/FieldA'
+  user:
+    $ref: 'definitions.yaml#/User/example'
+components:
+  FieldA:
+    type: string
+    example:
+      $ref: 'definitions.yaml#/User'

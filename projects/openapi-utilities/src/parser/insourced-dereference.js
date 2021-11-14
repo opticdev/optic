@@ -62,7 +62,7 @@ function crawl(
     circular: false,
   };
 
-  // sourcemap.log(path, pathFromRoot);
+  // if (path.includes("components")) console.log("A", path);
 
   if (options.dereference.circular === "ignore" || !processedObjects.has(obj)) {
     if (obj && typeof obj === "object" && !ArrayBuffer.isView(obj)) {
@@ -104,6 +104,9 @@ function crawl(
             );
             circular = dereferenced.circular;
             // Avoid pointless mutations; breaks frozen objects to no profit
+
+            let $refPath = url.resolve(keyPath, value.$ref);
+            sourcemap.logPointer($refPath, keyPathFromRoot);
             if (obj[key] !== dereferenced.value) {
               obj[key] = dereferenced.value;
             }
@@ -166,12 +169,11 @@ function dereference$Ref(
   sourcemap,
   options
 ) {
-  // console.log('Dereferencing $ref pointer "%s" at %s', $ref.$ref, path);
+  // console.log('Dereferencing $ref pointer "%s" \n at %s', $ref.$ref, path);
 
   let $refPath = url.resolve(path, $ref.$ref);
-  // console.log(pathFromRoot);
-
-  sourcemap.logRef($refPath, pathFromRoot);
+  const internalRefPathFromRoot = path.substring(path.indexOf("#/"));
+  sourcemap.logPointer($refPath, internalRefPathFromRoot);
 
   const cache = dereferencedCache.get($refPath);
   if (cache) {
@@ -212,6 +214,7 @@ function dereference$Ref(
   // Crawl the dereferenced value (unless it's circular)
   if (!circular) {
     // Determine if the dereferenced value is circular
+
     let dereferenced = crawl(
       dereferencedValue,
       pointer.path,

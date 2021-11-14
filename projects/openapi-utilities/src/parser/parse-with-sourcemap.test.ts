@@ -4,6 +4,7 @@ import {
 } from "./openapi-sourcemap-parser";
 import path from "path";
 import sortBy from "lodash.sortby";
+import { sourcemapReader } from "../index";
 
 const cwd = process.cwd();
 
@@ -34,6 +35,24 @@ it("can parse a json schema spec with external references", async () => {
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
 
+it("can parse a json schema spec with internal references to external references", async () => {
+  const results = await parseOpenAPIWithSourcemap(
+    path.resolve(
+      path.join(
+        __dirname,
+        "../../inputs/openapi3-with-references/internal-multiple.yaml"
+      )
+    )
+  );
+
+  // const abc = sourcemapReader(results.sourcemap).findFile(
+  //   "/example/internalRef/example/example/name"
+  // );
+  // console.log(abc);
+
+  expect(prepSnapshot(results)).toMatchSnapshot();
+});
+
 it("can parse a json schema spec with external references to the same file", async () => {
   const results = await parseOpenAPIWithSourcemap(
     path.resolve(
@@ -44,9 +63,6 @@ it("can parse a json schema spec with external references to the same file", asy
     )
   );
   expect(prepSnapshot(results)).toMatchSnapshot();
-
-  // expect(results.sourcemap.mappings).toHaveProperty("/example/user2/name");
-  // expect(prepSnapshot(results)).toMatchSnapshot();
 });
 
 it("can parse an OpenAPI file and have valid sourcemap", async () => {
@@ -56,15 +72,15 @@ it("can parse an OpenAPI file and have valid sourcemap", async () => {
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
 //
-// it("can parse a real schema spec with external references, resolved in any order", async () => {
-//   const results = await parseOpenAPIWithSourcemap(
-//     path.resolve(
-//       path.join(
-//         __dirname,
-//         "../../../snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/001-ok-add-property-field.yaml"
-//       )
-//     )
-//   );
-//
-//   expect(prepSnapshot(results)).toMatchSnapshot();
-// });
+it("can parse a real schema spec with external references, resolved in any order", async () => {
+  const results = await parseOpenAPIWithSourcemap(
+    path.resolve(
+      path.join(
+        __dirname,
+        "../../../snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/001-ok-add-property-field.yaml"
+      )
+    )
+  );
+
+  expect(prepSnapshot(results)).toMatchSnapshot();
+});

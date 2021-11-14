@@ -99,7 +99,7 @@ export type JsonPathExploded = string[];
 export type FileReference = number;
 
 export type DerefToSource = [YAMLNode, FileReference, JsonPath];
-export type ToSource = [JsonPathExploded, FileReference, JsonPathExploded];
+export type ToSource = [FileReference, JsonPath];
 
 // assumptions change because not serializing
 export class JsonSchemaSourcemap {
@@ -111,7 +111,7 @@ export class JsonSchemaSourcemap {
     ast: YAMLNode;
   }> = [];
 
-  public refMappings: ToSource[] = [];
+  public refMappings: { [key: JsonPath]: ToSource } = {};
 
   async addFileIfMissing(filePath: string, fileIndex: number) {
     if (filePath.startsWith("http")) {
@@ -158,26 +158,24 @@ export class JsonSchemaSourcemap {
     }
   }
 
-  logRef(path: string, pathFromRoot: string) {
-    const thisFile = this.files.find((i) => path.startsWith(i.path));
-    // strip pound sign
-    const rootKey = pathFromRoot.substring(1);
+  logPointer(pathRelativeToFile: string, pathRelativeToRoot: string) {
+    // console.log(pathRelativeToFile, pathRelativeToRoot);
+    const thisFile = this.files.find((i) =>
+      pathRelativeToFile.startsWith(i.path)
+    );
 
     if (thisFile) {
-      const jsonPointer = jsonPointerHelpers.unescapeUriSafePointer(
-        path.split(thisFile.path)[1].substring(1) || "/"
+      const rootKey = jsonPointerHelpers.unescapeUriSafePointer(
+        pathRelativeToRoot.substring(1)
       );
 
-      const a = jsonPointerHelpers.decode(
-        jsonPointerHelpers.unescapeUriSafePointer(rootKey)
+      const jsonPointer = jsonPointerHelpers.unescapeUriSafePointer(
+        pathRelativeToFile.split(thisFile.path)[1].substring(1) || "/"
       );
-      this.refMappings.push([
-        jsonPointerHelpers.decode(
-          jsonPointerHelpers.unescapeUriSafePointer(rootKey)
-        ),
-        thisFile.index,
-        jsonPointerHelpers.decode(jsonPointer),
-      ]);
+
+      if (rootKey === jsonPointer) return;
+
+      this.refMappings[rootKey] = [thisFile.index, jsonPointer];
     }
   }
 }

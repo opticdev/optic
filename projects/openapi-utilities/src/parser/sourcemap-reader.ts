@@ -15,71 +15,53 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
     (i) => i.path === sourcemap.rootFilePath
   )!.index;
 
-  const findFile = (
-    jsonPathFromRoot: JsonPath,
-    currentFile: number = rootFileNumber
-  ): ILookupPathResult => {
+  const findFile = (jsonPathFromRoot: JsonPath): ILookupPathResult => {
     const decoded = jsonPointerHelper.decode(jsonPathFromRoot);
 
-    // console.log("running it", jsonPathFromRoot, currentFile);
-
-    let consideredRefs = sourcemap.refMappings;
-
-    let pathStartLookup: ToSource | undefined;
+    let cursor: {
+      currentFile: number;
+      pathInRoot: string[];
+      pathInCurrentFile: string[];
+    } = {
+      currentFile: rootFileNumber,
+      pathInRoot: [],
+      pathInCurrentFile: [],
+    };
 
     decoded.forEach((component, index) => {
-      const filtered = consideredRefs.filter((trailMappings) => {
-        const [flatTrail] = trailMappings;
-        const atLength = flatTrail.slice(0, index + 1);
-        return equals(atLength, decoded.slice(0, index + 1));
-      });
-      if (consideredRefs.length > 0 && filtered.length === 0) {
-        pathStartLookup = consideredRefs[0];
-      }
-      consideredRefs = filtered;
-    });
-
-    // console.log(pathStartLookup);
-
-    if (pathStartLookup) {
-      const [pathInRoot, fileN, jsonPathInFile] = pathStartLookup;
-      const pointerFull = jsonPointerHelper.compile([
-        ...jsonPathInFile,
-        ...decoded.slice(pathInRoot.length),
+      const path = jsonPointerHelper.compile([
+        ...cursor.pathInCurrentFile,
+        component,
       ]);
 
-      const fileLookup = sourcemap.files.find((i) => i.index === fileN)!;
+      cursor.pathInRoot.push(component);
+      const hitRef = sourcemap.refMappings[path] as ToSource | undefined;
 
-      if (fileLookup.index === currentFile) {
-        return findFile(pointerFull, currentFile);
+      // console.log(path, hitRef ? "GOT HIT" : "no HIT");
+
+      if (hitRef) {
+        const [file, startingPath] = hitRef;
+        cursor.currentFile = file;
+        cursor.pathInCurrentFile = jsonPointerHelper.decode(startingPath);
+      } else {
+        cursor.pathInCurrentFile.push(component);
       }
 
-      const node = resolveJsonPointerInYamlAst(fileLookup.ast, pointerFull);
+      // console.log(cursor);
+    });
 
-      if (node) {
-        return {
-          filePath: fileLookup.path,
-          astNode: node,
-          startsAt: jsonPointerHelper.compile(jsonPathInFile),
-        };
-      }
-    } else {
-      // assume root file
-      const fileLookup = sourcemap.files.find((i) => i.index === currentFile);
-      if (fileLookup) {
-        const node = resolveJsonPointerInYamlAst(
-          fileLookup.ast,
-          jsonPathFromRoot
-        );
-        if (node) {
-          return {
-            filePath: fileLookup.path,
-            astNode: node,
-            startsAt: jsonPathFromRoot,
-          };
-        }
-      }
-    }
+    const file = sourcemap.files.find((i) => i.index === cursor.currentFile)!;
+
+    const pathInFile = jsonPointerHelper.compile(cursor.pathInCurrentFile);
+
+    const node = resolveJsonPointerInYamlAst(file.ast, pathInFile);
+
+    if (node)
+      return {
+        filePath: file.path,
+        astNode: node,
+        startsAt: pathInFile,
+      };
   };
 
   const findFileAndLines = async (jsonPathFromRoot: JsonPath) => {
