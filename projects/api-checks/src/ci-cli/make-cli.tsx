@@ -10,8 +10,13 @@ import { registerUpload } from "./commands/upload";
 
 export function makeCiCli<T>(
   forProject: string,
-  checkService: ApiCheckService<T>
+  checkService: ApiCheckService<T>,
+  options: {
+    opticToken?: string;
+  } = {}
 ) {
+  const { opticToken } = options;
+
   cli.version(
     `for ${forProject}, running optic api-check ${packageJson.version}`
   );
@@ -44,7 +49,7 @@ export function makeCiCli<T>(
       }
     );
 
-  registerUpload(cli);
+  registerUpload(cli, { opticToken });
 
   return cli;
 }

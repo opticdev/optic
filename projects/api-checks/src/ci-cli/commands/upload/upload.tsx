@@ -3,7 +3,10 @@ import fs from "fs";
 
 import { Command } from "commander";
 
-export const registerUpload = (cli: Command) => {
+export const registerUpload = (
+  cli: Command,
+  { opticToken }: { opticToken?: string }
+) => {
   cli
     .command("upload")
     .requiredOption("--from <from>", "from file or rev:file")
@@ -12,15 +15,18 @@ export const registerUpload = (cli: Command) => {
     // TODO figure out what optic domain routing information to send (organization, PR, runs)
     // TODO figure out what github context to send
     .action(async ({ from, to }: { from: string; to: string }) => {
+      if (!opticToken) {
+        console.error("Upload token was not included");
+        return process.exit(1);
+      }
+
       const backendWebBase =
         process.env.OPTIC_ENV === "staging"
           ? "https://api.o3c.info"
           : "https://api.useoptic.com";
 
-      // TODO add token - maybe this is part of the make CLI config?
-      const opticClient = new OpticBackendClient(
-        backendWebBase,
-        async () => ""
+      const opticClient = new OpticBackendClient(backendWebBase, () =>
+        Promise.resolve(opticToken)
       );
       console.log("Loading files...");
       try {
