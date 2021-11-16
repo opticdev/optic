@@ -20,13 +20,12 @@ import {
   OpenApiFieldFact,
   ILocation,
   OpenAPIV3,
+  OpenApiRequestParameterFact,
+  OpenApiResponseFact,
+  OpenApiFact,
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
 import { ShouldOrMust } from "@useoptic/api-checks/build/sdk/types";
-import {
-  OpenApiRequestParameterFact,
-  OpenApiResponseFact,
-} from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
 import { jsonPointerHelpers } from "@useoptic/common";
 
 type SnykStablity = "wip" | "experimental" | "beta" | "ga";
