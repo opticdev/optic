@@ -7,7 +7,7 @@ import {
 } from "./types";
 import { OpenAPIV3 } from "openapi-types";
 import jsonpath from "jsonpath";
-import { ConceptualLocation, IChange } from "@useoptic/openapi-utilities";
+import { ConceptualLocation, IChange, OpenApiFact } from "@useoptic/openapi-utilities";
 import equals from "fast-deep-equal";
 
 export function createSelectJsonPathHelper(
@@ -53,7 +53,7 @@ export function createSelectJsonPathHelper(
               const currentResults = jsonpath.query(operation.current, path);
               const nextResults = jsonpath.query(operation.next, path);
               const shouldRun = qualifier(currentResults, nextResults);
-              const fakeChange: IChange<any> = {
+              const fakeChange: IChange<OpenApiFact> = {
                 added:
                   nextResults.length > 0 && currentResults.length === 0
                     ? nextResults

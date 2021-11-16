@@ -1,10 +1,10 @@
 import { DocsLinkHelper, Result, runCheck } from "./types";
-import { IChange } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
+import { IChange, OpenApiFact } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
 
 export class Checker {
   private checkResults: Result[] = [];
   async runCheck(
-    change: IChange<any>,
+    change: IChange<OpenApiFact>,
     docsLink: DocsLinkHelper,
     where: string,
     condition: string,

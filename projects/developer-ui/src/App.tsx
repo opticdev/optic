@@ -7,6 +7,9 @@ import { OpenAPIV3 } from "@useoptic/common";
 import * as yaml from "js-yaml";
 import { IChange } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
 import openapiDiff from "openapi-diff";
+import React, { useEffect, useRef, useState } from 'react';
+import { OpenAPITraverser, factsToChangelog, OpenApiFact, IChange } from '@useoptic/openapi-utilities'
+import * as yaml from 'js-yaml';
 
 const staticServerBaseUrl = `http://localhost:5000`;
 
@@ -147,7 +150,7 @@ function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
       <div>
         <h3>changes (click to see them open in the console)</h3>
         <div>
-          {changes.map((change: IChange<any>) => {
+          {changes.map((change: IChange<OpenApiFact>) => {
             return (
               <div
                 style={{ display: "flex" }}
@@ -168,7 +171,7 @@ function OpenApiChangeViewer(props: OpenApiChangeViewerProps) {
     </div>
   );
 }
-function ChangeTypeIndicator(props: { change: IChange<any> }) {
+function ChangeTypeIndicator(props: { change: IChange<OpenApiFact> }) {
   if (props.change.added) {
     return <span>+</span>;
   }

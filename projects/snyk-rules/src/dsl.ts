@@ -74,8 +74,8 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
   private checks: Promise<Result>[] = [];
 
   constructor(
-    private nextFacts: IFact<any>[],
-    private changelog: IChange<any>[],
+    private nextFacts: IFact<OpenApiFact>[],
+    private changelog: IChange<OpenApiFact>[],
     private currentJsonLike: OpenAPIV3.Document,
     private nextJsonLike: OpenAPIV3.Document,
     private providedContext: SynkApiCheckContext

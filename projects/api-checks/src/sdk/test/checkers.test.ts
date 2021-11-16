@@ -1,9 +1,9 @@
 import { Checker } from "../checker";
-import { IChange } from "@useoptic/openapi-utilities";
+import { IChange, OpenApiFact } from "@useoptic/openapi-utilities";
 import { newDocsLinkHelper } from "../types";
 const { assert } = require("chai"); // Using Assert style
 
-const change: IChange<any> = {
+const change: IChange<OpenApiFact> = {
   location: {
     kind: "simulated",
     jsonPath: "/",

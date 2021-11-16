@@ -1,5 +1,6 @@
 import { IChange } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
 import { ILookupLinePreviewResult } from "@useoptic/openapi-io";
+import { OpenApiFact } from "@useoptic/openapi-utilities";
 
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;
@@ -46,7 +47,7 @@ export interface Result {
   isShould: boolean;
   error?: string;
   passed: boolean;
-  change: IChange<any>;
+  change: IChange<OpenApiFact>;
   docsLink?: string;
 }
 
@@ -78,7 +79,7 @@ export function newDocsLinkHelper(): DocsLinkHelper {
 }
 
 export async function runCheck(
-  change: IChange<any>,
+  change: IChange<OpenApiFact>,
   docsLink: DocsLinkHelper,
   where: string,
   condition: string,
