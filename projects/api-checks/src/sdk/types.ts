@@ -1,5 +1,5 @@
 import { IChange } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
-import { ILookupLinePreviewResult } from "@useoptic/openapi-utilities";
+import { ILookupLinePreviewResult } from "@useoptic/openapi-io";
 
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;

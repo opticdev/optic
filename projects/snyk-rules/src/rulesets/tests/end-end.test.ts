@@ -3,10 +3,10 @@ import fs from "fs-extra";
 import { SnykApiCheckDsl, SynkApiCheckContext } from "../../dsl";
 import { newSnykApiCheckService } from "../../service";
 import { specFromInputToResults } from "@useoptic/api-checks";
-import { sourcemapReader } from "@useoptic/openapi-utilities";
 import { ResultWithSourcemap } from "@useoptic/api-checks/build/sdk/types";
 import { parseSpecVersion } from "@useoptic/api-checks/build/ci-cli/input-helpers/compare-input-parser";
 import { defaultEmptySpec } from "@useoptic/api-checks/build/ci-cli/constants";
+import { sourcemapReader } from "@useoptic/openapi-io";
 
 describe("end-end-tests", () => {
   const inputsDir = path.resolve(

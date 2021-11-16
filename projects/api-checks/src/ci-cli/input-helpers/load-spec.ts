@@ -3,9 +3,9 @@ import {
   JsonSchemaSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
   ParseOpenAPIResult,
+  inGit,
   parseOpenAPIWithSourcemap,
-} from "@useoptic/openapi-utilities/build/parser/openapi-sourcemap-parser";
-import { inGit } from "@useoptic/openapi-utilities/build/loaders/file-on-branch";
+} from "@useoptic/openapi-io";
 import path from "path";
 
 export async function specFromInputToResults(

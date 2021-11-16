@@ -1,5 +1,5 @@
 {
-  "name": "@useoptic/openapi-utilities",
+  "name": "@useoptic/openapi-io",
   "version": "0.5.5",
   "packageManager": "yarn@3.0.2",
   "main": "build/index.js",
@@ -9,29 +9,43 @@
   ],
   "scripts": {
     "dev:test": "jest --colors",
-    "build": "yarn tsc --build --verbose",
+    "build": "yarn tsc --build --verbose && copyfiles -u 1 src/**/*.js build/",
     "resolver:start": "yarn build && micro -l tcp://localhost:5001 build/entry-points/servers/resolver.js",
     "ws:build": "yarn build",
     "ws:test": "yarn dev:test",
     "ws:clean": "rm -rf build"
   },
   "devDependencies": {
+    "@types/copyfiles": "^2",
+    "@types/fs-extra": "^9.0.13",
     "@types/jest": "^26.0.24",
+    "@types/json-pointer": "^1.0.31",
     "@types/lodash.sortby": "^4.7.6",
-    "@useoptic/openapi-io": "workspace:*",
+    "@types/micro": "^7.3.6",
+    "@types/micro-cors": "^0",
+    "@types/node-fetch": "2.5.12",
     "babel-jest": "26.6.0",
-    "fs-extra": "^10.0.0",
+    "chai": "^4.3.4",
     "jest": "^26.6.0",
+    "micro": "^9.3.4",
+    "micro-cors": "^0.1.1",
+    "node-fetch": "2.6.5",
     "prettier": "^2.4.1",
     "ts-node": "^10.3.1",
     "typescript": "^4.4.4"
   },
   "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^9.0.9",
+    "@jsdevtools/ono": "^7.1.3",
     "@useoptic/common": "workspace:*",
+    "copyfiles": "^2.4.1",
     "fast-deep-equal": "^3.1.3",
+    "fs-extra": "^10.0.0",
+    "json-pointer": "^0.6.1",
     "lodash.sortby": "^4.7.0",
     "openapi-types": "^9.3.0",
-    "ts-invariant": "^0.9.3"
+    "ts-invariant": "^0.9.3",
+    "yaml-ast-parser": "^0.0.43"
   },
   "jest": {
     "testPathIgnorePatterns": [

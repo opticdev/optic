@@ -1,8 +1,8 @@
 import { FactAccumulator, Traverse } from "../../sdk/types";
 import { IPathComponent } from "../../sdk/types";
-import { OpenAPIV3 } from "openapi-types";
-import jsonPointer from "../../../parser/json-pointer-helpers";
 import invariant from "ts-invariant";
+import { OpenAPIV3 } from "@useoptic/common";
+import { jsonPointerHelpers as jsonPointer } from "@useoptic/common";
 
 export function normalizeOpenApiPath(path: string): string {
   return path
