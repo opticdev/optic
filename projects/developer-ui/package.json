@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^12.1.10",
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
+    "@useoptic/json-pointer-helpers": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
     "js-yaml": "^4.1.0",
     "openapi-diff": "^0.23.5",

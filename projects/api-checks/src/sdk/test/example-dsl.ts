@@ -1,16 +1,14 @@
+import { ApiCheckDsl, EntityRule, Result } from "../types";
+import { genericEntityRuleImpl } from "../generic-entity-rule-impl";
+import { OpenAPIV3 } from "openapi-types";
 import {
   IChange,
   IFact,
-} from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
-import { ApiCheckDsl, EntityRule, Result } from "../types";
-import {
-  jsonPointerHelper,
   OpenApiKind,
   OpenApiOperationFact,
   OpenApiFact,
 } from "@useoptic/openapi-utilities";
-import { genericEntityRuleImpl } from "../generic-entity-rule-impl";
-import { OpenAPIV3 } from "openapi-types";
+import { jsonPointerHelpers } from "@useoptic/json-pointer-helpers";
 
 export type ExampleDslContext = {
   maturity: "wip" | "beta" | "ga";
@@ -49,7 +47,7 @@ export class ExampleDsl implements ApiCheckDsl {
       (opFact) => `${opFact.method.toUpperCase()} ${opFact.pathPattern}`,
       (location) => this.getContext(),
       (...items) => this.checks.push(...items),
-      (pointer: string) => jsonPointerHelper.get(this.nextJson, pointer)
+      (pointer: string) => jsonPointerHelpers.get(this.nextJson, pointer)
     );
   }
 

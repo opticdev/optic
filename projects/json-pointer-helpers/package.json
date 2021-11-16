@@ -1,5 +1,5 @@
 {
-  "name": "@useoptic/openapi-utilities",
+  "name": "@useoptic/json-pointer-helpers",
   "version": "0.5.5",
   "packageManager": "yarn@3.0.2",
   "main": "build/index.js",
@@ -10,28 +10,20 @@
   "scripts": {
     "dev:test": "jest --colors",
     "build": "yarn tsc --build --verbose",
-    "resolver:start": "yarn build && micro -l tcp://localhost:5001 build/entry-points/servers/resolver.js",
     "ws:build": "yarn build",
     "ws:test": "yarn dev:test",
     "ws:clean": "rm -rf build"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.24",
-    "@types/lodash.sortby": "^4.7.6",
-    "@useoptic/openapi-io": "workspace:*",
+    "@types/json-pointer": "^1.0.31",
     "babel-jest": "26.6.0",
-    "fs-extra": "^10.0.0",
     "jest": "^26.6.0",
     "prettier": "^2.4.1",
     "ts-node": "^10.3.1",
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@useoptic/json-pointer-helpers": "workspace:*",
-    "fast-deep-equal": "^3.1.3",
-    "lodash.sortby": "^4.7.0",
-    "openapi-types": "^9.3.0",
-    "ts-invariant": "^0.9.3"
+    "json-pointer": "^0.6.1"
   },
   "jest": {
     "testPathIgnorePatterns": [

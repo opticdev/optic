@@ -1,23 +1,11 @@
 import React, { useEffect } from "react";
-import * as path from "path";
-import { inGit } from "@useoptic/openapi-utilities/build/loaders/file-on-branch";
-import {
-  SpecFromInput,
-  SpecVersionFrom,
-} from "../../input-helpers/compare-input-parser";
+import { SpecFromInput } from "../../input-helpers/compare-input-parser";
 import { Box, Newline, Text, useApp } from "ink";
-
-import {
-  JsonSchemaSourcemap,
-  parseOpenAPIFromRepoWithSourcemap,
-  ParseOpenAPIResult,
-  parseOpenAPIWithSourcemap,
-} from "@useoptic/openapi-utilities/build/parser/openapi-sourcemap-parser";
 import { useAsync, useAsyncFn } from "react-use";
 import { AsyncState } from "react-use/lib/useAsyncFn";
 import { ApiCheckService } from "../../../sdk/api-check-service";
 import { RenderCheckResults } from "./render-results";
-import { sourcemapReader } from "@useoptic/openapi-utilities";
+import { sourcemapReader } from "@useoptic/openapi-io";
 import { ResultWithSourcemap } from "../../../sdk/types";
 import { specFromInputToResults } from "../../input-helpers/load-spec";
 

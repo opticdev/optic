@@ -1,6 +1,8 @@
 {
     "private": true,
     "workspaces": [
+        "projects/json-pointer-helpers",
+        "projects/openapi-io",
         "projects/openapi-utilities",
         "projects/developer-ui",
         "projects/api-checks",

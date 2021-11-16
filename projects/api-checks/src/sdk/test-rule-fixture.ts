@@ -1,13 +1,10 @@
+import { ApiCheckDsl } from "./types";
+import { ApiCheckService, DslConstructorInput } from "./api-check-service";
+import { OpenAPIV3 } from "@useoptic/openapi-utilities";
 import {
   factsToChangelog,
   OpenAPITraverser,
-  OpenAPIV3,
-  sourcemapReader,
 } from "@useoptic/openapi-utilities";
-import { ApiCheckDsl, ResultWithSourcemap } from "./types";
-import { ApiCheckService, DslConstructorInput } from "./api-check-service";
-import { JsonSchemaSourcemap } from "@useoptic/openapi-utilities/build/parser/openapi-sourcemap-parser";
-import stringify from "json-stable-stringify";
 
 type OpenApiInput =
   | OpenAPIV3.Document

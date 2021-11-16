@@ -33,6 +33,8 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
+    "@useoptic/json-pointer-helpers": "workspace:*",
+    "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
     "commander": "^8.3.0",
     "fs-extra": "^10.0.0",

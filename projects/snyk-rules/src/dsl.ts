@@ -18,17 +18,15 @@ import {
   IChange,
   IFact,
   OpenApiFieldFact,
-  jsonPointerHelper,
   ILocation,
   OpenAPIV3,
+  OpenApiRequestParameterFact,
+  OpenApiResponseFact,
   OpenApiFact,
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
 import { ShouldOrMust } from "@useoptic/api-checks/build/sdk/types";
-import {
-  OpenApiRequestParameterFact,
-  OpenApiResponseFact,
-} from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
+import { jsonPointerHelpers } from "@useoptic/json-pointer-helpers";
 
 type SnykStablity = "wip" | "experimental" | "beta" | "ga";
 type DateString = string; // YYYY-mm-dd
@@ -119,11 +117,12 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         conceptualLocation: i.conceptualLocation,
         current:
           niceTry(() =>
-            jsonPointerHelper.get(this.currentJsonLike, i.jsonPath)
+            jsonPointerHelpers.get(this.currentJsonLike, i.jsonPath)
           ) || {},
         next:
-          niceTry(() => jsonPointerHelper.get(this.nextJsonLike, i.jsonPath)) ||
-          {},
+          niceTry(() =>
+            jsonPointerHelpers.get(this.nextJsonLike, i.jsonPath)
+          ) || {},
       };
     });
 
@@ -143,7 +142,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         (opFact) => `${opFact.method.toUpperCase()} ${opFact.pathPattern}`,
         (location) => this.getContext(location),
         (...items) => this.checks.push(...items),
-        (pointer: string) => jsonPointerHelper.get(this.nextJsonLike, pointer)
+        (pointer: string) => jsonPointerHelpers.get(this.nextJsonLike, pointer)
       ),
     };
   }
@@ -207,7 +206,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         (query) => `${query.name}`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
-        (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
+        (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
       pathParameter: genericEntityRuleImpl<
         OpenApiRequestParameterFact,
@@ -221,7 +220,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         (path) => `${path.name}`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
-        (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
+        (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
       header: genericEntityRuleImpl<
         OpenApiRequestParameterFact,
@@ -235,7 +234,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         (header) => `${header.name}`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
-        (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
+        (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
     };
   }
@@ -256,7 +255,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         (response) => `${response.statusCode}`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
-        (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
+        (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
       headers: genericEntityRuleImpl<
         OpenApiHeaderFact,
@@ -270,7 +269,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         (header) => `${header.name}`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
-        (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
+        (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
     };
   }
@@ -328,7 +327,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
       (field) => `${field.key}`,
       (location) => dsl.getContext(location),
       (...items) => dsl.checks.push(...items),
-      (pointer: string) => jsonPointerHelper.get(dsl.nextJsonLike, pointer)
+      (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
     );
   }
 }
