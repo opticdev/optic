@@ -66,7 +66,7 @@ export const uploadCiRun = async (
 
   const [githubContextFileS3Path, fromFileS3Path, toFileS3Path] =
     await Promise.all(
-      fileBuffers.map((fileBuffer) => uploadFileToS3(opticClient, fileBuffer))
+      [githubContextFileBuffer, ...fileBuffers].map((fileBuffer) => uploadFileToS3(opticClient, fileBuffer))
     );
 
   // TODO check whether the `run` numbers are reused, and if they are, should that overwrite, or create
