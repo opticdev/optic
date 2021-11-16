@@ -7,6 +7,7 @@ import {
   jsonPointerHelper,
   OpenApiKind,
   OpenApiOperationFact,
+  OpenApiFact,
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "../generic-entity-rule-impl";
 import { OpenAPIV3 } from "openapi-types";
@@ -19,9 +20,9 @@ export class ExampleDsl implements ApiCheckDsl {
   private checks: Promise<Result>[] = [];
 
   constructor(
-    private nextFacts: IFact<any>[],
+    private nextFacts: IFact<OpenApiFact>[],
     private nextJson: OpenAPIV3.Document,
-    private changelog: IChange<any>[]
+    private changelog: IChange<OpenApiFact>[]
   ) {}
 
   getContext(): ExampleDslContext {

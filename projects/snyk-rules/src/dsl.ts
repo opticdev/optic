@@ -21,13 +21,14 @@ import {
   jsonPointerHelper,
   ILocation,
   OpenAPIV3,
+  OpenApiFact,
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
 import { ShouldOrMust } from "@useoptic/api-checks/build/sdk/types";
 import {
   OpenApiRequestParameterFact,
   OpenApiResponseFact,
-} from "@useoptic/openapi-utilities/build/openapi3/implementations/openapi3/openapi-traverser";
+} from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
 
 type SnykStablity = "wip" | "experimental" | "beta" | "ga";
 type DateString = string; // YYYY-mm-dd
@@ -74,8 +75,8 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
   private checks: Promise<Result>[] = [];
 
   constructor(
-    private nextFacts: IFact<any>[],
-    private changelog: IChange<any>[],
+    private nextFacts: IFact<OpenApiFact>[],
+    private changelog: IChange<OpenApiFact>[],
     private currentJsonLike: OpenAPIV3.Document,
     private nextJsonLike: OpenAPIV3.Document,
     private providedContext: SynkApiCheckContext

@@ -1,12 +1,11 @@
-import { IFact } from "./types";
-import { IChange } from "./types";
+import { IFact, IChange, OpenApiFact } from "./types";
 
 import equals from "fast-deep-equal";
 
 export function factsToChangelog(
-  past: IFact<any>[],
-  current: IFact<any>[]
-): IChange<any>[] {
+  past: IFact<OpenApiFact>[],
+  current: IFact<OpenApiFact>[]
+): IChange<OpenApiFact>[] {
   const added = current.filter(
     (i) =>
       !past.some((fact) =>

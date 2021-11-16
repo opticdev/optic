@@ -4,17 +4,16 @@ import flatten from "lodash.flatten";
 import {
   factsToChangelog,
   OpenAPITraverser,
-} from "@useoptic/openapi-utilities";
-import {
   IChange,
   IFact,
-} from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
+  OpenApiFact,
+} from "@useoptic/openapi-utilities";
 
 export type DslConstructorInput<Context> = {
   context: Context;
-  nextFacts: IFact<any>[];
-  currentFacts: IFact<any>[];
-  changelog: IChange<any>[];
+  nextFacts: IFact<OpenApiFact>[];
+  currentFacts: IFact<OpenApiFact>[];
+  changelog: IChange<OpenApiFact>[];
   nextJsonLike: OpenAPIV3.Document;
   currentJsonLike: OpenAPIV3.Document;
 };
