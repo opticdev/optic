@@ -146,11 +146,7 @@ module.exports = {
       type: 'category',
       label: 'CI Workflows',
       collapsed: false,
-      items: [
-        'reference/ci/changelog',
-        'reference/ci/test',
-        'reference/ci/check',
-      ],
+      items: ['reference/ci/test', 'reference/ci/check'],
     },
     {
       type: 'category',
