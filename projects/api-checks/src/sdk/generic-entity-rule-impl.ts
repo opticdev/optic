@@ -26,9 +26,20 @@ export function genericEntityRuleImpl<
     .filter((i) => i.location.kind === OpenApiKind.Operation && i.added)
     .map((i) => i.location.conceptualLocation);
 
+  const operationsRemoved = changelog
+    .filter((i) => i.location.kind === OpenApiKind.Operation && i.removed)
+    .map((i) => i.location.conceptualLocation);
+
   const skipIfParentOperationAdded = (location: ConceptualLocation) => {
     if (openApiKind === OpenApiKind.Operation) return false;
     return operationsAdded.some(
+      (i) => i.path === location.path && i.method === location.method
+    );
+  };
+
+  const skipIfParentOperationRemoved = (location: ConceptualLocation) => {
+    if (openApiKind === OpenApiKind.Operation) return false;
+    return operationsRemoved.some(
       (i) => i.path === location.path && i.method === location.method
     );
   };
@@ -91,15 +102,22 @@ export function genericEntityRuleImpl<
   >["removed"]["must"] = (must: boolean) => {
     return (statement, handler) => {
       pushCheck(
-        ...removed.map((item, index) => {
-          const addedWhere = `removed ${openApiKind.toString()}: ${describeWhere(
-            item.removed!.before!
-          )}`;
-          const docsHelper = newDocsLinkHelper();
-          return runCheck(item, docsHelper, addedWhere, statement, must, () =>
-            handler(item.added!, getContext(item.location), docsHelper)
-          );
-        })
+        ...removed
+          .filter((addRule) => {
+            // should not run added rule if the parent operation was also added.
+            return !skipIfParentOperationRemoved(
+              addRule.location.conceptualLocation
+            );
+          })
+          .map((item, index) => {
+            const addedWhere = `removed ${openApiKind.toString()}: ${describeWhere(
+              item.removed!.before!
+            )}`;
+            const docsHelper = newDocsLinkHelper();
+            return runCheck(item, docsHelper, addedWhere, statement, must, () =>
+              handler(item.added!, getContext(item.location), docsHelper)
+            );
+          })
       );
     };
   };
