@@ -27,7 +27,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@useoptic/common": "workspace:*",
+    "@useoptic/json-pointer-helpers": "workspace:*",
     "fast-deep-equal": "^3.1.3",
     "lodash.sortby": "^4.7.0",
     "openapi-types": "^9.3.0",

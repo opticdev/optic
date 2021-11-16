@@ -3,13 +3,18 @@ import {
   OpenAPITraverser,
   factsToChangelog,
 } from "@useoptic/openapi-utilities";
-import { OpenAPIV3 } from "@useoptic/common";
+import { OpenAPIV3 } from "@useoptic/openapi-utilities";
 import * as yaml from "js-yaml";
 import { IChange } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
 import openapiDiff from "openapi-diff";
-import React, { useEffect, useRef, useState } from 'react';
-import { OpenAPITraverser, factsToChangelog, OpenApiFact, IChange } from '@useoptic/openapi-utilities'
-import * as yaml from 'js-yaml';
+import React, { useEffect, useRef, useState } from "react";
+import {
+  OpenAPITraverser,
+  factsToChangelog,
+  OpenApiFact,
+  IChange,
+} from "@useoptic/openapi-utilities";
+import * as yaml from "js-yaml";
 
 const staticServerBaseUrl = `http://localhost:5000`;
 

@@ -8,7 +8,7 @@ import {
   OpenApiOperationFact,
   OpenApiFact,
 } from "@useoptic/openapi-utilities";
-import { jsonPointerHelpers } from "@useoptic/common";
+import { jsonPointerHelpers } from "@useoptic/json-pointer-helpers";
 
 export type ExampleDslContext = {
   maturity: "wip" | "beta" | "ga";

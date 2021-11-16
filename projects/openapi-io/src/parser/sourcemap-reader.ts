@@ -8,7 +8,7 @@ import {
 import fs from "fs-extra";
 import { Kind, YamlMap, YAMLNode, YAMLSequence } from "yaml-ast-parser";
 import equals from "fast-deep-equal";
-import { jsonPointerHelpers } from "@useoptic/common";
+import { jsonPointerHelpers } from "@useoptic/json-pointer-helpers";
 
 export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
   const rootFileNumber = sourcemap.files.find(

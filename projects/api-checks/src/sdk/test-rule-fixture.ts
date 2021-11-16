@@ -1,6 +1,6 @@
 import { ApiCheckDsl } from "./types";
 import { ApiCheckService, DslConstructorInput } from "./api-check-service";
-import { OpenAPIV3 } from "@useoptic/common";
+import { OpenAPIV3 } from "@useoptic/openapi-utilities";
 import {
   factsToChangelog,
   OpenAPITraverser,

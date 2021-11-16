@@ -9,7 +9,7 @@ import { dereference } from "./insourced-dereference";
 import path from "path";
 import fetch from "node-fetch";
 import { OpenAPIV3 } from "openapi-types";
-import { jsonPointerHelpers } from "@useoptic/common";
+import { jsonPointerHelpers } from "@useoptic/json-pointer-helpers";
 
 export type ParseOpenAPIResult = {
   jsonLike: OpenAPIV3.Document;

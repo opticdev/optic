@@ -13,8 +13,8 @@ import {
 } from "../../sdk/types";
 import { IPathComponent } from "../../sdk/types";
 import invariant from "ts-invariant";
-import { OpenAPIV3 } from "@useoptic/common";
-import { jsonPointerHelpers as jsonPointer } from "@useoptic/common";
+import { jsonPointerHelpers as jsonPointer } from "@useoptic/json-pointer-helpers";
+import { OpenAPIV3 } from "openapi-types";
 
 export function normalizeOpenApiPath(path: string): string {
   return path
