@@ -107,7 +107,7 @@ export function Compare<T>(props: {
   }
 
   return (
-    <Box flexDirection="column">
+    <Box flexDirection="column" width={process.env.COLUMNS || "5000"}>
       <Text color="blue" bold>
         Loading specifications for comparison:
       </Text>
