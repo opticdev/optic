@@ -1,0 +1,84 @@
+# API.next versioning rules
+
+functions:
+  - arrayObjectPattern
+
+rules:
+
+  ## Version query parameter
+
+  requests-declare-parameters:
+    description: Requests must declare parameters
+    message: 'Missing request parameters'
+    severity: error
+    given: $.paths[?(!@property.match(/\/openapi/))][*]
+    then:
+      field: parameters
+      function: truthy
+
+  version-request:
+    description: Requests must declare an API version query parameter
+    message: 'Missing request parameter "version"'
+    severity: error
+    given: $.paths[?(!@property.match(/\/openapi/))][*].parameters
+    then:
+      function: arrayObjectPattern
+      functionOptions:
+        field: name
+        match: '^version$'
+
+  ## Version response headers
+
+  responses-declare-headers:
+    description: Responses must declare headers
+    message: 'Missing response headers'
+    severity: error
+    given: $.paths[?(!@property.match(/\/openapi/))][*].responses[*]
+    then:
+      field: headers
+      function: truthy
+
+  version-response-deprecation:
+    description: Responses must provide deprecation header
+    message: '{{description}}'
+    severity: error
+    given: $.paths[?(!@property.match(/\/openapi/))][*].responses[*].headers
+    then:
+      field: 'deprecation'
+      function: truthy
+
+  version-response-lifecycle-stage:
+    description: Responses must provide snyk-version-lifecycle-stage header
+    message: '{{description}}'
+    severity: error
+    given: $.paths[?(!@property.match(/\/openapi/))][*].responses[*].headers
+    then:
+      field: 'snyk-version-lifecycle-stage'
+      function: truthy
+
+  version-response-requested:
+    description: Responses must provide snyk-version-requested header
+    message: '{{description}}'
+    severity: error
+    given: $.paths[?(!@property.match(/\/openapi/))][*].responses[*].headers
+    then:
+      field: 'snyk-version-requested'
+      function: truthy
+
+  version-response-served:
+    description: Responses must provide snyk-version-served header
+    message: '{{description}}'
+    severity: error
+    given: $.paths[?(!@property.match(/\/openapi/))][*].responses[*].headers
+    then:
+      field: 'snyk-version-served'
+      function: truthy
+
+  version-response-sunset:
+    description: Responses must provide sunset header
+    message: '{{description}}'
+    severity: error
+    given: $.paths[?(!@property.match(/\/openapi/))][*].responses[*].headers
+    then:
+      field: 'sunset'
+      function: truthy
