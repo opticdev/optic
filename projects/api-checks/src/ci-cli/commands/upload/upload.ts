@@ -9,6 +9,7 @@ export const registerUpload = (
 ) => {
   cli
     .command("upload")
+    // TODO allow upload without from file (as an initial step)
     .requiredOption("--from <from>", "from file or rev:file")
     .requiredOption("--to <to>", "to file or rev:file")
     .requiredOption("--context <context>", "file with github context")
@@ -62,8 +63,11 @@ export const uploadCiRun = async (
     githubContextFileBuffer
   );
 
+  // TODO make request to start session in optic
+
   console.log("Uploading OpenAPI files to Optic...");
 
+  // TODO use start session upload file urls instead of generating own links
   const [githubContextFileS3Path, fromFileS3Path, toFileS3Path] =
     await Promise.all(
       [githubContextFileBuffer, ...fileBuffers].map((fileBuffer) => uploadFileToS3(opticClient, fileBuffer))

@@ -21,9 +21,15 @@ export const uploadFileToS3 = async (
   opticClient: OpticBackendClient,
   file: Buffer
 ) => {
-  const uploadUrl = await opticClient.getUploadUrl();
-  await (async (uploadUrl: string, file: Buffer) => {
-    // TODO upload this file to s3 via aws sdk?
-  })(uploadUrl, file);
+  const signedUrl = await opticClient.getUploadUrl();
+  // TODO validate that Buffers can be sent to AWS S3
+  await fetch(signedUrl, {
+    method: "PUT",
+    headers: {
+      "x-amz-server-side-encryption": "AES256",
+    },
+    body: file,
+  });
+
   return "TODO get location of uploaded file";
 };
