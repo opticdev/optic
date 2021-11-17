@@ -97,17 +97,11 @@ export function Compare<T>(props: {
 
   if (props.output == "json") {
     if (results.value) {
-      const hasFailures = results.value.find(x => !x.passed);
-
-      const filteredResults = props.verbose ? results.value : results.value.filter(x => !x.passed);
+      const filteredResults = props.verbose
+        ? results.value
+        : results.value.filter((x) => !x.passed);
       stdout.write(JSON.stringify(filteredResults, null, 2));
 
-      if (hasFailures) {
-        exit();
-        process.exit(1);
-      } else {
-        exit()
-      }
     }
     return null;
   }
