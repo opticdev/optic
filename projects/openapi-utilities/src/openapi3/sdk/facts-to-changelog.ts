@@ -37,7 +37,7 @@ export function factsToChangelog(
     ...removed.map((removed) => ({
       location: removed.location,
       removed: {
-        before: removed,
+        before: removed.value,
       },
     })),
     ...updated.map((past) => {
