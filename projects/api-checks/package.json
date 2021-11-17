@@ -35,6 +35,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
+    "@stoplight/spectral-core": "^1.6.1",
     "@useoptic/json-pointer-helpers": "workspace:*",
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
