@@ -35,8 +35,16 @@ export function makeCiCli<T>(
         rules: string;
         context: T;
         verbose: boolean;
-        output: "pretty" | "json"
+        output: "pretty" | "json" | "plain"
       }) => {
+        if (options.output === "plain") {
+          // https://github.com/chalk/chalk#supportscolor
+          // https://github.com/chalk/supports-color/blob/ff1704d46cfb0714003f53c8d7e55736d8d545ff/index.js#L38
+          if (process.env.FORCE_COLOR !== 'false' && process.env.FORCE_COLOR !== '0') {
+            console.error(`Please set FORCE_COLOR=false or FORCE_COLOR=0 to enable plain text output in the environment you want to run this command in`);
+            return process.exit(1);
+          }
+        }
         const { waitUntilExit } = render(
           <Compare
             verbose={options.verbose}
@@ -46,7 +54,7 @@ export function makeCiCli<T>(
             to={parseSpecVersion(options.to, defaultEmptySpec)}
             context={options.context}
           />,
-          { exitOnCtrlC: true }
+          { exitOnCtrlC: true,  }
         );
         await waitUntilExit();
       }
