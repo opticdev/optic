@@ -28,7 +28,7 @@ checker.useDsl(
 );
 
 const cli = makeCiCli("play-thing", checker);
-
+const [,,...args] = process.argv;
 cli.parse([
   "",
   "",
@@ -36,4 +36,5 @@ cli.parse([
   `--from=${path.join(__dirname, "inputs", "v0.json")}`,
   `--to=${path.join(__dirname, "inputs", "v1.json")}`,
   `--context="{}"`,
+  ...args
 ]);

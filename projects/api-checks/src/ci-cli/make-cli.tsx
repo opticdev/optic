@@ -27,6 +27,7 @@ export function makeCiCli<T>(
     .option("--to <to>", "to file or rev:file, defaults empty spec")
     .option("--context <context>", "json of context")
     .option("--verbose", "show all checks, even passing", false)
+    .option("--output <format>", "show 'pretty' output for interactive usage or 'json' for JSON", "pretty")
     .action(
       async (options: {
         from: string;
@@ -34,10 +35,12 @@ export function makeCiCli<T>(
         rules: string;
         context: T;
         verbose: boolean;
+        output: "pretty" | "json"
       }) => {
         const { waitUntilExit } = render(
           <Compare
             verbose={options.verbose}
+            output={options.output}
             apiCheckService={checkService}
             from={parseSpecVersion(options.from, defaultEmptySpec)}
             to={parseSpecVersion(options.to, defaultEmptySpec)}
