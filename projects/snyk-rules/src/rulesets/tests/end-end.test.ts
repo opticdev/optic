@@ -1,5 +1,4 @@
 import path from "path";
-import fs from "fs-extra";
 import { SnykApiCheckDsl, SynkApiCheckContext } from "../../dsl";
 import { newSnykApiCheckService } from "../../service";
 import { specFromInputToResults } from "@useoptic/api-checks";
@@ -115,6 +114,22 @@ describe("end-end-tests", () => {
       toSpec.jsonLike,
       context
     );
+
+    // helpful to in-source this when debugging
+    // const currentTraverser = new OpenAPITraverser();
+    // const nextTraverser = new OpenAPITraverser();
+    //
+    // await currentTraverser.traverse(fromSpec.jsonLike);
+    // const currentFacts = currentTraverser.accumulator.allFacts();
+    // await nextTraverser.traverse(toSpec.jsonLike);
+    // const nextFacts = nextTraverser.accumulator.allFacts();
+    //
+    // const ft2l = factsToChangelog(
+    //   currentFacts.filter(
+    //     (i: any) => i.location.kind === OpenApiKind.Operation
+    //   ),
+    //   nextFacts.filter((i: any) => i.location.kind === OpenApiKind.Operation)
+    // );
 
     const { findFileAndLines } = sourcemapReader(toSpec.sourcemap);
     const result: ResultWithSourcemap[] = await Promise.all(

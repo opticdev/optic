@@ -62,39 +62,11 @@ Object {
       },
       "removed": Object {
         "before": Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "count",
-              ],
-              "method": "get",
-              "path": "/example",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/example",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "count",
-            ],
-            "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/count",
-            "kind": "field",
+          "flatSchema": Object {
+            "type": "number",
           },
-          "value": Object {
-            "flatSchema": Object {
-              "type": "number",
-            },
-            "key": "count",
-            "required": false,
-          },
+          "key": "count",
+          "required": false,
         },
       },
     },
@@ -156,39 +128,11 @@ Object {
         },
         "removed": Object {
           "before": Object {
-            "location": Object {
-              "conceptualLocation": Object {
-                "inResponse": Object {
-                  "body": Object {
-                    "contentType": "application/json",
-                  },
-                  "statusCode": "200",
-                },
-                "jsonSchemaTrail": Array [
-                  "count",
-                ],
-                "method": "get",
-                "path": "/example",
-              },
-              "conceptualPath": Array [
-                "operations",
-                "/example",
-                "get",
-                "responses",
-                "200",
-                "application/json",
-                "count",
-              ],
-              "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/count",
-              "kind": "field",
+            "flatSchema": Object {
+              "type": "number",
             },
-            "value": Object {
-              "flatSchema": Object {
-                "type": "number",
-              },
-              "key": "count",
-              "required": false,
-            },
+            "key": "count",
+            "required": false,
           },
         },
       },
@@ -198,7 +142,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "removed field: undefined",
+      "where": "removed field: count",
     },
   ],
 }
