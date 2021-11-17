@@ -492,28 +492,13 @@ Object {
       },
       "removed": Object {
         "before": Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "method": "get",
-              "path": "/example",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/example",
-              "get",
-            ],
-            "jsonPath": "/paths/~1example/get",
-            "kind": "operation",
-          },
-          "value": Object {
-            "method": "get",
-            "operationId": "getExample",
-            "pathPattern": "/example",
-            "summary": "Retrieve example",
-            "tags": Array [
-              "Example",
-            ],
-          },
+          "method": "get",
+          "operationId": "getExample",
+          "pathPattern": "/example",
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
         },
       },
     },
@@ -1055,28 +1040,13 @@ Object {
       },
       "removed": Object {
         "before": Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "method": "get",
-              "path": "/example",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/example",
-              "get",
-            ],
-            "jsonPath": "/paths/~1example/get",
-            "kind": "operation",
-          },
-          "value": Object {
-            "method": "get",
-            "operationId": "getExample",
-            "pathPattern": "/example",
-            "summary": "Retrieve example",
-            "tags": Array [
-              "Example",
-            ],
-          },
+          "method": "get",
+          "operationId": "getExample",
+          "pathPattern": "/example",
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
         },
       },
     },
@@ -1180,28 +1150,8 @@ Object {
       },
       "removed": Object {
         "before": Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "statusCode": "200",
-              },
-              "method": "get",
-              "path": "/example",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/example",
-              "get",
-              "responses",
-              "200",
-            ],
-            "jsonPath": "/paths/~1example/get/responses/200",
-            "kind": "response",
-          },
-          "value": Object {
-            "description": "Example response",
-            "statusCode": 200,
-          },
+          "description": "Example response",
+          "statusCode": 200,
         },
       },
     },
@@ -1248,28 +1198,8 @@ Object {
         },
         "removed": Object {
           "before": Object {
-            "location": Object {
-              "conceptualLocation": Object {
-                "inResponse": Object {
-                  "statusCode": "200",
-                },
-                "method": "get",
-                "path": "/example",
-              },
-              "conceptualPath": Array [
-                "operations",
-                "/example",
-                "get",
-                "responses",
-                "200",
-              ],
-              "jsonPath": "/paths/~1example/get/responses/200",
-              "kind": "response",
-            },
-            "value": Object {
-              "description": "Example response",
-              "statusCode": 200,
-            },
+            "description": "Example response",
+            "statusCode": 200,
           },
         },
       },
@@ -1279,7 +1209,7 @@ Object {
       "isMust": true,
       "isShould": false,
       "passed": false,
-      "where": "removed response: undefined",
+      "where": "removed response: 200",
     },
   ],
 }

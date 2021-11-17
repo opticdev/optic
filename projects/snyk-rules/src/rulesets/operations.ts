@@ -1,6 +1,6 @@
 import { SnykApiCheckDsl } from "../dsl";
-import {camelCase, snakeCase} from 'change-case';
-import {OpenAPIV3} from '@useoptic/api-checks';
+import { camelCase, snakeCase } from "change-case";
+import { OpenAPIV3 } from "@useoptic/api-checks";
 
 const { expect } = require("chai");
 
@@ -15,7 +15,8 @@ export const rules = {
         if (operation.operationId !== undefined) {
           const normalized = camelCase(operation.operationId);
           expect(
-            normalized === operation.operationId && prefixRegex.test(operation.operationId),
+            normalized === operation.operationId &&
+              prefixRegex.test(operation.operationId),
             `operationId "${operation.operationId}" must be camelCase (${normalized}) and start with get|create|list|update|delete`
           ).to.be.ok;
         }
@@ -45,14 +46,13 @@ export const rules = {
     operations.requirement.must(
       "use the correct case",
       (operation, context, docs, specItem) => {
-
-        for (const p  of specItem.parameters || []) {
+        for (const p of specItem.parameters || []) {
           const parameter = p as OpenAPIV3.ParameterObject;
           if (["path", "query"].includes(parameter.in)) {
             const normalized = snakeCase(parameter.name);
 
             expect(
-               normalized === parameter.name,
+              normalized === parameter.name,
               `expected parameter name "${parameter.name}" to be snake_case (${normalized})`
             ).to.be.ok;
           }
@@ -60,11 +60,17 @@ export const rules = {
       }
     );
   },
+  preventRemovingOperation: ({ operations }: SnykApiCheckDsl) => {
+    operations.removed.must("not be allowed", (operation, context) => {
+      expect.fail("expected operation to be present");
+    });
+  },
   versionParameter: ({ operations }: SnykApiCheckDsl) => {
     operations.requirement.must(
       "include a version parameter",
       (operation, context, docs, specItem) => {
-        const parameters = (specItem.parameters || []) as OpenAPIV3.ParameterObject[];
+        const parameters = (specItem.parameters ||
+          []) as OpenAPIV3.ParameterObject[];
         const parameterNames = parameters
           .filter((parameter) => parameter.in === "query")
           .map((parameter) => {
@@ -100,8 +106,10 @@ export const rules = {
     request.queryParameter.changed.must(
       "not change the default value",
       (parameterBefore, parameterAfter) => {
-        let beforeSchema = (parameterBefore.schema || {}) as OpenAPIV3.SchemaObject;
-        let afterSchema = (parameterAfter.schema || {}) as OpenAPIV3.SchemaObject;
+        let beforeSchema = (parameterBefore.schema ||
+          {}) as OpenAPIV3.SchemaObject;
+        let afterSchema = (parameterAfter.schema ||
+          {}) as OpenAPIV3.SchemaObject;
         expect(beforeSchema.default).to.equal(afterSchema.default);
       }
     );

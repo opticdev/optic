@@ -7,7 +7,8 @@ import {
   OpenApiFact,
 } from "@useoptic/openapi-utilities";
 import { EntityRule, newDocsLinkHelper, Result, runCheck } from "./types";
-
+import equals from "lodash.isequal";
+import { IPathComponent } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
 export function genericEntityRuleImpl<
   NarrowedOpenApiFact, // TODO require Type to be a type of `OpenApiFact`
   ApiContext,
@@ -22,26 +23,20 @@ export function genericEntityRuleImpl<
   pushCheck: (...check: Promise<Result>[]) => void,
   getSpecItem: (pointer: string) => OpenApiEntityType
 ): EntityRule<NarrowedOpenApiFact, ApiContext, DslContext, OpenApiEntityType> {
-  const operationsAdded = changelog
-    .filter((i) => i.location.kind === OpenApiKind.Operation && i.added)
-    .map((i) => i.location.conceptualLocation);
-
-  const operationsRemoved = changelog
-    .filter((i) => i.location.kind === OpenApiKind.Operation && i.removed)
-    .map((i) => i.location.conceptualLocation);
-
-  const skipIfParentOperationAdded = (location: ConceptualLocation) => {
-    if (openApiKind === OpenApiKind.Operation) return false;
-    return operationsAdded.some(
-      (i) => i.path === location.path && i.method === location.method
-    );
+  const wasParentAdded = (location: IPathComponent[]) => {
+    return changelog.some((i) => {
+      if (i.added) {
+        return parentOfChild(i.location.conceptualPath, location);
+      }
+    });
   };
 
-  const skipIfParentOperationRemoved = (location: ConceptualLocation) => {
-    if (openApiKind === OpenApiKind.Operation) return false;
-    return operationsRemoved.some(
-      (i) => i.path === location.path && i.method === location.method
-    );
+  const wasParentRemoved = (location: IPathComponent[]) => {
+    return changelog.some((i) => {
+      if (i.removed) {
+        return parentOfChild(i.location.conceptualPath, location);
+      }
+    });
   };
 
   const changesForKind = changelog.filter(
@@ -75,9 +70,7 @@ export function genericEntityRuleImpl<
         ...added
           .filter((addRule) => {
             // should not run added rule if the parent operation was also added.
-            return !skipIfParentOperationAdded(
-              addRule.location.conceptualLocation
-            );
+            return !wasParentAdded(addRule.location.conceptualPath);
           })
           .map((item, index) => {
             const addedWhere = `added ${openApiKind.toString()}: ${describeWhere(
@@ -105,9 +98,7 @@ export function genericEntityRuleImpl<
         ...removed
           .filter((addRule) => {
             // should not run added rule if the parent operation was also added.
-            return !skipIfParentOperationRemoved(
-              addRule.location.conceptualLocation
-            );
+            return !wasParentRemoved(addRule.location.conceptualPath);
           })
           .map((item, index) => {
             const addedWhere = `removed ${openApiKind.toString()}: ${describeWhere(
@@ -206,4 +197,14 @@ export function genericEntityRuleImpl<
       should: requirementsHandler(false),
     },
   };
+}
+
+function parentOfChild(
+  parent: IPathComponent[],
+  child: IPathComponent[]
+): boolean {
+  return (
+    child.length > parent.length &&
+    equals(parent, child.slice(0, parent.length))
+  );
 }

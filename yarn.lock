@@ -3705,6 +3705,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.isequal@npm:^4.5.5":
+  version: 4.5.5
+  resolution: "@types/lodash.isequal@npm:4.5.5"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 9dd22ceb5453a711e3ce6cd5a31d0ba8fe2263b3c989bc3b64e398933dbe7e9fd22a77a585ab7ee4f27d80a00845e15602b2a4a4b113f01291e2fd236a7707f7
+  languageName: node
+  linkType: hard
+
 "@types/lodash.sortby@npm:^4.7.6":
   version: 4.7.6
   resolution: "@types/lodash.sortby@npm:4.7.6"
@@ -4127,6 +4136,7 @@ __metadata:
     "@types/jsonpath": ^0.2.0
     "@types/lodash.flatten": ^4.4.6
     "@types/lodash.groupby": ^4.6.6
+    "@types/lodash.isequal": ^4.5.5
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
@@ -4142,6 +4152,7 @@ __metadata:
     jsonpath: ^1.1.1
     lodash.flatten: ^4.4.0
     lodash.groupby: ^4.6.0
+    lodash.isequal: ^4.5.0
     prettier: ^2.4.1
     react: ^17.0.2
     react-use: ^17.3.1

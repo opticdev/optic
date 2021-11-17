@@ -7,6 +7,7 @@ import {
   IChange,
   IFact,
   OpenApiFact,
+  OpenApiKind,
 } from "@useoptic/openapi-utilities";
 
 export type DslConstructorInput<Context> = {
