@@ -1,5 +1,4 @@
 import { SpectralDsl } from "./dsl";
-import { OpenAPIV3 } from "@useoptic/openapi-utilities";
 
 export const defaultEmptySpec: any = {
   openapi: "3.0.1",
@@ -12,4 +11,4 @@ export const defaultEmptySpec: any = {
 };
 
 const result = new SpectralDsl(defaultEmptySpec);
-result.addRuleset();
+// result.addRuleset();
