@@ -14,7 +14,7 @@ export function Compare<T>(props: {
   to: SpecFromInput;
   context: T;
   verbose: boolean;
-  output: "pretty" | "json";
+  output: "pretty" | "json" | "plain";
   apiCheckService: ApiCheckService<T>;
 }) {
   const stdout = useStdout();
@@ -101,7 +101,6 @@ export function Compare<T>(props: {
         ? results.value
         : results.value.filter((x) => !x.passed);
       stdout.write(JSON.stringify(filteredResults, null, 2));
-
     }
     return null;
   }
