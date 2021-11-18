@@ -1,5 +1,7 @@
+import { v4 as uuidv4 } from "uuid";
+
 import { uploadCiRun } from "../upload";
-import { OpticBackendClient } from "../optic-client";
+import { OpticBackendClient, UploadSlot } from "../optic-client";
 import { loadFile, uploadFileToS3 } from "../utils";
 import { mockGhContext } from "./mock-gh-context";
 
@@ -9,49 +11,71 @@ jest.mock("../utils");
 const MockedOpticBackendClient = OpticBackendClient as jest.MockedClass<
   typeof OpticBackendClient
 >;
+const mockOpticClient = new MockedOpticBackendClient("", () =>
+  Promise.resolve("")
+);
+const mockedStartSession = mockOpticClient.startSession as jest.MockedFunction<
+  typeof mockOpticClient.startSession
+>;
+const mockGetUploadUrls = mockOpticClient.getUploadUrls as jest.MockedFunction<
+  typeof mockOpticClient.getUploadUrls
+>;
 const mockedLoadFile = loadFile as jest.MockedFunction<typeof loadFile>;
 const mockedUploadFileToS3 = uploadFileToS3 as jest.MockedFunction<
   typeof uploadFileToS3
 >;
+
+let fileBufferMap: Record<UploadSlot, Buffer> = {
+  [UploadSlot.CheckResults]: Buffer.from("check results"),
+  [UploadSlot.FromFile]: Buffer.from("from file"),
+  [UploadSlot.ToFile]: Buffer.from("to file"),
+  [UploadSlot.GithubActionsEvent]: Buffer.from(JSON.stringify(mockGhContext)),
+};
 
 afterEach(() => {
   // Clear all instances and calls to constructor and all methods:
   mockedLoadFile.mockClear();
   mockedUploadFileToS3.mockClear();
   MockedOpticBackendClient.mockClear();
+  mockedStartSession.mockClear();
+  mockGetUploadUrls.mockClear();
 });
 
 test("uploading a file", async () => {
-  const mockOpticClient = new MockedOpticBackendClient("", () =>
-    Promise.resolve("")
-  );
-  const contextPath = "/context_path";
+  const numberOfFiles = Object.values(UploadSlot).length;
+
+  mockGetUploadUrls.mockImplementation(async () => {
+    return Object.values(UploadSlot).map((uploadSlot) => ({
+      id: uuidv4(),
+      slot: uploadSlot,
+      url: `/url/${uploadSlot}`,
+    }));
+  });
 
   mockedLoadFile.mockImplementation(async (filePath: string) => {
-    if (filePath === contextPath) {
-      return Buffer.from(JSON.stringify(mockGhContext));
-    } else {
-      return Buffer.from("abc");
-    }
+    return fileBufferMap[filePath as UploadSlot] || Buffer.from("abc");
   });
 
   await uploadCiRun(mockOpticClient, {
-    from: "/from_path",
-    to: "/to_path",
-    context: "/context_path",
-    rules: "/rules_path"
+    from: UploadSlot.FromFile,
+    to: UploadSlot.ToFile,
+    context: UploadSlot.GithubActionsEvent,
+    rules: UploadSlot.CheckResults,
   });
 
-  // TODO add in better assertions around API calls when interface is defined
-  expect(
-    (
-      mockOpticClient.startSession as jest.MockedFunction<
-        typeof mockOpticClient.startSession
-      >
-    ).mock.calls.length
-  ).toBe(1);
-  expect(mockedLoadFile.mock.calls.length).toBe(4);
-  expect(mockedUploadFileToS3.mock.calls.length).toBe(4);
+  expect(mockedLoadFile.mock.calls.length).toBe(numberOfFiles);
+  expect(mockedStartSession.mock.calls.length).toBe(1);
+  expect(mockedUploadFileToS3.mock.calls.length).toBe(numberOfFiles);
+  for (const uploadSlot of Object.values(UploadSlot)) {
+    const matchingFnCall = mockedUploadFileToS3.mock.calls.find(
+      (call) => call[0] === `/url/${uploadSlot}`
+    )!;
+    expect(matchingFnCall[1].toString()).toEqual(
+      fileBufferMap[uploadSlot].toString()
+    );
+  }
+
+  // TODO change this function or remove
   expect(
     (
       mockOpticClient.saveCiRun as jest.MockedFunction<
@@ -59,4 +83,39 @@ test("uploading a file", async () => {
       >
     ).mock.calls.length
   ).toBe(1);
+});
+
+test("uploading a file with only partial slots open", async () => {
+  const returnedSlots = [UploadSlot.CheckResults, UploadSlot.FromFile];
+
+  mockGetUploadUrls.mockImplementation(async () => {
+    return returnedSlots.map((uploadSlot) => ({
+      id: uuidv4(),
+      slot: uploadSlot,
+      url: `/url/${uploadSlot}`,
+    }));
+  });
+
+  mockedLoadFile.mockImplementation(async (filePath: string) => {
+    return fileBufferMap[filePath as UploadSlot] || Buffer.from("abc");
+  });
+
+  await uploadCiRun(mockOpticClient, {
+    from: UploadSlot.FromFile,
+    to: UploadSlot.ToFile,
+    context: UploadSlot.GithubActionsEvent,
+    rules: UploadSlot.CheckResults,
+  });
+
+  expect(mockedLoadFile.mock.calls.length).toBe(Object.values(UploadSlot).length);
+  expect(mockedStartSession.mock.calls.length).toBe(1);
+  expect(mockedUploadFileToS3.mock.calls.length).toBe(returnedSlots.length);
+  for (const uploadSlot of returnedSlots) {
+    const matchingFnCall = mockedUploadFileToS3.mock.calls.find(
+      (call) => call[0] === `/url/${uploadSlot}`
+    )!;
+    expect(matchingFnCall[1].toString()).toEqual(
+      fileBufferMap[uploadSlot].toString()
+    );
+  }
 });

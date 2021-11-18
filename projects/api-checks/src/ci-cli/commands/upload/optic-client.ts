@@ -186,6 +186,19 @@ type Session = {
   };
 };
 
+export enum UploadSlot {
+  FromFile = "FromFile",
+  ToFile = "ToFile",
+  GithubActionsEvent = "GithubActionsEvent",
+  CheckResults = "CheckResults",
+}
+
+export type UploadUrl = {
+  id: string;
+  slot: UploadSlot;
+  url: string;
+};
+
 // TODO figure out what the parameters we need are
 export class OpticBackendClient extends JsonHttpClient {
   constructor(
@@ -208,8 +221,11 @@ export class OpticBackendClient extends JsonHttpClient {
     });
   };
 
-  public async getUploadUrl(): Promise<string> {
-    return "";
+  public async getUploadUrls(sessionId: string): Promise<UploadUrl[]> {
+    const response = await this.getJson<{
+      upload_urls: UploadUrl[];
+    }>(`/api/runs/${sessionId}/upload-urls`);
+    return response.upload_urls;
   }
 
   public async saveCiRun() {}

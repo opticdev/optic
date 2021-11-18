@@ -1,6 +1,11 @@
 import { Command } from "commander";
 import { readAndValidateGithubContext } from "./context-parsers";
-import { OpticBackendClient, SessionType } from "./optic-client";
+import {
+  OpticBackendClient,
+  SessionType,
+  UploadSlot,
+  UploadUrl,
+} from "./optic-client";
 import { loadFile, uploadFileToS3 } from "./utils";
 
 export const registerUpload = (
@@ -54,17 +59,25 @@ export const uploadCiRun = async (
   }
 ) => {
   console.log("Loading files...");
+
   const [
     githubContextFileBuffer,
     fromFileS3Buffer,
     toFileS3Buffer,
-    rulesfileS3Path,
+    rulesFileS3Buffer,
   ] = await Promise.all([
     loadFile(runArgs.context),
     loadFile(runArgs.from),
     loadFile(runArgs.to),
     loadFile(runArgs.rules),
   ]);
+
+  const fileMap: Record<UploadSlot, Buffer> = {
+    [UploadSlot.CheckResults]: rulesFileS3Buffer,
+    [UploadSlot.FromFile]: fromFileS3Buffer,
+    [UploadSlot.ToFile]: toFileS3Buffer,
+    [UploadSlot.GithubActionsEvent]: githubContextFileBuffer,
+  };
 
   // TODO change this for different providers
   const { organization, pull_request, run, run_attempt, repo } =
@@ -83,20 +96,23 @@ export const uploadCiRun = async (
 
   console.log("Uploading OpenAPI files to Optic...");
 
-  // TODO update this to use upload urls
-  const [
-    githubContextFileS3Path,
-    fromFileS3Path,
-    toFileS3Path,
-    rulesFileS3Path,
-  ] = await Promise.all(
-    [
-      githubContextFileBuffer,
-      fromFileS3Buffer,
-      toFileS3Buffer,
-      rulesfileS3Path,
-    ].map((fileBuffer) => uploadFileToS3(opticClient, fileBuffer))
+  const uploadUrls = await opticClient.getUploadUrls(sessionId);
+
+  const uploadedFilePaths: {
+    id: string;
+    s3Path: string;
+  }[] = await Promise.all(
+    uploadUrls.map(async (uploadUrl) => {
+      const file = fileMap[uploadUrl.slot];
+      const s3Path = await uploadFileToS3(uploadUrl.url, file);
+      return {
+        id: uploadUrl.id,
+        s3Path,
+      };
+    })
   );
+
+  // TODO make requests to file endpoint marking upload as complete
 
   // TODO check whether the `run` numbers are reused, and if they are, should that overwrite, or create
   // i.e. there are run number, and run attempt, so retrying on the same commit hash may trigger the same run number
