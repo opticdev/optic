@@ -39,11 +39,19 @@ test("uploading a file", async () => {
     from: "/from_path",
     to: "/to_path",
     context: "/context_path",
+    rules: "/rules_path"
   });
 
   // TODO add in better assertions around API calls when interface is defined
-  expect(mockedLoadFile.mock.calls.length).toBe(3);
-  expect(mockedUploadFileToS3.mock.calls.length).toBe(3);
+  expect(
+    (
+      mockOpticClient.startSession as jest.MockedFunction<
+        typeof mockOpticClient.startSession
+      >
+    ).mock.calls.length
+  ).toBe(1);
+  expect(mockedLoadFile.mock.calls.length).toBe(4);
+  expect(mockedUploadFileToS3.mock.calls.length).toBe(4);
   expect(
     (
       mockOpticClient.saveCiRun as jest.MockedFunction<

@@ -13,8 +13,10 @@ describe("github context parser", () => {
     const mockBuffer = createMockBuffer(JSON.stringify(mockGhContext));
     expect(readAndValidateGithubContext(mockBuffer)).toEqual({
       organization: "opticdev",
+      repo: "poc-governance-tools",
       pull_request: 61,
-      run: "75",
+      run: 75,
+      run_attempt: 1,
     });
   });
 
@@ -42,6 +44,7 @@ describe("github context parser", () => {
       event: {
         ...mockGhContext.event,
         repository: {
+          ...mockGhContext.event.repository,
           owner: {},
         },
       },
@@ -49,6 +52,23 @@ describe("github context parser", () => {
     const mockBuffer = createMockBuffer(JSON.stringify(ghContext));
     expect(() => readAndValidateGithubContext(mockBuffer)).toThrowError(
       /Expected a respository owner at context\.event\.repository\.owner\.login/i
+    );
+  });
+
+  test("errors if no repo in expected location", () => {
+    const ghContext = {
+      ...mockGhContext,
+      event: {
+        ...mockGhContext.event,
+        repository: {
+          ...mockGhContext.event.repository,
+          name: null,
+        },
+      },
+    };
+    const mockBuffer = createMockBuffer(JSON.stringify(ghContext));
+    expect(() => readAndValidateGithubContext(mockBuffer)).toThrowError(
+      /Expected a repo at context\.event\.repository\.name/i
     );
   });
 
@@ -69,11 +89,22 @@ describe("github context parser", () => {
   test("errors if no run in expected location", () => {
     const ghContext = {
       ...mockGhContext,
-      run_number: null
+      run_number: null,
     };
     const mockBuffer = createMockBuffer(JSON.stringify(ghContext));
     expect(() => readAndValidateGithubContext(mockBuffer)).toThrowError(
       /Expected a run_number at context\.run_number/i
+    );
+  });
+
+  test("errors if no run_attempt in expected location", () => {
+    const ghContext = {
+      ...mockGhContext,
+      run_attempt: null,
+    };
+    const mockBuffer = createMockBuffer(JSON.stringify(ghContext));
+    expect(() => readAndValidateGithubContext(mockBuffer)).toThrowError(
+      /Expected a run_attempt at context\.run_attempt/i
     );
   });
 });

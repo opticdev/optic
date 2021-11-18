@@ -1,7 +1,9 @@
 type UploadContext = {
   organization: string;
+  repo: string;
   pull_request: number;
   run: number;
+  run_attempt: number;
 };
 
 // This is specifically from the GITHUB_CONTEXT object
@@ -20,14 +22,20 @@ export const readAndValidateGithubContext = (
 
   const organization: string | undefined =
     parsedContext.event?.repository?.owner?.login;
+  const repo: string | undefined = parsedContext.event?.repository?.name;
   const pull_request: number | undefined =
     parsedContext.event?.pull_request?.number;
   const run: number | undefined = parsedContext.run_number;
+  const run_attempt: number | undefined = parsedContext.run_attempt;
 
   if (!organization) {
     throw new Error(
       "Expected a respository owner at context.event.repository.owner.login"
     );
+  }
+
+  if (!repo) {
+    throw new Error("Expected a repo at context.event.repository.name");
   }
 
   if (!pull_request) {
@@ -40,9 +48,15 @@ export const readAndValidateGithubContext = (
     throw new Error("Expected a run_number at context.run_number");
   }
 
+  if (!run_attempt) {
+    throw new Error("Expected a run_attempt at context.run_attempt");
+  }
+
   return {
     organization,
-    pull_request,
-    run,
+    repo,
+    pull_request: Number(pull_request),
+    run: Number(run),
+    run_attempt: Number(run_attempt),
   };
 };
