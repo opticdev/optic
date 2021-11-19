@@ -120,10 +120,8 @@ export const uploadCiRun = async (
     )
   );
 
-  // TODO query session for web url
+  const { web_url: opticWebUrl } = await opticClient.getSession(sessionId);
 
   console.log('Successfully uploaded files to Optic');
-  const opticUploadUrl = 'todo add url';
-  console.log(`You can view the results of this run at: ${opticUploadUrl}`);
-  // TODO post comment to github
+  console.log(`You can view the results of this run at: ${opticWebUrl}`);
 };

@@ -199,7 +199,23 @@ export type UploadUrl = {
   url: string;
 };
 
-// TODO figure out what the parameters we need are
+export enum SessionStatus {
+  Ready = 'Ready',
+  NotReady = 'NotReady',
+}
+
+type SessionFile = {
+  slot: UploadSlot;
+  url: string;
+};
+
+type GetSessionResponse = {
+  web_url: string;
+  session: Session;
+  status: SessionStatus;
+  files: SessionFile[];
+};
+
 export class OpticBackendClient extends JsonHttpClient {
   constructor(
     private baseUrl: string,
@@ -261,5 +277,9 @@ export class OpticBackendClient extends JsonHttpClient {
         upload_slot: uploadSlot,
       }
     );
+  }
+
+  public async getSession(sessionId: string): Promise<GetSessionResponse> {
+    return this.getJson<GetSessionResponse>(`/api/runs/${sessionId}`);
   }
 }
