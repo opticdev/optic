@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from 'uuid';
 // TODO created shared instance to import from (optic cloud fe + here)
 
 class JsonHttpClient {
@@ -33,9 +33,9 @@ class JsonHttpClient {
     additionalHeaders: Record<string, string> = {}
   ): Promise<T> {
     return this.fetch(url, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        accept: "application/json",
+        accept: 'application/json',
         ...additionalHeaders,
       },
     }).then(this.handleJsonResponse);
@@ -43,9 +43,9 @@ class JsonHttpClient {
 
   async getJsonWithoutHandlingResponse(url: string) {
     return this.fetch(url, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        Accept: "application/json",
+        Accept: 'application/json',
       },
     });
   }
@@ -56,11 +56,11 @@ class JsonHttpClient {
     additionalHeaders: Record<string, string> = {}
   ): Promise<T> {
     return this.fetch(url, {
-      method: "POST",
+      method: 'POST',
       body,
       headers: {
-        accept: "application/json",
-        "content-type": "application/json",
+        accept: 'application/json',
+        'content-type': 'application/json',
         ...additionalHeaders,
       },
     }).then(this.handleJsonResponse);
@@ -80,11 +80,11 @@ class JsonHttpClient {
     additionalHeaders: Record<string, string> = {}
   ): Promise<T> {
     return this.fetch(url, {
-      method: "PATCH",
+      method: 'PATCH',
       body,
       headers: {
-        accept: "application/json",
-        "content-type": "application/json",
+        accept: 'application/json',
+        'content-type': 'application/json',
         ...additionalHeaders,
       },
     }).then(this.handleJsonResponse);
@@ -107,9 +107,9 @@ class JsonHttpClient {
     additionalHeaders: Record<string, string> = {}
   ): Promise<T> {
     return this.fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        accept: "application/json",
+        accept: 'application/json',
         ...additionalHeaders,
       },
     }).then(this.handleJsonResponse);
@@ -118,7 +118,7 @@ class JsonHttpClient {
   async getJsonAsText(url: string) {
     return this.fetch(url, {
       headers: {
-        accept: "application/json",
+        accept: 'application/json',
       },
     }).then(this.verifyOkResponse);
   }
@@ -137,11 +137,11 @@ class JsonHttpClient {
     additionalHeaders: Record<string, string> = {}
   ): Promise<T> {
     return this.fetch(url, {
-      method: "PUT",
+      method: 'PUT',
       body: body,
       headers: {
-        accept: "application/json",
-        "content-type": "application/json",
+        accept: 'application/json',
+        'content-type': 'application/json',
         ...additionalHeaders,
       },
     }).then(this.handleJsonResponse);
@@ -153,10 +153,10 @@ class JsonHttpClient {
     additionalHeaders: Record<string, string> = {}
   ) {
     return this.fetch(url, {
-      method: "PUT",
+      method: 'PUT',
       body,
       headers: {
-        "content-length": body.length.toString(),
+        'content-length': body.length.toString(),
         ...additionalHeaders,
       },
     }).then(this.verifyOkResponse);
@@ -164,7 +164,7 @@ class JsonHttpClient {
 }
 
 export enum SessionType {
-  GithubActions = "GithubActions",
+  GithubActions = 'GithubActions',
 }
 
 type RunArgs = {
@@ -187,10 +187,10 @@ type Session = {
 };
 
 export enum UploadSlot {
-  FromFile = "FromFile",
-  ToFile = "ToFile",
-  GithubActionsEvent = "GithubActionsEvent",
-  CheckResults = "CheckResults",
+  FromFile = 'FromFile',
+  ToFile = 'ToFile',
+  GithubActionsEvent = 'GithubActionsEvent',
+  CheckResults = 'CheckResults',
 }
 
 export type UploadUrl = {
@@ -228,12 +228,10 @@ export class OpticBackendClient extends JsonHttpClient {
     return response.upload_urls;
   }
 
-  public async saveCiRun() {}
-
   // TODO make this function signature generic such that SessionType changes what session data should look like
   public async startSession(
     sessionType: SessionType,
-    sessionData: Omit<Session, "type">
+    sessionData: Omit<Session, 'type'>
   ): Promise<string> {
     const sessionId = uuidv4();
 
@@ -249,5 +247,19 @@ export class OpticBackendClient extends JsonHttpClient {
       }
     );
     return sessionId;
+  }
+
+  public async markUploadAsComplete(
+    sessionId: string,
+    uploadId: string,
+    uploadSlot: UploadSlot
+  ): Promise<void> {
+    await this.postJson(
+      `/api/spec-comparison-sessions/${sessionId}/commands/mark-upload-completed`,
+      {
+        upload_id: uploadId,
+        upload_slot: uploadSlot,
+      }
+    );
   }
 }

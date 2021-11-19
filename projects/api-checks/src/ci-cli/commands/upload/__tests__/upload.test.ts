@@ -20,6 +20,9 @@ const mockedStartSession = mockOpticClient.startSession as jest.MockedFunction<
 const mockGetUploadUrls = mockOpticClient.getUploadUrls as jest.MockedFunction<
   typeof mockOpticClient.getUploadUrls
 >;
+const mockMarkUploadAsComplete = mockOpticClient.markUploadAsComplete as  jest.MockedFunction<
+typeof mockOpticClient.markUploadAsComplete
+>;
 const mockedLoadFile = loadFile as jest.MockedFunction<typeof loadFile>;
 const mockedUploadFileToS3 = uploadFileToS3 as jest.MockedFunction<
   typeof uploadFileToS3
@@ -39,6 +42,7 @@ afterEach(() => {
   MockedOpticBackendClient.mockClear();
   mockedStartSession.mockClear();
   mockGetUploadUrls.mockClear();
+  mockMarkUploadAsComplete.mockClear();
 });
 
 test("uploading a file", async () => {
@@ -74,15 +78,7 @@ test("uploading a file", async () => {
       fileBufferMap[uploadSlot].toString()
     );
   }
-
-  // TODO change this function or remove
-  expect(
-    (
-      mockOpticClient.saveCiRun as jest.MockedFunction<
-        typeof mockOpticClient.saveCiRun
-      >
-    ).mock.calls.length
-  ).toBe(1);
+  expect(mockMarkUploadAsComplete.mock.calls.length).toBe(numberOfFiles);
 });
 
 test("uploading a file with only partial slots open", async () => {
@@ -118,4 +114,5 @@ test("uploading a file with only partial slots open", async () => {
       fileBufferMap[uploadSlot].toString()
     );
   }
+  expect(mockMarkUploadAsComplete.mock.calls.length).toBe(returnedSlots.length);
 });

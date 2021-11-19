@@ -1,10 +1,6 @@
 import { Command } from 'commander';
 import { readAndValidateGithubContext } from './context-parsers';
-import {
-  OpticBackendClient,
-  SessionType,
-  UploadSlot,
-} from './optic-client';
+import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
 import { loadFile, uploadFileToS3 } from './utils';
 
 export const registerUpload = (
@@ -99,24 +95,32 @@ export const uploadCiRun = async (
 
   const uploadedFilePaths: {
     id: string;
+    slot: UploadSlot;
     s3Path: string;
   }[] = await Promise.all(
     uploadUrls.map(async (uploadUrl) => {
       const file = fileMap[uploadUrl.slot];
       const s3Path = await uploadFileToS3(uploadUrl.url, file);
+
       return {
         id: uploadUrl.id,
+        slot: uploadUrl.slot,
         s3Path,
       };
     })
   );
 
-  // TODO make requests to file endpoint marking upload as complete
+  await Promise.all(
+    uploadedFilePaths.map(async (uploadedFilePath) =>
+      opticClient.markUploadAsComplete(
+        sessionId,
+        uploadedFilePath.id,
+        uploadedFilePath.slot
+      )
+    )
+  );
 
-  // TODO check whether the `run` numbers are reused, and if they are, should that overwrite, or create
-  // i.e. there are run number, and run attempt, so retrying on the same commit hash may trigger the same run number
-  // May need to try catch this block (or decide on product behavior)
-  await opticClient.saveCiRun();
+  // TODO query session for web url
 
   console.log('Successfully uploaded files to Optic');
   const opticUploadUrl = 'todo add url';
