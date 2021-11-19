@@ -1,0 +1,240 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`new operations can be added to an empty spec 1`] = `
+Object {
+  "openapi": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example/{example_id}/status": Object {
+        "get": Object {
+          "parameters": Array [],
+          "responses": Object {
+            "200": Object {
+              "content": Object {
+                "application/json": Object {
+                  "schema": Object {
+                    "properties": Object {
+                      "full_name": Object {
+                        "type": "string",
+                      },
+                      "id": Object {
+                        "type": "number",
+                      },
+                      "name": Object {
+                        "type": "string",
+                      },
+                      "node_id": Object {
+                        "type": "string",
+                      },
+                      "owner": Object {
+                        "properties": Object {
+                          "id": Object {
+                            "type": "number",
+                          },
+                          "login": Object {
+                            "type": "string",
+                          },
+                        },
+                        "required": Array [
+                          "login",
+                          "id",
+                        ],
+                        "type": "object",
+                      },
+                      "private": Object {
+                        "type": "boolean",
+                      },
+                    },
+                    "required": Array [
+                      "id",
+                      "node_id",
+                      "name",
+                      "full_name",
+                      "private",
+                      "owner",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "",
+            },
+          },
+        },
+        "parameters": Array [
+          Object {
+            "in": "path",
+            "name": "example_id",
+            "required": true,
+            "schema": Object {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    },
+  },
+  "operation": Object {
+    "parameters": Array [],
+    "responses": Object {
+      "200": Object {
+        "content": Object {
+          "application/json": Object {
+            "schema": Object {
+              "properties": Object {
+                "full_name": Object {
+                  "type": "string",
+                },
+                "id": Object {
+                  "type": "number",
+                },
+                "name": Object {
+                  "type": "string",
+                },
+                "node_id": Object {
+                  "type": "string",
+                },
+                "owner": Object {
+                  "properties": Object {
+                    "id": Object {
+                      "type": "number",
+                    },
+                    "login": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "login",
+                    "id",
+                  ],
+                  "type": "object",
+                },
+                "private": Object {
+                  "type": "boolean",
+                },
+              },
+              "required": Array [
+                "id",
+                "node_id",
+                "name",
+                "full_name",
+                "private",
+                "owner",
+              ],
+              "type": "object",
+            },
+          },
+        },
+        "description": "",
+      },
+    },
+  },
+  "patches": Array [
+    Object {
+      "intent": "add path /example/{example_id}/status",
+      "patches": Array [
+        Object {
+          "op": "add",
+          "path": "/paths/~1example~1{example_id}~1status",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "in": "path",
+                "name": "example_id",
+                "required": true,
+                "schema": Object {
+                  "type": "string",
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    Object {
+      "intent": "add operation get /example/{example_id}/status",
+      "patches": Array [
+        Object {
+          "op": "add",
+          "path": "/paths/~1example~1{example_id}~1status/get",
+          "value": Object {
+            "parameters": Array [],
+            "responses": Object {},
+          },
+        },
+      ],
+    },
+    Object {
+      "intent": "add 200 status code",
+      "patches": Array [
+        Object {
+          "op": "add",
+          "path": "/paths/~1example~1{example_id}~1status/get/responses/200",
+          "value": Object {
+            "content": Object {},
+            "description": "",
+          },
+        },
+      ],
+    },
+    Object {
+      "intent": "add response body content application/json",
+      "patches": Array [
+        Object {
+          "op": "add",
+          "path": "/paths/~1example~1{example_id}~1status/get/responses/200/content/application~1json",
+          "value": Object {
+            "schema": Object {
+              "properties": Object {
+                "full_name": Object {
+                  "type": "string",
+                },
+                "id": Object {
+                  "type": "number",
+                },
+                "name": Object {
+                  "type": "string",
+                },
+                "node_id": Object {
+                  "type": "string",
+                },
+                "owner": Object {
+                  "properties": Object {
+                    "id": Object {
+                      "type": "number",
+                    },
+                    "login": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "login",
+                    "id",
+                  ],
+                  "type": "object",
+                },
+                "private": Object {
+                  "type": "boolean",
+                },
+              },
+              "required": Array [
+                "id",
+                "node_id",
+                "name",
+                "full_name",
+                "private",
+                "owner",
+              ],
+              "type": "object",
+            },
+          },
+        },
+      ],
+    },
+  ],
+}
+`;

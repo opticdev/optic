@@ -1,0 +1,756 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`one of json schema differ plugin when new field in one of object variant of one of 1`] = `
+Object {
+  "0": Object {
+    "diff": Object {
+      "example": Object {
+        "polyProp": Object {
+          "hello": "world",
+        },
+      },
+      "key": "hello",
+      "keyword": "additionalProperties",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/example",
+      },
+      "parentObjectPath": "/properties/polyProp/oneOf/0/additionalProperties",
+      "propertyExamplePath": "/polyProp/hello",
+      "schemaPath": "",
+      "type": "BodyAdditionalProperty",
+    },
+    "patchesExecuted": Array [
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "polyProp": Object {
+              "oneOf": Array [
+                Object {
+                  "properties": Object {
+                    "hello": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "hello",
+                  ],
+                  "type": "object",
+                },
+                Object {
+                  "type": "number",
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Compatible",
+          "effect": "add property hello",
+          "extends": true,
+          "patch": Array [
+            Object {
+              "intent": "add required to parent object",
+              "patches": Array [
+                Object {
+                  "op": "add",
+                  "path": "/properties/polyProp/oneOf/0/required",
+                  "value": Array [],
+                },
+              ],
+            },
+            Object {
+              "intent": "add property hello schema to properties and required",
+              "patches": Array [
+                Object {
+                  "op": "add",
+                  "path": "/properties/polyProp/oneOf/0/properties/hello",
+                  "value": Object {
+                    "type": "string",
+                  },
+                },
+                Object {
+                  "op": "add",
+                  "path": "/properties/polyProp/oneOf/0/required/-",
+                  "value": "hello",
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  "1": Object {
+    "diff": Object {
+      "example": Object {
+        "hello": "world",
+      },
+      "key": "1",
+      "keyword": "type",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/example",
+      },
+      "propertyPath": "/properties/polyProp/oneOf/1",
+      "schemaPath": "",
+      "type": "BodyUnmatchedType",
+    },
+    "patchesExecuted": Array [
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "polyProp": Object {
+              "oneOf": Array [
+                Object {
+                  "properties": Object {},
+                  "type": "object",
+                },
+                Object {
+                  "oneOf": Array [
+                    Object {
+                      "type": "number",
+                    },
+                    Object {
+                      "properties": Object {
+                        "hello": Object {
+                          "type": "string",
+                        },
+                      },
+                      "required": Array [
+                        "hello",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "make 1 oneOf",
+          "extends": true,
+          "patch": Array [
+            Object {
+              "intent": "remove 1 type, in prep for replacing with one of",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/polyProp/oneOf/1/type",
+                },
+              ],
+            },
+            Object {
+              "intent": "add 1 one of",
+              "patches": Array [
+                Object {
+                  "op": "add",
+                  "path": "/properties/polyProp/oneOf/1/oneOf",
+                  "value": Array [
+                    Object {
+                      "type": "number",
+                    },
+                    Object {
+                      "properties": Object {
+                        "hello": Object {
+                          "type": "string",
+                        },
+                      },
+                      "required": Array [
+                        "hello",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "polyProp": Object {
+              "oneOf": Array [
+                Object {
+                  "properties": Object {},
+                  "type": "object",
+                },
+                Object {
+                  "properties": Object {
+                    "hello": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "hello",
+                  ],
+                  "type": "object",
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "change type of 1",
+          "extends": false,
+          "patch": Array [
+            Object {
+              "intent": "change 1 type",
+              "patches": Array [
+                Object {
+                  "op": "replace",
+                  "path": "/properties/polyProp/oneOf/1",
+                  "value": Object {
+                    "properties": Object {
+                      "hello": Object {
+                        "type": "string",
+                      },
+                    },
+                    "required": Array [
+                      "hello",
+                    ],
+                    "type": "object",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  "2": Object {
+    "diff": Object {
+      "example": Object {
+        "hello": "world",
+      },
+      "key": "polyProp",
+      "keyword": "oneOf",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/example",
+      },
+      "propertyPath": "/properties/polyProp",
+      "schemaPath": "",
+      "type": "BodyUnmatchedType",
+    },
+    "patchesExecuted": Array [
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "polyProp": Object {
+              "oneOf": Array [
+                Object {
+                  "properties": Object {},
+                  "type": "object",
+                },
+                Object {
+                  "type": "number",
+                },
+                Object {
+                  "properties": Object {
+                    "hello": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "hello",
+                  ],
+                  "type": "object",
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "expand one of for polyProp",
+          "extends": true,
+          "patch": Array [
+            Object {
+              "intent": "add new oneOf type to polyProp",
+              "patches": Array [
+                Object {
+                  "op": "add",
+                  "path": "/properties/polyProp/oneOf/-",
+                  "value": Object {
+                    "properties": Object {
+                      "hello": Object {
+                        "type": "string",
+                      },
+                    },
+                    "required": Array [
+                      "hello",
+                    ],
+                    "type": "object",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  "totalDiffsAfterPatches": 0,
+}
+`;
+
+exports[`one of json schema differ plugin when new primitive types provided to existing one of  1`] = `
+Object {
+  "0": Object {
+    "diff": Object {
+      "example": true,
+      "key": "0",
+      "keyword": "type",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/example",
+      },
+      "propertyPath": "/properties/polyProp/oneOf/0",
+      "schemaPath": "",
+      "type": "BodyUnmatchedType",
+    },
+    "patchesExecuted": Array [
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "polyProp": Object {
+              "oneOf": Array [
+                Object {
+                  "oneOf": Array [
+                    Object {
+                      "type": "string",
+                    },
+                    Object {
+                      "type": "boolean",
+                    },
+                  ],
+                },
+                Object {
+                  "type": "number",
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "make 0 oneOf",
+          "extends": true,
+          "patch": Array [
+            Object {
+              "intent": "remove 0 type, in prep for replacing with one of",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/polyProp/oneOf/0/type",
+                },
+              ],
+            },
+            Object {
+              "intent": "add 0 one of",
+              "patches": Array [
+                Object {
+                  "op": "add",
+                  "path": "/properties/polyProp/oneOf/0/oneOf",
+                  "value": Array [
+                    Object {
+                      "type": "string",
+                    },
+                    Object {
+                      "type": "boolean",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "polyProp": Object {
+              "oneOf": Array [
+                Object {
+                  "type": "boolean",
+                },
+                Object {
+                  "type": "number",
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "change type of 0",
+          "extends": false,
+          "patch": Array [
+            Object {
+              "intent": "change 0 type",
+              "patches": Array [
+                Object {
+                  "op": "replace",
+                  "path": "/properties/polyProp/oneOf/0",
+                  "value": Object {
+                    "type": "boolean",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  "1": Object {
+    "diff": Object {
+      "example": true,
+      "key": "1",
+      "keyword": "type",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/example",
+      },
+      "propertyPath": "/properties/polyProp/oneOf/1",
+      "schemaPath": "",
+      "type": "BodyUnmatchedType",
+    },
+    "patchesExecuted": Array [
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "polyProp": Object {
+              "oneOf": Array [
+                Object {
+                  "type": "string",
+                },
+                Object {
+                  "oneOf": Array [
+                    Object {
+                      "type": "number",
+                    },
+                    Object {
+                      "type": "boolean",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "make 1 oneOf",
+          "extends": true,
+          "patch": Array [
+            Object {
+              "intent": "remove 1 type, in prep for replacing with one of",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/polyProp/oneOf/1/type",
+                },
+              ],
+            },
+            Object {
+              "intent": "add 1 one of",
+              "patches": Array [
+                Object {
+                  "op": "add",
+                  "path": "/properties/polyProp/oneOf/1/oneOf",
+                  "value": Array [
+                    Object {
+                      "type": "number",
+                    },
+                    Object {
+                      "type": "boolean",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "polyProp": Object {
+              "oneOf": Array [
+                Object {
+                  "type": "string",
+                },
+                Object {
+                  "type": "boolean",
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "change type of 1",
+          "extends": false,
+          "patch": Array [
+            Object {
+              "intent": "change 1 type",
+              "patches": Array [
+                Object {
+                  "op": "replace",
+                  "path": "/properties/polyProp/oneOf/1",
+                  "value": Object {
+                    "type": "boolean",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  "2": Object {
+    "diff": Object {
+      "example": true,
+      "key": "polyProp",
+      "keyword": "oneOf",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/example",
+      },
+      "propertyPath": "/properties/polyProp",
+      "schemaPath": "",
+      "type": "BodyUnmatchedType",
+    },
+    "patchesExecuted": Array [
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "polyProp": Object {
+              "oneOf": Array [
+                Object {
+                  "type": "string",
+                },
+                Object {
+                  "type": "number",
+                },
+                Object {
+                  "type": "boolean",
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "expand one of for polyProp",
+          "extends": true,
+          "patch": Array [
+            Object {
+              "intent": "add new oneOf type to polyProp",
+              "patches": Array [
+                Object {
+                  "op": "add",
+                  "path": "/properties/polyProp/oneOf/-",
+                  "value": Object {
+                    "type": "boolean",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  "totalDiffsAfterPatches": 0,
+}
+`;
+
+exports[`one of json schema differ plugin when root schema is obejct and is shown an array 1`] = `
+Object {
+  "0": Object {
+    "diff": Object {
+      "example": Array [],
+      "key": "",
+      "keyword": "type",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/example",
+      },
+      "propertyPath": "",
+      "schemaPath": "",
+      "type": "BodyUnmatchedType",
+    },
+    "patchesExecuted": Array [
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "oneOf": Array [
+            Object {
+              "properties": Object {
+                "sup": Object {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            Object {
+              "items": Object {
+                "type": "object",
+              },
+              "type": "array",
+            },
+          ],
+          "properties": Object {
+            "sup": Object {
+              "type": "string",
+            },
+          },
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "make  oneOf",
+          "extends": true,
+          "patch": Array [
+            Object {
+              "intent": "remove  type, in prep for replacing with one of",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/type",
+                },
+              ],
+            },
+            Object {
+              "intent": "add  one of",
+              "patches": Array [
+                Object {
+                  "op": "add",
+                  "path": "/oneOf",
+                  "value": Array [
+                    Object {
+                      "properties": Object {
+                        "sup": Object {
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                    Object {
+                      "items": Object {
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "items": Object {
+            "type": "object",
+          },
+          "type": "array",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "change type of ",
+          "extends": false,
+          "patch": Array [
+            Object {
+              "intent": "change  type",
+              "patches": Array [
+                Object {
+                  "op": "replace",
+                  "path": "",
+                  "value": Object {
+                    "items": Object {
+                      "type": "object",
+                    },
+                    "type": "array",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  "totalDiffsAfterPatches": 0,
+}
+`;

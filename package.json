@@ -4,6 +4,7 @@
         "projects/json-pointer-helpers",
         "projects/openapi-io",
         "projects/openapi-utilities",
+        "projects/openapi-diff",
         "projects/developer-ui",
         "projects/api-checks",
         "projects/snyk-rules"

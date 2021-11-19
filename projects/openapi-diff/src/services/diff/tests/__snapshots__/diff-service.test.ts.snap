@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`diff service does not emit a path diff for a match 1`] = `
+Object {
+  "diffs": Array [],
+  "errors": Array [],
+}
+`;
+
+exports[`diff service emit a path diff for a partial match 1`] = `
+Object {
+  "diffs": Array [
+    Object {
+      "closestMatch": "/users/{username}/packages-not-right",
+      "method": "get",
+      "path": "/users/{username}/packages-not-right",
+      "type": "UnmatchedPath",
+    },
+  ],
+  "errors": Array [],
+}
+`;
+
+exports[`diff service emits unmatched path diff 1`] = `
+Object {
+  "diffs": Array [
+    Object {
+      "closestMatch": "/users/123",
+      "method": "get",
+      "path": "/other-resource/123",
+      "type": "UnmatchedPath",
+    },
+  ],
+  "errors": Array [],
+}
+`;
+
+exports[`diff service path matching emit a path diff for a partial match 1`] = `
+Object {
+  "diffs": Array [
+    Object {
+      "closestMatch": "/users/{username}/packages-not-right",
+      "method": "get",
+      "path": "/users/{username}/packages-not-right",
+      "type": "UnmatchedPath",
+    },
+  ],
+  "errors": Array [],
+}
+`;
+
+exports[`diff service path matching emits unmatched path diff 1`] = `
+Object {
+  "diffs": Array [
+    Object {
+      "closestMatch": "/users/123",
+      "method": "get",
+      "path": "/other-resource/123",
+      "type": "UnmatchedPath",
+    },
+  ],
+  "errors": Array [],
+}
+`;

@@ -1,0 +1,516 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`type json schema differ plugin when provided with an array, it can apply patches 1`] = `
+Object {
+  "0": Object {
+    "diff": Object {
+      "example": Array [
+        "1",
+        "2",
+        "3",
+        true,
+      ],
+      "key": "stringField",
+      "keyword": "type",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/example",
+      },
+      "propertyPath": "/properties/stringField",
+      "schemaPath": "",
+      "type": "BodyUnmatchedType",
+    },
+    "patchesExecuted": Array [
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "stringField": Object {
+              "oneOf": Array [
+                Object {
+                  "type": "string",
+                },
+                Object {
+                  "items": Object {
+                    "oneOf": Array [
+                      Object {
+                        "type": "string",
+                      },
+                      Object {
+                        "type": "boolean",
+                      },
+                    ],
+                  },
+                  "type": "array",
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "make stringField oneOf",
+          "extends": true,
+          "patch": Array [
+            Object {
+              "intent": "remove stringField type, in prep for replacing with one of",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/stringField/type",
+                },
+              ],
+            },
+            Object {
+              "intent": "add stringField one of",
+              "patches": Array [
+                Object {
+                  "op": "add",
+                  "path": "/properties/stringField/oneOf",
+                  "value": Array [
+                    Object {
+                      "type": "string",
+                    },
+                    Object {
+                      "items": Object {
+                        "oneOf": Array [
+                          Object {
+                            "type": "string",
+                          },
+                          Object {
+                            "type": "boolean",
+                          },
+                        ],
+                      },
+                      "type": "array",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "stringField": Object {
+              "items": Object {
+                "oneOf": Array [
+                  Object {
+                    "type": "string",
+                  },
+                  Object {
+                    "type": "boolean",
+                  },
+                ],
+              },
+              "type": "array",
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "change type of stringField",
+          "extends": false,
+          "patch": Array [
+            Object {
+              "intent": "change stringField type",
+              "patches": Array [
+                Object {
+                  "op": "replace",
+                  "path": "/properties/stringField",
+                  "value": Object {
+                    "items": Object {
+                      "oneOf": Array [
+                        Object {
+                          "type": "string",
+                        },
+                        Object {
+                          "type": "boolean",
+                        },
+                      ],
+                    },
+                    "type": "array",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  "totalDiffsAfterPatches": 0,
+}
+`;
+
+exports[`type json schema differ plugin when provided with an object, it can apply patches 1`] = `
+Object {
+  "0": Object {
+    "diff": Object {
+      "example": Object {
+        "field": "string",
+      },
+      "key": "stringField",
+      "keyword": "type",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/example",
+      },
+      "propertyPath": "/properties/stringField",
+      "schemaPath": "",
+      "type": "BodyUnmatchedType",
+    },
+    "patchesExecuted": Array [
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "stringField": Object {
+              "oneOf": Array [
+                Object {
+                  "type": "string",
+                },
+                Object {
+                  "properties": Object {
+                    "field": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "field",
+                  ],
+                  "type": "object",
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "make stringField oneOf",
+          "extends": true,
+          "patch": Array [
+            Object {
+              "intent": "remove stringField type, in prep for replacing with one of",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/stringField/type",
+                },
+              ],
+            },
+            Object {
+              "intent": "add stringField one of",
+              "patches": Array [
+                Object {
+                  "op": "add",
+                  "path": "/properties/stringField/oneOf",
+                  "value": Array [
+                    Object {
+                      "type": "string",
+                    },
+                    Object {
+                      "properties": Object {
+                        "field": Object {
+                          "type": "string",
+                        },
+                      },
+                      "required": Array [
+                        "field",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "stringField": Object {
+              "properties": Object {
+                "field": Object {
+                  "type": "string",
+                },
+              },
+              "required": Array [
+                "field",
+              ],
+              "type": "object",
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "change type of stringField",
+          "extends": false,
+          "patch": Array [
+            Object {
+              "intent": "change stringField type",
+              "patches": Array [
+                Object {
+                  "op": "replace",
+                  "path": "/properties/stringField",
+                  "value": Object {
+                    "properties": Object {
+                      "field": Object {
+                        "type": "string",
+                      },
+                    },
+                    "required": Array [
+                      "field",
+                    ],
+                    "type": "object",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  "totalDiffsAfterPatches": 0,
+}
+`;
+
+exports[`type json schema differ plugin when provided with another primitive, it can apply patches 1`] = `
+Object {
+  "0": Object {
+    "diff": Object {
+      "example": 123,
+      "key": "stringField",
+      "keyword": "type",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/example",
+      },
+      "propertyPath": "/properties/stringField",
+      "schemaPath": "",
+      "type": "BodyUnmatchedType",
+    },
+    "patchesExecuted": Array [
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "stringField": Object {
+              "oneOf": Array [
+                Object {
+                  "type": "string",
+                },
+                Object {
+                  "type": "number",
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "make stringField oneOf",
+          "extends": true,
+          "patch": Array [
+            Object {
+              "intent": "remove stringField type, in prep for replacing with one of",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/stringField/type",
+                },
+              ],
+            },
+            Object {
+              "intent": "add stringField one of",
+              "patches": Array [
+                Object {
+                  "op": "add",
+                  "path": "/properties/stringField/oneOf",
+                  "value": Array [
+                    Object {
+                      "type": "string",
+                    },
+                    Object {
+                      "type": "number",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "stringField": Object {
+              "type": "number",
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "change type of stringField",
+          "extends": false,
+          "patch": Array [
+            Object {
+              "intent": "change stringField type",
+              "patches": Array [
+                Object {
+                  "op": "replace",
+                  "path": "/properties/stringField",
+                  "value": Object {
+                    "type": "number",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  "totalDiffsAfterPatches": 0,
+}
+`;
+
+exports[`type json schema differ plugin when provided with null value, it can apply patches 1`] = `
+Object {
+  "0": Object {
+    "diff": Object {
+      "example": null,
+      "key": "stringField",
+      "keyword": "type",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/example",
+      },
+      "propertyPath": "/properties/stringField",
+      "schemaPath": "",
+      "type": "BodyUnmatchedType",
+    },
+    "patchesExecuted": Array [
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "stringField": Object {
+              "oneOf": Array [
+                Object {
+                  "type": "string",
+                },
+                Object {
+                  "type": "null",
+                },
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "make stringField oneOf",
+          "extends": true,
+          "patch": Array [
+            Object {
+              "intent": "remove stringField type, in prep for replacing with one of",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/stringField/type",
+                },
+              ],
+            },
+            Object {
+              "intent": "add stringField one of",
+              "patches": Array [
+                Object {
+                  "op": "add",
+                  "path": "/properties/stringField/oneOf",
+                  "value": Array [
+                    Object {
+                      "type": "string",
+                    },
+                    Object {
+                      "type": "null",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "stringField": Object {
+              "type": "null",
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "change type of stringField",
+          "extends": false,
+          "patch": Array [
+            Object {
+              "intent": "change stringField type",
+              "patches": Array [
+                Object {
+                  "op": "replace",
+                  "path": "/properties/stringField",
+                  "value": Object {
+                    "type": "null",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  "totalDiffsAfterPatches": 0,
+}
+`;

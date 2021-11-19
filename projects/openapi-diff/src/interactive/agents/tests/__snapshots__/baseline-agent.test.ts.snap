@@ -1,0 +1,222 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`baseline agents automatically approve new response types 1`] = `
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/examples": Object {
+      "get": Object {
+        "parameters": Array [],
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "field1": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "field1",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "",
+          },
+          "404": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "error": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "error",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "",
+          },
+        },
+      },
+      "parameters": Array [],
+    },
+  },
+}
+`;
+
+exports[`baseline agents automatically approve property diffs 1`] = `
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/examples": Object {
+      "get": Object {
+        "parameters": Array [],
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "field1": Object {
+                      "oneOf": Array [
+                        Object {
+                          "type": "string",
+                        },
+                        Object {
+                          "type": "number",
+                        },
+                      ],
+                    },
+                    "field2": Object {
+                      "items": Object {
+                        "properties": Object {
+                          "size": Object {
+                            "type": "string",
+                          },
+                        },
+                        "required": Array [
+                          "size",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": Array [
+                    "field1",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "",
+          },
+        },
+      },
+      "parameters": Array [],
+    },
+  },
+}
+`;
+
+exports[`baseline agents learn API one path at a time 1`] = `
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/examples": Object {
+      "get": Object {
+        "parameters": Array [],
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "items": Object {
+                      "items": Object {
+                        "type": "string",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": Array [
+                    "items",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "",
+          },
+        },
+      },
+      "parameters": Array [],
+      "post": Object {
+        "parameters": Array [],
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "items": Object {
+                      "items": Object {
+                        "type": "string",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": Array [
+                    "items",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "",
+          },
+        },
+      },
+    },
+    "/examples/{exampleId}": Object {
+      "get": Object {
+        "parameters": Array [],
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "name": Object {
+                      "type": "string",
+                    },
+                    "size": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "name",
+                    "size",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "",
+          },
+        },
+      },
+      "parameters": Array [
+        Object {
+          "in": "path",
+          "name": "exampleId",
+          "required": true,
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      ],
+    },
+  },
+}
+`;

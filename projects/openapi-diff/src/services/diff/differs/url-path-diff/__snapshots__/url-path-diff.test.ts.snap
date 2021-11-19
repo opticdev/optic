@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`url path differ can match / 1`] = `
+Object {
+  "context": Object {
+    "path": "/",
+    "pathParameterValues": Object {},
+    "urlPath": "/",
+  },
+  "diffs": undefined,
+  "error": undefined,
+  "isDiff": false,
+  "isMatch": true,
+}
+`;
+
+exports[`url path differ path parameters from pattern can be extracted 1`] = `
+Array [
+  "exampleId",
+  "action",
+]
+`;
+
+exports[`url path differ path parameters from pattern empty if constants 1`] = `Array []`;
+
+exports[`url path differ will match concrete paths in set 1`] = `
+Object {
+  "context": Object {
+    "path": "/app/hook/config",
+    "pathParameterValues": Object {},
+    "urlPath": "/app/hook/config",
+  },
+  "diffs": undefined,
+  "error": undefined,
+  "isDiff": false,
+  "isMatch": true,
+}
+`;
+
+exports[`url path differ will match concrete paths with parameters set 1`] = `
+Object {
+  "context": Object {
+    "path": "/orgs/{org}/actions/runner-groups/{runner_group_id}/runners/{runner_id}",
+    "pathParameterValues": Object {
+      "org": "aidans-org",
+      "runner_group_id": "group-5",
+      "runner_id": "id-5",
+    },
+    "urlPath": "/orgs/aidans-org/actions/runner-groups/group-5/runners/id-5",
+  },
+  "diffs": undefined,
+  "error": undefined,
+  "isDiff": false,
+  "isMatch": true,
+}
+`;
+
+exports[`url path differ will match concrete paths with parameters set 2 1`] = `
+Object {
+  "context": Object {
+    "path": "/repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/dismissals",
+    "pathParameterValues": Object {
+      "owner": "aidan-org",
+      "pull_number": "15",
+      "repo": "repo-1",
+      "review_id": "23",
+    },
+    "urlPath": "/repos/aidan-org/repo-1/pulls/15/reviews/23/dismissals",
+  },
+  "diffs": undefined,
+  "error": undefined,
+  "isDiff": false,
+  "isMatch": true,
+}
+`;
+
+exports[`url path differ will not match paths outside of set 1`] = `
+Object {
+  "context": undefined,
+  "diffs": Array [
+    Object {
+      "closestMatch": "/random-example",
+      "method": "get",
+      "path": "/random-example",
+      "type": "UnmatchedPath",
+    },
+  ],
+  "error": undefined,
+  "isDiff": true,
+  "isMatch": false,
+}
+`;
+
+exports[`url path differ will not match, but will find closest path with parameters set 2 1`] = `
+Object {
+  "context": undefined,
+  "diffs": Array [
+    Object {
+      "closestMatch": "/repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/not-real",
+      "method": "get",
+      "path": "/repos/aidan-org/repo-1/pulls/15/reviews/23/not-real",
+      "type": "UnmatchedPath",
+    },
+  ],
+  "error": undefined,
+  "isDiff": true,
+  "isMatch": false,
+}
+`;
