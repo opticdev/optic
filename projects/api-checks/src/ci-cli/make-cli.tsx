@@ -2,7 +2,7 @@ import React from "react";
 import { program as cli } from "commander";
 import { Compare } from "./commands/compare";
 import { parseSpecVersion } from "./input-helpers/compare-input-parser";
-import { defaultEmptySpec } from "./constants";
+import { defaultEmptySpec } from "@useoptic/openapi-utilities";
 const packageJson = require("../../package.json");
 import { render } from "ink";
 import { ApiCheckService } from "../sdk/api-check-service";

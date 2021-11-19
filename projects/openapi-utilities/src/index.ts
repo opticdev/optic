@@ -14,6 +14,7 @@ import {
   OpenApiRequestParameterFact,
   OpenApiResponseFact,
 } from "./openapi3/sdk/types";
+export { defaultEmptySpec } from './openapi3/constants';
 
 export {
   OpenApiFact,
