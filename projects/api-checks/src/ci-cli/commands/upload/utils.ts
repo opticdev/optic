@@ -27,6 +27,4 @@ export const uploadFileToS3 = async (
     },
     body: file,
   });
-
-  return "TODO get location of uploaded file";
 };
