@@ -12,7 +12,6 @@ export interface JsonPatcher<G> {
   helper: {
     getPath: (basePath: string, path: string[]) => any;
     get: (path: string) => any;
-    requiresObjectAt: (path: string[]) => void;
   };
   apply: (
     intent: string,
@@ -114,45 +113,6 @@ export function jsonPatcher<G>(
         const myPath = jsonPointerHelpers.append(basePath, ...paths);
         return niceTry(() =>
           jsonPatch.getValueByPointer(currentDocument(), myPath)
-        );
-      },
-      requiresObjectAt: (path: string[]) => {
-        const intent = `require object: ${path}`;
-        const wip = jsonPatcher(currentDocument());
-        const found = niceTry(() =>
-          jsonPatch.getValueByPointer(wip, jsonPointerHelpers.compile(path))
-        );
-        if (found) return;
-        path.forEach((component, index) => {
-          const partialPath = jsonPointerHelpers.compile(
-            path.slice(0, index + 1)
-          );
-          const partialPathParent = jsonPointerHelpers.compile(
-            path.slice(0, index)
-          );
-          const wipCurrent = wip.currentDocument();
-          const valueAtPointer = niceTry(() =>
-            jsonPatch.getValueByPointer(wipCurrent, partialPath)
-          );
-
-          const valueAtParentPointer = niceTry(() =>
-            jsonPatch.getValueByPointer(wipCurrent, partialPathParent)
-          );
-
-          if (!valueAtPointer) {
-            if (isObject(valueAtParentPointer)) {
-              wip.apply(`add ${component}`, [
-                { path: partialPath, value: {}, op: 'add' },
-              ]);
-            } else {
-              throw new Error(`cannot ensure object at : ${path}`);
-            }
-          }
-        });
-
-        apply(
-          intent,
-          wip.currentPatches().flatMap((i) => i.patches)
         );
       },
     },

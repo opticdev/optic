@@ -107,23 +107,6 @@ Object {
 }
 `;
 
-exports[`response differ matches default response status code if not other matches 2`] = `
-Object {
-  "context": undefined,
-  "diffs": Array [
-    Object {
-      "method": "get",
-      "path": "/example",
-      "statusCode": "200",
-      "type": "UnmatchedResponse",
-    },
-  ],
-  "error": undefined,
-  "isDiff": true,
-  "isMatch": false,
-}
-`;
-
 exports[`response differ no diff for 500 range status code 1`] = `
 Object {
   "context": undefined,

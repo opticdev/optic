@@ -46,40 +46,4 @@ describe('json patcher', () => {
 
     expect(patcher.currentDocument()).toMatchSnapshot();
   });
-
-  describe('helper', () => {
-    const example = {
-      favorite: {
-        color: 'red',
-      },
-    };
-
-    describe('to require an object at a certain key', () => {
-      it('works when the key is already an object', () => {
-        const patcher = jsonPatcher(example);
-        patcher.helper.requiresObjectAt(['favorite']);
-        expect(patcher.currentDocument()).toMatchSnapshot();
-        expect(patcher.currentPatches()).toMatchSnapshot();
-      });
-      it('works when the key is not present at root', () => {
-        const patcher = jsonPatcher(example);
-        patcher.helper.requiresObjectAt(['contacts']);
-        expect(patcher.currentDocument()).toMatchSnapshot();
-        expect(patcher.currentPatches()).toMatchSnapshot();
-      });
-      it('works when the key is nested', () => {
-        const patcher = jsonPatcher(example);
-        patcher.helper.requiresObjectAt(['favorite', 'foods']);
-        expect(patcher.currentDocument()).toMatchSnapshot();
-        expect(patcher.currentPatches()).toMatchSnapshot();
-      });
-
-      it('works when deeply nested ', () => {
-        const patcher = jsonPatcher(example);
-        patcher.helper.requiresObjectAt(['favorite', 'foods', 'healthy']);
-        expect(patcher.currentDocument()).toMatchSnapshot();
-        expect(patcher.currentPatches()).toMatchSnapshot();
-      });
-    });
-  });
 });

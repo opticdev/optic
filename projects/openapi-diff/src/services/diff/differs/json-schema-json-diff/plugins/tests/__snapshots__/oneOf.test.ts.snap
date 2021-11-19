@@ -58,9 +58,10 @@ Object {
           "extends": true,
           "patch": Array [
             Object {
-              "intent": "add required to parent object",
+              "intent": "add required [] to parent object",
               "patches": Array [
                 Object {
+                  "extra": "same",
                   "op": "add",
                   "path": "/properties/polyProp/oneOf/0/required",
                   "value": Array [],
@@ -68,7 +69,7 @@ Object {
               ],
             },
             Object {
-              "intent": "add property hello schema to properties and required",
+              "intent": "add property hello schema to properties",
               "patches": Array [
                 Object {
                   "op": "add",
@@ -77,6 +78,11 @@ Object {
                     "type": "string",
                   },
                 },
+              ],
+            },
+            Object {
+              "intent": "make new property hello required",
+              "patches": Array [
                 Object {
                   "op": "add",
                   "path": "/properties/polyProp/oneOf/0/required/-",

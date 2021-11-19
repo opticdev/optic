@@ -4255,7 +4255,7 @@ __metadata:
     ink-tab: ^4.1.0
     ink-testing-library: ^2.1.0
     ink-text-input: ^4.0.2
-    jest: ^26.6.0
+    jest: 26.6.0
     json-schema-traverse: ^1.0.0
     lodash.flatten: ^4.4.0
     lodash.isequal: ^4.5.0
