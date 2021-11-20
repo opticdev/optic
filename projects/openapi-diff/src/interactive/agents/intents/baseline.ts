@@ -1,6 +1,7 @@
 import { AgentIntent } from '../agent-interface';
 import { AnswerQuestionTypes } from '../questions';
 import {
+  BodyPropertyUnmatchedType,
   DiffType,
   IDiffService,
   ShapeDiffTypes,
@@ -9,6 +10,7 @@ import {
 } from '../../../services/diff/types';
 import { v4 as uuidv4 } from 'uuid';
 import { JsonSchemaPatch } from '../../../services/diff/differs/json-schema-json-diff/plugins/plugin-types';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export function baselineIntent(): AgentIntent {
   return {
@@ -40,6 +42,10 @@ export function baselineIntent(): AgentIntent {
         case DiffType.BodyAdditionalProperty:
         case DiffType.BodyUnmatchedType:
         case DiffType.BodyMissingRequiredProperty: {
+          if (shouldSkipOneOne(diff as ShapeDiffTypes)) {
+            return;
+          }
+
           const possiblePatches = diffService.jsonSchemaDiffer.diffToPatch(
             diff as ShapeDiffTypes,
             patch.forkedPatcher()
@@ -77,4 +83,31 @@ export function baselineIntent(): AgentIntent {
       }
     },
   };
+}
+
+/*
+  Extending a one of automatically is tricky business.
+  Any strategy can be configured by the user, and employed -- the current one is skipping
+ */
+function shouldSkipOneOne(diff: ShapeDiffTypes) {
+  if (diff.type === DiffType.BodyUnmatchedType) {
+    return (
+      jsonPointerHelpers.decode(diff.schemaPath).includes('oneOf') ||
+      jsonPointerHelpers.decode(diff.propertyPath).includes('oneOf')
+    );
+  }
+  if (diff.type === DiffType.BodyAdditionalProperty) {
+    return (
+      jsonPointerHelpers.decode(diff.schemaPath).includes('oneOf') ||
+      jsonPointerHelpers.decode(diff.parentObjectPath).includes('oneOf')
+    );
+  }
+  if (diff.type === DiffType.BodyMissingRequiredProperty) {
+    return (
+      jsonPointerHelpers.decode(diff.schemaPath).includes('oneOf') ||
+      jsonPointerHelpers.decode(diff.parentObjectPath).includes('oneOf')
+    );
+  }
+
+  return false;
 }

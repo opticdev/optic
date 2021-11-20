@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`json patcher helper will remove disallowed fields from object 1`] = `
+Object {
+  "description": "",
+  "properties": Object {},
+  "type": "object",
+}
+`;
+
 exports[`json patcher invalid patches do not apply 1`] = `
 Object {
   "error": "Cannot perform an \`add\` operation at the desired path

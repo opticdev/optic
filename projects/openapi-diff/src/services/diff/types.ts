@@ -142,7 +142,7 @@ export function EitherDiffResult<Context>(
       ? (i as MatchedWithContext<Context>).context
       : undefined,
     error: i.hasOwnProperty('error') ? (i as DiffError).error : undefined,
-    diffs: i.hasOwnProperty('diffs') ? (i as Diff).diffs : undefined,
+    diffs: i.hasOwnProperty('diffs') ? (i as Diff).diffs : [],
   };
 }
 

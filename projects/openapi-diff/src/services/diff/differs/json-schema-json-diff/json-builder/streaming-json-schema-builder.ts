@@ -7,8 +7,6 @@ import {
 } from '../../../../patch/incremental-json-patch/json-patcher';
 import invariant from 'ts-invariant';
 import equals from 'fast-deep-equal';
-import _isequal from 'lodash.isequal';
-import uniqwith from 'lodash.uniqwith';
 
 export function streamingJsonSchemaBuilder(
   jsonDiffer: JsonSchemaJsonDiffer,
@@ -73,9 +71,9 @@ export function extendSchemaWithExample(
   );
 
   diffs.forEach((diff) => {
-    const starting = patchJsonSchema.currentDocument();
     const patches = jsonDiffer.diffToPatch(diff, patchJsonSchema as any);
     const extendsPatches = patches.filter((i) => i.extends);
+    // console.log(extendsPatches);
     extendsPatches.forEach((i) => {
       if (i.patch.length > 0) {
         patchJsonSchema.applyPatch({
@@ -106,9 +104,7 @@ function chooseInitialType(rootInput: any): OpenAPIV3.SchemaObject {
   } else if (Array.isArray(rootInput)) {
     return {
       type: 'array',
-      items: rootInput.length
-        ? chooseInitialType(rootInput[0])
-        : chooseInitialType({}),
+      items: rootInput.length ? chooseInitialType(rootInput[0]) : {},
     };
   } else if (typeof rootInput === 'string') {
     return { type: 'string' };

@@ -14,6 +14,7 @@ import {
 } from '../../../../patch/incremental-json-patch/json-patcher';
 import { streamingJsonSchemaBuilder } from '../json-builder/streaming-json-schema-builder';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { allowedKeysForOneOf } from '../transition-assumptions';
 
 export const oneOfKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
   keyword: JsonSchemaKnownKeyword.oneOf,
@@ -27,8 +28,12 @@ export const oneOfKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
       validationError.schemaPath.substring(1)
     );
 
-    const propertyPath = jsonPointerHelpers.pop(
-      jsonPointerHelpers.compile(typeKeywordPath)
+    const oneOfIndex = jsonPointerHelpers
+      .compile(typeKeywordPath)
+      .lastIndexOf('oneOf');
+
+    const propertyPath = jsonPointerHelpers.compile(
+      typeKeywordPath.slice(0, oneOfIndex + 1)
     );
 
     const keyName = jsonPointerHelpers.decode(propertyPath).pop() || '';
@@ -65,6 +70,12 @@ export const oneOfKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
           value: streamingJsonSchemaBuilder(differ, diff.example),
         },
       ]);
+
+      patch.helper.removeKeysNotAllowedAt(
+        diff.propertyPath,
+        allowedKeysForOneOf,
+        'after changing to a oneOf'
+      );
 
       const effect = `expand one of for ${diff.key}`;
       return {

@@ -46,4 +46,25 @@ describe('json patcher', () => {
 
     expect(patcher.currentDocument()).toMatchSnapshot();
   });
+
+  it('helper will remove disallowed fields from object', () => {
+    const example = {
+      type: 'object',
+      items: {
+        type: 'string',
+      },
+      description: '',
+      properties: {},
+      minimum: 0,
+    };
+    const patcher = jsonPatcher(example);
+
+    patcher.helper.removeKeysNotAllowedAt(
+      '',
+      ['type', 'properties', 'description'],
+      'after switching type'
+    );
+
+    expect(patcher.currentDocument()).toMatchSnapshot();
+  });
 });

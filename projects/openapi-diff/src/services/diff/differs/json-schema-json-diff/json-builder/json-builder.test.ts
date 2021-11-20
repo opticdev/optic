@@ -1,5 +1,8 @@
 import { opticJsonSchemaDiffer } from '../index';
-import { streamingJsonSchemaBuilder } from './streaming-json-schema-builder';
+import {
+  extendSchemaWithExample,
+  streamingJsonSchemaBuilder,
+} from './streaming-json-schema-builder';
 import { locations } from '../plugins/tests/json-schema-diff-patch-fixture';
 const schemaDiffer = opticJsonSchemaDiffer();
 
@@ -129,10 +132,81 @@ describe('json builder', () => {
       expect(result).toMatchSnapshot();
     });
 
-    // it("can learn an array of empty items, then a string", () => {
-    //   const result = fixture([], ["hello"]);
-    //   expect(result.diffBetweenGeneratedAndInput).toHaveLength(0);
-    //   expect(result).toMatchSnapshot();
-    // });
+    it('[known limitation] -- empty arrays will never learn their types, must be set by user', () => {
+      // new keyword would be needed to emit a diff of kind "UnderspecifiedArrayObservation"
+      const result = fixture([], ['hello']);
+      expect(result.diffBetweenGeneratedAndInput).toHaveLength(0);
+      expect(result).toMatchSnapshot();
+    });
+
+    it('can learn an array with polymorphism, that can also be an object', () => {
+      const arraysWithWildPolymorphism = [
+        [{ food: 'rice' }, { food: 'cookies' }, { food: 'chips' }],
+        ['user1', 'user2', 'user3'],
+        ['user1', 'user2', 'user3'],
+        ['user1', 'user2', 'user3'],
+        ['user1', 'user2', 'user3'],
+        { nemesis: 'Brad' },
+      ];
+
+      const result = fixture(
+        arraysWithWildPolymorphism[0],
+        ...arraysWithWildPolymorphism
+      );
+      expect(result.diffBetweenGeneratedAndInput).toHaveLength(0);
+      expect(result).toMatchSnapshot();
+    });
+
+    it('can learn an object, that can also be an array with polymorphism', () => {
+      const arraysWithWildPolymorphism = [
+        { nemesis: 'Brad' },
+        [{ food: 'rice' }, { food: 'cookies' }, { food: 'chips' }],
+        // ['user1', 'user2', 'user3'],
+      ];
+
+      const result = fixture(
+        arraysWithWildPolymorphism[0],
+        ...arraysWithWildPolymorphism
+      );
+      expect(result.diffBetweenGeneratedAndInput).toHaveLength(0);
+      expect(result).toMatchSnapshot();
+    });
+
+    it('can extend an object array one of properly', () => {
+      const schema: any = {
+        oneOf: [
+          {
+            type: 'object',
+            properties: {
+              nemesis: {
+                type: 'string',
+              },
+            },
+            required: ['nemesis'],
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                food: {
+                  type: 'string',
+                },
+              },
+              required: ['food'],
+            },
+          },
+        ],
+      };
+
+      const result = extendSchemaWithExample(opticJsonSchemaDiffer(), schema, [
+        'user1',
+        'user2',
+        'user3',
+      ]);
+
+      console.log(result.schema);
+      expect(result).toMatchSnapshot();
+    });
   });
 });

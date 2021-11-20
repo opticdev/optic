@@ -13,8 +13,11 @@ import {
   jsonPatcher,
 } from '../../../../patch/incremental-json-patch/json-patcher';
 import { streamingJsonSchemaBuilder } from '../json-builder/streaming-json-schema-builder';
-import { removeTypeKeywords } from '../json-schema-utils';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import {
+  allowedKeysForOneOf,
+  cleanupNewSchema,
+} from '../transition-assumptions';
 
 export const typeKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
   keyword: JsonSchemaKnownKeyword.type,
@@ -74,16 +77,6 @@ export const typeKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
           },
         ]);
       } else {
-        patch.apply(
-          `remove ${diff.key} type, in prep for replacing with one of`,
-          [
-            {
-              op: 'remove',
-              path: jsonPointerHelpers.append(diff.propertyPath, 'type'),
-            },
-          ]
-        );
-
         patch.apply(`add ${diff.key} one of`, [
           {
             op: 'add',
@@ -94,6 +87,12 @@ export const typeKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
             ], // whatever it was before, with whatever it is now
           },
         ]);
+
+        patch.helper.removeKeysNotAllowedAt(
+          diff.propertyPath,
+          allowedKeysForOneOf,
+          'after changing to a oneOf'
+        );
       }
 
       const effect = `make ${diff.key} oneOf`;
@@ -118,10 +117,11 @@ export const typeKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
         {
           op: 'replace',
           path: jsonPointerHelpers.append(diff.propertyPath),
-          value: {
-            ...removeTypeKeywords(currentPropertySchema),
-            ...streamingJsonSchemaBuilder(differ, diff.example),
-          },
+          // handles removal of keys that are no longer allowed
+          value: cleanupNewSchema(
+            currentPropertySchema,
+            streamingJsonSchemaBuilder(differ, diff.example)
+          ),
         },
       ]);
 

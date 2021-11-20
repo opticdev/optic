@@ -1,5 +1,91 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`json builder arrays [known limitation] -- empty arrays will never learn their types, must be set by user 1`] = `
+Object {
+  "diffBetweenGeneratedAndInput": Array [],
+  "input": Array [],
+  "jsonSchemaForInput": Object {
+    "items": Object {},
+    "type": "array",
+  },
+}
+`;
+
+exports[`json builder arrays can extend an object array one of properly 1`] = `
+Object {
+  "diffs": Array [
+    Object {
+      "example": Array [
+        "user1",
+        "user2",
+        "user3",
+      ],
+      "key": "oneOf",
+      "keyword": "oneOf",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/",
+      },
+      "propertyPath": "/oneOf",
+      "schemaPath": "",
+      "type": "BodyUnmatchedType",
+    },
+  ],
+  "schema": Object {
+    "oneOf": Array [
+      Object {
+        "oneOf": Array [
+          Object {
+            "properties": Object {
+              "nemesis": Object {
+                "type": "string",
+              },
+            },
+            "required": Array [
+              "nemesis",
+            ],
+            "type": "object",
+          },
+          Object {
+            "items": Object {
+              "type": "string",
+            },
+            "type": "array",
+          },
+        ],
+      },
+      Object {
+        "items": Object {
+          "oneOf": Array [
+            Object {
+              "properties": Object {
+                "food": Object {
+                  "type": "string",
+                },
+              },
+              "required": Array [
+                "food",
+              ],
+              "type": "object",
+            },
+            Object {
+              "type": "string",
+            },
+          ],
+        },
+        "type": "array",
+      },
+    ],
+  },
+}
+`;
+
 exports[`json builder arrays can learn an array of object items 1`] = `
 Object {
   "diffBetweenGeneratedAndInput": Array [],
@@ -79,6 +165,97 @@ Object {
       "type": "string",
     },
     "type": "array",
+  },
+}
+`;
+
+exports[`json builder arrays can learn an array with polymorphism, that can also be an object 1`] = `
+Object {
+  "diffBetweenGeneratedAndInput": Array [],
+  "input": Array [
+    Object {
+      "food": "rice",
+    },
+    Object {
+      "food": "cookies",
+    },
+    Object {
+      "food": "chips",
+    },
+  ],
+  "jsonSchemaForInput": Object {
+    "oneOf": Array [
+      Object {
+        "items": Object {
+          "oneOf": Array [
+            Object {
+              "properties": Object {
+                "food": Object {
+                  "type": "string",
+                },
+              },
+              "required": Array [
+                "food",
+              ],
+              "type": "object",
+            },
+            Object {
+              "type": "string",
+            },
+          ],
+        },
+        "type": "array",
+      },
+      Object {
+        "properties": Object {
+          "nemesis": Object {
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "nemesis",
+        ],
+        "type": "object",
+      },
+    ],
+  },
+}
+`;
+
+exports[`json builder arrays can learn an object, that can also be an array with polymorphism 1`] = `
+Object {
+  "diffBetweenGeneratedAndInput": Array [],
+  "input": Object {
+    "nemesis": "Brad",
+  },
+  "jsonSchemaForInput": Object {
+    "oneOf": Array [
+      Object {
+        "properties": Object {
+          "nemesis": Object {
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "nemesis",
+        ],
+        "type": "object",
+      },
+      Object {
+        "items": Object {
+          "properties": Object {
+            "food": Object {
+              "type": "string",
+            },
+          },
+          "required": Array [
+            "food",
+          ],
+          "type": "object",
+        },
+        "type": "array",
+      },
+    ],
   },
 }
 `;

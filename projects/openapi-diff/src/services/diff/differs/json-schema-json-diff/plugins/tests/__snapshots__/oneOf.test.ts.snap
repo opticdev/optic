@@ -156,15 +156,6 @@ Object {
           "extends": true,
           "patch": Array [
             Object {
-              "intent": "remove 1 type, in prep for replacing with one of",
-              "patches": Array [
-                Object {
-                  "op": "remove",
-                  "path": "/properties/polyProp/oneOf/1/type",
-                },
-              ],
-            },
-            Object {
               "intent": "add 1 one of",
               "patches": Array [
                 Object {
@@ -186,6 +177,15 @@ Object {
                       "type": "object",
                     },
                   ],
+                },
+              ],
+            },
+            Object {
+              "intent": "remove type after after changing to a oneOf",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/polyProp/oneOf/1/type",
                 },
               ],
             },
@@ -253,7 +253,7 @@ Object {
       "example": Object {
         "hello": "world",
       },
-      "key": "polyProp",
+      "key": "oneOf",
       "keyword": "oneOf",
       "location": Object {
         "inResponse": Object {
@@ -265,13 +265,77 @@ Object {
         "method": "post",
         "path": "/example",
       },
-      "propertyPath": "/properties/polyProp",
+      "propertyPath": "/properties/polyProp/oneOf",
       "schemaPath": "",
       "type": "BodyUnmatchedType",
     },
     "patchesExecuted": Array [
       Object {
-        "newDiffs": Array [],
+        "newDiffs": Array [
+          Object {
+            "example": Object {
+              "polyProp": Object {
+                "hello": "world",
+              },
+            },
+            "key": "hello",
+            "keyword": "additionalProperties",
+            "location": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "method": "post",
+              "path": "/example",
+            },
+            "parentObjectPath": "/properties/polyProp/oneOf/0/additionalProperties",
+            "propertyExamplePath": "/polyProp/hello",
+            "schemaPath": "",
+            "type": "BodyAdditionalProperty",
+          },
+          Object {
+            "example": Object {
+              "hello": "world",
+            },
+            "key": "1",
+            "keyword": "type",
+            "location": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "method": "post",
+              "path": "/example",
+            },
+            "propertyPath": "/properties/polyProp/oneOf/1",
+            "schemaPath": "",
+            "type": "BodyUnmatchedType",
+          },
+          Object {
+            "example": Object {
+              "hello": "world",
+            },
+            "key": "oneOf",
+            "keyword": "oneOf",
+            "location": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "method": "post",
+              "path": "/example",
+            },
+            "propertyPath": "/properties/polyProp/oneOf",
+            "schemaPath": "",
+            "type": "BodyUnmatchedType",
+          },
+        ],
         "newJsonSchema": Object {
           "properties": Object {
             "polyProp": Object {
@@ -283,17 +347,6 @@ Object {
                 Object {
                   "type": "number",
                 },
-                Object {
-                  "properties": Object {
-                    "hello": Object {
-                      "type": "string",
-                    },
-                  },
-                  "required": Array [
-                    "hello",
-                  ],
-                  "type": "object",
-                },
               ],
             },
           },
@@ -301,35 +354,14 @@ Object {
         },
         "patch": Object {
           "classification": "Incompatible",
-          "effect": "expand one of for polyProp",
+          "effect": "expand one of for oneOf",
           "extends": true,
-          "patch": Array [
-            Object {
-              "intent": "add new oneOf type to polyProp",
-              "patches": Array [
-                Object {
-                  "op": "add",
-                  "path": "/properties/polyProp/oneOf/-",
-                  "value": Object {
-                    "properties": Object {
-                      "hello": Object {
-                        "type": "string",
-                      },
-                    },
-                    "required": Array [
-                      "hello",
-                    ],
-                    "type": "object",
-                  },
-                },
-              ],
-            },
-          ],
+          "patch": Array [],
         },
       },
     ],
   },
-  "totalDiffsAfterPatches": 0,
+  "totalDiffsAfterPatches": 3,
 }
 `;
 
@@ -385,15 +417,6 @@ Object {
           "extends": true,
           "patch": Array [
             Object {
-              "intent": "remove 0 type, in prep for replacing with one of",
-              "patches": Array [
-                Object {
-                  "op": "remove",
-                  "path": "/properties/polyProp/oneOf/0/type",
-                },
-              ],
-            },
-            Object {
               "intent": "add 0 one of",
               "patches": Array [
                 Object {
@@ -407,6 +430,15 @@ Object {
                       "type": "boolean",
                     },
                   ],
+                },
+              ],
+            },
+            Object {
+              "intent": "remove type after after changing to a oneOf",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/polyProp/oneOf/0/type",
                 },
               ],
             },
@@ -502,15 +534,6 @@ Object {
           "extends": true,
           "patch": Array [
             Object {
-              "intent": "remove 1 type, in prep for replacing with one of",
-              "patches": Array [
-                Object {
-                  "op": "remove",
-                  "path": "/properties/polyProp/oneOf/1/type",
-                },
-              ],
-            },
-            Object {
               "intent": "add 1 one of",
               "patches": Array [
                 Object {
@@ -524,6 +547,15 @@ Object {
                       "type": "boolean",
                     },
                   ],
+                },
+              ],
+            },
+            Object {
+              "intent": "remove type after after changing to a oneOf",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/polyProp/oneOf/1/type",
                 },
               ],
             },
@@ -572,7 +604,7 @@ Object {
   "2": Object {
     "diff": Object {
       "example": true,
-      "key": "polyProp",
+      "key": "oneOf",
       "keyword": "oneOf",
       "location": Object {
         "inResponse": Object {
@@ -584,13 +616,68 @@ Object {
         "method": "post",
         "path": "/example",
       },
-      "propertyPath": "/properties/polyProp",
+      "propertyPath": "/properties/polyProp/oneOf",
       "schemaPath": "",
       "type": "BodyUnmatchedType",
     },
     "patchesExecuted": Array [
       Object {
-        "newDiffs": Array [],
+        "newDiffs": Array [
+          Object {
+            "example": true,
+            "key": "0",
+            "keyword": "type",
+            "location": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "method": "post",
+              "path": "/example",
+            },
+            "propertyPath": "/properties/polyProp/oneOf/0",
+            "schemaPath": "",
+            "type": "BodyUnmatchedType",
+          },
+          Object {
+            "example": true,
+            "key": "1",
+            "keyword": "type",
+            "location": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "method": "post",
+              "path": "/example",
+            },
+            "propertyPath": "/properties/polyProp/oneOf/1",
+            "schemaPath": "",
+            "type": "BodyUnmatchedType",
+          },
+          Object {
+            "example": true,
+            "key": "oneOf",
+            "keyword": "oneOf",
+            "location": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "method": "post",
+              "path": "/example",
+            },
+            "propertyPath": "/properties/polyProp/oneOf",
+            "schemaPath": "",
+            "type": "BodyUnmatchedType",
+          },
+        ],
         "newJsonSchema": Object {
           "properties": Object {
             "polyProp": Object {
@@ -601,9 +688,6 @@ Object {
                 Object {
                   "type": "number",
                 },
-                Object {
-                  "type": "boolean",
-                },
               ],
             },
           },
@@ -611,27 +695,14 @@ Object {
         },
         "patch": Object {
           "classification": "Incompatible",
-          "effect": "expand one of for polyProp",
+          "effect": "expand one of for oneOf",
           "extends": true,
-          "patch": Array [
-            Object {
-              "intent": "add new oneOf type to polyProp",
-              "patches": Array [
-                Object {
-                  "op": "add",
-                  "path": "/properties/polyProp/oneOf/-",
-                  "value": Object {
-                    "type": "boolean",
-                  },
-                },
-              ],
-            },
-          ],
+          "patch": Array [],
         },
       },
     ],
   },
-  "totalDiffsAfterPatches": 0,
+  "totalDiffsAfterPatches": 3,
 }
 `;
 
@@ -670,32 +741,16 @@ Object {
               "type": "object",
             },
             Object {
-              "items": Object {
-                "type": "object",
-              },
+              "items": Object {},
               "type": "array",
             },
           ],
-          "properties": Object {
-            "sup": Object {
-              "type": "string",
-            },
-          },
         },
         "patch": Object {
           "classification": "Incompatible",
           "effect": "make  oneOf",
           "extends": true,
           "patch": Array [
-            Object {
-              "intent": "remove  type, in prep for replacing with one of",
-              "patches": Array [
-                Object {
-                  "op": "remove",
-                  "path": "/type",
-                },
-              ],
-            },
             Object {
               "intent": "add  one of",
               "patches": Array [
@@ -712,12 +767,28 @@ Object {
                       "type": "object",
                     },
                     Object {
-                      "items": Object {
-                        "type": "object",
-                      },
+                      "items": Object {},
                       "type": "array",
                     },
                   ],
+                },
+              ],
+            },
+            Object {
+              "intent": "remove type after after changing to a oneOf",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/type",
+                },
+              ],
+            },
+            Object {
+              "intent": "remove properties after after changing to a oneOf",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties",
                 },
               ],
             },
@@ -727,9 +798,6 @@ Object {
       Object {
         "newDiffs": Array [],
         "newJsonSchema": Object {
-          "items": Object {
-            "type": "object",
-          },
           "type": "array",
         },
         "patch": Object {
@@ -744,9 +812,6 @@ Object {
                   "op": "replace",
                   "path": "",
                   "value": Object {
-                    "items": Object {
-                      "type": "object",
-                    },
                     "type": "array",
                   },
                 },

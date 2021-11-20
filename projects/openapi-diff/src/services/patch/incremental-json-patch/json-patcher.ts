@@ -3,6 +3,7 @@ import { copyObject } from '../../../utils/debug_waitFor';
 import { isObject } from '../../../utils/is-object';
 import niceTry from 'nice-try';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { isExtension } from '../../diff/differs/json-schema-json-diff/transition-assumptions';
 
 export interface JsonPatcher<G> {
   fork: () => JsonPatcher<G>;
@@ -12,6 +13,11 @@ export interface JsonPatcher<G> {
   helper: {
     getPath: (basePath: string, path: string[]) => any;
     get: (path: string) => any;
+    removeKeysNotAllowedAt: (
+      basePath: string,
+      allowedKeys: string[],
+      reason: string
+    ) => void;
   };
   apply: (
     intent: string,
@@ -108,6 +114,30 @@ export function jsonPatcher<G>(
         return niceTry(() =>
           jsonPatch.getValueByPointer(currentDocument(), path)
         );
+      },
+      removeKeysNotAllowedAt: (
+        basePath: string,
+        allowedKeys: string[],
+        reason: string
+      ) => {
+        const current = currentDocument();
+        const parent = niceTry(() =>
+          jsonPatch.getValueByPointer(current, basePath)
+        );
+
+        if (parent && isObject(parent)) {
+          Object.keys(parent).forEach((key) => {
+            if (!allowedKeys.includes(key) || isExtension(key)) {
+              const keypath = jsonPointerHelpers.append(basePath, key);
+              apply(`remove ${key} after ${reason}`, [
+                {
+                  op: 'remove',
+                  path: keypath,
+                },
+              ]);
+            }
+          });
+        }
       },
       getPath: (basePath: string, paths: string[]) => {
         const myPath = jsonPointerHelpers.append(basePath, ...paths);

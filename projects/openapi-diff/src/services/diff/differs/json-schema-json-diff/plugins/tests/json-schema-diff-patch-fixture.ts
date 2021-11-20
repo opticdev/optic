@@ -30,6 +30,8 @@ export function jsonSchemaDiffPatchFixture(
 
         const newJsonSchema = jsonSchema.currentDocument();
 
+        console.log(newJsonSchema);
+
         const newDiffs = jsonDiffer.compare(
           newJsonSchema,
           input,

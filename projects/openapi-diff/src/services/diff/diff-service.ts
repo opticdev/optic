@@ -48,7 +48,6 @@ export function createDiffServiceWithCachingProjections(
             diffs: [],
             errors: [],
           };
-
           // match the response
           const response = responsesMatcher.responseDiffsForTraffic(
             traffic,

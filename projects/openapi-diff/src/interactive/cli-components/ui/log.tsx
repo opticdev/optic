@@ -22,7 +22,7 @@ export function Log(props: { log: AgentLogEvent[] }) {
                 <Box paddingLeft={2} paddingRight={1} width={10}>
                   {logItem.hasDiffs ? (
                     <Text backgroundColor="red" bold>
-                      {' Diff  '}
+                      {'  Diff '}
                     </Text>
                   ) : (
                     <Text backgroundColor="blue" bold>

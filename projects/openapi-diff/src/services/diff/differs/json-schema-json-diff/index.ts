@@ -2,6 +2,17 @@ import { ConceptualLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { prepareSchemaForDiff } from './prepare-schema-for-diff';
 import Ajv, { ErrorObject } from 'ajv';
 import { JsonSchemaDiffPlugin } from './plugins/plugin-types';
+// Register plugins here
+import { requiredKeyword } from './plugins/required';
+import { additionalProperties } from './plugins/additionalProperties';
+import { JsonSchemaJsonDiffer } from './types';
+import { typeKeyword } from './plugins/type';
+import { oneOfKeyword } from './plugins/oneOf';
+import { DiffType, ShapeDiffTypes } from '../../types';
+import { normalizeJsonPointer } from '../../normalize-json-pointer';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import uniqWith from 'lodash.uniqwith';
+import isEqual from 'lodash.isequal';
 
 export function jsonSchemaDiffer(
   plugins: JsonSchemaDiffPlugin<any>[]
@@ -93,15 +104,6 @@ export function jsonSchemaDiffer(
   };
   return differ;
 }
-
-// Register plugins here
-import { requiredKeyword } from './plugins/required';
-import { additionalProperties } from './plugins/additionalProperties';
-import { JsonSchemaJsonDiffer } from './types';
-import { typeKeyword } from './plugins/type';
-import { oneOfKeyword } from './plugins/oneOf';
-import { DiffType, ShapeDiffTypes } from '../../types';
-import { normalizeJsonPointer } from '../../normalize-json-pointer';
 
 export const opticJsonSchemaDiffer = () => {
   return jsonSchemaDiffer([
