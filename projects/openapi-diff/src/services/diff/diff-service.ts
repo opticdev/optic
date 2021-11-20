@@ -1,4 +1,4 @@
-import { IDiff, IDiffService } from './types';
+import { DiffResult, EitherDiffResult, IDiff, IDiffService } from './types';
 import { OpenAPIDiffingQuestions } from '../read/types';
 import { ApiTraffic } from '../traffic/types';
 import { shouldDiffAgainstThisSpec } from './differs/should-diff';
@@ -22,18 +22,30 @@ export function createDiffServiceWithCachingProjections(
     compare: async (
       traffic: ApiTraffic
     ): Promise<{ diffs: IDiff[]; errors: string[] }> => {
+      const diffResult: { diffs: IDiff[]; errors: string[] } = {
+        diffs: [],
+        errors: [],
+      };
+
+      const appendDiffResult = <A>(result: EitherDiffResult<A>) => {
+        diffResult.diffs.push(...result.diffs);
+        if (result.error) diffResult.errors.push(result.error);
+      };
+
       /*
         This is nested, feels ugly, but probably is the best way to represent a nested data structure that can be diffed...for now
         open to suggestions
        */
       const continueWithDiff =
         shouldDiff.responseDiffsForTraffic(traffic).isMatch;
-      if (!continueWithDiff) return { diffs: [], errors: [] };
+      if (!continueWithDiff) return diffResult;
 
       const matchesPath = pathMatcher.compareToPath(
         traffic.method,
         traffic.path
       );
+
+      appendDiffResult(matchesPath);
 
       // here we know we've matched an operation
       if (matchesPath.isMatch) {
@@ -43,16 +55,16 @@ export function createDiffServiceWithCachingProjections(
             traffic.method
           );
 
+        appendDiffResult(matchesOperation);
+
         if (matchesOperation.isMatch) {
-          const results: { diffs: IDiff[]; errors: string[] } = {
-            diffs: [],
-            errors: [],
-          };
           // match the response
           const response = responsesMatcher.responseDiffsForTraffic(
             traffic,
             matchesOperation.context
           );
+
+          appendDiffResult(response);
 
           if (response.isMatch) {
             // response content & schema diff
@@ -62,14 +74,12 @@ export function createDiffServiceWithCachingProjections(
                 response.context
               );
 
-            results.diffs.push(...responseContentMatch.diffs);
-          } else results.diffs.push(...response.diffs);
-
-          // collect diffs from failed matches
-          return results;
-        } else return { diffs: matchesOperation.diffs, errors: [] };
+            appendDiffResult(responseContentMatch);
+          }
+        }
       }
-      return { diffs: matchesPath.diffs, errors: [] };
+
+      return diffResult;
     },
   };
 }

@@ -65,6 +65,15 @@ export function Log(props: { log: AgentLogEvent[] }) {
               </Box>
             );
             break;
+          case AgentLogEvents.error:
+            return (
+              <Box key={index + 'patching'} flexDirection="row" paddingLeft={2}>
+                <Text color="yellow" bold>
+                  warning: <Text>{logItem.error}</Text>
+                </Text>
+              </Box>
+            );
+            break;
         }
       }}
     </Static>

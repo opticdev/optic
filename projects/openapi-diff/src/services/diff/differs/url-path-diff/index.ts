@@ -68,12 +68,29 @@ export function urlPathDiff(paths: string[]) {
       });
       // grab the last one before overwriting
       if (qualifiedPaths.length > 0 && filtered.length === 0) {
-        closestMatch = qualifiedPaths[0];
+        if (index === 0) {
+          closestMatch = inputAsFragment;
+        } else {
+          closestMatch = qualifiedPaths[0];
+        }
       }
       qualifiedPaths = filtered;
     });
 
     if (qualifiedPaths.length > 1) {
+      const exactMatch = qualifiedPaths.find((i) => equals(i, inputAsFragment));
+
+      if (exactMatch) {
+        const matchPath: string = allPathsAsFragments.find((i) =>
+          equals(i[1], exactMatch)
+        )![0];
+        return DiffResult.matchWithContext<MatchedUrlPath>({
+          pathParameterValues: {},
+          urlPath,
+          path: matchPath,
+        });
+      }
+
       return DiffResult.error(`Url matched > 1 path ${urlPath} `);
     } else if (qualifiedPaths.length === 1) {
       const match = qualifiedPaths[0];

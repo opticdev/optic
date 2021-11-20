@@ -64,7 +64,7 @@ Object {
     "pathParameterValues": Object {},
     "urlPath": "/example",
   },
-  "diffs": undefined,
+  "diffs": Array [],
   "error": undefined,
   "isDiff": false,
   "isMatch": true,

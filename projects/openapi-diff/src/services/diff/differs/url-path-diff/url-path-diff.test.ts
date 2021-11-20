@@ -61,6 +61,35 @@ describe('url path differ', () => {
     expect(result).toMatchSnapshot();
   });
 
+  /*
+  known limitation -- nested ambiguous may not work properly
+   */
+  describe('ambiguous paths', () => {
+    const stub: OpenAPIDiffingQuestions = {
+      ...openApiDiffingQuestionsTestingStub,
+      paths(): string[] {
+        return ['/venues/top', '/venues/featured', '/venues/{venueId}'];
+      },
+    };
+
+    const ambiguousPathDiffer = urlPathDiffFromSpec(stub);
+    it('will match absolute path', () => {
+      const result = ambiguousPathDiffer.compareToPath(
+        OpenAPIV3.HttpMethods.GET,
+        '/venues/top'
+      );
+      expect(result).toMatchSnapshot();
+    });
+
+    it('will match parameterized path', () => {
+      const result = ambiguousPathDiffer.compareToPath(
+        OpenAPIV3.HttpMethods.GET,
+        '/venues/venue123'
+      );
+      expect(result).toMatchSnapshot();
+    });
+  });
+
   describe('path parameters from pattern', () => {
     it('can be extracted', () => {
       expect(

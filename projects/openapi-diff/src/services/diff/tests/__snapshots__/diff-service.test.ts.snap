@@ -18,7 +18,7 @@ exports[`diff service path matching emits unmatched path diff 1`] = `
 Object {
   "diffs": Array [
     Object {
-      "closestMatch": "/users/123",
+      "closestMatch": "/other-resource/123",
       "method": "get",
       "path": "/other-resource/123",
       "type": "UnmatchedPath",

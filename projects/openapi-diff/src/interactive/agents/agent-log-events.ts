@@ -15,7 +15,7 @@ export enum AgentLogEvents {
 
 type ReadingSpec = { event: AgentLogEvents.reading; location: string };
 type PatchingSpec = { event: AgentLogEvents.patching; patches: string[] };
-type UnexpectedError = { event: AgentLogEvents.error };
+type UnexpectedError = { event: AgentLogEvents.error; error: string };
 type DiffingTraffic = {
   // matched?: { pathPattern: string; method: OpenAPIV3.HttpMethods };
   path: string;

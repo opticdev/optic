@@ -170,6 +170,13 @@ export function newDiffMachine(
               hasDiffs: results.diffs.length > 0,
             });
 
+            results.errors.forEach((error) =>
+              log({
+                event: AgentLogEvents.error,
+                error,
+              })
+            );
+
             if (
               results.diffs.some(
                 (i) =>

@@ -1,5 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`url path differ ambiguous paths will match absolute path 1`] = `
+Object {
+  "context": Object {
+    "path": "/venues/top",
+    "pathParameterValues": Object {},
+    "urlPath": "/venues/top",
+  },
+  "diffs": Array [],
+  "error": undefined,
+  "isDiff": false,
+  "isMatch": true,
+}
+`;
+
+exports[`url path differ ambiguous paths will match parameterized path 1`] = `
+Object {
+  "context": Object {
+    "path": "/venues/{venueId}",
+    "pathParameterValues": Object {
+      "venueId": "venue123",
+    },
+    "urlPath": "/venues/venue123",
+  },
+  "diffs": Array [],
+  "error": undefined,
+  "isDiff": false,
+  "isMatch": true,
+}
+`;
+
 exports[`url path differ can match / 1`] = `
 Object {
   "context": Object {
@@ -7,7 +37,7 @@ Object {
     "pathParameterValues": Object {},
     "urlPath": "/",
   },
-  "diffs": undefined,
+  "diffs": Array [],
   "error": undefined,
   "isDiff": false,
   "isMatch": true,
@@ -30,7 +60,7 @@ Object {
     "pathParameterValues": Object {},
     "urlPath": "/app/hook/config",
   },
-  "diffs": undefined,
+  "diffs": Array [],
   "error": undefined,
   "isDiff": false,
   "isMatch": true,
@@ -48,7 +78,7 @@ Object {
     },
     "urlPath": "/orgs/aidans-org/actions/runner-groups/group-5/runners/id-5",
   },
-  "diffs": undefined,
+  "diffs": Array [],
   "error": undefined,
   "isDiff": false,
   "isMatch": true,
@@ -67,7 +97,7 @@ Object {
     },
     "urlPath": "/repos/aidan-org/repo-1/pulls/15/reviews/23/dismissals",
   },
-  "diffs": undefined,
+  "diffs": Array [],
   "error": undefined,
   "isDiff": false,
   "isMatch": true,
