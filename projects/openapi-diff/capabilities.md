@@ -3,7 +3,7 @@
 | paths                      	| ✔    	| ✔    	| ✔     	|               	|
 | operations                 	| ✔    	| ✔    	| ✔     	|               	|
 | parameters.path            	| ✔    	| -    	| -     	|               	|
-| parameters.query           	|      	|      	|       	| $500          	|
+| parameters.query           	| ✔    	| ✔    	| ✔     	| $500          	|
 | parameters.header          	|      	|      	|       	| $500          	|
 | parameters.cookie          	|      	|      	|       	| $500          	|
 | request.content            	|      	|      	|       	|               	|

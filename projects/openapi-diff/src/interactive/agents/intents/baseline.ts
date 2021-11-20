@@ -1,9 +1,9 @@
 import { AgentIntent } from '../agent-interface';
 import { AnswerQuestionTypes } from '../questions';
 import {
-  BodyPropertyUnmatchedType,
   DiffType,
   IDiffService,
+  QueryAdditionalParameter,
   ShapeDiffTypes,
   UnmatchedPath,
   UnmatchedResponse,
@@ -36,6 +36,13 @@ export function baselineIntent(): AgentIntent {
           const { path, method } = diff as UnmatchedPath;
           patch.init.operation(path, method, example);
 
+          break;
+        }
+        // handle parameter diffs
+        case DiffType.QueryAdditionalParameter: {
+          const { path, method, name, example } =
+            diff as QueryAdditionalParameter;
+          patch.init.queryParameter(method, path, name, example);
           break;
         }
         // handle property diffs

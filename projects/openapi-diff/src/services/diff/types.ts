@@ -31,6 +31,7 @@ export enum DiffType {
   BodyAdditionalProperty = 'BodyAdditionalProperty',
   BodyMissingRequiredProperty = 'BodyMissingRequiredProperty',
   BodyUnmatchedType = 'BodyUnmatchedType',
+  QueryAdditionalParameter = 'QueryAdditionalParameter',
 }
 
 export interface IDiff {
@@ -56,6 +57,16 @@ export interface UnmatchedResponse extends IDiff {
   method: OpenAPIV3.HttpMethods;
   statusCode: string;
 }
+////////////////////////////////////////////////////////////
+
+export interface QueryAdditionalParameter extends IDiff {
+  type: DiffType.QueryAdditionalParameter;
+  path: string;
+  name: string;
+  method: OpenAPIV3.HttpMethods;
+  example: any;
+}
+
 ////////////////////////////////////////////////////////////
 
 export interface BodyAdditionalProperty extends IDiff {
@@ -97,6 +108,7 @@ type DiffKinds =
   | UnmatchedMethod
   | UnmatchedPath
   | UnmatchedResponse
+  | QueryAdditionalParameter
   | ShapeDiffTypes;
 
 /*

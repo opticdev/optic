@@ -19,6 +19,11 @@ export interface OpenAPIDiffingQuestions {
     method: OpenAPIV3.HttpMethods,
     path: string
   ): ResponseMatchType[];
+
+  queryParametersForOperation(
+    method: OpenAPIV3.HttpMethods,
+    path: string
+  ): QueryParameterType[];
 }
 
 export interface ISpecReader {
@@ -46,8 +51,12 @@ export const openApiDiffingQuestionsTestingStub: OpenAPIDiffingQuestions = {
   responsesForOperation(method: OpenAPIV3.HttpMethods, path: string) {
     return [];
   },
+  queryParametersForOperation(method: OpenAPIV3.HttpMethods, path: string) {
+    return [];
+  },
 };
 
+// Result Types
 export type ResponseMatchType = {
   statusCodeMatcher: string;
   contentTypes: {
@@ -56,4 +65,11 @@ export type ResponseMatchType = {
     location: ConceptualLocation;
     jsonPath: string;
   }[];
+};
+export type QueryParameterType = {
+  name: string;
+  schema?: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject;
+  location: ConceptualLocation;
+  jsonPath: string;
+  required: boolean;
 };

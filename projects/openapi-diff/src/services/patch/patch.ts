@@ -12,6 +12,7 @@ import { opticJsonSchemaDiffer } from '../diff/differs/json-schema-json-diff';
 import { addResponseForExample } from '../diff/differs/responses/new-response';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { patchAdditionalQueryParameter } from '../diff/differs/query-parameters/new-query-parameters';
 
 export async function createOpenApiPatch(
   reader: ISpecReader,
@@ -61,12 +62,20 @@ export async function createOpenApiPatch(
           method,
           'responses',
         ]);
-
         addResponseForExample(
           patcher,
           responsesMapPointer,
           example,
           jsonSchemaJsonDiffer
+        );
+      },
+      queryParameter: (method, path, name, exampleValue) => {
+        patchAdditionalQueryParameter(
+          patcher,
+          method,
+          path,
+          name,
+          exampleValue
         );
       },
       responseBody: (

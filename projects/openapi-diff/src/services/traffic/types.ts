@@ -13,6 +13,7 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 export interface ApiTraffic {
   method: OpenAPIV3.HttpMethods;
   path: string;
+  queryString: string;
   response: {
     statusCode: string;
     body: {

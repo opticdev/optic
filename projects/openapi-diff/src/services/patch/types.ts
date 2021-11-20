@@ -32,6 +32,12 @@ export interface IPatchOpenAPI {
       method: OpenAPIV3.HttpMethods,
       example: ApiTraffic
     ) => void;
+    queryParameter: (
+      method: OpenAPIV3.HttpMethods,
+      path: string,
+      name: string,
+      exampleValue: string | boolean | number
+    ) => void;
     response: (
       pathPattern: string,
       method: OpenAPIV3.HttpMethods,

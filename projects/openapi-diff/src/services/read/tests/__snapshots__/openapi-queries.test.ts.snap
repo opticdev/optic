@@ -139,3 +139,67 @@ Array [
   },
 ]
 `;
+
+exports[`openapi queries get query params 1`] = `
+Array [
+  Object {
+    "jsonPath": "/paths/~1user~1{username}/parameters/0",
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "query": "example-query-param",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "parameters",
+        "query",
+        "example-query-param",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/parameters/0",
+      "kind": "query-parameter",
+    },
+    "name": "example-query-param",
+    "required": false,
+    "schema": Object {
+      "type": "string",
+    },
+  },
+]
+`;
+
+exports[`openapi queries get query params 2`] = `
+Array [
+  Object {
+    "jsonPath": "/paths/~1user~1{username}/parameters/0",
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "query": "example-query-param",
+        },
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "parameters",
+        "query",
+        "example-query-param",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/parameters/0",
+      "kind": "query-parameter",
+    },
+    "name": "example-query-param",
+    "required": false,
+    "schema": Object {
+      "type": "string",
+    },
+  },
+]
+`;

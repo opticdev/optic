@@ -1,8 +1,14 @@
-import { OpenAPIDiffingQuestions, ResponseMatchType } from './types';
+import {
+  OpenAPIDiffingQuestions,
+  QueryParameterType,
+  ResponseMatchType,
+} from './types';
 import {
   IFact,
+  OpenApiFact,
   OpenApiKind,
   OpenApiOperationFact,
+  OpenApiRequestParameterFact,
   OpenApiResponseFact,
   OpenAPITraverser,
   OpenAPIV3,
@@ -40,6 +46,31 @@ export function openApiQueries(
     },
     paths() {
       return paths;
+    },
+    queryParametersForOperation(
+      method: OpenAPIV3.HttpMethods,
+      path: string
+    ): QueryParameterType[] {
+      return facts
+        .filter((fact) => {
+          return (
+            fact.location.kind === OpenApiKind.QueryParameter &&
+            fact.location.conceptualLocation.path === path &&
+            fact.location.conceptualLocation.method === method
+          );
+        })
+        .map((fact) => {
+          const queryParamFact = fact.value as OpenApiRequestParameterFact;
+
+          const query: QueryParameterType = {
+            jsonPath: fact.location.jsonPath,
+            name: queryParamFact.name,
+            required: queryParamFact.required,
+            schema: queryParamFact.schema,
+            location: fact.location.conceptualLocation,
+          };
+          return query;
+        });
     },
     responsesForOperation(
       method: OpenAPIV3.HttpMethods,

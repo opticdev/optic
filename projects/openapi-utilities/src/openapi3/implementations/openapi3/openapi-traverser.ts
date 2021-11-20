@@ -17,7 +17,7 @@ import {
   jsonPointerHelpers,
   jsonPointerHelpers as jsonPointer,
 } from '@useoptic/json-pointer-helpers';
-import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
+import { OpenAPIV3 } from 'openapi-types';
 
 export function normalizeOpenApiPath(path: string): string {
   return path

@@ -9,6 +9,7 @@ import { ApiTraffic } from '../../../traffic/types';
 import { addResponseForExample } from '../responses/new-response';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { newAddAllQueryParameters } from '../query-parameters/new-query-parameters';
 
 export function addNewOperation(
   patcher: JsonPatcher<OpenAPIV3.Document>,
@@ -74,12 +75,15 @@ export function addNewOperation(
     ]);
   }
 
+  // init children
   addResponseForExample(
     patcher,
     jsonPointerHelpers.append(operationPointer, 'responses'),
     example,
     jsonSchemaDiffer
   );
+
+  newAddAllQueryParameters(patcher, method, pathPattern, example);
 
   return {
     operation: jsonPointerHelpers.get(

@@ -51,6 +51,7 @@ type IOpticCaptureHttpInteraction = any;
 export class OpticHttpInteraction implements ApiTraffic {
   private _method: OpenAPIV3.HttpMethods;
   private _path: string;
+  private _queryString: string;
   private _response: {
     statusCode: string;
     body: {
@@ -63,6 +64,7 @@ export class OpticHttpInteraction implements ApiTraffic {
     this._method =
       _interaction.request.method.toLowerCase() as OpenAPIV3.HttpMethods;
     this._path = _interaction.request.path;
+    this._queryString = _interaction.request.query.asText || '';
     this._response = {
       statusCode: _interaction.response.statusCode.toString(),
       body: {
@@ -84,5 +86,9 @@ export class OpticHttpInteraction implements ApiTraffic {
   }
   get response() {
     return this._response;
+  }
+
+  get queryString() {
+    return this._queryString;
   }
 }

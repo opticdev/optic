@@ -3,7 +3,7 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
 export class SimpleExampleTraffic implements ApiTraffic {
   constructor(
-    private _request: { method: string; path: string },
+    private _request: { method: string; path: string; queryString?: string },
     private _response: { statusCode: string; json?: any }
   ) {}
   get method() {
@@ -22,6 +22,10 @@ export class SimpleExampleTraffic implements ApiTraffic {
           : undefined,
       },
     };
+  }
+
+  get queryString() {
+    return this._request.queryString || '';
   }
 }
 
