@@ -1,4 +1,4 @@
-import { openapiutils } from '../../../test-data/test-data-dirs';
+import { openapiutils } from '../../../test/test-data-dirs';
 import * as path from 'path';
 import { openApiQueries } from '../queries';
 import { OpenAPIDiffingQuestions } from '../types';

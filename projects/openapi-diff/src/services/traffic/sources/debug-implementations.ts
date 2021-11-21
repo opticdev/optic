@@ -23,6 +23,23 @@ export class DebugSource extends TrafficSource {
   }
 }
 
+export class PassThroughSource extends TrafficSource {
+  constructor() {
+    super();
+  }
+  start(): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  sendTraffic = (...traffic: ApiTraffic[]) => {
+    traffic.forEach((i) => this.emitTraffic(i));
+  };
+
+  stop(): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+}
+
 export class OpticOssDebugCaptureSource extends TrafficSource {
   constructor(private filePath: string, private pauseFor: number) {
     super();

@@ -5,7 +5,7 @@ import {
   openApiDiffingQuestionsTestingStub,
 } from '../../../read/types';
 
-const gitHubOpenApiPaths = require('../../../../test-data/githubpaths.json');
+const gitHubOpenApiPaths = require('../../../../test/githubpaths.json');
 
 const stub: OpenAPIDiffingQuestions = {
   ...openApiDiffingQuestionsTestingStub,

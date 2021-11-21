@@ -44,7 +44,7 @@ describe('diff service', () => {
 
 const diffServiceFixture: Promise<IDiffService> = new Promise(
   async (resolve) => {
-    const gitHubOpenApiPaths = require('../../../test-data/githubpaths-subset.json');
+    const gitHubOpenApiPaths = require('../../../test/githubpaths-subset.json');
     const gitHubPathsSpecReader = new PassThroughSpecReader(
       specWithPaths(gitHubOpenApiPaths)
     );
@@ -58,7 +58,7 @@ const diffServiceFixture: Promise<IDiffService> = new Promise(
 );
 const diffServiceExampleSpecFixture: Promise<IDiffService> = new Promise(
   async (resolve) => {
-    const simpleExample = require('../../../test-data/simple-example-with-200.json');
+    const simpleExample = require('../../../test/simple-example-with-200.json');
     const gitHubPathsSpecReader = new PassThroughSpecReader(simpleExample);
 
     const diffService = createDiffServiceWithCachingProjections(

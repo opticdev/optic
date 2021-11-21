@@ -27,6 +27,7 @@ Object {
     Object {
       "example": "Hello",
       "method": "get",
+      "name": "search",
       "path": "/example",
       "type": "QueryAdditionalParameter",
     },

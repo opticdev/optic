@@ -145,23 +145,11 @@ Array [
   Object {
     "jsonPath": "/paths/~1user~1{username}/parameters/0",
     "location": Object {
-      "conceptualLocation": Object {
-        "inRequest": Object {
-          "query": "example-query-param",
-        },
-        "method": "get",
-        "path": "/user/{username}",
+      "inRequest": Object {
+        "query": "example-query-param",
       },
-      "conceptualPath": Array [
-        "operations",
-        "/user/{}",
-        "get",
-        "parameters",
-        "query",
-        "example-query-param",
-      ],
-      "jsonPath": "/paths/~1user~1{username}/parameters/0",
-      "kind": "query-parameter",
+      "method": "get",
+      "path": "/user/{username}",
     },
     "name": "example-query-param",
     "required": false,
@@ -177,23 +165,11 @@ Array [
   Object {
     "jsonPath": "/paths/~1user~1{username}/parameters/0",
     "location": Object {
-      "conceptualLocation": Object {
-        "inRequest": Object {
-          "query": "example-query-param",
-        },
-        "method": "put",
-        "path": "/user/{username}",
+      "inRequest": Object {
+        "query": "example-query-param",
       },
-      "conceptualPath": Array [
-        "operations",
-        "/user/{}",
-        "put",
-        "parameters",
-        "query",
-        "example-query-param",
-      ],
-      "jsonPath": "/paths/~1user~1{username}/parameters/0",
-      "kind": "query-parameter",
+      "method": "get",
+      "path": "/user/{username}",
     },
     "name": "example-query-param",
     "required": false,
