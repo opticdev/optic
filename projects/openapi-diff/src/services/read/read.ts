@@ -5,6 +5,7 @@ import { IFilePatch } from '../patch/types';
 import fs from 'fs-extra';
 import { defaultEmptySpec } from './debug-implementations';
 import {
+  JsonSchemaSourcemap,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
 } from '@useoptic/openapi-io';
@@ -52,6 +53,10 @@ export function createOpenApiFileSystemReader(filePath: string): ISpecReader {
     flattenedSpecification: async (): Promise<OpenAPIV3.Document> => {
       const { jsonLike } = await result;
       return jsonLike;
+    },
+    sourcemap: async (): Promise<JsonSchemaSourcemap> => {
+      const { sourcemap } = await result;
+      return sourcemap;
     },
     didLoad: async () => {
       // wait for it to finish

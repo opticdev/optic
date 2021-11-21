@@ -6,7 +6,6 @@ import {
 } from './types';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { IFilePatch } from '../patch/types';
-import stringify from 'json-stable-stringify';
 import { openApiQueries } from './queries';
 import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
 
@@ -31,13 +30,18 @@ export class PassThroughSpecReader implements ISpecReader {
       const mock = new JsonSchemaSourcemap(this._mainOpenApiFile);
       await mock.addFileIfMissingFromContents(
         this._mainOpenApiFile,
-        stringify(openApi),
+        JSON.stringify(openApi, null, 2),
         0
       );
       return { flattened: openApi, sourcemap: mock };
     };
 
     this._loadedPromise = createMock();
+  }
+
+  async sourcemap(): Promise<any> {
+    const { sourcemap } = await this._loadedPromise;
+    return sourcemap;
   }
 
   describeLocation(): string {

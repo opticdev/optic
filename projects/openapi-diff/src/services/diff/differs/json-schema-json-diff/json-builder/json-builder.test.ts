@@ -205,7 +205,6 @@ describe('json builder', () => {
         'user3',
       ]);
 
-      console.log(result.schema);
       expect(result).toMatchSnapshot();
     });
   });

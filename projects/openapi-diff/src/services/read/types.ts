@@ -7,6 +7,7 @@
    */
 import { ConceptualLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { IFilePatch } from '../patch/types';
+import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
 
 export interface OpenAPIDiffingQuestions {
   paths(): string[];
@@ -28,6 +29,7 @@ export interface OpenAPIDiffingQuestions {
 
 export interface ISpecReader {
   questions(): Promise<OpenAPIDiffingQuestions>;
+  sourcemap(): Promise<JsonSchemaSourcemap>;
   flattenedSpecification(): Promise<OpenAPIV3.Document>;
   didLoad(): Promise<DidLoadStatus>;
   isStale(): Promise<FilePathsWithChanges[] | false>;

@@ -11,6 +11,7 @@ import {
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
 } from './parser/openapi-sourcemap-parser';
+import { loadYaml, isYaml, isJson, writeYaml } from './write/index';
 
 export {
   ILookupLinePreviewResult,
@@ -24,4 +25,8 @@ export {
   parseOpenAPIWithSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
   JsonSchemaSourcemap,
+  loadYaml,
+  isYaml,
+  isJson,
+  writeYaml,
 };
