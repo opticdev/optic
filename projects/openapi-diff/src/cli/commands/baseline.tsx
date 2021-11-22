@@ -3,7 +3,7 @@ import path from 'path';
 import { isJson, isYaml, writeYaml } from '@useoptic/openapi-io';
 import fs from 'fs-extra';
 import { emptyOpenApi } from '../empty-open-api';
-import { SnifferSource } from '../../services/traffic/sources/sniffer';
+import { SnifferNativeSource } from '../../services/traffic/sources/sniffer_native';
 import { render } from 'ink';
 import { Baseline } from '../../interactive/cli-components/baseline';
 import React from 'react';
@@ -23,9 +23,9 @@ export function registerBaselineCommands(cli: Command) {
       const openApiPath = path.resolve(openApiRelativePath);
       await ensureOpenApiAt(openApiPath);
 
-      const sniffSource = new SnifferSource({
-        port: Number(options.port),
-        interface: options.interface,
+      const sniffSource = new SnifferNativeSource({
+        port: Number(options.sniffPort),
+        interface: options.sniffInterface,
       });
 
       // for debugging
