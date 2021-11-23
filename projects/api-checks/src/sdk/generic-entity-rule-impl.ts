@@ -3,7 +3,6 @@ import {
   OpenApiKind,
   IFact,
   ILocation,
-  ConceptualLocation,
   OpenApiFact,
 } from "@useoptic/openapi-utilities";
 import { EntityRule, newDocsLinkHelper, Result, runCheck } from "./types";
