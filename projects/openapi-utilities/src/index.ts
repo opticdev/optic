@@ -8,11 +8,20 @@ import {
   ILocation,
   OpenApiFact,
   OpenApiFieldFact,
+  OpenApiBodyFact,
   OpenApiHeaderFact,
   OpenApiKind,
   OpenApiOperationFact,
   OpenApiRequestParameterFact,
   OpenApiResponseFact,
+  OperationLocation,
+  QueryParameterLocation,
+  PathParameterLocation,
+  HeaderParameterLocation,
+  ResponseHeaderLocation,
+  ResponseLocation,
+  BodyLocation,
+  FieldLocation
 } from "./openapi3/sdk/types";
 export { defaultEmptySpec } from './openapi3/constants';
 
@@ -23,6 +32,7 @@ export {
   ConceptualLocation,
   IChange,
   OpenApiFieldFact,
+  OpenApiBodyFact,
   OpenAPIV3,
   OpenApiKind,
   OpenApiOperationFact,
@@ -31,4 +41,12 @@ export {
   ILocation,
   OpenApiRequestParameterFact,
   OpenApiResponseFact,
+  OperationLocation,
+  QueryParameterLocation,
+  PathParameterLocation,
+  HeaderParameterLocation,
+  ResponseHeaderLocation,
+  ResponseLocation,
+  BodyLocation,
+  FieldLocation
 };

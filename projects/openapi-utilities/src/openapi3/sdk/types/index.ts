@@ -1,42 +1,32 @@
-import { OpenAPIV3 } from "openapi-types";
+import { OpenAPIV3 } from 'openapi-types';
+import {
+  ILocation,
+  IPathComponent,
+  OperationLocation,
+  QueryParameterLocation,
+  PathParameterLocation,
+  HeaderParameterLocation,
+  ResponseHeaderLocation,
+  ResponseLocation,
+  BodyLocation,
+  FieldLocation,
+} from './location';
+import { OpenApiKind } from './openApiKinds';
 
-//@TODO: figure out what other info downstream tools will need
-export interface ConceptualLocation {
-  path: string;
-  method: string;
-  inRequest?: {
-    header?: string;
-    path?: string;
-    query?: string;
-    body?: {
-      contentType: string;
-    };
-  };
-  inResponse?: {
-    header?: string;
-    query?: string;
-    body?: {
-      contentType: string;
-    };
-    statusCode: string;
-  };
-  jsonSchemaTrail?: string[];
-}
-
-export enum OpenApiKind {
-  Operation = "operation",
-  Request = "request",
-  QueryParameter = "query-parameter",
-  PathParameter = "path-parameter",
-  HeaderParameter = "header-parameter",
-  ResponseHeader = "response-header",
-  Response = "response",
-  Body = "body",
-  Object = "object",
-  Field = "field",
-  Array = "array",
-  Primitive = "primitive",
-}
+export {
+  ILocation,
+  IPathComponent,
+  OpenApiKind,
+  OperationLocation,
+  QueryParameterLocation,
+  PathParameterLocation,
+  HeaderParameterLocation,
+  ResponseHeaderLocation,
+  ResponseLocation,
+  BodyLocation,
+  FieldLocation,
+};
+export type ConceptualLocation = ILocation['conceptualLocation'];
 
 export type OpenApiFact =
   | OpenApiOperationFact
@@ -63,7 +53,7 @@ export interface OpenApiFieldFact {
   flatSchema: OpenAPIV3.SchemaObject;
 }
 export interface OpenApiResponseFact
-  extends Omit<OpenAPIV3.ResponseObject, "headers" | "content"> {
+  extends Omit<OpenAPIV3.ResponseObject, 'headers' | 'content'> {
   statusCode: number;
 }
 export interface OpenApiRequestFact {}
@@ -74,7 +64,6 @@ export interface OpenApiHeaderFact extends OpenAPIV3.HeaderObject {
 
 export interface OpenApiRequestParameterFact
   extends OpenAPIV3.ParameterObject {}
-
 
 export class FactAccumulator<KindSchema> {
   constructor(private facts: IFact<KindSchema>[]) {}
@@ -96,16 +85,6 @@ export interface Traverse<DocSchema, FactSchema> {
 export interface IFact<KindSchema> {
   location: ILocation;
   value: KindSchema;
-}
-
-export type IPathComponent = string | number;
-export type I = string | number;
-
-export interface ILocation {
-  jsonPath: string;
-  conceptualPath: IPathComponent[];
-  conceptualLocation: ConceptualLocation;
-  kind: string;
 }
 
 export interface IChange<T> {

@@ -10,28 +10,36 @@ import {
   FactAccumulator,
   Traverse,
   OpenApiFact,
-} from "../../sdk/types";
-import { IPathComponent } from "../../sdk/types";
-import invariant from "ts-invariant";
-import { jsonPointerHelpers as jsonPointer } from "@useoptic/json-pointer-helpers";
-import { OpenAPIV3 } from "openapi-types";
+  OperationLocation,
+  QueryParameterLocation,
+  PathParameterLocation,
+  HeaderParameterLocation,
+  ResponseHeaderLocation,
+  ResponseLocation,
+  BodyLocation,
+  FieldLocation,
+} from '../../sdk/types';
+import { IPathComponent } from '../../sdk/types';
+import invariant from 'ts-invariant';
+import { jsonPointerHelpers as jsonPointer } from '@useoptic/json-pointer-helpers';
+import { OpenAPIV3 } from 'openapi-types';
 
 export function normalizeOpenApiPath(path: string): string {
   return path
-    .split("/")
+    .split('/')
     .map((pathComponent) => {
-      if (pathComponent.startsWith("{") && pathComponent.endsWith("}")) {
-        return "{}";
+      if (pathComponent.startsWith('{') && pathComponent.endsWith('}')) {
+        return '{}';
       }
       return pathComponent;
     })
-    .join("/");
+    .join('/');
 }
 
 export class OpenAPITraverser
   implements Traverse<OpenAPIV3.Document, OpenApiFact>
 {
-  format = "openapi3";
+  format = 'openapi3';
   accumulator = new FactAccumulator<OpenApiFact>([]);
 
   input: OpenAPIV3.Document | undefined = undefined;
@@ -40,28 +48,28 @@ export class OpenAPITraverser
     this.input = input;
     Object.entries(input.paths).forEach(([pathPattern, paths]) => {
       if (paths?.get)
-        this.traverseOperations(paths?.get!, "get", pathPattern, {
-          method: "get",
+        this.traverseOperations(paths?.get!, 'get', pathPattern, {
+          method: 'get',
           path: pathPattern,
         });
       if (paths?.patch)
-        this.traverseOperations(paths?.patch!, "patch", pathPattern, {
-          method: "patch",
+        this.traverseOperations(paths?.patch!, 'patch', pathPattern, {
+          method: 'patch',
           path: pathPattern,
         });
       if (paths?.post)
-        this.traverseOperations(paths?.post!, "post", pathPattern, {
-          method: "post",
+        this.traverseOperations(paths?.post!, 'post', pathPattern, {
+          method: 'post',
           path: pathPattern,
         });
       if (paths?.put)
-        this.traverseOperations(paths?.put!, "put", pathPattern, {
-          method: "put",
+        this.traverseOperations(paths?.put!, 'put', pathPattern, {
+          method: 'put',
           path: pathPattern,
         });
       if (paths?.delete)
-        this.traverseOperations(paths?.delete!, "delete", pathPattern, {
-          method: "delete",
+        this.traverseOperations(paths?.delete!, 'delete', pathPattern, {
+          method: 'delete',
           path: pathPattern,
         });
     });
@@ -71,12 +79,12 @@ export class OpenAPITraverser
     operation: OpenAPIV3.OperationObject,
     method: string,
     pathPattern: string,
-    location: ConceptualLocation
+    location: OperationLocation
   ): void {
-    const jsonPath = jsonPointer.append("", "paths", pathPattern, method);
+    const jsonPath = jsonPointer.append('', 'paths', pathPattern, method);
     this.checkJsonTrail(jsonPath, operation);
     const normalizedPath = normalizeOpenApiPath(pathPattern);
-    const conceptualPath = ["operations", normalizedPath, method];
+    const conceptualPath = ['operations', normalizedPath, method];
     this.onOperation(
       operation,
       pathPattern,
@@ -88,8 +96,8 @@ export class OpenAPITraverser
 
     this.traverseParameters(
       operation,
-      jsonPointer.append(jsonPath, "parameters"),
-      [...conceptualPath, "parameters"],
+      jsonPointer.append(jsonPath, 'parameters'),
+      [...conceptualPath, 'parameters'],
       location
     );
 
@@ -100,7 +108,7 @@ export class OpenAPITraverser
           this.traverseBody(
             body,
             contentType,
-            jsonPointer.append(jsonPath, "requestBody", "content", contentType),
+            jsonPointer.append(jsonPath, 'requestBody', 'content', contentType),
             [...conceptualPath, contentType],
             { ...location, inRequest: { body: { contentType } } }
           );
@@ -112,8 +120,8 @@ export class OpenAPITraverser
       this.traverseResponse(
         response as OpenAPIV3.ResponseObject,
         statusCode,
-        jsonPointer.append(jsonPath, "responses", statusCode),
-        [...conceptualPath, "responses", statusCode],
+        jsonPointer.append(jsonPath, 'responses', statusCode),
+        [...conceptualPath, 'responses', statusCode],
         { ...location, inResponse: { statusCode } }
       );
     });
@@ -124,7 +132,7 @@ export class OpenAPITraverser
     statusCode: string,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    location: ConceptualLocation
+    location: ResponseLocation
   ): void {
     this.traverseResponseHeaders(response, jsonPath, conceptualPath, location);
     this.checkJsonTrail(jsonPath, response);
@@ -133,12 +141,12 @@ export class OpenAPITraverser
       this.traverseBody(
         body,
         contentType,
-        jsonPointer.append(jsonPath, "content", contentType),
+        jsonPointer.append(jsonPath, 'content', contentType),
         [...conceptualPath, contentType],
         {
           ...location,
           inResponse: {
-            statusCode: location.inResponse!.statusCode,
+            statusCode: location.inResponse.statusCode,
             body: { contentType },
           },
         }
@@ -152,29 +160,37 @@ export class OpenAPITraverser
     operation: OpenAPIV3.OperationObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    location: ConceptualLocation
+    location: OperationLocation
   ) {
     if (operation.parameters) {
       this.checkJsonTrail(jsonPath, operation.parameters);
       operation.parameters.forEach((p, i) => {
         const parameter = p as OpenAPIV3.ParameterObject;
+        let paramLocation:
+          | PathParameterLocation
+          | QueryParameterLocation
+          | HeaderParameterLocation;
 
-        const locationForParameter = (() => {
-          if (parameter.in === "query")
-            return { ...location, inRequest: { query: parameter.name } };
-          if (parameter.in === "header")
-            return { ...location, inRequest: { header: parameter.name } };
-          if (parameter.in === "path")
-            return { ...location, inRequest: { path: parameter.name } };
+        if (parameter.in === 'query') {
+          paramLocation = { ...location, inRequest: { query: parameter.name } };
+        } else if (parameter.in === 'header') {
+          paramLocation = {
+            ...location,
+            inRequest: { header: parameter.name },
+          };
+        } else if (parameter.in === 'path') {
+          paramLocation = { ...location, inRequest: { path: parameter.name } };
+        } else {
           // @todo add cookie
-          return location;
-        })();
+          console.warn('Found a parameter that was not handled');
+          return;
+        }
 
         this.onRequestParameter(
           parameter,
           jsonPointer.append(jsonPath, i.toString()),
           [...conceptualPath, parameter.in, parameter.name],
-          locationForParameter
+          paramLocation
         );
       });
     }
@@ -183,36 +199,47 @@ export class OpenAPITraverser
     parameter: OpenAPIV3.ParameterObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    location: ConceptualLocation
+    location:
+      | PathParameterLocation
+      | QueryParameterLocation
+      | HeaderParameterLocation
   ) {
     this.checkJsonTrail(jsonPath, parameter);
     const value: OpenApiRequestParameterFact = {
       ...parameter,
     };
 
-    const inToType = (() => {
-      switch (parameter.in) {
-        case "query":
-          return OpenApiKind.QueryParameter;
-        case "header":
-          return OpenApiKind.HeaderParameter;
-        case "path":
-          return OpenApiKind.PathParameter;
-        default:
-          return;
-      }
-    })();
-
-    if (inToType) {
-      this.accumulator.log({
-        location: {
-          jsonPath,
-          conceptualPath,
-          kind: inToType,
-          conceptualLocation: location,
-        },
-        value,
-      });
+    switch (parameter.in) {
+      case 'query':
+        return this.accumulator.log({
+          location: {
+            jsonPath,
+            conceptualPath,
+            kind: OpenApiKind.QueryParameter,
+            conceptualLocation: location as QueryParameterLocation,
+          },
+          value,
+        });
+      case 'header':
+        return this.accumulator.log({
+          location: {
+            jsonPath,
+            conceptualPath,
+            kind: OpenApiKind.HeaderParameter,
+            conceptualLocation: location as HeaderParameterLocation,
+          },
+          value,
+        });
+      case 'path':
+        return this.accumulator.log({
+          location: {
+            jsonPath,
+            conceptualPath,
+            kind: OpenApiKind.PathParameter,
+            conceptualLocation: location as PathParameterLocation,
+          },
+          value,
+        });
     }
   }
 
@@ -220,7 +247,7 @@ export class OpenAPITraverser
     response: OpenAPIV3.ResponseObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    location: ConceptualLocation
+    location: ResponseLocation
   ) {
     if (response.headers) {
       Object.entries(response.headers).forEach(([name, value]) => {
@@ -228,12 +255,12 @@ export class OpenAPITraverser
         this.onResponseHeader(
           name,
           header,
-          jsonPointer.append(jsonPath, "headers", name),
-          [...conceptualPath, "headers", name],
+          jsonPointer.append(jsonPath, 'headers', name),
+          [...conceptualPath, 'headers', name],
           {
             ...location,
             inResponse: {
-              statusCode: location.inResponse!.statusCode,
+              statusCode: location.inResponse.statusCode,
               header: name,
             },
           }
@@ -247,7 +274,7 @@ export class OpenAPITraverser
     header: OpenAPIV3.HeaderObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    location: ConceptualLocation
+    location: ResponseHeaderLocation
   ) {
     this.checkJsonTrail(jsonPath, header);
     const value: OpenApiHeaderFact = {
@@ -272,7 +299,7 @@ export class OpenAPITraverser
     contentType: string,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    location: ConceptualLocation
+    location: BodyLocation
   ) {
     this.checkJsonTrail(jsonPath, body);
     //@TODO: not sure if we need to check the body.schema key count
@@ -286,9 +313,12 @@ export class OpenAPITraverser
       );
       this.traverseSchema(
         body.schema as OpenAPIV3.SchemaObject,
-        jsonPointer.append(jsonPath, "schema"),
+        jsonPointer.append(jsonPath, 'schema'),
         conceptualPath,
-        location
+        {
+          ...location,
+          jsonSchemaTrail: [],
+        }
       );
     }
   }
@@ -299,7 +329,7 @@ export class OpenAPITraverser
     required: boolean,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    location: ConceptualLocation
+    location: FieldLocation
   ) {
     this.checkJsonTrail(jsonPath, schema);
     this.onField(key, schema, required, jsonPath, conceptualPath, location);
@@ -310,21 +340,21 @@ export class OpenAPITraverser
     schema: OpenAPIV3.SchemaObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    location: ConceptualLocation
+    location: FieldLocation
   ) {
     this.checkJsonTrail(jsonPath, schema);
     if (schema.oneOf || schema.anyOf || schema.allOf) {
       // iterate these, multiple branches at path
     }
     switch (schema.type) {
-      case "object":
+      case 'object':
         // this.onObject(...)
         Object.entries(schema.properties || {}).forEach(([key, fieldSchema]) =>
           this.traverseField(
             key,
             fieldSchema as OpenAPIV3.SchemaObject,
             (schema.required || []).includes(key),
-            jsonPointer.append(jsonPath, "properties", key),
+            jsonPointer.append(jsonPath, 'properties', key),
             [...conceptualPath, key],
             {
               ...location,
@@ -333,21 +363,21 @@ export class OpenAPITraverser
           )
         );
         break;
-      case "array":
+      case 'array':
         // this.onArray()
         this.traverseSchema(
           schema.items as OpenAPIV3.SchemaObject,
-          jsonPointer.append(jsonPath, "items"),
-          [...conceptualPath, "items"],
+          jsonPointer.append(jsonPath, 'items'),
+          [...conceptualPath, 'items'],
           {
             ...location,
-            jsonSchemaTrail: [...(location.jsonSchemaTrail || []), "items"],
+            jsonSchemaTrail: [...(location.jsonSchemaTrail || []), 'items'],
           }
         );
         break;
-      case "string":
-      case "number":
-      case "integer":
+      case 'string':
+      case 'number':
+      case 'integer':
         break;
     }
   }
@@ -366,7 +396,7 @@ export class OpenAPITraverser
     contentType: string,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    location: ConceptualLocation
+    location: BodyLocation
   ) {
     const schema = body.schema! as OpenAPIV3.SchemaObject;
     const flatSchema = this.getSchemaWithoutNestedThings(schema);
@@ -391,7 +421,7 @@ export class OpenAPITraverser
     required: boolean,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    location: ConceptualLocation
+    location: FieldLocation
   ) {
     this.checkJsonTrail(jsonPath, schema);
     const flatSchema = this.getSchemaWithoutNestedThings(schema);
@@ -427,7 +457,7 @@ export class OpenAPITraverser
     method: string,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    location: ConceptualLocation
+    location: OperationLocation
   ) {
     this.checkJsonTrail(jsonPath, operation);
     const flatOperation = this.getOperationWithoutNestedThings(
@@ -454,7 +484,7 @@ export class OpenAPITraverser
     statusCode: string,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    location: ConceptualLocation
+    location: ResponseLocation
   ) {
     this.checkJsonTrail(jsonPath, response);
     const flatResponse = this.getResponseWithoutNestedThings(response);
@@ -474,7 +504,7 @@ export class OpenAPITraverser
   }
   getResponseWithoutNestedThings(
     response: OpenAPIV3.ResponseObject
-  ): Omit<OpenAPIV3.ResponseObject, "headers" | "content"> {
+  ): Omit<OpenAPIV3.ResponseObject, 'headers' | 'content'> {
     const { headers, content, ...responseWithoutNestedThings } = response;
     return responseWithoutNestedThings as OpenAPIV3.ResponseObject;
   }
