@@ -12,7 +12,7 @@ const change: IChange<OpenApiFact> = {
       path: "/simulated",
       method: "get",
     },
-  },
+  } as any,
 };
 
 it("checks can run / fail using off-the-shelf test helpers", async (done) => {

@@ -73,7 +73,7 @@ export function createSelectJsonPathHelper(
                   conceptualPath: ["json-path", path],
                   jsonPath: "/",
                   kind: "custom-json-path",
-                },
+                } as any,
               };
 
               if (shouldRun) {

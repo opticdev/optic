@@ -154,7 +154,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         jsonPath: "/",
         conceptualPath: [],
         kind: "API",
-      },
+      } as any,
     };
 
     const value: ShouldOrMust<
@@ -291,7 +291,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
                 method: "",
               },
               kind: "ContextRule",
-            },
+            } as any,
           };
           return runCheck(
             syntheticChange,
