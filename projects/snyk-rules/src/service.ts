@@ -15,18 +15,18 @@ export function newSnykApiCheckService() {
     );
   };
 
-  snykRulesService.useDslWithNamedRules(
-    dslConstructor,
-    require("./rulesets/operations").rules
-  );
-  snykRulesService.useDslWithNamedRules(
-    dslConstructor,
-    require("./rulesets/headers").rules
-  );
-  snykRulesService.useDslWithNamedRules(
-    dslConstructor,
-    require("./rulesets/properties").rules
-  );
+  // snykRulesService.useDslWithNamedRules(
+  //   dslConstructor,
+  //   require("./rulesets/operations").rules
+  // );
+  // snykRulesService.useDslWithNamedRules(
+  //   dslConstructor,
+  //   require("./rulesets/headers").rules
+  // );
+  // snykRulesService.useDslWithNamedRules(
+  //   dslConstructor,
+  //   require("./rulesets/properties").rules
+  // );
 
   snykRulesService.useSpectralRuleset(spectralRuleset);
 

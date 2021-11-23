@@ -18,12 +18,14 @@ import { jsonPointerHelpers } from "@useoptic/json-pointer-helpers";
 export class SpectralDsl implements ApiCheckDsl {
   private checks: Promise<Result>[] = [];
 
+  public spectralChecksResults: Promise<Result[]>;
+
   constructor(
     private nextJson: OpenAPIV3.Document,
     private nextFacts: IFact<OpenApiFact>[],
     private ruleset: any
   ) {
-    this.run();
+    this.spectralChecksResults = this.run();
   }
 
   async run() {
@@ -37,39 +39,37 @@ export class SpectralDsl implements ApiCheckDsl {
       this.nextJson as any
     );
 
-    const opticResult: Promise<Result>[] = results.map(
-      async (spectralResult) => {
-        const operationPath = spectralResult.path.slice(0, 3);
-        const matchingOperation = operations.find((i) =>
-          isEqual(i.location.conceptualPath, operationPath)
-        );
+    const opticResult: Result[] = results.map((spectralResult) => {
+      const operationPath = spectralResult.path.slice(0, 3);
+      const matchingOperation = operations.find((i) =>
+        isEqual(i.location.conceptualPath, operationPath)
+      );
 
-        const location: ILocation = {
-          conceptualLocation: matchingOperation
-            ? matchingOperation.location.conceptualLocation
-            : { path: "This Specification", method: "" },
-          jsonPath: jsonPointerHelpers.compile(
-            spectralResult.path.map((i) => i.toString())
-          ),
-          conceptualPath: [],
-          kind: "API",
-        };
+      const location: ILocation = {
+        conceptualLocation: matchingOperation
+          ? matchingOperation.location.conceptualLocation
+          : { path: "This Specification", method: "" },
+        jsonPath: jsonPointerHelpers.compile(
+          spectralResult.path.map((i) => i.toString())
+        ),
+        conceptualPath: [],
+        kind: "API",
+      };
 
-        return {
-          condition: spectralResult.code.toString(),
-          passed: false,
-          error: spectralResult.message,
-          isMust: true,
-          isShould: false,
-          where: "requirement ",
-          change: {
-            location,
-          },
-        };
-      }
-    );
+      return {
+        condition: spectralResult.code.toString(),
+        passed: false,
+        error: spectralResult.message,
+        isMust: true,
+        isShould: false,
+        where: "requirement ",
+        change: {
+          location,
+        },
+      };
+    });
 
-    this.checks.push(...opticResult);
+    return opticResult;
   }
 
   checkPromises() {

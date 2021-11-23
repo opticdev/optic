@@ -108,15 +108,17 @@ export class OpenAPITraverser
       );
     }
 
-    Object.entries(operation.responses).forEach(([statusCode, response]) => {
-      this.traverseResponse(
-        response as OpenAPIV3.ResponseObject,
-        statusCode,
-        jsonPointer.append(jsonPath, "responses", statusCode),
-        [...conceptualPath, "responses", statusCode],
-        { ...location, inResponse: { statusCode } }
-      );
-    });
+    if (operation.responses) {
+      Object.entries(operation.responses).forEach(([statusCode, response]) => {
+        this.traverseResponse(
+          response as OpenAPIV3.ResponseObject,
+          statusCode,
+          jsonPointer.append(jsonPath, "responses", statusCode),
+          [...conceptualPath, "responses", statusCode],
+          { ...location, inResponse: { statusCode } }
+        );
+      });
+    }
   }
 
   traverseResponse(
