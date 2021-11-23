@@ -26,7 +26,11 @@ export class SnifferNativeSource extends TrafficSource {
     super();
 
     this.sessions = {};
+
+    // See the track_packetIPv6 implementation for more details on how we use
+    // this.
     this.tracker = new TCPTracker();
+    this.tracker.track_packet = track_packetIPv6.bind(this.tracker);
 
     this.tracker.on('session', async (session: any) => {
       //console.log("session");
@@ -199,6 +203,9 @@ class Simulation {
   // Note: No copy is made. If the buffer is re-used then copy it before passing
   // it in.
   public async storeResponseBytes(data: Uint8Array) {
+    // This happens with IPv6 because?
+    if (data.length == 0) { return; }
+
     // parseStatusLine is implemented with an anchored regex, internally.
     // It won't parse unless we split lines. We take the first 100 bytes
     // to avoid large response bodies
@@ -443,3 +450,45 @@ function getAddrString(addr: AddressInfo | string): string {
 
   return addr_string;
 }
+
+// The pcap library doesn't handle IPv6, or didn't at some point. The TCPTracker
+// class still doesn't but it is trivial to fix that.
+function track_packetIPv6(this: any, packet: any) {
+  var ip, tcp, src, dst, key, session;
+  
+  // This check is changed from https://github.com/node-pcap/node_pcap/blob/master/tcp_tracker.js#L15
+  // It now processes IPv4 or IPv6. 
+  // NOTE: The upstream check uses the types in the package but those are not
+  // exported. We mimic this by checking the decoderName set on the objects.
+  if (packet.payload.payload.payload.decoderName === 'tcp' &&
+        (packet.payload.payload.decoderName === 'ipv4' || packet.payload.payload.decoderName === 'ipv6')) {
+      ip  = packet.payload.payload;
+      tcp = ip.payload;
+      src = ip.saddr + ":" + tcp.sport;
+      dst = ip.daddr + ":" + tcp.dport;
+
+      if (src < dst) {
+          key = src + "-" + dst;
+      } else {
+          key = dst + "-" + src;
+      }
+
+      var is_new = false;
+      session = this.sessions[key];
+      if (! session) {
+          is_new = true;
+          session = new TCPSession();
+          this.sessions[key] = session;
+      }
+
+      session.track(packet);
+
+      // need to track at least one packet before we emit this new session, otherwise nothing
+      // will be initialized.
+      if (is_new) {
+          this.emit("session", session);
+      }
+  }
+  // silently ignore any non IPv4 TCP packets
+  // user should filter these out with their pcap filter, but oh well.
+};
