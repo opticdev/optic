@@ -512,19 +512,19 @@ export default {
             function: pathCasing,
           },
         },
-        "parameter-names-snake-case": {
-          description: "Parameter names must be snake_case.",
-          message: "{{description}}",
-          severity: "error",
-          given: "$..parameters[*]",
-          then: {
-            field: "name",
-            function: casing,
-            functionOptions: {
-              type: "snake",
-            },
-          },
-        },
+        // "parameter-names-snake-case": {
+        //   description: "Parameter names must be snake_case.",
+        //   message: "{{description}}",
+        //   severity: "error",
+        //   given: "$..parameters[*]",
+        //   then: {
+        //     field: "name",
+        //     function: casing,
+        //     functionOptions: {
+        //       type: "snake",
+        //     },
+        //   },
+        // },
         "component-names-pascal-case": {
           description: "Component names must be PascalCase (except responses).",
           message: "{{description}}",
@@ -554,41 +554,41 @@ export default {
         },
       },
     },
+    // {
+    //   rules: {
+    //     "response-request-id": {
+    //       description: "Responses must provide snyk-request-id",
+    //       message: "{{description}}",
+    //       severity: "error",
+    //       given: "$.paths[*][*].responses[*].headers",
+    //       then: {
+    //         field: "snyk-request-id",
+    //         function: truthy,
+    //       },
+    //     },
+    //   },
+    // },
     {
       rules: {
-        "response-request-id": {
-          description: "Responses must provide snyk-request-id",
-          message: "{{description}}",
-          severity: "error",
-          given: "$.paths[*][*].responses[*].headers",
-          then: {
-            field: "snyk-request-id",
-            function: truthy,
-          },
-        },
-      },
-    },
-    {
-      rules: {
-        "openapi-get-versions": {
-          description:
-            "APIs must list the available versioned OpenAPI specifications.",
-          severity: "error",
-          given: "$.paths[/openapi]",
-          then: {
-            field: "get",
-            function: truthy,
-          },
-        },
-        "openapi-get-version": {
-          description: "APIs must provide versioned OpenAPI specifications.",
-          severity: "error",
-          given: "$.paths[/openapi/{version}]",
-          then: {
-            field: "get",
-            function: truthy,
-          },
-        },
+        // "openapi-get-versions": {
+        //   description:
+        //     "APIs must list the available versioned OpenAPI specifications.",
+        //   severity: "error",
+        //   given: "$.paths[/openapi]",
+        //   then: {
+        //     field: "get",
+        //     function: truthy,
+        //   },
+        // },
+        // "openapi-get-version": {
+        //   description: "APIs must provide versioned OpenAPI specifications.",
+        //   severity: "error",
+        //   given: "$.paths[/openapi/{version}]",
+        //   then: {
+        //     field: "get",
+        //     function: truthy,
+        //   },
+        // },
         "openapi-arrays-types": {
           description: 'Array items must have a "type" field.',
           severity: "error",
@@ -602,95 +602,95 @@ export default {
     },
     {
       rules: {
-        "requests-declare-parameters": {
-          description: "Requests must declare parameters",
-          message: "Missing request parameters",
-          severity: "error",
-          given: "$.paths[?(!@property.match(/\\/openapi/))][*]",
-          then: {
-            field: "parameters",
-            function: truthy,
-          },
-        },
-        "version-request": {
-          description: "Requests must declare an API version query parameter",
-          message: 'Missing request parameter "version"',
-          severity: "error",
-          given: "$.paths[?(!@property.match(/\\/openapi/))][*].parameters",
-          then: {
-            function: arrayObjectPattern,
-            functionOptions: {
-              field: "name",
-              match: "^version$",
-            },
-          },
-        },
-        "responses-declare-headers": {
-          description: "Responses must declare headers",
-          message: "Missing response headers",
-          severity: "error",
-          given: "$.paths[?(!@property.match(/\\/openapi/))][*].responses[*]",
-          then: {
-            field: "headers",
-            function: truthy,
-          },
-        },
-        "version-response-deprecation": {
-          description: "Responses must provide deprecation header",
-          message: "{{description}}",
-          severity: "error",
-          given:
-            "$.paths[?(!@property.match(/\\/openapi/))][*].responses[*].headers",
-          then: {
-            field: "deprecation",
-            function: truthy,
-          },
-        },
-        "version-response-lifecycle-stage": {
-          description:
-            "Responses must provide snyk-version-lifecycle-stage header",
-          message: "{{description}}",
-          severity: "error",
-          given:
-            "$.paths[?(!@property.match(/\\/openapi/))][*].responses[*].headers",
-          then: {
-            field: "snyk-version-lifecycle-stage",
-            function: truthy,
-          },
-        },
-        "version-response-requested": {
-          description: "Responses must provide snyk-version-requested header",
-          message: "{{description}}",
-          severity: "error",
-          given:
-            "$.paths[?(!@property.match(/\\/openapi/))][*].responses[*].headers",
-          then: {
-            field: "snyk-version-requested",
-            function: truthy,
-          },
-        },
-        "version-response-served": {
-          description: "Responses must provide snyk-version-served header",
-          message: "{{description}}",
-          severity: "error",
-          given:
-            "$.paths[?(!@property.match(/\\/openapi/))][*].responses[*].headers",
-          then: {
-            field: "snyk-version-served",
-            function: truthy,
-          },
-        },
-        "version-response-sunset": {
-          description: "Responses must provide sunset header",
-          message: "{{description}}",
-          severity: "error",
-          given:
-            "$.paths[?(!@property.match(/\\/openapi/))][*].responses[*].headers",
-          then: {
-            field: "sunset",
-            function: truthy,
-          },
-        },
+        // "requests-declare-parameters": {
+        //   description: "Requests must declare parameters",
+        //   message: "Missing request parameters",
+        //   severity: "error",
+        //   given: "$.paths[?(!@property.match(/\\/openapi/))][*]",
+        //   then: {
+        //     field: "parameters",
+        //     function: truthy,
+        //   },
+        // },
+        // "version-request": {
+        //   description: "Requests must declare an API version query parameter",
+        //   message: 'Missing request parameter "version"',
+        //   severity: "error",
+        //   given: "$.paths[?(!@property.match(/\\/openapi/))][*].parameters",
+        //   then: {
+        //     function: arrayObjectPattern,
+        //     functionOptions: {
+        //       field: "name",
+        //       match: "^version$",
+        //     },
+        //   },
+        // },
+        // "responses-declare-headers": {
+        //   description: "Responses must declare headers",
+        //   message: "Missing response headers",
+        //   severity: "error",
+        //   given: "$.paths[?(!@property.match(/\\/openapi/))][*].responses[*]",
+        //   then: {
+        //     field: "headers",
+        //     function: truthy,
+        //   },
+        // },
+        // "version-response-deprecation": {
+        //   description: "Responses must provide deprecation header",
+        //   message: "{{description}}",
+        //   severity: "error",
+        //   given:
+        //     "$.paths[?(!@property.match(/\\/openapi/))][*].responses[*].headers",
+        //   then: {
+        //     field: "deprecation",
+        //     function: truthy,
+        //   },
+        // },
+        // "version-response-lifecycle-stage": {
+        //   description:
+        //     "Responses must provide snyk-version-lifecycle-stage header",
+        //   message: "{{description}}",
+        //   severity: "error",
+        //   given:
+        //     "$.paths[?(!@property.match(/\\/openapi/))][*].responses[*].headers",
+        //   then: {
+        //     field: "snyk-version-lifecycle-stage",
+        //     function: truthy,
+        //   },
+        // },
+        // "version-response-requested": {
+        //   description: "Responses must provide snyk-version-requested header",
+        //   message: "{{description}}",
+        //   severity: "error",
+        //   given:
+        //     "$.paths[?(!@property.match(/\\/openapi/))][*].responses[*].headers",
+        //   then: {
+        //     field: "snyk-version-requested",
+        //     function: truthy,
+        //   },
+        // },
+        // "version-response-served": {
+        //   description: "Responses must provide snyk-version-served header",
+        //   message: "{{description}}",
+        //   severity: "error",
+        //   given:
+        //     "$.paths[?(!@property.match(/\\/openapi/))][*].responses[*].headers",
+        //   then: {
+        //     field: "snyk-version-served",
+        //     function: truthy,
+        //   },
+        // },
+        // "version-response-sunset": {
+        //   description: "Responses must provide sunset header",
+        //   message: "{{description}}",
+        //   severity: "error",
+        //   given:
+        //     "$.paths[?(!@property.match(/\\/openapi/))][*].responses[*].headers",
+        //   then: {
+        //     field: "sunset",
+        //     function: truthy,
+        //   },
+        // },
       },
     },
   ],
@@ -815,24 +815,24 @@ export default {
         },
       ],
     },
-    "apinext-operation-summary": {
-      description: "Path operations must include a summary",
-      severity: "error",
-      given: "$.paths[*][*]",
-      then: {
-        field: "summary",
-        function: truthy,
-      },
-    },
-    "apinext-operation-tags": {
-      description: "Path operations must include tags",
-      severity: "error",
-      given: "$.paths[*][*]",
-      then: {
-        field: "tags",
-        function: truthy,
-      },
-    },
+    // "apinext-operation-summary": {
+    //   description: "Path operations must include a summary",
+    //   severity: "error",
+    //   given: "$.paths[*][*]",
+    //   then: {
+    //     field: "summary",
+    //     function: truthy,
+    //   },
+    // },
+    // "apinext-operation-tags": {
+    //   description: "Path operations must include tags",
+    //   severity: "error",
+    //   given: "$.paths[*][*]",
+    //   then: {
+    //     field: "tags",
+    //     function: truthy,
+    //   },
+    // },
   },
 };
 function _interopDefault(ex) {
