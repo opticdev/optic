@@ -75,7 +75,7 @@ describe("end-end-tests", () => {
     ).toMatchSnapshot();
   });
 
-  it.only("passes when property operation added", async () => {
+  it("passes when property operation added", async () => {
     const results = await snapshotScenario(
       "000-baseline.yaml",
       "002-ok-add-operation.yaml",

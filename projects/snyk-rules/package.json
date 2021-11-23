@@ -32,7 +32,6 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@stoplight/spectral-core": "^1.6.1",
     "@stoplight/spectral-rulesets": "^1.3.0",
     "@useoptic/api-checks": "workspace:*",
     "@useoptic/openapi-io": "workspace:*",
