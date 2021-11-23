@@ -5,6 +5,8 @@ import * as fs from "fs";
 import YAML from "js-yaml";
 import { SnykApiCheckDsl } from "./dsl";
 import { newSnykApiCheckService } from "./service";
+import { loadSpecFromFile } from "@useoptic/openapi-io";
+import { spec } from "@useoptic/api-checks/build/sdk/test/select-when-rule.test";
 
 export const defaultEmptySpec: any = {
   openapi: "3.0.1",
@@ -19,19 +21,33 @@ export const defaultEmptySpec: any = {
 async function main() {
   // const spec: any = YAML.load(
   //   fs.readFileSync(
-  //     "./projects/snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/002-ok-add-operation.yaml",
+  //     "./projects/snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/000-baseline.yaml",
   //     "utf-8"
   //   )
   // );
-  const spectralDSL = new SpectralDsl(defaultEmptySpec, [], ruleset);
-
-  const apiCheckService = newSnykApiCheckService();
-  const result = await apiCheckService.runRules(
-    defaultEmptySpec,
-    defaultEmptySpec,
-    {} as any
+  const specFile = await loadSpecFromFile(
+    "./projects/snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/000-baseline.yaml"
   );
-  console.log(JSON.stringify(result, null, 2));
+  if (specFile.flattened) {
+    // const spectralDSL = new SpectralDsl(specFile.flattened, [], ruleset);
+    // console.log(JSON.stringify(specFile.flattened));
+    // process.exit();
+    const spectral = new Spectral();
+    spectral.setRuleset(ruleset as any);
+    const spec = JSON.parse(JSON.stringify(specFile.flattened, null, 2));
+    const results = await spectral.run(specFile.flattened as any);
+    console.log(results);
+
+    // const apiCheckService = newSnykApiCheckService();
+    // const result = await apiCheckService.runRules(
+    //   specFile.flattened,
+    //   specFile.flattened,
+    //   {} as any
+    // );
+    // console.log(
+    //   YAML.dump()
+    // );
+  }
 
   //
   // // console.log(JSON.stringify(spectral, null, 2));

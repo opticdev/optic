@@ -698,28 +698,30 @@ export default {
         }
       }
     },
-    "apinext-operation-response-array-examples": {
-      "description": "Responses must have an enum or examples field and be non-empty",
-      "severity": "error",
-      "given": "$.paths[*][*].responses[*].content[*].schema.properties.data.items.properties.attributes..[properties][?(!@.type.match(/object|boolean/))]",
-      "then": {
-        "function": xor,
-        "functionOptions": {
-          "properties": ["enum", "example"]
-        }
-      }
-    },
-    "apinext-operation-response-single-examples": {
-      "description": "Responses must have an enum or examples field and be non-empty",
-      "severity": "error",
-      "given": "$.paths[*][*].responses[*].content[*].schema.properties.data.properties.attributes..[properties][?(!@.type.match(/object|boolean/))]",
-      "then": {
-        "function": xor,
-        "functionOptions": {
-          "properties": ["enum", "example"]
-        }
-      }
-    },
+    // TODO: conver this as it causes an error
+    // "apinext-operation-response-array-examples": {
+    //   "description": "Responses must have an enum or examples field and be non-empty",
+    //   "severity": "error",
+    //   "given": "$.paths[*][*].responses[*].content[*].schema.properties.data.items.properties.attributes..[properties][?(!@.type.match(/object|boolean/))]",
+    //   "then": {
+    //     "function": xor,
+    //     "functionOptions": {
+    //       "properties": ["enum", "example"]
+    //     }
+    //   }
+    // },
+    // TODO: conver this as it causes an error
+    // "apinext-operation-response-single-examples": {
+    //   "description": "Responses must have an enum or examples field and be non-empty",
+    //   "severity": "error",
+    //   "given": "$.paths[*][*].responses[*].content[*].schema.properties.data.properties.attributes..[properties][?(!@.type.match(/object|boolean/))]",
+    //   "then": {
+    //     "function": xor,
+    //     "functionOptions": {
+    //       "properties": ["enum", "example"]
+    //     }
+    //   }
+    // },
     "apinext-date-property-formatting": {
       "description": "Date-time properties require correct date-time format",
       "severity": "error",
