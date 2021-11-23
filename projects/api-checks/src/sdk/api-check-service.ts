@@ -9,6 +9,8 @@ import {
   OpenApiFact,
   OpenApiKind,
 } from "@useoptic/openapi-utilities";
+import { Ruleset } from "@stoplight/spectral-core";
+import { SpectralDsl } from "./spectral/dsl";
 
 export type DslConstructorInput<Context> = {
   context: Context;
@@ -34,6 +36,17 @@ export class ApiCheckService<Context> {
       return dsl.checkPromises();
     };
 
+    this.rules.push(runner);
+    return this;
+  }
+
+  // tried using "Ruleset" but getting typeerrors -- falling back to any
+  // @Stephen please chech on this
+  useSpectralRuleset(ruleset: any) {
+    const runner = (input: DslConstructorInput<Context>) => {
+      const dsl = new SpectralDsl(input.nextJsonLike, input.nextFacts, ruleset);
+      return dsl.checkPromises();
+    };
     this.rules.push(runner);
     return this;
   }
