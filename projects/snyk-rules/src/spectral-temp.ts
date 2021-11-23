@@ -10,8 +10,7 @@ export const defaultEmptySpec: any = {
   openapi: "3.0.1",
   paths: {
     "/example": {
-      get: {},
-      responses: {},
+      get: { responses: {} },
     },
   },
   info: { version: "0.0.0", title: "Empty" },
@@ -27,13 +26,12 @@ async function main() {
   const spectralDSL = new SpectralDsl(defaultEmptySpec, [], ruleset);
 
   const apiCheckService = newSnykApiCheckService();
-  console.log(
-    await apiCheckService.runRules(
-      defaultEmptySpec,
-      defaultEmptySpec,
-      {} as any
-    )
+  const result = await apiCheckService.runRules(
+    defaultEmptySpec,
+    defaultEmptySpec,
+    {} as any
   );
+  console.log(JSON.stringify(result, null, 2));
 
   //
   // // console.log(JSON.stringify(spectral, null, 2));
