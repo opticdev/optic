@@ -1,6 +1,6 @@
-import { IFact, IChange, OpenApiFact } from "./types";
+import { IFact, IChange, OpenApiFact, ChangeType } from './types';
 
-import equals from "fast-deep-equal";
+import equals from 'fast-deep-equal';
 
 export function factsToChangelog(
   past: IFact<OpenApiFact>[],
@@ -29,28 +29,33 @@ export function factsToChangelog(
     } else return false;
   });
 
-  return [
-    ...added.map((added) => ({
-      location: added.location,
-      added: added.value,
-    })),
-    ...removed.map((removed) => ({
-      location: removed.location,
-      removed: {
-        before: removed.value,
+  const addedChanges: IChange<OpenApiFact>[] = added.map((added) => ({
+    location: added.location,
+    added: added.value,
+    changeType: ChangeType.Added,
+  }));
+
+  const removedChanges: IChange<OpenApiFact>[] = removed.map((removed) => ({
+    location: removed.location,
+    removed: {
+      before: removed.value,
+    },
+    changeType: ChangeType.Removed,
+  }));
+
+  const changedChanges: IChange<OpenApiFact>[] = updated.map((past) => {
+    const after = current.find((fact) =>
+      equals(fact.location.conceptualPath, past.location.conceptualPath)
+    )!;
+    return {
+      location: past.location,
+      changed: {
+        before: past.value,
+        after: after.value,
       },
-    })),
-    ...updated.map((past) => {
-      const after = current.find((fact) =>
-        equals(fact.location.conceptualPath, past.location.conceptualPath)
-      )!;
-      return {
-        location: past.location,
-        changed: {
-          before: past.value,
-          after: after.value,
-        },
-      };
-    }),
-  ];
+      changeType: ChangeType.Changed,
+    };
+  });
+
+  return [...addedChanges, ...removedChanges, ...changedChanges];
 }

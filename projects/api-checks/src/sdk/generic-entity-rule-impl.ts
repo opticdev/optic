@@ -4,10 +4,10 @@ import {
   IFact,
   ILocation,
   OpenApiFact,
-} from "@useoptic/openapi-utilities";
-import { EntityRule, newDocsLinkHelper, Result, runCheck } from "./types";
-import equals from "lodash.isequal";
-import { IPathComponent } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
+} from '@useoptic/openapi-utilities';
+import { EntityRule, newDocsLinkHelper, Result, runCheck } from './types';
+import equals from 'lodash.isequal';
+import { IPathComponent } from '@useoptic/openapi-utilities/build/openapi3/sdk/types';
 export function genericEntityRuleImpl<
   NarrowedOpenApiFact, // TODO require Type to be a type of `OpenApiFact`
   ApiContext,
@@ -63,7 +63,7 @@ export function genericEntityRuleImpl<
     ApiContext,
     DslContext,
     OpenApiEntityType
-  >["added"]["must"] = (must: boolean) => {
+  >['added']['must'] = (must: boolean) => {
     return (statement, handler) => {
       pushCheck(
         ...added
@@ -91,7 +91,7 @@ export function genericEntityRuleImpl<
     ApiContext,
     DslContext,
     OpenApiEntityType
-  >["removed"]["must"] = (must: boolean) => {
+  >['removed']['must'] = (must: boolean) => {
     return (statement, handler) => {
       pushCheck(
         ...removed
@@ -119,7 +119,7 @@ export function genericEntityRuleImpl<
     ApiContext,
     DslContext,
     OpenApiEntityType
-  >["changed"]["must"] = (must: boolean) => {
+  >['changed']['must'] = (must: boolean) => {
     return (statement, handler) => {
       pushCheck(
         ...changes.map((item, index) => {
@@ -147,7 +147,7 @@ export function genericEntityRuleImpl<
     ApiContext,
     DslContext,
     OpenApiEntityType
-  >["requirement"]["must"] = (must: boolean) => {
+  >['requirement']['must'] = (must: boolean) => {
     return (statement, handler) => {
       pushCheck(
         ...requirements.map((item, index) => {
@@ -161,17 +161,25 @@ export function genericEntityRuleImpl<
             specItem = getSpecItem(item.location.jsonPath);
           } catch (e) {
             throw new Error(
-              "JSON trail does not resolve " + item.location.jsonPath
+              'JSON trail does not resolve ' + item.location.jsonPath
             );
           }
 
-          return runCheck(item, docsHelper, where, statement, must, () =>
-            handler(
-              item.value,
-              getContext(item.location),
-              docsHelper,
-              specItem || ({} as OpenApiEntityType)
-            )
+          return runCheck(
+            // How does this even work? `requirements` are defined as a IFact, but runCheck expects IChange
+            // And these types don't overlap
+            item as any,
+            docsHelper,
+            where,
+            statement,
+            must,
+            () =>
+              handler(
+                item.value,
+                getContext(item.location),
+                docsHelper,
+                specItem || ({} as OpenApiEntityType)
+              )
           );
         })
       );

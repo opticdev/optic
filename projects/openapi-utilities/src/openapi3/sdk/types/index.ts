@@ -87,14 +87,39 @@ export interface IFact<KindSchema> {
   value: KindSchema;
 }
 
-export interface IChange<T> {
-  location: ILocation;
-  added?: T;
-  changed?: {
-    before: T;
-    after: T;
-  };
-  removed?: {
-    before: T;
-  };
+export enum ChangeType {
+  Added = 'added',
+  Changed = 'changed',
+  Removed = 'removed',
 }
+
+type BaseChange = {
+  location: ILocation;
+};
+
+export type IChange<T> = BaseChange &
+  (
+    | {
+        changeType: ChangeType.Added;
+        added: T;
+        changed?: undefined;
+        removed?: undefined;
+      }
+    | {
+        changeType: ChangeType.Changed;
+        added?: undefined;
+        changed: {
+          before: T;
+          after: T;
+        };
+        removed?: undefined;
+      }
+    | {
+        changeType: ChangeType.Removed;
+        added?: undefined;
+        changed?: undefined;
+        removed: {
+          before: T;
+        };
+      }
+  );

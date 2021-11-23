@@ -23,6 +23,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "method": "get",
@@ -135,6 +136,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "method": "get",
@@ -249,6 +251,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "method": "get",
@@ -437,6 +440,7 @@ Object {
         "method": "get",
         "pathPattern": "/example/{pathParameter}",
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "method": "get",
@@ -456,6 +460,7 @@ Object {
         "in": "path",
         "name": "pathParameter",
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -477,6 +482,7 @@ Object {
       },
     },
     Object {
+      "changeType": "removed",
       "location": Object {
         "conceptualLocation": Object {
           "method": "get",
@@ -589,6 +595,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "in": "query",
@@ -660,6 +667,7 @@ Object {
   "results": Array [
     Object {
       "change": Object {
+        "changeType": "changed",
         "changed": Object {
           "after": Object {
             "in": "query",
@@ -738,6 +746,7 @@ Object {
         "name": "query_parameter",
         "required": true,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -793,6 +802,7 @@ Object {
           "name": "query_parameter",
           "required": true,
         },
+        "changeType": "added",
         "location": Object {
           "conceptualLocation": Object {
             "inRequest": Object {
@@ -854,6 +864,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "in": "query",
@@ -915,6 +926,7 @@ Object {
   "results": Array [
     Object {
       "change": Object {
+        "changeType": "changed",
         "changed": Object {
           "after": Object {
             "in": "query",
@@ -985,6 +997,7 @@ Object {
         "method": "get",
         "pathPattern": "/example/{path_parameter}",
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "method": "get",
@@ -1004,6 +1017,7 @@ Object {
         "in": "path",
         "name": "path_parameter",
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -1025,6 +1039,7 @@ Object {
       },
     },
     Object {
+      "changeType": "removed",
       "location": Object {
         "conceptualLocation": Object {
           "method": "get",
@@ -1130,6 +1145,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "removed",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -1178,6 +1194,7 @@ Object {
   "results": Array [
     Object {
       "change": Object {
+        "changeType": "removed",
         "location": Object {
           "conceptualLocation": Object {
             "inResponse": Object {
@@ -1321,6 +1338,7 @@ Object {
         "in": "query",
         "name": "version",
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -1423,6 +1441,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "method": "get",
@@ -1468,6 +1487,7 @@ Object {
   "results": Array [
     Object {
       "change": Object {
+        "changeType": "changed",
         "changed": Object {
           "after": Object {
             "method": "get",
@@ -1525,6 +1545,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "method": "get",
@@ -1568,6 +1589,7 @@ Object {
   "results": Array [
     Object {
       "change": Object {
+        "changeType": "changed",
         "changed": Object {
           "after": Object {
             "method": "get",
@@ -1623,6 +1645,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "method": "get",
@@ -1716,6 +1739,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "method": "get",
@@ -1873,6 +1897,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "method": "get",
@@ -1965,6 +1990,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "method": "get",
@@ -2058,6 +2084,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "method": "get",

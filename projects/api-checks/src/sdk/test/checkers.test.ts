@@ -12,8 +12,8 @@ const change: IChange<OpenApiFact> = {
       path: "/simulated",
       method: "get",
     },
-  } as any,
-};
+  },
+} as any;
 
 it("checks can run / fail using off-the-shelf test helpers", async (done) => {
   const check = new Checker();

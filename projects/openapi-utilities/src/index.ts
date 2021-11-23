@@ -21,7 +21,8 @@ import {
   ResponseHeaderLocation,
   ResponseLocation,
   BodyLocation,
-  FieldLocation
+  FieldLocation,
+  ChangeType,
 } from "./openapi3/sdk/types";
 export { defaultEmptySpec } from './openapi3/constants';
 
@@ -48,5 +49,6 @@ export {
   ResponseHeaderLocation,
   ResponseLocation,
   BodyLocation,
-  FieldLocation
+  FieldLocation,
+  ChangeType,
 };

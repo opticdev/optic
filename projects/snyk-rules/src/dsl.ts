@@ -23,6 +23,7 @@ import {
   OpenApiRequestParameterFact,
   OpenApiResponseFact,
   OpenApiFact,
+  ChangeType,
 } from "@useoptic/openapi-utilities";
 import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
 import { ShouldOrMust } from "@useoptic/api-checks/build/sdk/types";
@@ -154,8 +155,8 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         jsonPath: "/",
         conceptualPath: [],
         kind: "API",
-      } as any,
-    };
+      },
+    } as any;
 
     const value: ShouldOrMust<
       (
@@ -281,8 +282,9 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
       (must: boolean) => {
         return (statement, handler) => {
           const docsHelper = newDocsLinkHelper();
-          const syntheticChange = {
+          const syntheticChange: IChange<any> = {
             added: this.providedContext,
+            changeType: ChangeType.Added,
             location: {
               jsonPath: "/",
               conceptualPath: [],

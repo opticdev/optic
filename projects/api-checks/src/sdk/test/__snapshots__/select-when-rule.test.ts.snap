@@ -4,7 +4,7 @@ exports[`select when rules empty json paths will not break 1`] = `
 Array [
   Object {
     "change": Object {
-      "added": undefined,
+      "changeType": "changed",
       "changed": Object {
         "after": Array [
           "Goodbye",
@@ -25,7 +25,6 @@ Array [
         "jsonPath": "/",
         "kind": "custom-json-path",
       },
-      "removed": undefined,
     },
     "condition": "be amazing",
     "docsLink": undefined,
@@ -44,7 +43,7 @@ exports[`select when rules works for json paths 1`] = `
 Array [
   Object {
     "change": Object {
-      "added": undefined,
+      "changeType": "changed",
       "changed": Object {
         "after": Array [
           "Goodbye",
@@ -65,7 +64,6 @@ Array [
         "jsonPath": "/",
         "kind": "custom-json-path",
       },
-      "removed": undefined,
     },
     "condition": "be amazing",
     "docsLink": undefined,

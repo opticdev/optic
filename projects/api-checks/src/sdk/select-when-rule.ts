@@ -4,11 +4,16 @@ import {
   Result,
   runCheck,
   ShouldOrMust,
-} from "./types";
-import { OpenAPIV3 } from "openapi-types";
-import jsonpath from "jsonpath";
-import { ConceptualLocation, IChange, OpenApiFact } from "@useoptic/openapi-utilities";
-import equals from "fast-deep-equal";
+} from './types';
+import { OpenAPIV3 } from 'openapi-types';
+import jsonpath from 'jsonpath';
+import {
+  ConceptualLocation,
+  IChange,
+  OpenApiFact,
+  ChangeType,
+} from '@useoptic/openapi-utilities';
+import equals from 'fast-deep-equal';
 
 export function createSelectJsonPathHelper(
   operations: {
@@ -45,7 +50,7 @@ export function createSelectJsonPathHelper(
           (current: T[], next: T[], docsHelper: DocsLinkHelper) => void
         >;
 
-        const selectRuleHandler: (must: boolean) => Re["must"] = (
+        const selectRuleHandler: (must: boolean) => Re['must'] = (
           must: boolean
         ) => {
           return (statement, handler) => {
@@ -53,30 +58,38 @@ export function createSelectJsonPathHelper(
               const currentResults = jsonpath.query(operation.current, path);
               const nextResults = jsonpath.query(operation.next, path);
               const shouldRun = qualifier(currentResults, nextResults);
-              const fakeChange: IChange<OpenApiFact> = {
-                added:
-                  nextResults.length > 0 && currentResults.length === 0
-                    ? nextResults
-                    : undefined,
-                changed: equals(currentResults, nextResults)
-                  ? undefined
-                  : {
-                      before: currentResults,
-                      after: nextResults,
-                    },
-                removed:
-                  currentResults.length > 0 && nextResults.length === 0
-                    ? { before: currentResults }
-                    : undefined,
-                location: {
-                  conceptualLocation: operation.conceptualLocation,
-                  conceptualPath: ["json-path", path],
-                  jsonPath: "/",
-                  kind: "custom-json-path",
-                } as any,
-              };
+              const location = {
+                conceptualLocation: operation.conceptualLocation,
+                conceptualPath: ['json-path', path],
+                jsonPath: '/',
+                kind: 'custom-json-path',
+              } as any;
 
-              if (shouldRun) {
+              const fakeChange: IChange<any[]> | null =
+                nextResults.length > 0 && currentResults.length === 0
+                  ? {
+                      added: nextResults,
+                      changeType: ChangeType.Added,
+                      location,
+                    }
+                  : currentResults.length > 0 && nextResults.length === 0
+                  ? {
+                      changeType: ChangeType.Removed,
+                      location,
+                      removed: { before: currentResults },
+                    }
+                  : !equals(currentResults, nextResults)
+                  ? {
+                      changeType: ChangeType.Changed,
+                      location,
+                      changed: {
+                        before: currentResults,
+                        after: nextResults,
+                      },
+                    }
+                  : null;
+
+              if (shouldRun && fakeChange) {
                 const docsHelper = newDocsLinkHelper();
                 pushCheck(
                   runCheck(
