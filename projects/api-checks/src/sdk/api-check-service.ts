@@ -9,6 +9,8 @@ import {
   OpenApiFact,
   OpenApiKind,
 } from "@useoptic/openapi-utilities";
+import { Ruleset } from "@stoplight/spectral-core";
+import { SpectralDsl } from "./spectral/dsl";
 
 export type DslConstructorInput<Context> = {
   context: Context;
@@ -23,6 +25,9 @@ export class ApiCheckService<Context> {
   private rules: ((
     input: DslConstructorInput<Context>
   ) => Promise<Result>[])[] = [];
+  private additionalResults: ((
+    input: DslConstructorInput<Context>
+  ) => Promise<Result[]>)[] = [];
 
   useDsl<DSL extends ApiCheckDsl>(
     dslConstructor: (input: DslConstructorInput<Context>) => DSL,
@@ -35,6 +40,17 @@ export class ApiCheckService<Context> {
     };
 
     this.rules.push(runner);
+    return this;
+  }
+
+  // tried using "Ruleset" but getting typeerrors -- falling back to any
+  // @Stephen please chech on this
+  useSpectralRuleset(ruleset: any) {
+    const runner = async (input: DslConstructorInput<Context>) => {
+      const dsl = new SpectralDsl(input.nextJsonLike, input.nextFacts, ruleset);
+      return await dsl.spectralChecksResults;
+    };
+    this.additionalResults.push(runner);
     return this;
   }
 
@@ -79,8 +95,15 @@ export class ApiCheckService<Context> {
       this.rules.map((ruleRunner) => ruleRunner(input))
     );
 
-    const results: Result[] = await Promise.all(checkPromises);
+    const additionalCheckPromises = this.additionalResults.map((ruleRunner) =>
+      ruleRunner(input)
+    );
 
-    return results;
+    const results: Result[] = await Promise.all(checkPromises);
+    const additionalCheckResults: Result[] = flatten(
+      await Promise.all(additionalCheckPromises)
+    );
+
+    return [...results, ...additionalCheckResults];
   }
 }

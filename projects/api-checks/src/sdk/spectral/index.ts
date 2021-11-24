@@ -1,4 +1,9 @@
 import { SpectralDsl } from "./dsl";
+import { oas } from "@stoplight/spectral-rulesets";
+
+const ruleset = {
+  extends: [[oas, "all"]],
+};
 
 export const defaultEmptySpec: any = {
   openapi: "3.0.1",
@@ -10,5 +15,5 @@ export const defaultEmptySpec: any = {
   info: { version: "0.0.0", title: "Empty" },
 };
 
-const result = new SpectralDsl(defaultEmptySpec);
-// result.addRuleset();
+const result = new SpectralDsl(defaultEmptySpec, [], ruleset);
+result.run();

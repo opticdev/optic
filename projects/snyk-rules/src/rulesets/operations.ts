@@ -1,6 +1,7 @@
 import { SnykApiCheckDsl } from "../dsl";
 import { camelCase, snakeCase } from "change-case";
 import { OpenAPIV3 } from "@useoptic/api-checks";
+import pathCasing from "./spectral/functions/pathCasing";
 
 const { expect } = require("chai");
 
@@ -27,6 +28,10 @@ export const rules = {
     operations.requirement.must("have tags", (operation) => {
       expect(operation.tags).to.exist;
       expect(operation.tags).to.have.lengthOf.above(0, "with examples");
+      for (const tag of operation.tags || []) {
+        expect(tag).to.have.property("name");
+        expect(tag).to.have.property("description");
+      }
     });
   },
   summary: ({ operations }: SnykApiCheckDsl) => {
@@ -77,6 +82,40 @@ export const rules = {
             return parameter.name;
           });
         expect(parameterNames).to.include("version");
+      }
+    );
+  },
+  tenantFormatting: ({ operations }: SnykApiCheckDsl) => {
+    operations.requirement.must(
+      "use UUID for org_id or group_id",
+      (operation, context, docs, specItem) => {
+        for (const parameter of specItem.parameters || []) {
+          if ("$ref" in parameter) continue;
+          if (parameter.name === "group_id" || parameter.name === "org_id") {
+            if (!parameter.schema) {
+              expect.fail(
+                `expected operation ${operation.pathPattern} ${operation.method} parameter ${parameter.name} to have a schema`
+              );
+              continue;
+            }
+            if (!("$ref" in parameter.schema)) {
+              expect(
+                parameter.schema.format,
+                `expected operation ${operation.pathPattern} ${operation.method} parameter ${parameter.name} to have a schema`
+              ).to.be("uuid");
+            }
+          }
+        }
+      }
+    );
+  },
+  // TODO: this currently will run for every operation which means a path element may be
+  // checked multiple times. This should be changed once paths are supported in the DSL.
+  pathElementsCasing: ({ operations }: SnykApiCheckDsl) => {
+    operations.requirement.must(
+      "use the right casing for path elements",
+      (operation, context) => {
+        expect(pathCasing(context.path, null, null)).to.be.true;
       }
     );
   },

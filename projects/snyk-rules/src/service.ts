@@ -1,5 +1,6 @@
 import { SnykApiCheckDsl, SynkApiCheckContext } from "./dsl";
 import { ApiCheckService, DslConstructorInput } from "@useoptic/api-checks";
+import spectralRuleset from "./rulesets/spectral/ruleset";
 
 export function newSnykApiCheckService() {
   const snykRulesService = new ApiCheckService<SynkApiCheckContext>();
@@ -26,6 +27,8 @@ export function newSnykApiCheckService() {
     dslConstructor,
     require("./rulesets/properties").rules
   );
+
+  snykRulesService.useSpectralRuleset(spectralRuleset);
 
   return snykRulesService;
 }
