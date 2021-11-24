@@ -35,4 +35,40 @@ export const rules = {
       expect(property.required).to.not.be.true;
     });
   },
+  enumOrExample: ({ bodyProperties }: SnykApiCheckDsl) => {
+    bodyProperties.requirement.must(
+      "have enum or example",
+      (property, context) => {
+        if (!context.inResponse) return;
+        if (
+          property.flatSchema.type === "object" ||
+          property.flatSchema.type === "boolean"
+        )
+          return;
+        expect(Boolean(property.flatSchema.enum || property.flatSchema.example))
+          .to.be.true;
+      }
+    );
+  },
+  dateFormatting: ({ bodyProperties, operations }: SnykApiCheckDsl) => {
+    bodyProperties.requirement.must(
+      "use date-time for dates",
+      (property, context) => {
+        if (!context.inResponse) return;
+        if (["created", "updated", "deleted"].includes(property.key)) {
+          expect(property.flatSchema.format).to.be("date-time");
+        }
+      }
+    );
+  },
+  arrayWithItems: ({ bodyProperties, operations }: SnykApiCheckDsl) => {
+    bodyProperties.requirement.must(
+      "have type for array items",
+      (property, context) => {
+        if (property.flatSchema.type === "array") {
+          expect(property.flatSchema.items).to.have.property("type");
+        }
+      }
+    );
+  },
 };
