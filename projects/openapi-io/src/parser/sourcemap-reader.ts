@@ -133,7 +133,7 @@ function positionToLine(
   const startLine =
     (contents.substring(0, start).match(/\n/g) || '').length + 1;
   const endLine =
-    (contents.substring(end).match(/\n/g) || '').length + startLine - 1;
+    (contents.substring(start, end).match(/\n/g) || '').length + startLine;
 
   const lines = contents.split(/\r\n|\r|\n/);
 
