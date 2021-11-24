@@ -1,7 +1,7 @@
 import React from 'react';
 import { program as cli } from 'commander';
 import path from 'path';
-import { render, Text } from 'ink';
+import { Box, render, Text } from 'ink';
 import { ChangeView } from '../ui/change';
 import { CodeBlock } from '../ui/code/code-block';
 
@@ -35,16 +35,39 @@ const json = {
 cli.action(async (options: { capture: string }) => {
   // render(<ChangeView />);
   render(
-    <CodeBlock
-      render={{
-        json,
-        highlight: {
-          trail: '/owner/login',
-          wasMissing: false,
-          highlight: 'green',
-        },
-      }}
-    />
+    <Box flexDirection="column">
+      <CodeBlock
+        render={{
+          json,
+          highlight: {
+            trail: '/owner/login',
+            wasMissing: false,
+            highlight: 'green',
+          },
+        }}
+      />
+      <CodeBlock
+        render={{
+          json,
+          highlight: {
+            trail: '/owner/received_events_url',
+            wasMissing: false,
+            highlight: 'yellow',
+          },
+        }}
+      />
+
+      <CodeBlock
+        render={{
+          json,
+          highlight: {
+            trail: '/owner/created_at',
+            wasMissing: true,
+            highlight: 'red',
+          },
+        }}
+      />
+    </Box>
   );
 });
 
