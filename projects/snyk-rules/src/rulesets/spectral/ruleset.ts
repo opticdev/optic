@@ -56,100 +56,100 @@ export default {
       //     }
       //   }
       // },
-      "jsonapi-get-post-response-data-schema": {
-        "description": "JSON:API response data schema",
-        "message": "{{error}}",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/))][?(@property.match(/get|post/))].responses[?(@property.match(/200|201/))].content['application/vnd.api+json'].schema.properties",
-        "then": {
-          "field": "data",
-          "function": schema,
-          "functionOptions": {
-            "schema": {
-              "oneOf": [{
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "enum": ["array"]
-                  },
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "properties": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": ["string"]
-                              },
-                              "format": {
-                                "type": "string",
-                                "enum": ["uuid"]
-                              }
-                            },
-                            "required": ["type", "format"]
-                          },
-                          "type": {
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": ["string"]
-                              }
-                            },
-                            "required": ["type"]
-                          }
-                        },
-                        "required": ["id", "type"]
-                      }
-                    },
-                    "required": ["properties"]
-                  }
-                }
-              }, {
-                "type": "object",
-                "properties": {
-                  "properties": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "object",
-                        "properties": {
-                          "type": {
-                            "type": "string",
-                            "enum": ["string"]
-                          },
-                          "format": {
-                            "type": "string",
-                            "enum": ["uuid"]
-                          }
-                        },
-                        "required": ["type", "format"]
-                      },
-                      "type": {
-                        "type": "object",
-                        "properties": {
-                          "type": {
-                            "type": "string",
-                            "enum": ["string"]
-                          }
-                        },
-                        "required": ["type"]
-                      }
-                    },
-                    "required": ["id", "type"]
-                  }
-                },
-                "required": ["properties"]
-              }]
-            }
-          }
-        }
-      },
+      // "jsonapi-get-post-response-data-schema": {
+      //   "description": "JSON:API response data schema",
+      //   "message": "{{error}}",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/))][?(@property.match(/get|post/))].responses[?(@property.match(/200|201/))].content['application/vnd.api+json'].schema.properties",
+      //   "then": {
+      //     "field": "data",
+      //     "function": schema,
+      //     "functionOptions": {
+      //       "schema": {
+      //         "oneOf": [{
+      //           "type": "object",
+      //           "properties": {
+      //             "type": {
+      //               "type": "string",
+      //               "enum": ["array"]
+      //             },
+      //             "items": {
+      //               "type": "object",
+      //               "properties": {
+      //                 "properties": {
+      //                   "type": "object",
+      //                   "properties": {
+      //                     "id": {
+      //                       "type": "object",
+      //                       "properties": {
+      //                         "type": {
+      //                           "type": "string",
+      //                           "enum": ["string"]
+      //                         },
+      //                         "format": {
+      //                           "type": "string",
+      //                           "enum": ["uuid"]
+      //                         }
+      //                       },
+      //                       "required": ["type", "format"]
+      //                     },
+      //                     "type": {
+      //                       "type": "object",
+      //                       "properties": {
+      //                         "type": {
+      //                           "type": "string",
+      //                           "enum": ["string"]
+      //                         }
+      //                       },
+      //                       "required": ["type"]
+      //                     }
+      //                   },
+      //                   "required": ["id", "type"]
+      //                 }
+      //               },
+      //               "required": ["properties"]
+      //             }
+      //           }
+      //         }, {
+      //           "type": "object",
+      //           "properties": {
+      //             "properties": {
+      //               "type": "object",
+      //               "properties": {
+      //                 "id": {
+      //                   "type": "object",
+      //                   "properties": {
+      //                     "type": {
+      //                       "type": "string",
+      //                       "enum": ["string"]
+      //                     },
+      //                     "format": {
+      //                       "type": "string",
+      //                       "enum": ["uuid"]
+      //                     }
+      //                   },
+      //                   "required": ["type", "format"]
+      //                 },
+      //                 "type": {
+      //                   "type": "object",
+      //                   "properties": {
+      //                     "type": {
+      //                       "type": "string",
+      //                       "enum": ["string"]
+      //                     }
+      //                   },
+      //                   "required": ["type"]
+      //                 }
+      //               },
+      //               "required": ["id", "type"]
+      //             }
+      //           },
+      //           "required": ["properties"]
+      //         }]
+      //       }
+      //     }
+      //   }
+      // },
       // "jsonapi-patch-response-data": {
       //   "description": "JSON:API patch 200 response requires a schema",
       //   "message": "{{description}}",
@@ -162,48 +162,48 @@ export default {
       //     }
       //   }
       // },
-      "jsonapi-patch-response-200-schema": {
-        "description": "JSON:API patch response data schema",
-        "message": "{{error}}",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/))].patch.responses.200.content['application/vnd.api+json'].schema",
-        "then": {
-          "field": "properties",
-          "function": schema,
-          "functionOptions": {
-            "schema": {
-              "oneOf": [{
-                "type": "object",
-                "properties": {
-                  "meta": {
-                    "type": "object"
-                  },
-                  "links": {
-                    "type": "object"
-                  }
-                },
-                "required": ["meta", "links"],
-                "additionalProperties": false
-              }, {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object"
-                  },
-                  "jsonapi": {
-                    "type": "object"
-                  },
-                  "links": {
-                    "type": "object"
-                  }
-                },
-                "required": ["data", "jsonapi", "links"],
-                "additionalProperties": false
-              }]
-            }
-          }
-        }
-      },
+      // "jsonapi-patch-response-200-schema": {
+      //   "description": "JSON:API patch response data schema",
+      //   "message": "{{error}}",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/))].patch.responses.200.content['application/vnd.api+json'].schema",
+      //   "then": {
+      //     "field": "properties",
+      //     "function": schema,
+      //     "functionOptions": {
+      //       "schema": {
+      //         "oneOf": [{
+      //           "type": "object",
+      //           "properties": {
+      //             "meta": {
+      //               "type": "object"
+      //             },
+      //             "links": {
+      //               "type": "object"
+      //             }
+      //           },
+      //           "required": ["meta", "links"],
+      //           "additionalProperties": false
+      //         }, {
+      //           "type": "object",
+      //           "properties": {
+      //             "data": {
+      //               "type": "object"
+      //             },
+      //             "jsonapi": {
+      //               "type": "object"
+      //             },
+      //             "links": {
+      //               "type": "object"
+      //             }
+      //           },
+      //           "required": ["data", "jsonapi", "links"],
+      //           "additionalProperties": false
+      //         }]
+      //       }
+      //     }
+      //   }
+      // },
       // "jsonapi-patch-response-204-schema": {
       //   "description": "JSON:API patch 204 response should not have content",
       //   "message": "{{error}}",
@@ -268,28 +268,28 @@ export default {
       //     }
       //   }
       // },
-      "jsonapi-delete-response-200": {
-        "description": "JSON:API delete 200 response data schema",
-        "message": "{{error}}",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/))].delete.responses.200.content['application/vnd.api+json'].schema",
-        "then": {
-          "field": "properties",
-          "function": schema,
-          "functionOptions": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "meta": {
-                  "type": "object"
-                }
-              },
-              "required": ["meta"],
-              "additionalProperties": false
-            }
-          }
-        }
-      },
+      // "jsonapi-delete-response-200": {
+      //   "description": "JSON:API delete 200 response data schema",
+      //   "message": "{{error}}",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/))].delete.responses.200.content['application/vnd.api+json'].schema",
+      //   "then": {
+      //     "field": "properties",
+      //     "function": schema,
+      //     "functionOptions": {
+      //       "schema": {
+      //         "type": "object",
+      //         "properties": {
+      //           "meta": {
+      //             "type": "object"
+      //           }
+      //         },
+      //         "required": ["meta"],
+      //         "additionalProperties": false
+      //       }
+      //     }
+      //   }
+      // },
       // "jsonapi-delete-response-204": {
       //   "description": "JSON:API delete 204 response data schema",
       //   "message": "{{error}}",
@@ -364,101 +364,101 @@ export default {
       //     }
       //   }
       // },
-      "jsonapi-response-relationship-schema": {
-        "description": "JSON:API response relationship schema",
-        "message": "{{error}}",
-        "severity": "error",
-        "given": "$.paths.*.*.responses.*.content['application/vnd.api+json'].schema.properties.data.properties.relationships",
-        "then": {
-          "function": schema,
-          "functionOptions": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "properties": {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "properties": {
-                              "type": "object",
-                              "properties": {
-                                "type": {
-                                  "type": "object",
-                                  "properties": {
-                                    "type": {
-                                      "type": "string",
-                                      "enum": ["string"]
-                                    }
-                                  },
-                                  "required": ["type"]
-                                },
-                                "id": {
-                                  "type": "object",
-                                  "properties": {
-                                    "type": {
-                                      "type": "string",
-                                      "enum": ["string"]
-                                    },
-                                    "format": {
-                                      "type": "string",
-                                      "enum": ["uuid"]
-                                    }
-                                  },
-                                  "required": ["type", "format"]
-                                }
-                              },
-                              "required": ["type", "id"]
-                            }
-                          },
-                          "required": ["properties"]
-                        },
-                        "links": {
-                          "type": "object",
-                          "properties": {
-                            "properties": {
-                              "type": "object",
-                              "properties": {
-                                "related": {
-                                  "type": "object",
-                                  "properties": {
-                                    "type": {
-                                      "type": "string",
-                                      "enum": ["string"]
-                                    }
-                                  }
-                                }
-                              },
-                              "required": ["related"]
-                            }
-                          },
-                          "required": ["properties"]
-                        }
-                      },
-                      "required": ["data", "links"]
-                    }
-                  },
-                  "required": ["properties"]
-                }
-              }
-            }
-          }
-        }
-      },
-      // "jsonapi-no-compound-documents": {
-      //   "description": "Compound documents are not allowed",
-      //   "severity": "error",
-      //   "given": "$.paths.*.*.responses[?(@property.match(/200|201/))].content['application/vnd.api+json'].schema.properties",
-      //   "then": {
-      //     "field": "included",
-      //     "function": falsy
-      //   }
-      // }
-    }
+    //   "jsonapi-response-relationship-schema": {
+    //     "description": "JSON:API response relationship schema",
+    //     "message": "{{error}}",
+    //     "severity": "error",
+    //     "given": "$.paths.*.*.responses.*.content['application/vnd.api+json'].schema.properties.data.properties.relationships",
+    //     "then": {
+    //       "function": schema,
+    //       "functionOptions": {
+    //         "schema": {
+    //           "type": "object",
+    //           "properties": {
+    //             "additionalProperties": {
+    //               "type": "object",
+    //               "properties": {
+    //                 "properties": {
+    //                   "type": "object",
+    //                   "properties": {
+    //                     "data": {
+    //                       "type": "object",
+    //                       "properties": {
+    //                         "properties": {
+    //                           "type": "object",
+    //                           "properties": {
+    //                             "type": {
+    //                               "type": "object",
+    //                               "properties": {
+    //                                 "type": {
+    //                                   "type": "string",
+    //                                   "enum": ["string"]
+    //                                 }
+    //                               },
+    //                               "required": ["type"]
+    //                             },
+    //                             "id": {
+    //                               "type": "object",
+    //                               "properties": {
+    //                                 "type": {
+    //                                   "type": "string",
+    //                                   "enum": ["string"]
+    //                                 },
+    //                                 "format": {
+    //                                   "type": "string",
+    //                                   "enum": ["uuid"]
+    //                                 }
+    //                               },
+    //                               "required": ["type", "format"]
+    //                             }
+    //                           },
+    //                           "required": ["type", "id"]
+    //                         }
+    //                       },
+    //                       "required": ["properties"]
+    //                     },
+    //                     "links": {
+    //                       "type": "object",
+    //                       "properties": {
+    //                         "properties": {
+    //                           "type": "object",
+    //                           "properties": {
+    //                             "related": {
+    //                               "type": "object",
+    //                               "properties": {
+    //                                 "type": {
+    //                                   "type": "string",
+    //                                   "enum": ["string"]
+    //                                 }
+    //                               }
+    //                             }
+    //                           },
+    //                           "required": ["related"]
+    //                         }
+    //                       },
+    //                       "required": ["properties"]
+    //                     }
+    //                   },
+    //                   "required": ["data", "links"]
+    //                 }
+    //               },
+    //               "required": ["properties"]
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   },
+    //   // "jsonapi-no-compound-documents": {
+    //   //   "description": "Compound documents are not allowed",
+    //   //   "severity": "error",
+    //   //   "given": "$.paths.*.*.responses[?(@property.match(/200|201/))].content['application/vnd.api+json'].schema.properties",
+    //   //   "then": {
+    //   //     "field": "included",
+    //   //     "function": falsy
+    //   //   }
+    //   // }
+    // }
   }, {
     "rules": {
       "paths-snake-case": {

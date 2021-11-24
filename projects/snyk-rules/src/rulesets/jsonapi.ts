@@ -1,7 +1,12 @@
+import * as fs from "fs";
+import * as path from "path";
+import YAML from "js-yaml";
 import { SnykApiCheckDsl } from "../dsl";
 import { OpenAPIV3 } from "openapi-types";
+import Ajv from "ajv";
+import { expect } from "chai";
 
-const { expect } = require("chai");
+const ajv = new Ajv();
 
 function getOperationName(operation) {
   return `operation ${operation.pathPattern} ${operation.method}`;
@@ -13,6 +18,11 @@ function getResponseName(response, context) {
 
 function isOpenApiPath(path) {
   return path.match(/\/openapi/);
+}
+
+function loadSchemaFromFile(filename) {
+  const fullFilename = path.join(__dirname, "..", "..", "schemas", filename);
+  return YAML.load(fs.readFileSync(fullFilename, "utf-8"));
 }
 
 export const rules = {
@@ -252,6 +262,78 @@ export const rules = {
               context
             )} to support compound documents`
           ).to.not.exist;
+        }
+      }
+    );
+  },
+  schemas: ({ responses }: SnykApiCheckDsl) => {
+    responses.requirement.must(
+      "have valid JSON:API schemas",
+      (response, context, docs, specItem) => {
+        if (isOpenApiPath(context.path)) return;
+
+        // Response data
+        if (
+          ["get", "post"].includes(context.method) &&
+          [200, 201].includes(response.statusCode)
+        ) {
+          const responseSchema =
+            specItem.content?.["application/vnd.api+json"]?.schema;
+          const schema: any = loadSchemaFromFile("get-post-response-data.yaml");
+          const validate = ajv.compile(schema);
+          expect(
+            validate(responseSchema),
+            `expected ${getResponseName(
+              response,
+              context
+            )} schema to be valid response data`
+          ).to.be.true;
+        }
+
+        // Patch response data
+        if (context.method === "patch" && response.statusCode === 200) {
+          const responseSchema =
+            specItem.content?.["application/vnd.api+json"]?.schema;
+          const schema: any = loadSchemaFromFile("patch-response-data.yaml");
+          const validate = ajv.compile(schema);
+          expect(
+            validate(responseSchema),
+            `expected ${getResponseName(
+              response,
+              context
+            )} schema to be valid response data`
+          ).to.be.true;
+        }
+
+        // Delete response data
+        if (context.method === "delete" && response.statusCode === 200) {
+          const responseSchema =
+            specItem.content?.["application/vnd.api+json"]?.schema;
+          const schema: any = loadSchemaFromFile("delete-response-data.yaml");
+          const validate = ajv.compile(schema);
+          expect(
+            validate(responseSchema),
+            `expected ${getResponseName(
+              response,
+              context
+            )} schema to be valid response data`
+          ).to.be.true;
+        }
+
+        // Relationships
+        const relationships =
+          specItem.content?.["application/vnd.api+json"]?.schema?.properties
+            ?.data?.properties?.relationships;
+        if (relationships) {
+          const schema: any = loadSchemaFromFile("relationship.yaml");
+          const validate = ajv.compile(schema);
+          expect(
+            validate(relationships),
+            `expected ${getResponseName(
+              response,
+              context
+            )} schema to have valid relationships`
+          ).to.be.true;
         }
       }
     );
