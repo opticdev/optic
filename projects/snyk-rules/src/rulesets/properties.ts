@@ -61,4 +61,14 @@ export const rules = {
       }
     );
   },
+  arrayWithItems: ({ bodyProperties, operations }: SnykApiCheckDsl) => {
+    bodyProperties.requirement.must(
+      "have type for array items",
+      (property, context) => {
+        if (property.flatSchema.type === "array") {
+          expect(property.flatSchema.items).to.have.property("type");
+        }
+      }
+    );
+  },
 };

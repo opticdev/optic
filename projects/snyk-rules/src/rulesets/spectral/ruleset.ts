@@ -543,15 +543,15 @@ export default {
       //     "function": truthy
       //   }
       // },
-      "openapi-arrays-types": {
-        "description": "Array items must have a \"type\" field.",
-        "severity": "error",
-        "given": "$..[?(@.type === \"array\")].items",
-        "then": {
-          "field": "type",
-          "function": truthy
-        }
-      }
+      // "openapi-arrays-types": {
+      //   "description": "Array items must have a \"type\" field.",
+      //   "severity": "error",
+      //   "given": "$..[?(@.type === \"array\")].items",
+      //   "then": {
+      //     "field": "type",
+      //     "function": truthy
+      //   }
+      // }
     }
   }, {
     "rules": {
@@ -732,18 +732,18 @@ export default {
     //     }
     //   }]
     // },
-    "apinext-tags-name-description": {
-      "description": "Tags must have a name and description",
-      "severity": "error",
-      "given": "$.tags[*]",
-      "then": [{
-        "field": "name",
-        "function": truthy
-      }, {
-        "field": "description",
-        "function": truthy
-      }]
-    },
+    // "apinext-tags-name-description": {
+    //   "description": "Tags must have a name and description",
+    //   "severity": "error",
+    //   "given": "$.tags[*]",
+    //   "then": [{
+    //     "field": "name",
+    //     "function": truthy
+    //   }, {
+    //     "field": "description",
+    //     "function": truthy
+    //   }]
+    // },
     // "apinext-operation-summary": {
     //   "description": "Path operations must include a summary",
     //   "severity": "error",
