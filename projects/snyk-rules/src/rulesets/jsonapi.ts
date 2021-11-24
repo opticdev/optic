@@ -1,7 +1,4 @@
 import { SnykApiCheckDsl } from "../dsl";
-import { OpenAPIV3 } from "@useoptic/api-checks";
-import { camelCase } from "change-case";
-import { spec } from "@useoptic/api-checks/build/sdk/test/select-when-rule.test";
 
 const { expect } = require("chai");
 
@@ -128,7 +125,7 @@ export const rules = {
   },
   selfLinks: ({ responses }: SnykApiCheckDsl) => {
     responses.requirement.must(
-      "use the correct JSON:API response data",
+      "include self links",
       (response, context, docs, specItem) => {
         // Top-level self links
         if (
