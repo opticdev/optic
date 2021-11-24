@@ -698,7 +698,6 @@ export default {
         }
       }
     },
-    // TODO: convert this as it causes an error
     // "apinext-operation-response-array-examples": {
     //   "description": "Responses must have an enum or examples field and be non-empty",
     //   "severity": "error",
@@ -710,7 +709,6 @@ export default {
     //     }
     //   }
     // },
-    // TODO: convert this as it causes an error
     // "apinext-operation-response-single-examples": {
     //   "description": "Responses must have an enum or examples field and be non-empty",
     //   "severity": "error",

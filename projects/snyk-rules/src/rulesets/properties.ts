@@ -35,4 +35,11 @@ export const rules = {
       expect(property.required).to.not.be.true;
     });
   },
+  enumOrExample: ({ bodyProperties }: SnykApiCheckDsl) => {
+    bodyProperties.added.must("have enum or example", (property, context) => {
+      if (!context.inResponse) return;
+      if (property.flatSchema.type === "object" || property.flatSchema.type === "boolean") return;
+      expect(Boolean(property.flatSchema.enum || property.flatSchema.example)).to.be.true;
+    });
+  },
 };
