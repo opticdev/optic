@@ -51,10 +51,10 @@ export class OpenAPITraverser
         }
       };
       traverseIfPresent(OpenAPIV3.HttpMethods.GET);
+      traverseIfPresent(OpenAPIV3.HttpMethods.PATCH);
       traverseIfPresent(OpenAPIV3.HttpMethods.POST);
       traverseIfPresent(OpenAPIV3.HttpMethods.PUT);
       traverseIfPresent(OpenAPIV3.HttpMethods.DELETE);
-      traverseIfPresent(OpenAPIV3.HttpMethods.PATCH);
       traverseIfPresent(OpenAPIV3.HttpMethods.HEAD);
       traverseIfPresent(OpenAPIV3.HttpMethods.OPTIONS);
     });
