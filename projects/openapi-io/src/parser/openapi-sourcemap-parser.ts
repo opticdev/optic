@@ -1,15 +1,15 @@
-import $RefParser from "@apidevtools/json-schema-ref-parser";
+import $RefParser from '@apidevtools/json-schema-ref-parser';
 // @ts-ignore
-import * as $RefParserOptions from "@apidevtools/json-schema-ref-parser/lib/options";
-import * as YAML from "yaml-ast-parser";
-import { YAMLMapping, YAMLNode, YAMLSequence } from "yaml-ast-parser";
-import * as fs from "fs-extra";
+import * as $RefParserOptions from '@apidevtools/json-schema-ref-parser/lib/options';
+import * as YAML from 'yaml-ast-parser';
+import { YAMLMapping, YAMLNode, YAMLSequence } from 'yaml-ast-parser';
+import * as fs from 'fs-extra';
 // @ts-ignore
-import { dereference } from "./insourced-dereference";
-import path from "path";
-import fetch from "node-fetch";
-import { OpenAPIV3 } from "openapi-types";
-import { jsonPointerHelpers } from "@useoptic/json-pointer-helpers";
+import { dereference } from './insourced-dereference';
+import path from 'path';
+import fetch from 'node-fetch';
+import { OpenAPIV3 } from 'openapi-types';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export type ParseOpenAPIResult = {
   jsonLike: OpenAPIV3.Document;
@@ -26,7 +26,7 @@ export async function parseOpenAPIWithSourcemap(
     resolve: {
       http: {
         headers: {
-          accept: "*/*",
+          accept: '*/*',
         },
       },
     },
@@ -58,7 +58,7 @@ export async function parseOpenAPIFromRepoWithSourcemap(
   repoPath: string,
   branch: string
 ): Promise<ParseOpenAPIResult> {
-  const newGitBranchResolver = require("./git-branch-file-resolver.js");
+  const newGitBranchResolver = require('./git-branch-file-resolver.js');
 
   const inGitResolver = newGitBranchResolver(repoPath, branch);
   const resolver = new $RefParser();
@@ -113,7 +113,7 @@ export class JsonSchemaSourcemap {
   public refMappings: { [key: JsonPath]: ToSource } = {};
 
   async addFileIfMissing(filePath: string, fileIndex: number) {
-    if (filePath.startsWith("http")) {
+    if (filePath.startsWith('http')) {
       const response = await fetch(filePath);
       const asText = await response.text();
 
@@ -140,7 +140,7 @@ export class JsonSchemaSourcemap {
     }
   }
 
-  async addFileIfMissingFromContents(
+  addFileIfMissingFromContents(
     filePath: string,
     contents: string,
     fileIndex: number
@@ -169,7 +169,7 @@ export class JsonSchemaSourcemap {
       );
 
       const jsonPointer = jsonPointerHelpers.unescapeUriSafePointer(
-        pathRelativeToFile.split(thisFile.path)[1].substring(1) || "/"
+        pathRelativeToFile.split(thisFile.path)[1].substring(1) || '/'
       );
 
       if (rootKey === jsonPointer) return;
@@ -185,7 +185,7 @@ export function resolveJsonPointerInYamlAst(
 ): YAMLNode | undefined {
   const decoded = jsonPointerHelpers.decode(pointer);
   const isEmpty =
-    decoded.length === 0 || (decoded.length === 1 && decoded[0] === "");
+    decoded.length === 0 || (decoded.length === 1 && decoded[0] === '');
 
   if (isEmpty) return node;
 
@@ -193,7 +193,7 @@ export function resolveJsonPointerInYamlAst(
     if (!current) return undefined;
     const node: YAMLNode = current.key ? current.value : current;
     const isNumericalKey =
-      !isNaN(Number(path)) && (node as any).hasOwnProperty("items");
+      !isNaN(Number(path)) && (node as any).hasOwnProperty('items');
 
     if (isNumericalKey) {
       return (node as YAMLSequence).items[Number(path)];

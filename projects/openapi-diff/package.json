@@ -13,7 +13,8 @@
     "ws:clean": "rm -rf build",
     "ws:test": "yarn dev:test",
     "dev:test": "jest --colors",
-    "run:it": " ts-node src/interactive/cli-components/tests/test-baseline --capture github.json"
+    "run:it": " ts-node src/interactive/cli-components/tests/test-baseline --capture github.json",
+    "explore": " ts-node src/interactive/cli-components/tests/wip.tsx"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
