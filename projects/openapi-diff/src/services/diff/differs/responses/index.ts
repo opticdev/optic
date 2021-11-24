@@ -14,6 +14,7 @@ import { qualifyJsonDiffer } from '../../qualify-schema-differs';
 import { JsonSchemaJsonDiffer } from '../json-schema-json-diff/types';
 import { opticJsonSchemaDiffer } from '../json-schema-json-diff';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { FieldLocation } from '@useoptic/openapi-utilities';
 
 export function responsesDiffer(
   openApiQuestions: OpenAPIDiffingQuestions,
@@ -87,7 +88,10 @@ export function responsesDiffer(
             const schemaDiffs = jsonSchemaDiffer.compare(
               match.schema,
               JSON.parse(apiTraffic.response.body.jsonBodyString),
-              match.location,
+              {
+                ...match.location,
+                jsonSchemaTrail: []
+              },
               jsonPointerHelpers.append(match.jsonPath, 'schema'),
               { collapseToFirstInstanceOfArrayDiffs: true }
             );

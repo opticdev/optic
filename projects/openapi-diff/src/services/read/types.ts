@@ -7,8 +7,8 @@
    */
 import {
   BodyLocation,
-  ConceptualLocation,
   OpenAPIV3,
+  QueryParameterLocation,
 } from '@useoptic/openapi-utilities';
 import { IFilePatch } from '../patch/types';
 import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
@@ -75,7 +75,7 @@ export type ResponseMatchType = {
 export type QueryParameterType = {
   name: string;
   schema?: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject;
-  location: ConceptualLocation;
+  location: QueryParameterLocation;
   jsonPath: string;
   required: boolean;
 };

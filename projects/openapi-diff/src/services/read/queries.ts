@@ -6,13 +6,13 @@ import {
 import {
   BodyLocation,
   IFact,
-  OpenApiFact,
   OpenApiKind,
   OpenApiOperationFact,
   OpenApiRequestParameterFact,
   OpenApiResponseFact,
   OpenAPITraverser,
   OpenAPIV3,
+  QueryParameterLocation,
 } from '@useoptic/openapi-utilities';
 import { OpenApiBodyFact } from '@useoptic/openapi-utilities/build/openapi3/sdk/types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
@@ -36,8 +36,8 @@ export function openApiQueries(
     });
 
   const responses = facts.filter(
-    (i: IFact<OpenApiFact>) => i.location.kind === OpenApiKind.Response
-  );
+    (i) => i.location.kind === OpenApiKind.Response
+  ) as IFact<OpenApiResponseFact>[];
 
   const paths = operations.map((i) => i.path).sort();
 
@@ -68,7 +68,7 @@ export function openApiQueries(
             name: queryParamFact.name,
             required: queryParamFact.required,
             schema: queryParamFact.schema,
-            location: fact.location.conceptualLocation,
+            location: fact.location.conceptualLocation as QueryParameterLocation,
           };
           return query;
         });
@@ -77,13 +77,14 @@ export function openApiQueries(
       method: OpenAPIV3.HttpMethods,
       path: string
     ): ResponseMatchType[] {
+
       const forOperation = responses.filter(
         (res) =>
           res.location.conceptualLocation.method === method &&
           res.location.conceptualLocation.path === path
       );
 
-      return forOperation.map((res: IFact<OpenApiResponseFact>) => {
+      return forOperation.map((res) => {
         const statusCodeMatcher = res.value.statusCode.toString();
 
         const contentTypes = (
@@ -105,7 +106,7 @@ export function openApiQueries(
           return {
             contentType: i.value.contentType,
             schema: schema,
-            location: i.location.conceptualLocation,
+            location: i.location.conceptualLocation as BodyLocation,
             jsonPath: i.location.jsonPath,
           };
         });
