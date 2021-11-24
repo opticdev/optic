@@ -1,4 +1,6 @@
 import { SnykApiCheckDsl } from "../dsl";
+import { OpenAPIV3 } from "openapi-types";
+import { spec } from "@useoptic/api-checks/build/sdk/test/select-when-rule.test";
 
 const { expect } = require("chai");
 
@@ -63,6 +65,14 @@ export const rules = {
     responses.requirement.must(
       "use the correct JSON:API response data",
       (response, context, docs, specItem) => {
+        // Patch response requires schema
+        if (context.method === "patch" && response.statusCode === 200) {
+          expect(
+            specItem.content["application/vnd.api+json"]?.schema?.properties,
+            `expected response ${context.path} ${context.method} ${response.statusCode} to have a schema`
+          ).to.exist;
+        }
+
         // Empty patch 204 content
         if (
           ["delete", "patch"].includes(context.method) &&
@@ -138,6 +148,67 @@ export const rules = {
               ?.links?.properties?.self,
             `expected response ${context.path} ${context.method} ${response.statusCode} to have a self link`
           ).to.exist;
+        }
+      }
+    );
+  },
+  pagination: ({ operations }: SnykApiCheckDsl) => {
+    operations.requirement.must(
+      "correctly support pagination",
+      (operation, context, docs, specItem) => {
+        if (operation.pathPattern.match(/\/openapi/)) return;
+
+        const paginationParameters = [
+          "starting_after",
+          "ending_before",
+          "limit",
+        ];
+        const parameterNames = (
+          (specItem.parameters || []) as OpenAPIV3.ParameterObject[]
+        ).map((parameter) => {
+          return parameter.name;
+        });
+        if (operation.pathPattern.match(/\{[a-z]*?_?id\}$/)) {
+          if (operation.method === "get") {
+            // Require pagination parameters
+            for (const paginationParameterName of paginationParameters) {
+              expect(
+                parameterNames,
+                `expected ${operation.pathPattern} ${operation.method} to include ${paginationParameterName}`
+              ).to.include(paginationParameterName);
+            }
+            // Require pagination links
+            const response = specItem.responses["200"];
+            if (!("$ref" in response)) {
+              const schema = response.content?.["application/vnd.api+json"]?.schema || {};
+              if (!("$ref" in schema)) {
+                expect(schema.properties?.link).to.exist;
+              }
+            }
+          }
+        } else {
+          if (operation.method !== "get") {
+            for (const paginationParameterName of paginationParameters) {
+              expect(
+                parameterNames,
+                `expected ${operation.pathPattern} ${operation.method} to not include ${paginationParameterName}`
+              ).to.not.include(paginationParameterName);
+            }
+          }
+        }
+      }
+    );
+  },
+  compoundDocuments: ({ responses }: SnykApiCheckDsl) => {
+    responses.requirement.must(
+      "not allow compound documents",
+      (response, context, docs, specItem) => {
+        if ([200, 201].includes(response.statusCode)) {
+          expect(
+            specItem.content["application/vnd.api+json"]?.schema?.properties
+              ?.included,
+            `expected response ${context.path} ${context.method} ${response.statusCode} to support compound documents`
+          ).to.not.exist;
         }
       }
     );

@@ -22,40 +22,40 @@ const arrayObjectPattern = _interopDefault(
 export default {
   "extends": [[oas, "all"], {
     "rules": {
-      "jsonapi-response-content-type": {
-        "description": "Responses must provide a JSON:API content type",
-        "message": "JSON:API requires \"Content-Type: application/vnd.api+json\"",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/(openapi|sarif)(\\/.*)?$/))][*].responses[*].content",
-        "then": {
-          "field": "application/vnd.api+json",
-          "function": truthy
-        }
-      },
-      "jsonapi-get-post-response-data": {
-        "description": "JSON:API response schema requires data property",
-        "message": "{{description}}",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/))][?(@property.match(/get|post/))].responses[?(@property.match(/200|201/))].content['application/vnd.api+json']",
-        "then": {
-          "function": assertObjectPath,
-          "functionOptions": {
-            "path": ["schema", "properties", "data", "type"]
-          }
-        }
-      },
-      "jsonapi-response-jsonapi": {
-        "description": "JSON:API response schema requires jsonapi property",
-        "message": "{{description}}",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/))][?(!@property.match(/patch|delete/))].responses[?(@property.match(/200|201/))].content['application/vnd.api+json']",
-        "then": {
-          "function": assertObjectPath,
-          "functionOptions": {
-            "path": ["schema", "properties", "jsonapi", "type"]
-          }
-        }
-      },
+      // "jsonapi-response-content-type": {
+      //   "description": "Responses must provide a JSON:API content type",
+      //   "message": "JSON:API requires \"Content-Type: application/vnd.api+json\"",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/(openapi|sarif)(\\/.*)?$/))][*].responses[*].content",
+      //   "then": {
+      //     "field": "application/vnd.api+json",
+      //     "function": truthy
+      //   }
+      // },
+      // "jsonapi-get-post-response-data": {
+      //   "description": "JSON:API response schema requires data property",
+      //   "message": "{{description}}",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/))][?(@property.match(/get|post/))].responses[?(@property.match(/200|201/))].content['application/vnd.api+json']",
+      //   "then": {
+      //     "function": assertObjectPath,
+      //     "functionOptions": {
+      //       "path": ["schema", "properties", "data", "type"]
+      //     }
+      //   }
+      // },
+      // "jsonapi-response-jsonapi": {
+      //   "description": "JSON:API response schema requires jsonapi property",
+      //   "message": "{{description}}",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/))][?(!@property.match(/patch|delete/))].responses[?(@property.match(/200|201/))].content['application/vnd.api+json']",
+      //   "then": {
+      //     "function": assertObjectPath,
+      //     "functionOptions": {
+      //       "path": ["schema", "properties", "jsonapi", "type"]
+      //     }
+      //   }
+      // },
       "jsonapi-get-post-response-data-schema": {
         "description": "JSON:API response data schema",
         "message": "{{error}}",
@@ -150,18 +150,18 @@ export default {
           }
         }
       },
-      "jsonapi-patch-response-data": {
-        "description": "JSON:API patch 200 response requires a schema",
-        "message": "{{description}}",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/))].patch.responses.200",
-        "then": {
-          "function": assertObjectPath,
-          "functionOptions": {
-            "path": ["content", "application/vnd.api+json", "schema", "properties"]
-          }
-        }
-      },
+      // "jsonapi-patch-response-data": {
+      //   "description": "JSON:API patch 200 response requires a schema",
+      //   "message": "{{description}}",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/))].patch.responses.200",
+      //   "then": {
+      //     "function": assertObjectPath,
+      //     "functionOptions": {
+      //       "path": ["content", "application/vnd.api+json", "schema", "properties"]
+      //     }
+      //   }
+      // },
       "jsonapi-patch-response-200-schema": {
         "description": "JSON:API patch response data schema",
         "message": "{{error}}",
@@ -204,70 +204,70 @@ export default {
           }
         }
       },
-      "jsonapi-patch-response-204-schema": {
-        "description": "JSON:API patch 204 response should not have content",
-        "message": "{{error}}",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/))].patch.responses.204",
-        "then": {
-          "field": "content",
-          "function": falsy
-        }
-      },
-      "jsonapi-post-response-201": {
-        "description": "Post responses must respond with a 201 status code on success",
-        "severity": "error",
-        "given": "$.paths[*].post.responses",
-        "then": {
-          "field": "@key",
-          "function": pattern,
-          "functionOptions": {
-            "match": "^201|[3-5][0-9]{2}$"
-          }
-        }
-      },
-      "jsonapi-4xx-response-codes": {
-        "description": "Only 400, 401, 403, 404, 409, and 429 status codes can be returned in the 4xx.",
-        "severity": "error",
-        "given": "$.paths[*].*.responses",
-        "then": {
-          "field": "@key",
-          "function": pattern,
-          "functionOptions": {
-            "match": "^(40[0|1|3|4|9]|429)|([2|3|5][0-9]{2})$"
-          }
-        }
-      },
-      "jsonapi-created-response-location": {
-        "description": "Post responses must include a location header for the created resource",
-        "severity": "error",
-        "given": "$.paths[*].post.responses.201.headers",
-        "then": {
-          "field": "location",
-          "function": truthy
-        }
-      },
-      "jsonapi-created-response-self-link": {
-        "description": "Post responses must include a self link for the created resource",
-        "severity": "error",
-        "given": "$.paths[*].post.responses.201.content['application/vnd.api+json'].schema.properties.data.properties.links.properties",
-        "then": {
-          "field": "self",
-          "function": truthy
-        }
-      },
-      "jsonapi-delete-response-statuses": {
-        "description": "Delete endpoints can only use 200 or 204 status codes",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/))].delete.responses",
-        "then": {
-          "field": "@key",
-          "function": pattern,
-          "functionOptions": {
-            "match": "^20[0|4]|[3-5][0-9]{2}$"
-          }
-        }
-      },
+      // "jsonapi-patch-response-204-schema": {
+      //   "description": "JSON:API patch 204 response should not have content",
+      //   "message": "{{error}}",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/))].patch.responses.204",
+      //   "then": {
+      //     "field": "content",
+      //     "function": falsy
+      //   }
+      // },
+      // "jsonapi-post-response-201": {
+      //   "description": "Post responses must respond with a 201 status code on success",
+      //   "severity": "error",
+      //   "given": "$.paths[*].post.responses",
+      //   "then": {
+      //     "field": "@key",
+      //     "function": pattern,
+      //     "functionOptions": {
+      //       "match": "^201|[3-5][0-9]{2}$"
+      //     }
+      //   }
+      // },
+      // "jsonapi-4xx-response-codes": {
+      //   "description": "Only 400, 401, 403, 404, 409, and 429 status codes can be returned in the 4xx.",
+      //   "severity": "error",
+      //   "given": "$.paths[*].*.responses",
+      //   "then": {
+      //     "field": "@key",
+      //     "function": pattern,
+      //     "functionOptions": {
+      //       "match": "^(40[0|1|3|4|9]|429)|([2|3|5][0-9]{2})$"
+      //     }
+      //   }
+      // },
+      // "jsonapi-created-response-location": {
+      //   "description": "Post responses must include a location header for the created resource",
+      //   "severity": "error",
+      //   "given": "$.paths[*].post.responses.201.headers",
+      //   "then": {
+      //     "field": "location",
+      //     "function": truthy
+      //   }
+      // },
+      // "jsonapi-created-response-self-link": {
+      //   "description": "Post responses must include a self link for the created resource",
+      //   "severity": "error",
+      //   "given": "$.paths[*].post.responses.201.content['application/vnd.api+json'].schema.properties.data.properties.links.properties",
+      //   "then": {
+      //     "field": "self",
+      //     "function": truthy
+      //   }
+      // },
+      // "jsonapi-delete-response-statuses": {
+      //   "description": "Delete endpoints can only use 200 or 204 status codes",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/))].delete.responses",
+      //   "then": {
+      //     "field": "@key",
+      //     "function": pattern,
+      //     "functionOptions": {
+      //       "match": "^20[0|4]|[3-5][0-9]{2}$"
+      //     }
+      //   }
+      // },
       "jsonapi-delete-response-200": {
         "description": "JSON:API delete 200 response data schema",
         "message": "{{error}}",
@@ -290,80 +290,80 @@ export default {
           }
         }
       },
-      "jsonapi-delete-response-204": {
-        "description": "JSON:API delete 204 response data schema",
-        "message": "{{error}}",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/))].delete.responses.204",
-        "then": {
-          "field": "content",
-          "function": falsy
-        }
-      },
-      "jsonapi-content-non-204": {
-        "description": "Responses from non-204 statuses must have content",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/))][*].responses[?(@property !== '204')]",
-        "then": {
-          "field": "content",
-          "function": truthy
-        }
-      },
-      "jsonapi-pagination-collection-parameters": {
-        "description": "Collection requests must include pagination parameters",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/) && !@property.match(/\\{[a-z]*?_?id\\}$/))].get.parameters",
-        "then": {
-          "function": contains,
-          "functionOptions": {
-            "field": "name",
-            "values": ["starting_after", "ending_before", "limit"]
-          }
-        }
-      },
-      "jsonapi-pagination-collection-links": {
-        "description": "Responses for collection requests must include pagination links",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/) && !@property.match(/\\{[a-z]*?_?id\\}$/))].get.responses.200.content['application/vnd.api+json'].schema.properties",
-        "then": {
-          "field": "links",
-          "function": truthy
-        }
-      },
-      "jsonapi-no-pagination-parameters": {
-        "description": "Non-GET requests should not allow pagination parameters",
-        "severity": "error",
-        "given": "$.paths[*][?(@property.match(/post|patch|delete/))].parameters",
-        "then": {
-          "function": notContains,
-          "functionOptions": {
-            "field": "name",
-            "values": ["starting_after", "ending_before", "limit"]
-          }
-        }
-      },
-      "jsonapi-self-links-get-patch": {
-        "description": "Successful GET responses should include a top-level self link",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/))][?(@property.match(/get|patch/))].responses.200.content['application/vnd.api+json'].schema.properties",
-        "then": {
-          "function": assertObjectPath,
-          "functionOptions": {
-            "path": ["links", "properties", "self"]
-          }
-        }
-      },
-      "jsonapi-self-links-post": {
-        "description": "Successful GET responses should include a top-level self link",
-        "severity": "error",
-        "given": "$.paths[?(!@property.match(/\\/openapi/))].post.responses.201.content['application/vnd.api+json'].schema.properties",
-        "then": {
-          "function": assertObjectPath,
-          "functionOptions": {
-            "path": ["links", "properties", "self"]
-          }
-        }
-      },
+      // "jsonapi-delete-response-204": {
+      //   "description": "JSON:API delete 204 response data schema",
+      //   "message": "{{error}}",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/))].delete.responses.204",
+      //   "then": {
+      //     "field": "content",
+      //     "function": falsy
+      //   }
+      // },
+      // "jsonapi-content-non-204": {
+      //   "description": "Responses from non-204 statuses must have content",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/))][*].responses[?(@property !== '204')]",
+      //   "then": {
+      //     "field": "content",
+      //     "function": truthy
+      //   }
+      // },
+      // "jsonapi-pagination-collection-parameters": {
+      //   "description": "Collection requests must include pagination parameters",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/) && !@property.match(/\\{[a-z]*?_?id\\}$/))].get.parameters",
+      //   "then": {
+      //     "function": contains,
+      //     "functionOptions": {
+      //       "field": "name",
+      //       "values": ["starting_after", "ending_before", "limit"]
+      //     }
+      //   }
+      // },
+      // "jsonapi-pagination-collection-links": {
+      //   "description": "Responses for collection requests must include pagination links",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/) && !@property.match(/\\{[a-z]*?_?id\\}$/))].get.responses.200.content['application/vnd.api+json'].schema.properties",
+      //   "then": {
+      //     "field": "links",
+      //     "function": truthy
+      //   }
+      // },
+      // "jsonapi-no-pagination-parameters": {
+      //   "description": "Non-GET requests should not allow pagination parameters",
+      //   "severity": "error",
+      //   "given": "$.paths[*][?(@property.match(/post|patch|delete/))].parameters",
+      //   "then": {
+      //     "function": notContains,
+      //     "functionOptions": {
+      //       "field": "name",
+      //       "values": ["starting_after", "ending_before", "limit"]
+      //     }
+      //   }
+      // },
+      // "jsonapi-self-links-get-patch": {
+      //   "description": "Successful GET responses should include a top-level self link",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/))][?(@property.match(/get|patch/))].responses.200.content['application/vnd.api+json'].schema.properties",
+      //   "then": {
+      //     "function": assertObjectPath,
+      //     "functionOptions": {
+      //       "path": ["links", "properties", "self"]
+      //     }
+      //   }
+      // },
+      // "jsonapi-self-links-post": {
+      //   "description": "Successful GET responses should include a top-level self link",
+      //   "severity": "error",
+      //   "given": "$.paths[?(!@property.match(/\\/openapi/))].post.responses.201.content['application/vnd.api+json'].schema.properties",
+      //   "then": {
+      //     "function": assertObjectPath,
+      //     "functionOptions": {
+      //       "path": ["links", "properties", "self"]
+      //     }
+      //   }
+      // },
       "jsonapi-response-relationship-schema": {
         "description": "JSON:API response relationship schema",
         "message": "{{error}}",
@@ -449,15 +449,15 @@ export default {
           }
         }
       },
-      "jsonapi-no-compound-documents": {
-        "description": "Compound documents are not allowed",
-        "severity": "error",
-        "given": "$.paths.*.*.responses[?(@property.match(/200|201/))].content['application/vnd.api+json'].schema.properties",
-        "then": {
-          "field": "included",
-          "function": falsy
-        }
-      }
+      // "jsonapi-no-compound-documents": {
+      //   "description": "Compound documents are not allowed",
+      //   "severity": "error",
+      //   "given": "$.paths.*.*.responses[?(@property.match(/200|201/))].content['application/vnd.api+json'].schema.properties",
+      //   "then": {
+      //     "field": "included",
+      //     "function": falsy
+      //   }
+      // }
     }
   }, {
     "rules": {
