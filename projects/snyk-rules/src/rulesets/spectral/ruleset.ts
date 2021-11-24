@@ -364,101 +364,101 @@ export default {
       //     }
       //   }
       // },
-    //   "jsonapi-response-relationship-schema": {
-    //     "description": "JSON:API response relationship schema",
-    //     "message": "{{error}}",
-    //     "severity": "error",
-    //     "given": "$.paths.*.*.responses.*.content['application/vnd.api+json'].schema.properties.data.properties.relationships",
-    //     "then": {
-    //       "function": schema,
-    //       "functionOptions": {
-    //         "schema": {
-    //           "type": "object",
-    //           "properties": {
-    //             "additionalProperties": {
-    //               "type": "object",
-    //               "properties": {
-    //                 "properties": {
-    //                   "type": "object",
-    //                   "properties": {
-    //                     "data": {
-    //                       "type": "object",
-    //                       "properties": {
-    //                         "properties": {
-    //                           "type": "object",
-    //                           "properties": {
-    //                             "type": {
-    //                               "type": "object",
-    //                               "properties": {
-    //                                 "type": {
-    //                                   "type": "string",
-    //                                   "enum": ["string"]
-    //                                 }
-    //                               },
-    //                               "required": ["type"]
-    //                             },
-    //                             "id": {
-    //                               "type": "object",
-    //                               "properties": {
-    //                                 "type": {
-    //                                   "type": "string",
-    //                                   "enum": ["string"]
-    //                                 },
-    //                                 "format": {
-    //                                   "type": "string",
-    //                                   "enum": ["uuid"]
-    //                                 }
-    //                               },
-    //                               "required": ["type", "format"]
-    //                             }
-    //                           },
-    //                           "required": ["type", "id"]
-    //                         }
-    //                       },
-    //                       "required": ["properties"]
-    //                     },
-    //                     "links": {
-    //                       "type": "object",
-    //                       "properties": {
-    //                         "properties": {
-    //                           "type": "object",
-    //                           "properties": {
-    //                             "related": {
-    //                               "type": "object",
-    //                               "properties": {
-    //                                 "type": {
-    //                                   "type": "string",
-    //                                   "enum": ["string"]
-    //                                 }
-    //                               }
-    //                             }
-    //                           },
-    //                           "required": ["related"]
-    //                         }
-    //                       },
-    //                       "required": ["properties"]
-    //                     }
-    //                   },
-    //                   "required": ["data", "links"]
-    //                 }
-    //               },
-    //               "required": ["properties"]
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-    //   },
-    //   // "jsonapi-no-compound-documents": {
-    //   //   "description": "Compound documents are not allowed",
-    //   //   "severity": "error",
-    //   //   "given": "$.paths.*.*.responses[?(@property.match(/200|201/))].content['application/vnd.api+json'].schema.properties",
-    //   //   "then": {
-    //   //     "field": "included",
-    //   //     "function": falsy
-    //   //   }
-    //   // }
-    // }
+      // "jsonapi-response-relationship-schema": {
+      //   "description": "JSON:API response relationship schema",
+      //   "message": "{{error}}",
+      //   "severity": "error",
+      //   "given": "$.paths.*.*.responses.*.content['application/vnd.api+json'].schema.properties.data.properties.relationships",
+      //   "then": {
+      //     "function": schema,
+      //     "functionOptions": {
+      //       "schema": {
+      //         "type": "object",
+      //         "properties": {
+      //           "additionalProperties": {
+      //             "type": "object",
+      //             "properties": {
+      //               "properties": {
+      //                 "type": "object",
+      //                 "properties": {
+      //                   "data": {
+      //                     "type": "object",
+      //                     "properties": {
+      //                       "properties": {
+      //                         "type": "object",
+      //                         "properties": {
+      //                           "type": {
+      //                             "type": "object",
+      //                             "properties": {
+      //                               "type": {
+      //                                 "type": "string",
+      //                                 "enum": ["string"]
+      //                               }
+      //                             },
+      //                             "required": ["type"]
+      //                           },
+      //                           "id": {
+      //                             "type": "object",
+      //                             "properties": {
+      //                               "type": {
+      //                                 "type": "string",
+      //                                 "enum": ["string"]
+      //                               },
+      //                               "format": {
+      //                                 "type": "string",
+      //                                 "enum": ["uuid"]
+      //                               }
+      //                             },
+      //                             "required": ["type", "format"]
+      //                           }
+      //                         },
+      //                         "required": ["type", "id"]
+      //                       }
+      //                     },
+      //                     "required": ["properties"]
+      //                   },
+      //                   "links": {
+      //                     "type": "object",
+      //                     "properties": {
+      //                       "properties": {
+      //                         "type": "object",
+      //                         "properties": {
+      //                           "related": {
+      //                             "type": "object",
+      //                             "properties": {
+      //                               "type": {
+      //                                 "type": "string",
+      //                                 "enum": ["string"]
+      //                               }
+      //                             }
+      //                           }
+      //                         },
+      //                         "required": ["related"]
+      //                       }
+      //                     },
+      //                     "required": ["properties"]
+      //                   }
+      //                 },
+      //                 "required": ["data", "links"]
+      //               }
+      //             },
+      //             "required": ["properties"]
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      // },
+      // "jsonapi-no-compound-documents": {
+      //   "description": "Compound documents are not allowed",
+      //   "severity": "error",
+      //   "given": "$.paths.*.*.responses[?(@property.match(/200|201/))].content['application/vnd.api+json'].schema.properties",
+      //   "then": {
+      //     "field": "included",
+      //     "function": falsy
+      //   }
+      // }
+    }
   }, {
     "rules": {
       "paths-snake-case": {
