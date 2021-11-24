@@ -80,6 +80,30 @@ export const rules = {
       }
     );
   },
+  tenantFormatting: ({ operations }: SnykApiCheckDsl) => {
+    operations.requirement.must(
+      "use UUID for org_id or group_id",
+      (operation, context, docs, specItem) => {
+        for (const parameter of specItem.parameters || []) {
+          if ("$ref" in parameter) continue;
+          if (parameter.name === "group_id" || parameter.name === "org_id") {
+            if (!parameter.schema) {
+              expect.fail(
+                `expected operation ${operation.pathPattern} ${operation.method} parameter ${parameter.name} to have a schema`
+              );
+              continue;
+            }
+            if (!("$ref" in parameter.schema)) {
+              expect(
+                parameter.schema.format,
+                `expected operation ${operation.pathPattern} ${operation.method} parameter ${parameter.name} to have a schema`
+              ).to.be("uuid");
+            }
+          }
+        }
+      }
+    );
+  },
   preventAddingRequiredQueryParameters: ({ request }: SnykApiCheckDsl) => {
     request.queryParameter.added.must("not be required", (queryParameter) => {
       expect(queryParameter.required).to.not.be.true;

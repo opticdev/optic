@@ -665,27 +665,27 @@ export default {
         "function": truthy
       }
     },
-    "apinext-route-tenant-uuids": {
-      "description": "APIs must use UUIDs where org or group tenants are specified",
-      "severity": "error",
-      "given": "$.paths[*][*].parameters[?(@.name.match(/org_id|group_id/))].schema",
-      "then": [{
-        "field": "type",
-        "function": enumeration,
-        "functionOptions": {
-          "values": ["string"]
-        }
-      }, {
-        "field": "format",
-        "function": truthy
-      }, {
-        "field": "format",
-        "function": enumeration,
-        "functionOptions": {
-          "values": ["uuid"]
-        }
-      }]
-    },
+    // "apinext-route-tenant-uuids": {
+    //   "description": "APIs must use UUIDs where org or group tenants are specified",
+    //   "severity": "error",
+    //   "given": "$.paths[*][*].parameters[?(@.name.match(/org_id|group_id/))].schema",
+    //   "then": [{
+    //     "field": "type",
+    //     "function": enumeration,
+    //     "functionOptions": {
+    //       "values": ["string"]
+    //     }
+    //   }, {
+    //     "field": "format",
+    //     "function": truthy
+    //   }, {
+    //     "field": "format",
+    //     "function": enumeration,
+    //     "functionOptions": {
+    //       "values": ["uuid"]
+    //     }
+    //   }]
+    // },
     "apinext-paths-tenants": {
       "description": "APIs must have an org or group tenant",
       "severity": "error",
@@ -720,18 +720,18 @@ export default {
     //     }
     //   }
     // },
-    "apinext-date-property-formatting": {
-      "description": "Date-time properties require correct date-time format",
-      "severity": "error",
-      "given": "$.paths[*][*].responses[*].content[*].schema..properties[?(@property.match(/created|updated|deleted/))]",
-      "then": [{
-        "field": "format",
-        "function": equals,
-        "functionOptions": {
-          "value": "date-time"
-        }
-      }]
-    },
+    // "apinext-date-property-formatting": {
+    //   "description": "Date-time properties require correct date-time format",
+    //   "severity": "error",
+    //   "given": "$.paths[*][*].responses[*].content[*].schema..properties[?(@property.match(/created|updated|deleted/))]",
+    //   "then": [{
+    //     "field": "format",
+    //     "function": equals,
+    //     "functionOptions": {
+    //       "value": "date-time"
+    //     }
+    //   }]
+    // },
     "apinext-tags-name-description": {
       "description": "Tags must have a name and description",
       "severity": "error",
