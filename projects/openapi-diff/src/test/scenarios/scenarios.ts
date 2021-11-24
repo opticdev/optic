@@ -73,6 +73,10 @@ export function scenarioRunner(
     sendTraffic: (...traffic: ApiTraffic[]) => {
       source.sendTraffic(...traffic);
     },
+    shutdown: async () => {
+      agentMachine.stop();
+      diffService.stop();
+    },
     waitForEmptyQueue: async () => {
       return new Promise((resolve, reject) => {
         let queue0 = false;
@@ -80,6 +84,7 @@ export function scenarioRunner(
           if (i.context.queue.length === 0) {
             queue0 = true;
             if (unsubscribe) unsubscribe();
+            interactive.shutdown();
             resolve(undefined);
           }
         });

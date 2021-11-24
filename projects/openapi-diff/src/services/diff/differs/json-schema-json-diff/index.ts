@@ -1,5 +1,5 @@
 import {
-  ConceptualLocation,
+  BodyLocation,
   FieldLocation,
   OpenAPIV3,
 } from '@useoptic/openapi-utilities';
@@ -14,9 +14,6 @@ import { typeKeyword } from './plugins/type';
 import { oneOfKeyword } from './plugins/oneOf';
 import { DiffType, ShapeDiffTypes } from '../../types';
 import { normalizeJsonPointer } from '../../normalize-json-pointer';
-import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import uniqWith from 'lodash.uniqwith';
-import isEqual from 'lodash.isequal';
 
 export function jsonSchemaDiffer(
   plugins: JsonSchemaDiffPlugin<any>[]
@@ -39,7 +36,7 @@ export function jsonSchemaDiffer(
   const compare = (
     schema: OpenAPIV3.SchemaObject,
     to: any,
-    location: FieldLocation,
+    location: BodyLocation,
     schemaPath: string,
     options: {
       collapseToFirstInstanceOfArrayDiffs: boolean;
@@ -92,7 +89,7 @@ export function jsonSchemaDiffer(
       schemaPath: string,
       diff: ErrorObject,
       example: any,
-      location: FieldLocation
+      location: BodyLocation
     ) => {
       if (pluginsMap[diff.keyword]) {
         return pluginsMap[diff.keyword].emitDiff(

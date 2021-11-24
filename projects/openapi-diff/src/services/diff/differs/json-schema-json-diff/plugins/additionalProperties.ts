@@ -7,6 +7,7 @@ import {
 import { ErrorObject } from 'ajv';
 import { BodyAdditionalProperty, DiffType } from '../../../types';
 import {
+  BodyLocation,
   ConceptualLocation,
   FieldLocation,
   OpenAPIV3,
@@ -27,7 +28,7 @@ export const additionalProperties: JsonSchemaDiffPlugin<BodyAdditionalProperty> 
       schemaPath: string,
       validationError: ErrorObject,
       example: any,
-      conceptualLocation: FieldLocation
+      conceptualLocation: BodyLocation
     ): BodyAdditionalProperty {
       const key = validationError.params.additionalProperty;
 
@@ -40,7 +41,12 @@ export const additionalProperties: JsonSchemaDiffPlugin<BodyAdditionalProperty> 
         schemaPath,
         type: DiffType.BodyAdditionalProperty,
         keyword: JsonSchemaKnownKeyword.additionalProperties,
-        location: conceptualLocation,
+        location: {
+          ...conceptualLocation,
+          jsonSchemaTrail: jsonPointerHelpers.decode(
+            validationError.instancePath
+          ),
+        },
         parentObjectPath: validationError.schemaPath.substring(1),
         propertyExamplePath,
         example,

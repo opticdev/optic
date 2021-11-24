@@ -18,6 +18,9 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [
+          "polyProp",
+        ],
         "method": "post",
         "path": "/example",
       },
@@ -109,6 +112,9 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [
+          "polyProp",
+        ],
         "method": "post",
         "path": "/example",
       },
@@ -262,6 +268,9 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [
+          "polyProp",
+        ],
         "method": "post",
         "path": "/example",
       },
@@ -287,6 +296,9 @@ Object {
                 },
                 "statusCode": "200",
               },
+              "jsonSchemaTrail": Array [
+                "polyProp",
+              ],
               "method": "post",
               "path": "/example",
             },
@@ -308,6 +320,9 @@ Object {
                 },
                 "statusCode": "200",
               },
+              "jsonSchemaTrail": Array [
+                "polyProp",
+              ],
               "method": "post",
               "path": "/example",
             },
@@ -328,6 +343,9 @@ Object {
                 },
                 "statusCode": "200",
               },
+              "jsonSchemaTrail": Array [
+                "polyProp",
+              ],
               "method": "post",
               "path": "/example",
             },
@@ -379,6 +397,9 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [
+          "polyProp",
+        ],
         "method": "post",
         "path": "/example",
       },
@@ -496,6 +517,9 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [
+          "polyProp",
+        ],
         "method": "post",
         "path": "/example",
       },
@@ -613,6 +637,9 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [
+          "polyProp",
+        ],
         "method": "post",
         "path": "/example",
       },
@@ -634,6 +661,9 @@ Object {
                 },
                 "statusCode": "200",
               },
+              "jsonSchemaTrail": Array [
+                "polyProp",
+              ],
               "method": "post",
               "path": "/example",
             },
@@ -652,6 +682,9 @@ Object {
                 },
                 "statusCode": "200",
               },
+              "jsonSchemaTrail": Array [
+                "polyProp",
+              ],
               "method": "post",
               "path": "/example",
             },
@@ -670,6 +703,9 @@ Object {
                 },
                 "statusCode": "200",
               },
+              "jsonSchemaTrail": Array [
+                "polyProp",
+              ],
               "method": "post",
               "path": "/example",
             },
@@ -720,6 +756,7 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [],
         "method": "post",
         "path": "/example",
       },

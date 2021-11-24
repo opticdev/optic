@@ -13,6 +13,9 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [
+          "hello",
+        ],
         "method": "post",
         "path": "/example",
       },

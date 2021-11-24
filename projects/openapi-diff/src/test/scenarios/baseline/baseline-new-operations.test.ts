@@ -14,6 +14,9 @@ describe('baseline new operations', () => {
         pathPattern: '/example',
       };
     });
+
+    await scenario.waitForEmptyQueue();
+
     expect(scenario.results.flattenedSpec()).toMatchSnapshot();
   });
 

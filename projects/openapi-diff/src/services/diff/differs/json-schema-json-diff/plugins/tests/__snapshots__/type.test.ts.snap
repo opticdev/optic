@@ -19,6 +19,9 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [
+          "stringField",
+        ],
         "method": "post",
         "path": "/example",
       },
@@ -150,6 +153,9 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [
+          "stringField",
+        ],
         "method": "post",
         "path": "/example",
       },
@@ -291,6 +297,9 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [
+          "stringField",
+        ],
         "method": "post",
         "path": "/example",
       },
@@ -400,6 +409,9 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [
+          "stringField",
+        ],
         "method": "post",
         "path": "/example",
       },

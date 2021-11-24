@@ -6,6 +6,7 @@ import {
 } from './plugin-types';
 import { ErrorObject } from 'ajv';
 import {
+  BodyLocation,
   ConceptualLocation,
   FieldLocation,
   OpenAPIV3,
@@ -26,7 +27,7 @@ export const oneOfKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
     schemaPath: string,
     validationError: ErrorObject,
     example: any,
-    conceptualLocation: FieldLocation
+    conceptualLocation: BodyLocation
   ): BodyPropertyUnmatchedType {
     const typeKeywordPath = jsonPointerHelpers.decode(
       validationError.schemaPath.substring(1)
@@ -51,7 +52,12 @@ export const oneOfKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
       schemaPath,
       type: DiffType.BodyUnmatchedType,
       keyword: JsonSchemaKnownKeyword.oneOf,
-      location: conceptualLocation,
+      location: {
+        ...conceptualLocation,
+        jsonSchemaTrail: jsonPointerHelpers.decode(
+          validationError.instancePath
+        ),
+      },
       propertyPath: propertyPath,
       key: keyName,
       example: unmatchedValue,

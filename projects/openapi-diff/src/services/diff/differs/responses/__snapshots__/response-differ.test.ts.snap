@@ -35,6 +35,7 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [],
         "method": "get",
         "path": "/example",
       },
@@ -54,6 +55,9 @@ Object {
           },
           "statusCode": "200",
         },
+        "jsonSchemaTrail": Array [
+          "one",
+        ],
         "method": "get",
         "path": "/example",
       },

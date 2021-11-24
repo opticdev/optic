@@ -88,10 +88,7 @@ export function responsesDiffer(
             const schemaDiffs = jsonSchemaDiffer.compare(
               match.schema,
               JSON.parse(apiTraffic.response.body.jsonBodyString),
-              {
-                ...match.location,
-                jsonSchemaTrail: []
-              },
+              match.location,
               jsonPointerHelpers.append(match.jsonPath, 'schema'),
               { collapseToFirstInstanceOfArrayDiffs: true }
             );

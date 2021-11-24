@@ -7,6 +7,7 @@ import {
 import { ErrorObject } from 'ajv';
 import { BodyMissingRequiredProperty, DiffType } from '../../../types';
 import {
+  BodyLocation,
   ConceptualLocation,
   FieldLocation,
   OpenAPIV3,
@@ -25,13 +26,18 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
       schemaPath: string,
       validationError: ErrorObject,
       example: any,
-      conceptualLocation: FieldLocation
+      conceptualLocation: BodyLocation
     ): BodyMissingRequiredProperty {
       return {
         schemaPath,
         type: DiffType.BodyMissingRequiredProperty,
         keyword: JsonSchemaKnownKeyword.required,
-        location: conceptualLocation,
+        location: {
+          ...conceptualLocation,
+          jsonSchemaTrail: jsonPointerHelpers.decode(
+            validationError.instancePath
+          ),
+        },
         parentObjectPath: validationError.schemaPath.substring(1),
         key: validationError.params.missingProperty,
       };

@@ -1,11 +1,6 @@
 import { IDiff } from '../../../types';
 import Ajv, { ErrorObject } from 'ajv';
-import { additionalProperties } from './additionalProperties';
-import {
-  ConceptualLocation,
-  FieldLocation,
-  OpenAPIV3,
-} from '@useoptic/openapi-utilities';
+import { BodyLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import {
   IPatchGroup,
   JsonPatcher,
@@ -19,7 +14,7 @@ export interface JsonSchemaDiffPlugin<T extends IDiff> {
     schemaPath: string,
     validationError: ErrorObject,
     example: any,
-    conceptualLocation: FieldLocation
+    conceptualLocation: BodyLocation
   ) => T;
   shapePatches: (
     diff: T,
