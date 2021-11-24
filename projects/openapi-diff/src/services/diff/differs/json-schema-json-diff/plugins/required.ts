@@ -65,9 +65,10 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
 
         const effect = `make property ${diff.key} optional`;
         return {
-          classification: diff.location.hasOwnProperty('inRequest')
-            ? JsonSchemaPatchClassification.Compatible
-            : JsonSchemaPatchClassification.Incompatible,
+          classification:
+            'inRequest' in diff.location
+              ? JsonSchemaPatchClassification.Compatible
+              : JsonSchemaPatchClassification.Incompatible,
           patch: patch.currentPatchesRelativeTo(diff.schemaPath),
           effect: effect,
           extends: true,
@@ -97,9 +98,10 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
 
         const effect = `remove property ${diff.key}`;
         return {
-          classification: diff.location.hasOwnProperty('inRequest')
-            ? JsonSchemaPatchClassification.Compatible
-            : JsonSchemaPatchClassification.Incompatible,
+          classification:
+            'inRequest' in diff.location
+              ? JsonSchemaPatchClassification.Compatible
+              : JsonSchemaPatchClassification.Incompatible,
           patch: patch.currentPatchesRelativeTo(diff.schemaPath),
           effect: effect,
           extends: false,

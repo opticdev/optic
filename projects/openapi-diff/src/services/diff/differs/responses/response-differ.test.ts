@@ -2,7 +2,11 @@ import {
   openApiDiffingQuestionsTestingStub,
   ResponseMatchType,
 } from '../../../read/types';
-import { ConceptualLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  BodyLocation,
+  ConceptualLocation,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { responsesDiffer } from './index';
 import { makeExample } from '../../../traffic/traffic/debug-simple';
 
@@ -46,7 +50,7 @@ const exampleMatch = {
 const mockLocation = (
   statusCode: string,
   contentType: string
-): ConceptualLocation => ({
+): BodyLocation => ({
   path: '/example',
   method: OpenAPIV3.HttpMethods.GET,
   inResponse: {

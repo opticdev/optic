@@ -36,8 +36,8 @@ export function openApiQueries(
     });
 
   const responses = facts.filter(
-    (i) => i.location.kind === OpenApiKind.Response
-  ) as IFact<OpenApiResponseFact>[];
+    (i: IFact<OpenApiFact>) => i.location.kind === OpenApiKind.Response
+  );
 
   const paths = operations.map((i) => i.path).sort();
 
@@ -83,17 +83,17 @@ export function openApiQueries(
           res.location.conceptualLocation.path === path
       );
 
-      return forOperation.map((res) => {
+      return forOperation.map((res: IFact<OpenApiResponseFact>) => {
         const statusCodeMatcher = res.value.statusCode.toString();
 
         const contentTypes = (
           facts.filter(
             (i) =>
               i.location.kind === OpenApiKind.Body &&
+              'inResponse' in i.location.conceptualLocation &&
               i.location.conceptualLocation.path === path &&
               i.location.conceptualLocation.method === method &&
-              i.location.conceptualLocation.hasOwnProperty('inResponse') &&
-              i.location.conceptualLocation.inResponse?.statusCode ===
+              i.location.conceptualLocation.inResponse.statusCode ===
                 statusCodeMatcher
           ) as IFact<OpenApiBodyFact>[]
         ).map((i) => {

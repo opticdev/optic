@@ -5,7 +5,11 @@
    - retrain pointers to ast nodes
 
    */
-import { ConceptualLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  BodyLocation,
+  ConceptualLocation,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { IFilePatch } from '../patch/types';
 import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
 
@@ -64,7 +68,7 @@ export type ResponseMatchType = {
   contentTypes: {
     contentType: string;
     schema?: OpenAPIV3.SchemaObject;
-    location: ConceptualLocation;
+    location: BodyLocation;
     jsonPath: string;
   }[];
 };

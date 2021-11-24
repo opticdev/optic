@@ -83,9 +83,10 @@ export const oneOfKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
 
       const effect = `expand one of for ${diff.key}`;
       return {
-        classification: diff.location.hasOwnProperty('inRequest')
-          ? JsonSchemaPatchClassification.Compatible
-          : JsonSchemaPatchClassification.Incompatible,
+        classification:
+          'inRequest' in diff.location
+            ? JsonSchemaPatchClassification.Compatible
+            : JsonSchemaPatchClassification.Incompatible,
         patch: patch.currentPatchesRelativeTo(diff.schemaPath),
         effect: effect,
         extends: true,

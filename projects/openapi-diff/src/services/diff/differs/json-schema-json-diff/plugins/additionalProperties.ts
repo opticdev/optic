@@ -124,9 +124,10 @@ export const additionalProperties: JsonSchemaDiffPlugin<BodyAdditionalProperty> 
         const effect = `add property ${diff.key}`;
         return {
           extends: true,
-          classification: diff.location.hasOwnProperty('inResponse')
-            ? JsonSchemaPatchClassification.Compatible
-            : JsonSchemaPatchClassification.Incompatible,
+          classification:
+            'inResponse' in diff.location
+              ? JsonSchemaPatchClassification.Compatible
+              : JsonSchemaPatchClassification.Incompatible,
           patch: patch.currentPatchesRelativeTo(diff.schemaPath),
           effect: effect,
         };

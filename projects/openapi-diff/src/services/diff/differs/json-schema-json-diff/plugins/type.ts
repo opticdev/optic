@@ -101,9 +101,10 @@ export const typeKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
 
       const effect = `make ${diff.key} oneOf`;
       return {
-        classification: diff.location.hasOwnProperty('inRequest')
-          ? JsonSchemaPatchClassification.Compatible
-          : JsonSchemaPatchClassification.Incompatible,
+        classification:
+          'inRequest' in diff.location
+            ? JsonSchemaPatchClassification.Compatible
+            : JsonSchemaPatchClassification.Incompatible,
         patch: patch.currentPatchesRelativeTo(diff.schemaPath),
         effect: effect,
         extends: true,
