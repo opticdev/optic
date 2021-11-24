@@ -4256,6 +4256,7 @@ __metadata:
     ink-tab: ^4.1.0
     ink-testing-library: ^2.1.0
     ink-text-input: ^4.0.2
+    ink-use-stdout-dimensions: ^1.0.5
     jest: 26.6.0
     json-schema-traverse: ^1.0.0
     lodash.flatten: ^4.4.0
@@ -10108,6 +10109,16 @@ fsevents@^1.2.7:
     ink: ^3.0.0-3
     react: ^16.5.2 || ^17.0.0
   checksum: 81d90ba9bc074f6b4c03ea68e29c94cbd126132c12b12ace74f566deefd0147b07d6cf5e6bad5cbab4337c810f008d5461ee81c8603340bda47b60cb7da9d153
+  languageName: node
+  linkType: hard
+
+"ink-use-stdout-dimensions@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "ink-use-stdout-dimensions@npm:1.0.5"
+  peerDependencies:
+    ink: ">=2.0.0"
+    react: ">=16.0.0"
+  checksum: 71fb471ed6195460a5562f8cf0b046c888f837a29c022f48f180df3fd78b8b37dc736c1b8a383552930ae7a0c754b0b1f85fe234e8aa71b227c5b8c82de22472
   languageName: node
   linkType: hard
 
