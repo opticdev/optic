@@ -1,16 +1,28 @@
 import { SnykApiCheckDsl } from "../dsl";
 import { OpenAPIV3 } from "openapi-types";
-import { spec } from "@useoptic/api-checks/build/sdk/test/select-when-rule.test";
 
 const { expect } = require("chai");
+
+function getOperationName(operation) {
+  return `operation ${operation.pathPattern} ${operation.method}`;
+}
+
+function getResponseName(response, context) {
+  return `response ${context.path} ${context.method} ${response.statusCode}`;
+}
+
+function isOpenApiPath(path) {
+  return path.match(/\/openapi/);
+}
 
 export const rules = {
   statusCodes: ({ operations }: SnykApiCheckDsl) => {
     operations.requirement.must(
       "support the correct status codes",
       (operation, context, docs, specItem) => {
-        if (operation.pathPattern.match(/\/openapi/)) return;
+        if (isOpenApiPath(context.path)) return;
 
+        const operationName = getOperationName(operation);
         const statusCodes = Object.keys(specItem.responses);
 
         // Ensure only supported 4xx are used
@@ -26,7 +38,10 @@ export const rules = {
           statusCode.startsWith("4")
         );
         for (const statusCode4xx of statusCodes4xx) {
-          expect(allowed4xxStatusCodes).to.include(statusCode4xx);
+          expect(
+            allowed4xxStatusCodes,
+            `expected ${operationName} to not support ${statusCode4xx}`
+          ).to.include(statusCode4xx);
         }
 
         // Ensure delete supports correct 2xx status codes
@@ -35,7 +50,10 @@ export const rules = {
             statusCode.startsWith("2")
           );
           for (const statusCode2xx of statusCodes2xx) {
-            expect(["200", "204"]).to.include(statusCode2xx);
+            expect(
+              ["200", "204"],
+              `expected ${operationName} to not support ${statusCode2xx}`
+            ).to.include(statusCode2xx);
           }
         }
 
@@ -45,7 +63,10 @@ export const rules = {
             statusCode.startsWith("2")
           );
           for (const statusCode2xx of statusCodes2xx) {
-            expect(["201"]).to.include(statusCode2xx);
+            expect(
+              ["201"],
+              `expected ${operationName} to not support ${statusCode2xx}`
+            ).to.include(statusCode2xx);
           }
         }
       }
@@ -55,9 +76,15 @@ export const rules = {
     responses.requirement.must(
       "use the JSON:API content type",
       (response, context, docs, specItem) => {
-        if (response.statusCode === 204) return;
+        if (isOpenApiPath(context.path) && response.statusCode === 204) return;
         const contentTypes = Object.keys(specItem.content);
-        expect(contentTypes).to.include("application/vnd.api+json");
+        expect(
+          contentTypes,
+          `expected ${getResponseName(
+            response,
+            context
+          )} to support application/vnd.api+json`
+        ).to.include("application/vnd.api+json");
       }
     );
   },
@@ -65,11 +92,15 @@ export const rules = {
     responses.requirement.must(
       "use the correct JSON:API response data",
       (response, context, docs, specItem) => {
+        if (isOpenApiPath(context.path)) return;
+
+        const responseName = getResponseName(response, context);
+
         // Patch response requires schema
         if (context.method === "patch" && response.statusCode === 200) {
           expect(
             specItem.content["application/vnd.api+json"]?.schema?.properties,
-            `expected response ${context.path} ${context.method} ${response.statusCode} to have a schema`
+            `expected ${responseName} to have a schema`
           ).to.exist;
         }
 
@@ -80,16 +111,14 @@ export const rules = {
         ) {
           expect(
             specItem.content,
-            `expected response ${context.path} ${context.method} ${response.statusCode} to not have content`
+            `expected ${responseName} to not have content`
           ).to.not.exist;
         }
 
         // Non-204 status codes must have content
         if (response.statusCode !== 204) {
-          expect(
-            specItem.content,
-            `expected response ${context.path} ${context.method} ${response.statusCode} to have content`
-          ).to.not.exist;
+          expect(specItem.content, `expected ${responseName} to have content`)
+            .to.not.exist;
         }
 
         // JSON:API data property
@@ -100,7 +129,7 @@ export const rules = {
           expect(
             specItem.content["application/vnd.api+json"]?.schema?.properties
               ?.data?.type,
-            `expected response ${context.path} ${context.method} ${response.statusCode} to have data property`
+            `expected ${responseName} to have data property`
           ).to.exist;
         }
 
@@ -112,7 +141,7 @@ export const rules = {
           expect(
             specItem.content["application/vnd.api+json"]?.schema?.properties
               ?.jsonapi?.type?.data?.type,
-            `expected response ${context.path} ${context.method} ${response.statusCode} to have a JSON:API property`
+            `expected ${responseName} to have a JSON:API property`
           ).to.exist;
         }
 
@@ -121,13 +150,13 @@ export const rules = {
           // Location header
           expect(
             specItem.headers,
-            `expected response ${context.path} ${context.method} ${response.statusCode} to have a location header`
+            `expected ${responseName} to have a location header`
           ).to.have.property("location");
           // Self link
           expect(
             specItem.content["application/vnd.api+json"]?.schema?.properties
               ?.data?.properties?.links?.properties?.self,
-            `expected response ${context.path} ${context.method} ${response.statusCode} to have a self link`
+            `expected ${responseName} to have a self link`
           ).to.exist;
         }
       }
@@ -137,6 +166,10 @@ export const rules = {
     responses.requirement.must(
       "include self links",
       (response, context, docs, specItem) => {
+        if (isOpenApiPath(context.path)) return;
+
+        const responseName = getResponseName(response, context);
+
         // Top-level self links
         if (
           (["get", "patch"].includes(context.method) &&
@@ -146,7 +179,7 @@ export const rules = {
           expect(
             specItem.content["application/vnd.api+json"]?.schema?.properties
               ?.links?.properties?.self,
-            `expected response ${context.path} ${context.method} ${response.statusCode} to have a self link`
+            `expected ${responseName} to have a self link`
           ).to.exist;
         }
       }
@@ -156,7 +189,9 @@ export const rules = {
     operations.requirement.must(
       "correctly support pagination",
       (operation, context, docs, specItem) => {
-        if (operation.pathPattern.match(/\/openapi/)) return;
+        if (isOpenApiPath(context.path)) return;
+
+        const operationName = getOperationName(operation);
 
         const paginationParameters = [
           "starting_after",
@@ -174,15 +209,19 @@ export const rules = {
             for (const paginationParameterName of paginationParameters) {
               expect(
                 parameterNames,
-                `expected ${operation.pathPattern} ${operation.method} to include ${paginationParameterName}`
+                `expected ${operationName} to include ${paginationParameterName} parameter`
               ).to.include(paginationParameterName);
             }
             // Require pagination links
             const response = specItem.responses["200"];
             if (!("$ref" in response)) {
-              const schema = response.content?.["application/vnd.api+json"]?.schema || {};
+              const schema =
+                response.content?.["application/vnd.api+json"]?.schema || {};
               if (!("$ref" in schema)) {
-                expect(schema.properties?.link).to.exist;
+                expect(
+                  schema.properties?.link,
+                  `expected ${operationName} to have pagination links`
+                ).to.exist;
               }
             }
           }
@@ -191,7 +230,7 @@ export const rules = {
             for (const paginationParameterName of paginationParameters) {
               expect(
                 parameterNames,
-                `expected ${operation.pathPattern} ${operation.method} to not include ${paginationParameterName}`
+                `expected ${operationName} to not include ${paginationParameterName} parameter`
               ).to.not.include(paginationParameterName);
             }
           }
@@ -203,11 +242,15 @@ export const rules = {
     responses.requirement.must(
       "not allow compound documents",
       (response, context, docs, specItem) => {
+        if (isOpenApiPath(context.path)) return;
         if ([200, 201].includes(response.statusCode)) {
           expect(
             specItem.content["application/vnd.api+json"]?.schema?.properties
               ?.included,
-            `expected response ${context.path} ${context.method} ${response.statusCode} to support compound documents`
+            `expected ${getResponseName(
+              response,
+              context
+            )} to support compound documents`
           ).to.not.exist;
         }
       }
