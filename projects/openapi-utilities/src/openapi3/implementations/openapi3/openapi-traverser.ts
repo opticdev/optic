@@ -11,17 +11,20 @@ import {
   Traverse,
   OpenApiFact,
   OperationLocation,
-  QueryParameterLocation,
-  PathParameterLocation,
-  HeaderParameterLocation,
   ResponseHeaderLocation,
   ResponseLocation,
+  PathParameterLocation,
+  HeaderParameterLocation,
   BodyLocation,
+  QueryParameterLocation,
   FieldLocation,
 } from '../../sdk/types';
 import { IPathComponent } from '../../sdk/types';
 import invariant from 'ts-invariant';
-import { jsonPointerHelpers as jsonPointer } from '@useoptic/json-pointer-helpers';
+import {
+  jsonPointerHelpers,
+  jsonPointerHelpers as jsonPointer,
+} from '@useoptic/json-pointer-helpers';
 import { OpenAPIV3 } from 'openapi-types';
 
 export function normalizeOpenApiPath(path: string): string {
@@ -47,31 +50,21 @@ export class OpenAPITraverser
   traverse(input: OpenAPIV3.Document): void {
     this.input = input;
     Object.entries(input.paths).forEach(([pathPattern, paths]) => {
-      if (paths?.get)
-        this.traverseOperations(paths?.get!, 'get', pathPattern, {
-          method: 'get',
-          path: pathPattern,
-        });
-      if (paths?.patch)
-        this.traverseOperations(paths?.patch!, 'patch', pathPattern, {
-          method: 'patch',
-          path: pathPattern,
-        });
-      if (paths?.post)
-        this.traverseOperations(paths?.post!, 'post', pathPattern, {
-          method: 'post',
-          path: pathPattern,
-        });
-      if (paths?.put)
-        this.traverseOperations(paths?.put!, 'put', pathPattern, {
-          method: 'put',
-          path: pathPattern,
-        });
-      if (paths?.delete)
-        this.traverseOperations(paths?.delete!, 'delete', pathPattern, {
-          method: 'delete',
-          path: pathPattern,
-        });
+      const traverseIfPresent = (method: OpenAPIV3.HttpMethods) => {
+        if (paths && paths[method]) {
+          this.traverseOperations(paths[method]!, method, pathPattern, {
+            method: method,
+            path: pathPattern,
+          });
+        }
+      };
+      traverseIfPresent(OpenAPIV3.HttpMethods.GET);
+      traverseIfPresent(OpenAPIV3.HttpMethods.PATCH);
+      traverseIfPresent(OpenAPIV3.HttpMethods.POST);
+      traverseIfPresent(OpenAPIV3.HttpMethods.PUT);
+      traverseIfPresent(OpenAPIV3.HttpMethods.DELETE);
+      traverseIfPresent(OpenAPIV3.HttpMethods.HEAD);
+      traverseIfPresent(OpenAPIV3.HttpMethods.OPTIONS);
     });
   }
 
@@ -162,36 +155,71 @@ export class OpenAPITraverser
     conceptualPath: IPathComponent[],
     location: OperationLocation
   ) {
+    const locationForParameter = (p: OpenAPIV3.ParameterObject) => {
+      const parameter = p as OpenAPIV3.ParameterObject;
+      let paramLocation:
+        | PathParameterLocation
+        | QueryParameterLocation
+        | HeaderParameterLocation;
+
+      if (parameter.in === 'query') {
+        paramLocation = { ...location, inRequest: { query: parameter.name } };
+      } else if (parameter.in === 'header') {
+        paramLocation = {
+          ...location,
+          inRequest: { header: parameter.name },
+        };
+      } else if (parameter.in === 'path') {
+        paramLocation = { ...location, inRequest: { path: parameter.name } };
+      } else {
+        // @todo add cookie
+        console.warn('Found a parameter that was not handled');
+        return;
+      }
+
+      return paramLocation;
+    };
+
     if (operation.parameters) {
       this.checkJsonTrail(jsonPath, operation.parameters);
       operation.parameters.forEach((p, i) => {
         const parameter = p as OpenAPIV3.ParameterObject;
-        let paramLocation:
-          | PathParameterLocation
-          | QueryParameterLocation
-          | HeaderParameterLocation;
-
-        if (parameter.in === 'query') {
-          paramLocation = { ...location, inRequest: { query: parameter.name } };
-        } else if (parameter.in === 'header') {
-          paramLocation = {
-            ...location,
-            inRequest: { header: parameter.name },
-          };
-        } else if (parameter.in === 'path') {
-          paramLocation = { ...location, inRequest: { path: parameter.name } };
-        } else {
-          // @todo add cookie
-          console.warn('Found a parameter that was not handled');
-          return;
+        const location = locationForParameter(parameter);
+        if (location) {
+          this.onRequestParameter(
+            parameter,
+            jsonPointer.append(jsonPath, i.toString()),
+            [...conceptualPath, parameter.in, parameter.name],
+            location
+          );
         }
+      });
+    }
 
-        this.onRequestParameter(
-          parameter,
-          jsonPointer.append(jsonPath, i.toString()),
-          [...conceptualPath, parameter.in, parameter.name],
-          paramLocation
-        );
+    const sharedParametersPointer = jsonPointer.compile([
+      'paths',
+      location.path,
+      'parameters',
+    ]);
+
+    const sharedParameters = jsonPointer.tryGet(
+      this.input,
+      sharedParametersPointer
+    );
+
+    if (sharedParameters.match) {
+      const shared = sharedParameters.value as OpenAPIV3.ParameterObject[];
+      shared.forEach((p, i) => {
+        const parameter = p as OpenAPIV3.ParameterObject;
+        const location = locationForParameter(parameter);
+        if (location) {
+          this.onRequestParameter(
+            parameter,
+            jsonPointer.append(sharedParametersPointer, i.toString()),
+            [...conceptualPath, parameter.in, parameter.name],
+            location
+          );
+        }
       });
     }
   }
@@ -208,7 +236,6 @@ export class OpenAPITraverser
     const value: OpenApiRequestParameterFact = {
       ...parameter,
     };
-
     switch (parameter.in) {
       case 'query':
         return this.accumulator.log({

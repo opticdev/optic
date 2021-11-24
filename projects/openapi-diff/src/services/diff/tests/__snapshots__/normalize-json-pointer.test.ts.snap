@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`normalize json pointer works for nested array items 1`] = `"/items/0/properties/0/values/0"`;
+
+exports[`normalize json pointer works for single array item 1`] = `"/items/0"`;

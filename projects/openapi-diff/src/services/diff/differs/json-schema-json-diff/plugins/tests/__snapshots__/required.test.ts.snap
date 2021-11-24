@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`required json schema differ plugin missing required fields will patch as 'make optional' or 'remove' 1`] = `
+Object {
+  "0": Object {
+    "diff": Object {
+      "key": "f3",
+      "keyword": "required",
+      "location": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "hello",
+        ],
+        "method": "post",
+        "path": "/example",
+      },
+      "parentObjectPath": "/properties/hello/required",
+      "schemaPath": "",
+      "type": "BodyMissingRequiredProperty",
+    },
+    "patchesExecuted": Array [
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "hello": Object {
+              "properties": Object {
+                "f1": Object {
+                  "type": "string",
+                },
+                "f2": Object {
+                  "type": "number",
+                },
+                "f3": Object {
+                  "type": "object",
+                },
+              },
+              "required": Array [
+                "f1",
+                "f2",
+              ],
+              "type": "object",
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "make property f3 optional",
+          "extends": true,
+          "patch": Array [
+            Object {
+              "intent": "remove f3 from parent's required array",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/hello/required/2",
+                },
+              ],
+            },
+          ],
+        },
+      },
+      Object {
+        "newDiffs": Array [],
+        "newJsonSchema": Object {
+          "properties": Object {
+            "hello": Object {
+              "properties": Object {
+                "f1": Object {
+                  "type": "string",
+                },
+                "f2": Object {
+                  "type": "number",
+                },
+              },
+              "required": Array [
+                "f1",
+                "f2",
+              ],
+              "type": "object",
+            },
+          },
+          "type": "object",
+        },
+        "patch": Object {
+          "classification": "Incompatible",
+          "effect": "remove property f3",
+          "extends": false,
+          "patch": Array [
+            Object {
+              "intent": "remove f3 from parent's required array",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/hello/required/2",
+                },
+              ],
+            },
+            Object {
+              "intent": "remove f3 from parent's properties object",
+              "patches": Array [
+                Object {
+                  "op": "remove",
+                  "path": "/properties/hello/properties/f3",
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  "totalDiffsAfterPatches": 0,
+}
+`;
