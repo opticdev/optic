@@ -1,6 +1,7 @@
 import { SnykApiCheckDsl } from "../dsl";
 import { camelCase, snakeCase } from "change-case";
 import { OpenAPIV3 } from "@useoptic/api-checks";
+import pathCasing from "./spectral/functions/pathCasing";
 
 const { expect } = require("chai");
 
@@ -105,6 +106,16 @@ export const rules = {
             }
           }
         }
+      }
+    );
+  },
+  // TODO: this currently will run for every operation which means a path element may be
+  // checked multiple times. This should be changed once paths are supported in the DSL.
+  pathElementsCasing: ({ operations }: SnykApiCheckDsl) => {
+    operations.requirement.must(
+      "use the right casing for path elements",
+      (operation, context) => {
+        expect(pathCasing(context.path, null, null)).to.be.true;
       }
     );
   },

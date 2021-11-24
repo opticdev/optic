@@ -461,15 +461,15 @@ export default {
     }
   }, {
     "rules": {
-      "paths-snake-case": {
-        "description": "Path elements must be snake_case.",
-        "message": "{{error}}",
-        "severity": "error",
-        "given": "$.paths[*]~",
-        "then": {
-          "function": pathCasing
-        }
-      },
+      // "paths-snake-case": {
+      //   "description": "Path elements must be snake_case.",
+      //   "message": "{{error}}",
+      //   "severity": "error",
+      //   "given": "$.paths[*]~",
+      //   "then": {
+      //     "function": pathCasing
+      //   }
+      // },
       // "parameter-names-snake-case": {
       //   "description": "Parameter names must be snake_case.",
       //   "message": "{{description}}",
