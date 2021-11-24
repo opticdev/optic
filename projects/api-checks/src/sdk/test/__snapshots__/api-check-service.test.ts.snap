@@ -4,6 +4,7 @@ exports[`can run dsl rules through check service 1`] = `
 Array [
   Object {
     "change": Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "method": "get",

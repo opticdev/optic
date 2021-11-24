@@ -96,16 +96,14 @@ export const uploadCiRun = async (
   const uploadedFilePaths: {
     id: string;
     slot: UploadSlot;
-    s3Path: string;
   }[] = await Promise.all(
     uploadUrls.map(async (uploadUrl) => {
       const file = fileMap[uploadUrl.slot];
-      const s3Path = await uploadFileToS3(uploadUrl.url, file);
+      await uploadFileToS3(uploadUrl.url, file);
 
       return {
         id: uploadUrl.id,
         slot: uploadUrl.slot,
-        s3Path,
       };
     })
   );

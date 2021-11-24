@@ -6,7 +6,11 @@ import {
 } from './plugin-types';
 import { ErrorObject } from 'ajv';
 import { BodyMissingRequiredProperty, DiffType } from '../../../types';
-import { ConceptualLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  ConceptualLocation,
+  FieldLocation,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import {
   JsonPatcher,
   jsonPatcher,
@@ -21,7 +25,7 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
       schemaPath: string,
       validationError: ErrorObject,
       example: any,
-      conceptualLocation: ConceptualLocation
+      conceptualLocation: FieldLocation
     ): BodyMissingRequiredProperty {
       return {
         schemaPath,
@@ -61,7 +65,7 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
 
         const effect = `make property ${diff.key} optional`;
         return {
-          classification: diff.location.inRequest
+          classification: diff.location.hasOwnProperty('inRequest')
             ? JsonSchemaPatchClassification.Compatible
             : JsonSchemaPatchClassification.Incompatible,
           patch: patch.currentPatchesRelativeTo(diff.schemaPath),
@@ -93,7 +97,7 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
 
         const effect = `remove property ${diff.key}`;
         return {
-          classification: diff.location.inRequest
+          classification: diff.location.hasOwnProperty('inRequest')
             ? JsonSchemaPatchClassification.Compatible
             : JsonSchemaPatchClassification.Incompatible,
           patch: patch.currentPatchesRelativeTo(diff.schemaPath),

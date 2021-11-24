@@ -34,7 +34,7 @@ const results: ResultWithSourcemap[] = [
         conceptualPath: ["operations", "/example", "get"],
         kind: "operation",
         conceptualLocation: { method: "get", path: "/example" },
-      },
+      } as any,
       // @ts-ignore
       value: {
         operationId: "",
@@ -60,7 +60,7 @@ const results: ResultWithSourcemap[] = [
         conceptualPath: ["operations", "/example", "get"],
         kind: "operation",
         conceptualLocation: { method: "get", path: "/example" },
-      },
+      } as any,
       // @ts-ignore
       value: {
         operationId: "",
@@ -86,7 +86,7 @@ const results: ResultWithSourcemap[] = [
         conceptualPath: ["operations", "/example", "get"],
         kind: "operation",
         conceptualLocation: { method: "patch", path: "/example/{}" },
-      },
+      } as any,
       // @ts-ignore
       value: {
         operationId: "",

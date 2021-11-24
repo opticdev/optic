@@ -13,7 +13,7 @@ const change: IChange<OpenApiFact> = {
       method: "get",
     },
   },
-};
+} as any;
 
 it("checks can run / fail using off-the-shelf test helpers", async (done) => {
   const check = new Checker();

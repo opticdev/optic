@@ -1,10 +1,7 @@
 import { JsonSchemaJsonDiffer } from '../types';
-import { ConceptualLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { FieldLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { isObject } from '../../../../../utils/is-object';
-import {
-  IPatchGroup,
-  jsonPatcher,
-} from '../../../../patch/incremental-json-patch/json-patcher';
+import { jsonPatcher } from '../../../../patch/incremental-json-patch/json-patcher';
 import invariant from 'ts-invariant';
 import equals from 'fast-deep-equal';
 
@@ -121,11 +118,12 @@ function chooseInitialType(rootInput: any): OpenAPIV3.SchemaObject {
 }
 
 // when extending the spec, follow in response rules
-const inResponseSimulated_forbaseline: ConceptualLocation = {
+const inResponseSimulated_forbaseline: FieldLocation = {
   path: '/',
   method: 'get',
   inResponse: {
     statusCode: '200',
     body: { contentType: 'application/json' },
   },
+  jsonSchemaTrail: [],
 };

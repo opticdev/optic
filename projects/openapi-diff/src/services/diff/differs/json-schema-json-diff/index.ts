@@ -1,4 +1,8 @@
-import { ConceptualLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  ConceptualLocation,
+  FieldLocation,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { prepareSchemaForDiff } from './prepare-schema-for-diff';
 import Ajv, { ErrorObject } from 'ajv';
 import { JsonSchemaDiffPlugin } from './plugins/plugin-types';
@@ -35,7 +39,7 @@ export function jsonSchemaDiffer(
   const compare = (
     schema: OpenAPIV3.SchemaObject,
     to: any,
-    location: ConceptualLocation,
+    location: FieldLocation,
     schemaPath: string,
     options: {
       collapseToFirstInstanceOfArrayDiffs: boolean;
@@ -88,7 +92,7 @@ export function jsonSchemaDiffer(
       schemaPath: string,
       diff: ErrorObject,
       example: any,
-      location: ConceptualLocation
+      location: FieldLocation
     ) => {
       if (pluginsMap[diff.keyword]) {
         return pluginsMap[diff.keyword].emitDiff(

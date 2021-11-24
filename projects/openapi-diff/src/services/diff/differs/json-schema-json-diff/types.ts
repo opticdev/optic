@@ -1,4 +1,8 @@
-import { ConceptualLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  ConceptualLocation,
+  FieldLocation,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import Ajv, { ErrorObject } from 'ajv';
 import { ShapeDiffTypes } from '../../types';
 import { JsonSchemaPatch } from './plugins/plugin-types';
@@ -10,7 +14,7 @@ export interface JsonSchemaJsonDiffer {
     schemaPath: string,
     diff: ErrorObject,
     example: any,
-    location: ConceptualLocation
+    location: FieldLocation
   ) => ShapeDiffTypes;
   diffToPatch: (
     diff: ShapeDiffTypes,
@@ -19,7 +23,7 @@ export interface JsonSchemaJsonDiffer {
   compare: (
     schema: OpenAPIV3.SchemaObject,
     to: any,
-    location: ConceptualLocation,
+    location: FieldLocation,
     schemaPath: string,
     options: {
       collapseToFirstInstanceOfArrayDiffs: boolean;

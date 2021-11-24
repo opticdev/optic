@@ -1,12 +1,16 @@
 import { JsonSchemaJsonDiffer } from '../../types';
-import { ConceptualLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  ConceptualLocation,
+  FieldLocation,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { jsonPatcher } from '../../../../../patch/incremental-json-patch/json-patcher';
 
 export function jsonSchemaDiffPatchFixture(
   jsonDiffer: JsonSchemaJsonDiffer,
   schema: OpenAPIV3.SchemaObject,
   input: any,
-  location: ConceptualLocation
+  location: FieldLocation
 ) {
   const patcher = jsonPatcher(schema);
 
@@ -54,7 +58,7 @@ export function jsonSchemaDiffPatchFixture(
   };
 }
 
-const inARequest: ConceptualLocation = {
+const inARequest: FieldLocation = {
   path: '/example',
   method: 'post',
   inRequest: {
@@ -62,9 +66,10 @@ const inARequest: ConceptualLocation = {
       contentType: 'application/json',
     },
   },
+  jsonSchemaTrail: [],
 };
 
-const inAResponse: ConceptualLocation = {
+const inAResponse: FieldLocation = {
   path: '/example',
   method: 'post',
   inResponse: {
@@ -73,6 +78,7 @@ const inAResponse: ConceptualLocation = {
       contentType: 'application/json',
     },
   },
+  jsonSchemaTrail: [],
 };
 export const locations = {
   inARequest,

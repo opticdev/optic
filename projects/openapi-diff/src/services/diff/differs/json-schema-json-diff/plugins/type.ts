@@ -5,7 +5,11 @@ import {
   JsonSchemaPatchClassification,
 } from './plugin-types';
 import { ErrorObject } from 'ajv';
-import { ConceptualLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  ConceptualLocation,
+  FieldLocation,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { JsonSchemaJsonDiffer } from '../types';
 import { BodyPropertyUnmatchedType, DiffType } from '../../../types';
 import {
@@ -25,7 +29,7 @@ export const typeKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
     schemaPath: string,
     validationError: ErrorObject,
     example: any,
-    conceptualLocation: ConceptualLocation
+    conceptualLocation: FieldLocation
   ): BodyPropertyUnmatchedType {
     const typeKeywordPath = jsonPointerHelpers.decode(
       validationError.schemaPath.substring(1)
@@ -97,7 +101,7 @@ export const typeKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
 
       const effect = `make ${diff.key} oneOf`;
       return {
-        classification: diff.location.inRequest
+        classification: diff.location.hasOwnProperty('inRequest')
           ? JsonSchemaPatchClassification.Compatible
           : JsonSchemaPatchClassification.Incompatible,
         patch: patch.currentPatchesRelativeTo(diff.schemaPath),

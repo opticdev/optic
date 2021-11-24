@@ -10,7 +10,11 @@
    */
 import { ApiTraffic } from '../traffic/types';
 import { OpenAPIDiffingQuestions } from '../read/types';
-import { ConceptualLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  ConceptualLocation,
+  FieldLocation,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { JsonSchemaKnownKeyword } from './differs/json-schema-json-diff/plugins/plugin-types';
 import { JsonSchemaJsonDiffer } from './differs/json-schema-json-diff/types';
 import { JsonPath } from '@useoptic/openapi-io';
@@ -77,7 +81,7 @@ export interface BodyAdditionalProperty extends IDiff {
   example: any;
   keyword: JsonSchemaKnownKeyword.additionalProperties;
   schemaPath: JsonPath;
-  location: ConceptualLocation;
+  location: FieldLocation;
 }
 
 export interface BodyMissingRequiredProperty extends IDiff {
@@ -86,7 +90,7 @@ export interface BodyMissingRequiredProperty extends IDiff {
   parentObjectPath: JsonPath;
   key: string;
   schemaPath: JsonPath;
-  location: ConceptualLocation;
+  location: FieldLocation;
 }
 
 export interface BodyPropertyUnmatchedType extends IDiff {
@@ -96,7 +100,7 @@ export interface BodyPropertyUnmatchedType extends IDiff {
   key: string;
   example: any;
   schemaPath: JsonPath;
-  location: ConceptualLocation;
+  location: FieldLocation;
 }
 
 export type ShapeDiffTypes =

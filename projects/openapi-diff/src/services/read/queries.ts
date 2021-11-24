@@ -4,6 +4,7 @@ import {
   ResponseMatchType,
 } from './types';
 import {
+  BodyLocation,
   IFact,
   OpenApiFact,
   OpenApiKind,
@@ -89,10 +90,10 @@ export function openApiQueries(
           facts.filter(
             (i) =>
               i.location.kind === OpenApiKind.Body &&
-              i.location.conceptualLocation.inResponse &&
               i.location.conceptualLocation.path === path &&
               i.location.conceptualLocation.method === method &&
-              i.location.conceptualLocation.inResponse.statusCode ===
+              i.location.conceptualLocation.hasOwnProperty('inResponse') &&
+              i.location.conceptualLocation.inResponse?.statusCode ===
                 statusCodeMatcher
           ) as IFact<OpenApiBodyFact>[]
         ).map((i) => {

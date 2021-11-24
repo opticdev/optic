@@ -24,6 +24,7 @@ Object {
           "type": "string",
         },
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -51,6 +52,7 @@ Object {
         "description": "",
         "statusCode": 200,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -163,6 +165,7 @@ Object {
           "type": "string",
         },
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -190,6 +193,7 @@ Object {
         "description": "",
         "statusCode": 200,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -298,6 +302,7 @@ Object {
       "added": Object {
         "name": "snyk-request-id",
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -324,6 +329,7 @@ Object {
       "added": Object {
         "name": "snyk-version-lifecycle-stage",
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -350,6 +356,7 @@ Object {
       "added": Object {
         "name": "snyk-version-requested",
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -376,6 +383,7 @@ Object {
       "added": Object {
         "name": "snyk-version-served",
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -402,6 +410,7 @@ Object {
       "added": Object {
         "name": "sunset",
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -428,6 +437,7 @@ Object {
       "added": Object {
         "name": "deprecation",
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -455,6 +465,7 @@ Object {
         "description": "With headers",
         "statusCode": 200,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -560,6 +571,7 @@ Object {
         "description": "No headers",
         "statusCode": 200,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {

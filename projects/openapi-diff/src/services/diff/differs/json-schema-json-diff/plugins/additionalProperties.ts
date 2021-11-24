@@ -6,7 +6,11 @@ import {
 } from './plugin-types';
 import { ErrorObject } from 'ajv';
 import { BodyAdditionalProperty, DiffType } from '../../../types';
-import { ConceptualLocation, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import {
+  ConceptualLocation,
+  FieldLocation,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 import {
@@ -23,7 +27,7 @@ export const additionalProperties: JsonSchemaDiffPlugin<BodyAdditionalProperty> 
       schemaPath: string,
       validationError: ErrorObject,
       example: any,
-      conceptualLocation: ConceptualLocation
+      conceptualLocation: FieldLocation
     ): BodyAdditionalProperty {
       const key = validationError.params.additionalProperty;
 
@@ -120,7 +124,7 @@ export const additionalProperties: JsonSchemaDiffPlugin<BodyAdditionalProperty> 
         const effect = `add property ${diff.key}`;
         return {
           extends: true,
-          classification: diff.location.inResponse
+          classification: diff.location.hasOwnProperty('inResponse')
             ? JsonSchemaPatchClassification.Compatible
             : JsonSchemaPatchClassification.Incompatible,
           patch: patch.currentPatchesRelativeTo(diff.schemaPath),

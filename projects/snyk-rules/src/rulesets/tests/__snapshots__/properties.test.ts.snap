@@ -34,6 +34,7 @@ Object {
   },
   "changelog": Array [
     Object {
+      "changeType": "removed",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -100,6 +101,7 @@ Object {
   "results": Array [
     Object {
       "change": Object {
+        "changeType": "removed",
         "location": Object {
           "conceptualLocation": Object {
             "inResponse": Object {
@@ -183,6 +185,7 @@ Object {
         "key": "count",
         "required": true,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -208,6 +211,7 @@ Object {
       },
     },
     Object {
+      "changeType": "changed",
       "changed": Object {
         "after": Object {
           "method": "get",
@@ -301,6 +305,7 @@ Object {
           "key": "count",
           "required": true,
         },
+        "changeType": "added",
         "location": Object {
           "conceptualLocation": Object {
             "inRequest": Object {
@@ -361,6 +366,7 @@ Object {
           "type": "object",
         },
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -392,6 +398,7 @@ Object {
         "key": "name",
         "required": false,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -424,6 +431,7 @@ Object {
         "description": "",
         "statusCode": 200,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -547,6 +555,7 @@ Object {
           "type": "object",
         },
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -579,6 +588,7 @@ Object {
         "key": "name",
         "required": false,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -611,6 +621,7 @@ Object {
         "description": "",
         "statusCode": 200,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -735,6 +746,7 @@ Object {
           "type": "object",
         },
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -766,6 +778,7 @@ Object {
         "key": "name",
         "required": false,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -798,6 +811,7 @@ Object {
         "description": "",
         "statusCode": 200,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -921,6 +935,7 @@ Object {
           "type": "object",
         },
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -952,6 +967,7 @@ Object {
         "key": "count",
         "required": false,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -984,6 +1000,7 @@ Object {
         "description": "",
         "statusCode": 200,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -1106,6 +1123,7 @@ Object {
           "type": "object",
         },
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -1137,6 +1155,7 @@ Object {
         "key": "not-snake-case",
         "required": false,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -1169,6 +1188,7 @@ Object {
         "description": "",
         "statusCode": 200,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -1292,6 +1312,7 @@ Object {
           "type": "object",
         },
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -1323,6 +1344,7 @@ Object {
         "key": "is_snake_case",
         "required": false,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -1355,6 +1377,7 @@ Object {
         "description": "",
         "statusCode": 200,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -1477,6 +1500,7 @@ Object {
           "type": "object",
         },
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -1508,6 +1532,7 @@ Object {
         "key": "technicallysnakecase",
         "required": false,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -1540,6 +1565,7 @@ Object {
         "description": "",
         "statusCode": 200,
       },
+      "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
