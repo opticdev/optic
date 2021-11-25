@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@types/copyfiles": "^2",
+    "@types/crypto-js": "^4.0.2",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^26.0.24",
     "@types/json-pointer": "^1.0.31",
@@ -38,6 +39,7 @@
     "@jsdevtools/ono": "^7.1.3",
     "@useoptic/json-pointer-helpers": "workspace:*",
     "copyfiles": "^2.4.1",
+    "crypto-js": "^4.1.1",
     "fast-deep-equal": "^3.1.3",
     "fs-extra": "^10.0.0",
     "js-yaml": "^4.1.0",
