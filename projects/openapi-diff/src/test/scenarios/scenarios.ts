@@ -1,4 +1,6 @@
 import {
+  AgentContext,
+  AgentEvent,
   AgentEventEnum,
   AgentIntent,
   WaitingOnInputDiffContext,
@@ -22,6 +24,8 @@ import { newDiffMachine } from '../../interactive/machine';
 import { createDiffServiceWithCachingProjections } from '../../services/diff/diff-service';
 import { createAgentMachine } from '../../interactive/agents/agent';
 import invariant from 'ts-invariant';
+import { Interpreter } from 'xstate';
+import { IPatchGroup } from '../../services/patch/incremental-json-patch/json-patcher';
 
 export function scenarios(intent: AgentIntent) {
   return {
@@ -54,7 +58,7 @@ export function scenarios(intent: AgentIntent) {
 export function scenarioRunner(
   intent: AgentIntent,
   specInterfaceFactory: SpecInterfaceFactory
-) {
+): TestScenarioRunner {
   const source = new PassThroughSource();
 
   const diffService = newDiffMachine(
@@ -157,4 +161,18 @@ export function scenarioRunner(
   return interactive;
 }
 
-scenarios(baselineIntent());
+export type TestScenarioRunner = {
+  agentMachine: Interpreter<AgentContext, any, AgentEvent>;
+  answerQuestion: (
+    questionType: AnswerQuestionTypes,
+    answer: (question: QuestionsForAgent) => void
+  ) => Promise<void>;
+  sendTraffic: (...traffic: ApiTraffic[]) => void;
+  results: {
+    flattenedSpec: () => OpenAPIV3.Document<{}>;
+    patches: () => IPatchGroup[];
+    fileSystemPatches: () => void;
+  };
+  shutdown: () => Promise<void>;
+  waitForEmptyQueue: () => Promise<unknown>;
+};

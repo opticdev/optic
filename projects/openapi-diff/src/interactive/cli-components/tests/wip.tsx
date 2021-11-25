@@ -56,7 +56,6 @@ cli.action(async (options: { capture: string }) => {
           },
         }}
       />
-
       <CodeBlock
         render={{
           json,

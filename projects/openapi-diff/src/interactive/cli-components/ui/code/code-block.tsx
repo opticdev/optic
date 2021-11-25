@@ -14,28 +14,13 @@ export function CodeBlock(props: Props) {
     [props.render]
   );
 
-  const highlightToBackgroundColor = (
-    highlight: Highlights
-  ): [string, string] | [undefined, undefined] => {
-    switch (highlight) {
-      case 'green':
-        return ['#2b810a', 'black'];
-      case 'yellow':
-        return ['#ffcf00', 'black'];
-      case 'red':
-        return ['#8f1919', 'white'];
-      case 'none':
-        return [undefined, undefined];
-    }
-  };
-
   return (
     <Box flexDirection="column">
       {linesToRender.map((line, index) => {
-        const [bg, fg] = highlightToBackgroundColor(line.highlight);
+        const color = highlightToBackgroundColor(line.highlight);
 
         return (
-          <Text bold={Boolean(bg)} key={index} backgroundColor={bg} color={fg}>
+          <Text bold={line.highlight !== 'none'} key={index} color={color}>
             {line.contents}
           </Text>
         );
@@ -43,6 +28,21 @@ export function CodeBlock(props: Props) {
     </Box>
   );
 }
+
+const highlightToBackgroundColor = (
+  highlight: Highlights
+): string | undefined => {
+  switch (highlight) {
+    case 'green':
+      return 'green';
+    case 'yellow':
+      return 'yellow';
+    case 'red':
+      return 'red';
+    case 'none':
+      return 'grey';
+  }
+};
 
 type Highlights = 'none' | 'green' | 'red' | 'yellow';
 type RenderJsonSource = {
@@ -59,7 +59,7 @@ type RenderLines = {
   highlight: Highlights;
 };
 
-function prepareSourceForRender(input: RenderJsonSource): RenderLines[] {
+const prepareSourceForRender = (input: RenderJsonSource): RenderLines[] => {
   const patcher = jsonPatcher(input.json);
 
   if (input.highlight?.wasMissing) {
@@ -100,4 +100,4 @@ function prepareSourceForRender(input: RenderJsonSource): RenderLines[] {
       highlight: inRange ? input.highlight.highlight : 'none',
     };
   });
-}
+};
