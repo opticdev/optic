@@ -7,6 +7,9 @@ import * as fs from 'fs-extra';
 // @ts-ignore
 import { dereference } from './insourced-dereference';
 import path from 'path';
+import sha256 from 'crypto-js/sha256';
+import Hex from 'crypto-js/enc-hex';
+
 import fetch from 'node-fetch';
 import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
@@ -107,6 +110,8 @@ export class JsonSchemaSourcemap {
   public files: Array<{
     path: string;
     index: number;
+    contents: string;
+    sha256: string;
     ast: YAMLNode;
   }> = [];
 
@@ -121,18 +126,21 @@ export class JsonSchemaSourcemap {
 
       this.files.push({
         path: filePath,
+        contents: asText,
+        sha256: Hex.stringify(sha256(asText)),
         index: fileIndex,
         ast: yamlAst,
       });
     } else {
       if (!this.files.find((i) => i.path === filePath)) {
+        const contents = (await fs.readFile(filePath)).toString();
         // add the ast to the cache
-        const yamlAst: YAMLNode = YAML.safeLoad(
-          (await fs.readFile(filePath)).toString()
-        );
+        const yamlAst: YAMLNode = YAML.safeLoad(contents);
 
         this.files.push({
           path: filePath,
+          sha256: Hex.stringify(sha256(contents)),
+          contents,
           index: fileIndex,
           ast: yamlAst,
         });
@@ -140,7 +148,7 @@ export class JsonSchemaSourcemap {
     }
   }
 
-  addFileIfMissingFromContents(
+  async addFileIfMissingFromContents(
     filePath: string,
     contents: string,
     fileIndex: number
@@ -152,6 +160,8 @@ export class JsonSchemaSourcemap {
       this.files.push({
         path: filePath,
         index: fileIndex,
+        contents,
+        sha256: Hex.stringify(sha256(contents)),
         ast: yamlAst,
       });
     }
