@@ -18,14 +18,11 @@ import {
 } from './loaders/watch-dependencies';
 
 export {
-  ILookupLinePreviewResult,
   sourcemapReader,
   loadSpecFromFile,
-  ParseOpenAPIResult,
   inGit,
   loadSpecFromUrl,
   loadSpecFromBranch,
-  JsonPath,
   parseOpenAPIWithSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
   JsonSchemaSourcemap,
@@ -36,3 +33,5 @@ export {
   watchDependencies,
   WatchDependenciesHandler,
 };
+
+export type { JsonPath, ParseOpenAPIResult, ILookupLinePreviewResult };

@@ -26,6 +26,7 @@ Object {
         "one": 12,
         "two": "owt",
       },
+      "instancePath": "/two",
       "key": "two",
       "keyword": "additionalProperties",
       "location": Object {
@@ -46,6 +47,7 @@ Object {
     },
     Object {
       "example": 12,
+      "instancePath": "/one",
       "key": "one",
       "keyword": "type",
       "location": Object {

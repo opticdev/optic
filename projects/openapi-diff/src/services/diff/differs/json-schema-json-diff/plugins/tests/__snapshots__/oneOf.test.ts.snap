@@ -9,6 +9,7 @@ Object {
           "hello": "world",
         },
       },
+      "instancePath": "/polyProp/hello",
       "key": "hello",
       "keyword": "additionalProperties",
       "location": Object {
@@ -103,6 +104,7 @@ Object {
       "example": Object {
         "hello": "world",
       },
+      "instancePath": "/polyProp",
       "key": "1",
       "keyword": "type",
       "location": Object {
@@ -259,6 +261,7 @@ Object {
       "example": Object {
         "hello": "world",
       },
+      "instancePath": "/polyProp",
       "key": "oneOf",
       "keyword": "oneOf",
       "location": Object {
@@ -287,6 +290,7 @@ Object {
                 "hello": "world",
               },
             },
+            "instancePath": "/polyProp/hello",
             "key": "hello",
             "keyword": "additionalProperties",
             "location": Object {
@@ -311,6 +315,7 @@ Object {
             "example": Object {
               "hello": "world",
             },
+            "instancePath": "/polyProp",
             "key": "1",
             "keyword": "type",
             "location": Object {
@@ -334,6 +339,7 @@ Object {
             "example": Object {
               "hello": "world",
             },
+            "instancePath": "/polyProp",
             "key": "oneOf",
             "keyword": "oneOf",
             "location": Object {
@@ -388,6 +394,7 @@ Object {
   "0": Object {
     "diff": Object {
       "example": true,
+      "instancePath": "/polyProp",
       "key": "0",
       "keyword": "type",
       "location": Object {
@@ -508,6 +515,7 @@ Object {
   "1": Object {
     "diff": Object {
       "example": true,
+      "instancePath": "/polyProp",
       "key": "1",
       "keyword": "type",
       "location": Object {
@@ -628,6 +636,7 @@ Object {
   "2": Object {
     "diff": Object {
       "example": true,
+      "instancePath": "/polyProp",
       "key": "oneOf",
       "keyword": "oneOf",
       "location": Object {
@@ -652,6 +661,7 @@ Object {
         "newDiffs": Array [
           Object {
             "example": true,
+            "instancePath": "/polyProp",
             "key": "0",
             "keyword": "type",
             "location": Object {
@@ -673,6 +683,7 @@ Object {
           },
           Object {
             "example": true,
+            "instancePath": "/polyProp",
             "key": "1",
             "keyword": "type",
             "location": Object {
@@ -694,6 +705,7 @@ Object {
           },
           Object {
             "example": true,
+            "instancePath": "/polyProp",
             "key": "oneOf",
             "keyword": "oneOf",
             "location": Object {
@@ -747,6 +759,7 @@ Object {
   "0": Object {
     "diff": Object {
       "example": Array [],
+      "instancePath": "",
       "key": "",
       "keyword": "type",
       "location": Object {

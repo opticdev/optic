@@ -9,6 +9,8 @@ export type DiffBetweenSpecs = { hunk: string[]; path: string; line: number }[];
 export function showDiffBetweenSpecs({ files }: IFilePatch): DiffBetweenSpecs {
   const hunks: DiffBetweenSpecs = files.flatMap(
     ({ previousContents, newContents, path }) => {
+      // const processPrevious = /
+
       return Diff.structuredPatch(
         '',
         '',

@@ -1,9 +1,10 @@
 import {
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
-} from './openapi-sourcemap-parser';
-import path from 'path';
-import sortBy from 'lodash.sortby';
+} from "./openapi-sourcemap-parser";
+import path from "path";
+import sortBy from "lodash.sortby";
+import { sourcemapReader } from "../index";
 
 const cwd = process.cwd();
 
@@ -18,17 +19,17 @@ function prepSnapshot(result: ParseOpenAPIResult) {
 
   result.sourcemap.rootFilePath = result.sourcemap.rootFilePath.split(cwd)[1];
 
-  result.sourcemap.files = sortBy(result.sourcemap.files, 'path');
+  result.sourcemap.files = sortBy(result.sourcemap.files, "path");
 
   return result;
 }
 
-it('can parse a json schema spec with external references', async () => {
+it("can parse a json schema spec with external references", async () => {
   const results = await parseOpenAPIWithSourcemap(
     path.resolve(
       path.join(
         __dirname,
-        '../../inputs/openapi3-with-references/external-multiple.yaml'
+        "../../inputs/openapi3-with-references/external-multiple.yaml"
       )
     )
   );
@@ -36,12 +37,12 @@ it('can parse a json schema spec with external references', async () => {
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
 
-it('can parse a json schema spec with internal references to external references', async () => {
+it("can parse a json schema spec with internal references to external references", async () => {
   const results = await parseOpenAPIWithSourcemap(
     path.resolve(
       path.join(
         __dirname,
-        '../../inputs/openapi3-with-references/internal-multiple.yaml'
+        "../../inputs/openapi3-with-references/internal-multiple.yaml"
       )
     )
   );
@@ -54,21 +55,21 @@ it('can parse a json schema spec with internal references to external references
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
 
-it('can parse a json schema spec with external references to the same file', async () => {
+it("can parse a json schema spec with external references to the same file", async () => {
   const results = await parseOpenAPIWithSourcemap(
     path.resolve(
       path.join(
         __dirname,
-        '../../inputs/openapi3-with-references/external-multiple-branches.yaml'
+        "../../inputs/openapi3-with-references/external-multiple-branches.yaml"
       )
     )
   );
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
 
-it('can parse an OpenAPI file and have valid sourcemap', async () => {
+it("can parse an OpenAPI file and have valid sourcemap", async () => {
   const results = await parseOpenAPIWithSourcemap(
-    path.resolve(path.join(__dirname, '../../inputs/openapi3/petstore0.json'))
+    path.resolve(path.join(__dirname, "../../inputs/openapi3/petstore0.json"))
   );
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
