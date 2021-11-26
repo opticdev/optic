@@ -20,6 +20,10 @@ import {
 } from '../services/diff/types';
 import { SpecInterfaceFactory } from '../services/openapi-read-patch-interface';
 import { AgentLogEvent, AgentLogEvents } from './agents/agent-log-events';
+import {
+  watchDependencies,
+  WatchDependenciesHandler,
+} from '@useoptic/openapi-io';
 
 export type InteractiveDiffMachineType = Interpreter<
   Context,
@@ -83,6 +87,8 @@ export function newDiffMachine(
     },
   };
 
+  let watchDependenciesHandler: WatchDependenciesHandler | undefined;
+
   const differ = createMachine<Context, InteractiveDiffEvents>({
     id: 'diff-machine',
     initial: 'reading_spec',
@@ -103,6 +109,11 @@ export function newDiffMachine(
             const specInterface = ctx.specInterface
               ? await ctx.specInterface
               : await specInterfaceFactory();
+
+            // if already instantiated, reload
+            if (ctx.specInterface) {
+              await specInterface.read.reload();
+            }
 
             log({
               event: AgentLogEvents.reading,
@@ -231,6 +242,13 @@ export function newDiffMachine(
               queue: dropFirstItemFromQueue(ctx),
             })),
           },
+          [DiffEventEnum.Reread_Specification]: {
+            actions: assign((ctx) => ({
+              diffService: undefined,
+              diffs: [],
+            })),
+            target: 'reading_spec',
+          },
           // add to the queue, but do not leave until we have our answer
           [DiffEventEnum.Traffic_Observed]: {
             actions: assign(
@@ -245,6 +263,30 @@ export function newDiffMachine(
               }
             ),
           },
+        },
+        /*
+        This allows for real time collaboration between human spec writer and Optic
+        - known limitation, if they get spec into invalid sate it'll go into an error state.
+         */
+        entry: (ctx, event) => {
+          if (ctx.specInterface.read.mode === 'filesystem') {
+            if (watchDependenciesHandler)
+              watchDependenciesHandler.stopWatching();
+            ctx.specInterface.read.sourcemap().then((sourcemap) => {
+              watchDependenciesHandler = watchDependencies(
+                sourcemap,
+                (file) => {
+                  service.send({ type: DiffEventEnum.Reread_Specification });
+                }
+              );
+            });
+          }
+        },
+        exit: (ctx, event) => {
+          if (watchDependenciesHandler) {
+            watchDependenciesHandler.stopWatching();
+            watchDependenciesHandler = undefined;
+          }
         },
       },
       apply_changes: {

@@ -94,6 +94,9 @@ export function createAgentMachine(
       },
       waiting_for_input: {
         on: {
+          [AgentEventEnum.Reset]: {
+            target: 'idle',
+          },
           [AgentEventEnum.SkipInteraction]: {
             actions: (ctx, event) => {
               diffMachine.send({
@@ -226,6 +229,9 @@ export function createAgentMachine(
       }
     } else {
       previousAsk = undefined;
+      service.send({
+        type: AgentEventEnum.Reset,
+      });
     }
   });
 

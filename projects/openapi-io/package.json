@@ -27,7 +27,7 @@
     "@types/node-fetch": "2.5.12",
     "babel-jest": "26.6.0",
     "chai": "^4.3.4",
-    "jest": "^26.6.0",
+    "jest": "26.6.0",
     "micro": "^9.3.4",
     "micro-cors": "^0.1.1",
     "prettier": "^2.4.1",

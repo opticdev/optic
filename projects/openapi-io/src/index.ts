@@ -12,6 +12,10 @@ import {
   parseOpenAPIWithSourcemap,
 } from './parser/openapi-sourcemap-parser';
 import { loadYaml, isYaml, isJson, writeYaml } from './write/index';
+import {
+  watchDependencies,
+  WatchDependenciesHandler,
+} from './loaders/watch-dependencies';
 
 export {
   ILookupLinePreviewResult,
@@ -29,4 +33,6 @@ export {
   isYaml,
   isJson,
   writeYaml,
+  watchDependencies,
+  WatchDependenciesHandler,
 };
