@@ -41,6 +41,10 @@ export const additionalProperties: JsonSchemaDiffPlugin<BodyAdditionalProperty> 
         schemaPath,
         type: DiffType.BodyAdditionalProperty,
         keyword: JsonSchemaKnownKeyword.additionalProperties,
+        instancePath: jsonPointerHelpers.append(
+          validationError.instancePath,
+          key
+        ),
         location: {
           ...conceptualLocation,
           jsonSchemaTrail: jsonPointerHelpers.decode(

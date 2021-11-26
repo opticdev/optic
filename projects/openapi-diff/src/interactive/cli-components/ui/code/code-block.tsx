@@ -3,6 +3,7 @@ import { Box, Text } from 'ink';
 import { JsonSchemaSourcemap, sourcemapReader } from '@useoptic/openapi-io';
 import os from 'os';
 import { jsonPatcher } from '../../../../services/patch/incremental-json-patch/json-patcher';
+import invariant from 'ts-invariant';
 
 type Props = {
   render: RenderJsonSource;
@@ -49,7 +50,7 @@ type RenderJsonSource = {
   json: any;
   highlight?: {
     trail: string;
-    wasMissing: boolean;
+    wasMissing?: boolean;
     highlight: Highlights;
   };
 };
@@ -78,7 +79,12 @@ const prepareSourceForRender = (input: RenderJsonSource): RenderLines[] => {
 
   let highlightLines: [number, number];
   if (input.highlight) {
-    const astNode = reader.findFile(input.highlight.trail).astNode;
+    const lookup = reader.findFile(input.highlight.trail);
+    invariant(
+      Boolean(lookup),
+      `could not render trail ${input.highlight.trail}`
+    );
+    const { astNode } = lookup;
     const position = reader.findLinesForAstAndContents(astNode, code);
     highlightLines = [position.startLine - 1, position.endLine - 1];
   }

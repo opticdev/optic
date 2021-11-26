@@ -15,7 +15,7 @@ export enum DiffEventEnum {
 
 export type InteractiveDiffEvents =
   | { type: DiffEventEnum.Traffic_Observed; example: ApiTraffic }
-  | { type: DiffEventEnum.Agent_Submitted_Patch }
+  | { type: DiffEventEnum.Agent_Submitted_Patch; dropCurrentTraffic: boolean }
   | { type: DiffEventEnum.Agent_Skipped_Interaction };
 
 /*

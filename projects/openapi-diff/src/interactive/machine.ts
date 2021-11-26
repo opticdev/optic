@@ -218,8 +218,11 @@ export function newDiffMachine(
           ...handleNewTrafficInBackground,
           [DiffEventEnum.Agent_Submitted_Patch]: {
             target: 'apply_changes',
-            actions: assign((ctx) => ({
-              queue: dropFirstItemFromQueue(ctx),
+            actions: assign((ctx, event) => ({
+              // if the agent suspects there will be future diffs, allow it to keep the head in the queue.
+              queue: event.dropCurrentTraffic
+                ? dropFirstItemFromQueue(ctx)
+                : ctx.queue,
             })),
           },
           [DiffEventEnum.Agent_Skipped_Interaction]: {

@@ -47,9 +47,9 @@ export function StringifyReconciler(
         const patch = jsonPatcher(currentDocument);
 
         patch.apply('patches', operations);
-
         return {
           path: filePath,
+          previousContents: contentsOfFile,
           newContents: stringifyDocument(filePath, patch.currentDocument()),
         };
       });

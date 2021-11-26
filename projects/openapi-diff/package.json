@@ -14,9 +14,10 @@
     "ws:test": "yarn dev:test",
     "dev:test": "jest --colors",
     "run:it": " ts-node src/interactive/cli-components/tests/test-baseline --capture github.json",
-    "explore": " ts-node src/interactive/cli-components/tests/wip.tsx"
+    "explore": "ts-node src/interactive/cli-components/tests/test-update.tsx  --scenario newField"
   },
   "devDependencies": {
+    "@types/diff": "5.0.0",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^26.0.24",
     "@types/lodash.flatten": "^4.4.6",
@@ -40,6 +41,7 @@
     "@xstate/react": "^1.6.2",
     "ajv": "^8.6.3",
     "commander": "^8.3.0",
+    "diff": "5.0.0",
     "fast-deep-equal": "^3.1.3",
     "fast-json-patch": "^3.1.0",
     "fs-extra": "^10.0.0",

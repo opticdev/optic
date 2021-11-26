@@ -102,6 +102,14 @@ export function createAgentMachine(
             },
             target: 'idle',
           },
+          [AgentEventEnum.SkipQuestion]: {
+            actions: assign((ctx) => {
+              const newQuestions = (ctx as WaitingOnInputDiffContext).questions;
+              newQuestions.shift();
+              return { questions: newQuestions };
+            }),
+            target: 'check_should_flush',
+          },
           [AgentEventEnum.AnswerQuestion]: {
             actions: assign((ctx, event) => {
               const context = ctx as WaitingOnInputDiffContext;
@@ -112,6 +120,7 @@ export function createAgentMachine(
               if (question) {
                 question.answer = event.answer;
               }
+              intent.applyAnswerAsPatch(question, specInterface.patch);
               return { questions: context.questions };
             }),
             target: 'check_should_flush',
@@ -128,17 +137,14 @@ export function createAgentMachine(
 
             if (
               context.questions.length > 0 &&
-              context.questions.every((i) => i.answer)
+              context.questions.some((i) => i.answer)
             ) {
-              context.questions.forEach((question) =>
-                intent.applyAnswerAsPatch(question, specInterface.patch)
-              );
               result.shouldFlush = true;
             }
 
             if (
               context.questions.length > 0 &&
-              context.questions.some((i) => !i.answer)
+              context.questions.every((i) => !i.answer)
             ) {
               result.shouldFlush = false;
               result.shouldIdle = false;
@@ -156,8 +162,16 @@ export function createAgentMachine(
           onDone: [
             {
               target: 'idle',
-              actions: () => {
-                diffMachine.send({ type: DiffEventEnum.Agent_Submitted_Patch });
+              actions: (ctx) => {
+                const additionalQuestions = ctx as WaitingOnInputDiffContext;
+                const dropCurrentTraffic = !additionalQuestions.questions.some(
+                  (i) => !i.answer
+                );
+
+                diffMachine.send({
+                  type: DiffEventEnum.Agent_Submitted_Patch,
+                  dropCurrentTraffic,
+                });
               },
               cond: (ctx, event) => event.data.shouldFlush,
             },
@@ -215,5 +229,5 @@ export function createAgentMachine(
     }
   });
 
-  return service;
+  return { agent: service, diffMachine: diffMachine };
 }

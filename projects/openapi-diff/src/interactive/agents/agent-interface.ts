@@ -9,6 +9,7 @@ export enum AgentEventEnum {
   DiffReceived = 'DiffReceived',
   AnswerQuestion = 'AnswerQuestion',
   SkipInteraction = 'SkipInteraction',
+  SkipQuestion = 'SkipQuestion',
   AdvancePastError = 'AdvancePastError',
   Start = 'Start',
   Finish = 'Finish',
@@ -27,7 +28,8 @@ export type WaitingOnInputDiffContext = AgentContext & {
 export type AgentEvent =
   | { type: AgentEventEnum.DiffReceived; diffs: IDiff[]; traffic: ApiTraffic }
   | { type: AgentEventEnum.AnswerQuestion; id: string; answer: any }
-  | { type: AgentEventEnum.SkipInteraction };
+  | { type: AgentEventEnum.SkipInteraction }
+  | { type: AgentEventEnum.SkipQuestion };
 
 export type AgentTypestate =
   | {

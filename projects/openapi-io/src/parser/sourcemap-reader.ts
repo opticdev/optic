@@ -150,7 +150,8 @@ function positionToLine(
   start: number,
   end: number
 ): { startLine: number; endLine: number; preview: string } {
-  const startLine = (contents.substring(0, start).match(/\n/g) || '').length;
+  const startLine =
+    (contents.substring(0, start).match(/\n/g) || '').length + 1;
   const endLine =
     (contents.substring(start, end).match(/\n/g) || '').length + startLine;
 
