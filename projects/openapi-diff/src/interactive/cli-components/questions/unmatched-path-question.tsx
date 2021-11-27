@@ -12,6 +12,7 @@ import quote from 'ajv/dist/runtime/quote';
 import { AnswerBar } from '../ui/answer-bar';
 import { AddPathAnswer, AddPathQuestion } from '../../agents/questions';
 import { tabInPath } from '../utils/tab-or-delete-in-path';
+import { useDiffAgentActions } from '../context/diff-agent-context';
 
 const options = [
   {
@@ -24,14 +25,11 @@ const options = [
   },
 ];
 
-export function UnmatchedPathQuestion(props: {
-  question: AddPathQuestion;
-  skipInteraction: () => void;
-  answerQuestion: (questionId: string, answer: any) => void;
-}) {
+export function UnmatchedPathQuestion(props: { question: AddPathQuestion }) {
   const [pathPattern, setPathPattern] = useState(
     props.question.diff.closestMatch
   );
+  const actions = useDiffAgentActions();
   const [autocompleteKey, setAutocompleteKey] = useState(0);
 
   const [option, setOption] = useState<string | null>(null);
@@ -88,7 +86,7 @@ export function UnmatchedPathQuestion(props: {
                 const answer: AddPathAnswer = {
                   pathPattern: pathPattern.trim(),
                 };
-                props.answerQuestion(props.question.uuid, answer);
+                actions.answer(props.question.uuid, answer);
               }}
             />
           </Box>
@@ -136,7 +134,7 @@ export function UnmatchedPathQuestion(props: {
       <AnswerBar
         onSelect={(option) => {
           if (option === 's') {
-            return props.skipInteraction();
+            return actions.skipInteraction();
           }
           setOption(option);
         }}

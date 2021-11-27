@@ -101,10 +101,30 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
     }
   };
 
+  const findLinesForAstAndContents = (astNode: YAMLNode, contents: string) => {
+    const [startPosition, endPosition] = astNodesToStartEndPosition(astNode);
+
+    const { startLine, endLine, preview } = positionToLine(
+      contents,
+      startPosition,
+      endPosition
+    );
+    const result: ILookupLinePreviewResult = {
+      filePath: '',
+      startLine,
+      endLine,
+      preview,
+      startPosition: startPosition,
+      endPosition: endPosition,
+    };
+    return result;
+  };
+
   return {
     findFile,
     findFilePosition,
     findFileAndLines,
+    findLinesForAstAndContents,
   };
 }
 
@@ -130,7 +150,8 @@ function positionToLine(
   start: number,
   end: number
 ): { startLine: number; endLine: number; preview: string } {
-  const startLine = (contents.substring(0, start).match(/\n/g) || '').length;
+  const startLine =
+    (contents.substring(0, start).match(/\n/g) || '').length + 1;
   const endLine =
     (contents.substring(start, end).match(/\n/g) || '').length + startLine;
 

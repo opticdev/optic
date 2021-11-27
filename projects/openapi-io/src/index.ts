@@ -12,16 +12,17 @@ import {
   parseOpenAPIWithSourcemap,
 } from './parser/openapi-sourcemap-parser';
 import { loadYaml, isYaml, isJson, writeYaml } from './write/index';
+import {
+  watchDependencies,
+  WatchDependenciesHandler,
+} from './loaders/watch-dependencies';
 
 export {
-  ILookupLinePreviewResult,
   sourcemapReader,
   loadSpecFromFile,
-  ParseOpenAPIResult,
   inGit,
   loadSpecFromUrl,
   loadSpecFromBranch,
-  JsonPath,
   parseOpenAPIWithSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
   JsonSchemaSourcemap,
@@ -29,4 +30,8 @@ export {
   isYaml,
   isJson,
   writeYaml,
+  watchDependencies,
+  WatchDependenciesHandler,
 };
+
+export type { JsonPath, ParseOpenAPIResult, ILookupLinePreviewResult };

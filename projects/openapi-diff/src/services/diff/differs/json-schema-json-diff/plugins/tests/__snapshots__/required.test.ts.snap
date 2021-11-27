@@ -4,6 +4,7 @@ exports[`required json schema differ plugin missing required fields will patch a
 Object {
   "0": Object {
     "diff": Object {
+      "instancePath": "/hello/f3",
       "key": "f3",
       "keyword": "required",
       "location": Object {

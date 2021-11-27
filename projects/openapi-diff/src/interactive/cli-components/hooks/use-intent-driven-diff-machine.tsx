@@ -1,9 +1,7 @@
 import { TrafficSource } from '../../../services/traffic/types';
 
 import { newDiffMachine } from '../../machine';
-import { OpenApiInterface } from '../../../services/openapi-read-patch-interface';
-import { PassThroughSpecReader } from '../../../services/read/debug-implementations';
-import { StringifyReconciler } from '../../../services/patch/reconcilers/stringify-reconciler';
+import { SpecInterfaceFactory } from '../../../services/openapi-read-patch-interface';
 import { createDiffServiceWithCachingProjections } from '../../../services/diff/diff-service';
 import { useActor } from '@xstate/react';
 import { useEffect, useMemo, useState } from 'react';
@@ -11,46 +9,48 @@ import { createAgentMachine } from '../../agents/agent';
 import { AgentEventEnum, AgentIntent } from '../../agents/agent-interface';
 import { AgentLogEvent } from '../../agents/agent-log-events';
 import { baselineDefaults } from '../../machine-interface';
-import { createOpenApiFileSystemReader } from '../../../services/read/read';
+import { DiffAgentContextInput } from '../context/diff-agent-context';
 
 export function useIntentDrivenDiffMachine(
   source: TrafficSource,
   intentFactory: () => AgentIntent,
-  openApiFilePath?: string
+  openApiInterfaceFactory: SpecInterfaceFactory
 ) {
   const [log, setLog] = useState<AgentLogEvent[]>([]);
 
-  const agentActor = useMemo(() => {
-    const specReader = openApiFilePath
-      ? createOpenApiFileSystemReader(openApiFilePath)
-      : new PassThroughSpecReader();
+  const intent = useMemo(intentFactory, [intentFactory]);
 
+  const { agent, diffMachine } = useMemo(() => {
     const diffMachine = newDiffMachine(
       source,
-      () =>
-        OpenApiInterface(specReader, (reader) => StringifyReconciler(reader)),
+      openApiInterfaceFactory,
       (spec) => createDiffServiceWithCachingProjections(spec),
       baselineDefaults,
       (logEvent) => setLog((i) => [...i, logEvent])
     );
 
-    return createAgentMachine(diffMachine, intentFactory());
+    return createAgentMachine(diffMachine, intent);
   }, []);
 
   useEffect(() => {
-    if (agentActor) source.start();
-  }, [agentActor]);
+    if (agent) source.start();
+  }, [agent]);
 
-  const [state, send] = useActor(agentActor);
+  const [state, send] = useActor(agent);
+
+  const diffAgentContext: DiffAgentContextInput = {
+    diffMachine,
+    answer: (id: string, answer: any) =>
+      send({ type: AgentEventEnum.AnswerQuestion, id, answer }),
+    skipInteraction: () => send({ type: AgentEventEnum.SkipInteraction }),
+    skipQuestion: () => send({ type: AgentEventEnum.SkipQuestion }),
+  };
 
   return {
     log,
+    intent,
     state: state.value || '',
     context: state.context,
-    send: {
-      answer: (id: string, answer: any) =>
-        send({ type: AgentEventEnum.AnswerQuestion, id, answer }),
-      skipInteraction: () => send({ type: AgentEventEnum.SkipInteraction }),
-    },
+    diffAgentContext,
   };
 }

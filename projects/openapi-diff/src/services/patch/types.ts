@@ -24,7 +24,8 @@ import { JsonSchemaPatch } from '../diff/differs/json-schema-json-diff/plugins/p
 export interface IPatchOpenAPI {
   reset: () => void;
   listPatches: () => IPatchGroup[];
-  save: (options: { dryRun: boolean }) => void;
+  save: (options: { dryRun: boolean }) => Promise<IFilePatch>;
+  fork: () => Promise<IPatchOpenAPI>;
   forkedPatcher(): JsonPatcher<OpenAPIV3.Document>;
   init: {
     operation: (
@@ -67,4 +68,6 @@ export type IPatchOpenAPIReconcilerFactory = (
   reader: ISpecReader
 ) => IPatchOpenAPIReconciler;
 
-export type IFilePatch = { files: { path: string; newContents: string }[] };
+export type IFilePatch = {
+  files: { path: string; previousContents: string; newContents: string }[];
+};

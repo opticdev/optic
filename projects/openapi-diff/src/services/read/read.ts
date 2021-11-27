@@ -38,9 +38,14 @@ export function createOpenApiFileSystemReader(filePath: string): ISpecReader {
   reload();
 
   return {
+    reload: async (): Promise<void> => {
+      reload();
+      await result;
+    },
     rootFile(): string {
       return filePath;
     },
+    mode: 'filesystem',
     describeLocation(): string {
       return `${filePath.replace(process.cwd(), '')}`;
     },
@@ -74,9 +79,6 @@ export function createOpenApiFileSystemReader(filePath: string): ISpecReader {
           durationMillis: end - start,
         };
       }
-    },
-    isStale: async () => {
-      return false; // @todo checksum dependencies
     },
     questions: async (): Promise<OpenAPIDiffingQuestions> => {
       return questionsPromise;

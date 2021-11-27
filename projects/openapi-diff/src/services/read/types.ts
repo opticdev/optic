@@ -36,10 +36,11 @@ export interface ISpecReader {
   sourcemap(): Promise<JsonSchemaSourcemap>;
   flattenedSpecification(): Promise<OpenAPIV3.Document>;
   didLoad(): Promise<DidLoadStatus>;
-  isStale(): Promise<FilePathsWithChanges[] | false>;
   save(patch: IFilePatch): Promise<void>;
   describeLocation(): string;
   rootFile(): string;
+  reload(): Promise<void>;
+  mode: 'simulated' | 'filesystem';
 }
 
 export type FilePathsWithChanges = string[];

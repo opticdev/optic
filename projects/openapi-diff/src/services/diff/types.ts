@@ -81,6 +81,7 @@ export interface BodyAdditionalProperty extends IDiff {
   example: any;
   keyword: JsonSchemaKnownKeyword.additionalProperties;
   schemaPath: JsonPath;
+  instancePath: JsonPath;
   location: FieldLocation;
 }
 
@@ -90,6 +91,7 @@ export interface BodyMissingRequiredProperty extends IDiff {
   parentObjectPath: JsonPath;
   key: string;
   schemaPath: JsonPath;
+  instancePath: JsonPath;
   location: FieldLocation;
 }
 
@@ -100,6 +102,7 @@ export interface BodyPropertyUnmatchedType extends IDiff {
   key: string;
   example: any;
   schemaPath: JsonPath;
+  instancePath: JsonPath;
   location: FieldLocation;
 }
 

@@ -23,6 +23,22 @@ Array [
   }
 }",
     "path": "definitions.json",
+    "previousContents": "{
+  \\"components\\": {
+    \\"ExampleBody\\": {
+      \\"type\\": \\"object\\",
+      \\"properties\\": {
+        \\"hello\\": {
+          \\"type\\": \\"string\\"
+        }
+      },
+      \\"required\\": [
+        \\"hello\\"
+      ]
+    }
+  }
+}
+",
   },
   Object {
     "newContents": "{
@@ -53,6 +69,32 @@ Array [
   }
 }",
     "path": "with-body-ref.json",
+    "previousContents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/example\\": {
+      \\"parameters\\": [],
+      \\"get\\": {
+        \\"parameters\\": [],
+        \\"responses\\": {
+          \\"200\\": {
+            \\"description\\": \\"\\",
+            \\"content\\": {
+              \\"application/json\\": {
+                \\"schema\\": {\\"$ref\\":  \\"./definitions.json#/components/ExampleBody\\"}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}
+",
   },
 ]
 `;
@@ -80,6 +122,22 @@ Array [
   }
 }",
     "path": "definitions.json",
+    "previousContents": "{
+  \\"components\\": {
+    \\"ExampleBody\\": {
+      \\"type\\": \\"object\\",
+      \\"properties\\": {
+        \\"hello\\": {
+          \\"type\\": \\"string\\"
+        }
+      },
+      \\"required\\": [
+        \\"hello\\"
+      ]
+    }
+  }
+}
+",
   },
   Object {
     "newContents": "info:
@@ -100,6 +158,23 @@ paths:
                 $ref: ./definitions.json#/components/ExampleBody
 ",
     "path": "with-body-ref.yaml",
+    "previousContents": "info:
+  version: 0.0.0
+  title: Empty
+openapi: 3.0.1
+paths:
+  \\"/example\\":
+    parameters: []
+    get:
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                \\"$ref\\": \\"./definitions.json#/components/ExampleBody\\"
+",
   },
 ]
 `;

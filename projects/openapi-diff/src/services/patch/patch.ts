@@ -24,6 +24,7 @@ export async function createOpenApiPatch(
   const jsonSchemaJsonDiffer = opticJsonSchemaDiffer();
 
   return {
+    fork: () => createOpenApiPatch(reader, reconciler),
     listPatches(): IPatchGroup[] {
       return patcher.currentPatches();
     },
@@ -31,7 +32,10 @@ export async function createOpenApiPatch(
       const filePatches = await reconciler.patchesToFileMutations(
         patcher.patchesToSave()
       );
-      await reader.save(filePatches);
+      if (options.dryRun === false) {
+        await reader.save(filePatches);
+      }
+      return filePatches;
     },
     reset(): void {
       patcher.reset();

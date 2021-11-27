@@ -37,13 +37,19 @@ export function StringifyReconciler(
       const files = Object.entries(grouped).map(async (entry) => {
         const [filePath, operations]: [string, Operation[]] = entry;
 
-        const currentDocument = await readCurrentDocument(filePath);
+        const contentsOfFile = sourcemap.files.find(
+          (i) => i.path === filePath
+        ).contents;
+        const currentDocument = await readCurrentDocument(
+          filePath,
+          contentsOfFile
+        );
         const patch = jsonPatcher(currentDocument);
 
         patch.apply('patches', operations);
-
         return {
           path: filePath,
+          previousContents: contentsOfFile,
           newContents: stringifyDocument(filePath, patch.currentDocument()),
         };
       });
@@ -70,9 +76,10 @@ function stringifyDocument(
   }
 }
 
-async function readCurrentDocument(filePath: string): Promise<any> {
-  const fileContents = (await fs.readFile(filePath)).toString();
-
+async function readCurrentDocument(
+  filePath: string,
+  fileContents: string
+): Promise<any> {
   if (isJson(filePath)) {
     return JSON.parse(fileContents);
   } else if (isYaml(filePath)) {

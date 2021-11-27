@@ -23,6 +23,8 @@ export class PassThroughSpecReader implements ISpecReader {
 
   private readonly _mainOpenApiFile: string;
 
+  mode: 'simulated';
+
   constructor(openApi: OpenAPIV3.Document = defaultEmptySpec) {
     this._mainOpenApiFile = 'openapi.json';
 
@@ -58,8 +60,8 @@ export class PassThroughSpecReader implements ISpecReader {
     return flattened;
   }
 
-  isStale(): Promise<FilePathsWithChanges[] | false> {
-    return Promise.resolve(false);
+  async reload() {
+    return Promise.resolve();
   }
 
   async questions(): Promise<OpenAPIDiffingQuestions> {

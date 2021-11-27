@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
+import { keys } from '../utils/keys';
 
 export function AnswerBar(props: {
   options: AnswerBarOption[];
@@ -13,7 +14,13 @@ export function AnswerBar(props: {
 
     if (props.hide) return;
 
-    const selectedOption = props.options.find((i) => i.char === key);
+    const selectedOption = props.options.find((i) => {
+      return (
+        i.char === key ||
+        (i.char === keys.leftArrow && modifier.leftArrow) ||
+        (i.char === keys.rightArrow && modifier.rightArrow)
+      );
+    });
 
     if (!selectedOption) {
       return;

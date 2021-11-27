@@ -10,13 +10,15 @@ import { SpecInterface } from '../services/openapi-read-patch-interface';
 export enum DiffEventEnum {
   Traffic_Observed = 'TRAFFIC_OBSERVED',
   Agent_Submitted_Patch = 'Agent_Submitted_Patch',
+  Reread_Specification = 'Reread_Specification',
   Agent_Skipped_Interaction = 'Agent_Skipped_Interaction',
 }
 
 export type InteractiveDiffEvents =
   | { type: DiffEventEnum.Traffic_Observed; example: ApiTraffic }
-  | { type: DiffEventEnum.Agent_Submitted_Patch }
-  | { type: DiffEventEnum.Agent_Skipped_Interaction };
+  | { type: DiffEventEnum.Agent_Submitted_Patch; dropCurrentTraffic: boolean }
+  | { type: DiffEventEnum.Agent_Skipped_Interaction }
+  | { type: DiffEventEnum.Reread_Specification };
 
 /*
   Machine state is responsible for

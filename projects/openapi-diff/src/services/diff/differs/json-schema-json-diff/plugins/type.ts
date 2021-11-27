@@ -51,6 +51,7 @@ export const typeKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
       schemaPath,
       type: DiffType.BodyUnmatchedType,
       keyword: JsonSchemaKnownKeyword.type,
+      instancePath: validationError.instancePath,
       location: {
         ...conceptualLocation,
         jsonSchemaTrail: jsonPointerHelpers.decode(

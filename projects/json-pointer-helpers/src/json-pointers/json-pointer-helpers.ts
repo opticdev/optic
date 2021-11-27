@@ -11,6 +11,12 @@ function pop(pointer: string): string {
   return jsonPointer.compile([...parsed]);
 }
 
+function splitParentChild(pointer: string): [string, string, string] {
+  const parsed = jsonPointer.parse(pointer.toString()) || [];
+  const key = parsed.pop();
+  return [jsonPointer.compile([...parsed]), key || '', pointer];
+}
+
 function unescapeUriSafePointer(inputFromApiToolkit: string): string {
   return decodeURIComponent(inputFromApiToolkit);
 }
@@ -39,6 +45,7 @@ export default {
   append,
   pop,
   decode,
+  splitParentChild,
   unescapeUriSafePointer,
   get: jsonPointer.get,
   tryGet,

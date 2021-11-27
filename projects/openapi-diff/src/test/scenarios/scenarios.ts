@@ -1,4 +1,6 @@
 import {
+  AgentContext,
+  AgentEvent,
   AgentEventEnum,
   AgentIntent,
   WaitingOnInputDiffContext,
@@ -22,11 +24,17 @@ import { newDiffMachine } from '../../interactive/machine';
 import { createDiffServiceWithCachingProjections } from '../../services/diff/diff-service';
 import { createAgentMachine } from '../../interactive/agents/agent';
 import invariant from 'ts-invariant';
+import { Interpreter } from 'xstate';
+import { IPatchGroup } from '../../services/patch/incremental-json-patch/json-patcher';
+import {
+  Context,
+  InteractiveDiffEvents,
+} from '../../interactive/machine-interface';
 
 export function scenarios(intent: AgentIntent) {
   return {
     initialSpec: (spec: OpenAPIV3.Document) =>
-      scenarioRunner(intent, () =>
+      scenarioRunner(intent, spec, () =>
         OpenApiInterface(new PassThroughSpecReader(spec), (reader) =>
           StringifyReconciler(reader)
         )
@@ -41,7 +49,7 @@ export function scenarios(intent: AgentIntent) {
 
       const spec = openApiInterface.patch.forkedPatcher().currentDocument();
 
-      return scenarioRunner(intent, () =>
+      return scenarioRunner(intent, spec, () =>
         OpenApiInterface(new PassThroughSpecReader(spec), (reader) =>
           StringifyReconciler(reader)
         )
@@ -53,28 +61,37 @@ export function scenarios(intent: AgentIntent) {
 
 export function scenarioRunner(
   intent: AgentIntent,
+  spec: OpenAPIV3.Document,
   specInterfaceFactory: SpecInterfaceFactory
 ) {
   const source = new PassThroughSource();
 
-  const diffService = newDiffMachine(
-    source,
-    specInterfaceFactory,
-    (spec) => createDiffServiceWithCachingProjections(spec),
-    {
-      maxQueue: 50,
-    }
-  );
+  const diffService: Interpreter<Context, any, InteractiveDiffEvents> =
+    newDiffMachine(
+      source,
+      specInterfaceFactory,
+      (spec) => createDiffServiceWithCachingProjections(spec),
+      {
+        maxQueue: 50,
+      }
+    );
 
-  const agentMachine = createAgentMachine(diffService, intent);
+  const { agent } = createAgentMachine(diffService, intent);
 
   const interactive = {
-    agentMachine,
+    agentMachine: agent,
     sendTraffic: (...traffic: ApiTraffic[]) => {
       source.sendTraffic(...traffic);
     },
+    source,
+    spec,
+    specInterfaceFactory: () => {
+      return OpenApiInterface(new PassThroughSpecReader(spec), (reader) =>
+        StringifyReconciler(reader)
+      );
+    },
     shutdown: async () => {
-      agentMachine.stop();
+      agent.stop();
       diffService.stop();
     },
     waitForEmptyQueue: async () => {
@@ -103,7 +120,7 @@ export function scenarioRunner(
     ) => {
       const context: WaitingOnInputDiffContext = await new Promise(
         (resolve, reject) => {
-          let { unsubscribe } = agentMachine.subscribe((i) => {
+          let { unsubscribe } = agent.subscribe((i) => {
             if (i.value === 'waiting_for_input') {
               resolve(i.context as WaitingOnInputDiffContext);
               if (unsubscribe) unsubscribe();
@@ -126,14 +143,14 @@ export function scenarioRunner(
         'expecting the agent to have answered question, got undefined'
       );
 
-      agentMachine.send({
+      agent.send({
         type: AgentEventEnum.AnswerQuestion,
         id: question.uuid,
         answer: question.answer,
       });
 
       await new Promise((resolve, reject) => {
-        let { unsubscribe } = agentMachine.subscribe((i) => {
+        let { unsubscribe } = agent.subscribe((i) => {
           if (i.value === 'check_should_flush') {
             if (unsubscribe) unsubscribe();
             resolve(undefined);
@@ -156,5 +173,3 @@ export function scenarioRunner(
 
   return interactive;
 }
-
-scenarios(baselineIntent());

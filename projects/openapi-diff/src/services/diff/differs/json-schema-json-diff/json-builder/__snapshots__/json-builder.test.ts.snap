@@ -20,6 +20,7 @@ Object {
         "user2",
         "user3",
       ],
+      "instancePath": "",
       "key": "oneOf",
       "keyword": "oneOf",
       "location": Object {

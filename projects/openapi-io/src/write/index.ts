@@ -1,7 +1,7 @@
 import { dump as yamlDump, load as yamlLoad } from 'js-yaml';
 
-export function writeYaml(document: any) {
-  return yamlDump(document, { indent: 2 });
+export function writeYaml(document: any, indent: 2 | 4 = 2) {
+  return yamlDump(document, { indent });
 }
 
 export function loadYaml(contents: string) {

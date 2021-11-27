@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { TrafficSource } from '../../services/traffic/types';
 import { Box, Newline, Static, Text } from 'ink';
 import { useIntentDrivenDiffMachine } from './hooks/use-intent-driven-diff-machine';
@@ -7,15 +7,36 @@ import { UnmatchedPathQuestion } from './questions/unmatched-path-question';
 import { baselineIntent } from '../agents/intents/baseline';
 import { WaitingOnInputDiffContext } from '../agents/agent-interface';
 import { Log } from './ui/log';
+import { createOpenApiFileSystemReader } from '../../services/read/read';
+import { PassThroughSpecReader } from '../../services/read/debug-implementations';
+import {
+  OpenApiInterface,
+  SpecInterfaceFactory,
+} from '../../services/openapi-read-patch-interface';
+import { StringifyReconciler } from '../../services/patch/reconcilers/stringify-reconciler';
+import { componentForQuestion } from './questions/registry';
+import {
+  DiffAgentContext,
+  DiffAgentContextProvider,
+} from './context/diff-agent-context';
 
 export function Baseline(props: {
   source: TrafficSource;
   openApiFilePath?: string;
 }) {
-  const { state, context, send, log } = useIntentDrivenDiffMachine(
+  const specInterface: SpecInterfaceFactory = useMemo(() => {
+    const specReader = props.openApiFilePath
+      ? createOpenApiFileSystemReader(props.openApiFilePath)
+      : new PassThroughSpecReader();
+
+    return async () =>
+      OpenApiInterface(specReader, (reader) => StringifyReconciler(reader));
+  }, [props.openApiFilePath]);
+
+  const { state, context, diffAgentContext, log } = useIntentDrivenDiffMachine(
     props.source,
     baselineIntent,
-    props.openApiFilePath
+    specInterface
   );
   let dynamic = <></>;
 
@@ -25,48 +46,18 @@ export function Baseline(props: {
       (i) => !i.answer
     );
     if (firstUnansweredQuestion) {
-      dynamic = (
-        <>
-          {componentForQuestion(
-            firstUnansweredQuestion,
-            send.answer,
-            send.skipInteraction
-          )}
-        </>
-      );
+      dynamic = <>{componentForQuestion(firstUnansweredQuestion)}</>;
     }
   }
 
   return (
-    <Box flexDirection="column">
-      <Log log={log} />
-      {state === 'waiting_for_input' && (
-        <Box flexDirection="column">{dynamic}</Box>
-      )}
-    </Box>
+    <DiffAgentContextProvider context={diffAgentContext}>
+      <Box flexDirection="column">
+        <Log log={log} />
+        {state === 'waiting_for_input' && (
+          <Box flexDirection="column">{dynamic}</Box>
+        )}
+      </Box>
+    </DiffAgentContextProvider>
   );
-}
-
-function componentForQuestion(
-  question: QuestionsForAgent | undefined,
-  answerQuestion: (questionId: string, answer: any) => void,
-  skip: () => void
-) {
-  if (!question) return null;
-
-  switch (question.type) {
-    case AnswerQuestionTypes.AddPath:
-      return (
-        <UnmatchedPathQuestion
-          key={question.uuid}
-          question={question}
-          answerQuestion={answerQuestion}
-          skipInteraction={skip}
-        />
-      );
-    default:
-      throw new Error(
-        'no registered question / answer component for ' + question
-      );
-  }
 }
