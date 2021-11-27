@@ -5,23 +5,22 @@ import fetch from 'node-fetch';
 
 import express from "express";
 
-import { SnifferSource } from '../sniffer';
-import { ApiTraffic } from '../../types';
-import { waitFor } from '../../../../utils/debug_waitFor';
+import { SnifferNativeSource } from "../sniffer_native";
+import { ApiTraffic } from "../../types";
+import { waitFor } from "../../../../utils/debug_waitFor";
 
 const rootOnlyIt = os.userInfo().uid == 0 ? it : it.skip;
 
-describe('capture sources', () => {
-  rootOnlyIt('can parse captured traffic', async () => {
+describe("capture sources native", () => {
+  rootOnlyIt("can parse captured traffic", async () => {
     let server = startServer();
     let addr: AddressInfo | string = server.address() as AddressInfo;
     console.log(`server addr ${JSON.stringify(server.address())}`);
 
-    const source = new SnifferSource({interface: 'lo0', port: addr.port});
-
+    const source = new SnifferNativeSource({interface: 'lo0', port: addr.port});
 
     const examples: ApiTraffic[] = [];
-    source.on('traffic', (example) => {
+    source.on("traffic", (example) => {
       //console.log(example);
       examples.push(example);
     });
@@ -35,6 +34,12 @@ describe('capture sources', () => {
 
     await waitFor(300);
     await source.stop();
+
+    // FIXME: This is unfortunate. The pcap internals don't return on close
+    // until they see a packet. We create a packet for them so our tests can
+    // end.
+    source.removeAllListeners(); // This should already be true due to .stop()
+    await fetch(makeTestURL(server, 9999));
     server.close();
 
     expect(JSON.stringify(examples)).toMatchSnapshot();

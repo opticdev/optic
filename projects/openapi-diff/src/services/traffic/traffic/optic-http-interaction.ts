@@ -1,6 +1,5 @@
 import { ApiTraffic } from '../types';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
-import { isThisExpression } from '@babel/types';
 
 // TODO: Fill in the type
 // {
