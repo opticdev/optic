@@ -1,5 +1,5 @@
 import stringifyJson from 'json-stable-stringify';
-import { spacer } from './lines';
+import { jsonSpacer } from './lines';
 import { safeLoad } from 'yaml-ast-parser';
 import { JsonRoundtripConfig } from '../json';
 
@@ -16,7 +16,9 @@ function generatedAddedField(
   writeConfig: JsonRoundtripConfig
 ): string {
   const simulated = { [key]: fieldValue };
-  const formatted = stringifyJson(simulated, { space: spacer(writeConfig) });
+  const formatted = stringifyJson(simulated, {
+    space: jsonSpacer(writeConfig),
+  });
   const oneAndOnlyMapping = safeLoad(formatted).mappings[0];
   const asString = formatted.substring(
     oneAndOnlyMapping.startPosition,
@@ -26,7 +28,7 @@ function generatedAddedField(
 }
 
 function generatedAdded(fieldValue: any, writeConfig: JsonRoundtripConfig) {
-  return stringifyJson(fieldValue, { space: spacer(writeConfig) });
+  return stringifyJson(fieldValue, { space: jsonSpacer(writeConfig) });
 }
 
 export default {

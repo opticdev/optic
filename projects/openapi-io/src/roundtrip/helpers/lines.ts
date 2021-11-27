@@ -1,4 +1,5 @@
 import { JsonRoundtripConfig } from '../json';
+import { YamlRoundTripConfig } from '../yaml';
 const { EOL } = require('os');
 
 export function lines(contents: string): string[] {
@@ -19,6 +20,36 @@ export function replaceRange(
   substitute: string
 ) {
   return contents.substring(0, start) + substitute + contents.substring(end);
+}
+
+export function insertLines(
+  contents: string,
+  afterLine: number,
+  insert: string
+): string {
+  const asLines = lines(contents);
+
+  asLines.splice(afterLine, 0, insert);
+
+  return asLines.join(EOL);
+}
+
+export function removeLines(
+  contents: string,
+  lower: number,
+  upper: number
+): string {
+  const asLines = lines(contents);
+  return asLines
+    .map((i, index) => {
+      if (index >= lower && index <= upper) {
+        return null;
+      } else {
+        return i;
+      }
+    })
+    .filter((i) => i !== null)
+    .join('\n');
 }
 
 export function pad(contents: string, padLeft: string = '') {
@@ -63,7 +94,11 @@ export function pad(contents: string, padLeft: string = '') {
   return f;
 }
 
-export function spacer(jsonConfig: JsonRoundtripConfig): string {
+export function jsonSpacer(jsonConfig: JsonRoundtripConfig): string {
   const char = jsonConfig.spacer === 'tab' ? '\t' : ' ';
-  return new Array(jsonConfig.count + 1).join(char);
+  return char.padStart(jsonConfig.count + 1, char);
+}
+
+export function yamlSpacer(yamlConfig: YamlRoundTripConfig): string {
+  return yamlConfig.count === 2 ? '  ' : '    ';
 }

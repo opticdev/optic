@@ -1,13 +1,11 @@
-import { jsonPatchFixture, yamlPatchFixture } from './fixture';
-import { JsonRoundtripper } from '../json';
-import path from 'path';
-import fs from 'fs-extra';
+import { yamlPatchFixture } from './fixture';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { YamlRoundtripper } from '../yaml';
 
-describe('json roundtrip', () => {
+describe('yaml roundtrip', () => {
   it('can apply json patches', async () => {
-    const result = await jsonPatchFixture(
-      'simple-json-schema-example.json',
+    const result = await yamlPatchFixture(
+      'simple-json-schema-example.yaml',
       [
         {
           op: 'add',
@@ -28,15 +26,15 @@ describe('json roundtrip', () => {
           value: 'address',
         },
       ],
-      JsonRoundtripper
+      YamlRoundtripper
     );
     expect(result).toMatchSnapshot();
   });
 
   describe('patch field array scenarios', () => {
-    it('can append a string to a multiline array', async () => {
-      const result = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+    it(`can append a string to a multiline array`, async () => {
+      const result = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'add',
@@ -44,14 +42,14 @@ describe('json roundtrip', () => {
             value: 'address',
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(result).toMatchSnapshot();
     });
 
     it('can prepend a string to a multiline array', async () => {
-      const result = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const result = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'add',
@@ -59,14 +57,14 @@ describe('json roundtrip', () => {
             value: 'address',
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(result).toMatchSnapshot();
     });
 
     it('can add a string to the middle of an array', async () => {
-      const result = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const result = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'add',
@@ -74,14 +72,14 @@ describe('json roundtrip', () => {
             value: 'address',
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(result).toMatchSnapshot();
     });
 
     it('can append an object to a multi line array', async () => {
-      const result = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const result = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'add',
@@ -92,14 +90,31 @@ describe('json roundtrip', () => {
             },
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
+      );
+      expect(result).toMatchSnapshot();
+    });
+    it('can add an object to the middle of a  multi line array', async () => {
+      const result = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
+        [
+          {
+            op: 'add',
+            path: jsonPointerHelpers.compile(['required', '2']),
+            value: {
+              hello: 'world',
+              colors: ['red', 'green', 'blue'],
+            },
+          },
+        ],
+        YamlRoundtripper
       );
       expect(result).toMatchSnapshot();
     });
 
     it('empty single line array, expands', async () => {
-      const result = await jsonPatchFixture(
-        'small-arrays.json',
+      const result = await yamlPatchFixture(
+        'small-arrays.yaml',
         [
           {
             op: 'add',
@@ -107,13 +122,13 @@ describe('json roundtrip', () => {
             value: 'EXAMPLE',
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(result).toMatchSnapshot();
     });
     it('empty multi line array, can be appended to', async () => {
-      const result = await jsonPatchFixture(
-        'small-arrays.json',
+      const result = await yamlPatchFixture(
+        'small-arrays.yaml',
         [
           {
             op: 'add',
@@ -121,13 +136,13 @@ describe('json roundtrip', () => {
             value: 'EXAMPLE',
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(result).toMatchSnapshot();
     });
     it('string single line array, is expanded', async () => {
-      const result = await jsonPatchFixture(
-        'small-arrays.json',
+      const result = await yamlPatchFixture(
+        'small-arrays.yaml',
         [
           {
             op: 'add',
@@ -135,63 +150,63 @@ describe('json roundtrip', () => {
             value: 'purple',
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(result).toMatchSnapshot();
     });
 
     it('can remove first item in array', async () => {
       const result = await yamlPatchFixture(
-        'simple-json-schema-example.json',
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'remove',
             path: jsonPointerHelpers.compile(['required', '0']),
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(result).toMatchSnapshot();
     });
 
     it('can remove middle item in array', async () => {
       const result = await yamlPatchFixture(
-        'simple-json-schema-example.json',
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'remove',
             path: jsonPointerHelpers.compile(['required', '2']),
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(result).toMatchSnapshot();
     });
 
     it('can remove last item in array', async () => {
       const result = await yamlPatchFixture(
-        'simple-json-schema-example.json',
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'remove',
             path: jsonPointerHelpers.compile(['required', '4']),
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(result).toMatchSnapshot();
     });
 
     it('can remove only item in array', async () => {
       const result = await yamlPatchFixture(
-        'small-arrays.json',
+        'small-arrays.yaml',
         [
           {
             op: 'remove',
             path: jsonPointerHelpers.compile(['withOneItem', '0']),
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(result).toMatchSnapshot();
     });
@@ -199,35 +214,12 @@ describe('json roundtrip', () => {
 
   describe('patch object scenarios', () => {
     it('appending a field to a multi line object with existing children', async () => {
-      expect(
-        await jsonPatchFixture(
-          'simple-json-schema-example.json',
-          [
-            {
-              op: 'add',
-              path: jsonPointerHelpers.compile(['properties', 'address']),
-              value: {
-                type: 'object',
-                description: 'where we live',
-                required: ['zipCode', 'street'],
-                properties: {
-                  zipCode: { type: 'number' },
-                  street: { type: 'string' },
-                },
-              },
-            },
-          ],
-          JsonRoundtripper
-        )
-      ).toMatchSnapshot();
-    });
-    it('appending a field to an empty object multi-line', async () => {
-      const meta = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const result = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'add',
-            path: jsonPointerHelpers.compile(['meta', 'address']),
+            path: jsonPointerHelpers.compile(['properties', 'address']),
             value: {
               type: 'object',
               description: 'where we live',
@@ -239,14 +231,15 @@ describe('json roundtrip', () => {
             },
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+
+      expect(result).toMatchSnapshot();
     });
 
     it('appending a field to an empty object single-line', async () => {
-      const meta = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const meta = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'add',
@@ -262,58 +255,58 @@ describe('json roundtrip', () => {
             },
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
 
       expect(meta).toMatchSnapshot();
     });
 
     it('removing first field in an object', async () => {
-      const patch = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const patch = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'remove',
             path: jsonPointerHelpers.compile(['properties', 'name']),
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
 
       expect(patch).toMatchSnapshot();
     });
 
     it('removing middle field in an object', async () => {
-      const patch = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const patch = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'remove',
             path: jsonPointerHelpers.compile(['properties', 'artist']),
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(patch).toMatchSnapshot();
     });
 
     it('removing last field in an object', async () => {
-      const patch = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const patch = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'remove',
             path: jsonPointerHelpers.compile(['properties', 'tags']),
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(patch).toMatchSnapshot();
     });
 
     it('removing only field in an object', async () => {
-      const patch = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const patch = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'remove',
@@ -324,7 +317,7 @@ describe('json roundtrip', () => {
             ]),
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(patch).toMatchSnapshot();
     });
@@ -332,8 +325,8 @@ describe('json roundtrip', () => {
 
   describe('replace patch', () => {
     it('can replace an object with a primitive', async () => {
-      const meta = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const meta = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'replace',
@@ -341,14 +334,29 @@ describe('json roundtrip', () => {
             value: 12345,
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
+      );
+      expect(meta).toMatchSnapshot();
+    });
+
+    it('can replace an object an empty array', async () => {
+      const meta = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
+        [
+          {
+            op: 'replace',
+            path: jsonPointerHelpers.compile(['properties']),
+            value: [],
+          },
+        ],
+        YamlRoundtripper
       );
       expect(meta).toMatchSnapshot();
     });
 
     it('can replace a string with an object', async () => {
-      const meta = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const meta = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'replace',
@@ -356,14 +364,14 @@ describe('json roundtrip', () => {
             value: { anything: 'else' },
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(meta).toMatchSnapshot();
     });
 
     it('can replace an object with another object', async () => {
-      const meta = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const meta = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'replace',
@@ -371,14 +379,14 @@ describe('json roundtrip', () => {
             value: { hello: 'world', a: ['2', 3] },
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(meta).toMatchSnapshot();
     });
 
     it('can replace a mapping value with a null', async () => {
-      const meta = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const meta = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'replace',
@@ -386,14 +394,14 @@ describe('json roundtrip', () => {
             value: null,
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(meta).toMatchSnapshot();
     });
 
     it('can replace a mapping value with a primitive', async () => {
-      const meta = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const meta = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'replace',
@@ -401,14 +409,14 @@ describe('json roundtrip', () => {
             value: true,
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(meta).toMatchSnapshot();
     });
 
     it('can replace an array item', async () => {
-      const meta = await jsonPatchFixture(
-        'simple-json-schema-example.json',
+      const meta = await yamlPatchFixture(
+        'simple-json-schema-example.yaml',
         [
           {
             op: 'replace',
@@ -416,33 +424,9 @@ describe('json roundtrip', () => {
             value: { hello: 'world', color: [1, 2, 3] },
           },
         ],
-        JsonRoundtripper
+        YamlRoundtripper
       );
       expect(meta).toMatchSnapshot();
-    });
-  });
-
-  describe('can infer style', () => {
-    it('infers tabs', async () => {
-      const fileContents = (
-        await fs.readFile(
-          path.resolve(path.join(__dirname, 'inputs', 'tab.json.not'))
-        )
-      ).toString();
-      expect(
-        await JsonRoundtripper.inferConfig(fileContents)
-      ).toMatchSnapshot();
-    });
-
-    it('infers spaces', async () => {
-      const fileContents = (
-        await fs.readFile(
-          path.resolve(path.join(__dirname, 'inputs', 'space.json.not'))
-        )
-      ).toString();
-      expect(
-        await JsonRoundtripper.inferConfig(fileContents)
-      ).toMatchSnapshot();
     });
   });
 });

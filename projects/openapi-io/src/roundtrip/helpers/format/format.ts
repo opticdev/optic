@@ -1,4 +1,5 @@
 import { JsonRoundtripConfig } from '../../json';
+import { YamlRoundTripConfig } from '../../yaml';
 
 const prettier = require('prettier');
 
@@ -18,7 +19,10 @@ export function formatJson(
   });
 }
 
-export function formatYaml(yamlString: string) {
+export function formatYaml(
+  yamlString: string,
+  writeConfig: YamlRoundTripConfig
+) {
   return prettier.format(yamlString, {
     parser: 'yaml',
     plugins,

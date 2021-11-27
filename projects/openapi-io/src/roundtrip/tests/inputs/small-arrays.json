@@ -3,5 +3,8 @@
   "empty-multi-line": [
 
   ],
-  "colors": ["red", "green", "blue", "yellow"]
+  "colors": ["red", "green", "blue", "yellow"],
+  "withOneItem": [
+    "firstAndOnly"
+  ]
 }

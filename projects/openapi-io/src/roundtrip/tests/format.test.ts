@@ -5,7 +5,7 @@ describe('format', () => {
     expect(
       formatJson(
         JSON.stringify({ hello: 'world', array: [1, 2, [[]]] }, null, 2),
-        { spacer: 'tab', count: 1, shouldOverwrite: false }
+        { spacer: 'tab', count: 1 }
       )
     ).toMatchSnapshot();
   });
