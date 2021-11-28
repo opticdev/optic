@@ -27,6 +27,9 @@ export function createAgentMachine(
       idle: {
         entry: assign({}),
         on: {
+          [AgentEventEnum.DisplayError]: {
+            target: 'error',
+          },
           [AgentEventEnum.DiffReceived]: {
             target: 'process_diffs',
             actions: assign((context, event) => {
@@ -36,6 +39,15 @@ export function createAgentMachine(
                 questions: [],
               };
             }),
+          },
+        },
+      },
+      error: {
+        on: {
+          [AgentEventEnum.BypassError]: {
+            actions: (ctx, event) =>
+              diffMachine.send({ type: DiffEventEnum.Bypass_Error }),
+            target: 'idle',
           },
         },
       },
@@ -93,6 +105,9 @@ export function createAgentMachine(
       },
       waiting_for_input: {
         on: {
+          [AgentEventEnum.DisplayError]: {
+            target: 'error',
+          },
           [AgentEventEnum.Reset]: {
             target: 'idle',
           },
@@ -186,7 +201,6 @@ export function createAgentMachine(
           onError: {
             actions: [
               (ctx, error) => {
-                console.error(error);
                 diffMachine.send({
                   type: DiffEventEnum.Agent_Skipped_Interaction,
                 });
@@ -208,6 +222,12 @@ export function createAgentMachine(
 
   diffMachine.onTransition((state, event) => {
     // transitioned to waiting_for_input
+
+    if (typeof state.value === 'string' && state.value.endsWith('_error')) {
+      return service.send({
+        type: AgentEventEnum.DisplayError,
+      });
+    }
 
     if (state.value === 'waiting_for_input') {
       if (

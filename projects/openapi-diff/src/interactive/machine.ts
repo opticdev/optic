@@ -111,9 +111,7 @@ export function newDiffMachine(
               : await specInterfaceFactory();
 
             // if already instantiated, reload
-            if (ctx.specInterface) {
-              await specInterface.read.reload();
-            }
+            await specInterface.read.reload();
 
             log({
               event: AgentLogEvents.reading,
@@ -139,11 +137,25 @@ export function newDiffMachine(
             target: 'check_next',
           },
           onError: {
-            // @todo fill me out
+            actions: (ctx, event) => {
+              log({
+                event: AgentLogEvents.error,
+                error: event.data.toString(),
+                classification: 'Reading OpenAPI specification',
+              });
+            },
+            target: 'reading_spec_error',
           },
         },
         on: {
           ...alwaysHandleNewTraffic,
+        },
+      },
+      reading_spec_error: {
+        on: {
+          [DiffEventEnum.Bypass_Error]: {
+            target: 'reading_spec',
+          },
         },
       },
       observing: {
@@ -185,6 +197,7 @@ export function newDiffMachine(
               log({
                 event: AgentLogEvents.error,
                 error,
+                classification: 'Diff Warning',
               })
             );
 
@@ -195,11 +208,6 @@ export function newDiffMachine(
                   i.type === DiffType.UnmatchedMethod
               )
             ) {
-              // agent.log({
-              //   event: AgentLogEvents.observedTraffic,
-              //   path: example.path,
-              //   method: example.method,
-              // });
             }
             // results.errors log these
             return results.diffs;
@@ -222,6 +230,15 @@ export function newDiffMachine(
               target: 'check_next',
             },
           ],
+          onError: {
+            actions: (ctx, event) =>
+              log({
+                event: AgentLogEvents.error,
+                error: event.data.message,
+                classification: 'Patching OpenAPI Error',
+              }),
+            target: 'diff_or_patch_error',
+          },
         },
       },
       waiting_for_input: {
@@ -314,7 +331,26 @@ export function newDiffMachine(
             })),
             target: 'reading_spec',
           },
-          onError: {},
+          onError: {
+            actions: (ctx, event) =>
+              log({
+                event: AgentLogEvents.error,
+                error: event.data.message,
+                classification: 'Patching OpenAPI Error',
+              }),
+            target: 'diff_or_patch_error',
+          },
+        },
+      },
+      diff_or_patch_error: {
+        on: {
+          // when bypassing a diff or patch error, clear queue
+          [DiffEventEnum.Bypass_Error]: {
+            target: 'check_next',
+            actions: assign((ctx) => ({
+              queue: dropFirstItemFromQueue(ctx),
+            })),
+          },
         },
       },
     },
@@ -328,6 +364,10 @@ export function newDiffMachine(
   source.on('traffic', (example: ApiTraffic) => {
     service.send({ type: DiffEventEnum.Traffic_Observed, example });
   });
+  //
+  // service.onTransition((i) => {
+  //   console.log(i.value);
+  // });
 
   return service;
 }

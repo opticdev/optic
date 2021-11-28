@@ -18,6 +18,7 @@ export type DiffAgentContextInput = Omit<
 type DiffAgentContext = {
   skipQuestion: () => void;
   skipInteraction: () => void;
+  bypassIssue: () => void;
   answer: (id: string, answer: any) => void;
   diffMachine: InteractiveDiffMachineType;
   computePossiblePatches: (diff: IDiff) => Promise<PatchPreview[]>;

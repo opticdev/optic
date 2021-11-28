@@ -16,6 +16,8 @@ export enum AgentEventEnum {
   AdvancePastError = 'AdvancePastError',
   Start = 'Start',
   Finish = 'Finish',
+  DisplayError = 'DisplayError',
+  BypassError = 'BypassError',
 }
 
 export type ProcessDiffContext = AgentContext & {
@@ -33,7 +35,9 @@ export type AgentEvent =
   | { type: AgentEventEnum.AnswerQuestion; id: string; answer: any }
   | { type: AgentEventEnum.Reset }
   | { type: AgentEventEnum.SkipInteraction }
-  | { type: AgentEventEnum.SkipQuestion };
+  | { type: AgentEventEnum.SkipQuestion }
+  | { type: AgentEventEnum.DisplayError }
+  | { type: AgentEventEnum.BypassError };
 
 export type AgentTypestate =
   | {

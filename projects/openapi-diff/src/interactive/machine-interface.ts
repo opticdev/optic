@@ -12,13 +12,15 @@ export enum DiffEventEnum {
   Agent_Submitted_Patch = 'Agent_Submitted_Patch',
   Reread_Specification = 'Reread_Specification',
   Agent_Skipped_Interaction = 'Agent_Skipped_Interaction',
+  Bypass_Error = 'Bypass_Error',
 }
 
 export type InteractiveDiffEvents =
   | { type: DiffEventEnum.Traffic_Observed; example: ApiTraffic }
   | { type: DiffEventEnum.Agent_Submitted_Patch; dropCurrentTraffic: boolean }
   | { type: DiffEventEnum.Agent_Skipped_Interaction }
-  | { type: DiffEventEnum.Reread_Specification };
+  | { type: DiffEventEnum.Reread_Specification }
+  | { type: DiffEventEnum.Bypass_Error };
 
 /*
   Machine state is responsible for
