@@ -2,11 +2,12 @@ import {
   jsonSchemaDiffPatchFixture,
   locations,
 } from './json-schema-diff-patch-fixture';
-import { jsonSchemaDiffer } from '../../index';
+import { jsonSchemaDiffer, opticJsonSchemaDiffer } from '../../index';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { typeKeyword } from '../type';
 import { additionalProperties } from '../additionalProperties';
 import { oneOfKeyword } from '../oneOf';
+import { objectOrStringOneOf } from '../../json-builder/tests/oneof-schemas';
 
 const onlyRequiredRules = jsonSchemaDiffer([
   oneOfKeyword,
@@ -109,6 +110,29 @@ describe('one of json schema differ plugin', () => {
     );
 
     // expect(result.totalDiffsAfterPatches).toBe(0);
+    expect(result).toMatchSnapshot();
+  });
+
+  it('can add an additional branch to a complex one of', () => {
+    const schema: OpenAPIV3.SchemaObject = objectOrStringOneOf;
+
+    const input: any = {
+      location: {
+        principality: {
+          city: 'San Fransisco',
+          population: 830000,
+          coordinates: [1, 2, 3],
+        },
+      },
+    };
+
+    const result = jsonSchemaDiffPatchFixture(
+      opticJsonSchemaDiffer(),
+      schema,
+      input,
+      locations.inAResponse
+    );
+    expect(result.totalDiffsAfterPatches).toBe(0);
     expect(result).toMatchSnapshot();
   });
 });

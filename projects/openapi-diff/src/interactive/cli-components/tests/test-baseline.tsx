@@ -18,7 +18,7 @@ cli
     render(
       <Baseline
         source={debugSource}
-        openApiFilePath={`${process.cwd()}/openapi.json`}
+        openApiFilePath={`${process.cwd()}/openapi.yaml`}
       />
     );
   });

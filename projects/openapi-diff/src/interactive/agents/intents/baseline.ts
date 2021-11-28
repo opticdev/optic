@@ -3,6 +3,7 @@ import { AnswerQuestionTypes } from '../questions';
 import {
   DiffType,
   IDiffService,
+  isSchemaDiff,
   QueryAdditionalParameter,
   ShapeDiffTypes,
   UnmatchedPath,
@@ -11,10 +12,33 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { JsonSchemaPatch } from '../../../services/diff/differs/json-schema-json-diff/plugins/plugin-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import groupby from 'lodash.groupby';
+import { filterDiffsForBaseline } from '../../../services/diff/differs/json-schema-json-diff/json-builder/filter-diffs-for-baseline';
+import { trafficSelector } from '../../../services/traffic/traffic-selector';
 
 export function baselineIntent(): AgentIntent {
   return {
     name: 'baseline',
+    filterDiffs: (diffs, questions, traffic, spec) => {
+      const schemaDiffs = diffs.filter((diff) =>
+        isSchemaDiff(diff)
+      ) as ShapeDiffTypes[];
+      const grouped = groupby(schemaDiffs, (i) => i.schemaPath);
+
+      const schemaDiffsFiltered = Object.entries(grouped).flatMap((entry) => {
+        const [schemaPath, diffsForSchema] = entry;
+        const schema = jsonPointerHelpers.get(spec, schemaPath);
+
+        const example = trafficSelector(traffic).bodyJsonForLocation(
+          diffsForSchema[0].location
+        );
+        return filterDiffsForBaseline(schema, diffsForSchema, example);
+      });
+
+      const otherDiffs = diffs.filter((diff) => !isSchemaDiff(diff));
+
+      return [...otherDiffs, ...schemaDiffsFiltered];
+    },
     handleDiffs: (
       diff,
       example,
@@ -49,10 +73,6 @@ export function baselineIntent(): AgentIntent {
         case DiffType.BodyAdditionalProperty:
         case DiffType.BodyUnmatchedType:
         case DiffType.BodyMissingRequiredProperty: {
-          if (shouldSkipOneOne(diff as ShapeDiffTypes)) {
-            return;
-          }
-
           const possiblePatches = diffService.jsonSchemaDiffer.diffToPatch(
             diff as ShapeDiffTypes,
             patch.forkedPatcher()
@@ -90,31 +110,4 @@ export function baselineIntent(): AgentIntent {
       }
     },
   };
-}
-
-/*
-  Extending a one of automatically is tricky business.
-  Any strategy can be configured by the user, and employed -- the current one is skipping
- */
-function shouldSkipOneOne(diff: ShapeDiffTypes) {
-  if (diff.type === DiffType.BodyUnmatchedType) {
-    return (
-      jsonPointerHelpers.decode(diff.schemaPath).includes('oneOf') ||
-      jsonPointerHelpers.decode(diff.propertyPath).includes('oneOf')
-    );
-  }
-  if (diff.type === DiffType.BodyAdditionalProperty) {
-    return (
-      jsonPointerHelpers.decode(diff.schemaPath).includes('oneOf') ||
-      jsonPointerHelpers.decode(diff.parentObjectPath).includes('oneOf')
-    );
-  }
-  if (diff.type === DiffType.BodyMissingRequiredProperty) {
-    return (
-      jsonPointerHelpers.decode(diff.schemaPath).includes('oneOf') ||
-      jsonPointerHelpers.decode(diff.parentObjectPath).includes('oneOf')
-    );
-  }
-
-  return false;
 }

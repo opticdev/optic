@@ -42,6 +42,7 @@ Object {
       },
       "parentObjectPath": "/additionalProperties",
       "propertyExamplePath": "/two",
+      "propertyPath": "/additionalProperties/two",
       "schemaPath": "/schema",
       "type": "BodyAdditionalProperty",
     },

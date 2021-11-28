@@ -654,45 +654,6 @@ Object {
 }
 `;
 
-exports[`json builder oneOfs are built correctly one of array or object 2`] = `
-Object {
-  "oneOf": Array [
-    Object {
-      "properties": Object {
-        "nemesis": Object {
-          "type": "string",
-        },
-      },
-      "required": Array [
-        "nemesis",
-      ],
-      "type": "object",
-    },
-    Object {
-      "items": Object {
-        "oneOf": Array [
-          Object {
-            "properties": Object {
-              "food": Object {
-                "type": "string",
-              },
-            },
-            "required": Array [
-              "food",
-            ],
-            "type": "object",
-          },
-          Object {
-            "type": "string",
-          },
-        ],
-      },
-      "type": "array",
-    },
-  ],
-}
-`;
-
 exports[`json builder primitives can build JSON from a boolean 1`] = `
 Object {
   "diffBetweenGeneratedAndInput": Array [],

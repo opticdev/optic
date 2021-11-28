@@ -53,7 +53,14 @@ export function createAgentMachine(
             // use this to patch diffs this intent automates
             const { specInterface, diffService } = diffMachine.state.context;
 
-            diffs.forEach((diff) =>
+            const filteredDiffs = intent.filterDiffs(
+              diffs,
+              await specInterface.read.questions(),
+              traffic,
+              await specInterface.read.flattenedSpecification()
+            );
+
+            filteredDiffs.forEach((diff) =>
               intent.handleDiffs(
                 diff,
                 traffic,
@@ -64,14 +71,6 @@ export function createAgentMachine(
                 }
               )
             );
-
-            // if automated patches are dispatched, we run these first
-            // if (specInterface.patch.listPatches().length) {
-            //   // diffMachine.send({
-            //   //   type: DiffEventEnum.Agent_Submitted_Patch,
-            //   // });
-            //   return { questions: [] };
-            // }
 
             return { questions };
           },

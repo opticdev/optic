@@ -2,6 +2,8 @@ import { AnswerQuestionTypes, QuestionsForAgent } from './questions';
 import { ApiTraffic } from '../../services/traffic/types';
 import { IDiff, IDiffService } from '../../services/diff/types';
 import { IPatchOpenAPI } from '../../services/patch/types';
+import { OpenAPIDiffingQuestions } from '../../services/read/types';
+import { OpenAPIV3 } from 'openapi-types';
 
 export interface AgentContext {}
 
@@ -57,6 +59,12 @@ export type AgentTypestate =
 
 export interface AgentIntent {
   name: string;
+  filterDiffs: (
+    diffs: IDiff[],
+    questions: OpenAPIDiffingQuestions,
+    traffic: ApiTraffic,
+    spec: OpenAPIV3.Document
+  ) => IDiff[];
   handleDiffs: (
     diff: IDiff,
     example: ApiTraffic,
@@ -64,6 +72,7 @@ export interface AgentIntent {
     diffService: IDiffService,
     askQuestion: (question: QuestionsForAgent) => void
   ) => void;
+  // filterDiffs:
   applyAnswerAsPatch: (
     questionAnswer: QuestionsForAgent,
     patch: IPatchOpenAPI

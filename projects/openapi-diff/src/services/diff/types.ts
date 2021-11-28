@@ -187,3 +187,11 @@ export const DiffResult = {
     return EitherDiffResult<undefined>({ isMatch: false, error } as DiffError);
   },
 };
+
+export function isSchemaDiff(i: IDiff): boolean {
+  return (
+    i.type === DiffType.BodyAdditionalProperty ||
+    i.type === DiffType.BodyUnmatchedType ||
+    i.type === DiffType.BodyMissingRequiredProperty
+  );
+}

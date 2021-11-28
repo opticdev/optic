@@ -219,6 +219,7 @@ describe('json builder', () => {
       expect(result.diffBetweenGeneratedAndInput).toHaveLength(0);
       expect(result).toMatchSnapshot();
     });
+
     it('can polymorphism between instances of objects and arrays', () => {
       const result = fixture(
         {

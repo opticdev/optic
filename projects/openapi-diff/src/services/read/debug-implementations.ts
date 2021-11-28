@@ -11,8 +11,8 @@ import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
 
 export const defaultEmptySpec: OpenAPIV3.Document = {
   openapi: '3.0.1',
-  paths: {},
   info: { version: '0.0.0', title: 'Empty' },
+  paths: {},
 };
 
 export class PassThroughSpecReader implements ISpecReader {
