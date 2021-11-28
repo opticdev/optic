@@ -4,6 +4,7 @@ import { isObject } from '../../../utils/is-object';
 import niceTry from 'nice-try';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { isExtension } from '../../diff/differs/json-schema-json-diff/transition-assumptions';
+import invariant from 'ts-invariant';
 
 export interface JsonPatcher<G> {
   fork: () => JsonPatcher<G>;
@@ -21,7 +22,8 @@ export interface JsonPatcher<G> {
   };
   apply: (
     intent: string,
-    patches: Operation[]
+    patches: Operation[],
+    swallowErrors?: boolean
   ) => {
     error?: string;
     patch?: { patches: Operation[]; intent: string };
@@ -57,7 +59,11 @@ export function jsonPatcher<G>(
     }, copyObject(original) as G);
   };
 
-  const apply = (intent: string, patches: Operation[]) => {
+  const apply = (
+    intent: string,
+    patches: Operation[],
+    swallowErrors: boolean = false
+  ) => {
     try {
       jsonPatch.applyPatch(
         copyObject(currentDocument()),
@@ -69,7 +75,8 @@ export function jsonPatcher<G>(
       currentPatches.push(patch);
       return { success: true, patch };
     } catch (e: any) {
-      return { success: false, error: e.message };
+      if (swallowErrors) return { success: false, error: e.message };
+      invariant(false, 'could not apply json patch ' + e.message);
     }
   };
 
