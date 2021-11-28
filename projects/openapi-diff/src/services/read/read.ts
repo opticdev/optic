@@ -5,9 +5,12 @@ import { IFilePatch } from '../patch/types';
 import fs from 'fs-extra';
 import { defaultEmptySpec } from './debug-implementations';
 import {
+  isJson,
+  isYaml,
   JsonSchemaSourcemap,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
+  writeYaml,
 } from '@useoptic/openapi-io';
 
 export function createOpenApiFileSystemReader(filePath: string): ISpecReader {
@@ -23,8 +26,16 @@ export function createOpenApiFileSystemReader(filePath: string): ISpecReader {
       if (checkIfExists) {
         return resolve(await parseOpenAPIWithSourcemap(filePath));
       } else {
-        await fs.writeJSON(filePath, defaultEmptySpec);
-        return resolve(await parseOpenAPIWithSourcemap(filePath));
+        if (isYaml(filePath)) {
+          await fs.writeFile(filePath, writeYaml(defaultEmptySpec));
+          return resolve(await parseOpenAPIWithSourcemap(filePath));
+        } else if (isJson(filePath)) {
+          await fs.writeFile(
+            filePath,
+            JSON.stringify(defaultEmptySpec, null, 2)
+          );
+          return resolve(await parseOpenAPIWithSourcemap(filePath));
+        } else throw new Error('OpenAPI filepath must end in .json or .yaml');
       }
     });
 

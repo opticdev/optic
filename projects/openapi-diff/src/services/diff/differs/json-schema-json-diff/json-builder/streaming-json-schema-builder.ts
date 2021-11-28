@@ -4,6 +4,7 @@ import { isObject } from '../../../../../utils/is-object';
 import { jsonPatcher } from '../../../../patch/incremental-json-patch/json-patcher';
 import invariant from 'ts-invariant';
 import equals from 'fast-deep-equal';
+import { filterDiffsForBaseline } from './filter-diffs-for-baseline';
 
 export function streamingJsonSchemaBuilder(
   jsonDiffer: JsonSchemaJsonDiffer,
@@ -59,13 +60,15 @@ export function extendSchemaWithExample(
 ) {
   const patchJsonSchema = jsonPatcher(schema);
 
-  const diffs = jsonDiffer.compare(
+  const diffsAll = jsonDiffer.compare(
     schema,
     input,
     inResponseSimulated_forbaseline,
     '',
     { collapseToFirstInstanceOfArrayDiffs: true }
   );
+
+  const diffs = filterDiffsForBaseline(schema, diffsAll, input);
 
   diffs.forEach((diff) => {
     const patches = jsonDiffer.diffToPatch(diff, patchJsonSchema as any);

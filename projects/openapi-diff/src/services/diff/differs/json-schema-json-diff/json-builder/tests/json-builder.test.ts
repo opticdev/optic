@@ -1,9 +1,10 @@
-import { opticJsonSchemaDiffer } from '../index';
+import { opticJsonSchemaDiffer } from '../../index';
 import {
   extendSchemaWithExample,
   streamingJsonSchemaBuilder,
-} from './streaming-json-schema-builder';
-import { locations } from '../plugins/tests/json-schema-diff-patch-fixture';
+} from '../streaming-json-schema-builder';
+import { locations } from '../../plugins/tests/json-schema-diff-patch-fixture';
+import { rootObjectOrArray } from './oneof-schemas';
 const schemaDiffer = opticJsonSchemaDiffer();
 
 function fixture(input: any, ...additional: any[]) {
@@ -171,40 +172,80 @@ describe('json builder', () => {
       expect(result.diffBetweenGeneratedAndInput).toHaveLength(0);
       expect(result).toMatchSnapshot();
     });
+  });
 
-    it('can extend an object array one of properly', () => {
-      const schema: any = {
-        oneOf: [
-          {
-            type: 'object',
-            properties: {
-              nemesis: {
-                type: 'string',
-              },
-            },
-            required: ['nemesis'],
-          },
-          {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                food: {
-                  type: 'string',
-                },
-              },
-              required: ['food'],
-            },
-          },
+  describe('oneOfs are built correctly', () => {
+    it('one of array or object', () => {
+      const abc = extendSchemaWithExample(
+        opticJsonSchemaDiffer(),
+        rootObjectOrArray,
+        ['user1', 'user2', 'user3']
+      );
+
+      expect(abc.schema).toMatchSnapshot();
+    });
+
+    it('can learn an array of objects', () => {
+      const result = fixture({
+        name: { first: 'Bob', last: 'C' },
+        rivals: [{ food: 'rice' }, { food: 'cookies' }, { food: 'chips' }],
+        stats: { rank: 1 },
+      });
+      expect(result.diffBetweenGeneratedAndInput).toHaveLength(0);
+      expect(result).toMatchSnapshot();
+    });
+
+    it('can learn an array of objects with polymorphism', () => {
+      const result = fixture({
+        name: { first: 'Bob', last: 'C' },
+        rivals: [
+          { food: 'rice' },
+          { food: 'cookies' },
+          { food: 'chips' },
+          'none',
         ],
-      };
+        stats: { rank: 1 },
+      });
+      expect(result.diffBetweenGeneratedAndInput).toHaveLength(0);
+      expect(result).toMatchSnapshot();
+    });
 
-      const result = extendSchemaWithExample(opticJsonSchemaDiffer(), schema, [
-        'user1',
-        'user2',
-        'user3',
-      ]);
+    it('can learn an array of objects with polymorphism when primitive value seen first', () => {
+      const result = fixture({
+        name: { first: 'Bob', last: 'C' },
+        rivals: ['none', { hello: 'world' }],
+        stats: { rank: 1 },
+      });
+      expect(result.diffBetweenGeneratedAndInput).toHaveLength(0);
+      expect(result).toMatchSnapshot();
+    });
 
+    it('can polymorphism between instances of objects and arrays', () => {
+      const result = fixture(
+        {
+          location: {
+            principality: {
+              city: 'San Fransisco',
+              population: 830000,
+              coordinates: [1, 2, 3],
+            },
+          },
+        },
+        {
+          location: {
+            principality: {
+              city: 'San Fransisco',
+              population: 830000,
+              coordinates: {
+                format: 'DMS',
+                lat: '37.7749° N',
+                long: '122.4194° W',
+              },
+            },
+          },
+        }
+      );
+      expect(result.diffBetweenGeneratedAndInput).toHaveLength(0);
       expect(result).toMatchSnapshot();
     });
   });

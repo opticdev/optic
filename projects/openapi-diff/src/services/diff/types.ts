@@ -79,6 +79,7 @@ export interface BodyAdditionalProperty extends IDiff {
   parentObjectPath: JsonPath;
   key: string;
   example: any;
+  propertyPath: JsonPath;
   keyword: JsonSchemaKnownKeyword.additionalProperties;
   schemaPath: JsonPath;
   instancePath: JsonPath;
@@ -89,6 +90,7 @@ export interface BodyMissingRequiredProperty extends IDiff {
   type: DiffType.BodyMissingRequiredProperty;
   keyword: JsonSchemaKnownKeyword.required;
   parentObjectPath: JsonPath;
+  propertyPath: JsonPath;
   key: string;
   schemaPath: JsonPath;
   instancePath: JsonPath;
@@ -185,3 +187,11 @@ export const DiffResult = {
     return EitherDiffResult<undefined>({ isMatch: false, error } as DiffError);
   },
 };
+
+export function isSchemaDiff(i: IDiff): boolean {
+  return (
+    i.type === DiffType.BodyAdditionalProperty ||
+    i.type === DiffType.BodyUnmatchedType ||
+    i.type === DiffType.BodyMissingRequiredProperty
+  );
+}

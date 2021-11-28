@@ -13,7 +13,7 @@
     "ws:clean": "rm -rf build",
     "ws:test": "yarn dev:test",
     "dev:test": "jest --colors",
-    "run:it": " ts-node src/interactive/cli-components/tests/test-baseline --capture github.json",
+    "run:it": " ts-node src/interactive/cli-components/tests/test-baseline --capture diff-use-cases-with-events.json",
     "explore": "ts-node src/interactive/cli-components/tests/test-update.tsx  --scenario newField"
   },
   "devDependencies": {

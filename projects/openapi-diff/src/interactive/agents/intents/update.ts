@@ -11,6 +11,9 @@ import { v4 as uuidv4 } from 'uuid';
 export function updateIntent(): AgentIntent {
   return {
     name: 'update',
+    filterDiffs: (diffs) => {
+      return diffs;
+    },
     handleDiffs: (
       diff,
       example,

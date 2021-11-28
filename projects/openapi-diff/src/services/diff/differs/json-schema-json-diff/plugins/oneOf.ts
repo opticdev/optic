@@ -69,21 +69,20 @@ export const oneOfKeyword: JsonSchemaDiffPlugin<BodyPropertyUnmatchedType> = {
     differ: JsonSchemaJsonDiffer,
     patcher: JsonPatcher<OpenAPIV3.Document>
   ): JsonSchemaPatch[] {
-    const schema = jsonPatcher(patcher.helper.get(diff.schemaPath));
-
     const expandOneOf = () => {
+      const schema = jsonPatcher(patcher.helper.get(diff.schemaPath));
       const patch = schema.fork();
 
       patch.apply(`add new oneOf type to ${diff.key}`, [
         {
           op: 'add',
-          path: jsonPointerHelpers.append(diff.propertyPath, 'oneOf', '-'), // "-" indicates append to array
+          path: jsonPointerHelpers.append(diff.propertyPath, '-'), // "-" indicates append to array
           value: streamingJsonSchemaBuilder(differ, diff.example),
         },
       ]);
 
       patch.helper.removeKeysNotAllowedAt(
-        diff.propertyPath,
+        jsonPointerHelpers.pop(diff.propertyPath),
         allowedKeysForOneOf,
         'after changing to a oneOf'
       );

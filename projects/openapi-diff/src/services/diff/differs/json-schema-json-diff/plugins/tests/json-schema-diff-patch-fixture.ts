@@ -5,6 +5,7 @@ import {
   OpenAPIV3,
 } from '@useoptic/openapi-utilities';
 import { jsonPatcher } from '../../../../../patch/incremental-json-patch/json-patcher';
+import { filterDiffsForBaseline } from '../../json-builder/filter-diffs-for-baseline';
 
 export function jsonSchemaDiffPatchFixture(
   jsonDiffer: JsonSchemaJsonDiffer,
@@ -17,9 +18,11 @@ export function jsonSchemaDiffPatchFixture(
   // hardcode root schema path for tests
   const schemaPath = '';
 
-  const diffs = jsonDiffer.compare(schema, input, location, schemaPath, {
+  const allDiffs = jsonDiffer.compare(schema, input, location, schemaPath, {
     collapseToFirstInstanceOfArrayDiffs: true,
   });
+
+  const diffs = filterDiffsForBaseline(schema, allDiffs, input);
 
   let totalDiffsAfterPatches = 0;
 
