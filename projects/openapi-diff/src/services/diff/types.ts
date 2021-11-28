@@ -79,6 +79,7 @@ export interface BodyAdditionalProperty extends IDiff {
   parentObjectPath: JsonPath;
   key: string;
   example: any;
+  propertyPath: JsonPath;
   keyword: JsonSchemaKnownKeyword.additionalProperties;
   schemaPath: JsonPath;
   instancePath: JsonPath;
@@ -89,6 +90,7 @@ export interface BodyMissingRequiredProperty extends IDiff {
   type: DiffType.BodyMissingRequiredProperty;
   keyword: JsonSchemaKnownKeyword.required;
   parentObjectPath: JsonPath;
+  propertyPath: JsonPath;
   key: string;
   schemaPath: JsonPath;
   instancePath: JsonPath;

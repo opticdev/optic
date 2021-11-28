@@ -37,8 +37,12 @@ export const additionalProperties: JsonSchemaDiffPlugin<BodyAdditionalProperty> 
         key
       );
 
+      const parentObjectPath = validationError.schemaPath.substring(1);
+      const propertyPath = jsonPointerHelpers.append(parentObjectPath, key);
+
       return {
         schemaPath,
+        propertyPath,
         type: DiffType.BodyAdditionalProperty,
         keyword: JsonSchemaKnownKeyword.additionalProperties,
         instancePath: jsonPointerHelpers.append(
@@ -51,7 +55,7 @@ export const additionalProperties: JsonSchemaDiffPlugin<BodyAdditionalProperty> 
             validationError.instancePath
           ),
         },
-        parentObjectPath: validationError.schemaPath.substring(1),
+        parentObjectPath,
         propertyExamplePath,
         example,
         key,

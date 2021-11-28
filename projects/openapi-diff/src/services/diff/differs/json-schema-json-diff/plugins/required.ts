@@ -28,12 +28,17 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
       example: any,
       conceptualLocation: BodyLocation
     ): BodyMissingRequiredProperty {
+      const parentObjectPath = jsonPointerHelpers.pop(
+        validationError.schemaPath.substring(1)
+      );
+      const key = validationError.params.missingProperty;
       return {
         schemaPath,
         instancePath: jsonPointerHelpers.append(
           validationError.instancePath,
           validationError.params.missingProperty
         ),
+        propertyPath: jsonPointerHelpers.append(parentObjectPath, key),
         type: DiffType.BodyMissingRequiredProperty,
         keyword: JsonSchemaKnownKeyword.required,
         location: {
@@ -42,8 +47,8 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
             validationError.instancePath
           ),
         },
-        parentObjectPath: validationError.schemaPath.substring(1),
-        key: validationError.params.missingProperty,
+        parentObjectPath,
+        key,
       };
     },
     shapePatches(
@@ -56,9 +61,14 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
       const makeOptional = (): JsonSchemaPatch => {
         const patch = schema.fork();
 
+        const requiredPath = jsonPointerHelpers.append(
+          diff.parentObjectPath,
+          'required'
+        );
+
         const requiredArray = jsonPointerHelpers.get(
           patch.currentDocument(),
-          diff.parentObjectPath
+          requiredPath
         ) as string[];
 
         const indexOfRequired = requiredArray.indexOf(diff.key);
@@ -67,7 +77,7 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
           {
             op: 'remove',
             path: jsonPointerHelpers.append(
-              diff.parentObjectPath,
+              requiredPath,
               indexOfRequired.toString()
             ),
           },
@@ -88,10 +98,15 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
       const removeField = (): JsonSchemaPatch => {
         const patch = schema.fork();
 
+        const requiredPath = jsonPointerHelpers.append(
+          diff.parentObjectPath,
+          'required'
+        );
+
         // first make sure we remove it form the required array (dup above)
         const requiredArray = jsonPointerHelpers.get(
           patch.currentDocument(),
-          diff.parentObjectPath
+          requiredPath
         ) as string[];
 
         const indexOfRequired = requiredArray.indexOf(diff.key);
@@ -100,16 +115,15 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
           {
             op: 'remove',
             path: jsonPointerHelpers.append(
-              diff.parentObjectPath,
+              requiredPath,
               indexOfRequired.toString()
             ),
           },
         ]);
 
         // now we need to remove it from the properties object
-        const parentPath = jsonPointerHelpers.pop(diff.parentObjectPath);
         const propertyPath = jsonPointerHelpers.append(
-          parentPath,
+          diff.parentObjectPath,
           'properties',
           diff.key
         );
