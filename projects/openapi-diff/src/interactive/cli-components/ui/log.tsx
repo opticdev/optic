@@ -69,7 +69,8 @@ export function Log(props: { log: AgentLogEvent[] }) {
             return (
               <Box key={index + 'patching'} flexDirection="row" paddingLeft={2}>
                 <Text color="yellow" bold>
-                  warning: <Text>{logItem.error}</Text>
+                  warning: <Text bold>{logItem.classification}</Text>{' '}
+                  <Text>{logItem.error}</Text>
                 </Text>
               </Box>
             );

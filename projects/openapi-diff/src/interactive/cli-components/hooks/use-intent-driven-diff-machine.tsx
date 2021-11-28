@@ -44,6 +44,7 @@ export function useIntentDrivenDiffMachine(
       send({ type: AgentEventEnum.AnswerQuestion, id, answer }),
     skipInteraction: () => send({ type: AgentEventEnum.SkipInteraction }),
     skipQuestion: () => send({ type: AgentEventEnum.SkipQuestion }),
+    bypassIssue: () => send({ type: AgentEventEnum.BypassError }),
   };
 
   return {

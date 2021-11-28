@@ -19,6 +19,7 @@ import {
   DiffAgentContext,
   DiffAgentContextProvider,
 } from './context/diff-agent-context';
+import { BypassError } from './ui/bypass-error';
 
 export function Baseline(props: {
   source: TrafficSource;
@@ -57,6 +58,7 @@ export function Baseline(props: {
         {state === 'waiting_for_input' && (
           <Box flexDirection="column">{dynamic}</Box>
         )}
+        {state === 'error' && <BypassError />}
       </Box>
     </DiffAgentContextProvider>
   );

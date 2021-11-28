@@ -1,4 +1,4 @@
-import { ISpecReader, OpenAPIDiffingQuestions } from './types';
+import { DidLoadStatus, ISpecReader, OpenAPIDiffingQuestions } from './types';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { openApiQueries } from './queries';
 import { IFilePatch } from '../patch/types';
@@ -12,87 +12,114 @@ import {
   parseOpenAPIWithSourcemap,
   writeYaml,
 } from '@useoptic/openapi-io';
+import invariant from 'ts-invariant';
+
+type LoadedResult = {
+  result: ParseOpenAPIResult;
+  questions: OpenAPIDiffingQuestions;
+  start: number;
+  end: number;
+};
 
 export function createOpenApiFileSystemReader(filePath: string): ISpecReader {
-  const start = Date.now();
-  let end = Date.now();
-  let result: Promise<ParseOpenAPIResult> | undefined;
+  return new FileSystemSpecReader(filePath);
+}
 
-  let questionsPromise: Promise<OpenAPIDiffingQuestions> | undefined;
-
-  function reload() {
-    result = new Promise(async (resolve) => {
-      const checkIfExists = await fs.pathExists(filePath);
-      if (checkIfExists) {
-        return resolve(await parseOpenAPIWithSourcemap(filePath));
-      } else {
-        if (isYaml(filePath)) {
-          await fs.writeFile(filePath, writeYaml(defaultEmptySpec));
-          return resolve(await parseOpenAPIWithSourcemap(filePath));
-        } else if (isJson(filePath)) {
-          await fs.writeFile(
-            filePath,
-            JSON.stringify(defaultEmptySpec, null, 2)
-          );
-          return resolve(await parseOpenAPIWithSourcemap(filePath));
-        } else throw new Error('OpenAPI filepath must end in .json or .yaml');
-      }
-    });
-
-    result.finally(() => {
-      end = Date.now();
-    });
-
-    questionsPromise = result.then((parsed) => openApiQueries(parsed.jsonLike));
+class FileSystemSpecReader implements ISpecReader {
+  constructor(private filePath: string) {
+    this.reload();
   }
 
-  reload();
+  private loaded?: LoadedResult;
+  private isLoading: Promise<any> = Promise.resolve();
 
-  return {
-    reload: async (): Promise<void> => {
-      reload();
-      await result;
-    },
-    rootFile(): string {
-      return filePath;
-    },
-    mode: 'filesystem',
-    describeLocation(): string {
-      return `${filePath.replace(process.cwd(), '')}`;
-    },
-    save: async (patch: IFilePatch): Promise<void> => {
-      await Promise.all(
-        patch.files.map(async (i) => fs.writeFile(i.path, i.newContents))
-      );
-      reload();
-    },
-    flattenedSpecification: async (): Promise<OpenAPIV3.Document> => {
-      const { jsonLike } = await result;
-      return jsonLike;
-    },
-    sourcemap: async (): Promise<JsonSchemaSourcemap> => {
-      const { sourcemap } = await result;
-      return sourcemap;
-    },
-    didLoad: async () => {
-      // wait for it to finish
-      await new Promise((resolve) => {
-        result.finally(() => resolve(undefined));
-      });
+  describeLocation(): string {
+    return `${this.filePath.replace(process.cwd(), '')}`;
+  }
 
+  async didLoad(): Promise<DidLoadStatus> {
+    try {
+      const results = await this.isLoading;
+      invariant(results[0].status === 'fulfilled', results[0].reason);
+      return {
+        success: true,
+        durationMillis: this.loaded.end - this.loaded.start,
+      };
+    } catch (e: any) {
+      return {
+        success: false,
+        error: e.message,
+        durationMillis: this.loaded.end - this.loaded.start,
+      };
+    }
+  }
+
+  async flattenedSpecification(): Promise<OpenAPIV3.Document> {
+    await this.isLoading;
+    return this.loaded.result.jsonLike;
+  }
+
+  async questions(): Promise<OpenAPIDiffingQuestions> {
+    await this.isLoading;
+    return this.loaded.questions;
+  }
+
+  async reload(): Promise<void> {
+    const start = Date.now();
+    this.loaded = undefined;
+    const loadResult = new Promise<LoadedResult>(async (resolve, reject) => {
       try {
-        await result;
-        return { success: true, durationMillis: end - start };
+        const checkIfExists = await fs.pathExists(this.filePath);
+        if (checkIfExists) {
+          const parsed = await parseOpenAPIWithSourcemap(this.filePath);
+          resolve({
+            result: parsed,
+            start,
+            end: Date.now(),
+            questions: openApiQueries(parsed.jsonLike),
+          });
+        } else {
+          if (isYaml(this.filePath)) {
+            await fs.writeFile(this.filePath, writeYaml(defaultEmptySpec));
+          } else if (isJson(this.filePath)) {
+            await fs.writeFile(
+              this.filePath,
+              JSON.stringify(defaultEmptySpec, null, 2)
+            );
+          } else {
+            reject('openapi file must be .json or .yaml');
+          }
+          const parsed = await parseOpenAPIWithSourcemap(this.filePath);
+          resolve({
+            result: parsed,
+            start,
+            end: Date.now(),
+            questions: openApiQueries(parsed.jsonLike),
+          });
+        }
       } catch (e: any) {
-        return {
-          success: false,
-          error: e.message,
-          durationMillis: end - start,
-        };
+        reject(e.message);
       }
-    },
-    questions: async (): Promise<OpenAPIDiffingQuestions> => {
-      return questionsPromise;
-    },
-  };
+    });
+    this.isLoading = Promise.allSettled([loadResult]);
+    this.loaded = await loadResult;
+    return;
+  }
+
+  rootFile(): string {
+    return this.filePath;
+  }
+
+  async save(patch: IFilePatch): Promise<void> {
+    await Promise.all(
+      patch.files.map(async (i) => fs.writeFile(i.path, i.newContents))
+    );
+  }
+
+  async sourcemap(): Promise<JsonSchemaSourcemap> {
+    await this.isLoading;
+    return this.loaded.result.sourcemap;
+  }
+
+  mode: 'simulated' | 'filesystem' = 'filesystem';
 }
