@@ -36,6 +36,12 @@ class DebugTrafficImpl implements ApiTraffic {
     };
     return this;
   }
+  withTextRequest() {
+    this.requestBody = {
+      contentType: 'text/html',
+    };
+    return this;
+  }
 }
 
 export function DebugTraffic(method: string, path: string) {

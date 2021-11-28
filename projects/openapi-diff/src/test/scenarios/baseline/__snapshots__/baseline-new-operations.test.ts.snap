@@ -1,6 +1,63 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`baseline new operations asks question for a new path 1`] = `
+exports[`baseline new operations asks question for a new path and can learn request body 1`] = `
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/example": Object {
+      "get": Object {
+        "parameters": Array [],
+        "requestBody": Object {
+          "content": Object {
+            "application/json": Object {
+              "schema": Object {
+                "properties": Object {
+                  "goodbye": Object {
+                    "type": "string",
+                  },
+                },
+                "required": Array [
+                  "goodbye",
+                ],
+                "type": "object",
+              },
+            },
+          },
+          "description": "",
+          "required": true,
+        },
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "hello": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "hello",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "",
+          },
+        },
+      },
+      "parameters": Array [],
+    },
+  },
+}
+`;
+
+exports[`baseline new operations asks question for a new path and can learn response body 1`] = `
 Object {
   "info": Object {
     "title": "Empty",
@@ -99,7 +156,117 @@ Object {
 }
 `;
 
-exports[`baseline new operations autolearns new properties in matched bodies 1`] = `
+exports[`baseline new operations autolearns new properties in matched request bodies 1`] = `
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/example": Object {
+      "get": Object {
+        "parameters": Array [],
+        "requestBody": Object {
+          "content": Object {
+            "application/json": Object {
+              "schema": Object {
+                "properties": Object {
+                  "colors": Object {
+                    "items": Object {
+                      "type": "string",
+                    },
+                    "type": "array",
+                  },
+                  "goodbye": Object {
+                    "type": "string",
+                  },
+                },
+                "required": Array [
+                  "goodbye",
+                  "colors",
+                ],
+                "type": "object",
+              },
+            },
+          },
+          "description": "",
+          "required": true,
+        },
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "goodbye": Object {
+                      "type": "string",
+                    },
+                    "hello": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "hello",
+                    "goodbye",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "",
+          },
+        },
+      },
+      "parameters": Array [],
+      "post": Object {
+        "parameters": Array [],
+        "requestBody": Object {
+          "content": Object {
+            "application/json": Object {
+              "schema": Object {
+                "properties": Object {
+                  "goodbye": Object {
+                    "type": "string",
+                  },
+                },
+                "required": Array [
+                  "goodbye",
+                ],
+                "type": "object",
+              },
+            },
+          },
+          "description": "",
+          "required": true,
+        },
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "hello": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "hello",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`baseline new operations autolearns new properties in matched response bodies 1`] = `
 Object {
   "info": Object {
     "title": "Empty",

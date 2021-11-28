@@ -16,78 +16,39 @@ import { opticJsonSchemaDiffer } from '../json-schema-json-diff';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { FieldLocation } from '@useoptic/openapi-utilities';
 
-export function responsesDiffer(
+export function requestsDiffer(
   openApiQuestions: OpenAPIDiffingQuestions,
   jsonSchemaDiffer: JsonSchemaJsonDiffer = opticJsonSchemaDiffer()
 ) {
   return {
-    responseDiffsForTraffic: (
+    requestContentDiffsForTraffic: (
       apiTraffic: ApiTraffic,
       operationMatch: MatchedOperationPath
-    ): EitherDiffResult<ResponseMatchType> => {
-      const responses = openApiQuestions.responsesForOperation(
+    ): EitherDiffResult => {
+      const requestBodies = openApiQuestions.requestBodiesForOperation(
         operationMatch.method,
         operationMatch.path
       );
 
-      const matchExact = responses.find(
-        (res) => res.statusCodeMatcher === apiTraffic.response.statusCode
-      );
-      const matchRange = responses
-        .filter((res) => Boolean(res.statusCodeMatcher.match(/[245]xx/)))
-        .find(
-          (res) =>
-            res.statusCodeMatcher.substring(0, 1) ===
-            apiTraffic.response.statusCode.substring(0, 1)
-        );
+      // if there's no content type, we don't do anything. This is a request, w/o a content type
+      // @todo should have a diff kind about 'required' bodies.
+      if (!apiTraffic.requestBody) return DiffResult.diff([]);
 
-      const matchDefault = responses.find(
-        (res) => res.statusCodeMatcher === 'default'
+      const match = requestBodies.find(
+        (i) => i.contentType === apiTraffic.requestBody.contentType
       );
 
-      const response = matchExact || matchRange || matchDefault;
-
-      if (response) {
-        return DiffResult.matchWithContext(response);
-      } else {
-        const asNumber = Number(apiTraffic.response.statusCode);
-        // only qualify the following range of status codes
-        if (asNumber >= 200 && asNumber < 500) {
-          const unmatched: UnmatchedResponse = {
-            type: DiffType.UnmatchedResponse,
-            path: operationMatch.path,
-            method: operationMatch.method,
-            statusCode: apiTraffic.response.statusCode,
-          };
-          return DiffResult.diff([unmatched]);
-        }
-      }
-
-      return DiffResult.diff([]);
-    },
-
-    responseContentDiffsForTraffic: (
-      apiTraffic: ApiTraffic,
-      responseMatch: ResponseMatchType
-    ): EitherDiffResult => {
-      // if there's no content type, we don't do anything. This is a response, w/o a content type
-      if (!apiTraffic.response.body.contentType) return DiffResult.diff([]);
-
-      const match = responseMatch.contentTypes.find(
-        (content) =>
-          content.contentType === apiTraffic.response.body.contentType
-      );
       if (match) {
         if (
           qualifyJsonDiffer(match.contentType) &&
-          qualifyJsonDiffer(apiTraffic.response.body.contentType!)
+          qualifyJsonDiffer(apiTraffic.requestBody.contentType!)
         ) {
           // we can do shape diffs :)
           try {
             // console.log(match.schema);
             const schemaDiffs = jsonSchemaDiffer.compare(
               match.schema,
-              JSON.parse(apiTraffic.response.body.jsonBodyString),
+              JSON.parse(apiTraffic.requestBody.jsonBodyString),
               match.location,
               jsonPointerHelpers.append(match.jsonPath, 'schema'),
               { collapseToFirstInstanceOfArrayDiffs: true }
@@ -101,8 +62,8 @@ export function responsesDiffer(
             );
           }
         }
-      } else if (apiTraffic.response.body.contentType) {
-        // new content type diff
+      } else if (apiTraffic.requestBody.contentType) {
+        // new content type diff -> ie had JSON, then got text or vice versa
         // @todo add this capability
       }
 
