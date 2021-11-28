@@ -11,6 +11,8 @@ class DebugTrafficImpl implements ApiTraffic {
     body: {},
   };
 
+  requestBody: ApiTraffic['requestBody'];
+
   withQuery(queryString: string) {
     this.queryString = queryString;
     return this;
@@ -24,6 +26,14 @@ class DebugTrafficImpl implements ApiTraffic {
   withJsonResponse(json: any) {
     this.response.body.contentType = 'application/json';
     this.response.body.jsonBodyString = JSON.stringify(json);
+    return this;
+  }
+
+  withJsonRequest(json: any) {
+    this.requestBody = {
+      contentType: 'application/json',
+      jsonBodyString: JSON.stringify(json),
+    };
     return this;
   }
 }

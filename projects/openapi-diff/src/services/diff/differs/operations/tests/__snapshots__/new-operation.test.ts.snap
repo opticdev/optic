@@ -238,3 +238,310 @@ Object {
   ],
 }
 `;
+
+exports[`new operations operation with request and response body can be added to an empty spec 1`] = `
+Object {
+  "openapi": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example/123606765/status": Object {
+        "parameters": Array [],
+        "patch": Object {
+          "parameters": Array [],
+          "requestBody": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "full_name": Object {
+                      "type": "string",
+                    },
+                    "private": Object {
+                      "type": "boolean",
+                    },
+                  },
+                  "required": Array [
+                    "full_name",
+                    "private",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "",
+            "required": true,
+          },
+          "responses": Object {
+            "200": Object {
+              "content": Object {
+                "application/json": Object {
+                  "schema": Object {
+                    "properties": Object {
+                      "full_name": Object {
+                        "type": "string",
+                      },
+                      "id": Object {
+                        "type": "number",
+                      },
+                      "name": Object {
+                        "type": "string",
+                      },
+                      "node_id": Object {
+                        "type": "string",
+                      },
+                      "owner": Object {
+                        "properties": Object {
+                          "id": Object {
+                            "type": "number",
+                          },
+                          "login": Object {
+                            "type": "string",
+                          },
+                        },
+                        "required": Array [
+                          "login",
+                          "id",
+                        ],
+                        "type": "object",
+                      },
+                      "private": Object {
+                        "type": "boolean",
+                      },
+                    },
+                    "required": Array [
+                      "id",
+                      "node_id",
+                      "name",
+                      "full_name",
+                      "private",
+                      "owner",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "",
+            },
+          },
+        },
+      },
+    },
+  },
+  "operation": Object {
+    "parameters": Array [],
+    "requestBody": Object {
+      "content": Object {
+        "application/json": Object {
+          "schema": Object {
+            "properties": Object {
+              "full_name": Object {
+                "type": "string",
+              },
+              "private": Object {
+                "type": "boolean",
+              },
+            },
+            "required": Array [
+              "full_name",
+              "private",
+            ],
+            "type": "object",
+          },
+        },
+      },
+      "description": "",
+      "required": true,
+    },
+    "responses": Object {
+      "200": Object {
+        "content": Object {
+          "application/json": Object {
+            "schema": Object {
+              "properties": Object {
+                "full_name": Object {
+                  "type": "string",
+                },
+                "id": Object {
+                  "type": "number",
+                },
+                "name": Object {
+                  "type": "string",
+                },
+                "node_id": Object {
+                  "type": "string",
+                },
+                "owner": Object {
+                  "properties": Object {
+                    "id": Object {
+                      "type": "number",
+                    },
+                    "login": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "login",
+                    "id",
+                  ],
+                  "type": "object",
+                },
+                "private": Object {
+                  "type": "boolean",
+                },
+              },
+              "required": Array [
+                "id",
+                "node_id",
+                "name",
+                "full_name",
+                "private",
+                "owner",
+              ],
+              "type": "object",
+            },
+          },
+        },
+        "description": "",
+      },
+    },
+  },
+  "patches": Array [
+    Object {
+      "intent": "add path /example/123606765/status",
+      "patches": Array [
+        Object {
+          "op": "add",
+          "path": "/paths/~1example~1123606765~1status",
+          "value": Object {
+            "parameters": Array [],
+          },
+        },
+      ],
+    },
+    Object {
+      "intent": "add operation patch /example/123606765/status",
+      "patches": Array [
+        Object {
+          "op": "add",
+          "path": "/paths/~1example~1123606765~1status/patch",
+          "value": Object {
+            "parameters": Array [],
+            "responses": Object {},
+          },
+        },
+      ],
+    },
+    Object {
+      "intent": "add 200 status code",
+      "patches": Array [
+        Object {
+          "op": "add",
+          "path": "/paths/~1example~1123606765~1status/patch/responses/200",
+          "value": Object {
+            "content": Object {},
+            "description": "",
+          },
+        },
+      ],
+    },
+    Object {
+      "intent": "add response body content application/json",
+      "patches": Array [
+        Object {
+          "op": "add",
+          "path": "/paths/~1example~1123606765~1status/patch/responses/200/content/application~1json",
+          "value": Object {
+            "schema": Object {
+              "properties": Object {
+                "full_name": Object {
+                  "type": "string",
+                },
+                "id": Object {
+                  "type": "number",
+                },
+                "name": Object {
+                  "type": "string",
+                },
+                "node_id": Object {
+                  "type": "string",
+                },
+                "owner": Object {
+                  "properties": Object {
+                    "id": Object {
+                      "type": "number",
+                    },
+                    "login": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "login",
+                    "id",
+                  ],
+                  "type": "object",
+                },
+                "private": Object {
+                  "type": "boolean",
+                },
+              },
+              "required": Array [
+                "id",
+                "node_id",
+                "name",
+                "full_name",
+                "private",
+                "owner",
+              ],
+              "type": "object",
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "intent": "add requestBody to operation",
+      "patches": Array [
+        Object {
+          "op": "add",
+          "path": "/paths/~1example~1123606765~1status/patch/requestBody",
+          "value": Object {
+            "content": Object {},
+            "description": "",
+            "required": true,
+          },
+        },
+      ],
+    },
+    Object {
+      "intent": "add application/json to request body",
+      "patches": Array [
+        Object {
+          "op": "add",
+          "path": "/paths/~1example~1123606765~1status/patch/requestBody/content/application~1json",
+          "value": Object {
+            "schema": Object {
+              "properties": Object {
+                "full_name": Object {
+                  "type": "string",
+                },
+                "private": Object {
+                  "type": "boolean",
+                },
+              },
+              "required": Array [
+                "full_name",
+                "private",
+              ],
+              "type": "object",
+            },
+          },
+        },
+      ],
+    },
+  ],
+}
+`;
