@@ -56,9 +56,9 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
       differ: JsonSchemaJsonDiffer,
       patcher: JsonPatcher<OpenAPIV3.Document>
     ): JsonSchemaPatch[] {
-      const schema = jsonPatcher(patcher.helper.get(diff.schemaPath));
-
       const makeOptional = (): JsonSchemaPatch => {
+        const schema = jsonPatcher(patcher.helper.get(diff.schemaPath));
+
         const patch = schema.fork();
 
         const requiredPath = jsonPointerHelpers.append(
@@ -73,15 +73,17 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
 
         const indexOfRequired = requiredArray.indexOf(diff.key);
 
-        patch.apply(`remove ${diff.key} from parent's required array`, [
-          {
-            op: 'remove',
-            path: jsonPointerHelpers.append(
-              requiredPath,
-              indexOfRequired.toString()
-            ),
-          },
-        ]);
+        if (indexOfRequired !== -1) {
+          patch.apply(`remove ${diff.key} from parent's required array`, [
+            {
+              op: 'remove',
+              path: jsonPointerHelpers.append(
+                requiredPath,
+                indexOfRequired.toString()
+              ),
+            },
+          ]);
+        }
 
         const effect = `make property ${diff.key} optional`;
         return {
@@ -96,6 +98,8 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
       };
 
       const removeField = (): JsonSchemaPatch => {
+        const schema = jsonPatcher(patcher.helper.get(diff.schemaPath));
+
         const patch = schema.fork();
 
         const requiredPath = jsonPointerHelpers.append(
@@ -111,15 +115,17 @@ export const requiredKeyword: JsonSchemaDiffPlugin<BodyMissingRequiredProperty> 
 
         const indexOfRequired = requiredArray.indexOf(diff.key);
 
-        patch.apply(`remove ${diff.key} from parent's required array`, [
-          {
-            op: 'remove',
-            path: jsonPointerHelpers.append(
-              requiredPath,
-              indexOfRequired.toString()
-            ),
-          },
-        ]);
+        if (indexOfRequired !== -1) {
+          patch.apply(`remove ${diff.key} from parent's required array`, [
+            {
+              op: 'remove',
+              path: jsonPointerHelpers.append(
+                requiredPath,
+                indexOfRequired.toString()
+              ),
+            },
+          ]);
+        }
 
         // now we need to remove it from the properties object
         const propertyPath = jsonPointerHelpers.append(

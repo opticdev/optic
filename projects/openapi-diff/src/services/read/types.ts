@@ -25,6 +25,11 @@ export interface OpenAPIDiffingQuestions {
     path: string
   ): ResponseMatchType[];
 
+  requestBodiesForOperation(
+    method: OpenAPIV3.HttpMethods,
+    path: string
+  ): RequestBodyMatchType[];
+
   queryParametersForOperation(
     method: OpenAPIV3.HttpMethods,
     path: string
@@ -55,6 +60,9 @@ export const openApiDiffingQuestionsTestingStub: OpenAPIDiffingQuestions = {
   paths(): string[] {
     return [];
   },
+  requestBodiesForOperation(method: OpenAPIV3.HttpMethods, path: string) {
+    return [];
+  },
   responsesForOperation(method: OpenAPIV3.HttpMethods, path: string) {
     return [];
   },
@@ -73,6 +81,14 @@ export type ResponseMatchType = {
     jsonPath: string;
   }[];
 };
+
+export type RequestBodyMatchType = {
+  contentType: string;
+  schema?: OpenAPIV3.SchemaObject;
+  location: BodyLocation;
+  jsonPath: string;
+};
+
 export type QueryParameterType = {
   name: string;
   schema?: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject;

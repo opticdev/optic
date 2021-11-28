@@ -1,12 +1,35 @@
 import { AnswerQuestionTypes } from '../../../interactive/agents/questions';
-import { emptySpec, oneEndpointExampleSpec } from '../specs';
+import {
+  emptySpec,
+  oneEndpointExampleSpec,
+  oneEndpointExampleSpecWithRequestBody,
+} from '../specs';
 import { DebugTraffic } from '../traffic';
 
 describe('baseline new operations', () => {
-  it('asks question for a new path', async () => {
+  it('asks question for a new path and can learn response body', async () => {
     const scenario = emptySpec();
     scenario.sendTraffic(
       DebugTraffic('get', '/example').withJsonResponse({ hello: 'world' })
+    );
+
+    await scenario.answerQuestion(AnswerQuestionTypes.AddPath, (question) => {
+      question.answer = {
+        pathPattern: '/example',
+      };
+    });
+
+    await scenario.waitForEmptyQueue();
+
+    expect(scenario.results.flattenedSpec()).toMatchSnapshot();
+  });
+
+  it('asks question for a new path and can learn request body', async () => {
+    const scenario = emptySpec();
+    scenario.sendTraffic(
+      DebugTraffic('get', '/example')
+        .withJsonResponse({ hello: 'world' })
+        .withJsonRequest({ goodbye: 'earth' })
     );
 
     await scenario.answerQuestion(AnswerQuestionTypes.AddPath, (question) => {
@@ -32,7 +55,7 @@ describe('baseline new operations', () => {
     expect(scenario.results.flattenedSpec()).toMatchSnapshot();
   });
 
-  it('autolearns new properties in matched bodies', async () => {
+  it('autolearns new properties in matched response bodies', async () => {
     const scenario = await oneEndpointExampleSpec();
 
     scenario.sendTraffic(
@@ -40,6 +63,23 @@ describe('baseline new operations', () => {
         hello: 'world',
         goodbye: 'saturn',
       })
+    );
+
+    await scenario.waitForEmptyQueue();
+
+    expect(scenario.results.flattenedSpec()).toMatchSnapshot();
+  });
+
+  it('autolearns new properties in matched request bodies', async () => {
+    const scenario = await oneEndpointExampleSpecWithRequestBody();
+
+    scenario.sendTraffic(
+      DebugTraffic('get', '/example')
+        .withJsonRequest({ goodbye: 'earth', colors: ['blue', 'green'] })
+        .withJsonResponse({
+          hello: 'world',
+          goodbye: 'saturn',
+        })
     );
 
     await scenario.waitForEmptyQueue();

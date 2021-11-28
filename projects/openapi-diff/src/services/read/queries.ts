@@ -1,6 +1,7 @@
 import {
   OpenAPIDiffingQuestions,
   QueryParameterType,
+  RequestBodyMatchType,
   ResponseMatchType,
 } from './types';
 import {
@@ -68,16 +69,43 @@ export function openApiQueries(
             name: queryParamFact.name,
             required: queryParamFact.required,
             schema: queryParamFact.schema,
-            location: fact.location.conceptualLocation as QueryParameterLocation,
+            location: fact.location
+              .conceptualLocation as QueryParameterLocation,
           };
           return query;
         });
+    },
+    requestBodiesForOperation(
+      method: OpenAPIV3.HttpMethods,
+      path: string
+    ): RequestBodyMatchType[] {
+      const requestBodyFacts = facts.filter(
+        (i) =>
+          i.location.kind === OpenApiKind.Body &&
+          'inRequest' in i.location.conceptualLocation &&
+          i.location.conceptualLocation.inRequest &&
+          i.location.conceptualLocation.path === path &&
+          i.location.conceptualLocation.method === method
+      ) as IFact<OpenApiBodyFact>[];
+
+      return requestBodyFacts.map((body) => {
+        const schema = jsonPointerHelpers.get(
+          document,
+          jsonPointerHelpers.append(body.location.jsonPath, 'schema')
+        );
+
+        return {
+          contentType: body.value.contentType,
+          schema: schema,
+          location: body.location.conceptualLocation as BodyLocation,
+          jsonPath: body.location.jsonPath,
+        };
+      });
     },
     responsesForOperation(
       method: OpenAPIV3.HttpMethods,
       path: string
     ): ResponseMatchType[] {
-
       const forOperation = responses.filter(
         (res) =>
           res.location.conceptualLocation.method === method &&

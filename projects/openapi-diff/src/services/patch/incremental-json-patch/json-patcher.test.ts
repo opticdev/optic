@@ -21,9 +21,11 @@ describe('json patcher', () => {
   it('invalid patches do not apply', () => {
     const patcher = jsonPatcher(example);
 
-    const result = patcher.apply('add city', [
-      { path: '/favorite/city/0', op: 'add', value: 'Philadelphia' },
-    ]);
+    const result = patcher.apply(
+      'add city',
+      [{ path: '/favorite/city/0', op: 'add', value: 'Philadelphia' }],
+      true
+    );
 
     expect(result.success).toBeFalsy();
     expect(result).toMatchSnapshot();

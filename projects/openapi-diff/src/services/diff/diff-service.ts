@@ -8,6 +8,7 @@ import { opticJsonSchemaDiffer } from './differs/json-schema-json-diff';
 import { pathMethodOperationDiffer } from './differs/path-method-operation-diff';
 import { responsesDiffer } from './differs/responses';
 import { queryParametersDiffer } from './differs/query-parameters';
+import { requestsDiffer } from './differs/requests';
 
 export function createDiffServiceWithCachingProjections(
   spec: OpenAPIDiffingQuestions,
@@ -16,6 +17,7 @@ export function createDiffServiceWithCachingProjections(
   const shouldDiff = shouldDiffAgainstThisSpec(spec);
   const pathMatcher = urlPathDiffFromSpec(spec);
   const operationMatcher = pathMethodOperationDiffer(spec);
+  const requestMatcher = requestsDiffer(spec, jsonSchemaDiffer);
   const responsesMatcher = responsesDiffer(spec, jsonSchemaDiffer);
   const queryParamDiffer = queryParametersDiffer(spec);
 
@@ -66,6 +68,14 @@ export function createDiffServiceWithCachingProjections(
             matchesOperation.context
           );
           appendDiffResult(queryParamResult);
+
+          // match the request
+          const request = requestMatcher.requestContentDiffsForTraffic(
+            traffic,
+            matchesOperation.context
+          );
+
+          appendDiffResult(request);
 
           // match the response
           const response = responsesMatcher.responseDiffsForTraffic(

@@ -21,6 +21,10 @@ export interface ApiTraffic {
       jsonBodyString?: string;
     };
   };
+  requestBody?: {
+    contentType?: string;
+    jsonBodyString?: string;
+  };
 }
 
 /*

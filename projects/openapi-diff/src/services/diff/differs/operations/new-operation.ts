@@ -10,6 +10,7 @@ import { addResponseForExample } from '../responses/new-response';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { newAddAllQueryParameters } from '../query-parameters/new-query-parameters';
+import { addRequestBodyForExample } from '../requests/new-request';
 
 export function addNewOperation(
   patcher: JsonPatcher<OpenAPIV3.Document>,
@@ -79,6 +80,12 @@ export function addNewOperation(
   addResponseForExample(
     patcher,
     jsonPointerHelpers.append(operationPointer, 'responses'),
+    example,
+    jsonSchemaDiffer
+  );
+  addRequestBodyForExample(
+    patcher,
+    operationPointer,
     example,
     jsonSchemaDiffer
   );

@@ -20,6 +20,21 @@ export function trafficSelector(traffic: ApiTraffic) {
 
         return JSON.parse(traffic.response.body.jsonBodyString!);
       }
+
+      if ('inRequest' in location && 'body' in location.inRequest) {
+        const { contentType } = location.inRequest.body;
+        invariant(
+          contentType === traffic.requestBody?.contentType,
+          'content type must match when selecting examples from traffic'
+        );
+        invariant(
+          typeof traffic.requestBody.jsonBodyString !== 'undefined',
+          'body json must be present if selecting example from traffic'
+        );
+        return JSON.parse(traffic.requestBody.jsonBodyString!);
+      }
+
+      invariant(false, 'can not select example body from traffic');
     },
   };
 }

@@ -2,6 +2,7 @@ import { scenarios } from './scenarios';
 import { baselineIntent } from '../../interactive/agents/intents/baseline';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { makeExample } from '../../services/traffic/traffic/debug-simple';
+import { DebugTraffic } from './traffic';
 
 export const emptySpec = () =>
   scenarios(baselineIntent()).initialSpec({
@@ -16,6 +17,18 @@ export const oneEndpointExampleSpec = async () =>
       '/example',
       OpenAPIV3.HttpMethods.GET,
       makeExample('/example', 'get', '200', { hello: 'world' })
+    );
+  });
+
+export const oneEndpointExampleSpecWithRequestBody = async () =>
+  await scenarios(baselineIntent()).buildSpecFrom((patch) => {
+    patch.init.operation(
+      '/example',
+      OpenAPIV3.HttpMethods.POST,
+      DebugTraffic('/example', OpenAPIV3.HttpMethods.POST)
+        .withStatusCode('200')
+        .withJsonResponse({ hello: 'world' })
+        .withJsonRequest({ goodbye: 'earth' })
     );
   });
 
