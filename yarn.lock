@@ -4370,7 +4370,6 @@ __metadata:
     http-string-parser: ^0.0.6
     ink: ^3.2.0
     ink-divider: ^3.0.0
-    ink-tab: ^4.1.0
     ink-testing-library: ^2.1.0
     ink-text-input: ^4.0.2
     ink-use-stdout-dimensions: ^1.0.5
@@ -4391,6 +4390,8 @@ __metadata:
     typescript: ^4.4.4
     uuid: ^8.3.2
     xstate: ^4.26.0
+  bin:
+    optic: build/cli/index.js
   languageName: unknown
   linkType: soft
 
@@ -10228,18 +10229,6 @@ fsevents@^1.2.7:
     ink: ">=3.0.0"
     react: ">=16.8.0"
   checksum: cde7b0c4051ecc8fc8ca978f70e17348f24faed413dc72489ee7cc3a515eced03ec51471a092bd3aca549fcc4af29d0619e0e5230553a38dd2e79df653955b80
-  languageName: node
-  linkType: hard
-
-"ink-tab@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "ink-tab@npm:4.1.0"
-  dependencies:
-    prop-types: ^15.7.2
-  peerDependencies:
-    ink: ^3.0.0
-    react: ^16.8.0
-  checksum: 5c490ee865819624ae6c290af9bd72805f7df8751e444499794bc84885d3dd3ffa78a804e85d9e018a4cd7e2f42b5a8f0ffd52a2f335f4a62bab8f2b3e9148bf
   languageName: node
   linkType: hard
 
