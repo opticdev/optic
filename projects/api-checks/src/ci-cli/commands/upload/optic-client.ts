@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import fetch, { Response } from 'node-fetch';
 // TODO created shared instance to import from (optic cloud fe + here)
 
 class JsonHttpClient {
@@ -15,7 +16,7 @@ class JsonHttpClient {
     return text;
   }
 
-  private async handleJsonResponse(response: Response) {
+  private async handleJsonResponse(response: Response): Promise<any> {
     if (response.ok) {
       if (response.status === 204) {
         return;
@@ -224,6 +225,8 @@ export class OpticBackendClient extends JsonHttpClient {
     super();
   }
 
+  // TODO - fix this typing - node-fetch has isRedirect on the fn object
+  // @ts-ignore
   fetch: typeof fetch = async (requestUri, options = {}) => {
     const token = await this.getAuthToken();
     const headers = options.headers || {};
@@ -251,7 +254,7 @@ export class OpticBackendClient extends JsonHttpClient {
   ): Promise<string> {
     const sessionId = uuidv4();
 
-    this.postJson(
+    await this.postJson(
       `/api/spec-comparison-sessions/${sessionId}/commands/start-session`,
       {
         session: {

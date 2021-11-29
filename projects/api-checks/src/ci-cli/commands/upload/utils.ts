@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import fetch from 'node-fetch';
 
 export const loadFile = (filePath: string): Promise<Buffer> => {
   const workingDir = process.cwd();

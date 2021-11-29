@@ -5,6 +5,8 @@ import { makeCiCli } from "./ci-cli/make-cli";
 const checker: ApiCheckService<ExampleDslContext> =
   new ApiCheckService<ExampleDslContext>();
 
-const cli = makeCiCli("play-thing", checker);
+const cli = makeCiCli("play-thing", checker, {
+  opticToken: '123'
+});
 
 cli.parse(process.argv);

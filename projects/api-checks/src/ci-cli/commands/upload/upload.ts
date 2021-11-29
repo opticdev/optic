@@ -108,15 +108,26 @@ export const uploadCiRun = async (
     })
   );
 
-  await Promise.all(
-    uploadedFilePaths.map(async (uploadedFilePath) =>
-      opticClient.markUploadAsComplete(
-        sessionId,
-        uploadedFilePath.id,
-        uploadedFilePath.slot
-      )
-    )
-  );
+  // TODO run this in parallel when optimistic concurrency is fixed
+  // await Promise.all(
+  //   uploadedFilePaths.map(async (uploadedFilePath) =>
+  //     opticClient.markUploadAsComplete(
+  //       sessionId,
+  //       uploadedFilePath.id,
+  //       uploadedFilePath.slot
+  //     )
+  //   )
+  // );
+
+  // Run this sequentially to work around optimistic concurrency bug
+  await uploadedFilePaths.reduce(async (promiseChain, uploadedFilePath) => {
+    await promiseChain;
+    return opticClient.markUploadAsComplete(
+      sessionId,
+      uploadedFilePath.id,
+      uploadedFilePath.slot
+    );
+  }, Promise.resolve());
 
   const { web_url: opticWebUrl } = await opticClient.getSession(sessionId);
 
