@@ -31,7 +31,7 @@ export const rules = {
     bodyProperties,
   }: SnykApiCheckDsl) => {
     bodyProperties.added.must("not be required", (property, context) => {
-      if (!context.inRequest) return;
+      if (!('inRequest' in context)) return;
       expect(property.required).to.not.be.true;
     });
   },

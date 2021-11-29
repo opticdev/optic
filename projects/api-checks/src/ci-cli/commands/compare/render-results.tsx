@@ -15,7 +15,7 @@ export function RenderCheckResults(props: {
   );
 
   return (
-    <Box alignItems="flex-start" flexDirection="column">
+    <Box alignItems="flex-start" flexDirection="column" width={process.env.COLUMNS || "5000"}>
       {Object.keys(groupedResults)
         .sort()
         .map((key) => {

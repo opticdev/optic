@@ -1,43 +1,41 @@
-import { Command } from "commander";
-import { readAndValidateGithubContext } from "./context-parsers";
-import { OpticBackendClient } from "./optic-client";
-import { loadFile, uploadFileToS3 } from "./utils";
+import { Command } from 'commander';
+import { readAndValidateGithubContext } from './context-parsers';
+import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
+import { loadFile, uploadFileToS3 } from './utils';
 
 export const registerUpload = (
   cli: Command,
   { opticToken }: { opticToken?: string }
 ) => {
   cli
-    .command("upload")
-    .requiredOption("--from <from>", "from file or rev:file")
-    .requiredOption("--to <to>", "to file or rev:file")
-    .requiredOption("--context <context>", "file with github context")
-    // .requiredOption("--rules <rules>", "path to rules output") // TODO - uncomment and implement - also figure out how to make this
+    .command('upload')
+    // TODO allow upload without from file (as an initial step)
+    .requiredOption('--from <from>', 'from file or rev:file')
+    .requiredOption('--to <to>', 'to file or rev:file')
+    .requiredOption('--context <context>', 'file with github context')
+    .requiredOption('--rules <rules>', 'path to rules output')
     .action(
-      async ({
-        from,
-        to,
-        context,
-      }: {
+      async (runArgs: {
         from: string;
         to: string;
         context: string;
+        rules: string;
       }) => {
         if (!opticToken) {
-          console.error("Upload token was not included");
+          console.error('Upload token was not included');
           return process.exit(1);
         }
 
         const backendWebBase =
-          process.env.OPTIC_ENV === "staging"
-            ? "https://api.o3c.info"
-            : "https://api.useoptic.com";
+          process.env.OPTIC_ENV === 'staging'
+            ? 'https://api.o3c.info'
+            : 'https://api.useoptic.com';
 
         const opticClient = new OpticBackendClient(backendWebBase, () =>
           Promise.resolve(opticToken)
         );
         try {
-          await uploadCiRun(opticClient, { from, to, context });
+          await uploadCiRun(opticClient, runArgs);
         } catch (e) {
           console.error(e);
           return process.exit(1);
@@ -48,34 +46,91 @@ export const registerUpload = (
 
 export const uploadCiRun = async (
   opticClient: OpticBackendClient,
-  filePaths: { from: string; to: string; context: string }
+  runArgs: {
+    from: string;
+    to: string;
+    context: string;
+    rules: string;
+  }
 ) => {
-  console.log("Loading files...");
-  const [githubContextFileBuffer, ...fileBuffers] = await Promise.all([
-    loadFile(filePaths.context),
-    loadFile(filePaths.from),
-    loadFile(filePaths.to),
+  console.log('Loading files...');
+
+  const [
+    githubContextFileBuffer,
+    fromFileS3Buffer,
+    toFileS3Buffer,
+    rulesFileS3Buffer,
+  ] = await Promise.all([
+    loadFile(runArgs.context),
+    loadFile(runArgs.from),
+    loadFile(runArgs.to),
+    loadFile(runArgs.rules),
   ]);
 
+  const fileMap: Record<UploadSlot, Buffer> = {
+    [UploadSlot.CheckResults]: rulesFileS3Buffer,
+    [UploadSlot.FromFile]: fromFileS3Buffer,
+    [UploadSlot.ToFile]: toFileS3Buffer,
+    [UploadSlot.GithubActionsEvent]: githubContextFileBuffer,
+  };
+
   // TODO change this for different providers
-  const { organization, pull_request, run } = readAndValidateGithubContext(
-    githubContextFileBuffer
+  const { organization, pull_request, run, run_attempt, repo } =
+    readAndValidateGithubContext(githubContextFileBuffer);
+
+  const sessionId = await opticClient.startSession(SessionType.GithubActions, {
+    run_args: runArgs,
+    github_data: {
+      organization,
+      repo,
+      pull_request,
+      run,
+      run_attempt,
+    },
+  });
+
+  console.log('Uploading OpenAPI files to Optic...');
+
+  const uploadUrls = await opticClient.getUploadUrls(sessionId);
+
+  const uploadedFilePaths: {
+    id: string;
+    slot: UploadSlot;
+  }[] = await Promise.all(
+    uploadUrls.map(async (uploadUrl) => {
+      const file = fileMap[uploadUrl.slot];
+      await uploadFileToS3(uploadUrl.url, file);
+
+      return {
+        id: uploadUrl.id,
+        slot: uploadUrl.slot,
+      };
+    })
   );
 
-  console.log("Uploading OpenAPI files to Optic...");
+  // TODO run this in parallel when optimistic concurrency is fixed
+  // await Promise.all(
+  //   uploadedFilePaths.map(async (uploadedFilePath) =>
+  //     opticClient.markUploadAsComplete(
+  //       sessionId,
+  //       uploadedFilePath.id,
+  //       uploadedFilePath.slot
+  //     )
+  //   )
+  // );
 
-  const [githubContextFileS3Path, fromFileS3Path, toFileS3Path] =
-    await Promise.all(
-      [githubContextFileBuffer, ...fileBuffers].map((fileBuffer) => uploadFileToS3(opticClient, fileBuffer))
+  // Run this sequentially to work around optimistic concurrency bug
+  await uploadedFilePaths.reduce(async (promiseChain, uploadedFilePath) => {
+    await promiseChain;
+    return opticClient.markUploadAsComplete(
+      sessionId,
+      uploadedFilePath.id,
+      uploadedFilePath.slot
     );
+  }, Promise.resolve());
 
-  // TODO check whether the `run` numbers are reused, and if they are, should that overwrite, or create
-  // i.e. there are run number, and run attempt, so retrying on the same commit hash may trigger the same run number
-  // May need to try catch this block (or decide on product behavior)
-  await opticClient.saveCiRun();
+  const { web_url: opticWebUrl } = await opticClient.getSession(sessionId);
 
-  console.log("Successfully uploaded files to Optic");
-  const opticUploadUrl = "todo add url";
-  console.log(`You can view the results of this run at: ${opticUploadUrl}`);
-  // TODO post comment to github
+  console.log('Successfully uploaded files to Optic');
+  console.log(`You can view the results of this run at: ${opticWebUrl}`);
 };

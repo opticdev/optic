@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { SpecFromInput } from "../../input-helpers/compare-input-parser";
-import { Box, Newline, Text, useApp } from "ink";
+import { Box, Newline, Text, useApp, useStderr, useStdout } from "ink";
 import { useAsync, useAsyncFn } from "react-use";
 import { AsyncState } from "react-use/lib/useAsyncFn";
 import { ApiCheckService } from "../../../sdk/api-check-service";
@@ -14,8 +14,11 @@ export function Compare<T>(props: {
   to: SpecFromInput;
   context: T;
   verbose: boolean;
+  output: "pretty" | "json" | "plain";
   apiCheckService: ApiCheckService<T>;
 }) {
+  const stdout = useStdout();
+  const stderr = useStderr();
   const loadFrom = useAsync(
     async () => await specFromInputToResults(props.from, process.cwd())
   );
@@ -92,8 +95,18 @@ export function Compare<T>(props: {
     if (specsLoaded) sendCheckRequest();
   }, [loadFrom, loadTo]);
 
+  if (props.output == "json") {
+    if (results.value) {
+      const filteredResults = props.verbose
+        ? results.value
+        : results.value.filter((x) => !x.passed);
+      stdout.write(JSON.stringify(filteredResults, null, 2));
+    }
+    return null;
+  }
+
   return (
-    <Box flexDirection="column">
+    <Box flexDirection="column" width={process.env.COLUMNS || "5000"}>
       <Text color="blue" bold>
         Loading specifications for comparison:
       </Text>

@@ -1344,6 +1344,36 @@ Array [
   Object {
     "location": Object {
       "conceptualLocation": Object {
+        "inRequest": Object {
+          "query": "example-query-param",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "parameters",
+        "query",
+        "example-query-param",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/parameters/0",
+      "kind": "query-parameter",
+    },
+    "value": Object {
+      "description": "The name that needs to be fetched. Use user1 for testing. ",
+      "in": "query",
+      "name": "example-query-param",
+      "required": false,
+      "schema": Object {
+        "type": "string",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
         "inResponse": Object {
           "body": Object {
             "contentType": "application/xml",
@@ -1544,6 +1574,36 @@ Array [
     "location": Object {
       "conceptualLocation": Object {
         "inRequest": Object {
+          "query": "example-query-param",
+        },
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "parameters",
+        "query",
+        "example-query-param",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/parameters/0",
+      "kind": "query-parameter",
+    },
+    "value": Object {
+      "description": "The name that needs to be fetched. Use user1 for testing. ",
+      "in": "query",
+      "name": "example-query-param",
+      "required": false,
+      "schema": Object {
+        "type": "string",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
           "body": Object {
             "contentType": "*/*",
           },
@@ -1665,6 +1725,36 @@ Array [
       "in": "path",
       "name": "username",
       "required": true,
+      "schema": Object {
+        "type": "string",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "query": "example-query-param",
+        },
+        "method": "delete",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "delete",
+        "parameters",
+        "query",
+        "example-query-param",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/parameters/0",
+      "kind": "query-parameter",
+    },
+    "value": Object {
+      "description": "The name that needs to be fetched. Use user1 for testing. ",
+      "in": "query",
+      "name": "example-query-param",
+      "required": false,
       "schema": Object {
         "type": "string",
       },
@@ -2389,6 +2479,17 @@ Object {
           "user",
         ],
       },
+      "parameters": Array [
+        Object {
+          "description": "The name that needs to be fetched. Use user1 for testing. ",
+          "in": "query",
+          "name": "example-query-param",
+          "required": false,
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      ],
       "put": Object {
         "description": "This can only be done by the logged in user.",
         "operationId": "updateUser",

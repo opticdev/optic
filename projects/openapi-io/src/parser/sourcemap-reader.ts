@@ -4,11 +4,11 @@ import {
   JsonSchemaSourcemap,
   resolveJsonPointerInYamlAst,
   ToSource,
-} from "./openapi-sourcemap-parser";
-import fs from "fs-extra";
-import { Kind, YamlMap, YAMLNode, YAMLSequence } from "yaml-ast-parser";
-import equals from "fast-deep-equal";
-import { jsonPointerHelpers } from "@useoptic/json-pointer-helpers";
+} from './openapi-sourcemap-parser';
+import fs from 'fs-extra';
+import { Kind, YamlMap, YAMLNode, YAMLSequence } from 'yaml-ast-parser';
+import equals from 'fast-deep-equal';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
   const rootFileNumber = sourcemap.files.find(
@@ -16,6 +16,22 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
   )!.index;
 
   const findFile = (jsonPathFromRoot: JsonPath): ILookupPathResult => {
+    const fileResult = findFilePosition(jsonPathFromRoot);
+    if (!fileResult) return undefined;
+
+    const file = sourcemap.files.find((i) => i.path === fileResult.filePath)!;
+
+    const node = resolveJsonPointerInYamlAst(file.ast, fileResult.startsAt);
+
+    if (node)
+      return {
+        filePath: file.path,
+        astNode: node,
+        startsAt: fileResult.startsAt,
+      };
+  };
+
+  const findFilePosition = (jsonPathFromRoot: JsonPath): ILookupFileResult => {
     const decoded = jsonPointerHelpers.decode(jsonPathFromRoot);
 
     let cursor: {
@@ -54,14 +70,10 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
 
     const pathInFile = jsonPointerHelpers.compile(cursor.pathInCurrentFile);
 
-    const node = resolveJsonPointerInYamlAst(file.ast, pathInFile);
-
-    if (node)
-      return {
-        filePath: file.path,
-        astNode: node,
-        startsAt: pathInFile,
-      };
+    return {
+      filePath: file.path,
+      startsAt: pathInFile,
+    };
   };
 
   const findFileAndLines = async (jsonPathFromRoot: JsonPath) => {
@@ -89,15 +101,37 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
     }
   };
 
+  const findLinesForAstAndContents = (astNode: YAMLNode, contents: string) => {
+    const [startPosition, endPosition] = astNodesToStartEndPosition(astNode);
+
+    const { startLine, endLine, preview } = positionToLine(
+      contents,
+      startPosition,
+      endPosition
+    );
+    const result: ILookupLinePreviewResult = {
+      filePath: '',
+      startLine,
+      endLine,
+      preview,
+      startPosition: startPosition,
+      endPosition: endPosition,
+    };
+    return result;
+  };
+
   return {
     findFile,
+    findFilePosition,
     findFileAndLines,
+    findLinesForAstAndContents,
   };
 }
 
 type ILookupPathResult =
   | undefined
   | { filePath: string; startsAt: JsonPath; astNode: YAMLNode };
+type ILookupFileResult = undefined | { filePath: string; startsAt: JsonPath };
 export type ILookupLinePreviewResult =
   | undefined
   | {
@@ -117,13 +151,13 @@ function positionToLine(
   end: number
 ): { startLine: number; endLine: number; preview: string } {
   const startLine =
-    (contents.substring(0, start).match(/\n/g) || "").length + 1;
+    (contents.substring(0, start).match(/\n/g) || '').length + 1;
   const endLine =
-    (contents.substring(end).match(/\n/g) || "").length + startLine - 1;
+    (contents.substring(start, end).match(/\n/g) || '').length + startLine;
 
   const lines = contents.split(/\r\n|\r|\n/);
 
-  const preview = lines.slice(startLine - 1, endLine).join("\n");
+  const preview = lines.slice(startLine - 1, endLine).join('\n');
 
   return {
     startLine,

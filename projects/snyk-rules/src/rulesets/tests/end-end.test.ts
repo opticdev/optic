@@ -4,7 +4,7 @@ import { newSnykApiCheckService } from "../../service";
 import { specFromInputToResults } from "@useoptic/api-checks";
 import { ResultWithSourcemap } from "@useoptic/api-checks/build/sdk/types";
 import { parseSpecVersion } from "@useoptic/api-checks/build/ci-cli/input-helpers/compare-input-parser";
-import { defaultEmptySpec } from "@useoptic/api-checks/build/ci-cli/constants";
+import { defaultEmptySpec } from "@useoptic/openapi-utilities";
 import { sourcemapReader } from "@useoptic/openapi-io";
 
 describe("end-end-tests", () => {

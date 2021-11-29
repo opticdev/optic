@@ -1,7 +1,6 @@
 import path from "path";
 import fs from "fs";
-
-import { OpticBackendClient } from "./optic-client";
+import fetch from 'node-fetch';
 
 export const loadFile = (filePath: string): Promise<Buffer> => {
   const workingDir = process.cwd();
@@ -18,12 +17,15 @@ export const loadFile = (filePath: string): Promise<Buffer> => {
 };
 
 export const uploadFileToS3 = async (
-  opticClient: OpticBackendClient,
+  signedUrl: string,
   file: Buffer
 ) => {
-  const uploadUrl = await opticClient.getUploadUrl();
-  await (async (uploadUrl: string, file: Buffer) => {
-    // TODO upload this file to s3 via aws sdk?
-  })(uploadUrl, file);
-  return "TODO get location of uploaded file";
+  // TODO validate that Buffers can be sent to AWS S3
+  await fetch(signedUrl, {
+    method: "PUT",
+    headers: {
+      "x-amz-server-side-encryption": "AES256",
+    },
+    body: file,
+  });
 };
