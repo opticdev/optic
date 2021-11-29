@@ -1,18 +1,15 @@
+import { ISpectralDiagnostic, Spectral } from '@stoplight/spectral-core';
+import { ApiCheckDsl, Result } from '../types';
 import {
-  ISpectralDiagnostic,
-  Spectral,
-  Ruleset,
-} from "@stoplight/spectral-core";
-import { ApiCheckDsl, Result } from "../types";
-import {
+  ConceptualLocation,
   IFact,
   ILocation,
   OpenApiFact,
   OpenApiKind,
   OpenAPIV3,
-} from "@useoptic/openapi-utilities";
-import isEqual from "lodash.isequal";
-import { jsonPointerHelpers } from "@useoptic/json-pointer-helpers";
+} from '@useoptic/openapi-utilities';
+import isEqual from 'lodash.isequal';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 // TODO: fix types here
 export class SpectralDsl implements ApiCheckDsl {
@@ -46,14 +43,14 @@ export class SpectralDsl implements ApiCheckDsl {
       );
 
       const location: ILocation = {
-        conceptualLocation: matchingOperation
+        conceptualLocation: (matchingOperation
           ? matchingOperation.location.conceptualLocation
-          : { path: "This Specification", method: "" },
+          : { path: 'This Specification', method: '' }) as ConceptualLocation,
         jsonPath: jsonPointerHelpers.compile(
           spectralResult.path.map((i) => i.toString())
         ),
         conceptualPath: [],
-        kind: "API",
+        kind: 'API' as any,
       };
 
       return {
@@ -62,10 +59,10 @@ export class SpectralDsl implements ApiCheckDsl {
         error: spectralResult.message,
         isMust: true,
         isShould: false,
-        where: "requirement ",
+        where: 'requirement ',
         change: {
           location,
-        },
+        } as any,
       };
     });
 

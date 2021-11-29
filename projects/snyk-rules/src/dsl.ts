@@ -6,9 +6,9 @@ import {
   newDocsLinkHelper,
   runCheck,
   createSelectJsonPathHelper,
-} from "@useoptic/api-checks";
+} from '@useoptic/api-checks';
 
-import niceTry from "nice-try";
+import niceTry from 'nice-try';
 
 import {
   ConceptualLocation,
@@ -24,12 +24,12 @@ import {
   OpenApiResponseFact,
   OpenApiFact,
   ChangeType,
-} from "@useoptic/openapi-utilities";
-import { genericEntityRuleImpl } from "@useoptic/api-checks/build/sdk/generic-entity-rule-impl";
-import { ShouldOrMust } from "@useoptic/api-checks/build/sdk/types";
-import { jsonPointerHelpers } from "@useoptic/json-pointer-helpers";
+} from '@useoptic/openapi-utilities';
+import { genericEntityRuleImpl } from '@useoptic/api-checks/build/sdk/generic-entity-rule-impl';
+import { ShouldOrMust } from '@useoptic/api-checks/build/sdk/types';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
-type SnykStablity = "wip" | "experimental" | "beta" | "ga";
+type SnykStablity = 'wip' | 'experimental' | 'beta' | 'ga';
 type DateString = string; // YYYY-mm-dd
 type ResourceName = string;
 
@@ -151,10 +151,10 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
   get context() {
     const change: IChange<SnykApiCheckDsl> = {
       location: {
-        conceptualLocation: { path: "This Specification", method: "" },
-        jsonPath: "/",
+        conceptualLocation: { path: 'This Specification', method: '' },
+        jsonPath: '/',
         conceptualPath: [],
-        kind: "API",
+        kind: 'API',
       },
     } as any;
 
@@ -169,7 +169,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         return runCheck(
           change,
           docsHelper,
-          "this specification: ",
+          'this specification: ',
           statement,
           true,
           () => handler(this.providedContext, docsHelper)
@@ -180,7 +180,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
         return runCheck(
           change,
           docsHelper,
-          "this specification: ",
+          'this specification: ',
           statement,
           false,
           () => handler(this.providedContext, docsHelper)
@@ -278,7 +278,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
   get checkApiContext(): ShouldOrMust<
     (context: SynkApiCheckContext, docs: DocsLinkHelper) => void
   > {
-    const contextChangedHandler: (must: boolean) => ContextChangedRule["must"] =
+    const contextChangedHandler: (must: boolean) => ContextChangedRule['must'] =
       (must: boolean) => {
         return (statement, handler) => {
           const docsHelper = newDocsLinkHelper();
@@ -286,19 +286,19 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
             added: this.providedContext,
             changeType: ChangeType.Added,
             location: {
-              jsonPath: "/",
+              jsonPath: '/',
               conceptualPath: [],
               conceptualLocation: {
-                path: "Entire Resource",
-                method: "",
+                path: 'Entire Resource',
+                method: '',
               },
-              kind: "ContextRule",
+              kind: 'ContextRule',
             } as any,
           };
           return runCheck(
             syntheticChange,
             docsHelper,
-            "api lifeycle: ",
+            'api lifeycle: ',
             statement,
             must,
             () => handler(this.providedContext, docsHelper)
