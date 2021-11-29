@@ -4391,6 +4391,8 @@ __metadata:
     typescript: ^4.4.4
     uuid: ^8.3.2
     xstate: ^4.26.0
+  bin:
+    optic: build/cli/index.js
   languageName: unknown
   linkType: soft
 
