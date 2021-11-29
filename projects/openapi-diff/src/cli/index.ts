@@ -1,4 +1,4 @@
-import React from 'react';
+#!/usr/bin/env node
 import { program as cli } from 'commander';
 import { registerBaselineCommands } from './commands/baseline';
 const packageJson = require('../../package.json');

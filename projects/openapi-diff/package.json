@@ -55,7 +55,6 @@
     "http-string-parser": "^0.0.6",
     "ink": "^3.2.0",
     "ink-divider": "^3.0.0",
-    "ink-tab": "^4.1.0",
     "ink-text-input": "^4.0.2",
     "ink-use-stdout-dimensions": "^1.0.5",
     "json-schema-traverse": "^1.0.0",
