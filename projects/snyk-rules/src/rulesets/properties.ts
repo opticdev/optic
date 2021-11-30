@@ -38,15 +38,28 @@ export const rules = {
   enumOrExample: ({ bodyProperties }: SnykApiCheckDsl) => {
     bodyProperties.requirement.must(
       'have enum or example',
-      (property, context) => {
+      (property, context, docs, specItem) => {
         if (!('inResponse' in context)) return;
+        // @ts-ignore
+        if (context.jsonSchemaTrail.length < 3) return;
         if (
-          property.flatSchema.type === 'object' ||
-          property.flatSchema.type === 'boolean'
+          !(
+            // @ts-ignore
+            context.jsonSchemaTrail[0] === 'data' &&
+            // @ts-ignore
+            context.jsonSchemaTrail[1] === 'attributes'
+          )
         )
           return;
-        expect(Boolean(property.flatSchema.enum || property.flatSchema.example))
-          .to.be.true;
+        console.log(specItem, JSON.stringify(context, null, 2))
+        if (
+          specItem.type === 'object' ||
+          specItem.type === 'boolean'
+        )
+          return;
+        const expected = ('enum' in specItem || 'example' in specItem);
+        // if (!expected) console.log(property.key, JSON.stringify(context, null, 2))
+        expect(expected).to.be.true;
       }
     );
   },
