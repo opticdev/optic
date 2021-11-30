@@ -11,15 +11,13 @@ export const rules = {
     bodyProperties.requirement.should(
       'have a format when a string',
       ({ flatSchema }, context) => {
-        if (flatSchema.type !== "string") return;
+        if (flatSchema.type !== 'string') return;
         // @ts-ignore
-        if (context.jsonSchemaTrail.length < 3) return;
+        const jsonSchemaTrail = context.jsonSchemaTrail;
+        if (jsonSchemaTrail.length < 3) return;
         if (
           !(
-            // @ts-ignore
-            context.jsonSchemaTrail[0] === 'data' &&
-            // @ts-ignore
-            context.jsonSchemaTrail[1] === 'attributes'
+            jsonSchemaTrail[0] === 'data' && jsonSchemaTrail[1] === 'attributes'
           )
         )
           return;
@@ -46,21 +44,15 @@ export const rules = {
       (property, context, docs, specItem) => {
         if (!('inResponse' in context)) return;
         // @ts-ignore
-        if (context.jsonSchemaTrail.length < 3) return;
+        const jsonSchemaTrail = context.jsonSchemaTrail;
+        if (jsonSchemaTrail.length < 3) return;
         if (
           !(
-            // @ts-ignore
-            context.jsonSchemaTrail[0] === 'data' &&
-            // @ts-ignore
-            context.jsonSchemaTrail[1] === 'attributes'
+            jsonSchemaTrail[0] === 'data' && jsonSchemaTrail[1] === 'attributes'
           )
         )
           return;
-        if (
-          specItem.type === 'object' ||
-          specItem.type === 'boolean'
-        )
-          return;
+        if (specItem.type === 'object' || specItem.type === 'boolean') return;
         expect('enum' in specItem || 'example' in specItem).to.be.true;
       }
     );
