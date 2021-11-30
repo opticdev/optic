@@ -3511,7 +3511,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/body-parser@npm:*":
+"@types/body-parser@npm:*, @types/body-parser@npm:^1":
   version: 1.19.2
   resolution: "@types/body-parser@npm:1.19.2"
   dependencies:
@@ -4343,6 +4343,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@useoptic/openapi-diff@workspace:projects/openapi-diff"
   dependencies:
+    "@types/body-parser": ^1
     "@types/diff": 5.0.0
     "@types/express": ^4
     "@types/fs-extra": ^9.0.13
@@ -4361,6 +4362,7 @@ __metadata:
     "@xstate/react": ^1.6.2
     ajv: ^8.6.3
     babel-jest: 26.6.0
+    body-parser: ^1.19.0
     commander: ^8.3.0
     diff: 5.0.0
     express: ^4.17.1
@@ -5720,7 +5722,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:1.19.0":
+"body-parser@npm:1.19.0, body-parser@npm:^1.19.0":
   version: 1.19.0
   resolution: "body-parser@npm:1.19.0"
   dependencies:

@@ -8,6 +8,7 @@ import { PcapSession, TCPTracker, TCPSession, createSession, decode } from "pcap
 import express from 'express';
 import { createProxyMiddleware, RequestHandler, responseInterceptor } from 'http-proxy-middleware';
 import { parseStatusLine } from "http-string-parser";
+import bodyParser from "body-parser";
 
 import { TrafficSource } from "../types";
 import { OpticHttpInteraction } from "../traffic/optic-http-interaction";
@@ -261,16 +262,20 @@ class Simulation {
         query = url.search.slice(1); // strip leading `?`
       } finally {}
 
-      let contentType = proxyRes.headers["content-type"],
-          response = undefined;
+      let reqContentType = req.headers["content-type"];
+      // http.IncomingMessage doesn't have the .body field, but it's there, promise!
+      let reqBody = reqContentType ? JSON.stringify((req as any).body) : undefined;
+
+      let resContentType = proxyRes.headers["content-type"],
+          resBody = undefined;
       try {
         // Check that this is a JSON string
         JSON.parse(responseBuffer.toString());
-        response = responseBuffer.toString(); 
+        resBody = responseBuffer.toString(); 
         //console.log(`OnProxyRes response is JSON`);
-        //console.log(`response: ${response}`);
+        //console.log(`response: ${resBody}`);
       } catch (e) {
-        contentType = undefined; // We rely on this to indicate empty bodies
+        resContentType = undefined; // We rely on this to indicate empty bodies
       }
 
       // Success! emit an interaction
@@ -278,13 +283,17 @@ class Simulation {
         request: {
           method: req.method,
           path: path,
-          query: { asText: query }
+          query: { asText: query },
+          body: {
+            contentType: reqContentType,
+            value: { asJsonString: reqBody}
+          }
         },
         response: {
           statusCode: res.statusCode.toString(),
           body: {
-            contentType: contentType,
-            value: { asJsonString: response}
+            contentType: resContentType,
+            value: { asJsonString: resBody}
           }
         }
       });
@@ -304,7 +313,7 @@ class Simulation {
 
     // start a server, cleaning up any leftover sockets
     await unlink(socketFrontendPath).catch(() => {});
-    const proxyApp = express().use(this.proxy);
+    const proxyApp = express().use(bodyParser.json()).use(this.proxy);
     this.proxyListener = proxyApp.listen(socketFrontendPath);
     await new Promise((resolve) => {
       this.proxyListener.on('listening', resolve);
