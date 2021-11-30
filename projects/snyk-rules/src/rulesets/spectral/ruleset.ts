@@ -483,32 +483,32 @@ export default {
       //     }
       //   }
       // },
-      "component-names-pascal-case": {
-        "description": "Component names must be PascalCase (except responses).",
-        "message": "{{description}}",
-        "severity": "error",
-        "given": "$..components[?(@property !== 'responses')][*]~",
-        "then": {
-          "field": "@key",
-          "function": casing,
-          "functionOptions": {
-            "type": "pascal"
-          }
-        }
-      },
-      "component-response-names": {
-        "description": "Response names must be PascalCase or a status code.",
-        "message": "{{description}}",
-        "severity": "error",
-        "given": "$..components[?(@property === 'responses')][?(!@property.match(/^\\d+$/))]~",
-        "then": {
-          "field": "@key",
-          "function": casing,
-          "functionOptions": {
-            "type": "pascal"
-          }
-        }
-      }
+      // "component-names-pascal-case": {
+      //   "description": "Component names must be PascalCase (except responses).",
+      //   "message": "{{description}}",
+      //   "severity": "error",
+      //   "given": "$..components[?(@property !== 'responses')][*]~",
+      //   "then": {
+      //     "field": "@key",
+      //     "function": casing,
+      //     "functionOptions": {
+      //       "type": "pascal"
+      //     }
+      //   }
+      // },
+      // "component-response-names": {
+      //   "description": "Response names must be PascalCase or a status code.",
+      //   "message": "{{description}}",
+      //   "severity": "error",
+      //   "given": "$..components[?(@property === 'responses')][?(!@property.match(/^\\d+$/))]~",
+      //   "then": {
+      //     "field": "@key",
+      //     "function": casing,
+      //     "functionOptions": {
+      //       "type": "pascal"
+      //     }
+      //   }
+      // }
     }
   }, {
     "rules": {
@@ -647,24 +647,24 @@ export default {
     "info-description": "off",
     "info-license": "off",
     "license-url": "off",
-    "openapi-get-versions": {
-      "description": "APIs must list the available versioned OpenAPI specifications.",
-      "severity": "error",
-      "given": "$.paths[/openapi]",
-      "then": {
-        "field": "get",
-        "function": truthy
-      }
-    },
-    "openapi-get-version": {
-      "description": "APIs must provide versioned OpenAPI specifications.",
-      "severity": "error",
-      "given": "$.paths[/openapi/{version}]",
-      "then": {
-        "field": "get",
-        "function": truthy
-      }
-    },
+    // "openapi-get-versions": {
+    //   "description": "APIs must list the available versioned OpenAPI specifications.",
+    //   "severity": "error",
+    //   "given": "$.paths[/openapi]",
+    //   "then": {
+    //     "field": "get",
+    //     "function": truthy
+    //   }
+    // },
+    // "openapi-get-version": {
+    //   "description": "APIs must provide versioned OpenAPI specifications.",
+    //   "severity": "error",
+    //   "given": "$.paths[/openapi/{version}]",
+    //   "then": {
+    //     "field": "get",
+    //     "function": truthy
+    //   }
+    // },
     // "apinext-route-tenant-uuids": {
     //   "description": "APIs must use UUIDs where org or group tenants are specified",
     //   "severity": "error",
@@ -686,18 +686,18 @@ export default {
     //     }
     //   }]
     // },
-    "apinext-paths-tenants": {
-      "description": "APIs must have an org or group tenant",
-      "severity": "error",
-      "given": "$.paths",
-      "then": {
-        "field": "@key",
-        "function": pattern,
-        "functionOptions": {
-          "match": "^\\/(orgs\\/{org_id}|groups\\/{group_id})"
-        }
-      }
-    },
+    // "apinext-paths-tenants": {
+    //   "description": "APIs must have an org or group tenant",
+    //   "severity": "error",
+    //   "given": "$.paths",
+    //   "then": {
+    //     "field": "@key",
+    //     "function": pattern,
+    //     "functionOptions": {
+    //       "match": "^\\/(orgs\\/{org_id}|groups\\/{group_id})"
+    //     }
+    //   }
+    // },
     // "apinext-operation-response-array-examples": {
     //   "description": "Responses must have an enum or examples field and be non-empty",
     //   "severity": "error",
@@ -732,18 +732,18 @@ export default {
     //     }
     //   }]
     // },
-    "apinext-tags-name-description": {
-      "description": "Tags must have a name and description",
-      "severity": "error",
-      "given": "$.tags[*]",
-      "then": [{
-        "field": "name",
-        "function": truthy
-      }, {
-        "field": "description",
-        "function": truthy
-      }]
-    },
+    // "apinext-tags-name-description": {
+    //   "description": "Tags must have a name and description",
+    //   "severity": "error",
+    //   "given": "$.tags[*]",
+    //   "then": [{
+    //     "field": "name",
+    //     "function": truthy
+    //   }, {
+    //     "field": "description",
+    //     "function": truthy
+    //   }]
+    // },
     // "apinext-operation-summary": {
     //   "description": "Path operations must include a summary",
     //   "severity": "error",
