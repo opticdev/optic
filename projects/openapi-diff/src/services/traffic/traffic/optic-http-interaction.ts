@@ -65,7 +65,7 @@ export class OpticHttpInteraction implements ApiTraffic {
       _interaction.request.method.toLowerCase() as OpenAPIV3.HttpMethods;
     this._path = _interaction.request.path;
     this._queryString = _interaction.request.query.asText || '';
-    this._requestBody = _interaction.request.body.contentType
+    this._requestBody = _interaction.request.body && _interaction.request.body.contentType
       ? {
           contentType: _interaction.request.body.contentType,
           jsonBodyString:
@@ -75,7 +75,7 @@ export class OpticHttpInteraction implements ApiTraffic {
     this._response = {
       statusCode: _interaction.response.statusCode.toString(),
       body: {
-        contentType: _interaction.response.body.contentType
+        contentType: _interaction.response.body && _interaction.response.body.contentType
           ? 'application/json'
           : undefined,
         jsonBodyString: _interaction.response.body.value.asJsonString
