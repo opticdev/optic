@@ -1,6 +1,6 @@
 import { SnykApiCheckDsl, SynkApiCheckContext } from './dsl';
 import { ApiCheckService, DslConstructorInput } from '@useoptic/api-checks';
-import spectralRuleset from './rulesets/spectral/ruleset';
+const { oas: oas } = require('@stoplight/spectral-rulesets');
 
 export function newSnykApiCheckService() {
   const snykRulesService = new ApiCheckService<SynkApiCheckContext>();
@@ -32,7 +32,17 @@ export function newSnykApiCheckService() {
     require('./rulesets/specification').rules
   );
 
-  snykRulesService.useSpectralRuleset(spectralRuleset);
+  snykRulesService.useSpectralRuleset({
+    extends: [[oas, 'all']],
+    rules: {
+      'openapi-tags': 'off',
+      'operation-tags': 'off',
+      'info-contact': 'off',
+      'info-description': 'off',
+      'info-license': 'off',
+      'license-url': 'off',
+    },
+  });
 
   return snykRulesService;
 }
