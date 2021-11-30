@@ -1,5 +1,17 @@
 import { SnykApiCheckDsl } from '../dsl';
 const { expect } = require('chai');
+
+function withinAttributes(context) {
+  // @ts-ignore
+  const { jsonSchemaTrail } = context;
+  // We don't want to check [data, attributes] so we return false for anything
+  // that isn't nested deeper.
+  if (jsonSchemaTrail.length < 3) return false;
+  if (!(jsonSchemaTrail[0] === 'data' && jsonSchemaTrail[1] === 'attributes'))
+    return false;
+  return true;
+}
+
 export const rules = {
   propertyKey: ({ bodyProperties }: SnykApiCheckDsl) => {
     bodyProperties.requirement.must('have camel case keys', ({ key }) => {
@@ -12,15 +24,7 @@ export const rules = {
       'have a format when a string',
       ({ flatSchema }, context) => {
         if (flatSchema.type !== 'string') return;
-        // @ts-ignore
-        const jsonSchemaTrail = context.jsonSchemaTrail;
-        if (jsonSchemaTrail.length < 3) return;
-        if (
-          !(
-            jsonSchemaTrail[0] === 'data' && jsonSchemaTrail[1] === 'attributes'
-          )
-        )
-          return;
+        if (!withinAttributes(context)) return;
         expect(flatSchema.format).to.exist;
       }
     );
@@ -43,15 +47,7 @@ export const rules = {
       'have enum or example',
       (property, context, docs, specItem) => {
         if (!('inResponse' in context)) return;
-        // @ts-ignore
-        const jsonSchemaTrail = context.jsonSchemaTrail;
-        if (jsonSchemaTrail.length < 3) return;
-        if (
-          !(
-            jsonSchemaTrail[0] === 'data' && jsonSchemaTrail[1] === 'attributes'
-          )
-        )
-          return;
+        if (!withinAttributes(context)) return;
         if (specItem.type === 'object' || specItem.type === 'boolean') return;
         expect('enum' in specItem || 'example' in specItem).to.be.true;
       }
