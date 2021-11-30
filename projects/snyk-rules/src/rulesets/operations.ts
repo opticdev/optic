@@ -27,11 +27,7 @@ export const rules = {
   tags: ({ operations }: SnykApiCheckDsl) => {
     operations.requirement.must("have tags", (operation) => {
       expect(operation.tags).to.exist;
-      expect(operation.tags).to.have.lengthOf.above(0, "with examples");
-      for (const tag of operation.tags || []) {
-        expect(tag).to.have.property("name");
-        expect(tag).to.have.property("description");
-      }
+      expect(operation.tags).to.have.lengthOf.above(0, "with at least one tag");
     });
   },
   summary: ({ operations }: SnykApiCheckDsl) => {
