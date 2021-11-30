@@ -58,8 +58,8 @@ export const rules = {
       (spec) => {
         const tags = spec.tags || [];
         for (const tag of tags) {
-          expect(tag).to.haveOwnProperty('name');
-          expect(tag).to.haveOwnProperty('description');
+          expect(tag).to.have.property('name');
+          expect(tag).to.have.property('description');
         }
       }
     );
