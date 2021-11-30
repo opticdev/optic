@@ -342,386 +342,6 @@ Object {
 }
 `;
 
-exports[`body properties example fails if doesn't exist 1`] = `
-Object {
-  "base": Object {
-    "info": Object {
-      "title": "Empty",
-      "version": "0.0.0",
-    },
-    "openapi": "3.0.1",
-    "paths": Object {
-      "/example": Object {
-        "get": Object {
-          "responses": Object {},
-        },
-      },
-    },
-  },
-  "changelog": Array [
-    Object {
-      "added": Object {
-        "contentType": "application/json",
-        "flatSchema": Object {
-          "type": "object",
-        },
-      },
-      "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "method": "get",
-          "path": "/example",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/example",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-        ],
-        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json",
-        "kind": "body",
-      },
-    },
-    Object {
-      "added": Object {
-        "flatSchema": Object {
-          "type": "string",
-        },
-        "key": "name",
-        "required": false,
-      },
-      "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": Array [
-            "name",
-          ],
-          "method": "get",
-          "path": "/example",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/example",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "name",
-        ],
-        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/name",
-        "kind": "field",
-      },
-    },
-    Object {
-      "added": Object {
-        "description": "",
-        "statusCode": 200,
-      },
-      "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "statusCode": "200",
-          },
-          "method": "get",
-          "path": "/example",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/example",
-          "get",
-          "responses",
-          "200",
-        ],
-        "jsonPath": "/paths/~1example/get/responses/200",
-        "kind": "response",
-      },
-    },
-  ],
-  "next": Object {
-    "info": Object {
-      "title": "Empty",
-      "version": "0.0.0",
-    },
-    "openapi": "3.0.1",
-    "paths": Object {
-      "/example": Object {
-        "get": Object {
-          "responses": Object {
-            "200": Object {
-              "content": Object {
-                "application/json": Object {
-                  "schema": Object {
-                    "properties": Object {
-                      "name": Object {
-                        "type": "string",
-                      },
-                    },
-                    "type": "object",
-                  },
-                },
-              },
-              "description": "",
-            },
-          },
-        },
-      },
-    },
-  },
-  "results": Array [
-    Object {
-      "change": Object {
-        "location": Object {
-          "conceptualLocation": Object {
-            "inResponse": Object {
-              "body": Object {
-                "contentType": "application/json",
-              },
-              "statusCode": "200",
-            },
-            "jsonSchemaTrail": Array [
-              "name",
-            ],
-            "method": "get",
-            "path": "/example",
-          },
-          "conceptualPath": Array [
-            "operations",
-            "/example",
-            "get",
-            "responses",
-            "200",
-            "application/json",
-            "name",
-          ],
-          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/name",
-          "kind": "field",
-        },
-        "value": Object {
-          "flatSchema": Object {
-            "type": "string",
-          },
-          "key": "name",
-          "required": false,
-        },
-      },
-      "condition": "have an example",
-      "docsLink": undefined,
-      "error": "expected undefined to exist",
-      "isMust": true,
-      "isShould": false,
-      "passed": false,
-      "where": "requirement for field: name",
-    },
-  ],
-}
-`;
-
-exports[`body properties example passes if exists 1`] = `
-Object {
-  "base": Object {
-    "info": Object {
-      "title": "Empty",
-      "version": "0.0.0",
-    },
-    "openapi": "3.0.1",
-    "paths": Object {
-      "/example": Object {
-        "get": Object {
-          "responses": Object {},
-        },
-      },
-    },
-  },
-  "changelog": Array [
-    Object {
-      "added": Object {
-        "contentType": "application/json",
-        "flatSchema": Object {
-          "type": "object",
-        },
-      },
-      "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "method": "get",
-          "path": "/example",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/example",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-        ],
-        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json",
-        "kind": "body",
-      },
-    },
-    Object {
-      "added": Object {
-        "flatSchema": Object {
-          "example": "Jane Doe",
-          "type": "string",
-        },
-        "key": "name",
-        "required": false,
-      },
-      "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": Array [
-            "name",
-          ],
-          "method": "get",
-          "path": "/example",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/example",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "name",
-        ],
-        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/name",
-        "kind": "field",
-      },
-    },
-    Object {
-      "added": Object {
-        "description": "",
-        "statusCode": 200,
-      },
-      "changeType": "added",
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "statusCode": "200",
-          },
-          "method": "get",
-          "path": "/example",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/example",
-          "get",
-          "responses",
-          "200",
-        ],
-        "jsonPath": "/paths/~1example/get/responses/200",
-        "kind": "response",
-      },
-    },
-  ],
-  "next": Object {
-    "info": Object {
-      "title": "Empty",
-      "version": "0.0.0",
-    },
-    "openapi": "3.0.1",
-    "paths": Object {
-      "/example": Object {
-        "get": Object {
-          "responses": Object {
-            "200": Object {
-              "content": Object {
-                "application/json": Object {
-                  "schema": Object {
-                    "properties": Object {
-                      "name": Object {
-                        "example": "Jane Doe",
-                        "type": "string",
-                      },
-                    },
-                    "type": "object",
-                  },
-                },
-              },
-              "description": "",
-            },
-          },
-        },
-      },
-    },
-  },
-  "results": Array [
-    Object {
-      "change": Object {
-        "location": Object {
-          "conceptualLocation": Object {
-            "inResponse": Object {
-              "body": Object {
-                "contentType": "application/json",
-              },
-              "statusCode": "200",
-            },
-            "jsonSchemaTrail": Array [
-              "name",
-            ],
-            "method": "get",
-            "path": "/example",
-          },
-          "conceptualPath": Array [
-            "operations",
-            "/example",
-            "get",
-            "responses",
-            "200",
-            "application/json",
-            "name",
-          ],
-          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/name",
-          "kind": "field",
-        },
-        "value": Object {
-          "flatSchema": Object {
-            "example": "Jane Doe",
-            "type": "string",
-          },
-          "key": "name",
-          "required": false,
-        },
-      },
-      "condition": "have an example",
-      "docsLink": undefined,
-      "isMust": true,
-      "isShould": false,
-      "passed": true,
-      "where": "requirement for field: name",
-    },
-  ],
-}
-`;
-
 exports[`body properties format fails if format doesn't exist 1`] = `
 Object {
   "base": Object {
@@ -773,6 +393,80 @@ Object {
     Object {
       "added": Object {
         "flatSchema": Object {
+          "type": "object",
+        },
+        "key": "data",
+        "required": false,
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": Array [
+            "data",
+          ],
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "data",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/data",
+        "kind": "field",
+      },
+    },
+    Object {
+      "added": Object {
+        "flatSchema": Object {
+          "type": "object",
+        },
+        "key": "attributes",
+        "required": false,
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "jsonSchemaTrail": Array [
+            "data",
+            "attributes",
+          ],
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+          "data",
+          "attributes",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/data/properties/attributes",
+        "kind": "field",
+      },
+    },
+    Object {
+      "added": Object {
+        "flatSchema": Object {
           "type": "string",
         },
         "key": "name",
@@ -788,6 +482,8 @@ Object {
             "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
+            "data",
+            "attributes",
             "name",
           ],
           "method": "get",
@@ -800,9 +496,11 @@ Object {
           "responses",
           "200",
           "application/json",
+          "data",
+          "attributes",
           "name",
         ],
-        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/name",
+        "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/data/properties/attributes/properties/name",
         "kind": "field",
       },
     },
@@ -847,8 +545,18 @@ Object {
                 "application/json": Object {
                   "schema": Object {
                     "properties": Object {
-                      "name": Object {
-                        "type": "string",
+                      "data": Object {
+                        "properties": Object {
+                          "attributes": Object {
+                            "properties": Object {
+                              "name": Object {
+                                "type": "string",
+                              },
+                            },
+                            "type": "object",
+                          },
+                        },
+                        "type": "object",
                       },
                     },
                     "type": "object",
@@ -874,6 +582,96 @@ Object {
               "statusCode": "200",
             },
             "jsonSchemaTrail": Array [
+              "data",
+            ],
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "application/json",
+            "data",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/data",
+          "kind": "field",
+        },
+        "value": Object {
+          "flatSchema": Object {
+            "type": "object",
+          },
+          "key": "data",
+          "required": false,
+        },
+      },
+      "condition": "have a format when a string",
+      "docsLink": undefined,
+      "isMust": false,
+      "isShould": true,
+      "passed": true,
+      "where": "requirement for field: data",
+    },
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+              "statusCode": "200",
+            },
+            "jsonSchemaTrail": Array [
+              "data",
+              "attributes",
+            ],
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "application/json",
+            "data",
+            "attributes",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/data/properties/attributes",
+          "kind": "field",
+        },
+        "value": Object {
+          "flatSchema": Object {
+            "type": "object",
+          },
+          "key": "attributes",
+          "required": false,
+        },
+      },
+      "condition": "have a format when a string",
+      "docsLink": undefined,
+      "isMust": false,
+      "isShould": true,
+      "passed": true,
+      "where": "requirement for field: attributes",
+    },
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+              "statusCode": "200",
+            },
+            "jsonSchemaTrail": Array [
+              "data",
+              "attributes",
               "name",
             ],
             "method": "get",
@@ -886,9 +684,11 @@ Object {
             "responses",
             "200",
             "application/json",
+            "data",
+            "attributes",
             "name",
           ],
-          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/name",
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/data/properties/attributes/properties/name",
           "kind": "field",
         },
         "value": Object {

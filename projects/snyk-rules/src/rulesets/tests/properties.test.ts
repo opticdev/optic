@@ -107,60 +107,6 @@ describe("body properties", () => {
     });
   });
 
-  describe("example", () => {
-    it("passes if exists", async () => {
-      const result = await compare(baseOpenAPI)
-        .to((spec) => {
-          spec.paths!["/example"]!.get!.responses = {
-            "200": {
-              description: "",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      name: { type: "string", example: "Jane Doe" },
-                    },
-                  },
-                },
-              },
-            },
-          };
-          return spec;
-        })
-        .withRule(rules.propertyExample, emptyContext);
-
-      expect(result.results[0].passed).toBeTruthy();
-      expect(result).toMatchSnapshot();
-    });
-
-    it("fails if doesn't exist", async () => {
-      const result = await compare(baseOpenAPI)
-        .to((spec) => {
-          spec.paths!["/example"]!.get!.responses = {
-            "200": {
-              description: "",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      name: { type: "string" },
-                    },
-                  },
-                },
-              },
-            },
-          };
-          return spec;
-        })
-        .withRule(rules.propertyExample, emptyContext);
-
-      expect(result.results[0].passed).toBeFalsy();
-      expect(result).toMatchSnapshot();
-    });
-  });
-
   describe("format", () => {
     it("fails if format doesn't exist", async () => {
       const result = await compare(baseOpenAPI)
@@ -173,7 +119,17 @@ describe("body properties", () => {
                   schema: {
                     type: "object",
                     properties: {
-                      name: { type: "string" },
+                      data: {
+                        type: "object",
+                        properties: {
+                          attributes: {
+                            type: "object",
+                            properties: {
+                              name: {type: "string"}
+                            }
+                          }
+                        }
+                      },
                     },
                   },
                 },
@@ -184,8 +140,11 @@ describe("body properties", () => {
         })
         .withRule(rules.propertyFormat, emptyContext);
 
-      expect(result.results[0].passed).toBeFalsy();
-      expect(result.results[0].isShould).toBeTruthy();
+      // This is because there are several checks since there are layers of properties
+      // Both data and attributes will be checked before name
+      const ruleResult = result.results[2];
+      expect(ruleResult.passed).toBeFalsy();
+      expect(ruleResult.isShould).toBeTruthy();
       expect(result).toMatchSnapshot();
     });
 

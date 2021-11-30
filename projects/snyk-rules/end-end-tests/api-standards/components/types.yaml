@@ -1,3 +1,4 @@
 Types:
   type: string
+  example: "sometype"
   # TODO: enum, generated from all known resources
