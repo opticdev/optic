@@ -1,5 +1,5 @@
-const { oas: oas } = require("@stoplight/spectral-rulesets");
-const equals = _interopDefault(require("./functions/equals"));
+const { oas: oas } = require('@stoplight/spectral-rulesets');
+const equals = _interopDefault(require('./functions/equals'));
 const {
   truthy: truthy,
   enumeration: enumeration,
@@ -8,15 +8,15 @@ const {
   schema: schema,
   falsy: falsy,
   casing: casing,
-} = require("@stoplight/spectral-functions");
+} = require('@stoplight/spectral-functions');
 const assertObjectPath = _interopDefault(
-  require("./functions/assertObjectPath")
+  require('./functions/assertObjectPath')
 );
-const contains = _interopDefault(require("./functions/contains"));
-const notContains = _interopDefault(require("./functions/notContains"));
-const pathCasing = _interopDefault(require("./functions/pathCasing"));
+const contains = _interopDefault(require('./functions/contains'));
+const notContains = _interopDefault(require('./functions/notContains'));
+const pathCasing = _interopDefault(require('./functions/pathCasing'));
 const arrayObjectPattern = _interopDefault(
-  require("./functions/arrayObjectPattern")
+  require('./functions/arrayObjectPattern')
 );
 // prettier-ignore
 export default {
@@ -732,18 +732,18 @@ export default {
     //     }
     //   }]
     // },
-    // "apinext-tags-name-description": {
-    //   "description": "Tags must have a name and description",
-    //   "severity": "error",
-    //   "given": "$.tags[*]",
-    //   "then": [{
-    //     "field": "name",
-    //     "function": truthy
-    //   }, {
-    //     "field": "description",
-    //     "function": truthy
-    //   }]
-    // },
+    "apinext-tags-name-description": {
+      "description": "Tags must have a name and description",
+      "severity": "error",
+      "given": "$.tags[*]",
+      "then": [{
+        "field": "name",
+        "function": truthy
+      }, {
+        "field": "description",
+        "function": truthy
+      }]
+    },
     // "apinext-operation-summary": {
     //   "description": "Path operations must include a summary",
     //   "severity": "error",
@@ -765,5 +765,5 @@ export default {
   }
 };
 function _interopDefault(ex) {
-  return ex && typeof ex === "object" && "default" in ex ? ex["default"] : ex;
+  return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
 }
