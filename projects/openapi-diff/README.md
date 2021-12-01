@@ -11,7 +11,7 @@ traffic:
 docker run -it -e SNIFF_PORT=80 -e SNIFF_INTERFACE=any \
   --network=container:4dd7916f077e \
   --mount type=bind,source=`pwd`,target=/out \
-  useoptic/baseline:latest
+  public.ecr.aws/optic/baseline:latest
 ```
 
 where --network=container:4dd7916f077e uses the container ID from docker ps of
@@ -107,7 +107,34 @@ Alternatively, you can use ts-node to more simply invoke the code:
 sudo ts-node src/cli/index.ts baseline openapi.yaml --sniff-port 3001 --sniff-interface lo0
 ```
 
+## Building the container image
+
+Run `task openapi-diff:docker:build` to build a container. It will locally build to 
+
 ## Tests
+
+### Manual Test
+
+To test against a development build or to check that things are working as
+expected, use the `httpbin` container image as an echo server and run the
+baseline container.
+
+```
+$ docker run -d  -p 127.0.0.1:8000:80 kennethreitz/httpbin
+5ffd48c7f1549aba47314f149be392510ed8dbba833d138ee20cc9a75b24dc50
+
+$ docker ps
+CONTAINER ID   IMAGE                  COMMAND                  CREATED         STATUS         PORTS                    NAMES
+5ffd48c7f154   kennethreitz/httpbin   "gunicorn -b 0.0.0.0…"   4 seconds ago   Up 3 seconds   127.0.0.1:8000->80/tcp   strange_curie
+
+ docker run -it -e SNIFF_PORT=80  --network=container:5ffd48c7f154 --mount type=bind,source=`pwd`,target=/out public.ecr.aws/optic/baseline:latest public.ecr.aws/optic/baseline
+↪ reading specification from out/optic.openapi.yaml
+   Diff   GET /get                                                                             200 response
+```
+You will see the `Diff GET` line if you issue a request with `curl 127.0.0.1:8000/get`. An `optic.openapi.yaml` is created in the local directory.
+
+
+### Automated Tests
 
 Coming Soon! You can run the (failing) tests with
 
@@ -116,3 +143,25 @@ sudo yarn dev:test
 ```
 
 Root is required for sniffing.
+
+
+## Release Process
+
+This is manual for now.
+
+The docker image relies on the public `@useoptic/openapi-diff` npm package. This needs to be released first.
+
+### npm package
+
+Manually run the release job at https://github.com/opticdev/poc-governance-tools/actions/workflows/release.yaml
+
+### Docker Build & Push
+
+Use the task commands to build the docker image and push it with the current
+version of the npm package.
+
+```
+PUBLIC_TAG=$(npm view @useoptic/openapi-diff version) task openapi-diff:docker:build openapi-diff:docker:push:public
+```
+
+Note: You will need to be authenticated into the optic account to push to the optic container registry.
