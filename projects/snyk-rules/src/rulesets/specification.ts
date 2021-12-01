@@ -42,7 +42,10 @@ export const rules = {
       const tenantUrls = Object.keys(spec.paths).filter(
         (url) => url === '/orgs/{org_id}' || url === '/groups/{group_id}'
       );
-      expect(tenantUrls).to.have.lengthOf.at.least(0);
+      expect(
+        tenantUrls,
+        `expected support for org or group tenant`
+      ).to.have.lengthOf.gt(0);
     });
   },
   tags: ({ specification }: SnykApiCheckDsl) => {

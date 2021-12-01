@@ -1,7 +1,6 @@
 import { SnykApiCheckDsl } from '../dsl';
 import { camelCase, snakeCase } from 'change-case';
 import { OpenAPIV3 } from '@useoptic/api-checks';
-import pathCasing from './spectral/functions/pathCasing';
 import { expect } from 'chai';
 
 const prefixRegex = /^(get|create|list|update|delete)[A-Z]+.*/; // alternatively we could split at camelCase boundaries and assert on the first item
@@ -105,18 +104,18 @@ export const rules = {
     );
   },
   pathElementsCasing: ({ specification }: SnykApiCheckDsl) => {
-    // operations.requirement.must(
-    //   'use the right casing for path elements',
-    //   (operation, context) => {
-    //     expect(pathCasing(context.path, null, null)).to.be.true;
-    //   }
-    // );
     specification.requirement.must(
       'use the right casing for path elements',
       (spec) => {
         const pathUrls = Object.keys(spec.paths);
         for (const pathUrl of pathUrls) {
-          expect(pathCasing(pathUrl, null, null)).to.be.true;
+          const parts = pathUrl.replace(/[?].*/, '').split(/[/]/);
+          const invalid = parts
+            // Filter out empty string (leading path) and params (different rule)
+            .filter((part) => part.length > 0 && !part.match(/^[{].*[}]/))
+            .filter((part) => snakeCase(part) !== part);
+          expect(invalid, `expected ${pathUrl} to support correct casing`).to.be
+            .empty;
         }
       }
     );
