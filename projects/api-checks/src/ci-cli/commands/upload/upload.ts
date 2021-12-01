@@ -3,6 +3,7 @@ import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 import { readAndValidateGithubContext } from './context-parsers';
 import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
 import { loadFile, uploadFileToS3 } from './utils';
+import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 
 export const registerUpload = (
   cli: Command,
@@ -16,32 +17,37 @@ export const registerUpload = (
     .requiredOption('--context <context>', 'file with github context')
     .requiredOption('--rules <rules>', 'path to rules output')
     .action(
-      async (runArgs: {
-        from?: string;
-        to: string;
-        context: string;
-        rules: string;
-      }) => {
-        if (!opticToken) {
-          console.error('Upload token was not included');
-          return process.exit(1);
-        }
+      wrapActionHandlerWithSentry(
+        async (runArgs: {
+          from?: string;
+          to: string;
+          context: string;
+          rules: string;
+        }) => {
+          if (!opticToken) {
+            console.error('Upload token was not included');
+            return process.exit(1);
+          }
 
-        const backendWebBase =
-          process.env.OPTIC_ENV === 'staging'
-            ? 'https://api.o3c.info'
-            : 'https://api.useoptic.com';
+          const backendWebBase =
+            // TODO centralize this optic env configuration
+            process.env.OPTIC_ENV === 'staging'
+              ? 'https://api.o3c.info'
+              : 'https://api.useoptic.com';
 
-        const opticClient = new OpticBackendClient(backendWebBase, () =>
-          Promise.resolve(opticToken)
-        );
-        try {
-          await uploadCiRun(opticClient, runArgs);
-        } catch (e) {
-          console.error(e);
-          return process.exit(1);
+          const opticClient = new OpticBackendClient(backendWebBase, () =>
+            Promise.resolve(opticToken)
+          );
+          try {
+            await uploadCiRun(opticClient, runArgs);
+          } catch (e) {
+            console.error(e);
+            SentryClient && SentryClient.captureException(e);
+            await (new Promise(resolve => setTimeout(resolve, 1000)))
+            return process.exit(1);
+          }
         }
-      }
+      )
     );
 };
 
