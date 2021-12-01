@@ -152,3 +152,35 @@ test('uploading a file with only partial slots open', async () => {
   expect(mockMarkUploadAsComplete.mock.calls.length).toBe(returnedSlots.length);
   expect(mockGetSession.mock.calls.length).toBe(1);
 });
+
+test('uploads files where from is not specified', async () => {
+  const numberOfFiles = Object.values(UploadSlot).length;
+
+  mockGetUploadUrls.mockImplementation(async () => {
+    return Object.values(UploadSlot).map((uploadSlot) => ({
+      id: uuidv4(),
+      slot: uploadSlot,
+      url: `/url/${uploadSlot}`,
+    }));
+  });
+
+  await uploadCiRun(mockOpticClient, {
+    to: UploadSlot.ToFile,
+    context: UploadSlot.GithubActionsEvent,
+    rules: UploadSlot.CheckResults,
+  });
+
+  expect(mockedLoadFile.mock.calls.length).toBe(numberOfFiles - 1);
+  expect(mockedStartSession.mock.calls.length).toBe(1);
+  expect(mockedUploadFileToS3.mock.calls.length).toBe(numberOfFiles);
+  for (const uploadSlot of [UploadSlot.ToFile, UploadSlot.GithubActionsEvent, UploadSlot.CheckResults]) {
+    const matchingFnCall = mockedUploadFileToS3.mock.calls.find(
+      (call) => call[0] === `/url/${uploadSlot}`
+    )!;
+    expect(matchingFnCall[1].toString()).toEqual(
+      fileBufferMap[uploadSlot].toString()
+    );
+  }
+  expect(mockMarkUploadAsComplete.mock.calls.length).toBe(numberOfFiles);
+  expect(mockGetSession.mock.calls.length).toBe(1);
+});

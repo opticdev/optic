@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 import { readAndValidateGithubContext } from './context-parsers';
 import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
 import { loadFile, uploadFileToS3 } from './utils';
@@ -10,13 +11,13 @@ export const registerUpload = (
   cli
     .command('upload')
     // TODO allow upload without from file (as an initial step)
-    .requiredOption('--from <from>', 'from file or rev:file')
+    .option('--from <from>', 'from file or rev:file')
     .requiredOption('--to <to>', 'to file or rev:file')
     .requiredOption('--context <context>', 'file with github context')
     .requiredOption('--rules <rules>', 'path to rules output')
     .action(
       async (runArgs: {
-        from: string;
+        from?: string;
         to: string;
         context: string;
         rules: string;
@@ -47,7 +48,7 @@ export const registerUpload = (
 export const uploadCiRun = async (
   opticClient: OpticBackendClient,
   runArgs: {
-    from: string;
+    from?: string;
     to: string;
     context: string;
     rules: string;
@@ -62,7 +63,9 @@ export const uploadCiRun = async (
     rulesFileS3Buffer,
   ] = await Promise.all([
     loadFile(runArgs.context),
-    loadFile(runArgs.from),
+    runArgs.from
+      ? loadFile(runArgs.from)
+      : Promise.resolve(Buffer.from(JSON.stringify(defaultEmptySpec))),
     loadFile(runArgs.to),
     loadFile(runArgs.rules),
   ]);
