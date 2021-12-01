@@ -166,24 +166,28 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
     > = {
       must: (statement, handler) => {
         const docsHelper = newDocsLinkHelper();
-        return runCheck(
-          change,
-          docsHelper,
-          'this specification: ',
-          statement,
-          true,
-          () => handler(this.providedContext, docsHelper)
+        this.checks.push(
+          runCheck(
+            change,
+            docsHelper,
+            'this specification: ',
+            statement,
+            true,
+            () => handler(this.providedContext, docsHelper)
+          )
         );
       },
       should: (statement, handler) => {
         const docsHelper = newDocsLinkHelper();
-        return runCheck(
-          change,
-          docsHelper,
-          'this specification: ',
-          statement,
-          false,
-          () => handler(this.providedContext, docsHelper)
+        this.checks.push(
+          runCheck(
+            change,
+            docsHelper,
+            'this specification: ',
+            statement,
+            false,
+            () => handler(this.providedContext, docsHelper)
+          )
         );
       },
     };
@@ -210,24 +214,28 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
     > = {
       must: (statement, handler) => {
         const docsHelper = newDocsLinkHelper();
-        return runCheck(
-          change,
-          docsHelper,
-          'this specification: ',
-          statement,
-          true,
-          () => handler(this.nextJsonLike, this.providedContext, docsHelper)
+        this.checks.push(
+          runCheck(
+            change,
+            docsHelper,
+            'this specification: ',
+            statement,
+            true,
+            () => handler(this.nextJsonLike, this.providedContext, docsHelper)
+          )
         );
       },
       should: (statement, handler) => {
         const docsHelper = newDocsLinkHelper();
-        return runCheck(
-          change,
-          docsHelper,
-          'this specification: ',
-          statement,
-          false,
-          () => handler(this.nextJsonLike, this.providedContext, docsHelper)
+        this.checks.push(
+          runCheck(
+            change,
+            docsHelper,
+            'this specification: ',
+            statement,
+            false,
+            () => handler(this.nextJsonLike, this.providedContext, docsHelper)
+          )
         );
       },
     };
