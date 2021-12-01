@@ -1,0 +1,8 @@
+---
+type: object
+properties:
+  meta:
+    type: object
+required:
+  - meta
+additionalProperties: false
