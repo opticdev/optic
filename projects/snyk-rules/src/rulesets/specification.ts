@@ -3,13 +3,11 @@ import { expect } from 'chai';
 import { pascalCase } from 'change-case';
 
 export const rules = {
-  pascalCaseNames: ({ specification }: SnykApiCheckDsl) => {
+  componentNameCase: ({ specification }: SnykApiCheckDsl) => {
     specification.requirement.must(
       'use pascal case for component names',
       (spec) => {
-        const componentTypes = Object.keys(spec.components || {}).filter(
-          (componentType) => componentType !== 'responses'
-        );
+        const componentTypes = Object.keys(spec.components || {});
         for (const componentType of componentTypes) {
           const componentNames = Object.keys(
             spec.components?.[componentType] || {}
@@ -17,11 +15,6 @@ export const rules = {
           for (const componentName of componentNames) {
             expect(pascalCase(componentName)).to.equal(componentName);
           }
-        }
-        for (const responseName of Object.keys(
-          spec.components?.responses || {}
-        )) {
-          expect(pascalCase(responseName)).to.equal(responseName);
         }
       }
     );

@@ -1,5 +1,4 @@
 import { SnykApiCheckDsl } from '../dsl';
-const { expect } = require('chai');
 
 export const rules = {
   example: ({ checkApiContext, responses }: SnykApiCheckDsl) => {
@@ -8,7 +7,7 @@ export const rules = {
       (context, docs) => {
         docs.includeDocsLink('https://how.we.version/rule');
         context.changeVersion.date;
-      },
+      }
     );
   },
 };

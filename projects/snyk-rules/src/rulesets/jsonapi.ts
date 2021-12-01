@@ -1,10 +1,10 @@
-import * as fs from "fs";
-import * as path from "path";
-import YAML from "js-yaml";
-import { SnykApiCheckDsl } from "../dsl";
-import { OpenAPIV3 } from "openapi-types";
-import Ajv from "ajv";
-import { expect } from "chai";
+import * as fs from 'fs';
+import * as path from 'path';
+import YAML from 'js-yaml';
+import { SnykApiCheckDsl } from '../dsl';
+import { OpenAPIV3 } from 'openapi-types';
+import Ajv from 'ajv';
+import { expect } from 'chai';
 
 const ajv = new Ajv();
 
@@ -21,14 +21,14 @@ function isOpenApiPath(path) {
 }
 
 function loadSchemaFromFile(filename) {
-  const fullFilename = path.join(__dirname, "..", "..", "schemas", filename);
-  return YAML.load(fs.readFileSync(fullFilename, "utf-8"));
+  const fullFilename = path.join(__dirname, '..', '..', 'schemas', filename);
+  return YAML.load(fs.readFileSync(fullFilename, 'utf-8'));
 }
 
 export const rules = {
   statusCodes: ({ operations }: SnykApiCheckDsl) => {
     operations.requirement.must(
-      "support the correct status codes",
+      'support the correct status codes',
       (operation, context, docs, specItem) => {
         if (isOpenApiPath(context.path)) return;
 
@@ -37,15 +37,15 @@ export const rules = {
 
         // Ensure only supported 4xx are used
         const allowed4xxStatusCodes = [
-          "400",
-          "401",
-          "403",
-          "404",
-          "409",
-          "429",
+          '400',
+          '401',
+          '403',
+          '404',
+          '409',
+          '429',
         ];
         const statusCodes4xx = statusCodes.filter((statusCode) =>
-          statusCode.startsWith("4")
+          statusCode.startsWith('4')
         );
         for (const statusCode4xx of statusCodes4xx) {
           expect(
@@ -55,26 +55,26 @@ export const rules = {
         }
 
         // Ensure delete supports correct 2xx status codes
-        if (operation.method === "delete") {
+        if (operation.method === 'delete') {
           const statusCodes2xx = statusCodes.filter((statusCode) =>
-            statusCode.startsWith("2")
+            statusCode.startsWith('2')
           );
           for (const statusCode2xx of statusCodes2xx) {
             expect(
-              ["200", "204"],
+              ['200', '204'],
               `expected ${operationName} to not support ${statusCode2xx}`
             ).to.include(statusCode2xx);
           }
         }
 
         // Ensure delete supports correct 2xx status codes
-        if (operation.method === "post") {
+        if (operation.method === 'post') {
           const statusCodes2xx = statusCodes.filter((statusCode) =>
-            statusCode.startsWith("2")
+            statusCode.startsWith('2')
           );
           for (const statusCode2xx of statusCodes2xx) {
             expect(
-              ["201"],
+              ['201'],
               `expected ${operationName} to not support ${statusCode2xx}`
             ).to.include(statusCode2xx);
           }
@@ -84,9 +84,9 @@ export const rules = {
   },
   contentType: ({ responses }: SnykApiCheckDsl) => {
     responses.requirement.must(
-      "use the JSON:API content type",
+      'use the JSON:API content type',
       (response, context, docs, specItem) => {
-        if (isOpenApiPath(context.path) && response.statusCode === 204) return;
+        if (isOpenApiPath(context.path) || response.statusCode === 204) return;
         const contentTypes = Object.keys(specItem.content);
         expect(
           contentTypes,
@@ -94,29 +94,29 @@ export const rules = {
             response,
             context
           )} to support application/vnd.api+json`
-        ).to.include("application/vnd.api+json");
+        ).to.include('application/vnd.api+json');
       }
     );
   },
   responseData: ({ responses }: SnykApiCheckDsl) => {
     responses.requirement.must(
-      "use the correct JSON:API response data",
+      'use the correct JSON:API response data',
       (response, context, docs, specItem) => {
         if (isOpenApiPath(context.path)) return;
 
         const responseName = getResponseName(response, context);
 
         // Patch response requires schema
-        if (context.method === "patch" && response.statusCode === 200) {
+        if (context.method === 'patch' && response.statusCode === 200) {
           expect(
-            specItem.content["application/vnd.api+json"]?.schema?.properties,
+            specItem.content['application/vnd.api+json']?.schema?.properties,
             `expected ${responseName} to have a schema`
           ).to.exist;
         }
 
         // Empty patch 204 content
         if (
-          ["delete", "patch"].includes(context.method) &&
+          ['delete', 'patch'].includes(context.method) &&
           response.statusCode === 204
         ) {
           expect(
@@ -133,11 +133,11 @@ export const rules = {
 
         // JSON:API data property
         if (
-          ["get", "post"].includes(context.method) &&
+          ['get', 'post'].includes(context.method) &&
           [200, 201].includes(response.statusCode)
         ) {
           expect(
-            specItem.content["application/vnd.api+json"]?.schema?.properties
+            specItem.content['application/vnd.api+json']?.schema?.properties
               ?.data?.type,
             `expected ${responseName} to have data property`
           ).to.exist;
@@ -145,26 +145,26 @@ export const rules = {
 
         // JSON:API jsonapi property
         if (
-          !["patch", "delete"].includes(context.method) &&
+          !['patch', 'delete'].includes(context.method) &&
           [200, 201].includes(response.statusCode)
         ) {
           expect(
-            specItem.content["application/vnd.api+json"]?.schema?.properties
+            specItem.content['application/vnd.api+json']?.schema?.properties
               ?.jsonapi?.type?.data?.type,
             `expected ${responseName} to have a JSON:API property`
           ).to.exist;
         }
 
         // Success post responses
-        if (context.method === "post" && response.statusCode === 201) {
+        if (context.method === 'post' && response.statusCode === 201) {
           // Location header
           expect(
             specItem.headers,
             `expected ${responseName} to have a location header`
-          ).to.have.property("location");
+          ).to.have.property('location');
           // Self link
           expect(
-            specItem.content["application/vnd.api+json"]?.schema?.properties
+            specItem.content['application/vnd.api+json']?.schema?.properties
               ?.data?.properties?.links?.properties?.self,
             `expected ${responseName} to have a self link`
           ).to.exist;
@@ -174,22 +174,20 @@ export const rules = {
   },
   selfLinks: ({ responses }: SnykApiCheckDsl) => {
     responses.requirement.must(
-      "include self links",
+      'include self links',
       (response, context, docs, specItem) => {
         if (isOpenApiPath(context.path)) return;
 
-        const responseName = getResponseName(response, context);
-
         // Top-level self links
         if (
-          (["get", "patch"].includes(context.method) &&
+          (['get', 'patch'].includes(context.method) &&
             response.statusCode === 200) ||
-          (context.method === "post" && response.statusCode === 200)
+          (context.method === 'post' && response.statusCode === 201)
         ) {
           expect(
-            specItem.content["application/vnd.api+json"]?.schema?.properties
+            specItem.content['application/vnd.api+json']?.schema?.properties
               ?.links?.properties?.self,
-            `expected ${responseName} to have a self link`
+            `expected ${getResponseName(response, context)} to have a self link`
           ).to.exist;
         }
       }
@@ -197,24 +195,24 @@ export const rules = {
   },
   pagination: ({ operations }: SnykApiCheckDsl) => {
     operations.requirement.must(
-      "correctly support pagination",
+      'correctly support pagination',
       (operation, context, docs, specItem) => {
         if (isOpenApiPath(context.path)) return;
 
         const operationName = getOperationName(operation);
 
         const paginationParameters = [
-          "starting_after",
-          "ending_before",
-          "limit",
+          'starting_after',
+          'ending_before',
+          'limit',
         ];
         const parameterNames = (
           (specItem.parameters || []) as OpenAPIV3.ParameterObject[]
         ).map((parameter) => {
           return parameter.name;
         });
-        if (operation.pathPattern.match(/\{[a-z]*?_?id\}$/)) {
-          if (operation.method === "get") {
+        if (!operation.pathPattern.match(/\{[a-z]*?_?id\}$/)) {
+          if (operation.method === 'get') {
             // Require pagination parameters
             for (const paginationParameterName of paginationParameters) {
               expect(
@@ -223,20 +221,20 @@ export const rules = {
               ).to.include(paginationParameterName);
             }
             // Require pagination links
-            const response = specItem.responses["200"];
-            if (!("$ref" in response)) {
+            const response = specItem.responses['200'];
+            if (!('$ref' in response)) {
               const schema =
-                response.content?.["application/vnd.api+json"]?.schema || {};
-              if (!("$ref" in schema)) {
+                response.content?.['application/vnd.api+json']?.schema || {};
+              if (!('$ref' in schema)) {
                 expect(
-                  schema.properties?.link,
+                  schema.properties?.links,
                   `expected ${operationName} to have pagination links`
                 ).to.exist;
               }
             }
           }
         } else {
-          if (operation.method !== "get") {
+          if (operation.method !== 'get') {
             for (const paginationParameterName of paginationParameters) {
               expect(
                 parameterNames,
@@ -250,17 +248,17 @@ export const rules = {
   },
   compoundDocuments: ({ responses }: SnykApiCheckDsl) => {
     responses.requirement.must(
-      "not allow compound documents",
+      'not allow compound documents',
       (response, context, docs, specItem) => {
         if (isOpenApiPath(context.path)) return;
         if ([200, 201].includes(response.statusCode)) {
           expect(
-            specItem.content["application/vnd.api+json"]?.schema?.properties
+            specItem.content['application/vnd.api+json']?.schema?.properties
               ?.included,
             `expected ${getResponseName(
               response,
               context
-            )} to support compound documents`
+            )} to not support compound documents`
           ).to.not.exist;
         }
       }
@@ -268,18 +266,18 @@ export const rules = {
   },
   schemas: ({ responses }: SnykApiCheckDsl) => {
     responses.requirement.must(
-      "have valid JSON:API schemas",
+      'have valid JSON:API schemas',
       (response, context, docs, specItem) => {
         if (isOpenApiPath(context.path)) return;
 
         // Response data
         if (
-          ["get", "post"].includes(context.method) &&
+          ['get', 'post'].includes(context.method) &&
           [200, 201].includes(response.statusCode)
         ) {
           const responseSchema =
-            specItem.content?.["application/vnd.api+json"]?.schema;
-          const schema: any = loadSchemaFromFile("get-post-response-data.yaml");
+            specItem.content?.['application/vnd.api+json']?.schema;
+          const schema: any = loadSchemaFromFile('get-post-response-data.yaml');
           const validate = ajv.compile(schema);
           expect(
             validate(responseSchema),
@@ -291,10 +289,10 @@ export const rules = {
         }
 
         // Patch response data
-        if (context.method === "patch" && response.statusCode === 200) {
+        if (context.method === 'patch' && response.statusCode === 200) {
           const responseSchema =
-            specItem.content?.["application/vnd.api+json"]?.schema;
-          const schema: any = loadSchemaFromFile("patch-response-data.yaml");
+            specItem.content?.['application/vnd.api+json']?.schema;
+          const schema: any = loadSchemaFromFile('patch-response-data.yaml');
           const validate = ajv.compile(schema);
           expect(
             validate(responseSchema),
@@ -306,10 +304,10 @@ export const rules = {
         }
 
         // Delete response data
-        if (context.method === "delete" && response.statusCode === 200) {
+        if (context.method === 'delete' && response.statusCode === 200) {
           const responseSchema =
-            specItem.content?.["application/vnd.api+json"]?.schema;
-          const schema: any = loadSchemaFromFile("delete-response-data.yaml");
+            specItem.content?.['application/vnd.api+json']?.schema;
+          const schema: any = loadSchemaFromFile('delete-response-data.yaml');
           const validate = ajv.compile(schema);
           expect(
             validate(responseSchema),
@@ -322,10 +320,10 @@ export const rules = {
 
         // Relationships
         const relationships =
-          specItem.content?.["application/vnd.api+json"]?.schema?.properties
+          specItem.content?.['application/vnd.api+json']?.schema?.properties
             ?.data?.properties?.relationships;
         if (relationships) {
-          const schema: any = loadSchemaFromFile("relationship.yaml");
+          const schema: any = loadSchemaFromFile('relationship.yaml');
           const validate = ajv.compile(schema);
           expect(
             validate(relationships),

@@ -1,6 +1,7 @@
 import { SnykApiCheckDsl } from '../dsl';
-const { expect } = require('chai');
+import { expect } from 'chai';
 
+// TODO: make sure this works for data.items.properties.attributes and data.properties.attributes
 function withinAttributes(context) {
   // @ts-ignore
   const { jsonSchemaTrail } = context;
@@ -31,7 +32,7 @@ export const rules = {
   },
   preventRemoval: ({ bodyProperties }: SnykApiCheckDsl) => {
     bodyProperties.removed.must('not be removed', (property) => {
-      expect(false, `expected ${property.key} to be present`).to.be.ok;
+      expect.fail(`expected ${property.key} to be present`);
     });
   },
   preventAddingRequiredRequestProperties: ({

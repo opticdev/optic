@@ -1,16 +1,15 @@
-import { SnykApiCheckDsl } from "../dsl";
-import { camelCase, snakeCase } from "change-case";
-import { OpenAPIV3 } from "@useoptic/api-checks";
-import pathCasing from "./spectral/functions/pathCasing";
-
-const { expect } = require("chai");
+import { SnykApiCheckDsl } from '../dsl';
+import { camelCase, snakeCase } from 'change-case';
+import { OpenAPIV3 } from '@useoptic/api-checks';
+import pathCasing from './spectral/functions/pathCasing';
+import { expect } from 'chai';
 
 const prefixRegex = /^(get|create|list|update|delete)[A-Z]+.*/; // alternatively we could split at camelCase boundaries and assert on the first item
 
 export const rules = {
   operationId: ({ operations }: SnykApiCheckDsl) => {
     operations.requirement.must(
-      "have the correct operationId format",
+      'have the correct operationId format',
       (operation) => {
         expect(operation.operationId).to.be.ok;
         if (operation.operationId !== undefined) {
@@ -25,19 +24,19 @@ export const rules = {
     );
   },
   tags: ({ operations }: SnykApiCheckDsl) => {
-    operations.requirement.must("have tags", (operation) => {
+    operations.requirement.must('have tags', (operation) => {
       expect(operation.tags).to.exist;
-      expect(operation.tags).to.have.lengthOf.above(0, "with at least one tag");
+      expect(operation.tags).to.have.lengthOf.above(0, 'with at least one tag');
     });
   },
   summary: ({ operations }: SnykApiCheckDsl) => {
-    operations.requirement.must("have a summary", (operation) => {
+    operations.requirement.must('have a summary', (operation) => {
       expect(operation.summary).to.exist;
     });
   },
   removingOperationId: ({ operations }: SnykApiCheckDsl) => {
     operations.changed.must(
-      "have consistent operation IDs",
+      'have consistent operation IDs',
       (current, next) => {
         expect(current.operationId).to.equal(next.operationId);
       }
@@ -45,11 +44,11 @@ export const rules = {
   },
   parameterCase: ({ operations }: SnykApiCheckDsl) => {
     operations.requirement.must(
-      "use the correct case",
+      'use the correct case',
       (operation, context, docs, specItem) => {
         for (const p of specItem.parameters || []) {
           const parameter = p as OpenAPIV3.ParameterObject;
-          if (["path", "query"].includes(parameter.in)) {
+          if (['path', 'query'].includes(parameter.in)) {
             const normalized = snakeCase(parameter.name);
 
             expect(
@@ -62,61 +61,68 @@ export const rules = {
     );
   },
   preventRemovingOperation: ({ operations }: SnykApiCheckDsl) => {
-    operations.removed.must("not be allowed", (operation, context) => {
-      expect.fail("expected operation to be present");
+    operations.removed.must('not be allowed', (operation, context) => {
+      expect.fail('expected operation to be present');
     });
   },
   versionParameter: ({ operations }: SnykApiCheckDsl) => {
     operations.requirement.must(
-      "include a version parameter",
+      'include a version parameter',
       (operation, context, docs, specItem) => {
         const parameters = (specItem.parameters ||
           []) as OpenAPIV3.ParameterObject[];
         const parameterNames = parameters
-          .filter((parameter) => parameter.in === "query")
+          .filter((parameter) => parameter.in === 'query')
           .map((parameter) => {
             return parameter.name;
           });
-        expect(parameterNames).to.include("version");
+        expect(parameterNames).to.include('version');
       }
     );
   },
   tenantFormatting: ({ operations }: SnykApiCheckDsl) => {
     operations.requirement.must(
-      "use UUID for org_id or group_id",
+      'use UUID for org_id or group_id',
       (operation, context, docs, specItem) => {
         for (const parameter of specItem.parameters || []) {
-          if ("$ref" in parameter) continue;
-          if (parameter.name === "group_id" || parameter.name === "org_id") {
+          if ('$ref' in parameter) continue;
+          if (parameter.name === 'group_id' || parameter.name === 'org_id') {
             if (!parameter.schema) {
               expect.fail(
                 `expected operation ${operation.pathPattern} ${operation.method} parameter ${parameter.name} to have a schema`
               );
               continue;
             }
-            if (!("$ref" in parameter.schema)) {
+            if (!('$ref' in parameter.schema)) {
               expect(
                 parameter.schema.format,
-                `expected operation ${operation.pathPattern} ${operation.method} parameter ${parameter.name} to have a schema`
-              ).to.be("uuid");
+                `expected operation ${operation.pathPattern} ${operation.method} parameter ${parameter.name} to use format UUID`
+              ).to.equal('uuid');
             }
           }
         }
       }
     );
   },
-  // TODO: this currently will run for every operation which means a path element may be
-  // checked multiple times. This should be changed once paths are supported in the DSL.
-  pathElementsCasing: ({ operations }: SnykApiCheckDsl) => {
-    operations.requirement.must(
-      "use the right casing for path elements",
-      (operation, context) => {
-        expect(pathCasing(context.path, null, null)).to.be.true;
+  pathElementsCasing: ({ specification }: SnykApiCheckDsl) => {
+    // operations.requirement.must(
+    //   'use the right casing for path elements',
+    //   (operation, context) => {
+    //     expect(pathCasing(context.path, null, null)).to.be.true;
+    //   }
+    // );
+    specification.requirement.must(
+      'use the right casing for path elements',
+      (spec) => {
+        const pathUrls = Object.keys(spec.paths);
+        for (const pathUrl of pathUrls) {
+          expect(pathCasing(pathUrl, null, null)).to.be.true;
+        }
       }
     );
   },
   preventAddingRequiredQueryParameters: ({ request }: SnykApiCheckDsl) => {
-    request.queryParameter.added.must("not be required", (queryParameter) => {
+    request.queryParameter.added.must('not be required', (queryParameter) => {
       expect(queryParameter.required).to.not.be.true;
     });
   },
@@ -124,7 +130,7 @@ export const rules = {
     request,
   }: SnykApiCheckDsl) => {
     request.queryParameter.changed.must(
-      "not be optional then required",
+      'not be optional then required',
       (queryParameterBefore, queryParameterAfter) => {
         if (!queryParameterBefore.required) {
           expect(queryParameterAfter.required).to.not.be.true;
@@ -133,13 +139,13 @@ export const rules = {
     );
   },
   preventRemovingStatusCodes: ({ responses }: SnykApiCheckDsl) => {
-    responses.removed.must("not be removed", (response) => {
+    responses.removed.must('not be removed', (response) => {
       expect(false, `expected ${response.statusCode} to be present`).to.be.true;
     });
   },
   preventChangingParameterDefaultValue: ({ request }: SnykApiCheckDsl) => {
     request.queryParameter.changed.must(
-      "not change the default value",
+      'not change the default value',
       (parameterBefore, parameterAfter) => {
         let beforeSchema = (parameterBefore.schema ||
           {}) as OpenAPIV3.SchemaObject;
