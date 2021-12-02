@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { WatchEventType } from 'fs-extra';
 import sha256 from 'crypto-js/sha256';
 import Hex from 'crypto-js/enc-hex';
 import fsExtra from 'fs-extra';
@@ -17,7 +16,7 @@ export function watchDependencies(
 
   let called = false;
 
-  const onChangeEvent = async (watchType: WatchEventType, filename: string) => {
+  const onChangeEvent = async (watchType: string, filename: string) => {
     const resolvedFileName = path.resolve(filename);
     const fileContents = (await fsExtra.readFile(filename)).toString();
     const sha = Hex.stringify(sha256(fileContents));

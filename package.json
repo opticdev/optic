@@ -1,12 +1,13 @@
 {
-    "private": true,
-    "workspaces": [
-        "projects/json-pointer-helpers",
-        "projects/openapi-io",
-        "projects/openapi-utilities",
-        "projects/openapi-diff",
-        "projects/developer-ui",
-        "projects/api-checks",
-        "projects/snyk-rules"
-    ]
+  "name": "openapi-workspaces",
+  "private": true,
+  "workspaces": [
+    "projects/json-pointer-helpers",
+    "projects/openapi-io",
+    "projects/openapi-utilities",
+    "projects/openapi-diff",
+    "projects/developer-ui",
+    "projects/api-checks",
+    "projects/snyk-rules"
+  ]
 }
