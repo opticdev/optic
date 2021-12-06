@@ -31,6 +31,7 @@
     "@types/lodash.isequal": "^4.5.5",
     "@types/lodash.uniqwith": "^4.5.6",
     "@types/nice-try": "^2.1.0",
+    "@types/node": "^16.11.11",
     "@types/object-hash": "^2.2.1",
     "@types/uuid": "^8.3.1",
     "babel-jest": "26.6.0",
