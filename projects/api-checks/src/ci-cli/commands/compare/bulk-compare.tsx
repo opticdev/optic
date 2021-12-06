@@ -12,8 +12,8 @@ import { specFromInputToResults } from '../../input-helpers/load-spec';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { ResultWithSourcemap } from '../../../sdk/types';
 import { wrapActionHandlerWithSentry } from '../../sentry';
-import { loadFile } from '../upload/utils';
-import { generateSpecResults } from './utils';
+import { loadFile } from '../utils';
+import { generateSpecResults } from './generateSpecResults';
 
 export const registerBulkCompare = <T extends {}>(
   cli: Command,

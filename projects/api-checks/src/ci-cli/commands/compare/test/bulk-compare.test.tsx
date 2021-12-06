@@ -1,7 +1,7 @@
 import { parseCsvComparisonInput } from '../bulk-compare';
-import { loadFile } from '../../upload/utils';
+import { loadFile } from '../../utils';
 
-jest.mock('../../upload/utils');
+jest.mock('../../utils');
 const mockedLoadFile = loadFile as jest.MockedFunction<typeof loadFile>;
 
 describe('parseCsvComparisonInput', () => {

@@ -7,11 +7,11 @@ import {
   SessionStatus,
   UploadSlot,
 } from '../optic-client';
-import { loadFile, uploadFileToS3 } from '../utils';
+import { loadFile, uploadFileToS3 } from '../../utils';
 import { mockGhContext } from './mock-gh-context';
 
 jest.mock('../optic-client');
-jest.mock('../utils');
+jest.mock('../../utils');
 
 const MockedOpticBackendClient = OpticBackendClient as jest.MockedClass<
   typeof OpticBackendClient

@@ -7,6 +7,7 @@ const packageJson = require('../../package.json');
 import { render } from 'ink';
 import { ApiCheckService } from '../sdk/api-check-service';
 import { registerUpload } from './commands/upload';
+import { registerGithubComment } from './commands/comment';
 import { registerBulkCompare } from './commands/compare'
 import { initSentry, wrapActionHandlerWithSentry } from './sentry';
 
@@ -76,6 +77,7 @@ export function makeCiCli<T>(
 
   registerBulkCompare(cli, checkService);
   registerUpload(cli, { opticToken });
+  registerGithubComment(cli);
 
   return cli;
 }

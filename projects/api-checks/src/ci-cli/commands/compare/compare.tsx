@@ -6,7 +6,7 @@ import { AsyncState } from 'react-use/lib/useAsyncFn';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { SpecComparison } from './components';
 import { specFromInputToResults } from '../../input-helpers/load-spec';
-import { generateSpecResults } from './utils';
+import { generateSpecResults } from './generateSpecResults';
 
 export function Compare<T>(props: {
   from: SpecFromInput;

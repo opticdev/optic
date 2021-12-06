@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 import { readAndValidateGithubContext } from './context-parsers';
 import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
-import { loadFile, uploadFileToS3 } from './utils';
+import { loadFile, uploadFileToS3, writeFile } from '../utils';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 
 export const registerUpload = (
@@ -11,7 +11,6 @@ export const registerUpload = (
 ) => {
   cli
     .command('upload')
-    // TODO allow upload without from file (as an initial step)
     .option('--from <from>', 'from file or rev:file')
     .requiredOption('--to <to>', 'to file or rev:file')
     .requiredOption('--context <context>', 'file with github context')
@@ -43,7 +42,6 @@ export const registerUpload = (
           } catch (e) {
             console.error(e);
             SentryClient && SentryClient.captureException(e);
-            await (new Promise(resolve => setTimeout(resolve, 1000)))
             return process.exit(1);
           }
         }
@@ -139,7 +137,17 @@ export const uploadCiRun = async (
   }, Promise.resolve());
 
   const { web_url: opticWebUrl } = await opticClient.getSession(sessionId);
+  const uploadDataFilePath = 'upload-run.json'; // TODO maybe make this a cli argument?
+  const uploadFileLocation = writeFile(
+    uploadDataFilePath,
+    Buffer.from(
+      JSON.stringify({
+        opticWebUrl,
+      })
+    )
+  );
 
   console.log('Successfully uploaded files to Optic');
   console.log(`You can view the results of this run at: ${opticWebUrl}`);
+  console.log(`Results of this run can be found at ${uploadFileLocation}`);
 };
