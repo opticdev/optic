@@ -1,7 +1,6 @@
 import { Command, Option } from 'commander';
 import React, { FC, useEffect, useState } from 'react';
 import { Box, Text, useApp, useStderr, render, Newline, useStdout } from 'ink';
-import { parse } from 'csv-parse/sync';
 import { v4 as uuidv4 } from 'uuid';
 
 import { defaultEmptySpec } from '@useoptic/openapi-utilities';
@@ -23,9 +22,8 @@ export const registerBulkCompare = <T extends {}>(
     .command('bulk-compare')
     .requiredOption(
       '--input <input>',
-      'a csv with the from and to files, format: <from>,<to>'
+      'a csv with the from, to files, and context format: <from>,<to>,<jsonified context>'
     )
-    .option('--context <context>', 'json of context')
     .option('--verbose <verbose>', 'show all checks, even passing', false)
     .addOption(
       new Option(
@@ -37,12 +35,10 @@ export const registerBulkCompare = <T extends {}>(
       wrapActionHandlerWithSentry(
         async ({
           input,
-          context = {},
           verbose,
           output = 'pretty',
         }: {
           input: string;
-          context?: any;
           verbose: boolean;
           output?: 'pretty' | 'json' | 'plain';
         }) => {
@@ -63,7 +59,6 @@ export const registerBulkCompare = <T extends {}>(
             <BulkCompare
               checkService={checkService}
               input={input}
-              context={context}
               verbose={verbose}
               output={output}
             />,
@@ -79,6 +74,7 @@ type Comparison = {
   id: string;
   fromFileName: string;
   toFileName: string;
+  context: any;
 } & (
   | { loading: true }
   | { loading: false; error: true; errorDetails: any }
@@ -99,17 +95,15 @@ const compareSpecs = async ({
   comparisons,
   onComparisonComplete,
   onComparisonError,
-  context,
 }: {
   checkService: ApiCheckService<any>;
   comparisons: Map<string, Comparison>;
   onComparisonComplete: (id: string, results: ResultWithSourcemap[]) => void;
   onComparisonError: (id: string, error: any) => void;
-  context: any;
 }) => {
   const PARALLEL_REQUESTS = 4;
   const inflightRequests = new Map<string, Promise<string>>();
-  for (const [id, files] of comparisons.entries()) {
+  for (const [id, comparison] of comparisons.entries()) {
     if (inflightRequests.size >= PARALLEL_REQUESTS) {
       // await, then remove
       const resolvePromiseId = await Promise.race([
@@ -124,14 +118,15 @@ const compareSpecs = async ({
         async (resolve, reject) => {
           try {
             const [from, to] = await Promise.all([
-              loadSpecFile(files.fromFileName),
-              loadSpecFile(files.toFileName),
+              loadSpecFile(comparison.fromFileName),
+              loadSpecFile(comparison.toFileName),
             ]);
+
             const results = await generateSpecResults(
               checkService,
               from,
               to,
-              context
+              comparison.context
             );
             resolve({
               id,
@@ -161,32 +156,29 @@ const compareSpecs = async ({
   await Promise.all([...inflightRequests.values()]);
 };
 
-export const parseCsvComparisonInput = async (
+export const parseJsonComparisonInput = async (
   input: string
 ): Promise<Map<string, Comparison>> => {
   const fileOutput = await loadFile(input);
-  const output = parse(fileOutput, {
-    skipEmptyLines: true,
-    trim: true,
-    // We handle this separately to provide better user feedback rather than erroring
-    relaxColumnCount: true,
-  });
+  const output = JSON.parse(fileOutput.toString());
   const initialComparisons: Map<string, Comparison> = new Map();
-  for (const line of output) {
+  for (const comparison of output.comparisons || []) {
     // expected format is fromfile, tofile
-    if (line.length !== 2) {
+    if (!comparison.from || !comparison.to || !comparison.context) {
       console.log(
-        `Line does not match expected format, skipping line: '${line.join(
-          ', '
-        )}'`
+        `Comparison doesn't match expected format, found: ${JSON.stringify(
+          comparison
+        )}`
       );
       continue;
     }
     const id = uuidv4();
+
     initialComparisons.set(id, {
       id,
-      fromFileName: line[0],
-      toFileName: line[1],
+      fromFileName: comparison.from,
+      toFileName: comparison.to,
+      context: comparison.context,
       loading: true,
     });
   }
@@ -200,10 +192,9 @@ export const parseCsvComparisonInput = async (
 const BulkCompare: FC<{
   checkService: ApiCheckService<any>;
   input: string;
-  context: Object;
   verbose: boolean;
   output: 'pretty' | 'json' | 'plain';
-}> = ({ input, context, verbose, output, checkService }) => {
+}> = ({ input, verbose, output, checkService }) => {
   const { exit } = useApp();
   const stdout = useStdout();
   const stderr = useStderr();
@@ -216,7 +207,7 @@ const BulkCompare: FC<{
     (async () => {
       try {
         console.log('Reading input file...');
-        const initialComparisons = await parseCsvComparisonInput(input);
+        const initialComparisons = await parseJsonComparisonInput(input);
 
         !isStale && setComparisons(initialComparisons);
 
@@ -249,7 +240,6 @@ const BulkCompare: FC<{
                 return newComparisons;
               });
           },
-          context,
         });
 
         exit();

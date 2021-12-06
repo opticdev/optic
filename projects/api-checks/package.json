@@ -43,7 +43,6 @@
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
     "commander": "^8.3.0",
-    "csv-parse": "^5.0.3",
     "fs-extra": "^10.0.0",
     "ink": "^3.2.0",
     "ink-link": "^2.0.0",
@@ -66,8 +65,7 @@
     ],
     "moduleNameMapper": {
       "^nimma/fallbacks$": "<rootDir>../../node_modules/nimma/dist/cjs/fallbacks/index.js",
-      "^nimma/legacy$": "<rootDir>../../node_modules/nimma/dist/legacy/cjs/index.js",
-      "csv-parse/sync": "<rootDir>/../../node_modules/csv-parse/dist/cjs/sync.cjs"
+      "^nimma/legacy$": "<rootDir>../../node_modules/nimma/dist/legacy/cjs/index.js"
     }
   }
 }
