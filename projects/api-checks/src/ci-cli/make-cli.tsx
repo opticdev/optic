@@ -7,6 +7,7 @@ const packageJson = require('../../package.json');
 import { render } from 'ink';
 import { ApiCheckService } from '../sdk/api-check-service';
 import { registerUpload } from './commands/upload';
+import { registerBulkCompare } from './commands/compare'
 import { initSentry, wrapActionHandlerWithSentry } from './sentry';
 
 export function makeCiCli<T>(
@@ -25,7 +26,6 @@ export function makeCiCli<T>(
 
   cli
     .command('compare')
-    // TODO make these options required
     .option('--from <from>', 'from file or rev:file, defaults empty spec')
     .option('--to <to>', 'to file or rev:file, defaults empty spec')
     .option('--context <context>', 'json of context')
@@ -74,6 +74,7 @@ export function makeCiCli<T>(
       )
     );
 
+  registerBulkCompare(cli, checkService);
   registerUpload(cli, { opticToken });
 
   return cli;

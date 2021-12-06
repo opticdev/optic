@@ -3647,6 +3647,7 @@ __metadata:
     babel-jest: 26.6.0
     chai: ^4.3.4
     commander: ^8.3.0
+    csv-parse: ^5.0.3
     fs-extra: ^10.0.0
     ink: ^3.2.0
     ink-link: ^2.0.0
@@ -6736,6 +6737,13 @@ __metadata:
   version: 3.0.10
   resolution: "csstype@npm:3.0.10"
   checksum: 20a8fa324f2b33ddf94aa7507d1b6ab3daa6f3cc308888dc50126585d7952f2471de69b2dbe0635d1fdc31223fef8e070842691877e725caf456e2378685a631
+  languageName: node
+  linkType: hard
+
+"csv-parse@npm:^5.0.3":
+  version: 5.0.3
+  resolution: "csv-parse@npm:5.0.3"
+  checksum: 44b45bcffeb575fecf77e5b5229e40be0f380ff9175795370c5405ae36b2e7a647ba1015be8926631690de31383938ab4c81aada0c696a9fec56ff3d3716104e
   languageName: node
   linkType: hard
 

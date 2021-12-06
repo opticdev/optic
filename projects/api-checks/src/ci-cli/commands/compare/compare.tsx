@@ -1,24 +1,22 @@
-import React, { useEffect } from "react";
-import { SpecFromInput } from "../../input-helpers/compare-input-parser";
-import { Box, Newline, Text, useApp, useStderr, useStdout } from "ink";
-import { useAsync, useAsyncFn } from "react-use";
-import { AsyncState } from "react-use/lib/useAsyncFn";
-import { ApiCheckService } from "../../../sdk/api-check-service";
-import { RenderCheckResults } from "./render-results";
-import { sourcemapReader } from "@useoptic/openapi-io";
-import { ResultWithSourcemap } from "../../../sdk/types";
-import { specFromInputToResults } from "../../input-helpers/load-spec";
+import React, { useEffect } from 'react';
+import { SpecFromInput } from '../../input-helpers/compare-input-parser';
+import { Box, Text, useApp, useStdout } from 'ink';
+import { useAsync, useAsyncFn } from 'react-use';
+import { AsyncState } from 'react-use/lib/useAsyncFn';
+import { ApiCheckService } from '../../../sdk/api-check-service';
+import { SpecComparison } from './components';
+import { specFromInputToResults } from '../../input-helpers/load-spec';
+import { generateSpecResults } from './utils';
 
 export function Compare<T>(props: {
   from: SpecFromInput;
   to: SpecFromInput;
   context: T;
   verbose: boolean;
-  output: "pretty" | "json" | "plain";
+  output: 'pretty' | 'json' | 'plain';
   apiCheckService: ApiCheckService<T>;
 }) {
   const stdout = useStdout();
-  const stderr = useStderr();
   const loadFrom = useAsync(
     async () => await specFromInputToResults(props.from, process.cwd())
   );
@@ -29,22 +27,11 @@ export function Compare<T>(props: {
   const specsLoaded = !loadFrom.loading && !loadFrom.loading;
 
   const [results, sendCheckRequest] = useAsyncFn(async () => {
-    const checkResults = await props.apiCheckService.runRules(
-      loadFrom.value!.jsonLike!,
-      loadTo.value!.jsonLike!,
+    return generateSpecResults(
+      props.apiCheckService,
+      loadFrom.value!,
+      loadTo.value!,
       props.context
-    );
-
-    const { findFileAndLines } = sourcemapReader(loadTo.value!.sourcemap);
-    return await Promise.all(
-      checkResults.map(async (checkResult) => {
-        return {
-          ...checkResult,
-          sourcemap: await findFileAndLines(
-            checkResult.change.location.jsonPath
-          ),
-        } as ResultWithSourcemap;
-      })
     );
   }, [loadFrom, loadTo, props.context]);
 
@@ -60,7 +47,7 @@ export function Compare<T>(props: {
     if (results.value && results.value.some((i) => !i.passed)) {
       setTimeout(() => {
         exit();
-        console.log("\n");
+        console.log('\n');
         process.exit(1);
       }, 200);
     }
@@ -71,7 +58,7 @@ export function Compare<T>(props: {
   const loadStatus = (spec: string, promise: AsyncState<any>) => {
     return (
       <Text color="white">
-        {spec} specification:{" "}
+        {spec} specification:{' '}
         {promise.loading && (
           <Text color="green" bold>
             loading...
@@ -79,7 +66,7 @@ export function Compare<T>(props: {
         )}
         {promise.error && (
           <Text color="red" bold>
-            {promise.error.message.split("\n")[0]}
+            {promise.error.message.split('\n')[0]}
           </Text>
         )}
         {!promise.loading && !promise.error && (
@@ -95,7 +82,7 @@ export function Compare<T>(props: {
     if (specsLoaded) sendCheckRequest();
   }, [loadFrom, loadTo]);
 
-  if (props.output == "json") {
+  if (props.output == 'json') {
     if (results.value) {
       const filteredResults = props.verbose
         ? results.value
@@ -106,13 +93,13 @@ export function Compare<T>(props: {
   }
 
   return (
-    <Box flexDirection="column" width={process.env.COLUMNS || "5000"}>
+    <Box flexDirection="column" width={process.env.COLUMNS || '5000'}>
       <Text color="blue" bold>
         Loading specifications for comparison:
       </Text>
 
-      {loadStatus("Current", loadFrom)}
-      {loadStatus("Next", loadTo)}
+      {loadStatus('Current', loadFrom)}
+      {loadStatus('Next', loadTo)}
 
       {errorLoadingSpec && (
         <Text color="red">
@@ -125,27 +112,7 @@ export function Compare<T>(props: {
         </>
       )}
       {results.value && (
-        <Box flexDirection="column">
-          <Newline />
-          <RenderCheckResults
-            results={results.value || []}
-            verbose={props.verbose}
-          />
-          <Box alignItems="flex-start" flexDirection="column" marginTop={3}>
-            <Text bold color="green">
-              {results.value.filter((i) => i.passed).length} checks passed
-              {props.verbose && results.value.some((i) => i.passed) && (
-                <Text color="grey">
-                  {" "}
-                  run with --verbose flag to see results
-                </Text>
-              )}
-            </Text>
-            <Text bold color="red">
-              {results.value.filter((i) => !i.passed).length} checks failed
-            </Text>
-          </Box>
-        </Box>
+        <SpecComparison results={results.value} verbose={props.verbose} />
       )}
     </Box>
   );
