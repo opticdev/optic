@@ -8,7 +8,7 @@ import {
   UploadSlot,
 } from '../optic-client';
 import { loadFile, uploadFileToS3 } from '../../utils';
-import { mockGhContext } from './mock-gh-context';
+import { mockGhContext } from './mock-context';
 
 jest.mock('../optic-client');
 jest.mock('../../utils');
@@ -42,6 +42,7 @@ let fileBufferMap: Record<UploadSlot, Buffer> = {
   [UploadSlot.FromFile]: Buffer.from('from file'),
   [UploadSlot.ToFile]: Buffer.from('to file'),
   [UploadSlot.GithubActionsEvent]: Buffer.from(JSON.stringify(mockGhContext)),
+  [UploadSlot.CircleCiEvent]: Buffer.from(JSON.stringify(mockGhContext)),
 };
 
 beforeEach(() => {
@@ -57,6 +58,7 @@ beforeEach(() => {
         run_args: {
           from: '',
           to: '',
+          provider: 'github',
           context: '',
           rules: '',
         },
@@ -65,7 +67,7 @@ beforeEach(() => {
           repo: '',
           pull_request: 1,
           run: 1,
-          run_attempt: 1,
+          commit_hash: '',
         },
       },
       status: SessionStatus.Ready,
@@ -86,10 +88,16 @@ afterEach(() => {
 });
 
 test('uploading a file', async () => {
-  const numberOfFiles = Object.values(UploadSlot).length;
+  const numberOfFiles = 4;
+  const githubUploadSlots = [
+    UploadSlot.FromFile,
+    UploadSlot.ToFile,
+    UploadSlot.CheckResults,
+    UploadSlot.GithubActionsEvent,
+  ]
 
   mockGetUploadUrls.mockImplementation(async () => {
-    return Object.values(UploadSlot).map((uploadSlot) => ({
+    return githubUploadSlots.map((uploadSlot) => ({
       id: uuidv4(),
       slot: uploadSlot,
       url: `/url/${uploadSlot}`,
@@ -100,13 +108,14 @@ test('uploading a file', async () => {
     from: UploadSlot.FromFile,
     to: UploadSlot.ToFile,
     context: UploadSlot.GithubActionsEvent,
+    provider: 'github',
     rules: UploadSlot.CheckResults,
   });
 
   expect(mockedLoadFile.mock.calls.length).toBe(numberOfFiles);
   expect(mockedStartSession.mock.calls.length).toBe(1);
   expect(mockedUploadFileToS3.mock.calls.length).toBe(numberOfFiles);
-  for (const uploadSlot of Object.values(UploadSlot)) {
+  for (const uploadSlot of githubUploadSlots) {
     const matchingFnCall = mockedUploadFileToS3.mock.calls.find(
       (call) => call[0] === `/url/${uploadSlot}`
     )!;
@@ -133,12 +142,11 @@ test('uploading a file with only partial slots open', async () => {
     from: UploadSlot.FromFile,
     to: UploadSlot.ToFile,
     context: UploadSlot.GithubActionsEvent,
+    provider: 'github',
     rules: UploadSlot.CheckResults,
   });
 
-  expect(mockedLoadFile.mock.calls.length).toBe(
-    Object.values(UploadSlot).length
-  );
+  expect(mockedLoadFile.mock.calls.length).toBe(4);
   expect(mockedStartSession.mock.calls.length).toBe(1);
   expect(mockedUploadFileToS3.mock.calls.length).toBe(returnedSlots.length);
   for (const uploadSlot of returnedSlots) {
@@ -154,10 +162,15 @@ test('uploading a file with only partial slots open', async () => {
 });
 
 test('uploads files where from is not specified', async () => {
-  const numberOfFiles = Object.values(UploadSlot).length;
+  const numberOfFiles = 4;
 
   mockGetUploadUrls.mockImplementation(async () => {
-    return Object.values(UploadSlot).map((uploadSlot) => ({
+    return [
+      UploadSlot.FromFile,
+      UploadSlot.ToFile,
+      UploadSlot.CheckResults,
+      UploadSlot.GithubActionsEvent,
+    ].map((uploadSlot) => ({
       id: uuidv4(),
       slot: uploadSlot,
       url: `/url/${uploadSlot}`,
@@ -167,13 +180,18 @@ test('uploads files where from is not specified', async () => {
   await uploadCiRun(mockOpticClient, {
     to: UploadSlot.ToFile,
     context: UploadSlot.GithubActionsEvent,
+    provider: 'github',
     rules: UploadSlot.CheckResults,
   });
 
   expect(mockedLoadFile.mock.calls.length).toBe(numberOfFiles - 1);
   expect(mockedStartSession.mock.calls.length).toBe(1);
   expect(mockedUploadFileToS3.mock.calls.length).toBe(numberOfFiles);
-  for (const uploadSlot of [UploadSlot.ToFile, UploadSlot.GithubActionsEvent, UploadSlot.CheckResults]) {
+  for (const uploadSlot of [
+    UploadSlot.ToFile,
+    UploadSlot.GithubActionsEvent,
+    UploadSlot.CheckResults,
+  ]) {
     const matchingFnCall = mockedUploadFileToS3.mock.calls.find(
       (call) => call[0] === `/url/${uploadSlot}`
     )!;

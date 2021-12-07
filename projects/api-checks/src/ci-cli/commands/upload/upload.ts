@@ -1,7 +1,15 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import { defaultEmptySpec } from '@useoptic/openapi-utilities';
-import { readAndValidateGithubContext } from './context-parsers';
-import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
+import {
+  readAndValidateGithubContext,
+  readAndValidateCircleCiContext,
+} from './context-parsers';
+import {
+  OpticBackendClient,
+  RunArgs,
+  SessionType,
+  UploadSlot,
+} from './optic-client';
 import { loadFile, uploadFileToS3, writeFile } from '../utils';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 
@@ -9,59 +17,98 @@ export const registerUpload = (
   cli: Command,
   { opticToken }: { opticToken?: string }
 ) => {
+  // TODO also extend this to support gitlab / bitbucket
   cli
     .command('upload')
     .option('--from <from>', 'from file or rev:file')
+    .addOption(
+      new Option(
+        '--provider <provider>',
+        'The name of the ci-provider, supported'
+      )
+        .choices(['github', 'circleci'])
+        .makeOptionMandatory()
+    )
     .requiredOption('--to <to>', 'to file or rev:file')
     .requiredOption('--context <context>', 'file with github context')
     .requiredOption('--rules <rules>', 'path to rules output')
     .action(
-      wrapActionHandlerWithSentry(
-        async (runArgs: {
-          from?: string;
-          to: string;
-          context: string;
-          rules: string;
-        }) => {
-          if (!opticToken) {
-            console.error('Upload token was not included');
-            return process.exit(1);
-          }
-
-          const backendWebBase =
-            // TODO centralize this optic env configuration
-            process.env.OPTIC_ENV === 'staging'
-              ? 'https://api.o3c.info'
-              : 'https://api.useoptic.com';
-
-          const opticClient = new OpticBackendClient(backendWebBase, () =>
-            Promise.resolve(opticToken)
-          );
-          try {
-            await uploadCiRun(opticClient, runArgs);
-          } catch (e) {
-            console.error(e);
-            SentryClient && SentryClient.captureException(e);
-            return process.exit(1);
-          }
+      wrapActionHandlerWithSentry(async (runArgs: RunArgs) => {
+        if (!opticToken) {
+          console.error('Upload token was not included');
+          return process.exit(1);
         }
-      )
+
+        const backendWebBase =
+          // TODO centralize this optic env configuration
+          process.env.OPTIC_ENV === 'staging'
+            ? 'https://api.o3c.info'
+            : 'https://api.useoptic.com';
+
+        const opticClient = new OpticBackendClient(backendWebBase, () =>
+          Promise.resolve(opticToken)
+        );
+        try {
+          await uploadCiRun(opticClient, runArgs);
+        } catch (e) {
+          console.error(e);
+          SentryClient && SentryClient.captureException(e);
+          return process.exit(1);
+        }
+      })
     );
+};
+
+const startSession = async (
+  opticClient: OpticBackendClient,
+  runArgs: RunArgs,
+  contextBuffer: Buffer
+): Promise<string> => {
+  if (runArgs.provider === 'github') {
+    const { organization, pull_request, run, commit_hash, repo } =
+      readAndValidateGithubContext(contextBuffer);
+
+    const sessionId = await opticClient.startSession(
+      SessionType.GithubActions,
+      {
+        run_args: runArgs,
+        github_data: {
+          organization,
+          repo,
+          pull_request,
+          run,
+          commit_hash,
+        },
+      }
+    );
+    return sessionId;
+  } else if (runArgs.provider === 'circleci') {
+    const { organization, pull_request, run, commit_hash, repo } =
+      readAndValidateCircleCiContext(contextBuffer);
+
+    const sessionId = await opticClient.startSession(SessionType.CircleCi, {
+      run_args: runArgs,
+      circle_ci_data: {
+        organization,
+        repo,
+        pull_request,
+        run,
+        commit_hash,
+      },
+    });
+    return sessionId;
+  }
+  throw new Error(`Unrecognized provider ${runArgs.provider}`);
 };
 
 export const uploadCiRun = async (
   opticClient: OpticBackendClient,
-  runArgs: {
-    from?: string;
-    to: string;
-    context: string;
-    rules: string;
-  }
+  runArgs: RunArgs
 ) => {
   console.log('Loading files...');
 
   const [
-    githubContextFileBuffer,
+    contextFileBuffer,
     fromFileS3Buffer,
     toFileS3Buffer,
     rulesFileS3Buffer,
@@ -78,23 +125,11 @@ export const uploadCiRun = async (
     [UploadSlot.CheckResults]: rulesFileS3Buffer,
     [UploadSlot.FromFile]: fromFileS3Buffer,
     [UploadSlot.ToFile]: toFileS3Buffer,
-    [UploadSlot.GithubActionsEvent]: githubContextFileBuffer,
+    [UploadSlot.GithubActionsEvent]: contextFileBuffer,
+    [UploadSlot.CircleCiEvent]: contextFileBuffer,
   };
 
-  // TODO change this for different providers
-  const { organization, pull_request, run, run_attempt, repo } =
-    readAndValidateGithubContext(githubContextFileBuffer);
-
-  const sessionId = await opticClient.startSession(SessionType.GithubActions, {
-    run_args: runArgs,
-    github_data: {
-      organization,
-      repo,
-      pull_request,
-      run,
-      run_attempt,
-    },
-  });
+  const sessionId = await startSession(opticClient, runArgs, contextFileBuffer);
 
   console.log('Uploading OpenAPI files to Optic...');
 

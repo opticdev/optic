@@ -166,31 +166,46 @@ class JsonHttpClient {
 
 export enum SessionType {
   GithubActions = 'GithubActions',
+  CircleCi = 'CircleCi',
 }
 
-type RunArgs = {
+export type RunArgs = {
   from?: string;
+  provider: 'github' | 'circleci';
   to: string;
   context: string;
   rules: string;
 };
 
-type Session = {
-  type: SessionType.GithubActions;
-  run_args: RunArgs;
-  github_data: {
-    organization: string;
-    repo: string;
-    pull_request: number;
-    run: number;
-    run_attempt: number;
-  };
-};
+type Session =
+  | {
+      type: SessionType.GithubActions;
+      run_args: RunArgs;
+      github_data: {
+        organization: string;
+        repo: string;
+        commit_hash: string;
+        pull_request: number;
+        run: number;
+      };
+    }
+  | {
+      type: SessionType.CircleCi;
+      run_args: RunArgs;
+      circle_ci_data: {
+        organization: string;
+        repo: string;
+        commit_hash: string;
+        pull_request: number;
+        run: number;
+      };
+    };
 
 export enum UploadSlot {
   FromFile = 'FromFile',
   ToFile = 'ToFile',
   GithubActionsEvent = 'GithubActionsEvent',
+  CircleCiEvent = 'CircleCiEvent',
   CheckResults = 'CheckResults',
 }
 
@@ -247,10 +262,9 @@ export class OpticBackendClient extends JsonHttpClient {
     return response.upload_urls;
   }
 
-  // TODO make this function signature generic such that SessionType changes what session data should look like
-  public async startSession(
-    sessionType: SessionType,
-    sessionData: Omit<Session, 'type'>
+  public async startSession<Type extends SessionType>(
+    sessionType: Type,
+    sessionData: Omit<Extract<Session, { type: Type }>, 'type'>
   ): Promise<string> {
     const sessionId = uuidv4();
 
