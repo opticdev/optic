@@ -64,7 +64,12 @@ export const registerBulkCompare = <T extends {}>(
             />,
             { exitOnCtrlC: true }
           );
-          await waitUntilExit();
+          try {
+            await waitUntilExit();
+            process.exit(0);
+          } catch (e) {
+            process.exit(1);
+          }
         }
       )
     );
@@ -207,6 +212,7 @@ const BulkCompare: FC<{
     (async () => {
       try {
         console.log('Reading input file...');
+        let hasError = false;
         const initialComparisons = await parseJsonComparisonInput(input);
 
         !isStale && setComparisons(initialComparisons);
@@ -218,6 +224,9 @@ const BulkCompare: FC<{
             !isStale &&
               setComparisons((prevComparisons) => {
                 const newComparisons = new Map(prevComparisons);
+                if (results.some(result => !result.passed)) {
+                  hasError = true;
+                }
                 newComparisons.set(id, {
                   ...prevComparisons.get(id)!,
                   loading: false,
@@ -231,6 +240,7 @@ const BulkCompare: FC<{
             !isStale &&
               setComparisons((prevComparisons) => {
                 const newComparisons = new Map(prevComparisons);
+                hasError = true;
                 newComparisons.set(id, {
                   ...prevComparisons.get(id)!,
                   loading: false,
@@ -242,10 +252,10 @@ const BulkCompare: FC<{
           },
         });
 
-        exit();
+        exit(hasError ? new Error('Some comparisons are invalid') : undefined);
       } catch (e) {
         stderr.write(JSON.stringify(e, null, 2));
-        exit();
+        exit(e as Error);
       }
     })();
     return () => {
