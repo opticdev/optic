@@ -106,7 +106,7 @@ test('uploading a file', async () => {
   await uploadCiRun(mockOpticClient, {
     from: UploadSlot.FromFile,
     to: UploadSlot.ToFile,
-    context: UploadSlot.GithubActionsEvent,
+    ciContext: UploadSlot.GithubActionsEvent,
     provider: 'github',
     rules: UploadSlot.CheckResults,
   });
@@ -140,7 +140,7 @@ test('uploading a file with only partial slots open', async () => {
   await uploadCiRun(mockOpticClient, {
     from: UploadSlot.FromFile,
     to: UploadSlot.ToFile,
-    context: UploadSlot.GithubActionsEvent,
+    ciContext: UploadSlot.GithubActionsEvent,
     provider: 'github',
     rules: UploadSlot.CheckResults,
   });
@@ -178,7 +178,7 @@ test('uploads files where from is not specified', async () => {
 
   await uploadCiRun(mockOpticClient, {
     to: UploadSlot.ToFile,
-    context: UploadSlot.GithubActionsEvent,
+    ciContext: UploadSlot.GithubActionsEvent,
     provider: 'github',
     rules: UploadSlot.CheckResults,
   });
