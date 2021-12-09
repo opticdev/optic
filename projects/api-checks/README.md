@@ -60,7 +60,7 @@ $ node ./consolidate-open-api-files.js
 
 # Run the compare files
 # outputs compare-output.json
-$ node ./cli.js compare --from ./from.json --to ./to.json --context {}
+$ node ./cli.js compare --from ./from.json --to ./to.json --context {} --create-file
 
 # Build out the context file
 # Expected output is a JSONified file
@@ -75,9 +75,11 @@ $ OPTIC_TOKEN="INSERT_YOUR_TOKEN" node ./cli.js upload \
 		--rules ./compare-output.json
 
 # Post a comment on the PR (creates OR update the existing comment)
-$ node ./cli.js comment \
+$ node ./cli.js github-comment \
 		--token $GH_TOKEN
 		--provider github \
 		--ci-context ./ci-context.json
-		--upload-results ./upload-output.json
+		--upload ./upload-output.json
 ```
+
+### Expected contexts

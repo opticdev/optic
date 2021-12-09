@@ -20,14 +20,11 @@ export const registerGithubComment = (cli: Command) => {
         .makeOptionMandatory()
     )
     .requiredOption('--ci-context <ciContext>', 'file with github context')
-    .requiredOption(
-      '--upload-results <upload>',
-      'the file path to the upload output'
-    )
+    .requiredOption('--upload <upload>', 'the file path to the upload output')
     .action(
       wrapActionHandlerWithSentry(
         async (runArgs: {
-          githubToken: string;
+          token: string;
           ciContext: string;
           provider: 'github' | 'circleci';
           upload: string;
@@ -40,7 +37,7 @@ export const registerGithubComment = (cli: Command) => {
                 : readAndValidateCircleCiContext(fileBuffer);
 
             await sendMessage({
-              githubToken: runArgs.githubToken,
+              githubToken: runArgs.token,
               owner: owner,
               repo: repo,
               pull_number: Number(pull_number),

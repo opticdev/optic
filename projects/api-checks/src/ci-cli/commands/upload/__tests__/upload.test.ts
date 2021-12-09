@@ -108,7 +108,7 @@ test('uploading a file', async () => {
     to: UploadSlot.ToFile,
     ciContext: UploadSlot.GithubActionsEvent,
     provider: 'github',
-    rules: UploadSlot.CheckResults,
+    compare: UploadSlot.CheckResults,
   });
 
   expect(mockedLoadFile.mock.calls.length).toBe(numberOfFiles);
@@ -142,7 +142,7 @@ test('uploading a file with only partial slots open', async () => {
     to: UploadSlot.ToFile,
     ciContext: UploadSlot.GithubActionsEvent,
     provider: 'github',
-    rules: UploadSlot.CheckResults,
+    compare: UploadSlot.CheckResults,
   });
 
   expect(mockedLoadFile.mock.calls.length).toBe(4);
@@ -180,7 +180,7 @@ test('uploads files where from is not specified', async () => {
     to: UploadSlot.ToFile,
     ciContext: UploadSlot.GithubActionsEvent,
     provider: 'github',
-    rules: UploadSlot.CheckResults,
+    compare: UploadSlot.CheckResults,
   });
 
   expect(mockedLoadFile.mock.calls.length).toBe(numberOfFiles - 1);
