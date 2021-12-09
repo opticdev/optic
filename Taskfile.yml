@@ -27,10 +27,6 @@ tasks:
     desc: "Publish built artifacts"
     cmds:
       - yarn workspaces foreach -v --no-private npm publish --tolerate-republish --access public
-  ci:version:
-    desc: "Bump ('decline', 'major', 'minor', 'patch', 'prerelease') or Set the version of all packages"
-    cmds:
-      - yarn workspaces foreach -v --no-private version {{.CLI_ARGS}}
 
 # openapi-diff specific tasks. These should be moved to a separate file.
   openapi-diff:docker:build:
@@ -57,3 +53,7 @@ tasks:
       TAG: '{{default "latest" .TAG}}'
     cmds:
       - docker push 513974440343.dkr.ecr.us-east-1.amazonaws.com/optic/baseline:{{.TAG}}
+  version:
+    desc: "Bump ('decline', 'major', 'minor', 'patch', 'prerelease') or Set the version of all packages"
+    cmds:
+      - yarn workspaces foreach -v --no-private version {{.CLI_ARGS}}
