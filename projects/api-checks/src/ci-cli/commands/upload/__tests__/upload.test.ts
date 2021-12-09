@@ -8,7 +8,7 @@ import {
   UploadSlot,
 } from '../optic-client';
 import { loadFile, uploadFileToS3 } from '../../utils';
-import { mockGhContext } from './mock-context';
+import { mockGhContext } from '../../__tests__/mock-context';
 
 jest.mock('../optic-client');
 jest.mock('../../utils');
@@ -25,10 +25,9 @@ const mockedStartSession = mockOpticClient.startSession as jest.MockedFunction<
 const mockGetUploadUrls = mockOpticClient.getUploadUrls as jest.MockedFunction<
   typeof mockOpticClient.getUploadUrls
 >;
-const mockMarkUploadAsComplete =
-  mockOpticClient.markUploadAsComplete as jest.MockedFunction<
-    typeof mockOpticClient.markUploadAsComplete
-  >;
+const mockMarkUploadAsComplete = mockOpticClient.markUploadAsComplete as jest.MockedFunction<
+  typeof mockOpticClient.markUploadAsComplete
+>;
 const mockGetSession = mockOpticClient.getSession as jest.MockedFunction<
   typeof mockOpticClient.getSession
 >;
@@ -94,7 +93,7 @@ test('uploading a file', async () => {
     UploadSlot.ToFile,
     UploadSlot.CheckResults,
     UploadSlot.GithubActionsEvent,
-  ]
+  ];
 
   mockGetUploadUrls.mockImplementation(async () => {
     return githubUploadSlots.map((uploadSlot) => ({

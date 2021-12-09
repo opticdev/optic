@@ -3,15 +3,18 @@ import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 import {
   readAndValidateGithubContext,
   readAndValidateCircleCiContext,
-} from './context-parsers';
-import {
-  OpticBackendClient,
-  RunArgs,
-  SessionType,
-  UploadSlot,
-} from './optic-client';
+} from '../ci-context-parsers';
+import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
 import { loadFile, uploadFileToS3, writeFile } from '../utils';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
+
+type CiRunArgs = {
+  from?: string;
+  provider: 'github' | 'circleci';
+  to: string;
+  ciContext: string;
+  rules: string;
+};
 
 export const registerUpload = (
   cli: Command,
@@ -30,10 +33,10 @@ export const registerUpload = (
         .makeOptionMandatory()
     )
     .requiredOption('--to <to>', 'to file or rev:file')
-    .requiredOption('--context <context>', 'file with github context')
+    .requiredOption('--ci-context <ciContext>', 'file with github context')
     .requiredOption('--rules <rules>', 'path to rules output')
     .action(
-      wrapActionHandlerWithSentry(async (runArgs: RunArgs) => {
+      wrapActionHandlerWithSentry(async (runArgs: CiRunArgs) => {
         if (!opticToken) {
           console.error('Upload token was not included');
           return process.exit(1);
@@ -61,7 +64,7 @@ export const registerUpload = (
 
 const startSession = async (
   opticClient: OpticBackendClient,
-  runArgs: RunArgs,
+  runArgs: CiRunArgs,
   contextBuffer: Buffer
 ): Promise<string> => {
   if (runArgs.provider === 'github') {
@@ -76,7 +79,13 @@ const startSession = async (
     const sessionId = await opticClient.startSession(
       SessionType.GithubActions,
       {
-        run_args: runArgs,
+        run_args: {
+          from: runArgs.from,
+          to: runArgs.to,
+          context: runArgs.ciContext,
+          rules: runArgs.rules,
+          provider: runArgs.provider,
+        },
         github_data: {
           organization,
           repo,
@@ -97,7 +106,13 @@ const startSession = async (
     } = readAndValidateCircleCiContext(contextBuffer);
 
     const sessionId = await opticClient.startSession(SessionType.CircleCi, {
-      run_args: runArgs,
+      run_args: {
+        from: runArgs.from,
+        to: runArgs.to,
+        context: runArgs.ciContext,
+        rules: runArgs.rules,
+        provider: runArgs.provider,
+      },
       circle_ci_data: {
         organization,
         repo,
@@ -113,7 +128,7 @@ const startSession = async (
 
 export const uploadCiRun = async (
   opticClient: OpticBackendClient,
-  runArgs: RunArgs
+  runArgs: CiRunArgs
 ) => {
   console.log('Loading files...');
 
@@ -123,7 +138,7 @@ export const uploadCiRun = async (
     toFileS3Buffer,
     rulesFileS3Buffer,
   ] = await Promise.all([
-    loadFile(runArgs.context),
+    loadFile(runArgs.ciContext),
     runArgs.from
       ? loadFile(runArgs.from)
       : Promise.resolve(Buffer.from(JSON.stringify(defaultEmptySpec))),
