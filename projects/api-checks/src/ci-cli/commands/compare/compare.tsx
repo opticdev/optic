@@ -14,7 +14,7 @@ type LoadingState =
     }
   | {
       loading: false;
-      error: any;
+      error: Error;
     }
   | {
       loading: false;
@@ -39,7 +39,16 @@ export function Compare<T>(props: {
     loading: true,
   });
 
-  const [results, setResults] = useState<ResultWithSourcemap[] | null>(null);
+  const [results, setResults] = useState<
+    | {
+        loading: true;
+      }
+    | {
+        loading: false;
+        error: Error;
+      }
+    | { loading: false; error: false; data: ResultWithSourcemap[] }
+  >({ loading: true });
   useEffect(() => {
     let isState = false;
     (async () => {
@@ -81,24 +90,30 @@ export function Compare<T>(props: {
             }),
         ]);
 
-        const results = await generateSpecResults(
-          props.apiCheckService,
-          from,
-          to,
-          props.context
-        );
+        try {
+          const results = await generateSpecResults(
+            props.apiCheckService,
+            from,
+            to,
+            props.context
+          );
 
-        if (!isState) {
-          setResults(results);
-        }
-        const hasError = results.some((result) => !result.passed);
+          if (!isState) {
+            setResults({ loading: false, error: false, data: results });
+          }
+          const hasError = results.some((result) => !result.passed);
 
-        exit();
-        // TODO bubble this up to the handler instead of process exiting here
-        if (hasError) {
+          exit();
+          // TODO bubble this up to the handler instead of process exiting here
+          if (hasError) {
+            process.exit(1);
+          } else {
+            process.exit(0);
+          }
+        } catch (e) {
+          SentryClient && SentryClient.captureException(e);
+          !isState && setResults({ loading: false, error: e as Error });
           process.exit(1);
-        } else {
-          process.exit(0);
         }
       } catch (e) {
         console.error(e);
@@ -135,10 +150,10 @@ export function Compare<T>(props: {
   };
 
   if (props.output == 'json') {
-    if (results) {
+    if ('data' in results) {
       const filteredResults = props.verbose
-        ? results
-        : results.filter((x) => !x.passed);
+        ? results.data
+        : results.data.filter((x) => !x.passed);
       stdout.write(JSON.stringify(filteredResults, null, 2));
     }
     return null;
@@ -165,7 +180,13 @@ export function Compare<T>(props: {
           <Text>running rules...</Text>
         </>
       )}
-      {results && <SpecComparison results={results} verbose={props.verbose} />}
+      {results.loading ? null : results.error ? (
+        <Text>
+          Error running rules: {JSON.stringify(results.error.message)}
+        </Text>
+      ) : (
+        <SpecComparison results={results.data} verbose={props.verbose} />
+      )}
     </Box>
   );
 }
