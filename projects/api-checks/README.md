@@ -83,3 +83,23 @@ $ node ./cli.js github-comment \
 ```
 
 ### Expected contexts
+#### Github Actions Context
+The easiest way to dump this is from github actions:
+```
+...
+  env:
+    GITHUB_CONTEXT: ${{ toJSON(github) }}
+  run: echo "$GITHUB_CONTEXT" > ./ci-context.json
+```
+
+#### CircleCI Context
+
+Expected JSON values are:
+```json
+{
+  "CIRCLE_REPOSITORY_URL": "https://github.com/owner/repo_name",
+  "CIRCLE_PR_NUMBER": 10,
+  "CIRCLE_BUILD_NUM": 1,
+  "CIRCLE_SHA1": "e756e8e68f5daaed86fafe76cd8e51400d70946a"
+}
+```
