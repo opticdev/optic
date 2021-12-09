@@ -5,18 +5,18 @@ API checks helps automate checks between OpenAPI changes.
 ## Example usage
 
 ### Configuring your CLI
-```typescript
-// cli.ts
+
+```javascript
+// cli.js
 import { expect } from 'chai';
 import { ApiCheckService } from './sdk/api-check-service';
 import { ExampleDsl, ExampleDslContext } from './sdk/test/example-dsl';
 import { makeCiCli } from './ci-cli/make-cli';
 
-const checker: ApiCheckService<ExampleDslContext> =
-  new ApiCheckService<ExampleDslContext>();
+const checker = new ApiCheckService();
 
 // Swap out / write your own custom rulesets
-function completenessApiRules(dsl: ExampleDsl) {
+function completenessApiRules(dsl) {
   dsl.operations.changed.must(
     'have consistent operationIds',
     (current, next, context, docs) => {
@@ -43,28 +43,31 @@ const cli = makeCiCli('my_cli', checker, {
 
 cli.parse(process.argv);
 ```
+
 ### Setting up your build pipeline
 
 Currently, only CircleCi and Github Actions are supported. There's three main commands to this flow:
+
 - compare (compares two OpenAPI files together)
 - upload (uploads the OpenAPI files, and the output of compare)
 - github-comment (posts a github comment to the link to Optic with the ci run)
 
 <!-- TODO write this as a GHA workflow or circleci job -->
+
 ```bash
 # Output the open api files from somewhere
-$ ts-node ./consolidate-open-api-files.ts
+$ node ./consolidate-open-api-files.js
 
-# Run the compare files 
+# Run the compare files
 # outputs compare-output.json
-$ ts-node ./cli.ts compare --from ./from.json --to ./to.json --context {}
+$ node ./cli.js compare --from ./from.json --to ./to.json --context {}
 
 # Build out the context file
 # Expected output is a JSONified file
 $ echo $GITHUB_CONTEXT > ./ci-context.json
 # Run the upload flow (can set the env externally)
 # outputs upload-output.json
-$ OPTIC_TOKEN="INSERT_YOUR_TOKEN" ts-node ./cli.ts upload \
+$ OPTIC_TOKEN="INSERT_YOUR_TOKEN" node ./cli.js upload \
 		--from ./from.json \
 		--to ./to.json \
 		--provider github \
@@ -72,7 +75,7 @@ $ OPTIC_TOKEN="INSERT_YOUR_TOKEN" ts-node ./cli.ts upload \
 		--rules ./compare-output.json
 
 # Post a comment on the PR (creates OR update the existing comment)
-$ ts-node ts-node ./cli.ts comment \
+$ node ./cli.js comment \
 		--token $GH_TOKEN
 		--provider github \
 		--ci-context ./ci-context.json
