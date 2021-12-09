@@ -14,7 +14,7 @@ type CiRunArgs = {
   provider: 'github' | 'circleci';
   to: string;
   ciContext: string;
-  rules: string;
+  compare: string;
 };
 
 export const registerUpload = (
@@ -35,7 +35,7 @@ export const registerUpload = (
     )
     .requiredOption('--to <to>', 'to file or rev:file')
     .requiredOption('--ci-context <ciContext>', 'file with github context')
-    .requiredOption('--rules <rules>', 'path to rules output')
+    .requiredOption('--compare <compare>', 'path to compare output')
     .action(
       wrapActionHandlerWithSentry(async (runArgs: CiRunArgs) => {
         if (!opticToken) {
@@ -84,7 +84,7 @@ const startSession = async (
           from: runArgs.from,
           to: runArgs.to,
           context: runArgs.ciContext,
-          rules: runArgs.rules,
+          rules: runArgs.compare,
           provider: runArgs.provider,
         },
         github_data: {
@@ -111,7 +111,7 @@ const startSession = async (
         from: runArgs.from,
         to: runArgs.to,
         context: runArgs.ciContext,
-        rules: runArgs.rules,
+        rules: runArgs.compare,
         provider: runArgs.provider,
       },
       circle_ci_data: {
@@ -144,7 +144,7 @@ export const uploadCiRun = async (
       ? loadFile(runArgs.from)
       : Promise.resolve(Buffer.from(JSON.stringify(defaultEmptySpec))),
     loadFile(runArgs.to),
-    loadFile(runArgs.rules),
+    loadFile(runArgs.compare),
   ]);
 
   const fileMap: Record<UploadSlot, Buffer> = {
