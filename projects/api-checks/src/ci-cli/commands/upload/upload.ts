@@ -65,8 +65,13 @@ const startSession = async (
   contextBuffer: Buffer
 ): Promise<string> => {
   if (runArgs.provider === 'github') {
-    const { organization, pull_request, run, commit_hash, repo } =
-      readAndValidateGithubContext(contextBuffer);
+    const {
+      organization,
+      pull_request,
+      run,
+      commit_hash,
+      repo,
+    } = readAndValidateGithubContext(contextBuffer);
 
     const sessionId = await opticClient.startSession(
       SessionType.GithubActions,
@@ -83,8 +88,13 @@ const startSession = async (
     );
     return sessionId;
   } else if (runArgs.provider === 'circleci') {
-    const { organization, pull_request, run, commit_hash, repo } =
-      readAndValidateCircleCiContext(contextBuffer);
+    const {
+      organization,
+      pull_request,
+      run,
+      commit_hash,
+      repo,
+    } = readAndValidateCircleCiContext(contextBuffer);
 
     const sessionId = await opticClient.startSession(SessionType.CircleCi, {
       run_args: runArgs,
@@ -172,8 +182,8 @@ export const uploadCiRun = async (
   }, Promise.resolve());
 
   const { web_url: opticWebUrl } = await opticClient.getSession(sessionId);
-  const uploadDataFilePath = 'upload-run.json'; // TODO maybe make this a cli argument?
-  const uploadFileLocation = writeFile(
+  const uploadDataFilePath = 'upload-output.json'; // TODO maybe make this a cli argument?
+  const uploadFileLocation = await writeFile(
     uploadDataFilePath,
     Buffer.from(
       JSON.stringify({
