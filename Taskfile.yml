@@ -56,5 +56,11 @@ tasks:
       - docker push 513974440343.dkr.ecr.us-east-1.amazonaws.com/optic/baseline:{{.TAG}}
   version:
     desc: "Bump ('decline', 'major', 'minor', 'patch', 'prerelease') or Set the version of all packages"
+    summary: |
+      Bump the version of all packages. Pass the semver bump as the argument,
+      'decline', 'major', 'minor', 'patch', 'prerelease'
+
+      Examples:
+        task openapi-workspaces:version -- patch
     cmds:
       - yarn workspaces foreach -v --no-private version {{.CLI_ARGS}}
