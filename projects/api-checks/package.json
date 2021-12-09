@@ -16,6 +16,7 @@
     "local:run": "ts-node ./src/run-local.ts"
   },
   "devDependencies": {
+    "@types/analytics-node": "^3.1.7",
     "@types/chai": "^4.2.22",
     "@types/copyfiles": "^2",
     "@types/fs-extra": "^9.0.13",
@@ -42,6 +43,7 @@
     "@useoptic/json-pointer-helpers": "workspace:*",
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
+    "analytics-node": "^6.0.0",
     "commander": "^8.3.0",
     "fs-extra": "^10.0.0",
     "ink": "^3.2.0",
