@@ -1,12 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SpecFromInput } from '../../input-helpers/compare-input-parser';
 import { Box, Text, useApp, useStdout } from 'ink';
-import { useAsync, useAsyncFn } from 'react-use';
-import { AsyncState } from 'react-use/lib/useAsyncFn';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { SpecComparison } from './components';
 import { specFromInputToResults } from '../../input-helpers/load-spec';
 import { generateSpecResults } from './generateSpecResults';
+import { ResultWithSourcemap } from '../../../sdk/types';
+import { SentryClient } from '../../sentry';
+
+type LoadingState =
+  | {
+      loading: true;
+    }
+  | {
+      loading: false;
+      error: any;
+    }
+  | {
+      loading: false;
+      error: false;
+    };
 
 export function Compare<T>(props: {
   from: SpecFromInput;
@@ -17,59 +30,102 @@ export function Compare<T>(props: {
   apiCheckService: ApiCheckService<T>;
 }) {
   const stdout = useStdout();
-  const loadFrom = useAsync(
-    async () => await specFromInputToResults(props.from, process.cwd())
-  );
-  const loadTo = useAsync(
-    async () => await specFromInputToResults(props.to, process.cwd())
-  );
-
-  const specsLoaded = !loadFrom.loading && !loadFrom.loading;
-
-  const [results, sendCheckRequest] = useAsyncFn(async () => {
-    return generateSpecResults(
-      props.apiCheckService,
-      loadFrom.value!,
-      loadTo.value!,
-      props.context
-    );
-  }, [loadFrom, loadTo, props.context]);
-
   const { exit } = useApp();
+  // TODO change this to something less handwritten
+  const [fromState, setFromState] = useState<LoadingState>({
+    loading: true,
+  });
+  const [toState, setToState] = useState<LoadingState>({
+    loading: true,
+  });
 
+  const [results, setResults] = useState<ResultWithSourcemap[] | null>(null);
   useEffect(() => {
-    if (loadFrom.error || loadTo.error) {
-      setTimeout(() => exit(), 200);
-    }
-  }, [loadFrom, loadTo]);
+    let isState = false;
+    (async () => {
+      try {
+        const [from, to] = await Promise.all([
+          specFromInputToResults(props.from, process.cwd())
+            .then((results) => {
+              !isState &&
+                setFromState({
+                  loading: false,
+                  error: false,
+                });
+              return results;
+            })
+            .catch((e) => {
+              !isState &&
+                setFromState({
+                  loading: false,
+                  error: e,
+                });
+              throw new Error('Could not load from state');
+            }),
+          specFromInputToResults(props.to, process.cwd())
+            .then((results) => {
+              !isState &&
+                setToState({
+                  loading: false,
+                  error: false,
+                });
+              return results;
+            })
+            .catch((e) => {
+              !isState &&
+                setToState({
+                  loading: false,
+                  error: e,
+                });
+              throw new Error('Could not load to state');
+            }),
+        ]);
 
-  useEffect(() => {
-    if (results.value && results.value.some((i) => !i.passed)) {
-      setTimeout(() => {
+        const results = await generateSpecResults(
+          props.apiCheckService,
+          from,
+          to,
+          props.context
+        );
+
+        if (!isState) {
+          setResults(results);
+        }
+        const hasError = results.some((result) => !result.passed);
+
         exit();
-        console.log('\n');
+        // TODO bubble this up to the handler instead of process exiting here
+        if (hasError) {
+          process.exit(1);
+        } else {
+          process.exit(0);
+        }
+      } catch (e) {
+        console.error(e);
+        SentryClient && SentryClient.captureException(e);
+        exit();
         process.exit(1);
-      }, 200);
-    }
-  }, [results.value]);
+      }
+    })();
 
-  const errorLoadingSpec = loadFrom.error || loadTo.error;
+    return () => {
+      isState = false;
+    };
+  }, []);
 
-  const loadStatus = (spec: string, promise: AsyncState<any>) => {
+  const loadStatus = (spec: string, state: LoadingState) => {
     return (
       <Text color="white">
         {spec} specification:{' '}
-        {promise.loading && (
+        {state.loading ? (
           <Text color="green" bold>
             loading...
           </Text>
-        )}
-        {promise.error && (
+        ) : state.error !== false ? (
           <Text color="red" bold>
-            {promise.error.message.split('\n')[0]}
+            {state.error.message?.split('\n')[0]}
           </Text>
-        )}
-        {!promise.loading && !promise.error && (
+        ) : (
           <Text color="green" bold>
             done
           </Text>
@@ -78,15 +134,11 @@ export function Compare<T>(props: {
     );
   };
 
-  useEffect(() => {
-    if (specsLoaded) sendCheckRequest();
-  }, [loadFrom, loadTo]);
-
   if (props.output == 'json') {
-    if (results.value) {
+    if (results) {
       const filteredResults = props.verbose
-        ? results.value
-        : results.value.filter((x) => !x.passed);
+        ? results
+        : results.filter((x) => !x.passed);
       stdout.write(JSON.stringify(filteredResults, null, 2));
     }
     return null;
@@ -98,22 +150,22 @@ export function Compare<T>(props: {
         Loading specifications for comparison:
       </Text>
 
-      {loadStatus('Current', loadFrom)}
-      {loadStatus('Next', loadTo)}
+      {loadStatus('Current', fromState)}
+      {loadStatus('Next', toState)}
 
-      {errorLoadingSpec && (
+      {((!fromState.loading && fromState.error !== false) ||
+        (!toState.loading && toState.error !== false)) && (
         <Text color="red">
           Stopping. Could not load two specifications to compare
         </Text>
       )}
-      {specsLoaded && results.loading && (
+      {((!fromState.loading && fromState.error === false) ||
+        (!toState.loading && toState.error === false)) && (
         <>
           <Text>running rules...</Text>
         </>
       )}
-      {results.value && (
-        <SpecComparison results={results.value} verbose={props.verbose} />
-      )}
+      {results && <SpecComparison results={results} verbose={props.verbose} />}
     </Box>
   );
 }

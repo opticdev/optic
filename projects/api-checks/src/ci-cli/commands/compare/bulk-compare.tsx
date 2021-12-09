@@ -10,7 +10,7 @@ import { parseSpecVersion } from '../../input-helpers/compare-input-parser';
 import { specFromInputToResults } from '../../input-helpers/load-spec';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { ResultWithSourcemap } from '../../../sdk/types';
-import { wrapActionHandlerWithSentry } from '../../sentry';
+import { SentryClient, wrapActionHandlerWithSentry } from '../../sentry';
 import { loadFile } from '../utils';
 import { generateSpecResults } from './generateSpecResults';
 
@@ -68,6 +68,7 @@ export const registerBulkCompare = <T extends {}>(
             await waitUntilExit();
             process.exit(0);
           } catch (e) {
+            SentryClient && SentryClient.captureException(e);
             process.exit(1);
           }
         }
@@ -224,7 +225,7 @@ const BulkCompare: FC<{
             !isStale &&
               setComparisons((prevComparisons) => {
                 const newComparisons = new Map(prevComparisons);
-                if (results.some(result => !result.passed)) {
+                if (results.some((result) => !result.passed)) {
                   hasError = true;
                 }
                 newComparisons.set(id, {
