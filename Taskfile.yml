@@ -11,6 +11,7 @@ tasks:
       - yarn install
       - yarn workspaces foreach -pv --no-private run ws:clean
       - yarn workspaces foreach -ptv --no-private run ws:build
+
   ci:setup:
     desc: "Install dependencies"
     cmds:
