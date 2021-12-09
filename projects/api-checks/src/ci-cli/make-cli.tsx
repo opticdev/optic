@@ -8,7 +8,7 @@ import { render } from 'ink';
 import { ApiCheckService } from '../sdk/api-check-service';
 import { registerUpload } from './commands/upload';
 import { registerGithubComment } from './commands/comment';
-import { registerBulkCompare } from './commands/compare'
+import { registerBulkCompare } from './commands/compare';
 import { initSentry, wrapActionHandlerWithSentry } from './sentry';
 
 export function makeCiCli<T>(
@@ -32,6 +32,11 @@ export function makeCiCli<T>(
     .option('--context <context>', 'json of context')
     .option('--verbose', 'show all checks, even passing', false)
     .option(
+      '--create-file',
+      'creates a file with the results of the run in json format',
+      false
+    )
+    .option(
       '--output <format>',
       "show 'pretty' output for interactive usage or 'json' for JSON",
       'pretty'
@@ -45,6 +50,7 @@ export function makeCiCli<T>(
           context: T;
           verbose: boolean;
           output: 'pretty' | 'json' | 'plain';
+          createFile: boolean;
         }) => {
           if (options.output === 'plain') {
             // https://github.com/chalk/chalk#supportscolor
@@ -67,6 +73,7 @@ export function makeCiCli<T>(
               from={parseSpecVersion(options.from, defaultEmptySpec)}
               to={parseSpecVersion(options.to, defaultEmptySpec)}
               context={options.context}
+              shouldGenerateFile={options.createFile}
             />,
             { exitOnCtrlC: true }
           );

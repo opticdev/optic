@@ -7,6 +7,8 @@ import { ApiCheckService } from '../../../sdk/api-check-service';
 import { SpecComparison } from './components';
 import { specFromInputToResults } from '../../input-helpers/load-spec';
 import { generateSpecResults } from './generateSpecResults';
+import { writeFile } from '../utils';
+import { DEFAULT_COMPARE_OUTPUT_FILENAME } from '../../constants';
 
 export function Compare<T>(props: {
   from: SpecFromInput;
@@ -15,6 +17,7 @@ export function Compare<T>(props: {
   verbose: boolean;
   output: 'pretty' | 'json' | 'plain';
   apiCheckService: ApiCheckService<T>;
+  shouldGenerateFile: boolean;
 }) {
   const stdout = useStdout();
   const loadFrom = useAsync(
@@ -27,12 +30,27 @@ export function Compare<T>(props: {
   const specsLoaded = !loadFrom.loading && !loadFrom.loading;
 
   const [results, sendCheckRequest] = useAsyncFn(async () => {
-    return generateSpecResults(
+    const results = await generateSpecResults(
       props.apiCheckService,
       loadFrom.value!,
       loadTo.value!,
       props.context
     );
+
+    if (props.shouldGenerateFile) {
+      const compareOutputLocation = await writeFile(
+        DEFAULT_COMPARE_OUTPUT_FILENAME,
+        Buffer.from(
+          JSON.stringify({
+            results,
+          })
+        )
+      );
+      console.log(
+        `Results of this run can be found at ${compareOutputLocation}`
+      );
+    }
+    return results;
   }, [loadFrom, loadTo, props.context]);
 
   const { exit } = useApp();

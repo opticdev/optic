@@ -7,6 +7,7 @@ import {
 import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
 import { loadFile, uploadFileToS3, writeFile } from '../utils';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
+import { DEFAULT_UPLOAD_OUTPUT_FILENAME } from '../../constants';
 
 type CiRunArgs = {
   from?: string;
@@ -197,9 +198,8 @@ export const uploadCiRun = async (
   }, Promise.resolve());
 
   const { web_url: opticWebUrl } = await opticClient.getSession(sessionId);
-  const uploadDataFilePath = 'upload-output.json'; // TODO maybe make this a cli argument?
   const uploadFileLocation = await writeFile(
-    uploadDataFilePath,
+    DEFAULT_UPLOAD_OUTPUT_FILENAME, // TODO maybe make this a cli argument?
     Buffer.from(
       JSON.stringify({
         opticWebUrl,
