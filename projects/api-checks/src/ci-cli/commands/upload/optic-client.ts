@@ -250,7 +250,7 @@ export class OpticBackendClient extends JsonHttpClient {
       ...options,
       headers: {
         ...headers,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Token ${token}`,
       },
     });
   };
