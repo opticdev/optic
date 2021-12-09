@@ -26,7 +26,7 @@ tasks:
   ci:publish:
     desc: "Publish built artifacts"
     cmds:
-      - yarn workspaces foreach -v --no-private npm publish --tolerate-republish --access public
+      - yarn workspaces foreach -v --no-private npm publish --access public
 
 # openapi-diff specific tasks. These should be moved to a separate file.
   openapi-diff:docker:build:
