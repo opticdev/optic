@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { Octokit } from '@octokit/rest';
 import { loadFile } from '../utils';
+import { trackEvent } from '../../segment';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 
 export const registerGithubComment = (cli: Command) => {
@@ -45,6 +46,7 @@ export const registerGithubComment = (cli: Command) => {
 };
 
 // The identifier we use to find the Optic Comment
+// TODO is there a better way to track and identify Optic comments for comment / replace?
 const GITHUB_COMMENT_IDENTIFIER =
   'INTERNAL-OPTIC-COMMENT-IDENTIFIER-1234567890';
 
@@ -70,6 +72,22 @@ const sendMessage = async ({
 
   const octokit = new Octokit({
     auth: githubToken,
+  });
+
+  const {
+    data: requestedReviewers,
+  } = await octokit.pulls.listRequestedReviewers({
+    owner,
+    repo,
+    pull_number,
+  });
+
+  trackEvent('optic_ci_github_comment', {
+    owner,
+    repo,
+    pull_number,
+    number_of_reviewers:
+      requestedReviewers.users.length + requestedReviewers.teams.length,
   });
 
   // Given we don't have the comment id; we need to fetch all comments on a PR.

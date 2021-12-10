@@ -8,8 +8,9 @@ import { render } from 'ink';
 import { ApiCheckService } from '../sdk/api-check-service';
 import { registerUpload } from './commands/upload';
 import { registerGithubComment } from './commands/comment';
-import { registerBulkCompare } from './commands/compare'
+import { registerBulkCompare } from './commands/compare';
 import { initSentry, wrapActionHandlerWithSentry } from './sentry';
+import { initSegment } from './segment';
 
 export function makeCiCli<T>(
   forProject: string,
@@ -19,6 +20,7 @@ export function makeCiCli<T>(
   } = {}
 ) {
   initSentry(packageJson.version);
+  initSegment();
   const { opticToken } = options;
 
   cli.version(
