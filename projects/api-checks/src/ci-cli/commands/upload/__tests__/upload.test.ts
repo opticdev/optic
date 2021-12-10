@@ -8,7 +8,7 @@ import {
   UploadSlot,
 } from '../optic-client';
 import { loadFile, uploadFileToS3 } from '../../utils';
-import { mockGhContext } from './mock-context';
+import { mockGhContext } from '../../__tests__/mock-context';
 
 jest.mock('../optic-client');
 jest.mock('../../utils');
@@ -25,10 +25,9 @@ const mockedStartSession = mockOpticClient.startSession as jest.MockedFunction<
 const mockGetUploadUrls = mockOpticClient.getUploadUrls as jest.MockedFunction<
   typeof mockOpticClient.getUploadUrls
 >;
-const mockMarkUploadAsComplete =
-  mockOpticClient.markUploadAsComplete as jest.MockedFunction<
-    typeof mockOpticClient.markUploadAsComplete
-  >;
+const mockMarkUploadAsComplete = mockOpticClient.markUploadAsComplete as jest.MockedFunction<
+  typeof mockOpticClient.markUploadAsComplete
+>;
 const mockGetSession = mockOpticClient.getSession as jest.MockedFunction<
   typeof mockOpticClient.getSession
 >;
@@ -94,7 +93,7 @@ test('uploading a file', async () => {
     UploadSlot.ToFile,
     UploadSlot.CheckResults,
     UploadSlot.GithubActionsEvent,
-  ]
+  ];
 
   mockGetUploadUrls.mockImplementation(async () => {
     return githubUploadSlots.map((uploadSlot) => ({
@@ -107,9 +106,9 @@ test('uploading a file', async () => {
   await uploadCiRun(mockOpticClient, {
     from: UploadSlot.FromFile,
     to: UploadSlot.ToFile,
-    context: UploadSlot.GithubActionsEvent,
+    ciContext: UploadSlot.GithubActionsEvent,
     provider: 'github',
-    rules: UploadSlot.CheckResults,
+    compare: UploadSlot.CheckResults,
   });
 
   expect(mockedLoadFile.mock.calls.length).toBe(numberOfFiles);
@@ -141,9 +140,9 @@ test('uploading a file with only partial slots open', async () => {
   await uploadCiRun(mockOpticClient, {
     from: UploadSlot.FromFile,
     to: UploadSlot.ToFile,
-    context: UploadSlot.GithubActionsEvent,
+    ciContext: UploadSlot.GithubActionsEvent,
     provider: 'github',
-    rules: UploadSlot.CheckResults,
+    compare: UploadSlot.CheckResults,
   });
 
   expect(mockedLoadFile.mock.calls.length).toBe(4);
@@ -179,9 +178,9 @@ test('uploads files where from is not specified', async () => {
 
   await uploadCiRun(mockOpticClient, {
     to: UploadSlot.ToFile,
-    context: UploadSlot.GithubActionsEvent,
+    ciContext: UploadSlot.GithubActionsEvent,
     provider: 'github',
-    rules: UploadSlot.CheckResults,
+    compare: UploadSlot.CheckResults,
   });
 
   expect(mockedLoadFile.mock.calls.length).toBe(numberOfFiles - 1);

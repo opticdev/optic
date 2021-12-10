@@ -169,7 +169,7 @@ export enum SessionType {
   CircleCi = 'CircleCi',
 }
 
-export type RunArgs = {
+export type UploadRunArgs = {
   from?: string;
   provider: 'github' | 'circleci';
   to: string;
@@ -180,7 +180,7 @@ export type RunArgs = {
 type Session =
   | {
       type: SessionType.GithubActions;
-      run_args: RunArgs;
+      run_args: UploadRunArgs;
       github_data: {
         organization: string;
         repo: string;
@@ -191,7 +191,7 @@ type Session =
     }
   | {
       type: SessionType.CircleCi;
-      run_args: RunArgs;
+      run_args: UploadRunArgs;
       circle_ci_data: {
         organization: string;
         repo: string;
@@ -250,7 +250,7 @@ export class OpticBackendClient extends JsonHttpClient {
       ...options,
       headers: {
         ...headers,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Token ${token}`,
       },
     });
   };

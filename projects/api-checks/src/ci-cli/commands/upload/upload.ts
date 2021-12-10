@@ -3,15 +3,19 @@ import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 import {
   readAndValidateGithubContext,
   readAndValidateCircleCiContext,
-} from './context-parsers';
-import {
-  OpticBackendClient,
-  RunArgs,
-  SessionType,
-  UploadSlot,
-} from './optic-client';
+} from '../ci-context-parsers';
+import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
 import { loadFile, uploadFileToS3, writeFile } from '../utils';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
+import { DEFAULT_UPLOAD_OUTPUT_FILENAME } from '../../constants';
+
+type CiRunArgs = {
+  from?: string;
+  provider: 'github' | 'circleci';
+  to: string;
+  ciContext: string;
+  compare: string;
+};
 
 export const registerUpload = (
   cli: Command,
@@ -30,10 +34,10 @@ export const registerUpload = (
         .makeOptionMandatory()
     )
     .requiredOption('--to <to>', 'to file or rev:file')
-    .requiredOption('--context <context>', 'file with github context')
-    .requiredOption('--rules <rules>', 'path to rules output')
+    .requiredOption('--ci-context <ciContext>', 'file with github context')
+    .requiredOption('--compare <compare>', 'path to compare output')
     .action(
-      wrapActionHandlerWithSentry(async (runArgs: RunArgs) => {
+      wrapActionHandlerWithSentry(async (runArgs: CiRunArgs) => {
         if (!opticToken) {
           console.error('Upload token was not included');
           return process.exit(1);
@@ -61,17 +65,28 @@ export const registerUpload = (
 
 const startSession = async (
   opticClient: OpticBackendClient,
-  runArgs: RunArgs,
+  runArgs: CiRunArgs,
   contextBuffer: Buffer
 ): Promise<string> => {
   if (runArgs.provider === 'github') {
-    const { organization, pull_request, run, commit_hash, repo } =
-      readAndValidateGithubContext(contextBuffer);
+    const {
+      organization,
+      pull_request,
+      run,
+      commit_hash,
+      repo,
+    } = readAndValidateGithubContext(contextBuffer);
 
     const sessionId = await opticClient.startSession(
       SessionType.GithubActions,
       {
-        run_args: runArgs,
+        run_args: {
+          from: runArgs.from,
+          to: runArgs.to,
+          context: runArgs.ciContext,
+          rules: runArgs.compare,
+          provider: runArgs.provider,
+        },
         github_data: {
           organization,
           repo,
@@ -83,11 +98,22 @@ const startSession = async (
     );
     return sessionId;
   } else if (runArgs.provider === 'circleci') {
-    const { organization, pull_request, run, commit_hash, repo } =
-      readAndValidateCircleCiContext(contextBuffer);
+    const {
+      organization,
+      pull_request,
+      run,
+      commit_hash,
+      repo,
+    } = readAndValidateCircleCiContext(contextBuffer);
 
     const sessionId = await opticClient.startSession(SessionType.CircleCi, {
-      run_args: runArgs,
+      run_args: {
+        from: runArgs.from,
+        to: runArgs.to,
+        context: runArgs.ciContext,
+        rules: runArgs.compare,
+        provider: runArgs.provider,
+      },
       circle_ci_data: {
         organization,
         repo,
@@ -103,7 +129,7 @@ const startSession = async (
 
 export const uploadCiRun = async (
   opticClient: OpticBackendClient,
-  runArgs: RunArgs
+  runArgs: CiRunArgs
 ) => {
   console.log('Loading files...');
 
@@ -113,12 +139,12 @@ export const uploadCiRun = async (
     toFileS3Buffer,
     rulesFileS3Buffer,
   ] = await Promise.all([
-    loadFile(runArgs.context),
+    loadFile(runArgs.ciContext),
     runArgs.from
       ? loadFile(runArgs.from)
       : Promise.resolve(Buffer.from(JSON.stringify(defaultEmptySpec))),
     loadFile(runArgs.to),
-    loadFile(runArgs.rules),
+    loadFile(runArgs.compare),
   ]);
 
   const fileMap: Record<UploadSlot, Buffer> = {
@@ -172,9 +198,8 @@ export const uploadCiRun = async (
   }, Promise.resolve());
 
   const { web_url: opticWebUrl } = await opticClient.getSession(sessionId);
-  const uploadDataFilePath = 'upload-run.json'; // TODO maybe make this a cli argument?
-  const uploadFileLocation = writeFile(
-    uploadDataFilePath,
+  const uploadFileLocation = await writeFile(
+    DEFAULT_UPLOAD_OUTPUT_FILENAME, // TODO maybe make this a cli argument?
     Buffer.from(
       JSON.stringify({
         opticWebUrl,

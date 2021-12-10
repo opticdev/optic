@@ -5,6 +5,8 @@ import { ApiCheckService } from '../../../sdk/api-check-service';
 import { SpecComparison } from './components';
 import { specFromInputToResults } from '../../input-helpers/load-spec';
 import { generateSpecResults } from './generateSpecResults';
+import { writeFile } from '../utils';
+import { DEFAULT_COMPARE_OUTPUT_FILENAME } from '../../constants';
 import { ResultWithSourcemap } from '../../../sdk/types';
 import { SentryClient } from '../../sentry';
 
@@ -28,6 +30,7 @@ export function Compare<T>(props: {
   verbose: boolean;
   output: 'pretty' | 'json' | 'plain';
   apiCheckService: ApiCheckService<T>;
+  shouldGenerateFile: boolean;
 }) {
   const stdout = useStdout();
   const { exit } = useApp();
@@ -38,6 +41,9 @@ export function Compare<T>(props: {
   const [toState, setToState] = useState<LoadingState>({
     loading: true,
   });
+  const [outputFileLocation, setOutputFileLocation] = useState<string | null>(
+    null
+  );
 
   const [results, setResults] = useState<
     | {
@@ -50,13 +56,13 @@ export function Compare<T>(props: {
     | { loading: false; error: false; data: ResultWithSourcemap[] }
   >({ loading: true });
   useEffect(() => {
-    let isState = false;
+    let isStale = false;
     (async () => {
       try {
         const [from, to] = await Promise.all([
           specFromInputToResults(props.from, process.cwd())
             .then((results) => {
-              !isState &&
+              !isStale &&
                 setFromState({
                   loading: false,
                   error: false,
@@ -64,7 +70,7 @@ export function Compare<T>(props: {
               return results;
             })
             .catch((e) => {
-              !isState &&
+              !isStale &&
                 setFromState({
                   loading: false,
                   error: e,
@@ -73,7 +79,7 @@ export function Compare<T>(props: {
             }),
           specFromInputToResults(props.to, process.cwd())
             .then((results) => {
-              !isState &&
+              !isStale &&
                 setToState({
                   loading: false,
                   error: false,
@@ -81,7 +87,7 @@ export function Compare<T>(props: {
               return results;
             })
             .catch((e) => {
-              !isState &&
+              !isStale &&
                 setToState({
                   loading: false,
                   error: e,
@@ -98,7 +104,19 @@ export function Compare<T>(props: {
             props.context
           );
 
-          if (!isState) {
+          if (props.shouldGenerateFile) {
+            const compareOutputLocation = await writeFile(
+              DEFAULT_COMPARE_OUTPUT_FILENAME,
+              Buffer.from(
+                JSON.stringify({
+                  results,
+                })
+              )
+            );
+            !isStale && setOutputFileLocation(compareOutputLocation);
+          }
+
+          if (!isStale) {
             setResults({ loading: false, error: false, data: results });
           }
           const hasError = results.some((result) => !result.passed);
@@ -112,7 +130,7 @@ export function Compare<T>(props: {
           }
         } catch (e) {
           SentryClient && SentryClient.captureException(e);
-          !isState && setResults({ loading: false, error: e as Error });
+          !isStale && setResults({ loading: false, error: e as Error });
           process.exit(1);
         }
       } catch (e) {
@@ -124,7 +142,7 @@ export function Compare<T>(props: {
     })();
 
     return () => {
-      isState = false;
+      isStale = false;
     };
   }, []);
 
@@ -186,6 +204,9 @@ export function Compare<T>(props: {
         </Text>
       ) : (
         <SpecComparison results={results.data} verbose={props.verbose} />
+      )}
+      {outputFileLocation && (
+        <Text>Results of this run can be found at: {outputFileLocation}</Text>
       )}
     </Box>
   );

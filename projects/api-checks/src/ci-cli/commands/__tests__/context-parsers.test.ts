@@ -1,14 +1,14 @@
 import {
   readAndValidateCircleCiContext,
   readAndValidateGithubContext,
-} from '../context-parsers';
+} from '../ci-context-parsers';
 import { mockCircleCiContext, mockGhContext } from './mock-context';
 
 // We only mock toString since this module only uses toString
 const createMockBuffer = (stringToReturn: string): Buffer => {
-  return {
+  return ({
     toString: jest.fn().mockImplementation(() => stringToReturn),
-  } as unknown as Buffer;
+  } as unknown) as Buffer;
 };
 
 describe('github context parser', () => {
@@ -145,7 +145,7 @@ describe('circle ci context parser', () => {
   test('errors if url is not in expected format in expected location', () => {
     const circleCiContext = {
       ...mockCircleCiContext,
-      CIRCLE_REPOSITORY_URL: "https://github.com/badformat"
+      CIRCLE_REPOSITORY_URL: 'https://github.com/badformat',
     };
     const mockBuffer = createMockBuffer(JSON.stringify(circleCiContext));
     expect(() => readAndValidateCircleCiContext(mockBuffer)).toThrowError(
@@ -156,7 +156,7 @@ describe('circle ci context parser', () => {
   test('errors if no CIRCLE_PR_NUMBER in expected location', () => {
     const circleCiContext = {
       ...mockCircleCiContext,
-      CIRCLE_PR_NUMBER: null
+      CIRCLE_PR_NUMBER: null,
     };
     const mockBuffer = createMockBuffer(JSON.stringify(circleCiContext));
     expect(() => readAndValidateCircleCiContext(mockBuffer)).toThrowError(
