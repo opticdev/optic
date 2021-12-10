@@ -54,19 +54,21 @@ beforeEach(() => {
       web_url: '/the_web_url',
       session: {
         type: SessionType.GithubActions,
-        run_args: {
-          from: '',
-          to: '',
-          provider: 'github',
-          context: '',
-          rules: '',
-        },
-        github_data: {
-          organization: '',
-          repo: '',
-          pull_request: 1,
-          run: 1,
-          commit_hash: '',
+        data: {
+          run_args: {
+            from: '',
+            to: '',
+            provider: 'github',
+            context: '',
+            rules: '',
+          },
+          github_data: {
+            organization: '',
+            repo: '',
+            pull_request: 1,
+            run: 1,
+            commit_hash: '',
+          },
         },
       },
       status: SessionStatus.Ready,

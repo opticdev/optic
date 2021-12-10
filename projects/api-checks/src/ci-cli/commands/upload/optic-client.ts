@@ -180,24 +180,28 @@ export type UploadRunArgs = {
 type Session =
   | {
       type: SessionType.GithubActions;
-      run_args: UploadRunArgs;
-      github_data: {
-        organization: string;
-        repo: string;
-        commit_hash: string;
-        pull_request: number;
-        run: number;
+      data: {
+        run_args: UploadRunArgs;
+        github_data: {
+          organization: string;
+          repo: string;
+          commit_hash: string;
+          pull_request: number;
+          run: number;
+        };
       };
     }
   | {
       type: SessionType.CircleCi;
-      run_args: UploadRunArgs;
-      circle_ci_data: {
-        organization: string;
-        repo: string;
-        commit_hash: string;
-        pull_request: number;
-        run: number;
+      data: {
+        run_args: UploadRunArgs;
+        circle_ci_data: {
+          organization: string;
+          repo: string;
+          commit_hash: string;
+          pull_request: number;
+          run: number;
+        };
       };
     };
 
@@ -264,7 +268,7 @@ export class OpticBackendClient extends JsonHttpClient {
 
   public async startSession<Type extends SessionType>(
     sessionType: Type,
-    sessionData: Omit<Extract<Session, { type: Type }>, 'type'>
+    sessionData: Extract<Session, { type: Type }>['data']
   ): Promise<string> {
     const sessionId = uuidv4();
 
