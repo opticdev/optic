@@ -36,28 +36,35 @@ export const mockGhContext = {
     pull_request: {
       _links: {
         comments: {
-          href: 'https://api.github.com/repos/opticdev/poc-governance-tools/issues/61/comments',
+          href:
+            'https://api.github.com/repos/opticdev/poc-governance-tools/issues/61/comments',
         },
         commits: {
-          href: 'https://api.github.com/repos/opticdev/poc-governance-tools/pulls/61/commits',
+          href:
+            'https://api.github.com/repos/opticdev/poc-governance-tools/pulls/61/commits',
         },
         html: {
           href: 'https://github.com/opticdev/poc-governance-tools/pull/61',
         },
         issue: {
-          href: 'https://api.github.com/repos/opticdev/poc-governance-tools/issues/61',
+          href:
+            'https://api.github.com/repos/opticdev/poc-governance-tools/issues/61',
         },
         review_comment: {
-          href: 'https://api.github.com/repos/opticdev/poc-governance-tools/pulls/comments{/number}',
+          href:
+            'https://api.github.com/repos/opticdev/poc-governance-tools/pulls/comments{/number}',
         },
         review_comments: {
-          href: 'https://api.github.com/repos/opticdev/poc-governance-tools/pulls/61/comments',
+          href:
+            'https://api.github.com/repos/opticdev/poc-governance-tools/pulls/61/comments',
         },
         self: {
-          href: 'https://api.github.com/repos/opticdev/poc-governance-tools/pulls/61',
+          href:
+            'https://api.github.com/repos/opticdev/poc-governance-tools/pulls/61',
         },
         statuses: {
-          href: 'https://api.github.com/repos/opticdev/poc-governance-tools/statuses/ab29f2bc311946eb2ea5e37cb297329081eb06b0',
+          href:
+            'https://api.github.com/repos/opticdev/poc-governance-tools/statuses/ab29f2bc311946eb2ea5e37cb297329081eb06b0',
         },
       },
       active_lock_reason: null,
@@ -239,7 +246,8 @@ export const mockGhContext = {
           url: 'https://api.github.com/users/opticdev',
         },
       },
-      body: "Instead of passing this via a file, we can expect to pass this in via an env variable - this means we don't need to\r\n\r\nI've also scope it so we only extract keys we need (excluding token), rather than dumping everything - this is because if github context adds more sensitive fields, we don't want to accidently grab more than we need and leak those.\r\n\r\nhttps://docs.github.com/en/actions/learn-github-actions/contexts#github-context\r\n\r\nI've also update this so it only gets triggered off `pull_request` triggers. This does mean that this is very specifically designed to run in CI pipelines, and not run locally (our cloud viewer relies on this information for rendering).",
+      body:
+        "Instead of passing this via a file, we can expect to pass this in via an env variable - this means we don't need to\r\n\r\nI've also scope it so we only extract keys we need (excluding token), rather than dumping everything - this is because if github context adds more sensitive fields, we don't want to accidently grab more than we need and leak those.\r\n\r\nhttps://docs.github.com/en/actions/learn-github-actions/contexts#github-context\r\n\r\nI've also update this so it only gets triggered off `pull_request` triggers. This does mean that this is very specifically designed to run in CI pipelines, and not run locally (our cloud viewer relies on this information for rendering).",
       changed_files: 1,
       closed_at: null,
       comments: 0,
@@ -481,7 +489,8 @@ export const mockGhContext = {
         'https://api.github.com/repos/opticdev/poc-governance-tools/statuses/ab29f2bc311946eb2ea5e37cb297329081eb06b0',
       title: 'Implement getting github context',
       updated_at: '2021-11-16T15:58:22Z',
-      url: 'https://api.github.com/repos/opticdev/poc-governance-tools/pulls/61',
+      url:
+        'https://api.github.com/repos/opticdev/poc-governance-tools/pulls/61',
       user: {
         avatar_url: 'https://avatars.githubusercontent.com/u/18374483?v=4',
         events_url: 'https://api.github.com/users/niclim/events{/privacy}',

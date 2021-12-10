@@ -1,37 +1,47 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import { Octokit } from '@octokit/rest';
+import {
+  readAndValidateGithubContext,
+  readAndValidateCircleCiContext,
+} from '../ci-context-parsers';
 import { loadFile } from '../utils';
+import { trackEvent } from '../../segment';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 
 export const registerGithubComment = (cli: Command) => {
   cli
     .command('github-comment')
     .requiredOption('--token <token>', 'github token')
-    .requiredOption(
-      '--owner <owner>',
-      'owner of the repository (can be a user or an organization)'
+    .addOption(
+      new Option(
+        '--provider <provider>',
+        'The name of the ci-provider, supported'
+      )
+        .choices(['github', 'circleci'])
+        .makeOptionMandatory()
     )
-    .requiredOption('--repo <repo>', 'name of the repository')
-    .requiredOption('--pr <pull_number>', 'the pull request number')
-    .requiredOption(
-      '--upload-results <upload>',
-      'the file path to the upload output'
-    )
+    .requiredOption('--ci-context <ciContext>', 'file with github context')
+    .requiredOption('--upload <upload>', 'the file path to the upload output')
     .action(
       wrapActionHandlerWithSentry(
         async (runArgs: {
-          githubToken: string;
-          owner: string;
-          repo: string;
-          pull_number: string;
+          token: string;
+          ciContext: string;
+          provider: 'github' | 'circleci';
           upload: string;
         }) => {
           try {
+            const fileBuffer = await loadFile(runArgs.ciContext);
+            const { organization: owner, repo, pull_request: pull_number } =
+              runArgs.provider === 'github'
+                ? readAndValidateGithubContext(fileBuffer)
+                : readAndValidateCircleCiContext(fileBuffer);
+
             await sendMessage({
-              githubToken: runArgs.githubToken,
-              owner: runArgs.owner,
-              repo: runArgs.repo,
-              pull_number: Number(runArgs.pull_number),
+              githubToken: runArgs.token,
+              owner: owner,
+              repo: repo,
+              pull_number: Number(pull_number),
               upload: runArgs.upload,
             });
           } catch (e) {
@@ -45,6 +55,7 @@ export const registerGithubComment = (cli: Command) => {
 };
 
 // The identifier we use to find the Optic Comment
+// TODO is there a better way to track and identify Optic comments for comment / replace?
 const GITHUB_COMMENT_IDENTIFIER =
   'INTERNAL-OPTIC-COMMENT-IDENTIFIER-1234567890';
 
@@ -70,6 +81,22 @@ const sendMessage = async ({
 
   const octokit = new Octokit({
     auth: githubToken,
+  });
+
+  const {
+    data: requestedReviewers,
+  } = await octokit.pulls.listRequestedReviewers({
+    owner,
+    repo,
+    pull_number,
+  });
+
+  trackEvent('optic_ci_github_comment', {
+    owner,
+    repo,
+    pull_number,
+    number_of_reviewers:
+      requestedReviewers.users.length + requestedReviewers.teams.length,
   });
 
   // Given we don't have the comment id; we need to fetch all comments on a PR.

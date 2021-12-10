@@ -8,8 +8,9 @@ import { render } from 'ink';
 import { ApiCheckService } from '../sdk/api-check-service';
 import { registerUpload } from './commands/upload';
 import { registerGithubComment } from './commands/comment';
-import { registerBulkCompare } from './commands/compare'
+import { registerBulkCompare } from './commands/compare';
 import { initSentry, wrapActionHandlerWithSentry } from './sentry';
+import { initSegment } from './segment';
 
 export function makeCiCli<T>(
   forProject: string,
@@ -19,6 +20,7 @@ export function makeCiCli<T>(
   } = {}
 ) {
   initSentry(packageJson.version);
+  initSegment();
   const { opticToken } = options;
 
   cli.version(
@@ -31,6 +33,11 @@ export function makeCiCli<T>(
     .option('--to <to>', 'to file or rev:file, defaults empty spec')
     .option('--context <context>', 'json of context')
     .option('--verbose', 'show all checks, even passing', false)
+    .option(
+      '--create-file',
+      'creates a file with the results of the run in json format',
+      false
+    )
     .option(
       '--output <format>',
       "show 'pretty' output for interactive usage or 'json' for JSON",
@@ -45,6 +52,7 @@ export function makeCiCli<T>(
           context: T;
           verbose: boolean;
           output: 'pretty' | 'json' | 'plain';
+          createFile: boolean;
         }) => {
           if (options.output === 'plain') {
             // https://github.com/chalk/chalk#supportscolor
@@ -67,6 +75,7 @@ export function makeCiCli<T>(
               from={parseSpecVersion(options.from, defaultEmptySpec)}
               to={parseSpecVersion(options.to, defaultEmptySpec)}
               context={options.context}
+              shouldGenerateFile={options.createFile}
             />,
             { exitOnCtrlC: true }
           );
