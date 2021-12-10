@@ -1,12 +1,13 @@
-import { SpecFromInput, SpecVersionFrom } from "./compare-input-parser";
+import { SpecFromInput, SpecVersionFrom } from './compare-input-parser';
 import {
   JsonSchemaSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
   ParseOpenAPIResult,
   inGit,
   parseOpenAPIWithSourcemap,
-} from "@useoptic/openapi-io";
-import path from "path";
+} from '@useoptic/openapi-io';
+import path from 'path';
+import { OpenAPIV3 } from 'openapi-types';
 
 export async function specFromInputToResults(
   input: SpecFromInput,
@@ -15,8 +16,11 @@ export async function specFromInputToResults(
   switch (input.from) {
     case SpecVersionFrom.empty:
       return {
-        jsonLike: input.value,
-        sourcemap: new JsonSchemaSourcemap("empty.json"),
+        jsonLike: {
+          ...input.value,
+          ['x-optic-ci-empty-spec']: true,
+        } as OpenAPIV3.Document,
+        sourcemap: new JsonSchemaSourcemap('empty.json'),
       };
     case SpecVersionFrom.git: {
       const gitRepo = await inGit(path.join(workingDir, input.name));
