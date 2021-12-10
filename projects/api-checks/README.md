@@ -9,9 +9,8 @@ API checks helps automate checks between OpenAPI changes.
 ```javascript
 // cli.js
 import { expect } from 'chai';
-import { ApiCheckService } from './sdk/api-check-service';
-import { ExampleDsl, ExampleDslContext } from './sdk/test/example-dsl';
-import { makeCiCli } from './ci-cli/make-cli';
+import { ApiCheckService, makeCiCli } from '@useoptic/api-checks';
+import { ExampleDsl } from './dsl';
 
 const checker = new ApiCheckService();
 
