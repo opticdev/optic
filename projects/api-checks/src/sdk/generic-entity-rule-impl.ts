@@ -67,10 +67,10 @@ export function genericEntityRuleImpl<
     return (statement, handler) => {
       pushCheck(
         ...added
-          .filter((addRule) => {
-            // should not run added rule if the parent operation was also added.
-            return !wasParentAdded(addRule.location.conceptualPath);
-          })
+          // .filter((addRule) => {
+          //   // should not run added rule if the parent operation was also added.
+          //   return !wasParentAdded(addRule.location.conceptualPath);
+          // })
           .map((item, index) => {
             const addedWhere = `added ${openApiKind.toString()}: ${describeWhere(
               item.added!
