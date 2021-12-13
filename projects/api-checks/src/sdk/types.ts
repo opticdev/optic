@@ -1,5 +1,5 @@
-import { ILookupLinePreviewResult } from "@useoptic/openapi-io";
-import { OpenApiFact, IChange } from "@useoptic/openapi-utilities";
+import { ILookupLinePreviewResult } from '@useoptic/openapi-io';
+import { OpenApiFact, IChange } from '@useoptic/openapi-utilities';
 
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;
@@ -11,7 +11,8 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
     (
       added: G,
       context: ApiContext & DSLContext,
-      docs: DocsLinkHelper
+      docs: DocsLinkHelper,
+      specItem: OpenApiEntityType
     ) => Promise<void> | void
   >;
   changed: ShouldOrMust<
@@ -19,7 +20,16 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
       before: G,
       after: G,
       context: ApiContext & DSLContext,
-      docs: DocsLinkHelper
+      docs: DocsLinkHelper,
+      specItem: OpenApiEntityType
+    ) => Promise<void> | void
+  >;
+  requirementOnChange: ShouldOrMust<
+    (
+      addedOrAfter: G,
+      context: ApiContext & DSLContext,
+      docs: DocsLinkHelper,
+      specItem: OpenApiEntityType
     ) => Promise<void> | void
   >;
   removed: ShouldOrMust<

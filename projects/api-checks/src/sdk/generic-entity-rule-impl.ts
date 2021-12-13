@@ -75,9 +75,24 @@ export function genericEntityRuleImpl<
             const addedWhere = `added ${openApiKind.toString()}: ${describeWhere(
               item.added!
             )}`;
+
+            let specItem: OpenApiEntityType | undefined;
+            try {
+              specItem = getSpecItem(item.location.jsonPath);
+            } catch (e) {
+              throw new Error(
+                'JSON trail does not resolve ' + item.location.jsonPath
+              );
+            }
+
             const docsHelper = newDocsLinkHelper();
             return runCheck(item, docsHelper, addedWhere, statement, must, () =>
-              handler(item.added!, getContext(item.location), docsHelper)
+              handler(
+                item.added!,
+                getContext(item.location),
+                docsHelper,
+                specItem!
+              )
             );
           })
       );
@@ -127,12 +142,85 @@ export function genericEntityRuleImpl<
             item.changed!.after!
           )}`;
           const docsHelper = newDocsLinkHelper();
+
+          let specItem: OpenApiEntityType | undefined;
+          try {
+            specItem = getSpecItem(item.location.jsonPath);
+          } catch (e) {
+            throw new Error(
+              'JSON trail does not resolve ' + item.location.jsonPath
+            );
+          }
+
           return runCheck(item, docsHelper, updatedWhere, statement, must, () =>
             handler(
               item.changed!.before,
               item.changed!.after,
               getContext(item.location),
-              docsHelper
+              docsHelper,
+              specItem!
+            )
+          );
+        })
+      );
+    };
+  };
+
+  const requirementOnChange: (
+    must: boolean
+  ) => EntityRule<
+    NarrowedOpenApiFact,
+    ApiContext,
+    DslContext,
+    OpenApiEntityType
+  >['requirementOnChange']['must'] = (must: boolean) => {
+    return (statement, handler) => {
+      pushCheck(
+        ...changes.map((item, index) => {
+          const updatedWhere = `updated ${openApiKind.toString()}: ${describeWhere(
+            item.changed!.after!
+          )}`;
+          const docsHelper = newDocsLinkHelper();
+
+          let specItem: OpenApiEntityType | undefined;
+          try {
+            specItem = getSpecItem(item.location.jsonPath);
+          } catch (e) {
+            throw new Error(
+              'JSON trail does not resolve ' + item.location.jsonPath
+            );
+          }
+
+          return runCheck(item, docsHelper, updatedWhere, statement, must, () =>
+            handler(
+              item.changed!.after,
+              getContext(item.location),
+              docsHelper,
+              specItem!
+            )
+          );
+        }),
+        ...added.map((item, index) => {
+          const addedWhere = `added ${openApiKind.toString()}: ${describeWhere(
+            item.added!
+          )}`;
+
+          let specItem: OpenApiEntityType | undefined;
+          try {
+            specItem = getSpecItem(item.location.jsonPath);
+          } catch (e) {
+            throw new Error(
+              'JSON trail does not resolve ' + item.location.jsonPath
+            );
+          }
+
+          const docsHelper = newDocsLinkHelper();
+          return runCheck(item, docsHelper, addedWhere, statement, must, () =>
+            handler(
+              item.added!,
+              getContext(item.location),
+              docsHelper,
+              specItem!
             )
           );
         })
@@ -202,6 +290,10 @@ export function genericEntityRuleImpl<
     requirement: {
       must: requirementsHandler(true),
       should: requirementsHandler(false),
+    },
+    requirementOnChange: {
+      must: requirementOnChange(true),
+      should: requirementOnChange(false),
     },
   };
 }
