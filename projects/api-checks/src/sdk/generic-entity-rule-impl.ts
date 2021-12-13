@@ -20,12 +20,16 @@ export function genericEntityRuleImpl<
   describeWhere: (fact: NarrowedOpenApiFact) => string,
   getContext: (location: ILocation) => ApiContext & DslContext,
   pushCheck: (...check: Promise<Result>[]) => void,
-  getSpecItem: (pointer: string) => OpenApiEntityType
+  getSpecItem: (pointer: string) => OpenApiEntityType,
+  shouldSkipAddedWhenParent: (change: IChange<OpenApiFact>) => boolean = () =>
+    false
 ): EntityRule<NarrowedOpenApiFact, ApiContext, DslContext, OpenApiEntityType> {
   const wasParentAdded = (location: IPathComponent[]) => {
     return changelog.some((i) => {
       if (i.added) {
-        return parentOfChild(i.location.conceptualPath, location);
+        if (parentOfChild(i.location.conceptualPath, location)) {
+          return Boolean(i.added) && shouldSkipAddedWhenParent(i);
+        }
       }
     });
   };
@@ -67,10 +71,10 @@ export function genericEntityRuleImpl<
     return (statement, handler) => {
       pushCheck(
         ...added
-          // .filter((addRule) => {
-          //   // should not run added rule if the parent operation was also added.
-          //   return !wasParentAdded(addRule.location.conceptualPath);
-          // })
+          .filter((addRule) => {
+            // should not run added rule if the parent operation was also added.
+            return !wasParentAdded(addRule.location.conceptualPath);
+          })
           .map((item, index) => {
             const addedWhere = `added ${openApiKind.toString()}: ${describeWhere(
               item.added!
@@ -200,30 +204,35 @@ export function genericEntityRuleImpl<
             )
           );
         }),
-        ...added.map((item, index) => {
-          const addedWhere = `added ${openApiKind.toString()}: ${describeWhere(
-            item.added!
-          )}`;
+        ...added
+          .filter((addRule) => {
+            // should not run added rule if the parent operation was also added.
+            return !wasParentAdded(addRule.location.conceptualPath);
+          })
+          .map((item, index) => {
+            const addedWhere = `added ${openApiKind.toString()}: ${describeWhere(
+              item.added!
+            )}`;
 
-          let specItem: OpenApiEntityType | undefined;
-          try {
-            specItem = getSpecItem(item.location.jsonPath);
-          } catch (e) {
-            throw new Error(
-              'JSON trail does not resolve ' + item.location.jsonPath
+            let specItem: OpenApiEntityType | undefined;
+            try {
+              specItem = getSpecItem(item.location.jsonPath);
+            } catch (e) {
+              throw new Error(
+                'JSON trail does not resolve ' + item.location.jsonPath
+              );
+            }
+
+            const docsHelper = newDocsLinkHelper();
+            return runCheck(item, docsHelper, addedWhere, statement, must, () =>
+              handler(
+                item.added!,
+                getContext(item.location),
+                docsHelper,
+                specItem!
+              )
             );
-          }
-
-          const docsHelper = newDocsLinkHelper();
-          return runCheck(item, docsHelper, addedWhere, statement, must, () =>
-            handler(
-              item.added!,
-              getContext(item.location),
-              docsHelper,
-              specItem!
-            )
-          );
-        })
+          })
       );
     };
   };
