@@ -33,18 +33,47 @@ describe('parseJsonComparisonInput', () => {
         })
       );
     });
-    const output = await parseJsonComparisonInput('abcdef');
+    const {
+      comparisons: output,
+      skippedParsing,
+    } = await parseJsonComparisonInput('abcdef');
     const expectedOutputs = [
       ['a', 'b', { abc: 123 }],
       ['c', 'd', { cde: 'test' }],
       ['e', 'f', {}],
     ];
     expect(output.size).toBe(3);
+    expect(skippedParsing).toBe(false);
     [...output.values()].forEach((parsedLine, i) => {
       const [expectedFrom, expectedTo, context] = expectedOutputs[i];
       expect(parsedLine.fromFileName).toBe(expectedFrom);
       expect(parsedLine.toFileName).toBe(expectedTo);
       expect(parsedLine.context).toEqual(context);
+    });
+    mockedLoadFile.mockClear();
+  });
+
+  test('handles when from is not specified', async () => {
+    mockedLoadFile.mockImplementation(async () => {
+      return Buffer.from(
+        JSON.stringify({
+          comparisons: [
+            {
+              to: 'b',
+              context: {},
+            },
+          ],
+        })
+      );
+    });
+    const {
+      comparisons: output,
+      skippedParsing,
+    } = await parseJsonComparisonInput('abcdef');
+    expect(output.size).toBe(1);
+    expect(skippedParsing).toBe(false);
+    output.forEach((line) => {
+      expect(line.toFileName).toBe('b');
     });
     mockedLoadFile.mockClear();
   });
@@ -62,16 +91,16 @@ describe('parseJsonComparisonInput', () => {
             {
               from: 'c',
             },
-            {
-              to: 'f',
-              context: {},
-            },
           ],
         })
       );
     });
-    const output = await parseJsonComparisonInput('abcdef');
+    const {
+      comparisons: output,
+      skippedParsing,
+    } = await parseJsonComparisonInput('abcdef');
     expect(output.size).toBe(1);
+    expect(skippedParsing).toBe(true);
     output.forEach((line) => {
       expect(line.fromFileName).toBe('a');
       expect(line.toFileName).toBe('b');

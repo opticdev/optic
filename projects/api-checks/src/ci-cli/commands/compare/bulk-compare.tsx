@@ -68,6 +68,7 @@ export const registerBulkCompare = <T extends {}>(
             await waitUntilExit();
             process.exit(0);
           } catch (e) {
+            console.error((e as Error).message);
             SentryClient && SentryClient.captureException(e);
             process.exit(1);
           }
@@ -78,7 +79,7 @@ export const registerBulkCompare = <T extends {}>(
 
 type Comparison = {
   id: string;
-  fromFileName: string;
+  fromFileName?: string;
   toFileName: string;
   context: any;
 } & (
@@ -87,7 +88,7 @@ type Comparison = {
   | { loading: false; error: false; results: ResultWithSourcemap[] }
 );
 
-const loadSpecFile = async (fileName: string): Promise<ParseOpenAPIResult> => {
+const loadSpecFile = async (fileName?: string): Promise<ParseOpenAPIResult> => {
   return specFromInputToResults(
     parseSpecVersion(fileName, defaultEmptySpec),
     process.cwd()
@@ -164,18 +165,23 @@ const compareSpecs = async ({
 
 export const parseJsonComparisonInput = async (
   input: string
-): Promise<Map<string, Comparison>> => {
+): Promise<{
+  comparisons: Map<string, Comparison>;
+  skippedParsing: boolean;
+}> => {
   const fileOutput = await loadFile(input);
+  let skippedParsing = false;
   const output = JSON.parse(fileOutput.toString());
   const initialComparisons: Map<string, Comparison> = new Map();
   for (const comparison of output.comparisons || []) {
     // expected format is fromfile, tofile
-    if (!comparison.from || !comparison.to || !comparison.context) {
+    if (!comparison.to || !comparison.context) {
       console.log(
         `Comparison doesn't match expected format, found: ${JSON.stringify(
           comparison
         )}`
       );
+      skippedParsing = true;
       continue;
     }
     const id = uuidv4();
@@ -189,7 +195,7 @@ export const parseJsonComparisonInput = async (
     });
   }
 
-  return initialComparisons;
+  return { comparisons: initialComparisons, skippedParsing };
 };
 
 // TODO if we want this to parse a large amount of data, we'll want to convert this to read as a stream
@@ -214,7 +220,10 @@ const BulkCompare: FC<{
       try {
         console.log('Reading input file...');
         let hasError = false;
-        const initialComparisons = await parseJsonComparisonInput(input);
+        const {
+          comparisons: initialComparisons,
+          skippedParsing,
+        } = await parseJsonComparisonInput(input);
 
         !isStale && setComparisons(initialComparisons);
 
@@ -253,7 +262,12 @@ const BulkCompare: FC<{
           },
         });
 
-        exit(hasError ? new Error('Some comparisons are invalid') : undefined);
+        const maybeError = skippedParsing
+          ? new Error('Error: Could not read all of the comparison inputs')
+          : hasError
+          ? new Error('Some checks did not pass')
+          : undefined;
+        exit(maybeError);
       } catch (e) {
         stderr.write(JSON.stringify(e, null, 2));
         exit(e as Error);
@@ -288,7 +302,8 @@ const BulkCompare: FC<{
           >
             <Box>
               <Text>
-                Comparing {comparison.fromFileName} to {comparison.toFileName}
+                Comparing {comparison.fromFileName || 'Empty spec'} to{' '}
+                {comparison.toFileName}
               </Text>
             </Box>
             <Box>
