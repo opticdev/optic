@@ -79,7 +79,7 @@ api start
 [optic] Starting My API API on Port: 3005, with npm run server-start
 ```
 
-- [Document your API with Optic](https://useoptic.com/document/baseline/)
+- [Document your API with Optic](https://optic10.useoptic.com/document/baseline/)
 - [Video: Quinn Slack from Sourcegraph documenting GitHub's API in 10 minutes](https://www.youtube.com/watch?v=UQ4TYUvTrok&t=2s)
 
 
@@ -91,7 +91,7 @@ api start
 
 While you develop your API and run tests locally, Optic diffs the traffic to find new endpoints, or changes to existing endpoints. These API diffs are listed when you run `api status`:
 
-- [Learn more about detecting + reviewing API Diffs](https://useoptic.com/change/diff-review/)
+- [Learn more about detecting + reviewing API Diffs](https://optic10.useoptic.com/change/diff-review/)
 
 <img src="https://github.com/opticdev/optic/raw/develop/website/static/img/status.svg" alt="Optic" height="350">
 
@@ -124,26 +124,26 @@ Adding explicit API changelogs in PRs facilitates discussion and leads to better
 
 No more doc drift. When you approve an API change Optic also updates the specification.
 
-[Install & Set up the GitBot](https://useoptic.com/reference/ci/changelog)
+[Install & Set up the GitBot](https://optic10.useoptic.com/ci/changelog)
 
 ![changelog](https://github.com/opticdev/optic/raw/develop/website/static/img/gitbot-large.png)
 
 ---
 
-## Documentation [https://useoptic.com/docs](https://www.useoptic.com/docs)
+## Documentation [optic10.useoptic.com/docs](https://optic10.useoptic.com/docs)
 
-- Read the full docs at: [useoptic.com/docs](https://www.useoptic.com/docs).
+- Read the full docs at: [optic10.useoptic.com/docs](https://optic10.useoptic.com/docs).
 - Want to contribute? Check out the [Contribution Guidelines](Contributing.md).
 - To get set up working on the project, please review our [Developer Setup](Developer-setup.md) guide as well.
 
 
 ## Resources
-- Read our about Aidan + Dev's vision for the space **[Read: Git for APIs](https://useoptic.com/blog/git-for-apis)**
+- Read our about Aidan + Dev's vision for the space **[Read: Git for APIs](https://optic10.useoptic.com/blog/git-for-apis)**
 - Listen to **[Optic on Software Engineering Daily](https://softwareengineeringdaily.com/2020/09/02/api-change-management-with-aidan-cunniffe/)**
 - Read API Evangelist on Optic **[Automatically Generate OpenAPI For Your APIs Just By Using Them
   ](https://apievangelist.com/2019/12/12/automatically-generate-openapi-for-your-apis-just-by-using-them/)**
 
-- **[Join Community](https://useoptic.com/docs/community)**
+- **[Join Community](https://optic10.useoptic.com/docs/community)**
 
 Want to help us design the next features? [Book Maintainer Office Hours](https://calendly.com/opticlabs/maintainer-office-hours?month=2021-01)
 
