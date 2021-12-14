@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { SpecFromInput } from '../../input-helpers/compare-input-parser';
-import { Box, Text, useApp, useStdout } from 'ink';
+import { Command } from 'commander';
+
+import { Box, Text, render, useApp, useStdout } from 'ink';
+import { defaultEmptySpec } from '@useoptic/openapi-utilities';
+import {
+  SpecFromInput,
+  parseSpecVersion,
+} from '../../input-helpers/compare-input-parser';
+import { specFromInputToResults } from '../../input-helpers/load-spec';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { SpecComparison } from './components';
-import { specFromInputToResults } from '../../input-helpers/load-spec';
 import { generateSpecResults } from './generateSpecResults';
 import { writeFile } from '../utils';
 import { DEFAULT_COMPARE_OUTPUT_FILENAME } from '../../constants';
 import { ResultWithSourcemap } from '../../../sdk/types';
-import { SentryClient } from '../../sentry';
+import { SentryClient, wrapActionHandlerWithSentry } from '../../sentry';
 
 type LoadingState =
   | {
@@ -23,7 +29,79 @@ type LoadingState =
       error: false;
     };
 
-export function Compare<T>(props: {
+export const registerCompare = <T extends {}>(
+  cli: Command,
+  checkService: ApiCheckService<T>
+) => {
+  cli
+    .command('compare')
+    .option('--from <from>', 'from file or rev:file, defaults empty spec')
+    .option('--to <to>', 'to file or rev:file, defaults empty spec')
+    .option('--context <context>', 'json of context')
+    .option('--verbose', 'show all checks, even passing', false)
+    .option(
+      '--create-file',
+      'creates a file with the results of the run in json format',
+      false
+    )
+    .option(
+      '--output <format>',
+      "show 'pretty' output for interactive usage or 'json' for JSON",
+      'pretty'
+    )
+    .action(
+      wrapActionHandlerWithSentry(
+        async (options: {
+          from?: string;
+          to?: string;
+          context?: string;
+          verbose: boolean;
+          output: 'pretty' | 'json' | 'plain';
+          createFile: boolean;
+        }) => {
+          if (options.output === 'plain') {
+            // https://github.com/chalk/chalk#supportscolor
+            // https://github.com/chalk/supports-color/blob/ff1704d46cfb0714003f53c8d7e55736d8d545ff/index.js#L38
+            if (
+              process.env.FORCE_COLOR !== 'false' &&
+              process.env.FORCE_COLOR !== '0'
+            ) {
+              console.error(
+                `Please set FORCE_COLOR=false or FORCE_COLOR=0 to enable plain text output in the environment you want to run this command in`
+              );
+              return process.exit(1);
+            }
+          }
+          try {
+            const parsedContext = options.context
+              ? JSON.parse(options.context)
+              : {};
+            const { waitUntilExit } = render(
+              <Compare
+                verbose={options.verbose}
+                output={options.output}
+                apiCheckService={checkService}
+                from={parseSpecVersion(options.from, defaultEmptySpec)}
+                to={parseSpecVersion(options.to, defaultEmptySpec)}
+                context={parsedContext}
+                shouldGenerateFile={options.createFile}
+              />,
+              { exitOnCtrlC: true }
+            );
+            await waitUntilExit();
+          } catch (e) {
+            console.error(
+              `Could not parse the context object provided at --context ${
+                options.context
+              }. Got an error: ${(e as Error).message}`
+            );
+          }
+        }
+      )
+    );
+};
+
+function Compare<T>(props: {
   from: SpecFromInput;
   to: SpecFromInput;
   context: T;
