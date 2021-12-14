@@ -6,11 +6,18 @@ export interface ShouldOrMust<G> {
   should: (statement: string, handler: G) => void;
 }
 
+export type StructuralContext = {
+  directParentAdded: boolean;
+  operationAdded: boolean;
+  bodyAdded: boolean;
+  responseAdded: boolean;
+};
+
 export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
   added: ShouldOrMust<
     (
       added: G,
-      context: ApiContext & DSLContext,
+      context: ApiContext & DSLContext & StructuralContext,
       docs: DocsLinkHelper,
       specItem: OpenApiEntityType
     ) => Promise<void> | void
@@ -19,7 +26,7 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
     (
       before: G,
       after: G,
-      context: ApiContext & DSLContext,
+      context: ApiContext & DSLContext & StructuralContext,
       docs: DocsLinkHelper,
       specItem: OpenApiEntityType
     ) => Promise<void> | void
@@ -27,7 +34,7 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
   requirementOnChange: ShouldOrMust<
     (
       addedOrAfter: G,
-      context: ApiContext & DSLContext,
+      context: ApiContext & DSLContext & StructuralContext,
       docs: DocsLinkHelper,
       specItem: OpenApiEntityType
     ) => Promise<void> | void
@@ -35,14 +42,14 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
   removed: ShouldOrMust<
     (
       before: G,
-      context: ApiContext & DSLContext,
+      context: ApiContext & DSLContext & StructuralContext,
       docs: DocsLinkHelper
     ) => Promise<void> | void
   >;
   requirement: ShouldOrMust<
     (
       value: G,
-      context: ApiContext & DSLContext,
+      context: ApiContext & DSLContext & StructuralContext,
       docs: DocsLinkHelper,
       specItem: OpenApiEntityType
     ) => Promise<void> | void

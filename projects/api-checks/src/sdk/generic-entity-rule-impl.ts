@@ -1,13 +1,21 @@
 import {
   IChange,
-  OpenApiKind,
   IFact,
   ILocation,
   OpenApiFact,
+  OpenApiKind,
+  OpenApiOperationFact,
 } from '@useoptic/openapi-utilities';
-import { EntityRule, newDocsLinkHelper, Result, runCheck } from './types';
+import {
+  EntityRule,
+  newDocsLinkHelper,
+  Result,
+  runCheck,
+  StructuralContext,
+} from './types';
 import equals from 'lodash.isequal';
 import { IPathComponent } from '@useoptic/openapi-utilities/build/openapi3/sdk/types';
+
 export function genericEntityRuleImpl<
   NarrowedOpenApiFact, // TODO require Type to be a type of `OpenApiFact`
   ApiContext,
@@ -20,18 +28,72 @@ export function genericEntityRuleImpl<
   describeWhere: (fact: NarrowedOpenApiFact) => string,
   getContext: (location: ILocation) => ApiContext & DslContext,
   pushCheck: (...check: Promise<Result>[]) => void,
-  getSpecItem: (pointer: string) => OpenApiEntityType,
-  shouldSkipAddedWhenParent: (change: IChange<OpenApiFact>) => boolean = () =>
-    false
+  getSpecItem: (pointer: string) => OpenApiEntityType
 ): EntityRule<NarrowedOpenApiFact, ApiContext, DslContext, OpenApiEntityType> {
   const wasParentAdded = (location: IPathComponent[]) => {
     return changelog.some((i) => {
       if (i.added) {
-        if (parentOfChild(i.location.conceptualPath, location)) {
-          return Boolean(i.added) && shouldSkipAddedWhenParent(i);
-        }
+        return parentOfChild(i.location.conceptualPath, location);
       }
     });
+  };
+
+  const getStructuralContext = (location: ILocation): StructuralContext => {
+    return {
+      directParentAdded: wasParentAdded(location.conceptualPath),
+      operationAdded: changelog.some((i) => {
+        if (i.added && i.location.kind === OpenApiKind.Operation) {
+          const fact = i.added as OpenApiOperationFact;
+          return (
+            fact.method === i.location.conceptualLocation.method &&
+            fact.pathPattern === i.location.conceptualLocation.path
+          );
+        }
+      }),
+      responseAdded: changelog.some((i) => {
+        if (
+          i.added &&
+          i.location.kind === OpenApiKind.Response &&
+          'inResponse' in location.conceptualLocation &&
+          'inResponse' in i.location.conceptualLocation
+        ) {
+          return (
+            location.conceptualLocation.inResponse.statusCode ===
+            i.location.conceptualLocation.inResponse.statusCode
+          );
+        }
+      }),
+      bodyAdded: changelog.some((i) => {
+        if (
+          i.added &&
+          i.location.kind === OpenApiKind.Body &&
+          'inRequest' in location.conceptualLocation &&
+          'body' in location.conceptualLocation.inRequest &&
+          'inRequest' in i.location.conceptualLocation &&
+          'body' in i.location.conceptualLocation.inRequest
+        ) {
+          return (
+            location.conceptualLocation.inRequest.body.contentType ===
+            i.location.conceptualLocation.inRequest.body.contentType
+          );
+        }
+        if (
+          i.added &&
+          i.location.kind === OpenApiKind.Body &&
+          'inResponse' in location.conceptualLocation &&
+          'body' in location.conceptualLocation.inResponse &&
+          'inResponse' in i.location.conceptualLocation &&
+          'body' in i.location.conceptualLocation.inResponse
+        ) {
+          return (
+            location.conceptualLocation.inResponse.body.contentType ===
+              i.location.conceptualLocation.inResponse.body.contentType &&
+            location.conceptualLocation.inResponse.statusCode ===
+              i.location.conceptualLocation.inResponse.statusCode
+          );
+        }
+      }),
+    };
   };
 
   const wasParentRemoved = (location: IPathComponent[]) => {
@@ -71,10 +133,10 @@ export function genericEntityRuleImpl<
     return (statement, handler) => {
       pushCheck(
         ...added
-          .filter((addRule) => {
-            // should not run added rule if the parent operation was also added.
-            return !wasParentAdded(addRule.location.conceptualPath);
-          })
+          // .filter((addRule) => {
+          //   // should not run added rule if the parent operation was also added.
+          //   return !wasParentAdded(addRule.location.conceptualPath);
+          // })
           .map((item, index) => {
             const addedWhere = `added ${openApiKind.toString()}: ${describeWhere(
               item.added!
@@ -93,7 +155,10 @@ export function genericEntityRuleImpl<
             return runCheck(item, docsHelper, addedWhere, statement, must, () =>
               handler(
                 item.added!,
-                getContext(item.location),
+                {
+                  ...getContext(item.location),
+                  ...getStructuralContext(item.location),
+                },
                 docsHelper,
                 specItem!
               )
@@ -124,7 +189,14 @@ export function genericEntityRuleImpl<
             )}`;
             const docsHelper = newDocsLinkHelper();
             return runCheck(item, docsHelper, addedWhere, statement, must, () =>
-              handler(item.added!, getContext(item.location), docsHelper)
+              handler(
+                item.added!,
+                {
+                  ...getContext(item.location),
+                  ...getStructuralContext(item.location),
+                },
+                docsHelper
+              )
             );
           })
       );
@@ -160,7 +232,10 @@ export function genericEntityRuleImpl<
             handler(
               item.changed!.before,
               item.changed!.after,
-              getContext(item.location),
+              {
+                ...getContext(item.location),
+                ...getStructuralContext(item.location),
+              },
               docsHelper,
               specItem!
             )
@@ -198,17 +273,20 @@ export function genericEntityRuleImpl<
           return runCheck(item, docsHelper, updatedWhere, statement, must, () =>
             handler(
               item.changed!.after,
-              getContext(item.location),
+              {
+                ...getContext(item.location),
+                ...getStructuralContext(item.location),
+              },
               docsHelper,
               specItem!
             )
           );
         }),
         ...added
-          .filter((addRule) => {
-            // should not run added rule if the parent operation was also added.
-            return !wasParentAdded(addRule.location.conceptualPath);
-          })
+          // .filter((addRule) => {
+          //   // should not run added rule if the parent operation was also added.
+          //   return !wasParentAdded(addRule.location.conceptualPath);
+          // })
           .map((item, index) => {
             const addedWhere = `added ${openApiKind.toString()}: ${describeWhere(
               item.added!
@@ -227,7 +305,10 @@ export function genericEntityRuleImpl<
             return runCheck(item, docsHelper, addedWhere, statement, must, () =>
               handler(
                 item.added!,
-                getContext(item.location),
+                {
+                  ...getContext(item.location),
+                  ...getStructuralContext(item.location),
+                },
                 docsHelper,
                 specItem!
               )
@@ -273,7 +354,10 @@ export function genericEntityRuleImpl<
             () =>
               handler(
                 item.value,
-                getContext(item.location),
+                {
+                  ...getContext(item.location),
+                  ...getStructuralContext(item.location),
+                },
                 docsHelper,
                 specItem || ({} as OpenApiEntityType)
               )
