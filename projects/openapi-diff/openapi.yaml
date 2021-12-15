@@ -30,7 +30,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "./schemas.yaml#/components/DeploymentStatus"
+                  $ref: ./schemas.yaml#/components/DeploymentStatus
   /users/{username}/followers:
     parameters:
       - in: path
@@ -130,7 +130,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./schemas.yaml#/components/DeploymentStatus"
+                $ref: ./schemas.yaml#/components/DeploymentStatus
   /users/{username}:
     parameters:
       - in: path
