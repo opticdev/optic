@@ -170,7 +170,7 @@ export enum SessionType {
 }
 
 export type UploadRunArgs = {
-  from?: string;
+  from: string;
   provider: 'github' | 'circleci';
   to: string;
   context: string;
