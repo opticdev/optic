@@ -8,10 +8,12 @@ import {
   UploadSlot,
 } from '../optic-client';
 import { loadFile, uploadFileToS3 } from '../../utils';
+import { specFromInputToResults } from '../../../input-helpers/load-spec';
 import { mockGhContext } from '../../__tests__/mock-context';
 
 jest.mock('../optic-client');
 jest.mock('../../utils');
+jest.mock('../../../input-helpers/load-spec');
 
 const MockedOpticBackendClient = OpticBackendClient as jest.MockedClass<
   typeof OpticBackendClient
@@ -35,11 +37,14 @@ const mockedLoadFile = loadFile as jest.MockedFunction<typeof loadFile>;
 const mockedUploadFileToS3 = uploadFileToS3 as jest.MockedFunction<
   typeof uploadFileToS3
 >;
+const mockSpecFromInputToResults = specFromInputToResults as jest.MockedFunction<
+  typeof specFromInputToResults
+>;
 
 let fileBufferMap: Record<UploadSlot, Buffer> = {
   [UploadSlot.CheckResults]: Buffer.from('check results'),
-  [UploadSlot.FromFile]: Buffer.from('from file'),
-  [UploadSlot.ToFile]: Buffer.from('to file'),
+  [UploadSlot.FromFile]: Buffer.from(JSON.stringify({})),
+  [UploadSlot.ToFile]: Buffer.from(JSON.stringify({})),
   [UploadSlot.GithubActionsEvent]: Buffer.from(JSON.stringify(mockGhContext)),
   [UploadSlot.CircleCiEvent]: Buffer.from(JSON.stringify(mockGhContext)),
 };
@@ -48,6 +53,17 @@ beforeEach(() => {
   mockedLoadFile.mockImplementation(async (filePath: string) => {
     return fileBufferMap[filePath as UploadSlot] || Buffer.from('abc');
   });
+
+  mockSpecFromInputToResults.mockImplementation(
+    async (input: any, workingDir: any) => {
+      return {
+        jsonLike: JSON.parse(
+          fileBufferMap[input.filePath as UploadSlot].toString()
+        ),
+        sourcemap: {} as any,
+      };
+    }
+  );
 
   mockGetSession.mockReturnValue(
     Promise.resolve({
@@ -86,6 +102,7 @@ afterEach(() => {
   mockGetUploadUrls.mockClear();
   mockMarkUploadAsComplete.mockClear();
   mockGetSession.mockClear();
+  mockSpecFromInputToResults.mockClear();
 });
 
 test('uploading a file', async () => {
@@ -113,7 +130,8 @@ test('uploading a file', async () => {
     compare: UploadSlot.CheckResults,
   });
 
-  expect(mockedLoadFile.mock.calls.length).toBe(numberOfFiles);
+  expect(mockedLoadFile.mock.calls.length).toBe(2);
+  expect(mockSpecFromInputToResults.mock.calls.length).toBe(2);
   expect(mockedStartSession.mock.calls.length).toBe(1);
   expect(mockedUploadFileToS3.mock.calls.length).toBe(numberOfFiles);
   for (const uploadSlot of githubUploadSlots) {
@@ -147,7 +165,8 @@ test('uploading a file with only partial slots open', async () => {
     compare: UploadSlot.CheckResults,
   });
 
-  expect(mockedLoadFile.mock.calls.length).toBe(4);
+  expect(mockedLoadFile.mock.calls.length).toBe(2);
+  expect(mockSpecFromInputToResults.mock.calls.length).toBe(2);
   expect(mockedStartSession.mock.calls.length).toBe(1);
   expect(mockedUploadFileToS3.mock.calls.length).toBe(returnedSlots.length);
   for (const uploadSlot of returnedSlots) {
@@ -185,7 +204,8 @@ test('uploads files where from is not specified', async () => {
     compare: UploadSlot.CheckResults,
   });
 
-  expect(mockedLoadFile.mock.calls.length).toBe(numberOfFiles - 1);
+  expect(mockedLoadFile.mock.calls.length).toBe(2);
+  expect(mockSpecFromInputToResults.mock.calls.length).toBe(1);
   expect(mockedStartSession.mock.calls.length).toBe(1);
   expect(mockedUploadFileToS3.mock.calls.length).toBe(numberOfFiles);
   for (const uploadSlot of [

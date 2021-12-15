@@ -8,6 +8,8 @@ import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
 import { loadFile, uploadFileToS3, writeFile } from '../utils';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import { DEFAULT_UPLOAD_OUTPUT_FILENAME } from '../../constants';
+import { parseSpecVersion } from '../../input-helpers/compare-input-parser';
+import { specFromInputToResults } from '../../input-helpers/load-spec';
 
 type CiRunArgs = {
   from?: string;
@@ -15,6 +17,14 @@ type CiRunArgs = {
   to: string;
   ciContext: string;
   compare: string;
+};
+
+const loadSpecFile = async (fileName: string): Promise<Buffer> => {
+  const parsedOpenApifile = await specFromInputToResults(
+    parseSpecVersion(fileName, defaultEmptySpec),
+    process.cwd()
+  );
+  return Buffer.from(JSON.stringify(parsedOpenApifile.jsonLike));
 };
 
 export const registerUpload = (
@@ -25,6 +35,7 @@ export const registerUpload = (
   cli
     .command('upload')
     .option('--from <from>', 'from file or rev:file')
+    .requiredOption('--to <to>', 'to file or rev:file')
     .addOption(
       new Option(
         '--provider <provider>',
@@ -33,7 +44,6 @@ export const registerUpload = (
         .choices(['github', 'circleci'])
         .makeOptionMandatory()
     )
-    .requiredOption('--to <to>', 'to file or rev:file')
     .requiredOption('--ci-context <ciContext>', 'file with github context')
     .requiredOption('--compare <compare>', 'path to compare output')
     .action(
@@ -141,9 +151,9 @@ export const uploadCiRun = async (
   ] = await Promise.all([
     loadFile(runArgs.ciContext),
     runArgs.from
-      ? loadFile(runArgs.from)
+      ? loadSpecFile(runArgs.from)
       : Promise.resolve(Buffer.from(JSON.stringify(defaultEmptySpec))),
-    loadFile(runArgs.to),
+    loadSpecFile(runArgs.to),
     loadFile(runArgs.compare),
   ]);
 

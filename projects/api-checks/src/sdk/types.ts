@@ -1,38 +1,55 @@
-import { ILookupLinePreviewResult } from "@useoptic/openapi-io";
-import { OpenApiFact, IChange } from "@useoptic/openapi-utilities";
+import { ILookupLinePreviewResult } from '@useoptic/openapi-io';
+import { OpenApiFact, IChange } from '@useoptic/openapi-utilities';
 
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;
   should: (statement: string, handler: G) => void;
 }
 
+export type StructuralContext = {
+  directParentAdded: boolean;
+  operationAdded: boolean;
+  bodyAdded: boolean;
+  responseAdded: boolean;
+};
+
 export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
   added: ShouldOrMust<
     (
       added: G,
-      context: ApiContext & DSLContext,
-      docs: DocsLinkHelper
+      context: ApiContext & DSLContext & StructuralContext,
+      docs: DocsLinkHelper,
+      specItem: OpenApiEntityType
     ) => Promise<void> | void
   >;
   changed: ShouldOrMust<
     (
       before: G,
       after: G,
-      context: ApiContext & DSLContext,
-      docs: DocsLinkHelper
+      context: ApiContext & DSLContext & StructuralContext,
+      docs: DocsLinkHelper,
+      specItem: OpenApiEntityType
+    ) => Promise<void> | void
+  >;
+  requirementOnChange: ShouldOrMust<
+    (
+      addedOrAfter: G,
+      context: ApiContext & DSLContext & StructuralContext,
+      docs: DocsLinkHelper,
+      specItem: OpenApiEntityType
     ) => Promise<void> | void
   >;
   removed: ShouldOrMust<
     (
       before: G,
-      context: ApiContext & DSLContext,
+      context: ApiContext & DSLContext & StructuralContext,
       docs: DocsLinkHelper
     ) => Promise<void> | void
   >;
   requirement: ShouldOrMust<
     (
       value: G,
-      context: ApiContext & DSLContext,
+      context: ApiContext & DSLContext & StructuralContext,
       docs: DocsLinkHelper,
       specItem: OpenApiEntityType
     ) => Promise<void> | void
