@@ -71,7 +71,7 @@ $ OPTIC_TOKEN="INSERT_YOUR_TOKEN" node ./cli.js upload \
 		--to ./to.json \
 		--provider github \
 		--ci-context ./ci-context.json \
-		--rules ./compare-output.json
+		--compare ./compare-output.json
 
 # Post a comment on the PR (creates OR update the existing comment)
 $ node ./cli.js github-comment \
