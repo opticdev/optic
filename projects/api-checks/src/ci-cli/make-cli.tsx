@@ -7,10 +7,11 @@ import { registerGithubComment } from './commands/comment';
 import { registerBulkCompare, registerCompare } from './commands/compare';
 import { initSentry } from './sentry';
 import { initSegment } from './segment';
+import { OpticCINamedRulesets } from '../sdk/ruleset';
 
-export function makeCiCli<T>(
+export function makeCiCliWithNamedRules<T>(
   forProject: string,
-  checkService: ApiCheckService<T>,
+  rulesetServices: OpticCINamedRulesets,
   options: {
     opticToken?: string;
   } = {}
@@ -23,10 +24,24 @@ export function makeCiCli<T>(
     `for ${forProject}, running optic api-check ${packageJson.version}`
   );
 
-  registerCompare(cli, checkService);
-  registerBulkCompare(cli, checkService);
+  registerCompare(cli, rulesetServices);
+  registerBulkCompare(cli, rulesetServices);
   registerUpload(cli, { opticToken });
   registerGithubComment(cli);
 
   return cli;
+}
+
+export function makeCiCli<T>(
+  forProject: string,
+  checkService: ApiCheckService<T>,
+  options: {
+    opticToken?: string;
+  } = {}
+) {
+  return makeCiCliWithNamedRules(
+    forProject,
+    { default: checkService },
+    options
+  );
 }

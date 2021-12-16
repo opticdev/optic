@@ -15,6 +15,7 @@ import { writeFile } from '../utils';
 import { DEFAULT_COMPARE_OUTPUT_FILENAME } from '../../constants';
 import { ResultWithSourcemap } from '../../../sdk/types';
 import { SentryClient, wrapActionHandlerWithSentry } from '../../sentry';
+import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 
 type LoadingState =
   | {
@@ -31,7 +32,7 @@ type LoadingState =
 
 export const registerCompare = <T extends {}>(
   cli: Command,
-  checkService: ApiCheckService<T>
+  rulesetServices: OpticCINamedRulesets
 ) => {
   cli
     .command('compare')
@@ -39,6 +40,7 @@ export const registerCompare = <T extends {}>(
     .option('--to <to>', 'to file or rev:file, defaults empty spec')
     .option('--context <context>', 'json of context')
     .option('--verbose', 'show all checks, even passing', false)
+    .option('--ruleset <ruleset>', 'name of ruleset to run', 'default')
     .option(
       '--create-file',
       'creates a file with the results of the run in json format',
@@ -57,8 +59,21 @@ export const registerCompare = <T extends {}>(
           context?: string;
           verbose: boolean;
           output: 'pretty' | 'json' | 'plain';
+          ruleset: string;
           createFile: boolean;
         }) => {
+          const checkService = rulesetServices[options.ruleset];
+          if (!checkService) {
+            console.error(
+              `Ruleset named ${
+                options.ruleset
+              } is not registered. valid options: ${JSON.stringify(
+                Object.keys(rulesetServices)
+              )}`
+            );
+            return process.exit(1);
+          }
+
           if (options.output === 'plain') {
             // https://github.com/chalk/chalk#supportscolor
             // https://github.com/chalk/supports-color/blob/ff1704d46cfb0714003f53c8d7e55736d8d545ff/index.js#L38

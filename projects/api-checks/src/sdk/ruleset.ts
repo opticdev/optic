@@ -1,0 +1,36 @@
+import { ApiCheckDsl } from './types';
+import { ApiCheckService } from './api-check-service';
+
+export type OpticCIRuleset<DSL extends ApiCheckDsl> = {
+  [key: string]: (dsl: DSL) => void;
+};
+
+export function mergeRulesets<DSL extends ApiCheckDsl>(
+  ...rules: OpticCIRuleset<DSL>[]
+): OpticCIRuleset<DSL> {
+  const allRules: OpticCIRuleset<DSL> = {};
+  rules.forEach((set) => {
+    Object.entries(set).forEach(([key, value]) => {
+      if (allRules.hasOwnProperty(key)) {
+        console.warn(`rule with '${key}' defined more than once. Overwritten`);
+      }
+      allRules[key] = value;
+    });
+  });
+
+  return allRules;
+}
+
+export function disableRules<DSL extends ApiCheckDsl>(
+  dsl: OpticCIRuleset<DSL>,
+  ...rules: string[]
+) {
+  rules.forEach((ruleKey) => {
+    delete dsl[ruleKey];
+  });
+}
+
+export type OpticCINamedRulesets = {
+  // actually any, could be multiple DSL kinds
+  [key: string]: ApiCheckService<any>;
+};
