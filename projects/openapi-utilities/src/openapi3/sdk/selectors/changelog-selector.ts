@@ -1,12 +1,12 @@
 import {
   ConceptualLocation,
   IChange,
+  IPathComponent,
   OpenApiFact,
   OpenApiKind,
   OpenApiOperationFact,
   OpenApiRequestParameterFact,
 } from '../types';
-import { IPathComponent } from '../../../../build/openapi3/sdk/types';
 import equals from 'lodash.isequal';
 import { OpenAPIV3 } from 'openapi-types';
 

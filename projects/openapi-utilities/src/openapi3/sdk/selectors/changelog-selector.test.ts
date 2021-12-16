@@ -1,7 +1,11 @@
 import { jsonFromFile } from '../../implementations/openapi3/openapi-traverser.test';
-import { OpenAPITraverser, OpenAPIV3 } from '../../../../build';
-import { factsToChangelog, OpenApiKind } from '../../../index';
+import {
+  factsToChangelog,
+  OpenApiKind,
+  OpenAPITraverser,
+} from '../../../index';
 import { queryChangelog } from './changelog-selector';
+import { OpenAPIV3 } from 'openapi-types';
 
 async function fixture() {
   const spec1 = await jsonFromFile('./inputs/openapi3/petstore0.json')();
