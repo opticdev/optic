@@ -30,7 +30,7 @@ export function disableRules<DSL extends ApiCheckDsl>(
   });
 }
 
-export type OpticCINamedRulesets = {
+export type OpticCINamedRulesets = { default: ApiCheckService<any> } & {
   // actually any, could be multiple DSL kinds / contexts in the same CLI
   // ie one we made, one the community made, one a customer built in-house
   [key: string]: ApiCheckService<any> | undefined;
