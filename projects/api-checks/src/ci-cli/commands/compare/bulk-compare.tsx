@@ -83,7 +83,10 @@ export const registerBulkCompare = <T extends {}>(
             process.exit(0);
           } catch (e) {
             console.error((e as Error).message);
-            SentryClient && SentryClient.captureException(e);
+            if (SentryClient) {
+              SentryClient.captureException(e);
+              await SentryClient.flush();
+            }
             process.exit(1);
           }
         }

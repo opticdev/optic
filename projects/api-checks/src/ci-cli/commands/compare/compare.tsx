@@ -103,13 +103,24 @@ export const registerCompare = <T extends {}>(
               />,
               { exitOnCtrlC: true }
             );
-            await waitUntilExit();
+            try {
+              await waitUntilExit();
+              process.exit(0);
+            } catch (e) {
+              console.error((e as Error).message);
+              if (SentryClient) {
+                SentryClient.captureException(e);
+                await SentryClient.flush();
+              }
+              process.exit(1);
+            }
           } catch (e) {
             console.error(
               `Could not parse the context object provided at --context ${
                 options.context
               }. Got an error: ${(e as Error).message}`
             );
+            process.exit(1);
           }
         }
       )
@@ -214,23 +225,13 @@ function Compare<T>(props: {
           }
           const hasError = results.some((result) => !result.passed);
 
-          exit();
-          // TODO bubble this up to the handler instead of process exiting here
-          if (hasError) {
-            process.exit(1);
-          } else {
-            process.exit(0);
-          }
+          exit(hasError ? new Error('Some checks did not pass') : undefined);
         } catch (e) {
-          SentryClient && SentryClient.captureException(e);
           !isStale && setResults({ loading: false, error: e as Error });
-          process.exit(1);
+          throw e;
         }
       } catch (e) {
-        console.error(e);
-        SentryClient && SentryClient.captureException(e);
-        exit();
-        process.exit(1);
+        exit(e as Error);
       }
     })();
 

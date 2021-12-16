@@ -66,7 +66,10 @@ export const registerUpload = (
           await uploadCiRun(opticClient, runArgs);
         } catch (e) {
           console.error(e);
-          SentryClient && SentryClient.captureException(e);
+          if (SentryClient) {
+            SentryClient.captureException(e);
+            await SentryClient.flush();
+          }
           return process.exit(1);
         }
       })
