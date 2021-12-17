@@ -1,6 +1,6 @@
-import { ApiCheckDsl, Result } from "./types";
-import { OpenAPIV3 } from "openapi-types";
-import flatten from "lodash.flatten";
+import { ApiCheckDsl, Result } from './types';
+import { OpenAPIV3 } from 'openapi-types';
+import flatten from 'lodash.flatten';
 import {
   factsToChangelog,
   OpenAPITraverser,
@@ -8,9 +8,9 @@ import {
   IFact,
   OpenApiFact,
   OpenApiKind,
-} from "@useoptic/openapi-utilities";
-import { Ruleset } from "@stoplight/spectral-core";
-import { SpectralDsl } from "./spectral/dsl";
+} from '@useoptic/openapi-utilities';
+import { SpectralDsl } from './spectral/dsl';
+import { ApiChangeDsl, ApiCheckDslContext } from './api-change-dsl';
 
 export type DslConstructorInput<Context> = {
   context: Context;
@@ -35,6 +35,28 @@ export class ApiCheckService<Context> {
   ) {
     const runner = (input: DslConstructorInput<Context>) => {
       const dsl = dslConstructor(input);
+      rules.forEach((i) => i(dsl));
+      return dsl.checkPromises();
+    };
+
+    this.rules.push(runner);
+    return this;
+  }
+  // for our standard DSL
+  useRules(rulesMap: { [key: string]: (dsl: ApiChangeDsl) => void }) {
+    const dslConstructor = (input: DslConstructorInput<ApiCheckDslContext>) => {
+      return new ApiChangeDsl(
+        input.nextFacts,
+        input.changelog,
+        input.currentJsonLike,
+        input.nextJsonLike,
+        input.context
+      );
+    };
+
+    const runner = (input: DslConstructorInput<Context>) => {
+      const dsl = dslConstructor(input);
+      const rules = Object.values(rulesMap);
       rules.forEach((i) => i(dsl));
       return dsl.checkPromises();
     };

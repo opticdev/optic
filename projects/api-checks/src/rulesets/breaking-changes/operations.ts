@@ -1,5 +1,6 @@
-import { ApiChangeDsl, OpenAPIV3 } from '@useoptic/api-checks';
 import { expect } from 'chai';
+import { ApiChangeDsl } from '../../sdk/api-change-dsl';
+import { OpenAPIV3 } from 'openapi-types';
 
 export const rules = {
   removingOperationId: ({ operations }: ApiChangeDsl) => {

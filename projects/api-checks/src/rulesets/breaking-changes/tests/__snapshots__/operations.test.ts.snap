@@ -1,0 +1,320 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`operation parameters status codes fails when a status codes is removed 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "responses": Object {
+            "200": Object {
+              "description": "Example response",
+            },
+          },
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1example/get/responses/200",
+        "kind": "response",
+      },
+      "removed": Object {
+        "before": Object {
+          "description": "Example response",
+          "statusCode": 200,
+        },
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "getExample",
+          "responses": Object {},
+          "summary": "Retrieve example",
+          "tags": Array [
+            "Example",
+          ],
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "changeType": "removed",
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "statusCode": "200",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200",
+          "kind": "response",
+        },
+        "removed": Object {
+          "before": Object {
+            "description": "Example response",
+            "statusCode": 200,
+          },
+        },
+      },
+      "condition": "not be removed",
+      "docsLink": undefined,
+      "error": "Cannot read property 'statusCode' of undefined",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "removed response: 200",
+    },
+  ],
+}
+`;
+
+exports[`operationId fails if changed 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "example",
+          "responses": Object {},
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "method": "get",
+          "operationId": "example2",
+          "pathPattern": "/example",
+        },
+        "before": Object {
+          "method": "get",
+          "operationId": "example",
+          "pathPattern": "/example",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+        ],
+        "jsonPath": "/paths/~1example/get",
+        "kind": "operation",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "example2",
+          "responses": Object {},
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "changeType": "changed",
+        "changed": Object {
+          "after": Object {
+            "method": "get",
+            "operationId": "example2",
+            "pathPattern": "/example",
+          },
+          "before": Object {
+            "method": "get",
+            "operationId": "example",
+            "pathPattern": "/example",
+          },
+        },
+        "location": Object {
+          "conceptualLocation": Object {
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+          ],
+          "jsonPath": "/paths/~1example/get",
+          "kind": "operation",
+        },
+      },
+      "condition": "have consistent operation IDs",
+      "docsLink": undefined,
+      "error": "expected 'example' to equal 'example2'",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "updated operation: GET /example",
+    },
+  ],
+}
+`;
+
+exports[`operationId fails if removed 1`] = `
+Object {
+  "base": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "operationId": "example",
+          "responses": Object {},
+        },
+      },
+    },
+  },
+  "changelog": Array [
+    Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "method": "get",
+          "pathPattern": "/example",
+        },
+        "before": Object {
+          "method": "get",
+          "operationId": "example",
+          "pathPattern": "/example",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/example",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/example",
+          "get",
+        ],
+        "jsonPath": "/paths/~1example/get",
+        "kind": "operation",
+      },
+    },
+  ],
+  "next": Object {
+    "info": Object {
+      "title": "Empty",
+      "version": "0.0.0",
+    },
+    "openapi": "3.0.1",
+    "paths": Object {
+      "/example": Object {
+        "get": Object {
+          "responses": Object {},
+        },
+      },
+    },
+  },
+  "results": Array [
+    Object {
+      "change": Object {
+        "changeType": "changed",
+        "changed": Object {
+          "after": Object {
+            "method": "get",
+            "pathPattern": "/example",
+          },
+          "before": Object {
+            "method": "get",
+            "operationId": "example",
+            "pathPattern": "/example",
+          },
+        },
+        "location": Object {
+          "conceptualLocation": Object {
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+          ],
+          "jsonPath": "/paths/~1example/get",
+          "kind": "operation",
+        },
+      },
+      "condition": "have consistent operation IDs",
+      "docsLink": undefined,
+      "error": "expected 'example' to equal undefined",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "updated operation: GET /example",
+    },
+  ],
+}
+`;

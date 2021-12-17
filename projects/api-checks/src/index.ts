@@ -1,7 +1,14 @@
-import { makeCiCli } from './ci-cli/make-cli';
+import { makeCiCli, makeCiCliWithNamedRules } from './ci-cli/make-cli';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { ApiCheckService, DslConstructorInput } from './sdk/api-check-service';
-import { ApiCheckDsl, Result, Passed, Failed, EntityRule } from './sdk/types';
+import {
+  ApiCheckDsl,
+  Result,
+  Passed,
+  Failed,
+  EntityRule,
+  ResultWithSourcemap,
+} from './sdk/types';
 import { runCheck, newDocsLinkHelper, DocsLinkHelper } from './sdk/types';
 import { createTestDslFixture } from './sdk/test-rule-fixture';
 import { createSelectJsonPathHelper } from './sdk/select-when-rule';
@@ -15,6 +22,8 @@ import {
   OpticCINamedRulesets,
   OpticCIRuleset,
 } from './sdk/ruleset';
+import { parseSpecVersion } from './ci-cli/input-helpers/compare-input-parser';
+import { packagedRules } from './rulesets/packaged-rules';
 export {
   ApiCheckService,
   DslConstructorInput,
@@ -28,8 +37,10 @@ export {
   EntityRule,
   runCheck,
   makeCiCli,
+  makeCiCliWithNamedRules,
   createTestDslFixture,
   OpenAPIV3,
+  parseSpecVersion,
   createSelectJsonPathHelper,
   specFromInputToResults,
   SpectralDsl,
@@ -39,4 +50,6 @@ export {
   mergeRulesets,
   disableRules,
   OpticCINamedRulesets,
+  ResultWithSourcemap,
+  packagedRules as rulesets,
 };

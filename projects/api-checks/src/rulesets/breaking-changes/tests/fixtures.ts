@@ -1,11 +1,8 @@
-import {
-  ApiChangeDsl,
-  ApiCheckService,
-  createTestDslFixture,
-  ApiCheckDslContext,
-} from '@useoptic/api-checks';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import path from 'path';
+import { ApiChangeDsl, ApiCheckDslContext } from '../../../sdk/api-change-dsl';
+import { ApiCheckService } from '../../../sdk/api-check-service';
+import { createTestDslFixture } from '../../../sdk/test-rule-fixture';
 export async function rulesFixture(
   before: OpenAPIV3.Document,
   after: OpenAPIV3.Document,

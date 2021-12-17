@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { ApiChangeDsl } from '../../../../api-checks';
+import { ApiChangeDsl } from '../../sdk/api-change-dsl';
 
 export const rules = {
   preventRemoval: ({ bodyProperties }: ApiChangeDsl) => {
