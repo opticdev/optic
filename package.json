@@ -8,7 +8,6 @@
     "projects/openapi-diff",
     "projects/developer-ui",
     "projects/api-checks",
-    "projects/snyk-rules",
-    "projects/optic-ci"
+    "projects/snyk-rules"
   ]
 }
