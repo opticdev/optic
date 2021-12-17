@@ -1,5 +1,5 @@
 
-> **Announcement:** Interested in more advanced team workflows? An easier way to run Optic in real environments? Check out [Optic Cloud, now in Beta.](https://cloud.useoptic.com)
+> **Announcement:** Optic 11 will have native support for OpenAPI 3, read more and get early access here (https://www.useoptic.com/blog/optic-for-openapi)
 
 ---
 
