@@ -46,7 +46,10 @@ export const registerGithubComment = (cli: Command) => {
             });
           } catch (e) {
             console.error(e);
-            SentryClient && SentryClient.captureException(e);
+            if (SentryClient) {
+              SentryClient.captureException(e);
+              await SentryClient.flush();
+            }
             return process.exit(1);
           }
         }

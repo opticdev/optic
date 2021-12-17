@@ -9,9 +9,8 @@ API checks helps automate checks between OpenAPI changes.
 ```javascript
 // cli.js
 import { expect } from 'chai';
-import { ApiCheckService } from './sdk/api-check-service';
-import { ExampleDsl, ExampleDslContext } from './sdk/test/example-dsl';
-import { makeCiCli } from './ci-cli/make-cli';
+import { ApiCheckService, makeCiCli } from '@useoptic/api-checks';
+import { ExampleDsl } from './dsl';
 
 const checker = new ApiCheckService();
 
@@ -72,7 +71,7 @@ $ OPTIC_TOKEN="INSERT_YOUR_TOKEN" node ./cli.js upload \
 		--to ./to.json \
 		--provider github \
 		--ci-context ./ci-context.json \
-		--rules ./compare-output.json
+		--compare ./compare-output.json
 
 # Post a comment on the PR (creates OR update the existing comment)
 $ node ./cli.js github-comment \

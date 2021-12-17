@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { SpecFromInput } from '../../input-helpers/compare-input-parser';
-import { Box, Text, useApp, useStdout } from 'ink';
+import { Command } from 'commander';
+
+import { Box, Text, render, useApp, useStdout } from 'ink';
+import { defaultEmptySpec } from '@useoptic/openapi-utilities';
+import {
+  SpecFromInput,
+  parseSpecVersion,
+} from '../../input-helpers/compare-input-parser';
+import { specFromInputToResults } from '../../input-helpers/load-spec';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { SpecComparison } from './components';
-import { specFromInputToResults } from '../../input-helpers/load-spec';
 import { generateSpecResults } from './generateSpecResults';
 import { writeFile } from '../utils';
 import { DEFAULT_COMPARE_OUTPUT_FILENAME } from '../../constants';
 import { ResultWithSourcemap } from '../../../sdk/types';
-import { SentryClient } from '../../sentry';
+import { SentryClient, wrapActionHandlerWithSentry } from '../../sentry';
+import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 
 type LoadingState =
   | {
@@ -23,7 +30,104 @@ type LoadingState =
       error: false;
     };
 
-export function Compare<T>(props: {
+export const registerCompare = <T extends {}>(
+  cli: Command,
+  rulesetServices: OpticCINamedRulesets
+) => {
+  cli
+    .command('compare')
+    .option('--from <from>', 'from file or rev:file, defaults empty spec')
+    .option('--to <to>', 'to file or rev:file, defaults empty spec')
+    .option('--context <context>', 'json of context')
+    .option('--verbose', 'show all checks, even passing', false)
+    .option('--ruleset <ruleset>', 'name of ruleset to run', 'default')
+    .option(
+      '--create-file',
+      'creates a file with the results of the run in json format',
+      false
+    )
+    .option(
+      '--output <format>',
+      "show 'pretty' output for interactive usage or 'json' for JSON",
+      'pretty'
+    )
+    .action(
+      wrapActionHandlerWithSentry(
+        async (options: {
+          from?: string;
+          to?: string;
+          context?: string;
+          verbose: boolean;
+          output: 'pretty' | 'json' | 'plain';
+          ruleset: string;
+          createFile: boolean;
+        }) => {
+          const checkService = rulesetServices[options.ruleset];
+          if (!checkService) {
+            console.error(
+              `Ruleset named ${
+                options.ruleset
+              } is not registered. valid options: ${JSON.stringify(
+                Object.keys(rulesetServices)
+              )}`
+            );
+            return process.exit(1);
+          }
+
+          if (options.output === 'plain') {
+            // https://github.com/chalk/chalk#supportscolor
+            // https://github.com/chalk/supports-color/blob/ff1704d46cfb0714003f53c8d7e55736d8d545ff/index.js#L38
+            if (
+              process.env.FORCE_COLOR !== 'false' &&
+              process.env.FORCE_COLOR !== '0'
+            ) {
+              console.error(
+                `Please set FORCE_COLOR=false or FORCE_COLOR=0 to enable plain text output in the environment you want to run this command in`
+              );
+              return process.exit(1);
+            }
+          }
+          try {
+            const parsedContext = options.context
+              ? JSON.parse(options.context)
+              : {};
+            const { waitUntilExit } = render(
+              <Compare
+                verbose={options.verbose}
+                output={options.output}
+                apiCheckService={checkService}
+                from={parseSpecVersion(options.from, defaultEmptySpec)}
+                to={parseSpecVersion(options.to, defaultEmptySpec)}
+                context={parsedContext}
+                shouldGenerateFile={options.createFile}
+              />,
+              { exitOnCtrlC: true }
+            );
+            try {
+              await waitUntilExit();
+              process.exit(0);
+            } catch (e) {
+              console.error((e as Error).message);
+              if (SentryClient) {
+                SentryClient.captureException(e);
+                await SentryClient.flush();
+              }
+              process.exit(1);
+            }
+          } catch (e) {
+            console.error(
+              `Could not parse the context object provided at --context ${
+                options.context
+              }. Got an error: ${(e as Error).message}`
+            );
+            process.exit(1);
+          }
+        }
+      )
+    );
+};
+
+function Compare<T>(props: {
   from: SpecFromInput;
   to: SpecFromInput;
   context: T;
@@ -121,23 +225,13 @@ export function Compare<T>(props: {
           }
           const hasError = results.some((result) => !result.passed);
 
-          exit();
-          // TODO bubble this up to the handler instead of process exiting here
-          if (hasError) {
-            process.exit(1);
-          } else {
-            process.exit(0);
-          }
+          exit(hasError ? new Error('Some checks did not pass') : undefined);
         } catch (e) {
-          SentryClient && SentryClient.captureException(e);
           !isStale && setResults({ loading: false, error: e as Error });
-          process.exit(1);
+          throw e;
         }
       } catch (e) {
-        console.error(e);
-        SentryClient && SentryClient.captureException(e);
-        exit();
-        process.exit(1);
+        exit(e as Error);
       }
     })();
 

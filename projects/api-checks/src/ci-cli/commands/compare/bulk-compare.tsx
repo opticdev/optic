@@ -13,10 +13,11 @@ import { ResultWithSourcemap } from '../../../sdk/types';
 import { SentryClient, wrapActionHandlerWithSentry } from '../../sentry';
 import { loadFile } from '../utils';
 import { generateSpecResults } from './generateSpecResults';
+import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 
 export const registerBulkCompare = <T extends {}>(
   cli: Command,
-  checkService: ApiCheckService<T>
+  rulesetServices: OpticCINamedRulesets
 ) => {
   cli
     .command('bulk-compare')
@@ -25,6 +26,7 @@ export const registerBulkCompare = <T extends {}>(
       'a csv with the from, to files, and context format: <from>,<to>,<jsonified context>'
     )
     .option('--verbose <verbose>', 'show all checks, even passing', false)
+    .option('--ruleset', 'name of ruleset to run', 'default')
     .addOption(
       new Option(
         '--output <output>',
@@ -36,12 +38,24 @@ export const registerBulkCompare = <T extends {}>(
         async ({
           input,
           verbose,
+          ruleset,
           output = 'pretty',
         }: {
           input: string;
           verbose: boolean;
+          ruleset: string;
           output?: 'pretty' | 'json' | 'plain';
         }) => {
+          const checkService = rulesetServices[ruleset];
+          if (!checkService) {
+            console.error(
+              `Ruleset named ${ruleset} is not registered. valid options: ${JSON.stringify(
+                Object.keys(rulesetServices)
+              )}`
+            );
+            return process.exit(1);
+          }
+
           if (output === 'plain') {
             // https://github.com/chalk/chalk#supportscolor
             // https://github.com/chalk/supports-color/blob/ff1704d46cfb0714003f53c8d7e55736d8d545ff/index.js#L38
@@ -69,7 +83,10 @@ export const registerBulkCompare = <T extends {}>(
             process.exit(0);
           } catch (e) {
             console.error((e as Error).message);
-            SentryClient && SentryClient.captureException(e);
+            if (SentryClient) {
+              SentryClient.captureException(e);
+              await SentryClient.flush();
+            }
             process.exit(1);
           }
         }

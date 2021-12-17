@@ -9,6 +9,12 @@ import { specFromInputToResults } from './ci-cli/input-helpers/load-spec';
 import { genericEntityRuleImpl } from './sdk/generic-entity-rule-impl';
 import { SpectralDsl } from './sdk/spectral/dsl';
 import { ApiChangeDsl, ApiCheckDslContext } from './sdk/api-change-dsl';
+import {
+  disableRules,
+  mergeRulesets,
+  OpticCINamedRulesets,
+  OpticCIRuleset,
+} from './sdk/ruleset';
 export {
   ApiCheckService,
   DslConstructorInput,
@@ -29,4 +35,8 @@ export {
   SpectralDsl,
   ApiChangeDsl,
   ApiCheckDslContext,
+  OpticCIRuleset,
+  mergeRulesets,
+  disableRules,
+  OpticCINamedRulesets,
 };

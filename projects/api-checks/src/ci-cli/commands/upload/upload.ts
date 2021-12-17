@@ -14,7 +14,7 @@ import { specFromInputToResults } from '../../input-helpers/load-spec';
 type CiRunArgs = {
   from?: string;
   provider: 'github' | 'circleci';
-  to: string;
+  to?: string;
   ciContext: string;
   compare: string;
 };
@@ -66,7 +66,10 @@ export const registerUpload = (
           await uploadCiRun(opticClient, runArgs);
         } catch (e) {
           console.error(e);
-          SentryClient && SentryClient.captureException(e);
+          if (SentryClient) {
+            SentryClient.captureException(e);
+            await SentryClient.flush();
+          }
           return process.exit(1);
         }
       })
@@ -91,8 +94,8 @@ const startSession = async (
       SessionType.GithubActions,
       {
         run_args: {
-          from: runArgs.from,
-          to: runArgs.to,
+          from: runArgs.from || '',
+          to: runArgs.to || '',
           context: runArgs.ciContext,
           rules: runArgs.compare,
           provider: runArgs.provider,
@@ -118,8 +121,8 @@ const startSession = async (
 
     const sessionId = await opticClient.startSession(SessionType.CircleCi, {
       run_args: {
-        from: runArgs.from,
-        to: runArgs.to,
+        from: runArgs.from || '',
+        to: runArgs.to || '',
         context: runArgs.ciContext,
         rules: runArgs.compare,
         provider: runArgs.provider,
@@ -153,7 +156,9 @@ export const uploadCiRun = async (
     runArgs.from
       ? loadSpecFile(runArgs.from)
       : Promise.resolve(Buffer.from(JSON.stringify(defaultEmptySpec))),
-    loadSpecFile(runArgs.to),
+    runArgs.to
+      ? loadSpecFile(runArgs.to)
+      : Promise.resolve(Buffer.from(JSON.stringify(defaultEmptySpec))),
     loadFile(runArgs.compare),
   ]);
 

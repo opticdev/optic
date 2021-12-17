@@ -14,14 +14,24 @@ export async function specFromInputToResults(
   workingDir: string = process.cwd()
 ): Promise<ParseOpenAPIResult> {
   switch (input.from) {
-    case SpecVersionFrom.empty:
+    case SpecVersionFrom.empty: {
+      const emptySpecName = 'empty.json';
+      const jsonLike = {
+        ...input.value,
+        ['x-optic-ci-empty-spec']: true,
+      } as OpenAPIV3.Document;
+      const sourcemap = new JsonSchemaSourcemap(emptySpecName);
+      await sourcemap.addFileIfMissingFromContents(
+        emptySpecName,
+        JSON.stringify(jsonLike, null, 2),
+        0
+      );
+
       return {
-        jsonLike: {
-          ...input.value,
-          ['x-optic-ci-empty-spec']: true,
-        } as OpenAPIV3.Document,
-        sourcemap: new JsonSchemaSourcemap('empty.json'),
+        jsonLike,
+        sourcemap,
       };
+    }
     case SpecVersionFrom.git: {
       const gitRepo = await inGit(path.join(workingDir, input.name));
       if (!gitRepo) {
