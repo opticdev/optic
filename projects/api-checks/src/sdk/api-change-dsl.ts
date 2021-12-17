@@ -191,7 +191,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
-      header: genericEntityRuleImpl<
+      headerParameter: genericEntityRuleImpl<
         OpenApiRequestParameterFact,
         ConceptualLocation,
         ApiCheckDslContext,
@@ -226,7 +226,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
-      headers: genericEntityRuleImpl<
+      header: genericEntityRuleImpl<
         OpenApiHeaderFact,
         ConceptualLocation,
         ApiCheckDslContext,
