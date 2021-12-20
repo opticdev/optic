@@ -1,15 +1,21 @@
 import { Command, Option } from 'commander';
-import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 import {
+  defaultEmptySpec,
+  validateOpenApiV3Document,
+} from '@useoptic/openapi-utilities';
+import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
+import {
+  loadFile,
+  uploadFileToS3,
+  writeFile,
+  parseSpecVersion,
   readAndValidateGithubContext,
   readAndValidateCircleCiContext,
-} from '../ci-context-parsers';
-import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
-import { loadFile, uploadFileToS3, writeFile } from '../utils';
-import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
+  specFromInputToResults,
+} from '../utils';
+import { wrapActionHandlerWithSentry } from '../../sentry';
 import { DEFAULT_UPLOAD_OUTPUT_FILENAME } from '../../constants';
-import { parseSpecVersion } from '../../input-helpers/compare-input-parser';
-import { specFromInputToResults } from '../../input-helpers/load-spec';
+import { UserError } from '../../errors';
 
 type CiRunArgs = {
   from?: string;
@@ -62,16 +68,7 @@ export const registerUpload = (
         const opticClient = new OpticBackendClient(backendWebBase, () =>
           Promise.resolve(opticToken)
         );
-        try {
-          await uploadCiRun(opticClient, runArgs);
-        } catch (e) {
-          console.error(e);
-          if (SentryClient) {
-            SentryClient.captureException(e);
-            await SentryClient.flush();
-          }
-          return process.exit(1);
-        }
+        await uploadCiRun(opticClient, runArgs);
       })
     );
 };
@@ -169,6 +166,13 @@ export const uploadCiRun = async (
     [UploadSlot.GithubActionsEvent]: contextFileBuffer,
     [UploadSlot.CircleCiEvent]: contextFileBuffer,
   };
+
+  try {
+    validateOpenApiV3Document(JSON.parse(fromFileS3Buffer.toString()));
+    validateOpenApiV3Document(JSON.parse(toFileS3Buffer.toString()));
+  } catch (e) {
+    throw new UserError((e as Error).message);
+  }
 
   const sessionId = await startSession(opticClient, runArgs, contextFileBuffer);
 
