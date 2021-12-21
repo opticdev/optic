@@ -1,10 +1,10 @@
-import { ApiCheckDsl } from "./types";
-import { ApiCheckService, DslConstructorInput } from "./api-check-service";
-import { OpenAPIV3 } from "@useoptic/openapi-utilities";
+import { ApiCheckDsl } from './types';
+import { ApiCheckService, DslConstructorInput } from './api-check-service';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import {
   factsToChangelog,
   OpenAPITraverser,
-} from "@useoptic/openapi-utilities";
+} from '@useoptic/openapi-utilities';
 
 type OpenApiInput =
   | OpenAPIV3.Document
@@ -26,7 +26,10 @@ export function createTestDslFixture<DSL extends ApiCheckDsl, Context>(
         );
 
         return {
-          withRule: async (rule: (dsl: DSL) => void, context: Context) => {
+          withRule: async (
+            rule: (dsl: DSL) => void,
+            context: Context = {} as any
+          ) => {
             const checker = new ApiCheckService<Context>();
             checker.useDsl<DSL>((input) => dslConstructor(input), rule);
             const results = await checker.runRules(base, next, context);
@@ -96,7 +99,7 @@ function openApiInputToDocument(
   input: OpenApiInput,
   baseOpenApi: OpenAPIV3.Document
 ): OpenAPIV3.Document {
-  if (typeof input === "function") {
+  if (typeof input === 'function') {
     return input(baseOpenApi);
   } else {
     return input;
@@ -104,7 +107,7 @@ function openApiInputToDocument(
 }
 
 const emptyOpenApi: OpenAPIV3.Document = {
-  openapi: "3.0.1",
+  openapi: '3.0.1',
   paths: {},
-  info: { version: "0.0.0", title: "Empty" },
+  info: { version: '0.0.0', title: 'Empty' },
 };

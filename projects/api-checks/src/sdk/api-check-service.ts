@@ -7,7 +7,6 @@ import {
   IChange,
   IFact,
   OpenApiFact,
-  OpenApiKind,
 } from '@useoptic/openapi-utilities';
 import { SpectralDsl } from './spectral/dsl';
 import { ApiChangeDsl, ApiCheckDslContext } from './api-change-dsl';

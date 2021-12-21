@@ -11,6 +11,8 @@ export type StructuralContext = {
   operationAdded: boolean;
   bodyAdded: boolean;
   responseAdded: boolean;
+  isInRequest: boolean;
+  isInResponse: boolean;
 };
 
 export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {

@@ -12,6 +12,7 @@ import {
   OpenApiRequestParameterFact,
   OpenApiResponseFact,
   OpenAPIV3,
+  queryChangelog,
 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
@@ -205,6 +206,29 @@ export class ApiChangeDsl implements ApiCheckDsl {
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
+      bodyProperties: genericEntityRuleImpl<
+        OpenApiFieldFact,
+        ConceptualLocation,
+        ApiCheckDslContext,
+        OpenAPIV3.SchemaObject
+      >(
+        OpenApiKind.Field,
+        queryChangelog(dsl.changelog)
+          .filter((i) => {
+            if (
+              i.location.kind === OpenApiKind.Field &&
+              'inResponse' in i.location.conceptualLocation
+            )
+              return false;
+            return true;
+          })
+          .changes(),
+        dsl.nextFacts,
+        (field) => `${field.key}`,
+        (location) => dsl.getContext(location),
+        (...items) => dsl.checks.push(...items),
+        (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
+      ),
     };
   }
 
@@ -222,6 +246,29 @@ export class ApiChangeDsl implements ApiCheckDsl {
         dsl.changelog,
         dsl.nextFacts,
         (response) => `${response.statusCode}`,
+        (location) => dsl.getContext(location),
+        (...items) => dsl.checks.push(...items),
+        (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
+      ),
+      bodyProperties: genericEntityRuleImpl<
+        OpenApiFieldFact,
+        ConceptualLocation,
+        ApiCheckDslContext,
+        OpenAPIV3.SchemaObject
+      >(
+        OpenApiKind.Field,
+        queryChangelog(dsl.changelog)
+          .filter((i) => {
+            if (
+              i.location.kind === OpenApiKind.Field &&
+              'inRequest' in i.location.conceptualLocation
+            )
+              return false;
+            return true;
+          })
+          .changes(),
+        dsl.nextFacts,
+        (field) => `${field.key}`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)

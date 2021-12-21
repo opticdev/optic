@@ -40,6 +40,8 @@ export function genericEntityRuleImpl<
 
   const getStructuralContext = (location: ILocation): StructuralContext => {
     return {
+      isInRequest: 'inRequest' in location.conceptualLocation,
+      isInResponse: 'inResponse' in location.conceptualLocation,
       directParentAdded: wasParentAdded(location.conceptualPath),
       operationAdded: changelog.some((i) => {
         if (i.added && i.location.kind === OpenApiKind.Operation) {
