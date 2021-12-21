@@ -3,17 +3,19 @@ import React, { FC, useEffect, useState } from 'react';
 import { Box, Text, useApp, useStderr, render, Newline, useStdout } from 'ink';
 import { v4 as uuidv4 } from 'uuid';
 
-import { defaultEmptySpec } from '@useoptic/openapi-utilities';
+import {
+  defaultEmptySpec,
+  validateOpenApiV3Document,
+} from '@useoptic/openapi-utilities';
 import { ParseOpenAPIResult } from '@useoptic/openapi-io';
 import { SpecComparison } from './components';
-import { parseSpecVersion } from '../../input-helpers/compare-input-parser';
-import { specFromInputToResults } from '../../input-helpers/load-spec';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { ResultWithSourcemap } from '../../../sdk/types';
-import { SentryClient, wrapActionHandlerWithSentry } from '../../sentry';
-import { loadFile } from '../utils';
+import { wrapActionHandlerWithSentry } from '../../sentry';
+import { loadFile, specFromInputToResults, parseSpecVersion } from '../utils';
 import { generateSpecResults } from './generateSpecResults';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
+import { UserError } from '../../errors';
 
 export const registerBulkCompare = <T extends {}>(
   cli: Command,
@@ -78,17 +80,8 @@ export const registerBulkCompare = <T extends {}>(
             />,
             { exitOnCtrlC: true }
           );
-          try {
-            await waitUntilExit();
-            process.exit(0);
-          } catch (e) {
-            console.error((e as Error).message);
-            if (SentryClient) {
-              SentryClient.captureException(e);
-              await SentryClient.flush();
-            }
-            process.exit(1);
-          }
+          await waitUntilExit();
+          process.exit(0);
         }
       )
     );
@@ -145,6 +138,9 @@ const compareSpecs = async ({
               loadSpecFile(comparison.fromFileName),
               loadSpecFile(comparison.toFileName),
             ]);
+
+            validateOpenApiV3Document(from.jsonLike);
+            validateOpenApiV3Document(to.jsonLike);
 
             const results = await generateSpecResults(
               checkService,
@@ -236,6 +232,7 @@ const BulkCompare: FC<{
     (async () => {
       try {
         console.log('Reading input file...');
+        let hasChecksFailing = false;
         let hasError = false;
         const {
           comparisons: initialComparisons,
@@ -252,7 +249,7 @@ const BulkCompare: FC<{
               setComparisons((prevComparisons) => {
                 const newComparisons = new Map(prevComparisons);
                 if (results.some((result) => !result.passed)) {
-                  hasError = true;
+                  hasChecksFailing = true;
                 }
                 newComparisons.set(id, {
                   ...prevComparisons.get(id)!,
@@ -280,9 +277,11 @@ const BulkCompare: FC<{
         });
 
         const maybeError = skippedParsing
-          ? new Error('Error: Could not read all of the comparison inputs')
+          ? new UserError('Error: Could not read all of the comparison inputs')
           : hasError
-          ? new Error('Some checks did not pass')
+          ? new UserError('Error: Could not run all of the comparisons')
+          : hasChecksFailing
+          ? new UserError('Some checks did not pass')
           : undefined;
         exit(maybeError);
       } catch (e) {

@@ -1,9 +1,11 @@
 import path from 'path';
-import { SnykApiCheckDsl, SynkApiCheckContext } from '../../dsl';
+import { SynkApiCheckContext } from '../../dsl';
 import { newSnykApiCheckService } from '../../service';
-import { specFromInputToResults } from '@useoptic/api-checks';
 import { ResultWithSourcemap } from '@useoptic/api-checks/build/sdk/types';
-import { parseSpecVersion } from '@useoptic/api-checks/build/ci-cli/input-helpers/compare-input-parser';
+import {
+  specFromInputToResults,
+  parseSpecVersion,
+} from '@useoptic/api-checks/build/ci-cli/commands/utils';
 import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 import { sourcemapReader } from '@useoptic/openapi-io';
 

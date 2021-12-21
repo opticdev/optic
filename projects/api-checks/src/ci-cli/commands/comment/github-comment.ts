@@ -1,12 +1,12 @@
 import { Command, Option } from 'commander';
 import { Octokit } from '@octokit/rest';
 import {
+  loadFile,
   readAndValidateGithubContext,
   readAndValidateCircleCiContext,
-} from '../ci-context-parsers';
-import { loadFile } from '../utils';
+} from '../utils';
 import { trackEvent } from '../../segment';
-import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
+import { wrapActionHandlerWithSentry } from '../../sentry';
 
 export const registerGithubComment = (cli: Command) => {
   cli
@@ -30,28 +30,19 @@ export const registerGithubComment = (cli: Command) => {
           provider: 'github' | 'circleci';
           upload: string;
         }) => {
-          try {
-            const fileBuffer = await loadFile(runArgs.ciContext);
-            const { organization: owner, repo, pull_request: pull_number } =
-              runArgs.provider === 'github'
-                ? readAndValidateGithubContext(fileBuffer)
-                : readAndValidateCircleCiContext(fileBuffer);
+          const fileBuffer = await loadFile(runArgs.ciContext);
+          const { organization: owner, repo, pull_request: pull_number } =
+            runArgs.provider === 'github'
+              ? readAndValidateGithubContext(fileBuffer)
+              : readAndValidateCircleCiContext(fileBuffer);
 
-            await sendMessage({
-              githubToken: runArgs.token,
-              owner: owner,
-              repo: repo,
-              pull_number: Number(pull_number),
-              upload: runArgs.upload,
-            });
-          } catch (e) {
-            console.error(e);
-            if (SentryClient) {
-              SentryClient.captureException(e);
-              await SentryClient.flush();
-            }
-            return process.exit(1);
-          }
+          await sendMessage({
+            githubToken: runArgs.token,
+            owner: owner,
+            repo: repo,
+            pull_number: Number(pull_number),
+            upload: runArgs.upload,
+          });
         }
       )
     );
