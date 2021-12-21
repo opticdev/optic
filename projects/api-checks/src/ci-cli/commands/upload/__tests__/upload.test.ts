@@ -7,13 +7,16 @@ import {
   SessionStatus,
   UploadSlot,
 } from '../optic-client';
-import { loadFile, uploadFileToS3 } from '../../utils';
-import { specFromInputToResults } from '../../../input-helpers/load-spec';
-import { mockGhContext } from '../../__tests__/mock-context';
+import { mockGhContext } from '../../utils/__tests__/mock-context';
+import { loadFile } from '../../utils/files';
+import { uploadFileToS3 } from '../../utils/s3';
+import { specFromInputToResults } from '../../utils/load-spec';
+import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 
 jest.mock('../optic-client');
-jest.mock('../../utils');
-jest.mock('../../../input-helpers/load-spec');
+jest.mock('../../utils/files');
+jest.mock('../../utils/s3');
+jest.mock('../../utils/load-spec');
 
 const MockedOpticBackendClient = OpticBackendClient as jest.MockedClass<
   typeof OpticBackendClient
@@ -43,8 +46,8 @@ const mockSpecFromInputToResults = specFromInputToResults as jest.MockedFunction
 
 let fileBufferMap: Record<UploadSlot, Buffer> = {
   [UploadSlot.CheckResults]: Buffer.from('check results'),
-  [UploadSlot.FromFile]: Buffer.from(JSON.stringify({})),
-  [UploadSlot.ToFile]: Buffer.from(JSON.stringify({})),
+  [UploadSlot.FromFile]: Buffer.from(JSON.stringify(defaultEmptySpec)),
+  [UploadSlot.ToFile]: Buffer.from(JSON.stringify(defaultEmptySpec)),
   [UploadSlot.GithubActionsEvent]: Buffer.from(JSON.stringify(mockGhContext)),
   [UploadSlot.CircleCiEvent]: Buffer.from(JSON.stringify(mockGhContext)),
 };

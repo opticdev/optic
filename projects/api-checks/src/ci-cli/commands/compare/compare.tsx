@@ -2,19 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { Command } from 'commander';
 
 import { Box, Text, render, useApp, useStdout } from 'ink';
-import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 import {
-  SpecFromInput,
-  parseSpecVersion,
-} from '../../input-helpers/compare-input-parser';
-import { specFromInputToResults } from '../../input-helpers/load-spec';
+  defaultEmptySpec,
+  validateOpenApiV3Document,
+} from '@useoptic/openapi-utilities';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { SpecComparison } from './components';
 import { generateSpecResults } from './generateSpecResults';
-import { writeFile } from '../utils';
+import {
+  writeFile,
+  SpecFromInput,
+  parseSpecVersion,
+  specFromInputToResults,
+} from '../utils';
 import { DEFAULT_COMPARE_OUTPUT_FILENAME } from '../../constants';
+import { UserError } from '../../errors';
 import { ResultWithSourcemap } from '../../../sdk/types';
-import { SentryClient, wrapActionHandlerWithSentry } from '../../sentry';
+import { wrapActionHandlerWithSentry } from '../../sentry';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 
 type LoadingState =
@@ -29,6 +33,19 @@ type LoadingState =
       loading: false;
       error: false;
     };
+
+const parseContextObject = (context?: string): any => {
+  try {
+    const parsedContext = context ? JSON.parse(context) : {};
+    return parsedContext;
+  } catch (e) {
+    throw new UserError(
+      `Could not parse the context object provided at --context ${context}. Got an error: ${
+        (e as Error).message
+      }`
+    );
+  }
+};
 
 export const registerCompare = <T extends {}>(
   cli: Command,
@@ -64,14 +81,13 @@ export const registerCompare = <T extends {}>(
         }) => {
           const checkService = rulesetServices[options.ruleset];
           if (!checkService) {
-            console.error(
+            throw new UserError(
               `Ruleset named ${
                 options.ruleset
               } is not registered. valid options: ${JSON.stringify(
                 Object.keys(rulesetServices)
               )}`
             );
-            return process.exit(1);
           }
 
           if (options.output === 'plain') {
@@ -87,41 +103,21 @@ export const registerCompare = <T extends {}>(
               return process.exit(1);
             }
           }
-          try {
-            const parsedContext = options.context
-              ? JSON.parse(options.context)
-              : {};
-            const { waitUntilExit } = render(
-              <Compare
-                verbose={options.verbose}
-                output={options.output}
-                apiCheckService={checkService}
-                from={parseSpecVersion(options.from, defaultEmptySpec)}
-                to={parseSpecVersion(options.to, defaultEmptySpec)}
-                context={parsedContext}
-                shouldGenerateFile={options.createFile}
-              />,
-              { exitOnCtrlC: true }
-            );
-            try {
-              await waitUntilExit();
-              process.exit(0);
-            } catch (e) {
-              console.error((e as Error).message);
-              if (SentryClient) {
-                SentryClient.captureException(e);
-                await SentryClient.flush();
-              }
-              process.exit(1);
-            }
-          } catch (e) {
-            console.error(
-              `Could not parse the context object provided at --context ${
-                options.context
-              }. Got an error: ${(e as Error).message}`
-            );
-            process.exit(1);
-          }
+          const parsedContext = parseContextObject(options.context);
+
+          const { waitUntilExit } = render(
+            <Compare
+              verbose={options.verbose}
+              output={options.output}
+              apiCheckService={checkService}
+              from={parseSpecVersion(options.from, defaultEmptySpec)}
+              to={parseSpecVersion(options.to, defaultEmptySpec)}
+              context={parsedContext}
+              shouldGenerateFile={options.createFile}
+            />,
+            { exitOnCtrlC: true }
+          );
+          await waitUntilExit();
         }
       )
     );
@@ -166,6 +162,8 @@ function Compare<T>(props: {
         const [from, to] = await Promise.all([
           specFromInputToResults(props.from, process.cwd())
             .then((results) => {
+              validateOpenApiV3Document(results.jsonLike);
+
               !isStale &&
                 setFromState({
                   loading: false,
@@ -179,10 +177,12 @@ function Compare<T>(props: {
                   loading: false,
                   error: e,
                 });
-              throw new Error('Could not load from state');
+              throw new UserError(e);
             }),
           specFromInputToResults(props.to, process.cwd())
             .then((results) => {
+              validateOpenApiV3Document(results.jsonLike);
+
               !isStale &&
                 setToState({
                   loading: false,
@@ -196,7 +196,7 @@ function Compare<T>(props: {
                   loading: false,
                   error: e,
                 });
-              throw new Error('Could not load to state');
+              throw new UserError(e);
             }),
         ]);
 
@@ -225,7 +225,9 @@ function Compare<T>(props: {
           }
           const hasError = results.some((result) => !result.passed);
 
-          exit(hasError ? new Error('Some checks did not pass') : undefined);
+          exit(
+            hasError ? new UserError('Some checks did not pass') : undefined
+          );
         } catch (e) {
           !isStale && setResults({ loading: false, error: e as Error });
           throw e;

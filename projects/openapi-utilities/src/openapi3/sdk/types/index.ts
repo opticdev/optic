@@ -37,20 +37,21 @@ export type OpenApiFact =
   | OpenApiBodyFact
   | OpenApiFieldFact;
 
-export interface OpenApiOperationFact extends OpenAPIV3.OperationObject {
+export interface OpenApiOperationFact
+  extends Omit<OpenAPIV3.OperationObject, 'parameters' | 'responses'> {
   pathPattern: string;
   method: string;
 }
 
 export interface OpenApiBodyFact {
   contentType: string;
-  flatSchema: OpenAPIV3.SchemaObject;
+  flatSchema: Omit<OpenAPIV3.SchemaObject, 'item' | 'required' | 'properties'>;
 }
 
 export interface OpenApiFieldFact {
   key: string;
   required: boolean;
-  flatSchema: OpenAPIV3.SchemaObject;
+  flatSchema: Omit<OpenAPIV3.SchemaObject, 'item' | 'required' | 'properties'>;
 }
 export interface OpenApiResponseFact
   extends Omit<OpenAPIV3.ResponseObject, 'headers' | 'content'> {

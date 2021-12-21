@@ -1,4 +1,4 @@
-import { jsonFromFile } from '../../implementations/openapi3/openapi-traverser.test';
+import fs from 'fs-extra';
 import {
   factsToChangelog,
   OpenApiKind,
@@ -7,10 +7,15 @@ import {
 import { queryChangelog } from './changelog-selector';
 import { OpenAPIV3 } from 'openapi-types';
 
+const jsonFromFile = async (path: string) => {
+  const bytes = await fs.readJson(path);
+  return bytes;
+};
+
 async function fixture() {
-  const spec1 = await jsonFromFile('./inputs/openapi3/petstore0.json')();
+  const spec1 = await jsonFromFile('./inputs/openapi3/petstore0.json');
   const traverser1 = new OpenAPITraverser();
-  const spec2 = await jsonFromFile('./inputs/openapi3/petstore1.json')();
+  const spec2 = await jsonFromFile('./inputs/openapi3/petstore1.json');
   const traverser2 = new OpenAPITraverser();
 
   traverser1.traverse(spec1);

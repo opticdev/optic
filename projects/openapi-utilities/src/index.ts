@@ -1,6 +1,7 @@
 import { OpenAPITraverser } from './openapi3/implementations/openapi3/openapi-traverser';
-import { factsToChangelog } from './openapi3/sdk/facts-to-changelog';
+import { validateOpenApiV3Document } from './openapi3/implementations/openapi3/validator';
 import { OpenAPIV3 } from 'openapi-types';
+import { factsToChangelog } from './openapi3/sdk/facts-to-changelog';
 import {
   ConceptualLocation,
   IChange,
@@ -28,6 +29,7 @@ import { queryChangelog } from './openapi3/sdk/selectors/changelog-selector';
 export { defaultEmptySpec } from './openapi3/constants';
 
 export {
+  validateOpenApiV3Document,
   OpenApiFact,
   OpenAPITraverser,
   factsToChangelog,

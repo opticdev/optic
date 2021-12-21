@@ -1,6 +1,5 @@
-import path from "path";
-import fs from "fs";
-import fetch from 'node-fetch';
+import path from 'path';
+import fs from 'fs';
 
 export const loadFile = (filePath: string): Promise<Buffer> => {
   const workingDir = process.cwd();
@@ -16,7 +15,10 @@ export const loadFile = (filePath: string): Promise<Buffer> => {
   });
 };
 
-export const writeFile = (filePath: string, buffer: Buffer): Promise<string> => {
+export const writeFile = (
+  filePath: string,
+  buffer: Buffer
+): Promise<string> => {
   const workingDir = process.cwd();
   const resolvedPath = path.resolve(workingDir, filePath);
   return new Promise((resolve, reject) => {
@@ -27,18 +29,5 @@ export const writeFile = (filePath: string, buffer: Buffer): Promise<string> => 
         resolve(resolvedPath);
       }
     });
-  });
-}
-
-export const uploadFileToS3 = async (
-  signedUrl: string,
-  file: Buffer
-) => {
-  await fetch(signedUrl, {
-    method: "PUT",
-    headers: {
-      "x-amz-server-side-encryption": "AES256",
-    },
-    body: file,
   });
 };
