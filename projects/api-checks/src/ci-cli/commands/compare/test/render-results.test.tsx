@@ -33,7 +33,7 @@ describe('list of checks', () => {
     );
     const output = lastFrame()!;
     const stringified = Buffer.from(output).toString('base64');
-    console.log(lastFrame());
+    // console.log(lastFrame());
     // jest complains for some reason, and the snapshots aren't consistent.
     expect(stringified).toMatchSnapshot();
     expect(output).toMatchSnapshot();
