@@ -2,16 +2,21 @@ import React, { FC } from 'react';
 import { Box, Newline, Text } from 'ink';
 import { ResultWithSourcemap } from '../../../../sdk/types';
 
-import { RenderCheckResults } from './render-results';
+import { RenderCheckResults, SourcemapRendererEnum } from './render-results';
 
 export const SpecComparison: FC<{
   results: ResultWithSourcemap[];
   verbose: boolean;
-}> = ({ results, verbose }) => {
+  mapToFile: SourcemapRendererEnum;
+}> = ({ results, verbose, mapToFile }) => {
   return (
     <Box flexDirection="column">
       <Newline />
-      <RenderCheckResults results={results} verbose={verbose} />
+      <RenderCheckResults
+        results={results}
+        verbose={verbose}
+        mapToFile={mapToFile}
+      />
       <Box alignItems="flex-start" flexDirection="column" marginTop={3}>
         <Text bold color="green">
           {results.filter((i) => i.passed).length} checks passed

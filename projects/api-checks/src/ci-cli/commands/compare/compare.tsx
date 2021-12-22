@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Command } from 'commander';
 
-import { Box, Text, render, useApp, useStdout } from 'ink';
+import { Box, render, Text, useApp, useStdout } from 'ink';
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
@@ -10,16 +10,17 @@ import { ApiCheckService } from '../../../sdk/api-check-service';
 import { SpecComparison } from './components';
 import { generateSpecResults } from './generateSpecResults';
 import {
-  writeFile,
-  SpecFromInput,
   parseSpecVersion,
+  SpecFromInput,
   specFromInputToResults,
+  writeFile,
 } from '../utils';
 import { DEFAULT_COMPARE_OUTPUT_FILENAME } from '../../constants';
 import { UserError } from '../../errors';
 import { ResultWithSourcemap } from '../../../sdk/types';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
+import { SourcemapRendererEnum } from './components/render-results';
 
 type LoadingState =
   | {
@@ -56,6 +57,11 @@ export const registerCompare = <T extends {}>(
     .option('--from <from>', 'from file or rev:file, defaults empty spec')
     .option('--to <to>', 'to file or rev:file, defaults empty spec')
     .option('--context <context>', 'json of context')
+    .option(
+      '--github-errors',
+      'show the result of checks using github action errors',
+      false
+    )
     .option('--verbose', 'show all checks, even passing', false)
     .option('--ruleset <ruleset>', 'name of ruleset to run', 'default')
     .option(
@@ -77,6 +83,7 @@ export const registerCompare = <T extends {}>(
           verbose: boolean;
           output: 'pretty' | 'json' | 'plain';
           ruleset: string;
+          ['github-errors']: boolean;
           createFile: boolean;
         }) => {
           const checkService = rulesetServices[options.ruleset];
@@ -114,6 +121,11 @@ export const registerCompare = <T extends {}>(
               to={parseSpecVersion(options.to, defaultEmptySpec)}
               context={parsedContext}
               shouldGenerateFile={options.createFile}
+              mapToFile={
+                options['github-errors']
+                  ? SourcemapRendererEnum.github
+                  : SourcemapRendererEnum.local
+              }
             />,
             { exitOnCtrlC: true }
           );
@@ -131,6 +143,7 @@ function Compare<T>(props: {
   output: 'pretty' | 'json' | 'plain';
   apiCheckService: ApiCheckService<T>;
   shouldGenerateFile: boolean;
+  mapToFile: SourcemapRendererEnum;
 }) {
   const stdout = useStdout();
   const { exit } = useApp();
@@ -299,7 +312,11 @@ function Compare<T>(props: {
           Error running rules: {JSON.stringify(results.error.message)}
         </Text>
       ) : (
-        <SpecComparison results={results.data} verbose={props.verbose} />
+        <SpecComparison
+          results={results.data}
+          verbose={props.verbose}
+          mapToFile={props.mapToFile}
+        />
       )}
       {outputFileLocation && (
         <Text>Results of this run can be found at: {outputFileLocation}</Text>

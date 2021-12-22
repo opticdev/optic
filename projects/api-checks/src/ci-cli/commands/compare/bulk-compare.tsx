@@ -1,6 +1,6 @@
 import { Command, Option } from 'commander';
 import React, { FC, useEffect, useState } from 'react';
-import { Box, Text, useApp, useStderr, render, Newline, useStdout } from 'ink';
+import { Box, Newline, render, Text, useApp, useStderr, useStdout } from 'ink';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -12,10 +12,11 @@ import { SpecComparison } from './components';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { ResultWithSourcemap } from '../../../sdk/types';
 import { wrapActionHandlerWithSentry } from '../../sentry';
-import { loadFile, specFromInputToResults, parseSpecVersion } from '../utils';
+import { loadFile, parseSpecVersion, specFromInputToResults } from '../utils';
 import { generateSpecResults } from './generateSpecResults';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { UserError } from '../../errors';
+import { SourcemapRendererEnum } from './components/render-results';
 
 export const registerBulkCompare = <T extends {}>(
   cli: Command,
@@ -27,8 +28,8 @@ export const registerBulkCompare = <T extends {}>(
       '--input <input>',
       'a csv with the from, to files, and context format: <from>,<to>,<jsonified context>'
     )
-    .option('--verbose <verbose>', 'show all checks, even passing', false)
-    .option('--ruleset', 'name of ruleset to run', 'default')
+    .option('--verbose', 'show all checks, even passing', false)
+    .option('--ruleset <ruleset>', 'name of ruleset to run', 'default')
     .addOption(
       new Option(
         '--output <output>',
@@ -333,6 +334,7 @@ const BulkCompare: FC<{
                 <SpecComparison
                   results={comparison.results}
                   verbose={verbose}
+                  mapToFile={SourcemapRendererEnum.local}
                 />
               )}
             </Box>

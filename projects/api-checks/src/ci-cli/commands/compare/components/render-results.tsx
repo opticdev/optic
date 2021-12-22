@@ -1,12 +1,18 @@
-import { Box, Text } from "ink";
-import React from "react";
-import { Result, ResultWithSourcemap } from "../../../../sdk/types";
-import groupBy from "lodash.groupby";
-import Link from "ink-link";
+import { Box, Text } from 'ink';
+import React from 'react';
+import { Result, ResultWithSourcemap } from '../../../../sdk/types';
+import groupBy from 'lodash.groupby';
+import Link from 'ink-link';
+
+export enum SourcemapRendererEnum {
+  local,
+  github,
+}
 
 export function RenderCheckResults(props: {
   results: ResultWithSourcemap[];
   verbose: boolean;
+  mapToFile: SourcemapRendererEnum;
 }) {
   const groupedResults = groupBy(
     props.results,
@@ -15,13 +21,19 @@ export function RenderCheckResults(props: {
   );
 
   return (
-    <Box alignItems="flex-start" flexDirection="column" width={process.env.COLUMNS || "5000"}>
+    <Box
+      alignItems="flex-start"
+      flexDirection="column"
+      width={process.env.COLUMNS || '5000'}
+    >
       {Object.keys(groupedResults)
         .sort()
         .map((key) => {
           const operationResults = groupedResults[key] as ResultWithSourcemap[];
-          const { method, path } =
-            operationResults[0]!.change.location.conceptualLocation;
+          const {
+            method,
+            path,
+          } = operationResults[0]!.change.location.conceptualLocation;
 
           const allPasses = operationResults.every((i) => i.passed);
 
@@ -31,13 +43,13 @@ export function RenderCheckResults(props: {
                 <Box width={7}>
                   {allPasses ? (
                     <Text backgroundColor="green" bold>
-                      {" "}
-                      PASS{" "}
+                      {' '}
+                      PASS{' '}
                     </Text>
                   ) : (
                     <Text backgroundColor="red" bold>
-                      {" "}
-                      FAIL{" "}
+                      {' '}
+                      FAIL{' '}
                     </Text>
                   )}
                 </Box>
@@ -65,7 +77,7 @@ export function RenderCheckResults(props: {
                           <Text color="red">x </Text>
                         )}
                         <Text>
-                          {result.where} {result.isMust ? "must" : "should"}{" "}
+                          {result.where} {result.isMust ? 'must' : 'should'}{' '}
                           {result.condition}
                         </Text>
                       </Text>
@@ -74,22 +86,12 @@ export function RenderCheckResults(props: {
                           <Text color="red">{result.error}</Text>
                         </Box>
                       )}
-                      {result.docsLink ? (
-                        <Box paddingLeft={2}>
-                          <Link url={result.docsLink} fallback={true}>
-                            <Text underline color="blue">
-                              Read more in our API guide
-                            </Text>
-                          </Link>
-                        </Box>
-                      ) : null}
-                      {result.sourcemap ? (
-                        <Box paddingLeft={2}>
-                          <Text underline color="blue">
-                            {`at (${result.sourcemap.filePath}:${result.sourcemap.startLine}:${result.sourcemap.startPosition})`}
-                          </Text>
-                        </Box>
-                      ) : null}
+                      {props.mapToFile === SourcemapRendererEnum.local && (
+                        <SourcemapInLocalContext result={result} />
+                      )}
+                      {props.mapToFile === SourcemapRendererEnum.github && (
+                        <SourceInGitHubContext result={result} />
+                      )}
                     </Box>
                   );
                 })}
@@ -99,4 +101,61 @@ export function RenderCheckResults(props: {
         })}
     </Box>
   );
+}
+
+function SourcemapInLocalContext(props: { result: ResultWithSourcemap }) {
+  const { result } = props;
+  return (
+    <>
+      {result.docsLink ? (
+        <Box paddingLeft={2}>
+          <Link url={result.docsLink} fallback={true}>
+            <Text underline color="blue">
+              Read more in our API guide
+            </Text>
+          </Link>
+        </Box>
+      ) : null}
+      {result.sourcemap ? (
+        <Box paddingLeft={2}>
+          <Text underline color="blue">
+            {`at (${result.sourcemap.filePath}:${result.sourcemap.startLine}:${result.sourcemap.startPosition})`}
+          </Text>
+        </Box>
+      ) : null}
+    </>
+  );
+}
+
+function SourceInGitHubContext(props: { result: ResultWithSourcemap }) {
+  const { result } = props;
+
+  function escapeForGitHubActions(s: string): string {
+    return s
+      .replace(/%/g, '%25')
+      .replace(/\r/g, '%0D')
+      .replace(/\n/g, '%0A')
+      .replace(/:/g, '%3A')
+      .replace(/,/g, '%2C');
+  }
+
+  if (result.sourcemap) {
+    const messageLines: string[] = [
+      `${result.where} ${result.isMust ? 'must' : 'should'} ${
+        result.condition
+      }`,
+    ];
+
+    if (result.docsLink) {
+      messageLines.push(`documentation ${result.docsLink}`);
+    }
+
+    const errorInvoke = `::warning file=${result.sourcemap.filePath},line=${
+      result.sourcemap.startLine
+    },title=${escapeForGitHubActions(result.error!)}::${JSON.stringify(
+      messageLines.map(escapeForGitHubActions).join('%0A')
+    )}`;
+
+    return <Text>{errorInvoke}</Text>;
+  } else return <SourcemapInLocalContext result={result} />;
 }
