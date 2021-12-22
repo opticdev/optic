@@ -58,7 +58,7 @@ export const registerCompare = <T extends {}>(
     .option('--to <to>', 'to file or rev:file, defaults empty spec')
     .option('--context <context>', 'json of context')
     .option(
-      '--github-errors',
+      '--github-annotations',
       'show the result of checks using github action errors',
       false
     )
@@ -83,8 +83,8 @@ export const registerCompare = <T extends {}>(
           verbose: boolean;
           output: 'pretty' | 'json' | 'plain';
           ruleset: string;
-          ['github-errors']: boolean;
           createFile: boolean;
+          githubAnnotations: boolean;
         }) => {
           const checkService = rulesetServices[options.ruleset];
           if (!checkService) {
@@ -122,7 +122,7 @@ export const registerCompare = <T extends {}>(
               context={parsedContext}
               shouldGenerateFile={options.createFile}
               mapToFile={
-                options['github-errors']
+                options.githubAnnotations
                   ? SourcemapRendererEnum.github
                   : SourcemapRendererEnum.local
               }
@@ -130,6 +130,7 @@ export const registerCompare = <T extends {}>(
             { exitOnCtrlC: true }
           );
           await waitUntilExit();
+          return Promise.resolve();
         }
       )
     );
