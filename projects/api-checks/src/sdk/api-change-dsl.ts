@@ -224,7 +224,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
           })
           .changes(),
         dsl.nextFacts,
-        (field) => `${field.key}`,
+        (field) => `request body '${field.key}'`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
@@ -268,7 +268,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
           })
           .changes(),
         dsl.nextFacts,
-        (field) => `${field.key}`,
+        (field) => `response body '${field.key}'`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
         (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
