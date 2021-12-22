@@ -152,8 +152,8 @@ function SourceInGitHubContext(props: { result: ResultWithSourcemap }) {
 
     const errorInvoke = `::warning file=${result.sourcemap.filePath},line=${
       result.sourcemap.startLine
-    },title=${escapeForGitHubActions(result.error!)}::${JSON.stringify(
-      messageLines.map(escapeForGitHubActions).join('%0A')
+    },title=${escapeForGitHubActions(result.error!)}::${messageLines.join(
+      '%0A'
     )}`;
 
     return <Text>{errorInvoke}</Text>;
