@@ -1,0 +1,229 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`is case  camel case matches correct examples 1`] = `
+Array [
+  Array [
+    "kebab-case-for-fun",
+    false,
+  ],
+  Array [
+    "camelCaseForFun",
+    true,
+  ],
+  Array [
+    "PascalCaseForFun",
+    false,
+  ],
+  Array [
+    "snake_case_for_fun",
+    false,
+  ],
+  Array [
+    "technicallycamelcase",
+    true,
+  ],
+  Array [
+    "with A Space",
+    false,
+  ],
+  Array [
+    "Pascalwithoutfriends",
+    false,
+  ],
+  Array [
+    "camelwithoutfriends",
+    true,
+  ],
+  Array [
+    "snake",
+    true,
+  ],
+  Array [
+    "kebabwithoutfriends",
+    true,
+  ],
+  Array [
+    "some-kebab-someCamel",
+    false,
+  ],
+  Array [
+    "",
+    false,
+  ],
+  Array [
+    "RANDOM",
+    false,
+  ],
+]
+`;
+
+exports[`is case  param case matches correct examples 1`] = `
+Array [
+  Array [
+    "kebab-case-for-fun",
+    true,
+  ],
+  Array [
+    "camelCaseForFun",
+    false,
+  ],
+  Array [
+    "PascalCaseForFun",
+    false,
+  ],
+  Array [
+    "snake_case_for_fun",
+    false,
+  ],
+  Array [
+    "technicallycamelcase",
+    true,
+  ],
+  Array [
+    "with A Space",
+    false,
+  ],
+  Array [
+    "Pascalwithoutfriends",
+    false,
+  ],
+  Array [
+    "camelwithoutfriends",
+    true,
+  ],
+  Array [
+    "snake",
+    true,
+  ],
+  Array [
+    "kebabwithoutfriends",
+    true,
+  ],
+  Array [
+    "some-kebab-someCamel",
+    false,
+  ],
+  Array [
+    "",
+    false,
+  ],
+  Array [
+    "RANDOM",
+    false,
+  ],
+]
+`;
+
+exports[`is case  pascal case matches correct examples 1`] = `
+Array [
+  Array [
+    "kebab-case-for-fun",
+    false,
+  ],
+  Array [
+    "camelCaseForFun",
+    false,
+  ],
+  Array [
+    "PascalCaseForFun",
+    true,
+  ],
+  Array [
+    "snake_case_for_fun",
+    false,
+  ],
+  Array [
+    "technicallycamelcase",
+    false,
+  ],
+  Array [
+    "with A Space",
+    false,
+  ],
+  Array [
+    "Pascalwithoutfriends",
+    true,
+  ],
+  Array [
+    "camelwithoutfriends",
+    false,
+  ],
+  Array [
+    "snake",
+    false,
+  ],
+  Array [
+    "kebabwithoutfriends",
+    false,
+  ],
+  Array [
+    "some-kebab-someCamel",
+    false,
+  ],
+  Array [
+    "",
+    false,
+  ],
+  Array [
+    "RANDOM",
+    false,
+  ],
+]
+`;
+
+exports[`is case  snake case matches correct examples 1`] = `
+Array [
+  Array [
+    "kebab-case-for-fun",
+    false,
+  ],
+  Array [
+    "camelCaseForFun",
+    false,
+  ],
+  Array [
+    "PascalCaseForFun",
+    false,
+  ],
+  Array [
+    "snake_case_for_fun",
+    true,
+  ],
+  Array [
+    "technicallycamelcase",
+    true,
+  ],
+  Array [
+    "with A Space",
+    false,
+  ],
+  Array [
+    "Pascalwithoutfriends",
+    false,
+  ],
+  Array [
+    "camelwithoutfriends",
+    true,
+  ],
+  Array [
+    "snake",
+    true,
+  ],
+  Array [
+    "kebabwithoutfriends",
+    true,
+  ],
+  Array [
+    "some-kebab-someCamel",
+    false,
+  ],
+  Array [
+    "",
+    false,
+  ],
+  Array [
+    "RANDOM",
+    false,
+  ],
+]
+`;
