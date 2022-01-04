@@ -2,6 +2,7 @@ import { OpenAPIV3 } from 'openapi-types';
 const HttpMethods = OpenAPIV3.HttpMethods;
 export type BeforeAndAfter = [OpenAPIV3.Document, OpenAPIV3.Document];
 export const copy = (obj: any) => JSON.parse(JSON.stringify(obj));
+export type Editable<T> = (item: T) => T;
 
 const defaultEmpty = (): OpenAPIV3.Document => ({
   openapi: '3.0.1',
@@ -57,6 +58,30 @@ const defaultWithSchema = (
   },
 });
 
+const defaultWithQueryParameters = (
+  parameters: OpenAPIV3.ParameterObject[]
+): OpenAPIV3.Document => ({
+  openapi: '3.0.1',
+  info: {
+    version: '0.1.0',
+    title: '',
+  },
+  paths: {
+    '/example': {
+      get: {
+        parameters,
+        responses: {
+          '200': {
+            description: '',
+          },
+        },
+      },
+    },
+  },
+});
+
+const baseParam = { in: 'query', name: 'exampleParam' };
+
 export function scenario(name: string) {
   return {
     responseSchema: {
@@ -101,16 +126,11 @@ export function scenario(name: string) {
         return [defaultEmpty(), copied];
       },
       removed: (
-        operation: OpenAPIV3.OperationObject,
         method: OpenAPIV3.HttpMethods = HttpMethods.GET,
         pathPattern: string = '/example'
       ): BeforeAndAfter => {
         const copied: OpenAPIV3.Document = defaultEmpty();
-        copied.paths = {
-          [pathPattern]: {
-            [method]: operation,
-          },
-        };
+        delete copied.paths[pathPattern]?.[method];
         return [copied, defaultEmpty()];
       },
       changed: (
@@ -134,6 +154,23 @@ export function scenario(name: string) {
           },
         };
         return [before, after];
+      },
+    },
+    queryParameter: {
+      added: (parameterToAdded: OpenAPIV3.ParameterObject): BeforeAndAfter => {
+        return [
+          defaultWithQueryParameters([]),
+          defaultWithQueryParameters([parameterToAdded]),
+        ];
+      },
+      changed: (
+        parameterBefore: OpenAPIV3.ParameterObject,
+        editParameter: Editable<OpenAPIV3.ParameterObject>
+      ): BeforeAndAfter => {
+        return [
+          defaultWithQueryParameters([parameterBefore]),
+          defaultWithQueryParameters([editParameter(copy(parameterBefore))]),
+        ];
       },
     },
   };
