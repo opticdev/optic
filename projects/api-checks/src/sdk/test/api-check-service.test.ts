@@ -12,6 +12,7 @@ function completenessApiRules(dsl: ExampleDsl) {
     'have consistent operationIds',
     (current, next, context, docs) => {
       const { expect } = require('chai'); // Using Assert style
+      docs.includeDocsLink('https://github.com/docs');
       expect(current.operationId).to.equal(
         next.operationId || '',
         'operation ids must be consistent'

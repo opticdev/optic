@@ -99,8 +99,12 @@ export function newDocsLinkHelper(): DocsLinkHelper {
   return {
     includeDocsLink: (link: string) => (docsLink = link),
     becomesEffectiveOn: (date: Date) => (effectiveOn = date),
-    docsLink,
-    effectiveOn,
+    get docsLink() {
+      return docsLink;
+    },
+    get effectiveOn() {
+      return effectiveOn;
+    },
   };
 }
 
