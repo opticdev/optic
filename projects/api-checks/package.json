@@ -65,7 +65,7 @@
       "build"
     ],
     "testMatch": [
-      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+      "<rootDir>/src/**/*.{spec,test,rule}.{js,jsx,ts,tsx}"
     ],
     "moduleNameMapper": {
       "^nimma/fallbacks$": "<rootDir>../../../../node_modules/nimma/dist/cjs/fallbacks/index.js",

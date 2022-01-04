@@ -28,6 +28,27 @@ export class ApiCheckService<Context> {
     input: DslConstructorInput<Context>
   ) => Promise<Result[]>)[] = [];
 
+  useRulesBuildFrom(rules: (apiChangeDsl: ApiChangeDsl) => void) {
+    const dslConstructor = (input: DslConstructorInput<ApiCheckDslContext>) => {
+      return new ApiChangeDsl(
+        input.nextFacts,
+        input.changelog,
+        input.currentJsonLike,
+        input.nextJsonLike,
+        input.context
+      );
+    };
+
+    const runner = (input: DslConstructorInput<Context>) => {
+      const dsl = dslConstructor(input);
+      rules(dsl);
+      return dsl.checkPromises();
+    };
+
+    this.rules.push(runner);
+    return this;
+  }
+
   useDsl<DSL extends ApiCheckDsl>(
     dslConstructor: (input: DslConstructorInput<Context>) => DSL,
     ...rules: ((dsl: DSL) => void)[]
