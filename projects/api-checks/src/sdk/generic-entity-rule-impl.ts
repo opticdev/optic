@@ -192,7 +192,7 @@ export function genericEntityRuleImpl<
             const docsHelper = newDocsLinkHelper();
             return runCheck(item, docsHelper, addedWhere, statement, must, () =>
               handler(
-                item.added!,
+                item.removed!.before!,
                 {
                   ...getContext(item.location),
                   ...getStructuralContext(item.location),
