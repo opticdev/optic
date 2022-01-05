@@ -2,6 +2,7 @@ import { OpenAPIV3 } from 'openapi-types';
 const HttpMethods = OpenAPIV3.HttpMethods;
 export type BeforeAndAfter = [OpenAPIV3.Document, OpenAPIV3.Document];
 export const copy = (obj: any) => JSON.parse(JSON.stringify(obj));
+export type Editable<T> = (item: T) => T;
 
 const defaultEmpty = (): OpenAPIV3.Document => ({
   openapi: '3.0.1',
@@ -31,7 +32,7 @@ const defaultWithoutSchema = (): OpenAPIV3.Document => ({
   },
 });
 
-const defaultWithSchema = (
+const defaultWithResponseBodySchema = (
   schema: OpenAPIV3.SchemaObject
 ): OpenAPIV3.Document => ({
   openapi: '3.0.1',
@@ -57,19 +58,82 @@ const defaultWithSchema = (
   },
 });
 
+const defaultWithQueryParameters = (
+  parameters: OpenAPIV3.ParameterObject[]
+): OpenAPIV3.Document => ({
+  openapi: '3.0.1',
+  info: {
+    version: '0.1.0',
+    title: '',
+  },
+  paths: {
+    '/example': {
+      get: {
+        parameters,
+        responses: {
+          '200': {
+            description: '',
+          },
+        },
+      },
+    },
+  },
+});
+
+const defaultWithRequestBodySchema = (
+  schema: OpenAPIV3.SchemaObject
+): OpenAPIV3.Document => ({
+  openapi: '3.0.1',
+  info: {
+    version: '0.1.0',
+    title: '',
+  },
+  paths: {
+    '/example': {
+      post: {
+        requestBody: {
+          content: {
+            'application/json': {
+              schema,
+            },
+          },
+        },
+        responses: {
+          '201': {
+            description: '',
+          },
+        },
+      },
+    },
+  },
+});
+
+const baseParam = { in: 'query', name: 'exampleParam' };
+
 export function scenario(name: string) {
   return {
-    responseSchema: {
-      added: (schema: OpenAPIV3.SchemaObject): BeforeAndAfter => {
-        return [defaultWithoutSchema(), defaultWithSchema(schema)];
-      },
+    // responseSchema: {
+    //   added: (schema: OpenAPIV3.SchemaObject): BeforeAndAfter => {
+    //     return [defaultWithoutSchema(), defaultWithResponseBodySchema(schema)];
+    //   },
+    //   changed: (
+    //     beforeSchema: OpenAPIV3.SchemaObject,
+    //     afterSchema: OpenAPIV3.SchemaObject
+    //   ): BeforeAndAfter => {
+    //     return [
+    //       defaultWithResponseBodySchema(beforeSchema),
+    //       defaultWithResponseBodySchema(afterSchema),
+    //     ];
+    //   },
+    // },
+    paths: {
       changed: (
-        beforeSchema: OpenAPIV3.SchemaObject,
-        afterSchema: OpenAPIV3.SchemaObject
+        pathsBefore: OpenAPIV3.PathsObject,
+        editPaths: Editable<OpenAPIV3.PathsObject>
       ): BeforeAndAfter => {
         return [
-          defaultWithSchema(beforeSchema),
-          defaultWithSchema(afterSchema),
+          { ...defaultEmpty(), paths: pathsBefore },
+          { ...defaultEmpty(), paths: editPaths(pathsBefore) },
         ];
       },
     },
@@ -101,16 +165,11 @@ export function scenario(name: string) {
         return [defaultEmpty(), copied];
       },
       removed: (
-        operation: OpenAPIV3.OperationObject,
         method: OpenAPIV3.HttpMethods = HttpMethods.GET,
         pathPattern: string = '/example'
       ): BeforeAndAfter => {
         const copied: OpenAPIV3.Document = defaultEmpty();
-        copied.paths = {
-          [pathPattern]: {
-            [method]: operation,
-          },
-        };
+        delete copied.paths[pathPattern]?.[method];
         return [copied, defaultEmpty()];
       },
       changed: (
@@ -134,6 +193,45 @@ export function scenario(name: string) {
           },
         };
         return [before, after];
+      },
+    },
+    queryParameter: {
+      added: (parameterToAdded: OpenAPIV3.ParameterObject): BeforeAndAfter => {
+        return [
+          defaultWithQueryParameters([]),
+          defaultWithQueryParameters([parameterToAdded]),
+        ];
+      },
+      changed: (
+        parameterBefore: OpenAPIV3.ParameterObject,
+        editParameter: Editable<OpenAPIV3.ParameterObject>
+      ): BeforeAndAfter => {
+        return [
+          defaultWithQueryParameters([parameterBefore]),
+          defaultWithQueryParameters([editParameter(copy(parameterBefore))]),
+        ];
+      },
+    },
+    requestBodySchema: {
+      changed: (
+        schemaBefore: OpenAPIV3.SchemaObject,
+        editSchema: Editable<OpenAPIV3.SchemaObject>
+      ): BeforeAndAfter => {
+        return [
+          defaultWithRequestBodySchema(schemaBefore),
+          defaultWithRequestBodySchema(editSchema(copy(schemaBefore))),
+        ];
+      },
+    },
+    responseBodySchema: {
+      changed: (
+        schemaBefore: OpenAPIV3.SchemaObject,
+        editSchema: Editable<OpenAPIV3.SchemaObject>
+      ): BeforeAndAfter => {
+        return [
+          defaultWithResponseBodySchema(schemaBefore),
+          defaultWithResponseBodySchema(editSchema(copy(schemaBefore))),
+        ];
       },
     },
   };
