@@ -38,7 +38,7 @@ const defaultWithoutSchema = (): OpenAPIV3.Document => ({
 });
 
 const defaultWithResponseBodySchema = (
-  schema: OpenAPIV3.SchemaObject
+  schema: OpenAPIV3.SchemaObject | undefined
 ): OpenAPIV3.Document => ({
   openapi: '3.0.1',
   info: {
@@ -86,7 +86,7 @@ const defaultWithQueryParameters = (
 });
 
 const defaultWithRequestBodySchema = (
-  schema: OpenAPIV3.SchemaObject
+  schema: OpenAPIV3.SchemaObject | undefined
 ): OpenAPIV3.Document => ({
   openapi: '3.0.1',
   info: {
@@ -231,6 +231,13 @@ export function scenario(name: string) {
           name,
         ];
       },
+      added: (schema: OpenAPIV3.SchemaObject): BeforeAndAfter => {
+        return [
+          defaultWithRequestBodySchema(undefined),
+          defaultWithRequestBodySchema(schema),
+          name,
+        ];
+      },
     },
     responseBodySchema: {
       changed: (
@@ -240,6 +247,13 @@ export function scenario(name: string) {
         return [
           defaultWithResponseBodySchema(schemaBefore),
           defaultWithResponseBodySchema(editSchema(copy(schemaBefore))),
+          name,
+        ];
+      },
+      added: (schema: OpenAPIV3.SchemaObject): BeforeAndAfter => {
+        return [
+          defaultWithResponseBodySchema(undefined),
+          defaultWithResponseBodySchema(schema),
           name,
         ];
       },

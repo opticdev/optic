@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/api-checks",
   "packageManager": "yarn@3.0.2",
-  "version": "0.18.4",
+  "version": "0.18.6",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -69,8 +69,14 @@
       "<rootDir>/src/**/*.{spec,test,rule}.{js,jsx,ts,tsx}"
     ],
     "moduleNameMapper": {
-      "^nimma/fallbacks$": "<rootDir>../../../../node_modules/nimma/dist/cjs/fallbacks/index.js",
-      "^nimma/legacy$": "<rootDir>../../../../node_modules/nimma/dist/legacy/cjs/index.js"
+      "^nimma/fallbacks$": [
+        "<rootDir>../../node_modules/nimma/dist/cjs/fallbacks/index.js",
+        "<rootDir>../../../../node_modules/nimma/dist/cjs/fallbacks/index.js"
+      ],
+      "^nimma/legacy$": [
+        "<rootDir>../../node_modules/nimma/dist/legacy/cjs/index.js",
+        "<rootDir>../../../../node_modules/nimma/dist/legacy/cjs/index.js"
+      ]
     }
   }
 }

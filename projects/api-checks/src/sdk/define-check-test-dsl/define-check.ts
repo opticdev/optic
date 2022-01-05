@@ -4,16 +4,16 @@ import { ApiChangeDsl } from '../api-change-dsl';
 import { Result } from '../types';
 import invariant from 'ts-invariant';
 
-export interface IApiCheckDefinition {
+export interface IApiCheckDefinition<CheckConfig> {
   name: string;
-  implementation?: (apiChangeDsl: ApiChangeDsl) => void;
+  implementation?: (apiChangeDsl: ApiChangeDsl, config: CheckConfig) => void;
   description?: string;
   validExamples: BeforeAndAfter[];
   invalidExamples: BeforeAndAfter[];
 }
 
-class ApiCheckImpl {
-  public check: IApiCheckDefinition;
+class ApiCheckImpl<CheckConfig> {
+  public check: IApiCheckDefinition<CheckConfig>;
 
   constructor(name: string) {
     this.check = {
@@ -29,13 +29,16 @@ class ApiCheckImpl {
   }
 
   implementation(
-    implementation: (apiChangeDsl: ApiChangeDsl) => void | Promise<void>
+    implementation: (
+      apiChangeDsl: ApiChangeDsl,
+      config?: CheckConfig
+    ) => void | Promise<void>
   ) {
     this.check.implementation = implementation;
     return this;
   }
 
-  passingExample(beforeAndAfter: BeforeAndAfter) {
+  passingExample(beforeAndAfter: BeforeAndAfter, config?: CheckConfig) {
     this.check.validExamples = [...this.check.validExamples, beforeAndAfter];
 
     if (!this.check.implementation) test.skip('', () => 1);
@@ -47,7 +50,7 @@ class ApiCheckImpl {
       const testName = `passing case ${this.check.validExamples.length}: ${beforeAndAfter[2]}`;
 
       test(testName, async () => {
-        const testResult = await this.testExample(beforeAndAfter);
+        const testResult = await this.testExample(beforeAndAfter, config);
         expect(testResult).toMatchSnapshot();
         expect(testResult.passed).toBeTruthy();
       });
@@ -56,7 +59,7 @@ class ApiCheckImpl {
     return this;
   }
 
-  failingExample(beforeAndAfter: BeforeAndAfter) {
+  failingExample(beforeAndAfter: BeforeAndAfter, config?: CheckConfig) {
     this.check.invalidExamples = [
       ...this.check.invalidExamples,
       beforeAndAfter,
@@ -70,7 +73,7 @@ class ApiCheckImpl {
 
       const testName = `failing case ${this.check.invalidExamples.length}: ${beforeAndAfter[2]}`;
       it(testName, async () => {
-        const testResult = await this.testExample(beforeAndAfter);
+        const testResult = await this.testExample(beforeAndAfter, config);
         expect(testResult).toMatchSnapshot();
         expect(testResult.passed).toBeFalsy();
       });
@@ -79,10 +82,13 @@ class ApiCheckImpl {
     return this;
   }
 
-  private async testExample(beforeAndAfter: BeforeAndAfter) {
+  private async testExample(
+    beforeAndAfter: BeforeAndAfter,
+    config?: CheckConfig
+  ) {
     invariant(this.check.implementation);
-    const service = new ApiCheckService().useRulesBuildFrom(
-      this.check.implementation
+    const service = new ApiCheckService().useRulesBuildFrom((dsl) =>
+      this.check.implementation!(dsl, config as any)
     );
 
     const [before, after] = beforeAndAfter;
@@ -96,6 +102,6 @@ class ApiCheckImpl {
   }
 }
 
-export function check(name: string) {
-  return new ApiCheckImpl(name);
+export function check<CheckConfig = undefined>(name: string) {
+  return new ApiCheckImpl<CheckConfig>(name);
 }
