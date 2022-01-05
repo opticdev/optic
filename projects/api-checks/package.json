@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/api-checks",
   "packageManager": "yarn@3.0.2",
-  "version": "0.18.2",
+  "version": "0.18.3",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -39,7 +39,7 @@
   "dependencies": {
     "@octokit/rest": "^18.12.0",
     "@sentry/node": "^6.15.0",
-    "@stoplight/spectral-core": "^1.6.1",
+    "@stoplight/spectral-core": "^1.8.1",
     "@useoptic/json-pointer-helpers": "workspace:*",
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
