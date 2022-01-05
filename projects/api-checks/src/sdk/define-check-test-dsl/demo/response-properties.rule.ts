@@ -16,7 +16,7 @@ check('required properties in response should not be removed')
     );
   })
   .failingExample(
-    scenario('removing required property').responseSchema.changed(
+    scenario('removing required property').responseBodySchema.changed(
       {
         type: 'object',
         required: ['lookAtMe'],
@@ -24,23 +24,25 @@ check('required properties in response should not be removed')
           lookAtMe: { type: 'string' },
         },
       },
-      {
-        type: 'object',
-        properties: {},
+      (schema) => {
+        schema.required = [];
+        schema.properties = {};
+        return schema;
       }
     )
   )
   .passingExample(
-    scenario('removing optional property').responseSchema.changed(
+    scenario('removing optional property').responseBodySchema.changed(
       {
         type: 'object',
         properties: {
           lookAtMe: { type: 'string' },
         },
       },
-      {
-        type: 'object',
-        properties: {},
+      (schema) => {
+        schema.required = [];
+        schema.properties = {};
+        return schema;
       }
     )
   );
