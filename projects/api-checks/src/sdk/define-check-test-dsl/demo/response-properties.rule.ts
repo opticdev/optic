@@ -6,11 +6,11 @@ check('required properties in response should not be removed')
   .implementation(({ bodyProperties }) => {
     const { expect } = require('chai');
     bodyProperties.removed.must(
-      'not be removed from response bodies if required ',
+      'not be required in response bodies',
       (property, context) => {
-        if ('inResponse' in context && property.required)
+        if (context.isInResponse && property.required)
           expect.fail(
-            `removing required property '${property.key}' is a breaking change`
+            `removing required property ${property.key} from response is a breaking change!!`
           );
       }
     );

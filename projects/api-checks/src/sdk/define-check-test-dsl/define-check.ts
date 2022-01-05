@@ -38,6 +38,8 @@ class ApiCheckImpl {
   passingExample(beforeAndAfter: BeforeAndAfter) {
     this.check.validExamples = [...this.check.validExamples, beforeAndAfter];
 
+    if (!this.check.implementation) test.skip('', () => 1);
+
     if (typeof jest !== 'undefined' && this.check.implementation) {
       // @ts-ignore
       const { test, expect } = global;
@@ -59,6 +61,8 @@ class ApiCheckImpl {
       ...this.check.invalidExamples,
       beforeAndAfter,
     ];
+
+    if (!this.check.implementation) test.skip('', () => 1);
 
     if (typeof jest !== 'undefined' && this.check.implementation) {
       // @ts-ignore
