@@ -3,9 +3,6 @@ import { scenario } from '../scenarios';
 import { expect } from 'chai';
 
 check('required properties in response should not be removed')
-  .description(
-    'removing a required property will break clients that expect it to be there'
-  )
   .implementation(({ bodyProperties }) => {
     const { expect } = require('chai');
     bodyProperties.removed.must(

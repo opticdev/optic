@@ -58,7 +58,7 @@ Object {
 
 exports[` passing case 1 1`] = `
 Object {
-  "passed": false,
+  "passed": true,
   "results": Array [
     Object {
       "change": Object {
@@ -101,10 +101,10 @@ Object {
       },
       "condition": "not be removed from response bodies if required ",
       "docsLink": undefined,
-      "error": "Cannot read property 'required' of undefined",
+      "effectiveOnDate": undefined,
       "isMust": true,
       "isShould": false,
-      "passed": false,
+      "passed": true,
       "where": "removed field: lookAtMe",
     },
   ],
