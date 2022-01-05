@@ -1,33 +1,33 @@
-import { ApiCheckService } from "../api-check-service";
-import { ExampleDsl, ExampleDslContext } from "./example-dsl";
-import { OpenAPIV3 } from "@useoptic/openapi-utilities";
+import { ApiCheckService } from '../api-check-service';
+import { ExampleDsl, ExampleDslContext } from './example-dsl';
+import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 export const defaultEmptySpec: OpenAPIV3.Document = {
-  openapi: "3.0.1",
+  openapi: '3.0.1',
   paths: {},
-  info: { version: "0.0.0", title: "Empty" },
+  info: { version: '0.0.0', title: 'Empty' },
 };
 
 function completenessApiRules(dsl: ExampleDsl) {
   dsl.operations.changed.must(
-    "have consistent operationIds",
+    'have consistent operationIds',
     (current, next, context, docs) => {
-      const { expect } = require("chai"); // Using Assert style
-
+      const { expect } = require('chai'); // Using Assert style
+      docs.includeDocsLink('https://github.com/docs');
       expect(current.operationId).to.equal(
-        next.operationId || "",
-        "operation ids must be consistent"
+        next.operationId || '',
+        'operation ids must be consistent'
       );
     }
   );
   dsl.operations.requirement.must(
-    "be able to see spec",
+    'be able to see spec',
     (value, context, docs, specItem) => {
       expect(specItem).toBeTruthy();
     }
   );
 }
 
-it("can run dsl rules through check service", async (done) => {
+it('can run dsl rules through check service', async (done) => {
   const checker = new ApiCheckService<ExampleDslContext>();
 
   checker.useDsl(
@@ -40,9 +40,9 @@ it("can run dsl rules through check service", async (done) => {
     {
       ...defaultEmptySpec,
       paths: {
-        "/example": {
+        '/example': {
           get: {
-            operationId: "getExample",
+            operationId: 'getExample',
             responses: {},
           },
         },
@@ -51,16 +51,16 @@ it("can run dsl rules through check service", async (done) => {
     {
       ...defaultEmptySpec,
       paths: {
-        "/example": {
+        '/example': {
           get: {
-            operationId: "get_example",
+            operationId: 'get_example',
             responses: {},
           },
         },
       },
     },
 
-    { maturity: "wip" }
+    { maturity: 'wip' }
   );
 
   expect(results).toMatchSnapshot();

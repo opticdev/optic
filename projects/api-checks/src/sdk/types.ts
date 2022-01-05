@@ -15,12 +15,14 @@ export type StructuralContext = {
   isInResponse: boolean;
 };
 
+type DocsMetadata = Omit<DocsLinkHelper, 'docsLink' | 'effectiveOn'>;
+
 export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
   added: ShouldOrMust<
     (
       added: G,
       context: ApiContext & DSLContext & StructuralContext,
-      docs: DocsLinkHelper,
+      docs: DocsMetadata,
       specItem: OpenApiEntityType
     ) => Promise<void> | void
   >;
@@ -29,7 +31,7 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
       before: G,
       after: G,
       context: ApiContext & DSLContext & StructuralContext,
-      docs: DocsLinkHelper,
+      docs: DocsMetadata,
       specItem: OpenApiEntityType
     ) => Promise<void> | void
   >;
@@ -37,7 +39,7 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
     (
       addedOrAfter: G,
       context: ApiContext & DSLContext & StructuralContext,
-      docs: DocsLinkHelper,
+      docs: DocsMetadata,
       specItem: OpenApiEntityType
     ) => Promise<void> | void
   >;
@@ -45,14 +47,14 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
     (
       before: G,
       context: ApiContext & DSLContext & StructuralContext,
-      docs: DocsLinkHelper
+      docs: DocsMetadata
     ) => Promise<void> | void
   >;
   requirement: ShouldOrMust<
     (
       value: G,
       context: ApiContext & DSLContext & StructuralContext,
-      docs: DocsLinkHelper,
+      docs: DocsMetadata,
       specItem: OpenApiEntityType
     ) => Promise<void> | void
   >;
@@ -67,6 +69,7 @@ export interface Result {
   passed: boolean;
   change: IChange<OpenApiFact>;
   docsLink?: string;
+  effectiveOnDate?: Date;
 }
 
 export type ResultWithSourcemap = Result & {
@@ -83,16 +86,25 @@ export interface Failed extends Result {
 }
 
 export type DocsLinkHelper = {
+  docsLink: string | undefined;
+  effectiveOn: Date | undefined;
   includeDocsLink: (link: string) => void;
-  getDocsLink: () => string | undefined;
+  becomesEffectiveOn: (date: Date) => void;
 };
 
 export function newDocsLinkHelper(): DocsLinkHelper {
   let docsLink: string | undefined = undefined;
+  let effectiveOn: Date | undefined = undefined;
 
   return {
     includeDocsLink: (link: string) => (docsLink = link),
-    getDocsLink: () => docsLink,
+    becomesEffectiveOn: (date: Date) => (effectiveOn = date),
+    get docsLink() {
+      return docsLink;
+    },
+    get effectiveOn() {
+      return effectiveOn;
+    },
   };
 }
 
@@ -113,7 +125,8 @@ export async function runCheck(
       isMust: must,
       isShould: !must,
       change,
-      docsLink: docsLink.getDocsLink(),
+      docsLink: docsLink.docsLink,
+      effectiveOnDate: docsLink.effectiveOn,
     };
   } catch (e: any) {
     return {
@@ -124,7 +137,8 @@ export async function runCheck(
       isShould: !must,
       error: e.message,
       change,
-      docsLink: docsLink.getDocsLink(),
+      docsLink: docsLink.docsLink,
+      effectiveOnDate: docsLink.effectiveOn,
     };
   }
 }

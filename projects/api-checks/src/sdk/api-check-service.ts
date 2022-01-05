@@ -21,6 +21,8 @@ export type DslConstructorInput<Context> = {
 };
 
 export class ApiCheckService<Context> {
+  constructor(private getExecutionDate?: (context: Context) => Date) {}
+
   private rules: ((
     input: DslConstructorInput<Context>
   ) => Promise<Result>[])[] = [];
@@ -142,10 +144,26 @@ export class ApiCheckService<Context> {
     );
 
     const results: Result[] = await Promise.all(checkPromises);
+
     const additionalCheckResults: Result[] = flatten(
       await Promise.all(additionalCheckPromises)
     );
 
-    return [...results, ...additionalCheckResults];
+    const date = this.getExecutionDate && this.getExecutionDate(context);
+
+    const combinedResults = [...results, ...additionalCheckResults].filter(
+      (result) => {
+        // filter when effective date is set and context is mapped to a date of execution
+        if (result.effectiveOnDate && date) {
+          // execution is after effective date, include
+          // execution is before effective date filter out
+          return date > result.effectiveOnDate;
+        }
+
+        return true;
+      }
+    );
+
+    return combinedResults;
   }
 }
