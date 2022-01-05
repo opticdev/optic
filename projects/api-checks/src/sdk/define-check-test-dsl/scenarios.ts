@@ -138,7 +138,7 @@ export function scenario(name: string) {
       ): BeforeAndAfter => {
         return [
           { ...defaultEmpty(), paths: pathsBefore },
-          { ...defaultEmpty(), paths: editPaths(pathsBefore) },
+          { ...defaultEmpty(), paths: editPaths(copy(pathsBefore)) },
           name,
         ];
       },

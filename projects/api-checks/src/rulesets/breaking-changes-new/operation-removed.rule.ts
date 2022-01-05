@@ -3,6 +3,12 @@ import { scenario } from '../../sdk/define-check-test-dsl/scenarios';
 
 const operationRemovalCheck = check('prevent operation removal')
   .description('Removing an operation is a breaking change')
+  .implementation(({ operations }) => {
+    const { expect } = require('chai');
+    operations.removed.must('not be allowed', () => {
+      expect.fail('expected operation to not be removed');
+    });
+  })
   .failingExample(
     scenario('removing operation').paths.changed(
       {

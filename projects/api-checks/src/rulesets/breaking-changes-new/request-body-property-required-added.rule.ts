@@ -4,6 +4,14 @@ import { scenario } from '../../sdk/define-check-test-dsl/scenarios';
 const requestBodyPropertyRequiredAdded = check(
   'prevent adding a required property'
 )
+  .implementation(({ bodyProperties }) => {
+    const { expect } = require('chai');
+    bodyProperties.added.must('not be required', (property, context) => {
+      if (context.isInRequest && property.required) {
+        expect.fail('expected requst body property to not be required');
+      }
+    });
+  })
   .passingExample(
     scenario('adding an optional property').requestBodySchema.changed(
       {
