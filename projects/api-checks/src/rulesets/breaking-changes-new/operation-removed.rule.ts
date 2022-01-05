@@ -17,9 +17,7 @@ const operationRemovalCheck = check('prevent operation removal')
         },
       },
       (paths) => {
-        if (paths['/example']) {
-          delete paths['/example'].get;
-        }
+        delete paths['/example']!.get;
         return paths;
       }
     )
