@@ -9,3 +9,9 @@ exports[`json schema pointer assumptions decoding an empty string returns an emp
 exports[`json schema pointer helpers appends are escaped 1`] = `"/paths/~1example~1{todoId}/get"`;
 
 exports[`json schema pointer helpers can cleanup stoplights mess 1`] = `"#/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json/schema/properties"`;
+
+exports[`relative can make pointer relative 1`] = `"/start-trek/voyager"`;
+
+exports[`relative throws if improper lineage make pointer relative 1`] = `"/other-place/start-trek/voyager can not be relative to /paths/~1example/schema -- need same lineage"`;
+
+exports[`relative throws if improper lineage make pointer relative 2`] = `"/paths/~1example/schema/start-trek/voyager can not be relative to /paths/~1example/schema/start-trek/voyager/season-1"`;

@@ -10,7 +10,7 @@ import {
 import equals from 'lodash.isequal';
 import { OpenAPIV3 } from 'openapi-types';
 
-class ChangelogSelector {
+export class ChangelogSelector {
   constructor(private changelog: IChange<OpenApiFact>[]) {}
 
   changes() {

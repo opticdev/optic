@@ -29,6 +29,22 @@ function decode(pointer: string): string[] {
   return jsonPointer.parse(pointer);
 }
 
+function relative(pointer: string, from: string) {
+  const targetDecoded = decode(pointer);
+  const fromDecoded = decode(from);
+
+  if (fromDecoded.length > targetDecoded.length)
+    throw new Error(`${pointer} can not be relative to ${from}`);
+
+  const parent = targetDecoded.slice(0, fromDecoded.length);
+  if (JSON.stringify(parent) !== JSON.stringify(fromDecoded))
+    throw new Error(
+      `${pointer} can not be relative to ${from} -- need same lineage`
+    );
+
+  return compile(targetDecoded.slice(fromDecoded.length));
+}
+
 function tryGet(
   input: any,
   pointer: string
@@ -41,13 +57,19 @@ function tryGet(
   }
 }
 
+function join(leading: string, trailing: string): string {
+  return compile([...decode(leading), ...decode(trailing)]);
+}
+
 export default {
   append,
   pop,
   decode,
+  join,
   splitParentChild,
   unescapeUriSafePointer,
   get: jsonPointer.get,
   tryGet,
   compile,
+  relative,
 };

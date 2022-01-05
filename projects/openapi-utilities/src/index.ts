@@ -25,7 +25,16 @@ import {
   FieldLocation,
   ChangeType,
 } from './openapi3/sdk/types';
-import { queryChangelog } from './openapi3/sdk/selectors/changelog-selector';
+import {
+  ChangelogSelector,
+  queryChangelog,
+} from './openapi3/sdk/selectors/changelog-selector';
+import {
+  RenderFlatJsonSchema,
+  renderFlatJsonSchema,
+  renderFlatOpenAPI,
+  RenderFlatOpenAPI,
+} from './render/render-flat-openapi';
 export { defaultEmptySpec } from './openapi3/constants';
 
 export {
@@ -55,4 +64,9 @@ export {
   FieldLocation,
   ChangeType,
   queryChangelog,
+  renderFlatOpenAPI,
+  renderFlatJsonSchema,
+  RenderFlatJsonSchema,
+  RenderFlatOpenAPI,
+  ChangelogSelector,
 };
