@@ -2,6 +2,7 @@ import { BeforeAndAfter } from './scenarios';
 import { ApiCheckService } from '../api-check-service';
 import { ApiChangeDsl } from '../api-change-dsl';
 import { Result } from '../types';
+import invariant from 'ts-invariant';
 
 export interface IApiCheckDefinition {
   name: string;
@@ -36,6 +37,18 @@ class ApiCheckImpl {
 
   passingExample(beforeAndAfter: BeforeAndAfter) {
     this.check.validExamples = [...this.check.validExamples, beforeAndAfter];
+
+    if (typeof jest !== 'undefined' && this.check.implementation) {
+      // @ts-ignore
+      const { test, expect } = global;
+
+      test(' passing case ' + this.check.validExamples.length, async () => {
+        const testResult = await this.testExample(beforeAndAfter);
+        expect(testResult).toMatchSnapshot();
+        expect(testResult.passed).toBeTruthy();
+      });
+    }
+
     return this;
   }
 
@@ -44,41 +57,35 @@ class ApiCheckImpl {
       ...this.check.invalidExamples,
       beforeAndAfter,
     ];
+
+    if (typeof jest !== 'undefined' && this.check.implementation) {
+      // @ts-ignore
+      const { it, expect } = global;
+
+      it(' failing case ' + this.check.invalidExamples.length, async () => {
+        const testResult = await this.testExample(beforeAndAfter);
+        expect(testResult).toMatchSnapshot();
+        expect(testResult.passed).toBeFalsy();
+      });
+    }
+
     return this;
   }
 
-  async testExamples() {
-    if (!this.check.implementation)
-      throw new Error('no implementation for rule ' + this.check.name);
+  private async testExample(beforeAndAfter: BeforeAndAfter) {
+    invariant(this.check.implementation);
     const service = new ApiCheckService().useRulesBuildFrom(
       this.check.implementation
     );
 
-    const results: {
-      passing: { passed: boolean; results: Result[] }[];
-      failing: { passed: boolean; results: Result[] }[];
-    } = {
-      passing: await Promise.all(
-        this.check.validExamples.map(async ([before, after]) => {
-          const runResults = await service.runRules(before, after, {});
+    const [before, after] = beforeAndAfter;
 
-          return {
-            passed: !runResults.some((i) => !i.passed),
-            results: runResults,
-          };
-        })
-      ),
-      failing: await Promise.all(
-        this.check.invalidExamples.map(async ([before, after]) => {
-          const runResults = await service.runRules(before, after, {});
-          return {
-            passed: !runResults.some((i) => !i.passed),
-            results: runResults,
-          };
-        })
-      ),
+    const runResults = await service.runRules(before, after, {});
+
+    return {
+      passed: !runResults.some((i) => !i.passed),
+      results: runResults,
     };
-    return results;
   }
 }
 
