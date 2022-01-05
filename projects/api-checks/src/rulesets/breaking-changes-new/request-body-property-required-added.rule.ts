@@ -39,9 +39,3 @@ const requestBodyPropertyRequiredAdded = check(
       }
     )
   );
-
-test(requestBodyPropertyRequiredAdded.check.name, async () => {
-  expect(
-    await requestBodyPropertyRequiredAdded.testExamples()
-  ).toMatchSnapshot();
-});

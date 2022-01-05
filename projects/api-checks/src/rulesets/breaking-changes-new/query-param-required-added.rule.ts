@@ -18,7 +18,3 @@ const queryParameterRequiredAdded = check(
       required: true,
     })
   );
-
-test(queryParameterRequiredAdded.check.name, async () => {
-  expect(await queryParameterRequiredAdded.testExamples()).toMatchSnapshot();
-});

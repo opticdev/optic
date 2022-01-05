@@ -20,7 +20,3 @@ const responseBodyPropertyRemoving = check(
     }
   )
 );
-
-test(responseBodyPropertyRemoving.check.name, async () => {
-  expect(await responseBodyPropertyRemoving.testExamples()).toMatchSnapshot();
-});

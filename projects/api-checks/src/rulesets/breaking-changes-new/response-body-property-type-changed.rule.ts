@@ -20,9 +20,3 @@ const responseBodyPropertyTypeChanged = check(
     }
   )
 );
-
-test(responseBodyPropertyTypeChanged.check.name, async () => {
-  expect(
-    await responseBodyPropertyTypeChanged.testExamples()
-  ).toMatchSnapshot();
-});

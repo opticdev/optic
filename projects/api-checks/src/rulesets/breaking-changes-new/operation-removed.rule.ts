@@ -22,7 +22,3 @@ const operationRemovalCheck = check('prevent operation removal')
       }
     )
   );
-
-test(operationRemovalCheck.check.name, async () => {
-  expect(await operationRemovalCheck.testExamples()).toMatchSnapshot();
-});

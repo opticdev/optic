@@ -34,9 +34,3 @@ const responseBodyPropertyRequiredToOptional = check(
       }
     )
   );
-
-test(responseBodyPropertyRequiredToOptional.check.name, async () => {
-  expect(
-    await responseBodyPropertyRequiredToOptional.testExamples()
-  ).toMatchSnapshot();
-});

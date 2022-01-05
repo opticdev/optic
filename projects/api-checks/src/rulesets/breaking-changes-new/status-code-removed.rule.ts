@@ -16,7 +16,3 @@ const statusCodeRemoved = check('prevent removing status code').failingExample(
     }
   )
 );
-
-test(statusCodeRemoved.check.name, async () => {
-  expect(await statusCodeRemoved.testExamples()).toMatchSnapshot();
-});

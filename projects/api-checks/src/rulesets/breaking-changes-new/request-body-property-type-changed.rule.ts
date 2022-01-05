@@ -20,7 +20,3 @@ const requestBodyPropertyTypeChanged = check(
     }
   )
 );
-
-test(requestBodyPropertyTypeChanged.check.name, async () => {
-  expect(await requestBodyPropertyTypeChanged.testExamples()).toMatchSnapshot();
-});

@@ -20,7 +20,3 @@ const queryParamOptionalToRequired = check(
     }
   )
 );
-
-test(queryParamOptionalToRequired.check.name, async () => {
-  expect(await queryParamOptionalToRequired.testExamples()).toMatchSnapshot();
-});
