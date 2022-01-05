@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[` failing case 1 1`] = `
+Object {
+  "passed": false,
+  "results": Array [
+    Object {
+      "change": Object {
+        "changeType": "removed",
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+              "statusCode": "200",
+            },
+            "jsonSchemaTrail": Array [
+              "lookAtMe",
+            ],
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "application/json",
+            "lookAtMe",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/lookAtMe",
+          "kind": "field",
+        },
+        "removed": Object {
+          "before": Object {
+            "flatSchema": Object {
+              "type": "string",
+            },
+            "key": "lookAtMe",
+            "required": true,
+          },
+        },
+      },
+      "condition": "not be removed from response bodies if required ",
+      "docsLink": undefined,
+      "error": "Cannot read property 'required' of undefined",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "removed field: lookAtMe",
+    },
+  ],
+}
+`;
+
+exports[` passing case 1 1`] = `
+Object {
+  "passed": false,
+  "results": Array [
+    Object {
+      "change": Object {
+        "changeType": "removed",
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+              "statusCode": "200",
+            },
+            "jsonSchemaTrail": Array [
+              "lookAtMe",
+            ],
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "application/json",
+            "lookAtMe",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/lookAtMe",
+          "kind": "field",
+        },
+        "removed": Object {
+          "before": Object {
+            "flatSchema": Object {
+              "type": "string",
+            },
+            "key": "lookAtMe",
+            "required": false,
+          },
+        },
+      },
+      "condition": "not be removed from response bodies if required ",
+      "docsLink": undefined,
+      "error": "Cannot read property 'required' of undefined",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "removed field: lookAtMe",
+    },
+  ],
+}
+`;

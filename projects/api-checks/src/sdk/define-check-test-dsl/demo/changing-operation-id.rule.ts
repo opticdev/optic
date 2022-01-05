@@ -1,8 +1,8 @@
 import { check } from '../define-check';
 import { scenario } from '../scenarios';
 
-const operationRemovalCheck = check('prevent operation removal')
-  .description('this is a breaking change')
+const changingOperationIdRule = check('operationId should not change')
+  .description('')
   .implementation(({ operations }) => {
     const { expect } = require('chai');
     operations.removed.must('not be removed unless marked deprecated', () => {
