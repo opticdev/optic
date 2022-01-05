@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[` failing case 1 1`] = `
+Object {
+  "passed": true,
+  "results": Array [],
+}
+`;
+
+exports[` passing case 1 1`] = `
+Object {
+  "passed": true,
+  "results": Array [],
+}
+`;
