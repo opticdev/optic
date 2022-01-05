@@ -11,7 +11,6 @@ check('required properties in response should not be removed')
     bodyProperties.removed.must(
       'not be removed from response bodies if required ',
       (property, context) => {
-        console.log(property);
         if ('inResponse' in context && property.required)
           expect.fail(
             `removing required property '${property.key}' is a breaking change`
