@@ -1,6 +1,11 @@
 import { OpenAPIV3 } from 'openapi-types';
 const HttpMethods = OpenAPIV3.HttpMethods;
-export type BeforeAndAfter = [OpenAPIV3.Document, OpenAPIV3.Document];
+type ScenarioName = string;
+export type BeforeAndAfter = [
+  OpenAPIV3.Document,
+  OpenAPIV3.Document,
+  ScenarioName
+];
 export const copy = (obj: any) => JSON.parse(JSON.stringify(obj));
 export type Editable<T> = (item: T) => T;
 
@@ -134,6 +139,7 @@ export function scenario(name: string) {
         return [
           { ...defaultEmpty(), paths: pathsBefore },
           { ...defaultEmpty(), paths: editPaths(pathsBefore) },
+          name,
         ];
       },
     },
@@ -149,7 +155,7 @@ export function scenario(name: string) {
             [method]: operation,
           },
         };
-        return [spec, spec];
+        return [spec, spec, name];
       },
       added: (
         operation: OpenAPIV3.OperationObject,
@@ -162,7 +168,7 @@ export function scenario(name: string) {
             [method]: operation,
           },
         };
-        return [defaultEmpty(), copied];
+        return [defaultEmpty(), copied, name];
       },
       removed: (
         method: OpenAPIV3.HttpMethods = HttpMethods.GET,
@@ -170,7 +176,7 @@ export function scenario(name: string) {
       ): BeforeAndAfter => {
         const copied: OpenAPIV3.Document = defaultEmpty();
         delete copied.paths[pathPattern]?.[method];
-        return [copied, defaultEmpty()];
+        return [copied, defaultEmpty(), name];
       },
       changed: (
         operationBefore: OpenAPIV3.OperationObject,
@@ -192,7 +198,7 @@ export function scenario(name: string) {
             [method]: operationAfter(copy(operationBefore)),
           },
         };
-        return [before, after];
+        return [before, after, name];
       },
     },
     queryParameter: {
@@ -200,6 +206,7 @@ export function scenario(name: string) {
         return [
           defaultWithQueryParameters([]),
           defaultWithQueryParameters([parameterToAdded]),
+          name,
         ];
       },
       changed: (
@@ -209,6 +216,7 @@ export function scenario(name: string) {
         return [
           defaultWithQueryParameters([parameterBefore]),
           defaultWithQueryParameters([editParameter(copy(parameterBefore))]),
+          name,
         ];
       },
     },
@@ -220,6 +228,7 @@ export function scenario(name: string) {
         return [
           defaultWithRequestBodySchema(schemaBefore),
           defaultWithRequestBodySchema(editSchema(copy(schemaBefore))),
+          name,
         ];
       },
     },
@@ -231,6 +240,7 @@ export function scenario(name: string) {
         return [
           defaultWithResponseBodySchema(schemaBefore),
           defaultWithResponseBodySchema(editSchema(copy(schemaBefore))),
+          name,
         ];
       },
     },

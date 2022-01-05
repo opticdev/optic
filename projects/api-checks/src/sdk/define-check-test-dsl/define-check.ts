@@ -42,7 +42,9 @@ class ApiCheckImpl {
       // @ts-ignore
       const { test, expect } = global;
 
-      test(' passing case ' + this.check.validExamples.length, async () => {
+      const testName = `passing case ${this.check.validExamples.length}: ${beforeAndAfter[2]}`;
+
+      test(testName, async () => {
         const testResult = await this.testExample(beforeAndAfter);
         expect(testResult).toMatchSnapshot();
         expect(testResult.passed).toBeTruthy();
@@ -62,7 +64,8 @@ class ApiCheckImpl {
       // @ts-ignore
       const { it, expect } = global;
 
-      it(' failing case ' + this.check.invalidExamples.length, async () => {
+      const testName = `failing case ${this.check.invalidExamples.length}: ${beforeAndAfter[2]}`;
+      it(testName, async () => {
         const testResult = await this.testExample(beforeAndAfter);
         expect(testResult).toMatchSnapshot();
         expect(testResult.passed).toBeFalsy();
