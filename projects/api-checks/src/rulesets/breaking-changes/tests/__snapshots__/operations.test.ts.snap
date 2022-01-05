@@ -105,7 +105,7 @@ Object {
       "condition": "not be removed",
       "docsLink": undefined,
       "effectiveOnDate": undefined,
-      "error": "Cannot read property 'statusCode' of undefined",
+      "error": "expected 200 to be present: expected false to be true",
       "isMust": true,
       "isShould": false,
       "passed": false,

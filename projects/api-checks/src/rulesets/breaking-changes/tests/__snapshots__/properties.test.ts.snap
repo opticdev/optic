@@ -141,7 +141,7 @@ Object {
       "condition": "not be removed",
       "docsLink": undefined,
       "effectiveOnDate": undefined,
-      "error": "Cannot read property 'key' of undefined",
+      "error": "expected count to be present",
       "isMust": true,
       "isShould": false,
       "passed": false,
