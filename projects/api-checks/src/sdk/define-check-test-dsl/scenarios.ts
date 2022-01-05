@@ -112,17 +112,28 @@ const baseParam = { in: 'query', name: 'exampleParam' };
 
 export function scenario(name: string) {
   return {
-    responseSchema: {
-      added: (schema: OpenAPIV3.SchemaObject): BeforeAndAfter => {
-        return [defaultWithoutSchema(), defaultWithResponseBodySchema(schema)];
-      },
+    // responseSchema: {
+    //   added: (schema: OpenAPIV3.SchemaObject): BeforeAndAfter => {
+    //     return [defaultWithoutSchema(), defaultWithResponseBodySchema(schema)];
+    //   },
+    //   changed: (
+    //     beforeSchema: OpenAPIV3.SchemaObject,
+    //     afterSchema: OpenAPIV3.SchemaObject
+    //   ): BeforeAndAfter => {
+    //     return [
+    //       defaultWithResponseBodySchema(beforeSchema),
+    //       defaultWithResponseBodySchema(afterSchema),
+    //     ];
+    //   },
+    // },
+    paths: {
       changed: (
-        beforeSchema: OpenAPIV3.SchemaObject,
-        afterSchema: OpenAPIV3.SchemaObject
+        pathsBefore: OpenAPIV3.PathsObject,
+        editPaths: Editable<OpenAPIV3.PathsObject>
       ): BeforeAndAfter => {
         return [
-          defaultWithResponseBodySchema(beforeSchema),
-          defaultWithResponseBodySchema(afterSchema),
+          { ...defaultEmpty(), paths: pathsBefore },
+          { ...defaultEmpty(), paths: editPaths(pathsBefore) },
         ];
       },
     },
