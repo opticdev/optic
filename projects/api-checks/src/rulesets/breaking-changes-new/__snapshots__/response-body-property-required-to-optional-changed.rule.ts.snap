@@ -1,0 +1,126 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`failing case 1: changing required to optional 1`] = `
+Object {
+  "passed": false,
+  "results": Array [
+    Object {
+      "change": Object {
+        "changeType": "changed",
+        "changed": Object {
+          "after": Object {
+            "flatSchema": Object {
+              "type": "string",
+            },
+            "key": "name",
+            "required": false,
+          },
+          "before": Object {
+            "flatSchema": Object {
+              "type": "string",
+            },
+            "key": "name",
+            "required": true,
+          },
+        },
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+              "statusCode": "200",
+            },
+            "jsonSchemaTrail": Array [
+              "name",
+            ],
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "application/json",
+            "name",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/name",
+          "kind": "field",
+        },
+      },
+      "condition": "not change from optional to required",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "error": "expected body property to be optional",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "updated field: name",
+    },
+  ],
+}
+`;
+
+exports[`passing case 1: changing optional to required 1`] = `
+Object {
+  "passed": true,
+  "results": Array [
+    Object {
+      "change": Object {
+        "changeType": "changed",
+        "changed": Object {
+          "after": Object {
+            "flatSchema": Object {
+              "type": "string",
+            },
+            "key": "name",
+            "required": true,
+          },
+          "before": Object {
+            "flatSchema": Object {
+              "type": "string",
+            },
+            "key": "name",
+            "required": false,
+          },
+        },
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+              "statusCode": "200",
+            },
+            "jsonSchemaTrail": Array [
+              "name",
+            ],
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "application/json",
+            "name",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/name",
+          "kind": "field",
+        },
+      },
+      "condition": "not change from optional to required",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "updated field: name",
+    },
+  ],
+}
+`;
