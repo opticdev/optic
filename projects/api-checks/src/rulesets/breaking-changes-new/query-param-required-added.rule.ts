@@ -13,14 +13,14 @@ const queryParameterRequiredAdded = check(
     });
   })
   .passingExample(
-    scenario('adding optional').queryParameter.added({
+    scenario('adding optional').requestParameter.added({
       in: 'query',
       name: 'exampleParam',
       required: false,
     })
   )
   .failingExample(
-    scenario('adding required').queryParameter.added({
+    scenario('adding required').requestParameter.added({
       in: 'query',
       name: 'exampleParam',
       required: true,

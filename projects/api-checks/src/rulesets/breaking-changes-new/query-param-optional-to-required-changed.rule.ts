@@ -16,7 +16,7 @@ const queryParamOptionalToRequired = check(
     );
   })
   .failingExample(
-    scenario('changing from optional to required').queryParameter.changed(
+    scenario('changing from optional to required').requestParameter.changed(
       {
         in: 'query',
         name: 'exampleParam',

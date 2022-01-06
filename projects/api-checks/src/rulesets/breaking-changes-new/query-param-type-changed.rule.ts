@@ -22,7 +22,7 @@ const queryParamChangeType = check('prevent changing query type')
     );
   })
   .failingExample(
-    scenario('changing type').queryParameter.changed(
+    scenario('changing type').requestParameter.changed(
       {
         in: 'query',
         name: 'exampleParam',

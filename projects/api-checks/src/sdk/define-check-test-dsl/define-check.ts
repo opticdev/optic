@@ -12,7 +12,7 @@ export interface IApiCheckDefinition<CheckConfig> {
   invalidExamples: BeforeAndAfter[];
 }
 
-class ApiCheckImpl<CheckConfig> {
+export class ApiCheckImpl<CheckConfig> {
   public check: IApiCheckDefinition<CheckConfig>;
 
   constructor(name: string) {
@@ -36,6 +36,15 @@ class ApiCheckImpl<CheckConfig> {
   ) {
     this.check.implementation = implementation;
     return this;
+  }
+
+  runner() {
+    return (dsl: ApiChangeDsl) =>
+      this.check.implementation!(dsl, undefined as any);
+  }
+
+  runnerWithConfig(config: CheckConfig) {
+    return (dsl: ApiChangeDsl) => this.check.implementation!(dsl, config);
   }
 
   passingExample(beforeAndAfter: BeforeAndAfter, config?: CheckConfig) {
@@ -87,7 +96,7 @@ class ApiCheckImpl<CheckConfig> {
     config?: CheckConfig
   ) {
     invariant(this.check.implementation);
-    const service = new ApiCheckService().useRulesBuildFrom((dsl) =>
+    const service = new ApiCheckService().useRulesFrom((dsl) =>
       this.check.implementation!(dsl, config as any)
     );
 

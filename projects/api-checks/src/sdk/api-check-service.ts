@@ -30,7 +30,7 @@ export class ApiCheckService<Context> {
     input: DslConstructorInput<Context>
   ) => Promise<Result[]>)[] = [];
 
-  useRulesBuildFrom(rules: (apiChangeDsl: ApiChangeDsl) => void) {
+  useRulesFrom(rules: (apiChangeDsl: ApiChangeDsl) => void) {
     const dslConstructor = (input: DslConstructorInput<ApiCheckDslContext>) => {
       return new ApiChangeDsl(
         input.nextFacts,
