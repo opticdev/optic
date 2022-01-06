@@ -1472,3 +1472,505 @@ Object {
   ],
 }
 `;
+
+exports[`failing case 1: adding a camelCase when pascalCase is required 1`] = `
+Object {
+  "passed": false,
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "header": "exampleParam",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "header",
+            "exampleParam",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "header-parameter",
+        },
+        "value": Object {
+          "in": "header",
+          "name": "exampleParam",
+          "required": false,
+        },
+      },
+      "condition": "have PascalCase name",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "error": "exampleParam is not PascalCase",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "requirement for header-parameter: exampleParam",
+    },
+  ],
+}
+`;
+
+exports[`failing case 1: adding a camelCase when pascalCase is required 2`] = `
+Object {
+  "passed": false,
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "header": "exampleParam",
+              "statusCode": "200",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "headers",
+            "exampleParam",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200/headers/exampleParam",
+          "kind": "response-header",
+        },
+        "value": Object {
+          "name": "exampleParam",
+          "required": false,
+        },
+      },
+      "condition": "have PascalCase name",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "error": "exampleParam is not PascalCase",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "requirement for response-header: exampleParam",
+    },
+  ],
+}
+`;
+
+exports[`failing case 1: adding a camelCase when pascalCase is required 3`] = `
+Object {
+  "passed": false,
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+            },
+            "jsonSchemaTrail": Array [
+              "examplePropertyName",
+            ],
+            "method": "post",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "post",
+            "application/json",
+            "examplePropertyName",
+          ],
+          "jsonPath": "/paths/~1example/post/requestBody/content/application~1json/schema/properties/examplePropertyName",
+          "kind": "field",
+        },
+        "value": Object {
+          "flatSchema": Object {
+            "type": "string",
+          },
+          "key": "examplePropertyName",
+          "required": false,
+        },
+      },
+      "condition": "have PascalCase name",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "error": "examplePropertyName is not PascalCase",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "requirement for field: request body 'examplePropertyName'",
+    },
+  ],
+}
+`;
+
+exports[`failing case 1: adding a camelCase when pascalCase is required 4`] = `
+Object {
+  "passed": false,
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+              "statusCode": "200",
+            },
+            "jsonSchemaTrail": Array [
+              "examplePropertyName",
+            ],
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "application/json",
+            "examplePropertyName",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/examplePropertyName",
+          "kind": "field",
+        },
+        "value": Object {
+          "flatSchema": Object {
+            "type": "string",
+          },
+          "key": "examplePropertyName",
+          "required": false,
+        },
+      },
+      "condition": "have PascalCase name",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "error": "examplePropertyName is not PascalCase",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "requirement for field: response body 'examplePropertyName'",
+    },
+  ],
+}
+`;
+
+exports[`failing case 1: adding a camelCase when pascalCase is required 5`] = `
+Object {
+  "passed": false,
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "query": "exampleParam",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "query",
+            "exampleParam",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "query-parameter",
+        },
+        "value": Object {
+          "in": "query",
+          "name": "exampleParam",
+          "required": false,
+        },
+      },
+      "condition": "have PascalCase name",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "error": "exampleParam is not PascalCase",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "requirement for query-parameter: exampleParam",
+    },
+  ],
+}
+`;
+
+exports[`passing case 1: adding a camelCase when camelCase is required 1`] = `
+Object {
+  "passed": true,
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "header": "exampleParam",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "header",
+            "exampleParam",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "header-parameter",
+        },
+        "value": Object {
+          "in": "header",
+          "name": "exampleParam",
+          "required": false,
+        },
+      },
+      "condition": "have camelCase name",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "requirement for header-parameter: exampleParam",
+    },
+  ],
+}
+`;
+
+exports[`passing case 1: adding a camelCase when camelCase is required 2`] = `
+Object {
+  "passed": true,
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "header": "exampleParam",
+              "statusCode": "200",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "headers",
+            "exampleParam",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200/headers/exampleParam",
+          "kind": "response-header",
+        },
+        "value": Object {
+          "name": "exampleParam",
+          "required": false,
+        },
+      },
+      "condition": "have camelCase name",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "requirement for response-header: exampleParam",
+    },
+  ],
+}
+`;
+
+exports[`passing case 1: adding a camelCase when camelCase is required 3`] = `
+Object {
+  "passed": true,
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+            },
+            "jsonSchemaTrail": Array [
+              "camelCase",
+            ],
+            "method": "post",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "post",
+            "application/json",
+            "camelCase",
+          ],
+          "jsonPath": "/paths/~1example/post/requestBody/content/application~1json/schema/properties/camelCase",
+          "kind": "field",
+        },
+        "value": Object {
+          "flatSchema": Object {
+            "type": "string",
+          },
+          "key": "camelCase",
+          "required": false,
+        },
+      },
+      "condition": "have camelCase name",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "requirement for field: request body 'camelCase'",
+    },
+  ],
+}
+`;
+
+exports[`passing case 1: adding a camelCase when camelCase is required 4`] = `
+Object {
+  "passed": true,
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "body": Object {
+                "contentType": "application/json",
+              },
+              "statusCode": "200",
+            },
+            "jsonSchemaTrail": Array [
+              "camelCase",
+            ],
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+            "application/json",
+            "camelCase",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/camelCase",
+          "kind": "field",
+        },
+        "value": Object {
+          "flatSchema": Object {
+            "type": "string",
+          },
+          "key": "camelCase",
+          "required": false,
+        },
+      },
+      "condition": "have camelCase name",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "requirement for field: response body 'camelCase'",
+    },
+  ],
+}
+`;
+
+exports[`passing case 1: adding a camelCase when camelCase is required 5`] = `
+Object {
+  "passed": true,
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "query": "exampleParam",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "query",
+            "exampleParam",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "query-parameter",
+        },
+        "value": Object {
+          "in": "query",
+          "name": "exampleParam",
+          "required": false,
+        },
+      },
+      "condition": "have camelCase name",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "requirement for query-parameter: exampleParam",
+    },
+  ],
+}
+`;
+
+exports[`passing case 2: wrong case ok if it is already there 1`] = `
+Object {
+  "passed": true,
+  "results": Array [],
+}
+`;
+
+exports[`passing case 2: wrong case ok if it is already there 2`] = `
+Object {
+  "passed": true,
+  "results": Array [],
+}
+`;
+
+exports[`passing case 2: wrong case ok if it is already there 3`] = `
+Object {
+  "passed": true,
+  "results": Array [],
+}
+`;
+
+exports[`passing case 2: wrong case ok if it is already there 4`] = `
+Object {
+  "passed": true,
+  "results": Array [],
+}
+`;
+
+exports[`passing case 2: wrong case ok if it is already there 5`] = `
+Object {
+  "passed": true,
+  "results": Array [],
+}
+`;
