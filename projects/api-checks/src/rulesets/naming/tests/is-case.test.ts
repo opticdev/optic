@@ -1,5 +1,5 @@
-import { isCase } from '../is-case';
-import { NameMustBe } from '../config';
+import { isCase } from '../helpers/is-case';
+import { NameMustBe } from '../helpers/config';
 
 describe('is case ', () => {
   const diverseExamples = [

@@ -135,6 +135,22 @@ class ChangelogSelector {
     );
   }
 
+  filterToRequestBodies() {
+    return this.filter(
+      (change) =>
+        'inRequest' in change.location.conceptualLocation &&
+        'body' in change.location.conceptualLocation.inRequest
+    );
+  }
+
+  filterToResponseBodies() {
+    return this.filter(
+      (change) =>
+        'inResponse' in change.location.conceptualLocation &&
+        'body' in change.location.conceptualLocation.inResponse
+    );
+  }
+
   // helpers
   hasOperationChanged(
     httpMethod: OpenAPIV3.HttpMethods,

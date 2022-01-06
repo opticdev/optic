@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`failing case 1: adding required 1`] = `
+Object {
+  "passed": false,
+  "results": Array [
+    Object {
+      "change": Object {
+        "added": Object {
+          "in": "query",
+          "name": "exampleParam",
+          "required": true,
+        },
+        "changeType": "added",
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "query": "exampleParam",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "query",
+            "exampleParam",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "query-parameter",
+        },
+      },
+      "condition": "not be allowed",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "error": "expected added query parameter to not be required",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "added query-parameter: exampleParam",
+    },
+  ],
+}
+`;
+
+exports[`passing case 1: adding optional 1`] = `
+Object {
+  "passed": true,
+  "results": Array [
+    Object {
+      "change": Object {
+        "added": Object {
+          "in": "query",
+          "name": "exampleParam",
+          "required": false,
+        },
+        "changeType": "added",
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "query": "exampleParam",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "query",
+            "exampleParam",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "query-parameter",
+        },
+      },
+      "condition": "not be allowed",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "added query-parameter: exampleParam",
+    },
+  ],
+}
+`;

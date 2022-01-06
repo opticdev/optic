@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`failing case 1: removing status code 1`] = `
+Object {
+  "passed": false,
+  "results": Array [
+    Object {
+      "change": Object {
+        "changeType": "removed",
+        "location": Object {
+          "conceptualLocation": Object {
+            "inResponse": Object {
+              "statusCode": "200",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "responses",
+            "200",
+          ],
+          "jsonPath": "/paths/~1example/get/responses/200",
+          "kind": "response",
+        },
+        "removed": Object {
+          "before": Object {
+            "description": "",
+            "statusCode": 200,
+          },
+        },
+      },
+      "condition": "not be allowed",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "error": "expected response to not be removed",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "removed response: 200",
+    },
+  ],
+}
+`;

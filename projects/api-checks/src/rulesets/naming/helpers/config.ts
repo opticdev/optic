@@ -1,4 +1,4 @@
-import { RuleApplies } from '../shared-config';
+import { RuleApplies } from '../../shared-config';
 
 export enum NameMustBe {
   none = 'none',

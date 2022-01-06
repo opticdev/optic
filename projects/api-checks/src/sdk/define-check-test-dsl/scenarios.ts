@@ -63,7 +63,7 @@ const defaultWithResponseBodySchema = (
   },
 });
 
-const defaultWithQueryParameters = (
+const defaultWithRequestParameters = (
   parameters: OpenAPIV3.ParameterObject[]
 ): OpenAPIV3.Document => ({
   openapi: '3.0.1',
@@ -77,6 +77,34 @@ const defaultWithQueryParameters = (
         parameters,
         responses: {
           '200': {
+            description: '',
+          },
+        },
+      },
+    },
+  },
+});
+
+const defaultWithResponseHeaders = (
+  key: string,
+  header: OpenAPIV3.HeaderObject,
+  include: boolean
+): OpenAPIV3.Document => ({
+  openapi: '3.0.1',
+  info: {
+    version: '0.1.0',
+    title: '',
+  },
+  paths: {
+    '/example': {
+      get: {
+        responses: {
+          '200': {
+            headers: include
+              ? {
+                  [key]: header,
+                }
+              : {},
             description: '',
           },
         },
@@ -138,7 +166,7 @@ export function scenario(name: string) {
       ): BeforeAndAfter => {
         return [
           { ...defaultEmpty(), paths: pathsBefore },
-          { ...defaultEmpty(), paths: editPaths(pathsBefore) },
+          { ...defaultEmpty(), paths: editPaths(copy(pathsBefore)) },
           name,
         ];
       },
@@ -201,11 +229,11 @@ export function scenario(name: string) {
         return [before, after, name];
       },
     },
-    queryParameter: {
+    requestParameter: {
       added: (parameterToAdded: OpenAPIV3.ParameterObject): BeforeAndAfter => {
         return [
-          defaultWithQueryParameters([]),
-          defaultWithQueryParameters([parameterToAdded]),
+          defaultWithRequestParameters([]),
+          defaultWithRequestParameters([parameterToAdded]),
           name,
         ];
       },
@@ -214,8 +242,28 @@ export function scenario(name: string) {
         editParameter: Editable<OpenAPIV3.ParameterObject>
       ): BeforeAndAfter => {
         return [
-          defaultWithQueryParameters([parameterBefore]),
-          defaultWithQueryParameters([editParameter(copy(parameterBefore))]),
+          defaultWithRequestParameters([parameterBefore]),
+          defaultWithRequestParameters([editParameter(copy(parameterBefore))]),
+          name,
+        ];
+      },
+    },
+    responseHeader: {
+      added: (key: string, header: OpenAPIV3.HeaderObject): BeforeAndAfter => {
+        return [
+          defaultWithResponseHeaders(key, header, false),
+          defaultWithResponseHeaders(key, header, true),
+          name,
+        ];
+      },
+      changed: (
+        key: string,
+        headerBefore: OpenAPIV3.HeaderObject,
+        editHeader: Editable<OpenAPIV3.HeaderObject>
+      ): BeforeAndAfter => {
+        return [
+          defaultWithResponseHeaders(key, headerBefore, true),
+          defaultWithResponseHeaders(key, editHeader(copy(headerBefore)), true),
           name,
         ];
       },
