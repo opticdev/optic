@@ -57,9 +57,9 @@ export function CTATryOptic() {
               We're here to help your team build a great API
             </Typography>
             <Typography variant="h1" className={featuredStyles.subtext}>
-              Explore our docs, our live demos and read about the workflows
-              Optic enables. When you are ready, set Optic up (it takes 10 mins)
-              or have a conversation with the Optic maintainers for help.
+              Explore our docs and read about the workflows Optic enables. When
+              you are ready, set Optic up (it takes 10 mins) or have a
+              conversation with the Optic maintainers for help.
             </Typography>
             <Box style={{ marginTop: 5, marginBottom: 120 }}>
               <Box

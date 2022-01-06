@@ -2,7 +2,6 @@ import React from 'react';
 import { ThemeProvider } from '@material-ui/core';
 import HomePageHero from './HomePageHero';
 import theme from './theme';
-import { DocumentGitHubExample, GitBotDemo } from './CommandDemo';
 import { ApiDemo, ApiSpecsEverywhere, QuotesAll } from './APISpecsEverywhere';
 import { DeveloperFriendly } from './DeveloperFriendly';
 import Divider from '@material-ui/core/Divider';
@@ -38,9 +37,6 @@ export const SplashPage = () => {
       <TestValueProp />
 
       <Divider style={{ marginTop: 90 }} />
-
-      <DocumentGitHubExample />
-      <Divider />
 
       <ToolsSupported />
       <Divider />

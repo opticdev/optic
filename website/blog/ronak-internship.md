@@ -14,7 +14,7 @@ Optic is a Git-like version control system for API contracts. With Optic, mainta
 
 <!--truncate-->
 
-At Optic, I got to work on a wide variety of features and improvements. The first product I worked on at Optic was the Optic Demo. Optic needed an interactive demo on their main site to allow potential users and customers to quickly and easily understand the value proposition that Optic would give you. I built an interactive demo, based upon the core Optic UI, allowing users to use the actual Optic product on an example API. This demo is currently embedded on the main website and you can try it out [here](https://demo.useoptic.com).
+At Optic, I got to work on a wide variety of features and improvements. The first product I worked on at Optic was the Optic Demo. Optic needed an interactive demo on their main site to allow potential users and customers to quickly and easily understand the value proposition that Optic would give you. I built an interactive demo, based upon the core Optic UI, allowing users to use the actual Optic product on an example API.
 
 ![The Optic Demo](/img/blog-content/demo.png)
 
@@ -29,7 +29,5 @@ I also spent some of my time working on the [marketing site](https://www.useopti
 ![The Docs Site](/img/blog-content/docs.png)
 
 The past ten weeks seem to have flown by, but I will always treasure my time here as I was able to be a fully integrated team member and got to be a part of the Optic team. If you haven't already, you should definitely try using Optic for your own personal project by installing it here, and you should also add the Optic GitBot to your project to maximize the value.
-
-Need convincing? Check out [that demo](https://demo.useoptic.com) 😉
 
 ![the team](/img/blog-content/theteam.png)

@@ -7,14 +7,12 @@ slug: /document
 import ExpandDocs from '../../src/components/Expand';
 import InstallSlim from '../shared/install-slim.mdx';
 import InitSlim from '../shared/init-slim.mdx';
-import { DemoPageModal } from '../../src/components/Modal';
 import { MuiThemeProvider } from '../../src/components/MuiIndexPage';
 import { ShowAllFrameworks } from '../../src/components/ShowAllFrameworks';
 import Tabs from '@theme/Tabs';
 import { ShowAllTools } from '../../src/components/ShowAllTools';
 import TabItem from '@theme/TabItem';
 import { ShowAllBrowsers } from '../../src/components/ShowAllBrowsers';
-import { IFrameDemoNotCentered } from '../../src/components/iFrameDemo2';
 import LiveEnvironments from '../shared/live-environments-beta.mdx';
 
 > Get visibility into how your API works today. Optic learns your API's current behavior by observing traffic.
@@ -27,20 +25,6 @@ import LiveEnvironments from '../shared/live-environments-beta.mdx';
 import TOCInline from '@theme/TOCInline';
 
 <TOCInline toc={toc.slice(1)} />
-
-<DemoPageModal demoKey={"document-demo"} title="Document your API Demo">
-It does not matter if your API is years old or brand new -- wherever you are, Optic makes it easy to get any API documented, and keep those docs up-to-date. It's like having Git, but for your APIs.
-
-Want to start versioning some of your existing API endpoints with Optic?
-
-1. Collect API traffic
-2. Add them to the spec in just a few clicks
-
-*Try out the UI without downloading Optic:*
-<IFrameDemoNotCentered demoPath={'/examples/github/diffs/local/example-session/urls'} />
-
-</DemoPageModal>
-
 
 ## Add an Optic specification to your API project
 <ExpandDocs title="1. Install Optic on your Development Machine" defaultOpen={false}>
