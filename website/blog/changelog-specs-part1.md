@@ -102,7 +102,7 @@ Commands for the API spec domain might be things like `AddQueryParameter`, `Crea
 
 ![](https://cdn-images-1.medium.com/max/3638/0*MSMFZ27dhfvEQqJz.png)
 
-> Modern Take: Wow that pic is a throwback, Optic looks very different now. See https://demo.useoptic.com
+> Modern Take: Wow that pic is a throwback, Optic looks very different now. See https://www.useoptic.com
 
 ## Query what you need
 

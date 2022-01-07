@@ -8,7 +8,6 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import IconGrid, { TextWithSubtext } from './IconGrid';
 import { Tab, Tabs } from '@material-ui/core';
-import { IFrameDemo2 } from './iFrameDemo2';
 import Box from '@material-ui/core/Box';
 import { SubtleBlueBackground } from './theme';
 
@@ -118,59 +117,5 @@ export function GitBotDemo() {
         </Grid>
       </Container>
     </Container>
-  );
-}
-
-export function DocumentGitHubExample() {
-  const featuredStyles = useFeatureStyles();
-  const classes = useStyles();
-
-  const [tab, setTab] = useState(0);
-
-  const demoPath =
-    tab === 0
-      ? '/examples/github/diffs/local/example-session/urls'
-      : '/examples/github-with-diffs/diffs';
-
-  return (
-    <div style={{ backgroundColor: SubtleBlueBackground, paddingTop: 70 }}>
-      <Container
-        maxWidth={false}
-        className={classes.gitBotContainer}
-        style={{ marginBottom: 0 }}
-      >
-        <Container maxWidth="md">
-          <Typography
-            variant="h4"
-            className={featuredStyles.headline}
-            style={{
-              fontWeight: 300,
-              fontSize: 45,
-              textAlign: 'left',
-              fontFamily: 'Ubuntu Mono',
-            }}
-          >
-            <FormatCopy value={copy.example.heading} />
-          </Typography>
-          <Typography
-            variant="subtitle2"
-            className={featuredStyles.descriptions}
-            style={{ marginBottom: 10 }}
-          >
-            {copy.example.description}
-          </Typography>
-
-          <Tabs
-            value={tab}
-            color="secondary"
-            onChange={(e, value) => setTab(value)}
-          >
-            <Tab value={0} label="Document GitHub in 3 mins." />
-            <Tab value={1} label="Review an API Diff Optic Found" />
-          </Tabs>
-        </Container>
-      </Container>
-      <IFrameDemo2 demoPath={demoPath} />
-    </div>
   );
 }

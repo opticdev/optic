@@ -30,8 +30,6 @@
   <a href="#license">License</a>
 </p>
 
-## [Check out our Live Demo of GitHub's API](https://useoptic.com/)
-
 ## Try Optic
 > Similar to `git init`
 
