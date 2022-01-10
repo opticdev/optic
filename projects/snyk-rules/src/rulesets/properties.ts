@@ -21,7 +21,7 @@ export const rules = {
     });
   },
   propertyFormat: ({ bodyProperties }: SnykApiCheckDsl) => {
-    bodyProperties.requirement.should(
+    bodyProperties.requirement.must(
       'have a format when a string',
       ({ flatSchema }, context) => {
         if (flatSchema.type !== 'string') return;

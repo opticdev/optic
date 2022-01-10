@@ -177,19 +177,19 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
           )
         );
       },
-      should: (statement, handler) => {
-        const docsHelper = newDocsLinkHelper();
-        this.checks.push(
-          runCheck(
-            change,
-            docsHelper,
-            'this specification: ',
-            statement,
-            false,
-            () => handler(this.providedContext, docsHelper)
-          )
-        );
-      },
+      // should: (statement, handler) => {
+      //   const docsHelper = newDocsLinkHelper();
+      //   this.checks.push(
+      //     runCheck(
+      //       change,
+      //       docsHelper,
+      //       'this specification: ',
+      //       statement,
+      //       false,
+      //       () => handler(this.providedContext, docsHelper)
+      //     )
+      //   );
+      // },
     };
 
     return value;
@@ -225,19 +225,19 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
           )
         );
       },
-      should: (statement, handler) => {
-        const docsHelper = newDocsLinkHelper();
-        this.checks.push(
-          runCheck(
-            change,
-            docsHelper,
-            'this specification: ',
-            statement,
-            false,
-            () => handler(this.nextJsonLike, this.providedContext, docsHelper)
-          )
-        );
-      },
+      // should: (statement, handler) => {
+      //   const docsHelper = newDocsLinkHelper();
+      //   this.checks.push(
+      //     runCheck(
+      //       change,
+      //       docsHelper,
+      //       'this specification: ',
+      //       statement,
+      //       false,
+      //       () => handler(this.nextJsonLike, this.providedContext, docsHelper)
+      //     )
+      //   );
+      // },
     };
 
     return {
@@ -332,37 +332,38 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
   get checkApiContext(): ShouldOrMust<
     (context: SynkApiCheckContext, docs: DocsLinkHelper) => void
   > {
-    const contextChangedHandler: (must: boolean) => ContextChangedRule['must'] =
-      (must: boolean) => {
-        return (statement, handler) => {
-          const docsHelper = newDocsLinkHelper();
-          const syntheticChange: IChange<any> = {
-            added: this.providedContext,
-            changeType: ChangeType.Added,
-            location: {
-              jsonPath: '/',
-              conceptualPath: [],
-              conceptualLocation: {
-                path: 'Entire Resource',
-                method: '',
-              },
-              kind: 'ContextRule',
-            } as any,
-          };
-          return runCheck(
-            syntheticChange,
-            docsHelper,
-            'api lifeycle: ',
-            statement,
-            must,
-            () => handler(this.providedContext, docsHelper)
-          );
+    const contextChangedHandler: (
+      must: boolean
+    ) => ContextChangedRule['must'] = (must: boolean) => {
+      return (statement, handler) => {
+        const docsHelper = newDocsLinkHelper();
+        const syntheticChange: IChange<any> = {
+          added: this.providedContext,
+          changeType: ChangeType.Added,
+          location: {
+            jsonPath: '/',
+            conceptualPath: [],
+            conceptualLocation: {
+              path: 'Entire Resource',
+              method: '',
+            },
+            kind: 'ContextRule',
+          } as any,
         };
+        return runCheck(
+          syntheticChange,
+          docsHelper,
+          'api lifeycle: ',
+          statement,
+          must,
+          () => handler(this.providedContext, docsHelper)
+        );
       };
+    };
 
     return {
       must: contextChangedHandler(true),
-      should: contextChangedHandler(false),
+      // should: contextChangedHandler(false),
     };
   }
 

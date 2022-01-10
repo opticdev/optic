@@ -206,84 +206,123 @@ export function genericEntityRuleImpl<
   };
 
   const changedHandler: (
-    must: boolean
+    must: boolean,
+    onlyAttributes: string[]
   ) => EntityRule<
     NarrowedOpenApiFact,
     ApiContext,
     DslContext,
     OpenApiEntityType
-  >['changed']['must'] = (must: boolean) => {
+  >['changed']['must'] = (must: boolean, onlyAttributes: string[]) => {
     return (statement, handler) => {
       pushCheck(
-        ...changes.map((item, index) => {
-          const updatedWhere = `updated ${openApiKind.toString()}: ${describeWhere(
-            item.changed!.after!
-          )}`;
-          const docsHelper = newDocsLinkHelper();
+        ...changes
+          .filter((item) => {
+            if (onlyAttributes.length > 0)
+              return didKeysChange(
+                item.changed!.before,
+                item.changed!.after,
+                onlyAttributes
+              );
 
-          let specItem: OpenApiEntityType | undefined;
-          try {
-            specItem = getSpecItem(item.location.jsonPath);
-          } catch (e) {
-            throw new Error(
-              'JSON trail does not resolve ' + item.location.jsonPath
-            );
-          }
+            return true;
+          })
+          .map((item, index) => {
+            const updatedWhere = `updated ${openApiKind.toString()}: ${describeWhere(
+              item.changed!.after!
+            )}`;
+            const docsHelper = newDocsLinkHelper();
 
-          return runCheck(item, docsHelper, updatedWhere, statement, must, () =>
-            handler(
-              item.changed!.before,
-              item.changed!.after,
-              {
-                ...getContext(item.location),
-                ...getStructuralContext(item.location),
-              },
+            let specItem: OpenApiEntityType | undefined;
+            try {
+              specItem = getSpecItem(item.location.jsonPath);
+            } catch (e) {
+              throw new Error(
+                'JSON trail does not resolve ' + item.location.jsonPath
+              );
+            }
+
+            return runCheck(
+              item,
               docsHelper,
-              specItem!
-            )
-          );
-        })
+              updatedWhere,
+              statement,
+              must,
+              () =>
+                handler(
+                  item.changed!.before,
+                  item.changed!.after,
+                  {
+                    ...getContext(item.location),
+                    ...getStructuralContext(item.location),
+                  },
+                  docsHelper,
+                  specItem!
+                )
+            );
+          })
       );
     };
   };
 
   const requirementOnChange: (
-    must: boolean
+    must: boolean,
+    onlyAttributes: string[]
   ) => EntityRule<
     NarrowedOpenApiFact,
     ApiContext,
     DslContext,
     OpenApiEntityType
-  >['requirementOnChange']['must'] = (must: boolean) => {
+  >['requirementOnChange']['must'] = (
+    must: boolean,
+    onlyAttributes: string[]
+  ) => {
     return (statement, handler) => {
       pushCheck(
-        ...changes.map((item, index) => {
-          const updatedWhere = `updated ${openApiKind.toString()}: ${describeWhere(
-            item.changed!.after!
-          )}`;
-          const docsHelper = newDocsLinkHelper();
+        ...changes
+          .filter((item) => {
+            if (onlyAttributes.length > 0)
+              return didKeysChange(
+                item.changed!.before,
+                item.changed!.after,
+                onlyAttributes
+              );
 
-          let specItem: OpenApiEntityType | undefined;
-          try {
-            specItem = getSpecItem(item.location.jsonPath);
-          } catch (e) {
-            throw new Error(
-              'JSON trail does not resolve ' + item.location.jsonPath
-            );
-          }
+            return true;
+          })
+          .map((item, index) => {
+            const updatedWhere = `updated ${openApiKind.toString()}: ${describeWhere(
+              item.changed!.after!
+            )}`;
+            const docsHelper = newDocsLinkHelper();
 
-          return runCheck(item, docsHelper, updatedWhere, statement, must, () =>
-            handler(
-              item.changed!.after,
-              {
-                ...getContext(item.location),
-                ...getStructuralContext(item.location),
-              },
+            let specItem: OpenApiEntityType | undefined;
+            try {
+              specItem = getSpecItem(item.location.jsonPath);
+            } catch (e) {
+              throw new Error(
+                'JSON trail does not resolve ' + item.location.jsonPath
+              );
+            }
+
+            return runCheck(
+              item,
               docsHelper,
-              specItem!
-            )
-          );
-        }),
+              updatedWhere,
+              statement,
+              must,
+              () =>
+                handler(
+                  item.changed!.after,
+                  {
+                    ...getContext(item.location),
+                    ...getStructuralContext(item.location),
+                  },
+                  docsHelper,
+                  specItem!
+                )
+            );
+          }),
         ...added
           // .filter((addRule) => {
           //   // should not run added rule if the parent operation was also added.
@@ -372,23 +411,35 @@ export function genericEntityRuleImpl<
   return {
     added: {
       must: addedHandler(true),
-      should: addedHandler(false),
+      // should: addedHandler(false),
     },
     changed: {
-      must: changedHandler(true),
-      should: changedHandler(false),
+      must: changedHandler(true, []),
+      // should: changedHandler(false, []),
+      attributes: (first, ...others) => {
+        return {
+          must: changedHandler(true, [first, ...(others || [])]),
+          // should: changedHandler(false, []),
+        };
+      },
     },
     removed: {
       must: removedHandler(true),
-      should: removedHandler(false),
+      // should: removedHandler(false),
     },
     requirement: {
       must: requirementsHandler(true),
-      should: requirementsHandler(false),
+      // should: requirementsHandler(false),
     },
     requirementOnChange: {
-      must: requirementOnChange(true),
-      should: requirementOnChange(false),
+      must: requirementOnChange(true, []),
+      attributes: (first, ...others) => {
+        return {
+          must: requirementOnChange(true, [first, ...(others || [])]),
+          // should: changedHandler(false, []),
+        };
+      },
+      // should: requirementOnChange(false),
     },
   };
 }
@@ -401,4 +452,24 @@ function parentOfChild(
     child.length > parent.length &&
     equals(parent, child.slice(0, parent.length))
   );
+}
+
+function didKeysChange(
+  before: any,
+  after: any,
+  keysToCompare: string[]
+): boolean {
+  if (keysToCompare.length === 0) return true;
+
+  const beforeObjFiltered: { [key: string]: any } = omitAdditionalKeys(before);
+  const afterObjFiltered: { [key: string]: any } = omitAdditionalKeys(after);
+  function omitAdditionalKeys(obj: { [key: string]: any }) {
+    const o: { [key: string]: any } = {};
+    Object.keys(obj)
+      .filter((key) => keysToCompare.includes(key))
+      .forEach((includedKey) => (o[includedKey] = obj[includedKey]));
+    return o;
+  }
+
+  return !equals(beforeObjFiltered, afterObjFiltered);
 }

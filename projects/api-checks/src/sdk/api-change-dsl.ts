@@ -140,19 +140,6 @@ export class ApiChangeDsl implements ApiCheckDsl {
           )
         );
       },
-      should: (statement, handler) => {
-        const docsHelper = newDocsLinkHelper();
-        this.checks.push(
-          runCheck(
-            change,
-            docsHelper,
-            'this specification: ',
-            statement,
-            false,
-            () => handler(this.nextJsonLike, this.providedContext, docsHelper)
-          )
-        );
-      },
     };
 
     return {

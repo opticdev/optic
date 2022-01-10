@@ -3,7 +3,7 @@ import { OpenApiFact, IChange } from '@useoptic/openapi-utilities';
 
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;
-  should: (statement: string, handler: G) => void;
+  // should: (statement: string, handler: G) => void;
 }
 
 export type StructuralContext = {
@@ -34,7 +34,20 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
       docs: DocsMetadata,
       specItem: OpenApiEntityType
     ) => Promise<void> | void
-  >;
+  > & {
+    attributes: (
+      first: string,
+      ...others: string[]
+    ) => ShouldOrMust<
+      (
+        before: G,
+        after: G,
+        context: ApiContext & DSLContext & StructuralContext,
+        docs: DocsMetadata,
+        specItem: OpenApiEntityType
+      ) => Promise<void> | void
+    >;
+  };
   requirementOnChange: ShouldOrMust<
     (
       addedOrAfter: G,
@@ -42,7 +55,19 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
       docs: DocsMetadata,
       specItem: OpenApiEntityType
     ) => Promise<void> | void
-  >;
+  > & {
+    attributes: (
+      first: string,
+      ...others: string[]
+    ) => ShouldOrMust<
+      (
+        addedOrAfter: G,
+        context: ApiContext & DSLContext & StructuralContext,
+        docs: DocsMetadata,
+        specItem: OpenApiEntityType
+      ) => Promise<void> | void
+    >;
+  };
   removed: ShouldOrMust<
     (
       before: G,
