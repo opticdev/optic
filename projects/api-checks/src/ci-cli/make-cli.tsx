@@ -24,8 +24,8 @@ export function makeCiCliWithNamedRules<T>(
     `for ${forProject}, running optic api-check ${packageJson.version}`
   );
 
-  registerCompare(cli, rulesetServices);
-  registerBulkCompare(cli, rulesetServices);
+  registerCompare(cli, forProject, rulesetServices);
+  registerBulkCompare(cli, forProject, rulesetServices);
   registerUpload(cli, { opticToken });
   registerGithubComment(cli);
 

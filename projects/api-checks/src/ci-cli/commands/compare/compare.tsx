@@ -21,6 +21,7 @@ import { ResultWithSourcemap } from '../../../sdk/types';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { SourcemapRendererEnum } from './components/render-results';
+import { trackEvent } from '../../segment';
 
 type LoadingState =
   | {
@@ -50,6 +51,7 @@ const parseContextObject = (context?: string): any => {
 
 export const registerCompare = <T extends {}>(
   cli: Command,
+  projectName: string,
   rulesetServices: OpticCINamedRulesets
 ) => {
   cli
@@ -126,6 +128,7 @@ export const registerCompare = <T extends {}>(
                   ? SourcemapRendererEnum.github
                   : SourcemapRendererEnum.local
               }
+              projectName={projectName}
             />,
             { exitOnCtrlC: true }
           );
@@ -145,6 +148,7 @@ function Compare<T>(props: {
   apiCheckService: ApiCheckService<T>;
   shouldGenerateFile: boolean;
   mapToFile: SourcemapRendererEnum;
+  projectName: string;
 }) {
   const stdout = useStdout();
   const { exit } = useApp();
@@ -238,6 +242,15 @@ function Compare<T>(props: {
             setResults({ loading: false, error: false, data: results });
           }
           const hasError = results.some((result) => !result.passed);
+
+          trackEvent('optic_ci.compare', `${props.projectName}-optic-ci`, {
+            isInCi: process.env.CI === 'true',
+            numberOfErrors: results.reduce(
+              (count, result) => (result.passed ? count : count + 1),
+              0
+            ),
+            // TODO add in number of changes between openapi files
+          });
 
           exit(
             hasError ? new UserError('Some checks did not pass') : undefined
