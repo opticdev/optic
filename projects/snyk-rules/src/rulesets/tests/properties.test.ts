@@ -1,46 +1,46 @@
-import { rules } from "../properties";
-import { SnykApiCheckDsl, SynkApiCheckContext } from "../../dsl";
+import { rules } from '../properties';
+import { SnykApiCheckDsl, SynkApiCheckContext } from '../../dsl';
 
-import { createSnykTestFixture } from "./fixtures";
+import { createSnykTestFixture } from './fixtures';
 
 const { compare } = createSnykTestFixture();
 // todo: fix copy/paste
 const emptyContext: SynkApiCheckContext = {
-  changeDate: "2021-10-10",
-  changeResource: "Example",
+  changeDate: '2021-10-10',
+  changeResource: 'Example',
   changeVersion: {
-    date: "2021-10-10",
-    stability: "ga",
+    date: '2021-10-10',
+    stability: 'ga',
   },
   resourceVersions: {},
 };
 
-describe("body properties", () => {
+describe('body properties', () => {
   const baseOpenAPI = {
-    openapi: "3.0.1",
+    openapi: '3.0.1',
     paths: {
-      "/example": {
+      '/example': {
         get: {
           responses: {},
         },
       },
     },
-    info: { version: "0.0.0", title: "Empty" },
+    info: { version: '0.0.0', title: 'Empty' },
   };
 
-  describe("key", () => {
-    it("passes when snake case with more than one component", async () => {
+  describe('key', () => {
+    it('passes when snake case with more than one component', async () => {
       const result = await compare(baseOpenAPI)
         .to((spec) => {
-          spec.paths!["/example"]!.get!.responses = {
-            "200": {
-              description: "",
+          spec.paths!['/example']!.get!.responses = {
+            '200': {
+              description: '',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      is_snake_case: { type: "string" },
+                      is_snake_case: { type: 'string' },
                     },
                   },
                 },
@@ -54,18 +54,18 @@ describe("body properties", () => {
       expect(result.results[0].passed).toBeTruthy();
       expect(result).toMatchSnapshot();
     });
-    it("passes when snake case with one component", async () => {
+    it('passes when snake case with one component', async () => {
       const result = await compare(baseOpenAPI)
         .to((spec) => {
-          spec.paths!["/example"]!.get!.responses = {
-            "200": {
-              description: "",
+          spec.paths!['/example']!.get!.responses = {
+            '200': {
+              description: '',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      technicallysnakecase: { type: "string" },
+                      technicallysnakecase: { type: 'string' },
                     },
                   },
                 },
@@ -80,18 +80,18 @@ describe("body properties", () => {
       expect(result).toMatchSnapshot();
     });
 
-    it("fails when not snake case", async () => {
+    it('fails when not snake case', async () => {
       const result = await compare(baseOpenAPI)
         .to((spec) => {
-          spec.paths!["/example"]!.get!.responses = {
-            "200": {
-              description: "",
+          spec.paths!['/example']!.get!.responses = {
+            '200': {
+              description: '',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      "not-snake-case": { type: "string" },
+                      'not-snake-case': { type: 'string' },
                     },
                   },
                 },
@@ -107,28 +107,28 @@ describe("body properties", () => {
     });
   });
 
-  describe("format", () => {
+  describe('format', () => {
     it("fails if format doesn't exist", async () => {
       const result = await compare(baseOpenAPI)
         .to((spec) => {
-          spec.paths!["/example"]!.get!.responses = {
-            "200": {
-              description: "",
+          spec.paths!['/example']!.get!.responses = {
+            '200': {
+              description: '',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
                       data: {
-                        type: "object",
+                        type: 'object',
                         properties: {
                           attributes: {
-                            type: "object",
+                            type: 'object',
                             properties: {
-                              name: {type: "string"}
-                            }
-                          }
-                        }
+                              name: { type: 'string' },
+                            },
+                          },
+                        },
                       },
                     },
                   },
@@ -144,22 +144,22 @@ describe("body properties", () => {
       // Both data and attributes will be checked before name
       const ruleResult = result.results[2];
       expect(ruleResult.passed).toBeFalsy();
-      expect(ruleResult.isShould).toBeTruthy();
+      expect(ruleResult.isMust).toBeTruthy();
       expect(result).toMatchSnapshot();
     });
 
-    it("passes if not a string", async () => {
+    it('passes if not a string', async () => {
       const result = await compare(baseOpenAPI)
         .to((spec) => {
-          spec.paths!["/example"]!.get!.responses = {
-            "200": {
-              description: "",
+          spec.paths!['/example']!.get!.responses = {
+            '200': {
+              description: '',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      count: { type: "number" },
+                      count: { type: 'number' },
                     },
                   },
                 },
@@ -170,23 +170,23 @@ describe("body properties", () => {
         })
         .withRule(rules.propertyFormat, emptyContext);
 
-      expect(result.results[0].isShould).toBeTruthy();
+      expect(result.results[0].isMust).toBeTruthy();
       expect(result).toMatchSnapshot();
     });
   });
 
-  describe("breaking changes", () => {
-    it("fails if a property is removed", async () => {
+  describe('breaking changes', () => {
+    it('fails if a property is removed', async () => {
       const base = JSON.parse(JSON.stringify(baseOpenAPI));
-      base.paths!["/example"]!.get!.responses = {
-        "200": {
-          description: "",
+      base.paths!['/example']!.get!.responses = {
+        '200': {
+          description: '',
           content: {
-            "application/json": {
+            'application/json': {
               schema: {
-                type: "object",
+                type: 'object',
                 properties: {
-                  count: { type: "number" },
+                  count: { type: 'number' },
                 },
               },
             },
@@ -195,13 +195,13 @@ describe("body properties", () => {
       };
       const result = await compare(base)
         .to((spec) => {
-          spec.paths!["/example"]!.get!.responses = {
-            "200": {
-              description: "",
+          spec.paths!['/example']!.get!.responses = {
+            '200': {
+              description: '',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {},
                   },
                 },
@@ -215,13 +215,13 @@ describe("body properties", () => {
       expect(result.results[0].passed).toBeFalsy();
       expect(result).toMatchSnapshot();
     });
-    it("fails if a required property is added", async () => {
+    it('fails if a required property is added', async () => {
       const base = JSON.parse(JSON.stringify(baseOpenAPI));
-      base.paths!["/example"]!.get!.requestBody = {
+      base.paths!['/example']!.get!.requestBody = {
         content: {
-          "application/json": {
+          'application/json': {
             schema: {
-              type: "object",
+              type: 'object',
               properties: {},
             },
           },
@@ -229,15 +229,15 @@ describe("body properties", () => {
       };
       const result = await compare(base)
         .to((spec) => {
-          spec.paths!["/example"]!.get!.requestBody = {
+          spec.paths!['/example']!.get!.requestBody = {
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    count: { type: "number" },
+                    count: { type: 'number' },
                   },
-                  required: ["count"],
+                  required: ['count'],
                 },
               },
             },

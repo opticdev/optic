@@ -36,8 +36,8 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
     ) => Promise<void> | void
   > & {
     attributes: (
-      first: string,
-      ...others: string[]
+      limitToKey: string,
+      ...andKeys: string[]
     ) => ShouldOrMust<
       (
         before: G,
@@ -57,8 +57,8 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
     ) => Promise<void> | void
   > & {
     attributes: (
-      first: string,
-      ...others: string[]
+      limitToKey: string,
+      ...andKeys: string[]
     ) => ShouldOrMust<
       (
         addedOrAfter: G,

@@ -34,12 +34,11 @@ export const rules = {
     });
   },
   removingOperationId: ({ operations }: SnykApiCheckDsl) => {
-    operations.changed.must(
-      'have consistent operation IDs',
-      (current, next) => {
+    operations.changed
+      .attributes('operationId')
+      .must('have consistent operation IDs', (current, next) => {
         expect(current.operationId).to.equal(next.operationId);
-      }
-    );
+      });
   },
   parameterCase: ({ operations }: SnykApiCheckDsl) => {
     operations.requirement.must(
