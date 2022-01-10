@@ -11,12 +11,13 @@ import {
   BodyLocation,
   FieldLocation,
 } from './location';
-import { OpenApiKind } from './openApiKinds';
+import { OpenApiKind, OpenApiParameterKind } from './openApiKinds';
 
 export {
   ILocation,
   IPathComponent,
   OpenApiKind,
+  OpenApiParameterKind,
   OperationLocation,
   QueryParameterLocation,
   PathParameterLocation,
