@@ -85,7 +85,7 @@ const sendMessage = async ({
     pull_number,
   });
 
-  trackEvent('optic_ci_github_comment', `${owner}-optic-ci`, {
+  trackEvent('optic_ci.github_comment', `${owner}-optic-ci`, {
     owner,
     repo,
     pull_number,
