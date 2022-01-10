@@ -3,8 +3,8 @@ import {
   OpenApiFact,
   DocsLinkHelper,
   Result,
-  runCheck,
 } from '@useoptic/openapi-utilities';
+import { runCheck } from '../utils';
 
 export class Checker {
   private checkResults: Result[] = [];

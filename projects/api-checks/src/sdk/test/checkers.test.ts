@@ -1,9 +1,6 @@
 import { Checker } from '../checker';
-import {
-  IChange,
-  OpenApiFact,
-  newDocsLinkHelper,
-} from '@useoptic/openapi-utilities';
+import { IChange, OpenApiFact } from '@useoptic/openapi-utilities';
+import { newDocsLinkHelper } from '../../utils';
 const { assert } = require('chai'); // Using Assert style
 
 const change: IChange<OpenApiFact> = {

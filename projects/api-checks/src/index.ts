@@ -7,8 +7,6 @@ import {
   Failed,
   EntityRule,
   ResultWithSourcemap,
-  runCheck,
-  newDocsLinkHelper,
   DocsLinkHelper,
 } from '@useoptic/openapi-utilities';
 import { ApiCheckService, DslConstructorInput } from './sdk/api-check-service';
@@ -26,6 +24,7 @@ import {
 } from './sdk/ruleset';
 import { parseSpecVersion } from './ci-cli/commands/utils';
 import { packagedRules, standards } from './rulesets/packaged-rules';
+import { runCheck, newDocsLinkHelper } from './utils';
 export {
   ApiCheckService,
   DslConstructorInput,

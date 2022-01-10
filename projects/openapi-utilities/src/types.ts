@@ -1,7 +1,6 @@
-// TODO rename the 3 type folders (./types, openapi3/sdk/types, /openapi3/types) - make a shared type file
-// TODO figure out if some of this stuff actually belongs in api-checks
 import { OpenApiFact, IChange } from './openapi3/sdk/types';
 
+// API check results and sourcemaps
 export type ILookupLinePreviewResult =
   | undefined
   | {
@@ -15,7 +14,6 @@ export type ILookupLinePreviewResult =
 
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;
-  // should: (statement: string, handler: G) => void;
 }
 
 export type StructuralContext = {
@@ -128,57 +126,6 @@ export type DocsLinkHelper = {
   includeDocsLink: (link: string) => void;
   becomesEffectiveOn: (date: Date) => void;
 };
-
-export function newDocsLinkHelper(): DocsLinkHelper {
-  let docsLink: string | undefined = undefined;
-  let effectiveOn: Date | undefined = undefined;
-
-  return {
-    includeDocsLink: (link: string) => (docsLink = link),
-    becomesEffectiveOn: (date: Date) => (effectiveOn = date),
-    get docsLink() {
-      return docsLink;
-    },
-    get effectiveOn() {
-      return effectiveOn;
-    },
-  };
-}
-
-export async function runCheck(
-  change: IChange<OpenApiFact>,
-  docsLink: DocsLinkHelper,
-  where: string,
-  condition: string,
-  must: boolean,
-  handler: (() => void) | (() => Promise<void>)
-): Promise<Result> {
-  try {
-    await handler();
-    return {
-      passed: true,
-      condition,
-      where,
-      isMust: must,
-      isShould: !must,
-      change,
-      docsLink: docsLink.docsLink,
-      effectiveOnDate: docsLink.effectiveOn,
-    };
-  } catch (e: any) {
-    return {
-      passed: false,
-      condition,
-      where,
-      isMust: must,
-      isShould: !must,
-      error: e.message,
-      change,
-      docsLink: docsLink.docsLink,
-      effectiveOnDate: docsLink.effectiveOn,
-    };
-  }
-}
 
 export interface ApiCheckDsl {
   checkPromises: () => Promise<Result>[];
