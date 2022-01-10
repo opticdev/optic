@@ -1,9 +1,11 @@
 import path from 'path';
 import { SynkApiCheckContext } from '../../dsl';
 import { newSnykApiCheckService } from '../../service';
-import { ResultWithSourcemap } from '@useoptic/api-checks/build/sdk/types';
 import { specFromInputToResults, parseSpecVersion } from '@useoptic/api-checks';
-import { defaultEmptySpec } from '@useoptic/openapi-utilities';
+import {
+  defaultEmptySpec,
+  ResultWithSourcemap,
+} from '@useoptic/openapi-utilities';
 import { sourcemapReader } from '@useoptic/openapi-io';
 
 describe('end-end-tests', () => {

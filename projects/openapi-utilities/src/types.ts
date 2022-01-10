@@ -1,5 +1,17 @@
-import { ILookupLinePreviewResult } from '@useoptic/openapi-io';
-import { OpenApiFact, IChange } from '@useoptic/openapi-utilities';
+// TODO rename the 3 type folders (./types, openapi3/sdk/types, /openapi3/types) - make a shared type file
+// TODO figure out if some of this stuff actually belongs in api-checks
+import { OpenApiFact, IChange } from './openapi3/sdk/types';
+
+export type ILookupLinePreviewResult =
+  | undefined
+  | {
+      endLine: number;
+      endPosition: number;
+      filePath: string;
+      startLine: number;
+      preview: string;
+      startPosition: number;
+    };
 
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;

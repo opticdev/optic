@@ -1,8 +1,8 @@
 import path from 'path';
-import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
+import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 import { sourcemapReader } from '@useoptic/openapi-io';
 import { breakingChanges } from '../service';
-import { ResultWithSourcemap } from '../../../sdk/types';
+import { ResultWithSourcemap } from '@useoptic/openapi-utilities';
 import { parseSpecVersion, specFromInputToResults } from '../../../index';
 
 describe('end-end-tests', () => {

@@ -1,15 +1,17 @@
 import { makeCiCli, makeCiCliWithNamedRules } from './ci-cli/make-cli';
-import { OpenAPIV3 } from '@useoptic/openapi-utilities';
-import { ApiCheckService, DslConstructorInput } from './sdk/api-check-service';
 import {
+  OpenAPIV3,
   ApiCheckDsl,
   Result,
   Passed,
   Failed,
   EntityRule,
   ResultWithSourcemap,
-} from './sdk/types';
-import { runCheck, newDocsLinkHelper, DocsLinkHelper } from './sdk/types';
+  runCheck,
+  newDocsLinkHelper,
+  DocsLinkHelper,
+} from '@useoptic/openapi-utilities';
+import { ApiCheckService, DslConstructorInput } from './sdk/api-check-service';
 import { createTestDslFixture } from './sdk/test-rule-fixture';
 import { createSelectJsonPathHelper } from './sdk/select-when-rule';
 import { specFromInputToResults } from './ci-cli/commands/utils';

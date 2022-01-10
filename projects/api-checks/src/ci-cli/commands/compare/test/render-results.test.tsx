@@ -4,7 +4,7 @@ import {
   RenderCheckResults,
   SourcemapRendererEnum,
 } from '../components/render-results';
-import { ResultWithSourcemap } from '../../../../sdk/types';
+import { ResultWithSourcemap } from '@useoptic/openapi-utilities';
 
 describe('list of checks', () => {
   it('renders list of checks with local sourcemaps', async () => {

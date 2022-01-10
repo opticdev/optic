@@ -3,8 +3,7 @@ import { ApiCheckService } from './sdk/api-check-service';
 import { ExampleDsl, ExampleDslContext } from './sdk/test/example-dsl';
 import { makeCiCli } from './ci-cli/make-cli';
 
-const checker: ApiCheckService<ExampleDslContext> =
-  new ApiCheckService<ExampleDslContext>();
+const checker: ApiCheckService<ExampleDslContext> = new ApiCheckService<ExampleDslContext>();
 
 function completenessApiRules(dsl: ExampleDsl) {
   dsl.operations.changed.must(

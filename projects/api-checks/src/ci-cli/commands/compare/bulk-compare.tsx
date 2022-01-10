@@ -6,11 +6,11 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
+  ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { ParseOpenAPIResult } from '@useoptic/openapi-io';
 import { SpecComparison } from './components';
 import { ApiCheckService } from '../../../sdk/api-check-service';
-import { ResultWithSourcemap } from '../../../sdk/types';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { loadFile, parseSpecVersion, specFromInputToResults } from '../utils';
 import { generateSpecResults } from './generateSpecResults';

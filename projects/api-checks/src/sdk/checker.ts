@@ -1,5 +1,10 @@
-import { DocsLinkHelper, Result, runCheck } from "./types";
-import { IChange, OpenApiFact } from "@useoptic/openapi-utilities/build/openapi3/sdk/types";
+import {
+  IChange,
+  OpenApiFact,
+  DocsLinkHelper,
+  Result,
+  runCheck,
+} from '@useoptic/openapi-utilities';
 
 export class Checker {
   private checkResults: Result[] = [];

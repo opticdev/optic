@@ -1,13 +1,11 @@
+import { OpenAPIV3 } from 'openapi-types';
+import jsonpath from 'jsonpath';
 import {
   DocsLinkHelper,
   newDocsLinkHelper,
   Result,
   runCheck,
   ShouldOrMust,
-} from './types';
-import { OpenAPIV3 } from 'openapi-types';
-import jsonpath from 'jsonpath';
-import {
   ConceptualLocation,
   IChange,
   OpenApiFact,

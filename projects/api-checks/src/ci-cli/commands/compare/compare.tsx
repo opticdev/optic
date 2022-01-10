@@ -5,6 +5,7 @@ import { Box, render, Text, useApp, useStdout } from 'ink';
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
+  ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { SpecComparison } from './components';
@@ -17,7 +18,6 @@ import {
 } from '../utils';
 import { DEFAULT_COMPARE_OUTPUT_FILENAME } from '../../constants';
 import { UserError } from '../../errors';
-import { ResultWithSourcemap } from '../../../sdk/types';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { SourcemapRendererEnum } from './components/render-results';

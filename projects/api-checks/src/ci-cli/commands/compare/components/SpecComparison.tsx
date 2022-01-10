@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Box, Newline, Text } from 'ink';
-import { ResultWithSourcemap } from '../../../../sdk/types';
+import { ResultWithSourcemap } from '@useoptic/openapi-utilities';
 
 import { RenderCheckResults, SourcemapRendererEnum } from './render-results';
 
