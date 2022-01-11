@@ -1,9 +1,7 @@
 import { check } from '../../sdk/define-check-test-dsl/define-check';
 import { scenario } from '../../sdk/define-check-test-dsl/scenarios';
 
-const queryParameterRequiredAdded = check(
-  'prevent adding required query parameter'
-)
+export default check('prevent adding required query parameter')
   .implementation(({ request }) => {
     const { expect } = require('chai');
     request.queryParameter.added.must('not be allowed', (param) => {

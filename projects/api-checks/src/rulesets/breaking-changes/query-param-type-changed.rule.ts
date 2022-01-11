@@ -1,7 +1,7 @@
 import { check } from '../../sdk/define-check-test-dsl/define-check';
 import { scenario } from '../../sdk/define-check-test-dsl/scenarios';
 
-const queryParamChangeType = check('prevent changing query type')
+export default check('prevent changing query type')
   .implementation(({ request }) => {
     request.queryParameter.changed.must(
       'not change the type',

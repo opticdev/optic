@@ -24,12 +24,17 @@ export type DslConstructorInput<Context> = {
 export class ApiCheckService<Context> {
   constructor(private getExecutionDate?: (context: Context) => Date) {}
 
-  private rules: ((
+  public rules: ((
     input: DslConstructorInput<Context>
   ) => Promise<Result>[])[] = [];
-  private additionalResults: ((
+  public additionalResults: ((
     input: DslConstructorInput<Context>
   ) => Promise<Result[]>)[] = [];
+
+  mergeWith(apiCheckService: ApiCheckService<Context>) {
+    this.rules.push(...apiCheckService.rules);
+    this.additionalResults.push(...apiCheckService.additionalResults);
+  }
 
   useRulesFrom(rules: (apiChangeDsl: ApiChangeDsl) => void) {
     const dslConstructor = (input: DslConstructorInput<ApiCheckDslContext>) => {

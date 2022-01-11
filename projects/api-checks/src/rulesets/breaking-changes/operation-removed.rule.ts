@@ -1,7 +1,7 @@
 import { check } from '../../sdk/define-check-test-dsl/define-check';
 import { scenario } from '../../sdk/define-check-test-dsl/scenarios';
 
-const operationRemovalCheck = check('prevent operation removal')
+export default check('prevent operation removal')
   .description('Removing an operation is a breaking change')
   .implementation(({ operations }) => {
     const { expect } = require('chai');

@@ -90,7 +90,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
 
       const [startPosition, endPosition] = astNodesToStartEndPosition(astNode);
 
-      const { startLine, endLine, preview } = positionToLine(
+      const { startLine, endLine } = positionToLine(
         contents,
         startPosition,
         endPosition
@@ -99,7 +99,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
         filePath: lookupResult.filePath,
         startLine,
         endLine,
-        preview,
+        // preview,
         startPosition: startPosition,
         endPosition: endPosition,
       };
@@ -110,7 +110,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
   const findLinesForAstAndContents = (astNode: YAMLNode, contents: string) => {
     const [startPosition, endPosition] = astNodesToStartEndPosition(astNode);
 
-    const { startLine, endLine, preview } = positionToLine(
+    const { startLine, endLine } = positionToLine(
       contents,
       startPosition,
       endPosition
@@ -119,7 +119,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
       filePath: '',
       startLine,
       endLine,
-      preview,
+      // preview,
       startPosition: startPosition,
       endPosition: endPosition,
     };

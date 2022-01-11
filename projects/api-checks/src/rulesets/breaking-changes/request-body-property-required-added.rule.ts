@@ -1,9 +1,7 @@
 import { check } from '../../sdk/define-check-test-dsl/define-check';
 import { scenario } from '../../sdk/define-check-test-dsl/scenarios';
 
-const requestBodyPropertyRequiredAdded = check(
-  'prevent adding a required property'
-)
+export default check('prevent adding a required property')
   .implementation(({ bodyProperties }) => {
     const { expect } = require('chai');
     bodyProperties.added.must('not be required', (property, context) => {
