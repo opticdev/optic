@@ -12,7 +12,7 @@ export function breakingChangeRules(config: BreakingChecksConfig = {}) {
 
   // query params
   service.useRulesFrom(
-    require('./query-param-optional-to-required-changed.rule.rule').runner
+    require('./query-param-optional-to-required-changed.rule').runner
   );
   service.useRulesFrom(require('./query-param-required-added.rule').runner);
   service.useRulesFrom(require('./query-param-type-changed.rule').runner);
