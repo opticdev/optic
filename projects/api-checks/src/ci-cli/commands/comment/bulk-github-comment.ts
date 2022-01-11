@@ -10,7 +10,7 @@ import { wrapActionHandlerWithSentry } from '../../sentry';
 import { findOpticCommentId } from './shared-comment';
 import { BulkUploadFileJson } from '@useoptic/openapi-utilities';
 
-export const registerGithubComment = (cli: Command) => {
+export const registerBulkGithubComment = (cli: Command) => {
   cli
     .command('github-comment')
     .requiredOption('--token <token>', 'github token')
