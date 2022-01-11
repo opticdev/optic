@@ -73,6 +73,23 @@ export const uploadCiRun = async (
     rulesFileS3Buffer.toString()
   );
 
+  if (changes.length === 0) {
+    console.log('No changes were detected, not uploading anything.');
+    const fileOutput: UploadFileJson = {
+      results,
+      changes,
+      opticWebUrl: '',
+      ciContext: normalizedCiContext,
+    };
+    // We write a file here which will propagate to github-comment and noop
+    await writeFile(
+      DEFAULT_UPLOAD_OUTPUT_FILENAME, // TODO maybe make this a cli argument?
+      Buffer.from(JSON.stringify(fileOutput))
+    );
+
+    return;
+  }
+
   console.log('Uploading OpenAPI files to Optic...');
 
   const fileMap: Record<UploadSlot, Buffer> = {

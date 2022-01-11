@@ -70,10 +70,17 @@ const sendMessage = async ({
 }) => {
   const uploadFileResults = await loadFile(upload);
   // TODO write this in a validation step and error to give better errors to the user
-  const { opticWebUrl }: UploadFileJson = JSON.parse(
-    uploadFileResults.toString()
-  );
+  const {
+    opticWebUrl,
+    results,
+    changes,
+    ciContext,
+  }: UploadFileJson = JSON.parse(uploadFileResults.toString());
 
+  if (changes.length === 0) {
+    console.log('No changes were found, exiting.');
+    return;
+  }
   const octokit = new Octokit({
     auth: githubToken,
   });
@@ -103,12 +110,19 @@ const sendMessage = async ({
     repo,
     pull_number
   );
+  const failingChecks = results.filter((result) => !result.passed).length;
+  const totalChecks = results.filter((result) => !result.passed).length;
+  const passingChecks = totalChecks - failingChecks;
 
   const body = `
   <!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
   ## View Changes in Optic
 
-  The OpenAPI changes can be viewed at ${opticWebUrl}
+  The latest run at commit ${ciContext.commit_hash} detected:
+  - ${changes.length} API changes
+  - ${passingChecks} checks passed out of ${totalChecks} (${failingChecks} failing checks).
+
+  The API changes can be viewed at ${opticWebUrl}
 `;
 
   if (maybeOpticCommentId) {
