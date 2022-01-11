@@ -45,7 +45,17 @@ const mockSpecFromInputToResults = specFromInputToResults as jest.MockedFunction
 >;
 
 let fileBufferMap: Record<UploadSlot, Buffer> = {
-  [UploadSlot.CheckResults]: Buffer.from('check results'),
+  [UploadSlot.CheckResults]: Buffer.from(
+    JSON.stringify({
+      results: [],
+      changes: [
+        {
+          changeType: 'added',
+          added: {} as any,
+        },
+      ],
+    })
+  ),
   [UploadSlot.FromFile]: Buffer.from(JSON.stringify(defaultEmptySpec)),
   [UploadSlot.ToFile]: Buffer.from(JSON.stringify(defaultEmptySpec)),
   [UploadSlot.GithubActionsEvent]: Buffer.from(JSON.stringify(mockGhContext)),
