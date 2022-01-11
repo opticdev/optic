@@ -1,14 +1,14 @@
 import { check } from '../../sdk/define-check-test-dsl/define-check';
 import { scenario } from '../../sdk/define-check-test-dsl/scenarios';
 
-const responseBodyPropertyTypeChanged = check('prevent changing property type')
+export default check('prevent changing property type')
   .implementation(({ bodyProperties }) => {
     const { expect } = require('chai');
     bodyProperties.changed.must(
       'not allow changing types',
       (beforeProperty, afterProperty, context) => {
         if (
-          context.isInResponse &&
+          context.isInRequest &&
           beforeProperty.flatSchema.type !== afterProperty.flatSchema.type
         ) {
           expect.fail('expected property to not change type');
@@ -17,7 +17,7 @@ const responseBodyPropertyTypeChanged = check('prevent changing property type')
     );
   })
   .failingExample(
-    scenario('changing type').responseBodySchema.changed(
+    scenario('changing type').requestBodySchema.changed(
       {
         type: 'object',
         properties: {

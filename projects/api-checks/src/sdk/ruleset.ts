@@ -1,5 +1,6 @@
 import { ApiCheckDsl } from './types';
 import { ApiCheckService } from './api-check-service';
+import { ApiCheckDslContext } from './api-change-dsl';
 
 export type OpticCIRuleset<DSL extends ApiCheckDsl> = {
   [key: string]: (dsl: DSL) => void;
@@ -30,7 +31,9 @@ export function disableRules<DSL extends ApiCheckDsl>(
   });
 }
 
-export type OpticCINamedRulesets = { default: ApiCheckService<any> } & {
+export type OpticCINamedRulesets = {
+  default: ApiCheckService<any>;
+} & {
   // actually any, could be multiple DSL kinds / contexts in the same CLI
   // ie one we made, one the community made, one a customer built in-house
   [key: string]: ApiCheckService<any> | undefined;

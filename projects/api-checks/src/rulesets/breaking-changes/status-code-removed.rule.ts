@@ -1,7 +1,7 @@
 import { check } from '../../sdk/define-check-test-dsl/define-check';
 import { scenario } from '../../sdk/define-check-test-dsl/scenarios';
 
-const statusCodeRemoved = check('prevent removing status code')
+export default check('prevent removing status code')
   .implementation(({ responses }) => {
     const { expect } = require('chai');
     responses.removed.must('not be allowed', (response) => {

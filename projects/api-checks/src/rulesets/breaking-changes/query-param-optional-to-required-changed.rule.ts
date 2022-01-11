@@ -1,9 +1,7 @@
 import { check } from '../../sdk/define-check-test-dsl/define-check';
 import { scenario } from '../../sdk/define-check-test-dsl/scenarios';
 
-const queryParamOptionalToRequired = check(
-  'prevent changing from optional to required'
-)
+export default check('prevent changing from optional to required')
   .implementation(({ request }) => {
     const { expect } = require('chai');
     request.queryParameter.changed.must(
