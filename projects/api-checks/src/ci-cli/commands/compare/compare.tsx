@@ -232,6 +232,7 @@ function Compare<T>(props: {
               Buffer.from(
                 JSON.stringify({
                   results,
+                  changes,
                 })
               )
             );
@@ -249,7 +250,7 @@ function Compare<T>(props: {
               (count, result) => (result.passed ? count : count + 1),
               0
             ),
-            // TODO add in number of changes between openapi files
+            numberOfChanges: changes.length,
           });
 
           exit(

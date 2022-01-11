@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {
   defaultEmptySpec,
+  IChange,
+  OpenApiFact,
   validateOpenApiV3Document,
 } from '@useoptic/openapi-utilities';
 import { ParseOpenAPIResult } from '@useoptic/openapi-io';
@@ -12,12 +14,18 @@ import { SpecComparison } from './components';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { ResultWithSourcemap } from '../../../sdk/types';
 import { wrapActionHandlerWithSentry } from '../../sentry';
-import { loadFile, parseSpecVersion, specFromInputToResults } from '../utils';
+import {
+  loadFile,
+  parseSpecVersion,
+  specFromInputToResults,
+  writeFile,
+} from '../utils';
 import { generateSpecResults } from './generateSpecResults';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { UserError } from '../../errors';
 import { SourcemapRendererEnum } from './components/render-results';
 import { trackEvent } from '../../segment';
+import { DEFAULT_BULK_COMPARE_OUTPUT_FILENAME } from '../../constants';
 
 export const registerBulkCompare = <T extends {}>(
   cli: Command,
@@ -99,7 +107,14 @@ type Comparison = {
 } & (
   | { loading: true }
   | { loading: false; error: true; errorDetails: any }
-  | { loading: false; error: false; results: ResultWithSourcemap[] }
+  | {
+      loading: false;
+      error: false;
+      data: {
+        changes: IChange<OpenApiFact>[];
+        results: ResultWithSourcemap[];
+      };
+    }
 );
 
 const loadSpecFile = async (fileName?: string): Promise<ParseOpenAPIResult> => {
@@ -119,7 +134,13 @@ const compareSpecs = async ({
 }: {
   checkService: ApiCheckService<any>;
   comparisons: Map<string, Comparison>;
-  onComparisonComplete: (id: string, results: ResultWithSourcemap[]) => void;
+  onComparisonComplete: (
+    id: string,
+    data: {
+      changes: IChange<OpenApiFact>[];
+      results: ResultWithSourcemap[];
+    }
+  ) => void;
   onComparisonError: (id: string, error: any) => void;
 }) => {
   const PARALLEL_REQUESTS = 4;
@@ -135,37 +156,44 @@ const compareSpecs = async ({
     // Enqueue next
     inflightRequests.set(
       id,
-      new Promise<{ id: string; results: ResultWithSourcemap[] }>(
-        async (resolve, reject) => {
-          try {
-            const [from, to] = await Promise.all([
-              loadSpecFile(comparison.fromFileName),
-              loadSpecFile(comparison.toFileName),
-            ]);
+      new Promise<{
+        id: string;
+        data: {
+          changes: IChange<OpenApiFact>[];
+          results: ResultWithSourcemap[];
+        };
+      }>(async (resolve, reject) => {
+        try {
+          const [from, to] = await Promise.all([
+            loadSpecFile(comparison.fromFileName),
+            loadSpecFile(comparison.toFileName),
+          ]);
 
-            validateOpenApiV3Document(from.jsonLike);
-            validateOpenApiV3Document(to.jsonLike);
+          validateOpenApiV3Document(from.jsonLike);
+          validateOpenApiV3Document(to.jsonLike);
 
-            const { results, changes } = await generateSpecResults(
-              checkService,
-              from,
-              to,
-              comparison.context
-            );
-            resolve({
-              id,
+          const { results, changes } = await generateSpecResults(
+            checkService,
+            from,
+            to,
+            comparison.context
+          );
+          resolve({
+            id,
+            data: {
               results,
-            });
-          } catch (e) {
-            reject({
-              id,
-              error: e,
-            });
-          }
+              changes,
+            },
+          });
+        } catch (e) {
+          reject({
+            id,
+            error: e,
+          });
         }
-      )
-        .then(({ id, results }) => {
-          onComparisonComplete(id, results);
+      })
+        .then(({ id, data }) => {
+          onComparisonComplete(id, data);
           return id;
         })
         .catch((e) => {
@@ -239,6 +267,7 @@ const BulkCompare: FC<{
         console.log('Reading input file...');
         let numberOfErrors = 0;
         let numberOfComparisonsWithErrors = 0;
+        let numberOfComparisonsWithAChange = 0;
         let hasChecksFailing = false;
         let hasError = false;
         const {
@@ -247,44 +276,41 @@ const BulkCompare: FC<{
         } = await parseJsonComparisonInput(input);
 
         !isStale && setComparisons(initialComparisons);
+        const finalComparisons = new Map(initialComparisons);
 
         await compareSpecs({
           checkService,
           comparisons: initialComparisons,
-          onComparisonComplete: (id, results) => {
-            !isStale &&
-              setComparisons((prevComparisons) => {
-                const newComparisons = new Map(prevComparisons);
-                if (results.some((result) => !result.passed)) {
-                  hasChecksFailing = true;
-                  numberOfComparisonsWithErrors += 1;
-                  numberOfErrors += results.reduce(
-                    (count, result) => (result.passed ? count : count + 1),
-                    0
-                  );
-                }
-                newComparisons.set(id, {
-                  ...prevComparisons.get(id)!,
-                  loading: false,
-                  error: false,
-                  results,
-                });
-                return newComparisons;
-              });
+          onComparisonComplete: (id, { results, changes }) => {
+            if (results.some((result) => !result.passed)) {
+              hasChecksFailing = true;
+              numberOfComparisonsWithErrors += 1;
+              numberOfErrors += results.reduce(
+                (count, result) => (result.passed ? count : count + 1),
+                0
+              );
+            }
+            if (changes.length > 0) {
+              numberOfComparisonsWithAChange += 1;
+            }
+            finalComparisons.set(id, {
+              ...initialComparisons.get(id)!,
+              loading: false,
+              error: false,
+              data: {
+                results,
+                changes,
+              },
+            });
           },
           onComparisonError: (id, error) => {
-            !isStale &&
-              setComparisons((prevComparisons) => {
-                const newComparisons = new Map(prevComparisons);
-                hasError = true;
-                newComparisons.set(id, {
-                  ...prevComparisons.get(id)!,
-                  loading: false,
-                  error: true,
-                  errorDetails: error,
-                });
-                return newComparisons;
-              });
+            hasError = true;
+            finalComparisons.set(id, {
+              ...initialComparisons.get(id)!,
+              loading: false,
+              error: true,
+              errorDetails: error,
+            });
           },
         });
 
@@ -293,8 +319,10 @@ const BulkCompare: FC<{
           numberOfErrors,
           numberOfComparisons: initialComparisons.size,
           numberOfComparisonsWithErrors,
-          // TODO add in number of changes between openapi files
+          numberOfComparisonsWithAChange,
         });
+
+        !isStale && setComparisons(finalComparisons);
 
         const maybeError = skippedParsing
           ? new UserError('Error: Could not read all of the comparison inputs')
@@ -303,6 +331,27 @@ const BulkCompare: FC<{
           : hasChecksFailing
           ? new UserError('Some checks did not pass')
           : undefined;
+
+        if (!maybeError) {
+          // TODO create shared typings
+          const fileContents = {
+            comparisons: [...finalComparisons].map(([, comparison]) => {
+              if (comparison.loading || comparison.error) {
+                throw new Error(
+                  'Expected comparison to be loaded without errors'
+                );
+              }
+              return {
+                results: comparison.data.results,
+                changes: comparison.data.changes,
+              };
+            }),
+          };
+          await writeFile(
+            DEFAULT_BULK_COMPARE_OUTPUT_FILENAME,
+            Buffer.from(JSON.stringify(fileContents))
+          );
+        }
         exit(maybeError);
       } catch (e) {
         stderr.write(JSON.stringify(e, null, 2));
@@ -351,7 +400,7 @@ const BulkCompare: FC<{
                 </Text>
               ) : (
                 <SpecComparison
-                  results={comparison.results}
+                  results={comparison.data.results}
                   verbose={verbose}
                   mapToFile={SourcemapRendererEnum.local}
                 />
