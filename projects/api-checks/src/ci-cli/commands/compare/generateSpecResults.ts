@@ -1,4 +1,9 @@
 import { ParseOpenAPIResult, sourcemapReader } from '@useoptic/openapi-io';
+import {
+  factsToChangelog,
+  OpenApiFact,
+  IChange,
+} from '@useoptic/openapi-utilities';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { ResultWithSourcemap } from '../../../sdk/types';
 
@@ -7,15 +12,29 @@ export const generateSpecResults = async <T extends {}>(
   from: ParseOpenAPIResult,
   to: ParseOpenAPIResult,
   context: any
-): Promise<ResultWithSourcemap[]> => {
-  const checkResults = await checkService.runRules(
-    from.jsonLike!,
-    to.jsonLike!,
-    context
+): Promise<{
+  changes: IChange<OpenApiFact>[];
+  results: ResultWithSourcemap[];
+}> => {
+  const fromJsonLike = from.jsonLike!;
+  const toJsonLike = to.jsonLike!;
+  const { currentFacts, nextFacts } = checkService.generateFacts(
+    fromJsonLike,
+    toJsonLike
   );
+  const changes = factsToChangelog(currentFacts, nextFacts);
+
+  const checkResults = await checkService.runRulesWithFacts({
+    currentJsonLike: fromJsonLike,
+    nextJsonLike: toJsonLike,
+    currentFacts,
+    nextFacts,
+    changelog: changes,
+    context,
+  });
 
   const { findFileAndLines } = sourcemapReader(to.sourcemap);
-  return await Promise.all(
+  const results = await Promise.all(
     checkResults.map(async (checkResult) => {
       return {
         ...checkResult,
@@ -23,4 +42,8 @@ export const generateSpecResults = async <T extends {}>(
       };
     })
   );
+  return {
+    changes,
+    results,
+  };
 };

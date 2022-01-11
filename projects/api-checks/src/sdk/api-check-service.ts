@@ -113,28 +113,27 @@ export class ApiCheckService<Context> {
     return this;
   }
 
-  async runRules(
+  generateFacts(
     currentJsonLike: OpenAPIV3.Document,
-    nextJsonLike: OpenAPIV3.Document,
-    context: Context
+    nextJsonLike: OpenAPIV3.Document
   ) {
     const currentTraverser = new OpenAPITraverser();
     const nextTraverser = new OpenAPITraverser();
 
-    await currentTraverser.traverse(currentJsonLike);
+    currentTraverser.traverse(currentJsonLike);
     const currentFacts = currentTraverser.accumulator.allFacts();
-    await nextTraverser.traverse(nextJsonLike);
+    nextTraverser.traverse(nextJsonLike);
     const nextFacts = nextTraverser.accumulator.allFacts();
 
-    const input: DslConstructorInput<Context> = {
+    return {
       currentFacts,
-      nextJsonLike: nextJsonLike,
-      currentJsonLike: currentJsonLike,
       nextFacts,
-      changelog: factsToChangelog(currentFacts, nextFacts),
-      context,
     };
+  }
 
+  async runRulesWithFacts(
+    input: DslConstructorInput<Context>
+  ): Promise<Result[]> {
     const checkPromises: Promise<Result>[] = flatten(
       this.rules.map((ruleRunner) => ruleRunner(input))
     );
@@ -149,7 +148,7 @@ export class ApiCheckService<Context> {
       await Promise.all(additionalCheckPromises)
     );
 
-    const date = this.getExecutionDate && this.getExecutionDate(context);
+    const date = this.getExecutionDate && this.getExecutionDate(input.context);
 
     const combinedResults = [...results, ...additionalCheckResults].filter(
       (result) => {
@@ -165,5 +164,26 @@ export class ApiCheckService<Context> {
     );
 
     return combinedResults;
+  }
+
+  // TODO deprecate
+  async runRules(
+    currentJsonLike: OpenAPIV3.Document,
+    nextJsonLike: OpenAPIV3.Document,
+    context: Context
+  ): Promise<Result[]> {
+    const { currentFacts, nextFacts } = this.generateFacts(
+      currentJsonLike,
+      nextJsonLike
+    );
+
+    return this.runRulesWithFacts({
+      currentJsonLike,
+      nextJsonLike,
+      currentFacts,
+      nextFacts,
+      changelog: factsToChangelog(currentFacts, nextFacts),
+      context,
+    });
   }
 }

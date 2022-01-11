@@ -146,7 +146,7 @@ const compareSpecs = async ({
             validateOpenApiV3Document(from.jsonLike);
             validateOpenApiV3Document(to.jsonLike);
 
-            const results = await generateSpecResults(
+            const { results, changes } = await generateSpecResults(
               checkService,
               from,
               to,

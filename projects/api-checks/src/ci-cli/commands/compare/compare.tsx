@@ -219,7 +219,7 @@ function Compare<T>(props: {
         ]);
 
         try {
-          const results = await generateSpecResults(
+          const { results, changes } = await generateSpecResults(
             props.apiCheckService,
             from,
             to,
