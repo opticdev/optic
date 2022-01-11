@@ -36,6 +36,7 @@ import {
   RenderFlatOpenAPI,
 } from './render/render-flat-openapi';
 export { defaultEmptySpec } from './openapi3/constants';
+export * from './ci-types';
 
 export {
   validateOpenApiV3Document,

@@ -5,6 +5,7 @@ import { Box, render, Text, useApp, useStdout } from 'ink';
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
+  CompareFileJson,
 } from '@useoptic/openapi-utilities';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { SpecComparison } from './components';
@@ -49,7 +50,7 @@ const parseContextObject = (context?: string): any => {
   }
 };
 
-export const registerCompare = <T extends {}>(
+export const registerCompare = (
   cli: Command,
   projectName: string,
   rulesetServices: OpticCINamedRulesets
@@ -227,14 +228,10 @@ function Compare<T>(props: {
           );
 
           if (props.shouldGenerateFile) {
+            const fileOutput: CompareFileJson = { results, changes };
             const compareOutputLocation = await writeFile(
               DEFAULT_COMPARE_OUTPUT_FILENAME,
-              Buffer.from(
-                JSON.stringify({
-                  results,
-                  changes,
-                })
-              )
+              Buffer.from(JSON.stringify(fileOutput))
             );
             !isStale && setOutputFileLocation(compareOutputLocation);
           }

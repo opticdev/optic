@@ -8,6 +8,7 @@ import {
   IChange,
   OpenApiFact,
   validateOpenApiV3Document,
+  BulkCompareFileJson,
 } from '@useoptic/openapi-utilities';
 import { ParseOpenAPIResult } from '@useoptic/openapi-io';
 import { SpecComparison } from './components';
@@ -27,7 +28,7 @@ import { SourcemapRendererEnum } from './components/render-results';
 import { trackEvent } from '../../segment';
 import { DEFAULT_BULK_COMPARE_OUTPUT_FILENAME } from '../../constants';
 
-export const registerBulkCompare = <T extends {}>(
+export const registerBulkCompare = (
   cli: Command,
   projectName: string,
   rulesetServices: OpticCINamedRulesets
@@ -102,7 +103,7 @@ export const registerBulkCompare = <T extends {}>(
 type Comparison = {
   id: string;
   fromFileName?: string;
-  toFileName: string;
+  toFileName?: string;
   context: any;
 } & (
   | { loading: true }
@@ -333,8 +334,7 @@ const BulkCompare: FC<{
           : undefined;
 
         if (!maybeError) {
-          // TODO create shared typings
-          const fileContents = {
+          const fileContents: BulkCompareFileJson = {
             comparisons: [...finalComparisons].map(([, comparison]) => {
               if (comparison.loading || comparison.error) {
                 throw new Error(
@@ -344,6 +344,10 @@ const BulkCompare: FC<{
               return {
                 results: comparison.data.results,
                 changes: comparison.data.changes,
+                inputs: {
+                  from: comparison.fromFileName,
+                  to: comparison.toFileName,
+                },
               };
             }),
           };
@@ -382,13 +386,13 @@ const BulkCompare: FC<{
       {[...comparisons.values()].map((comparison) => {
         return (
           <Box
-            key={comparison.fromFileName + comparison.toFileName}
+            key={comparison.fromFileName || '' + comparison.toFileName || ''}
             flexDirection="column"
           >
             <Box>
               <Text>
                 Comparing {comparison.fromFileName || 'Empty spec'} to{' '}
-                {comparison.toFileName}
+                {comparison.toFileName || 'Empty spec'}
               </Text>
             </Box>
             <Box>

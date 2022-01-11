@@ -1,6 +1,4 @@
-import React from 'react';
 import { program as cli } from 'commander';
-const packageJson = require('../../package.json');
 import { ApiCheckService } from '../sdk/api-check-service';
 import { registerUpload } from './commands/upload';
 import { registerGithubComment } from './commands/comment';
@@ -8,8 +6,9 @@ import { registerBulkCompare, registerCompare } from './commands/compare';
 import { initSentry } from './sentry';
 import { initSegment } from './segment';
 import { OpticCINamedRulesets } from '../sdk/ruleset';
+const packageJson = require('../../package.json');
 
-export function makeCiCliWithNamedRules<T>(
+export function makeCiCliWithNamedRules(
   forProject: string,
   rulesetServices: OpticCINamedRulesets,
   options: {
