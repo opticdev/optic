@@ -1,6 +1,7 @@
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
+  NormalizedCiContext,
 } from '@useoptic/openapi-utilities';
 import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
 import {
@@ -31,17 +32,9 @@ const loadSpecFile = async (fileName: string): Promise<Buffer> => {
 const startSession = async (
   opticClient: OpticBackendClient,
   runArgs: CiRunArgs,
-  contextBuffer: Buffer
+  ciContext: NormalizedCiContext
 ): Promise<string> => {
   if (runArgs.provider === 'github') {
-    const {
-      organization,
-      pull_request,
-      run,
-      commit_hash,
-      repo,
-    } = readAndValidateGithubContext(contextBuffer);
-
     const sessionId = await opticClient.startSession(
       SessionType.GithubActions,
       {
@@ -52,25 +45,11 @@ const startSession = async (
           rules: runArgs.compare,
           provider: runArgs.provider,
         },
-        github_data: {
-          organization,
-          repo,
-          pull_request,
-          run,
-          commit_hash,
-        },
+        github_data: ciContext,
       }
     );
     return sessionId;
   } else if (runArgs.provider === 'circleci') {
-    const {
-      organization,
-      pull_request,
-      run,
-      commit_hash,
-      repo,
-    } = readAndValidateCircleCiContext(contextBuffer);
-
     const sessionId = await opticClient.startSession(SessionType.CircleCi, {
       run_args: {
         from: runArgs.from || '',
@@ -79,17 +58,22 @@ const startSession = async (
         rules: runArgs.compare,
         provider: runArgs.provider,
       },
-      circle_ci_data: {
-        organization,
-        repo,
-        pull_request,
-        run,
-        commit_hash,
-      },
+      circle_ci_data: ciContext,
     });
     return sessionId;
   }
   throw new Error(`Unrecognized provider ${runArgs.provider}`);
+};
+
+export const normalizeCiContext = (
+  provider: 'github' | 'circleci',
+  contextBuffer: Buffer
+): NormalizedCiContext => {
+  if (provider === 'github') {
+    return readAndValidateGithubContext(contextBuffer);
+  } else {
+    return readAndValidateCircleCiContext(contextBuffer);
+  }
 };
 
 export const loadAndValidateSpecFiles = async (from?: string, to?: string) => {
@@ -118,10 +102,10 @@ export const loadAndValidateSpecFiles = async (from?: string, to?: string) => {
 export const uploadRun = async (
   opticClient: OpticBackendClient,
   fileMap: Record<UploadSlot, Buffer>,
-  runArgs: CiRunArgs
+  runArgs: CiRunArgs,
+  ciContext: NormalizedCiContext
 ) => {
-  const contextFileBuffer = fileMap.GithubActionsEvent; // This should be identical to the other context
-  const sessionId = await startSession(opticClient, runArgs, contextFileBuffer);
+  const sessionId = await startSession(opticClient, runArgs, ciContext);
 
   const uploadUrls = await opticClient.getUploadUrls(sessionId);
 

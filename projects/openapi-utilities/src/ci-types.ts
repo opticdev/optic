@@ -1,12 +1,23 @@
 import { IChange, OpenApiFact } from './openapi3/sdk/types';
 
+export type NormalizedCiContext = {
+  organization: string;
+  pull_request: number;
+  run: number;
+  commit_hash: string;
+  repo: string;
+};
+
 export type CompareFileJson = {
   results: any[]; // TODO change type
   changes: IChange<OpenApiFact>[];
 };
 
 export type UploadFileJson = {
+  results: any[]; // TODO change type
+  changes: IChange<OpenApiFact>[];
   opticWebUrl: string;
+  ciContext: NormalizedCiContext;
 };
 
 export type BulkCompareFileJson = {
@@ -30,4 +41,5 @@ export type BulkUploadFileJson = {
     };
     opticWebUrl: string;
   }[];
+  ciContext: NormalizedCiContext;
 };

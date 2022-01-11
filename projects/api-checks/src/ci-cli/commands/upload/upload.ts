@@ -1,5 +1,5 @@
 import { Command, Option } from 'commander';
-import { UploadFileJson } from '@useoptic/openapi-utilities';
+import { CompareFileJson, UploadFileJson } from '@useoptic/openapi-utilities';
 import { OpticBackendClient, UploadSlot } from './optic-client';
 import { loadFile, writeFile } from '../utils';
 import { wrapActionHandlerWithSentry } from '../../sentry';
@@ -8,6 +8,7 @@ import {
   CiRunArgs,
   loadAndValidateSpecFiles,
   uploadRun,
+  normalizeCiContext,
 } from './shared-upload';
 
 export const registerUpload = (
@@ -63,6 +64,14 @@ export const uploadCiRun = async (
     loadFile(runArgs.compare),
     loadAndValidateSpecFiles(runArgs.from, runArgs.to),
   ]);
+  const normalizedCiContext = normalizeCiContext(
+    runArgs.provider,
+    contextFileBuffer
+  );
+
+  const { results, changes }: CompareFileJson = JSON.parse(
+    rulesFileS3Buffer.toString()
+  );
 
   console.log('Uploading OpenAPI files to Optic...');
 
@@ -77,10 +86,14 @@ export const uploadCiRun = async (
   const { web_url: opticWebUrl } = await uploadRun(
     opticClient,
     fileMap,
-    runArgs
+    runArgs,
+    normalizedCiContext
   );
   const fileOutput: UploadFileJson = {
+    results,
+    changes,
     opticWebUrl,
+    ciContext: normalizedCiContext,
   };
   const uploadFileLocation = await writeFile(
     DEFAULT_UPLOAD_OUTPUT_FILENAME, // TODO maybe make this a cli argument?

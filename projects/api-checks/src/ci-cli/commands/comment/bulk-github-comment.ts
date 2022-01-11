@@ -8,7 +8,7 @@ import {
 import { trackEvent } from '../../segment';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { findOpticCommentId } from './shared-comment';
-import { UploadFileJson } from '@useoptic/openapi-utilities';
+import { BulkUploadFileJson } from '@useoptic/openapi-utilities';
 
 export const registerGithubComment = (cli: Command) => {
   cli
@@ -53,7 +53,7 @@ export const registerGithubComment = (cli: Command) => {
 // The identifier we use to find the Optic Comment
 // TODO is there a better way to track and identify Optic comments for comment / replace?
 const GITHUB_COMMENT_IDENTIFIER =
-  'INTERNAL-OPTIC-COMMENT-IDENTIFIER-1234567890';
+  'INTERNAL-OPTIC-BULK-COMMENT-IDENTIFIER-1234567890';
 
 const sendMessage = async ({
   githubToken,
@@ -70,9 +70,14 @@ const sendMessage = async ({
 }) => {
   const uploadFileResults = await loadFile(upload);
   // TODO write this in a validation step and error to give better errors to the user
-  const { opticWebUrl }: UploadFileJson = JSON.parse(
+  const { comparisons, ciContext }: BulkUploadFileJson = JSON.parse(
     uploadFileResults.toString()
   );
+
+  if (comparisons.length === 0) {
+    console.log('No comparisons were found, exiting.');
+    return;
+  }
 
   const octokit = new Octokit({
     auth: githubToken,
@@ -86,7 +91,7 @@ const sendMessage = async ({
     pull_number,
   });
 
-  trackEvent('optic_ci.github_comment', `${owner}-optic-ci`, {
+  trackEvent('optic_ci.bulk_github_comment', `${owner}-optic-ci`, {
     owner,
     repo,
     pull_number,
@@ -104,12 +109,32 @@ const sendMessage = async ({
     pull_number
   );
 
-  const body = `
-  <!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
-  ## View Changes in Optic
+  const bodyDetails = comparisons.reduce((acc, comparison) => {
+    const failingChecks = comparison.results.filter((result) => !result.passed)
+      .length;
+    const totalChecks = comparison.results.filter((result) => !result.passed)
+      .length;
+    const passingChecks = totalChecks - failingChecks;
+    const comparisonRow = `
+      #### Comparing ${comparison.inputs.from || 'Empty Spec'} to ${
+      comparison.inputs.to || 'Empty Spec'
+    }
+      Number of changes: ${comparison.changes.length}
+      ${passingChecks} checks passed out of ${totalChecks} (${failingChecks} failing checks).
 
-  The OpenAPI changes can be viewed at ${opticWebUrl}
-`;
+      View results at ${comparison.opticWebUrl}.
+      `;
+    return acc + '<br/>' + comparisonRow;
+  }, '');
+
+  const body = `
+    <!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
+    ## View Changes in Optic
+  
+    The following changes were detected in the latest run for commit: ${ciContext.commit_hash}:
+
+    ${bodyDetails}
+  `;
 
   if (maybeOpticCommentId) {
     octokit.rest.issues.updateComment({
