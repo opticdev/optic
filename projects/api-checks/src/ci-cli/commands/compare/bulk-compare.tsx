@@ -17,9 +17,11 @@ import { generateSpecResults } from './generateSpecResults';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { UserError } from '../../errors';
 import { SourcemapRendererEnum } from './components/render-results';
+import { trackEvent } from '../../segment';
 
 export const registerBulkCompare = <T extends {}>(
   cli: Command,
+  projectName: string,
   rulesetServices: OpticCINamedRulesets
 ) => {
   cli
@@ -78,6 +80,7 @@ export const registerBulkCompare = <T extends {}>(
               input={input}
               verbose={verbose}
               output={output}
+              projectName={projectName}
             />,
             { exitOnCtrlC: true }
           );
@@ -219,8 +222,9 @@ const BulkCompare: FC<{
   checkService: ApiCheckService<any>;
   input: string;
   verbose: boolean;
+  projectName: string;
   output: 'pretty' | 'json' | 'plain';
-}> = ({ input, verbose, output, checkService }) => {
+}> = ({ input, verbose, output, checkService, projectName }) => {
   const { exit } = useApp();
   const stdout = useStdout();
   const stderr = useStderr();
@@ -233,6 +237,8 @@ const BulkCompare: FC<{
     (async () => {
       try {
         console.log('Reading input file...');
+        let numberOfErrors = 0;
+        let numberOfComparisonsWithErrors = 0;
         let hasChecksFailing = false;
         let hasError = false;
         const {
@@ -251,6 +257,11 @@ const BulkCompare: FC<{
                 const newComparisons = new Map(prevComparisons);
                 if (results.some((result) => !result.passed)) {
                   hasChecksFailing = true;
+                  numberOfComparisonsWithErrors += 1;
+                  numberOfErrors += results.reduce(
+                    (count, result) => (result.passed ? count : count + 1),
+                    0
+                  );
                 }
                 newComparisons.set(id, {
                   ...prevComparisons.get(id)!,
@@ -275,6 +286,14 @@ const BulkCompare: FC<{
                 return newComparisons;
               });
           },
+        });
+
+        trackEvent('optic_ci.bulk_compare', `${projectName}-optic-ci`, {
+          isInCi: process.env.CI === 'true',
+          numberOfErrors,
+          numberOfComparisons: initialComparisons.size,
+          numberOfComparisonsWithErrors,
+          // TODO add in number of changes between openapi files
         });
 
         const maybeError = skippedParsing

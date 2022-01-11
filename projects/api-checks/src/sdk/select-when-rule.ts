@@ -110,7 +110,7 @@ export function createSelectJsonPathHelper(
           (current: T[], next: T[], docsHelper: DocsLinkHelper) => void
         > = {
           must: selectRuleHandler(true),
-          should: selectRuleHandler(false),
+          // should: selectRuleHandler(false),
         };
         return rule;
       },
