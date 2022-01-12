@@ -120,7 +120,7 @@ const sendMessage = async ({
 
   The latest run at commit ${ciContext.commit_hash} detected:
   - ${changes.length} API changes
-  - ${passingChecks} checks passed out of ${totalChecks} (${failingChecks} failing checks).
+  - ${passingChecks} checks passed out of ${totalChecks} total checks (${failingChecks} failing checks).
 
   The API changes can be viewed at ${opticWebUrl}
 `;

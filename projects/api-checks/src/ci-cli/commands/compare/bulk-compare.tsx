@@ -47,6 +47,11 @@ export const registerBulkCompare = (
         "show 'pretty' output for interactive usage or 'json' for JSON, defaults to 'pretty'"
       ).choices(['pretty', 'json', 'plain'])
     )
+    .option(
+      '--create-file',
+      'creates a file with the results of the run in json format',
+      false
+    )
     .action(
       wrapActionHandlerWithSentry(
         async ({
@@ -54,11 +59,13 @@ export const registerBulkCompare = (
           verbose,
           ruleset,
           output = 'pretty',
+          createFile,
         }: {
           input: string;
           verbose: boolean;
           ruleset: string;
           output?: 'pretty' | 'json' | 'plain';
+          createFile: boolean;
         }) => {
           const checkService = rulesetServices[ruleset];
           if (!checkService) {
@@ -90,6 +97,7 @@ export const registerBulkCompare = (
               verbose={verbose}
               output={output}
               projectName={projectName}
+              createFile={createFile}
             />,
             { exitOnCtrlC: true }
           );
@@ -253,12 +261,16 @@ const BulkCompare: FC<{
   verbose: boolean;
   projectName: string;
   output: 'pretty' | 'json' | 'plain';
-}> = ({ input, verbose, output, checkService, projectName }) => {
+  createFile: boolean;
+}> = ({ input, verbose, output, checkService, projectName, createFile }) => {
   const { exit } = useApp();
   const stdout = useStdout();
   const stderr = useStderr();
   const [comparisons, setComparisons] = useState<Map<string, Comparison>>(
     new Map()
+  );
+  const [outputFileLocation, setOutputFileLocation] = useState<string | null>(
+    null
   );
 
   useEffect(() => {
@@ -351,10 +363,13 @@ const BulkCompare: FC<{
               };
             }),
           };
-          await writeFile(
-            DEFAULT_BULK_COMPARE_OUTPUT_FILENAME,
-            Buffer.from(JSON.stringify(fileContents))
-          );
+          if (createFile) {
+            const compareOutputLocation = await writeFile(
+              DEFAULT_BULK_COMPARE_OUTPUT_FILENAME,
+              Buffer.from(JSON.stringify(fileContents))
+            );
+            !isStale && setOutputFileLocation(compareOutputLocation);
+          }
         }
         exit(maybeError);
       } catch (e) {
@@ -414,6 +429,9 @@ const BulkCompare: FC<{
           </Box>
         );
       })}
+      {outputFileLocation && (
+        <Text>Results of this run can be found at: {outputFileLocation}</Text>
+      )}
     </Box>
   );
 };

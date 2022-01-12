@@ -98,7 +98,7 @@ const bulkUploadCiRun = async (
     return;
   }
   console.log(
-    `Uploading comparisons (${filteredComparisons.length}/${comparisons.length} had valid changes)`
+    `Uploading comparisons (${filteredComparisons.length}/${comparisons.length} comparisons had at least 1 change)`
   );
 
   const uploadedComparisons = [];
@@ -152,6 +152,6 @@ const bulkUploadCiRun = async (
     Buffer.from(JSON.stringify(fileOutput))
   );
 
-  console.log('Successfully uploaded files to Optic');
+  console.log('Successfully uploaded all files to Optic');
   console.log(`Results of this run can be found at ${uploadFileLocation}`);
 };

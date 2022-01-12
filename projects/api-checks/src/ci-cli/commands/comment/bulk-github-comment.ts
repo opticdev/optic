@@ -12,7 +12,7 @@ import { BulkUploadFileJson } from '@useoptic/openapi-utilities';
 
 export const registerBulkGithubComment = (cli: Command) => {
   cli
-    .command('github-comment')
+    .command('bulk-github-comment')
     .requiredOption('--token <token>', 'github token')
     .addOption(
       new Option(
@@ -23,14 +23,17 @@ export const registerBulkGithubComment = (cli: Command) => {
         .makeOptionMandatory()
     )
     .requiredOption('--ci-context <ciContext>', 'file with github context')
-    .requiredOption('--upload <upload>', 'the file path to the upload output')
+    .requiredOption(
+      '--bulk-upload <bulkUpload>',
+      'the file path to the bulk upload output'
+    )
     .action(
       wrapActionHandlerWithSentry(
         async (runArgs: {
           token: string;
           ciContext: string;
           provider: 'github' | 'circleci';
-          upload: string;
+          bulkUpload: string;
         }) => {
           const fileBuffer = await loadFile(runArgs.ciContext);
           const { organization: owner, repo, pull_request: pull_number } =
@@ -43,7 +46,7 @@ export const registerBulkGithubComment = (cli: Command) => {
             owner: owner,
             repo: repo,
             pull_number: Number(pull_number),
-            upload: runArgs.upload,
+            upload: runArgs.bulkUpload,
           });
         }
       )
@@ -116,24 +119,24 @@ const sendMessage = async ({
       .length;
     const passingChecks = totalChecks - failingChecks;
     const comparisonRow = `
-      #### Comparing ${comparison.inputs.from || 'Empty Spec'} to ${
+### Comparing ${comparison.inputs.from || 'Empty Spec'} to ${
       comparison.inputs.to || 'Empty Spec'
     }
-      Number of changes: ${comparison.changes.length}
-      ${passingChecks} checks passed out of ${totalChecks} (${failingChecks} failing checks).
+Number of changes: ${comparison.changes.length}
+${passingChecks} checks passed out of ${totalChecks} (${failingChecks} failing checks).
 
-      View results at ${comparison.opticWebUrl}.
-      `;
-    return acc + '<br/>' + comparisonRow;
+View results at ${comparison.opticWebUrl}.
+`;
+    return acc + comparisonRow;
   }, '');
 
   const body = `
-    <!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
-    ## View Changes in Optic
-  
-    The following changes were detected in the latest run for commit: ${ciContext.commit_hash}:
+<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
+## View Changes in Optic
 
-    ${bodyDetails}
+The following changes were detected in the latest run for commit: ${ciContext.commit_hash}:
+
+${bodyDetails}
   `;
 
   if (maybeOpticCommentId) {
