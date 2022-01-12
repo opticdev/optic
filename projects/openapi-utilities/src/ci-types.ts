@@ -1,3 +1,4 @@
+import { ResultWithSourcemap } from './types';
 import { IChange, OpenApiFact } from './openapi3/sdk/types';
 
 export type NormalizedCiContext = {
@@ -9,12 +10,12 @@ export type NormalizedCiContext = {
 };
 
 export type CompareFileJson = {
-  results: any[]; // TODO change type
+  results: ResultWithSourcemap[];
   changes: IChange<OpenApiFact>[];
 };
 
 export type UploadFileJson = {
-  results: any[]; // TODO change type
+  results: ResultWithSourcemap[];
   changes: IChange<OpenApiFact>[];
   opticWebUrl: string;
   ciContext: NormalizedCiContext;
@@ -22,7 +23,7 @@ export type UploadFileJson = {
 
 export type BulkCompareFileJson = {
   comparisons: {
-    results: any[]; // TODO change type
+    results: ResultWithSourcemap[];
     changes: IChange<OpenApiFact>[];
     inputs: {
       from?: string;
@@ -33,7 +34,7 @@ export type BulkCompareFileJson = {
 
 export type BulkUploadFileJson = {
   comparisons: {
-    results: any[]; // TODO change type
+    results: ResultWithSourcemap[];
     changes: IChange<OpenApiFact>[];
     inputs: {
       from?: string;
