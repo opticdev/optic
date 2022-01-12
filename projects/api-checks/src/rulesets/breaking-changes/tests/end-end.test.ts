@@ -1,8 +1,10 @@
 import path from 'path';
-import { defaultEmptySpec } from '@useoptic/openapi-utilities';
+import {
+  defaultEmptySpec,
+  ResultWithSourcemap,
+} from '@useoptic/openapi-utilities';
 import { sourcemapReader } from '@useoptic/openapi-io';
-import { breakingChanges } from '../service';
-import { ResultWithSourcemap } from '@useoptic/openapi-utilities';
+import { breakingChangeRules } from '../service';
 import { parseSpecVersion, specFromInputToResults } from '../../../index';
 
 describe('end-end-tests', () => {
@@ -106,7 +108,7 @@ describe('end-end-tests', () => {
     const toSpecSig = parseSpecVersion(to, defaultEmptySpec);
     const toSpec = await specFromInputToResults(toSpecSig, workingDir);
 
-    const checkService = breakingChanges();
+    const checkService = breakingChangeRules();
     const checkResults = await checkService.runRules(
       fromSpec.jsonLike,
       toSpec.jsonLike,

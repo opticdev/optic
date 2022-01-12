@@ -99,7 +99,6 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
         filePath: lookupResult.filePath,
         startLine,
         endLine,
-        // preview,
         startPosition: startPosition,
         endPosition: endPosition,
       };
@@ -119,7 +118,6 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
       filePath: '',
       startLine,
       endLine,
-      // preview,
       startPosition: startPosition,
       endPosition: endPosition,
     };
