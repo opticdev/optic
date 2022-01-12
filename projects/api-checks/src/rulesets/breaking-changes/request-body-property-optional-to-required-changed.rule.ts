@@ -1,7 +1,9 @@
 import { check } from '../../sdk/define-check-test-dsl/define-check';
 import { scenario } from '../../sdk/define-check-test-dsl/scenarios';
 
-export default check('prevent changing optional to required')
+export default check(
+  'prevent changing request body property from optional to required'
+)
   .implementation(({ bodyProperties }) => {
     const { expect } = require('chai');
     bodyProperties.changed.must(
