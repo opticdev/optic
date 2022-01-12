@@ -5,16 +5,13 @@ import {
   OpenApiFact,
   OpenApiKind,
   OpenApiOperationFact,
-} from '@useoptic/openapi-utilities';
-import {
   EntityRule,
-  newDocsLinkHelper,
   Result,
-  runCheck,
   StructuralContext,
-} from './types';
+} from '@useoptic/openapi-utilities';
 import equals from 'lodash.isequal';
 import { IPathComponent } from '@useoptic/openapi-utilities/build/openapi3/sdk/types';
+import { runCheck, newDocsLinkHelper } from '../utils';
 
 export function genericEntityRuleImpl<
   NarrowedOpenApiFact, // TODO require Type to be a type of `OpenApiFact`

@@ -1,18 +1,14 @@
-import {
-  DocsLinkHelper,
-  newDocsLinkHelper,
-  Result,
-  runCheck,
-  ShouldOrMust,
-} from './types';
 import { OpenAPIV3 } from 'openapi-types';
 import jsonpath from 'jsonpath';
 import {
+  DocsLinkHelper,
+  Result,
+  ShouldOrMust,
   ConceptualLocation,
   IChange,
-  OpenApiFact,
   ChangeType,
 } from '@useoptic/openapi-utilities';
+import { runCheck, newDocsLinkHelper } from '../utils';
 import equals from 'fast-deep-equal';
 
 export function createSelectJsonPathHelper(

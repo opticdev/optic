@@ -1,6 +1,6 @@
 import { Box, Text } from 'ink';
 import React from 'react';
-import { Result, ResultWithSourcemap } from '../../../../sdk/types';
+import { ResultWithSourcemap } from '@useoptic/openapi-utilities';
 import groupBy from 'lodash.groupby';
 import Link from 'ink-link';
 

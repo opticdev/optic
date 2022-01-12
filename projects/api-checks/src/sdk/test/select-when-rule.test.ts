@@ -1,19 +1,18 @@
-import { createSelectJsonPathHelper } from "../select-when-rule";
-import { OpenAPIV3 } from "@useoptic/openapi-utilities";
-import { Result } from "../types";
+import { createSelectJsonPathHelper } from '../select-when-rule';
+import { OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 
 export const spec: OpenAPIV3.OperationObject = {
-  summary: "Hello",
+  summary: 'Hello',
   responses: {},
 };
 
 export const spec2: OpenAPIV3.OperationObject = {
-  summary: "Goodbye",
+  summary: 'Goodbye',
   responses: {},
 };
 
-describe("select when rules", () => {
-  it("works for json paths", async () => {
+describe('select when rules', () => {
+  it('works for json paths', async () => {
     const checks: Promise<Result>[] = [];
 
     const { selectJsonPath } = createSelectJsonPathHelper(
@@ -22,18 +21,18 @@ describe("select when rules", () => {
           current: spec,
           next: spec2,
           conceptualLocation: {
-            path: "/my-path",
-            method: "GET",
+            path: '/my-path',
+            method: 'GET',
           },
         },
       ],
       (check) => checks.push(check)
     );
-    selectJsonPath("summaries", "$..summary")
+    selectJsonPath('summaries', '$..summary')
       .when((current, next) => {
         return true;
       })
-      .must("be amazing", (current, next) => {
+      .must('be amazing', (current, next) => {
         if (current[0] !== next[0]) {
           throw new Error("can't change the summary!");
         }
@@ -43,7 +42,7 @@ describe("select when rules", () => {
     expect(results).toMatchSnapshot();
   });
 
-  it("empty json paths will not break", async () => {
+  it('empty json paths will not break', async () => {
     const checks: Promise<Result>[] = [];
 
     const { selectJsonPath } = createSelectJsonPathHelper(
@@ -52,19 +51,19 @@ describe("select when rules", () => {
           current: spec,
           next: spec2,
           conceptualLocation: {
-            path: "/my-path",
-            method: "GET",
+            path: '/my-path',
+            method: 'GET',
           },
         },
       ],
       (check) => checks.push(check)
     );
 
-    selectJsonPath("summaries", "$..summary")
+    selectJsonPath('summaries', '$..summary')
       .when((current, next) => {
         return true;
       })
-      .must("be amazing", (current, next) => {
+      .must('be amazing', (current, next) => {
         if (current[0] !== next[0]) {
           throw new Error("can't change the summary!");
         }
@@ -83,19 +82,19 @@ describe("select when rules", () => {
           current: spec,
           next: spec2,
           conceptualLocation: {
-            path: "/my-path",
-            method: "GET",
+            path: '/my-path',
+            method: 'GET',
           },
         },
       ],
       (check) => checks.push(check)
     );
 
-    selectJsonPath("summaries", "$..summary")
+    selectJsonPath('summaries', '$..summary')
       .when((current, next) => {
         return false;
       })
-      .must("be amazing", (current, next) => {
+      .must('be amazing', (current, next) => {
         console.log(current);
         console.log(next);
         if (current[0] !== next[0]) {

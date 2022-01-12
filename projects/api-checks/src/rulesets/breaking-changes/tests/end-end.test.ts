@@ -1,16 +1,15 @@
 import path from 'path';
-import { SynkApiCheckContext } from '../../dsl';
-import { newSnykApiCheckService } from '../../service';
-import { specFromInputToResults, parseSpecVersion } from '@useoptic/api-checks';
 import {
   defaultEmptySpec,
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { sourcemapReader } from '@useoptic/openapi-io';
+import { breakingChangeRules } from '../service';
+import { parseSpecVersion, specFromInputToResults } from '../../../index';
 
 describe('end-end-tests', () => {
   const inputsDir = path.resolve(
-    path.join(__dirname, '../../../end-end-tests/api-standards')
+    path.join(__dirname, '../../../../end-end-tests/api-standards')
   );
 
   const resourceDate = (resource: string, date: string) =>
@@ -101,7 +100,7 @@ describe('end-end-tests', () => {
     from: string | undefined,
     to: string | undefined,
     workingDir: string,
-    context: SynkApiCheckContext,
+    context: {},
     shouldPass: boolean
   ) {
     const fromSpecSig = parseSpecVersion(from, defaultEmptySpec);
@@ -109,7 +108,7 @@ describe('end-end-tests', () => {
     const toSpecSig = parseSpecVersion(to, defaultEmptySpec);
     const toSpec = await specFromInputToResults(toSpecSig, workingDir);
 
-    const checkService = newSnykApiCheckService();
+    const checkService = breakingChangeRules();
     const checkResults = await checkService.runRules(
       fromSpec.jsonLike,
       toSpec.jsonLike,
@@ -140,12 +139,6 @@ describe('end-end-tests', () => {
         );
 
         const filePath = sourcemap?.filePath.split('end-end-tests')[1];
-
-        // if (!filePath) {
-        //   console.log(checkResult.change.location.jsonPath);
-        //   console.log("not found");
-        // }
-
         return {
           ...checkResult,
           sourcemap: {

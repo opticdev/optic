@@ -1,7 +1,6 @@
 import { BeforeAndAfter } from './scenarios';
 import { ApiCheckService } from '../api-check-service';
 import { ApiChangeDsl } from '../api-change-dsl';
-import { Result } from '../types';
 import invariant from 'ts-invariant';
 
 export interface IApiCheckDefinition<CheckConfig> {

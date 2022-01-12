@@ -3,9 +3,9 @@ import {
   factsToChangelog,
   OpenApiFact,
   IChange,
+  ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { ApiCheckService } from '../../../sdk/api-check-service';
-import { ResultWithSourcemap } from '../../../sdk/types';
 
 export const generateSpecResults = async <T extends {}>(
   checkService: ApiCheckService<T>,

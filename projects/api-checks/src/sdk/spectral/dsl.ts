@@ -1,6 +1,7 @@
 import { ISpectralDiagnostic, Spectral } from '@stoplight/spectral-core';
-import { ApiCheckDsl, Result } from '../types';
 import {
+  ApiCheckDsl,
+  Result,
   ConceptualLocation,
   IFact,
   ILocation,

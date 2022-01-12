@@ -9,11 +9,11 @@ import {
   OpenApiFact,
   validateOpenApiV3Document,
   BulkCompareFileJson,
+  ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { ParseOpenAPIResult } from '@useoptic/openapi-io';
 import { SpecComparison } from './components';
 import { ApiCheckService } from '../../../sdk/api-check-service';
-import { ResultWithSourcemap } from '../../../sdk/types';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import {
   loadFile,

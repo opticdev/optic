@@ -1,5 +1,4 @@
 import {
-  DerefToSource,
   JsonPath,
   JsonSchemaSourcemap,
   resolveJsonPointerInYamlAst,
@@ -7,8 +6,15 @@ import {
 } from './openapi-sourcemap-parser';
 import fs from 'fs-extra';
 import { Kind, YamlMap, YAMLNode, YAMLSequence } from 'yaml-ast-parser';
-import equals from 'fast-deep-equal';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { ILookupLinePreviewResult } from '@useoptic/openapi-utilities';
+
+export type ILookupPathResult =
+  | undefined
+  | { filePath: string; startsAt: JsonPath; astNode: YAMLNode };
+export type ILookupFileResult =
+  | undefined
+  | { filePath: string; startsAt: JsonPath };
 
 export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
   const rootFileNumber = sourcemap.files.find(
@@ -84,7 +90,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
 
       const [startPosition, endPosition] = astNodesToStartEndPosition(astNode);
 
-      const { startLine, endLine, preview } = positionToLine(
+      const { startLine, endLine } = positionToLine(
         contents,
         startPosition,
         endPosition
@@ -93,7 +99,6 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
         filePath: lookupResult.filePath,
         startLine,
         endLine,
-        preview,
         startPosition: startPosition,
         endPosition: endPosition,
       };
@@ -104,7 +109,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
   const findLinesForAstAndContents = (astNode: YAMLNode, contents: string) => {
     const [startPosition, endPosition] = astNodesToStartEndPosition(astNode);
 
-    const { startLine, endLine, preview } = positionToLine(
+    const { startLine, endLine } = positionToLine(
       contents,
       startPosition,
       endPosition
@@ -113,7 +118,6 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
       filePath: '',
       startLine,
       endLine,
-      preview,
       startPosition: startPosition,
       endPosition: endPosition,
     };
@@ -127,21 +131,6 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
     findLinesForAstAndContents,
   };
 }
-
-type ILookupPathResult =
-  | undefined
-  | { filePath: string; startsAt: JsonPath; astNode: YAMLNode };
-type ILookupFileResult = undefined | { filePath: string; startsAt: JsonPath };
-export type ILookupLinePreviewResult =
-  | undefined
-  | {
-      endLine: number;
-      endPosition: number;
-      filePath: string;
-      startLine: number;
-      preview: string;
-      startPosition: number;
-    };
 
 //////////////////////////////////////////////////////////
 

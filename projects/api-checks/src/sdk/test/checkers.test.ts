@@ -1,31 +1,31 @@
-import { Checker } from "../checker";
-import { IChange, OpenApiFact } from "@useoptic/openapi-utilities";
-import { newDocsLinkHelper } from "../types";
-const { assert } = require("chai"); // Using Assert style
+import { Checker } from '../checker';
+import { IChange, OpenApiFact } from '@useoptic/openapi-utilities';
+import { newDocsLinkHelper } from '../../utils';
+const { assert } = require('chai'); // Using Assert style
 
 const change: IChange<OpenApiFact> = {
   location: {
-    kind: "simulated",
-    jsonPath: "/",
+    kind: 'simulated',
+    jsonPath: '/',
     conceptualPath: [],
     conceptualLocation: {
-      path: "/simulated",
-      method: "get",
+      path: '/simulated',
+      method: 'get',
     },
   },
 } as any;
 
-it("checks can run / fail using off-the-shelf test helpers", async (done) => {
+it('checks can run / fail using off-the-shelf test helpers', async (done) => {
   const check = new Checker();
   const docsHelper = newDocsLinkHelper();
   await check.runCheck(
     change,
     docsHelper,
-    "location",
-    "is a thing",
+    'location',
+    'is a thing',
     true,
     () => {
-      docsHelper.includeDocsLink("https://gitlab.com");
+      docsHelper.includeDocsLink('https://gitlab.com');
       assert(false, "it's broken!!!");
     }
   );
@@ -33,11 +33,11 @@ it("checks can run / fail using off-the-shelf test helpers", async (done) => {
   await check.runCheck(
     change,
     docsHelper2,
-    "location",
-    "is a an ok thing",
+    'location',
+    'is a an ok thing',
     true,
     () => {
-      docsHelper2.includeDocsLink("https://github.com");
+      docsHelper2.includeDocsLink('https://github.com');
       assert(true, "it's broken if you see this");
     }
   );

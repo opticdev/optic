@@ -1,7 +1,8 @@
-import { ApiCheckDsl, Result } from './types';
 import { OpenAPIV3 } from 'openapi-types';
 import flatten from 'lodash.flatten';
 import {
+  ApiCheckDsl,
+  Result,
   factsToChangelog,
   OpenAPITraverser,
   IChange,

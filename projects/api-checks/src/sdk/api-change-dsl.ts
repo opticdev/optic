@@ -13,19 +13,16 @@ import {
   OpenApiResponseFact,
   OpenAPIV3,
   queryChangelog,
-} from '@useoptic/openapi-utilities';
-import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import {
   ApiCheckDsl,
   DocsLinkHelper,
   EntityRule,
-  newDocsLinkHelper,
   Result,
-  runCheck,
   ShouldOrMust,
-} from './types';
+} from '@useoptic/openapi-utilities';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { genericEntityRuleImpl } from './generic-entity-rule-impl';
 import { createSelectJsonPathHelper } from './select-when-rule';
+import { runCheck, newDocsLinkHelper } from '../utils';
 
 export interface ApiCheckDslContext {}
 

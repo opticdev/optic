@@ -1,7 +1,4 @@
-import {
-  ILookupLinePreviewResult,
-  sourcemapReader,
-} from './parser/sourcemap-reader';
+import { sourcemapReader } from './parser/sourcemap-reader';
 import { inGit, loadSpecFromBranch } from './loaders/file-on-branch';
 import { loadSpecFromFile, loadSpecFromUrl } from './loaders/file';
 import {
@@ -34,4 +31,4 @@ export {
   WatchDependenciesHandler,
 };
 
-export type { JsonPath, ParseOpenAPIResult, ILookupLinePreviewResult };
+export type { JsonPath, ParseOpenAPIResult };

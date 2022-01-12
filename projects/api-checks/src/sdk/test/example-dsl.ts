@@ -1,17 +1,19 @@
-import { ApiCheckDsl, EntityRule, Result } from "../types";
-import { genericEntityRuleImpl } from "../generic-entity-rule-impl";
-import { OpenAPIV3 } from "openapi-types";
+import { genericEntityRuleImpl } from '../generic-entity-rule-impl';
+import { OpenAPIV3 } from 'openapi-types';
 import {
+  ApiCheckDsl,
+  EntityRule,
+  Result,
   IChange,
   IFact,
   OpenApiKind,
   OpenApiOperationFact,
   OpenApiFact,
-} from "@useoptic/openapi-utilities";
-import { jsonPointerHelpers } from "@useoptic/json-pointer-helpers";
+} from '@useoptic/openapi-utilities';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export type ExampleDslContext = {
-  maturity: "wip" | "beta" | "ga";
+  maturity: 'wip' | 'beta' | 'ga';
 };
 
 export class ExampleDsl implements ApiCheckDsl {
@@ -25,7 +27,7 @@ export class ExampleDsl implements ApiCheckDsl {
 
   getContext(): ExampleDslContext {
     return {
-      maturity: "wip",
+      maturity: 'wip',
     };
   }
 
