@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/example-snyk-api-checks",
   "packageManager": "yarn@3.0.2",
-  "version": "0.19.0",
+  "version": "0.19.2",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [

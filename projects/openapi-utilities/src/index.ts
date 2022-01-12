@@ -12,6 +12,7 @@ import {
   OpenApiBodyFact,
   OpenApiHeaderFact,
   OpenApiKind,
+  OpenApiParameterKind,
   OpenApiOperationFact,
   OpenApiRequestParameterFact,
   OpenApiResponseFact,
@@ -35,6 +36,7 @@ import {
   renderFlatOpenAPI,
   RenderFlatOpenAPI,
 } from './render/render-flat-openapi';
+import { ILookupLinePreviewResult } from './render/ast-helpers';
 export { defaultEmptySpec } from './openapi3/constants';
 export * from './ci-types';
 
@@ -49,6 +51,7 @@ export {
   OpenApiBodyFact,
   OpenAPIV3,
   OpenApiKind,
+  OpenApiParameterKind,
   OpenApiOperationFact,
   OpenApiHeaderFact,
   IFact,
@@ -70,4 +73,5 @@ export {
   RenderFlatJsonSchema,
   RenderFlatOpenAPI,
   ChangelogSelector,
+  ILookupLinePreviewResult,
 };

@@ -12,3 +12,17 @@ export enum OpenApiKind {
   Array = 'array',
   Primitive = 'primitive',
 }
+
+export type OpenApiParameterKind = Extract<
+  OpenApiKind,
+  | OpenApiKind.HeaderParameter
+  | OpenApiKind.PathParameter
+  | OpenApiKind.QueryParameter
+>;
+
+// allow for iterations and `.includes` calls
+export const OpenApiParameterKind: OpenApiKind[] = [
+  OpenApiKind.HeaderParameter,
+  OpenApiKind.PathParameter,
+  OpenApiKind.QueryParameter,
+];

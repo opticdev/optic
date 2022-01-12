@@ -1,7 +1,7 @@
 import { check } from '../../sdk/define-check-test-dsl/define-check';
 import { scenario } from '../../sdk/define-check-test-dsl/scenarios';
 
-const responseBodyPropertyRemoving = check('prevent removing properties')
+export default check('prevent removing properties')
   .implementation(({ bodyProperties }) => {
     const { expect } = require('chai');
     bodyProperties.removed.must('not be allowed', (property, context) => {

@@ -23,7 +23,14 @@ import {
   OpticCIRuleset,
 } from './sdk/ruleset';
 import { parseSpecVersion } from './ci-cli/commands/utils';
-import { packagedRules, standards } from './rulesets/packaged-rules';
+import {
+  packagedRules,
+  StandardApiChecks,
+  makeApiChecksForStandards,
+  standards,
+} from './rulesets/packaged-rules';
+import { check } from './sdk/define-check-test-dsl/define-check';
+
 export {
   ApiCheckService,
   DslConstructorInput,
@@ -49,8 +56,11 @@ export {
   OpticCIRuleset,
   mergeRulesets,
   disableRules,
+  check,
   OpticCINamedRulesets,
   ResultWithSourcemap,
   packagedRules as rulesets,
   standards,
+  makeApiChecksForStandards,
+  StandardApiChecks,
 };
