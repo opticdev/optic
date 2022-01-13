@@ -1,7 +1,19 @@
+import path from 'path';
+import dotenv from 'dotenv';
 import { expect } from 'chai';
 import { ApiCheckService } from './sdk/api-check-service';
 import { ExampleDsl, ExampleDslContext } from './sdk/test/example-dsl';
 import { makeCiCli } from './ci-cli/make-cli';
+
+if (process.env.OPTIC_DEBUG_ENV_FILE) {
+  console.log(`using overridden env ${process.env.OPTIC_DEBUG_ENV_FILE}`);
+}
+const envPath =
+  process.env.OPTIC_DEBUG_ENV_FILE || path.join(__dirname, '..', '.env');
+
+dotenv.config({
+  path: envPath,
+});
 
 const checker: ApiCheckService<ExampleDslContext> = new ApiCheckService<ExampleDslContext>();
 
@@ -27,7 +39,7 @@ checker.useDsl(
 );
 
 const cli = makeCiCli('play-thing', checker, {
-  opticToken: '123',
+  opticToken: process.env.OPTIC_TOKEN || '123',
 });
 
 cli.parse(process.argv);

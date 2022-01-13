@@ -3,7 +3,9 @@ import Analytics from 'analytics-node';
 let analytics: Analytics | null = null;
 
 export const initSegment = () => {
-  analytics = new Analytics('mJ6wOwH8Zhj7ZiR44pCDIV6yHejD6mVd');
+  if (process.env.SEGMENT_KEY) {
+    analytics = new Analytics(process.env.SEGMENT_KEY);
+  }
 };
 export const trackEvent = (
   eventName: string,
