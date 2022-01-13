@@ -10,15 +10,14 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: "14.x"
-          cache: 'yarn'
+          node-version: 14.x
+          cache: yarn
+
       - name: Install libpcap
         run: sudo apt-get update -y && sudo apt-get install -y libpcap-dev
+
       - name: Install Task
         run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
-      - name: Setup
-        run: task ci:setup
-      - name: Build
-        run: task ci:build
+
       - name: Test
-        run: task ci:test
+        run: task default test

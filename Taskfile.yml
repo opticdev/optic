@@ -1,66 +1,38 @@
 # https://taskfile.dev/#/installation
 version: "3"
 
-vars:
-  DOCKER_REGISTRY: '{{default "public.ecr.aws" .DOCKER_REGISTRY}}'
-
 tasks:
-  postpull:
-    desc: Run after pulling new code
+  default:
+    desc: Perform a clean build
+    cmds:
+      - task: setup
+      - task: clean
+      - task: build
+
+  setup:
+    desc: Install dependencies
     cmds:
       - yarn install
-      - yarn workspaces foreach -pv --no-private run ws:clean
+
+  build:
+    desc: Build
+    cmds:
       - yarn workspaces foreach -ptv --no-private run ws:build
 
-  ci:setup:
-    desc: "Install dependencies"
+  clean:
+    desc: Clean
     cmds:
-      - yarn install
-  ci:build:
-    desc: "Build assuming CI environment"
-    cmds:
-      - yarn workspaces foreach -ptv --no-private run ws:build
-  ci:test:
-    desc: "Test built artifacts"
+      - yarn workspaces foreach -pv --no-private run ws:clean
+
+  test:
+    desc: Test
     cmds:
       - yarn workspaces foreach -pv --no-private run ws:test
-  ci:publish:
-    desc: "Publish built artifacts"
-    cmds:
-      - yarn workspaces foreach -v --no-private npm publish --access public
 
-# openapi-diff specific tasks. These should be moved to a separate file.
   openapi-diff:docker:build:
-    desc: "Build the interactive baseline image used to generate OpenAPI specs"
+    desc: Build the interactive baseline image used to generate OpenAPI specs
     dir: projects/openapi-diff
     env:
       TAG: '{{default "local" .TAG}}'
     cmds:
-      - |
-        docker build {{.CLI_ARGS}} \
-        -t {{.DOCKER_REGISTRY}}/optic/baseline:$TAG .
-  openapi-diff:docker:push:public:
-    desc: Push to Optic's public ECR Docker repository for openapi-diff, public.ecr.aws/optic/baseline
-    vars:
-      PRIVATE_TAG: '{{default "local" .PRIVATE_TAG}}'
-      PUBLIC_TAG: '{{default "latest" .PUBLIC_TAG}}'
-    cmds:
-      - docker tag {{.DOCKER_REGISTRY}}/optic/baseline:{{.PRIVATE_TAG}} {{.DOCKER_REGISTRY}}/optic/baseline:{{.PUBLIC_TAG}}
-      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin {{.DOCKER_REGISTRY}}/optic
-      - docker push {{.DOCKER_REGISTRY}}/optic/baseline:{{.PUBLIC_TAG}}
-  openapi-diff:docker:push:private:
-    desc: Push to Optic's private ECR Docker repository for openapi-diff
-    vars:
-      TAG: '{{default "latest" .TAG}}'
-    cmds:
-      - docker push 513974440343.dkr.ecr.us-east-1.amazonaws.com/optic/baseline:{{.TAG}}
-  version:
-    desc: "Bump ('decline', 'major', 'minor', 'patch', 'prerelease') or Set the version of all packages"
-    summary: |
-      Bump the version of all packages. Pass the semver bump as the argument,
-      'decline', 'major', 'minor', 'patch', 'prerelease'
-
-      Examples:
-        task openapi-workspaces:version -- patch
-    cmds:
-      - yarn workspaces foreach -v --no-private version {{.CLI_ARGS}}
+      - docker build {{.CLI_ARGS}} optic-baseline:$TAG .
