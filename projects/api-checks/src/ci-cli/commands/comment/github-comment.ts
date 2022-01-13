@@ -33,7 +33,12 @@ export const registerGithubComment = (cli: Command) => {
           upload: string;
         }) => {
           const fileBuffer = await loadFile(runArgs.ciContext);
-          const { organization: owner, repo, pull_request: pull_number } =
+          const {
+            organization: owner,
+            repo,
+            pull_request: pull_number,
+            commit_hash,
+          } =
             runArgs.provider === 'github'
               ? readAndValidateGithubContext(fileBuffer)
               : readAndValidateCircleCiContext(fileBuffer);
@@ -44,6 +49,7 @@ export const registerGithubComment = (cli: Command) => {
             repo: repo,
             pull_number: Number(pull_number),
             upload: runArgs.upload,
+            commit_hash,
           });
         }
       )
@@ -61,21 +67,20 @@ const sendMessage = async ({
   repo,
   pull_number,
   upload,
+  commit_hash,
 }: {
   githubToken: string;
   owner: string;
   repo: string;
   pull_number: number;
   upload: string;
+  commit_hash: string;
 }) => {
   const uploadFileResults = await loadFile(upload);
   // TODO write this in a validation step and error to give better errors to the user
-  const {
-    opticWebUrl,
-    results,
-    changes,
-    ciContext,
-  }: UploadFileJson = JSON.parse(uploadFileResults.toString());
+  const { opticWebUrl, results, changes }: UploadFileJson = JSON.parse(
+    uploadFileResults.toString()
+  );
 
   if (changes.length === 0) {
     console.log('No changes were found, exiting.');
@@ -118,7 +123,7 @@ const sendMessage = async ({
   <!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
   ## View Changes in Optic
 
-  The latest run at commit ${ciContext.commit_hash} detected:
+  The latest run at commit ${commit_hash} detected:
   - ${changes.length} API changes
   - ${passingChecks} checks passed out of ${totalChecks} total checks (${failingChecks} failing checks).
 

@@ -36,7 +36,12 @@ export const registerBulkGithubComment = (cli: Command) => {
           bulkUpload: string;
         }) => {
           const fileBuffer = await loadFile(runArgs.ciContext);
-          const { organization: owner, repo, pull_request: pull_number } =
+          const {
+            organization: owner,
+            repo,
+            pull_request: pull_number,
+            commit_hash,
+          } =
             runArgs.provider === 'github'
               ? readAndValidateGithubContext(fileBuffer)
               : readAndValidateCircleCiContext(fileBuffer);
@@ -47,6 +52,7 @@ export const registerBulkGithubComment = (cli: Command) => {
             repo: repo,
             pull_number: Number(pull_number),
             upload: runArgs.bulkUpload,
+            commit_hash,
           });
         }
       )
@@ -64,16 +70,18 @@ const sendMessage = async ({
   repo,
   pull_number,
   upload,
+  commit_hash,
 }: {
   githubToken: string;
   owner: string;
   repo: string;
   pull_number: number;
   upload: string;
+  commit_hash: string;
 }) => {
   const uploadFileResults = await loadFile(upload);
   // TODO write this in a validation step and error to give better errors to the user
-  const { comparisons, ciContext }: BulkUploadFileJson = JSON.parse(
+  const { comparisons }: BulkUploadFileJson = JSON.parse(
     uploadFileResults.toString()
   );
 
@@ -134,7 +142,7 @@ View results at ${comparison.opticWebUrl}.
 <!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
 ## View Changes in Optic
 
-The following changes were detected in the latest run for commit: ${ciContext.commit_hash}:
+The following changes were detected in the latest run for commit: ${commit_hash}:
 
 ${bodyDetails}
   `;
