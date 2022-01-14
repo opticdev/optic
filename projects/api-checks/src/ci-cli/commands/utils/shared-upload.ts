@@ -15,23 +15,23 @@ import { UserError } from '../../errors';
 import { CliConfig } from '../../types';
 
 export const validateUploadRequirements = (
-  shouldUpload: boolean,
+  uploadResults: boolean,
   cliConfig: CliConfig,
   ciContext?: string
 ) => {
   const supportedGitProviders = ['github'];
   const supportedCiProviders = ['github', 'circleci'];
-  if (shouldUpload) {
-    // If shouldUpload, we should have a valid optic token, git provider and ciContext
+  if (uploadResults) {
+    // If uploadResults, we should have a valid optic token, git provider and ciContext
     if (!cliConfig.opticToken) {
       throw new UserError(
-        'Expected an opticToken to be set in cliOptions when used with --should-upload - check usage of makeCiCli or makeCiCliWithNamedRules'
+        'Expected an opticToken to be set in cliOptions when used with --upload-results - check usage of makeCiCli or makeCiCliWithNamedRules'
       );
     }
 
     if (!cliConfig.ciProvider) {
       throw new UserError(
-        'Expected an ciProvider to be set in cliOptions when used with --should-upload - check usage of makeCiCli or makeCiCliWithNamedRules'
+        'Expected an ciProvider to be set in cliOptions when used with --upload-results - check usage of makeCiCli or makeCiCliWithNamedRules'
       );
     }
 
@@ -45,7 +45,7 @@ export const validateUploadRequirements = (
 
     if (!cliConfig.gitProvider) {
       throw new UserError(
-        'Expected an gitProvider to be set in cliOptions when used with --should-upload - check usage of makeCiCli or makeCiCliWithNamedRules'
+        'Expected an gitProvider to be set in cliOptions when used with --upload-results - check usage of makeCiCli or makeCiCliWithNamedRules'
       );
     }
 
@@ -62,7 +62,7 @@ export const validateUploadRequirements = (
 
     if (!ciContext) {
       throw new UserError(
-        'Expected --ci-context to be set when used with --should-upload'
+        'Expected --ci-context to be set when used with --upload-results'
       );
     }
   }

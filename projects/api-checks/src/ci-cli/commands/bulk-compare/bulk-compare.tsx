@@ -52,7 +52,7 @@ export const registerBulkCompare = (
       ).choices(['pretty', 'json', 'plain'])
     )
     .option(
-      '--should-upload',
+      '--upload-results',
       'upload results of this run to optic cloud',
       false
     )
@@ -67,14 +67,14 @@ export const registerBulkCompare = (
           verbose,
           ruleset,
           output = 'pretty',
-          shouldUpload,
+          uploadResults,
           ciContext,
         }: {
           input: string;
           verbose: boolean;
           ruleset: string;
           output?: 'pretty' | 'json' | 'plain';
-          shouldUpload: boolean;
+          uploadResults: boolean;
           ciContext?: string;
         }) => {
           const checkService = rulesetServices[ruleset];
@@ -100,7 +100,7 @@ export const registerBulkCompare = (
               return process.exit(1);
             }
           }
-          validateUploadRequirements(shouldUpload, cliConfig, ciContext);
+          validateUploadRequirements(uploadResults, cliConfig, ciContext);
 
           const { waitUntilExit } = render(
             <BulkCompare
@@ -109,7 +109,7 @@ export const registerBulkCompare = (
               verbose={verbose}
               output={output}
               projectName={projectName}
-              shouldUpload={shouldUpload}
+              uploadResults={uploadResults}
               ciContext={ciContext}
               cliConfig={cliConfig}
             />,
@@ -275,7 +275,7 @@ const BulkCompare: FC<{
   verbose: boolean;
   projectName: string;
   output: 'pretty' | 'json' | 'plain';
-  shouldUpload: boolean;
+  uploadResults: boolean;
   ciContext?: string;
   cliConfig: CliConfig;
 }> = ({
@@ -284,7 +284,7 @@ const BulkCompare: FC<{
   output,
   checkService,
   projectName,
-  shouldUpload,
+  uploadResults,
   ciContext,
   cliConfig,
 }) => {
@@ -397,7 +397,7 @@ const BulkCompare: FC<{
               };
             }),
           };
-          if (shouldUpload) {
+          if (uploadResults) {
             !isStale &&
               setUploadState({
                 state: 'started',

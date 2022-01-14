@@ -75,7 +75,7 @@ export const registerCompare = (
       'pretty'
     )
     .option(
-      '--should-upload',
+      '--upload-results',
       'upload results of this run to optic cloud',
       false
     )
@@ -93,7 +93,7 @@ export const registerCompare = (
           output: 'pretty' | 'json' | 'plain';
           ruleset: string;
           githubAnnotations: boolean;
-          shouldUpload: boolean;
+          uploadResults: boolean;
           ciContext?: string;
         }) => {
           const checkService = rulesetServices[options.ruleset];
@@ -122,7 +122,7 @@ export const registerCompare = (
           }
           const parsedContext = parseContextObject(options.context);
           validateUploadRequirements(
-            options.shouldUpload,
+            options.uploadResults,
             cliConfig,
             options.ciContext
           );
@@ -141,7 +141,7 @@ export const registerCompare = (
                   : SourcemapRendererEnum.local
               }
               projectName={projectName}
-              shouldUpload={options.shouldUpload}
+              uploadResults={options.uploadResults}
               ciContext={options.ciContext}
               cliConfig={cliConfig}
             />,
@@ -163,7 +163,7 @@ function Compare<T>(props: {
   apiCheckService: ApiCheckService<T>;
   mapToFile: SourcemapRendererEnum;
   projectName: string;
-  shouldUpload: boolean;
+  uploadResults: boolean;
   ciContext?: string;
   cliConfig: CliConfig;
 }) {
@@ -256,7 +256,7 @@ function Compare<T>(props: {
           );
           const { results, changes } = compareOutput;
 
-          if (props.shouldUpload && changes.length > 0) {
+          if (props.uploadResults && changes.length > 0) {
             !isStale && setUploadState({ state: 'started' });
 
             // We've validated the shape in validateUploadRequirements
@@ -295,7 +295,7 @@ function Compare<T>(props: {
                 state: 'complete',
                 uploadLocation: uploadOutput.opticWebUrl,
               });
-          } else if (props.shouldUpload) {
+          } else if (props.uploadResults) {
             !isStale && setUploadState({ state: 'no changes' });
           }
 
