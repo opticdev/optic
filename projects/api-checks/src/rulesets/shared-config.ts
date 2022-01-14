@@ -1,7 +1,7 @@
 export enum RuleApplies {
-  always,
-  whenAdded,
-  whenAddedOrChanged,
+  always = 'always',
+  whenAdded = 'whenAdded',
+  whenAddedOrChanged = 'whenAddedOrChanged',
 }
 
 export function ruleAppliesToLifeCycleKeyword(
