@@ -1,10 +1,5 @@
 import { program as cli } from 'commander';
 import { ApiCheckService } from '../sdk/api-check-service';
-import { registerUpload, registerBulkUpload } from './commands/upload';
-import {
-  registerGithubComment,
-  registerBulkGithubComment,
-} from './commands/comment';
 import { registerBulkCompare, registerCompare } from './commands/compare';
 import { initSentry } from './sentry';
 import { initSegment } from './segment';
@@ -28,10 +23,6 @@ export function makeCiCliWithNamedRules(
 
   registerCompare(cli, forProject, rulesetServices);
   registerBulkCompare(cli, forProject, rulesetServices);
-  registerUpload(cli, { opticToken });
-  registerBulkUpload(cli, { opticToken });
-  registerGithubComment(cli);
-  registerBulkGithubComment(cli);
 
   return cli;
 }
