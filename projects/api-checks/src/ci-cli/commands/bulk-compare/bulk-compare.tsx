@@ -308,6 +308,9 @@ const BulkCompare: FC<{
         numberOfComparisons: number;
       }
   >({ state: 'not started' });
+  const [commentState, setCommentState] = useState<'not started' | 'github'>(
+    'not started'
+  );
 
   useEffect(() => {
     let isStale = false;
@@ -423,16 +426,18 @@ const BulkCompare: FC<{
             if (bulkUploadOutput) {
               // In the future we can add different git providers
               if (provider === 'github') {
+                setCommentState('github');
+
                 await sendBulkGithubMessage({
                   githubToken: token,
                   uploadOutput: bulkUploadOutput,
                 });
-                !isStale &&
-                  setUploadState({
-                    state: 'complete',
-                    bulkUploadJson: bulkUploadOutput,
-                  });
               }
+              !isStale &&
+                setUploadState({
+                  state: 'complete',
+                  bulkUploadJson: bulkUploadOutput,
+                });
             } else {
               !isStale &&
                 setUploadState({
@@ -442,11 +447,7 @@ const BulkCompare: FC<{
           }
         }
 
-        exit(
-          maybeError || hasChecksFailing
-            ? new UserError('Some checks did not pass')
-            : undefined
-        );
+        exit(maybeError || hasChecksFailing ? new UserError() : undefined);
       } catch (e) {
         stderr.write(JSON.stringify(e, null, 2));
         exit(e as Error);
@@ -518,7 +519,7 @@ const BulkCompare: FC<{
       ) : uploadState.state === 'complete' ? (
         <>
           <Text>
-            Successfully uploaded $
+            Successfully uploaded{' '}
             {uploadState.bulkUploadJson.comparisons.length} comparisons that had
             at least 1 change
           </Text>
@@ -529,9 +530,9 @@ const BulkCompare: FC<{
               {comparison.inputs.to || 'Empty Spec'} - {comparison.opticWebUrl}
             </Text>
           ))}
-          <Text>Posting comment to github</Text>
         </>
       ) : null}
+      {commentState === 'github' && <Text>Posting comment to github</Text>}
     </Box>
   );
 };

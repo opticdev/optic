@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Command } from 'commander';
 import { createOpticClient } from '../utils/optic-client';
 
-import { Box, render, Text, useApp, useStdout } from 'ink';
+import { Box, render, Text, Newline, useApp, useStdout } from 'ink';
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
@@ -185,6 +185,9 @@ function Compare<T>(props: {
         uploadLocation: string;
       }
   >({ state: 'not started' });
+  const [commentState, setCommentState] = useState<'not started' | 'github'>(
+    'not started'
+  );
 
   const [results, setResults] = useState<
     | {
@@ -256,6 +259,10 @@ function Compare<T>(props: {
           );
           const { results, changes } = compareOutput;
 
+          if (!isStale) {
+            setResults({ loading: false, error: false, data: results });
+          }
+
           if (props.uploadResults && changes.length > 0) {
             !isStale && setUploadState({ state: 'started' });
 
@@ -283,6 +290,7 @@ function Compare<T>(props: {
 
             // In the future we can add different git providers
             if (provider === 'github') {
+              setCommentState('github');
               await sendGithubMessage({
                 githubToken: token,
                 compareOutput,
@@ -299,9 +307,6 @@ function Compare<T>(props: {
             !isStale && setUploadState({ state: 'no changes' });
           }
 
-          if (!isStale) {
-            setResults({ loading: false, error: false, data: results });
-          }
           const hasError = results.some((result) => !result.passed);
 
           trackEvent('optic_ci.compare', `${props.projectName}-optic-ci`, {
@@ -313,9 +318,7 @@ function Compare<T>(props: {
             numberOfChanges: changes.length,
           });
 
-          exit(
-            hasError ? new UserError('Some checks did not pass') : undefined
-          );
+          exit(hasError ? new UserError() : undefined);
         } catch (e) {
           !isStale && setResults({ loading: false, error: e as Error });
           throw e;
@@ -404,9 +407,9 @@ function Compare<T>(props: {
           <Text>
             Results of this run can be found at: {uploadState.uploadLocation}
           </Text>
-          <Text>Posting comment to github</Text>
         </>
       ) : null}
+      {commentState === 'github' && <Text>Posting comment to github</Text>}
     </Box>
   );
 }

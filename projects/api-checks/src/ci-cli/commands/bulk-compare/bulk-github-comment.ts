@@ -86,14 +86,14 @@ ${bodyDetails}
   `;
 
   if (maybeOpticCommentId) {
-    octokit.rest.issues.updateComment({
+    await octokit.rest.issues.updateComment({
       owner,
       repo,
       comment_id: maybeOpticCommentId,
       body,
     });
   } else {
-    octokit.rest.issues.createComment({
+    await octokit.rest.issues.createComment({
       owner,
       repo,
       issue_number: pull_number,
