@@ -10,8 +10,8 @@ import {
   readAndValidateGithubContext,
   readAndValidateCircleCiContext,
   specFromInputToResults,
-} from '../utils';
-import { UserError } from '../../errors';
+} from '../../utils';
+import { UserError } from '../../../errors';
 
 export type CiRunArgs = {
   from?: string;

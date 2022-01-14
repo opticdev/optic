@@ -1,9 +1,9 @@
 import { Command, Option } from 'commander';
 import { CompareFileJson, UploadFileJson } from '@useoptic/openapi-utilities';
 import { OpticBackendClient, UploadSlot } from './optic-client';
-import { loadFile, writeFile } from '../utils';
-import { wrapActionHandlerWithSentry } from '../../sentry';
-import { DEFAULT_UPLOAD_OUTPUT_FILENAME } from '../../constants';
+import { loadFile, writeFile } from '../../utils';
+import { wrapActionHandlerWithSentry } from '../../../sentry';
+import { DEFAULT_UPLOAD_OUTPUT_FILENAME } from '../../../constants';
 import {
   CiRunArgs,
   loadAndValidateSpecFiles,

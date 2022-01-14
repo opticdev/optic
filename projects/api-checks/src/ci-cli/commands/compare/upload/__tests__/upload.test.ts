@@ -7,10 +7,10 @@ import {
   SessionStatus,
   UploadSlot,
 } from '../optic-client';
-import { mockGhContext } from '../../utils/__tests__/mock-context';
-import { loadFile } from '../../utils/files';
-import { uploadFileToS3 } from '../../utils/s3';
-import { specFromInputToResults } from '../../utils/load-spec';
+import { mockGhContext } from '../../../utils/__tests__/mock-context';
+import { loadFile } from '../../../utils/files';
+import { uploadFileToS3 } from '../../../utils/s3';
+import { specFromInputToResults } from '../../../utils/load-spec';
 import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 
 jest.mock('../optic-client');

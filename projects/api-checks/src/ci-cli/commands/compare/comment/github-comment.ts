@@ -4,9 +4,9 @@ import {
   loadFile,
   readAndValidateGithubContext,
   readAndValidateCircleCiContext,
-} from '../utils';
-import { trackEvent } from '../../segment';
-import { wrapActionHandlerWithSentry } from '../../sentry';
+} from '../../utils';
+import { trackEvent } from '../../../segment';
+import { wrapActionHandlerWithSentry } from '../../../sentry';
 import { findOpticCommentId } from './shared-comment';
 import { UploadFileJson } from '@useoptic/openapi-utilities';
 
