@@ -1,7 +1,6 @@
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
-  NormalizedCiContext,
 } from '@useoptic/openapi-utilities';
 import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
 import { uploadFileToS3 } from './s3';
@@ -12,7 +11,7 @@ import {
 } from './ci-context-parsers';
 import { specFromInputToResults } from './load-spec';
 import { UserError } from '../../errors';
-import { CliConfig } from '../../types';
+import { CliConfig, NormalizedCiContext } from '../../types';
 
 export const validateUploadRequirements = (
   uploadResults: boolean,
