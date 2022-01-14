@@ -61,8 +61,7 @@ export const sendGithubMessage = async ({
     pull_number
   );
   const failingChecks = results.filter((result) => !result.passed).length;
-  const totalChecks = results.filter((result) => !result.passed).length;
-  const passingChecks = totalChecks - failingChecks;
+  const totalChecks = results.length;
 
   const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
   ### Changes to your OpenAPI spec
@@ -73,7 +72,9 @@ export const sendGithubMessage = async ({
   ${
     failingChecks > 0
       ? `⚠️ **${failingChecks}** / **${totalChecks}** checks failed.`
-      : `✅ all checks passed (**${totalChecks}**).`
+      : totalChecks > 0
+      ? `✅ all checks passed (**${totalChecks}**).`
+      : `ℹ️ No automated checks have run.`
   }
   
   For details, see [the Optic API Changelog](${opticWebUrl})
