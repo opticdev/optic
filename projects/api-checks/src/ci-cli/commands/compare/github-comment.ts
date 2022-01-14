@@ -25,6 +25,7 @@ export const sendGithubMessage = async ({
     repo,
     pull_request: pull_number,
     commit_hash,
+    run,
   } = ciContext;
 
   if (changes.length === 0) {
@@ -35,13 +36,12 @@ export const sendGithubMessage = async ({
     auth: githubToken,
   });
 
-  const {
-    data: requestedReviewers,
-  } = await octokit.pulls.listRequestedReviewers({
-    owner,
-    repo,
-    pull_number,
-  });
+  const { data: requestedReviewers } =
+    await octokit.pulls.listRequestedReviewers({
+      owner,
+      repo,
+      pull_number,
+    });
 
   trackEvent('optic_ci.github_comment', `${owner}-optic-ci`, {
     owner,
@@ -64,15 +64,19 @@ export const sendGithubMessage = async ({
   const totalChecks = results.filter((result) => !result.passed).length;
   const passingChecks = totalChecks - failingChecks;
 
-  const body = `
-  <!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
-  ## View Changes in Optic
+  const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
+  ### Changes to your OpenAPI spec
 
-  The latest run at commit ${commit_hash} detected:
-  - ${changes.length} API changes
-  - ${passingChecks} checks passed out of ${totalChecks} total checks (${failingChecks} failing checks).
+  Summary of run [#${run}](${opticWebUrl}) results (${commit_hash}):
 
-  The API changes can be viewed at ${opticWebUrl}
+  💡 **${changes.length}** API changes
+  ${
+    failingChecks > 0
+      ? `⚠️ **${failingChecks}** / **${totalChecks}** checks failed.`
+      : `✅ all checks passed (**${totalChecks}**).`
+  }
+  
+  For details, see [the Optic API Changelog](${opticWebUrl})
 `;
 
   if (maybeOpticCommentId) {
