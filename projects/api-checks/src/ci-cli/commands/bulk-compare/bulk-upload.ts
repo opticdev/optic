@@ -4,15 +4,15 @@ import {
   CompareFileJson,
   BulkUploadFileJson,
 } from '@useoptic/openapi-utilities';
-import { OpticBackendClient, UploadSlot } from './optic-client';
-import { loadFile, writeFile } from '../../utils';
-import { wrapActionHandlerWithSentry } from '../../../sentry';
-import { DEFAULT_BULK_UPLOAD_OUTPUT_FILENAME } from '../../../constants';
+import { OpticBackendClient, UploadSlot } from '../utils/optic-client';
+import { loadFile, writeFile } from '../utils';
+import { wrapActionHandlerWithSentry } from '../../sentry';
+import { DEFAULT_BULK_UPLOAD_OUTPUT_FILENAME } from '../../constants';
 import {
   loadAndValidateSpecFiles,
   normalizeCiContext,
   uploadRun,
-} from './shared-upload';
+} from '../utils/shared-upload';
 
 type RunArgs = {
   bulkCompare: string;

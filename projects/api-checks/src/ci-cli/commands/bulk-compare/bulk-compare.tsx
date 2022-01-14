@@ -12,7 +12,7 @@ import {
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { ParseOpenAPIResult } from '@useoptic/openapi-io';
-import { SpecComparison } from './components';
+import { SpecComparison } from '../components';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import {
@@ -21,10 +21,10 @@ import {
   specFromInputToResults,
   writeFile,
 } from '../utils';
-import { generateSpecResults } from './generateSpecResults';
+import { generateSpecResults } from '../utils/generateSpecResults';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { UserError } from '../../errors';
-import { SourcemapRendererEnum } from './components/render-results';
+import { SourcemapRendererEnum } from '../components/render-results';
 import { trackEvent } from '../../segment';
 import { DEFAULT_BULK_COMPARE_OUTPUT_FILENAME } from '../../constants';
 

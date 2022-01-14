@@ -4,10 +4,10 @@ import {
   loadFile,
   readAndValidateGithubContext,
   readAndValidateCircleCiContext,
-} from '../../utils';
-import { trackEvent } from '../../../segment';
-import { wrapActionHandlerWithSentry } from '../../../sentry';
-import { findOpticCommentId } from './shared-comment';
+} from '../utils';
+import { trackEvent } from '../../segment';
+import { wrapActionHandlerWithSentry } from '../../sentry';
+import { findOpticCommentId } from '../utils/shared-comment';
 import { BulkUploadFileJson } from '@useoptic/openapi-utilities';
 
 export const registerBulkGithubComment = (cli: Command) => {

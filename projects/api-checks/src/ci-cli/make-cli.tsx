@@ -1,6 +1,7 @@
 import { program as cli } from 'commander';
 import { ApiCheckService } from '../sdk/api-check-service';
-import { registerBulkCompare, registerCompare } from './commands/compare';
+import { registerCompare } from './commands/compare';
+import { registerBulkCompare } from './commands/bulk-compare';
 import { initSentry } from './sentry';
 import { initSegment } from './segment';
 import { OpticCINamedRulesets } from '../sdk/ruleset';

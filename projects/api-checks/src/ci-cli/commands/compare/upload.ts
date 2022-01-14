@@ -1,15 +1,15 @@
 import { Command, Option } from 'commander';
 import { CompareFileJson, UploadFileJson } from '@useoptic/openapi-utilities';
-import { OpticBackendClient, UploadSlot } from './optic-client';
-import { loadFile, writeFile } from '../../utils';
-import { wrapActionHandlerWithSentry } from '../../../sentry';
-import { DEFAULT_UPLOAD_OUTPUT_FILENAME } from '../../../constants';
+import { OpticBackendClient, UploadSlot } from '../utils/optic-client';
+import { loadFile, writeFile } from '../utils';
+import { wrapActionHandlerWithSentry } from '../../sentry';
+import { DEFAULT_UPLOAD_OUTPUT_FILENAME } from '../../constants';
 import {
   CiRunArgs,
   loadAndValidateSpecFiles,
   uploadRun,
   normalizeCiContext,
-} from './shared-upload';
+} from '../utils/shared-upload';
 
 export const registerUpload = (
   cli: Command,
