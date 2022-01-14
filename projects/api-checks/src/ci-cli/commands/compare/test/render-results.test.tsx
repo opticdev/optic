@@ -3,7 +3,7 @@ import React from 'react';
 import {
   RenderCheckResults,
   SourcemapRendererEnum,
-} from '../components/render-results';
+} from '../../components/render-results';
 import { ResultWithSourcemap } from '@useoptic/openapi-utilities';
 
 describe('list of checks', () => {

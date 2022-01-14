@@ -9,8 +9,8 @@ import {
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { ApiCheckService } from '../../../sdk/api-check-service';
-import { SpecComparison } from './components';
-import { generateSpecResults } from './generateSpecResults';
+import { SpecComparison } from '../components';
+import { generateSpecResults } from '../utils/generateSpecResults';
 import {
   parseSpecVersion,
   SpecFromInput,
@@ -21,7 +21,7 @@ import { DEFAULT_COMPARE_OUTPUT_FILENAME } from '../../constants';
 import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
-import { SourcemapRendererEnum } from './components/render-results';
+import { SourcemapRendererEnum } from '../components/render-results';
 import { trackEvent } from '../../segment';
 
 type LoadingState =
