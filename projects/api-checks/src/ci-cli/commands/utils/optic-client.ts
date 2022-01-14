@@ -304,3 +304,15 @@ export class OpticBackendClient extends JsonHttpClient {
     return this.getJson<GetSessionResponse>(`/api/runs/${sessionId}`);
   }
 }
+
+export const createOpticClient = (opticToken: string) => {
+  const backendWebBase =
+    process.env.OPTIC_ENV === 'staging'
+      ? 'https://api.o3c.info'
+      : 'https://api.useoptic.com';
+
+  const opticClient = new OpticBackendClient(backendWebBase, () =>
+    Promise.resolve(opticToken)
+  );
+  return opticClient;
+};

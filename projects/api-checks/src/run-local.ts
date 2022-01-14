@@ -40,6 +40,10 @@ checker.useDsl(
 
 const cli = makeCiCli('play-thing', checker, {
   opticToken: process.env.OPTIC_TOKEN || '123',
+  gitProvider: {
+    token: process.env.GITHUB_TOKEN || '123',
+    provider: 'github',
+  },
 });
 
 cli.parse(process.argv);

@@ -1,86 +1,31 @@
-import { Command, Option } from 'commander';
 import { Octokit } from '@octokit/rest';
-import {
-  loadFile,
-  readAndValidateGithubContext,
-  readAndValidateCircleCiContext,
-} from '../utils';
+import { loadFile } from '../utils';
 import { trackEvent } from '../../segment';
-import { wrapActionHandlerWithSentry } from '../../sentry';
 import { findOpticCommentId } from '../utils/shared-comment';
-import { UploadFileJson } from '@useoptic/openapi-utilities';
-
-export const registerGithubComment = (cli: Command) => {
-  cli
-    .command('github-comment')
-    .requiredOption('--token <token>', 'github token')
-    .addOption(
-      new Option(
-        '--provider <provider>',
-        'The name of the ci-provider, supported'
-      )
-        .choices(['github', 'circleci'])
-        .makeOptionMandatory()
-    )
-    .requiredOption('--ci-context <ciContext>', 'file with github context')
-    .requiredOption('--upload <upload>', 'the file path to the upload output')
-    .action(
-      wrapActionHandlerWithSentry(
-        async (runArgs: {
-          token: string;
-          ciContext: string;
-          provider: 'github' | 'circleci';
-          upload: string;
-        }) => {
-          const fileBuffer = await loadFile(runArgs.ciContext);
-          const {
-            organization: owner,
-            repo,
-            pull_request: pull_number,
-            commit_hash,
-          } =
-            runArgs.provider === 'github'
-              ? readAndValidateGithubContext(fileBuffer)
-              : readAndValidateCircleCiContext(fileBuffer);
-
-          await sendMessage({
-            githubToken: runArgs.token,
-            owner: owner,
-            repo: repo,
-            pull_number: Number(pull_number),
-            upload: runArgs.upload,
-            commit_hash,
-          });
-        }
-      )
-    );
-};
+import { CompareJson, UploadJson } from '../../types';
 
 // The identifier we use to find the Optic Comment
 // TODO is there a better way to track and identify Optic comments for comment / replace?
 const GITHUB_COMMENT_IDENTIFIER =
   'INTERNAL-OPTIC-COMMENT-IDENTIFIER-1234567890';
 
-const sendMessage = async ({
+export const sendGithubMessage = async ({
   githubToken,
-  owner,
-  repo,
-  pull_number,
-  upload,
-  commit_hash,
+  compareOutput,
+  uploadOutput,
 }: {
   githubToken: string;
-  owner: string;
-  repo: string;
-  pull_number: number;
-  upload: string;
-  commit_hash: string;
+  compareOutput: CompareJson;
+  uploadOutput: UploadJson;
 }) => {
-  const uploadFileResults = await loadFile(upload);
-  // TODO write this in a validation step and error to give better errors to the user
-  const { opticWebUrl, results, changes }: UploadFileJson = JSON.parse(
-    uploadFileResults.toString()
-  );
+  const { results, changes } = compareOutput;
+  const { opticWebUrl, ciContext } = uploadOutput;
+  const {
+    organization: owner,
+    repo,
+    pull_request: pull_number,
+    commit_hash,
+  } = ciContext;
 
   if (changes.length === 0) {
     console.log('No changes were found, exiting.');

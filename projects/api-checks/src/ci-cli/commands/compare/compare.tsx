@@ -1,28 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Command } from 'commander';
+import { createOpticClient } from '../utils/optic-client';
 
 import { Box, render, Text, useApp, useStdout } from 'ink';
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
-  CompareFileJson,
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { SpecComparison } from '../components';
 import { generateSpecResults } from '../utils/generateSpecResults';
-import {
-  parseSpecVersion,
-  SpecFromInput,
-  specFromInputToResults,
-  writeFile,
-} from '../utils';
-import { DEFAULT_COMPARE_OUTPUT_FILENAME } from '../../constants';
+import { parseSpecVersion, specFromInputToResults } from '../utils';
 import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { SourcemapRendererEnum } from '../components/render-results';
 import { trackEvent } from '../../segment';
+import { CliConfig } from '../../types';
+import { uploadCiRun } from './upload';
+import { sendGithubMessage } from './github-comment';
 
 type LoadingState =
   | {
@@ -50,10 +47,65 @@ const parseContextObject = (context?: string): any => {
   }
 };
 
+const validateUploadRequirements = (
+  shouldUpload: boolean,
+  cliConfig: CliConfig,
+  ciContext?: string
+) => {
+  const supportedGitProviders = ['github'];
+  const supportedCiProviders = ['github', 'circleci'];
+  if (shouldUpload) {
+    // If shouldUpload, we should have a valid optic token, git provider and ciContext
+    if (!cliConfig.opticToken) {
+      throw new UserError(
+        'Expected an opticToken to be set in cliOptions when used with --should-upload - check usage of makeCiCli or makeCiCliWithNamedRules'
+      );
+    }
+
+    if (!cliConfig.ciProvider) {
+      throw new UserError(
+        'Expected an ciProvider to be set in cliOptions when used with --should-upload - check usage of makeCiCli or makeCiCliWithNamedRules'
+      );
+    }
+
+    if (!supportedCiProviders.includes(cliConfig.ciProvider)) {
+      throw new UserError(
+        `Unsupported gitProvider supplied - currently supported git providers are: ${supportedCiProviders.join(
+          ', '
+        )}`
+      );
+    }
+
+    if (!cliConfig.gitProvider) {
+      throw new UserError(
+        'Expected an gitProvider to be set in cliOptions when used with --should-upload - check usage of makeCiCli or makeCiCliWithNamedRules'
+      );
+    }
+
+    if (!supportedGitProviders.includes(cliConfig.gitProvider.provider)) {
+      throw new UserError(
+        `Unsupported gitProvider supplied - currently supported git providers are: ${supportedGitProviders.join(
+          ', '
+        )}`
+      );
+    }
+    if (!cliConfig.gitProvider.token) {
+      throw new UserError(`No gitProvider.token was supplied`);
+    }
+
+    if (!ciContext) {
+      throw new UserError(
+        'Expected --ci-context to be set when used with --should-upload'
+      );
+    }
+  }
+};
+
 export const registerCompare = (
   cli: Command,
   projectName: string,
-  rulesetServices: OpticCINamedRulesets
+  rulesetServices: OpticCINamedRulesets,
+  cliConfig: CliConfig
 ) => {
   cli
     .command('compare')
@@ -68,14 +120,18 @@ export const registerCompare = (
     .option('--verbose', 'show all checks, even passing', false)
     .option('--ruleset <ruleset>', 'name of ruleset to run', 'default')
     .option(
-      '--create-file',
-      'creates a file with the results of the run in json format',
-      false
-    )
-    .option(
       '--output <format>',
       "show 'pretty' output for interactive usage or 'json' for JSON",
       'pretty'
+    )
+    .option(
+      '--should-upload',
+      'upload results of this run to optic cloud',
+      false
+    )
+    .option(
+      '--ci-context <ciContext>',
+      'path to file with the context shape from the ci provider (e.g. github actions, circle ci)'
     )
     .action(
       wrapActionHandlerWithSentry(
@@ -86,8 +142,9 @@ export const registerCompare = (
           verbose: boolean;
           output: 'pretty' | 'json' | 'plain';
           ruleset: string;
-          createFile: boolean;
           githubAnnotations: boolean;
+          shouldUpload: boolean;
+          ciContext?: string;
         }) => {
           const checkService = rulesetServices[options.ruleset];
           if (!checkService) {
@@ -114,22 +171,29 @@ export const registerCompare = (
             }
           }
           const parsedContext = parseContextObject(options.context);
+          validateUploadRequirements(
+            options.shouldUpload,
+            cliConfig,
+            options.ciContext
+          );
 
           const { waitUntilExit } = render(
             <Compare
               verbose={options.verbose}
               output={options.output}
               apiCheckService={checkService}
-              from={parseSpecVersion(options.from, defaultEmptySpec)}
-              to={parseSpecVersion(options.to, defaultEmptySpec)}
+              from={options.from}
+              to={options.to}
               context={parsedContext}
-              shouldGenerateFile={options.createFile}
               mapToFile={
                 options.githubAnnotations
                   ? SourcemapRendererEnum.github
                   : SourcemapRendererEnum.local
               }
               projectName={projectName}
+              shouldUpload={options.shouldUpload}
+              ciContext={options.ciContext}
+              cliConfig={cliConfig}
             />,
             { exitOnCtrlC: true }
           );
@@ -141,15 +205,17 @@ export const registerCompare = (
 };
 
 function Compare<T>(props: {
-  from: SpecFromInput;
-  to: SpecFromInput;
+  from?: string;
+  to?: string;
   context: T;
   verbose: boolean;
   output: 'pretty' | 'json' | 'plain';
   apiCheckService: ApiCheckService<T>;
-  shouldGenerateFile: boolean;
   mapToFile: SourcemapRendererEnum;
   projectName: string;
+  shouldUpload: boolean;
+  ciContext?: string;
+  cliConfig: CliConfig;
 }) {
   const stdout = useStdout();
   const { exit } = useApp();
@@ -160,9 +226,15 @@ function Compare<T>(props: {
   const [toState, setToState] = useState<LoadingState>({
     loading: true,
   });
-  const [outputFileLocation, setOutputFileLocation] = useState<string | null>(
-    null
-  );
+  const [uploadState, setUploadState] = useState<
+    | {
+        state: 'not started' | 'started' | 'no changes';
+      }
+    | {
+        state: 'complete';
+        uploadLocation: string;
+      }
+  >({ state: 'not started' });
 
   const [results, setResults] = useState<
     | {
@@ -179,7 +251,10 @@ function Compare<T>(props: {
     (async () => {
       try {
         const [from, to] = await Promise.all([
-          specFromInputToResults(props.from, process.cwd())
+          specFromInputToResults(
+            parseSpecVersion(props.from, defaultEmptySpec),
+            process.cwd()
+          )
             .then((results) => {
               validateOpenApiV3Document(results.jsonLike);
 
@@ -198,7 +273,10 @@ function Compare<T>(props: {
                 });
               throw new UserError(e);
             }),
-          specFromInputToResults(props.to, process.cwd())
+          specFromInputToResults(
+            parseSpecVersion(props.to, defaultEmptySpec),
+            process.cwd()
+          )
             .then((results) => {
               validateOpenApiV3Document(results.jsonLike);
 
@@ -220,20 +298,55 @@ function Compare<T>(props: {
         ]);
 
         try {
-          const { results, changes } = await generateSpecResults(
+          const compareOutput = await generateSpecResults(
             props.apiCheckService,
             from,
             to,
             props.context
           );
+          const { results, changes } = compareOutput;
 
-          if (props.shouldGenerateFile) {
-            const fileOutput: CompareFileJson = { results, changes };
-            const compareOutputLocation = await writeFile(
-              DEFAULT_COMPARE_OUTPUT_FILENAME,
-              Buffer.from(JSON.stringify(fileOutput))
+          if (props.shouldUpload && changes.length > 0) {
+            !isStale && setUploadState({ state: 'started' });
+
+            // We've validated the shape in validateUploadRequirements
+            const ciContext = props.ciContext!;
+            const ciProvider = props.cliConfig.ciProvider!;
+            const opticToken = props.cliConfig.opticToken!;
+            const { token, provider } = props.cliConfig.gitProvider!;
+            const opticClient = createOpticClient(opticToken);
+            const uploadOutput = await uploadCiRun(
+              compareOutput,
+              from.jsonLike,
+              to.jsonLike,
+              ciContext,
+              ciProvider,
+              opticClient,
+              {
+                from: props.from,
+                to: props.to,
+                provider: ciProvider,
+                ciContext,
+                compare: '',
+              }
             );
-            !isStale && setOutputFileLocation(compareOutputLocation);
+
+            // In the future we can add different git providers
+            if (provider === 'github') {
+              await sendGithubMessage({
+                githubToken: token,
+                compareOutput,
+                uploadOutput,
+              });
+            }
+
+            !isStale &&
+              setUploadState({
+                state: 'complete',
+                uploadLocation: uploadOutput.opticWebUrl,
+              });
+          } else if (props.shouldUpload) {
+            !isStale && setUploadState({ state: 'no changes' });
           }
 
           if (!isStale) {
@@ -330,9 +443,20 @@ function Compare<T>(props: {
           mapToFile={props.mapToFile}
         />
       )}
-      {outputFileLocation && (
-        <Text>Results of this run can be found at: {outputFileLocation}</Text>
+      {uploadState.state !== 'not started' && (
+        <Text>Uploading files to Optic...</Text>
       )}
+      {uploadState.state === 'no changes' ? (
+        <Text>No changes were detected, not uploading anything</Text>
+      ) : uploadState.state === 'complete' ? (
+        <>
+          <Text>Successfully uploaded files to Optic</Text>
+          <Text>
+            Results of this run can be found at: {uploadState.uploadLocation}
+          </Text>
+          <Text>Posting comment to github</Text>
+        </>
+      ) : null}
     </Box>
   );
 }

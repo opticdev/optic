@@ -13,34 +13,3 @@ export type CompareFileJson = {
   results: ResultWithSourcemap[];
   changes: IChange<OpenApiFact>[];
 };
-
-export type UploadFileJson = {
-  results: ResultWithSourcemap[];
-  changes: IChange<OpenApiFact>[];
-  opticWebUrl: string;
-  ciContext: NormalizedCiContext;
-};
-
-export type BulkCompareFileJson = {
-  comparisons: {
-    results: ResultWithSourcemap[];
-    changes: IChange<OpenApiFact>[];
-    inputs: {
-      from?: string;
-      to?: string;
-    };
-  }[];
-};
-
-export type BulkUploadFileJson = {
-  comparisons: {
-    results: ResultWithSourcemap[];
-    changes: IChange<OpenApiFact>[];
-    inputs: {
-      from?: string;
-      to?: string;
-    };
-    opticWebUrl: string;
-  }[];
-  ciContext: NormalizedCiContext;
-};
