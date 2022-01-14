@@ -21,7 +21,7 @@ export function makeCiCliWithNamedRules(
   );
 
   registerCompare(cli, forProject, rulesetServices, options);
-  registerBulkCompare(cli, forProject, rulesetServices);
+  registerBulkCompare(cli, forProject, rulesetServices, options);
 
   return cli;
 }

@@ -1,105 +1,32 @@
-import { Command, Option } from 'commander';
-import {
-  BulkCompareFileJson,
-  CompareFileJson,
-  BulkUploadFileJson,
-} from '@useoptic/openapi-utilities';
+import { CompareFileJson } from '@useoptic/openapi-utilities';
 import { OpticBackendClient, UploadSlot } from '../utils/optic-client';
 import { loadFile, writeFile } from '../utils';
-import { wrapActionHandlerWithSentry } from '../../sentry';
-import { DEFAULT_BULK_UPLOAD_OUTPUT_FILENAME } from '../../constants';
 import {
   loadAndValidateSpecFiles,
   normalizeCiContext,
   uploadRun,
 } from '../utils/shared-upload';
+import { BulkCompareJson, BulkUploadJson } from '../../types';
 
-type RunArgs = {
-  bulkCompare: string;
-  provider: 'github' | 'circleci';
-  ciContext: string;
-};
-
-export const registerBulkUpload = (
-  cli: Command,
-  { opticToken }: { opticToken?: string }
-) => {
-  cli
-    .command('bulk-upload')
-    .requiredOption(
-      '--bulk-compare <bulkCompare>',
-      'path to bulk compare output'
-    )
-    .addOption(
-      new Option(
-        '--provider <provider>',
-        'The name of the ci-provider, supported'
-      )
-        .choices(['github', 'circleci'])
-        .makeOptionMandatory()
-    )
-    .requiredOption('--ci-context <ciContext>', 'file with github context')
-    .action(
-      wrapActionHandlerWithSentry(async (runArgs: RunArgs) => {
-        if (!opticToken) {
-          console.error('Upload token was not included');
-          return process.exit(1);
-        }
-
-        const backendWebBase =
-          // TODO centralize this optic env configuration
-          process.env.OPTIC_ENV === 'staging'
-            ? 'https://api.o3c.info'
-            : 'https://api.useoptic.com';
-
-        const opticClient = new OpticBackendClient(backendWebBase, () =>
-          Promise.resolve(opticToken)
-        );
-        await bulkUploadCiRun(opticClient, runArgs);
-      })
-    );
-};
-
-const bulkUploadCiRun = async (
+export const bulkUploadCiRun = async (
   opticClient: OpticBackendClient,
-  runArgs: RunArgs
-) => {
+  bulkCompareOutput: BulkCompareJson,
+  ciContext: string,
+  ciProvider: 'github' | 'circleci'
+): Promise<BulkUploadJson | null> => {
   console.log('Loading comparison files');
-  const [bulkFileBuffer, contextFileBuffer] = await Promise.all([
-    loadFile(runArgs.bulkCompare),
-    loadFile(runArgs.ciContext),
-  ]);
-  const normalizedCiContext = normalizeCiContext(
-    runArgs.provider,
-    contextFileBuffer
-  );
 
-  const { comparisons }: BulkCompareFileJson = JSON.parse(
-    bulkFileBuffer.toString()
-  );
+  const contextFileBuffer = await loadFile(ciContext);
+  const normalizedCiContext = normalizeCiContext(ciProvider, contextFileBuffer);
+
+  const { comparisons } = bulkCompareOutput;
 
   const filteredComparisons = comparisons.filter(
     (comparison) => comparison.changes.length > 0
   );
   if (filteredComparisons.length === 0) {
-    console.log(
-      'None of the comparisons had any changes, not uploading anything.'
-    );
-    const fileOutput: BulkUploadFileJson = {
-      comparisons: [],
-      ciContext: normalizedCiContext,
-    };
-    // We write a file here which will propagate to bulk-comment and noop
-    await writeFile(
-      DEFAULT_BULK_UPLOAD_OUTPUT_FILENAME, // TODO maybe make this a cli argument?
-      Buffer.from(JSON.stringify(fileOutput))
-    );
-
-    return;
+    return null;
   }
-  console.log(
-    `Uploading comparisons (${filteredComparisons.length}/${comparisons.length} comparisons had at least 1 change)`
-  );
 
   const uploadedComparisons = [];
 
@@ -124,8 +51,8 @@ const bulkUploadCiRun = async (
       opticClient,
       fileMap,
       {
-        provider: runArgs.provider,
-        ciContext: runArgs.ciContext,
+        provider: ciProvider,
+        ciContext: ciContext,
         compare: 'from bulk upload',
         from: comparison.inputs.from,
         to: comparison.inputs.to,
@@ -136,22 +63,10 @@ const bulkUploadCiRun = async (
       ...comparison,
       opticWebUrl,
     });
-    console.log(
-      `successfully uploaded ${JSON.stringify(
-        comparison.inputs
-      )} to ${opticWebUrl}`
-    );
   }
 
-  const fileOutput: BulkUploadFileJson = {
+  return {
     comparisons: uploadedComparisons,
     ciContext: normalizedCiContext,
   };
-  const uploadFileLocation = await writeFile(
-    DEFAULT_BULK_UPLOAD_OUTPUT_FILENAME, // TODO maybe make this a cli argument?
-    Buffer.from(JSON.stringify(fileOutput))
-  );
-
-  console.log('Successfully uploaded all files to Optic');
-  console.log(`Results of this run can be found at ${uploadFileLocation}`);
 };

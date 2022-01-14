@@ -4,14 +4,69 @@ import {
   NormalizedCiContext,
 } from '@useoptic/openapi-utilities';
 import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
+import { uploadFileToS3 } from './s3';
+import { parseSpecVersion } from './compare-input-parser';
 import {
-  uploadFileToS3,
-  parseSpecVersion,
   readAndValidateGithubContext,
   readAndValidateCircleCiContext,
-  specFromInputToResults,
-} from '.';
+} from './ci-context-parsers';
+import { specFromInputToResults } from './load-spec';
 import { UserError } from '../../errors';
+import { CliConfig } from '../../types';
+
+export const validateUploadRequirements = (
+  shouldUpload: boolean,
+  cliConfig: CliConfig,
+  ciContext?: string
+) => {
+  const supportedGitProviders = ['github'];
+  const supportedCiProviders = ['github', 'circleci'];
+  if (shouldUpload) {
+    // If shouldUpload, we should have a valid optic token, git provider and ciContext
+    if (!cliConfig.opticToken) {
+      throw new UserError(
+        'Expected an opticToken to be set in cliOptions when used with --should-upload - check usage of makeCiCli or makeCiCliWithNamedRules'
+      );
+    }
+
+    if (!cliConfig.ciProvider) {
+      throw new UserError(
+        'Expected an ciProvider to be set in cliOptions when used with --should-upload - check usage of makeCiCli or makeCiCliWithNamedRules'
+      );
+    }
+
+    if (!supportedCiProviders.includes(cliConfig.ciProvider)) {
+      throw new UserError(
+        `Unsupported gitProvider supplied - currently supported git providers are: ${supportedCiProviders.join(
+          ', '
+        )}`
+      );
+    }
+
+    if (!cliConfig.gitProvider) {
+      throw new UserError(
+        'Expected an gitProvider to be set in cliOptions when used with --should-upload - check usage of makeCiCli or makeCiCliWithNamedRules'
+      );
+    }
+
+    if (!supportedGitProviders.includes(cliConfig.gitProvider.provider)) {
+      throw new UserError(
+        `Unsupported gitProvider supplied - currently supported git providers are: ${supportedGitProviders.join(
+          ', '
+        )}`
+      );
+    }
+    if (!cliConfig.gitProvider.token) {
+      throw new UserError(`No gitProvider.token was supplied`);
+    }
+
+    if (!ciContext) {
+      throw new UserError(
+        'Expected --ci-context to be set when used with --should-upload'
+      );
+    }
+  }
+};
 
 export type CiRunArgs = {
   from?: string;

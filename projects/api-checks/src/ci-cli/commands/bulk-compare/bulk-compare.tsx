@@ -8,7 +8,6 @@ import {
   IChange,
   OpenApiFact,
   validateOpenApiV3Document,
-  BulkCompareFileJson,
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { ParseOpenAPIResult } from '@useoptic/openapi-io';
@@ -19,19 +18,24 @@ import {
   loadFile,
   parseSpecVersion,
   specFromInputToResults,
-  writeFile,
+  validateUploadRequirements,
+  generateSpecResults,
 } from '../utils';
-import { generateSpecResults } from '../utils/generateSpecResults';
+
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { UserError } from '../../errors';
 import { SourcemapRendererEnum } from '../components/render-results';
 import { trackEvent } from '../../segment';
-import { DEFAULT_BULK_COMPARE_OUTPUT_FILENAME } from '../../constants';
+import { CliConfig, BulkCompareJson, BulkUploadJson } from '../../types';
+import { createOpticClient } from '../utils/optic-client';
+import { bulkUploadCiRun } from './bulk-upload';
+import { sendBulkGithubMessage } from './bulk-github-comment';
 
 export const registerBulkCompare = (
   cli: Command,
   projectName: string,
-  rulesetServices: OpticCINamedRulesets
+  rulesetServices: OpticCINamedRulesets,
+  cliConfig: CliConfig
 ) => {
   cli
     .command('bulk-compare')
@@ -48,9 +52,13 @@ export const registerBulkCompare = (
       ).choices(['pretty', 'json', 'plain'])
     )
     .option(
-      '--create-file',
-      'creates a file with the results of the run in json format',
+      '--should-upload',
+      'upload results of this run to optic cloud',
       false
+    )
+    .option(
+      '--ci-context <ciContext>',
+      'path to file with the context shape from the ci provider (e.g. github actions, circle ci)'
     )
     .action(
       wrapActionHandlerWithSentry(
@@ -59,13 +67,15 @@ export const registerBulkCompare = (
           verbose,
           ruleset,
           output = 'pretty',
-          createFile,
+          shouldUpload,
+          ciContext,
         }: {
           input: string;
           verbose: boolean;
           ruleset: string;
           output?: 'pretty' | 'json' | 'plain';
-          createFile: boolean;
+          shouldUpload: boolean;
+          ciContext?: string;
         }) => {
           const checkService = rulesetServices[ruleset];
           if (!checkService) {
@@ -90,6 +100,8 @@ export const registerBulkCompare = (
               return process.exit(1);
             }
           }
+          validateUploadRequirements(shouldUpload, cliConfig, ciContext);
+
           const { waitUntilExit } = render(
             <BulkCompare
               checkService={checkService}
@@ -97,7 +109,9 @@ export const registerBulkCompare = (
               verbose={verbose}
               output={output}
               projectName={projectName}
-              createFile={createFile}
+              shouldUpload={shouldUpload}
+              ciContext={ciContext}
+              cliConfig={cliConfig}
             />,
             { exitOnCtrlC: true }
           );
@@ -261,17 +275,39 @@ const BulkCompare: FC<{
   verbose: boolean;
   projectName: string;
   output: 'pretty' | 'json' | 'plain';
-  createFile: boolean;
-}> = ({ input, verbose, output, checkService, projectName, createFile }) => {
+  shouldUpload: boolean;
+  ciContext?: string;
+  cliConfig: CliConfig;
+}> = ({
+  input,
+  verbose,
+  output,
+  checkService,
+  projectName,
+  shouldUpload,
+  ciContext,
+  cliConfig,
+}) => {
   const { exit } = useApp();
   const stdout = useStdout();
   const stderr = useStderr();
   const [comparisons, setComparisons] = useState<Map<string, Comparison>>(
     new Map()
   );
-  const [outputFileLocation, setOutputFileLocation] = useState<string | null>(
-    null
-  );
+  const [uploadState, setUploadState] = useState<
+    | {
+        state: 'not started' | 'no changes';
+      }
+    | {
+        state: 'complete';
+        bulkUploadJson: BulkUploadJson;
+      }
+    | {
+        state: 'started';
+        numberOfUploads: number;
+        numberOfComparisons: number;
+      }
+  >({ state: 'not started' });
 
   useEffect(() => {
     let isStale = false;
@@ -341,12 +377,10 @@ const BulkCompare: FC<{
           ? new UserError('Error: Could not read all of the comparison inputs')
           : hasError
           ? new UserError('Error: Could not run all of the comparisons')
-          : hasChecksFailing
-          ? new UserError('Some checks did not pass')
           : undefined;
 
         if (!maybeError) {
-          const fileContents: BulkCompareFileJson = {
+          const bulkCompareOutput: BulkCompareJson = {
             comparisons: [...finalComparisons].map(([, comparison]) => {
               if (comparison.loading || comparison.error) {
                 throw new Error(
@@ -363,15 +397,56 @@ const BulkCompare: FC<{
               };
             }),
           };
-          if (createFile) {
-            const compareOutputLocation = await writeFile(
-              DEFAULT_BULK_COMPARE_OUTPUT_FILENAME,
-              Buffer.from(JSON.stringify(fileContents))
+          if (shouldUpload) {
+            !isStale &&
+              setUploadState({
+                state: 'started',
+                numberOfUploads: bulkCompareOutput.comparisons.filter(
+                  (comparison) => comparison.changes.length > 0
+                ).length,
+                numberOfComparisons: bulkCompareOutput.comparisons.length,
+              });
+
+            // We've validated the shape in validateUploadRequirements
+            const ciContextNotNull = ciContext!;
+            const ciProvider = cliConfig.ciProvider!;
+            const opticToken = cliConfig.opticToken!;
+            const { token, provider } = cliConfig.gitProvider!;
+            const opticClient = createOpticClient(opticToken);
+            const bulkUploadOutput = await bulkUploadCiRun(
+              opticClient,
+              bulkCompareOutput,
+              ciContextNotNull,
+              ciProvider
             );
-            !isStale && setOutputFileLocation(compareOutputLocation);
+
+            if (bulkUploadOutput) {
+              // In the future we can add different git providers
+              if (provider === 'github') {
+                await sendBulkGithubMessage({
+                  githubToken: token,
+                  uploadOutput: bulkUploadOutput,
+                });
+                !isStale &&
+                  setUploadState({
+                    state: 'complete',
+                    bulkUploadJson: bulkUploadOutput,
+                  });
+              }
+            } else {
+              !isStale &&
+                setUploadState({
+                  state: 'no changes',
+                });
+            }
           }
         }
-        exit(maybeError);
+
+        exit(
+          maybeError || hasChecksFailing
+            ? new UserError('Some checks did not pass')
+            : undefined
+        );
       } catch (e) {
         stderr.write(JSON.stringify(e, null, 2));
         exit(e as Error);
@@ -429,9 +504,34 @@ const BulkCompare: FC<{
           </Box>
         );
       })}
-      {outputFileLocation && (
-        <Text>Results of this run can be found at: {outputFileLocation}</Text>
-      )}
+      {uploadState.state === 'started' ? (
+        <Text>
+          Uploading {uploadState.numberOfUploads} comparisons with at least 1
+          change to Optic... (
+          {uploadState.numberOfComparisons - uploadState.numberOfUploads} did
+          not have any changes)
+        </Text>
+      ) : uploadState.state === 'no changes' ? (
+        <Text>
+          None of the comparisons had any changes, not uploading anything
+        </Text>
+      ) : uploadState.state === 'complete' ? (
+        <>
+          <Text>
+            Successfully uploaded $
+            {uploadState.bulkUploadJson.comparisons.length} comparisons that had
+            at least 1 change
+          </Text>
+          <Text>These files can be found in</Text>
+          {uploadState.bulkUploadJson.comparisons.map((comparison) => (
+            <Text>
+              from: {comparison.inputs.from || 'Empty Spec'} to:{' '}
+              {comparison.inputs.to || 'Empty Spec'} - {comparison.opticWebUrl}
+            </Text>
+          ))}
+          <Text>Posting comment to github</Text>
+        </>
+      ) : null}
     </Box>
   );
 };

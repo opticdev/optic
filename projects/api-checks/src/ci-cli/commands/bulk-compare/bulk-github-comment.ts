@@ -1,89 +1,27 @@
-import { Command, Option } from 'commander';
 import { Octokit } from '@octokit/rest';
-import {
-  loadFile,
-  readAndValidateGithubContext,
-  readAndValidateCircleCiContext,
-} from '../utils';
 import { trackEvent } from '../../segment';
-import { wrapActionHandlerWithSentry } from '../../sentry';
 import { findOpticCommentId } from '../utils/shared-comment';
-import { BulkUploadFileJson } from '@useoptic/openapi-utilities';
-
-export const registerBulkGithubComment = (cli: Command) => {
-  cli
-    .command('bulk-github-comment')
-    .requiredOption('--token <token>', 'github token')
-    .addOption(
-      new Option(
-        '--provider <provider>',
-        'The name of the ci-provider, supported'
-      )
-        .choices(['github', 'circleci'])
-        .makeOptionMandatory()
-    )
-    .requiredOption('--ci-context <ciContext>', 'file with github context')
-    .requiredOption(
-      '--bulk-upload <bulkUpload>',
-      'the file path to the bulk upload output'
-    )
-    .action(
-      wrapActionHandlerWithSentry(
-        async (runArgs: {
-          token: string;
-          ciContext: string;
-          provider: 'github' | 'circleci';
-          bulkUpload: string;
-        }) => {
-          const fileBuffer = await loadFile(runArgs.ciContext);
-          const {
-            organization: owner,
-            repo,
-            pull_request: pull_number,
-            commit_hash,
-          } =
-            runArgs.provider === 'github'
-              ? readAndValidateGithubContext(fileBuffer)
-              : readAndValidateCircleCiContext(fileBuffer);
-
-          await sendMessage({
-            githubToken: runArgs.token,
-            owner: owner,
-            repo: repo,
-            pull_number: Number(pull_number),
-            upload: runArgs.bulkUpload,
-            commit_hash,
-          });
-        }
-      )
-    );
-};
+import { BulkUploadJson } from '../../types';
 
 // The identifier we use to find the Optic Comment
 // TODO is there a better way to track and identify Optic comments for comment / replace?
 const GITHUB_COMMENT_IDENTIFIER =
   'INTERNAL-OPTIC-BULK-COMMENT-IDENTIFIER-1234567890';
 
-const sendMessage = async ({
+export const sendBulkGithubMessage = async ({
   githubToken,
-  owner,
-  repo,
-  pull_number,
-  upload,
-  commit_hash,
+  uploadOutput,
 }: {
   githubToken: string;
-  owner: string;
-  repo: string;
-  pull_number: number;
-  upload: string;
-  commit_hash: string;
+  uploadOutput: BulkUploadJson;
 }) => {
-  const uploadFileResults = await loadFile(upload);
-  // TODO write this in a validation step and error to give better errors to the user
-  const { comparisons }: BulkUploadFileJson = JSON.parse(
-    uploadFileResults.toString()
-  );
+  const { comparisons, ciContext } = uploadOutput;
+  const {
+    organization: owner,
+    repo,
+    pull_request: pull_number,
+    commit_hash,
+  } = ciContext;
 
   if (comparisons.length === 0) {
     console.log('No comparisons were found, exiting.');
