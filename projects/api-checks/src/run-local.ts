@@ -2,8 +2,11 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { expect } from 'chai';
 import { ApiCheckService } from './sdk/api-check-service';
-import { ExampleDsl, ExampleDslContext } from './sdk/test/example-dsl';
+import { makeApiChecksForStandards } from './rulesets/packaged-rules';
+import { ApiCheckDslContext } from './sdk/api-change-dsl';
 import { makeCiCli } from './ci-cli/make-cli';
+import { NameMustBe } from './rulesets/naming/helpers/config';
+import { RuleApplies } from './rulesets/shared-config';
 
 if (process.env.OPTIC_DEBUG_ENV_FILE) {
   console.log(`using overridden env ${process.env.OPTIC_DEBUG_ENV_FILE}`);
@@ -15,28 +18,33 @@ dotenv.config({
   path: envPath,
 });
 
-const checker: ApiCheckService<ExampleDslContext> = new ApiCheckService<ExampleDslContext>();
-
-function completenessApiRules(dsl: ExampleDsl) {
-  dsl.operations.changed.must(
-    'have consistent operationIds',
-    (current, next, context, docs) => {
-      docs.includeDocsLink(
-        'https://github.com/apis/guide/our-rules#operations'
-      );
-      expect(current.operationId).to.equal(
-        next.operationId || '',
-        'operation ids must be consistent'
-      );
-    }
-  );
-}
-
-checker.useDsl(
-  (input) =>
-    new ExampleDsl(input.nextFacts, input.nextJsonLike, input.changelog),
-  completenessApiRules
-);
+const checker: ApiCheckService<ApiCheckDslContext> = makeApiChecksForStandards({
+  naming: {
+    requestHeaders: {
+      rule: NameMustBe.camelCase,
+      applies: RuleApplies.always,
+    },
+    queryParameters: {
+      rule: NameMustBe.camelCase,
+      applies: RuleApplies.always,
+    },
+    requestProperties: {
+      rule: NameMustBe.camelCase,
+      applies: RuleApplies.always,
+    },
+    responseProperties: {
+      rule: NameMustBe.camelCase,
+      applies: RuleApplies.always,
+    },
+    responseHeaders: {
+      rule: NameMustBe.camelCase,
+      applies: RuleApplies.always,
+    },
+  },
+  breakingChanges: {
+    failOn: 'all',
+  },
+});
 
 const cli = makeCiCli('play-thing', checker, {
   opticToken: process.env.OPTIC_TOKEN || '123',
