@@ -58,7 +58,7 @@ export const sendBulkGithubMessage = async ({
     pull_number
   );
 
-  const bodyDetails = comparisons.reduce((acc, comparison) => {
+  const renderedComparisons = comparisons.map((comparison) => {
     const { opticWebUrl, changes, inputs, results } = comparison;
     const failingChecks = results.filter((result) => !result.passed).length;
     const totalChecks = results.length;
@@ -82,8 +82,6 @@ export const sendBulkGithubMessage = async ({
       ? `✅ all checks passed (**${totalChecks}**).`
       : `ℹ️ No automated checks have run.`
   }
-  
-  For details, see [the Optic API Changelog](${opticWebUrl})
 `;
 
     //     const failingChecks = comparison.results.filter(
@@ -102,7 +100,7 @@ export const sendBulkGithubMessage = async ({
 
     // View results at ${comparison.opticWebUrl}.
     // `;
-    return acc + body;
+    return body;
   }, '');
 
   const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
@@ -110,7 +108,7 @@ export const sendBulkGithubMessage = async ({
 
 Summary of run #${run} results (${commit_hash}):
 
-${bodyDetails}
+${renderedComparisons.join(`\n---\n`)}
   `;
 
   if (maybeOpticCommentId) {
