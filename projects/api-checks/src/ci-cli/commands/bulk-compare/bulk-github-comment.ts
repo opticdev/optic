@@ -74,7 +74,7 @@ export const sendBulkGithubMessage = async ({
     const body = `
 #### Changelog for [${comparisonDescription}](${opticWebUrl})
 
-  💡 **${changes.length}** API changes
+  💡 **${changes.length}** API change${changes.length > 1 ? 's' : ''}
   ${
     failingChecks > 0
       ? `⚠️ **${failingChecks}** / **${totalChecks}** checks failed.`
