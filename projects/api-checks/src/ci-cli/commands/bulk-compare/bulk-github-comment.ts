@@ -106,7 +106,7 @@ export const sendBulkGithubMessage = async ({
   const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
 ### Changes to your OpenAPI specs
 
-Summary of run #${run} results (${commit_hash}):
+Summary of run # ${run} results (${commit_hash}):
 
 ${renderedComparisons.join(`\n---\n`)}
   `;
