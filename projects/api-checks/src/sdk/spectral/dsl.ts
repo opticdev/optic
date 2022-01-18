@@ -1,4 +1,9 @@
-import { ISpectralDiagnostic, Spectral } from '@stoplight/spectral-core';
+import {
+  ISpectralDiagnostic,
+  Spectral,
+  RulesetDefinition,
+  Ruleset,
+} from '@stoplight/spectral-core';
 import {
   ApiCheckDsl,
   Result,
@@ -21,7 +26,7 @@ export class SpectralDsl implements ApiCheckDsl {
   constructor(
     private nextJson: OpenAPIV3.Document,
     private nextFacts: IFact<OpenApiFact>[],
-    private ruleset: any
+    private ruleset: RulesetDefinition | Ruleset
   ) {
     this.spectralChecksResults = this.run();
   }
