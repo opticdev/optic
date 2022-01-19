@@ -1,17 +1,17 @@
-import http from "http";
-import { AddressInfo } from 'net';
-import net from "net";
-import { unlink } from "fs/promises";
-import stream from "stream";
+import stream from 'stream';
 
-import { PcapSession, TCPTracker, TCPSession, createSession, decode } from "pcap";
-import express from 'express';
-import { createProxyMiddleware, RequestHandler, responseInterceptor } from 'http-proxy-middleware';
-import { parseStatusLine } from "http-string-parser";
-import bodyParser from "body-parser";
+import {
+  PcapSession,
+  TCPTracker,
+  TCPSession,
+  createSession,
+  decode,
+} from 'pcap';
+import { HTTPParser, HTTPParserJS } from 'http-parser-js';
+import zlib from 'zlib';
 
-import { TrafficSource } from "../types";
-import { OpticHttpInteraction } from "../traffic/optic-http-interaction";
+import { TrafficSource } from '../types';
+import { OpticHttpInteraction } from '../traffic/optic-http-interaction';
 
 export type SnifferNativeConfig = {
   interface: string;
@@ -35,21 +35,21 @@ export class SnifferNativeSource extends TrafficSource {
 
     this.tracker.on('session', async (session: any) => {
       //console.log("session");
-      // Initialise a Simulation
+      // Initialise a Simulation, passing a callback to emit HTTPInteractions
+      // when they are complete.
       // Note: This is a "lightweight" operation since we need to wire up the
       // session's events quickly to avoid missing data
-      session.sim = new Simulation();
+      session.sim = new Simulation(this.emitTraffic.bind(this));
       let endPromise = this.wireSession(session, session.sim);
       // Replay the session as it happens, "simulating" it.
       this.simulateSession(session, endPromise);
     });
   }
 
-
   start(): Promise<void> {
     //console.log("start");
 
-    let options = { filter: `tcp and port ${this.config.port}` }
+    let options = { filter: `tcp and port ${this.config.port}` };
     this.pcapSession = createSession(this.config.interface, options);
 
     // listen for packets, decode them, and feed TCP to the tracker. The tracker
@@ -102,344 +102,412 @@ export class SnifferNativeSource extends TrafficSource {
     });
 
     //console.log(`session ${session.track_id} wired`);
-    return new Promise<void>((resolve) => {
-      session.on('end', (session: any) => {
-        //console.log("End of TCP session between " + session.src + " and " + session.dst);
-        resolve();
-      })
+    return new Promise<void>((resolve, reject) => {
+      session
+        .on('error', (e: any) => {
+          let msg = `Error while wiring up simulation: ${e}`;
+          console.error(msg);
+          reject(msg);
+        })
+        .on('end', (session: any) => {
+          //console.log(`End of TCP session between ${session.src} and ${session.dst}`);
+          resolve(null);
+        });
     });
   }
 
-  // Replay stored sesssion data and pass the Simulation a callback to emit a
-  // traffic event when we have a full request/response pair
-  async simulateSession(session: typeof TCPSession, sessionEndPromise: Promise<void>) {
-    await session.sim.prepareSimulation(this.emitTraffic.bind(this));
-    await session.sim.run();
-    await session.sim.finalize(sessionEndPromise);
-
-    //console.log(`Closing session ${session.track_id}`);
-    await session.sim.close();
-    delete this.sessions[session.track_id];
+  // Replay stored sesssion data, attaching a callback to end once the simulation ends.
+  // Note: The Simulation has a callback to emit a traffic event when we have a
+  // full request/response pair at construction.
+  async simulateSession(
+    session: typeof TCPSession,
+    sessionEndPromise: Promise<void>
+  ) {
+    try {
+      await session.sim.run(sessionEndPromise);
+      await sessionEndPromise;
+      delete this.sessions[session.track_id];
+    } catch (e: any) {
+      console.error(`Error in simulation: ${e}\n${e.stack}`);
+    }
   }
 }
 
 // Simulate/replay captured traffic through a proxy instance.
-// The flow is:
-//  client connection -> proxy request handler -> backend connection -> proxy response handler
-// Where 'client connection' a literal replay of the bytes seen from a client
-// (the 'data send' pcap event) and 'backend connection is a literal replay of
-// the bytes seen in a response (the 'data recv' pcap event).
-// Both replay connections are hand-rolled TCP connections.
-//
-// Note: http-proxy-middleware splits pipelined requests when dispatching to the
-// backend. This is annoying, as it means we need to split the response bytes by
-// looking for HTTP response message starts.
+// This runs the data sent by the client and the data returned by the server
+// through separate http-parser-js instances. Pipelined requests will trigger
+// separate emitTraffic callbacks as soon as the request/response pairs are
+// complete. While .run is called, the parsers parse as soon as data is written
+// to the requestStream or responseStream.
+// Note: The timing between request and response streams isn't retained and it
+// is assumed that requests and responses pair up in order. This may become an
+// issue with trailers or if we ever handle HTTP push protocols (like spdy or
+// HTTP2).
 class Simulation {
+  // The global counter for simulations, so that they have a unique number in
+  // sessionNumber
   static simCount = 0;
 
-  private sessionNumber: number;
+  // A unique identifier for the Simulation. Used for debug
+  private simNumber: number;
 
-  // Bytes for replay on the client connection, requestConn.
+  // Bytes sent by the client to the server in the session. This can be multiple
+  // requests and it is piped so that the parser is always reading. This allows
+  // us to emitTraffic as each request/response pair is complete and not at the
+  // end of a long multi-request session.
   private requestStream: stream.Duplex;
 
-  // Byte streams for each backend response. We split when we see a new response
-  // (marked with a HTTP/1.1 start). This happens with pipelined requests and we
-  // expect the number of streams to match the number of requests in a session.
-  private responseStreams: stream.PassThrough[];
+  // Bytes returned by the server to the client's requests
+  private responseStream: stream.Duplex;
 
-  // handles to the proxy and backend server
+  // An http-parser-js instance configured to parse requests
+  private request_parser: HTTPParserJS;
 
-  private backendServer: net.Server;
-  private proxy: RequestHandler;
-  private proxyListener: http.Server;
+  // An http-parser-js instance configured to parse responses
+  private response_parser: HTTPParserJS;
 
-  // Unix socket for the client connection (proxy listens on this, raw TCP connection made by us)
-  private requestSock: net.Socket;
-  // Unix socket for the backend (proxy connects to this, raw TCP server by us)
-  private requestConn: net.Socket;
-  // The client socket on connect, backend data is sent on this.
-  //
-  // Note: http-middleware-proxy splits pipelined requests. There will be
-  // multiple responseConn instances in those scenarios.
-  //private responseConnArr: net.Socket[];
+  // parsed HTTP requests stored in the order they were sent
+  private requests: HTTPRequest[];
 
-  // proxiedRequestsIdx & backendRequestsIdx are used to coordinate connections
-  // from the proxy to the backend server.
-  // They are independent since the order of operations is not fixed, and we may
-  // begin handling backend responses before all requests have passed through
-  // the proxy.
-  private proxiedRequestsIdx: number;
-  private backendRequestsIdx: number;
+  // parsed HTTP responses stored in the order they were sent
+  private responses: HTTPResponse[];
 
-  // allStreams is all the streams we create for this simulation. We use it in
-  // .close() to ensure that we don't shutdown before in-flight requests are
-  // handled.
-  public allStreams: stream.PassThrough;
+  // The next index to emit from .requests and .responses
+  // Note: We assume requests and responses pair up in order
+  private nextEmittedIdx: number;
 
+  // The callback to emit a completed request/response pair as an
+  // HTTPInteraction
+  private emitTraffic: { (interaction: any): void };
 
+  constructor(emitTraffic: { (interaction: any): void }) {
+    this.simNumber = ++Simulation.simCount;
+    //console.log(`Simulation ${this.simNumber} constructing`)
 
-  constructor(){
-    this.sessionNumber = ++Simulation.simCount;
+    this.request_parser = new HTTPParser(HTTPParser.REQUEST);
+    this.response_parser = new HTTPParser(HTTPParser.RESPONSE);
 
     this.requestStream = new stream.PassThrough();
+    this.requestStream.on('error', function (e) {
+      console.error(`Error in requestStream: ${e}`);
+    });
 
-    this.responseStreams = [];
-    this.proxiedRequestsIdx = -1;
-    this.backendRequestsIdx = -1;
+    this.responseStream = new stream.PassThrough();
+    this.responseStream.on('error', function (e) {
+      console.error(`Error in responseStream: ${e}`);
+    });
 
-    this.allStreams = new stream.PassThrough({ objectMode: true });
-    this.allStreams.push(this.requestStream);
+    this.requests = [];
+    this.responses = [];
+    this.nextEmittedIdx = 0;
+    this.emitTraffic = emitTraffic;
+
+    // Initialize the first entries in the .requests and .responses arrays
+    this.newRequest();
+    this.newResponse();
+
+    this.prepareSimulation();
   }
 
-  // storeRequestBytes retains data for replay on requestConn.
-  // Note: No copy is made. If the buffer is re-used then copy it before passing
-  // it in.
-  public async storeRequestBytes(data: Uint8Array) {
-      this.requestStream.write(data);
+  // prepareSimulation connects request/response parser callbacks to functions
+  // on Simulations (http-parser-js doesn't do events but direct functions on
+  // itself).
+  public async prepareSimulation() {
+    let self = this;
+    this.request_parser.onHeaders = function (headers, url) {
+      self.on_req_headers(headers, url);
+    };
+    this.request_parser.onHeadersComplete = function (info): number {
+      self.on_req_headers_complete(info);
+      return 0; // FIXME: this return is skipBody in http-parser-js
+    };
+    this.request_parser.onBody = function (buf, start, len) {
+      self.on_req_body(buf, start, len);
+    };
+    this.request_parser.onMessageComplete = function () {
+      //console.log(`HTTP request complete`);
+      self.on_req_complete();
+    };
+    this.response_parser.onHeaders = function (headers) {
+      self.on_res_headers(headers);
+    };
+    this.response_parser.onHeadersComplete = function (info): number {
+      self.on_res_headers_complete(info);
+      return 0; // FIXME: this return is skipBody in http-parser-js
+    };
+    this.response_parser.onBody = function (buf, start, len) {
+      self.on_res_body(buf, start, len);
+    };
+    this.response_parser.onMessageComplete = function () {
+      //console.log(`HTTP response complete`);
+      self.on_res_complete();
+    };
   }
 
-  // storeResponseBytes retains data for replay on responseConn. It splits on a
-  // new HTTP/1.1 response start, resulting in a number of internal buffer
-  // arrays.
-  // Note: No copy is made. If the buffer is re-used then copy it before passing
-  // it in.
-  public async storeResponseBytes(data: Uint8Array) {
-    // This happens with IPv6 because?
-    if (data.length == 0) { return; }
+  // run replays traffic stored with `storeRequestBytes` and `storeResponseBytes`
+  // Note: It is important to only pipe requestStream to requestConn after the
+  // proxy and backend server are both setup. i.e. Don't pipe in the connect
+  // callback for requestConn.
+  // Note: Assumes setupSimulation has already been called to put data into
+  // .request/responseStream
+  public async run(sessionEndPromise: Promise<void>) {
+    this.requestStream.on('data', (chunk: any) => {
+      this.request_parser.execute(chunk);
+    });
+    this.responseStream.on('data', (chunk: any) => {
+      this.response_parser.execute(chunk);
+    });
 
-    // parseStatusLine is implemented with an anchored regex, internally.
-    // It won't parse unless we split lines. We take the first 100 bytes
-    // to avoid large response bodies
-    const respline = parseStatusLine(data.slice(0, 100).toString().split(/\r?\n/, 1)[0]);
-    //console.log(`storeResponseBytes respline: ${JSON.stringify(respline)}`);
+    let requestEndPromise = new Promise((resolve, reject) => {
+      this.requestStream.once('finish', () => {
+        this.requestStream.removeAllListeners();
+        resolve(null);
+      });
+      this.requestStream.once('error', (e) => {
+        this.requestStream.removeAllListeners();
 
-    let idx = this.proxiedRequestsIdx;
+        let msg = `Error in requestStream ${e}`;
+        console.error(msg);
+        reject(msg);
+      });
+    });
 
-    // Start a new array of Buffers for a new HTTP response.
-    // Note: The first ever data will call newReponseStream via
-    // getResponseStream below, but it is likely that the first bytes are the
-    // start of a HTTP response anyway. idx must be consistent between the two, however.
-    if (respline.protocol && respline.protocol.startsWith("HTTP/1.1") &&
-        respline.statusCode && respline.statusMessage) {
-      idx = ++this.proxiedRequestsIdx;
-      //console.log(`storeResponseBytes need new curr len ${this.proxiedRequestsIdx} respline ${JSON.stringify(respline)}`);
+    let responseEndPromise = new Promise((resolve, reject) => {
+      this.responseStream.once('finish', () => {
+        this.responseStream.removeAllListeners();
+        resolve(null);
+      });
+      this.responseStream.once('error', (e) => {
+        this.responseStream.removeAllListeners();
 
-      // Allow processing the previous response, if there is one
-      if (this.proxiedRequestsIdx > 1) {
-        //console.log(`storeResponseBytes done with ${this.proxiedRequestsIdx}`);
-        this.resolveResponseStream(this.proxiedRequestsIdx - 1);
-      }
+        let msg = `Error in responseStream ${e}`;
+        console.error(msg);
+        reject(msg);
+      });
+    });
+
+    //console.log('starting session wait')
+    await Promise.allSettled([
+      sessionEndPromise.finally(this.endSimulation.bind(this)),
+      requestEndPromise.catch((reason: any) => {
+        console.error(
+          `Error while waiting for request data processing to end: ${reason}`
+        );
+      }),
+      responseEndPromise.catch((reason: any) => {
+        console.error(
+          `Error while waiting for response data processing to end: ${reason}`
+        );
+      }),
+    ]);
+    //console.log('ended session wait')
+  }
+
+  public async endSimulation() {
+    this.requestStream.end();
+    this.responseStream.end();
+  }
+
+  public async emitHTTPPair() {
+    let idx = this.nextEmittedIdx++;
+    //console.log(`emitting req/resp pair ${idx}`);
+
+    let request = this.requests[idx];
+    let requestBody = request.getBody();
+    let response = this.responses[idx];
+    let responseBody = response.getBody();
+
+    //console.log(`req headers ${JSON.stringify(request.headers)}`);
+    //console.log(`resp headers ${JSON.stringify(response.headers)}`);
+
+    //console.log(`HTTP Request\n${JSON.stringify(request)}`);
+    //console.log(`HTTP Request Body\n${request.getBody()}`);
+    //console.log(`HTTP Response\n${JSON.stringify(response)}`);
+    //console.log(`HTTP Response Body\n${responseBody}`);
+
+    // Split up the reported `req.url`
+    let path, query;
+    try {
+      let host = request.get_header('host');
+      let url = new URL(request.url, `http://${host}`);
+      path = url.pathname;
+      query = url.search.slice(1); // strip leading `?`
+    } finally {
     }
 
-    this.getResponseStream(this.proxiedRequestsIdx).write(data);
-    //console.log(`storeResponseBytes end`);
-  }
-
-  // prepareSimulation starts up the servers and connections we use to replay a session.
-  // Note: This is a slow operation and should not execute before setting up the
-  // session's callbacks to avoid missing traffic.
-  public async prepareSimulation(emitTraffic: any) {
-    const socketBackendPath = `simulated_session_${this.sessionNumber}_backend.sock`
-    const socketFrontendPath = `simulated_session_${this.sessionNumber}_frontend.sock`
-
-    await this.startBackendServer(socketBackendPath);
-
-    // setup proxy
-    let onProxyReq = (proxyReq: http.ClientRequest, req: http.IncomingMessage, res: http.ServerResponse): void => {
-      //console.log(`onProxyReq`);
-      //console.log(`onProxyReq: ${req.url}`);
-    };
-    let onProxyRes = responseInterceptor(async (responseBuffer: Buffer, proxyRes: http.IncomingMessage, req: http.IncomingMessage, res: http.ServerResponse) =>  {
-      //console.log(`onProxyRes`);
-      //console.log(`onProxyRes req headers ${req.headers.toString()}`);
-      //console.log(`onProxyRes res headers ${JSON.stringify(proxyRes.headers)}`);
-
-      // Split up the reported `req.url`
-      let path, query;
+    let reqContentType = request.get_header('content-type'),
+      reqBody = undefined;
+    if (reqContentType) {
       try {
-        let url = new URL(req.url, `http://${req.headers.host}`);
-        path = url.pathname;
-        query = url.search.slice(1); // strip leading `?`
-      } finally {}
+        JSON.parse(requestBody.toString());
+        reqBody = requestBody.toString();
+      } catch {}
+    }
 
-      let reqContentType = req.headers["content-type"];
-      // http.IncomingMessage doesn't have the .body field, but it's there, promise!
-      let reqBody = reqContentType ? JSON.stringify((req as any).body) : undefined;
+    let resContentType = response.get_header('content-type'),
+      resBody = undefined;
+    try {
+      // Check that this is a JSON string
+      JSON.parse(responseBody.toString());
+      resBody = responseBody.toString();
+      //console.log(`Response body is JSON`);
+      //console.log(`response: ${resBody}`);
+    } catch (e) {
+      resContentType = undefined; // We rely on this to indicate empty bodies
+    }
 
-      let resContentType = proxyRes.headers["content-type"],
-          resBody = undefined;
-      try {
-        // Check that this is a JSON string
-        JSON.parse(responseBuffer.toString());
-        resBody = responseBuffer.toString(); 
-        //console.log(`OnProxyRes response is JSON`);
-        //console.log(`response: ${resBody}`);
-      } catch (e) {
-        resContentType = undefined; // We rely on this to indicate empty bodies
-      }
-
+    let interaction: OpticHttpInteraction;
+    try {
       // Success! emit an interaction
-      let interaction = new OpticHttpInteraction({
+      interaction = new OpticHttpInteraction({
         request: {
-          method: req.method,
+          method: request.method,
           path: path,
           query: { asText: query },
           body: {
             contentType: reqContentType,
-            value: { asJsonString: reqBody}
-          }
+            value: { asJsonString: reqBody },
+          },
         },
         response: {
-          statusCode: res.statusCode.toString(),
+          statusCode: response.status_code.toString(),
           body: {
             contentType: resContentType,
-            value: { asJsonString: resBody}
-          }
-        }
+            value: { asJsonString: resBody },
+          },
+        },
       });
-      //console.log(`proxy emitTraffic: ${JSON.stringify(interaction)}`);
-      emitTraffic(interaction);
+    } catch (e) {
+      console.error(`Error constructing HTTPInteraction ${e}`);
+    }
 
-      return responseBuffer;
-    })
-
-    this.proxy = createProxyMiddleware({
-      selfHandleResponse: true, // Needed by `responseInterceptor`
-      target: { socketPath: socketBackendPath, host: "", port: 0 },
-      onProxyReq: onProxyReq,
-      onProxyRes: onProxyRes,
-      logLevel: 'error',
-    });
-
-    // start a server, cleaning up any leftover sockets
-    await unlink(socketFrontendPath).catch(() => {});
-    const proxyApp = express().use(bodyParser.json()).use(this.proxy);
-    this.proxyListener = proxyApp.listen(socketFrontendPath);
-    await new Promise((resolve) => {
-      this.proxyListener.on('listening', resolve);
-    });
-    //console.log(`ProxyApp ready`);
-
-    await this.startFrontendServer(socketFrontendPath);
-  }
-
-  // startTCPConnections intializes two unix sockets for replays.
-  // These are raw TCP connections because the pcap data is sent on them as-is.
-  // This is particularly relevant for compressed response bodies where we
-  // cannot introspect anything.
-  private async startBackendServer(socketBackendPath: string) {
-    // open backend response replay socket, cleanup leftover unix sockets from before
-    // TODO: We may need to wait on the request to be sent before we stream the response
-    await new Promise<void>((resolve) => {
-    unlink(socketBackendPath).catch(() => {} )
-    .finally(async () => {
-      this.backendServer = net.createServer(async (c) => {
-        let idx = ++this.backendRequestsIdx;
-        //console.log(`new backend connection ${idx}`);
-        let responseStream = this.getResponseStream(idx);
-
-        //responseStream.on('data', (data) => {
-        //  console.log(`wrting backend ${idx}`);
-        //  //console.log(`writing backend ${idx} data: ${data}`);
-        //});
-        //c.on('data', (data) => { console.log(`backend connection ${idx} data read: ${data}`);});
-        //c.on('end', () => { console.log(`backend connection ${idx} end`)});
-        //c.on('close', () => { console.log(`backend connection ${idx} close`)});
-
-        responseStream.pipe(c);
-      })
-      .on('error', (err: any) => {
-        console.log(`backend server error ${err}`);
-        throw err;
-      })
-    })
-    .then(async () => {
-        //console.log(`wiring listen event`);
-        this.backendServer.on('listening', () => {
-          //console.log(`Backend ready`);
-          resolve();
-        });
-        this.backendServer.listen(socketBackendPath, 1024*1024);
-      });
-    });
-
-  }
-
-  private async startFrontendServer(socketFrontendPath: string) {
-    // Open frontend request replay socket, cleanup leftover unix sockets from before
-    return new Promise<void>((resolve) => {
-      this.requestSock = new net.Socket();
-      this.requestConn = this.requestSock.connect(socketFrontendPath)
-        .on('connect', () => {
-          //console.log('requestConn connect event');
-          resolve();
-        })
-        .on('error', (err) => {
-          //console.log(`requestConn error: ${err}`);
-          throw err;
-        });
-    });
-    //console.log(`requestConn ready ${JSON.stringify(sim.requestConn.address())}`);
-  }
-
-  // run replays traffic stored with `storeRequestBytes` and `storeResponseBytes`
-  // Note: Only run this on completed sessions
-  // Note: Assumes setupSimulation has already been called.
-  public async run() {
-    //console.log(`Flushing session ${session.track_id}`);
-    this.requestStream.pipe(this.requestConn);
-    await this.requestStream;
-
-  }
-
-  public async finalize(sessionEndPromise: Promise<void>) {
-    await sessionEndPromise;
-    //console.log('session ended')
-    if (this.responseStreams.length >= 1) {
-      //console.log(`clearing last response stream`);
-      let idx = this.responseStreams.length - 1;
-      this.resolveResponseStream(idx);
+    try {
+      //console.log(`emitTraffic ${idx}: ${JSON.stringify(interaction)}`);
+      this.emitTraffic(interaction);
+    } catch (e) {
+      console.error(
+        `Error emitting HTTPInteraction ${e}\n${JSON.stringify(interaction)}`
+      );
     }
   }
 
-  public async close() {
-    //console.log(`simulation close pre all responseStreams`);
-    for await (const s of this.allStreams) { await s; }
-
-    this.responseStreams.forEach(async (s, idx) => {
-      await new Promise(resolve => { s.on('close', resolve) } );
-      //console.log(`simulation close await responseStreams[${idx}] returned`);
-    });
-    //console.log(`simulation close post all responseStreams`);
-
-    this.proxyListener.close();
-    this.backendServer.close();
-    //for (let c of await this.responseConnArr) { c.destroy(); }
-  }
-
-  private newResponseStream(): stream.Duplex {
-      this.responseStreams.push(new stream.PassThrough());
-      let idx = this.responseStreams.length - 1;
-      //console.log(`newReponseStream: idx ${idx} maxIdx ${this.responseStreams.length - 1}`);
-      this.allStreams.push(this.responseStreams[idx]);
-      return this.responseStreams[idx];
-  }
-
-  private getResponseStream(idx: number): stream.Duplex {
-    //console.log(`getResponseStream: idx ${idx} maxIdx ${this.responseStreams.length - 1}`);
-    // Add a new one if needed
-    if (idx > this.responseStreams.length - 1) {
-      return this.newResponseStream();
+  // storeRequestBytes retains data seen from the client to the server in the
+  // session. This can be multiple HTTP requests.
+  // Note: No copy is made. If the buffer is re-used then copy it before passing
+  // it in.
+  public async storeRequestBytes(data: Uint8Array) {
+    if (!this.requestStream.write(data)) {
+      console.warn(`Request stream is not draining quickly enough`);
     }
-    return this.responseStreams[idx];
   }
 
-  private resolveResponseStream(idx: number): stream.Duplex {
-    //console.log(`resolveResponseStream: idx ${idx} maxIdx ${this.responseStreams.length - 1}`);
-    let ret = this.getResponseStream(idx) as stream.PassThrough;
-    // TODO: Do we need a final implementation here?
-    ret.push(null);
-    return ret;
+  // getRequest returns a reference to the latest request object. This is the
+  // next to be emitted and may be incomplete until then.
+  private getRequest(): HTTPRequest {
+    return this.requests[this.requests.length - 1];
+  }
+
+  // newRequest creates a new latest HTTPRequest object. It is assumed that the
+  // previous latest has been emitted already.
+  private newRequest(): HTTPRequest {
+    this.requests.push(new HTTPRequest());
+    return this.getRequest();
+  }
+
+  // storeResponseBytes retains data seen from the server to the client in the
+  // session. This can be multiple HTTP responses.
+  // Note: No copy is made. If the buffer is re-used then copy it before passing
+  // it in.
+  public async storeResponseBytes(data: Uint8Array) {
+    // This happens with IPv6 because?
+    if (data.length == 0) {
+      return;
+    }
+
+    if (!this.responseStream.write(data)) {
+      console.warn(`Response stream is not draining quickly enough`);
+    }
+    //console.log(`storeResponseBytes end`);
+  }
+
+  // getResponse returns a reference to the latest response object. This is the
+  // next to be emitted and may be incomplete until then.
+  private getResponse(): HTTPResponse {
+    return this.responses[this.responses.length - 1];
+  }
+
+  // newResponsee creates a new latest HTTPResponse object. It is assumed that
+  // the previous latest has been emitted already.
+  private newResponse(): HTTPResponse {
+    this.responses.push(new HTTPResponse());
+    return this.getResponse();
+  }
+
+  private on_req_headers(headers: any, url: any) {
+    let request = this.getRequest();
+    request.headers = (request.headers || []).concat(headers);
+    request.url += url;
+  }
+
+  private on_req_headers_complete(info: any) {
+    //console.log(`on_req_headers_complete`);
+
+    let request = this.getRequest();
+
+    request.method = info.method;
+    request.url = info.url || request.url;
+    request.http_version = info.versionMajor + '.' + info.versionMinor;
+
+    var headers = info.headers || request.headers;
+    for (var i = 0; i < headers.length; i += 2) {
+      request.headers[headers[i]] = headers[i + 1];
+    }
+  }
+
+  private on_req_body(buf: Buffer, start: number, len: number) {
+    let request = this.getRequest();
+    request.body_len += len;
+    request.storeBodyBytes(buf.slice(start, start + len));
+  }
+
+  private on_req_complete() {
+    //console.log(`http request complete`);
+    this.newRequest();
+  }
+
+  private on_res_headers(headers: any) {
+    let response = this.getResponse();
+
+    response.headers = (response.headers || []).concat(headers);
+  }
+
+  private on_res_headers_complete(info: any) {
+    //console.log(`http response headers complete`);
+
+    let response = this.getResponse();
+
+    response.status_code = info.statusCode;
+    response.http_version = info.versionMajor + '.' + info.versionMinor;
+
+    var headers = info.headers || response.headers;
+    for (var i = 0; i < headers.length; i += 2) {
+      response.headers[headers[i]] = headers[i + 1];
+    }
+  }
+
+  private on_res_body(buf: any, start: any, len: any) {
+    let response = this.getResponse();
+
+    response.body_len += len;
+    response.storeBodyBytes(buf.slice(start, start + len));
+    //this.response.body.write(buf.slice(start, start + len));
+  }
+
+  private on_res_complete() {
+    //console.log(`http response complete`);
+    this.newResponse();
+
+    this.emitHTTPPair();
   }
 }
 
@@ -451,53 +519,147 @@ async function waitFor(millis: number) {
   });
 }
 
-function getAddrString(addr: AddressInfo | string): string {
-  let addr_string: string = (typeof addr == 'string') ? addr :
-    (addr.family == "IPv6") ?
-      `http://[${addr.address}]:${addr.port}` :
-      `http://${addr.address}:${addr.port}`;
-
-  return addr_string;
-}
-
 // The pcap library doesn't handle IPv6, or didn't at some point. The TCPTracker
 // class still doesn't but it is trivial to fix that.
 function track_packetIPv6(this: any, packet: any) {
   var ip, tcp, src, dst, key, session;
-  
+
   // This check is changed from https://github.com/node-pcap/node_pcap/blob/master/tcp_tracker.js#L15
-  // It now processes IPv4 or IPv6. 
+  // It now processes IPv4 or IPv6.
   // NOTE: The upstream check uses the types in the package but those are not
   // exported. We mimic this by checking the decoderName set on the objects.
-  if (packet.payload.payload.payload.decoderName === 'tcp' &&
-        (packet.payload.payload.decoderName === 'ipv4' || packet.payload.payload.decoderName === 'ipv6')) {
-      ip  = packet.payload.payload;
-      tcp = ip.payload;
-      src = ip.saddr + ":" + tcp.sport;
-      dst = ip.daddr + ":" + tcp.dport;
+  if (
+    packet.payload.payload.payload.decoderName === 'tcp' &&
+    (packet.payload.payload.decoderName === 'ipv4' ||
+      packet.payload.payload.decoderName === 'ipv6')
+  ) {
+    ip = packet.payload.payload;
+    tcp = ip.payload;
+    src = ip.saddr + ':' + tcp.sport;
+    dst = ip.daddr + ':' + tcp.dport;
 
-      if (src < dst) {
-          key = src + "-" + dst;
-      } else {
-          key = dst + "-" + src;
-      }
+    if (src < dst) {
+      key = src + '-' + dst;
+    } else {
+      key = dst + '-' + src;
+    }
 
-      var is_new = false;
-      session = this.sessions[key];
-      if (! session) {
-          is_new = true;
-          session = new TCPSession();
-          this.sessions[key] = session;
-      }
+    var is_new = false;
+    session = this.sessions[key];
+    if (!session) {
+      is_new = true;
+      session = new TCPSession();
+      this.sessions[key] = session;
+    }
 
-      session.track(packet);
+    session.track(packet);
 
-      // need to track at least one packet before we emit this new session, otherwise nothing
-      // will be initialized.
-      if (is_new) {
-          this.emit("session", session);
-      }
+    // need to track at least one packet before we emit this new session, otherwise nothing
+    // will be initialized.
+    if (is_new) {
+      this.emit('session', session);
+    }
   }
   // silently ignore any non IPv4 TCP packets
   // user should filter these out with their pcap filter, but oh well.
-};
+}
+
+// HTTP Request/Response Util classes
+
+class HTTPBase {
+  public http_version: any;
+
+  // Note: This field is first used to accumulate headers are they are seen, and
+  // then restructured as a map once the headers are complete
+  public headers: any;
+
+  public body_len: any;
+  private body: stream.Duplex;
+
+  constructor() {
+    this.http_version = null;
+    this.headers = {};
+    this.body_len = 0;
+    this.body = new stream.PassThrough();
+  }
+
+  public storeBodyBytes(data: Buffer) {
+    //console.log(`body: ${data}`);
+    this.body.write(data);
+  }
+
+  public getBody(): Buffer {
+    return this.unpack_body(this.headers, this.body);
+  }
+
+  public get_header(header_name: string): string {
+    //console.log(`get_header: ${header_name}`);
+    for (let [hdr, value] of Object.entries(this.headers)) {
+      //console.log(`looking at ${hdr}: ${value}`)
+      if (hdr.toLowerCase() === header_name.toLowerCase()) {
+        //console.log(`match ${hdr}: ${value}`)
+        return value as string;
+      }
+    }
+    return null;
+  }
+
+  private unpack_body(headers: string[], body_stream: stream.Readable): Buffer {
+    //console.log('unpack body')
+
+    // find a Content-Encoding header and setup a decoders
+    let decoders: { (data: Buffer): Buffer }[] = [];
+    let hdr = this.get_header('Content-Encoding') || '';
+    hdr.split(',').forEach((encoding) => {
+      let decoder: { (_: Buffer): Buffer };
+      switch (encoding) {
+        case 'gzip':
+          decoder = zlib.gunzipSync;
+          break;
+        case 'compress':
+          decoder = zlib.unzipSync;
+          break;
+        case 'deflate':
+          decoder = zlib.inflateSync;
+          break;
+        case 'br':
+          decoder = zlib.brotliDecompressSync;
+          break;
+      }
+      // The order in the header is the order the encoders were applied, we
+      // need to use the opposite order for the decoders
+      if (decoder) {
+        decoders.unshift(decoder);
+      }
+    });
+
+    // read the body into a Buffer, then apply each decoder, if any.
+    let byte_len = body_stream.readableLength;
+    let buf: Buffer = body_stream.read(byte_len);
+    decoders.forEach((decoder) => {
+      buf = decoder(buf);
+    });
+
+    return buf;
+  }
+}
+
+class HTTPRequest extends HTTPBase {
+  public url: any;
+  public method: any;
+
+  constructor() {
+    super();
+    this.url = null;
+    this.method = null;
+  }
+}
+
+class HTTPResponse extends HTTPBase {
+  public status_code: any;
+
+  constructor() {
+    super();
+    this.status_code = null;
+  }
+}
