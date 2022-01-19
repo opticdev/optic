@@ -447,7 +447,7 @@ export class OpenAPITraverser
         if (isNotReferenceObject(branchSchema)) {
           this.traverseSchema(
             branchSchema,
-            jsonPath,
+            jsonPointer.append(jsonPath, branchType, '' + branchIndex),
             newConceptualPath,
             location
           );

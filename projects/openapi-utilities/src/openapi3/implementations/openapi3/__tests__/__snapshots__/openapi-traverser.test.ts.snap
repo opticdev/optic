@@ -4617,3 +4617,477 @@ Array [
   },
 ]
 `;
+
+exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
+Array [
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+      ],
+      "jsonPath": "/paths/~1example/get",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "get",
+      "operationId": "getExamples",
+      "pathPattern": "/example",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "flatSchema": Object {
+        "type": "object",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "oneOf": Array [
+          Object {
+            "type": "string",
+          },
+          Object {
+            "type": "number",
+          },
+          Object {
+            "properties": Object {
+              "orderId": Object {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        ],
+      },
+      "key": "stringOrNumberOrObject",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "stringOrNumberOrObject",
+          "orderId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "2",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/2/properties/orderId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "orderId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "composedObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "allOf": Array [
+          Object {
+            "properties": Object {
+              "orderId": Object {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          Object {
+            "properties": Object {
+              "fulfillmentId": Object {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        ],
+      },
+      "key": "composedObject",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "composedObject",
+          "orderId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "0",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/0/properties/orderId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "orderId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "composedObject",
+          "fulfillmentId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "1",
+        "fulfillmentId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/1/properties/fulfillmentId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "fulfillmentId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "expandableObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "anyOf": Array [
+          Object {
+            "properties": Object {
+              "orderId": Object {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          Object {
+            "properties": Object {
+              "order": Object {
+                "properties": Object {
+                  "id": Object {
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            },
+            "type": "object",
+          },
+        ],
+      },
+      "key": "expandableObject",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "expandableObject",
+          "orderId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "0",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/0/properties/orderId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "orderId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "expandableObject",
+          "order",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "1",
+        "order",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1/properties/order",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "object",
+      },
+      "key": "order",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "expandableObject",
+          "order",
+          "id",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "1",
+        "order",
+        "id",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1/properties/order/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "succesful",
+      "statusCode": 200,
+    },
+  },
+]
+`;
