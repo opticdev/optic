@@ -44,7 +44,8 @@ const isNotReferenceObject = <T extends {}>(
 };
 
 export class OpenAPITraverser
-  implements Traverse<OpenAPIV3.Document, OpenApiFact> {
+  implements Traverse<OpenAPIV3.Document, OpenApiFact>
+{
   format = 'openapi3';
   accumulator = new FactAccumulator<OpenApiFact>([]);
 
@@ -423,7 +424,41 @@ export class OpenAPITraverser
   ) {
     this.checkJsonTrail(jsonPath, schema);
     if (schema.oneOf || schema.anyOf || schema.allOf) {
-      // iterate these, multiple branches at path
+      const schemas = [
+        { branchType: 'oneOf', schemas: schema.oneOf },
+        { branchType: 'anyOf', schemas: schema.anyOf },
+        { branchType: 'allOf', schemas: schema.allOf },
+      ].flatMap(({ branchType, schemas }) => {
+        if (!schemas) schemas = [];
+
+        return schemas.map((schema, branchIndex) => ({
+          branchType,
+          branchIndex,
+          branchSchema: schema,
+        }));
+      });
+      schemas.forEach(({ branchType, branchIndex, branchSchema }) => {
+        const newConceptualPath = [
+          ...conceptualPath,
+          branchType,
+          '' + branchIndex,
+        ];
+
+        if (isNotReferenceObject(branchSchema)) {
+          this.traverseSchema(
+            branchSchema,
+            jsonPath,
+            newConceptualPath,
+            location
+          );
+        } else {
+          console.warn(
+            `Expected a flattened spec, found a reference at: ${newConceptualPath.join(
+              ' > '
+            )}`
+          );
+        }
+      });
     }
     switch (schema.type) {
       case 'object':
@@ -484,12 +519,8 @@ export class OpenAPITraverser
     schema: OpenAPIV3.SchemaObject
   ): Omit<OpenAPIV3.SchemaObject, 'item' | 'required' | 'properties'> {
     if (schema.type === 'array') {
-      const {
-        items,
-        required,
-        properties,
-        ...schemaWithoutNestedThings
-      } = schema;
+      const { items, required, properties, ...schemaWithoutNestedThings } =
+        schema;
       return schemaWithoutNestedThings;
     } else {
       const { required, properties, ...schemaWithoutNestedThings } = schema;
