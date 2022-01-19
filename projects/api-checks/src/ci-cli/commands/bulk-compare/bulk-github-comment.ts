@@ -48,7 +48,7 @@ export const sendBulkGithubMessage = async ({
       requestedReviewers.users.length + requestedReviewers.teams.length,
   });
 
-  const commentIdentifier = GITHUB_COMMENT_IDENTIFIER + '-run-' + run;
+  const commentIdentifier = GITHUB_COMMENT_IDENTIFIER + '-' + commit_hash;
 
   // Given we don't have the comment id; we need to fetch all comments on a PR.
   // We don't want to spam the comments, we want to update to the latest
