@@ -48,11 +48,13 @@ export const sendBulkGithubMessage = async ({
       requestedReviewers.users.length + requestedReviewers.teams.length,
   });
 
+  const commentIdentifier = GITHUB_COMMENT_IDENTIFIER + '-run-' + run;
+
   // Given we don't have the comment id; we need to fetch all comments on a PR.
   // We don't want to spam the comments, we want to update to the latest
   const maybeOpticCommentId = await findOpticCommentId(
     octokit,
-    GITHUB_COMMENT_IDENTIFIER,
+    commentIdentifier,
     owner,
     repo,
     pull_number
@@ -83,27 +85,10 @@ export const sendBulkGithubMessage = async ({
       : `ℹ️ No automated checks have run.`
   }
 `;
-
-    //     const failingChecks = comparison.results.filter(
-    //       (result) => !result.passed
-    //     ).length;
-    //     const totalChecks = comparison.results.filter(
-    //       (result) => !result.passed
-    //     ).length;
-    //     const passingChecks = totalChecks - failingChecks;
-    //     const comparisonRow = `
-    // ### Comparing ${comparison.inputs.from || 'Empty Spec'} to ${
-    //       comparison.inputs.to || 'Empty Spec'
-    //     }
-    // Number of changes: ${comparison.changes.length}
-    // ${passingChecks} checks passed out of ${totalChecks} (${failingChecks} failing checks).
-
-    // View results at ${comparison.opticWebUrl}.
-    // `;
     return body;
-  }, '');
+  });
 
-  const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
+  const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${commentIdentifier} -->
 ### Changes to your OpenAPI specs
 
 Summary of run # ${run} results (${commit_hash}):

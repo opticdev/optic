@@ -1,5 +1,4 @@
 import { Octokit } from '@octokit/rest';
-import { loadFile } from '../utils';
 import { trackEvent } from '../../segment';
 import { findOpticCommentId } from '../utils/shared-comment';
 import { CompareJson, UploadJson } from '../../types';
@@ -51,11 +50,13 @@ export const sendGithubMessage = async ({
       requestedReviewers.users.length + requestedReviewers.teams.length,
   });
 
+  const commentIdentifier = GITHUB_COMMENT_IDENTIFIER + '-run-' + run;
+
   // Given we don't have the comment id; we need to fetch all comments on a PR.
   // We don't want to spam the comments, we want to update to the latest
   const maybeOpticCommentId = await findOpticCommentId(
     octokit,
-    GITHUB_COMMENT_IDENTIFIER,
+    commentIdentifier,
     owner,
     repo,
     pull_number
@@ -63,7 +64,7 @@ export const sendGithubMessage = async ({
   const failingChecks = results.filter((result) => !result.passed).length;
   const totalChecks = results.length;
 
-  const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
+  const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${commentIdentifier} -->
   ### Changes to your OpenAPI spec
 
   Summary of run [#${run}](${opticWebUrl}) results (${commit_hash}):
