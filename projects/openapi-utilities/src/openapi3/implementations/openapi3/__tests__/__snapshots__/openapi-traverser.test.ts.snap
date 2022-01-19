@@ -20,25 +20,6 @@ Array [
       "method": "post",
       "operationId": "uploadFile",
       "pathPattern": "/pet/{petId}/uploadImage",
-      "requestBody": Object {
-        "content": Object {
-          "multipart/form-data": Object {
-            "schema": Object {
-              "properties": Object {
-                "additionalMetadata": Object {
-                  "description": "Additional data to pass to server",
-                  "type": "string",
-                },
-                "file": Object {
-                  "description": "file to upload",
-                  "format": "binary",
-                  "type": "string",
-                },
-              },
-            },
-          },
-        },
-      },
       "security": Array [
         Object {
           "petstore_auth": Array [
@@ -108,6 +89,24 @@ Array [
       "contentType": "multipart/form-data",
       "flatSchema": Object {},
     },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {},
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "requestBody",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/requestBody",
+      "kind": "request",
+    },
+    "value": Object {},
   },
   Object {
     "location": Object {
@@ -375,51 +374,6 @@ Array [
       "method": "post",
       "operationId": "placeOrder",
       "pathPattern": "/store/order",
-      "requestBody": Object {
-        "content": Object {
-          "*/*": Object {
-            "schema": Object {
-              "properties": Object {
-                "complete": Object {
-                  "default": false,
-                  "type": "boolean",
-                },
-                "id": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "petId": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "quantity": Object {
-                  "format": "int32",
-                  "type": "integer",
-                },
-                "shipDate": Object {
-                  "format": "date-time",
-                  "type": "string",
-                },
-                "status": Object {
-                  "description": "Order Status",
-                  "enum": Array [
-                    "placed",
-                    "approved",
-                    "delivered",
-                  ],
-                  "type": "string",
-                },
-              },
-              "type": "object",
-              "xml": Object {
-                "name": "Order",
-              },
-            },
-          },
-        },
-        "description": "order placed for purchasing the pet",
-        "required": true,
-      },
       "summary": "Place an order for a pet",
       "tags": Array [
         "store",
@@ -658,6 +612,27 @@ Array [
       },
       "key": "complete",
       "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {},
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "requestBody",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody",
+      "kind": "request",
+    },
+    "value": Object {
+      "description": "order placed for purchasing the pet",
+      "required": true,
     },
   },
   Object {
@@ -1978,49 +1953,6 @@ Array [
       "method": "post",
       "operationId": "createUser",
       "pathPattern": "/user",
-      "requestBody": Object {
-        "content": Object {
-          "*/*": Object {
-            "schema": Object {
-              "properties": Object {
-                "email": Object {
-                  "type": "string",
-                },
-                "firstName": Object {
-                  "type": "string",
-                },
-                "id": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "lastName": Object {
-                  "type": "string",
-                },
-                "password": Object {
-                  "type": "string",
-                },
-                "phone": Object {
-                  "type": "string",
-                },
-                "userStatus": Object {
-                  "description": "User Status",
-                  "format": "int32",
-                  "type": "integer",
-                },
-                "username": Object {
-                  "type": "string",
-                },
-              },
-              "type": "object",
-              "xml": Object {
-                "name": "User",
-              },
-            },
-          },
-        },
-        "description": "Created user object",
-        "required": true,
-      },
       "summary": "Create user",
       "tags": Array [
         "user",
@@ -2320,6 +2252,27 @@ Array [
   Object {
     "location": Object {
       "conceptualLocation": Object {
+        "inRequest": Object {},
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+        "requestBody",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody",
+      "kind": "request",
+    },
+    "value": Object {
+      "description": "Created user object",
+      "required": true,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
         "inResponse": Object {
           "statusCode": "default",
         },
@@ -2359,52 +2312,6 @@ Array [
       "method": "post",
       "operationId": "createUsersWithArrayInput",
       "pathPattern": "/user/createWithArray",
-      "requestBody": Object {
-        "content": Object {
-          "*/*": Object {
-            "schema": Object {
-              "items": Object {
-                "properties": Object {
-                  "email": Object {
-                    "type": "string",
-                  },
-                  "firstName": Object {
-                    "type": "string",
-                  },
-                  "id": Object {
-                    "format": "int64",
-                    "type": "integer",
-                  },
-                  "lastName": Object {
-                    "type": "string",
-                  },
-                  "password": Object {
-                    "type": "string",
-                  },
-                  "phone": Object {
-                    "type": "string",
-                  },
-                  "userStatus": Object {
-                    "description": "User Status",
-                    "format": "int32",
-                    "type": "integer",
-                  },
-                  "username": Object {
-                    "type": "string",
-                  },
-                },
-                "type": "object",
-                "xml": Object {
-                  "name": "User",
-                },
-              },
-              "type": "array",
-            },
-          },
-        },
-        "description": "List of user object",
-        "required": true,
-      },
       "summary": "Creates list of users with given input array",
       "tags": Array [
         "user",
@@ -2717,6 +2624,27 @@ Array [
   Object {
     "location": Object {
       "conceptualLocation": Object {
+        "inRequest": Object {},
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "requestBody",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody",
+      "kind": "request",
+    },
+    "value": Object {
+      "description": "List of user object",
+      "required": true,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
         "inResponse": Object {
           "statusCode": "default",
         },
@@ -2756,52 +2684,6 @@ Array [
       "method": "post",
       "operationId": "createUsersWithListInput",
       "pathPattern": "/user/createWithList",
-      "requestBody": Object {
-        "content": Object {
-          "*/*": Object {
-            "schema": Object {
-              "items": Object {
-                "properties": Object {
-                  "email": Object {
-                    "type": "string",
-                  },
-                  "firstName": Object {
-                    "type": "string",
-                  },
-                  "id": Object {
-                    "format": "int64",
-                    "type": "integer",
-                  },
-                  "lastName": Object {
-                    "type": "string",
-                  },
-                  "password": Object {
-                    "type": "string",
-                  },
-                  "phone": Object {
-                    "type": "string",
-                  },
-                  "userStatus": Object {
-                    "description": "User Status",
-                    "format": "int32",
-                    "type": "integer",
-                  },
-                  "username": Object {
-                    "type": "string",
-                  },
-                },
-                "type": "object",
-                "xml": Object {
-                  "name": "User",
-                },
-              },
-              "type": "array",
-            },
-          },
-        },
-        "description": "List of user object",
-        "required": true,
-      },
       "summary": "Creates list of users with given input array",
       "tags": Array [
         "user",
@@ -3109,6 +2991,27 @@ Array [
       },
       "key": "userStatus",
       "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {},
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "requestBody",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody",
+      "kind": "request",
+    },
+    "value": Object {
+      "description": "List of user object",
+      "required": true,
     },
   },
   Object {
@@ -4214,49 +4117,6 @@ Array [
       "method": "put",
       "operationId": "updateUser",
       "pathPattern": "/user/{username}",
-      "requestBody": Object {
-        "content": Object {
-          "*/*": Object {
-            "schema": Object {
-              "properties": Object {
-                "email": Object {
-                  "type": "string",
-                },
-                "firstName": Object {
-                  "type": "string",
-                },
-                "id": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "lastName": Object {
-                  "type": "string",
-                },
-                "password": Object {
-                  "type": "string",
-                },
-                "phone": Object {
-                  "type": "string",
-                },
-                "userStatus": Object {
-                  "description": "User Status",
-                  "format": "int32",
-                  "type": "integer",
-                },
-                "username": Object {
-                  "type": "string",
-                },
-              },
-              "type": "object",
-              "xml": Object {
-                "name": "User",
-              },
-            },
-          },
-        },
-        "description": "Updated user object",
-        "required": true,
-      },
       "summary": "Updated user",
       "tags": Array [
         "user",
@@ -4581,6 +4441,27 @@ Array [
       },
       "key": "userStatus",
       "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {},
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "requestBody",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody",
+      "kind": "request",
+    },
+    "value": Object {
+      "description": "Updated user object",
+      "required": true,
     },
   },
   Object {

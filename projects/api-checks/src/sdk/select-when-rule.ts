@@ -61,7 +61,7 @@ export function createSelectJsonPathHelper(
                 kind: 'custom-json-path',
               } as any;
 
-              const fakeChange: IChange<any[]> | null =
+              const fakeChange: IChange<any> | null =
                 nextResults.length > 0 && currentResults.length === 0
                   ? {
                       added: nextResults,

@@ -211,59 +211,6 @@ Object {
         "kind": "field",
       },
     },
-    Object {
-      "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "method": "get",
-          "pathPattern": "/example",
-          "requestBody": Object {
-            "content": Object {
-              "application/json": Object {
-                "schema": Object {
-                  "properties": Object {
-                    "count": Object {
-                      "type": "number",
-                    },
-                  },
-                  "required": Array [
-                    "count",
-                  ],
-                  "type": "object",
-                },
-              },
-            },
-          },
-        },
-        "before": Object {
-          "method": "get",
-          "pathPattern": "/example",
-          "requestBody": Object {
-            "content": Object {
-              "application/json": Object {
-                "schema": Object {
-                  "properties": Object {},
-                  "type": "object",
-                },
-              },
-            },
-          },
-        },
-      },
-      "location": Object {
-        "conceptualLocation": Object {
-          "method": "get",
-          "path": "/example",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/example",
-          "get",
-        ],
-        "jsonPath": "/paths/~1example/get",
-        "kind": "operation",
-      },
-    },
   ],
   "next": Object {
     "info": Object {

@@ -1,5 +1,4 @@
 import {
-  ConceptualLocation,
   OpenApiKind,
   OpenApiHeaderFact,
   OpenApiRequestParameterFact,
@@ -12,12 +11,14 @@ import {
   OpenApiFact,
   OperationLocation,
   ResponseHeaderLocation,
+  RequestLocation,
   ResponseLocation,
   PathParameterLocation,
   HeaderParameterLocation,
   BodyLocation,
   QueryParameterLocation,
   FieldLocation,
+  OpenApiRequestFact,
 } from '../../sdk/types';
 import { IPathComponent } from '../../sdk/types';
 import invariant from 'ts-invariant';
@@ -114,6 +115,12 @@ export class OpenAPITraverser
               { ...location, inRequest: { body: { contentType } } }
             );
           }
+        );
+        this.onRequest(
+          requestBody,
+          jsonPointer.append(jsonPath, 'requestBody'),
+          [...conceptualPath, 'requestBody'],
+          { ...location, inRequest: {} }
         );
       } else {
         console.warn(
@@ -542,9 +549,13 @@ export class OpenAPITraverser
 
   getOperationWithoutNestedThings(
     operation: OpenAPIV3.OperationObject
-  ): Omit<OpenAPIV3.OperationObject, 'parameters' | 'responses'> {
+  ): Omit<
+    OpenAPIV3.OperationObject,
+    'parameters' | 'responses' | 'requestBody'
+  > {
     const {
       parameters,
+      requestBody,
       responses,
       ...operationWithoutNestedThings
     } = operation;
@@ -576,6 +587,34 @@ export class OpenAPITraverser
       value,
     });
   }
+  onRequest(
+    request: OpenAPIV3.RequestBodyObject,
+    jsonPath: string,
+    conceptualPath: IPathComponent[],
+    location: RequestLocation
+  ) {
+    this.checkJsonTrail(jsonPath, request);
+    const flatRequest = this.getRequestWithoutNestedThings(request);
+    const value: OpenApiRequestFact = {
+      ...flatRequest,
+    };
+    this.accumulator.log({
+      location: {
+        jsonPath,
+        conceptualPath,
+        kind: OpenApiKind.Request,
+        conceptualLocation: location,
+      },
+      value,
+    });
+  }
+  getRequestWithoutNestedThings(
+    request: OpenAPIV3.RequestBodyObject
+  ): Omit<OpenAPIV3.RequestBodyObject, 'content'> {
+    const { content, ...requestWithoutNestedThings } = request;
+    return requestWithoutNestedThings;
+  }
+
   onResponse(
     response: OpenAPIV3.ResponseObject,
     statusCode: string,

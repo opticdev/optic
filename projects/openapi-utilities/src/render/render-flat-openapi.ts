@@ -12,7 +12,9 @@ import { jsonPointerHelpers } from '../../../json-pointer-helpers';
 export type RenderFlatOpenAPI = {
   openapi: OpenAPIV3.Document;
   asYamlString: string;
-  offsetsForPath: (jsonPointer: string) => ILookupLinePreviewResult | undefined;
+  offsetsForAbsolutePath: (
+    jsonPointer: string
+  ) => ILookupLinePreviewResult | undefined;
 };
 
 export function renderFlatOpenAPI(
@@ -24,7 +26,7 @@ export function renderFlatOpenAPI(
   return {
     openapi,
     asYamlString,
-    offsetsForPath: (
+    offsetsForAbsolutePath: (
       jsonPointer: string
     ): ILookupLinePreviewResult | undefined => {
       const astNode = resolveJsonPointerInYamlAst(yamlAst, jsonPointer);
@@ -40,8 +42,10 @@ export type RenderFlatJsonSchema<T = any> = {
   data: T;
   startingPath: string;
   // just make sure these paths are relative to the schema object
-  offsetsForPath: (jsonPointer: string) => ILookupLinePreviewResult | undefined;
   offsetsForAbsolutePath: (
+    jsonPointer: string
+  ) => ILookupLinePreviewResult | undefined;
+  offsetsForRelativePath: (
     jsonPointer: string
   ) => ILookupLinePreviewResult | undefined;
 };
@@ -57,7 +61,7 @@ export function renderFlatJsonSchema<T = any>(
     startingPath,
     asYamlString,
     // assumed relative
-    offsetsForPath: (
+    offsetsForAbsolutePath: (
       jsonPointer: string
     ): ILookupLinePreviewResult | undefined => {
       const pointer = jsonPointerHelpers.relative(jsonPointer, startingPath);
@@ -66,7 +70,7 @@ export function renderFlatJsonSchema<T = any>(
         return findLinesForAstAndContents(astNode, asYamlString);
       }
     },
-    offsetsForAbsolutePath: (
+    offsetsForRelativePath: (
       jsonPointer: string
     ): ILookupLinePreviewResult | undefined => {
       const astNode = resolveJsonPointerInYamlAst(yamlAst, jsonPointer);
