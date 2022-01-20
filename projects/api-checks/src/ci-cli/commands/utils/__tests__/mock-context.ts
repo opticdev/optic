@@ -688,6 +688,7 @@ export const mockGhContext = {
 
 export const mockCircleCiContext = {
   CIRCLE_REPOSITORY_URL: 'https://github.com/opticdev/poc-governance-tools',
+  CIRCLE_BRANCH: 'handle-git-context-parsing',
   CIRCLE_PR_NUMBER: 90,
   CIRCLE_BUILD_NUM: 1,
   CIRCLE_SHA1: '35b281f4eb550fb1be47f5a238f57ff00ccae9b7',

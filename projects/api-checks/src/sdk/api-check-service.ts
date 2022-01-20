@@ -11,6 +11,8 @@ import {
 } from '@useoptic/openapi-utilities';
 import { SpectralDsl } from './spectral/dsl';
 import { ApiChangeDsl, ApiCheckDslContext } from './api-change-dsl';
+import { oas } from '@stoplight/spectral-rulesets';
+import { RulesetDefinition } from '@stoplight/spectral-core';
 
 export type DslConstructorInput<Context> = {
   context: Context;
@@ -20,6 +22,11 @@ export type DslConstructorInput<Context> = {
   nextJsonLike: OpenAPIV3.Document;
   currentJsonLike: OpenAPIV3.Document;
 };
+
+type SpectralRules = Extract<
+  RulesetDefinition,
+  { extends: any; rules: any }
+>['rules'];
 
 export class ApiCheckService<Context> {
   constructor(private getExecutionDate?: (context: Context) => Date) {}
@@ -94,10 +101,24 @@ export class ApiCheckService<Context> {
   }
 
   // tried using "Ruleset" but getting typeerrors -- falling back to any
-  // @Stephen please chech on this
-  useSpectralRuleset(ruleset: any) {
+  useSpectralRuleset(ruleset: RulesetDefinition) {
     const runner = async (input: DslConstructorInput<Context>) => {
       const dsl = new SpectralDsl(input.nextJsonLike, input.nextFacts, ruleset);
+      return await dsl.spectralChecksResults;
+    };
+    this.additionalResults.push(runner);
+    return this;
+  }
+
+  // Wrapper for useSpectralRuleset that includes the `oas` ruleset and allows for
+  // extending them with `rules`. This removes the need for the user to pass in
+  // an `oas`, which might be incompatible.
+  useSpectralOasRuleset(rules: SpectralRules) {
+    const runner = async (input: DslConstructorInput<Context>) => {
+      const dsl = new SpectralDsl(input.nextJsonLike, input.nextFacts, {
+        extends: [[oas as RulesetDefinition, 'all']],
+        rules,
+      });
       return await dsl.spectralChecksResults;
     };
     this.additionalResults.push(runner);

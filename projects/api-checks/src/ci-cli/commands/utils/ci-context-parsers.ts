@@ -3,6 +3,7 @@ type UploadContext = {
   repo: string;
   commit_hash: string;
   pull_request: number;
+  branch_name: string;
   run: number;
 };
 
@@ -27,6 +28,8 @@ export const readAndValidateGithubContext = (
     parsedContext.event?.pull_request?.number;
   const run: number | undefined = parsedContext.run_number;
   const commit_hash: string | undefined = parsedContext.sha;
+  const branch_name: string | undefined =
+    parsedContext.event?.pull_request?.head?.ref;
 
   if (!organization) {
     throw new Error(
@@ -44,6 +47,12 @@ export const readAndValidateGithubContext = (
     );
   }
 
+  if (!branch_name) {
+    throw new Error(
+      'Expected a branch_name at context.event.pull_request.head.ref'
+    );
+  }
+
   if (!run) {
     throw new Error('Expected a run_number at context.run_number');
   }
@@ -56,6 +65,7 @@ export const readAndValidateGithubContext = (
     organization,
     repo,
     commit_hash: commit_hash,
+    branch_name,
     pull_request: Number(pull_request),
     run: Number(run),
   };
@@ -68,6 +78,7 @@ export const readAndValidateCircleCiContext = (
   const parsedContext = JSON.parse(unvalidatedContextFile.toString());
 
   const repo_url: string | undefined = parsedContext.CIRCLE_REPOSITORY_URL;
+  const branch_name: string | undefined = parsedContext.CIRCLE_BRANCH;
   const pull_request: number | undefined = parsedContext.CIRCLE_PR_NUMBER;
   const run: number | undefined = parsedContext.CIRCLE_BUILD_NUM;
   const commit_hash: string | undefined = parsedContext.CIRCLE_SHA1;
@@ -82,6 +93,10 @@ export const readAndValidateCircleCiContext = (
     throw new Error(
       'Expected a CIRCLE_PR_NUMBER number at context.CIRCLE_PR_NUMBER'
     );
+  }
+
+  if (!branch_name) {
+    throw new Error('Expected a CIRCLE_BRANCH number at context.CIRCLE_BRANCH');
   }
 
   if (!run) {
@@ -106,6 +121,7 @@ export const readAndValidateCircleCiContext = (
   return {
     organization,
     repo,
+    branch_name,
     commit_hash: commit_hash,
     pull_request: Number(pull_request),
     run: Number(run),
