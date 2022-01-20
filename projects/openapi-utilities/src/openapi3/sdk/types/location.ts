@@ -32,6 +32,10 @@ export type ResponseHeaderLocation = ConceptualLocationBase & {
   };
 };
 
+export type RequestLocation = ConceptualLocationBase & {
+  inRequest: {};
+};
+
 export type ResponseLocation = ConceptualLocationBase & {
   inResponse: {
     statusCode: string;
@@ -105,6 +109,7 @@ export type ILocation = {
       kind: OpenApiKind.ResponseHeader;
     }
   | { conceptualLocation: ResponseLocation; kind: OpenApiKind.Response }
+  | { conceptualLocation: RequestLocation; kind: OpenApiKind.Request }
   | { conceptualLocation: BodyLocation; kind: OpenApiKind.Body }
   | { conceptualLocation: FieldLocation; kind: OpenApiKind.Field }
 );

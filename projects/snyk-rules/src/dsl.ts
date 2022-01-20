@@ -149,7 +149,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
   }
 
   get context() {
-    const change: IChange<SnykApiCheckDsl> = {
+    const change: IChange<OpenApiFact> = {
       location: {
         conceptualLocation: { path: 'This Specification', method: '' },
         jsonPath: '/',
@@ -196,7 +196,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
   }
 
   get specification() {
-    const change: IChange<SnykApiCheckDsl> = {
+    const change: IChange<OpenApiFact> = {
       location: {
         conceptualLocation: { path: 'This Specification', method: '' },
         jsonPath: '/',

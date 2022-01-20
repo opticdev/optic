@@ -1,0 +1,83 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Simple",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": { "email": "apiteam@swagger.io" },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "0.0.0"
+  },
+  "paths": {
+    "/example": {
+      "get": {
+        "operationId": "getExamples",
+        "responses": {
+          "200": {
+            "description": "succesful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "stringOrNumberOrObject": {
+                      "oneOf": [
+                        { "type": "string" },
+                        { "type": "number" },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "orderId": { "type": "string" }
+                          }
+                        }
+                      ]
+                    },
+                    "composedObject": {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "orderId": { "type": "string" }
+                          }
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "fulfillmentId": { "type": "string" }
+                          }
+                        }
+                      ]
+                    },
+                    "expandableObject": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "orderId": { "type": "string" }
+                          }
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "order": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "string" }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

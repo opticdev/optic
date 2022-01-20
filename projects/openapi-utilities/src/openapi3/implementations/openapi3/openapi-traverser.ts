@@ -1,5 +1,4 @@
 import {
-  ConceptualLocation,
   OpenApiKind,
   OpenApiHeaderFact,
   OpenApiRequestParameterFact,
@@ -12,12 +11,14 @@ import {
   OpenApiFact,
   OperationLocation,
   ResponseHeaderLocation,
+  RequestLocation,
   ResponseLocation,
   PathParameterLocation,
   HeaderParameterLocation,
   BodyLocation,
   QueryParameterLocation,
   FieldLocation,
+  OpenApiRequestFact,
 } from '../../sdk/types';
 import { IPathComponent } from '../../sdk/types';
 import invariant from 'ts-invariant';
@@ -43,7 +44,8 @@ const isNotReferenceObject = <T extends {}>(
 };
 
 export class OpenAPITraverser
-  implements Traverse<OpenAPIV3.Document, OpenApiFact> {
+  implements Traverse<OpenAPIV3.Document, OpenApiFact>
+{
   format = 'openapi3';
   accumulator = new FactAccumulator<OpenApiFact>([]);
 
@@ -114,6 +116,12 @@ export class OpenAPITraverser
               { ...location, inRequest: { body: { contentType } } }
             );
           }
+        );
+        this.onRequest(
+          requestBody,
+          jsonPointer.append(jsonPath, 'requestBody'),
+          [...conceptualPath, 'requestBody'],
+          { ...location, inRequest: {} }
         );
       } else {
         console.warn(
@@ -416,7 +424,41 @@ export class OpenAPITraverser
   ) {
     this.checkJsonTrail(jsonPath, schema);
     if (schema.oneOf || schema.anyOf || schema.allOf) {
-      // iterate these, multiple branches at path
+      const schemas = [
+        { branchType: 'oneOf', schemas: schema.oneOf },
+        { branchType: 'anyOf', schemas: schema.anyOf },
+        { branchType: 'allOf', schemas: schema.allOf },
+      ].flatMap(({ branchType, schemas }) => {
+        if (!schemas) schemas = [];
+
+        return schemas.map((schema, branchIndex) => ({
+          branchType,
+          branchIndex,
+          branchSchema: schema,
+        }));
+      });
+      schemas.forEach(({ branchType, branchIndex, branchSchema }) => {
+        const newConceptualPath = [
+          ...conceptualPath,
+          branchType,
+          '' + branchIndex,
+        ];
+
+        if (isNotReferenceObject(branchSchema)) {
+          this.traverseSchema(
+            branchSchema,
+            jsonPointer.append(jsonPath, branchType, '' + branchIndex),
+            newConceptualPath,
+            location
+          );
+        } else {
+          console.warn(
+            `Expected a flattened spec, found a reference at: ${newConceptualPath.join(
+              ' > '
+            )}`
+          );
+        }
+      });
     }
     switch (schema.type) {
       case 'object':
@@ -477,12 +519,8 @@ export class OpenAPITraverser
     schema: OpenAPIV3.SchemaObject
   ): Omit<OpenAPIV3.SchemaObject, 'item' | 'required' | 'properties'> {
     if (schema.type === 'array') {
-      const {
-        items,
-        required,
-        properties,
-        ...schemaWithoutNestedThings
-      } = schema;
+      const { items, required, properties, ...schemaWithoutNestedThings } =
+        schema;
       return schemaWithoutNestedThings;
     } else {
       const { required, properties, ...schemaWithoutNestedThings } = schema;
@@ -542,9 +580,13 @@ export class OpenAPITraverser
 
   getOperationWithoutNestedThings(
     operation: OpenAPIV3.OperationObject
-  ): Omit<OpenAPIV3.OperationObject, 'parameters' | 'responses'> {
+  ): Omit<
+    OpenAPIV3.OperationObject,
+    'parameters' | 'responses' | 'requestBody'
+  > {
     const {
       parameters,
+      requestBody,
       responses,
       ...operationWithoutNestedThings
     } = operation;
@@ -576,6 +618,34 @@ export class OpenAPITraverser
       value,
     });
   }
+  onRequest(
+    request: OpenAPIV3.RequestBodyObject,
+    jsonPath: string,
+    conceptualPath: IPathComponent[],
+    location: RequestLocation
+  ) {
+    this.checkJsonTrail(jsonPath, request);
+    const flatRequest = this.getRequestWithoutNestedThings(request);
+    const value: OpenApiRequestFact = {
+      ...flatRequest,
+    };
+    this.accumulator.log({
+      location: {
+        jsonPath,
+        conceptualPath,
+        kind: OpenApiKind.Request,
+        conceptualLocation: location,
+      },
+      value,
+    });
+  }
+  getRequestWithoutNestedThings(
+    request: OpenAPIV3.RequestBodyObject
+  ): Omit<OpenAPIV3.RequestBodyObject, 'content'> {
+    const { content, ...requestWithoutNestedThings } = request;
+    return requestWithoutNestedThings;
+  }
+
   onResponse(
     response: OpenAPIV3.ResponseObject,
     statusCode: string,

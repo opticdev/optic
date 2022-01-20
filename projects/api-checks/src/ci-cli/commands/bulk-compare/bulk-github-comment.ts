@@ -21,6 +21,7 @@ export const sendBulkGithubMessage = async ({
     repo,
     pull_request: pull_number,
     commit_hash,
+    run,
   } = ciContext;
 
   if (comparisons.length === 0) {
@@ -32,13 +33,12 @@ export const sendBulkGithubMessage = async ({
     auth: githubToken,
   });
 
-  const {
-    data: requestedReviewers,
-  } = await octokit.pulls.listRequestedReviewers({
-    owner,
-    repo,
-    pull_number,
-  });
+  const { data: requestedReviewers } =
+    await octokit.pulls.listRequestedReviewers({
+      owner,
+      repo,
+      pull_number,
+    });
 
   trackEvent('optic_ci.bulk_github_comment', `${owner}-optic-ci`, {
     owner,
@@ -48,41 +48,52 @@ export const sendBulkGithubMessage = async ({
       requestedReviewers.users.length + requestedReviewers.teams.length,
   });
 
+  const commentIdentifier = GITHUB_COMMENT_IDENTIFIER + '-' + commit_hash;
+
   // Given we don't have the comment id; we need to fetch all comments on a PR.
   // We don't want to spam the comments, we want to update to the latest
   const maybeOpticCommentId = await findOpticCommentId(
     octokit,
-    GITHUB_COMMENT_IDENTIFIER,
+    commentIdentifier,
     owner,
     repo,
     pull_number
   );
 
-  const bodyDetails = comparisons.reduce((acc, comparison) => {
-    const failingChecks = comparison.results.filter((result) => !result.passed)
-      .length;
-    const totalChecks = comparison.results.filter((result) => !result.passed)
-      .length;
-    const passingChecks = totalChecks - failingChecks;
-    const comparisonRow = `
-### Comparing ${comparison.inputs.from || 'Empty Spec'} to ${
-      comparison.inputs.to || 'Empty Spec'
-    }
-Number of changes: ${comparison.changes.length}
-${passingChecks} checks passed out of ${totalChecks} (${failingChecks} failing checks).
+  const renderedComparisons = comparisons.map((comparison) => {
+    const { opticWebUrl, changes, inputs, results } = comparison;
+    const failingChecks = results.filter((result) => !result.passed).length;
+    const totalChecks = results.length;
 
-View results at ${comparison.opticWebUrl}.
+    const comparisonDescription =
+      inputs.from && inputs.to
+        ? `changes to \`${inputs.from}\``
+        : !inputs.from && inputs.to
+        ? `new spec \`${inputs.to}\``
+        : inputs.from && !inputs.to
+        ? `removed spec \`${inputs.from}\``
+        : 'empty specs';
+    const body = `
+#### Changelog for [${comparisonDescription}](${opticWebUrl})
+
+  💡 **${changes.length}** API change${changes.length > 1 ? 's' : ''}
+  ${
+    failingChecks > 0
+      ? `⚠️ **${failingChecks}** / **${totalChecks}** checks failed.`
+      : totalChecks > 0
+      ? `✅ all checks passed (**${totalChecks}**).`
+      : `ℹ️ No automated checks have run.`
+  }
 `;
-    return acc + comparisonRow;
-  }, '');
+    return body;
+  });
 
-  const body = `
-<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${GITHUB_COMMENT_IDENTIFIER} -->
-## View Changes in Optic
+  const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${commentIdentifier} -->
+### Changes to your OpenAPI specs
 
-The following changes were detected in the latest run for commit: ${commit_hash}:
+Summary of run # ${run} results (${commit_hash}):
 
-${bodyDetails}
+${renderedComparisons.join(`\n---\n`)}
   `;
 
   if (maybeOpticCommentId) {

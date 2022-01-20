@@ -8,6 +8,7 @@ import {
   HeaderParameterLocation,
   ResponseHeaderLocation,
   ResponseLocation,
+  RequestLocation,
   BodyLocation,
   FieldLocation,
 } from './location';
@@ -24,6 +25,7 @@ export {
   HeaderParameterLocation,
   ResponseHeaderLocation,
   ResponseLocation,
+  RequestLocation,
   BodyLocation,
   FieldLocation,
 };
@@ -39,7 +41,10 @@ export type OpenApiFact =
   | OpenApiFieldFact;
 
 export interface OpenApiOperationFact
-  extends Omit<OpenAPIV3.OperationObject, 'parameters' | 'responses'> {
+  extends Omit<
+    OpenAPIV3.OperationObject,
+    'parameters' | 'responses' | 'requestBody'
+  > {
   pathPattern: string;
   method: string;
 }
@@ -58,7 +63,8 @@ export interface OpenApiResponseFact
   extends Omit<OpenAPIV3.ResponseObject, 'headers' | 'content'> {
   statusCode: number;
 }
-export interface OpenApiRequestFact {}
+export interface OpenApiRequestFact
+  extends Omit<OpenAPIV3.RequestBodyObject, 'content'> {}
 
 export interface OpenApiHeaderFact extends OpenAPIV3.HeaderObject {
   name: string;
