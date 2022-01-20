@@ -23,7 +23,32 @@ Design better APIs · Improve quality · Ship faster. It starts with having the 
 - `openapi-diff` - compares actual traffic against the specification, and provides helpers to surgically patch the OpenAPI specification
 
 ## Migrating from Optic 10 to Optic 11
-Optic 11 is in beta and nearing release. [Get early access by joining the beta here](https://www.useoptic.com/). If you are using Optic `<=10`, run `api generate:oas` to export an OpenAPI file compatible with Optic 11. Congrats, we're all using the standards now! If you have any problem or questions Open an Issue or reach out in Discord.  
+
+Optic 11 is in beta and nearing release. [Get early access by joining the beta here](https://www.useoptic.com/). If you are using Optic `<=10`, the first step is to migrate your spec to an OpenAPI file.
+
+### Generating an OpenAPI specification
+
+In your project's root directory, run `api generate:oas`. This exports your specification into an OpenAPI file for the Optic Toolkit, in YAML format. Copy the file in the command output into your project's root folder as `optic.openapi.yaml`.
+
+```bash
+$ api generate:oas
+
+[optic] Generated OAS files
+[optic] /{project root}/.optic/generated/openapi.yaml
+
+$ cp .optic/generated/openapi.yaml optic.openapi.yaml
+$ git add optic.openapi.yaml
+```
+
+💡 **Optional** You may specify a JSON OpenAPI file with the `--json` flag and using the `.json` extension. You may also save your OpenAPI file anywhere in your project, just don't lose track of it.
+
+### Cleaning up
+
+You're ready to run the Optic Toolkit against your project. It will automatically use the OpenAPI file exported above, and update it when changes are detected. Once you're comfortable with the new toolkit, you can remove the Optic 10 files from your project with `rm -rf .optic optic.yml`. It's safe to remove these files: the only thing the new Optic Toolkit uses is your OpenAPI specification.
+
+You should also remove the old Optic 10 CLI, as it doesn't share any components with the Optic Toolkit and is no longer necessary. Removal depends on how you installed it in the first place. For example, to uninstall via NPM, `npm remove --global @useoptic/cli`.
+
+ If you have any problem or questions Open an Issue or reach out in [Discord](https://discord.useoptic.com).
 
 ## Resources
 - Read our about Aidan + Dev's vision for the space **[Read: Git for APIs](https://optic10.useoptic.com/blog/git-for-apis)**
