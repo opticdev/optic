@@ -1,5 +1,5 @@
 
-> **Announcement:** Optic is launching have native support for OpenAPI 3, read more and get early access here (https://www.useoptic.com/blog/optic-for-openapi)
+> **Announcement:** Optic is launching have native support for OpenAPI 3. [Read more and get early access here ](https://www.useoptic.com/blog/optic-for-openapi)
 
 ---
 
