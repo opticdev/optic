@@ -19,6 +19,7 @@ describe('github context parser', () => {
       repo: 'poc-governance-tools',
       pull_request: 61,
       run: 75,
+      branch_name: 'handle-git-context-parsing',
       commit_hash: '35b281f4eb550fb1be47f5a238f57ff00ccae9b7',
     });
   });
@@ -89,6 +90,23 @@ describe('github context parser', () => {
     );
   });
 
+  test('errors if no branch in expected location', () => {
+    const ghContext = {
+      ...mockGhContext,
+      event: {
+        ...mockGhContext.event,
+        pull_request: {
+          ...mockGhContext.event.pull_request,
+          head: {},
+        },
+      },
+    };
+    const mockBuffer = createMockBuffer(JSON.stringify(ghContext));
+    expect(() => readAndValidateGithubContext(mockBuffer)).toThrowError(
+      /Expected a branch_name at context\.event\.pull_request\.head\.ref/i
+    );
+  });
+
   test('errors if no run in expected location', () => {
     const ghContext = {
       ...mockGhContext,
@@ -119,6 +137,7 @@ describe('circle ci context parser', () => {
       organization: 'opticdev',
       repo: 'poc-governance-tools',
       pull_request: 90,
+      branch_name: 'handle-git-context-parsing',
       run: 1,
       commit_hash: '35b281f4eb550fb1be47f5a238f57ff00ccae9b7',
     });
@@ -161,6 +180,17 @@ describe('circle ci context parser', () => {
     const mockBuffer = createMockBuffer(JSON.stringify(circleCiContext));
     expect(() => readAndValidateCircleCiContext(mockBuffer)).toThrowError(
       /Expected a CIRCLE_PR_NUMBER number at context\.CIRCLE_PR_NUMBER/i
+    );
+  });
+
+  test('errors if no CIRCLE_BRANCH in expected location', () => {
+    const circleCiContext = {
+      ...mockCircleCiContext,
+      CIRCLE_BRANCH: null,
+    };
+    const mockBuffer = createMockBuffer(JSON.stringify(circleCiContext));
+    expect(() => readAndValidateCircleCiContext(mockBuffer)).toThrowError(
+      /Expected a CIRCLE_BRANCH number at context\.CIRCLE_BRANCH/i
     );
   });
 

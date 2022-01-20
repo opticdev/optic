@@ -38,6 +38,11 @@ checker.useDsl(
 
 const cli = makeCiCli('my_cli', checker, {
   opticToken: process.env.OPTIC_TOKEN,
+  gitProvider: {
+    token: process.env.GITHUB_TOKEN,
+    provider: 'github',
+  },
+  ciProvider: 'github',
 });
 
 cli.parse(process.argv);
@@ -48,37 +53,17 @@ cli.parse(process.argv);
 Currently, only CircleCi and Github Actions are supported. There's three main commands to this flow:
 
 - compare (compares two OpenAPI files together)
-- upload (uploads the OpenAPI files, and the output of compare)
-- github-comment (posts a github comment to the link to Optic with the ci run)
-
-<!-- TODO write this as a GHA workflow or circleci job -->
 
 ```bash
 # Output the open api files from somewhere
 $ node ./consolidate-open-api-files.js
 
-# Run the compare files
-# outputs compare-output.json
-$ node ./cli.js compare --from ./from.json --to ./to.json --context {} --create-file
-
-# Build out the context file
-# Expected output is a JSONified file
+# For github actions
 $ echo $GITHUB_CONTEXT > ./ci-context.json
-# Run the upload flow (can set the env externally)
-# outputs upload-output.json
-$ OPTIC_TOKEN="INSERT_YOUR_TOKEN" node ./cli.js upload \
-		--from ./from.json \
-		--to ./to.json \
-		--provider github \
-		--ci-context ./ci-context.json \
-		--compare ./compare-output.json
 
-# Post a comment on the PR (creates OR update the existing comment)
-$ node ./cli.js github-comment \
-		--token $GH_TOKEN
-		--provider github \
-		--ci-context ./ci-context.json
-		--upload ./upload-output.json
+# Run the compare files
+# this will run compare, and upload the files to optic cloud
+$ node ./cli.js compare --from ./from.json --to ./to.json --context "{\"createdAt\":1639434455822}" --upload-results --ci-context ./ci-context.json
 ```
 
 ### Expected contexts
@@ -97,6 +82,7 @@ Expected JSON values are:
 ```json
 {
   "CIRCLE_REPOSITORY_URL": "https://github.com/owner/repo_name",
+  "CIRCLE_BRANCH": "fix/the-git-branch-name",
   "CIRCLE_PR_NUMBER": 10,
   "CIRCLE_BUILD_NUM": 1,
   "CIRCLE_SHA1": "e756e8e68f5daaed86fafe76cd8e51400d70946a"
