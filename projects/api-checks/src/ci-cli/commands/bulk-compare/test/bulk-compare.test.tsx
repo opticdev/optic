@@ -1,4 +1,4 @@
-import { parseJsonComparisonInput } from '../../bulk-compare/bulk-compare';
+import { parseJsonComparisonInput } from '../bulk-compare';
 import { loadFile } from '../../utils';
 
 jest.mock('../../utils');
@@ -74,6 +74,31 @@ describe('parseJsonComparisonInput', () => {
     expect(skippedParsing).toBe(false);
     output.forEach((line) => {
       expect(line.toFileName).toBe('b');
+    });
+    mockedLoadFile.mockClear();
+  });
+
+  test('handles when to is not specified', async () => {
+    mockedLoadFile.mockImplementation(async () => {
+      return Buffer.from(
+        JSON.stringify({
+          comparisons: [
+            {
+              from: 'b',
+              context: {},
+            },
+          ],
+        })
+      );
+    });
+    const {
+      comparisons: output,
+      skippedParsing,
+    } = await parseJsonComparisonInput('abcdef');
+    expect(output.size).toBe(1);
+    expect(skippedParsing).toBe(false);
+    output.forEach((line) => {
+      expect(line.fromFileName).toBe('b');
     });
     mockedLoadFile.mockClear();
   });

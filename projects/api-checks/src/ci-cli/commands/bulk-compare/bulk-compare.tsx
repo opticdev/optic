@@ -242,8 +242,7 @@ export const parseJsonComparisonInput = async (
   const output = JSON.parse(fileOutput.toString());
   const initialComparisons: Map<string, Comparison> = new Map();
   for (const comparison of output.comparisons || []) {
-    // expected format is fromfile, tofile
-    if (!comparison.to || !comparison.context) {
+    if (!comparison.context) {
       console.log(
         `Comparison doesn't match expected format, found: ${JSON.stringify(
           comparison
