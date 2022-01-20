@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/api-checks",
   "packageManager": "yarn@3.0.2",
-  "version": "0.21.1-0",
+  "version": "0.21.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -89,6 +89,5 @@
         "<rootDir>../../../../node_modules/nimma/dist/legacy/cjs/index.js"
       ]
     }
-  },
-  "stableVersion": "0.21.0"
+  }
 }
