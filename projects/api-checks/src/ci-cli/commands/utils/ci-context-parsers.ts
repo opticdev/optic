@@ -27,7 +27,7 @@ export const readAndValidateGithubContext = (
   const pull_request: number | undefined =
     parsedContext.event?.pull_request?.number;
   const run: number | undefined = parsedContext.run_number;
-  const commit_hash: string | undefined = parsedContext.sha;
+  const commit_hash: string | undefined = parsedContext.event?.pull_request?.head?.sha;
   const branch_name: string | undefined =
     parsedContext.event?.pull_request?.head?.ref;
 
