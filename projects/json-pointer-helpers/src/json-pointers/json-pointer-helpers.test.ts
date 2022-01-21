@@ -13,6 +13,10 @@ describe('json schema pointer helpers', () => {
     ).toMatchSnapshot();
   });
 
+  it('handles empty compiles', () => {
+    expect(jsonPointerHelpers.compile([])).toBe('');
+  });
+
   it('appends are escaped', () => {
     expect(
       jsonPointerHelpers.append('/paths', '/example/{todoId}', 'get')
@@ -74,5 +78,25 @@ describe('relative', () => {
     expect(() =>
       jsonPointerHelpers.relative(b, a)
     ).toThrowErrorMatchingSnapshot();
+  });
+});
+
+describe('get', () => {
+  it('gets an object', () => {
+    expect(
+      jsonPointerHelpers.get(
+        {
+          a: {
+            b: {
+              3: {
+                the: 'bc',
+                be: '123',
+              },
+            },
+          },
+        },
+        '/a/b/3'
+      )
+    ).toMatchSnapshot();
   });
 });

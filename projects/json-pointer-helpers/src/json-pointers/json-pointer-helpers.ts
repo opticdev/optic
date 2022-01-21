@@ -1,12 +1,22 @@
-import JsonPointer from 'json-pointer';
-
 const escape = (str: string) => str.replace(/~/g, '~0').replace(/\//g, '~1');
 
 const unescape = (str: string) => str.replace(/~0/g, '~').replace(/~1/g, '/');
 
 const parse = (pointer: string) => pointer.split('/').slice(1).map(unescape);
 
-const compile = (parts: string[]) => '/' + parts.map(escape).join('/');
+const compile = (parts: string[]) =>
+  parts.length > 0 ? '/' + parts.map(escape).join('/') : '';
+
+const get = (obj: any, pointer: string[] | string) => {
+  const tokens = Array.isArray(pointer) ? pointer : parse(pointer);
+  for (const token of tokens) {
+    if (!(typeof obj == 'object' && token in obj)) {
+      throw new Error('Invalid reference token: ' + token);
+    }
+    obj = obj[token];
+  }
+  return obj;
+};
 
 function append(pointer: string, ...property: string[]): string {
   const parsed = parse(pointer.toString());
@@ -50,7 +60,7 @@ function tryGet(
   pointer: string
 ): { match: true; value: any } | { match: false; error: string } {
   try {
-    const value = JsonPointer.get(input, pointer);
+    const value = get(input, pointer);
     return { match: true, value };
   } catch (e: any) {
     return { match: false, error: e.message };
@@ -68,7 +78,7 @@ export default {
   join,
   splitParentChild,
   unescapeUriSafePointer,
-  get: JsonPointer.get,
+  get,
   tryGet,
   compile,
   relative,
