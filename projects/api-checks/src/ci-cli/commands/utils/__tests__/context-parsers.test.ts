@@ -20,7 +20,7 @@ describe('github context parser', () => {
       pull_request: 61,
       run: 75,
       branch_name: 'handle-git-context-parsing',
-      commit_hash: '35b281f4eb550fb1be47f5a238f57ff00ccae9b7',
+      commit_hash: 'ab29f2bc311946eb2ea5e37cb297329081eb06b0',
     });
   });
 
@@ -121,11 +121,20 @@ describe('github context parser', () => {
   test('errors if no sha in expected location', () => {
     const ghContext = {
       ...mockGhContext,
-      sha: null,
+      event: {
+        ...mockGhContext.event,
+        pull_request: {
+          ...mockGhContext.event.pull_request,
+          head: {
+            ...mockGhContext.event.pull_request.head,
+            sha: null
+          },
+        },
+      },
     };
     const mockBuffer = createMockBuffer(JSON.stringify(ghContext));
     expect(() => readAndValidateGithubContext(mockBuffer)).toThrowError(
-      /Expected a sha at context\.sha/i
+      /Expected a sha at context\.event\.pull_request\.head\.sha/i
     );
   });
 });

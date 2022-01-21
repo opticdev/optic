@@ -58,7 +58,7 @@ export const readAndValidateGithubContext = (
   }
 
   if (!commit_hash) {
-    throw new Error('Expected a sha at context.sha');
+    throw new Error('Expected a sha at context.event.pull_request.head.sha');
   }
 
   return {
