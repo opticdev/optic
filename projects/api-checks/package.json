@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/api-checks",
   "packageManager": "yarn@3.0.2",
-  "version": "0.21.4",
+  "version": "0.21.7",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -28,6 +28,7 @@
     "@types/babel__preset-env": "^7",
     "@types/chai": "^4.2.22",
     "@types/copyfiles": "^2",
+    "@types/follow-redirects": "^1",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^26.0.24",
     "@types/json-stable-stringify": "^1.0.33",
@@ -58,6 +59,7 @@
     "analytics-node": "^6.0.0",
     "chai": "^4.3.4",
     "commander": "^8.3.0",
+    "follow-redirects": "1.14.7",
     "fs-extra": "^10.0.0",
     "ink": "^3.2.0",
     "ink-link": "^2.0.0",
@@ -67,7 +69,7 @@
     "lodash.groupby": "^4.6.0",
     "lodash.isequal": "^4.5.0",
     "nice-try": "^3.0.0",
-    "node-fetch": "^2",
+    "node-fetch": "^2.6.7",
     "react": "^17.0.2",
     "react-use": "^17.3.1",
     "ts-invariant": "^0.9.4",
