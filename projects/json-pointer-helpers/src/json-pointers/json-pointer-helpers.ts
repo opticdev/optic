@@ -1,47 +1,57 @@
-import * as jsonPointer from 'json-pointer';
+const escape = (str: string) => str.replace(/~/g, '~0').replace(/\//g, '~1');
+
+const unescape = (str: string) => str.replace(/~0/g, '~').replace(/~1/g, '/');
+
+const parse = (pointer: string) => pointer.split('/').slice(1).map(unescape);
+
+const compile = (parts: string[]) =>
+  parts.length > 0 ? '/' + parts.map(escape).join('/') : '';
+
+const get = (obj: any, pointer: string[] | string) => {
+  const tokens = Array.isArray(pointer) ? pointer : parse(pointer);
+  for (const token of tokens) {
+    if (!(typeof obj == 'object' && token in obj)) {
+      throw new Error('Invalid reference token: ' + token);
+    }
+    obj = obj[token];
+  }
+  return obj;
+};
 
 function append(pointer: string, ...property: string[]): string {
-  const parsed = jsonPointer.parse(pointer.toString()) || [];
-  return jsonPointer.compile([...parsed, ...property]);
+  const parsed = parse(pointer.toString());
+  return compile([...parsed, ...property]);
 }
 
 function pop(pointer: string): string {
-  const parsed = jsonPointer.parse(pointer.toString()) || [];
+  const parsed = parse(pointer.toString());
   parsed.pop();
-  return jsonPointer.compile([...parsed]);
+  return compile([...parsed]);
 }
 
 function splitParentChild(pointer: string): [string, string, string] {
-  const parsed = jsonPointer.parse(pointer.toString()) || [];
+  const parsed = parse(pointer.toString());
   const key = parsed.pop();
-  return [jsonPointer.compile([...parsed]), key || '', pointer];
+  return [compile([...parsed]), key || '', pointer];
 }
 
 function unescapeUriSafePointer(inputFromApiToolkit: string): string {
   return decodeURIComponent(inputFromApiToolkit);
 }
 
-function compile(input: string[]) {
-  return jsonPointer.compile(input);
-}
-
-function decode(pointer: string): string[] {
-  return jsonPointer.parse(pointer);
-}
-
 function relative(pointer: string, from: string) {
-  const targetDecoded = decode(pointer);
-  const fromDecoded = decode(from);
+  const targetDecoded = parse(pointer);
+  const fromDecoded = parse(from);
 
   if (fromDecoded.length > targetDecoded.length)
     throw new Error(`${pointer} can not be relative to ${from}`);
 
   const parent = targetDecoded.slice(0, fromDecoded.length);
-  if (JSON.stringify(parent) !== JSON.stringify(fromDecoded))
+  if (JSON.stringify(parent) !== JSON.stringify(fromDecoded)) {
     throw new Error(
       `${pointer} can not be relative to ${from} -- need same lineage`
     );
-
+  }
   return compile(targetDecoded.slice(fromDecoded.length));
 }
 
@@ -50,7 +60,7 @@ function tryGet(
   pointer: string
 ): { match: true; value: any } | { match: false; error: string } {
   try {
-    const value = jsonPointer.get(input, pointer);
+    const value = get(input, pointer);
     return { match: true, value };
   } catch (e: any) {
     return { match: false, error: e.message };
@@ -58,17 +68,17 @@ function tryGet(
 }
 
 function join(leading: string, trailing: string): string {
-  return compile([...decode(leading), ...decode(trailing)]);
+  return compile([...parse(leading), ...parse(trailing)]);
 }
 
 export default {
   append,
   pop,
-  decode,
+  decode: parse,
   join,
   splitParentChild,
   unescapeUriSafePointer,
-  get: jsonPointer.get,
+  get,
   tryGet,
   compile,
   relative,
