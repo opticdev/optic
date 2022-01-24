@@ -3299,13 +3299,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/json-pointer@npm:^1.0.31":
-  version: 1.0.31
-  resolution: "@types/json-pointer@npm:1.0.31"
-  checksum: 1d24390dbd54a738968439de01a25b4cc646b0b3a43a318dae882b193321c7975ca465350f9e0cad0bf2222e0a0927c9652db625d2be50f09e35577477d5cd07
-  languageName: node
-  linkType: hard
-
 "@types/json-schema@npm:*, @types/json-schema@npm:^7.0.3, @types/json-schema@npm:^7.0.4, @types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.6, @types/json-schema@npm:^7.0.7, @types/json-schema@npm:^7.0.8":
   version: 7.0.9
   resolution: "@types/json-schema@npm:7.0.9"
@@ -4021,7 +4014,6 @@ __metadata:
     "@types/crypto-js": ^4.0.2
     "@types/fs-extra": ^9.0.13
     "@types/jest": ^26.0.24
-    "@types/json-pointer": ^1.0.31
     "@types/lodash.sortby": ^4.7.6
     "@types/micro": ^7.3.6
     "@types/micro-cors": ^0
@@ -4037,12 +4029,11 @@ __metadata:
     fs-extra: ^10.0.0
     jest: 26.6.0
     js-yaml: ^4.1.0
-    json-pointer: ^0.6.1
     json-stable-stringify: ^1.0.1
     lodash.sortby: ^4.7.0
     micro: ^9.3.4
     micro-cors: ^0.1.1
-    node-fetch: 2.6.5
+    node-fetch: 2.6.7
     prettier: ^2.4.1
     ts-invariant: ^0.9.3
     ts-node: ^10.3.1
@@ -8803,13 +8794,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"foreach@npm:^2.0.4":
-  version: 2.0.5
-  resolution: "foreach@npm:2.0.5"
-  checksum: dab4fbfef0b40b69ee5eab81bcb9626b8fa8b3469c8cfa26480f3e5e1ee08c40eae07048c9a967c65aeda26e774511ccc70b3f10a604c01753c6ef24361f0fc8
-  languageName: node
-  linkType: hard
-
 "forever-agent@npm:~0.6.1":
   version: 0.6.1
   resolution: "forever-agent@npm:0.6.1"
@@ -11399,15 +11383,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-pointer@npm:^0.6.1":
-  version: 0.6.1
-  resolution: "json-pointer@npm:0.6.1"
-  dependencies:
-    foreach: ^2.0.4
-  checksum: 882b4b24b515fd866f8c228ed1381c129a40bdbfec578b73882be86a52bbcac15aaa87579c548167d4d8d9e3fc60e35aefead473df95c463553bede2b957f79c
-  languageName: node
-  linkType: hard
-
 "json-schema-diff@npm:^0.17.1":
   version: 0.17.1
   resolution: "json-schema-diff@npm:0.17.1"
@@ -12637,25 +12612,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:2.6.5":
-  version: 2.6.5
-  resolution: "node-fetch@npm:2.6.5"
-  dependencies:
-    whatwg-url: ^5.0.0
-  checksum: 4e83db450718e70762882f00d96f647a7f2f3170035225934ddd5450cb1d91ef339ceb180d3687bcb0a6ed78c3fa5636ce8d3e44ec81ab59e0224ebf8965f65f
-  languageName: node
-  linkType: hard
-
-"node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1":
-  version: 2.6.6
-  resolution: "node-fetch@npm:2.6.6"
-  dependencies:
-    whatwg-url: ^5.0.0
-  checksum: ee8290626bdb73629c59722b75dcf4b9b6a67c1ed7eb9102e368479c4a13b56a48c2bb3ad71571e378e98c8b2c64c820e11f9cd39e4b8557dd138ad571ef9a42
-  languageName: node
-  linkType: hard
-
-"node-fetch@npm:^2.6.7":
+"node-fetch@npm:2.6.7, node-fetch@npm:^2.6.7":
   version: 2.6.7
   resolution: "node-fetch@npm:2.6.7"
   dependencies:
@@ -12666,6 +12623,15 @@ __metadata:
     encoding:
       optional: true
   checksum: 8d816ffd1ee22cab8301c7756ef04f3437f18dace86a1dae22cf81db8ef29c0bf6655f3215cb0cdb22b420b6fe141e64b26905e7f33f9377a7fa59135ea3e10b
+  languageName: node
+  linkType: hard
+
+"node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1":
+  version: 2.6.6
+  resolution: "node-fetch@npm:2.6.6"
+  dependencies:
+    whatwg-url: ^5.0.0
+  checksum: ee8290626bdb73629c59722b75dcf4b9b6a67c1ed7eb9102e368479c4a13b56a48c2bb3ad71571e378e98c8b2c64c820e11f9cd39e4b8557dd138ad571ef9a42
   languageName: node
   linkType: hard
 
