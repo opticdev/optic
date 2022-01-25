@@ -275,6 +275,19 @@ class Simulation {
     let responseEndPromise = new Promise((resolve, reject) => {
       this.responseStream.once('finish', () => {
         this.responseStream.removeAllListeners();
+
+        // Note: We have this special handling that forces a final interaction
+        // to emit if it is pending. This can happen if we stopped writing
+        // response data due to backpressure or if the connection we sniff
+        // behaves funny and the parser doesn't think the HTTP message has ended
+        // (this seems to happen when testing with `ab`).
+        let idx = this.nextEmittedIdx;
+        let request = this.requests[idx];
+        let response = this.responses[idx];
+        if (idx == 0 && request.method && response.status_code) {
+          this.emitHTTPPair();
+        }
+
         resolve(null);
       });
       this.responseStream.once('error', (e) => {
@@ -303,7 +316,10 @@ class Simulation {
     //console.log('ended session wait')
   }
 
-  public async endSimulation() {
+  // endSimulation reflects that we should begin shutting down. This doesn't
+  // stop processing, however. That is left for the `finish` stream callbacks.
+  // This call closes the streams to trigger any final processing.
+ public async endSimulation() {
     this.requestStream.end();
     this.responseStream.end();
   }
