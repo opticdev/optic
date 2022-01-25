@@ -1,9 +1,0 @@
-version: '3.4'
-
-services:
-  example-ci-cli-usage:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    environment:
-      NODE_ENV: production

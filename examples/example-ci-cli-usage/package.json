@@ -1,8 +1,0 @@
-{
-    "name": "example-ci-cli-usage",
-    "version": "0.1.0",
-    "dependencies": {
-        "@useoptic/api-checks": "0.1.1-0",
-        "@useoptic/example-snyk-api-checks": "0.1.1-0"
-    }
-}
