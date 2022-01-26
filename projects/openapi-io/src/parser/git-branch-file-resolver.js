@@ -42,7 +42,7 @@ module.exports = (gitBaseRepo, branch) => ({
       const toGit = path.relative(gitBaseRepo, file.url)
       const command = `git show ${branch}:${toGit}`
       try {
-        exec(command, {cwd: gitBaseRepo}, ((err, stdout, stderr) => {
+        exec(command, {cwd: gitBaseRepo, maxBuffer: 1024 * 1024 * 100}, ((err, stdout, stderr) => {
           if (err) reject(new ResolverError(ono(err, `Error opening file "${path}"`), path));
           if (stdout) resolve(stdout)
         }))
