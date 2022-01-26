@@ -412,9 +412,7 @@ class Simulation {
   // Note: No copy is made. If the buffer is re-used then copy it before passing
   // it in.
   public async storeRequestBytes(data: Uint8Array) {
-    if (!this.requestStream.write(data)) {
-      console.warn(`Request stream is not draining quickly enough`);
-    }
+    this.requestStream.write(data);
   }
 
   // getRequest returns a reference to the latest request object. This is the
@@ -440,9 +438,7 @@ class Simulation {
       return;
     }
 
-    if (!this.responseStream.write(data)) {
-      console.warn(`Response stream is not draining quickly enough`);
-    }
+    this.responseStream.write(data);
     //console.log(`storeResponseBytes end`);
   }
 
