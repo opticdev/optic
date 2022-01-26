@@ -3975,6 +3975,7 @@ __metadata:
     fast-deep-equal: ^3.1.3
     fast-json-patch: ^3.1.0
     fs-extra: ^10.0.0
+    http-parser-js: ^0.5.5
     http-proxy-middleware: ^2.0.1
     http-string-parser: ^0.0.6
     ink: ^3.2.0
@@ -4033,7 +4034,7 @@ __metadata:
     lodash.sortby: ^4.7.0
     micro: ^9.3.4
     micro-cors: ^0.1.1
-    node-fetch: 2.6.7
+    node-fetch: ^2.6.7
     prettier: ^2.4.1
     ts-invariant: ^0.9.3
     ts-node: ^10.3.1
@@ -9589,7 +9590,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-parser-js@npm:>=0.5.1":
+"http-parser-js@npm:>=0.5.1, http-parser-js@npm:^0.5.5":
   version: 0.5.5
   resolution: "http-parser-js@npm:0.5.5"
   checksum: 85e67f12d99d67565be6c82dd86d4cf71939825fdf9826e10047b2443460bfef13235859ca67c0235d54e553db242204ec813febc86f11f83ed8ebd3cd475b65
@@ -12612,7 +12613,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:2.6.7, node-fetch@npm:^2.6.7":
+"node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1":
+  version: 2.6.6
+  resolution: "node-fetch@npm:2.6.6"
+  dependencies:
+    whatwg-url: ^5.0.0
+  checksum: ee8290626bdb73629c59722b75dcf4b9b6a67c1ed7eb9102e368479c4a13b56a48c2bb3ad71571e378e98c8b2c64c820e11f9cd39e4b8557dd138ad571ef9a42
+  languageName: node
+  linkType: hard
+
+"node-fetch@npm:^2.6.7":
   version: 2.6.7
   resolution: "node-fetch@npm:2.6.7"
   dependencies:
@@ -12623,15 +12633,6 @@ __metadata:
     encoding:
       optional: true
   checksum: 8d816ffd1ee22cab8301c7756ef04f3437f18dace86a1dae22cf81db8ef29c0bf6655f3215cb0cdb22b420b6fe141e64b26905e7f33f9377a7fa59135ea3e10b
-  languageName: node
-  linkType: hard
-
-"node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1":
-  version: 2.6.6
-  resolution: "node-fetch@npm:2.6.6"
-  dependencies:
-    whatwg-url: ^5.0.0
-  checksum: ee8290626bdb73629c59722b75dcf4b9b6a67c1ed7eb9102e368479c4a13b56a48c2bb3ad71571e378e98c8b2c64c820e11f9cd39e4b8557dd138ad571ef9a42
   languageName: node
   linkType: hard
 
