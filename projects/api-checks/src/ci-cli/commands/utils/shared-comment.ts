@@ -1,5 +1,7 @@
 import { Octokit } from '@octokit/rest';
 
+export const OPTIC_COMMENT_SURVEY_LINK = 'https://forms.gle/9CgSy6ytjeLasnfWA';
+
 export const findOpticCommentId = async (
   octokit: Octokit,
   commitIdentifier: string,
