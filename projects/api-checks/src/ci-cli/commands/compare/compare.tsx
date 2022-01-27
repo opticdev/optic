@@ -154,7 +154,7 @@ export const registerCompare = (
     );
 };
 
-function Compare<T>(props: {
+export function Compare<T>(props: {
   from?: string;
   to?: string;
   context: T;
