@@ -1,6 +1,9 @@
 import { Octokit } from '@octokit/rest';
 import { trackEvent } from '../../segment';
-import { findOpticCommentId } from '../utils/shared-comment';
+import {
+  findOpticCommentId,
+  OPTIC_COMMENT_SURVEY_LINK,
+} from '../utils/shared-comment';
 import { BulkUploadJson } from '../../types';
 
 // The identifier we use to find the Optic Comment
@@ -33,12 +36,13 @@ export const sendBulkGithubMessage = async ({
     auth: githubToken,
   });
 
-  const { data: requestedReviewers } =
-    await octokit.pulls.listRequestedReviewers({
-      owner,
-      repo,
-      pull_number,
-    });
+  const {
+    data: requestedReviewers,
+  } = await octokit.pulls.listRequestedReviewers({
+    owner,
+    repo,
+    pull_number,
+  });
 
   trackEvent('optic_ci.bulk_github_comment', `${owner}-optic-ci`, {
     owner,
@@ -94,6 +98,9 @@ export const sendBulkGithubMessage = async ({
 Summary of run # ${run} results (${commit_hash}):
 
 ${renderedComparisons.join(`\n---\n`)}
+
+------
+How can Optic be improved? Leave your feedback [here](${OPTIC_COMMENT_SURVEY_LINK})
   `;
 
   if (maybeOpticCommentId) {

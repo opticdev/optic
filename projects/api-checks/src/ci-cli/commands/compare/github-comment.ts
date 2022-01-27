@@ -1,6 +1,9 @@
 import { Octokit } from '@octokit/rest';
 import { trackEvent } from '../../segment';
-import { findOpticCommentId } from '../utils/shared-comment';
+import {
+  findOpticCommentId,
+  OPTIC_COMMENT_SURVEY_LINK,
+} from '../utils/shared-comment';
 import { CompareJson, UploadJson } from '../../types';
 
 // The identifier we use to find the Optic Comment
@@ -35,12 +38,13 @@ export const sendGithubMessage = async ({
     auth: githubToken,
   });
 
-  const { data: requestedReviewers } =
-    await octokit.pulls.listRequestedReviewers({
-      owner,
-      repo,
-      pull_number,
-    });
+  const {
+    data: requestedReviewers,
+  } = await octokit.pulls.listRequestedReviewers({
+    owner,
+    repo,
+    pull_number,
+  });
 
   trackEvent('optic_ci.github_comment', `${owner}-optic-ci`, {
     owner,
@@ -79,6 +83,9 @@ export const sendGithubMessage = async ({
   }
   
   For details, see [the Optic API Changelog](${opticWebUrl})
+
+  ------
+  How can Optic be improved? Leave your feedback [here](${OPTIC_COMMENT_SURVEY_LINK})
 `;
 
   if (maybeOpticCommentId) {
