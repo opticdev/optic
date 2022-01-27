@@ -24,7 +24,6 @@ import { trackEvent } from '../../segment';
 import { CliConfig } from '../../types';
 import { uploadCiRun } from './upload';
 import { sendGithubMessage } from './github-comment';
-import { OpenAPIV3 } from 'openapi-types';
 
 type LoadingState =
   | {
@@ -132,7 +131,7 @@ export const registerCompare = (
             <Compare
               verbose={options.verbose}
               output={options.output}
-              apiCheckServiceFactory={() => checkService}
+              apiCheckService={checkService}
               from={options.from}
               to={options.to}
               context={parsedContext}
@@ -155,82 +154,13 @@ export const registerCompare = (
     );
 };
 
-export const registerConfigurableCompare = (
-  cli: Command,
-  projectName: string,
-  checkServiceFactory: (toSpec: OpenAPIV3.Document) => ApiCheckService<any>
-) => {
-  cli
-    .command('compare')
-    .option('--from <from>', 'from file or rev:file, defaults empty spec')
-    .option('--to <to>', 'to file or rev:file, defaults empty spec')
-    .option('--verbose', 'show all checks, even passing', false)
-    .option(
-      '--output <format>',
-      "show 'pretty' output for interactive usage or 'json' for JSON",
-      'pretty'
-    )
-    .action(
-      wrapActionHandlerWithSentry(
-        async (options: {
-          from?: string;
-          to?: string;
-          context?: string;
-          verbose: boolean;
-          output: 'pretty' | 'json' | 'plain';
-          ruleset: string;
-          githubAnnotations: boolean;
-          uploadResults: boolean;
-          ciContext?: string;
-        }) => {
-          if (options.output === 'plain') {
-            // https://github.com/chalk/chalk#supportscolor
-            // https://github.com/chalk/supports-color/blob/ff1704d46cfb0714003f53c8d7e55736d8d545ff/index.js#L38
-            if (
-              process.env.FORCE_COLOR !== 'false' &&
-              process.env.FORCE_COLOR !== '0'
-            ) {
-              console.error(
-                `Please set FORCE_COLOR=false or FORCE_COLOR=0 to enable plain text output in the environment you want to run this command in`
-              );
-              return process.exit(1);
-            }
-          }
-
-          const { waitUntilExit } = render(
-            <Compare
-              verbose={options.verbose}
-              output={options.output}
-              apiCheckServiceFactory={checkServiceFactory}
-              from={options.from}
-              to={options.to}
-              context={{}}
-              mapToFile={
-                options.githubAnnotations
-                  ? SourcemapRendererEnum.github
-                  : SourcemapRendererEnum.local
-              }
-              projectName={projectName}
-              uploadResults={options.uploadResults}
-              ciContext={options.ciContext}
-              cliConfig={{}}
-            />,
-            { exitOnCtrlC: true }
-          );
-          await waitUntilExit();
-          return Promise.resolve();
-        }
-      )
-    );
-};
-
 function Compare<T>(props: {
   from?: string;
   to?: string;
   context: T;
   verbose: boolean;
   output: 'pretty' | 'json' | 'plain';
-  apiCheckServiceFactory: (toSpec: OpenAPIV3.Document) => ApiCheckService<T>;
+  apiCheckService: ApiCheckService<T>;
   mapToFile: SourcemapRendererEnum;
   projectName: string;
   uploadResults: boolean;
@@ -322,7 +252,7 @@ function Compare<T>(props: {
 
         try {
           const compareOutput = await generateSpecResults(
-            props.apiCheckServiceFactory(to.jsonLike),
+            props.apiCheckService,
             from,
             to,
             props.context

@@ -31,7 +31,6 @@ import {
   standards,
 } from './rulesets/packaged-rules';
 import { check } from './sdk/define-check-test-dsl/define-check';
-import { registerConfigurableCompare } from './ci-cli/commands/compare';
 
 export {
   ApiCheckService,
@@ -52,7 +51,6 @@ export {
   check,
   packagedRules as rulesets,
   standards,
-  registerConfigurableCompare,
   makeApiChecksForStandards,
 };
 
