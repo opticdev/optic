@@ -7,9 +7,7 @@
   "files": [
     "/build"
   ],
-  "bin": {
-    "optic-ci": "build/index.js"
-  },
+  "bin": "build/index.js",
   "scripts": {
     "dev:test": "jest --colors",
     "build": "yarn tsc --build --verbose",
