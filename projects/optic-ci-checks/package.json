@@ -1,5 +1,5 @@
 {
-  "name": "@useoptic/standard-ci-checks",
+  "name": "@useoptic/optic-ci",
   "packageManager": "yarn@3.0.2",
   "version": "0.21.10",
   "main": "build/index.js",
