@@ -18,7 +18,7 @@ yarn global add @useoptic/optic-ci
 optic-ci compare --from main:openapi.yaml --to feature/xyz:openapi.yaml
 ```
 
-When you are just trying to learn how `optic-ci` works, copy your OpenAPI file and run compare on each:
+When you are just trying to learn how `optic-ci` works, make a copy of your OpenAPI file, make a small change, and run compare on both versions:
 
 ```bash
 optic-ci compare --from openapi-v1.yaml --to openapi-v2.yaml
