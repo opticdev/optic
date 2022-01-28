@@ -73,7 +73,7 @@ export class SnifferNativeSource extends TrafficSource {
   // Wire up the session to store both the client connection and the backend's
   // client data in the Simulation
   wireSession(session: typeof TCPSession, sim: Simulation): Promise<void> {
-    session.track_id = `${session.src}->${session.dst}`;
+    session.track_id = `${session.dst}-${session.src}`; // This matches the TCPTracker internal ID.
     this.sessions[session.track_id] = session;
 
     //console.log(`Simulating session ${this.sessionCount}: ${session.track_id}`);
@@ -126,10 +126,19 @@ export class SnifferNativeSource extends TrafficSource {
     try {
       await session.sim.run(sessionEndPromise);
       await sessionEndPromise;
-      delete this.sessions[session.track_id];
     } catch (e: any) {
       console.error(`Error in simulation: ${e}\n${e.stack}`);
+    } finally {
+      this.cleanSession(session);
     }
+  }
+
+  // cleanSession is a hack to ensure that TCPTracker doesn't leak memory. It
+  // just deletes the session from the tracker manually.
+  async cleanSession(session: typeof TCPSession) {
+    //console.log(`Removing session ${session.track_id} from TCPTracker: ${this.tracker.sessions[session.track_id]}`);
+    delete this.sessions[session.track_id];
+    delete this.tracker.sessions[session.track_id];
   }
 }
 
