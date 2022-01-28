@@ -11,11 +11,7 @@
     "strict": true,
     "skipLibCheck": true,
     "jsx": "react-jsx",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "noFallthroughCasesInSwitch": true,
@@ -24,7 +20,5 @@
     "isolatedModules": true,
     "noImplicitAny": false
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

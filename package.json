@@ -9,6 +9,6 @@
     "projects/developer-ui",
     "projects/api-checks",
     "projects/snyk-rules",
-    "projects/optic-ci-checks"
+    "projects/optic-ci"
   ]
 }

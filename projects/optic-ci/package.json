@@ -20,10 +20,8 @@
     "@babel/plugin-transform-runtime": "^7.16.0",
     "@babel/preset-env": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
-    "@types/fs-extra": "^9.0.13",
     "@types/jest": "^26.0.24",
     "@types/json-stable-stringify": "^1.0.33",
-    "@types/nice-try": "^2.1.0",
     "babel-jest": "26.6.0",
     "jest": "^26.6.0",
     "prettier": "^2.4.1",
@@ -31,13 +29,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@sinclair/typebox": "^0.23.3",
-    "@useoptic/api-checks": "workspace:*",
-    "ajv": "^8.9.0",
-    "better-ajv-errors": "^1.1.2",
-    "commander": "^8.3.0",
-    "fs-extra": "^10.0.0",
-    "nice-try": "^3.0.0"
+    "@useoptic/api-checks": "workspace:*"
   },
   "jest": {
     "testPathIgnorePatterns": [
