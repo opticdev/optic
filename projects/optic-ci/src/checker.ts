@@ -11,10 +11,19 @@ type OpticNamedRulesCheck = {
   config: NamingChecksConfig;
 };
 
-// TODO add in custom rule check
-export type CheckConfiguration = OpticNamedRulesCheck;
+type BreakingChangesCheck = {
+  name: 'optic-breaking-changes';
+};
 
-export const buildCheckerFromConfig = (checks: CheckConfiguration[]) => {
+// TODO add in custom rule check
+export type CheckConfiguration = OpticNamedRulesCheck | BreakingChangesCheck;
+
+const defaultChecks: CheckConfiguration[] = [
+  { name: 'optic-breaking-changes' },
+];
+
+export const buildCheckerFromConfig = (checks?: CheckConfiguration[]) => {
+  checks = checks || defaultChecks;
   const baseChecker = new ApiCheckService<ApiCheckDslContext>();
 
   for (const check of checks) {
@@ -23,6 +32,15 @@ export const buildCheckerFromConfig = (checks: CheckConfiguration[]) => {
       makeApiChecksForStandards(
         {
           naming: check.config,
+          breakingChanges: false,
+        },
+        baseChecker
+      );
+    } else if (check.name === 'optic-breaking-changes') {
+      // this function mutates, but it might be clearer to set the return to the base checker
+      makeApiChecksForStandards(
+        {
+          naming: {},
           breakingChanges: { failOn: 'all' },
         },
         baseChecker

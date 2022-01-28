@@ -1,9 +1,11 @@
 ## Optic CI packaged with standard rules
 
 Install
+
 ```bash
 npm install -g @useoptic/optic-ci
 ```
+
 ```bash
 yarn global add @useoptic/optic-ci
 ```
@@ -24,9 +26,9 @@ When you are just trying to learn how `optic-ci` works, make a copy of your Open
 optic-ci compare --from openapi-v1.yaml --to openapi-v2.yaml
 ```
 
-Give it a try! Make a required response property optional or add a required query parameter! There are many ways to break and API. 
+Give it a try! Make a required response property optional or add a required query parameter! There are many ways to break and API.
 
-### Apply your team's naming checks 
+### Apply your team's naming checks
 
 `optic-ci` ships with the ability to enforce standard naming rules. Add the rules to your `optic.config.js` to tell Optic about your team's casing strategy. An example of this is:
 
@@ -34,6 +36,7 @@ Give it a try! Make a required response property optional or add a required quer
 // optic.config.js
 module.exports = {
   checks: [
+    { name: 'optic-breaking-changes' }, // on by default
     {
       name: 'optic-named-checks',
       config: {
@@ -61,22 +64,19 @@ module.exports = {
     },
   ],
 };
-
 ```
 
-Rule options: `camelCase` | `PascalCase` | `snake_case` | `param-case` | `none`. 
+Rule options: `camelCase` | `PascalCase` | `snake_case` | `param-case` | `none`.
 Applies options: `whenAdded` | `always` | `whenAddedOrChanged`.
 
-Optic understands that if you suddenly turn on naming rules for a legacy API, it will fail on a lot of existing surface area. This is not helpful because changing those names is a breaking change. 
+Optic understands that if you suddenly turn on naming rules for a legacy API, it will fail on a lot of existing surface area. This is not helpful because changing those names is a breaking change.
 
-We suggest users also set `applyNamingRules: whenAdded` so that these rules only fail if improperly named surface area is added to the API (ie it governs new endpoints, fields, headers, etc but not old ones). If you want it to fail everywhere (not suggested), you can set it to `always`.  
+We suggest users also set `applyNamingRules: whenAdded` so that these rules only fail if improperly named surface area is added to the API (ie it governs new endpoints, fields, headers, etc but not old ones). If you want it to fail everywhere (not suggested), you can set it to `always`.
 
 Give it a try -- add a name that does not follow the standard!
 
-### Want to write your own rules? 
+### Want to write your own rules?
 
-
-### Join the beta! 
+### Join the beta!
 
 Do you like `optic-ci`? It solves this problem well because people just like you joined our Beta, connected with us on Slack and started helping us learn really fast. Join our beta to work directly with Optic's team to help us make OpenAPI and API-first easy for teams to adopt!
-

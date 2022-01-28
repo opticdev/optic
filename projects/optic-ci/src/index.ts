@@ -4,7 +4,7 @@ import { buildCheckerFromConfig } from './checker';
 
 (async () => {
   const config = await readConfig();
-  const checker = buildCheckerFromConfig(config.checks || []);
+  const checker = buildCheckerFromConfig(config.checks);
 
   const cli = makeCiCli(
     'optic-ci', // TODO deprecate this
