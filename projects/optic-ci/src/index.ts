@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { makeCiCli } from '@useoptic/api-checks';
 import { readConfig } from './config';
 import { buildCheckerFromConfig } from './checker';

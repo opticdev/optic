@@ -45,7 +45,7 @@ const findOpticConfigPath = (dir: string): string | null => {
 };
 
 export const readConfig = async (): Promise<OpticConfiguration> => {
-  const opticConfigPath = findOpticConfigPath(__dirname);
+  const opticConfigPath = findOpticConfigPath(process.cwd());
   if (opticConfigPath) {
     // TODO add validation to configuration loading
     // TODO add in fallbacks / defaults here
