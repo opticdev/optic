@@ -3,13 +3,13 @@ import { NameMustBe } from './config';
 function regexForRule(nameRule: NameMustBe) {
   switch (nameRule) {
     case NameMustBe.camelCase:
-      return /^[a-z]+(?:[A-Z][a-z]+)*$/;
+      return /^[a-z][a-z0-9]*(?:[A-Z0-9][a-z0-9]+)*$/;
     case NameMustBe.paramCase:
-      return /^([a-z][a-z0-9]*)(-[a-z0-9]+)*$/;
+      return /^[a-z0-9]+(-[a-z0-9]+)*$/;
     case NameMustBe.pascalCase:
-      return /^[A-Z][a-z]+(?:[A-Z][a-z]+)*$/;
+      return /^[A-Z][a-z0-9]+(?:[A-Z0-9][a-z0-9]+)*$/;
     case NameMustBe.snakeCase:
-      return /^[a-z]+(?:_[a-z]+)*$/;
+      return /^[a-z0-9]+(?:_[a-z0-9]+)*$/;
     default:
       return /(.*?)/;
   }
