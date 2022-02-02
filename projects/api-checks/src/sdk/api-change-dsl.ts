@@ -198,7 +198,11 @@ export class ApiChangeDsl implements ApiCheckDsl {
       >(
         OpenApiKind.Field,
         queryChangelog(dsl.changelog).filterToRequestBodies().changes(),
-        dsl.nextFacts,
+        dsl.nextFacts.filter(
+          (fact) =>
+            'inRequest' in fact.location.conceptualLocation &&
+            'body' in fact.location.conceptualLocation.inRequest
+        ),
         (field) => `request body '${field.key}'`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
@@ -233,7 +237,11 @@ export class ApiChangeDsl implements ApiCheckDsl {
       >(
         OpenApiKind.Field,
         queryChangelog(dsl.changelog).filterToResponseBodies().changes(),
-        dsl.nextFacts,
+        dsl.nextFacts.filter(
+          (fact) =>
+            'inResponse' in fact.location.conceptualLocation &&
+            'body' in fact.location.conceptualLocation.inResponse
+        ),
         (field) => `response body '${field.key}'`,
         (location) => dsl.getContext(location),
         (...items) => dsl.checks.push(...items),
