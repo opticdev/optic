@@ -74,7 +74,11 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
 
     const file = sourcemap.files.find((i) => i.index === cursor.currentFile)!;
 
-    const pathInFile = jsonPointerHelpers.compile(cursor.pathInCurrentFile);
+    const cursorPath =
+      cursor.pathInCurrentFile[0] === ''
+        ? cursor.pathInCurrentFile.slice(1)
+        : cursor.pathInCurrentFile;
+    const pathInFile = jsonPointerHelpers.compile(cursorPath);
 
     return {
       filePath: file.path,

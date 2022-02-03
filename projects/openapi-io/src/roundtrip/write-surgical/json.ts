@@ -3,61 +3,40 @@ import {
   PatchApplyResult,
   ReduceOperationType,
   RoundtripProvider,
-} from './roundtrip-provider';
+} from '../roundtrip-provider';
 import jsonpatch, { AddOperation, Operation } from 'fast-json-patch';
-import {
-  insertLines,
-  lines,
-  pad,
-  removeLines,
-  replaceRange,
-  startsWithWhitespace,
-  yamlSpacer,
-} from './helpers/lines';
+import { lines, replaceRange, startsWithWhitespace } from '../helpers/lines';
 import fs from 'fs-extra';
-import {
-  Kind,
-  safeLoad,
-  YamlMap,
-  YAMLMapping,
-  YAMLSequence,
-} from 'yaml-ast-parser';
+import { safeLoad, YamlMap, YAMLSequence } from 'yaml-ast-parser';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { resolveJsonPointerInYamlAst } from '../parser/openapi-sourcemap-parser';
+import { resolveJsonPointerInYamlAst } from '../../parser/openapi-sourcemap-parser';
 import invariant from 'ts-invariant';
-import ast from './helpers/ast';
-import jsonLike from './helpers/json-like';
-import yamlLike from './helpers/yaml-like';
-import { formatYaml } from './helpers/format/format';
-import {
-  findNextChar,
-  findPreviousChar,
-  returnLineForPosition,
-  returnLineNumberPosition,
-} from './helpers/next-or-last-char';
-import { loadYaml } from '../write';
+import ast from '../helpers/ast';
+import jsonLike from '../helpers/json-like';
+import { formatJson } from '../helpers/format/format';
+import { findNextChar, findPreviousChar } from '../helpers/next-or-last-char';
 
 const { EOL } = require('os');
 
-export type YamlRoundTripConfig = {
-  count: 2 | 4;
+export type JsonRoundtripConfig = {
+  spacer: 'tab' | 'space';
+  count: number;
 };
-
-class YamlRoundtripImpl implements RoundtripProvider<YamlRoundTripConfig> {
+//
+class JsonRoundtripImpl implements RoundtripProvider<JsonRoundtripConfig> {
   async applyPatches(
     filePath: string,
     operations: Operation[],
-    config: YamlRoundTripConfig | undefined
+    config: JsonRoundtripConfig | undefined
   ): Promise<PatchApplyResult> {
     const currentContents = (await fs.readFile(filePath)).toString();
-
     const writeConfig = config
       ? config
       : await this.inferConfig(currentContents);
-    const initialDocument = await this.parse(currentContents);
+    const initialDocument = await this.parse(filePath, currentContents);
 
     invariant(
-      initialDocument.success,
+      initialDocument.success === true,
       // @ts-ignore
       `could not parse '${filePath}' as json. Error: ${initialDocument.error}`
     );
@@ -91,7 +70,7 @@ class YamlRoundtripImpl implements RoundtripProvider<YamlRoundTripConfig> {
         reducerInput
       );
 
-      const formatted = formatYaml(updatedDocument.contents, writeConfig);
+      const formatted = formatJson(updatedDocument.contents, writeConfig);
 
       return {
         success: true,
@@ -103,20 +82,19 @@ class YamlRoundtripImpl implements RoundtripProvider<YamlRoundTripConfig> {
     }
   }
 
-  fileExtensions: string[] = ['.yaml', '.yml'];
+  fileExtensions: string[] = ['.json'];
 
-  async inferConfig(contents: string): Promise<YamlRoundTripConfig> {
+  async inferConfig(contents: string): Promise<JsonRoundtripConfig> {
     const asLines = lines(contents);
 
     // it's all one line, we'll be overwriting today
     if (asLines.length <= 1) {
-      return { count: 2 };
+      return { spacer: 'space', count: 2 };
     }
 
     const firstLineWithWhiteSpaceToStart = asLines.find((i) =>
       startsWithWhitespace(i)
     );
-
     if (firstLineWithWhiteSpaceToStart) {
       const startChar = startsWithWhitespace(
         firstLineWithWhiteSpaceToStart
@@ -124,30 +102,26 @@ class YamlRoundtripImpl implements RoundtripProvider<YamlRoundTripConfig> {
 
       if (startChar.includes('\t')) {
         return {
-          count:
-            Array.from(startChar).filter((i) => i === '\t').length === 4
-              ? 4
-              : 2,
+          spacer: 'tab',
+          count: Array.from(startChar).filter((i) => i === '\t').length,
         };
       }
       if (startChar.includes(' ')) {
         return {
-          count:
-            Array.from(startChar).filter((i) => i === '\t').length === 4
-              ? 4
-              : 2,
+          spacer: 'space',
+          count: Array.from(startChar).filter((i) => i === ' ').length,
         };
       }
     }
 
-    return { count: 2 };
+    return { spacer: 'space', count: 2 };
   }
 
-  name: string = 'yaml';
+  name: string = 'json';
 
-  async parse(contents: string): Promise<ParseResult> {
+  async parse(filepath: string, contents: string): Promise<ParseResult> {
     try {
-      const value = loadYaml(contents);
+      const value = JSON.parse(contents);
       return { value, success: true };
     } catch (e: any) {
       return { error: e.message, success: false };
@@ -155,14 +129,14 @@ class YamlRoundtripImpl implements RoundtripProvider<YamlRoundTripConfig> {
   }
 }
 
-export const YamlRoundtripper = new YamlRoundtripImpl();
+export const JsonRoundtripper = new JsonRoundtripImpl();
 
 // Patch Logic
 export function applyJsonPatchOperationToString(
   contents: string,
   jsonLikeValue: any,
   operation: Operation,
-  writeConfig: YamlRoundTripConfig
+  writeConfig: JsonRoundtripConfig
 ): string {
   const astRoot = safeLoad(contents);
 
@@ -199,24 +173,19 @@ export function applyJsonPatchOperationToString(
         const parentObjectAst = ast.getObjectMapNode(parentAstNode);
         ast.ensureKeyIsFree(parentObjectAst, key);
 
-        const newField = yamlLike.generatedAddedField(
+        const newField = jsonLike.generatedAddedField(
           key,
           operation.value,
           writeConfig
         );
 
-        return addFieldToObject(
-          parentObjectAst,
-          contents,
-          newField,
-          writeConfig
-        );
+        return addFieldToObject(parentObjectAst, contents, newField);
       }
 
       if (parentAstNode && ast.isArray(parentAstNode)) {
         const parentArrayAst = ast.getArrayNode(parentAstNode);
 
-        const newItem = yamlLike.generatedAdded(operation.value, writeConfig);
+        const newItem = jsonLike.generatedAdded(operation.value, writeConfig);
         const addIndex: number =
           key === '-' ? parentArrayAst.items.length : Number(key);
 
@@ -304,48 +273,18 @@ export function applyJsonPatchOperationToString(
       break;
     }
     case 'replace': {
-      const astNode = resolveJsonPointerInYamlAst(astRoot, operation.path)!;
-      invariant(
-        astNode,
-        'node to update can not be found at ' + operation.path
+      const node = resolveJsonPointerInYamlAst(astRoot, operation.path);
+      invariant(node, 'node to update can not be found at ' + operation.path);
+      const astNode = ast.toReplace(node);
+
+      const generated = jsonLike.generatedAdded(operation.value, writeConfig);
+
+      return replaceRange(
+        contents,
+        astNode.startPosition,
+        astNode.endPosition,
+        generated
       );
-      const generated = yamlLike.generatedAdded(operation.value, writeConfig);
-
-      const line = returnLineForPosition(contents, astNode.startPosition);
-      const leadingWhitespace = startsWithWhitespace(line) || '';
-
-      if (astNode.kind === Kind.MAPPING) {
-        const asMapping = astNode as YAMLMapping;
-        const replacingWithCollection =
-          jsonLike.isObject(operation.value) ||
-          jsonLike.isArray(operation.value);
-        const leadingEol =
-          lines(generated).length > 1 || replacingWithCollection ? EOL : '';
-        const replace = pad(
-          `${leadingEol}${generated}`,
-          leadingWhitespace + yamlSpacer(writeConfig)
-        )
-          .withLeading(`${leadingWhitespace}${asMapping.key.value}: `)
-          .flush();
-
-        return replaceRange(
-          contents,
-          asMapping.startPosition,
-          asMapping.endPosition,
-          replace
-        );
-      } else {
-        const spacer = yamlSpacer(writeConfig);
-        const replace = pad(generated, leadingWhitespace + spacer)
-          .withLeading('')
-          .flush();
-        return replaceRange(
-          contents,
-          astNode.startPosition,
-          astNode.endPosition,
-          replace
-        );
-      }
     }
 
     default:
@@ -359,38 +298,25 @@ export function applyJsonPatchOperationToString(
 function addFieldToObject(
   parentAst: YamlMap,
   contents: string,
-  fieldString: string,
-  writeConfig: YamlRoundTripConfig
+  fieldString: string
 ) {
   const isEmptyObject = ast.keys(parentAst).length === 0;
   if (isEmptyObject) {
-    const line = returnLineForPosition(contents, parentAst.startPosition);
-    const leadingWhitespace = startsWithWhitespace(line) || '';
-    const spacer = yamlSpacer(writeConfig);
-    const replace = pad(fieldString, leadingWhitespace + spacer + spacer)
-      .withLeading('\n' + leadingWhitespace + spacer)
-      .flush();
+    const append = `${fieldString}`;
     return replaceRange(
       contents,
-      parentAst.startPosition,
-      parentAst.endPosition,
-      replace
+      parentAst.startPosition + 1,
+      parentAst.startPosition + 1,
+      append
     );
   } else {
     const lastField = parentAst.mappings[parentAst.mappings.length - 1];
-
-    const line = returnLineForPosition(contents, lastField.startPosition);
-    const leadingWhitespace = startsWithWhitespace(line) || '';
-
-    const insert = pad(fieldString, leadingWhitespace)
-      .withLeading('\n' + leadingWhitespace)
-      .flush();
-
+    const readyForInsert = `, ${fieldString}`;
     return replaceRange(
       contents,
       lastField.endPosition,
-      lastField.endPosition,
-      insert
+      parentAst.endPosition - 1,
+      readyForInsert
     );
   }
 }
@@ -405,48 +331,67 @@ function removeFieldFromObject(
 
   const isOnlyKey = numberOfKeys === 1;
 
+  const isFirstKey = keyIndex === 0;
+  const isLastKey = keyIndex + 1 === numberOfKeys;
+
   const item = parentAst.mappings.find((i) => i.key.value === key)!;
 
-  if (isOnlyKey) {
+  if (isFirstKey) {
+    // decide if we need to grab the next comma
+    const removeEnd = isOnlyKey
+      ? item.endPosition
+      : findNextChar(contents, ',', item.endPosition);
+
+    return replaceRange(contents, item.startPosition, removeEnd, '');
+  } else if (isLastKey) {
+    const removeStart = isOnlyKey
+      ? item.startPosition
+      : findPreviousChar(contents, ',', item.startPosition);
+
+    return replaceRange(contents, removeStart, item.endPosition, '');
+  } else {
+    // is middle
     return replaceRange(
       contents,
-      parentAst.startPosition,
-      parentAst.endPosition,
-      '{}'
+      item.startPosition,
+      parentAst.mappings[keyIndex + 1].startPosition,
+      ''
     );
   }
-
-  const startLine = returnLineNumberPosition(contents, item.startPosition);
-
-  const endLine = returnLineNumberPosition(contents, item.endPosition);
-
-  return removeLines(contents, startLine, endLine);
 }
 
-function removeItemFromArray(
-  parentAst: YAMLSequence,
+export function removeItemFromArray(
+  parentSequence: YAMLSequence,
   contents: string,
   index: number
 ) {
-  const toRemove = parentAst.items[index];
-  const numberOfKeys = parentAst.items.length;
+  const numberOfKeys = parentSequence.items.length;
 
-  const isOnlyItem = numberOfKeys === 1;
+  const isOnlyKey = numberOfKeys === 1;
 
-  if (isOnlyItem) {
-    return replaceRange(
-      contents,
-      parentAst.startPosition,
-      parentAst.endPosition,
-      '[]'
-    );
+  const isFirstKey = index === 0;
+  const isLastKey = index + 1 === numberOfKeys;
+
+  const item = parentSequence.items[index];
+
+  if (isFirstKey) {
+    // decide if we need to grab the next comma
+    const removeEnd = isOnlyKey
+      ? item.endPosition
+      : findNextChar(contents, ',', item.endPosition);
+
+    return replaceRange(contents, item.startPosition, removeEnd, '');
+  } else if (isLastKey) {
+    const removeStart = isOnlyKey
+      ? item.startPosition
+      : findPreviousChar(contents, ',', item.startPosition);
+
+    return replaceRange(contents, removeStart, item.endPosition, '');
+  } else {
+    const next = parentSequence.items[index + 1];
+    // is middle
+    return replaceRange(contents, item.startPosition, next.startPosition, '');
   }
-
-  const startLine = returnLineNumberPosition(contents, toRemove.startPosition);
-
-  const endLine = returnLineNumberPosition(contents, toRemove.endPosition);
-
-  return removeLines(contents, startLine, endLine);
 }
 
 function addItemToArray(
@@ -454,58 +399,21 @@ function addItemToArray(
   contents: string,
   newItem: string,
   index: number,
-  writeConfig: YamlRoundTripConfig
+  writeConfig: JsonRoundtripConfig
 ) {
   const isAddingLastItem = parentAst.items.length === index;
   const isAddingFirstItem = index === 0;
-  const isAddingToEmptyArray =
-    isAddingFirstItem && parentAst.items.length === 0;
 
-  if (isAddingToEmptyArray) {
-    const line = returnLineForPosition(contents, parentAst.startPosition);
-    const parentLine = returnLineNumberPosition(
-      contents,
-      parentAst.startPosition
-    );
-
-    const leadingWhitespace = startsWithWhitespace(line) || '';
-
-    const insert = pad(newItem, leadingWhitespace + '  ')
-      .withLeading(`${EOL}${leadingWhitespace}- `)
-      .withTrailing(EOL)
-      .flush();
-
+  if (isAddingFirstItem) {
+    const insert = `${newItem}${parentAst.items.length > 0 ? ', ' : ''}`;
     return replaceRange(
       contents,
-      parentAst.startPosition,
-      parentAst.endPosition,
+      parentAst.startPosition + 1,
+      parentAst.startPosition + 1,
       insert
     );
-  } else if (isAddingFirstItem) {
-    // not done yet
-    const itemAfter = parentAst.items[index + 1];
-    const line = returnLineForPosition(contents, itemAfter.startPosition);
-    const afterLine = returnLineNumberPosition(
-      contents,
-      itemAfter.startPosition
-    );
-
-    const leadingWhitespace = startsWithWhitespace(line) || '';
-
-    const insert = pad(newItem, leadingWhitespace + '  ')
-      .withLeading(`${leadingWhitespace}- `)
-      .flush();
-
-    return insertLines(contents, afterLine - 1, insert);
   } else if (isAddingLastItem) {
-    const itemBefore = parentAst.items[index - 1];
-    const line = returnLineForPosition(contents, itemBefore.startPosition);
-    const leadingWhitespace = startsWithWhitespace(line) || '';
-
-    const insert = pad(newItem, leadingWhitespace + '  ')
-      .withLeading(EOL + leadingWhitespace + '- ')
-      .flush();
-
+    const insert = `, ${newItem}`;
     return replaceRange(
       contents,
       parentAst.endPosition - 1,
@@ -513,20 +421,13 @@ function addItemToArray(
       insert
     );
   } else {
-    const itemBefore = parentAst.items[index - 1];
-    const line = returnLineForPosition(contents, itemBefore.startPosition);
-
-    const beforeLine = returnLineNumberPosition(
+    const insert = ` ${newItem} , `;
+    const itemAfter = parentAst.items[index];
+    return replaceRange(
       contents,
-      itemBefore.startPosition
+      itemAfter.startPosition,
+      itemAfter.startPosition,
+      insert
     );
-
-    const leadingWhitespace = startsWithWhitespace(line) || '';
-
-    const insert = pad(newItem, leadingWhitespace + '  ')
-      .withLeading(leadingWhitespace + '- ')
-      .flush();
-
-    return insertLines(contents, beforeLine + 1, insert);
   }
 }

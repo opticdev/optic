@@ -1,5 +1,5 @@
-import { JsonRoundtripConfig } from '../../json';
-import { YamlRoundTripConfig } from '../../yaml';
+import { JsonRoundtripConfig } from '../../write-surgical/json';
+import { YamlRoundTripConfig } from '../../write-surgical/yaml';
 
 const prettier = require('prettier');
 

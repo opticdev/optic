@@ -1,6 +1,6 @@
 import { yamlPatchFixture } from './fixture';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { YamlRoundtripper } from '../yaml';
+import { YamlRoundtripper } from '../write-surgical/yaml';
 
 describe('yaml roundtrip', () => {
   it('can apply json patches', async () => {
