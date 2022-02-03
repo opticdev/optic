@@ -810,7 +810,7 @@ Object {
         "removed": Object {
           "before": Object {
             "description": "",
-            "statusCode": 200,
+            "statusCode": "200",
           },
         },
       },
@@ -2003,7 +2003,7 @@ Object {
       "removed": Object {
         "before": Object {
           "description": "Example response",
-          "statusCode": 200,
+          "statusCode": "200",
         },
       },
     },
@@ -2052,7 +2052,7 @@ Object {
         "removed": Object {
           "before": Object {
             "description": "Example response",
-            "statusCode": 200,
+            "statusCode": "200",
           },
         },
       },

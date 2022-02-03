@@ -229,7 +229,7 @@ ChangelogSelector {
     Object {
       "added": Object {
         "description": "successful operation",
-        "statusCode": 200,
+        "statusCode": "200",
       },
       "changeType": "added",
       "location": Object {
@@ -254,7 +254,7 @@ ChangelogSelector {
     Object {
       "added": Object {
         "description": "Invalid status value",
-        "statusCode": 400,
+        "statusCode": "400",
       },
       "changeType": "added",
       "location": Object {
@@ -573,7 +573,7 @@ Array [
   Object {
     "added": Object {
       "description": "successful operation",
-      "statusCode": 200,
+      "statusCode": "200",
     },
     "changeType": "added",
     "location": Object {
@@ -598,7 +598,7 @@ Array [
   Object {
     "added": Object {
       "description": "Invalid status value",
-      "statusCode": 400,
+      "statusCode": "400",
     },
     "changeType": "added",
     "location": Object {

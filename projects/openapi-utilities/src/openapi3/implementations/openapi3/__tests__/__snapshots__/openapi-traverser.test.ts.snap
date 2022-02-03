@@ -265,7 +265,7 @@ Array [
     },
     "value": Object {
       "description": "successful operation",
-      "statusCode": 200,
+      "statusCode": "200",
     },
   },
   Object {
@@ -353,7 +353,7 @@ Array [
     },
     "value": Object {
       "description": "successful operation",
-      "statusCode": 200,
+      "statusCode": "200",
     },
   },
   Object {
@@ -1164,7 +1164,7 @@ Array [
     },
     "value": Object {
       "description": "successful operation",
-      "statusCode": 200,
+      "statusCode": "200",
     },
   },
   Object {
@@ -1188,7 +1188,7 @@ Array [
     },
     "value": Object {
       "description": "Invalid Order",
-      "statusCode": 400,
+      "statusCode": "400",
     },
   },
   Object {
@@ -1778,7 +1778,7 @@ Array [
     },
     "value": Object {
       "description": "successful operation",
-      "statusCode": 200,
+      "statusCode": "200",
     },
   },
   Object {
@@ -1802,7 +1802,7 @@ Array [
     },
     "value": Object {
       "description": "Invalid ID supplied",
-      "statusCode": 400,
+      "statusCode": "400",
     },
   },
   Object {
@@ -1826,7 +1826,7 @@ Array [
     },
     "value": Object {
       "description": "Order not found",
-      "statusCode": 404,
+      "statusCode": "404",
     },
   },
   Object {
@@ -1907,7 +1907,7 @@ Array [
     },
     "value": Object {
       "description": "Invalid ID supplied",
-      "statusCode": 400,
+      "statusCode": "400",
     },
   },
   Object {
@@ -1931,7 +1931,7 @@ Array [
     },
     "value": Object {
       "description": "Order not found",
-      "statusCode": 404,
+      "statusCode": "404",
     },
   },
   Object {
@@ -2291,7 +2291,7 @@ Array [
     },
     "value": Object {
       "description": "successful operation",
-      "statusCode": NaN,
+      "statusCode": "default",
     },
   },
   Object {
@@ -2663,7 +2663,7 @@ Array [
     },
     "value": Object {
       "description": "successful operation",
-      "statusCode": NaN,
+      "statusCode": "default",
     },
   },
   Object {
@@ -3035,7 +3035,7 @@ Array [
     },
     "value": Object {
       "description": "successful operation",
-      "statusCode": NaN,
+      "statusCode": "default",
     },
   },
   Object {
@@ -3265,7 +3265,7 @@ Array [
     },
     "value": Object {
       "description": "successful operation",
-      "statusCode": 200,
+      "statusCode": "200",
     },
   },
   Object {
@@ -3289,7 +3289,7 @@ Array [
     },
     "value": Object {
       "description": "Invalid username/password supplied",
-      "statusCode": 400,
+      "statusCode": "400",
     },
   },
   Object {
@@ -3337,7 +3337,7 @@ Array [
     },
     "value": Object {
       "description": "successful operation",
-      "statusCode": NaN,
+      "statusCode": "default",
     },
   },
   Object {
@@ -4047,7 +4047,7 @@ Array [
     },
     "value": Object {
       "description": "successful operation",
-      "statusCode": 200,
+      "statusCode": "200",
     },
   },
   Object {
@@ -4071,7 +4071,7 @@ Array [
     },
     "value": Object {
       "description": "Invalid username supplied",
-      "statusCode": 400,
+      "statusCode": "400",
     },
   },
   Object {
@@ -4095,7 +4095,7 @@ Array [
     },
     "value": Object {
       "description": "User not found",
-      "statusCode": 404,
+      "statusCode": "404",
     },
   },
   Object {
@@ -4485,7 +4485,7 @@ Array [
     },
     "value": Object {
       "description": "Invalid user supplied",
-      "statusCode": 400,
+      "statusCode": "400",
     },
   },
   Object {
@@ -4509,7 +4509,7 @@ Array [
     },
     "value": Object {
       "description": "User not found",
-      "statusCode": 404,
+      "statusCode": "404",
     },
   },
   Object {
@@ -4588,7 +4588,7 @@ Array [
     },
     "value": Object {
       "description": "Invalid username supplied",
-      "statusCode": 400,
+      "statusCode": "400",
     },
   },
   Object {
@@ -4612,7 +4612,7 @@ Array [
     },
     "value": Object {
       "description": "User not found",
-      "statusCode": 404,
+      "statusCode": "404",
     },
   },
 ]
@@ -5086,7 +5086,7 @@ Array [
     },
     "value": Object {
       "description": "succesful",
-      "statusCode": 200,
+      "statusCode": "200",
     },
   },
 ]
