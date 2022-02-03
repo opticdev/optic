@@ -5,7 +5,7 @@
     "projects/json-pointer-helpers",
     "projects/openapi-io",
     "projects/openapi-utilities",
-    "projects/openapi-diff",
+    "projects/openapi-diff-experiment",
     "projects/api-checks",
     "projects/snyk-rules",
     "projects/optic-ci"
