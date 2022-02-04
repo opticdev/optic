@@ -1,6 +1,7 @@
 import { BeforeAndAfter } from './scenarios';
 import { ApiCheckService } from '../api-check-service';
 import { ApiChangeDsl } from '../api-change-dsl';
+import { factsToChangelog } from '@useoptic/openapi-utilities';
 import invariant from 'ts-invariant';
 
 export interface IApiCheckDefinition<CheckConfig> {
@@ -100,8 +101,15 @@ export class ApiCheckImpl<CheckConfig> {
     );
 
     const [before, after] = beforeAndAfter;
-
-    const runResults = await service.runRules(before, after, {});
+    const { currentFacts, nextFacts } = service.generateFacts(before, after);
+    const runResults = await service.runRulesWithFacts({
+      context: {},
+      nextFacts,
+      currentFacts,
+      changelog: factsToChangelog(currentFacts, nextFacts),
+      nextJsonLike: after,
+      currentJsonLike: before,
+    });
 
     return {
       passed: !runResults.some((i) => !i.passed),

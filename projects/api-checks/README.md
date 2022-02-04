@@ -10,31 +10,8 @@ API checks helps automate checks between OpenAPI changes.
 // cli.js
 import { expect } from 'chai';
 import { ApiCheckService, makeCiCli } from '@useoptic/api-checks';
-import { ExampleDsl } from './dsl';
 
 const checker = new ApiCheckService();
-
-// Swap out / write your own custom rulesets
-function completenessApiRules(dsl) {
-  dsl.operations.changed.must(
-    'have consistent operationIds',
-    (current, next, context, docs) => {
-      docs.includeDocsLink(
-        'https://github.com/apis/guide/our-rules#operations'
-      );
-      expect(current.operationId).to.equal(
-        next.operationId || '',
-        'operation ids must be consistent'
-      );
-    }
-  );
-}
-
-checker.useDsl(
-  (input) =>
-    new ExampleDsl(input.nextFacts, input.nextJsonLike, input.changelog),
-  completenessApiRules
-);
 
 const cli = makeCiCli('my_cli', checker, {
   opticToken: process.env.OPTIC_TOKEN,

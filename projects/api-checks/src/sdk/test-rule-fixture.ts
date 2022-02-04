@@ -31,7 +31,19 @@ export function createTestDslFixture<DSL extends ApiCheckDsl, Context>(
           ) => {
             const checker = new ApiCheckService<Context>();
             checker.useDsl<DSL>((input) => dslConstructor(input), rule);
-            const results = await checker.runRules(base, next, context);
+
+            const { currentFacts, nextFacts } = checker.generateFacts(
+              base,
+              next
+            );
+            const results = await checker.runRulesWithFacts({
+              context,
+              nextFacts,
+              currentFacts,
+              changelog: factsToChangelog(currentFacts, nextFacts),
+              nextJsonLike: next,
+              currentJsonLike: base,
+            });
 
             // const createMock = async (json: any) => {
             //   const mock = new JsonSchemaSourcemap();
@@ -47,14 +59,6 @@ export function createTestDslFixture<DSL extends ApiCheckDsl, Context>(
             // };
 
             // const nextSourcemap = await createMock(next);
-
-            const currentTraverser = new OpenAPITraverser();
-            const nextTraverser = new OpenAPITraverser();
-
-            await currentTraverser.traverse(base);
-            const currentFacts = currentTraverser.accumulator.allFacts();
-            await nextTraverser.traverse(next);
-            const nextFacts = nextTraverser.accumulator.allFacts();
 
             // const { findFileAndLines } = sourcemapReader(
             //   nextSourcemap.sourcemap

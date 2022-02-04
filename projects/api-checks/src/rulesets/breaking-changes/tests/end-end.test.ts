@@ -2,6 +2,7 @@ import path from 'path';
 import {
   defaultEmptySpec,
   ResultWithSourcemap,
+  factsToChangelog,
 } from '@useoptic/openapi-utilities';
 import { sourcemapReader } from '@useoptic/openapi-io';
 import { breakingChangeRules } from '../service';
@@ -109,11 +110,18 @@ describe('end-end-tests', () => {
     const toSpec = await specFromInputToResults(toSpecSig, workingDir);
 
     const checkService = breakingChangeRules();
-    const checkResults = await checkService.runRules(
+    const { currentFacts, nextFacts } = checkService.generateFacts(
       fromSpec.jsonLike,
-      toSpec.jsonLike,
-      context
+      toSpec.jsonLike
     );
+    const checkResults = await checkService.runRulesWithFacts({
+      context,
+      nextFacts,
+      currentFacts,
+      changelog: factsToChangelog(currentFacts, nextFacts),
+      nextJsonLike: toSpec.jsonLike,
+      currentJsonLike: fromSpec.jsonLike,
+    });
 
     // helpful to in-source this when debugging
     // const currentTraverser = new OpenAPITraverser();

@@ -3,7 +3,6 @@ import flatten from 'lodash.flatten';
 import {
   ApiCheckDsl,
   Result,
-  factsToChangelog,
   OpenAPITraverser,
   IChange,
   IFact,
@@ -23,6 +22,10 @@ export type DslConstructorInput<Context> = {
   currentJsonLike: OpenAPIV3.Document;
 };
 
+type Rule<Context> = (
+  input: DslConstructorInput<Context>
+) => Promise<Result | Result[]>[];
+
 type SpectralRules = Extract<
   RulesetDefinition,
   { extends: any; rules: any }
@@ -31,16 +34,10 @@ type SpectralRules = Extract<
 export class ApiCheckService<Context> {
   constructor(private getExecutionDate?: (context: Context) => Date) {}
 
-  public rules: ((
-    input: DslConstructorInput<Context>
-  ) => Promise<Result>[])[] = [];
-  public additionalResults: ((
-    input: DslConstructorInput<Context>
-  ) => Promise<Result[]>)[] = [];
+  public rules: Rule<Context>[] = [];
 
   mergeWith(apiCheckService: ApiCheckService<Context>) {
     this.rules.push(...apiCheckService.rules);
-    this.additionalResults.push(...apiCheckService.additionalResults);
   }
 
   useRulesFrom(rules: (apiChangeDsl: ApiChangeDsl) => void) {
@@ -100,13 +97,12 @@ export class ApiCheckService<Context> {
     return this;
   }
 
-  // tried using "Ruleset" but getting typeerrors -- falling back to any
   useSpectralRuleset(ruleset: RulesetDefinition) {
-    const runner = async (input: DslConstructorInput<Context>) => {
+    const runner = (input: DslConstructorInput<Context>) => {
       const dsl = new SpectralDsl(input.nextJsonLike, input.nextFacts, ruleset);
-      return await dsl.spectralChecksResults;
+      return [dsl.spectralChecksResults];
     };
-    this.additionalResults.push(runner);
+    this.rules.push(runner);
     return this;
   }
 
@@ -114,14 +110,14 @@ export class ApiCheckService<Context> {
   // extending them with `rules`. This removes the need for the user to pass in
   // an `oas`, which might be incompatible.
   useSpectralOasRuleset(rules: SpectralRules) {
-    const runner = async (input: DslConstructorInput<Context>) => {
+    const runner = (input: DslConstructorInput<Context>) => {
       const dsl = new SpectralDsl(input.nextJsonLike, input.nextFacts, {
         extends: [[oas as RulesetDefinition, 'all']],
         rules,
       });
-      return await dsl.spectralChecksResults;
+      return [dsl.spectralChecksResults];
     };
-    this.additionalResults.push(runner);
+    this.rules.push(runner);
     return this;
   }
 
@@ -161,56 +157,26 @@ export class ApiCheckService<Context> {
   async runRulesWithFacts(
     input: DslConstructorInput<Context>
   ): Promise<Result[]> {
-    const checkPromises: Promise<Result>[] = flatten(
+    const checkPromises: Promise<Result | Result[]>[] = flatten(
       this.rules.map((ruleRunner) => ruleRunner(input))
     );
 
-    const additionalCheckPromises = this.additionalResults.map((ruleRunner) =>
-      ruleRunner(input)
-    );
+    const results: Result[] = (await Promise.all(checkPromises)).flat();
 
-    const results: Result[] = await Promise.all(checkPromises);
-
-    const additionalCheckResults: Result[] = flatten(
-      await Promise.all(additionalCheckPromises)
-    );
-
+    // TODO deprecate this and run this separately as another config point
     const date = this.getExecutionDate && this.getExecutionDate(input.context);
 
-    const combinedResults = [...results, ...additionalCheckResults].filter(
-      (result) => {
-        // filter when effective date is set and context is mapped to a date of execution
-        if (result.effectiveOnDate && date) {
-          // execution is after effective date, include
-          // execution is before effective date filter out
-          return date > result.effectiveOnDate;
-        }
-
-        return true;
+    const filteredResults = results.filter((result) => {
+      // filter when effective date is set and context is mapped to a date of execution
+      if (result.effectiveOnDate && date) {
+        // execution is after effective date, include
+        // execution is before effective date filter out
+        return date > result.effectiveOnDate;
       }
-    );
 
-    return combinedResults;
-  }
-
-  // TODO deprecate
-  async runRules(
-    currentJsonLike: OpenAPIV3.Document,
-    nextJsonLike: OpenAPIV3.Document,
-    context: Context
-  ): Promise<Result[]> {
-    const { currentFacts, nextFacts } = this.generateFacts(
-      currentJsonLike,
-      nextJsonLike
-    );
-
-    return this.runRulesWithFacts({
-      currentJsonLike,
-      nextJsonLike,
-      currentFacts,
-      nextFacts,
-      changelog: factsToChangelog(currentFacts, nextFacts),
-      context,
+      return true;
     });
+
+    return filteredResults;
   }
 }

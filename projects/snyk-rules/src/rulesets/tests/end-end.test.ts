@@ -4,6 +4,7 @@ import { newSnykApiCheckService } from '../../service';
 import { specFromInputToResults, parseSpecVersion } from '@useoptic/api-checks';
 import {
   defaultEmptySpec,
+  factsToChangelog,
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { sourcemapReader } from '@useoptic/openapi-io';
@@ -110,11 +111,18 @@ describe('end-end-tests', () => {
     const toSpec = await specFromInputToResults(toSpecSig, workingDir);
 
     const checkService = newSnykApiCheckService();
-    const checkResults = await checkService.runRules(
+    const { currentFacts, nextFacts } = checkService.generateFacts(
       fromSpec.jsonLike,
-      toSpec.jsonLike,
-      context
+      toSpec.jsonLike
     );
+    const checkResults = await checkService.runRulesWithFacts({
+      context,
+      nextFacts,
+      currentFacts,
+      changelog: factsToChangelog(currentFacts, nextFacts),
+      nextJsonLike: toSpec.jsonLike,
+      currentJsonLike: fromSpec.jsonLike,
+    });
 
     // helpful to in-source this when debugging
     // const currentTraverser = new OpenAPITraverser();
