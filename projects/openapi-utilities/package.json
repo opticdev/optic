@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
+    "@types/js-yaml": "^4.0.5",
     "@types/lodash.sortby": "^4.7.6",
     "@useoptic/openapi-io": "workspace:*",
     "babel-jest": "26.6.0",
