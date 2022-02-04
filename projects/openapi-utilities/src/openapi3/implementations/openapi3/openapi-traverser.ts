@@ -53,15 +53,10 @@ export class OpenAPITraverser
 
   traverse(input: OpenAPIV3.Document): void {
     this.input = input;
+    // actual traversal happens when consuming the facts
   }
 
-  // Actual traversal happens when iterating over the traverser, allowing the consumer to control
-  // when compute happens.
-  //
-  // ```
-  // for (fact of traverser) {}
-  // ```
-  *[Symbol.iterator](): IterableIterator<IFact<OpenApiFact>> {
+  *facts(): IterableIterator<IFact<OpenApiFact>> {
     if (!this.input) return;
 
     for (let [pathPattern, paths] of Object.entries(this.input.paths)) {
@@ -88,24 +83,24 @@ export class OpenAPITraverser
       yield* traverseIfPresent(OpenAPIV3.HttpMethods.OPTIONS);
     }
 
-    Object.entries(this.input.paths).forEach(([pathPattern, paths]) => {
-      const traverseIfPresent = (method: OpenAPIV3.HttpMethods) => {
-        const pathObject = paths?.[method];
-        if (pathObject) {
-          this.traverseOperations(pathObject, method, pathPattern, {
-            method: method,
-            path: pathPattern,
-          });
-        }
-      };
-      traverseIfPresent(OpenAPIV3.HttpMethods.GET);
-      traverseIfPresent(OpenAPIV3.HttpMethods.PATCH);
-      traverseIfPresent(OpenAPIV3.HttpMethods.POST);
-      traverseIfPresent(OpenAPIV3.HttpMethods.PUT);
-      traverseIfPresent(OpenAPIV3.HttpMethods.DELETE);
-      traverseIfPresent(OpenAPIV3.HttpMethods.HEAD);
-      traverseIfPresent(OpenAPIV3.HttpMethods.OPTIONS);
-    });
+    // Object.entries(this.input.paths).forEach(([pathPattern, paths]) => {
+    //   const traverseIfPresent = (method: OpenAPIV3.HttpMethods) => {
+    //     const pathObject = paths?.[method];
+    //     if (pathObject) {
+    //       this.traverseOperations(pathObject, method, pathPattern, {
+    //         method: method,
+    //         path: pathPattern,
+    //       });
+    //     }
+    //   };
+    //   traverseIfPresent(OpenAPIV3.HttpMethods.GET);
+    //   traverseIfPresent(OpenAPIV3.HttpMethods.PATCH);
+    //   traverseIfPresent(OpenAPIV3.HttpMethods.POST);
+    //   traverseIfPresent(OpenAPIV3.HttpMethods.PUT);
+    //   traverseIfPresent(OpenAPIV3.HttpMethods.DELETE);
+    //   traverseIfPresent(OpenAPIV3.HttpMethods.HEAD);
+    //   traverseIfPresent(OpenAPIV3.HttpMethods.OPTIONS);
+    // });
   }
 
   *traverseOperations(
@@ -161,9 +156,9 @@ export class OpenAPITraverser
       }
     }
 
-    Object.entries(operation.responses).forEach(([statusCode, response]) => {
+    for (let [statusCode, response] of Object.entries(operation.responses)) {
       if (isNotReferenceObject(response)) {
-        this.traverseResponse(
+        yield* this.traverseResponse(
           response,
           statusCode,
           jsonPointer.append(jsonPath, 'responses', statusCode),
@@ -177,21 +172,26 @@ export class OpenAPITraverser
           )}`
         );
       }
-    });
+    }
   }
 
-  traverseResponse(
+  *traverseResponse(
     response: OpenAPIV3.ResponseObject,
     statusCode: string,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ResponseLocation
-  ): void {
-    this.traverseResponseHeaders(response, jsonPath, conceptualPath, location);
+  ): IterableIterator<IFact<OpenApiFact>> {
+    yield* this.traverseResponseHeaders(
+      response,
+      jsonPath,
+      conceptualPath,
+      location
+    );
     this.checkJsonTrail(jsonPath, response);
 
-    Object.entries(response.content || {}).forEach(([contentType, body]) => {
-      this.traverseBody(
+    for (let [contentType, body] of Object.entries(response.content || {})) {
+      yield* this.traverseBody(
         body,
         contentType,
         jsonPointer.append(jsonPath, 'content', contentType),
@@ -204,9 +204,15 @@ export class OpenAPITraverser
           },
         }
       );
-    });
+    }
 
-    this.onResponse(response, statusCode, jsonPath, conceptualPath, location);
+    yield this.onResponse(
+      response,
+      statusCode,
+      jsonPath,
+      conceptualPath,
+      location
+    );
   }
 
   *traverseParameters(
@@ -393,7 +399,7 @@ export class OpenAPITraverser
     };
   }
 
-  traverseLinks() {}
+  *traverseLinks() {}
 
   *traverseBody(
     body: OpenAPIV3.MediaTypeObject,

@@ -12,12 +12,14 @@ it('can extract facts from specs', async () => {
     './inputs/openapi3/petstore0.json.flattened-without-sourcemap.json'
   );
   traverser.traverse(spec);
-  expect(traverser.accumulator.allFacts()).toMatchSnapshot();
+  // let results = [...traverser];
+  // console.log('test results', results);
+  expect([...traverser.facts()]).toMatchSnapshot();
 });
 
 it('will extract facts for oneOf, allOf or anyOf schemas', async () => {
   const traverser = new OpenAPITraverser();
   const spec = await jsonFromFile('./inputs/openapi3/polymorphic-schemas.json');
   traverser.traverse(spec);
-  expect(traverser.accumulator.allFacts()).toMatchSnapshot();
+  expect([...traverser.facts()]).toMatchSnapshot();
 });
