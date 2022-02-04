@@ -19,6 +19,7 @@ import {
   QueryParameterLocation,
   FieldLocation,
   OpenApiRequestFact,
+  IFact,
 } from '../../sdk/types';
 import { IPathComponent } from '../../sdk/types';
 import invariant from 'ts-invariant';
@@ -52,7 +53,42 @@ export class OpenAPITraverser
 
   traverse(input: OpenAPIV3.Document): void {
     this.input = input;
-    Object.entries(input.paths).forEach(([pathPattern, paths]) => {
+  }
+
+  // Actual traversal happens when iterating over the traverser, allowing the consumer to control
+  // when compute happens.
+  //
+  // ```
+  // for (fact of traverser) {}
+  // ```
+  *[Symbol.iterator](): IterableIterator<IFact<OpenApiFact>> {
+    if (!this.input) return;
+
+    for (let [pathPattern, paths] of Object.entries(this.input.paths)) {
+      const traverser = this;
+
+      const traverseIfPresent = function* (
+        method: OpenAPIV3.HttpMethods
+      ): IterableIterator<IFact<OpenApiFact>> {
+        const pathObject = paths?.[method];
+        if (pathObject) {
+          yield* traverser.traverseOperations(pathObject, method, pathPattern, {
+            method: method,
+            path: pathPattern,
+          });
+        }
+      };
+
+      yield* traverseIfPresent(OpenAPIV3.HttpMethods.GET);
+      yield* traverseIfPresent(OpenAPIV3.HttpMethods.PATCH);
+      yield* traverseIfPresent(OpenAPIV3.HttpMethods.POST);
+      yield* traverseIfPresent(OpenAPIV3.HttpMethods.PUT);
+      yield* traverseIfPresent(OpenAPIV3.HttpMethods.DELETE);
+      yield* traverseIfPresent(OpenAPIV3.HttpMethods.HEAD);
+      yield* traverseIfPresent(OpenAPIV3.HttpMethods.OPTIONS);
+    }
+
+    Object.entries(this.input.paths).forEach(([pathPattern, paths]) => {
       const traverseIfPresent = (method: OpenAPIV3.HttpMethods) => {
         const pathObject = paths?.[method];
         if (pathObject) {
@@ -72,17 +108,17 @@ export class OpenAPITraverser
     });
   }
 
-  traverseOperations(
+  *traverseOperations(
     operation: OpenAPIV3.OperationObject,
     method: string,
     pathPattern: string,
     location: OperationLocation
-  ): void {
+  ): IterableIterator<IFact<OpenApiFact>> {
     const jsonPath = jsonPointer.append('', 'paths', pathPattern, method);
     this.checkJsonTrail(jsonPath, operation);
     const normalizedPath = normalizeOpenApiPath(pathPattern);
     const conceptualPath = ['operations', normalizedPath, method];
-    this.onOperation(
+    yield this.onOperation(
       operation,
       pathPattern,
       method,
@@ -91,7 +127,7 @@ export class OpenAPITraverser
       location
     );
 
-    this.traverseParameters(
+    yield* this.traverseParameters(
       operation,
       jsonPointer.append(jsonPath, 'parameters'),
       [...conceptualPath, 'parameters'],
@@ -100,23 +136,17 @@ export class OpenAPITraverser
     const requestBody = operation.requestBody;
     if (requestBody) {
       if (isNotReferenceObject(requestBody)) {
-        Object.entries(requestBody.content || {}).forEach(
-          ([contentType, body]) => {
-            this.traverseBody(
-              body,
-              contentType,
-              jsonPointer.append(
-                jsonPath,
-                'requestBody',
-                'content',
-                contentType
-              ),
-              [...conceptualPath, contentType],
-              { ...location, inRequest: { body: { contentType } } }
-            );
-          }
-        );
-        this.onRequest(
+        for (let [contentType, body] of Object.entries(
+          requestBody.content || {}
+        ))
+          yield* this.traverseBody(
+            body,
+            contentType,
+            jsonPointer.append(jsonPath, 'requestBody', 'content', contentType),
+            [...conceptualPath, contentType],
+            { ...location, inRequest: { body: { contentType } } }
+          );
+        yield this.onRequest(
           requestBody,
           jsonPointer.append(jsonPath, 'requestBody'),
           [...conceptualPath, 'requestBody'],
@@ -179,12 +209,12 @@ export class OpenAPITraverser
     this.onResponse(response, statusCode, jsonPath, conceptualPath, location);
   }
 
-  traverseParameters(
+  *traverseParameters(
     operation: OpenAPIV3.OperationObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: OperationLocation
-  ) {
+  ): IterableIterator<IFact<OpenApiFact>> {
     const locationForParameter = (parameter: OpenAPIV3.ParameterObject) => {
       let paramLocation:
         | PathParameterLocation
@@ -211,16 +241,17 @@ export class OpenAPITraverser
 
     if (operation.parameters) {
       this.checkJsonTrail(jsonPath, operation.parameters);
-      operation.parameters.forEach((parameter, i) => {
+      for (let [i, parameter] of Object.entries(operation.parameters)) {
         if (isNotReferenceObject(parameter)) {
           const location = locationForParameter(parameter);
           if (location) {
-            this.onRequestParameter(
+            let fact = this.onRequestParameter(
               parameter,
-              jsonPointer.append(jsonPath, i.toString()),
+              jsonPointer.append(jsonPath, i),
               [...conceptualPath, parameter.in, parameter.name],
               location
             );
+            if (fact) yield fact;
           }
         } else {
           console.warn(
@@ -229,7 +260,8 @@ export class OpenAPITraverser
             )}`
           );
         }
-      });
+      }
+      // operation.parameters.forEach((parameter, i) => {});
     }
 
     const sharedParametersPointer = jsonPointer.compile([
@@ -266,14 +298,14 @@ export class OpenAPITraverser
       | PathParameterLocation
       | QueryParameterLocation
       | HeaderParameterLocation
-  ) {
+  ): undefined | IFact<OpenApiRequestParameterFact> {
     this.checkJsonTrail(jsonPath, parameter);
     const value: OpenApiRequestParameterFact = {
       ...parameter,
     };
     switch (parameter.in) {
       case 'query':
-        return this.accumulator.log({
+        return {
           location: {
             jsonPath,
             conceptualPath,
@@ -281,9 +313,9 @@ export class OpenAPITraverser
             conceptualLocation: location as QueryParameterLocation,
           },
           value,
-        });
+        };
       case 'header':
-        return this.accumulator.log({
+        return {
           location: {
             jsonPath,
             conceptualPath,
@@ -291,9 +323,9 @@ export class OpenAPITraverser
             conceptualLocation: location as HeaderParameterLocation,
           },
           value,
-        });
+        };
       case 'path':
-        return this.accumulator.log({
+        return {
           location: {
             jsonPath,
             conceptualPath,
@@ -301,20 +333,20 @@ export class OpenAPITraverser
             conceptualLocation: location as PathParameterLocation,
           },
           value,
-        });
+        };
     }
   }
 
-  traverseResponseHeaders(
+  *traverseResponseHeaders(
     response: OpenAPIV3.ResponseObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ResponseLocation
-  ) {
+  ): IterableIterator<IFact<OpenApiFact>> {
     if (response.headers) {
-      Object.entries(response.headers).forEach(([name, header]) => {
+      for (let [name, header] of Object.entries(response.headers)) {
         if (isNotReferenceObject(header)) {
-          this.onResponseHeader(
+          yield this.onResponseHeader(
             name,
             header,
             jsonPointer.append(jsonPath, 'headers', name),
@@ -334,7 +366,7 @@ export class OpenAPITraverser
             )}`
           );
         }
-      });
+      }
     }
   }
 
@@ -344,13 +376,13 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ResponseHeaderLocation
-  ) {
+  ): IFact<OpenApiHeaderFact> {
     this.checkJsonTrail(jsonPath, header);
     const value: OpenApiHeaderFact = {
       name,
       ...header,
     };
-    this.accumulator.log({
+    return {
       location: {
         jsonPath,
         conceptualPath,
@@ -358,32 +390,32 @@ export class OpenAPITraverser
         conceptualLocation: location,
       },
       value,
-    });
+    };
   }
 
   traverseLinks() {}
 
-  traverseBody(
+  *traverseBody(
     body: OpenAPIV3.MediaTypeObject,
     contentType: string,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: BodyLocation
-  ) {
+  ): IterableIterator<IFact<OpenApiFact>> {
     this.checkJsonTrail(jsonPath, body);
     const schema = body.schema;
     if (!schema) {
       return;
     }
     if (isNotReferenceObject(schema)) {
-      this.onContentForBody(
+      yield this.onContentForBody(
         schema,
         contentType,
         jsonPath,
         conceptualPath,
         location
       );
-      this.traverseSchema(
+      yield* this.traverseSchema(
         schema,
         jsonPointer.append(jsonPath, 'schema'),
         conceptualPath,
@@ -401,26 +433,33 @@ export class OpenAPITraverser
     }
   }
 
-  traverseField(
+  *traverseField(
     key: string,
     schema: OpenAPIV3.SchemaObject,
     required: boolean,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: FieldLocation
-  ) {
+  ): IterableIterator<IFact<OpenApiFact>> {
     this.checkJsonTrail(jsonPath, schema);
-    this.onField(key, schema, required, jsonPath, conceptualPath, location);
-    this.traverseSchema(schema, jsonPath, conceptualPath, location);
+    yield this.onField(
+      key,
+      schema,
+      required,
+      jsonPath,
+      conceptualPath,
+      location
+    );
+    yield* this.traverseSchema(schema, jsonPath, conceptualPath, location);
   }
 
   // TODO discriminate between ArraySchemaObject | NonArraySchemaObject
-  traverseSchema(
+  *traverseSchema(
     schema: OpenAPIV3.SchemaObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: FieldLocation
-  ) {
+  ): IterableIterator<IFact<OpenApiFact>> {
     this.checkJsonTrail(jsonPath, schema);
     if (schema.oneOf || schema.anyOf || schema.allOf) {
       const schemas = [
@@ -436,7 +475,7 @@ export class OpenAPITraverser
           branchSchema: schema,
         }));
       });
-      schemas.forEach(({ branchType, branchIndex, branchSchema }) => {
+      for (let { branchType, branchIndex, branchSchema } of schemas) {
         const newConceptualPath = [
           ...conceptualPath,
           branchType,
@@ -444,7 +483,7 @@ export class OpenAPITraverser
         ];
 
         if (isNotReferenceObject(branchSchema)) {
-          this.traverseSchema(
+          yield* this.traverseSchema(
             branchSchema,
             jsonPointer.append(jsonPath, branchType, '' + branchIndex),
             newConceptualPath,
@@ -457,38 +496,38 @@ export class OpenAPITraverser
             )}`
           );
         }
-      });
+      }
     }
     switch (schema.type) {
       case 'object':
-        Object.entries(schema.properties || {}).forEach(
-          ([key, fieldSchema]) => {
-            if (isNotReferenceObject(fieldSchema)) {
-              this.traverseField(
-                key,
-                fieldSchema,
-                (schema.required || []).includes(key),
-                jsonPointer.append(jsonPath, 'properties', key),
-                [...conceptualPath, key],
-                {
-                  ...location,
-                  jsonSchemaTrail: [...(location.jsonSchemaTrail || []), key],
-                }
-              );
-            } else {
-              console.warn(
-                `Expected a flattened spec, found a reference at: ${conceptualPath.join(
-                  ' > '
-                )}`
-              );
-            }
+        for (let [key, fieldSchema] of Object.entries(
+          schema.properties || {}
+        )) {
+          if (isNotReferenceObject(fieldSchema)) {
+            yield* this.traverseField(
+              key,
+              fieldSchema,
+              (schema.required || []).includes(key),
+              jsonPointer.append(jsonPath, 'properties', key),
+              [...conceptualPath, key],
+              {
+                ...location,
+                jsonSchemaTrail: [...(location.jsonSchemaTrail || []), key],
+              }
+            );
+          } else {
+            console.warn(
+              `Expected a flattened spec, found a reference at: ${conceptualPath.join(
+                ' > '
+              )}`
+            );
           }
-        );
+        }
         break;
       case 'array':
         const arrayItems = schema.items;
         if (isNotReferenceObject(arrayItems)) {
-          this.traverseSchema(
+          yield* this.traverseSchema(
             arrayItems,
             jsonPointer.append(jsonPath, 'items'),
             [...conceptualPath, 'items'],
@@ -537,13 +576,13 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: BodyLocation
-  ) {
+  ): IFact<OpenApiBodyFact> {
     const flatSchema = this.getSchemaWithoutNestedThings(schema);
     const value: OpenApiBodyFact = {
       contentType,
       flatSchema,
     };
-    this.accumulator.log({
+    return {
       location: {
         jsonPath,
         conceptualPath,
@@ -551,7 +590,7 @@ export class OpenAPITraverser
         conceptualLocation: location,
       },
       value,
-    });
+    };
   }
 
   onField(
@@ -561,7 +600,7 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: FieldLocation
-  ) {
+  ): IFact<OpenApiFieldFact> {
     this.checkJsonTrail(jsonPath, schema);
     const flatSchema = this.getSchemaWithoutNestedThings(schema);
 
@@ -570,7 +609,7 @@ export class OpenAPITraverser
       flatSchema,
       required,
     };
-    this.accumulator.log({
+    return {
       location: {
         jsonPath,
         conceptualPath,
@@ -578,7 +617,7 @@ export class OpenAPITraverser
         conceptualLocation: location,
       },
       value,
-    });
+    };
   }
 
   getOperationWithoutNestedThings(
@@ -603,7 +642,7 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: OperationLocation
-  ) {
+  ): IFact<OpenApiOperationFact> {
     this.checkJsonTrail(jsonPath, operation);
     const flatOperation = this.getOperationWithoutNestedThings(operation);
     const value: OpenApiOperationFact = {
@@ -611,7 +650,7 @@ export class OpenAPITraverser
       method,
       pathPattern,
     };
-    this.accumulator.log({
+    return {
       location: {
         jsonPath,
         conceptualPath,
@@ -619,20 +658,20 @@ export class OpenAPITraverser
         conceptualLocation: location,
       },
       value,
-    });
+    };
   }
   onRequest(
     request: OpenAPIV3.RequestBodyObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: RequestLocation
-  ) {
+  ): IFact<OpenApiRequestFact> {
     this.checkJsonTrail(jsonPath, request);
     const flatRequest = this.getRequestWithoutNestedThings(request);
     const value: OpenApiRequestFact = {
       ...flatRequest,
     };
-    this.accumulator.log({
+    return {
       location: {
         jsonPath,
         conceptualPath,
@@ -640,7 +679,7 @@ export class OpenAPITraverser
         conceptualLocation: location,
       },
       value,
-    });
+    };
   }
   getRequestWithoutNestedThings(
     request: OpenAPIV3.RequestBodyObject
@@ -655,14 +694,14 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ResponseLocation
-  ) {
+  ): IFact<OpenApiResponseFact> {
     this.checkJsonTrail(jsonPath, response);
     const flatResponse = this.getResponseWithoutNestedThings(response);
     const value: OpenApiResponseFact = {
       ...flatResponse,
       statusCode,
     };
-    this.accumulator.log({
+    return {
       location: {
         jsonPath,
         conceptualPath,
@@ -670,7 +709,7 @@ export class OpenAPITraverser
         conceptualLocation: location,
       },
       value,
-    });
+    };
   }
   getResponseWithoutNestedThings(
     response: OpenAPIV3.ResponseObject
