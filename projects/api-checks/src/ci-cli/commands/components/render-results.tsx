@@ -118,8 +118,10 @@ function SourcemapInLocalContext(props: { result: ResultWithSourcemap }) {
       ) : null}
       {result.sourcemap ? (
         <Box paddingLeft={2}>
-          <Text underline color="blue">
-            {`at (${result.sourcemap.filePath}:${result.sourcemap.startLine}:${result.sourcemap.startPosition})`}
+          <Text>at </Text>
+          <Text underline>
+            ({result.sourcemap.filePath}:{result.sourcemap.startLine}:
+            {result.sourcemap.startPosition})
           </Text>
         </Box>
       ) : null}

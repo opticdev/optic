@@ -44,8 +44,7 @@ const isNotReferenceObject = <T extends {}>(
 };
 
 export class OpenAPITraverser
-  implements Traverse<OpenAPIV3.Document, OpenApiFact>
-{
+  implements Traverse<OpenAPIV3.Document, OpenApiFact> {
   format = 'openapi3';
   accumulator = new FactAccumulator<OpenApiFact>([]);
 
@@ -519,8 +518,12 @@ export class OpenAPITraverser
     schema: OpenAPIV3.SchemaObject
   ): Omit<OpenAPIV3.SchemaObject, 'item' | 'required' | 'properties'> {
     if (schema.type === 'array') {
-      const { items, required, properties, ...schemaWithoutNestedThings } =
-        schema;
+      const {
+        items,
+        required,
+        properties,
+        ...schemaWithoutNestedThings
+      } = schema;
       return schemaWithoutNestedThings;
     } else {
       const { required, properties, ...schemaWithoutNestedThings } = schema;
@@ -657,7 +660,7 @@ export class OpenAPITraverser
     const flatResponse = this.getResponseWithoutNestedThings(response);
     const value: OpenApiResponseFact = {
       ...flatResponse,
-      statusCode: parseInt(statusCode),
+      statusCode,
     };
     this.accumulator.log({
       location: {

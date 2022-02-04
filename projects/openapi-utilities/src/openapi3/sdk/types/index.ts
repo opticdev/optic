@@ -61,7 +61,7 @@ export interface OpenApiFieldFact {
 }
 export interface OpenApiResponseFact
   extends Omit<OpenAPIV3.ResponseObject, 'headers' | 'content'> {
-  statusCode: number;
+  statusCode: string;
 }
 export interface OpenApiRequestFact
   extends Omit<OpenAPIV3.RequestBodyObject, 'content'> {}
