@@ -3069,9 +3069,30 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@useoptic/openapi-diff@workspace:projects/openapi-diff":
+"@useoptic/openapi-cli@workspace:projects/openapi-cli":
   version: 0.0.0-use.local
-  resolution: "@useoptic/openapi-diff@workspace:projects/openapi-diff"
+  resolution: "@useoptic/openapi-cli@workspace:projects/openapi-cli"
+  dependencies:
+    "@babel/plugin-transform-runtime": ^7.16.0
+    "@babel/preset-env": ^7.16.0
+    "@babel/preset-typescript": ^7.16.0
+    "@types/jest": ^26.0.24
+    "@types/json-stable-stringify": ^1.0.33
+    "@useoptic/openapi-io": "workspace:*"
+    babel-jest: 26.6.0
+    commander: ^9.0.0
+    jest: ^26.6.0
+    prettier: ^2.4.1
+    ts-node: ^10.4.0
+    typescript: ^4.4.4
+  bin:
+    openapi-cli: build/index.js
+  languageName: unknown
+  linkType: soft
+
+"@useoptic/openapi-diff-experiment@workspace:projects/openapi-diff-experiment":
+  version: 0.0.0-use.local
+  resolution: "@useoptic/openapi-diff-experiment@workspace:projects/openapi-diff-experiment"
   dependencies:
     "@types/body-parser": ^1
     "@types/diff": 5.0.0
@@ -4322,6 +4343,13 @@ __metadata:
   version: 8.3.0
   resolution: "commander@npm:8.3.0"
   checksum: 0f82321821fc27b83bd409510bb9deeebcfa799ff0bf5d102128b500b7af22872c0c92cb6a0ebc5a4cf19c6b550fba9cedfa7329d18c6442a625f851377bacf0
+  languageName: node
+  linkType: hard
+
+"commander@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "commander@npm:9.0.0"
+  checksum: 15066e433d528315ded8261d16bc600d1f3c5671c75021e685ae67e4d62f7551243ff28411b28dc0a6f8b23c2a0f033550ec6f3e66bdf9d11a4fdc2d33dd9802
   languageName: node
   linkType: hard
 
