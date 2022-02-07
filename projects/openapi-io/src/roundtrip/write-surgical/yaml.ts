@@ -92,9 +92,10 @@ class YamlRoundtripImpl implements RoundtripProvider<YamlRoundTripConfig> {
         success: true,
         value: updatedDocument.currentValue,
         asString: formatted,
+        filePath,
       };
     } catch (e: any) {
-      return { success: false, error: e.message };
+      return { success: false, error: e.message, filePath };
     }
   }
 

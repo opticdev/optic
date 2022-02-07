@@ -20,7 +20,7 @@ test('specs can be updated in-memory', async () => {
     sourcemap: input.sourcemap!,
   });
 
-  await virtual.updateInput((yourJsonLike) => {
+  await virtual.update((yourJsonLike) => {
     // add title
     yourJsonLike.info.title = 'Changed ya';
     // make everything optional

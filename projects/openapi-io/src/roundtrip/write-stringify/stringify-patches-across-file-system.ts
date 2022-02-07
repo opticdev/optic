@@ -34,6 +34,7 @@ export class StringifyPatchesAcrossFileSystem
 
     return {
       success: true,
+      filePath,
       asString: updatedString,
       value: newDocument,
     };

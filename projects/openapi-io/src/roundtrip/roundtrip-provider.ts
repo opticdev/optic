@@ -20,8 +20,8 @@ export type ParseResult =
   | { error: string; success: false };
 
 export type PatchApplyResult =
-  | { value: any; asString: string; success: true }
-  | { error: string; success: false };
+  | { value: any; asString: string; success: true; filePath: string }
+  | { error: string; success: false; filePath: string };
 
 // Reducer
 

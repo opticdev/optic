@@ -4,7 +4,10 @@ import {
   ExampleDslContext,
 } from '../../../../sdk/test/example-dsl';
 import { expect } from 'chai';
-import { makeCiCli } from '../../../../ci-cli/make-cli';
+import {
+  makeCiCli,
+  makeCiCliWithNamedRulesAndScripts,
+} from '../../../../ci-cli/make-cli';
 import path from 'path';
 const checker: ApiCheckService<ExampleDslContext> = new ApiCheckService<ExampleDslContext>();
 
@@ -29,15 +32,22 @@ checker.useDsl(
   completenessApiRules
 );
 
-const cli = makeCiCli('play-thing', checker);
-const [, , ...args] = process.argv;
-cli.parse([
-  '',
-  '',
-  'compare',
-  `--from=${path.join(__dirname, 'inputs', 'v0.json')}`,
-  `--to=${path.join(__dirname, 'inputs', 'v1.json')}`,
-  `--context="{}"`,
-  // `--github-annotations`,
-  ...args,
-]);
+const cli = makeCiCliWithNamedRulesAndScripts(
+  'play-thing',
+  { default: checker },
+  [require('../../../../scripts/demo/optic-script-example').default]
+);
+//
+// const [, , ...args] = process.argv;
+// cli.parse([
+//   '',
+//   '',
+//   'compare',
+//   `--from=${path.join(__dirname, 'inputs', 'v0.json')}`,
+//   `--to=${path.join(__dirname, 'inputs', 'v1.json')}`,
+//   `--context="{}"`,
+//   // `--github-annotations`,
+//   ...args,
+// ]);
+
+cli.parse(process.argv);

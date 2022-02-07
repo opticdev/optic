@@ -4,6 +4,8 @@ import { groupPatchesWithSourcemap } from './group-patches-with-sourcemap';
 import { StringifyPatchesAcrossFileSystem } from '../write-stringify/stringify-patches-across-file-system';
 import { PatchApplyResult } from '../roundtrip-provider';
 import { loadYaml } from '../../index';
+import invariant from 'ts-invariant';
+import fs from 'fs-extra';
 
 interface ReconcilableInput<T = object> {
   jsonLike: T;
@@ -21,6 +23,7 @@ export function collectFilePatchesFromInMemoryUpdates<T>(
 ) {
   const mutableJson = input.jsonLike;
   const observer = jsonpatch.observe<T>(mutableJson);
+  let flushed = false;
 
   const deps: { [key: string]: { contents: string; value: any } } = {};
   input.sourcemap.files.forEach((i) => {
@@ -35,8 +38,8 @@ export function collectFilePatchesFromInMemoryUpdates<T>(
     root: deps[input.sourcemap.rootFilePath],
   };
 
-  return {
-    updateInput: async (
+  const patcher = {
+    update: async (
       callback: (input: T, deps: SpecFiles) => void | Promise<void>
     ) => {
       await callback(input.jsonLike, files);
@@ -59,5 +62,31 @@ export function collectFilePatchesFromInMemoryUpdates<T>(
 
       return Promise.all(patchesPromise);
     },
+    flush: async () => {
+      invariant(
+        !flushed,
+        'already flushed OpenAPI changes. You can only call this once'
+      );
+
+      flushed = true;
+
+      const patches = await patcher.toFilePatches();
+
+      invariant(
+        patches.every((i) => i.success),
+        'some patches could not be applied.'
+      );
+
+      return Promise.all(
+        patches.map((patch) => {
+          if (patch.success) {
+            console.log(`writing patch to ${patch.filePath}`);
+            return fs.writeFile(patch.filePath, patch.asString);
+          }
+        })
+      );
+    },
   };
+
+  return patcher;
 }
