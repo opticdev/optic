@@ -143,10 +143,10 @@ export class ApiCheckService<Context> {
     const currentTraverser = new OpenAPITraverser();
     const nextTraverser = new OpenAPITraverser();
 
-    currentTraverser.traverse(currentJsonLike);
-    const currentFacts = currentTraverser.accumulator.allFacts();
-    nextTraverser.traverse(nextJsonLike);
-    const nextFacts = nextTraverser.accumulator.allFacts();
+    currentTraverser.traverse(currentJsonLike, { legacyAccumulate: false });
+    const currentFacts = [...currentTraverser.facts()];
+    nextTraverser.traverse(nextJsonLike, { legacyAccumulate: false });
+    const nextFacts = [...nextTraverser.facts()];
 
     return {
       currentFacts,

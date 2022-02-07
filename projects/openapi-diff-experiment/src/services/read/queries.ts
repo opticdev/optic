@@ -22,8 +22,8 @@ export function openApiQueries(
   document: OpenAPIV3.Document
 ): OpenAPIDiffingQuestions {
   const traverser = new OpenAPITraverser();
-  traverser.traverse(document);
-  const facts = traverser.accumulator.allFacts();
+  traverser.traverse(document, { legacyAccumulate: false });
+  const facts = [...traverser.facts()];
 
   const operations = facts
     .filter((i) => i.location.kind === OpenApiKind.Operation)
