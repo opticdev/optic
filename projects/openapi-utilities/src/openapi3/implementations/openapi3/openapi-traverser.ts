@@ -6,7 +6,6 @@ import {
   OpenApiFieldFact,
   OpenApiOperationFact,
   OpenApiResponseFact,
-  FactAccumulator,
   Traverse,
   OpenApiFact,
   OperationLocation,
@@ -48,24 +47,11 @@ export class OpenAPITraverser
   implements Traverse<OpenAPIV3.Document, OpenApiFact>
 {
   format = 'openapi3';
-  // TODO: remove accumulator for next MAJOR / BREAKING change
-  accumulator = new FactAccumulator<OpenApiFact>([]);
 
   input: OpenAPIV3.Document | undefined = undefined;
 
-  traverse(
-    input: OpenAPIV3.Document,
-    options: { legacyAccumulate?: boolean } = { legacyAccumulate: true }
-  ): void {
+  traverse(input: OpenAPIV3.Document): void {
     this.input = input;
-
-    // legacy eager accumulation by default
-    // TOOD: remove for next MAJOR / BREAKING change
-    if (options.legacyAccumulate !== false) {
-      for (let fact of this.facts()) {
-        this.accumulator.log(fact);
-      }
-    }
   }
 
   *facts(): IterableIterator<IFact<OpenApiFact>> {

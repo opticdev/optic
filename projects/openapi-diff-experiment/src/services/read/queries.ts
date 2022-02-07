@@ -22,7 +22,7 @@ export function openApiQueries(
   document: OpenAPIV3.Document
 ): OpenAPIDiffingQuestions {
   const traverser = new OpenAPITraverser();
-  traverser.traverse(document, { legacyAccumulate: false });
+  traverser.traverse(document);
   const facts = [...traverser.facts()];
 
   const operations = facts
@@ -115,17 +115,15 @@ export function openApiQueries(
       return forOperation.map((res) => {
         const statusCodeMatcher = res.value.statusCode.toString();
 
-        const contentTypes = (
-          facts.filter(
-            (i) =>
-              i.location.kind === OpenApiKind.Body &&
-              'inResponse' in i.location.conceptualLocation &&
-              i.location.conceptualLocation.path === path &&
-              i.location.conceptualLocation.method === method &&
-              i.location.conceptualLocation.inResponse.statusCode ===
-                statusCodeMatcher
-          ) as IFact<OpenApiBodyFact>[]
-        ).map((i) => {
+        const contentTypes = (facts.filter(
+          (i) =>
+            i.location.kind === OpenApiKind.Body &&
+            'inResponse' in i.location.conceptualLocation &&
+            i.location.conceptualLocation.path === path &&
+            i.location.conceptualLocation.method === method &&
+            i.location.conceptualLocation.inResponse.statusCode ===
+              statusCodeMatcher
+        ) as IFact<OpenApiBodyFact>[]).map((i) => {
           const schema = jsonPointerHelpers.get(
             document,
             jsonPointerHelpers.append(i.location.jsonPath, 'schema')
