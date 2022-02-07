@@ -45,7 +45,8 @@ const isNotReferenceObject = <T extends {}>(
 };
 
 export class OpenAPITraverser
-  implements Traverse<OpenAPIV3.Document, OpenApiFact> {
+  implements Traverse<OpenAPIV3.Document, OpenApiFact>
+{
   format = 'openapi3';
   accumulator = new FactAccumulator<OpenApiFact>([]);
 
@@ -283,17 +284,18 @@ export class OpenAPITraverser
 
     if (sharedParameters.match) {
       const shared = sharedParameters.value as OpenAPIV3.ParameterObject[];
-      shared.forEach((parameter, i) => {
+      for (let [i, parameter] of Object.entries(shared)) {
         const location = locationForParameter(parameter);
         if (location) {
-          this.onRequestParameter(
+          let fact = this.onRequestParameter(
             parameter,
             jsonPointer.append(sharedParametersPointer, i.toString()),
             [...conceptualPath, parameter.in, parameter.name],
             location
           );
+          if (fact) yield fact;
         }
-      });
+      }
     }
   }
   onRequestParameter(
@@ -563,12 +565,8 @@ export class OpenAPITraverser
     schema: OpenAPIV3.SchemaObject
   ): Omit<OpenAPIV3.SchemaObject, 'item' | 'required' | 'properties'> {
     if (schema.type === 'array') {
-      const {
-        items,
-        required,
-        properties,
-        ...schemaWithoutNestedThings
-      } = schema;
+      const { items, required, properties, ...schemaWithoutNestedThings } =
+        schema;
       return schemaWithoutNestedThings;
     } else {
       const { required, properties, ...schemaWithoutNestedThings } = schema;

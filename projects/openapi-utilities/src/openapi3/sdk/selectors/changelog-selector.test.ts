@@ -22,10 +22,7 @@ async function fixture() {
   traverser2.traverse(spec2);
 
   return queryChangelog(
-    factsToChangelog(
-      traverser1.accumulator.allFacts(),
-      traverser2.accumulator.allFacts()
-    )
+    factsToChangelog([...traverser1.facts()], [...traverser2.facts()])
   );
 }
 
