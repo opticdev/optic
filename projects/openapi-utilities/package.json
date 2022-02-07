@@ -16,9 +16,12 @@
     "ws:clean": "rm -rf build"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.0",
+    "@types/babel__core": "^7",
     "@types/jest": "^26.0.24",
     "@types/js-yaml": "^4.0.5",
     "@types/lodash.sortby": "^4.7.6",
+    "@types/node": "^17.0.15",
     "@useoptic/openapi-io": "workspace:*",
     "babel-jest": "26.6.0",
     "fs-extra": "^10.0.0",

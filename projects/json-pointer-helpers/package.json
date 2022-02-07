@@ -15,6 +15,9 @@
     "ws:clean": "rm -rf build"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.0",
+    "@types/babel__core": "^7",
+    "@types/node": "^17.0.15",
     "babel-jest": "26.6.0",
     "jest": "^26.6.0",
     "prettier": "^2.4.1",

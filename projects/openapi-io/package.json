@@ -16,6 +16,8 @@
     "ws:clean": "rm -rf build"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.0",
+    "@types/babel__core": "^7",
     "@types/copyfiles": "^2",
     "@types/crypto-js": "^4.0.2",
     "@types/fs-extra": "^9.0.13",
@@ -23,6 +25,7 @@
     "@types/lodash.sortby": "^4.7.6",
     "@types/micro": "^7.3.6",
     "@types/micro-cors": "^0",
+    "@types/node": "^17.0.15",
     "@types/node-fetch": "2.5.12",
     "babel-jest": "26.6.0",
     "chai": "^4.3.4",

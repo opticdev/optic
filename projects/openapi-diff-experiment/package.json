@@ -21,6 +21,8 @@
     "explore": "ts-node src/interactive/cli-components/tests/test-update.tsx  --scenario newField"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.0",
+    "@types/babel__core": "^7",
     "@types/body-parser": "^1",
     "@types/diff": "5.0.0",
     "@types/express": "^4",

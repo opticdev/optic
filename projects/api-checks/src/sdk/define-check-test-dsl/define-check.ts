@@ -50,7 +50,7 @@ export class ApiCheckImpl<CheckConfig> {
   passingExample(beforeAndAfter: BeforeAndAfter, config?: CheckConfig) {
     this.check.validExamples = [...this.check.validExamples, beforeAndAfter];
 
-    if (!this.check.implementation) test.skip('', () => 1);
+    if (!this.check.implementation) test.skip('', () => {});
 
     if (typeof jest !== 'undefined' && this.check.implementation) {
       // @ts-ignore
@@ -74,7 +74,7 @@ export class ApiCheckImpl<CheckConfig> {
       beforeAndAfter,
     ];
 
-    if (!this.check.implementation) test.skip('', () => 1);
+    if (!this.check.implementation) test.skip('', () => {});
 
     if (typeof jest !== 'undefined' && this.check.implementation) {
       // @ts-ignore
