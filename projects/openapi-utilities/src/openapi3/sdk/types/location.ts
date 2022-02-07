@@ -61,6 +61,16 @@ export type BodyLocation = ConceptualLocationBase &
       }
   );
 
+export type BodyExampleLocation = BodyLocation &
+  (
+    | {
+        singular: true; // for use of `example: ExampleObject`
+      }
+    | {
+        id: string; // for use of `examples: { [id: string]: ExampleObject }`
+      }
+  );
+
 export type FieldLocation = ConceptualLocationBase &
   (
     | {

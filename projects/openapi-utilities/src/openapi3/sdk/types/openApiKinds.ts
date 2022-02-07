@@ -11,6 +11,7 @@ export enum OpenApiKind {
   Field = 'field',
   Array = 'array',
   Primitive = 'primitive',
+  Example = 'example',
 }
 
 export type OpenApiParameterKind = Extract<

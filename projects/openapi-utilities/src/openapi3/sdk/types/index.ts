@@ -10,6 +10,7 @@ import {
   ResponseLocation,
   RequestLocation,
   BodyLocation,
+  BodyExampleLocation,
   FieldLocation,
 } from './location';
 import { OpenApiKind, OpenApiParameterKind } from './openApiKinds';
@@ -27,6 +28,7 @@ export {
   ResponseLocation,
   RequestLocation,
   BodyLocation,
+  BodyExampleLocation,
   FieldLocation,
 };
 export type ConceptualLocation = ILocation['conceptualLocation'];
@@ -38,6 +40,7 @@ export type OpenApiFact =
   | OpenApiResponseFact
   | OpenApiHeaderFact
   | OpenApiBodyFact
+  | OpenApiBodyExampleFact
   | OpenApiFieldFact;
 
 export interface OpenApiOperationFact
@@ -52,6 +55,10 @@ export interface OpenApiOperationFact
 export interface OpenApiBodyFact {
   contentType: string;
   flatSchema: Omit<OpenAPIV3.SchemaObject, 'item' | 'required' | 'properties'>;
+}
+
+export interface OpenApiBodyExampleFact extends OpenAPIV3.ExampleObject {
+  contentType: string;
 }
 
 export interface OpenApiFieldFact {
