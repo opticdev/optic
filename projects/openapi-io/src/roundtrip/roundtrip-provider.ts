@@ -7,6 +7,7 @@ export interface RoundtripProvider<Config> {
   parse: (filepath: string, contents: string) => Promise<ParseResult>;
   applyPatches: (
     filePath: string,
+    fileContents: string,
     operations: Operation[],
     config?: Config
   ) => Promise<PatchApplyResult>;

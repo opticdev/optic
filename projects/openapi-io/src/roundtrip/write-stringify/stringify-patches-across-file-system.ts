@@ -7,12 +7,12 @@ import {
 import jsonpatch, { Operation } from 'fast-json-patch';
 import isUrl from 'is-url';
 import invariant from 'ts-invariant';
-import fs from 'fs-extra';
 
 export class StringifyPatchesAcrossFileSystem
   implements RoundtripProvider<undefined> {
   async applyPatches(
     filePath: string,
+    fileContents: string,
     operations: Operation[]
   ): Promise<PatchApplyResult> {
     invariant(
@@ -20,8 +20,7 @@ export class StringifyPatchesAcrossFileSystem
       `Unable to patch one of your dependencies. It a URL and not writable ${filePath}`
     );
 
-    const stringContents = (await fs.readFile(filePath)).toString();
-    const parsed = await this.parse(filePath, stringContents);
+    const parsed = await this.parse(filePath, fileContents);
 
     invariant(
       parsed.success,

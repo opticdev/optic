@@ -44,15 +44,12 @@ export type YamlRoundTripConfig = {
 class YamlRoundtripImpl implements RoundtripProvider<YamlRoundTripConfig> {
   async applyPatches(
     filePath: string,
+    fileContents: string,
     operations: Operation[],
     config: YamlRoundTripConfig | undefined
   ): Promise<PatchApplyResult> {
-    const currentContents = (await fs.readFile(filePath)).toString();
-
-    const writeConfig = config
-      ? config
-      : await this.inferConfig(currentContents);
-    const initialDocument = await this.parse(filePath, currentContents);
+    const writeConfig = config ? config : await this.inferConfig(fileContents);
+    const initialDocument = await this.parse(filePath, fileContents);
 
     invariant(
       initialDocument.success,
@@ -64,7 +61,7 @@ class YamlRoundtripImpl implements RoundtripProvider<YamlRoundTripConfig> {
     const ops: Operation[] = JSON.parse(JSON.stringify(operations));
 
     const reducerInput: ReduceOperationType = {
-      contents: currentContents,
+      contents: fileContents,
       currentValue: initialDocument.value,
     };
 

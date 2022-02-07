@@ -26,14 +26,12 @@ export type JsonRoundtripConfig = {
 class JsonRoundtripImpl implements RoundtripProvider<JsonRoundtripConfig> {
   async applyPatches(
     filePath: string,
+    fileContents: string,
     operations: Operation[],
     config: JsonRoundtripConfig | undefined
   ): Promise<PatchApplyResult> {
-    const currentContents = (await fs.readFile(filePath)).toString();
-    const writeConfig = config
-      ? config
-      : await this.inferConfig(currentContents);
-    const initialDocument = await this.parse(filePath, currentContents);
+    const writeConfig = config ? config : await this.inferConfig(fileContents);
+    const initialDocument = await this.parse(filePath, fileContents);
 
     invariant(
       initialDocument.success === true,
@@ -45,7 +43,7 @@ class JsonRoundtripImpl implements RoundtripProvider<JsonRoundtripConfig> {
     const ops: Operation[] = JSON.parse(JSON.stringify(operations));
 
     const reducerInput: ReduceOperationType = {
-      contents: currentContents,
+      contents: fileContents,
       currentValue: initialDocument.value,
     };
 
