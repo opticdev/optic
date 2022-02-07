@@ -73,6 +73,7 @@ export interface OpenApiHeaderFact extends OpenAPIV3.HeaderObject {
 export interface OpenApiRequestParameterFact
   extends OpenAPIV3.ParameterObject {}
 
+// TODO: remove accumulator for next MAJOR / BREAKING change
 export class FactAccumulator<KindSchema> {
   constructor(private facts: IFact<KindSchema>[]) {}
   log(fact: IFact<KindSchema>) {
@@ -87,6 +88,7 @@ export class FactAccumulator<KindSchema> {
 export interface Traverse<DocSchema, FactSchema> {
   format: string;
   traverse(input: DocSchema): void;
+  // TODO: remove accumulator for next MAJOR / BREAKING change
   accumulator: FactAccumulator<FactSchema>;
 }
 
