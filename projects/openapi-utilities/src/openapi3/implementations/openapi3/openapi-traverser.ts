@@ -15,6 +15,7 @@ import {
   PathParameterLocation,
   HeaderParameterLocation,
   BodyLocation,
+  BodyExampleLocation,
   QueryParameterLocation,
   FieldLocation,
   OpenApiRequestFact,
@@ -23,7 +24,7 @@ import {
 import { IPathComponent } from '../../sdk/types';
 import invariant from 'ts-invariant';
 import { jsonPointerHelpers as jsonPointer } from '@useoptic/json-pointer-helpers';
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPI, OpenAPIV3 } from 'openapi-types';
 
 export function normalizeOpenApiPath(path: string): string {
   return path
@@ -388,33 +389,54 @@ export class OpenAPITraverser
     location: BodyLocation
   ): IterableIterator<IFact<OpenApiFact>> {
     this.checkJsonTrail(jsonPath, body);
-    const schema = body.schema;
-    if (!schema) {
-      return;
+    const { schema, examples } = body;
+
+    if (schema) {
+      if (isNotReferenceObject(schema)) {
+        yield this.onContentForBody(
+          schema,
+          contentType,
+          jsonPath,
+          conceptualPath,
+          location
+        );
+        yield* this.traverseSchema(
+          schema,
+          jsonPointer.append(jsonPath, 'schema'),
+          conceptualPath,
+          {
+            ...location,
+            jsonSchemaTrail: [],
+          }
+        );
+      } else {
+        console.warn(
+          `Expected a flattened spec, found a reference at: ${conceptualPath.join(
+            ' > '
+          )}`
+        );
+      }
     }
-    if (isNotReferenceObject(schema)) {
-      yield this.onContentForBody(
-        schema,
-        contentType,
-        jsonPath,
-        conceptualPath,
-        location
-      );
-      yield* this.traverseSchema(
-        schema,
-        jsonPointer.append(jsonPath, 'schema'),
-        conceptualPath,
-        {
-          ...location,
-          jsonSchemaTrail: [],
+
+    if (examples) {
+      for (let [name, example] of Object.entries(examples)) {
+        if (isNotReferenceObject(example)) {
+          yield this.onBodyExample(
+            name,
+            example,
+            contentType,
+            jsonPath,
+            conceptualPath,
+            { ...location, name }
+          );
+        } else {
+          console.warn(
+            `Expected a flattened spec, found a reference at: ${conceptualPath.join(
+              ' > '
+            )}`
+          );
         }
-      );
-    } else {
-      console.warn(
-        `Expected a flattened spec, found a reference at: ${conceptualPath.join(
-          ' > '
-        )}`
-      );
+      }
     }
   }
 
@@ -571,6 +593,25 @@ export class OpenAPITraverser
         conceptualLocation: location,
       },
       value,
+    };
+  }
+
+  onBodyExample(
+    name: string,
+    example: OpenAPIV3.ExampleObject,
+    contentType: string,
+    jsonPath: string,
+    conceptualPath: IPathComponent[],
+    conceptualLocation: BodyExampleLocation
+  ): IFact<OpenApiBodyExampleFact> {
+    return {
+      location: {
+        conceptualLocation,
+        jsonPath,
+        conceptualPath,
+        kind: OpenApiKind.BodyExample,
+        conceptualLocation: location,
+      },
     };
   }
 

@@ -67,7 +67,7 @@ export type BodyExampleLocation = BodyLocation &
         singular: true; // for use of `example: ExampleObject`
       }
     | {
-        id: string; // for use of `examples: { [id: string]: ExampleObject }`
+        name: string; // for use of `examples: { [name: string]: ExampleObject }`
       }
   );
 

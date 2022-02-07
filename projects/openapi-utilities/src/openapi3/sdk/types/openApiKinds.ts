@@ -7,11 +7,11 @@ export enum OpenApiKind {
   ResponseHeader = 'response-header',
   Response = 'response',
   Body = 'body',
+  BodyExample = 'body-example',
   Object = 'object',
   Field = 'field',
   Array = 'array',
   Primitive = 'primitive',
-  Example = 'example',
 }
 
 export type OpenApiParameterKind = Extract<
