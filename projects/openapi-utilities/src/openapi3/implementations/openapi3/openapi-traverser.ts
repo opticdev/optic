@@ -80,25 +80,6 @@ export class OpenAPITraverser
       yield* traverseIfPresent(OpenAPIV3.HttpMethods.HEAD);
       yield* traverseIfPresent(OpenAPIV3.HttpMethods.OPTIONS);
     }
-
-    // Object.entries(this.input.paths).forEach(([pathPattern, paths]) => {
-    //   const traverseIfPresent = (method: OpenAPIV3.HttpMethods) => {
-    //     const pathObject = paths?.[method];
-    //     if (pathObject) {
-    //       this.traverseOperations(pathObject, method, pathPattern, {
-    //         method: method,
-    //         path: pathPattern,
-    //       });
-    //     }
-    //   };
-    //   traverseIfPresent(OpenAPIV3.HttpMethods.GET);
-    //   traverseIfPresent(OpenAPIV3.HttpMethods.PATCH);
-    //   traverseIfPresent(OpenAPIV3.HttpMethods.POST);
-    //   traverseIfPresent(OpenAPIV3.HttpMethods.PUT);
-    //   traverseIfPresent(OpenAPIV3.HttpMethods.DELETE);
-    //   traverseIfPresent(OpenAPIV3.HttpMethods.HEAD);
-    //   traverseIfPresent(OpenAPIV3.HttpMethods.OPTIONS);
-    // });
   }
 
   *traverseOperations(
@@ -265,7 +246,6 @@ export class OpenAPITraverser
           );
         }
       }
-      // operation.parameters.forEach((parameter, i) => {});
     }
 
     const sharedParametersPointer = jsonPointer.compile([
