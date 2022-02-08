@@ -1,5 +1,388 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`can extract body example facts from specs 1`] = `
+Array [
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/",
+        "get",
+      ],
+      "jsonPath": "/paths/~1/get",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "get",
+      "operationId": "listVersionsv2",
+      "pathPattern": "/",
+      "summary": "List API versions",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "name": "foo",
+        "path": "/",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1/get/responses/200/content/application~1json",
+      "kind": "body-example",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "name": "foo",
+      "value": Object {
+        "versions": Array [
+          Object {
+            "id": "v2.0",
+            "links": Array [
+              Object {
+                "href": "http://127.0.0.1:8774/v2/",
+                "rel": "self",
+              },
+            ],
+            "status": "CURRENT",
+            "updated": "2011-01-21T11:33:21Z",
+          },
+          Object {
+            "id": "v3.0",
+            "links": Array [
+              Object {
+                "href": "http://127.0.0.1:8774/v3/",
+                "rel": "self",
+              },
+            ],
+            "status": "EXPERIMENTAL",
+            "updated": "2013-07-23T11:33:21Z",
+          },
+        ],
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/",
+        "get",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1/get/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "200 response",
+      "statusCode": "200",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "300",
+        },
+        "method": "get",
+        "name": "foo",
+        "path": "/",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/",
+        "get",
+        "responses",
+        "300",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1/get/responses/300/content/application~1json",
+      "kind": "body-example",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "name": "foo",
+      "value": "{
+ \\"versions\\": [
+       {
+         \\"status\\": \\"CURRENT\\",
+         \\"updated\\": \\"2011-01-21T11:33:21Z\\",
+         \\"id\\": \\"v2.0\\",
+         \\"links\\": [
+             {
+                 \\"href\\": \\"http://127.0.0.1:8774/v2/\\",
+                 \\"rel\\": \\"self\\"
+             }
+         ]
+     },
+     {
+         \\"status\\": \\"EXPERIMENTAL\\",
+         \\"updated\\": \\"2013-07-23T11:33:21Z\\",
+         \\"id\\": \\"v3.0\\",
+         \\"links\\": [
+             {
+                 \\"href\\": \\"http://127.0.0.1:8774/v3/\\",
+                 \\"rel\\": \\"self\\"
+             }
+         ]
+     }
+ ]
+}
+",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "300",
+        },
+        "method": "get",
+        "path": "/",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/",
+        "get",
+        "responses",
+        "300",
+      ],
+      "jsonPath": "/paths/~1/get/responses/300",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "300 response",
+      "statusCode": "300",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/v2",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/v2",
+        "get",
+      ],
+      "jsonPath": "/paths/~1v2/get",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "get",
+      "operationId": "getVersionDetailsv2",
+      "pathPattern": "/v2",
+      "summary": "Show API version details",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "name": "foo",
+        "path": "/v2",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/v2",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1v2/get/responses/200/content/application~1json",
+      "kind": "body-example",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "name": "foo",
+      "value": Object {
+        "version": Object {
+          "id": "v2.0",
+          "links": Array [
+            Object {
+              "href": "http://127.0.0.1:8774/v2/",
+              "rel": "self",
+            },
+            Object {
+              "href": "http://docs.openstack.org/api/openstack-compute/2/os-compute-devguide-2.pdf",
+              "rel": "describedby",
+              "type": "application/pdf",
+            },
+            Object {
+              "href": "http://docs.openstack.org/api/openstack-compute/2/wadl/os-compute-2.wadl",
+              "rel": "describedby",
+              "type": "application/vnd.sun.wadl+xml",
+            },
+            Object {
+              "href": "http://docs.openstack.org/api/openstack-compute/2/wadl/os-compute-2.wadl",
+              "rel": "describedby",
+              "type": "application/vnd.sun.wadl+xml",
+            },
+          ],
+          "media-types": Array [
+            Object {
+              "base": "application/xml",
+              "type": "application/vnd.openstack.compute+xml;version=2",
+            },
+            Object {
+              "base": "application/json",
+              "type": "application/vnd.openstack.compute+json;version=2",
+            },
+          ],
+          "status": "CURRENT",
+          "updated": "2011-01-21T11:33:21Z",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/v2",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/v2",
+        "get",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1v2/get/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "200 response",
+      "statusCode": "200",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "203",
+        },
+        "method": "get",
+        "name": "foo",
+        "path": "/v2",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/v2",
+        "get",
+        "responses",
+        "203",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1v2/get/responses/203/content/application~1json",
+      "kind": "body-example",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "name": "foo",
+      "value": Object {
+        "version": Object {
+          "id": "v2.0",
+          "links": Array [
+            Object {
+              "href": "http://23.253.228.211:8774/v2/",
+              "rel": "self",
+            },
+            Object {
+              "href": "http://docs.openstack.org/api/openstack-compute/2/os-compute-devguide-2.pdf",
+              "rel": "describedby",
+              "type": "application/pdf",
+            },
+            Object {
+              "href": "http://docs.openstack.org/api/openstack-compute/2/wadl/os-compute-2.wadl",
+              "rel": "describedby",
+              "type": "application/vnd.sun.wadl+xml",
+            },
+          ],
+          "media-types": Array [
+            Object {
+              "base": "application/xml",
+              "type": "application/vnd.openstack.compute+xml;version=2",
+            },
+            Object {
+              "base": "application/json",
+              "type": "application/vnd.openstack.compute+json;version=2",
+            },
+          ],
+          "status": "CURRENT",
+          "updated": "2011-01-21T11:33:21Z",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "203",
+        },
+        "method": "get",
+        "path": "/v2",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/v2",
+        "get",
+        "responses",
+        "203",
+      ],
+      "jsonPath": "/paths/~1v2/get/responses/203",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "203 response",
+      "statusCode": "203",
+    },
+  },
+]
+`;
+
 exports[`can extract facts from specs 1`] = `
 Array [
   Object {

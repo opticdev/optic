@@ -121,5 +121,6 @@ export type ILocation = {
   | { conceptualLocation: ResponseLocation; kind: OpenApiKind.Response }
   | { conceptualLocation: RequestLocation; kind: OpenApiKind.Request }
   | { conceptualLocation: BodyLocation; kind: OpenApiKind.Body }
+  | { conceptualLocation: BodyExampleLocation; kind: OpenApiKind.BodyExample }
   | { conceptualLocation: FieldLocation; kind: OpenApiKind.Field }
 );

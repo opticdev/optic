@@ -59,6 +59,7 @@ export interface OpenApiBodyFact {
 
 export interface OpenApiBodyExampleFact extends OpenAPIV3.ExampleObject {
   contentType: string;
+  name?: string;
 }
 
 export interface OpenApiFieldFact {

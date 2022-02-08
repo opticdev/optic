@@ -3,6 +3,7 @@ import {
   OpenApiHeaderFact,
   OpenApiRequestParameterFact,
   OpenApiBodyFact,
+  OpenApiBodyExampleFact,
   OpenApiFieldFact,
   OpenApiOperationFact,
   OpenApiResponseFact,
@@ -605,12 +606,16 @@ export class OpenAPITraverser
     conceptualLocation: BodyExampleLocation
   ): IFact<OpenApiBodyExampleFact> {
     return {
+      value: {
+        contentType,
+        name,
+        ...example,
+      },
       location: {
-        conceptualLocation,
         jsonPath,
         conceptualPath,
         kind: OpenApiKind.BodyExample,
-        conceptualLocation: location,
+        conceptualLocation,
       },
     };
   }
