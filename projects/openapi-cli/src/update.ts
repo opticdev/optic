@@ -2,6 +2,9 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
+import * as ExampleBodies from './streams/example-bodies';
+import * as Facts from './streams/facts';
+
 import {
   JsonSchemaSourcemap,
   parseOpenAPIWithSourcemap,
@@ -24,5 +27,8 @@ export function registerUpdateCommand(cli: Command) {
       const { jsonLike: spec, sourcemap } = await parseOpenAPIWithSourcemap(
         absoluteSpecPath
       );
+
+      const facts = Facts.fromOpenAPISpec(spec);
+      const exampleBodies = ExampleBodies.fromOpenAPIFacts(facts);
     });
 }
