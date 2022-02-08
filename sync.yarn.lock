@@ -3456,6 +3456,7 @@ __metadata:
     "@types/json-stable-stringify": ^1.0.33
     "@types/node": ^17.0.15
     "@useoptic/openapi-io": "workspace:*"
+    "@useoptic/openapi-utilities": "workspace:*"
     babel-jest: 26.6.0
     commander: ^9.0.0
     jest: ^26.6.0
