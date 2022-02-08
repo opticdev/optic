@@ -390,7 +390,7 @@ export class OpenAPITraverser
     location: BodyLocation
   ): IterableIterator<IFact<OpenApiFact>> {
     this.checkJsonTrail(jsonPath, body);
-    const { schema, examples } = body;
+    const { schema, examples, example } = body;
 
     if (schema) {
       if (isNotReferenceObject(schema)) {
@@ -423,12 +423,12 @@ export class OpenAPITraverser
       for (let [name, example] of Object.entries(examples)) {
         if (isNotReferenceObject(example)) {
           yield this.onBodyExample(
-            name,
             example,
             contentType,
             jsonPath,
             conceptualPath,
-            { ...location, name }
+            { ...location, name },
+            name
           );
         } else {
           console.warn(
@@ -437,6 +437,24 @@ export class OpenAPITraverser
             )}`
           );
         }
+      }
+    }
+
+    if (example) {
+      if (isNotReferenceObject(example)) {
+        yield this.onBodyExample(
+          { value: example },
+          contentType,
+          jsonPath,
+          conceptualPath,
+          { ...location, singular: true }
+        );
+      } else {
+        console.warn(
+          `Expected a flattened spec, found a reference at: ${conceptualPath.join(
+            ' > '
+          )}`
+        );
       }
     }
   }
@@ -598,12 +616,12 @@ export class OpenAPITraverser
   }
 
   onBodyExample(
-    name: string,
     example: OpenAPIV3.ExampleObject,
     contentType: string,
     jsonPath: string,
     conceptualPath: IPathComponent[],
-    conceptualLocation: BodyExampleLocation
+    conceptualLocation: BodyExampleLocation,
+    name?: string
   ): IFact<OpenApiBodyExampleFact> {
     return {
       value: {
