@@ -85,16 +85,18 @@ it('can parse an OpenAPI file with nested URLs from file or git', async () => {
 
   expect(fileResults.jsonLike).toMatchSnapshot();
 
-  const gitRepo = await inGit(process.cwd());
-  invariant(gitRepo);
+  // these would require the whole repo to be checked out
 
-  const gitDatabaseObjectsResults = await parseOpenAPIFromRepoWithSourcemap(
-    'projects/openapi-workspaces/projects/openapi-io/inputs/openapi3/empty-with-url-ref.json',
-    gitRepo,
-    'master'
-  );
-
-  expect(gitDatabaseObjectsResults.jsonLike).toMatchSnapshot();
+  // const gitRepo = await inGit(process.cwd());
+  // invariant(gitRepo);
+  //
+  // const gitDatabaseObjectsResults = await parseOpenAPIFromRepoWithSourcemap(
+  //   'projects/openapi-workspaces/projects/openapi-io/inputs/openapi3/empty-with-url-ref.json',
+  //   gitRepo,
+  //   'master'
+  // );
+  //
+  // expect(gitDatabaseObjectsResults.jsonLike).toMatchSnapshot();
 });
 
 //
