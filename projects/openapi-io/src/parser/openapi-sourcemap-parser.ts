@@ -83,9 +83,17 @@ export async function parseOpenAPIFromRepoWithSourcemap(
   // parse all asts
   await Promise.all(
     resolverResults.paths().map(async (filePath, index) => {
+      const loadUrl = async (filePath: string) => {
+        const response = await fetch(filePath);
+        const asText = await response.text();
+        return asText;
+      };
+
       return await sourcemap.addFileIfMissingFromContents(
         filePath,
-        await inGitResolver.read({ url: filePath }),
+        filePath.startsWith('http')
+          ? await loadUrl(filePath)
+          : await inGitResolver.read({ url: filePath }),
         index
       );
     })
