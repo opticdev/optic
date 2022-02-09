@@ -2436,24 +2436,3 @@ https://datatracker.ietf.org/doc/html/rfc8594
   },
 }
 `;
-
-exports[`can parse an OpenAPI file with nested URLs from file or git 2`] = `
-Object {
-  "info": Object {
-    "title": "Empty",
-    "version": "0.0.0",
-  },
-  "openapi": "3.0.1",
-  "paths": Object {
-    "/abc": Object {
-      "get": Object {
-        "responses": Object {
-          "400": Object {
-            "$ref": "https://raw.githubusercontent.com/snyk/sweater-comb/v1.2.0/components/responses/400.yaml#/400",
-          },
-        },
-      },
-    },
-  },
-}
-`;
