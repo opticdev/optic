@@ -68,8 +68,16 @@ export async function parseOpenAPIFromRepoWithSourcemap(
   const fileName = path.join(repoPath, name);
 
   const sourcemap = new JsonSchemaSourcemap(fileName);
+  const resolve = {
+    file: inGitResolver,
+    http: {
+      headers: {
+        accept: '*/*',
+      },
+    },
+  };
   const resolverResults: $RefParser.$Refs = await resolver.resolve(fileName, {
-    resolve: { file: inGitResolver },
+    resolve,
   });
 
   // parse all asts
@@ -88,7 +96,7 @@ export async function parseOpenAPIFromRepoWithSourcemap(
     {
       ...$RefParserOptions.defaults,
       path: fileName,
-      resolve: { file: inGitResolver },
+      resolve,
     },
     sourcemap
   );
