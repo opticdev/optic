@@ -2,8 +2,9 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
-import * as ExampleBodies from './streams/example-bodies';
-import * as Facts from './streams/facts';
+import * as Bodies from './shapes/streams/bodies';
+import * as ShapeDiffs from './shapes/streams/shape-diffs';
+import * as Facts from './specs/streams/facts';
 
 import {
   JsonSchemaSourcemap,
@@ -29,6 +30,8 @@ export function registerUpdateCommand(cli: Command) {
       );
 
       const facts = Facts.fromOpenAPISpec(spec);
-      const exampleBodies = ExampleBodies.fromOpenAPIFacts(facts);
+      const exampleBodies = Bodies.fromBodyExampleFacts(facts);
+
+      // const shapeDiffs = ShapeDiffs.fromBodies(spec, exampleBodies);
     });
 }

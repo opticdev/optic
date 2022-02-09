@@ -34,7 +34,8 @@
   "dependencies": {
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
-    "commander": "^9.0.0"
+    "commander": "^9.0.0",
+    "json-schema-traverse": "^1.0.0"
   },
   "jest": {
     "testPathIgnorePatterns": [
