@@ -11,7 +11,12 @@ import { ILookupLinePreviewResult } from '@useoptic/openapi-utilities';
 
 export type ILookupPathResult =
   | undefined
-  | { filePath: string; startsAt: JsonPath; astNode: YAMLNode };
+  | {
+      filePath: string;
+      startsAt: JsonPath;
+      contents: string;
+      astNode: YAMLNode;
+    };
 export type ILookupFileResult =
   | undefined
   | { filePath: string; startsAt: JsonPath };
@@ -33,6 +38,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
       return {
         filePath: file.path,
         astNode: node,
+        contents: file.contents,
         startsAt: fileResult.startsAt,
       };
   };
@@ -86,7 +92,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
     const lookupResult = findFile(jsonPathFromRoot);
     if (lookupResult) {
       const astNode = lookupResult.astNode;
-      const contents = (await fs.readFile(lookupResult.filePath)).toString();
+      const contents = lookupResult.contents;
 
       const [startPosition, endPosition] = astNodesToStartEndPosition(astNode);
 

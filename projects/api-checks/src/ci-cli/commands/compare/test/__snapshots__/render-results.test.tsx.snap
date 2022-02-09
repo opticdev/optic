@@ -19,24 +19,24 @@ exports[`list of checks renders list of checks with github sourcemap 2`] = `
 "
 `;
 
-exports[`list of checks renders list of checks with local sourcemaps 1`] = `"IBtbMW0bWzQxbSBGQUlMIBtbNDltG1syMm0gG1szN20bWzFtR0VUG1syMm0gL2V4YW1wbGUbWzM5bQogIBtbMzFteCAbWzM5bW9wZXJhdGlvbiBtdXN0IGhhdmUgdGFncwogICAgG1szMW10YWdzIFtdIG11c3QgYmUgc2V0IG9uIGVhY2ggb3BlcmF0aW9uOiBleHBlY3RlZCB1bmRlZmluZWQgdG8gZXhpc3QbWzM5bQogICAgG1s0bRtbMzRtUmVhZCBtb3JlIGluIG91ciBBUEkgZ3VpZGUbWzM5bRtbMjRtICjigItodHRwczovL2dpdGh1Yi5jb20vc255ay9zd2VhdGVyLWNvbWIvYmxvYi9tYWluL2RvY3Mvc3RhbmRhcmRzLm1kI3RhZ3PigIspCiAgICBhdCAbWzRtKC9leGFtcGxlLnlhbWw6MToxMCkbWzI0bQogIBtbMzFteCAbWzM5bW9wZXJhdGlvbiBtdXN0IGhhdmUgYW4gb3BlcmF0aW9uIGlkCiAgICAbWzMxbW9wZXJhdGlvbiBpZCBpcyBtaXNzaW5nG1szOW0KICAgIBtbNG0bWzM0bVJlYWQgbW9yZSBpbiBvdXIgQVBJIGd1aWRlG1szOW0bWzI0bSAo4oCLaHR0cHM6Ly9naXRodWIuY29tL3NueWsvc3dlYXRlci1jb21iL2Jsb2IvbWFpbi9kb2NzL3N0YW5kYXJkcy5tZCNvcGVyYXRpb24taWRz4oCLKQogICAgYXQgG1s0bSgvZXhhbXBsZS55YW1sOjE6MTApG1syNG0KCgogG1sxbRtbNDJtIFBBU1MgG1s0OW0bWzIybSAbWzM3bRtbMW1QQVRDSBtbMjJtIC9leGFtcGxlL3t9G1szOW0KICAbWzMybeKclCAbWzM5bW9wZXJhdGlvbiBtdXN0IGhhdmUgYW4gb3BlcmF0aW9uIGlkCiAgICAbWzRtG1szNG1SZWFkIG1vcmUgaW4gb3VyIEFQSSBndWlkZRtbMzltG1syNG0gKOKAi2h0dHBzOi8vZ2l0aHViLmNvbS9zbnlrL3N3ZWF0ZXItY29tYi9ibG9iL21haW4vZG9jcy9zdGFuZGFyZHMubWQjb3BlcmF0aW9uLWlkc+KAiykKICAgIGF0IBtbNG0oL2V4YW1wbGUueWFtbDoxOjEwKRtbMjRtCgo="`;
+exports[`list of checks renders list of checks with local sourcemaps 1`] = `"IBtbMW0bWzQxbSBGQUlMIBtbNDltG1syMm0gG1szN20bWzFtR0VUG1syMm0gL2V4YW1wbGUbWzM5bQogIBtbMzFteCAbWzM5bW9wZXJhdGlvbiBtdXN0IGhhdmUgdGFncwogICAgG1szMW10YWdzIFtdIG11c3QgYmUgc2V0IG9uIGVhY2ggb3BlcmF0aW9uOiBleHBlY3RlZCB1bmRlZmluZWQgdG8gZXhpc3QbWzM5bQogICAgG1s0bRtbMzRtUmVhZCBtb3JlIGluIG91ciBBUEkgZ3VpZGUbWzM5bRtbMjRtICjigItodHRwczovL2dpdGh1Yi5jb20vc255ay9zd2VhdGVyLWNvbWIvYmxvYi9tYWluL2RvY3Mvc3RhbmRhcmRzLm1kI3RhZ3PigIspCiAgICBhdCAbWzRtL2V4YW1wbGUueWFtbDoxOjEwKRtbMjRtCiAgG1szMW14IBtbMzltb3BlcmF0aW9uIG11c3QgaGF2ZSBhbiBvcGVyYXRpb24gaWQKICAgIBtbMzFtb3BlcmF0aW9uIGlkIGlzIG1pc3NpbmcbWzM5bQogICAgG1s0bRtbMzRtUmVhZCBtb3JlIGluIG91ciBBUEkgZ3VpZGUbWzM5bRtbMjRtICjigItodHRwczovL2dpdGh1Yi5jb20vc255ay9zd2VhdGVyLWNvbWIvYmxvYi9tYWluL2RvY3Mvc3RhbmRhcmRzLm1kI29wZXJhdGlvbi1pZHPigIspCiAgICBhdCAbWzRtL2V4YW1wbGUueWFtbDoxOjEwKRtbMjRtCgoKIBtbMW0bWzQybSBQQVNTIBtbNDltG1syMm0gG1szN20bWzFtUEFUQ0gbWzIybSAvZXhhbXBsZS97fRtbMzltCiAgG1szMm3inJQgG1szOW1vcGVyYXRpb24gbXVzdCBoYXZlIGFuIG9wZXJhdGlvbiBpZAogICAgG1s0bRtbMzRtUmVhZCBtb3JlIGluIG91ciBBUEkgZ3VpZGUbWzM5bRtbMjRtICjigItodHRwczovL2dpdGh1Yi5jb20vc255ay9zd2VhdGVyLWNvbWIvYmxvYi9tYWluL2RvY3Mvc3RhbmRhcmRzLm1kI29wZXJhdGlvbi1pZHPigIspCiAgICBhdCAbWzRtL2V4YW1wbGUueWFtbDoxOjEwKRtbMjRtCgo="`;
 
 exports[`list of checks renders list of checks with local sourcemaps 2`] = `
 " [1m[41m FAIL [49m[22m [37m[1mGET[22m /example[39m
   [31mx [39moperation must have tags
     [31mtags [] must be set on each operation: expected undefined to exist[39m
     [4m[34mRead more in our API guide[39m[24m (​https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#tags​)
-    at [4m(/example.yaml:1:10)[24m
+    at [4m/example.yaml:1:10)[24m
   [31mx [39moperation must have an operation id
     [31moperation id is missing[39m
     [4m[34mRead more in our API guide[39m[24m (​https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#operation-ids​)
-    at [4m(/example.yaml:1:10)[24m
+    at [4m/example.yaml:1:10)[24m
 
 
  [1m[42m PASS [49m[22m [37m[1mPATCH[22m /example/{}[39m
   [32m✔ [39moperation must have an operation id
     [4m[34mRead more in our API guide[39m[24m (​https://github.com/snyk/sweater-comb/blob/main/docs/standards.md#operation-ids​)
-    at [4m(/example.yaml:1:10)[24m
+    at [4m/example.yaml:1:10)[24m
 
 "
 `;

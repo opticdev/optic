@@ -13,6 +13,7 @@ import Hex from 'crypto-js/enc-hex';
 import fetch from 'node-fetch';
 import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import isUrl from 'is-url';
 
 export type ParseOpenAPIResult = {
   jsonLike: OpenAPIV3.Document;
@@ -91,7 +92,7 @@ export async function parseOpenAPIFromRepoWithSourcemap(
 
       return await sourcemap.addFileIfMissingFromContents(
         filePath,
-        filePath.startsWith('http')
+        isUrl(filePath)
           ? await loadUrl(filePath)
           : await inGitResolver.read({ url: filePath }),
         index
@@ -134,7 +135,7 @@ export class JsonSchemaSourcemap {
   public refMappings: { [key: JsonPath]: ToSource } = {};
 
   async addFileIfMissing(filePath: string, fileIndex: number) {
-    if (filePath.startsWith('http')) {
+    if (isUrl(filePath)) {
       const response = await fetch(filePath);
       const asText = await response.text();
 

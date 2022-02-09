@@ -3,6 +3,7 @@ import React from 'react';
 import { ResultWithSourcemap } from '@useoptic/openapi-utilities';
 import groupBy from 'lodash.groupby';
 import Link from 'ink-link';
+import isUrl from 'is-url';
 
 export enum SourcemapRendererEnum {
   local,
@@ -119,10 +120,17 @@ function SourcemapInLocalContext(props: { result: ResultWithSourcemap }) {
       {result.sourcemap ? (
         <Box paddingLeft={2}>
           <Text>at </Text>
-          <Text underline>
-            ({result.sourcemap.filePath}:{result.sourcemap.startLine}:
-            {result.sourcemap.startPosition})
-          </Text>
+          {isUrl(result.sourcemap.filePath) ? (
+            <>
+              <Text underline>{result.sourcemap.filePath}</Text>
+              <Text> line {result.sourcemap.startLine}</Text>
+            </>
+          ) : (
+            <Text underline>
+              {result.sourcemap.filePath}:{result.sourcemap.startLine}:
+              {result.sourcemap.startPosition})
+            </Text>
+          )}
         </Box>
       ) : null}
     </>
