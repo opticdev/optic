@@ -1,12 +1,12 @@
-import { SpecLoaderResult } from "./types";
-import * as path from "path";
+import { SpecLoaderResult } from './types';
+import * as path from 'path';
 import {
   JsonSchemaSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
-} from "../parser/openapi-sourcemap-parser";
+} from '../parser/openapi-sourcemap-parser';
 
-const util = require("util");
-const exec = util.promisify(require("child_process").exec);
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
 export async function loadSpecFromBranch(
   fileNameInRepo: string,
@@ -34,12 +34,10 @@ export async function loadSpecFromBranch(
 }
 
 // helpers
-export async function inGit(filename: string): Promise<false | string> {
+export async function inGit(workingDirectory: string): Promise<false | string> {
   try {
-    const parent = path.dirname(filename);
-    await exec(`git ls-files --error-unmatch ${filename}`, { cwd: parent });
-    const { stdout } = await exec("git rev-parse --show-toplevel", {
-      cwd: parent,
+    const { stdout } = await exec('git rev-parse --show-toplevel', {
+      cwd: workingDirectory,
     });
     return stdout.trim();
   } catch (e) {

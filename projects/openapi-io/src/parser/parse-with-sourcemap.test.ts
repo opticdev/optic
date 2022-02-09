@@ -1,9 +1,12 @@
 import {
+  parseOpenAPIFromRepoWithSourcemap,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
 } from './openapi-sourcemap-parser';
 import path from 'path';
 import sortBy from 'lodash.sortby';
+import { inGit } from '../index';
+import invariant from 'ts-invariant';
 
 const cwd = process.cwd();
 
@@ -73,14 +76,23 @@ it('can parse an OpenAPI file and have valid sourcemap', async () => {
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
 
-it('can parse an OpenAPI file with nested URLs', async () => {
+it('can parse an OpenAPI file with nested URLs from file or git', async () => {
   const results = await parseOpenAPIWithSourcemap(
     path.resolve(
       path.join(__dirname, '../../inputs/openapi3/empty-with-url-ref.json')
     )
   );
 
-  expect(prepSnapshot(results)).toMatchSnapshot();
+  const gitRepo = await inGit(process.cwd());
+  invariant(gitRepo);
+
+  await parseOpenAPIFromRepoWithSourcemap(
+    'projects/openapi-workspaces/projects/openapi-io/inputs/openapi3/empty-with-url-ref.json',
+    gitRepo,
+    'master'
+  );
+
+  expect(results.jsonLike).toMatchSnapshot();
 });
 
 //
