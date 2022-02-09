@@ -3,10 +3,10 @@ import { ShapeDiffResult, ShapeDiffResultKind } from '../result';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export function* oneOfKeyword(
-  schemaPath: string,
   validationError: ErrorObject,
   example: any
 ): IterableIterator<ShapeDiffResult> {
+  if (validationError.keyword !== JsonSchemaKnownKeyword.oneOf) return;
   const typeKeywordPath = jsonPointerHelpers.decode(
     validationError.schemaPath.substring(1)
   );
@@ -27,7 +27,6 @@ export function* oneOfKeyword(
   );
 
   yield {
-    schemaPath,
     kind: ShapeDiffResultKind.UnmatchedType,
     keyword: JsonSchemaKnownKeyword.oneOf,
     instancePath: validationError.instancePath,
