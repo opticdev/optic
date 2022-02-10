@@ -1,4 +1,4 @@
-import { forkable } from '../documented-bodies';
+import { forkable } from '../async-tools';
 import * as AT from 'axax';
 
 test('can fork iterables', async () => {
@@ -6,9 +6,15 @@ test('can fork iterables', async () => {
   let forkableWords = forkable(AT.from(words));
   let observedResults: string[] = [];
 
-  for await (let word of forkableWords.fork()()) {
-    observedResults.push(word);
-  }
+  let consuming = (async function () {
+    for await (let word of forkableWords.fork()) {
+      observedResults.push(word);
+    }
+  })();
+
+  forkableWords.start();
+
+  await consuming;
 
   expect(observedResults).toEqual(words);
 });
@@ -35,8 +41,9 @@ test('forks share backpressure and run in lock-step', async () => {
 
   let forkOne = forkableWords.fork();
   let forkTwo = forkableWords.fork();
+  forkableWords.start();
 
-  await Promise.all([fast(forkOne()), slow(forkTwo())]);
+  await Promise.all([fast(forkOne), slow(forkTwo)]);
 
   expect(observedResults).toHaveLength(8);
   expect(observedResults).toMatchSnapshot();
