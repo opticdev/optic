@@ -1,7 +1,0 @@
----
-source: workspaces/optic-engine/src/commands/endpoint.rs
-expression: unexisting_path_result.unwrap_err()
----
-Validation(
-    "Command failed validation: path component must exist to add query parameters, \"AddQueryParameters(AddQueryParameters { query_parameters_id: \\\"query_parameters_2\\\", path_id: \\\"not-a-path\\\", http_method: \\\"POST\\\" })\"",
-)

@@ -1,9 +1,0 @@
----
-title: Setup - Consider SDK for running tests
----
-
-### Want to run your tests through Optic?
-
-<p>You can use your existing tests to run traffic through Optic and start documenting. Optic needs a way to see this test traffic. Some test frameworks go over the network bridge, but not all do. The easiest way to assure compatibility is to try using the Middlewares for {props.framework}. This will work across the greatest variety of test frameworks and environments, and be the smoothest, one-stop integration with Optic.</p>
-
-If using middleware is not an option, we recommend setting up a test task to [run tests against your API](/reference/optic-yaml/tasks#what-are-some-examples-of-how-id-define-my-tasks). You can use any test framework, as long as network requests are made (even if they're over localhost).
