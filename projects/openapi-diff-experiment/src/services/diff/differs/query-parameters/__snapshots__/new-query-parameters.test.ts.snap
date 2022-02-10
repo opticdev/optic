@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`query parameters init can document all query parameters for traffic 1`] = `
+Object {
+  "info": Object {
+    "title": "empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.3",
+  "paths": Object {
+    "/example": Object {
+      "get": Object {
+        "parameters": Array [
+          Object {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": Object {
+              "type": "number",
+            },
+          },
+          Object {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": Object {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": Object {},
+      },
+    },
+  },
+}
+`;
+
+exports[`query parameters init can document all query parameters for traffic when 1 query param already in spec 1`] = `
+Object {
+  "info": Object {
+    "title": "empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.3",
+  "paths": Object {
+    "/example": Object {
+      "get": Object {
+        "parameters": Array [
+          Object {
+            "in": "query",
+            "name": "pre-existing",
+            "required": true,
+          },
+          Object {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": Object {
+              "type": "number",
+            },
+          },
+          Object {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": Object {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": Object {},
+      },
+    },
+  },
+}
+`;
+
+exports[`query parameters init empty query string will document empty 1`] = `
+Object {
+  "info": Object {
+    "title": "empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.3",
+  "paths": Object {
+    "/example": Object {
+      "get": Object {
+        "responses": Object {},
+      },
+    },
+  },
+}
+`;

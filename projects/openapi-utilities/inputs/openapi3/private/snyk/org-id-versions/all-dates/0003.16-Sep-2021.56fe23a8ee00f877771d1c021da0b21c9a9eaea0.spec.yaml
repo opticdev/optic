@@ -1,0 +1,142 @@
+openapi: 3.0.3
+x-snyk-api-stability: beta
+info:
+  title: Registry
+  version: 3.0.0
+servers:
+  - url: /api/v3
+    description: Snyk Registry
+tags:
+  - name: Projects
+    description: Projects scanned by Snyk.
+paths:
+  /orgs/{org_id}/projects:
+    get:
+      description: Get a list of an organization's projects.
+      operationId: getOrgsProjects
+      tags:
+        - Projects
+      parameters:
+        - { $ref: '../../schemas/parameters/version.yaml#/Version' }
+        - { $ref: '../../schemas/parameters/pagination.yaml#/parameters/StartingAfter' }
+        - { $ref: '../../schemas/parameters/pagination.yaml#/parameters/EndingBefore' }
+        - { $ref: '../../schemas/parameters/pagination.yaml#/parameters/Limit' }
+        - name: org_id
+          in: path
+          required: true
+          description: The id of the org to return a list of projects
+          schema:
+            type: string
+        - in: query
+          name: name
+          description: Return projects that prefix-match the provided name
+          schema:
+            type: string
+        - in: query
+          name: origin
+          description: Return projects that match the provided origin
+          schema:
+            type: string
+        - in: query
+          description: Return projects that match the provided type
+          name: type
+          schema:
+            type: string
+        - in: query
+          name: status
+          description: Return projects that match the provided status
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+        - in: query
+          name: 'tags'
+          description: Return projects that match all provided tags
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              pattern: ^[a-zA-Z0-9_-]+:[a-zA-Z0-9_-]+$
+        - in: query
+          name: 'businessCriticality'
+          description: Return projects that have at least 1 option
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - critical
+                - high
+                - medium
+                - low
+        - in: query
+          name: 'environment'
+          description: Return projects that have at least 1 option
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - frontend
+                - backend
+                - internal
+                - external
+                - mobile
+                - saas
+                - onprem
+                - hosted
+                - distributed
+        - in: query
+          name: 'lifecycle'
+          description: Return projects that have at least 1 option
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - production
+                - development
+                - sandbox
+        - in: query
+          description: Return projects that belong to the provided target
+          name: targetId
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '400': { $ref: '../../schemas/responses/400.yaml#/400' }
+        '401': { $ref: '../../schemas/responses/401.yaml#/401' }
+        '404': { $ref: '../../schemas/responses/404.yaml#/404' }
+        '500': { $ref: '../../schemas/responses/500.yaml#/500' }
+        '200':
+          description: 'A list of projects is returned for the targeted org'
+          headers:
+            snyk-version-requested: { $ref: '../../schemas/headers/headers.yaml#/VersionRequestedResponseHeader' }
+            snyk-version-served: { $ref: '../../schemas/headers/headers.yaml#/VersionServedResponseHeader' }
+            snyk-request-id: { $ref: '../../schemas/headers/headers.yaml#/RequestIdResponseHeader' }
+            snyk-version-lifecycle-stage: { $ref: '../../schemas/headers/headers.yaml#/VersionStageResponseHeader' }
+            deprecation: { $ref: '../../schemas/headers/headers.yaml#/DeprecationHeader' }
+            sunset: { $ref: '../../schemas/headers/headers.yaml#/SunsetHeader' }
+            x-envoy-to-remove-normalized-request-path: { $ref: '../../schemas/headers/headers.yaml#/InternalGlooNormalizedPathHeader' }
+            x-envoy-to-remove-org-public-id: { $ref: '../../schemas/headers/headers.yaml#/InternalGlooOrgIdHeader' }
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  jsonapi: { $ref: '../../schemas/common.yaml#/JsonApi' }
+                  data:
+                    type: array
+                    items: { $ref: '../../schemas/models/project.yaml#/Project' }
+                  links: { $ref: '../../schemas/common.yaml#/Links' }
+                required: ['jsonapi', 'data', 'links' ]
+                additionalProperties: false

@@ -1,0 +1,5536 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can extract body example facts from specs 1`] = `
+Array [
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/",
+        "get",
+      ],
+      "jsonPath": "/paths/~1/get",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "get",
+      "operationId": "listVersionsv2",
+      "pathPattern": "/",
+      "summary": "List API versions",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "name": "foo",
+        "path": "/",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1/get/responses/200/content/application~1json",
+      "kind": "body-example",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "name": "foo",
+      "value": Object {
+        "versions": Array [
+          Object {
+            "id": "v2.0",
+            "links": Array [
+              Object {
+                "href": "http://127.0.0.1:8774/v2/",
+                "rel": "self",
+              },
+            ],
+            "status": "CURRENT",
+            "updated": "2011-01-21T11:33:21Z",
+          },
+          Object {
+            "id": "v3.0",
+            "links": Array [
+              Object {
+                "href": "http://127.0.0.1:8774/v3/",
+                "rel": "self",
+              },
+            ],
+            "status": "EXPERIMENTAL",
+            "updated": "2013-07-23T11:33:21Z",
+          },
+        ],
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/",
+        "get",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1/get/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "200 response",
+      "statusCode": "200",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "300",
+        },
+        "method": "get",
+        "name": "foo",
+        "path": "/",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/",
+        "get",
+        "responses",
+        "300",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1/get/responses/300/content/application~1json",
+      "kind": "body-example",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "name": "foo",
+      "value": "{
+ \\"versions\\": [
+       {
+         \\"status\\": \\"CURRENT\\",
+         \\"updated\\": \\"2011-01-21T11:33:21Z\\",
+         \\"id\\": \\"v2.0\\",
+         \\"links\\": [
+             {
+                 \\"href\\": \\"http://127.0.0.1:8774/v2/\\",
+                 \\"rel\\": \\"self\\"
+             }
+         ]
+     },
+     {
+         \\"status\\": \\"EXPERIMENTAL\\",
+         \\"updated\\": \\"2013-07-23T11:33:21Z\\",
+         \\"id\\": \\"v3.0\\",
+         \\"links\\": [
+             {
+                 \\"href\\": \\"http://127.0.0.1:8774/v3/\\",
+                 \\"rel\\": \\"self\\"
+             }
+         ]
+     }
+ ]
+}
+",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "300",
+        },
+        "method": "get",
+        "path": "/",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/",
+        "get",
+        "responses",
+        "300",
+      ],
+      "jsonPath": "/paths/~1/get/responses/300",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "300 response",
+      "statusCode": "300",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/v2",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/v2",
+        "get",
+      ],
+      "jsonPath": "/paths/~1v2/get",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "get",
+      "operationId": "getVersionDetailsv2",
+      "pathPattern": "/v2",
+      "summary": "Show API version details",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "name": "foo",
+        "path": "/v2",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/v2",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1v2/get/responses/200/content/application~1json",
+      "kind": "body-example",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "name": "foo",
+      "value": Object {
+        "version": Object {
+          "id": "v2.0",
+          "links": Array [
+            Object {
+              "href": "http://127.0.0.1:8774/v2/",
+              "rel": "self",
+            },
+            Object {
+              "href": "http://docs.openstack.org/api/openstack-compute/2/os-compute-devguide-2.pdf",
+              "rel": "describedby",
+              "type": "application/pdf",
+            },
+            Object {
+              "href": "http://docs.openstack.org/api/openstack-compute/2/wadl/os-compute-2.wadl",
+              "rel": "describedby",
+              "type": "application/vnd.sun.wadl+xml",
+            },
+            Object {
+              "href": "http://docs.openstack.org/api/openstack-compute/2/wadl/os-compute-2.wadl",
+              "rel": "describedby",
+              "type": "application/vnd.sun.wadl+xml",
+            },
+          ],
+          "media-types": Array [
+            Object {
+              "base": "application/xml",
+              "type": "application/vnd.openstack.compute+xml;version=2",
+            },
+            Object {
+              "base": "application/json",
+              "type": "application/vnd.openstack.compute+json;version=2",
+            },
+          ],
+          "status": "CURRENT",
+          "updated": "2011-01-21T11:33:21Z",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/v2",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/v2",
+        "get",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1v2/get/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "200 response",
+      "statusCode": "200",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "203",
+        },
+        "method": "get",
+        "name": "foo",
+        "path": "/v2",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/v2",
+        "get",
+        "responses",
+        "203",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1v2/get/responses/203/content/application~1json",
+      "kind": "body-example",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "name": "foo",
+      "value": Object {
+        "version": Object {
+          "id": "v2.0",
+          "links": Array [
+            Object {
+              "href": "http://23.253.228.211:8774/v2/",
+              "rel": "self",
+            },
+            Object {
+              "href": "http://docs.openstack.org/api/openstack-compute/2/os-compute-devguide-2.pdf",
+              "rel": "describedby",
+              "type": "application/pdf",
+            },
+            Object {
+              "href": "http://docs.openstack.org/api/openstack-compute/2/wadl/os-compute-2.wadl",
+              "rel": "describedby",
+              "type": "application/vnd.sun.wadl+xml",
+            },
+          ],
+          "media-types": Array [
+            Object {
+              "base": "application/xml",
+              "type": "application/vnd.openstack.compute+xml;version=2",
+            },
+            Object {
+              "base": "application/json",
+              "type": "application/vnd.openstack.compute+json;version=2",
+            },
+          ],
+          "status": "CURRENT",
+          "updated": "2011-01-21T11:33:21Z",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "203",
+        },
+        "method": "get",
+        "path": "/v2",
+        "singular": true,
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/v2",
+        "get",
+        "responses",
+        "203",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1v2/get/responses/203/content/application~1json",
+      "kind": "body-example",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "name": undefined,
+      "value": Object {
+        "id": "v2.0",
+        "links": Array [
+          Object {
+            "href": "http://23.253.228.211:8774/v2/",
+            "rel": "self",
+          },
+          Object {
+            "href": "http://docs.openstack.org/api/openstack-compute/2/os-compute-devguide-2.pdf",
+            "rel": "describedby",
+            "type": "application/pdf",
+          },
+          Object {
+            "href": "http://docs.openstack.org/api/openstack-compute/2/wadl/os-compute-2.wadl",
+            "rel": "describedby",
+            "type": "application/vnd.sun.wadl+xml",
+          },
+        ],
+        "media-types": Array [
+          Object {
+            "base": "application/xml",
+            "type": "application/vnd.openstack.compute+xml;version=2",
+          },
+          Object {
+            "base": "application/json",
+            "type": "application/vnd.openstack.compute+json;version=2",
+          },
+        ],
+        "status": "CURRENT",
+        "updated": "2011-01-21T11:33:21Z",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "203",
+        },
+        "method": "get",
+        "path": "/v2",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/v2",
+        "get",
+        "responses",
+        "203",
+      ],
+      "jsonPath": "/paths/~1v2/get/responses/203",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "203 response",
+      "statusCode": "203",
+    },
+  },
+]
+`;
+
+exports[`can extract facts from specs 1`] = `
+Array [
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "post",
+      "operationId": "uploadFile",
+      "pathPattern": "/pet/{petId}/uploadImage",
+      "security": Array [
+        Object {
+          "petstore_auth": Array [
+            "write:pets",
+            "read:pets",
+          ],
+        },
+      ],
+      "summary": "uploads an image",
+      "tags": Array [
+        "pet",
+      ],
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "path": "petId",
+        },
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "parameters",
+        "path",
+        "petId",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/parameters/0",
+      "kind": "path-parameter",
+    },
+    "value": Object {
+      "description": "ID of pet to update",
+      "in": "path",
+      "name": "petId",
+      "required": true,
+      "schema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "multipart/form-data",
+          },
+        },
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "multipart/form-data",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/requestBody/content/multipart~1form-data",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "multipart/form-data",
+      "flatSchema": Object {},
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {},
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "requestBody",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/requestBody",
+      "kind": "request",
+    },
+    "value": Object {},
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "flatSchema": Object {
+        "type": "object",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "code",
+        ],
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "code",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json/schema/properties/code",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int32",
+        "type": "integer",
+      },
+      "key": "code",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "type",
+        ],
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "type",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json/schema/properties/type",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "type",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "message",
+        ],
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "message",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json/schema/properties/message",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "message",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "successful operation",
+      "statusCode": "200",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/store/inventory",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/inventory",
+        "get",
+      ],
+      "jsonPath": "/paths/~1store~1inventory/get",
+      "kind": "operation",
+    },
+    "value": Object {
+      "description": "Returns a map of status codes to quantities",
+      "method": "get",
+      "operationId": "getInventory",
+      "pathPattern": "/store/inventory",
+      "security": Array [
+        Object {
+          "api_key": Array [],
+        },
+      ],
+      "summary": "Returns pet inventories by status",
+      "tags": Array [
+        "store",
+      ],
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/store/inventory",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/inventory",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1store~1inventory/get/responses/200/content/application~1json",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "flatSchema": Object {
+        "additionalProperties": Object {
+          "format": "int32",
+          "type": "integer",
+        },
+        "type": "object",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/store/inventory",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/inventory",
+        "get",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1store~1inventory/get/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "successful operation",
+      "statusCode": "200",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+      ],
+      "jsonPath": "/paths/~1store~1order/post",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "post",
+      "operationId": "placeOrder",
+      "pathPattern": "/store/order",
+      "summary": "Place an order for a pet",
+      "tags": Array [
+        "store",
+      ],
+      "x-codegen-request-body-name": "body",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "*/*",
+      "flatSchema": Object {
+        "type": "object",
+        "xml": Object {
+          "name": "Order",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "id",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+        "id",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "petId",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+        "petId",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/petId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "petId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "quantity",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+        "quantity",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/quantity",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int32",
+        "type": "integer",
+      },
+      "key": "quantity",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "shipDate",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+        "shipDate",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/shipDate",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "date-time",
+        "type": "string",
+      },
+      "key": "shipDate",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "status",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+        "status",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/status",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "description": "Order Status",
+        "enum": Array [
+          "placed",
+          "approved",
+          "delivered",
+        ],
+        "type": "string",
+      },
+      "key": "status",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "complete",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "*/*",
+        "complete",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody/content/*~1*/schema/properties/complete",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "default": false,
+        "type": "boolean",
+      },
+      "key": "complete",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {},
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "requestBody",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/requestBody",
+      "kind": "request",
+    },
+    "value": Object {
+      "description": "order placed for purchasing the pet",
+      "required": true,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/xml",
+      "flatSchema": Object {
+        "type": "object",
+        "xml": Object {
+          "name": "Order",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "id",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+        "id",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "petId",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+        "petId",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema/properties/petId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "petId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "quantity",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+        "quantity",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema/properties/quantity",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int32",
+        "type": "integer",
+      },
+      "key": "quantity",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "shipDate",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+        "shipDate",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema/properties/shipDate",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "date-time",
+        "type": "string",
+      },
+      "key": "shipDate",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "status",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+        "status",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema/properties/status",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "description": "Order Status",
+        "enum": Array [
+          "placed",
+          "approved",
+          "delivered",
+        ],
+        "type": "string",
+      },
+      "key": "status",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "complete",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/xml",
+        "complete",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1xml/schema/properties/complete",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "default": false,
+        "type": "boolean",
+      },
+      "key": "complete",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "flatSchema": Object {
+        "type": "object",
+        "xml": Object {
+          "name": "Order",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "id",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "id",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "petId",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "petId",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema/properties/petId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "petId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "quantity",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "quantity",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema/properties/quantity",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int32",
+        "type": "integer",
+      },
+      "key": "quantity",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "shipDate",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "shipDate",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema/properties/shipDate",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "date-time",
+        "type": "string",
+      },
+      "key": "shipDate",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "status",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "status",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema/properties/status",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "description": "Order Status",
+        "enum": Array [
+          "placed",
+          "approved",
+          "delivered",
+        ],
+        "type": "string",
+      },
+      "key": "status",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "complete",
+        ],
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+        "application/json",
+        "complete",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200/content/application~1json/schema/properties/complete",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "default": false,
+        "type": "boolean",
+      },
+      "key": "complete",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "successful operation",
+      "statusCode": "200",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "post",
+        "path": "/store/order",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order",
+        "post",
+        "responses",
+        "400",
+      ],
+      "jsonPath": "/paths/~1store~1order/post/responses/400",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "Invalid Order",
+      "statusCode": "400",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get",
+      "kind": "operation",
+    },
+    "value": Object {
+      "description": "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions",
+      "method": "get",
+      "operationId": "getOrderById",
+      "pathPattern": "/store/order/{orderId}",
+      "summary": "Find purchase order by ID",
+      "tags": Array [
+        "store",
+      ],
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "path": "orderId",
+        },
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "parameters",
+        "path",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/parameters/0",
+      "kind": "path-parameter",
+    },
+    "value": Object {
+      "description": "ID of pet that needs to be fetched",
+      "in": "path",
+      "name": "orderId",
+      "required": true,
+      "schema": Object {
+        "format": "int64",
+        "maximum": 10,
+        "minimum": 1,
+        "type": "integer",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/xml",
+      "flatSchema": Object {
+        "type": "object",
+        "xml": Object {
+          "name": "Order",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "id",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "id",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "petId",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "petId",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/petId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "petId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "quantity",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "quantity",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/quantity",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int32",
+        "type": "integer",
+      },
+      "key": "quantity",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "shipDate",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "shipDate",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/shipDate",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "date-time",
+        "type": "string",
+      },
+      "key": "shipDate",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "status",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "status",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/status",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "description": "Order Status",
+        "enum": Array [
+          "placed",
+          "approved",
+          "delivered",
+        ],
+        "type": "string",
+      },
+      "key": "status",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "complete",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "complete",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/complete",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "default": false,
+        "type": "boolean",
+      },
+      "key": "complete",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "flatSchema": Object {
+        "type": "object",
+        "xml": Object {
+          "name": "Order",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "id",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "id",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "petId",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "petId",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/petId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "petId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "quantity",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "quantity",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/quantity",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int32",
+        "type": "integer",
+      },
+      "key": "quantity",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "shipDate",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "shipDate",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/shipDate",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "date-time",
+        "type": "string",
+      },
+      "key": "shipDate",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "status",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "status",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/status",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "description": "Order Status",
+        "enum": Array [
+          "placed",
+          "approved",
+          "delivered",
+        ],
+        "type": "string",
+      },
+      "key": "status",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "complete",
+        ],
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "complete",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/complete",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "default": false,
+        "type": "boolean",
+      },
+      "key": "complete",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "successful operation",
+      "statusCode": "200",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "400",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/400",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "Invalid ID supplied",
+      "statusCode": "400",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "404",
+        },
+        "method": "get",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "get",
+        "responses",
+        "404",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "Order not found",
+      "statusCode": "404",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "delete",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "delete",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/delete",
+      "kind": "operation",
+    },
+    "value": Object {
+      "description": "For valid response try integer IDs with positive integer value.         Negative or non-integer values will generate API errors",
+      "method": "delete",
+      "operationId": "deleteOrder",
+      "pathPattern": "/store/order/{orderId}",
+      "summary": "Delete purchase order by ID",
+      "tags": Array [
+        "store",
+      ],
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "path": "orderId",
+        },
+        "method": "delete",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "delete",
+        "parameters",
+        "path",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/delete/parameters/0",
+      "kind": "path-parameter",
+    },
+    "value": Object {
+      "description": "ID of the order that needs to be deleted",
+      "in": "path",
+      "name": "orderId",
+      "required": true,
+      "schema": Object {
+        "format": "int64",
+        "minimum": 1,
+        "type": "integer",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "delete",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "delete",
+        "responses",
+        "400",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/delete/responses/400",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "Invalid ID supplied",
+      "statusCode": "400",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "404",
+        },
+        "method": "delete",
+        "path": "/store/order/{orderId}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/store/order/{}",
+        "delete",
+        "responses",
+        "404",
+      ],
+      "jsonPath": "/paths/~1store~1order~1{orderId}/delete/responses/404",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "Order not found",
+      "statusCode": "404",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+      ],
+      "jsonPath": "/paths/~1user/post",
+      "kind": "operation",
+    },
+    "value": Object {
+      "description": "This can only be done by the logged in user.",
+      "method": "post",
+      "operationId": "createUser",
+      "pathPattern": "/user",
+      "summary": "Create user",
+      "tags": Array [
+        "user",
+      ],
+      "x-codegen-request-body-name": "body",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "*/*",
+      "flatSchema": Object {
+        "type": "object",
+        "xml": Object {
+          "name": "User",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "id",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "id",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "username",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/username",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "username",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "firstName",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "firstName",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/firstName",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "firstName",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "lastName",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "lastName",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/lastName",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "lastName",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "email",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "email",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/email",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "email",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "password",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/password",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "password",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "phone",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "phone",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/phone",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "phone",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "userStatus",
+        ],
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+        "*/*",
+        "userStatus",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody/content/*~1*/schema/properties/userStatus",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "description": "User Status",
+        "format": "int32",
+        "type": "integer",
+      },
+      "key": "userStatus",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {},
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+        "requestBody",
+      ],
+      "jsonPath": "/paths/~1user/post/requestBody",
+      "kind": "request",
+    },
+    "value": Object {
+      "description": "Created user object",
+      "required": true,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "default",
+        },
+        "method": "post",
+        "path": "/user",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user",
+        "post",
+        "responses",
+        "default",
+      ],
+      "jsonPath": "/paths/~1user/post/responses/default",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "successful operation",
+      "statusCode": "default",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "post",
+      "operationId": "createUsersWithArrayInput",
+      "pathPattern": "/user/createWithArray",
+      "summary": "Creates list of users with given input array",
+      "tags": Array [
+        "user",
+      ],
+      "x-codegen-request-body-name": "body",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "*/*",
+      "flatSchema": Object {
+        "type": "array",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "id",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "id",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "username",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/username",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "username",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "firstName",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "firstName",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/firstName",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "firstName",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "lastName",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "lastName",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/lastName",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "lastName",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "email",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "email",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/email",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "email",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "password",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/password",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "password",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "phone",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "phone",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/phone",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "phone",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "userStatus",
+        ],
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "*/*",
+        "items",
+        "userStatus",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody/content/*~1*/schema/items/properties/userStatus",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "description": "User Status",
+        "format": "int32",
+        "type": "integer",
+      },
+      "key": "userStatus",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {},
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "requestBody",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/requestBody",
+      "kind": "request",
+    },
+    "value": Object {
+      "description": "List of user object",
+      "required": true,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "default",
+        },
+        "method": "post",
+        "path": "/user/createWithArray",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithArray",
+        "post",
+        "responses",
+        "default",
+      ],
+      "jsonPath": "/paths/~1user~1createWithArray/post/responses/default",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "successful operation",
+      "statusCode": "default",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "post",
+      "operationId": "createUsersWithListInput",
+      "pathPattern": "/user/createWithList",
+      "summary": "Creates list of users with given input array",
+      "tags": Array [
+        "user",
+      ],
+      "x-codegen-request-body-name": "body",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "*/*",
+      "flatSchema": Object {
+        "type": "array",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "id",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "id",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "username",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/username",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "username",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "firstName",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "firstName",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/firstName",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "firstName",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "lastName",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "lastName",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/lastName",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "lastName",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "email",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "email",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/email",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "email",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "password",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/password",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "password",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "phone",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "phone",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/phone",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "phone",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "items",
+          "userStatus",
+        ],
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "*/*",
+        "items",
+        "userStatus",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody/content/*~1*/schema/items/properties/userStatus",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "description": "User Status",
+        "format": "int32",
+        "type": "integer",
+      },
+      "key": "userStatus",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {},
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "requestBody",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/requestBody",
+      "kind": "request",
+    },
+    "value": Object {
+      "description": "List of user object",
+      "required": true,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "default",
+        },
+        "method": "post",
+        "path": "/user/createWithList",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/createWithList",
+        "post",
+        "responses",
+        "default",
+      ],
+      "jsonPath": "/paths/~1user~1createWithList/post/responses/default",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "successful operation",
+      "statusCode": "default",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/user/login",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/login",
+        "get",
+      ],
+      "jsonPath": "/paths/~1user~1login/get",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "get",
+      "operationId": "loginUser",
+      "pathPattern": "/user/login",
+      "summary": "Logs user into the system",
+      "tags": Array [
+        "user",
+      ],
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "query": "username",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/login",
+        "get",
+        "parameters",
+        "query",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1login/get/parameters/0",
+      "kind": "query-parameter",
+    },
+    "value": Object {
+      "description": "The user name for login",
+      "in": "query",
+      "name": "username",
+      "required": true,
+      "schema": Object {
+        "type": "string",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "query": "password",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/login",
+        "get",
+        "parameters",
+        "query",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user~1login/get/parameters/1",
+      "kind": "query-parameter",
+    },
+    "value": Object {
+      "description": "The password for login in clear text",
+      "in": "query",
+      "name": "password",
+      "required": true,
+      "schema": Object {
+        "type": "string",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "header": "X-Rate-Limit",
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/login",
+        "get",
+        "responses",
+        "200",
+        "headers",
+        "X-Rate-Limit",
+      ],
+      "jsonPath": "/paths/~1user~1login/get/responses/200/headers/X-Rate-Limit",
+      "kind": "response-header",
+    },
+    "value": Object {
+      "description": "calls per hour allowed by the user",
+      "name": "X-Rate-Limit",
+      "schema": Object {
+        "format": "int32",
+        "type": "integer",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "header": "X-Expires-After",
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/login",
+        "get",
+        "responses",
+        "200",
+        "headers",
+        "X-Expires-After",
+      ],
+      "jsonPath": "/paths/~1user~1login/get/responses/200/headers/X-Expires-After",
+      "kind": "response-header",
+    },
+    "value": Object {
+      "description": "date in UTC when token expires",
+      "name": "X-Expires-After",
+      "schema": Object {
+        "format": "date-time",
+        "type": "string",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/login",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+      ],
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1xml",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/xml",
+      "flatSchema": Object {
+        "type": "string",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/login",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1user~1login/get/responses/200/content/application~1json",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "flatSchema": Object {
+        "type": "string",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/login",
+        "get",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1user~1login/get/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "successful operation",
+      "statusCode": "200",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "get",
+        "path": "/user/login",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/login",
+        "get",
+        "responses",
+        "400",
+      ],
+      "jsonPath": "/paths/~1user~1login/get/responses/400",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "Invalid username/password supplied",
+      "statusCode": "400",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/user/logout",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/logout",
+        "get",
+      ],
+      "jsonPath": "/paths/~1user~1logout/get",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "get",
+      "operationId": "logoutUser",
+      "pathPattern": "/user/logout",
+      "summary": "Logs out current logged in user session",
+      "tags": Array [
+        "user",
+      ],
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "default",
+        },
+        "method": "get",
+        "path": "/user/logout",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/logout",
+        "get",
+        "responses",
+        "default",
+      ],
+      "jsonPath": "/paths/~1user~1logout/get/responses/default",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "successful operation",
+      "statusCode": "default",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "get",
+      "operationId": "getUserByName",
+      "pathPattern": "/user/{username}",
+      "summary": "Get user by user name",
+      "tags": Array [
+        "user",
+      ],
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "path": "username",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "parameters",
+        "path",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/parameters/0",
+      "kind": "path-parameter",
+    },
+    "value": Object {
+      "description": "The name that needs to be fetched. Use user1 for testing. ",
+      "in": "path",
+      "name": "username",
+      "required": true,
+      "schema": Object {
+        "type": "string",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/xml",
+      "flatSchema": Object {
+        "type": "object",
+        "xml": Object {
+          "name": "User",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "id",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "id",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "username",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/username",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "username",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "firstName",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "firstName",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/firstName",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "firstName",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "lastName",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "lastName",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/lastName",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "lastName",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "email",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "email",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/email",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "email",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "password",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/password",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "password",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "phone",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "phone",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/phone",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "phone",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/xml",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "userStatus",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/xml",
+        "userStatus",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1xml/schema/properties/userStatus",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "description": "User Status",
+        "format": "int32",
+        "type": "integer",
+      },
+      "key": "userStatus",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "flatSchema": Object {
+        "type": "object",
+        "xml": Object {
+          "name": "User",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "id",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "id",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "username",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/username",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "username",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "firstName",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "firstName",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/firstName",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "firstName",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "lastName",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "lastName",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/lastName",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "lastName",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "email",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "email",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/email",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "email",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "password",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/password",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "password",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "phone",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "phone",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/phone",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "phone",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "userStatus",
+        ],
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "userStatus",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200/content/application~1json/schema/properties/userStatus",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "description": "User Status",
+        "format": "int32",
+        "type": "integer",
+      },
+      "key": "userStatus",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "successful operation",
+      "statusCode": "200",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "400",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/400",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "Invalid username supplied",
+      "statusCode": "400",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "404",
+        },
+        "method": "get",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "get",
+        "responses",
+        "404",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/get/responses/404",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "User not found",
+      "statusCode": "404",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put",
+      "kind": "operation",
+    },
+    "value": Object {
+      "description": "This can only be done by the logged in user.",
+      "method": "put",
+      "operationId": "updateUser",
+      "pathPattern": "/user/{username}",
+      "summary": "Updated user",
+      "tags": Array [
+        "user",
+      ],
+      "x-codegen-request-body-name": "body",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "path": "username",
+        },
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "parameters",
+        "path",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/parameters/0",
+      "kind": "path-parameter",
+    },
+    "value": Object {
+      "description": "name that need to be updated",
+      "in": "path",
+      "name": "username",
+      "required": true,
+      "schema": Object {
+        "type": "string",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "*/*",
+      "flatSchema": Object {
+        "type": "object",
+        "xml": Object {
+          "name": "User",
+        },
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "id",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "id",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "format": "int64",
+        "type": "integer",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "username",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/username",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "username",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "firstName",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "firstName",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/firstName",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "firstName",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "lastName",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "lastName",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/lastName",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "lastName",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "email",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "email",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/email",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "email",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "password",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "password",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/password",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "password",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "phone",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "phone",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/phone",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "phone",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "body": Object {
+            "contentType": "*/*",
+          },
+        },
+        "jsonSchemaTrail": Array [
+          "userStatus",
+        ],
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "*/*",
+        "userStatus",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody/content/*~1*/schema/properties/userStatus",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "description": "User Status",
+        "format": "int32",
+        "type": "integer",
+      },
+      "key": "userStatus",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {},
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "requestBody",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/requestBody",
+      "kind": "request",
+    },
+    "value": Object {
+      "description": "Updated user object",
+      "required": true,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "responses",
+        "400",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/responses/400",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "Invalid user supplied",
+      "statusCode": "400",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "404",
+        },
+        "method": "put",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "put",
+        "responses",
+        "404",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/put/responses/404",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "User not found",
+      "statusCode": "404",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "delete",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "delete",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/delete",
+      "kind": "operation",
+    },
+    "value": Object {
+      "description": "This can only be done by the logged in user.",
+      "method": "delete",
+      "operationId": "deleteUser",
+      "pathPattern": "/user/{username}",
+      "summary": "Delete user",
+      "tags": Array [
+        "user",
+      ],
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
+          "path": "username",
+        },
+        "method": "delete",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "delete",
+        "parameters",
+        "path",
+        "username",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/delete/parameters/0",
+      "kind": "path-parameter",
+    },
+    "value": Object {
+      "description": "The name that needs to be deleted",
+      "in": "path",
+      "name": "username",
+      "required": true,
+      "schema": Object {
+        "type": "string",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "400",
+        },
+        "method": "delete",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "delete",
+        "responses",
+        "400",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/delete/responses/400",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "Invalid username supplied",
+      "statusCode": "400",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "404",
+        },
+        "method": "delete",
+        "path": "/user/{username}",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/user/{}",
+        "delete",
+        "responses",
+        "404",
+      ],
+      "jsonPath": "/paths/~1user~1{username}/delete/responses/404",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "User not found",
+      "statusCode": "404",
+    },
+  },
+]
+`;
+
+exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
+Array [
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+      ],
+      "jsonPath": "/paths/~1example/get",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "get",
+      "operationId": "getExamples",
+      "pathPattern": "/example",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "flatSchema": Object {
+        "type": "object",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "stringOrNumberOrObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "oneOf": Array [
+          Object {
+            "type": "string",
+          },
+          Object {
+            "type": "number",
+          },
+          Object {
+            "properties": Object {
+              "orderId": Object {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        ],
+      },
+      "key": "stringOrNumberOrObject",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "stringOrNumberOrObject",
+          "orderId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "stringOrNumberOrObject",
+        "oneOf",
+        "2",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/stringOrNumberOrObject/oneOf/2/properties/orderId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "orderId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "composedObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "allOf": Array [
+          Object {
+            "properties": Object {
+              "orderId": Object {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          Object {
+            "properties": Object {
+              "fulfillmentId": Object {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        ],
+      },
+      "key": "composedObject",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "composedObject",
+          "orderId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "0",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/0/properties/orderId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "orderId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "composedObject",
+          "fulfillmentId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "composedObject",
+        "allOf",
+        "1",
+        "fulfillmentId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/composedObject/allOf/1/properties/fulfillmentId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "fulfillmentId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "expandableObject",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "anyOf": Array [
+          Object {
+            "properties": Object {
+              "orderId": Object {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          Object {
+            "properties": Object {
+              "order": Object {
+                "properties": Object {
+                  "id": Object {
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            },
+            "type": "object",
+          },
+        ],
+      },
+      "key": "expandableObject",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "expandableObject",
+          "orderId",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "0",
+        "orderId",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/0/properties/orderId",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "orderId",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "expandableObject",
+          "order",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "1",
+        "order",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1/properties/order",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "object",
+      },
+      "key": "order",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "jsonSchemaTrail": Array [
+          "expandableObject",
+          "order",
+          "id",
+        ],
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+        "application/json",
+        "expandableObject",
+        "anyOf",
+        "1",
+        "order",
+        "id",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200/content/application~1json/schema/properties/expandableObject/anyOf/1/properties/order/properties/id",
+      "kind": "field",
+    },
+    "value": Object {
+      "flatSchema": Object {
+        "type": "string",
+      },
+      "key": "id",
+      "required": false,
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "get",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "get",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1example/get/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "succesful",
+      "statusCode": "200",
+    },
+  },
+]
+`;

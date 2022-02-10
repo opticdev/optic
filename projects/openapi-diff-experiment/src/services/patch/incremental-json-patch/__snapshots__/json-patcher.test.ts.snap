@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`json patcher helper will remove disallowed fields from object 1`] = `
+Object {
+  "description": "",
+  "properties": Object {},
+  "type": "object",
+}
+`;
+
+exports[`json patcher invalid patches do not apply 1`] = `
+Object {
+  "error": "Cannot perform an \`add\` operation at the desired path
+name: OPERATION_PATH_CANNOT_ADD
+index: 0
+operation: {
+  \\"path\\": \\"/favorite/city/0\\",
+  \\"op\\": \\"add\\",
+  \\"value\\": \\"Philadelphia\\"
+}
+tree: {
+  \\"favorite\\": {
+    \\"color\\": \\"red\\"
+  }
+}",
+  "success": false,
+}
+`;
+
+exports[`json patcher patches can be built up sequentially 1`] = `
+Object {
+  "favorite": Object {
+    "city": Array [
+      Object {
+        "name": "Philadelphia",
+      },
+    ],
+    "color": "red",
+  },
+}
+`;
+
+exports[`json patcher valid patches apply 1`] = `
+Object {
+  "favorite": Object {
+    "city": "Philadelphia",
+    "color": "red",
+  },
+}
+`;
