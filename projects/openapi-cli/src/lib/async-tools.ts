@@ -112,3 +112,15 @@ class Deferred<T> {
     });
   }
 }
+
+// execute a backpressure-less side effect
+export function tap<T>(
+  predicate: (subject: T) => void
+): (source: AsyncIterable<T>) => AsyncIterable<T> {
+  return async function* (source: AsyncIterable<T>) {
+    for await (let chunk of source) {
+      predicate(chunk);
+      yield chunk;
+    }
+  };
+}

@@ -9,5 +9,5 @@ export type SchemaObject = OpenAPIV3.SchemaObject;
 
 export interface DocumentedBody {
   body: Body;
-  schema: SchemaObject;
+  schema: SchemaObject | null;
 }

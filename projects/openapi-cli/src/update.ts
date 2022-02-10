@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
+import { tap } from './lib/async-tools';
 import * as DocumentedBodies from './shapes/streams/documented-bodies';
 import * as ShapeDiffs from './shapes/streams/shape-diffs';
 import * as Facts from './specs/streams/facts';
@@ -29,8 +30,16 @@ export function registerUpdateCommand(cli: Command) {
         absoluteSpecPath
       );
 
+      const logger = tap(console.log.bind(console));
+
       const facts = Facts.fromOpenAPISpec(spec);
-      const exampleBodies = DocumentedBodies.fromBodyExampleFacts(facts, spec);
+      const exampleBodies = logger(
+        DocumentedBodies.fromBodyExampleFacts(facts, spec)
+      );
+
+      for await (let documentedBody of exampleBodies) {
+        // console.log(documentedBody);
+      }
 
       // const shapeDiffs = ShapeDiffs.fromBodies(spec, exampleBodies);
     });

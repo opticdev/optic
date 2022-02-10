@@ -17,7 +17,7 @@ export async function* fromBodyExampleFacts(
 
   for await (let exampleFact of exampleFacts) {
     let body = exampleFact.value.value;
-    if (!body) continue;
+    if (!body) continue; // TODO: add support for external values
 
     let conceptualLocation = exampleFact.location
       .conceptualLocation as BodyExampleLocation;
@@ -31,12 +31,15 @@ export async function* fromBodyExampleFacts(
     );
 
     let resolvedSchema = jsonPointerHelpers.tryGet(spec, expectedSchemaPath);
+
     if (resolvedSchema.match) {
       let schema = resolvedSchema.value;
       yield {
         schema,
         body,
       };
+    } else {
+      yield { body, schema: null };
     }
   }
 }
