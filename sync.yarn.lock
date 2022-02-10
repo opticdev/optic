@@ -3455,11 +3455,14 @@ __metadata:
     "@types/jest": ^26.0.24
     "@types/json-stable-stringify": ^1.0.33
     "@types/node": ^17.0.15
+    "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
+    axax: ^0.2.2
     babel-jest: 26.6.0
     commander: ^9.0.0
     jest: ^26.6.0
+    json-schema-traverse: ^1.0.0
     prettier: ^2.4.1
     ts-node: ^10.4.0
     typescript: ^4.4.4
@@ -4003,6 +4006,13 @@ __metadata:
   version: 4.0.0
   resolution: "auto-bind@npm:4.0.0"
   checksum: 00cad71cce5742faccb7dd65c1b55ebc4f45add4b0c9a1547b10b05bab22813230133b0c892c67ba3eb969a4524710c5e43cc45c72898ec84e56f3a596e7a04f
+  languageName: node
+  linkType: hard
+
+"axax@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "axax@npm:0.2.2"
+  checksum: d1f20cf4186f4db3ee5e04da957759ff17e55a2e613d4f368d9f35ecc3257e88c3890a79338d2e0030d70d234385fc4f06b537cd2753e987954b3cb60519db0d
   languageName: node
   linkType: hard
 
