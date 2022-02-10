@@ -1,0 +1,13 @@
+AppOrg:
+  type: object
+  properties:
+    type:
+      type: string
+    id:
+      type: string
+      format: uuid
+    attributes:
+      type: object
+      additionalProperties: false
+  required: ['type', 'id']
+  additionalProperties: false
