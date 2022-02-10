@@ -1,0 +1,12 @@
+# Linting rules that apply to individual versioned API.next resources.
+
+extends:
+  - './apinext.yaml'
+
+rules:
+  # Individual resource specs do not contain these.
+  # They're added by `vervet compile`.
+  openapi-get-version: off
+  openapi-get-versions: off
+
+# TODO: Require compiler directives

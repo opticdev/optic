@@ -1,0 +1,25 @@
+{
+  "openapi": "3.0.1",
+  "paths": {
+    "/example": {
+      "parameters": [],
+      "get": {
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {"$ref":  "./definitions.json#/components/ExampleBody"}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "info": {
+    "version": "0.0.0",
+    "title": "Empty"
+  }
+}

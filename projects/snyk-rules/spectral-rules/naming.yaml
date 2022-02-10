@@ -1,0 +1,57 @@
+# API.Next naming conventions
+
+functions:
+  - pathCasing
+
+rules:
+
+  paths-snake-case:
+    description: Path elements must be snake_case.
+    message: '{{error}}'
+    severity: error
+    given: $.paths[*]~
+    then:
+      function: pathCasing
+
+  parameter-names-snake-case:
+    description: Parameter names must be snake_case.
+    message: '{{description}}'
+    severity: error
+    given: $..parameters[*]
+    then:
+      field: 'name'
+      function: casing
+      functionOptions:
+        type: snake
+
+  property-names-snake-case:
+    description: Property names must be snake_case.
+    message: '{{description}}'
+    severity: error
+    given: $..properties[*]~
+    then:
+      function: casing
+      functionOptions:
+        type: snake
+
+  component-names-pascal-case:
+    description: Component names must be PascalCase (except responses).
+    message: '{{description}}'
+    severity: error
+    given: $..components[?(@property !== 'responses')][*]~
+    then:
+      field: '@key'
+      function: casing
+      functionOptions:
+        type: pascal
+
+  component-response-names:
+    description: Response names must be PascalCase or a status code.
+    message: '{{description}}'
+    severity: error
+    given: $..components[?(@property === 'responses')][?(!@property.match(/^\d+$/))]~
+    then:
+      field: '@key'
+      function: casing
+      functionOptions:
+        type: pascal

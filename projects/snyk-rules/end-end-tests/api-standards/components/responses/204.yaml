@@ -1,0 +1,9 @@
+'204':
+  description: 'The operation completed successfully with no content'
+  headers:
+    snyk-version-requested: { $ref: '../headers/headers.yaml#/VersionRequestedResponseHeader' }
+    snyk-version-served: { $ref: '../headers/headers.yaml#/VersionServedResponseHeader' }
+    snyk-request-id: { $ref: '../headers/headers.yaml#/RequestIdResponseHeader' }
+    snyk-version-lifecycle-stage: { $ref: '../headers/headers.yaml#/VersionStageResponseHeader' }
+    deprecation: { $ref: '../headers/headers.yaml#/DeprecationHeader' }
+    sunset: { $ref: '../headers/headers.yaml#/SunsetHeader' }

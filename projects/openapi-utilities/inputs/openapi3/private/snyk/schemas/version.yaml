@@ -1,0 +1,7 @@
+Version:
+  name: version
+  in: query
+  required: true
+  description: The requested version of the endpoint to process the request
+  schema:
+    type: string

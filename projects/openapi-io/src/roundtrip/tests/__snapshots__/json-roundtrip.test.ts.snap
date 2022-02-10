@@ -1,0 +1,3084 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`json roundtrip can apply json patches 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\", \\"address\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    },
+    \\"address\\": {
+      \\"description\\": \\"where we live\\",
+      \\"properties\\": {
+        \\"street\\": {
+          \\"type\\": \\"string\\"
+        },
+        \\"zipCode\\": {
+          \\"type\\": \\"number\\"
+        }
+      },
+      \\"required\\": [\\"zipCode\\", \\"street\\"],
+      \\"type\\": \\"object\\"
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "address": Object {
+        "description": "where we live",
+        "properties": Object {
+          "street": Object {
+            "type": "string",
+          },
+          "zipCode": Object {
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "zipCode",
+          "street",
+        ],
+        "type": "object",
+      },
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+      "address",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip can infer style infers spaces 1`] = `
+Object {
+  "count": 2,
+  "spacer": "space",
+}
+`;
+
+exports[`json roundtrip can infer style infers tabs 1`] = `
+Object {
+  "count": 1,
+  "spacer": "tab",
+}
+`;
+
+exports[`json roundtrip patch field array scenarios can add a string to the middle of an array 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"address\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "address",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch field array scenarios can append a string to a multiline array 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\", \\"address\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+      "address",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch field array scenarios can append an object to a multi line array 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [
+    \\"name\\",
+    \\"artist\\",
+    \\"dimension\\",
+    \\"description\\",
+    \\"tags\\",
+    {
+      \\"colors\\": [\\"red\\", \\"green\\", \\"blue\\"],
+      \\"hello\\": \\"world\\"
+    }
+  ],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+      Object {
+        "colors": Array [
+          "red",
+          "green",
+          "blue",
+        ],
+        "hello": "world",
+      },
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch field array scenarios can prepend a string to a multiline array 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"address\\", \\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "address",
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch field array scenarios can remove first item in array 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch field array scenarios can remove last item in array 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch field array scenarios can remove middle item in array 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch field array scenarios can remove only item in array 1`] = `
+Object {
+  "asString": "{
+  \\"empty\\": [],
+  \\"empty-multi-line\\": [],
+  \\"colors\\": [\\"red\\", \\"green\\", \\"blue\\", \\"yellow\\"],
+  \\"withOneItem\\": []
+}
+",
+  "success": true,
+  "value": Object {
+    "colors": Array [
+      "red",
+      "green",
+      "blue",
+      "yellow",
+    ],
+    "empty": Array [],
+    "empty-multi-line": Array [],
+    "withOneItem": Array [],
+  },
+}
+`;
+
+exports[`json roundtrip patch field array scenarios empty multi line array, can be appended to 1`] = `
+Object {
+  "asString": "{
+  \\"empty\\": [],
+  \\"empty-multi-line\\": [\\"EXAMPLE\\"],
+  \\"colors\\": [\\"red\\", \\"green\\", \\"blue\\", \\"yellow\\"],
+  \\"withOneItem\\": [\\"firstAndOnly\\"]
+}
+",
+  "success": true,
+  "value": Object {
+    "colors": Array [
+      "red",
+      "green",
+      "blue",
+      "yellow",
+    ],
+    "empty": Array [],
+    "empty-multi-line": Array [
+      "EXAMPLE",
+    ],
+    "withOneItem": Array [
+      "firstAndOnly",
+    ],
+  },
+}
+`;
+
+exports[`json roundtrip patch field array scenarios empty single line array, expands 1`] = `
+Object {
+  "asString": "{
+  \\"empty\\": [\\"EXAMPLE\\"],
+  \\"empty-multi-line\\": [],
+  \\"colors\\": [\\"red\\", \\"green\\", \\"blue\\", \\"yellow\\"],
+  \\"withOneItem\\": [\\"firstAndOnly\\"]
+}
+",
+  "success": true,
+  "value": Object {
+    "colors": Array [
+      "red",
+      "green",
+      "blue",
+      "yellow",
+    ],
+    "empty": Array [
+      "EXAMPLE",
+    ],
+    "empty-multi-line": Array [],
+    "withOneItem": Array [
+      "firstAndOnly",
+    ],
+  },
+}
+`;
+
+exports[`json roundtrip patch field array scenarios string single line array, is expanded 1`] = `
+Object {
+  "asString": "{
+  \\"empty\\": [],
+  \\"empty-multi-line\\": [],
+  \\"colors\\": [\\"red\\", \\"purple\\", \\"green\\", \\"blue\\", \\"yellow\\"],
+  \\"withOneItem\\": [\\"firstAndOnly\\"]
+}
+",
+  "success": true,
+  "value": Object {
+    "colors": Array [
+      "red",
+      "purple",
+      "green",
+      "blue",
+      "yellow",
+    ],
+    "empty": Array [],
+    "empty-multi-line": Array [],
+    "withOneItem": Array [
+      "firstAndOnly",
+    ],
+  },
+}
+`;
+
+exports[`json roundtrip patch object scenarios appending a field to a multi line object with existing children 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    },
+    \\"address\\": {
+      \\"description\\": \\"where we live\\",
+      \\"properties\\": {
+        \\"street\\": {
+          \\"type\\": \\"string\\"
+        },
+        \\"zipCode\\": {
+          \\"type\\": \\"number\\"
+        }
+      },
+      \\"required\\": [\\"zipCode\\", \\"street\\"],
+      \\"type\\": \\"object\\"
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "address": Object {
+        "description": "where we live",
+        "properties": Object {
+          "street": Object {
+            "type": "string",
+          },
+          "zipCode": Object {
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "zipCode",
+          "street",
+        ],
+        "type": "object",
+      },
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch object scenarios appending a field to an empty object multi-line 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {
+    \\"address\\": {
+      \\"description\\": \\"where we live\\",
+      \\"properties\\": {
+        \\"street\\": {
+          \\"type\\": \\"string\\"
+        },
+        \\"zipCode\\": {
+          \\"type\\": \\"number\\"
+        }
+      },
+      \\"required\\": [\\"zipCode\\", \\"street\\"],
+      \\"type\\": \\"object\\"
+    }
+  },
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {
+      "address": Object {
+        "description": "where we live",
+        "properties": Object {
+          "street": Object {
+            "type": "string",
+          },
+          "zipCode": Object {
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "zipCode",
+          "street",
+        ],
+        "type": "object",
+      },
+    },
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch object scenarios appending a field to an empty object single-line 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {
+    \\"address\\": {
+      \\"description\\": \\"where we live\\",
+      \\"properties\\": {
+        \\"street\\": {
+          \\"type\\": \\"string\\"
+        },
+        \\"zipCode\\": {
+          \\"type\\": \\"number\\"
+        }
+      },
+      \\"required\\": [\\"zipCode\\", \\"street\\"],
+      \\"type\\": \\"object\\"
+    }
+  },
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {
+      "address": Object {
+        "description": "where we live",
+        "properties": Object {
+          "street": Object {
+            "type": "string",
+          },
+          "zipCode": Object {
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "zipCode",
+          "street",
+        ],
+        "type": "object",
+      },
+    },
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch object scenarios removing first field in an object 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch object scenarios removing last field in an object 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch object scenarios removing middle field in an object 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip patch object scenarios removing only field in an object 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {},
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {},
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip replace patch can replace a mapping value with a null 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": null,
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": null,
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip replace patch can replace a mapping value with a primitive 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": true,
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": true,
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip replace patch can replace a string with an object 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": {
+    \\"anything\\": \\"else\\"
+  },
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": Object {
+      "anything": "else",
+    },
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip replace patch can replace an array item 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [
+    \\"name\\",
+    {
+      \\"color\\": [1, 2, 3],
+      \\"hello\\": \\"world\\"
+    },
+    \\"dimension\\",
+    \\"description\\",
+    \\"tags\\"
+  ],
+  \\"properties\\": {
+    \\"name\\": {
+      \\"type\\": \\"string\\",
+      \\"description\\": \\"Painting name\\"
+    },
+    \\"artist\\": {
+      \\"type\\": \\"string\\",
+      \\"maxLength\\": 50,
+      \\"description\\": \\"Name of the artist\\"
+    },
+    \\"description\\": {
+      \\"type\\": [\\"string\\", \\"null\\"],
+      \\"description\\": \\"Painting description\\"
+    },
+    \\"dimension\\": {
+      \\"$ref\\": \\"#/$defs/dimension\\"
+    },
+    \\"tags\\": {
+      \\"type\\": \\"array\\",
+      \\"items\\": {
+        \\"$ref\\": \\"#/$defs/tag\\"
+      }
+    }
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "artist": Object {
+        "description": "Name of the artist",
+        "maxLength": 50,
+        "type": "string",
+      },
+      "description": Object {
+        "description": "Painting description",
+        "type": Array [
+          "string",
+          "null",
+        ],
+      },
+      "dimension": Object {
+        "$ref": "#/$defs/dimension",
+      },
+      "name": Object {
+        "description": "Painting name",
+        "type": "string",
+      },
+      "tags": Object {
+        "items": Object {
+          "$ref": "#/$defs/tag",
+        },
+        "type": "array",
+      },
+    },
+    "required": Array [
+      "name",
+      Object {
+        "color": Array [
+          1,
+          2,
+          3,
+        ],
+        "hello": "world",
+      },
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip replace patch can replace an object with a primitive 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": 12345,
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": 12345,
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;
+
+exports[`json roundtrip replace patch can replace an object with another object 1`] = `
+Object {
+  "asString": "{
+  \\"$schema\\": \\"https://json-schema.org/draft/2019-09/schema#\\",
+  \\"$id\\": \\"http://my-paintings-api.com/schemas/painting-schema.json\\",
+  \\"type\\": \\"object\\",
+  \\"title\\": \\"Painting\\",
+  \\"description\\": \\"Painting information\\",
+  \\"meta-single\\": {},
+  \\"meta\\": {},
+  \\"additionalProperties\\": true,
+  \\"required\\": [\\"name\\", \\"artist\\", \\"dimension\\", \\"description\\", \\"tags\\"],
+  \\"properties\\": {
+    \\"a\\": [\\"2\\", 3],
+    \\"hello\\": \\"world\\"
+  },
+  \\"$defs\\": {
+    \\"tag\\": {
+      \\"type\\": \\"string\\",
+      \\"enum\\": [\\"oil\\", \\"watercolor\\", \\"digital\\", \\"famous\\"]
+    },
+    \\"dimension\\": {
+      \\"type\\": \\"object\\",
+      \\"title\\": \\"Painting dimension\\",
+      \\"description\\": \\"Describes the dimension of a painting in cm\\",
+      \\"additionalProperties\\": true,
+      \\"required\\": [\\"width\\", \\"height\\"],
+      \\"properties\\": {
+        \\"width\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Width of the product\\",
+          \\"minimum\\": 1
+        },
+        \\"height\\": {
+          \\"type\\": \\"number\\",
+          \\"description\\": \\"Height of the product\\",
+          \\"minimum\\": 1
+        }
+      }
+    }
+  }
+}
+",
+  "success": true,
+  "value": Object {
+    "$defs": Object {
+      "dimension": Object {
+        "additionalProperties": true,
+        "description": "Describes the dimension of a painting in cm",
+        "properties": Object {
+          "height": Object {
+            "description": "Height of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+          "width": Object {
+            "description": "Width of the product",
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "width",
+          "height",
+        ],
+        "title": "Painting dimension",
+        "type": "object",
+      },
+      "tag": Object {
+        "enum": Array [
+          "oil",
+          "watercolor",
+          "digital",
+          "famous",
+        ],
+        "type": "string",
+      },
+    },
+    "$id": "http://my-paintings-api.com/schemas/painting-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+    "additionalProperties": true,
+    "description": "Painting information",
+    "meta": Object {},
+    "meta-single": Object {},
+    "properties": Object {
+      "a": Array [
+        "2",
+        3,
+      ],
+      "hello": "world",
+    },
+    "required": Array [
+      "name",
+      "artist",
+      "dimension",
+      "description",
+      "tags",
+    ],
+    "title": "Painting",
+    "type": "object",
+  },
+}
+`;

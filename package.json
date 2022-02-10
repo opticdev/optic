@@ -1,53 +1,14 @@
 {
+  "name": "openapi-workspaces",
   "private": true,
-  "scripts": {
-    "postpull": "printf 'Run this command:\n$ task workspaces:build\n or:\n$ task postpull\n'",
-    "bump": "node ./workspaces/scripts/bump.js"
-  },
   "workspaces": [
-    "workspaces/optic-engine-native",
-    "workspaces/optic-engine-wasm",
-    "workspaces/optic-domain",
-    "workspaces/analytics",
-    "workspaces/shape-hash",
-    "workspaces/saas-types",
-    "workspaces/graph-lib",
-    "workspaces/spectacle",
-    "workspaces/spectacle-shared",
-    "workspaces/changelog",
-    "workspaces/cli-config",
-    "workspaces/cli-shared",
-    "workspaces/client-utilities",
-    "workspaces/cli-client",
-    "workspaces/ui-v2",
-    "workspaces/cli-scripts",
-    "workspaces/cli-server",
-    "workspaces/local-cli",
-    "workspaces/snapshot-tests",
-    "workspaces/api-checks"
-  ],
-  "devDependencies": {
-    "@types/debug": "^4.1.5",
-    "@types/fs-extra": "^9.0.8",
-    "all-contributors-cli": "^6.20.0",
-    "fs-extra": "^9.1.0",
-    "husky": "^6.0.0",
-    "lint-staged": "^10.5.4",
-    "prettier": "^2.0.4",
-    "semver": "^7.3.2",
-    "typescript": "3.9",
-    "wait-on": "^4.0.0",
-    "wsrun": "^5.2.0"
-  },
-  "dependencies": {
-    "debug": "^4.1.1"
-  },
-  "lint-staged": {
-    "**/*.+(js|jsx|ts|tsx|json|css)": [
-      "yarn prettier --write"
-    ],
-    "**/*.rs": [
-      "rustfmt --config-path ./rustfmt.toml"
-    ]
-  }
+    "projects/json-pointer-helpers",
+    "projects/openapi-io",
+    "projects/openapi-utilities",
+    "projects/openapi-diff-experiment",
+    "projects/api-checks",
+    "projects/snyk-rules",
+    "projects/optic-ci",
+    "projects/openapi-cli"
+  ]
 }

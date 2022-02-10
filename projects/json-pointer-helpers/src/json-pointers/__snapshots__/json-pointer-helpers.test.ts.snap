@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`get gets an object 1`] = `
+Object {
+  "be": "123",
+  "the": "bc",
+}
+`;
+
+exports[`json schema pointer helpers appends are escaped 1`] = `"/paths/~1example~1{todoId}/get"`;
+
+exports[`json schema pointer helpers can compile an array of paths 1`] = `"/~1paths~1pets~1get/hello/goodbye"`;
+
+exports[`json schema pointer helpers can parse a json pointer into parts 1`] = `
+Array [
+  "paths",
+  "/user/{username}",
+  "get",
+]
+`;
+
+exports[`json schema pointer helpers can unescapeUriSafePointer 1`] = `"#/paths/~1pet~1{petId}~1uploadImage/post/responses/200/content/application~1json/schema/properties"`;
+
+exports[`relative can make pointer relative 1`] = `"/start-trek/voyager"`;
+
+exports[`relative throws if improper lineage make pointer relative 1`] = `"/other-place/start-trek/voyager can not be relative to /paths/~1example/schema -- need same lineage"`;
+
+exports[`relative throws if improper lineage make pointer relative 2`] = `"/paths/~1example/schema/start-trek/voyager can not be relative to /paths/~1example/schema/start-trek/voyager/season-1"`;

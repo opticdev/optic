@@ -1,3 +1,0 @@
-feature: ['feature/*', 'feat/*', 'feature-*', 'feat-*', 'enhancement-*', 'enhancement/*']
-fix: ['fix/*', 'issue-*']
-chore: chore/*
