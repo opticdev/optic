@@ -1,3 +1,5 @@
+export * from 'axax/esnext';
+
 // Fork an async iterable and share the backpressure (preventing memory bloat, but
 // reading at rate of slowest consumer).
 // Won't allow new forks once consumption has started through `forkable.start()`.
