@@ -33,14 +33,11 @@ export function registerUpdateCommand(cli: Command) {
       const logger = tap(console.log.bind(console));
 
       const facts = Facts.fromOpenAPISpec(spec);
-      const exampleBodies = logger(
-        DocumentedBodies.fromBodyExampleFacts(facts, spec)
-      );
+      const exampleBodies = DocumentedBodies.fromBodyExampleFacts(facts, spec);
 
-      for await (let documentedBody of exampleBodies) {
-        // console.log(documentedBody);
+      const shapeDiffs = logger(ShapeDiffs.fromDocumentedBodies(exampleBodies));
+
+      for await (let shapeDiff of shapeDiffs) {
       }
-
-      // const shapeDiffs = ShapeDiffs.fromBodies(spec, exampleBodies);
     });
 }

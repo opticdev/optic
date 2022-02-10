@@ -1,13 +1,13 @@
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
-import { Body, SchemaObject } from '../body';
+import { DocumentedBody, SchemaObject } from '../body';
 import { diffBodyBySchema } from '../diffs';
 
-export async function* forBodies(
-  schema: SchemaObject,
-  bodies: AsyncIterable<Body>
+export async function* fromDocumentedBodies(
+  bodies: AsyncIterable<DocumentedBody>
 ) {
-  for await (let body of bodies) {
+  for await (let { body, schema } of bodies) {
+    if (!schema) return;
     yield* diffBodyBySchema(body, schema);
   }
 }
