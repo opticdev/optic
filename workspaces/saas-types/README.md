@@ -1,1 +1,0 @@
-This project will be replaced by a dependency generated from the backend. Until then, we must keep them in sync
