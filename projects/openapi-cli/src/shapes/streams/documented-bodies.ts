@@ -7,7 +7,7 @@ export async function* fromBodyExampleFacts(
   facts: AsyncIterable<IFact<OpenApiFact>>
 ): AsyncIterable<DocumentedBody> {
   let forkableFacts = forkable(facts);
-  let exampleFacts = Facts.bodyExamples(forkableFacts.fork());
+  let exampleFacts = Facts.bodyExamples(forkableFacts.fork()());
 
   for await (let exampleFact of exampleFacts) {
     // const exampleBody =
@@ -20,65 +20,101 @@ export async function* fromBodyExampleFacts(
 }
 
 // fork an async iterable and share the backpressure (preventing memory bloat, but reading at rate of slowest consumer)
-function forkable<T>(iterable: AsyncIterable<T>): {
-  fork: () => AsyncIterable<T>;
+export function forkable<T>(iterable: AsyncIterable<T>): {
+  fork: () => () => AsyncIterable<T>;
 } {
   const source = iterable[Symbol.asyncIterator]();
-  let branches: AsyncIterable<T>[] = [];
+  let branches: (() => AsyncIterable<T>)[] = [];
 
-  // which branches have closed
   let started = false;
-  let pendingResults: Promise<IteratorResult<T>>[];
-  let pendingConsumers: Promise<void>[] = [];
-  let branchResolvers: (() => void)[] = [];
+  let reading = false;
+  let pendingRead = Promise.resolve();
+  let pendingResults: (Promise<IteratorResult<T>> | null)[] = [];
+  let pendingConsumers: Promise<void[]> = Promise.resolve([]);
+  let deferredConsumers: Deferred<void>[] = [];
 
   async function next(): Promise<void> {
     started = true;
-    await Promise.all(pendingConsumers);
-    pendingConsumers = [];
+    if (reading) return;
+
+    let resolveRead;
+    reading = true;
+    pendingRead = new Promise((resolve) => (resolveRead = resolve));
+
+    await Promise.all(deferredConsumers.map(({ promise }) => promise));
+    deferredConsumers = [];
     pendingResults = [];
 
     let pendingResult = source.next();
 
-    for (let i in branches) {
-      pendingResults.push({ ...pendingResult }); // queue new result for each consumer
-      pendingConsumers.push(
-        // allow each consumer to indicate they have consumed their result
-        new Promise((resolve) => branchResolvers.push(resolve))
-      );
-    }
+    pendingResults = branches.map(() => pendingResult);
+    deferredConsumers = branches.map(() => new Deferred());
+
+    pendingConsumers = Promise.all(
+      deferredConsumers.map(({ promise }) => promise)
+    );
 
     await pendingResult;
+    reading = false;
+    resolveRead();
   }
 
-  async function* branch(i: number): AsyncIterable<T> {
+  function branch(i: number): () => AsyncIterable<T> {
     if (started)
       throw new Error(
         'Cannot fork async iterable after consumption has already started'
       );
-    while (true) {
-      let pendingResult = pendingResults[i];
-      if (!pendingResult) {
-        await next();
-      } else {
-        let result = await pendingResult;
 
-        if (result.value) yield result.value;
+    return async function* () {
+      while (true) {
+        let pendingResult = pendingResults[i];
+        pendingResults[i] = null;
 
-        let resolve = branchResolvers[i];
-        if (resolve) resolve();
+        if (!pendingResult) {
+          if (!reading) {
+            await next();
+          } else {
+            await pendingRead;
+          }
+        } else {
+          let result = await pendingResult;
 
-        if (result.done) return;
+          if (result.value) yield result.value;
+
+          let deferred = deferredConsumers[i];
+          if (deferred) {
+            setTimeout(() => {
+              deferred.resolve();
+            });
+          }
+
+          if (result.done) return;
+
+          await pendingConsumers;
+        }
       }
-    }
+    };
   }
 
   return {
-    fork(): AsyncIterable<T> {
+    fork(): () => AsyncIterable<T> {
       let newBranchIndex = branches.length;
       let newBranch = branch(newBranchIndex);
       branches.push(newBranch);
       return newBranch;
     },
   };
+}
+
+class Deferred<T> {
+  promise: Promise<T>;
+  resolve!: (result: T) => void;
+  reject!: (err: Error) => void;
+
+  constructor() {
+    this.promise = new Promise((resolve, reject) => {
+      this.resolve = resolve;
+      this.reject = reject;
+    });
+  }
 }
