@@ -1,5 +1,0 @@
-version: 2
-main:
-  type: static
-  path: /workspaces/ui/build
-  spa: true

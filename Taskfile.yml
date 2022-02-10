@@ -1,163 +1,38 @@
-version: '3'
-
-dotenv:
-  - .env
-
-env:
-  DOCKER_REGISTRY: 513974440343.dkr.ecr.us-east-1.amazonaws.com
-  NODE_ENV: '{{default "development" .NODE_ENV}}'
-
-includes:
-  optic-engine-native:
-    taskfile: workspaces/optic-engine-native/Taskfile.yml
-  ui-v2:
-    taskfile: workspaces/ui-v2/Taskfile.yml
-    dir: workspaces/ui-v2
-  regression:
-    taskfile: taskfiles/regression-tests/Taskfile.yml
-  release:
-    taskfile: taskfiles/release/Taskfile.yml
-  release:side-channel:
-    taskfile: taskfiles/release/side-channel/Taskfile.yml
-  utility:
-    taskfile: taskfiles/utility/Taskfile.yml
-  verdaccio:
-    taskfile: docker/private-npm-registry/Taskfile.yml
-    dir: docker/private-npm-registry
-  website:
-    taskfile: website/Taskfile.yml
-    dir: website
+# https://taskfile.dev/#/installation
+version: "3"
 
 tasks:
-  # Set up a local environment
-  postpull:
+  default:
+    desc: Perform a clean build
     cmds:
-      - task: 'workspaces:clean'
-      - FLAGS_FILE=.env task workspaces:setenv
-      - task: 'workspaces:build'
+      - task: setup
+      - task: clean
+      - task: build
 
-  workspaces:setup:
-    env:
-      OPTIC_SKIP_PREBUILT_INSTALLS: 'true'
-    cmds:
-      - yarn install
-      - yarn run husky install
-    generates:
-      - .yarn/**/*
-      - yarn.lock
-    sources:
-      - workspaces/*/package.json
-      - package.json
-      - yarn.lock
-
-  workspaces:setenv:
-    desc: Ensure workspace projects have .env files
-    vars:
-      FLAGS_FILE: '{{.FLAGS_FILE}}'
-    cmds:
-      - |
-        if [[ -n "$FLAGS_FILE" ]]
-        then
-          echo "Feature flags found ($FLAGS_FILE), copying to packages for build and runtime."
-          cp $FLAGS_FILE workspaces/local-cli/.env
-          cp $FLAGS_FILE workspaces/cli-server/.env
-          cp $FLAGS_FILE workspaces/cli-scripts/.env
-          cp $FLAGS_FILE workspaces/optic-engine/.env
-          cp $FLAGS_FILE workspaces/optic-engine-native/.env
-          cp $FLAGS_FILE workspaces/ui-v2/.env.development.local
-          cp $FLAGS_FILE workspaces/ui-v2/.env.production.local
-        else
-          echo "Please specify the FLAGS_FILE environment variable"
-          exit 1
-        fi
-
-  workspaces:test:
-    desc: Test Yarn workspaces
-    cmds:
-      - yarn wsrun --stages --report --fast-exit --exclude-missing ws:test
-
-  workspaces:build:
-    desc: Build Yarn workspaces
-    deps: ['workspaces:setup']
-    env:
-      CI: 'FALSE'
-    cmds:
-      - yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
-
-    sources:
-      - '!workspaces/*/build/**/*'
-    generates:
-      - workspaces/optic-engine-wasm/browser/**/*
-      - workspaces/optic-engine-wasm/build/**/*
-      - workspaces/optic-engine-wasm/target/**/*
-      - workspaces/*/build/**/*
-
-  workspaces:build:ci:
-    desc: CI workflow
-    vars:
-      FLAGS_FILE: '{{.FLAGS_FILE}}'
-    cmds:
-      - task: workspaces:setup
-      - task: workspaces:clean
-      - task: workspaces:setenv
-        env:
-          FLAGS_FILE: '{{.FLAGS_FILE}}'
-      - task: workspaces:build
-      - task: workspaces:test
-      - task: flush-to-disk
-
-  workspaces:clean:
-    desc: Remove previous build artifacts
-    cmds:
-      - yarn wsrun --report --fast-exit --exclude-missing ws:clean
-
-  workspaces:watch:
-    desc: Watch source files and build as they change
-    deps: [workspaces:watch:typescript]
-    cmds:
-      - echo "Watching ended"
-
-  workspaces:watch:typescript:
-    desc: Watch all the source of Typescripts workspaces and automatically recompile (with a single watcher)
-    cmds:
-      - yarn tsc -b --watch
-
-  workspaces:watch:wasm:
-    desc: Watch the source of WASM targets and automatically recompile
-    cmds:
-      - yarn wsrun --parallel --exclude-missing ws:watch-wasm
-
-  npm:publish:
-    deps:
-      - workspaces:build
-    env:
-      OPTIC_SKIP_PREBUILT_INSTALLS: 'false'
+  setup:
+    desc: Install dependencies
     cmds:
       - yarn install
 
-  flush-to-disk:
+  build:
+    desc: Build
     cmds:
-      - sudo /usr/sbin/purge
-    status:
-      - uname -a | grep -qv Darwin
+      - yarn workspaces foreach -ptv --no-private run ws:build
 
-  docker:slack-notifier:
-    desc: Posts a message to Slack
-    summary: |
-      Posts a docker build announcement to Slack. To disable announcements
-      unset SLACK_WEBHOOK.
+  clean:
+    desc: Clean
+    cmds:
+      - yarn workspaces foreach -pv --no-private run ws:clean
 
-      Expected env:
-        * REPO — the Docker image repository
-        * SLACK_WEBHOOK — a Slack webhook URL
-        * TAG — the Docker image tag
-        * USER — the user to direct the message at
-    vars:
-      MESSAGE: '{{.USER}}: *{{.REPO}}* `{{.TAG}}` was pushed.'
+  test:
+    desc: Test
+    cmds:
+      - yarn workspaces foreach -pv --no-private run ws:test
+
+  openapi-diff:docker:build:
+    desc: Build the interactive baseline image used to generate OpenAPI specs
+    dir: projects/openapi-diff
     env:
-      DATA: '{"text":"{{.MESSAGE}}"}'
+      TAG: '{{default "local" .TAG}}'
     cmds:
-      - echo $DATA
-      - 'curl -X POST -H "Content-type: application/json" --data "$DATA" $SLACK_WEBHOOK'
-    status:
-      - test -z $SLACK_WEBHOOK
+      - docker build {{.CLI_ARGS}} optic-baseline:$TAG .

@@ -1,0 +1,65 @@
+{
+  "name": "@useoptic/openapi-io",
+  "version": "0.22.7",
+  "packageManager": "yarn@3.0.2",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "/build"
+  ],
+  "scripts": {
+    "dev:test": "jest --colors",
+    "build": "yarn tsc --build --verbose && copyfiles -u 1 src/**/*.js build/",
+    "resolver:start": "yarn build && micro -l tcp://localhost:5001 build/entry-points/servers/resolver.js",
+    "ws:build": "yarn build",
+    "ws:test": "yarn dev:test",
+    "ws:clean": "rm -rf build"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.0",
+    "@types/babel__core": "^7",
+    "@types/copyfiles": "^2",
+    "@types/crypto-js": "^4.0.2",
+    "@types/fs-extra": "^9.0.13",
+    "@types/is-url": "^1.2.30",
+    "@types/jest": "^26.0.24",
+    "@types/lodash.sortby": "^4.7.6",
+    "@types/micro": "^7.3.6",
+    "@types/micro-cors": "^0",
+    "@types/node": "^17.0.15",
+    "@types/node-fetch": "2.5.12",
+    "babel-jest": "26.6.0",
+    "chai": "^4.3.4",
+    "copyfiles": "^2.4.1",
+    "jest": "26.6.0",
+    "micro": "^9.3.4",
+    "micro-cors": "^0.1.1",
+    "prettier": "^2.4.1",
+    "ts-node": "^10.3.1",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^9.0.9",
+    "@jsdevtools/ono": "^7.1.3",
+    "@useoptic/json-pointer-helpers": "workspace:*",
+    "@useoptic/openapi-utilities": "workspace:*",
+    "copyfiles": "^2.4.1",
+    "crypto-js": "^4.1.1",
+    "fast-deep-equal": "^3.1.3",
+    "fast-json-patch": "^3.1.0",
+    "fs-extra": "^10.0.0",
+    "is-url": "^1.2.4",
+    "js-yaml": "^4.1.0",
+    "json-stable-stringify": "^1.0.1",
+    "lodash.sortby": "^4.7.0",
+    "node-fetch": "^2.6.7",
+    "prettier": "2.5.0",
+    "ts-invariant": "^0.9.3",
+    "yaml-ast-parser": "^0.0.43"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "build"
+    ]
+  }
+}
