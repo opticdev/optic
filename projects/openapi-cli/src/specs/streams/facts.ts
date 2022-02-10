@@ -5,6 +5,7 @@ import {
   OpenApiFact,
   OpenApiBodyExampleFact,
   OpenApiKind,
+  OpenApiBodyFact,
 } from '@useoptic/openapi-utilities';
 
 export async function* fromOpenAPISpec(
@@ -21,6 +22,16 @@ export async function* bodyExamples(
   for await (let fact of facts) {
     if (fact.location.kind === OpenApiKind.BodyExample) {
       yield fact as IFact<OpenApiBodyExampleFact>;
+    }
+  }
+}
+
+export async function* bodyFacts(
+  facts: AsyncIterable<IFact<OpenApiFact>>
+): AsyncIterable<IFact<OpenApiBodyFact>> {
+  for await (let fact of facts) {
+    if (fact.location.kind === OpenApiKind.Body) {
+      yield fact as IFact<OpenApiBodyFact>;
     }
   }
 }

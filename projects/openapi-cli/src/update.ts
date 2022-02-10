@@ -30,7 +30,7 @@ export function registerUpdateCommand(cli: Command) {
       );
 
       const facts = Facts.fromOpenAPISpec(spec);
-      const exampleBodies = DocumentedBodies.fromBodyExampleFacts(facts);
+      const exampleBodies = DocumentedBodies.fromBodyExampleFacts(facts, spec);
 
       // const shapeDiffs = ShapeDiffs.fromBodies(spec, exampleBodies);
     });
