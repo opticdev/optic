@@ -19,7 +19,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noImplicitAny": false,
-    "downlevelIteration": true,
+    "downlevelIteration": true
   },
   "include": ["src"]
 }
