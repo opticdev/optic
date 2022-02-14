@@ -33,9 +33,9 @@ export async function specFromInputToResults(
       };
     }
     case SpecVersionFrom.git: {
-      const gitRepo = await inGit(path.join(workingDir, input.name));
+      const gitRepo = await inGit(workingDir);
       if (!gitRepo) {
-        throw new Error(`${input.name} is not in a git repo`);
+        throw new Error(`${workingDir} is not a git repo`);
       }
       return await parseOpenAPIFromRepoWithSourcemap(
         input.name,

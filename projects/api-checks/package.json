@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/api-checks",
   "packageManager": "yarn@3.0.2",
-  "version": "0.22.5",
+  "version": "0.22.7",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -30,6 +30,7 @@
     "@types/copyfiles": "^2",
     "@types/follow-redirects": "^1",
     "@types/fs-extra": "^9.0.13",
+    "@types/is-url": "^1.2.30",
     "@types/jest": "^27.4.0",
     "@types/json-stable-stringify": "^1.0.33",
     "@types/jsonpath": "^0.2.0",
@@ -66,6 +67,7 @@
     "ink": "^3.2.0",
     "ink-link": "^2.0.0",
     "ink-testing-library": "^2.1.0",
+    "is-url": "^1.2.4",
     "jsonpath": "^1.1.1",
     "lodash.flatten": "^4.4.0",
     "lodash.groupby": "^4.6.0",

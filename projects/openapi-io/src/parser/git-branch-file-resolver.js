@@ -1,10 +1,12 @@
-"use strict";
-const fs = require("fs");
-const { ono } = require("@jsdevtools/ono");
-const url = require("@apidevtools/json-schema-ref-parser/lib/util/url");
-const { ResolverError } = require("@apidevtools/json-schema-ref-parser/lib/util/errors");
-const exec = require('child_process').exec
-const path = require("path")
+'use strict';
+const fs = require('fs');
+const { ono } = require('@jsdevtools/ono');
+const url = require('@apidevtools/json-schema-ref-parser/lib/util/url');
+const {
+  ResolverError,
+} = require('@apidevtools/json-schema-ref-parser/lib/util/errors');
+const exec = require('child_process').exec;
+const path = require('path');
 
 module.exports = (gitBaseRepo, branch) => ({
   /**
@@ -24,7 +26,7 @@ module.exports = (gitBaseRepo, branch) => ({
    * @param {string} file.extension - The lowercased file extension (e.g. ".txt", ".html", etc.)
    * @returns {boolean}
    */
-  canRead (file) {
+  canRead(file) {
     return url.isFileSystemPath(file.url);
   },
 
@@ -36,20 +38,30 @@ module.exports = (gitBaseRepo, branch) => ({
    * @param {string} file.extension - The lowercased file extension (e.g. ".txt", ".html", etc.)
    * @returns {Promise<Buffer>}
    */
-  read (file) {
-
-    return new Promise(((resolve, reject) => {
-      const toGit = path.relative(gitBaseRepo, file.url)
-      const command = `git show ${branch}:${toGit}`
+  read(file) {
+    return new Promise((resolve, reject) => {
+      const toGit = path.relative(gitBaseRepo, file.url);
+      const command = `git show ${branch}:${toGit}`;
       try {
-        exec(command, {cwd: gitBaseRepo, maxBuffer: 1024 * 1024 * 100}, ((err, stdout, stderr) => {
-          if (err) reject(new ResolverError(ono(err, `Error opening file "${path}"`), path));
-          if (stdout) resolve(stdout)
-        }))
+        exec(
+          command,
+          { cwd: gitBaseRepo, maxBuffer: 1024 * 1024 * 100 },
+          (err, stdout, stderr) => {
+            if (err)
+              reject(
+                new ResolverError(
+                  ono(err.message, `Error opening file "${path}"`),
+                  path
+                )
+              );
+            if (stdout) resolve(stdout);
+          }
+        );
+      } catch (err) {
+        reject(
+          new ResolverError(ono(err, `Error opening file "${path}"`), path)
+        );
       }
-      catch (err) {
-        reject(new ResolverError(ono(err, `Error opening file "${path}"`), path));
-      }
-    }));
-  }
+    });
+  },
 });
