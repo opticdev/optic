@@ -10,7 +10,6 @@ export enum ShapeDiffResultKind {
 
 // The result of matching a body against it's (JSON) schema
 export type ShapeDiffResult = {
-  kind: ShapeDiffResultKind;
   keyword: JsonSchemaKnownKeyword;
 
   // TODO: figure out if location belongs here, or whether one level up (its just passed
