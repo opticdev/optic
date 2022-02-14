@@ -425,7 +425,7 @@ export class OpenAPITraverser
           yield this.onBodyExample(
             example,
             contentType,
-            jsonPointer.append(jsonPath, 'examples', 'name'),
+            jsonPointer.append(jsonPath, 'examples', name),
             conceptualPath,
             { ...location, name },
             name
