@@ -18,7 +18,6 @@ export class BodyObservationsTraverser {
   // emits every intermediate result state, to allow control over compute by consumer
   *results(): IterableIterator<ShapeObservationResult> {
     if (!this.body) return;
-
     let observedTypes = this.traverseRoot(this.body.value);
     let currentResult = ShapeObservationResult.create();
 
@@ -33,7 +32,7 @@ export class BodyObservationsTraverser {
   }
 
   private *traverseRoot(rootValue: any): IterableIterator<IObservedTypes> {
-    let path = '/';
+    let path = '';
     yield* this.traverseValue(rootValue, path);
   }
 
@@ -57,7 +56,7 @@ export class BodyObservationsTraverser {
         ...Object.keys(bodyValue),
       ]);
 
-      for (let [key, fieldValue] of bodyValue.entries()) {
+      for (let [key, fieldValue] of Object.entries(bodyValue)) {
         let fieldPath = jsonPointerHelpers.append(path, key);
         yield* this.traverseValue(fieldValue, fieldPath);
       }

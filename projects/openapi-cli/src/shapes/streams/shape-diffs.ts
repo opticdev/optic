@@ -6,7 +6,7 @@ import { diffBodyBySchema } from '../diffs';
 export async function* fromDocumentedBodies(
   bodies: AsyncIterable<DocumentedBody>
 ) {
-  for await (let { body, schema } of bodies) {
+  for await (let { body, schema, bodyLocation } of bodies) {
     if (!schema) return;
     yield* diffBodyBySchema(body, schema);
   }

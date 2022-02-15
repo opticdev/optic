@@ -16,12 +16,18 @@ export async function* fromBodyExampleFacts(
   let exampleFacts = Facts.bodyExamples(facts);
 
   for await (let exampleFact of exampleFacts) {
-    let body = exampleFact.value.value;
-    if (!body) continue; // TODO: add support for external values
+    let exampleBody = exampleFact.value;
+    if (!exampleBody) continue; // TODO: add support for external values
+    let body = {
+      contentType: exampleBody.contentType,
+      value: exampleBody.value,
+    };
 
     let conceptualLocation = exampleFact.location
       .conceptualLocation as BodyExampleLocation;
     let jsonPath = exampleFact.location.jsonPath;
+
+    let bodyLocation = conceptualLocation; // bit nasty, relying on BodyExampleLocation being a superset of BodyLocation
 
     let expectedSchemaPath = jsonPointerHelpers.append(
       'singular' in conceptualLocation
@@ -37,9 +43,10 @@ export async function* fromBodyExampleFacts(
       yield {
         schema,
         body,
+        bodyLocation,
       };
     } else {
-      yield { body, schema: null };
+      yield { body, schema: null, bodyLocation };
     }
   }
 }
