@@ -7,6 +7,8 @@ export function* primitiveVisitor(
   path: JsonPath,
   primitive: boolean | number | null | string
 ): IterableIterator<IObservedTypes> {
+  if (visitType !== VisitType.Primitive) return;
+
   let types: ObservableJsonTypes[] = [];
   if (typeof primitive === 'boolean') {
     types.push(ObservableJsonTypes.Boolean);
