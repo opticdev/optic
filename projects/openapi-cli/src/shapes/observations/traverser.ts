@@ -6,6 +6,7 @@ import {
 } from './result';
 import { Body } from '../body';
 import { observationVisitors, VisitType } from './visitors';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export class BodyObservationsTraverser {
   private body?: Body;
@@ -42,9 +43,24 @@ export class BodyObservationsTraverser {
   ): IterableIterator<IObservedTypes> {
     if (typeof bodyValue === 'undefined') return;
 
-    if (typeof bodyValue === 'object' && Array.isArray(bodyValue)) {
+    if (Array.isArray(bodyValue)) {
+      yield* observationVisitors(VisitType.Array, path, bodyValue);
+
+      for (let [index, item] of bodyValue.entries()) {
+        let itemPath = jsonPointerHelpers.append(path, '' + index);
+        yield* this.traverseValue(item, itemPath);
+      }
     } else if (typeof bodyValue === 'object') {
       // objects
+      yield* observationVisitors(VisitType.Object, path, bodyValue);
+      yield* observationVisitors(VisitType.ObjectKeys, path, [
+        ...Object.keys(bodyValue),
+      ]);
+
+      for (let [key, fieldValue] of bodyValue.entries()) {
+        let fieldPath = jsonPointerHelpers.append(path, key);
+        yield* this.traverseValue(fieldValue, fieldPath);
+      }
     } else {
       // primitive types
       yield* observationVisitors(VisitType.Primitive, path, bodyValue);

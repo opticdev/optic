@@ -21,7 +21,7 @@ export function* objectVisitor(
 export function* objectKeyVisitor(
   visitType: VisitType,
   path: JsonPath,
-  objectKey: string
+  objectKeys: string[]
 ): IterableIterator<IObservedTypes> {
-  if (visitType !== VisitType.ObjectKey) return;
+  if (visitType !== VisitType.ObjectKeys) return;
 }

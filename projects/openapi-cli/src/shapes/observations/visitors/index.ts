@@ -8,7 +8,7 @@ import { primitiveVisitor } from './primitive';
 
 export enum VisitType {
   Object = 'object',
-  ObjectKey = 'objectKey',
+  ObjectKeys = 'objectKeys',
   Array = 'array',
   Primitive = 'primitive',
 }
@@ -16,7 +16,7 @@ export enum VisitType {
 export type BodyObservationsVisitor =
   | ArrayVisitor
   | BodyVisitor
-  | BodyKeyVisitor
+  | BodyKeysVisitor
   | PrimitiveVisitor;
 
 export function* observationVisitors(
@@ -44,11 +44,11 @@ interface BodyVisitor {
   ): IterableIterator<IObservedTypes>;
 }
 
-interface BodyKeyVisitor {
+interface BodyKeysVisitor {
   (
     type: VisitType,
     path: JsonPath,
-    value: string
+    value: string[]
   ): IterableIterator<IObservedTypes>;
 }
 
