@@ -59,7 +59,6 @@ export function registerUpdateCommand(cli: Command) {
 function last<T>(iter: Iterable<T>): T {
   let last;
   for (let item of iter) {
-    console.log('item', item);
     last = item;
   }
   return last;
