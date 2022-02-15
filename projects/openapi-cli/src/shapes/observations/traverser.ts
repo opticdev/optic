@@ -47,7 +47,7 @@ export class BodyObservationsTraverser {
       yield* observationVisitors(VisitType.Array, path, bodyValue);
 
       for (let [index, item] of bodyValue.entries()) {
-        let itemPath = jsonPointerHelpers.append(path, '' + index);
+        let itemPath = jsonPointerHelpers.append(path, '0');
         yield* this.traverseValue(item, itemPath);
       }
     } else if (typeof bodyValue === 'object') {
