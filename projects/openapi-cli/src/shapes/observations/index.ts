@@ -1,10 +1,10 @@
 import { Body } from '../body';
-import { ShapeObservationResult } from './result';
+import { IShapeObservationResult } from './result';
 import { BodyObservationsTraverser } from './traverser';
 
 export function* observeBodyShape(
   body: Body
-): IterableIterator<ShapeObservationResult> {
+): IterableIterator<IShapeObservationResult> {
   let traverser = new BodyObservationsTraverser();
   traverser.traverse(body);
   yield* traverser.results();

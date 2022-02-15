@@ -2,6 +2,7 @@ import { JsonPath } from '@useoptic/openapi-io';
 import {
   IObservedTypes,
   ObservedTypes,
+  IShapeObservationResult,
   ShapeObservationResult,
 } from './result';
 import { Body } from '../body';
@@ -16,7 +17,7 @@ export class BodyObservationsTraverser {
   }
 
   // emits every intermediate result state, to allow control over compute by consumer
-  *results(): IterableIterator<ShapeObservationResult> {
+  *results(): IterableIterator<IShapeObservationResult> {
     if (!this.body) return;
     let observedTypes = this.traverseRoot(this.body.value);
     let currentResult = ShapeObservationResult.create();
