@@ -4,33 +4,66 @@ export interface IShapeObservationResult {
   typesByPath: Map<JsonPath, IObservedTypes>;
 }
 
-export class ShapeObservationResult implements IShapeObservationResult {
-  typesByPath: Map<JsonPath, IObservedTypes>;
-  constructor() {
-    this.typesByPath = new Map();
+export class ShapeObservationResult {
+  static create(): IShapeObservationResult {
+    return { typesByPath: new Map() };
   }
 
-  entries(): IterableIterator<[JsonPath, IObservedTypes]> {
-    return this.typesByPath.entries();
+  static clone(self: IShapeObservationResult) {
+    return { typesByPath: new Map(self.typesByPath) };
   }
 
-  paths(): IterableIterator<JsonPath> {
-    return this.typesByPath.keys();
+  static entries(
+    self: IShapeObservationResult
+  ): IterableIterator<[JsonPath, IObservedTypes]> {
+    return self.typesByPath.entries();
   }
 
-  types(): IterableIterator<IObservedTypes> {
-    return this.typesByPath.values();
+  static paths(self: IShapeObservationResult): IterableIterator<JsonPath> {
+    return self.typesByPath.keys();
   }
 
-  union(newResult: ShapeObservationResult) {
-    for (let [path, newTypes] of newResult.entries()) {
-      let existingTypes = this.typesByPath[path];
+  static types(
+    self: IShapeObservationResult
+  ): IterableIterator<IObservedTypes> {
+    return self.typesByPath.values();
+  }
+
+  static observe(
+    self: IShapeObservationResult,
+    observation: IObservedTypes
+  ): IShapeObservationResult {
+    const { path } = observation;
+    const updated = ShapeObservationResult.clone(self);
+
+    let existingObservation = self.typesByPath[path];
+    if (!existingObservation) {
+      existingObservation = ObservedTypes.fromPath(path);
+    }
+
+    let unionedTypes = ObservedTypes.union(existingObservation, observation);
+    updated[path] = unionedTypes;
+
+    return updated;
+  }
+
+  static union(
+    self: IShapeObservationResult,
+    newResult: IShapeObservationResult
+  ): IShapeObservationResult {
+    const updated = ShapeObservationResult.clone(self);
+
+    for (let [path, newTypes] of ShapeObservationResult.entries(newResult)) {
+      let existingTypes = self.typesByPath[path];
       if (!existingTypes) {
-        this.typesByPath[path] = existingTypes = new ObservedTypes(path);
+        existingTypes = ObservedTypes.fromPath(path);
       }
 
-      existingTypes.union(newTypes);
+      let unionedTypes = ObservedTypes.union(existingTypes, newTypes);
+      updated.typesByPath[path] = unionedTypes;
     }
+
+    return updated;
   }
 }
 
@@ -51,35 +84,55 @@ export interface IObservedTypes {
   propertySets: Set<string>[];
 }
 
-export class ObservedTypes implements IObservedTypes {
-  types: Set<ObservableJsonTypes>;
-  propertySets: Set<string>[] = [];
-
-  constructor(public path: JsonPath) {
-    this.types = new Set();
+export class ObservedTypes {
+  static fromPath(path: JsonPath) {
+    return {
+      path,
+      types: [],
+      propertySets: [],
+    };
   }
 
-  union(newObservation: ObservedTypes) {
-    for (let newType of newObservation.types) {
-      this.types.add(newType);
+  static union(
+    observationA: IObservedTypes,
+    observationB: IObservedTypes
+  ): IObservedTypes {
+    if (observationA.path !== observationB.path) {
+      throw new Error('Cannot union observed types with different paths');
+    }
+    let path = observationA.path;
+
+    let updatedTypes = new Set(observationA.types);
+    for (let newType of observationB.types) {
+      updatedTypes.add(newType);
     }
 
-    for (let propertySet of newObservation.propertySets) {
-      this.addPropertySet(propertySet);
+    let updatedPropertySets = [...observationA.propertySets];
+    for (let propertySet of observationB.propertySets) {
+      ObservedTypes.addPropertySet(updatedPropertySets, propertySet);
     }
+
+    return {
+      path,
+      types: updatedTypes,
+      propertySets: updatedPropertySets,
+    };
   }
 
-  wasUnknown() {
-    return this.types.size === 0;
+  static wasUnknown(observedTypes: IObservedTypes) {
+    for (let _type of observedTypes.types) {
+      return true;
+    }
+    return false;
   }
 
-  addPropertySet(newSet: Set<string>) {
-    const exists = this.propertySets.some(
+  static addPropertySet(existingSets: Set<string>[], newSet: Set<string>) {
+    const exists = existingSets.some(
       (existingSet) => symmetricDifference(existingSet, newSet).size === 0
     );
 
     if (!exists) {
-      this.propertySets.push(newSet);
+      existingSets.push(newSet);
     }
   }
 }
