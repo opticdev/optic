@@ -36,13 +36,13 @@ export class ShapeObservationResult {
     const { path } = observation;
     const updated = ShapeObservationResult.clone(self);
 
-    let existingObservation = self.typesByPath[path];
+    let existingObservation = updated.typesByPath[path];
     if (!existingObservation) {
       existingObservation = ObservedTypes.fromPath(path);
     }
 
     let unionedTypes = ObservedTypes.union(existingObservation, observation);
-    updated[path] = unionedTypes;
+    updated.typesByPath.set(path, unionedTypes);
 
     return updated;
   }
@@ -60,7 +60,7 @@ export class ShapeObservationResult {
       }
 
       let unionedTypes = ObservedTypes.union(existingTypes, newTypes);
-      updated.typesByPath[path] = unionedTypes;
+      updated.typesByPath.set(path, unionedTypes);
     }
 
     return updated;
