@@ -208,24 +208,26 @@ describe('json roundtrip', () => {
   describe('patch object scenarios', () => {
     it('appending a field to a multi line object with existing children', async () => {
       expect(
-        await jsonPatchFixture(
-          'simple-json-schema-example.json',
-          [
-            {
-              op: 'add',
-              path: jsonPointerHelpers.compile(['properties', 'address']),
-              value: {
-                type: 'object',
-                description: 'where we live',
-                required: ['zipCode', 'street'],
-                properties: {
-                  zipCode: { type: 'number' },
-                  street: { type: 'string' },
+        cleanSnapshot(
+          await jsonPatchFixture(
+            'simple-json-schema-example.json',
+            [
+              {
+                op: 'add',
+                path: jsonPointerHelpers.compile(['properties', 'address']),
+                value: {
+                  type: 'object',
+                  description: 'where we live',
+                  required: ['zipCode', 'street'],
+                  properties: {
+                    zipCode: { type: 'number' },
+                    street: { type: 'string' },
+                  },
                 },
               },
-            },
-          ],
-          JsonRoundtripper
+            ],
+            JsonRoundtripper
+          )
         )
       ).toMatchSnapshot();
     });
@@ -249,7 +251,7 @@ describe('json roundtrip', () => {
         ],
         JsonRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('appending a field to an empty object single-line', async () => {
@@ -273,7 +275,7 @@ describe('json roundtrip', () => {
         JsonRoundtripper
       );
 
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('removing first field in an object', async () => {
@@ -288,7 +290,7 @@ describe('json roundtrip', () => {
         JsonRoundtripper
       );
 
-      expect(patch).toMatchSnapshot();
+      expect(cleanSnapshot(patch)).toMatchSnapshot();
     });
 
     it('removing middle field in an object', async () => {
@@ -302,7 +304,7 @@ describe('json roundtrip', () => {
         ],
         JsonRoundtripper
       );
-      expect(patch).toMatchSnapshot();
+      expect(cleanSnapshot(patch)).toMatchSnapshot();
     });
 
     it('removing last field in an object', async () => {
@@ -316,7 +318,7 @@ describe('json roundtrip', () => {
         ],
         JsonRoundtripper
       );
-      expect(patch).toMatchSnapshot();
+      expect(cleanSnapshot(patch)).toMatchSnapshot();
     });
 
     it('removing only field in an object', async () => {
@@ -334,7 +336,7 @@ describe('json roundtrip', () => {
         ],
         JsonRoundtripper
       );
-      expect(patch).toMatchSnapshot();
+      expect(cleanSnapshot(patch)).toMatchSnapshot();
     });
   });
 
@@ -351,7 +353,7 @@ describe('json roundtrip', () => {
         ],
         JsonRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('can replace a string with an object', async () => {
@@ -366,7 +368,7 @@ describe('json roundtrip', () => {
         ],
         JsonRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('can replace an object with another object', async () => {
@@ -381,7 +383,7 @@ describe('json roundtrip', () => {
         ],
         JsonRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('can replace a mapping value with a null', async () => {
@@ -396,7 +398,7 @@ describe('json roundtrip', () => {
         ],
         JsonRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('can replace a mapping value with a primitive', async () => {
@@ -411,7 +413,7 @@ describe('json roundtrip', () => {
         ],
         JsonRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('can replace an array item', async () => {
@@ -426,7 +428,7 @@ describe('json roundtrip', () => {
         ],
         JsonRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
   });
 

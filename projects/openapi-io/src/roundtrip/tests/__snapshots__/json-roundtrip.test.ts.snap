@@ -1409,7 +1409,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -1584,7 +1584,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -1760,7 +1760,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -1918,7 +1918,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -2053,7 +2053,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -2187,7 +2187,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -2325,7 +2325,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -2445,7 +2445,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -2541,7 +2541,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -2662,7 +2662,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -2818,7 +2818,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -2947,7 +2947,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -3046,7 +3046,7 @@ Object {
   }
 }
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.json",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
