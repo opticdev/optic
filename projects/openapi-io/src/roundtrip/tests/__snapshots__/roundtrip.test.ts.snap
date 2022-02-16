@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`specs can be updated in-memory 1`] = `
+Array [
+  Object {
+    "asString": "type: object
+required: []
+properties:
+  token:
+    type: string
+  user:
+    $ref: definitions.yaml#/User
+example:
+  token: '11111111'
+  user:
+    $ref: definitions.yaml#/User/example
+",
+    "success": true,
+    "value": Object {
+      "example": Object {
+        "token": "11111111",
+        "user": Object {
+          "$ref": "definitions.yaml#/User/example",
+        },
+      },
+      "properties": Object {
+        "token": Object {
+          "type": "string",
+        },
+        "user": Object {
+          "$ref": "definitions.yaml#/User",
+        },
+      },
+      "required": Array [],
+      "type": "object",
+    },
+  },
+  Object {
+    "asString": "openapi: 3.0.1
+info:
+  title: Changed ya
+  version: v0
+paths:
+  /example:
+    get:
+      responses:
+        '200':
+          description: some thing
+          content:
+            application/json:
+              schema:
+                $ref: external-multiple.yaml
+",
+    "success": true,
+    "value": Object {
+      "info": Object {
+        "title": "Changed ya",
+        "version": "v0",
+      },
+      "openapi": "3.0.1",
+      "paths": Object {
+        "/example": Object {
+          "get": Object {
+            "responses": Object {
+              "200": Object {
+                "content": Object {
+                  "application/json": Object {
+                    "schema": Object {
+                      "$ref": "external-multiple.yaml",
+                    },
+                  },
+                },
+                "description": "some thing",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+]
+`;

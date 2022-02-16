@@ -3,7 +3,7 @@ import {
   PatchApplyResult,
   ReduceOperationType,
   RoundtripProvider,
-} from './roundtrip-provider';
+} from '../roundtrip-provider';
 import jsonpatch, { AddOperation, Operation } from 'fast-json-patch';
 import {
   insertLines,
@@ -13,7 +13,7 @@ import {
   replaceRange,
   startsWithWhitespace,
   yamlSpacer,
-} from './helpers/lines';
+} from '../helpers/lines';
 import fs from 'fs-extra';
 import {
   Kind,
@@ -23,19 +23,17 @@ import {
   YAMLSequence,
 } from 'yaml-ast-parser';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { resolveJsonPointerInYamlAst } from '../parser/openapi-sourcemap-parser';
+import { resolveJsonPointerInYamlAst } from '../../parser/openapi-sourcemap-parser';
 import invariant from 'ts-invariant';
-import ast from './helpers/ast';
-import jsonLike from './helpers/json-like';
-import yamlLike from './helpers/yaml-like';
-import { formatYaml } from './helpers/format/format';
+import ast from '../helpers/ast';
+import jsonLike from '../helpers/json-like';
+import yamlLike from '../helpers/yaml-like';
+import { formatYaml } from '../helpers/format/format';
 import {
-  findNextChar,
-  findPreviousChar,
   returnLineForPosition,
   returnLineNumberPosition,
-} from './helpers/next-or-last-char';
-import { loadYaml } from '../write';
+} from '../helpers/next-or-last-char';
+import { loadYaml } from '../../write';
 
 const { EOL } = require('os');
 
@@ -46,15 +44,12 @@ export type YamlRoundTripConfig = {
 class YamlRoundtripImpl implements RoundtripProvider<YamlRoundTripConfig> {
   async applyPatches(
     filePath: string,
+    fileContents: string,
     operations: Operation[],
     config: YamlRoundTripConfig | undefined
   ): Promise<PatchApplyResult> {
-    const currentContents = (await fs.readFile(filePath)).toString();
-
-    const writeConfig = config
-      ? config
-      : await this.inferConfig(currentContents);
-    const initialDocument = await this.parse(currentContents);
+    const writeConfig = config ? config : await this.inferConfig(fileContents);
+    const initialDocument = await this.parse(filePath, fileContents);
 
     invariant(
       initialDocument.success,
@@ -66,7 +61,7 @@ class YamlRoundtripImpl implements RoundtripProvider<YamlRoundTripConfig> {
     const ops: Operation[] = JSON.parse(JSON.stringify(operations));
 
     const reducerInput: ReduceOperationType = {
-      contents: currentContents,
+      contents: fileContents,
       currentValue: initialDocument.value,
     };
 
@@ -97,9 +92,10 @@ class YamlRoundtripImpl implements RoundtripProvider<YamlRoundTripConfig> {
         success: true,
         value: updatedDocument.currentValue,
         asString: formatted,
+        filePath,
       };
     } catch (e: any) {
-      return { success: false, error: e.message };
+      return { success: false, error: e.message, filePath };
     }
   }
 
@@ -145,7 +141,7 @@ class YamlRoundtripImpl implements RoundtripProvider<YamlRoundTripConfig> {
 
   name: string = 'yaml';
 
-  async parse(contents: string): Promise<ParseResult> {
+  async parse(filepath: string, contents: string): Promise<ParseResult> {
     try {
       const value = loadYaml(contents);
       return { value, success: true };

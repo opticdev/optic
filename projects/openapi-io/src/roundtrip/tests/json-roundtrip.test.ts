@@ -1,5 +1,5 @@
 import { jsonPatchFixture, yamlPatchFixture } from './fixture';
-import { JsonRoundtripper } from '../json';
+import { JsonRoundtripper } from '../write-surgical/json';
 import path from 'path';
 import fs from 'fs-extra';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
