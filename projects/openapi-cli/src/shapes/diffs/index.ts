@@ -2,7 +2,8 @@ import { ShapeDiffTraverser } from './traverser';
 import { ShapeDiffResult, ShapeDiffResultKind } from './result';
 import { Body, SchemaObject } from '../body';
 
-export type { ShapeDiffResult, ShapeDiffResultKind };
+export type { ShapeDiffResult };
+export { ShapeDiffResultKind };
 
 export function* diffBodyBySchema(
   body: Body,
