@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/example-snyk-api-checks",
   "packageManager": "yarn@3.0.2",
-  "version": "0.22.7",
+  "version": "0.22.8",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -26,9 +26,9 @@
     "@types/json-stable-stringify": "^1.0.33",
     "@types/nice-try": "^2.1.0",
     "@types/node": "^17.0.15",
-    "babel-jest": "26.6.0",
+    "babel-jest": "^27.5.1",
     "chai": "^4.3.4",
-    "jest": "^26.6.0",
+    "jest": "^27.5.1",
     "json-stable-stringify": "^1.0.1",
     "prettier": "^2.4.1",
     "ts-node": "^10.4.0",

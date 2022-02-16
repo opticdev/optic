@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/openapi-cli",
   "packageManager": "yarn@3.0.2",
-  "version": "0.22.3",
+  "version": "0.22.4",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -25,16 +25,19 @@
     "@types/jest": "^26.0.24",
     "@types/json-stable-stringify": "^1.0.33",
     "@types/node": "^17.0.15",
-    "babel-jest": "26.6.0",
-    "jest": "^26.6.0",
+    "babel-jest": "^27.5.1",
+    "jest": "^27.5.1",
     "prettier": "^2.4.1",
     "ts-node": "^10.4.0",
     "typescript": "^4.4.4"
   },
   "dependencies": {
+    "@useoptic/json-pointer-helpers": "workspace:*",
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
-    "commander": "^9.0.0"
+    "axax": "^0.2.2",
+    "commander": "^9.0.0",
+    "json-schema-traverse": "^1.0.0"
   },
   "jest": {
     "testPathIgnorePatterns": [
