@@ -2,7 +2,7 @@ import { ShapeDiffResult, ShapeDiffResultKind } from '../../diffs';
 import { OperationGroup, PatchImpact, ShapePatch } from '..';
 import { SchemaObject } from '../../body';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { JsonPath } from '@useoptic/openapi-io';
+import { Schema } from '../../schema';
 import { BodyLocation } from '@useoptic/openapi-utilities';
 
 export function* requiredShapePatch(
@@ -49,21 +49,13 @@ export function* requiredShapePatch(
 
   // ok now we're ready for the property
   if (!(parent.properties || {}).hasOwnProperty(diff.key)) {
-    // TODO: build new JSONM schema for diff example value
-    console.warn(
-      'TODO: build new JSON schema from diff example and patch it for additional property diffs'
+    groupedOperations.push(
+      OperationGroup.create(`add property ${diff.key} schema to properties`, {
+        op: 'add',
+        path: newPropertyPath,
+        value: Schema.fromShapeDiff(diff),
+      })
     );
-    // groupedOperations.push(
-    //   OperationGroup.create(`add property ${diff.key} schema to properties`, {
-    //     op: 'add',
-    //     path: newPropertyPath,
-    //     // build new root schema
-    //     value: streamingJsonSchemaBuilder(
-    //       differ,
-    //       jsonPointerHelpers.get(diff.example, diff.propertyExamplePath)
-    //     ),
-    //   })
-    // );
   }
 
   if (!(parent.required || []).includes(diff.key)) {
