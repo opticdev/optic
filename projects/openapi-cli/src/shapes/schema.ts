@@ -44,10 +44,10 @@ export class Schema {
     return merged;
   }
 
-  static mergeOperations(
+  static *mergeOperations(
     currentSchema: SchemaObject,
     newSchema: SchemaObject
-  ): Operation[] {
+  ): IterableIterator<Operation> {
     const merged = { ...currentSchema, ...newSchema };
     const currrentKeys = new Set(Object.keys(currentSchema));
 
@@ -59,31 +59,28 @@ export class Schema {
       allowedKeys = allowedKeysForInteger;
     if (newSchema.oneOf) allowedKeys = allowedKeysForOneOf;
 
-    let ops: Operation[] = [];
-
     for (let [key, value] of Object.entries(merged)) {
       let path = jsonPointerHelpers.append('', key);
 
       if (!allowedKeys.includes(key) || isExtension(key)) {
-        ops.push({
+        yield {
           op: 'remove',
           path,
-        });
+        };
       } else if (!currrentKeys.has(key)) {
-        ops.push({
+        yield {
           op: 'add',
           path,
           value,
-        });
+        };
       } else if (value !== currentSchema[value]) {
-        ops.push({
+        yield {
           op: 'replace',
           path,
           value,
-        });
+        };
       }
     }
-    return ops;
   }
 }
 

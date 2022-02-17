@@ -37,15 +37,24 @@ export function* requiredShapePatch(
         })
       );
     } else {
-      groupedOperations.push(
-        OperationGroup.create(`add ${diff.key} one of`, {
-          op: 'add',
-          path: jsonPointerHelpers.append(diff.propertyPath, 'oneOf'),
-          value: [currentPropertySchema, Schema.fromValue(diff.example)], // whatever it was before, with whatever it is now
-        })
-      );
+      let mergeOperations = [
+        ...Schema.mergeOperations(Schema.clone(currentPropertySchema), {
+          oneOf: [
+            Schema.clone(currentPropertySchema),
+            Schema.fromValue(diff.example),
+          ],
+        }),
+      ];
 
-      // TODO: determine how we clean up the schema after we've just changed it to a one-off
+      groupedOperations.push(
+        OperationGroup.create(
+          `replace ${diff.key} with a one of containing both types`,
+          ...mergeOperations.map((op) => ({
+            ...op,
+            path: jsonPointerHelpers.join(diff.propertyPath, op.path),
+          }))
+        )
+      );
     }
 
     return groupedOperations;
