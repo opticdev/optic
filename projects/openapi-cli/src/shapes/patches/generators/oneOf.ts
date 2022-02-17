@@ -7,12 +7,12 @@ import { OperationGroup, PatchImpact, ShapePatch } from '..';
 import { SchemaObject, Schema } from '../../schema';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { JsonPath } from '@useoptic/openapi-io';
-import { BodyLocation } from '@useoptic/openapi-utilities';
+import { ShapeLocation } from '../..';
 
-export function* requiredShapePatch(
+export function* oneOfPatches(
   diff: ShapeDiffResult,
   schema: SchemaObject,
-  shapeContext: { location: BodyLocation }
+  shapeContext: { location: ShapeLocation }
 ): IterableIterator<ShapePatch> {
   if (
     diff.kind !== ShapeDiffResultKind.UnmatchedType ||

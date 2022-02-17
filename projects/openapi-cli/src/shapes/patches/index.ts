@@ -1,4 +1,19 @@
+import { BodyLocation } from '../body';
 import { Operation } from 'fast-json-patch';
+import { ShapeDiffResult } from '../diffs';
+import { SchemaObject } from '../schema';
+
+import { shapePatchGenerators } from './generators';
+
+export function* generateShapePatches(
+  diff: ShapeDiffResult,
+  schema: SchemaObject,
+  shapeContext: { location: BodyLocation }
+): IterableIterator<ShapePatch> {
+  for (let generator of shapePatchGenerators) {
+    yield* generator(diff, schema, shapeContext);
+  }
+}
 
 export interface ShapePatch {
   description: string;

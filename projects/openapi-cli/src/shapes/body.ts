@@ -6,6 +6,7 @@ export interface Body {
   value: any;
 }
 
+export type { BodyLocation };
 export type SchemaObject = OpenAPIV3.SchemaObject;
 
 export interface DocumentedBody {
