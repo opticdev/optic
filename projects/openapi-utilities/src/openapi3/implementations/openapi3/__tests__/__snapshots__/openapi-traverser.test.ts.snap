@@ -44,7 +44,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1/get/responses/200/content/application~1json",
+      "jsonPath": "/paths/~1/get/responses/200/content/application~1json/examples/foo",
       "kind": "body-example",
     },
     "value": Object {
@@ -123,7 +123,7 @@ Array [
         "300",
         "application/json",
       ],
-      "jsonPath": "/paths/~1/get/responses/300/content/application~1json",
+      "jsonPath": "/paths/~1/get/responses/300/content/application~1json/examples/foo",
       "kind": "body-example",
     },
     "value": Object {
@@ -224,7 +224,7 @@ Array [
         "200",
         "application/json",
       ],
-      "jsonPath": "/paths/~1v2/get/responses/200/content/application~1json",
+      "jsonPath": "/paths/~1v2/get/responses/200/content/application~1json/examples/foo",
       "kind": "body-example",
     },
     "value": Object {
@@ -315,7 +315,7 @@ Array [
         "203",
         "application/json",
       ],
-      "jsonPath": "/paths/~1v2/get/responses/203/content/application~1json",
+      "jsonPath": "/paths/~1v2/get/responses/203/content/application~1json/examples/foo",
       "kind": "body-example",
     },
     "value": Object {
@@ -377,7 +377,7 @@ Array [
         "203",
         "application/json",
       ],
-      "jsonPath": "/paths/~1v2/get/responses/203/content/application~1json",
+      "jsonPath": "/paths/~1v2/get/responses/203/content/application~1json/example",
       "kind": "body-example",
     },
     "value": Object {
