@@ -8,7 +8,7 @@
     "/build"
   ],
   "scripts": {
-    "dev:test": "jest --colors -u",
+    "dev:test": "jest --colors",
     "build": "yarn tsc --build --verbose && copyfiles -u 1 src/**/*.js build/",
     "resolver:start": "yarn build && micro -l tcp://localhost:5001 build/entry-points/servers/resolver.js",
     "ws:build": "yarn build",
