@@ -12,7 +12,7 @@ export interface ShapePatchGenerator {
   (
     diff: ShapeDiffResult,
     schema: SchemaObject,
-    shapeContext: { location: ShapeLocation }
+    shapeContext: { location?: ShapeLocation }
   ): IterableIterator<ShapePatch>;
 }
 

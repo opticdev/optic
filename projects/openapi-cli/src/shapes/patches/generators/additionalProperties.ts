@@ -8,7 +8,7 @@ import { ShapeLocation } from '../..';
 export function* additionalPropertiesPatches(
   diff: ShapeDiffResult,
   schema: SchemaObject,
-  shapeContext: { location: ShapeLocation }
+  shapeContext: { location?: ShapeLocation }
 ): IterableIterator<ShapePatch> {
   if (diff.kind !== ShapeDiffResultKind.AdditionalProperty) return;
 
@@ -74,7 +74,9 @@ export function* additionalPropertiesPatches(
     description: `add property ${diff.key}`,
     impact: [
       PatchImpact.Addition,
-      'inResponse' in shapeContext.location
+      !shapeContext.location
+        ? PatchImpact.BackwardsCompatibilityUnknown
+        : 'inResponse' in shapeContext.location
         ? PatchImpact.BackwardsCompatible
         : PatchImpact.BackwardsIncompatible,
     ],

@@ -12,7 +12,7 @@ import { ShapeLocation } from '../..';
 export function* oneOfPatches(
   diff: ShapeDiffResult,
   schema: SchemaObject,
-  shapeContext: { location: ShapeLocation }
+  shapeContext: { location?: ShapeLocation }
 ): IterableIterator<ShapePatch> {
   if (
     diff.kind !== ShapeDiffResultKind.UnmatchedType ||
@@ -36,7 +36,9 @@ export function* oneOfPatches(
     description: `expand one of for ${diff.key}`,
     impact: [
       PatchImpact.Addition,
-      'inRequest' in shapeContext.location
+      !shapeContext.location
+        ? PatchImpact.BackwardsCompatibilityUnknown
+        : 'inRequest' in shapeContext.location
         ? PatchImpact.BackwardsCompatible
         : PatchImpact.BackwardsIncompatible,
     ],

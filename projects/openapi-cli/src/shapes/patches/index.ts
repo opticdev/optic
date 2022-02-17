@@ -31,6 +31,7 @@ export type { Operation };
 export enum PatchImpact {
   BackwardsCompatible = 'BackwardsCompatible',
   BackwardsIncompatible = 'BackwardsIncompatible',
+  BackwardsCompatibilityUnknown = 'BackwardsCompatibilityUnknown',
   Addition = 'Addition',
 }
 

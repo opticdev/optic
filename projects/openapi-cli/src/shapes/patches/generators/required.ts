@@ -8,7 +8,7 @@ import { ShapeLocation } from '../..';
 export function* requiredPatches(
   diff: ShapeDiffResult,
   schema: SchemaObject,
-  shapeContext: { location: ShapeLocation }
+  shapeContext: { location?: ShapeLocation }
 ): IterableIterator<ShapePatch> {
   if (diff.kind !== ShapeDiffResultKind.MissingRequiredProperty) return;
 
@@ -56,7 +56,9 @@ export function* requiredPatches(
   yield {
     impact: [
       PatchImpact.Addition,
-      'inRequest' in shapeContext.location
+      !shapeContext.location
+        ? PatchImpact.BackwardsCompatibilityUnknown
+        : 'inRequest' in shapeContext.location
         ? PatchImpact.BackwardsCompatible
         : PatchImpact.BackwardsIncompatible,
     ],
@@ -70,7 +72,9 @@ export function* requiredPatches(
   yield {
     description: `remove property ${diff.key}`,
     impact: [
-      'inRequest' in shapeContext.location
+      !shapeContext.location
+        ? PatchImpact.BackwardsCompatibilityUnknown
+        : 'inRequest' in shapeContext.location
         ? PatchImpact.BackwardsCompatible
         : PatchImpact.BackwardsIncompatible,
     ],

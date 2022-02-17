@@ -20,7 +20,7 @@ export class Schema {
     let currentExample = value;
 
     // keep extending schema until we hit zero diffs
-    while (diffs.length > 0 || currentExample) {}
+    // while (diffs.length > 0 || currentExample) {}
 
     return schema;
   }
