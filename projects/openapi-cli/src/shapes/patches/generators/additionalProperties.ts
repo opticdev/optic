@@ -53,7 +53,9 @@ export function* requiredShapePatch(
       OperationGroup.create(`add property ${diff.key} schema to properties`, {
         op: 'add',
         path: newPropertyPath,
-        value: Schema.fromShapeDiff(diff),
+        value: Schema.fromValue(
+          jsonPointerHelpers.get(diff.example, diff.propertyExamplePath)
+        ),
       })
     );
   }

@@ -45,7 +45,6 @@ export function* requiredShapePatch(
 
     yield OperationGroup.create(
       `remove ${key} from parent's properties object`,
-
       {
         op: 'remove',
         path: propertyPath,
