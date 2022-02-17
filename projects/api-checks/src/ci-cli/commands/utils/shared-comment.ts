@@ -4,7 +4,7 @@ export const OPTIC_COMMENT_SURVEY_LINK = 'https://forms.gle/9CgSy6ytjeLasnfWA';
 
 export const findOpticCommentId = async (
   octokit: Octokit,
-  commitIdentifier: string,
+  comparisonHash: string,
   owner: string,
   repo: string,
   pull_number: number
@@ -40,7 +40,7 @@ export const findOpticCommentId = async (
 
   return (
     comments.find((comment) =>
-      new RegExp(commitIdentifier).test(comment.body || '')
+      new RegExp(comparisonHash).test(comment.body || '')
     )?.id || null
   );
 };
