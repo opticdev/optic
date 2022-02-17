@@ -2,6 +2,7 @@ import { OpenAPIV3 } from '../specs/index';
 import { diffBodyBySchema } from '.';
 import { ShapeDiffResult, ShapeDiffResultKind } from './diffs';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { Operation } from './patches';
 
 export type SchemaObject = OpenAPIV3.SchemaObject;
 
@@ -16,29 +17,73 @@ export class Schema {
     return root;
   }
 
+  static clone(value: SchemaObject): SchemaObject {
+    return JSON.parse(JSON.stringify(value));
+  }
+
   static merge(
     currentSchema: SchemaObject,
     newSchema: SchemaObject
   ): SchemaObject {
     const merged = { ...currentSchema, ...newSchema };
 
-    if (currentSchema.type !== newSchema.type) {
-      let allowedKeys: string[] = [...allowedMetaDataForAll, 'type'];
-      if (newSchema.type === 'object') allowedKeys = allowedKeysForObject;
-      if (newSchema.type === 'array') allowedKeys = allowedKeysForArray;
-      if (newSchema.type === 'string') allowedKeys = allowedKeysForString;
-      if (newSchema.type === 'number' || newSchema.type === 'integer')
-        allowedKeys = allowedKeysForInteger;
-      if (newSchema.oneOf) allowedKeys = allowedKeysForOneOf;
+    let allowedKeys: string[] = [...allowedMetaDataForAll, 'type'];
+    if (newSchema.type === 'object') allowedKeys = allowedKeysForObject;
+    if (newSchema.type === 'array') allowedKeys = allowedKeysForArray;
+    if (newSchema.type === 'string') allowedKeys = allowedKeysForString;
+    if (newSchema.type === 'number' || newSchema.type === 'integer')
+      allowedKeys = allowedKeysForInteger;
+    if (newSchema.oneOf) allowedKeys = allowedKeysForOneOf;
 
-      for (let key in merged) {
-        if (!allowedKeys.includes(key) || isExtension(key)) {
-          delete merged[key];
-        }
+    for (let key in merged) {
+      if (!allowedKeys.includes(key) || isExtension(key)) {
+        delete merged[key];
       }
     }
 
     return merged;
+  }
+
+  static mergeOperations(
+    currentSchema: SchemaObject,
+    newSchema: SchemaObject
+  ): Operation[] {
+    const merged = { ...currentSchema, ...newSchema };
+    const currrentKeys = new Set(Object.keys(currentSchema));
+
+    let allowedKeys: string[] = [...allowedMetaDataForAll, 'type'];
+    if (newSchema.type === 'object') allowedKeys = allowedKeysForObject;
+    if (newSchema.type === 'array') allowedKeys = allowedKeysForArray;
+    if (newSchema.type === 'string') allowedKeys = allowedKeysForString;
+    if (newSchema.type === 'number' || newSchema.type === 'integer')
+      allowedKeys = allowedKeysForInteger;
+    if (newSchema.oneOf) allowedKeys = allowedKeysForOneOf;
+
+    let ops: Operation[] = [];
+
+    for (let [key, value] of Object.entries(merged)) {
+      let path = jsonPointerHelpers.append('', key);
+
+      if (!allowedKeys.includes(key) || isExtension(key)) {
+        ops.push({
+          op: 'remove',
+          path,
+        });
+      } else if (!currrentKeys.has(key)) {
+        ops.push({
+          op: 'add',
+          path,
+          value,
+        });
+      } else if (value !== currentSchema[value]) {
+        ops.push({
+          op: 'replace',
+          path,
+          value,
+        });
+      }
+    }
+    return ops;
   }
 }
 
