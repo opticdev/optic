@@ -1,6 +1,15 @@
 import { yamlPatchFixture } from './fixture';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { YamlRoundtripper } from '../write-surgical/yaml';
+import { PatchApplyResult } from '../roundtrip-provider';
+import path from 'path';
+
+function cleanSnapshot(input: PatchApplyResult) {
+  if (input.filePath) {
+    input.filePath = path.parse(input.filePath).name;
+  }
+  return input;
+}
 
 describe('yaml roundtrip', () => {
   it('can apply json patches', async () => {
@@ -28,7 +37,7 @@ describe('yaml roundtrip', () => {
       ],
       YamlRoundtripper
     );
-    expect(result).toMatchSnapshot();
+    expect(cleanSnapshot(result)).toMatchSnapshot();
   });
 
   describe('patch field array scenarios', () => {
@@ -44,7 +53,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
 
     it('can prepend a string to a multiline array', async () => {
@@ -59,7 +68,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
 
     it('can add a string to the middle of an array', async () => {
@@ -74,7 +83,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
 
     it('can append an object to a multi line array', async () => {
@@ -92,7 +101,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
     it('can add an object to the middle of a  multi line array', async () => {
       const result = await yamlPatchFixture(
@@ -109,7 +118,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
 
     it('empty single line array, expands', async () => {
@@ -124,7 +133,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
     it('empty multi line array, can be appended to', async () => {
       const result = await yamlPatchFixture(
@@ -138,7 +147,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
     it('string single line array, is expanded', async () => {
       const result = await yamlPatchFixture(
@@ -152,7 +161,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
 
     it('can remove first item in array', async () => {
@@ -166,7 +175,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
 
     it('can remove middle item in array', async () => {
@@ -180,7 +189,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
 
     it('can remove last item in array', async () => {
@@ -194,7 +203,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
 
     it('can remove only item in array', async () => {
@@ -208,7 +217,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
   });
 
@@ -234,7 +243,7 @@ describe('yaml roundtrip', () => {
         YamlRoundtripper
       );
 
-      expect(result).toMatchSnapshot();
+      expect(cleanSnapshot(result)).toMatchSnapshot();
     });
 
     it('appending a field to an empty object single-line', async () => {
@@ -258,7 +267,7 @@ describe('yaml roundtrip', () => {
         YamlRoundtripper
       );
 
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('removing first field in an object', async () => {
@@ -336,7 +345,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('can replace an object an empty array', async () => {
@@ -351,7 +360,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('can replace a string with an object', async () => {
@@ -366,7 +375,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('can replace an object with another object', async () => {
@@ -381,7 +390,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('can replace a mapping value with a null', async () => {
@@ -396,7 +405,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('can replace a mapping value with a primitive', async () => {
@@ -411,7 +420,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
 
     it('can replace an array item', async () => {
@@ -426,7 +435,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(meta).toMatchSnapshot();
+      expect(cleanSnapshot(meta)).toMatchSnapshot();
     });
   });
 });
