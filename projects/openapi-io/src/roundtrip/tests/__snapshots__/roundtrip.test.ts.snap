@@ -15,7 +15,7 @@ example:
   user:
     $ref: definitions.yaml#/User/example
 ",
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/inputs/openapi3-with-references/external-multiple.yaml",
+    "filePath": "external-multiple",
     "success": true,
     "value": Object {
       "example": Object {
@@ -52,7 +52,7 @@ paths:
               schema:
                 $ref: external-multiple.yaml
 ",
-    "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/inputs/openapi3-with-references/openapi.yaml",
+    "filePath": "openapi",
     "success": true,
     "value": Object {
       "info": Object {

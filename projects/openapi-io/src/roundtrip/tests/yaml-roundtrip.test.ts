@@ -282,7 +282,7 @@ describe('yaml roundtrip', () => {
         YamlRoundtripper
       );
 
-      expect(patch).toMatchSnapshot();
+      expect(cleanSnapshot(patch)).toMatchSnapshot();
     });
 
     it('removing middle field in an object', async () => {
@@ -296,7 +296,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(patch).toMatchSnapshot();
+      expect(cleanSnapshot(patch)).toMatchSnapshot();
     });
 
     it('removing last field in an object', async () => {
@@ -310,7 +310,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(patch).toMatchSnapshot();
+      expect(cleanSnapshot(patch)).toMatchSnapshot();
     });
 
     it('removing only field in an object', async () => {
@@ -328,7 +328,7 @@ describe('yaml roundtrip', () => {
         ],
         YamlRoundtripper
       );
-      expect(patch).toMatchSnapshot();
+      expect(cleanSnapshot(patch)).toMatchSnapshot();
     });
   });
 

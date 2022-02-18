@@ -1866,7 +1866,7 @@ properties:
         description: Height of the product
         minimum: 1
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.yaml",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -2001,7 +2001,7 @@ properties:
         description: Height of the product
         minimum: 1
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.yaml",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -2134,7 +2134,7 @@ properties:
         description: Height of the product
         minimum: 1
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.yaml",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
@@ -2271,7 +2271,7 @@ properties:
         description: Height of the product
         minimum: 1
 ",
-  "filePath": "/Users/aidancunniffe/Developer/openapi-optic/monorail/projects/openapi-workspaces/projects/openapi-io/src/roundtrip/tests/inputs/simple-json-schema-example.yaml",
+  "filePath": "simple-json-schema-example",
   "success": true,
   "value": Object {
     "$defs": Object {
