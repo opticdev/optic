@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
+import { inspect } from 'util';
 
 import { tap } from './lib/async-tools';
 import * as DocumentedBodies from './shapes/streams/documented-bodies';
@@ -11,7 +12,7 @@ import {
   JsonSchemaSourcemap,
   parseOpenAPIWithSourcemap,
 } from '@useoptic/openapi-io';
-import { diffBodyBySchema, observeBodyShape } from './shapes';
+import { diffBodyBySchema, generateShapePatches } from './shapes';
 
 export function registerUpdateCommand(cli: Command) {
   cli
@@ -42,13 +43,20 @@ export function registerUpdateCommand(cli: Command) {
           shapeDiff = diffBodyBySchema(body, schema).next().value;
         }
 
-        if (shapeDiff) {
-          let observationResults = observeBodyShape(body);
+        if (schema && shapeDiff) {
+          // TODO: also generate shape patches for new schemas
+          let patches = generateShapePatches(shapeDiff, schema, {
+            location: bodyLocation,
+          });
+
           console.log(
-            'learned example shape',
-            bodyLocation,
-            last(observationResults)
+            'SHAPE DIFF',
+            inspect(shapeDiff, { depth: 3, colors: true })
           );
+
+          for (let patch of patches) {
+            console.log('PATCH', inspect(patch, { depth: 5, colors: true }));
+          }
         }
       }
 

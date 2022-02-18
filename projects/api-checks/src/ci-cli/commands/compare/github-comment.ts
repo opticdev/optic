@@ -4,12 +4,8 @@ import {
   findOpticCommentId,
   OPTIC_COMMENT_SURVEY_LINK,
 } from '../utils/shared-comment';
+import { generateHashForComparison } from '../utils/comparison-hash';
 import { CompareJson, UploadJson } from '../../types';
-
-// The identifier we use to find the Optic Comment
-// TODO is there a better way to track and identify Optic comments for comment / replace?
-const GITHUB_COMMENT_IDENTIFIER =
-  'INTERNAL-OPTIC-COMMENT-IDENTIFIER-1234567890';
 
 export const sendGithubMessage = async ({
   githubToken,
@@ -21,6 +17,10 @@ export const sendGithubMessage = async ({
   uploadOutput: UploadJson;
 }) => {
   const { results, changes } = compareOutput;
+  const compareHash = generateHashForComparison({
+    results,
+    changes,
+  });
   const { opticWebUrl, ciContext } = uploadOutput;
   const {
     organization: owner,
@@ -54,13 +54,11 @@ export const sendGithubMessage = async ({
       requestedReviewers.users.length + requestedReviewers.teams.length,
   });
 
-  const commentIdentifier = GITHUB_COMMENT_IDENTIFIER + '-' + commit_hash;
-
   // Given we don't have the comment id; we need to fetch all comments on a PR.
   // We don't want to spam the comments, we want to update to the latest
   const maybeOpticCommentId = await findOpticCommentId(
     octokit,
-    commentIdentifier,
+    compareHash,
     owner,
     repo,
     pull_number
@@ -68,8 +66,8 @@ export const sendGithubMessage = async ({
   const failingChecks = results.filter((result) => !result.passed).length;
   const totalChecks = results.length;
 
-  const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${commentIdentifier} -->
-  ### Changes to your OpenAPI spec
+  const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${compareHash} -->
+  ### New changes to your OpenAPI spec
 
   Summary of run [#${run}](${opticWebUrl}) results (${commit_hash}):
 
