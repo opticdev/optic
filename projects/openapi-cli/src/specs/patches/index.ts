@@ -1,5 +1,5 @@
-import { PatchImpact, OperationGroup } from '../../patches';
-import { SpecLocation } from '../';
+import { PatchImpact, OperationGroup, Operation } from '../../patches';
+import { SpecLocation } from '..';
 import { ShapePatch } from '../../shapes/patches';
 import { ShapeLocation } from '../../shapes';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
@@ -9,6 +9,9 @@ export interface SpecPatch {
   impact: PatchImpact[];
   groupedOperations: OperationGroup[];
 }
+
+export { PatchImpact, OperationGroup };
+export type { Operation };
 
 export class SpecPatch {
   static fromShapePatch(
@@ -36,4 +39,9 @@ export class SpecPatch {
       }),
     };
   }
+}
+
+export interface SpecFileOperation {
+  filePath: string;
+  operation: Operation;
 }

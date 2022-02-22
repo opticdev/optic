@@ -7,7 +7,7 @@ import { tap } from './lib/async-tools';
 import * as DocumentedBodies from './shapes/streams/documented-bodies';
 import * as ShapeDiffs from './shapes/streams/shape-diffs';
 import * as Facts from './specs/streams/facts';
-import { SpecPatch } from './specs';
+import { SpecFileOperations, SpecPatch, SpecPatches } from './specs';
 
 import {
   JsonSchemaSourcemap,
@@ -49,7 +49,7 @@ export function registerUpdateCommand(cli: Command) {
         } of documentedBodies) {
           let shapeDiff;
           if (schema) {
-            shapeDiff = diffBodyBySchema(body, schema).next().value;
+            shapeDiff = diffBodyBySchema(body, schema).next().value; // TODO: patches for all diffs
           }
 
           if (schema && shapeDiff) {
@@ -58,26 +58,23 @@ export function registerUpdateCommand(cli: Command) {
               location: bodyLocation,
             });
 
-            console.log(
-              'SHAPE DIFF',
-              inspect(shapeDiff, { depth: 3, colors: true })
-            );
-
             for (let patch of patches) {
-              // console.log('PATCH', inspect(patch, { depth: 5, colors: true }));
-
-              // TODO: yield SpecPatch from ShapePatch + Location
               yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation);
             }
           }
         }
       })(exampleBodies);
 
-      for await (let specPatch of specPatches) {
-        console.log(
-          'SPEC PATCH',
-          inspect(specPatch, { depth: 5, colors: true })
-        );
+      // additions only, so we only safely extend the spec
+      const specAdditions = logger(SpecPatches.additions(specPatches));
+
+      const fileOperations = SpecFileOperations.fromSpecPatches(
+        specAdditions,
+        sourcemap
+      );
+
+      for await (let fileOp of fileOperations) {
+        console.log('FILE OP', inspect(fileOp, { depth: 5, colors: true }));
       }
     });
 }

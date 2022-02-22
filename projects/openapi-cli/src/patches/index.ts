@@ -18,4 +18,8 @@ export class OperationGroup {
   static create(intent: string, ...operations: Operation[]): OperationGroup {
     return { intent, operations };
   }
+
+  static *operations(group: OperationGroup): IterableIterator<Operation> {
+    yield* group.operations;
+  }
 }
