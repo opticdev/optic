@@ -33,9 +33,7 @@ export function registerUpdateCommand(cli: Command) {
       const facts = SpecFacts.fromOpenAPISpec(spec);
       const exampleBodies = DocumentedBodies.fromBodyExampleFacts(facts, spec);
 
-      const specPatches = (async function* (
-        documentedBodies
-      ): AsyncIterable<SpecPatch> {
+      const specPatches = (async function* (documentedBodies): SpecPatches {
         for await (let documentedBody of documentedBodies) {
           let { specJsonPath, bodyLocation } = documentedBody;
 
@@ -56,8 +54,6 @@ export function registerUpdateCommand(cli: Command) {
       );
       const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
 
-      for await (let updatedFile of updatedSpecFiles) {
-        console.log(`file contents patched for ${updatedFile.path}`);
-      }
+      await SpecFiles.flushToFiles(updatedSpecFiles);
     });
 }

@@ -7,7 +7,7 @@ import {
 import { Operation } from '../patches';
 import { sourcemapReader } from '@useoptic/openapi-io';
 import invariant from 'ts-invariant';
-import * as AT from '../../lib/async-tools';
+import fs from 'fs-extra';
 
 export interface SpecFileOperations extends AsyncIterable<SpecFileOperation> {}
 
@@ -34,20 +34,6 @@ export class SpecFileOperations {
         filePath,
         operation: { ...operation, path: startsAt },
       };
-    }
-  }
-
-  static async toFiles(
-    fileOperations: SpecFileOperations,
-    sourceMap: SpecFilesSourcemap
-  ) {
-    const operationsByFile = {};
-
-    // buffer all the operations per path, to write once per file
-    for await (let { filePath, operation } of fileOperations) {
-      if (!operationsByFile[filePath]) operationsByFile[filePath] = [];
-
-      operationsByFile[filePath]!.push(operation);
     }
   }
 }
@@ -84,6 +70,12 @@ export class SpecFiles {
       const file = files.find(({ path }) => path === filePath)!;
 
       yield await SpecFile.applyPatch(file, operations);
+    }
+  }
+
+  static async flushToFiles(specFiles: SpecFilesAsync): Promise<void> {
+    for await (let { path, contents } of specFiles) {
+      return fs.writeFile(path, contents);
     }
   }
 }
