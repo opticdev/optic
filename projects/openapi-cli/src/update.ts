@@ -1,19 +1,13 @@
 import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
-import { inspect } from 'util';
 
 import { tap } from './lib/async-tools';
-import * as DocumentedBodies from './shapes/streams/documented-bodies';
-import * as ShapeDiffs from './shapes/streams/shape-diffs';
-import * as Facts from './specs/streams/facts';
+import { SpecFacts } from './specs';
+import { DocumentedBodies, ShapePatches } from './shapes';
 import { SpecFileOperations, SpecPatch, SpecPatches, SpecFiles } from './specs';
 
-import {
-  JsonSchemaSourcemap,
-  parseOpenAPIWithSourcemap,
-} from '@useoptic/openapi-io';
-import { diffBodyBySchema, generateShapePatches } from './shapes';
+import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 
 export function registerUpdateCommand(cli: Command) {
   cli
@@ -36,32 +30,19 @@ export function registerUpdateCommand(cli: Command) {
 
       const logger = tap(console.log.bind(console));
 
-      const facts = Facts.fromOpenAPISpec(spec);
+      const facts = SpecFacts.fromOpenAPISpec(spec);
       const exampleBodies = DocumentedBodies.fromBodyExampleFacts(facts, spec);
 
       const specPatches = (async function* (
-        documentedBodies: AsyncIterable<DocumentedBodies.DocumentedBody>
+        documentedBodies
       ): AsyncIterable<SpecPatch> {
-        for await (let {
-          body,
-          schema,
-          bodyLocation,
-          specJsonPath,
-        } of documentedBodies) {
-          let shapeDiff;
-          if (schema) {
-            shapeDiff = diffBodyBySchema(body, schema).next().value; // TODO: patches for all diffs
-          }
+        for await (let documentedBody of documentedBodies) {
+          let { specJsonPath, bodyLocation } = documentedBody;
 
-          if (schema && shapeDiff) {
-            // TODO: also generate shape patches for new schemas
-            let patches = generateShapePatches(shapeDiff, schema, {
-              location: bodyLocation,
-            });
-
-            for (let patch of patches) {
-              yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation);
-            }
+          for (let patch of ShapePatches.generateByDiffingBody(
+            documentedBody
+          )) {
+            yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation);
           }
         }
       })(exampleBodies);

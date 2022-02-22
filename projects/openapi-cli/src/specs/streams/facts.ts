@@ -8,30 +8,33 @@ import {
   OpenApiBodyFact,
 } from '@useoptic/openapi-utilities';
 
-export async function* fromOpenAPISpec(
-  spec: OpenAPIV3.Document
-): AsyncIterable<IFact<OpenApiFact>> {
-  const traverser = new OpenAPITraverser();
-  traverser.traverse(spec);
-  yield* traverser.facts();
-}
+export interface SpecFacts extends AsyncIterable<IFact<OpenApiFact>> {}
+export interface BodyExampleFacts
+  extends AsyncIterable<IFact<OpenApiBodyExampleFact>> {}
+export interface BodyFacts extends AsyncIterable<IFact<OpenApiBodyFact>> {}
 
-export async function* bodyExamples(
-  facts: AsyncIterable<IFact<OpenApiFact>>
-): AsyncIterable<IFact<OpenApiBodyExampleFact>> {
-  for await (let fact of facts) {
-    if (fact.location.kind === OpenApiKind.BodyExample) {
-      yield fact as IFact<OpenApiBodyExampleFact>;
+export class SpecFacts {
+  static async *fromOpenAPISpec(spec: OpenAPIV3.Document): SpecFacts {
+    const traverser = new OpenAPITraverser();
+    traverser.traverse(spec);
+    yield* traverser.facts();
+  }
+
+  static async *bodyExamples(
+    facts: AsyncIterable<IFact<OpenApiFact>>
+  ): BodyExampleFacts {
+    for await (let fact of facts) {
+      if (fact.location.kind === OpenApiKind.BodyExample) {
+        yield fact as IFact<OpenApiBodyExampleFact>;
+      }
     }
   }
-}
 
-export async function* bodyFacts(
-  facts: AsyncIterable<IFact<OpenApiFact>>
-): AsyncIterable<IFact<OpenApiBodyFact>> {
-  for await (let fact of facts) {
-    if (fact.location.kind === OpenApiKind.Body) {
-      yield fact as IFact<OpenApiBodyFact>;
+  static async *bodyFacts(facts: AsyncIterable<IFact<OpenApiFact>>): BodyFacts {
+    for await (let fact of facts) {
+      if (fact.location.kind === OpenApiKind.Body) {
+        yield fact as IFact<OpenApiBodyFact>;
+      }
     }
   }
 }
