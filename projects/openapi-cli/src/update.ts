@@ -7,7 +7,7 @@ import { tap } from './lib/async-tools';
 import * as DocumentedBodies from './shapes/streams/documented-bodies';
 import * as ShapeDiffs from './shapes/streams/shape-diffs';
 import * as Facts from './specs/streams/facts';
-import { SpecFileOperations, SpecPatch, SpecPatches } from './specs';
+import { SpecFileOperations, SpecPatch, SpecPatches, SpecFiles } from './specs';
 
 import {
   JsonSchemaSourcemap,
@@ -32,6 +32,7 @@ export function registerUpdateCommand(cli: Command) {
       const { jsonLike: spec, sourcemap } = await parseOpenAPIWithSourcemap(
         absoluteSpecPath
       );
+      const specFiles = SpecFiles.fromSourceMap(sourcemap);
 
       const logger = tap(console.log.bind(console));
 
@@ -66,23 +67,16 @@ export function registerUpdateCommand(cli: Command) {
       })(exampleBodies);
 
       // additions only, so we only safely extend the spec
-      const specAdditions = logger(SpecPatches.additions(specPatches));
+      const specAdditions = SpecPatches.additions(specPatches);
 
       const fileOperations = SpecFileOperations.fromSpecPatches(
         specAdditions,
         sourcemap
       );
+      const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
 
-      for await (let fileOp of fileOperations) {
-        console.log('FILE OP', inspect(fileOp, { depth: 5, colors: true }));
+      for await (let updatedFile of updatedSpecFiles) {
+        console.log(`file contents patched for ${updatedFile.path}`);
       }
     });
-}
-
-function last<T>(iter: Iterable<T>): T {
-  let last;
-  for (let item of iter) {
-    last = item;
-  }
-  return last;
 }

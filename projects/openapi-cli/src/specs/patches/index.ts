@@ -40,8 +40,3 @@ export class SpecPatch {
     };
   }
 }
-
-export interface SpecFileOperation {
-  filePath: string;
-  operation: Operation;
-}
