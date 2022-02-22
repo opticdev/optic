@@ -3,7 +3,7 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 
 import { tap } from './lib/async-tools';
-import { SpecFacts } from './specs';
+import { SpecFacts, SpecFile } from './specs';
 import { DocumentedBodies, ShapePatches } from './shapes';
 import { SpecFileOperations, SpecPatch, SpecPatches, SpecFiles } from './specs';
 
@@ -30,6 +30,18 @@ export function registerUpdateCommand(cli: Command) {
 
       const logger = tap(console.log.bind(console));
 
+      const stats = {
+        patchesCount: 0,
+        updatedFilesCount: 0,
+
+        observePatches: tap<SpecPatch>((_patch) => {
+          stats.patchesCount++;
+        }),
+        observeUpdatedFiles: tap<SpecFile>((_file) => {
+          stats.updatedFilesCount++;
+        }),
+      };
+
       const facts = SpecFacts.fromOpenAPISpec(spec);
       const exampleBodies = DocumentedBodies.fromBodyExampleFacts(facts, spec);
 
@@ -46,14 +58,31 @@ export function registerUpdateCommand(cli: Command) {
       })(exampleBodies);
 
       // additions only, so we only safely extend the spec
-      const specAdditions = SpecPatches.additions(specPatches);
+      const specAdditions = stats.observePatches(
+        SpecPatches.additions(specPatches)
+      );
 
       const fileOperations = SpecFileOperations.fromSpecPatches(
         specAdditions,
         sourcemap
       );
-      const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
 
-      await SpecFiles.flushToFiles(updatedSpecFiles);
+      const updatedSpecFiles = stats.observeUpdatedFiles(
+        SpecFiles.patch(specFiles, fileOperations)
+      );
+
+      for await (let writtenFilePath of SpecFiles.flushToFiles(
+        updatedSpecFiles
+      )) {
+        console.log(`Updated ${writtenFilePath}`);
+      }
+
+      console.log(
+        `✅ Applied ${stats.patchesCount} patche${
+          stats.patchesCount === 1 ? '' : 's'
+        } to ${stats.updatedFilesCount} file${
+          stats.updatedFilesCount === 1 ? '' : 's'
+        }`
+      );
     });
 }

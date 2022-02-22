@@ -73,9 +73,10 @@ export class SpecFiles {
     }
   }
 
-  static async flushToFiles(specFiles: SpecFilesAsync): Promise<void> {
+  static async *flushToFiles(specFiles: SpecFilesAsync): AsyncIterable<string> {
     for await (let { path, contents } of specFiles) {
-      return fs.writeFile(path, contents);
+      await fs.writeFile(path, contents);
+      yield path;
     }
   }
 }
