@@ -2,7 +2,7 @@ import { OpenAPIV3 } from '../specs/index';
 import { diffValueBySchema } from './diffs';
 import { ShapeDiffResult, ShapeDiffResultKind } from './diffs';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { Operation } from './patches';
+import { Operation } from '../patches';
 import equals from 'fast-deep-equal';
 
 export type SchemaObject = OpenAPIV3.SchemaObject;

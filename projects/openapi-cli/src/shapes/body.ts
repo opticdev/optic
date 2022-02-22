@@ -13,4 +13,5 @@ export interface DocumentedBody {
   body: Body;
   schema: SchemaObject | null;
   bodyLocation: BodyLocation;
+  specJsonPath: string;
 }

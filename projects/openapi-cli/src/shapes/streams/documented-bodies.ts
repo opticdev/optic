@@ -9,6 +9,8 @@ import * as Facts from '../../specs/streams/facts';
 import { OpenAPIV3 } from '../../specs';
 import { DocumentedBody } from '../body';
 
+export type { DocumentedBody };
+
 export async function* fromBodyExampleFacts(
   facts: AsyncIterable<IFact<OpenApiFact>>,
   spec: OpenAPIV3.Document
@@ -29,12 +31,11 @@ export async function* fromBodyExampleFacts(
 
     let bodyLocation = conceptualLocation; // bit nasty, relying on BodyExampleLocation being a superset of BodyLocation
 
-    let expectedSchemaPath = jsonPointerHelpers.append(
+    let bodyPath =
       'singular' in conceptualLocation
         ? jsonPointerHelpers.pop(jsonPath)
-        : jsonPointerHelpers.pop(jsonPointerHelpers.pop(jsonPath)),
-      'schema'
-    );
+        : jsonPointerHelpers.pop(jsonPointerHelpers.pop(jsonPath));
+    let expectedSchemaPath = jsonPointerHelpers.append(bodyPath, 'schema');
 
     let resolvedSchema = jsonPointerHelpers.tryGet(spec, expectedSchemaPath);
 
@@ -44,9 +45,15 @@ export async function* fromBodyExampleFacts(
         schema,
         body,
         bodyLocation,
+        specJsonPath: bodyPath,
       };
     } else {
-      yield { body, schema: null, bodyLocation };
+      yield {
+        body,
+        schema: null,
+        bodyLocation,
+        specJsonPath: bodyPath,
+      };
     }
   }
 }

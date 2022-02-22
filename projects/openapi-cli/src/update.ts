@@ -7,6 +7,7 @@ import { tap } from './lib/async-tools';
 import * as DocumentedBodies from './shapes/streams/documented-bodies';
 import * as ShapeDiffs from './shapes/streams/shape-diffs';
 import * as Facts from './specs/streams/facts';
+import { SpecPatch } from './specs';
 
 import {
   JsonSchemaSourcemap,
@@ -37,30 +38,47 @@ export function registerUpdateCommand(cli: Command) {
       const facts = Facts.fromOpenAPISpec(spec);
       const exampleBodies = DocumentedBodies.fromBodyExampleFacts(facts, spec);
 
-      for await (let { body, schema, bodyLocation } of exampleBodies) {
-        let shapeDiff;
-        if (schema) {
-          shapeDiff = diffBodyBySchema(body, schema).next().value;
-        }
+      const specPatches = (async function* (
+        documentedBodies: AsyncIterable<DocumentedBodies.DocumentedBody>
+      ): AsyncIterable<SpecPatch> {
+        for await (let {
+          body,
+          schema,
+          bodyLocation,
+          specJsonPath,
+        } of documentedBodies) {
+          let shapeDiff;
+          if (schema) {
+            shapeDiff = diffBodyBySchema(body, schema).next().value;
+          }
 
-        if (schema && shapeDiff) {
-          // TODO: also generate shape patches for new schemas
-          let patches = generateShapePatches(shapeDiff, schema, {
-            location: bodyLocation,
-          });
+          if (schema && shapeDiff) {
+            // TODO: also generate shape patches for new schemas
+            let patches = generateShapePatches(shapeDiff, schema, {
+              location: bodyLocation,
+            });
 
-          console.log(
-            'SHAPE DIFF',
-            inspect(shapeDiff, { depth: 3, colors: true })
-          );
+            console.log(
+              'SHAPE DIFF',
+              inspect(shapeDiff, { depth: 3, colors: true })
+            );
 
-          for (let patch of patches) {
-            console.log('PATCH', inspect(patch, { depth: 5, colors: true }));
+            for (let patch of patches) {
+              // console.log('PATCH', inspect(patch, { depth: 5, colors: true }));
+
+              // TODO: yield SpecPatch from ShapePatch + Location
+              yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation);
+            }
           }
         }
-      }
+      })(exampleBodies);
 
-      // const shapeDiffs = logger(ShapeDiffs.fromDocumentedBodies(exampleBodies));
+      for await (let specPatch of specPatches) {
+        console.log(
+          'SPEC PATCH',
+          inspect(specPatch, { depth: 5, colors: true })
+        );
+      }
     });
 }
 
