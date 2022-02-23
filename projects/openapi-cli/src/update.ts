@@ -4,10 +4,11 @@ import * as fs from 'fs-extra';
 
 import { tap } from './lib/async-tools';
 import { SpecFacts, SpecFile } from './specs';
-import { DocumentedBodies, ShapePatches, ShapePatch } from './shapes';
+import { DocumentedBodies, ShapePatches, SchemaObject } from './shapes';
 import { SpecFileOperations, SpecPatch, SpecPatches, SpecFiles } from './specs';
 
 import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
+import { DocumentedBody } from './shapes/body';
 
 export function registerUpdateCommand(cli: Command) {
   cli
@@ -31,9 +32,13 @@ export function registerUpdateCommand(cli: Command) {
       const logger = tap(console.log.bind(console));
 
       const stats = {
+        examplesCount: 0,
         patchesCount: 0,
         updatedFilesCount: 0,
 
+        observeExamples: tap<DocumentedBody>((_body) => {
+          stats.examplesCount++;
+        }),
         observePatches: tap<SpecPatch>((_patch) => {
           stats.patchesCount++;
         }),
@@ -43,17 +48,31 @@ export function registerUpdateCommand(cli: Command) {
       };
 
       const facts = SpecFacts.fromOpenAPISpec(spec);
-      const exampleBodies = DocumentedBodies.fromBodyExampleFacts(facts, spec);
+      const exampleBodies = stats.observeExamples(
+        DocumentedBodies.fromBodyExampleFacts(facts, spec)
+      );
 
       const specPatches = (async function* (documentedBodies): SpecPatches {
+        const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
+
         for await (let documentedBody of documentedBodies) {
           let { specJsonPath, bodyLocation } = documentedBody;
+
+          if (updatedSchemasByPath.has(specJsonPath)) {
+            documentedBody.schema = updatedSchemasByPath.get(specJsonPath)!;
+          }
 
           for (let patch of ShapePatches.generateBodyAdditions(
             documentedBody
           )) {
+            documentedBody = DocumentedBody.applyShapePatch(
+              documentedBody,
+              patch
+            );
             yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation);
           }
+
+          updatedSchemasByPath.set(specJsonPath, documentedBody.schema!);
         }
       })(exampleBodies);
 
@@ -82,6 +101,8 @@ export function registerUpdateCommand(cli: Command) {
           stats.patchesCount === 1 ? '' : 'es'
         } to ${stats.updatedFilesCount} file${
           stats.updatedFilesCount === 1 ? '' : 's'
+        } generated from ${stats.examplesCount} example${
+          stats.examplesCount === 1 ? '' : 's'
         }`
       );
     });

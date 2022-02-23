@@ -1,6 +1,6 @@
 import { ShapeDiffResult, ShapeDiffResultKind } from '../../diffs';
 import { OperationGroup, PatchImpact, ShapePatch } from '..';
-import { SchemaObject } from '../../body';
+import { SchemaObject } from '../../schema';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { JsonPath } from '@useoptic/openapi-io';
 import { ShapeLocation } from '../..';

@@ -1,5 +1,5 @@
 import jsonSchemaTraverse from 'json-schema-traverse';
-import { SchemaObject, Body } from '../body';
+import { SchemaObject, Body } from '..';
 import { ShapeDiffResult } from './result';
 import Ajv, { ErrorObject, ValidateFunction } from 'ajv';
 import { OpenAPIV3 } from '../../specs';

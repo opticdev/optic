@@ -1,10 +1,7 @@
 import { OpenAPIV3 } from '../specs/index';
-import { diffValueBySchema } from './diffs';
-import { ShapeDiffResult, ShapeDiffResultKind } from './diffs';
 import { ShapePatch } from './patches';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { Operation, OperationGroup } from '../patches';
-import equals from 'fast-deep-equal';
+import { Operation } from '../patches';
 import JsonPatch from 'fast-json-patch';
 
 export type SchemaObject = OpenAPIV3.SchemaObject;
@@ -13,13 +10,7 @@ export class Schema {
   static baseFromValue(value: any): SchemaObject {
     const rootSchema = initialSchema(value);
 
-    console.warn(
-      'TODO: generate entire json schema for example from shape diff, not just initial type'
-    );
-
     let schema = rootSchema;
-    let diffs = [...diffValueBySchema(value, rootSchema)];
-    let currentExample = value;
 
     return schema;
   }

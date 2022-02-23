@@ -9,3 +9,6 @@ export { DocumentedBodies } from './streams/documented-bodies';
 
 export { ShapePatch } from './patches';
 export { ShapePatches } from './streams/patches';
+
+export type { SchemaObject } from './schema';
+export { Schema } from './schema';

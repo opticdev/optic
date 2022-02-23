@@ -4,7 +4,7 @@ import {
   ShapeDiffResultKind,
 } from '../../diffs';
 import { OperationGroup, PatchImpact, ShapePatch } from '..';
-import { SchemaObject } from '../../body';
+import { SchemaObject } from '../../schema';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Schema } from '../../schema';
 import { ShapeLocation } from '../..';

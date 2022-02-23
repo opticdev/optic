@@ -1,6 +1,7 @@
 import { ShapeDiffTraverser, JsonSchemaKnownKeyword } from './traverser';
 import { ShapeDiffResult, ShapeDiffResultKind } from './result';
-import { Body, SchemaObject } from '../body';
+import { Body } from '../body';
+import { SchemaObject } from '../schema';
 
 export type { ShapeDiffResult };
 export { ShapeDiffResultKind };
