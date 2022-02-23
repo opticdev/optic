@@ -1,9 +1,11 @@
 import { OpenAPIV3 } from '../specs/index';
 import { diffValueBySchema } from './diffs';
 import { ShapeDiffResult, ShapeDiffResultKind } from './diffs';
+import { ShapePatch } from './patches';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { Operation } from '../patches';
+import { Operation, OperationGroup } from '../patches';
 import equals from 'fast-deep-equal';
+import JsonPatch from 'fast-json-patch';
 
 export type SchemaObject = OpenAPIV3.SchemaObject;
 
@@ -26,7 +28,7 @@ export class Schema {
   }
 
   static clone(value: SchemaObject): SchemaObject {
-    return JSON.parse(JSON.stringify(value));
+    return JsonPatch.deepClone(value);
   }
 
   static merge(
@@ -89,6 +91,20 @@ export class Schema {
         };
       }
     }
+  }
+
+  static applyShapePatch(
+    schema: SchemaObject,
+    patch: ShapePatch
+  ): SchemaObject {
+    const result = JsonPatch.applyPatch(
+      schema,
+      [...ShapePatch.operations(patch)],
+      undefined,
+      false // don't mutate the original schema
+    );
+
+    return result.newDocument;
   }
 }
 

@@ -2,7 +2,7 @@ import { BodyLocation } from '../body';
 import { ShapeDiffResult } from '../diffs';
 import { SchemaObject, Schema } from '../schema';
 
-import { PatchImpact, OperationGroup } from '../../patches';
+import { PatchImpact, OperationGroup, Operation } from '../../patches';
 
 export { PatchImpact, OperationGroup };
 
@@ -24,4 +24,16 @@ export interface ShapePatch {
   description: string;
   impact: PatchImpact[];
   groupedOperations: OperationGroup[];
+}
+
+export class ShapePatch {
+  static *operations(patch: ShapePatch): IterableIterator<Operation> {
+    for (let group of patch.groupedOperations) {
+      yield* OperationGroup.operations(group);
+    }
+  }
+
+  static isAddition(patch: ShapePatch): boolean {
+    return patch.impact.includes(PatchImpact.Addition);
+  }
 }

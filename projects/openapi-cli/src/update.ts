@@ -4,7 +4,7 @@ import * as fs from 'fs-extra';
 
 import { tap } from './lib/async-tools';
 import { SpecFacts, SpecFile } from './specs';
-import { DocumentedBodies, ShapePatches } from './shapes';
+import { DocumentedBodies, ShapePatches, ShapePatch } from './shapes';
 import { SpecFileOperations, SpecPatch, SpecPatches, SpecFiles } from './specs';
 
 import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
@@ -49,7 +49,10 @@ export function registerUpdateCommand(cli: Command) {
         for await (let documentedBody of documentedBodies) {
           let { specJsonPath, bodyLocation } = documentedBody;
 
-          for (let patch of ShapePatches.generateFromBody(documentedBody)) {
+          for (let patch of ShapePatches.generateFromBody(
+            documentedBody,
+            ShapePatch.isAddition // additions only, so we only safely extend the spec
+          )) {
             yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation);
           }
         }
