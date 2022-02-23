@@ -34,15 +34,26 @@ export function* additionalPropertiesPatches(
       })
     );
   }
-  // if required is not set, create one with empty []
+  // if required is not set, create one with property in it
   if (!parent.required) {
     groupedOperations.push(
-      OperationGroup.create(`add required [] to parent object`, {
+      OperationGroup.create(
+        `add required [] to parent object and make ${diff.key} required`,
+        {
+          op: 'add',
+          path: requiredPath,
+          value: [diff.key],
+          // @ts-ignore
+          extra: 'same',
+        }
+      )
+    );
+  } else if (!parent.required.includes(diff.key)) {
+    groupedOperations.push(
+      OperationGroup.create(`make new property ${diff.key} required`, {
         op: 'add',
-        path: requiredPath,
-        value: [],
-        // @ts-ignore
-        extra: 'same',
+        path: requiredPath + '/-', // append
+        value: diff.key,
       })
     );
   }
@@ -56,16 +67,6 @@ export function* additionalPropertiesPatches(
         value: Schema.fromValue(
           jsonPointerHelpers.get(diff.example, diff.propertyExamplePath)
         ),
-      })
-    );
-  }
-
-  if (!(parent.required || []).includes(diff.key)) {
-    groupedOperations.push(
-      OperationGroup.create(`make new property ${diff.key} required`, {
-        op: 'add',
-        path: requiredPath + '/-', // append
-        value: diff.key,
       })
     );
   }
