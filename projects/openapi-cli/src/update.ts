@@ -79,8 +79,8 @@ export function registerUpdateCommand(cli: Command) {
       }
 
       console.log(
-        `✅ Applied ${stats.patchesCount} patche${
-          stats.patchesCount === 1 ? '' : 's'
+        `✅ Applied ${stats.patchesCount} patch${
+          stats.patchesCount === 1 ? '' : 'es'
         } to ${stats.updatedFilesCount} file${
           stats.updatedFilesCount === 1 ? '' : 's'
         }`
