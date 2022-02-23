@@ -33,7 +33,7 @@ export function* typePatches(
         OperationGroup.create(`add new oneOf type to ${diff.key}`, {
           op: 'add',
           path: jsonPointerHelpers.append(diff.propertyPath, 'oneOf', '-'), // "-" indicates append to array
-          value: Schema.fromValue(diff.example),
+          value: Schema.baseFromValue(diff.example),
         })
       );
     } else {
@@ -41,7 +41,7 @@ export function* typePatches(
         ...Schema.mergeOperations(Schema.clone(currentPropertySchema), {
           oneOf: [
             Schema.clone(currentPropertySchema),
-            Schema.fromValue(diff.example),
+            Schema.baseFromValue(diff.example),
           ],
         }),
       ];
@@ -68,7 +68,7 @@ export function* typePatches(
         // handles removal of keys that are no longer allowed
         value: Schema.merge(
           currentPropertySchema,
-          Schema.fromValue(diff.example)
+          Schema.baseFromValue(diff.example)
         ),
       }),
     ];

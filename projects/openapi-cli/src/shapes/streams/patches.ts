@@ -7,14 +7,22 @@ import { DocumentedBody } from '../body';
 export interface ShapePatches extends Iterable<ShapePatch> {}
 
 export class ShapePatches {
-  static *generateFromBody(
-    documentedBody: DocumentedBody,
-    filter: (patch: ShapePatch) => boolean
-  ): ShapePatches {
+  static *generateBodyAdditions(documentedBody: DocumentedBody): ShapePatches {
     let { body, schema, bodyLocation } = documentedBody;
 
-    if (schema) {
+    let patchesExhausted = false;
+    while (!patchesExhausted) {
+      if (!schema) {
+        let newSchema = Schema.baseFromValue(body.value);
+
+        yield newSchemaPatch(newSchema, { location: bodyLocation });
+
+        schema = newSchema;
+      }
+
       let shapeDiffs = diffBodyBySchema(body, schema);
+
+      let patchCount = 0;
 
       for (let shapeDiff of shapeDiffs) {
         let diffPatches = generateShapePatchesByDiff(shapeDiff, schema, {
@@ -22,16 +30,15 @@ export class ShapePatches {
         });
 
         for (let patch of diffPatches) {
-          if (!filter(patch)) continue;
+          if (!ShapePatch.isAddition(patch)) continue;
+
+          patchCount++;
 
           schema = Schema.applyShapePatch(schema, patch);
           yield patch;
         }
       }
-    } else {
-      let newSchema = Schema.fromValue(body.value);
-
-      yield newSchemaPatch(newSchema, { location: bodyLocation });
+      patchesExhausted = patchCount === 0;
     }
   }
 }

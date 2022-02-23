@@ -64,7 +64,7 @@ export function* additionalPropertiesPatches(
       OperationGroup.create(`add property ${diff.key} schema to properties`, {
         op: 'add',
         path: newPropertyPath,
-        value: Schema.fromValue(
+        value: Schema.baseFromValue(
           jsonPointerHelpers.get(diff.example, diff.propertyExamplePath)
         ),
       })

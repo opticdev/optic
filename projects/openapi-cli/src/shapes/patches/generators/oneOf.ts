@@ -26,7 +26,7 @@ export function* oneOfPatches(
     OperationGroup.create(`add new oneOf branch to ${diff.key}`, {
       op: 'add',
       path: jsonPointerHelpers.append(diff.propertyPath, '-'), // "-" indicates append to array
-      value: Schema.fromValue(diff.example),
+      value: Schema.baseFromValue(diff.example),
     })
   );
 

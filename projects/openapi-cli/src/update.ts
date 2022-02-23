@@ -49,9 +49,8 @@ export function registerUpdateCommand(cli: Command) {
         for await (let documentedBody of documentedBodies) {
           let { specJsonPath, bodyLocation } = documentedBody;
 
-          for (let patch of ShapePatches.generateFromBody(
-            documentedBody,
-            ShapePatch.isAddition // additions only, so we only safely extend the spec
+          for (let patch of ShapePatches.generateBodyAdditions(
+            documentedBody
           )) {
             yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation);
           }

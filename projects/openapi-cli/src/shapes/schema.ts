@@ -10,7 +10,7 @@ import JsonPatch from 'fast-json-patch';
 export type SchemaObject = OpenAPIV3.SchemaObject;
 
 export class Schema {
-  static fromValue(value: any): SchemaObject {
+  static baseFromValue(value: any): SchemaObject {
     const rootSchema = initialSchema(value);
 
     console.warn(
@@ -20,9 +20,6 @@ export class Schema {
     let schema = rootSchema;
     let diffs = [...diffValueBySchema(value, rootSchema)];
     let currentExample = value;
-
-    // keep extending schema until we hit zero diffs
-    // while (diffs.length > 0 || currentExample) {}
 
     return schema;
   }
