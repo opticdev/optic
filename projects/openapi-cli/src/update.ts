@@ -49,9 +49,7 @@ export function registerUpdateCommand(cli: Command) {
         for await (let documentedBody of documentedBodies) {
           let { specJsonPath, bodyLocation } = documentedBody;
 
-          for (let patch of ShapePatches.generateByDiffingBody(
-            documentedBody
-          )) {
+          for (let patch of ShapePatches.generateFromBody(documentedBody)) {
             yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation);
           }
         }

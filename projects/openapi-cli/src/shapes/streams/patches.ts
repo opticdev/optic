@@ -1,22 +1,27 @@
 import { ShapePatch } from '../patches';
-import { DocumentedBodies, diffBodyBySchema, generateShapePatches } from '..';
+import { Schema } from '../schema';
+import { diffBodyBySchema } from '../diffs';
+import { newSchemaPatch, generateShapePatchesByDiff } from '../patches';
 import { DocumentedBody } from '../body';
 
 export interface ShapePatches extends Iterable<ShapePatch> {}
 
 export class ShapePatches {
-  static *generateByDiffingBody(documentedBody: DocumentedBody): ShapePatches {
+  static *generateFromBody(documentedBody: DocumentedBody): ShapePatches {
     let { body, schema, bodyLocation } = documentedBody;
-    let shapeDiff;
-    if (schema) {
-      shapeDiff = diffBodyBySchema(body, schema).next().value; // TODO: patches for all diffs
-    }
 
-    if (schema && shapeDiff) {
-      // TODO: also generate shape patches for new schemas
-      yield* generateShapePatches(shapeDiff, schema, {
-        location: bodyLocation,
-      });
+    if (schema) {
+      let shapeDiffs = diffBodyBySchema(body, schema);
+
+      for (let shapeDiff of shapeDiffs) {
+        yield* generateShapePatchesByDiff(shapeDiff, schema, {
+          location: bodyLocation,
+        });
+      }
+    } else {
+      let newSchema = Schema.fromValue(body.value);
+
+      yield newSchemaPatch(newSchema, { location: bodyLocation });
     }
   }
 }

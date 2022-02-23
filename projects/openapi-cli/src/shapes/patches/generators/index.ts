@@ -7,8 +7,9 @@ import { additionalPropertiesPatches } from './additionalProperties';
 import { oneOfPatches } from './oneOf';
 import { requiredPatches } from './required';
 import { typePatches } from './type';
+import { newSchemaPatch } from './newSchema';
 
-export interface ShapePatchGenerator {
+export interface DiffShapePatchGenerator {
   (
     diff: ShapeDiffResult,
     schema: SchemaObject,
@@ -16,9 +17,11 @@ export interface ShapePatchGenerator {
   ): IterableIterator<ShapePatch>;
 }
 
-export const shapePatchGenerators: ShapePatchGenerator[] = [
+export const diffShapePatchGenerators: DiffShapePatchGenerator[] = [
   additionalPropertiesPatches,
   oneOfPatches,
   requiredPatches,
   typePatches,
 ];
+
+export { newSchemaPatch };
