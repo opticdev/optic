@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`required json schema diff visitor missing required fields' 1`] = `
+Array [
+  Object {
+    "example": Object {
+      "hello": Object {
+        "f1": "value",
+        "f2": 122,
+      },
+    },
+    "instancePath": "/hello/f3",
+    "key": "f3",
+    "keyword": "required",
+    "kind": "MissingRequiredProperty",
+    "parentObjectPath": "/properties/hello",
+    "propertyPath": "/properties/hello/f3",
+  },
+]
+`;
