@@ -178,7 +178,7 @@ describe('generate shapes from bodies', () => {
     });
   });
 
-  describe('oneOfs are built correctly', () => {
+  describe.skip('oneOfs are built correctly', () => {
     it('one of array or object', () => {
       const input = ['user1', 'user2', 'user3'];
 
