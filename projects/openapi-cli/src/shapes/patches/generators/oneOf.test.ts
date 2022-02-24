@@ -70,7 +70,7 @@ describe('one of shape patch generator', () => {
   });
 
   it('can add an additional branch to a complex one of', () => {
-    const jsonSchema: SchemaObject = objectOrStringOneOf;
+    const jsonSchema: SchemaObject = objectOrStringOneOf();
 
     const input: any = {
       location: {

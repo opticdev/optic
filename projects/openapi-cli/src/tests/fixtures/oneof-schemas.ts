@@ -1,6 +1,6 @@
-import { SchemaObject } from '../..';
+import { SchemaObject } from '../../..';
 
-export const rootObjectOrArray: SchemaObject = {
+export const rootObjectOrArray = (): SchemaObject => ({
   oneOf: [
     {
       type: 'object',
@@ -24,9 +24,9 @@ export const rootObjectOrArray: SchemaObject = {
       },
     },
   ],
-};
+});
 
-export const objectOrStringOneOf: SchemaObject = {
+export const objectOrStringOneOf = (): SchemaObject => ({
   type: 'object',
   properties: {
     location: {
@@ -80,4 +80,4 @@ export const objectOrStringOneOf: SchemaObject = {
     },
   },
   required: ['location'],
-};
+});

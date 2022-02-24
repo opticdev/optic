@@ -15,7 +15,9 @@ export class ShapePatches {
       if (!schema) {
         let newSchema = Schema.baseFromValue(body.value);
 
-        yield newSchemaPatch(newSchema, { location: bodyLocation });
+        yield newSchemaPatch(newSchema, {
+          location: bodyLocation || undefined,
+        });
 
         schema = newSchema;
       }
@@ -26,7 +28,7 @@ export class ShapePatches {
 
       for (let shapeDiff of shapeDiffs) {
         let diffPatches = generateShapePatchesByDiff(shapeDiff, schema, {
-          location: bodyLocation,
+          location: bodyLocation || undefined,
         });
 
         for (let patch of diffPatches) {

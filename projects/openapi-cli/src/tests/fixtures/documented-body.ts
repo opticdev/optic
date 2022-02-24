@@ -1,7 +1,22 @@
 import { BodyLocation } from '../../shapes/body';
 import { DocumentedBody } from '../../shapes/body';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { SchemaObject } from '../../shapes';
+import { Schema, SchemaObject } from '../../shapes';
+
+export function jsonBody(
+  value: any,
+  schema: SchemaObject | null = null
+): DocumentedBody {
+  return {
+    body: {
+      value,
+      contentType: 'application/json',
+    },
+    bodyLocation: null,
+    schema,
+    specJsonPath: jsonPointerHelpers.compile(['/documented-body-fixture']),
+  };
+}
 
 export function jsonBodyInRequest(
   value: any,
@@ -33,7 +48,10 @@ export function jsonBodyInRequest(
   };
 }
 
-export function jsonBodyInResponse(value: any, schema: SchemaObject | null) {
+export function jsonBodyInResponse(
+  value: any,
+  schema: SchemaObject | null = null
+) {
   return {
     body: {
       value,

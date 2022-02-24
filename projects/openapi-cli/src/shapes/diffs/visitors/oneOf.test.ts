@@ -72,7 +72,7 @@ describe('one of json schema diff visitor', () => {
   });
 
   it('can add an additional branch to a complex one of', () => {
-    const jsonSchema: SchemaObject = objectOrStringOneOf;
+    const jsonSchema: SchemaObject = objectOrStringOneOf();
 
     const input: any = {
       location: {
