@@ -4,9 +4,10 @@ export interface RoundtripProvider<Config> {
   name: string;
   fileExtensions: string[];
   inferConfig: (contents: string) => Promise<Config>;
-  parse: (contents: string) => Promise<ParseResult>;
+  parse: (filepath: string, contents: string) => Promise<ParseResult>;
   applyPatches: (
     filePath: string,
+    fileContents: string,
     operations: Operation[],
     config?: Config
   ) => Promise<PatchApplyResult>;
@@ -19,8 +20,8 @@ export type ParseResult =
   | { error: string; success: false };
 
 export type PatchApplyResult =
-  | { value: any; asString: string; success: true }
-  | { error: string; success: false };
+  | { value: any; asString: string; success: true; filePath: string }
+  | { error: string; success: false; filePath: string };
 
 // Reducer
 

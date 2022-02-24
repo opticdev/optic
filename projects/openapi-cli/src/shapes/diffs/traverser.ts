@@ -1,5 +1,5 @@
 import jsonSchemaTraverse from 'json-schema-traverse';
-import { SchemaObject, Body } from '../body';
+import { SchemaObject, Body } from '..';
 import { ShapeDiffResult } from './result';
 import Ajv, { ErrorObject, ValidateFunction } from 'ajv';
 import { OpenAPIV3 } from '../../specs';
@@ -12,7 +12,7 @@ export class ShapeDiffTraverser {
   private validator: Ajv;
 
   private validate?: ValidateFunction;
-  private body?: Body;
+  private bodyValue?: any;
 
   constructor() {
     this.validator = new Ajv({
@@ -23,10 +23,10 @@ export class ShapeDiffTraverser {
     });
   }
 
-  traverse(body: Body, schema: SchemaObject) {
-    this.body = body;
+  traverse(bodyValue: any, schema: SchemaObject) {
+    this.bodyValue = bodyValue;
     this.validate = this.validator.compile(prepareSchemaForDiff(schema));
-    this.validate(body);
+    this.validate(bodyValue);
   }
 
   *results(): IterableIterator<ShapeDiffResult> {
@@ -34,7 +34,7 @@ export class ShapeDiffTraverser {
 
     if (this.validate.errors) {
       for (let error of this.validate.errors) {
-        yield* diffVisitors(error, this.body);
+        yield* diffVisitors(error, this.bodyValue);
       }
     }
   }

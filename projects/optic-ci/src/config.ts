@@ -11,7 +11,6 @@ import { CheckConfiguration } from './checker';
  *    token: process.env.GITHUB_TOKEN,
  *    provider: 'github'
  *  },
- * },
  * checks: [
  *
  * ]

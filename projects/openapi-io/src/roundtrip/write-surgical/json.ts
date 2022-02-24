@@ -3,25 +3,19 @@ import {
   PatchApplyResult,
   ReduceOperationType,
   RoundtripProvider,
-} from './roundtrip-provider';
-import { AddOperation, Operation } from 'fast-json-patch';
-import {
-  lines,
-  pad,
-  replaceRange,
-  jsonSpacer,
-  startsWithWhitespace,
-} from './helpers/lines';
+} from '../roundtrip-provider';
+import jsonpatch, { AddOperation, Operation } from 'fast-json-patch';
+import { lines, replaceRange, startsWithWhitespace } from '../helpers/lines';
 import fs from 'fs-extra';
-import jsonpatch from 'fast-json-patch';
 import { safeLoad, YamlMap, YAMLSequence } from 'yaml-ast-parser';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { resolveJsonPointerInYamlAst } from '../parser/openapi-sourcemap-parser';
+import { resolveJsonPointerInYamlAst } from '../../parser/openapi-sourcemap-parser';
 import invariant from 'ts-invariant';
-import ast from './helpers/ast';
-import jsonLike from './helpers/json-like';
-import { formatJson } from './helpers/format/format';
-import { findNextChar, findPreviousChar } from './helpers/next-or-last-char';
+import ast from '../helpers/ast';
+import jsonLike from '../helpers/json-like';
+import { formatJson } from '../helpers/format/format';
+import { findNextChar, findPreviousChar } from '../helpers/next-or-last-char';
+
 const { EOL } = require('os');
 
 export type JsonRoundtripConfig = {
@@ -32,14 +26,12 @@ export type JsonRoundtripConfig = {
 class JsonRoundtripImpl implements RoundtripProvider<JsonRoundtripConfig> {
   async applyPatches(
     filePath: string,
+    fileContents: string,
     operations: Operation[],
     config: JsonRoundtripConfig | undefined
   ): Promise<PatchApplyResult> {
-    const currentContents = (await fs.readFile(filePath)).toString();
-    const writeConfig = config
-      ? config
-      : await this.inferConfig(currentContents);
-    const initialDocument = await this.parse(currentContents);
+    const writeConfig = config ? config : await this.inferConfig(fileContents);
+    const initialDocument = await this.parse(filePath, fileContents);
 
     invariant(
       initialDocument.success === true,
@@ -51,7 +43,7 @@ class JsonRoundtripImpl implements RoundtripProvider<JsonRoundtripConfig> {
     const ops: Operation[] = JSON.parse(JSON.stringify(operations));
 
     const reducerInput: ReduceOperationType = {
-      contents: currentContents,
+      contents: fileContents,
       currentValue: initialDocument.value,
     };
 
@@ -82,9 +74,10 @@ class JsonRoundtripImpl implements RoundtripProvider<JsonRoundtripConfig> {
         success: true,
         value: updatedDocument.currentValue,
         asString: formatted,
+        filePath,
       };
     } catch (e: any) {
-      return { success: false, error: e.message };
+      return { success: false, error: e.message, filePath };
     }
   }
 
@@ -125,7 +118,7 @@ class JsonRoundtripImpl implements RoundtripProvider<JsonRoundtripConfig> {
 
   name: string = 'json';
 
-  async parse(contents: string): Promise<ParseResult> {
+  async parse(filepath: string, contents: string): Promise<ParseResult> {
     try {
       const value = JSON.parse(contents);
       return { value, success: true };

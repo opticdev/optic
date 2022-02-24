@@ -1,9 +1,9 @@
-import { JsonRoundtripConfig } from '../json';
+import { JsonRoundtripConfig } from '../write-surgical/json';
 import stringifyJson from 'json-stable-stringify';
 import { jsonSpacer } from './lines';
 import { safeLoad } from 'yaml-ast-parser';
 import { writeYaml } from '../../write';
-import { YamlRoundTripConfig } from '../yaml';
+import { YamlRoundTripConfig } from '../write-surgical/yaml';
 
 function generatedAddedField(
   key: string,

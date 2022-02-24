@@ -1,7 +1,7 @@
 import stringifyJson from 'json-stable-stringify';
 import { jsonSpacer } from './lines';
 import { safeLoad } from 'yaml-ast-parser';
-import { JsonRoundtripConfig } from '../json';
+import { JsonRoundtripConfig } from '../write-surgical/json';
 
 export function isObject(val: any) {
   return typeof val === 'object' && !Array.isArray(val) && val !== null;
