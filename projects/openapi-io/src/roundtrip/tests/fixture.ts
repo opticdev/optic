@@ -2,6 +2,7 @@ import path from 'path';
 import { Operation } from 'fast-json-patch';
 import { RoundtripProvider } from '../roundtrip-provider';
 import { loadYaml } from '../../write';
+import fs from 'fs-extra';
 
 export async function jsonPatchFixture(
   name: string,
@@ -9,7 +10,12 @@ export async function jsonPatchFixture(
   provider: RoundtripProvider<any>
 ) {
   const filePath = path.resolve(path.join(__dirname, 'inputs', name));
-  const result = await provider.applyPatches(filePath, operations);
+  const fileContents = (await fs.readFile(filePath)).toString();
+  const result = await provider.applyPatches(
+    filePath,
+    fileContents,
+    operations
+  );
 
   if (result.success) {
     expect(result.value).toEqual(JSON.parse(result.asString));
@@ -23,7 +29,12 @@ export async function yamlPatchFixture(
   provider: RoundtripProvider<any>
 ) {
   const filePath = path.resolve(path.join(__dirname, 'inputs', name));
-  const result = await provider.applyPatches(filePath, operations);
+  const fileContents = (await fs.readFile(filePath)).toString();
+  const result = await provider.applyPatches(
+    filePath,
+    fileContents,
+    operations
+  );
 
   if (result.success) {
     const yamlParsed = loadYaml(result.asString);

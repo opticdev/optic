@@ -128,10 +128,9 @@ Array [
     "condition": "not be allowed",
     "docsLink": undefined,
     "effectiveOnDate": undefined,
-    "error": "expected added query parameter to not be required",
     "isMust": true,
     "isShould": false,
-    "passed": false,
+    "passed": true,
     "sourcemap": Object {
       "endLine": 7,
       "endPosition": 156,
@@ -147,10 +146,9 @@ Array [
     "condition": "not be allowed",
     "docsLink": undefined,
     "effectiveOnDate": undefined,
-    "error": "expected added query parameter to not be required",
     "isMust": true,
     "isShould": false,
-    "passed": false,
+    "passed": true,
     "sourcemap": Object {
       "endLine": 80,
       "endPosition": 3707,

@@ -13,6 +13,7 @@ import {
   watchDependencies,
   WatchDependenciesHandler,
 } from './loaders/watch-dependencies';
+import { collectFilePatchesFromInMemoryUpdates } from './roundtrip/reconciler';
 
 export {
   sourcemapReader,
@@ -29,6 +30,7 @@ export {
   writeYaml,
   watchDependencies,
   WatchDependenciesHandler,
+  collectFilePatchesFromInMemoryUpdates,
 };
 
 export type { JsonPath, ParseOpenAPIResult };
