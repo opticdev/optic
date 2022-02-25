@@ -154,7 +154,7 @@ describe('generate shapes from bodies', () => {
       expect([...diffs(result, ...inputs)]).toHaveLength(0);
     });
 
-    it('can learn an array with polymorphism, that can also be an object', () => {
+    it.skip('can learn an array with polymorphism, that can also be an object', () => {
       const inputs = [
         [{ food: 'rice' }, { food: 'cookies' }, { food: 'chips' }],
         ['user1', 'user2', 'user3'],
@@ -182,7 +182,7 @@ describe('generate shapes from bodies', () => {
     });
   });
 
-  describe.only('oneOfs are built correctly', () => {
+  describe('oneOfs are built correctly', () => {
     it('one of array or object', () => {
       const input = ['user1', 'user2', 'user3'];
 
@@ -232,7 +232,7 @@ describe('generate shapes from bodies', () => {
       expect([...diffs(result, input)]).toHaveLength(0);
     });
 
-    it.only('can polymorphism between instances of objects and arrays', () => {
+    it('can polymorphism between instances of objects and arrays', () => {
       const inputs = [
         {
           location: {
