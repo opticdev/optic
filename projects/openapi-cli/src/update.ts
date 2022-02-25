@@ -69,7 +69,7 @@ export function registerUpdateCommand(cli: Command) {
               documentedBody,
               patch
             );
-            yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation);
+            yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation!);
           }
 
           updatedSchemasByPath.set(specJsonPath, documentedBody.schema!);

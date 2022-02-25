@@ -8,15 +8,25 @@ import { NamingChecksConfig } from '@useoptic/api-checks/build/rulesets/naming/h
 
 type OpticNamedRulesCheck = {
   name: 'optic-named-checks';
+  type?: undefined;
   config: NamingChecksConfig;
 };
 
 type BreakingChangesCheck = {
   name: 'optic-breaking-changes';
+  type?: undefined;
 };
 
-// TODO add in custom rule check
-export type CheckConfiguration = OpticNamedRulesCheck | BreakingChangesCheck;
+type CustomRuleCheck = {
+  name: string;
+  type: 'custom';
+  checkService: ApiCheckService<any>;
+};
+
+export type CheckConfiguration =
+  | OpticNamedRulesCheck
+  | BreakingChangesCheck
+  | CustomRuleCheck;
 
 const defaultChecks: CheckConfiguration[] = [
   { name: 'optic-breaking-changes' },
@@ -27,7 +37,10 @@ export const buildCheckerFromConfig = (checks?: CheckConfiguration[]) => {
   const baseChecker = new ApiCheckService<ApiCheckDslContext>();
 
   for (const check of checks) {
-    if (check.name === 'optic-named-checks') {
+    if (check.type === 'custom') {
+      // TODO do something with name to identify check service
+      baseChecker.mergeWith(check.checkService);
+    } else if (check.name === 'optic-named-checks') {
       // this function mutates, but it might be clearer to set the return to the base checker
       makeApiChecksForStandards(
         {
@@ -46,7 +59,6 @@ export const buildCheckerFromConfig = (checks?: CheckConfiguration[]) => {
         baseChecker
       );
     } else {
-      // TODO implement custom checks, and other checks
       console.warn(
         `check not applied - currently unsupported ${JSON.stringify(check)}`
       );

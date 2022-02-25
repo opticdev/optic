@@ -1,0 +1,224 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`type shape patch generator when provided with an array, it can apply patches 1`] = `
+Array [
+  Object {
+    "description": "make stringField oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "replace stringField with a one of containing both types",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/properties/stringField/type",
+          },
+          Object {
+            "op": "add",
+            "path": "/properties/stringField/oneOf",
+            "value": Array [
+              Object {
+                "type": "string",
+              },
+              Object {
+                "items": Object {
+                  "type": "string",
+                },
+                "type": "array",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+  Object {
+    "description": "change type of stringField",
+    "groupedOperations": Array [
+      Object {
+        "intent": "change stringField type",
+        "operations": Array [
+          Object {
+            "op": "replace",
+            "path": "/properties/stringField",
+            "value": Object {
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "BackwardsIncompatible",
+    ],
+  },
+]
+`;
+
+exports[`type shape patch generator when provided with an object, it can apply patches 1`] = `
+Array [
+  Object {
+    "description": "make stringField oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "replace stringField with a one of containing both types",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/properties/stringField/type",
+          },
+          Object {
+            "op": "add",
+            "path": "/properties/stringField/oneOf",
+            "value": Array [
+              Object {
+                "type": "string",
+              },
+              Object {
+                "type": "object",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+  Object {
+    "description": "change type of stringField",
+    "groupedOperations": Array [
+      Object {
+        "intent": "change stringField type",
+        "operations": Array [
+          Object {
+            "op": "replace",
+            "path": "/properties/stringField",
+            "value": Object {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "BackwardsIncompatible",
+    ],
+  },
+]
+`;
+
+exports[`type shape patch generator when provided with another primitive, it can apply patches 1`] = `
+Array [
+  Object {
+    "description": "make stringField oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "replace stringField with a one of containing both types",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/properties/stringField/type",
+          },
+          Object {
+            "op": "add",
+            "path": "/properties/stringField/oneOf",
+            "value": Array [
+              Object {
+                "type": "string",
+              },
+              Object {
+                "type": "number",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+  Object {
+    "description": "change type of stringField",
+    "groupedOperations": Array [
+      Object {
+        "intent": "change stringField type",
+        "operations": Array [
+          Object {
+            "op": "replace",
+            "path": "/properties/stringField",
+            "value": Object {
+              "type": "number",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "BackwardsIncompatible",
+    ],
+  },
+]
+`;
+
+exports[`type shape patch generator when provided with null value, it can apply patches 1`] = `
+Array [
+  Object {
+    "description": "make stringField oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "replace stringField with a one of containing both types",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/properties/stringField/type",
+          },
+          Object {
+            "op": "add",
+            "path": "/properties/stringField/oneOf",
+            "value": Array [
+              Object {
+                "type": "string",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+  Object {
+    "description": "change type of stringField",
+    "groupedOperations": Array [
+      Object {
+        "intent": "change stringField type",
+        "operations": Array [
+          Object {
+            "op": "replace",
+            "path": "/properties/stringField",
+            "value": Object {
+              "type": "null",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "BackwardsIncompatible",
+    ],
+  },
+]
+`;

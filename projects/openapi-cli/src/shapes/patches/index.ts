@@ -11,7 +11,7 @@ import { diffShapePatchGenerators, newSchemaPatch } from './generators';
 export function* generateShapePatchesByDiff(
   diff: ShapeDiffResult,
   schema: SchemaObject,
-  shapeContext: { location: BodyLocation }
+  shapeContext: { location?: BodyLocation }
 ): IterableIterator<ShapePatch> {
   for (let generator of diffShapePatchGenerators) {
     yield* generator(diff, schema, shapeContext);

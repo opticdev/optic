@@ -6,16 +6,22 @@ import { DocumentedBody } from '../body';
 
 export interface ShapePatches extends Iterable<ShapePatch> {}
 
+const MAX_ITERATIONS = 100;
+
 export class ShapePatches {
   static *generateBodyAdditions(documentedBody: DocumentedBody): ShapePatches {
     let { body, schema, bodyLocation } = documentedBody;
 
     let patchesExhausted = false;
-    while (!patchesExhausted) {
+    let i = 0;
+    while (!patchesExhausted && i < MAX_ITERATIONS) {
+      i++;
       if (!schema) {
         let newSchema = Schema.baseFromValue(body.value);
 
-        yield newSchemaPatch(newSchema, { location: bodyLocation });
+        yield newSchemaPatch(newSchema, {
+          location: bodyLocation || undefined,
+        });
 
         schema = newSchema;
       }
@@ -26,7 +32,7 @@ export class ShapePatches {
 
       for (let shapeDiff of shapeDiffs) {
         let diffPatches = generateShapePatchesByDiff(shapeDiff, schema, {
-          location: bodyLocation,
+          location: bodyLocation || undefined,
         });
 
         for (let patch of diffPatches) {
