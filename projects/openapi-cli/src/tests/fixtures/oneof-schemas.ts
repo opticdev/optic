@@ -1,4 +1,4 @@
-import { SchemaObject } from '../../..';
+import { SchemaObject } from '../../shapes';
 
 export const rootObjectOrArray = (): SchemaObject => ({
   oneOf: [
