@@ -4,25 +4,29 @@ import { generateShapePatchesByDiff } from '../../shapes/patches';
 import * as DocumentedBodyFixtures from '../fixtures/documented-body';
 import { rootObjectOrArray } from '../fixtures/oneof-schemas';
 
-function generateSchema(...inputs: any[]): SchemaObject {
-  return patchSchema({}, ...inputs);
+function generateSchema(...inputs: any[]): SchemaObject | null {
+  return patchSchema(null, ...inputs);
 }
 
-function patchSchema(schema: SchemaObject, ...inputs: any[]) {
+function patchSchema(
+  schema: SchemaObject | null,
+  ...inputs: any[]
+): SchemaObject | null {
   for (let input of inputs) {
     let body = DocumentedBodyFixtures.jsonBody(input);
     body.schema = schema;
     let patches = ShapePatches.generateBodyAdditions(body);
 
     for (let patch of patches) {
-      schema = Schema.applyShapePatch(schema, patch);
+      schema = Schema.applyShapePatch(schema || {}, patch);
     }
   }
 
   return schema;
 }
 
-function* diffs(schema: SchemaObject, ...inputs: any[]) {
+function* diffs(schema: SchemaObject | null, ...inputs: any[]) {
+  if (!schema) return;
   for (let input of inputs) {
     yield* diffValueBySchema(input, schema);
   }
@@ -178,7 +182,7 @@ describe('generate shapes from bodies', () => {
     });
   });
 
-  describe.skip('oneOfs are built correctly', () => {
+  describe.only('oneOfs are built correctly', () => {
     it('one of array or object', () => {
       const input = ['user1', 'user2', 'user3'];
 
@@ -228,7 +232,7 @@ describe('generate shapes from bodies', () => {
       expect([...diffs(result, input)]).toHaveLength(0);
     });
 
-    it('can polymorphism between instances of objects and arrays', () => {
+    it.only('can polymorphism between instances of objects and arrays', () => {
       const inputs = [
         {
           location: {
