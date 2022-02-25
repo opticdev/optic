@@ -11,14 +11,11 @@ export function* oneOfKeyword(
     validationError.schemaPath.substring(1)
   );
 
-  const oneOfIndex = jsonPointerHelpers
-    .compile(typeKeywordPath)
-    .lastIndexOf('oneOf');
+  const oneOfIndex = typeKeywordPath.lastIndexOf('oneOf');
 
   const propertyPath = jsonPointerHelpers.compile(
     typeKeywordPath.slice(0, oneOfIndex + 1)
   );
-
   const keyName = jsonPointerHelpers.decode(propertyPath).pop() || '';
 
   const unmatchedValue = jsonPointerHelpers.get(

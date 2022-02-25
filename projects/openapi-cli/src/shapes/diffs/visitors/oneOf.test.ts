@@ -53,7 +53,6 @@ describe('one of json schema diff visitor', () => {
     };
 
     const diffs = diffValueBySchema(input, jsonSchema);
-
     expect([...diffs]).toMatchSnapshot();
   });
 

@@ -9,30 +9,6 @@ Array [
       3,
     ],
     "instancePath": "/location/principality/coordinates",
-    "key": "0",
-    "keyword": "type",
-    "kind": "UnmatchedType",
-    "propertyPath": "/properties/location/properties/principality/properties/coordinates/oneOf/0",
-  },
-  Object {
-    "example": Array [
-      1,
-      2,
-      3,
-    ],
-    "instancePath": "/location/principality/coordinates",
-    "key": "1",
-    "keyword": "type",
-    "kind": "UnmatchedType",
-    "propertyPath": "/properties/location/properties/principality/properties/coordinates/oneOf/1",
-  },
-  Object {
-    "example": Array [
-      1,
-      2,
-      3,
-    ],
-    "instancePath": "/location/principality/coordinates",
     "key": "oneOf",
     "keyword": "oneOf",
     "kind": "UnmatchedType",
@@ -57,47 +33,11 @@ Array [
     "propertyExamplePath": "/polyProp/hello",
     "propertyPath": "/properties/polyProp/oneOf/0/additionalProperties/hello",
   },
-  Object {
-    "example": Object {
-      "hello": "world",
-    },
-    "instancePath": "/polyProp",
-    "key": "1",
-    "keyword": "type",
-    "kind": "UnmatchedType",
-    "propertyPath": "/properties/polyProp/oneOf/1",
-  },
-  Object {
-    "example": Object {
-      "hello": "world",
-    },
-    "instancePath": "/polyProp",
-    "key": "oneOf",
-    "keyword": "oneOf",
-    "kind": "UnmatchedType",
-    "propertyPath": "/properties/polyProp/oneOf",
-  },
 ]
 `;
 
 exports[`one of json schema diff visitor when new primitive types provided to existing one of  1`] = `
 Array [
-  Object {
-    "example": true,
-    "instancePath": "/polyProp",
-    "key": "0",
-    "keyword": "type",
-    "kind": "UnmatchedType",
-    "propertyPath": "/properties/polyProp/oneOf/0",
-  },
-  Object {
-    "example": true,
-    "instancePath": "/polyProp",
-    "key": "1",
-    "keyword": "type",
-    "kind": "UnmatchedType",
-    "propertyPath": "/properties/polyProp/oneOf/1",
-  },
   Object {
     "example": true,
     "instancePath": "/polyProp",

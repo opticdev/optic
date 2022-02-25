@@ -33,9 +33,7 @@ export class ShapeDiffTraverser {
     if (!this.validate) return;
 
     if (this.validate.errors) {
-      for (let error of this.validate.errors) {
-        yield* diffVisitors(error, this.bodyValue);
-      }
+      yield* diffVisitors(this.validate.errors, this.bodyValue);
     }
   }
 }
