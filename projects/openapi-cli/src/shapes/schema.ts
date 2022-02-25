@@ -148,6 +148,7 @@ export const allowedKeysForObject: string[] = [
 export const allowedKeysForArray: string[] = [
   ...allowedMetaDataForAll,
   'type',
+  'items',
   'maxItems',
   'minItems',
   'uniqueItems',

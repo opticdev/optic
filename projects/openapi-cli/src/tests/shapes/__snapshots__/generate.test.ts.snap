@@ -2,7 +2,22 @@
 
 exports[`generate shapes from bodies arrays [known limitation] -- empty arrays will never learn their types, must be set by user 1`] = `Object {}`;
 
-exports[`generate shapes from bodies arrays can learn an array of object items 1`] = `Object {}`;
+exports[`generate shapes from bodies arrays can learn an array of object items 1`] = `
+Object {
+  "items": Object {
+    "properties": Object {
+      "field": Object {
+        "type": "number",
+      },
+    },
+    "required": Array [
+      "field",
+    ],
+    "type": "object",
+  },
+  "type": "array",
+}
+`;
 
 exports[`generate shapes from bodies arrays can learn an array of object items with polymorphism 1`] = `Object {}`;
 
