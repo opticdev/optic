@@ -1,0 +1,457 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`one of shape patch generator can add an additional branch to a complex one of 1`] = `
+Array [
+  Object {
+    "description": "make 0 oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "replace 0 with a one of containing both types",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/properties/location/properties/principality/properties/coordinates/oneOf/0/type",
+          },
+          Object {
+            "op": "remove",
+            "path": "/properties/location/properties/principality/properties/coordinates/oneOf/0/properties",
+          },
+          Object {
+            "op": "remove",
+            "path": "/properties/location/properties/principality/properties/coordinates/oneOf/0/required",
+          },
+          Object {
+            "op": "add",
+            "path": "/properties/location/properties/principality/properties/coordinates/oneOf/0/oneOf",
+            "value": Array [
+              Object {
+                "properties": Object {
+                  "format": Object {
+                    "type": "string",
+                  },
+                  "lat": Object {
+                    "type": "string",
+                  },
+                  "long": Object {
+                    "type": "string",
+                  },
+                },
+                "required": Array [],
+                "type": "object",
+              },
+              Object {
+                "items": Object {
+                  "type": "number",
+                },
+                "type": "array",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+  Object {
+    "description": "change type of 0",
+    "groupedOperations": Array [
+      Object {
+        "intent": "change 0 type",
+        "operations": Array [
+          Object {
+            "op": "replace",
+            "path": "/properties/location/properties/principality/properties/coordinates/oneOf/0",
+            "value": Object {
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "BackwardsIncompatible",
+    ],
+  },
+  Object {
+    "description": "make 1 oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "replace 1 with a one of containing both types",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/properties/location/properties/principality/properties/coordinates/oneOf/1/type",
+          },
+          Object {
+            "op": "add",
+            "path": "/properties/location/properties/principality/properties/coordinates/oneOf/1/oneOf",
+            "value": Array [
+              Object {
+                "type": "string",
+              },
+              Object {
+                "items": Object {
+                  "type": "number",
+                },
+                "type": "array",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+  Object {
+    "description": "change type of 1",
+    "groupedOperations": Array [
+      Object {
+        "intent": "change 1 type",
+        "operations": Array [
+          Object {
+            "op": "replace",
+            "path": "/properties/location/properties/principality/properties/coordinates/oneOf/1",
+            "value": Object {
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "BackwardsIncompatible",
+    ],
+  },
+  Object {
+    "description": "expand one of for oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "add new oneOf branch to oneOf",
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/properties/location/properties/principality/properties/coordinates/oneOf/-",
+            "value": Object {
+              "items": Object {
+                "type": "number",
+              },
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+]
+`;
+
+exports[`one of shape patch generator when new field in one of object variant of one of 1`] = `
+Array [
+  Object {
+    "description": "add property hello",
+    "groupedOperations": Array [
+      Object {
+        "intent": "add required [] to parent object and make hello required",
+        "operations": Array [
+          Object {
+            "extra": "same",
+            "op": "add",
+            "path": "/properties/polyProp/oneOf/0/required",
+            "value": Array [
+              "hello",
+            ],
+          },
+        ],
+      },
+      Object {
+        "intent": "add property hello schema to properties",
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/properties/polyProp/oneOf/0/properties/hello",
+            "value": Object {
+              "type": "string",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+  Object {
+    "description": "make 1 oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "replace 1 with a one of containing both types",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/properties/polyProp/oneOf/1/type",
+          },
+          Object {
+            "op": "add",
+            "path": "/properties/polyProp/oneOf/1/oneOf",
+            "value": Array [
+              Object {
+                "type": "number",
+              },
+              Object {
+                "type": "object",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+  Object {
+    "description": "change type of 1",
+    "groupedOperations": Array [
+      Object {
+        "intent": "change 1 type",
+        "operations": Array [
+          Object {
+            "op": "replace",
+            "path": "/properties/polyProp/oneOf/1",
+            "value": Object {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "BackwardsIncompatible",
+    ],
+  },
+  Object {
+    "description": "expand one of for oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "add new oneOf branch to oneOf",
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/properties/polyProp/oneOf/-",
+            "value": Object {
+              "type": "object",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+]
+`;
+
+exports[`one of shape patch generator when new primitive types provided to existing one of  1`] = `
+Array [
+  Object {
+    "description": "make 0 oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "replace 0 with a one of containing both types",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/properties/polyProp/oneOf/0/type",
+          },
+          Object {
+            "op": "add",
+            "path": "/properties/polyProp/oneOf/0/oneOf",
+            "value": Array [
+              Object {
+                "type": "string",
+              },
+              Object {
+                "type": "boolean",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+  Object {
+    "description": "change type of 0",
+    "groupedOperations": Array [
+      Object {
+        "intent": "change 0 type",
+        "operations": Array [
+          Object {
+            "op": "replace",
+            "path": "/properties/polyProp/oneOf/0",
+            "value": Object {
+              "type": "boolean",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "BackwardsIncompatible",
+    ],
+  },
+  Object {
+    "description": "make 1 oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "replace 1 with a one of containing both types",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/properties/polyProp/oneOf/1/type",
+          },
+          Object {
+            "op": "add",
+            "path": "/properties/polyProp/oneOf/1/oneOf",
+            "value": Array [
+              Object {
+                "type": "number",
+              },
+              Object {
+                "type": "boolean",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+  Object {
+    "description": "change type of 1",
+    "groupedOperations": Array [
+      Object {
+        "intent": "change 1 type",
+        "operations": Array [
+          Object {
+            "op": "replace",
+            "path": "/properties/polyProp/oneOf/1",
+            "value": Object {
+              "type": "boolean",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "BackwardsIncompatible",
+    ],
+  },
+  Object {
+    "description": "expand one of for oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "add new oneOf branch to oneOf",
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/properties/polyProp/oneOf/-",
+            "value": Object {
+              "type": "boolean",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+]
+`;
+
+exports[`one of shape patch generator when root schema is obejct and is shown an array 1`] = `
+Array [
+  Object {
+    "description": "make  oneOf",
+    "groupedOperations": Array [
+      Object {
+        "intent": "replace  with a one of containing both types",
+        "operations": Array [
+          Object {
+            "op": "remove",
+            "path": "/type",
+          },
+          Object {
+            "op": "remove",
+            "path": "/properties",
+          },
+          Object {
+            "op": "add",
+            "path": "/oneOf",
+            "value": Array [
+              Object {
+                "properties": Object {
+                  "sup": Object {
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+              Object {
+                "items": Object {},
+                "type": "array",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatibilityUnknown",
+    ],
+  },
+  Object {
+    "description": "change type of ",
+    "groupedOperations": Array [
+      Object {
+        "intent": "change  type",
+        "operations": Array [
+          Object {
+            "op": "replace",
+            "path": "",
+            "value": Object {
+              "type": "array",
+            },
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "BackwardsIncompatible",
+    ],
+  },
+]
+`;

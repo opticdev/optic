@@ -13,7 +13,7 @@ export type { BodyLocation };
 export interface DocumentedBody {
   body: Body;
   schema: SchemaObject | null;
-  bodyLocation: BodyLocation;
+  bodyLocation: BodyLocation | null;
   specJsonPath: string;
 }
 

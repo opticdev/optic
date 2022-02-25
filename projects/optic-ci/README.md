@@ -77,6 +77,44 @@ Give it a try -- add a name that does not follow the standard!
 
 ### Want to write your own rules?
 
+`optic-ci` ships with the ability to write your own custom rules. Add the custom rule definition to your `optic.config.js`. An example of this is:
+
+```js
+const createStandardOperationsChecker = require('./optic/standardOperations.js');
+// optic.config.js
+module.exports = {
+  checks: [
+    { name: 'optic-breaking-changes' }, // on by default
+    {
+      name: 'standard-operations',
+      type: 'custom',
+      checkService: createStandardOperationsChecker(),
+    },
+  ],
+};
+```
+
+```js
+// optic/standardOperations.js
+const { ApiCheckService, check } = require("@useoptic/api-checks");
+const { expect } = require("chai"); // this can be substituted for other test assertion libraries
+
+const standardOperations = check("require operation summary")
+  .implementation(({ operations }) => {
+    operations.requirement.must("have a summary", (operation) => {
+      if (!operation.summary) expect.fail("must have a summary");
+    });
+  });
+
+module.exports = () => {
+  const operationsChecker = new ApiCheckService();
+
+  operationsChecker.useRulesFrom(standardOperations.runner());
+
+  return operationsChecker;
+};
+```
+
 ### Join the beta!
 
 Do you like `optic-ci`? It solves this problem well because people just like you joined our Beta, connected with us on Slack and started helping us learn really fast. Join our beta to work directly with Optic's team to help us make OpenAPI and API-first easy for teams to adopt!
