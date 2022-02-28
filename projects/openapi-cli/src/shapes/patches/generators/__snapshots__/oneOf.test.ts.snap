@@ -146,6 +146,7 @@ Array [
             "op": "replace",
             "path": "",
             "value": Object {
+              "items": Object {},
               "type": "array",
             },
           },

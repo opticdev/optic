@@ -54,9 +54,14 @@ export class ShapeDiffTraverser {
         );
         let branchPath = schemaPath.slice(oneOfPath.length);
 
+        // TODO: consider hardening detection of one of branches. Going just off string keynames could
+        // potentially be ugly, as we're dealing with partially user-definable input (property names).
         if (
-          branchPath.length == 2 &&
-          branchPath[1] === JsonSchemaKnownKeyword.type
+          (branchPath.length == 2 &&
+            branchPath[1] === JsonSchemaKnownKeyword.type) ||
+          (branchPath.length === 3 &&
+            branchPath[1] === 'items' &&
+            branchPath[2] === JsonSchemaKnownKeyword.type)
         ) {
           oneOfBranchType.push([
             jsonPointerHelpers.compile(oneOfPath),

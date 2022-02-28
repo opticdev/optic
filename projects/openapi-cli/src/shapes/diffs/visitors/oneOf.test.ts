@@ -59,7 +59,7 @@ describe('one of json schema diff visitor', () => {
     expect([...diffs]).toMatchSnapshot();
   });
 
-  it.skip('when one of variant is an array with mismatching item', () => {
+  it('when one of variant is an array with mismatching item', () => {
     const jsonSchema: SchemaObject = {
       oneOf: [
         {

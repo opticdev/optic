@@ -1664,31 +1664,15 @@ Object {
     },
     Object {
       "items": Object {
-        "oneOf": Array [
-          Object {
-            "properties": Object {
-              "food": Object {
-                "type": "string",
-              },
-            },
-            "required": Array [
-              "food",
-            ],
-            "type": "object",
-          },
-          Object {
+        "properties": Object {
+          "food": Object {
             "type": "string",
           },
-          Object {
-            "type": "string",
-          },
-          Object {
-            "type": "string",
-          },
-          Object {
-            "type": "string",
-          },
+        },
+        "required": Array [
+          "food",
         ],
+        "type": "object",
       },
       "type": "array",
     },

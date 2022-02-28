@@ -49,6 +49,23 @@ Array [
 ]
 `;
 
+exports[`one of json schema diff visitor when one of variant is an array with mismatching item 1`] = `
+Array [
+  Object {
+    "example": Array [
+      "user1",
+      "user2",
+      "user3",
+    ],
+    "instancePath": "",
+    "key": "oneOf",
+    "keyword": "oneOf",
+    "kind": "UnmatchedType",
+    "propertyPath": "/oneOf",
+  },
+]
+`;
+
 exports[`one of json schema diff visitor when root schema is obejct and is shown an array 1`] = `
 Array [
   Object {
