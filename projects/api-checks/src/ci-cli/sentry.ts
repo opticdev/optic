@@ -26,6 +26,8 @@ export const wrapActionHandlerWithSentry = <
       console.error(err.message);
       if (SentryClient && err.name !== 'UserError') {
         SentryClient.captureException(e);
+      }
+      if (SentryClient) {
         await SentryClient.flush();
       }
       process.exit(1);
