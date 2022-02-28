@@ -44,16 +44,11 @@ export const bulkUploadCiRun = async (
       [UploadSlot.CheckResults]: Buffer.from(JSON.stringify(checkResults)),
       [UploadSlot.FromFile]: fromFileS3Buffer,
       [UploadSlot.ToFile]: toFileS3Buffer,
-      [UploadSlot.GithubActionsEvent]: contextFileBuffer,
-      [UploadSlot.CircleCiEvent]: contextFileBuffer,
     };
     const { web_url: opticWebUrl } = await uploadRun(
       opticClient,
       fileMap,
       {
-        provider: ciProvider,
-        ciContext: ciContext,
-        compare: 'from bulk upload',
         from: comparison.inputs.from,
         to: comparison.inputs.to,
       },

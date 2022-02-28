@@ -6,7 +6,7 @@ import {
   uploadRun,
   normalizeCiContext,
 } from '../utils/shared-upload';
-import { CompareJson, UploadJson } from '../../types';
+import { UploadJson } from '../../types';
 import { OpenAPIV3, CompareFileJson } from '@useoptic/openapi-utilities';
 
 export const uploadCiRun = async (
@@ -17,7 +17,7 @@ export const uploadCiRun = async (
   ciContext: string,
   ciProvider: 'github' | 'circleci',
   opticClient: OpticBackendClient,
-  runArgs: CiRunArgs // TODO remove this from backend web and from here
+  runArgs: CiRunArgs
 ): Promise<UploadJson> => {
   const contextFileBuffer = await loadFile(ciContext);
 
@@ -27,8 +27,6 @@ export const uploadCiRun = async (
     [UploadSlot.CheckResults]: Buffer.from(JSON.stringify(compareOutput)),
     [UploadSlot.FromFile]: Buffer.from(JSON.stringify(fromFile)),
     [UploadSlot.ToFile]: Buffer.from(JSON.stringify(toFile)),
-    [UploadSlot.GithubActionsEvent]: contextFileBuffer,
-    [UploadSlot.CircleCiEvent]: contextFileBuffer,
   };
 
   const { web_url: opticWebUrl } = await uploadRun(

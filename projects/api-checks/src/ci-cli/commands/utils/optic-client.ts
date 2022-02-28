@@ -164,52 +164,20 @@ class JsonHttpClient {
   }
 }
 
-export enum SessionType {
-  GithubActions = 'GithubActions',
-  CircleCi = 'CircleCi',
-}
-
-export type UploadRunArgs = {
-  from: string;
-  provider: 'github' | 'circleci';
-  to: string;
-  context: string;
-  rules: string;
+type Session = {
+  owner: string;
+  repo: string;
+  commit_hash: string;
+  pull_request: number;
+  run: number;
+  branch_name: string;
+  from_arg: string | null;
+  to_arg: string | null;
 };
-
-type Session =
-  | {
-      type: SessionType.GithubActions;
-      data: {
-        run_args: UploadRunArgs;
-        github_data: {
-          organization: string;
-          repo: string;
-          commit_hash: string;
-          pull_request: number;
-          run: number;
-        };
-      };
-    }
-  | {
-      type: SessionType.CircleCi;
-      data: {
-        run_args: UploadRunArgs;
-        circle_ci_data: {
-          organization: string;
-          repo: string;
-          commit_hash: string;
-          pull_request: number;
-          run: number;
-        };
-      };
-    };
 
 export enum UploadSlot {
   FromFile = 'FromFile',
   ToFile = 'ToFile',
-  GithubActionsEvent = 'GithubActionsEvent',
-  CircleCiEvent = 'CircleCiEvent',
   CheckResults = 'CheckResults',
 }
 
@@ -219,11 +187,6 @@ export type UploadUrl = {
   url: string;
 };
 
-export enum SessionStatus {
-  Ready = 'Ready',
-  NotReady = 'NotReady',
-}
-
 type SessionFile = {
   slot: UploadSlot;
   url: string;
@@ -232,7 +195,7 @@ type SessionFile = {
 type GetSessionResponse = {
   web_url: string;
   session: Session;
-  status: SessionStatus;
+  status: 'ready' | 'not_ready';
   files: SessionFile[];
 };
 
@@ -262,46 +225,28 @@ export class OpticBackendClient extends JsonHttpClient {
   public async getUploadUrls(sessionId: string): Promise<UploadUrl[]> {
     const response = await this.getJson<{
       upload_urls: UploadUrl[];
-    }>(`/api/runs/${sessionId}/upload-urls`);
+    }>(`/api/run/${sessionId}/upload`);
     return response.upload_urls;
   }
 
-  public async startSession<Type extends SessionType>(
-    sessionType: Type,
-    sessionData: Extract<Session, { type: Type }>['data']
-  ): Promise<string> {
-    const sessionId = uuidv4();
-
-    await this.postJson(
-      `/api/spec-comparison-sessions/${sessionId}/commands/start-session`,
-      {
-        session: {
-          type: sessionType,
-          data: {
-            ...sessionData,
-          },
-        },
-      }
-    );
+  public async startSession(session: Session): Promise<string> {
+    const { id: sessionId } = await this.postJson(`/api/run`, {
+      ...session,
+    });
     return sessionId;
   }
 
   public async markUploadAsComplete(
     sessionId: string,
-    uploadId: string,
-    uploadSlot: UploadSlot
+    uploadId: string
   ): Promise<void> {
-    await this.postJson(
-      `/api/spec-comparison-sessions/${sessionId}/commands/mark-upload-completed`,
-      {
-        upload_id: uploadId,
-        upload_slot: uploadSlot,
-      }
-    );
+    await this.patchJson(`/api/run/${sessionId}/upload/${uploadId}`, {
+      status: 'Unverified',
+    });
   }
 
   public async getSession(sessionId: string): Promise<GetSessionResponse> {
-    return this.getJson<GetSessionResponse>(`/api/runs/${sessionId}`);
+    return this.getJson<GetSessionResponse>(`/api/run/${sessionId}`);
   }
 }
 

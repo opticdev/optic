@@ -20,6 +20,7 @@ export type NormalizedCiContext = {
   run: number;
   commit_hash: string;
   repo: string;
+  branch_name: string;
 };
 
 export type CompareJson = CompareFileJson;

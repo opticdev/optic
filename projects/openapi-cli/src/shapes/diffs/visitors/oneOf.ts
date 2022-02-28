@@ -7,18 +7,20 @@ export function* oneOfKeyword(
   example: any
 ): IterableIterator<ShapeDiffResult> {
   if (validationError.keyword !== JsonSchemaKnownKeyword.oneOf) return;
+  if (
+    validationError.params.passingSchemas &&
+    validationError.params.passingSchemas.length > 0
+  )
+    return; // no diffs or patches for multiple matches yet
   const typeKeywordPath = jsonPointerHelpers.decode(
     validationError.schemaPath.substring(1)
   );
 
-  const oneOfIndex = jsonPointerHelpers
-    .compile(typeKeywordPath)
-    .lastIndexOf('oneOf');
+  const oneOfIndex = typeKeywordPath.lastIndexOf('oneOf');
 
   const propertyPath = jsonPointerHelpers.compile(
     typeKeywordPath.slice(0, oneOfIndex + 1)
   );
-
   const keyName = jsonPointerHelpers.decode(propertyPath).pop() || '';
 
   const unmatchedValue = jsonPointerHelpers.get(

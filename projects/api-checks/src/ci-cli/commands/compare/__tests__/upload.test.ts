@@ -1,12 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { uploadCiRun } from '../upload';
-import {
-  OpticBackendClient,
-  SessionType,
-  SessionStatus,
-  UploadSlot,
-} from '../../utils/optic-client';
+import { OpticBackendClient, UploadSlot } from '../../utils/optic-client';
 import { mockGhContext } from '../../utils/__tests__/mock-context';
 import { loadFile } from '../../utils/files';
 import { uploadFileToS3 } from '../../utils/s3';
@@ -28,9 +23,10 @@ const mockedStartSession = mockOpticClient.startSession as jest.MockedFunction<
 const mockGetUploadUrls = mockOpticClient.getUploadUrls as jest.MockedFunction<
   typeof mockOpticClient.getUploadUrls
 >;
-const mockMarkUploadAsComplete = mockOpticClient.markUploadAsComplete as jest.MockedFunction<
-  typeof mockOpticClient.markUploadAsComplete
->;
+const mockMarkUploadAsComplete =
+  mockOpticClient.markUploadAsComplete as jest.MockedFunction<
+    typeof mockOpticClient.markUploadAsComplete
+  >;
 const mockGetSession = mockOpticClient.getSession as jest.MockedFunction<
   typeof mockOpticClient.getSession
 >;
@@ -49,12 +45,11 @@ const compareOutput = {
   ],
 };
 
-let fileBufferMap: Record<UploadSlot, Buffer> = {
+let fileBufferMap: Record<string, Buffer> = {
   [UploadSlot.CheckResults]: Buffer.from(JSON.stringify(compareOutput)),
   [UploadSlot.FromFile]: Buffer.from(JSON.stringify(defaultEmptySpec)),
   [UploadSlot.ToFile]: Buffer.from(JSON.stringify(defaultEmptySpec)),
-  [UploadSlot.GithubActionsEvent]: Buffer.from(JSON.stringify(mockGhContext)),
-  [UploadSlot.CircleCiEvent]: Buffer.from(JSON.stringify(mockGhContext)),
+  githubContext: Buffer.from(JSON.stringify(mockGhContext)),
 };
 
 beforeEach(() => {
@@ -66,25 +61,16 @@ beforeEach(() => {
     Promise.resolve({
       web_url: '/the_web_url',
       session: {
-        type: SessionType.GithubActions,
-        data: {
-          run_args: {
-            from: '',
-            to: '',
-            provider: 'github',
-            context: '',
-            rules: '',
-          },
-          github_data: {
-            organization: '',
-            repo: '',
-            pull_request: 1,
-            run: 1,
-            commit_hash: '',
-          },
-        },
+        owner: '',
+        repo: '',
+        pull_request: 1,
+        run: 1,
+        commit_hash: '',
+        branch_name: '',
+        from_arg: '',
+        to_arg: '',
       },
-      status: SessionStatus.Ready,
+      status: 'ready',
       files: [],
     })
   );
@@ -102,12 +88,11 @@ afterEach(() => {
 });
 
 test('uploading a file', async () => {
-  const numberOfFiles = 4;
+  const numberOfFiles = 3;
   const githubUploadSlots = [
     UploadSlot.FromFile,
     UploadSlot.ToFile,
     UploadSlot.CheckResults,
-    UploadSlot.GithubActionsEvent,
   ];
 
   mockGetUploadUrls.mockImplementation(async () => {
@@ -122,15 +107,12 @@ test('uploading a file', async () => {
     compareOutput,
     defaultEmptySpec,
     defaultEmptySpec,
-    UploadSlot.GithubActionsEvent,
+    'githubContext',
     'github',
     mockOpticClient,
     {
       from: UploadSlot.FromFile,
       to: UploadSlot.ToFile,
-      ciContext: UploadSlot.GithubActionsEvent,
-      provider: 'github',
-      compare: UploadSlot.CheckResults,
     }
   );
 
@@ -164,15 +146,12 @@ test('uploading a file with only partial slots open', async () => {
     compareOutput,
     defaultEmptySpec,
     defaultEmptySpec,
-    UploadSlot.GithubActionsEvent,
+    'githubContext',
     'github',
     mockOpticClient,
     {
       from: UploadSlot.FromFile,
       to: UploadSlot.ToFile,
-      ciContext: UploadSlot.GithubActionsEvent,
-      provider: 'github',
-      compare: UploadSlot.CheckResults,
     }
   );
 
@@ -192,14 +171,13 @@ test('uploading a file with only partial slots open', async () => {
 });
 
 test('uploads files where from is not specified', async () => {
-  const numberOfFiles = 4;
+  const numberOfFiles = 3;
 
   mockGetUploadUrls.mockImplementation(async () => {
     return [
       UploadSlot.FromFile,
       UploadSlot.ToFile,
       UploadSlot.CheckResults,
-      UploadSlot.GithubActionsEvent,
     ].map((uploadSlot) => ({
       id: uuidv4(),
       slot: uploadSlot,
@@ -211,26 +189,18 @@ test('uploads files where from is not specified', async () => {
     compareOutput,
     defaultEmptySpec,
     defaultEmptySpec,
-    UploadSlot.GithubActionsEvent,
+    'githubContext',
     'github',
     mockOpticClient,
     {
-      from: UploadSlot.FromFile,
       to: UploadSlot.ToFile,
-      ciContext: UploadSlot.GithubActionsEvent,
-      provider: 'github',
-      compare: UploadSlot.CheckResults,
     }
   );
 
   expect(mockedLoadFile.mock.calls.length).toBe(1);
   expect(mockedStartSession.mock.calls.length).toBe(1);
   expect(mockedUploadFileToS3.mock.calls.length).toBe(numberOfFiles);
-  for (const uploadSlot of [
-    UploadSlot.ToFile,
-    UploadSlot.GithubActionsEvent,
-    UploadSlot.CheckResults,
-  ]) {
+  for (const uploadSlot of [UploadSlot.ToFile, UploadSlot.CheckResults]) {
     const matchingFnCall = mockedUploadFileToS3.mock.calls.find(
       (call) => call[0] === `/url/${uploadSlot}`
     )!;

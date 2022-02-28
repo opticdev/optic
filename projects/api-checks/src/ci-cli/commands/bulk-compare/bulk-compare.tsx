@@ -25,7 +25,7 @@ import {
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { UserError } from '../../errors';
 import { SourcemapRendererEnum } from '../components/render-results';
-import { trackEvent } from '../../segment';
+import { trackEvent, flushEvents } from '../../segment';
 import { CliConfig, BulkCompareJson, BulkUploadJson } from '../../types';
 import { createOpticClient } from '../utils/optic-client';
 import { bulkUploadCiRun } from './bulk-upload';
@@ -321,10 +321,8 @@ const BulkCompare: FC<{
         let numberOfComparisonsWithAChange = 0;
         let hasChecksFailing = false;
         let hasError = false;
-        const {
-          comparisons: initialComparisons,
-          skippedParsing,
-        } = await parseJsonComparisonInput(input);
+        const { comparisons: initialComparisons, skippedParsing } =
+          await parseJsonComparisonInput(input);
 
         !isStale && setComparisons(initialComparisons);
         const finalComparisons = new Map(initialComparisons);
@@ -445,6 +443,7 @@ const BulkCompare: FC<{
             }
           }
         }
+        await flushEvents();
 
         exit(maybeError || hasChecksFailing ? new UserError() : undefined);
       } catch (e) {
