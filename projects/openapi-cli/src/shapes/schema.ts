@@ -19,6 +19,10 @@ export class Schema {
     return JsonPatch.deepClone(value);
   }
 
+  static equals(a: SchemaObject, b: SchemaObject): boolean {
+    return !!Schema.mergeOperations(a, b).next().done;
+  }
+
   static merge(
     currentSchema: SchemaObject,
     newSchema: SchemaObject
@@ -47,7 +51,7 @@ export class Schema {
     newSchema: SchemaObject
   ): IterableIterator<Operation> {
     const merged = { ...currentSchema, ...newSchema };
-    const currrentKeys = new Set(Object.keys(currentSchema));
+    const currentKeys = new Set(Object.keys(currentSchema));
 
     let allowedKeys: string[] = [...allowedMetaDataForAll, 'type'];
     if (newSchema.type === 'object') allowedKeys = allowedKeysForObject;
@@ -65,13 +69,13 @@ export class Schema {
           op: 'remove',
           path,
         };
-      } else if (!currrentKeys.has(key)) {
+      } else if (!currentKeys.has(key)) {
         yield {
           op: 'add',
           path,
           value,
         };
-      } else if (value !== currentSchema[value]) {
+      } else if (value !== currentSchema[key]) {
         yield {
           op: 'replace',
           path,
