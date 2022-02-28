@@ -7,6 +7,11 @@ export function* oneOfKeyword(
   example: any
 ): IterableIterator<ShapeDiffResult> {
   if (validationError.keyword !== JsonSchemaKnownKeyword.oneOf) return;
+  if (
+    validationError.params.passingSchemas &&
+    validationError.params.passingSchemas.length > 0
+  )
+    return; // no diffs or patches for multiple matches yet
   const typeKeywordPath = jsonPointerHelpers.decode(
     validationError.schemaPath.substring(1)
   );

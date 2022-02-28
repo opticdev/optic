@@ -30,6 +30,25 @@ describe('one of json schema diff visitor', () => {
     expect([...diffs]).toHaveLength(0);
   });
 
+  it('when more than one match, no type diff', () => {
+    const jsonSchema: SchemaObject = {
+      oneOf: [
+        {
+          type: 'object',
+          properties: { id: { type: 'string' }, name: { type: 'string' } },
+        },
+        {
+          type: 'object',
+          properties: { id: { type: 'string' }, price: { type: 'number' } },
+        },
+      ],
+    };
+    const input = { id: 'an-identifier' };
+
+    const diffs = diffValueBySchema(input, jsonSchema);
+    expect([...diffs]).toHaveLength(0);
+  });
+
   it('when new primitive types provided to existing one of ', () => {
     const input = {
       polyProp: true,
