@@ -20,3 +20,19 @@ export const trackEvent = (
     });
   }
 };
+
+export const flushEvents = (): Promise<void> => {
+  if (analytics) {
+    return new Promise((resolve, reject) => {
+      analytics!.flush((err, batch) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  } else {
+    return Promise.resolve();
+  }
+};

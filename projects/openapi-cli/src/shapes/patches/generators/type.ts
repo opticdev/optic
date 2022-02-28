@@ -29,13 +29,21 @@ export function* typePatches(
   function makeOneOfOperations() {
     const groupedOperations: OperationGroup[] = [];
     if (alreadyOneOf) {
-      groupedOperations.push(
-        OperationGroup.create(`add new oneOf type to ${diff.key}`, {
-          op: 'add',
-          path: jsonPointerHelpers.append(diff.propertyPath, 'oneOf', '-'), // "-" indicates append to array
-          value: Schema.baseFromValue(diff.example),
-        })
-      );
+      let baseSchema = Schema.baseFromValue(diff.example);
+
+      if (
+        !currentPropertySchema.oneOf.find((branchSchema) =>
+          Schema.equals(baseSchema, branchSchema)
+        )
+      ) {
+        groupedOperations.push(
+          OperationGroup.create(`add new oneOf type to ${diff.key}`, {
+            op: 'add',
+            path: jsonPointerHelpers.append(diff.propertyPath, 'oneOf', '-'), // "-" indicates append to array
+            value: baseSchema,
+          })
+        );
+      }
     } else {
       let mergeOperations = [
         ...Schema.mergeOperations(Schema.clone(currentPropertySchema), {

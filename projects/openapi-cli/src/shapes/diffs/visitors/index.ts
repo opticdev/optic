@@ -1,3 +1,5 @@
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { JsonSchemaKnownKeyword } from '..';
 import { ShapeDiffResult } from '../result';
 import { ErrorObject } from '../traverser';
 

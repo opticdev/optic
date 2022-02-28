@@ -3,6 +3,7 @@ import { SchemaObject, Body } from '..';
 import { ShapeDiffResult } from './result';
 import Ajv, { ErrorObject, ValidateFunction } from 'ajv';
 import { OpenAPIV3 } from '../../specs';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 import { diffVisitors } from './visitors';
 
@@ -30,12 +31,68 @@ export class ShapeDiffTraverser {
   }
 
   *results(): IterableIterator<ShapeDiffResult> {
-    if (!this.validate) return;
+    if (!this.validate || !this.validate.errors) return;
+    let validationErrors = this.validate.errors;
 
-    if (this.validate.errors) {
-      for (let error of this.validate.errors) {
-        yield* diffVisitors(error, this.bodyValue);
+    let oneOfs: Map<string, ErrorObject> = new Map();
+    let oneOfBranchType: [string, ErrorObject][] = [];
+    let oneOfBranchOther: [string, ErrorObject][] = [];
+
+    for (let validationError of validationErrors) {
+      if (validationError.keyword === JsonSchemaKnownKeyword.oneOf) {
+        let schemaPath = validationError.schemaPath.substring(1); // valid json pointer
+        oneOfs.set(schemaPath, validationError);
+      } else if (validationError.schemaPath.indexOf('oneOf') > -1) {
+        // probably has a oneof ancestor
+
+        let schemaPath = jsonPointerHelpers.decode(
+          validationError.schemaPath.substring(1)
+        );
+        let oneOfPath = schemaPath.slice(
+          0,
+          schemaPath.lastIndexOf('oneOf') + 1
+        );
+        let branchPath = schemaPath.slice(oneOfPath.length);
+
+        // TODO: consider hardening detection of one of branches. Going just off string keynames could
+        // potentially be ugly, as we're dealing with partially user-definable input (property names).
+        if (
+          (branchPath.length == 2 &&
+            branchPath[1] === JsonSchemaKnownKeyword.type) ||
+          (branchPath.length === 3 &&
+            branchPath[1] === 'items' &&
+            branchPath[2] === JsonSchemaKnownKeyword.type)
+        ) {
+          oneOfBranchType.push([
+            jsonPointerHelpers.compile(oneOfPath),
+            validationError,
+          ]);
+        } else if (branchPath.length >= 2) {
+          oneOfBranchOther.push([
+            jsonPointerHelpers.compile(oneOfPath),
+            validationError,
+          ]);
+        }
+      } else {
+        // not related to one-of? visit right away
+        yield* diffVisitors(validationError, this.bodyValue);
       }
+    }
+
+    for (let [oneOfPath, otherBranchError] of oneOfBranchOther) {
+      // any nested errors are all safe to visit
+      yield* diffVisitors(otherBranchError, this.bodyValue);
+
+      // once a nested error has been visited, we consider this a branch type match
+      oneOfs.delete(oneOfPath);
+      oneOfBranchType = oneOfBranchType.filter(
+        ([branchOneOfPath, _]) => oneOfPath !== branchOneOfPath
+      );
+    }
+
+    // visit any left over one ofs
+    for (let oneOfError of oneOfs.values()) {
+      yield* diffVisitors(oneOfError, this.bodyValue);
     }
   }
 }

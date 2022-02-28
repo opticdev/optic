@@ -1,5 +1,8 @@
 import { diffValueBySchema } from '..';
-import { objectOrStringOneOf } from '../../../tests/fixtures/oneof-schemas';
+import {
+  objectOrStringOneOf,
+  rootObjectOrArray,
+} from '../../../tests/fixtures/oneof-schemas';
 import { SchemaObject } from '../../schema';
 
 describe('one of json schema diff visitor', () => {
@@ -23,6 +26,25 @@ describe('one of json schema diff visitor', () => {
     const input = {
       polyProp: 123,
     };
+    const diffs = diffValueBySchema(input, jsonSchema);
+    expect([...diffs]).toHaveLength(0);
+  });
+
+  it('when more than one match, no type diff', () => {
+    const jsonSchema: SchemaObject = {
+      oneOf: [
+        {
+          type: 'object',
+          properties: { id: { type: 'string' }, name: { type: 'string' } },
+        },
+        {
+          type: 'object',
+          properties: { id: { type: 'string' }, price: { type: 'number' } },
+        },
+      ],
+    };
+    const input = { id: 'an-identifier' };
+
     const diffs = diffValueBySchema(input, jsonSchema);
     expect([...diffs]).toHaveLength(0);
   });
@@ -53,8 +75,31 @@ describe('one of json schema diff visitor', () => {
     };
 
     const diffs = diffValueBySchema(input, jsonSchema);
-
     expect([...diffs]).toMatchSnapshot();
+  });
+
+  it('when one of variant is an array with mismatching item', () => {
+    const jsonSchema: SchemaObject = {
+      oneOf: [
+        {
+          type: 'object',
+          properties: {},
+        },
+        {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {},
+          },
+        },
+      ],
+    };
+
+    const input = ['user1', 'user2', 'user3'];
+
+    const diffs = [...diffValueBySchema(input, jsonSchema)];
+    expect(diffs).toHaveLength(1);
+    expect(diffs).toMatchSnapshot();
   });
 
   it('when root schema is obejct and is shown an array', () => {

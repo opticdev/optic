@@ -45,6 +45,9 @@ Array [
             "op": "replace",
             "path": "/properties/stringField",
             "value": Object {
+              "items": Object {
+                "type": "string",
+              },
               "type": "array",
             },
           },
