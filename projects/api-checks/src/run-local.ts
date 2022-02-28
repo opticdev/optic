@@ -1,6 +1,5 @@
 import path from 'path';
 import dotenv from 'dotenv';
-import { expect } from 'chai';
 import { ApiCheckService } from './sdk/api-check-service';
 import { makeApiChecksForStandards } from './rulesets/packaged-rules';
 import { ApiCheckDslContext } from './sdk/api-change-dsl';
