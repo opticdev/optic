@@ -282,9 +282,6 @@ export function Compare<T>(props: {
               {
                 from: props.from,
                 to: props.to,
-                provider: ciProvider,
-                ciContext,
-                compare: '',
               }
             );
 

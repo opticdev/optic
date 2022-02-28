@@ -2,7 +2,7 @@ import {
   defaultEmptySpec,
   validateOpenApiV3Document,
 } from '@useoptic/openapi-utilities';
-import { OpticBackendClient, SessionType, UploadSlot } from './optic-client';
+import { OpticBackendClient, UploadSlot } from './optic-client';
 import { uploadFileToS3 } from './s3';
 import { parseSpecVersion } from './compare-input-parser';
 import {
@@ -69,10 +69,7 @@ export const validateUploadRequirements = (
 
 export type CiRunArgs = {
   from?: string;
-  provider: 'github' | 'circleci';
   to?: string;
-  ciContext: string;
-  compare: string;
 };
 
 const loadSpecFile = async (fileName: string): Promise<Buffer> => {
@@ -88,35 +85,18 @@ const startSession = async (
   runArgs: CiRunArgs,
   ciContext: NormalizedCiContext
 ): Promise<string> => {
-  if (runArgs.provider === 'github') {
-    const sessionId = await opticClient.startSession(
-      SessionType.GithubActions,
-      {
-        run_args: {
-          from: runArgs.from || '',
-          to: runArgs.to || '',
-          context: runArgs.ciContext,
-          rules: runArgs.compare,
-          provider: runArgs.provider,
-        },
-        github_data: ciContext,
-      }
-    );
-    return sessionId;
-  } else if (runArgs.provider === 'circleci') {
-    const sessionId = await opticClient.startSession(SessionType.CircleCi, {
-      run_args: {
-        from: runArgs.from || '',
-        to: runArgs.to || '',
-        context: runArgs.ciContext,
-        rules: runArgs.compare,
-        provider: runArgs.provider,
-      },
-      circle_ci_data: ciContext,
-    });
-    return sessionId;
-  }
-  throw new Error(`Unrecognized provider ${runArgs.provider}`);
+  const sessionId = await opticClient.startSession({
+    owner: ciContext.organization,
+    repo: ciContext.repo,
+    commit_hash: ciContext.commit_hash,
+    run: ciContext.run,
+    pull_request: ciContext.pull_request,
+    branch_name: ciContext.branch_name,
+    from_arg: runArgs.from || '',
+    to_arg: runArgs.to || '',
+  });
+
+  return sessionId;
 };
 
 export const normalizeCiContext = (
@@ -178,26 +158,11 @@ export const uploadRun = async (
     })
   );
 
-  // TODO run this in parallel when optimistic concurrency is fixed
-  // await Promise.all(
-  //   uploadedFilePaths.map(async (uploadedFilePath) =>
-  //     opticClient.markUploadAsComplete(
-  //       sessionId,
-  //       uploadedFilePath.id,
-  //       uploadedFilePath.slot
-  //     )
-  //   )
-  // );
-
-  // Run this sequentially to work around optimistic concurrency bug
-  await uploadedFilePaths.reduce(async (promiseChain, uploadedFilePath) => {
-    await promiseChain;
-    return opticClient.markUploadAsComplete(
-      sessionId,
-      uploadedFilePath.id,
-      uploadedFilePath.slot
-    );
-  }, Promise.resolve());
+  await Promise.all(
+    uploadedFilePaths.map(async (uploadedFilePath) =>
+      opticClient.markUploadAsComplete(sessionId, uploadedFilePath.id)
+    )
+  );
 
   return opticClient.getSession(sessionId);
 };
