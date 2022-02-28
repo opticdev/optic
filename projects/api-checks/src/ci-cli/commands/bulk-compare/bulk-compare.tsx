@@ -13,7 +13,7 @@ import {
 import { ParseOpenAPIResult } from '@useoptic/openapi-io';
 import { SpecComparison } from '../components';
 import { ApiCheckService } from '../../../sdk/api-check-service';
-import { wrapActionHandlerWithSentry } from '../../sentry';
+import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import {
   loadFile,
   parseSpecVersion,
@@ -306,10 +306,16 @@ const BulkCompare: FC<{
         numberOfUploads: number;
         numberOfComparisons: number;
       }
+    | {
+        state: 'error';
+        error: Error;
+      }
   >({ state: 'not started' });
-  const [commentState, setCommentState] = useState<'not started' | 'github'>(
-    'not started'
-  );
+  const [commentState, setCommentState] = useState<
+    | { state: 'not started' }
+    | { state: 'github' }
+    | { state: 'error'; error: Error }
+  >({ state: 'not started' });
 
   useEffect(() => {
     let isStale = false;
@@ -413,33 +419,52 @@ const BulkCompare: FC<{
             const opticToken = cliConfig.opticToken!;
             const { token, provider } = cliConfig.gitProvider!;
             const opticClient = createOpticClient(opticToken);
-            const bulkUploadOutput = await bulkUploadCiRun(
-              opticClient,
-              bulkCompareOutput,
-              ciContextNotNull,
-              ciProvider
-            );
 
-            if (bulkUploadOutput) {
-              // In the future we can add different git providers
-              if (provider === 'github') {
-                setCommentState('github');
+            try {
+              const bulkUploadOutput = await bulkUploadCiRun(
+                opticClient,
+                bulkCompareOutput,
+                ciContextNotNull,
+                ciProvider
+              );
+              if (bulkUploadOutput) {
+                // In the future we can add different git providers
+                if (provider === 'github') {
+                  setCommentState({
+                    state: 'github',
+                  });
 
-                await sendBulkGithubMessage({
-                  githubToken: token,
-                  uploadOutput: bulkUploadOutput,
-                });
+                  try {
+                    await sendBulkGithubMessage({
+                      githubToken: token,
+                      uploadOutput: bulkUploadOutput,
+                    });
+                  } catch (e) {
+                    setCommentState({
+                      state: 'error',
+                      error: e as Error,
+                    });
+                    SentryClient?.captureException(e);
+                  }
+                }
+                !isStale &&
+                  setUploadState({
+                    state: 'complete',
+                    bulkUploadJson: bulkUploadOutput,
+                  });
+              } else {
+                !isStale &&
+                  setUploadState({
+                    state: 'no changes',
+                  });
               }
+            } catch (e) {
               !isStale &&
                 setUploadState({
-                  state: 'complete',
-                  bulkUploadJson: bulkUploadOutput,
+                  state: 'error',
+                  error: e as Error,
                 });
-            } else {
-              !isStale &&
-                setUploadState({
-                  state: 'no changes',
-                });
+              SentryClient?.captureException(e);
             }
           }
         }
@@ -529,8 +554,25 @@ const BulkCompare: FC<{
             </Text>
           ))}
         </>
+      ) : uploadState.state === 'error' ? (
+        <>
+          <Text>
+            Error uploading the run to Optic - exiting with a zero exit code.
+          </Text>
+          <Text color="red">{JSON.stringify(uploadState.error.message)}</Text>
+        </>
       ) : null}
-      {commentState === 'github' && <Text>Posting comment to github</Text>}
+      {commentState.state === 'github' && (
+        <Text>Posting comment to github</Text>
+      )}
+      {commentState.state === 'error' && (
+        <>
+          <Text>
+            Failed to post comment to github - exiting with a zero exit code.
+          </Text>
+          <Text color="red">{JSON.stringify(commentState.error.message)}</Text>
+        </>
+      )}
     </Box>
   );
 };

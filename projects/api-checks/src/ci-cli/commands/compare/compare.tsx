@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Command } from 'commander';
 import { createOpticClient } from '../utils/optic-client';
 
-import { Box, render, Text, Newline, useApp, useStdout } from 'ink';
+import { Box, render, Text, useApp, useStdout } from 'ink';
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
@@ -17,7 +17,7 @@ import {
   generateSpecResults,
 } from '../utils';
 import { UserError } from '../../errors';
-import { wrapActionHandlerWithSentry } from '../../sentry';
+import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { SourcemapRendererEnum } from '../components/render-results';
 import { trackEvent, flushEvents } from '../../segment';
@@ -184,10 +184,16 @@ export function Compare<T>(props: {
         state: 'complete';
         uploadLocation: string;
       }
+    | {
+        state: 'error';
+        error: Error;
+      }
   >({ state: 'not started' });
-  const [commentState, setCommentState] = useState<'not started' | 'github'>(
-    'not started'
-  );
+  const [commentState, setCommentState] = useState<
+    | { state: 'not started' }
+    | { state: 'github' }
+    | { state: 'error'; error: Error }
+  >({ state: 'not started' });
 
   const [results, setResults] = useState<
     | {
@@ -272,34 +278,53 @@ export function Compare<T>(props: {
             const opticToken = props.cliConfig.opticToken!;
             const { token, provider } = props.cliConfig.gitProvider!;
             const opticClient = createOpticClient(opticToken);
-            const uploadOutput = await uploadCiRun(
-              compareOutput,
-              from.jsonLike,
-              to.jsonLike,
-              ciContext,
-              ciProvider,
-              opticClient,
-              {
-                from: props.from,
-                to: props.to,
-              }
-            );
 
-            // In the future we can add different git providers
-            if (provider === 'github') {
-              setCommentState('github');
-              await sendGithubMessage({
-                githubToken: token,
+            try {
+              const uploadOutput = await uploadCiRun(
                 compareOutput,
-                uploadOutput,
-              });
-            }
+                from.jsonLike,
+                to.jsonLike,
+                ciContext,
+                ciProvider,
+                opticClient,
+                {
+                  from: props.from,
+                  to: props.to,
+                }
+              );
+              // throw new Error('asd');
+              if (uploadOutput) {
+                // In the future we can add different git providers
+                if (provider === 'github') {
+                  setCommentState({ state: 'github' });
+                  try {
+                    await sendGithubMessage({
+                      githubToken: token,
+                      compareOutput,
+                      uploadOutput,
+                    });
+                  } catch (e) {
+                    setCommentState({
+                      state: 'error',
+                      error: e as Error,
+                    });
+                    SentryClient?.captureException(e);
+                  }
+                }
 
-            !isStale &&
+                !isStale &&
+                  setUploadState({
+                    state: 'complete',
+                    uploadLocation: uploadOutput.opticWebUrl,
+                  });
+              }
+            } catch (e) {
               setUploadState({
-                state: 'complete',
-                uploadLocation: uploadOutput.opticWebUrl,
+                state: 'error',
+                error: e as Error,
               });
+              SentryClient?.captureException(e);
+            }
           } else if (props.uploadResults) {
             !isStale && setUploadState({ state: 'no changes' });
           }
@@ -407,8 +432,25 @@ export function Compare<T>(props: {
             Results of this run can be found at: {uploadState.uploadLocation}
           </Text>
         </>
+      ) : uploadState.state === 'error' ? (
+        <>
+          <Text>
+            Error uploading the run to Optic - exiting with a zero exit code.
+          </Text>
+          <Text color="red">{JSON.stringify(uploadState.error.message)}</Text>
+        </>
       ) : null}
-      {commentState === 'github' && <Text>Posting comment to github</Text>}
+      {commentState.state === 'github' && (
+        <Text>Posting comment to github</Text>
+      )}
+      {commentState.state === 'error' && (
+        <>
+          <Text>
+            Failed to post comment to github - exiting with a zero exit code.
+          </Text>
+          <Text color="red">{JSON.stringify(commentState.error.message)}</Text>
+        </>
+      )}
     </Box>
   );
 }
