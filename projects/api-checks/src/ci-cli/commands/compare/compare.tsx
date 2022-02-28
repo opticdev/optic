@@ -20,7 +20,7 @@ import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { SourcemapRendererEnum } from '../components/render-results';
-import { trackEvent } from '../../segment';
+import { trackEvent, flushEvents } from '../../segment';
 import { CliConfig } from '../../types';
 import { uploadCiRun } from './upload';
 import { sendGithubMessage } from './github-comment';
@@ -317,6 +317,8 @@ export function Compare<T>(props: {
             ),
             numberOfChanges: changes.length,
           });
+
+          await flushEvents();
 
           exit(hasError ? new UserError() : undefined);
         } catch (e) {
