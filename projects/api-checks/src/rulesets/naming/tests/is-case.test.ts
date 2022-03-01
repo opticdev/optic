@@ -28,6 +28,35 @@ describe('isCase', () => {
     }
   });
 
+  test('Header-Param-Case', () => {
+    const passingCases = [
+      'Accept',
+      'Accept-Encoding',
+      'Authorization',
+      'Cache-Control',
+      'Connection',
+      'Content-Type',
+      'Host',
+      'Referer',
+      'supports-kebab-or-param-case',
+      'User-Agent'
+    ];
+    const failingCases = [
+      '',
+      'camelCaseForFun',
+      'some-kebab-someCamel',
+      'snake_case_for_fun',
+    ];
+
+    for (const passingCase of passingCases) {
+      expect(isCase(passingCase, NameMustBe.headerParamCase)).toBe(true);
+    }
+
+    for (const failingCase of failingCases) {
+      expect(isCase(failingCase, NameMustBe.headerParamCase)).toBe(false);
+    }
+  });
+
   test('param-case', () => {
     const passingCases = [
       'kebab-case-for-fun',

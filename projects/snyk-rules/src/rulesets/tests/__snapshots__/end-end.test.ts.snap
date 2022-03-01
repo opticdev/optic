@@ -156773,6 +156773,50 @@ Object {
 }
 `;
 
+exports[`failing case 2: adding a camelCase when Header-Param-Case is required 1`] = `
+Object {
+  "passed": false,
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "header": "exampleParam",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "header",
+            "exampleParam",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "header-parameter",
+        },
+        "value": Object {
+          "in": "header",
+          "name": "exampleParam",
+          "required": false,
+        },
+      },
+      "condition": "have Header-Param-Case name",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "error": "exampleParam is not Header-Param-Case",
+      "isMust": true,
+      "isShould": false,
+      "passed": false,
+      "where": "requirement for header-parameter: exampleParam",
+    },
+  ],
+}
+`;
+
 exports[`passing case 1: adding a camelCase when camelCase is required 1`] = `
 Object {
   "passed": true,
@@ -157248,6 +157292,56 @@ Object {
 `;
 
 exports[`passing case 2: wrong case ok if it is already there 5`] = `
+Object {
+  "passed": true,
+  "results": Array [],
+}
+`;
+
+exports[`passing case 3: adding a Header-Param-Case when Header-Param-Case is required 1`] = `
+Object {
+  "passed": true,
+  "results": Array [
+    Object {
+      "change": Object {
+        "location": Object {
+          "conceptualLocation": Object {
+            "inRequest": Object {
+              "header": "Example-Header",
+            },
+            "method": "get",
+            "path": "/example",
+          },
+          "conceptualPath": Array [
+            "operations",
+            "/example",
+            "get",
+            "parameters",
+            "header",
+            "Example-Header",
+          ],
+          "jsonPath": "/paths/~1example/get/parameters/0",
+          "kind": "header-parameter",
+        },
+        "value": Object {
+          "in": "header",
+          "name": "Example-Header",
+          "required": false,
+        },
+      },
+      "condition": "have Header-Param-Case name",
+      "docsLink": undefined,
+      "effectiveOnDate": undefined,
+      "isMust": true,
+      "isShould": false,
+      "passed": true,
+      "where": "requirement for header-parameter: Example-Header",
+    },
+  ],
+}
+`;
+
+exports[`passing case 4: wrong case ok if it is already there 1`] = `
 Object {
   "passed": true,
   "results": Array [],
