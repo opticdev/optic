@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/api-checks",
   "packageManager": "yarn@3.0.2",
-  "version": "0.22.15",
+  "version": "0.22.16",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -28,7 +28,6 @@
     "@types/babel__preset-env": "^7",
     "@types/chai": "^4.2.22",
     "@types/copyfiles": "^2",
-    "@types/follow-redirects": "^1",
     "@types/fs-extra": "^9.0.13",
     "@types/is-url": "^1.2.30",
     "@types/jest": "^27.4.0",
@@ -65,7 +64,6 @@
     "chai": "^4.3.4",
     "commander": "^8.3.0",
     "dotenv": "^16.0.0",
-    "follow-redirects": "1.14.7",
     "fs-extra": "^10.0.0",
     "ink": "^3.2.0",
     "ink-link": "^2.0.0",

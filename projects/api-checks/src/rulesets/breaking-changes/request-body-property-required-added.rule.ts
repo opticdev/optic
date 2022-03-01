@@ -5,8 +5,9 @@ export default check('prevent adding a required property')
   .implementation(({ bodyProperties }) => {
     const { expect } = require('chai');
     bodyProperties.added.must('not be required', (property, context) => {
+      if (context.operationAdded) return; // rule doesn't apply for new operations
       if (context.isInRequest && property.required) {
-        expect.fail('expected requst body property to not be required');
+        expect.fail('expected request body property to not be required');
       }
     });
   })
