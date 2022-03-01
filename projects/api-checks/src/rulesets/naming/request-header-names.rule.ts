@@ -29,6 +29,16 @@ export default check<NameRule>('request header naming')
     }),
     { rule: NameMustBe.pascalCase, applies: RuleApplies.always }
   )
+  .failingExample(
+    scenario(
+      'adding a camelCase when Header-Param-Case is required'
+    ).requestParameter.added({
+        in: 'header',
+        name: 'exampleParam',
+        required: false,
+    }),
+      { rule: NameMustBe.headerParamCase, applies: RuleApplies.always }
+  )
   .passingExample(
     scenario(
       'adding a camelCase when camelCase is required'
@@ -49,4 +59,26 @@ export default check<NameRule>('request header naming')
       (same) => same
     ),
     { rule: NameMustBe.pascalCase, applies: RuleApplies.whenAdded }
+  )
+  .passingExample(
+    scenario(
+      'adding a Header-Param-Case when Header-Param-Case is required'
+    ).requestParameter.added({
+      in: 'header',
+      name: 'Example-Header',
+      required: false,
+    }),
+    { rule: NameMustBe.headerParamCase, applies: RuleApplies.always }
+  )
+  .passingExample(
+    scenario('wrong case ok if it is already there').requestParameter.changed(
+      {
+        in: 'header',
+        name: 'exampleParam',
+        required: false,
+      },
+      (same) => same
+    ),
+    { rule: NameMustBe.headerParamCase, applies: RuleApplies.whenAdded }
   );
+
