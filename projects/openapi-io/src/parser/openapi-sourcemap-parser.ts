@@ -50,6 +50,7 @@ export async function parseOpenAPIWithSourcemap(
     {
       ...$RefParserOptions.defaults,
       path: path,
+      dereference: { circular: false },
     },
     sourcemap
   );
@@ -105,6 +106,7 @@ export async function parseOpenAPIFromRepoWithSourcemap(
     {
       ...$RefParserOptions.defaults,
       path: fileName,
+      dereference: { circular: false },
       resolve,
     },
     sourcemap
