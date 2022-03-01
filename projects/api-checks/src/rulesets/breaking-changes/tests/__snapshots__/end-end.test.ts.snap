@@ -1591,7 +1591,7 @@ Object {
       "condition": "not be required",
       "docsLink": undefined,
       "effectiveOnDate": undefined,
-      "error": "expected requst body property to not be required",
+      "error": "expected request body property to not be required",
       "isMust": true,
       "isShould": false,
       "passed": false,
