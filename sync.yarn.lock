@@ -2949,15 +2949,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/follow-redirects@npm:^1":
-  version: 1.13.1
-  resolution: "@types/follow-redirects@npm:1.13.1"
-  dependencies:
-    "@types/node": "*"
-  checksum: 6fdcda3e58e86418da0c2f068e818a9498f604110f54d73ab648fd4043538e170153166706f33f881564238522d03753bd90f57680d66b0617b5a582b957284b
-  languageName: node
-  linkType: hard
-
 "@types/fs-extra@npm:^9.0.13":
   version: 9.0.13
   resolution: "@types/fs-extra@npm:9.0.13"
@@ -3352,7 +3343,6 @@ __metadata:
     "@types/babel__preset-env": ^7
     "@types/chai": ^4.2.22
     "@types/copyfiles": ^2
-    "@types/follow-redirects": ^1
     "@types/fs-extra": ^9.0.13
     "@types/is-url": ^1.2.30
     "@types/jest": ^27.4.0
@@ -3375,7 +3365,6 @@ __metadata:
     chai: ^4.3.4
     commander: ^8.3.0
     dotenv: ^11.0.0
-    follow-redirects: 1.14.7
     fs-extra: ^10.0.0
     ink: ^3.2.0
     ink-link: ^2.0.0
@@ -5468,7 +5457,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:1.14.7, follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.0":
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.0":
   version: 1.14.7
   resolution: "follow-redirects@npm:1.14.7"
   peerDependenciesMeta:
