@@ -1,6 +1,7 @@
+import path from 'path';
 import { CompareFileJson } from '@useoptic/openapi-utilities';
 import { OpticBackendClient, UploadSlot } from '../utils/optic-client';
-import { loadFile, writeFile } from '../utils';
+import { loadFile } from '../utils';
 import {
   loadAndValidateSpecFiles,
   normalizeCiContext,
@@ -39,6 +40,7 @@ export const bulkUploadCiRun = async (
     const checkResults: CompareFileJson = {
       changes: comparison.changes,
       results: comparison.results,
+      projectRootDir: comparison.projectRootDir,
     };
     const fileMap: Record<UploadSlot, Buffer> = {
       [UploadSlot.CheckResults]: Buffer.from(JSON.stringify(checkResults)),
@@ -49,8 +51,12 @@ export const bulkUploadCiRun = async (
       opticClient,
       fileMap,
       {
-        from: comparison.inputs.from,
-        to: comparison.inputs.to,
+        from: comparison.inputs.from
+          ? path.join(process.cwd(), comparison.inputs.from)
+          : comparison.inputs.from,
+        to: comparison.inputs.to
+          ? path.join(process.cwd(), comparison.inputs.to)
+          : comparison.inputs.to,
       },
       normalizedCiContext
     );

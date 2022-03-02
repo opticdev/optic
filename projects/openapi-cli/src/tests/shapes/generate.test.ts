@@ -18,7 +18,7 @@ function patchSchema(
     let patches = ShapePatches.generateBodyAdditions(body);
 
     for (let patch of patches) {
-      schema = Schema.applyShapePatch(schema || {}, patch);
+      schema = Schema.applyShapePatch(schema, patch);
     }
   }
 

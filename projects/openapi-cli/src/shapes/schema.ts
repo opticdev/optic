@@ -47,9 +47,18 @@ export class Schema {
   }
 
   static *mergeOperations(
-    currentSchema: SchemaObject,
+    currentSchema: SchemaObject | null,
     newSchema: SchemaObject
   ): IterableIterator<Operation> {
+    if (currentSchema === null) {
+      yield {
+        op: 'add',
+        path: '',
+        value: {},
+      };
+      currentSchema = {};
+    }
+
     const merged = { ...currentSchema, ...newSchema };
     const currentKeys = new Set(Object.keys(currentSchema));
 
@@ -86,7 +95,7 @@ export class Schema {
   }
 
   static applyShapePatch(
-    schema: SchemaObject,
+    schema: SchemaObject | null,
     patch: ShapePatch
   ): SchemaObject {
     const result = JsonPatch.applyPatch(
@@ -96,7 +105,7 @@ export class Schema {
       false // don't mutate the original schema
     );
 
-    return result.newDocument;
+    return result.newDocument!;
   }
 }
 

@@ -39,7 +39,7 @@ export function resolveJsonPointerInYamlAst(
 export function findLinesForAstAndContents(
   astNode: YAMLNode,
   contents: string
-) {
+): LookupLineResult {
   const [startPosition, endPosition] = astNodesToStartEndPosition(
     astNode,
     contents
@@ -51,8 +51,7 @@ export function findLinesForAstAndContents(
     endPosition
   );
 
-  const result: ILookupLinePreviewResult = {
-    filePath: '',
+  const result: LookupLineResult = {
     startLine,
     endLine,
     startPosition: startPosition,
@@ -61,15 +60,16 @@ export function findLinesForAstAndContents(
   return result;
 }
 
-export type ILookupLinePreviewResult =
-  | undefined
-  | {
-      endLine: number;
-      endPosition: number;
-      filePath: string;
-      startLine: number;
-      startPosition: number;
-    };
+export type LookupLineResult = {
+  endLine: number;
+  endPosition: number;
+  startLine: number;
+  startPosition: number;
+};
+
+export type LookupLineResultWithFilepath = LookupLineResult & {
+  filePath: string;
+};
 
 function positionToLine(
   contents: string,
