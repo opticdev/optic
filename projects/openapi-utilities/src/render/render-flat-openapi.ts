@@ -4,7 +4,7 @@ import * as YAML from 'yaml-ast-parser';
 import { YAMLNode } from 'yaml-ast-parser';
 import {
   findLinesForAstAndContents,
-  ILookupLinePreviewResult,
+  LookupLineResult,
   resolveJsonPointerInYamlAst,
 } from './ast-helpers';
 import { jsonPointerHelpers } from '../../../json-pointer-helpers';
@@ -12,9 +12,7 @@ import { jsonPointerHelpers } from '../../../json-pointer-helpers';
 export type RenderFlatOpenAPI = {
   openapi: OpenAPIV3.Document;
   asYamlString: string;
-  offsetsForAbsolutePath: (
-    jsonPointer: string
-  ) => ILookupLinePreviewResult | undefined;
+  offsetsForAbsolutePath: (jsonPointer: string) => LookupLineResult | undefined;
 };
 
 export function renderFlatOpenAPI(
@@ -28,7 +26,7 @@ export function renderFlatOpenAPI(
     asYamlString,
     offsetsForAbsolutePath: (
       jsonPointer: string
-    ): ILookupLinePreviewResult | undefined => {
+    ): LookupLineResult | undefined => {
       const astNode = resolveJsonPointerInYamlAst(yamlAst, jsonPointer);
       if (astNode) {
         return findLinesForAstAndContents(astNode, asYamlString);
@@ -42,12 +40,8 @@ export type RenderFlatJsonSchema<T = any> = {
   data: T;
   startingPath: string;
   // just make sure these paths are relative to the schema object
-  offsetsForAbsolutePath: (
-    jsonPointer: string
-  ) => ILookupLinePreviewResult | undefined;
-  offsetsForRelativePath: (
-    jsonPointer: string
-  ) => ILookupLinePreviewResult | undefined;
+  offsetsForAbsolutePath: (jsonPointer: string) => LookupLineResult | undefined;
+  offsetsForRelativePath: (jsonPointer: string) => LookupLineResult | undefined;
 };
 
 export function renderFlatJsonSchema<T = any>(
@@ -63,7 +57,7 @@ export function renderFlatJsonSchema<T = any>(
     // assumed relative
     offsetsForAbsolutePath: (
       jsonPointer: string
-    ): ILookupLinePreviewResult | undefined => {
+    ): LookupLineResult | undefined => {
       const pointer = jsonPointerHelpers.relative(jsonPointer, startingPath);
       const astNode = resolveJsonPointerInYamlAst(yamlAst, pointer);
       if (astNode) {
@@ -72,7 +66,7 @@ export function renderFlatJsonSchema<T = any>(
     },
     offsetsForRelativePath: (
       jsonPointer: string
-    ): ILookupLinePreviewResult | undefined => {
+    ): LookupLineResult | undefined => {
       const astNode = resolveJsonPointerInYamlAst(yamlAst, jsonPointer);
       if (astNode) {
         return findLinesForAstAndContents(astNode, asYamlString);

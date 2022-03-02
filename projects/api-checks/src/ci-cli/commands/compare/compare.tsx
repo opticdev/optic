@@ -24,6 +24,7 @@ import { trackEvent, flushEvents } from '../../segment';
 import { CliConfig } from '../../types';
 import { uploadCiRun } from './upload';
 import { sendGithubMessage } from './github-comment';
+import path from 'path';
 
 type LoadingState =
   | {
@@ -288,8 +289,10 @@ export function Compare<T>(props: {
                 ciProvider,
                 opticClient,
                 {
-                  from: props.from,
-                  to: props.to,
+                  from: props.from
+                    ? path.join(process.cwd(), props.from)
+                    : props.from,
+                  to: props.to ? path.join(process.cwd(), props.to) : props.to,
                 }
               );
               // throw new Error('asd');
