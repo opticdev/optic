@@ -3348,7 +3348,6 @@ __metadata:
     "@types/jest": ^27.4.0
     "@types/json-stable-stringify": ^1.0.33
     "@types/jsonpath": ^0.2.0
-    "@types/lodash.flatten": ^4.4.6
     "@types/lodash.groupby": ^4.6.6
     "@types/lodash.isequal": ^4.5.5
     "@types/nice-try": ^2.1.0
@@ -3374,7 +3373,6 @@ __metadata:
     jshint: ^2.13.4
     json-stable-stringify: ^1.0.1
     jsonpath: ^1.1.1
-    lodash.flatten: ^4.4.0
     lodash.groupby: ^4.6.0
     lodash.isequal: ^4.5.0
     nice-try: ^3.0.0

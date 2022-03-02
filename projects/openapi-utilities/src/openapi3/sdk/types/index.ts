@@ -14,6 +14,7 @@ import {
   FieldLocation,
 } from './location';
 import { OpenApiKind, OpenApiParameterKind } from './openApiKinds';
+import { LookupLineResultWithFilepath } from '../../../render/ast-helpers';
 
 export {
   ILocation,
@@ -99,7 +100,9 @@ export enum ChangeType {
 }
 
 type BaseChange = {
-  location: ILocation;
+  location: ILocation & {
+    sourcemap?: LookupLineResultWithFilepath;
+  };
 };
 
 export type IChange<T> = BaseChange &

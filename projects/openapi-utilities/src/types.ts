@@ -1,5 +1,5 @@
 import { IChange, OpenApiFact } from './openapi3/sdk/types';
-import { ILookupLinePreviewResult } from './render/ast-helpers';
+import { LookupLineResultWithFilepath } from './render/ast-helpers';
 
 export interface ShouldOrMust<G> {
   must: (statement: string, handler: G) => void;
@@ -98,7 +98,7 @@ export interface Result {
 }
 
 export type ResultWithSourcemap = Result & {
-  sourcemap: ILookupLinePreviewResult;
+  sourcemap?: LookupLineResultWithFilepath;
 };
 
 export interface Passed extends Result {

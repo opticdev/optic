@@ -1,5 +1,4 @@
 import { OpenAPIV3 } from 'openapi-types';
-import flatten from 'lodash.flatten';
 import {
   ApiCheckDsl,
   Result,
@@ -157,9 +156,9 @@ export class ApiCheckService<Context> {
   async runRulesWithFacts(
     input: DslConstructorInput<Context>
   ): Promise<Result[]> {
-    const checkPromises: Promise<Result | Result[]>[] = flatten(
-      this.rules.map((ruleRunner) => ruleRunner(input))
-    );
+    const checkPromises: Promise<Result | Result[]>[] = this.rules
+      .map((ruleRunner) => ruleRunner(input))
+      .flat();
 
     const results: Result[] = (await Promise.all(checkPromises)).flat();
 
