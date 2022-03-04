@@ -38,7 +38,10 @@ import {
   renderFlatOpenAPI,
   RenderFlatOpenAPI,
 } from './render/render-flat-openapi';
-import { ILookupLinePreviewResult } from './render/ast-helpers';
+import {
+  LookupLineResult,
+  LookupLineResultWithFilepath,
+} from './render/ast-helpers';
 export { defaultEmptySpec } from './openapi3/constants';
 export * from './ci-types';
 
@@ -77,7 +80,8 @@ export {
   RenderFlatJsonSchema,
   RenderFlatOpenAPI,
   ChangelogSelector,
-  ILookupLinePreviewResult,
+  LookupLineResult,
+  LookupLineResultWithFilepath,
 };
 
 export * from './types';

@@ -34,6 +34,7 @@ export type BulkCompareJson = {
   comparisons: {
     results: ResultWithSourcemap[];
     changes: IChange<OpenApiFact>[];
+    projectRootDir?: string | false;
     inputs: {
       from?: string;
       to?: string;

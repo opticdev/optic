@@ -4,29 +4,29 @@ import {
   resolveJsonPointerInYamlAst,
   ToSource,
 } from './openapi-sourcemap-parser';
-import fs from 'fs-extra';
 import { Kind, YamlMap, YAMLNode, YAMLSequence } from 'yaml-ast-parser';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { ILookupLinePreviewResult } from '@useoptic/openapi-utilities';
+import {
+  LookupLineResultWithFilepath,
+  LookupLineResult,
+} from '@useoptic/openapi-utilities';
 
-export type ILookupPathResult =
-  | undefined
-  | {
-      filePath: string;
-      startsAt: JsonPath;
-      contents: string;
-      astNode: YAMLNode;
-    };
-export type ILookupFileResult =
-  | undefined
-  | { filePath: string; startsAt: JsonPath };
+export type ILookupPathResult = {
+  filePath: string;
+  startsAt: JsonPath;
+  contents: string;
+  astNode: YAMLNode;
+};
+export type ILookupFileResult = { filePath: string; startsAt: JsonPath };
 
 export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
   const rootFileNumber = sourcemap.files.find(
     (i) => i.path === sourcemap.rootFilePath
   )!.index;
 
-  const findFile = (jsonPathFromRoot: JsonPath): ILookupPathResult => {
+  const findFile = (
+    jsonPathFromRoot: JsonPath
+  ): ILookupPathResult | undefined => {
     const fileResult = findFilePosition(jsonPathFromRoot);
     if (!fileResult) return undefined;
 
@@ -105,7 +105,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
         startPosition,
         endPosition
       );
-      const result: ILookupLinePreviewResult = {
+      const result: LookupLineResultWithFilepath = {
         filePath: lookupResult.filePath,
         startLine,
         endLine,
@@ -124,8 +124,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
       startPosition,
       endPosition
     );
-    const result: ILookupLinePreviewResult = {
-      filePath: '',
+    const result: LookupLineResult = {
       startLine,
       endLine,
       startPosition: startPosition,

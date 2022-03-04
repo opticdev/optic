@@ -136,6 +136,7 @@ type Comparison = {
       data: {
         changes: IChange<OpenApiFact>[];
         results: ResultWithSourcemap[];
+        projectRootDir: string | false;
       };
     }
 );
@@ -162,6 +163,7 @@ const compareSpecs = async ({
     data: {
       changes: IChange<OpenApiFact>[];
       results: ResultWithSourcemap[];
+      projectRootDir: string | false;
     }
   ) => void;
   onComparisonError: (id: string, error: any) => void;
@@ -184,6 +186,7 @@ const compareSpecs = async ({
         data: {
           changes: IChange<OpenApiFact>[];
           results: ResultWithSourcemap[];
+          projectRootDir: string | false;
         };
       }>(async (resolve, reject) => {
         try {
@@ -195,17 +198,19 @@ const compareSpecs = async ({
           validateOpenApiV3Document(from.jsonLike);
           validateOpenApiV3Document(to.jsonLike);
 
-          const { results, changes } = await generateSpecResults(
-            checkService,
-            from,
-            to,
-            comparison.context
-          );
+          const { results, changes, projectRootDir } =
+            await generateSpecResults(
+              checkService,
+              from,
+              to,
+              comparison.context
+            );
           resolve({
             id,
             data: {
               results,
               changes,
+              projectRootDir,
             },
           });
         } catch (e) {
@@ -336,7 +341,7 @@ const BulkCompare: FC<{
         await compareSpecs({
           checkService,
           comparisons: initialComparisons,
-          onComparisonComplete: (id, { results, changes }) => {
+          onComparisonComplete: (id, { results, changes, projectRootDir }) => {
             if (results.some((result) => !result.passed)) {
               hasChecksFailing = true;
               numberOfComparisonsWithErrors += 1;
@@ -355,6 +360,7 @@ const BulkCompare: FC<{
               data: {
                 results,
                 changes,
+                projectRootDir,
               },
             });
           },
@@ -396,6 +402,7 @@ const BulkCompare: FC<{
               return {
                 results: comparison.data.results,
                 changes: comparison.data.changes,
+                projectRootDir: comparison.data.projectRootDir,
                 inputs: {
                   from: comparison.fromFileName,
                   to: comparison.toFileName,

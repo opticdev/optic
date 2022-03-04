@@ -44,8 +44,8 @@ export function genericEntityRuleImpl<
         if (i.added && i.location.kind === OpenApiKind.Operation) {
           const fact = i.added as OpenApiOperationFact;
           return (
-            fact.method === i.location.conceptualLocation.method &&
-            fact.pathPattern === i.location.conceptualLocation.path
+            fact.method === location.conceptualLocation.method &&
+            fact.pathPattern === location.conceptualLocation.path
           );
         }
       }),

@@ -50,6 +50,7 @@ export async function parseOpenAPIWithSourcemap(
     {
       ...$RefParserOptions.defaults,
       path: path,
+      dereference: { circular: false },
     },
     sourcemap
   );
@@ -105,6 +106,7 @@ export async function parseOpenAPIFromRepoWithSourcemap(
     {
       ...$RefParserOptions.defaults,
       path: fileName,
+      dereference: { circular: false },
       resolve,
     },
     sourcemap
@@ -185,7 +187,6 @@ export class JsonSchemaSourcemap {
   }
 
   logPointer(pathRelativeToFile: string, pathRelativeToRoot: string) {
-    // console.log(pathRelativeToFile, pathRelativeToRoot);
     const thisFile = this.files.find((i) =>
       pathRelativeToFile.startsWith(i.path)
     );
@@ -233,12 +234,4 @@ export function resolveJsonPointerInYamlAst(
   }, node as YAMLNode | undefined);
 
   return found;
-}
-
-type AstLocation = [number, number];
-interface LocationRecord {
-  key?: AstLocation;
-  value?: AstLocation;
-  node: AstLocation;
-  file: number;
 }
