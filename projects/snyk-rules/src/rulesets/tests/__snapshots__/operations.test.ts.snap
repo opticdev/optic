@@ -827,7 +827,7 @@ Object {
 }
 `;
 
-exports[`failing case 2: adding a camelCase when Header-Param-Case is required 1`] = `
+exports[`failing case 2: adding a camelCase when Capital-Param-Case is required 1`] = `
 Object {
   "passed": false,
   "results": Array [
@@ -858,10 +858,10 @@ Object {
           "required": false,
         },
       },
-      "condition": "have Header-Param-Case name",
+      "condition": "have Capital-Param-Case name",
       "docsLink": undefined,
       "effectiveOnDate": undefined,
-      "error": "exampleParam is not Header-Param-Case",
+      "error": "exampleParam is not Capital-Param-Case",
       "isMust": true,
       "isShould": false,
       "passed": false,
@@ -3532,7 +3532,7 @@ Object {
 }
 `;
 
-exports[`passing case 3: adding a Header-Param-Case when Header-Param-Case is required 1`] = `
+exports[`passing case 3: adding a Capital-Param-Case when Capital-Param-Case is required 1`] = `
 Object {
   "passed": true,
   "results": Array [
@@ -3563,7 +3563,7 @@ Object {
           "required": false,
         },
       },
-      "condition": "have Header-Param-Case name",
+      "condition": "have Capital-Param-Case name",
       "docsLink": undefined,
       "effectiveOnDate": undefined,
       "isMust": true,

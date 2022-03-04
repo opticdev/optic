@@ -4,7 +4,7 @@ export enum NameMustBe {
   none = 'none',
   snakeCase = 'snake_case',
   camelCase = 'camelCase',
-  headerParamCase = 'Header-Param-Case',
+  capitalParamCase = 'Capital-Param-Case',
   paramCase = 'param-case',
   pascalCase = 'PascalCase',
 }

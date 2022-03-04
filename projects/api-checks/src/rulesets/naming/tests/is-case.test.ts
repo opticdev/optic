@@ -28,7 +28,7 @@ describe('isCase', () => {
     }
   });
 
-  test('Header-Param-Case', () => {
+  test('Capital-Param-Case', () => {
     const passingCases = [
       'Accept',
       'Accept-Encoding',
@@ -49,11 +49,11 @@ describe('isCase', () => {
     ];
 
     for (const passingCase of passingCases) {
-      expect(isCase(passingCase, NameMustBe.headerParamCase)).toBe(true);
+      expect(isCase(passingCase, NameMustBe.capitalParamCase)).toBe(true);
     }
 
     for (const failingCase of failingCases) {
-      expect(isCase(failingCase, NameMustBe.headerParamCase)).toBe(false);
+      expect(isCase(failingCase, NameMustBe.capitalParamCase)).toBe(false);
     }
   });
 
