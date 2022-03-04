@@ -5,7 +5,7 @@ function regexForRule(nameRule: NameMustBe) {
     case NameMustBe.camelCase:
       return /^[a-z][a-z0-9]*(?:[A-Z0-9][a-z0-9]+)*$/;
     case NameMustBe.capitalParamCase:
-      return /^[a-zA-Z0-9][a-z0-9]*(-[a-zA-Z0-9][a-z0-9]*)*$/;
+      return /^[A-Z0-9][a-z0-9]*(-[A-Z0-9][a-z0-9]*)*$/;
     case NameMustBe.paramCase:
       return /^[a-z0-9]+(-[a-z0-9]+)*$/;
     case NameMustBe.pascalCase:

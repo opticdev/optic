@@ -38,7 +38,6 @@ describe('isCase', () => {
       'Content-Type',
       'Host',
       'Referer',
-      'supports-kebab-or-param-case',
       'User-Agent'
     ];
     const failingCases = [
@@ -46,6 +45,7 @@ describe('isCase', () => {
       'camelCaseForFun',
       'some-kebab-someCamel',
       'snake_case_for_fun',
+      'lower-param-case',
     ];
 
     for (const passingCase of passingCases) {
