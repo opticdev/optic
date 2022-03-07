@@ -5,7 +5,7 @@ import {
   OpenApiFact,
 } from '@useoptic/openapi-utilities';
 
-import { SpecFacts } from '../../specs';
+import { BodyExampleFacts } from '../../specs';
 import { OpenAPIV3 } from '../../specs';
 import { DocumentedBody } from '../body';
 
@@ -15,14 +15,12 @@ export interface DocumentedBodies extends AsyncIterable<DocumentedBody> {}
 
 export class DocumentedBodies {
   static async *fromBodyExampleFacts(
-    facts: AsyncIterable<IFact<OpenApiFact>>,
+    exampleFacts: BodyExampleFacts,
     spec: OpenAPIV3.Document
   ): AsyncIterable<DocumentedBody> {
-    let exampleFacts = SpecFacts.bodyExamples(facts);
-
     for await (let exampleFact of exampleFacts) {
       let exampleBody = exampleFact.value;
-      if (!exampleBody) continue; // TODO: add support for external values
+      if (!exampleBody || !exampleBody.value) continue; // TODO: add support for external values
       let body = {
         contentType: exampleBody.contentType,
         value: exampleBody.value,

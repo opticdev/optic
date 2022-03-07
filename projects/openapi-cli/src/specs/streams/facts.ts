@@ -13,6 +13,8 @@ export interface BodyExampleFacts
   extends AsyncIterable<IFact<OpenApiBodyExampleFact>> {}
 export interface BodyFacts extends AsyncIterable<IFact<OpenApiBodyFact>> {}
 
+export type BodyExampleFact = IFact<OpenApiBodyExampleFact>;
+
 export class SpecFacts {
   static async *fromOpenAPISpec(spec: OpenAPIV3.Document): SpecFacts {
     const traverser = new OpenAPITraverser();
@@ -38,3 +40,5 @@ export class SpecFacts {
     }
   }
 }
+
+export class BodyExampleFacts {}

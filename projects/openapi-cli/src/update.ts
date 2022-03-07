@@ -5,11 +5,17 @@ import * as fs from 'fs-extra';
 import { tap } from './lib/async-tools';
 import { SpecFacts, SpecFile, SpecFileOperation } from './specs';
 import { DocumentedBodies, ShapePatches, SchemaObject } from './shapes';
-import { SpecFileOperations, SpecPatch, SpecPatches, SpecFiles } from './specs';
+import {
+  SpecFileOperations,
+  SpecPatch,
+  SpecPatches,
+  SpecFiles,
+  BodyExampleFact,
+} from './specs';
 
 import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 import { DocumentedBody } from './shapes/body';
-import { trackEvent } from './segment';
+import { flushEvents, trackEvent } from './segment';
 
 export function registerUpdateCommand(cli: Command) {
   cli
@@ -34,12 +40,14 @@ export function registerUpdateCommand(cli: Command) {
 
       const stats = {
         examplesCount: 0,
+        externalExamplesCount: 0,
         patchesCount: 0,
         updatedFilesCount: 0,
         filesWithOverwrittenYamlComments: new Set<string>(),
 
-        observeExamples: tap<DocumentedBody>((_body) => {
+        observeExamples: tap<BodyExampleFact>((exampleFact) => {
           stats.examplesCount++;
+          if (exampleFact.value.externalValue) stats.externalExamplesCount++;
         }),
         observePatches: tap<SpecPatch>((_patch) => {
           stats.patchesCount++;
@@ -55,8 +63,12 @@ export function registerUpdateCommand(cli: Command) {
       };
 
       const facts = SpecFacts.fromOpenAPISpec(spec);
-      const exampleBodies = stats.observeExamples(
-        DocumentedBodies.fromBodyExampleFacts(facts, spec)
+      const bodyExampleFacts = stats.observeExamples(
+        SpecFacts.bodyExamples(facts)
+      );
+      const exampleBodies = DocumentedBodies.fromBodyExampleFacts(
+        bodyExampleFacts,
+        spec
       );
 
       const specPatches = (async function* (documentedBodies): SpecPatches {
@@ -112,15 +124,19 @@ export function registerUpdateCommand(cli: Command) {
         }`
       );
 
-      await Promise.all(
-        [...stats.filesWithOverwrittenYamlComments.values()].map(
-          async (_filePath) => {
-            await trackEvent(
-              'openapi_cli.overwritten_yaml_comments',
-              'openapi_cli' // TODO: identify user somehow?
-            );
-          }
-        )
+      await trackEvent(
+        'openapi_cli.spec_updated_by_example',
+        'openapi_cli', // TODO: determine more useful userId
+        {
+          examplesCount: stats.examplesCount,
+          externalExamplesCount: stats.externalExamplesCount,
+          patchesCount: stats.patchesCount,
+          updatedFilesCount: stats.updatedFilesCount,
+          filesWithOverwrittenYamlCommentsCount:
+            stats.filesWithOverwrittenYamlComments.size,
+        }
       );
+
+      await flushEvents();
     });
 }

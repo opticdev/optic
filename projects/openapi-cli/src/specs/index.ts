@@ -12,4 +12,5 @@ export type { SpecFilesSourcemap, SpecFileOperation } from './files';
 export { SpecPatch } from './patches';
 export { SpecPatches } from './streams/patches';
 export { SpecFileOperations, SpecFiles } from './streams/files';
-export { SpecFacts } from './streams/facts';
+export { SpecFacts, BodyExampleFacts } from './streams/facts';
+export type { BodyExampleFact } from './streams/facts';
