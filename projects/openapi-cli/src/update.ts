@@ -3,12 +3,13 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 
 import { tap } from './lib/async-tools';
-import { SpecFacts, SpecFile } from './specs';
+import { SpecFacts, SpecFile, SpecFileOperation } from './specs';
 import { DocumentedBodies, ShapePatches, SchemaObject } from './shapes';
 import { SpecFileOperations, SpecPatch, SpecPatches, SpecFiles } from './specs';
 
 import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 import { DocumentedBody } from './shapes/body';
+import { trackEvent } from './segment';
 
 export function registerUpdateCommand(cli: Command) {
   cli
@@ -27,7 +28,7 @@ export function registerUpdateCommand(cli: Command) {
       const { jsonLike: spec, sourcemap } = await parseOpenAPIWithSourcemap(
         absoluteSpecPath
       );
-      const specFiles = SpecFiles.fromSourceMap(sourcemap);
+      const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
 
       const logger = tap(console.log.bind(console));
 
@@ -35,12 +36,18 @@ export function registerUpdateCommand(cli: Command) {
         examplesCount: 0,
         patchesCount: 0,
         updatedFilesCount: 0,
+        filesWithOverwrittenYamlComments: new Set<string>(),
 
         observeExamples: tap<DocumentedBody>((_body) => {
           stats.examplesCount++;
         }),
         observePatches: tap<SpecPatch>((_patch) => {
           stats.patchesCount++;
+        }),
+        observeFileOperations: tap<SpecFileOperation>((op) => {
+          const file = specFiles.find(({ path }) => path === op.filePath);
+          if (file && SpecFile.containsYamlComments(file))
+            stats.filesWithOverwrittenYamlComments.add(file.path);
         }),
         observeUpdatedFiles: tap<SpecFile>((_file) => {
           stats.updatedFilesCount++;
@@ -81,16 +88,15 @@ export function registerUpdateCommand(cli: Command) {
         SpecPatches.additions(specPatches)
       );
 
-      const fileOperations = SpecFileOperations.fromSpecPatches(
-        specAdditions,
-        sourcemap
+      const fileOperations = stats.observeFileOperations(
+        SpecFileOperations.fromSpecPatches(specAdditions, sourcemap)
       );
 
       const updatedSpecFiles = stats.observeUpdatedFiles(
         SpecFiles.patch(specFiles, fileOperations)
       );
 
-      for await (let writtenFilePath of SpecFiles.flushToFiles(
+      for await (let writtenFilePath of SpecFiles.writeFiles(
         updatedSpecFiles
       )) {
         console.log(`Updated ${writtenFilePath}`);
@@ -104,6 +110,17 @@ export function registerUpdateCommand(cli: Command) {
         } generated from ${stats.examplesCount} example${
           stats.examplesCount === 1 ? '' : 's'
         }`
+      );
+
+      await Promise.all(
+        [...stats.filesWithOverwrittenYamlComments.values()].map(
+          async (_filePath) => {
+            await trackEvent(
+              'openapi_cli.overwritten_yaml_comments',
+              'openapi_cli' // TODO: identify user somehow?
+            );
+          }
+        )
       );
     });
 }
