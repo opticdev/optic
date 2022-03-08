@@ -46,7 +46,8 @@ const isNotReferenceObject = <T extends {}>(
 };
 
 export class OpenAPITraverser
-  implements Traverse<OpenAPIV3.Document, OpenApiFact> {
+  implements Traverse<OpenAPIV3.Document, OpenApiFact>
+{
   format = 'openapi3';
 
   input: OpenAPIV3.Document | undefined = undefined;
@@ -425,7 +426,7 @@ export class OpenAPITraverser
             example,
             contentType,
             jsonPointer.append(jsonPath, 'examples', name),
-            conceptualPath,
+            [...conceptualPath, 'examples', name],
             { ...location, name },
             name
           );
@@ -445,7 +446,7 @@ export class OpenAPITraverser
           { value: example },
           contentType,
           jsonPointer.append(jsonPath, 'example'),
-          conceptualPath,
+          [...conceptualPath, 'example'],
           { ...location, singular: true }
         );
       } else {
@@ -582,12 +583,8 @@ export class OpenAPITraverser
     schema: OpenAPIV3.SchemaObject
   ): Omit<OpenAPIV3.SchemaObject, 'item' | 'required' | 'properties'> {
     if (schema.type === 'array') {
-      const {
-        items,
-        required,
-        properties,
-        ...schemaWithoutNestedThings
-      } = schema;
+      const { items, required, properties, ...schemaWithoutNestedThings } =
+        schema;
       return schemaWithoutNestedThings;
     } else {
       const { required, properties, ...schemaWithoutNestedThings } = schema;
