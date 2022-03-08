@@ -1,1 +1,7 @@
-export interface CliConfig {}
+export interface CliConfig {
+  analytics: {
+    segment: null | {
+      key: string;
+    };
+  };
+}

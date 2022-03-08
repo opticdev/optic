@@ -3,12 +3,19 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 
 import { tap } from './lib/async-tools';
-import { SpecFacts, SpecFile } from './specs';
+import { SpecFacts, SpecFile, SpecFileOperation } from './specs';
 import { DocumentedBodies, ShapePatches, SchemaObject } from './shapes';
-import { SpecFileOperations, SpecPatch, SpecPatches, SpecFiles } from './specs';
+import {
+  SpecFileOperations,
+  SpecPatch,
+  SpecPatches,
+  SpecFiles,
+  BodyExampleFact,
+} from './specs';
 
 import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 import { DocumentedBody } from './shapes/body';
+import { flushEvents, trackEvent } from './segment';
 
 export function registerUpdateCommand(cli: Command) {
   cli
@@ -27,20 +34,28 @@ export function registerUpdateCommand(cli: Command) {
       const { jsonLike: spec, sourcemap } = await parseOpenAPIWithSourcemap(
         absoluteSpecPath
       );
-      const specFiles = SpecFiles.fromSourceMap(sourcemap);
+      const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
 
       const logger = tap(console.log.bind(console));
 
       const stats = {
         examplesCount: 0,
+        externalExamplesCount: 0,
         patchesCount: 0,
         updatedFilesCount: 0,
+        filesWithOverwrittenYamlComments: new Set<string>(),
 
-        observeExamples: tap<DocumentedBody>((_body) => {
+        observeExamples: tap<BodyExampleFact>((exampleFact) => {
           stats.examplesCount++;
+          if (exampleFact.value.externalValue) stats.externalExamplesCount++;
         }),
         observePatches: tap<SpecPatch>((_patch) => {
           stats.patchesCount++;
+        }),
+        observeFileOperations: tap<SpecFileOperation>((op) => {
+          const file = specFiles.find(({ path }) => path === op.filePath);
+          if (file && SpecFile.containsYamlComments(file))
+            stats.filesWithOverwrittenYamlComments.add(file.path);
         }),
         observeUpdatedFiles: tap<SpecFile>((_file) => {
           stats.updatedFilesCount++;
@@ -48,8 +63,12 @@ export function registerUpdateCommand(cli: Command) {
       };
 
       const facts = SpecFacts.fromOpenAPISpec(spec);
-      const exampleBodies = stats.observeExamples(
-        DocumentedBodies.fromBodyExampleFacts(facts, spec)
+      const bodyExampleFacts = stats.observeExamples(
+        SpecFacts.bodyExamples(facts)
+      );
+      const exampleBodies = DocumentedBodies.fromBodyExampleFacts(
+        bodyExampleFacts,
+        spec
       );
 
       const specPatches = (async function* (documentedBodies): SpecPatches {
@@ -81,16 +100,15 @@ export function registerUpdateCommand(cli: Command) {
         SpecPatches.additions(specPatches)
       );
 
-      const fileOperations = SpecFileOperations.fromSpecPatches(
-        specAdditions,
-        sourcemap
+      const fileOperations = stats.observeFileOperations(
+        SpecFileOperations.fromSpecPatches(specAdditions, sourcemap)
       );
 
       const updatedSpecFiles = stats.observeUpdatedFiles(
         SpecFiles.patch(specFiles, fileOperations)
       );
 
-      for await (let writtenFilePath of SpecFiles.flushToFiles(
+      for await (let writtenFilePath of SpecFiles.writeFiles(
         updatedSpecFiles
       )) {
         console.log(`Updated ${writtenFilePath}`);
@@ -105,5 +123,20 @@ export function registerUpdateCommand(cli: Command) {
           stats.examplesCount === 1 ? '' : 's'
         }`
       );
+
+      await trackEvent(
+        'openapi_cli.spec_updated_by_example',
+        'openapi_cli', // TODO: determine more useful userId
+        {
+          examplesCount: stats.examplesCount,
+          externalExamplesCount: stats.externalExamplesCount,
+          patchesCount: stats.patchesCount,
+          updatedFilesCount: stats.updatedFilesCount,
+          filesWithOverwrittenYamlCommentsCount:
+            stats.filesWithOverwrittenYamlComments.size,
+        }
+      );
+
+      await flushEvents();
     });
 }

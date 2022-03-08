@@ -3444,6 +3444,7 @@ __metadata:
     "@babel/plugin-transform-runtime": ^7.16.0
     "@babel/preset-env": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
+    "@types/analytics-node": ^3.1.7
     "@types/babel__core": ^7
     "@types/is-url": ^1.2.30
     "@types/jest": ^26.0.24
@@ -3452,6 +3453,7 @@ __metadata:
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
+    analytics-node: ^6.0.0
     axax: ^0.2.2
     babel-jest: ^27.5.1
     commander: ^9.0.0
