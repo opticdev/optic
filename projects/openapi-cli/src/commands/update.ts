@@ -2,20 +2,20 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
-import { tap } from './lib/async-tools';
-import { SpecFacts, SpecFile, SpecFileOperation } from './specs';
-import { DocumentedBodies, ShapePatches, SchemaObject } from './shapes';
+import { tap } from '../lib/async-tools';
+import { SpecFacts, SpecFile, SpecFileOperation } from '../specs';
+import { DocumentedBodies, ShapePatches, SchemaObject } from '../shapes';
 import {
   SpecFileOperations,
   SpecPatch,
   SpecPatches,
   SpecFiles,
   BodyExampleFact,
-} from './specs';
+} from '../specs';
 
 import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
-import { DocumentedBody } from './shapes/body';
-import { flushEvents, trackEvent } from './segment';
+import { DocumentedBody } from '../shapes/body';
+import { flushEvents, trackEvent } from '../segment';
 
 export function registerUpdateCommand(cli: Command) {
   cli
