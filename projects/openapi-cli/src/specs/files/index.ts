@@ -1,4 +1,4 @@
-import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
+import { JsonSchemaSourcemap, isYaml } from '@useoptic/openapi-io';
 import { Operation } from '../../patches';
 import { applyPatch } from './reconcilers';
 
@@ -25,7 +25,17 @@ export class SpecFile {
       contents: result.contents,
     };
   }
+
+  static isYaml(self: SpecFile): boolean {
+    return isYaml(self.path);
+  }
+
+  static containsYamlComments(self: SpecFile): boolean {
+    return SpecFile.isYaml(self) && yamlCommentsPattern.test(self.contents);
+  }
 }
+
+const yamlCommentsPattern = /(^|[\s])#.*\n?/;
 
 export type SpecFilePatchResult = {
   success: true;
