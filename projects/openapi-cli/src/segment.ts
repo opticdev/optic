@@ -2,10 +2,8 @@ import Analytics from 'analytics-node';
 
 let analytics: Analytics | null = null;
 
-export const initSegment = () => {
-  if (process.env.SEGMENT_KEY) {
-    analytics = new Analytics(process.env.SEGMENT_KEY);
-  }
+export const initSegment = ({ key }: { key: string }) => {
+  analytics = new Analytics(key);
 };
 export const trackEvent = (
   eventName: string,
