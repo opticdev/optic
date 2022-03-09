@@ -1,3 +1,5 @@
+export { parseOpenAPIWithSourcemap as readDeferencedSpec } from '@useoptic/openapi-io';
+
 import { ShapeLocation } from '../shapes';
 
 export { OpenAPIV3 } from '@useoptic/openapi-utilities';

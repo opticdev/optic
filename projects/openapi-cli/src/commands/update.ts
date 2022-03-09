@@ -3,7 +3,12 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 
 import { tap } from '../lib/async-tools';
-import { SpecFacts, SpecFile, SpecFileOperation } from '../specs';
+import {
+  SpecFacts,
+  SpecFile,
+  SpecFileOperation,
+  readDeferencedSpec,
+} from '../specs';
 import { DocumentedBodies, ShapePatches, SchemaObject } from '../shapes';
 import {
   SpecFileOperations,
@@ -31,7 +36,7 @@ export function registerUpdateCommand(cli: Command) {
         return cli.error('OpenAPI specification file could not be found');
       }
 
-      const { jsonLike: spec, sourcemap } = await parseOpenAPIWithSourcemap(
+      const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
         absoluteSpecPath
       );
       const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];

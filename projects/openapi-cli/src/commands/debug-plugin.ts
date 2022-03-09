@@ -2,14 +2,7 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
-import {
-  SpecFiles,
-  OpenAPIV3,
-  SpecPatches,
-  SpecFileOperations,
-  SpecTemplate,
-} from '../specs';
-import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
+import { OpenAPIV3, SpecTemplate, applyTemplate } from '../sdk';
 
 export function registerDebugPluginCommand(cli: Command) {
   cli
@@ -30,33 +23,6 @@ export function registerDebugPluginCommand(cli: Command) {
 
       await applyTemplate(template, specPath, { modelName: 'TestModel' });
     });
-}
-
-async function applyTemplate( // TODO: move this somewhere else (near the edge as it includes I/O)
-  template,
-  absoluteSpecPath,
-  options
-): Promise<void> {
-  const { jsonLike: spec, sourcemap } = await parseOpenAPIWithSourcemap(
-    absoluteSpecPath
-  );
-  const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
-
-  const specPatches = SpecPatches.generateByTemplate(
-    spec,
-    template.patchGenerator,
-    options
-  );
-
-  const fileOperations = SpecFileOperations.fromSpecPatches(
-    specPatches,
-    sourcemap
-  );
-
-  const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
-
-  for await (let _writtenFilePath of SpecFiles.writeFiles(updatedSpecFiles)) {
-  }
 }
 
 function exampleAddResourceSchema(
