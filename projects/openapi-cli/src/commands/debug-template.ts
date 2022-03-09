@@ -4,12 +4,15 @@ import * as fs from 'fs-extra';
 
 import { OpenAPIV3, SpecTemplate, applyTemplate } from '../sdk';
 
-export function registerDebugPluginCommand(cli: Command) {
+export function registerDebugTemplateCommand(cli: Command) {
   cli
-    .command('debug-plugin', { hidden: true }) // temporary debugging only
+    .command('debug-template', { hidden: true }) // temporary debugging only
     .usage('openapi.yml')
-    .argument('<openapi-file>', 'an OpenAPI spec file to debug plugin against')
-    .description('debug a plugin')
+    .argument(
+      '<openapi-file>',
+      'an OpenAPI spec file to debug template against'
+    )
+    .description('debug a template')
     .action(async (specPath) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
@@ -21,7 +24,9 @@ export function registerDebugPluginCommand(cli: Command) {
         exampleAddResourceSchema
       );
 
-      await applyTemplate(template, specPath, { modelName: 'TestModel' });
+      await applyTemplate(template, absoluteSpecPath, {
+        modelName: 'TestModel',
+      });
     });
 }
 
