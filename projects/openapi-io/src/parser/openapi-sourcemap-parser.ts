@@ -77,7 +77,7 @@ export async function parseOpenAPIFromRepoWithSourcemap(
         accept: '*/*',
       },
     },
-    resolve: true,
+    external: true,
   };
   const resolverResults: $RefParser.$Refs = await resolver.resolve(fileName, {
     resolve,
