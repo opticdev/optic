@@ -1,6 +1,4 @@
 import { Command, Option } from 'commander';
-import React, { FC, useEffect, useState } from 'react';
-import { Box, Newline, render, Text, useApp, useStderr, useStdout } from 'ink';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -11,7 +9,6 @@ import {
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { ParseOpenAPIResult } from '@useoptic/openapi-io';
-import { SpecComparison } from '../components';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import {
@@ -24,12 +21,12 @@ import {
 
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { UserError } from '../../errors';
-import { SourcemapRendererEnum } from '../components/render-results';
 import { trackEvent, flushEvents } from '../../segment';
-import { CliConfig, BulkCompareJson, BulkUploadJson } from '../../types';
+import { CliConfig, BulkCompareJson } from '../../types';
 import { createOpticClient } from '../utils/optic-client';
 import { bulkUploadCiRun } from './bulk-upload';
 import { sendBulkGithubMessage } from './bulk-github-comment';
+import { logComparison } from '../utils/comparison-renderer';
 
 export const registerBulkCompare = (
   cli: Command,
@@ -87,35 +84,18 @@ export const registerBulkCompare = (
             return process.exit(1);
           }
 
-          if (output === 'plain') {
-            // https://github.com/chalk/chalk#supportscolor
-            // https://github.com/chalk/supports-color/blob/ff1704d46cfb0714003f53c8d7e55736d8d545ff/index.js#L38
-            if (
-              process.env.FORCE_COLOR !== 'false' &&
-              process.env.FORCE_COLOR !== '0'
-            ) {
-              console.error(
-                `Please set FORCE_COLOR=false or FORCE_COLOR=0 to enable plain text output in the environment you want to run this command in`
-              );
-              return process.exit(1);
-            }
-          }
           validateUploadRequirements(uploadResults, cliConfig, ciContext);
 
-          const { waitUntilExit } = render(
-            <BulkCompare
-              checkService={checkService}
-              input={input}
-              verbose={verbose}
-              output={output}
-              projectName={projectName}
-              uploadResults={uploadResults}
-              ciContext={ciContext}
-              cliConfig={cliConfig}
-            />,
-            { exitOnCtrlC: true }
-          );
-          await waitUntilExit();
+          await runBulkCompare({
+            checkService,
+            input,
+            verbose,
+            output,
+            uploadResults,
+            ciContext,
+            projectName,
+            cliConfig,
+          });
           process.exit(0);
         }
       )
@@ -270,10 +250,16 @@ export const parseJsonComparisonInput = async (
   return { comparisons: initialComparisons, skippedParsing };
 };
 
-// TODO if we want this to parse a large amount of data, we'll want to convert this to read as a stream
-// We'll need to remove usage of `ink` and use a write stream to stdout (or get ink to dump a react component to stdout)
-// Expected usage is likely low (10s-100s) so streams are not likely to be necessarily
-const BulkCompare: FC<{
+const runBulkCompare = async ({
+  checkService,
+  input,
+  verbose,
+  projectName,
+  output,
+  uploadResults,
+  ciContext,
+  cliConfig,
+}: {
   checkService: ApiCheckService<any>;
   input: string;
   verbose: boolean;
@@ -282,304 +268,194 @@ const BulkCompare: FC<{
   uploadResults: boolean;
   ciContext?: string;
   cliConfig: CliConfig;
-}> = ({
-  input,
-  verbose,
-  output,
-  checkService,
-  projectName,
-  uploadResults,
-  ciContext,
-  cliConfig,
 }) => {
-  const { exit } = useApp();
-  const stdout = useStdout();
-  const stderr = useStderr();
-  const [comparisons, setComparisons] = useState<Map<string, Comparison>>(
-    new Map()
-  );
-  const [uploadState, setUploadState] = useState<
-    | {
-        state: 'not started' | 'no changes';
-      }
-    | {
-        state: 'complete';
-        bulkUploadJson: BulkUploadJson;
-      }
-    | {
-        state: 'started';
-        numberOfUploads: number;
-        numberOfComparisons: number;
-      }
-    | {
-        state: 'error';
-        error: Error;
-      }
-  >({ state: 'not started' });
-  const [commentState, setCommentState] = useState<
-    | { state: 'not started' }
-    | { state: 'github' }
-    | { state: 'error'; error: Error }
-  >({ state: 'not started' });
+  console.log('Reading input file...');
+  let numberOfErrors = 0;
+  let numberOfComparisonsWithErrors = 0;
+  let numberOfComparisonsWithAChange = 0;
+  let hasChecksFailing = false;
+  let hasError = false;
+  const { comparisons: initialComparisons, skippedParsing } =
+    await parseJsonComparisonInput(input);
 
-  useEffect(() => {
-    let isStale = false;
-    (async () => {
-      try {
-        console.log('Reading input file...');
-        let numberOfErrors = 0;
-        let numberOfComparisonsWithErrors = 0;
-        let numberOfComparisonsWithAChange = 0;
-        let hasChecksFailing = false;
-        let hasError = false;
-        const { comparisons: initialComparisons, skippedParsing } =
-          await parseJsonComparisonInput(input);
+  console.log(`Bulk comparing ${initialComparisons.size} comparisons`);
+  const finalComparisons = new Map(initialComparisons);
 
-        !isStale && setComparisons(initialComparisons);
-        const finalComparisons = new Map(initialComparisons);
+  await compareSpecs({
+    checkService,
+    comparisons: initialComparisons,
+    onComparisonComplete: (id, { results, changes, projectRootDir }) => {
+      if (results.some((result) => !result.passed)) {
+        hasChecksFailing = true;
+        numberOfComparisonsWithErrors += 1;
+        numberOfErrors += results.reduce(
+          (count, result) => (result.passed ? count : count + 1),
+          0
+        );
+      }
+      if (changes.length > 0) {
+        numberOfComparisonsWithAChange += 1;
+      }
+      finalComparisons.set(id, {
+        ...initialComparisons.get(id)!,
+        loading: false,
+        error: false,
+        data: {
+          results,
+          changes,
+          projectRootDir,
+        },
+      });
+    },
+    onComparisonError: (id, error) => {
+      hasError = true;
+      finalComparisons.set(id, {
+        ...initialComparisons.get(id)!,
+        loading: false,
+        error: true,
+        errorDetails: error,
+      });
+    },
+  });
 
-        await compareSpecs({
-          checkService,
-          comparisons: initialComparisons,
-          onComparisonComplete: (id, { results, changes, projectRootDir }) => {
-            if (results.some((result) => !result.passed)) {
-              hasChecksFailing = true;
-              numberOfComparisonsWithErrors += 1;
-              numberOfErrors += results.reduce(
-                (count, result) => (result.passed ? count : count + 1),
-                0
-              );
-            }
-            if (changes.length > 0) {
-              numberOfComparisonsWithAChange += 1;
-            }
-            finalComparisons.set(id, {
-              ...initialComparisons.get(id)!,
-              loading: false,
-              error: false,
-              data: {
-                results,
-                changes,
-                projectRootDir,
-              },
-            });
+  trackEvent('optic_ci.bulk_compare', `${projectName}-optic-ci`, {
+    isInCi: process.env.CI === 'true',
+    numberOfErrors,
+    numberOfComparisons: initialComparisons.size,
+    numberOfComparisonsWithErrors,
+    numberOfComparisonsWithAChange,
+  });
+
+  if (output === 'json') {
+    console.log(JSON.stringify([...finalComparisons.values()], null, 2));
+  } else {
+    for (const comparison of [...finalComparisons.values()]) {
+      const fromName = comparison.fromFileName || 'Empty Spec';
+      const toName = comparison.toFileName || 'Empty Spec';
+      console.log(`Comparing ${fromName} to ${toName}\n`);
+
+      if (comparison.loading) {
+        console.log('loading');
+      } else if (comparison.error) {
+        console.log(
+          `Error loading file: ${JSON.stringify(comparison.errorDetails)}`
+        );
+      } else {
+        logComparison(
+          {
+            results: comparison.data.results,
+            changes: comparison.data.changes,
           },
-          onComparisonError: (id, error) => {
-            hasError = true;
-            finalComparisons.set(id, {
-              ...initialComparisons.get(id)!,
-              loading: false,
-              error: true,
-              errorDetails: error,
+          {
+            output,
+            verbose,
+          }
+        );
+      }
+    }
+  }
+
+  const maybeError = skippedParsing
+    ? new UserError('Error: Could not read all of the comparison inputs')
+    : hasError
+    ? new UserError('Error: Could not run all of the comparisons')
+    : undefined;
+
+  if (maybeError) {
+    throw maybeError;
+  }
+
+  const bulkCompareOutput: BulkCompareJson = {
+    comparisons: [...finalComparisons].map(([, comparison]) => {
+      if (comparison.loading || comparison.error) {
+        throw new Error('Expected comparison to be loaded without errors');
+      }
+      return {
+        results: comparison.data.results,
+        changes: comparison.data.changes,
+        projectRootDir: comparison.data.projectRootDir,
+        inputs: {
+          from: comparison.fromFileName,
+          to: comparison.toFileName,
+        },
+      };
+    }),
+  };
+  if (uploadResults) {
+    const numberOfUploads = bulkCompareOutput.comparisons.filter(
+      (comparison) => comparison.changes.length > 0
+    ).length;
+    const numberOfComparisons = bulkCompareOutput.comparisons.length;
+    console.log(
+      `Uploading ${numberOfUploads} comparisons with at least 1 change to Optic...`
+    );
+    console.log(
+      `${numberOfComparisons - numberOfUploads} did not have any changes`
+    );
+
+    // We've validated the shape in validateUploadRequirements
+    const ciContextNotNull = ciContext!;
+    const ciProvider = cliConfig.ciProvider!;
+    const opticToken = cliConfig.opticToken!;
+    const { token, provider } = cliConfig.gitProvider!;
+    const opticClient = createOpticClient(opticToken);
+
+    try {
+      const bulkUploadOutput = await bulkUploadCiRun(
+        opticClient,
+        bulkCompareOutput,
+        ciContextNotNull,
+        ciProvider
+      );
+      if (bulkUploadOutput) {
+        console.log(
+          `Successfully uploaded ${bulkUploadOutput.comparisons.length} comparisons that had at least 1 change`
+        );
+        console.log('These files can be found at');
+        for (const comparison of bulkUploadOutput.comparisons) {
+          console.log(
+            `from: ${comparison.inputs.from || 'Empty Spec'} to: ${
+              comparison.inputs.to || 'Empty Spec'
+            } - ${comparison.opticWebUrl}}`
+          );
+        }
+
+        // In the future we can add different git providers
+        if (provider === 'github') {
+          console.log('Posting comment to github...');
+
+          try {
+            await sendBulkGithubMessage({
+              githubToken: token,
+              uploadOutput: bulkUploadOutput,
             });
-          },
-        });
-
-        trackEvent('optic_ci.bulk_compare', `${projectName}-optic-ci`, {
-          isInCi: process.env.CI === 'true',
-          numberOfErrors,
-          numberOfComparisons: initialComparisons.size,
-          numberOfComparisonsWithErrors,
-          numberOfComparisonsWithAChange,
-        });
-
-        !isStale && setComparisons(finalComparisons);
-
-        const maybeError = skippedParsing
-          ? new UserError('Error: Could not read all of the comparison inputs')
-          : hasError
-          ? new UserError('Error: Could not run all of the comparisons')
-          : undefined;
-
-        if (!maybeError) {
-          const bulkCompareOutput: BulkCompareJson = {
-            comparisons: [...finalComparisons].map(([, comparison]) => {
-              if (comparison.loading || comparison.error) {
-                throw new Error(
-                  'Expected comparison to be loaded without errors'
-                );
-              }
-              return {
-                results: comparison.data.results,
-                changes: comparison.data.changes,
-                projectRootDir: comparison.data.projectRootDir,
-                inputs: {
-                  from: comparison.fromFileName,
-                  to: comparison.toFileName,
-                },
-              };
-            }),
-          };
-          if (uploadResults) {
-            !isStale &&
-              setUploadState({
-                state: 'started',
-                numberOfUploads: bulkCompareOutput.comparisons.filter(
-                  (comparison) => comparison.changes.length > 0
-                ).length,
-                numberOfComparisons: bulkCompareOutput.comparisons.length,
-              });
-
-            // We've validated the shape in validateUploadRequirements
-            const ciContextNotNull = ciContext!;
-            const ciProvider = cliConfig.ciProvider!;
-            const opticToken = cliConfig.opticToken!;
-            const { token, provider } = cliConfig.gitProvider!;
-            const opticClient = createOpticClient(opticToken);
-
-            try {
-              const bulkUploadOutput = await bulkUploadCiRun(
-                opticClient,
-                bulkCompareOutput,
-                ciContextNotNull,
-                ciProvider
-              );
-              if (bulkUploadOutput) {
-                // In the future we can add different git providers
-                if (provider === 'github') {
-                  setCommentState({
-                    state: 'github',
-                  });
-
-                  try {
-                    await sendBulkGithubMessage({
-                      githubToken: token,
-                      uploadOutput: bulkUploadOutput,
-                    });
-                  } catch (e) {
-                    setCommentState({
-                      state: 'error',
-                      error: e as Error,
-                    });
-                    SentryClient?.captureException(e);
-                  }
-                }
-                !isStale &&
-                  setUploadState({
-                    state: 'complete',
-                    bulkUploadJson: bulkUploadOutput,
-                  });
-              } else {
-                !isStale &&
-                  setUploadState({
-                    state: 'no changes',
-                  });
-              }
-            } catch (e) {
-              !isStale &&
-                setUploadState({
-                  state: 'error',
-                  error: e as Error,
-                });
+          } catch (e) {
+            console.log(
+              'Failed to post comment to github - exiting with a zero exit code.'
+            );
+            console.error(e);
+            if ((e as Error).name !== 'UserError') {
               SentryClient?.captureException(e);
             }
           }
         }
-        await flushEvents();
-
-        exit(maybeError || hasChecksFailing ? new UserError() : undefined);
-      } catch (e) {
-        stderr.write(JSON.stringify(e, null, 2));
-        exit(e as Error);
+      } else {
+        console.log('No changes were detected, not uploading anything');
       }
-    })();
-    return () => {
-      isStale = true;
-    };
-  }, [input, exit, stderr]);
+    } catch (e) {
+      console.log(
+        'Error uploading the run to Optic - exiting with a zero exit code.'
+      );
+      console.error(e);
 
-  if (output === 'json') {
-    if (
-      comparisons.size > 0 &&
-      [...comparisons.values()].every((comparison) => !comparison.loading)
-    ) {
-      stdout.write(JSON.stringify([...comparisons.values()], null, 2));
+      if ((e as Error).name !== 'UserError') {
+        SentryClient?.captureException(e);
+      }
     }
-    return null;
   }
+  await flushEvents();
 
-  return (
-    <Box flexDirection="column" width={process.env.COLUMNS || '5000'}>
-      <Text>Bulk comparing</Text>
-
-      <Newline />
-
-      {[...comparisons.values()].map((comparison) => {
-        return (
-          <Box
-            key={comparison.fromFileName || '' + comparison.toFileName || ''}
-            flexDirection="column"
-          >
-            <Box>
-              <Text>
-                Comparing {comparison.fromFileName || 'Empty spec'} to{' '}
-                {comparison.toFileName || 'Empty spec'}
-              </Text>
-            </Box>
-            <Box>
-              {comparison.loading ? (
-                <Text>Loading</Text>
-              ) : comparison.error ? (
-                <Text>
-                  Error loading file: {JSON.stringify(comparison.errorDetails)}
-                </Text>
-              ) : (
-                <SpecComparison
-                  results={comparison.data.results}
-                  verbose={verbose}
-                  mapToFile={SourcemapRendererEnum.local}
-                />
-              )}
-            </Box>
-            <Newline />
-          </Box>
-        );
-      })}
-      {uploadState.state === 'started' ? (
-        <Text>
-          Uploading {uploadState.numberOfUploads} comparisons with at least 1
-          change to Optic... (
-          {uploadState.numberOfComparisons - uploadState.numberOfUploads} did
-          not have any changes)
-        </Text>
-      ) : uploadState.state === 'no changes' ? (
-        <Text>
-          None of the comparisons had any changes, not uploading anything
-        </Text>
-      ) : uploadState.state === 'complete' ? (
-        <>
-          <Text>
-            Successfully uploaded{' '}
-            {uploadState.bulkUploadJson.comparisons.length} comparisons that had
-            at least 1 change
-          </Text>
-          <Text>These files can be found in</Text>
-          {uploadState.bulkUploadJson.comparisons.map((comparison) => (
-            <Text>
-              from: {comparison.inputs.from || 'Empty Spec'} to:{' '}
-              {comparison.inputs.to || 'Empty Spec'} - {comparison.opticWebUrl}
-            </Text>
-          ))}
-        </>
-      ) : uploadState.state === 'error' ? (
-        <>
-          <Text>
-            Error uploading the run to Optic - exiting with a zero exit code.
-          </Text>
-          <Text color="red">{JSON.stringify(uploadState.error.message)}</Text>
-        </>
-      ) : null}
-      {commentState.state === 'github' && (
-        <Text>Posting comment to github</Text>
-      )}
-      {commentState.state === 'error' && (
-        <>
-          <Text>
-            Failed to post comment to github - exiting with a zero exit code.
-          </Text>
-          <Text color="red">{JSON.stringify(commentState.error.message)}</Text>
-        </>
-      )}
-    </Box>
-  );
+  if (hasChecksFailing) {
+    throw new UserError('Some checks failed');
+  }
 };

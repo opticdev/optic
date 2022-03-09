@@ -157,6 +157,10 @@ const runCompare = async ({
   });
   console.log('Specs loaded - running comparison');
 
+  const fromName = from || 'Empty Spec';
+  const toName = to || 'Empty Spec';
+  console.log(`Comparing ${fromName} to ${toName}\n`);
+
   const compareOutput = await generateSpecResults(
     apiCheckService,
     parsedFrom,
@@ -174,8 +178,6 @@ const runCompare = async ({
       {
         results,
         changes,
-        from,
-        to,
       },
       {
         output,
@@ -227,7 +229,10 @@ const runCompare = async ({
             console.log(
               'Failed to post comment to github - exiting with a zero exit code.'
             );
-            SentryClient?.captureException(e);
+            console.error(e);
+            if ((e as Error).name !== 'UserError') {
+              SentryClient?.captureException(e);
+            }
           }
         }
       }
@@ -235,6 +240,7 @@ const runCompare = async ({
       console.log(
         'Error uploading the run to Optic - exiting with a zero exit code.'
       );
+      console.error(e);
 
       if ((e as Error).name !== 'UserError') {
         SentryClient?.captureException(e);

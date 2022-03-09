@@ -14,8 +14,6 @@ export const logComparison = (
   comparison: {
     results: ResultWithSourcemap[];
     changes: IChange<OpenApiFact>[];
-    from?: string;
-    to?: string;
   },
   options: {
     output: 'pretty' | 'plain';
@@ -23,8 +21,6 @@ export const logComparison = (
   }
 ) => {
   const chalk = new Chalk({ level: options.output === 'plain' ? 0 : 1 });
-  const fromName = comparison.from || 'Empty Spec';
-  const toName = comparison.to || 'Empty Spec';
   const totalNumberOfChecks = comparison.results.length;
   const failedNumberOfChecks = comparison.results.filter(
     (result) => !result.passed
@@ -36,8 +32,6 @@ export const logComparison = (
     (result) =>
       `${result.change.location.conceptualLocation.method}-${result.change.location.conceptualLocation.path}`
   );
-
-  console.log(`Comparing ${fromName} to ${toName}\n`);
 
   for (const operationResults of Object.values(groupedResults)) {
     const { method, path } =
