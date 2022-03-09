@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from 'react';
 import { Command } from 'commander';
 import { createOpticClient } from '../utils/optic-client';
 
-import { Box, render, Text, useApp, useStdout } from 'ink';
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
-  ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { ApiCheckService } from '../../../sdk/api-check-service';
-import { SpecComparison } from '../components';
 import {
   parseSpecVersion,
   specFromInputToResults,
@@ -19,7 +15,6 @@ import {
 import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
-import { SourcemapRendererEnum } from '../components/render-results';
 import { trackEvent, flushEvents } from '../../segment';
 import { CliConfig } from '../../types';
 import { uploadCiRun } from './upload';
@@ -128,332 +123,154 @@ export const registerCompare = (
             options.ciContext
           );
 
-          const { waitUntilExit } = render(
-            <Compare
-              verbose={options.verbose}
-              output={options.output}
-              apiCheckService={checkService}
-              from={options.from}
-              to={options.to}
-              context={parsedContext}
-              mapToFile={
-                options.githubAnnotations
-                  ? SourcemapRendererEnum.github
-                  : SourcemapRendererEnum.local
-              }
-              projectName={projectName}
-              uploadResults={options.uploadResults}
-              ciContext={options.ciContext}
-              cliConfig={cliConfig}
-            />,
-            { exitOnCtrlC: true }
-          );
-          await waitUntilExit();
-          return Promise.resolve();
+          // TODO figure out if we need to maintain verbose, and json
+          await runCompare({
+            from: options.from,
+            to: options.to,
+            apiCheckService: checkService,
+            context: parsedContext,
+            uploadResults: options.uploadResults,
+            projectName: projectName,
+            ciContext: options.ciContext,
+            cliConfig: cliConfig,
+          });
         }
       )
     );
 };
 
-export function Compare<T>(props: {
+const runCompare = async ({
+  from,
+  to,
+  apiCheckService,
+  context,
+  uploadResults,
+  ciContext,
+  cliConfig,
+  projectName,
+}: {
   from?: string;
   to?: string;
-  context: T;
-  verbose: boolean;
-  output: 'pretty' | 'json' | 'plain';
-  apiCheckService: ApiCheckService<T>;
-  mapToFile: SourcemapRendererEnum;
-  projectName: string;
+  apiCheckService: ApiCheckService<any>;
+  context: any;
   uploadResults: boolean;
   ciContext?: string;
   cliConfig: CliConfig;
-}) {
-  const stdout = useStdout();
-  const { exit } = useApp();
-  // TODO change this to something less handwritten
-  const [fromState, setFromState] = useState<LoadingState>({
-    loading: true,
+  projectName: string;
+}) => {
+  console.log('Loading spec files');
+  const [parsedFrom, parsedTo] = await Promise.all([
+    specFromInputToResults(
+      parseSpecVersion(from, defaultEmptySpec),
+      process.cwd()
+    ).then((results) => {
+      validateOpenApiV3Document(results.jsonLike);
+      return results;
+    }),
+    specFromInputToResults(
+      parseSpecVersion(to, defaultEmptySpec),
+      process.cwd()
+    ).then((results) => {
+      validateOpenApiV3Document(results.jsonLike);
+      return results;
+    }),
+  ]).catch((e) => {
+    console.log('Stopping. Could not load two specifications to compare');
+    // TODO add in better error messaging here
+    console.error(e);
+    throw new UserError(e);
   });
-  const [toState, setToState] = useState<LoadingState>({
-    loading: true,
-  });
-  const [uploadState, setUploadState] = useState<
-    | {
-        state: 'not started' | 'started' | 'no changes';
-      }
-    | {
-        state: 'complete';
-        uploadLocation: string;
-      }
-    | {
-        state: 'error';
-        error: Error;
-      }
-  >({ state: 'not started' });
-  const [commentState, setCommentState] = useState<
-    | { state: 'not started' }
-    | { state: 'github' }
-    | { state: 'error'; error: Error }
-  >({ state: 'not started' });
 
-  const [results, setResults] = useState<
-    | {
-        loading: true;
-      }
-    | {
-        loading: false;
-        error: Error;
-      }
-    | { loading: false; error: false; data: ResultWithSourcemap[] }
-  >({ loading: true });
-  useEffect(() => {
-    let isStale = false;
-    (async () => {
-      try {
-        const [from, to] = await Promise.all([
-          specFromInputToResults(
-            parseSpecVersion(props.from, defaultEmptySpec),
-            process.cwd()
-          )
-            .then((results) => {
-              validateOpenApiV3Document(results.jsonLike);
+  const compareOutput = await generateSpecResults(
+    apiCheckService,
+    parsedFrom,
+    parsedTo,
+    context
+  );
+  const { results, changes } = compareOutput;
+  // TODO render code here
+  // TODO handle output json
+  // if (props.output == 'json') {
+  //   if ('data' in results) {
+  //     const filteredResults = props.verbose
+  //       ? results.data
+  //       : results.data.filter((x) => !x.passed);
+  //     stdout.write(JSON.stringify(filteredResults, null, 2));
+  //   }
+  //   return null;
+  // }
 
-              !isStale &&
-                setFromState({
-                  loading: false,
-                  error: false,
-                });
-              return results;
-            })
-            .catch((e) => {
-              !isStale &&
-                setFromState({
-                  loading: false,
-                  error: e,
-                });
-              throw new UserError(e);
-            }),
-          specFromInputToResults(
-            parseSpecVersion(props.to, defaultEmptySpec),
-            process.cwd()
-          )
-            .then((results) => {
-              validateOpenApiV3Document(results.jsonLike);
+  if (uploadResults && changes.length > 0) {
+    console.log('Uploading files to Optic...');
 
-              !isStale &&
-                setToState({
-                  loading: false,
-                  error: false,
-                });
-              return results;
-            })
-            .catch((e) => {
-              !isStale &&
-                setToState({
-                  loading: false,
-                  error: e,
-                });
-              throw new UserError(e);
-            }),
-        ]);
+    // We've validated the shape in validateUploadRequirements
+    const ciContextNotNull = ciContext!;
+    const ciProvider = cliConfig.ciProvider!;
+    const opticToken = cliConfig.opticToken!;
+    const { token, provider } = cliConfig.gitProvider!;
+    const opticClient = createOpticClient(opticToken);
 
-        try {
-          const compareOutput = await generateSpecResults(
-            props.apiCheckService,
-            from,
-            to,
-            props.context
-          );
-          const { results, changes } = compareOutput;
-
-          if (!isStale) {
-            setResults({ loading: false, error: false, data: results });
-          }
-
-          if (props.uploadResults && changes.length > 0) {
-            !isStale && setUploadState({ state: 'started' });
-
-            // We've validated the shape in validateUploadRequirements
-            const ciContext = props.ciContext!;
-            const ciProvider = props.cliConfig.ciProvider!;
-            const opticToken = props.cliConfig.opticToken!;
-            const { token, provider } = props.cliConfig.gitProvider!;
-            const opticClient = createOpticClient(opticToken);
-
-            try {
-              const uploadOutput = await uploadCiRun(
-                compareOutput,
-                from.jsonLike,
-                to.jsonLike,
-                ciContext,
-                ciProvider,
-                opticClient,
-                {
-                  from: props.from
-                    ? path.join(process.cwd(), props.from)
-                    : props.from,
-                  to: props.to ? path.join(process.cwd(), props.to) : props.to,
-                }
-              );
-              // throw new Error('asd');
-              if (uploadOutput) {
-                // In the future we can add different git providers
-                if (provider === 'github') {
-                  setCommentState({ state: 'github' });
-                  try {
-                    await sendGithubMessage({
-                      githubToken: token,
-                      compareOutput,
-                      uploadOutput,
-                    });
-                  } catch (e) {
-                    setCommentState({
-                      state: 'error',
-                      error: e as Error,
-                    });
-                    SentryClient?.captureException(e);
-                  }
-                }
-
-                !isStale &&
-                  setUploadState({
-                    state: 'complete',
-                    uploadLocation: uploadOutput.opticWebUrl,
-                  });
-              }
-            } catch (e) {
-              setUploadState({
-                state: 'error',
-                error: e as Error,
-              });
-              SentryClient?.captureException(e);
-            }
-          } else if (props.uploadResults) {
-            !isStale && setUploadState({ state: 'no changes' });
-          }
-
-          const hasError = results.some((result) => !result.passed);
-
-          trackEvent('optic_ci.compare', `${props.projectName}-optic-ci`, {
-            isInCi: process.env.CI === 'true',
-            numberOfErrors: results.reduce(
-              (count, result) => (result.passed ? count : count + 1),
-              0
-            ),
-            numberOfChanges: changes.length,
-          });
-
-          await flushEvents();
-
-          exit(hasError ? new UserError() : undefined);
-        } catch (e) {
-          !isStale && setResults({ loading: false, error: e as Error });
-          throw e;
+    try {
+      const uploadOutput = await uploadCiRun(
+        compareOutput,
+        parsedFrom.jsonLike,
+        parsedTo.jsonLike,
+        ciContextNotNull,
+        ciProvider,
+        opticClient,
+        {
+          from: from ? path.join(process.cwd(), from) : from,
+          to: to ? path.join(process.cwd(), to) : to,
         }
-      } catch (e) {
-        exit(e as Error);
+      );
+
+      if (uploadOutput) {
+        console.log('Successfully uploaded files to Optic');
+        console.log(
+          `Results of this run can be found at: ${uploadOutput.opticWebUrl}`
+        );
+
+        // In the future we can add different git providers
+        if (provider === 'github') {
+          console.log('Posting comment to github...');
+          try {
+            await sendGithubMessage({
+              githubToken: token,
+              compareOutput,
+              uploadOutput,
+            });
+          } catch (e) {
+            console.log(
+              'Failed to post comment to github - exiting with a zero exit code.'
+            );
+            SentryClient?.captureException(e);
+          }
+        }
       }
-    })();
+    } catch (e) {
+      console.log(
+        'Error uploading the run to Optic - exiting with a zero exit code.'
+      );
 
-    return () => {
-      isStale = false;
-    };
-  }, []);
-
-  const loadStatus = (spec: string, state: LoadingState) => {
-    return (
-      <Text color="white">
-        {spec} specification:{' '}
-        {state.loading ? (
-          <Text color="green" bold>
-            loading...
-          </Text>
-        ) : state.error !== false ? (
-          <Text color="red" bold>
-            {state.error.message?.split('\n')[0]}
-          </Text>
-        ) : (
-          <Text color="green" bold>
-            done
-          </Text>
-        )}
-      </Text>
-    );
-  };
-
-  if (props.output == 'json') {
-    if ('data' in results) {
-      const filteredResults = props.verbose
-        ? results.data
-        : results.data.filter((x) => !x.passed);
-      stdout.write(JSON.stringify(filteredResults, null, 2));
+      SentryClient?.captureException(e);
     }
-    return null;
+  } else if (uploadResults) {
+    console.log('No changes were detected, not uploading anything');
   }
 
-  return (
-    <Box flexDirection="column" width={process.env.COLUMNS || '5000'}>
-      <Text color="blue" bold>
-        Loading specifications for comparison:
-      </Text>
+  const hasError = results.some((result) => !result.passed);
 
-      {loadStatus('Current', fromState)}
-      {loadStatus('Next', toState)}
+  trackEvent('optic_ci.compare', `${projectName}-optic-ci`, {
+    isInCi: process.env.CI === 'true',
+    numberOfErrors: results.reduce(
+      (count, result) => (result.passed ? count : count + 1),
+      0
+    ),
+    numberOfChanges: changes.length,
+  });
 
-      {((!fromState.loading && fromState.error !== false) ||
-        (!toState.loading && toState.error !== false)) && (
-        <Text color="red">
-          Stopping. Could not load two specifications to compare
-        </Text>
-      )}
-      {((!fromState.loading && fromState.error === false) ||
-        (!toState.loading && toState.error === false)) && (
-        <>
-          <Text>running rules...</Text>
-        </>
-      )}
-      {results.loading ? null : results.error ? (
-        <Text>
-          Error running rules: {JSON.stringify(results.error.message)}
-        </Text>
-      ) : (
-        <SpecComparison
-          results={results.data}
-          verbose={props.verbose}
-          mapToFile={props.mapToFile}
-        />
-      )}
-      {uploadState.state !== 'not started' && (
-        <Text>Uploading files to Optic...</Text>
-      )}
-      {uploadState.state === 'no changes' ? (
-        <Text>No changes were detected, not uploading anything</Text>
-      ) : uploadState.state === 'complete' ? (
-        <>
-          <Text>Successfully uploaded files to Optic</Text>
-          <Text>
-            Results of this run can be found at: {uploadState.uploadLocation}
-          </Text>
-        </>
-      ) : uploadState.state === 'error' ? (
-        <>
-          <Text>
-            Error uploading the run to Optic - exiting with a zero exit code.
-          </Text>
-          <Text color="red">{JSON.stringify(uploadState.error.message)}</Text>
-        </>
-      ) : null}
-      {commentState.state === 'github' && (
-        <Text>Posting comment to github</Text>
-      )}
-      {commentState.state === 'error' && (
-        <>
-          <Text>
-            Failed to post comment to github - exiting with a zero exit code.
-          </Text>
-          <Text color="red">{JSON.stringify(commentState.error.message)}</Text>
-        </>
-      )}
-    </Box>
-  );
-}
+  await flushEvents();
+  if (hasError) {
+    throw new UserError();
+  }
+};
