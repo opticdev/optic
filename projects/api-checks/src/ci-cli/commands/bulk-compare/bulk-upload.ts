@@ -15,8 +15,6 @@ export const bulkUploadCiRun = async (
   ciContext: string,
   ciProvider: 'github' | 'circleci'
 ): Promise<BulkUploadJson | null> => {
-  console.log('Loading comparison files');
-
   const contextFileBuffer = await loadFile(ciContext);
   const normalizedCiContext = normalizeCiContext(ciProvider, contextFileBuffer);
 

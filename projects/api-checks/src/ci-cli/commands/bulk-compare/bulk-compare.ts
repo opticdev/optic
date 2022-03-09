@@ -387,10 +387,9 @@ const runBulkCompare = async ({
     ).length;
     const numberOfComparisons = bulkCompareOutput.comparisons.length;
     console.log(
-      `Uploading ${numberOfUploads} comparisons with at least 1 change to Optic...`
-    );
-    console.log(
-      `${numberOfComparisons - numberOfUploads} did not have any changes`
+      `Uploading ${numberOfUploads} comparisons with at least 1 change to Optic... (${
+        numberOfComparisons - numberOfUploads
+      } did not have any changes)`
     );
 
     // We've validated the shape in validateUploadRequirements
