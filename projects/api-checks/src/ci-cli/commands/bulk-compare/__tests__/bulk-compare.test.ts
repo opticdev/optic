@@ -33,10 +33,8 @@ describe('parseJsonComparisonInput', () => {
         })
       );
     });
-    const {
-      comparisons: output,
-      skippedParsing,
-    } = await parseJsonComparisonInput('abcdef');
+    const { comparisons: output, skippedParsing } =
+      await parseJsonComparisonInput('abcdef');
     const expectedOutputs = [
       ['a', 'b', { abc: 123 }],
       ['c', 'd', { cde: 'test' }],
@@ -66,10 +64,8 @@ describe('parseJsonComparisonInput', () => {
         })
       );
     });
-    const {
-      comparisons: output,
-      skippedParsing,
-    } = await parseJsonComparisonInput('abcdef');
+    const { comparisons: output, skippedParsing } =
+      await parseJsonComparisonInput('abcdef');
     expect(output.size).toBe(1);
     expect(skippedParsing).toBe(false);
     output.forEach((line) => {
@@ -91,10 +87,8 @@ describe('parseJsonComparisonInput', () => {
         })
       );
     });
-    const {
-      comparisons: output,
-      skippedParsing,
-    } = await parseJsonComparisonInput('abcdef');
+    const { comparisons: output, skippedParsing } =
+      await parseJsonComparisonInput('abcdef');
     expect(output.size).toBe(1);
     expect(skippedParsing).toBe(false);
     output.forEach((line) => {
@@ -120,10 +114,8 @@ describe('parseJsonComparisonInput', () => {
         })
       );
     });
-    const {
-      comparisons: output,
-      skippedParsing,
-    } = await parseJsonComparisonInput('abcdef');
+    const { comparisons: output, skippedParsing } =
+      await parseJsonComparisonInput('abcdef');
     expect(output.size).toBe(1);
     expect(skippedParsing).toBe(true);
     output.forEach((line) => {
