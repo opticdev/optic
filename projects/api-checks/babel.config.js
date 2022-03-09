@@ -13,4 +13,9 @@ module.exports = {
       },
     ],
   ],
+  env: {
+    production: {
+      ignore: ['**/*.test.ts', '**/*.test.tsx'],
+    },
+  },
 };
