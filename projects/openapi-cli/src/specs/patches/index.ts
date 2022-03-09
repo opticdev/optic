@@ -1,8 +1,13 @@
 import { PatchImpact, OperationGroup, Operation } from '../../patches';
-import { SpecLocation } from '..';
 import { ShapePatch } from '../../shapes/patches';
 import { ShapeLocation } from '../../shapes';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+
+export { templatePatches } from './generators/template';
+export type {
+  ObservedSpecPatchGenerator,
+  ObservedSpecPatchGeneratorContext,
+} from './generators/template';
 
 export interface SpecPatch {
   description: string;

@@ -1,3 +1,5 @@
+export { parseOpenAPIWithSourcemap as readDeferencedSpec } from '@useoptic/openapi-io';
+
 import { ShapeLocation } from '../shapes';
 
 export { OpenAPIV3 } from '@useoptic/openapi-utilities';
@@ -14,3 +16,6 @@ export { SpecPatches } from './streams/patches';
 export { SpecFileOperations, SpecFiles } from './streams/files';
 export { SpecFacts, BodyExampleFacts } from './streams/facts';
 export type { BodyExampleFact } from './streams/facts';
+
+// templates
+export { SpecTemplate } from './templates';

@@ -97,5 +97,6 @@
     /* Skip type checking all .d.ts files. */
     "jsx": "react"
   },
+  "exclude": ["**/*.test.ts", "**/*.test.tsx"],
   "include": ["src/**/*"]
 }
