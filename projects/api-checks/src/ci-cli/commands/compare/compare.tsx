@@ -3,7 +3,10 @@ import { createOpticClient } from '../utils/optic-client';
 
 import {
   defaultEmptySpec,
+  ResultWithSourcemap,
   validateOpenApiV3Document,
+  IChange,
+  OpenApiFact,
 } from '@useoptic/openapi-utilities';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import {
@@ -20,20 +23,9 @@ import { CliConfig } from '../../types';
 import { uploadCiRun } from './upload';
 import { sendGithubMessage } from './github-comment';
 import path from 'path';
-
-type LoadingState =
-  | {
-      loading: true;
-    }
-  | {
-      loading: false;
-      error: Error;
-    }
-  | {
-      loading: false;
-      error: false;
-    };
-
+import groupBy from 'lodash.groupby';
+import isUrl from 'is-url';
+import { Instance as Chalk } from 'chalk';
 const parseContextObject = (context?: string): any => {
   try {
     const parsedContext = context ? JSON.parse(context) : {};
@@ -58,11 +50,6 @@ export const registerCompare = (
     .option('--from <from>', 'from file or rev:file, defaults empty spec')
     .option('--to <to>', 'to file or rev:file, defaults empty spec')
     .option('--context <context>', 'json of context')
-    .option(
-      '--github-annotations',
-      'show the result of checks using github action errors',
-      false
-    )
     .option('--verbose', 'show all checks, even passing', false)
     .option('--ruleset <ruleset>', 'name of ruleset to run', 'default')
     .option(
@@ -103,19 +90,6 @@ export const registerCompare = (
             );
           }
 
-          if (options.output === 'plain') {
-            // https://github.com/chalk/chalk#supportscolor
-            // https://github.com/chalk/supports-color/blob/ff1704d46cfb0714003f53c8d7e55736d8d545ff/index.js#L38
-            if (
-              process.env.FORCE_COLOR !== 'false' &&
-              process.env.FORCE_COLOR !== '0'
-            ) {
-              console.error(
-                `Please set FORCE_COLOR=false or FORCE_COLOR=0 to enable plain text output in the environment you want to run this command in`
-              );
-              return process.exit(1);
-            }
-          }
           const parsedContext = parseContextObject(options.context);
           validateUploadRequirements(
             options.uploadResults,
@@ -123,7 +97,6 @@ export const registerCompare = (
             options.ciContext
           );
 
-          // TODO figure out if we need to maintain verbose, and json
           await runCompare({
             from: options.from,
             to: options.to,
@@ -133,10 +106,97 @@ export const registerCompare = (
             projectName: projectName,
             ciContext: options.ciContext,
             cliConfig: cliConfig,
+            verbose: options.verbose,
+            output: options.output,
           });
         }
       )
     );
+};
+
+const getIndent = (depth: number): string => ' '.repeat(depth * 2);
+
+// todo move this to shared file
+const logComparison = (
+  comparison: {
+    results: ResultWithSourcemap[];
+    changes: IChange<OpenApiFact>[];
+    from?: string;
+    to?: string;
+  },
+  options: {
+    output: 'pretty' | 'plain';
+    verbose: boolean;
+  }
+) => {
+  const chalk = new Chalk({ level: options.output === 'plain' ? 0 : 1 });
+  const fromName = comparison.from || 'Empty Spec';
+  const toName = comparison.to || 'Empty Spec';
+  const totalNumberOfChecks = comparison.results.length;
+  const failedNumberOfChecks = comparison.results.filter(
+    (result) => !result.passed
+  ).length;
+  const passedNumberOfChecks = totalNumberOfChecks - failedNumberOfChecks;
+  const numberOfChanges = comparison.changes.length;
+  const groupedResults = groupBy(
+    comparison.results,
+    (result) =>
+      `${result.change.location.conceptualLocation.method}-${result.change.location.conceptualLocation.path}`
+  );
+
+  console.log(`Comparing ${fromName} to ${toName}\n`);
+
+  for (const operationResults of Object.values(groupedResults)) {
+    const { method, path } =
+      operationResults[0].change.location.conceptualLocation;
+    const allPassed = operationResults.every((result) => result.passed);
+    const renderedResults = operationResults.filter(
+      (result) => options.verbose || !result.passed
+    );
+    const resultNode = allPassed
+      ? chalk.bold.bgGreen.white(' PASS ')
+      : chalk.bold.bgRed.white(' FAIL ');
+
+    console.log(
+      `${getIndent(1)}${resultNode} ${chalk.bold(method.toUpperCase())} ${path}`
+    );
+
+    for (const result of renderedResults) {
+      const icon = result.passed ? chalk.green('✔') : chalk.red('x');
+      const requirement = `${result.where} ${
+        result.isMust ? 'must' : 'should'
+      } ${result.condition}`;
+
+      console.log(`${getIndent(2)}${icon} ${requirement}`);
+
+      if (!result.passed) {
+        console.log(getIndent(3) + chalk.red(result.error));
+      }
+      if (result.docsLink) {
+        console.log(
+          `${getIndent(3)}Read more in our API Guide (${result.docsLink})`
+        );
+      }
+      if (result.sourcemap) {
+        console.log(
+          `${getIndent(3)}at ${
+            isUrl(result.sourcemap.filePath)
+              ? `${chalk.underline(result.sourcemap.filePath)} line ${
+                  result.sourcemap.startLine
+                }`
+              : chalk.underline(
+                  `${result.sourcemap.filePath}:${result.sourcemap.startLine}:${result.sourcemap.startPosition}`
+                )
+          }`
+        );
+      }
+    }
+    console.log('\n');
+  }
+
+  console.log(`${numberOfChanges} changes detected`);
+  console.log(chalk.red.bold(`${passedNumberOfChecks} checks passed`));
+  console.log(chalk.green.bold(`${failedNumberOfChecks} checks failed`));
 };
 
 const runCompare = async ({
@@ -148,6 +208,8 @@ const runCompare = async ({
   ciContext,
   cliConfig,
   projectName,
+  output,
+  verbose,
 }: {
   from?: string;
   to?: string;
@@ -157,6 +219,8 @@ const runCompare = async ({
   ciContext?: string;
   cliConfig: CliConfig;
   projectName: string;
+  output: 'pretty' | 'plain' | 'json';
+  verbose: boolean;
 }) => {
   console.log('Loading spec files');
   const [parsedFrom, parsedTo] = await Promise.all([
@@ -180,6 +244,7 @@ const runCompare = async ({
     console.error(e);
     throw new UserError(e);
   });
+  console.log('Specs loaded - running comparison');
 
   const compareOutput = await generateSpecResults(
     apiCheckService,
@@ -188,17 +253,25 @@ const runCompare = async ({
     context
   );
   const { results, changes } = compareOutput;
-  // TODO render code here
-  // TODO handle output json
-  // if (props.output == 'json') {
-  //   if ('data' in results) {
-  //     const filteredResults = props.verbose
-  //       ? results.data
-  //       : results.data.filter((x) => !x.passed);
-  //     stdout.write(JSON.stringify(filteredResults, null, 2));
-  //   }
-  //   return null;
-  // }
+  if (output === 'json') {
+    const filteredResults = verbose
+      ? results
+      : results.filter((x) => !x.passed);
+    console.log(JSON.stringify(filteredResults, null, 2));
+  } else {
+    logComparison(
+      {
+        results,
+        changes,
+        from,
+        to,
+      },
+      {
+        output,
+        verbose,
+      }
+    );
+  }
 
   if (uploadResults && changes.length > 0) {
     console.log('Uploading files to Optic...');
@@ -252,7 +325,9 @@ const runCompare = async ({
         'Error uploading the run to Optic - exiting with a zero exit code.'
       );
 
-      SentryClient?.captureException(e);
+      if ((e as Error).name !== 'UserError') {
+        SentryClient?.captureException(e);
+      }
     }
   } else if (uploadResults) {
     console.log('No changes were detected, not uploading anything');
