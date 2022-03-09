@@ -77,6 +77,7 @@ export const logComparison = (
           }`
         );
       }
+      console.log('');
     }
     console.log('\n');
   }

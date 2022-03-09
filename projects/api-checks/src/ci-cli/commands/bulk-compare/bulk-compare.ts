@@ -456,6 +456,6 @@ const runBulkCompare = async ({
   await flushEvents();
 
   if (hasChecksFailing) {
-    throw new UserError('Some checks failed');
+    throw new UserError();
   }
 };
