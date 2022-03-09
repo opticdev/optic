@@ -3,11 +3,11 @@ import { ShapePatch } from '../../shapes/patches';
 import { ShapeLocation } from '../../shapes';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
-export { updatePluginPatches as generatePatchesByUpdatePlugin } from './generators/update-plugin';
+export { templatePatches } from './generators/template';
 export type {
-  SpecUpdatePlugin,
-  SpecUpdatePluginContext,
-} from './generators/update-plugin';
+  ObservedSpecPatchGenerator,
+  ObservedSpecPatchGeneratorContext,
+} from './generators/template';
 
 export interface SpecPatch {
   description: string;

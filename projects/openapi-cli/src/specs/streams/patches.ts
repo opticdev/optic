@@ -1,10 +1,8 @@
 import { OpenAPIV3 } from '..';
 import { filter, flatMap } from '../../lib/async-tools';
 import { SpecPatch, PatchImpact, Operation, OperationGroup } from '../patches';
-import {
-  updatePluginPatches,
-  SpecUpdatePlugin,
-} from '../patches/generators/update-plugin';
+import { SpecTemplate } from '../templates';
+import { templatePatches } from '../patches/generators/template';
 
 export interface SpecPatches extends AsyncIterable<SpecPatch> {}
 
@@ -23,11 +21,11 @@ export class SpecPatches {
     })(patches);
   }
 
-  static async *generateByUpdatePlugin<T>(
+  static async *generateByTemplate<T>(
     spec: OpenAPIV3.Document,
-    plugin: SpecUpdatePlugin<T>,
+    template: SpecTemplate<T>,
     options: T
   ): SpecPatches {
-    yield* updatePluginPatches(spec, plugin, options);
+    yield* templatePatches(spec, template, options);
   }
 }

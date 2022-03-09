@@ -14,3 +14,6 @@ export { SpecPatches } from './streams/patches';
 export { SpecFileOperations, SpecFiles } from './streams/files';
 export { SpecFacts, BodyExampleFacts } from './streams/facts';
 export type { BodyExampleFact } from './streams/facts';
+
+// templates
+export { SpecTemplate } from './templates';

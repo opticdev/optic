@@ -7,6 +7,7 @@ import {
   OpenAPIV3,
   SpecPatches,
   SpecFileOperations,
+  SpecTemplate,
 } from '../specs';
 import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 
@@ -22,38 +23,40 @@ export function registerDebugPluginCommand(cli: Command) {
         return cli.error('OpenAPI specification file could not be found');
       }
 
-      const template = createTemplate(exampleAddResourceSchema);
+      const template = SpecTemplate.create(
+        'add-resource-schema',
+        exampleAddResourceSchema
+      );
 
-      const updatedSpecFiles = template(specPath, { modelName: 'TestModel' });
-
-      for await (let writtenFilePath of SpecFiles.writeFiles(
-        updatedSpecFiles
-      )) {
-        console.log(`Updated ${writtenFilePath}`);
-      }
+      await applyTemplate(template, specPath, { modelName: 'TestModel' });
     });
 }
 
-function createTemplate(plugin) {
-  return async function* (absoluteSpecPath, options) {
-    const { jsonLike: spec, sourcemap } = await parseOpenAPIWithSourcemap(
-      absoluteSpecPath
-    );
-    const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
+async function applyTemplate( // TODO: move this somewhere else (near the edge as it includes I/O)
+  template,
+  absoluteSpecPath,
+  options
+): Promise<void> {
+  const { jsonLike: spec, sourcemap } = await parseOpenAPIWithSourcemap(
+    absoluteSpecPath
+  );
+  const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
 
-    const specPatches = SpecPatches.generateByUpdatePlugin(
-      spec,
-      plugin,
-      options
-    );
+  const specPatches = SpecPatches.generateByTemplate(
+    spec,
+    template.patchGenerator,
+    options
+  );
 
-    const fileOperations = SpecFileOperations.fromSpecPatches(
-      specPatches,
-      sourcemap
-    );
+  const fileOperations = SpecFileOperations.fromSpecPatches(
+    specPatches,
+    sourcemap
+  );
 
-    return SpecFiles.patch(specFiles, fileOperations);
-  };
+  const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
+
+  for await (let _writtenFilePath of SpecFiles.writeFiles(updatedSpecFiles)) {
+  }
 }
 
 function exampleAddResourceSchema(
