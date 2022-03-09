@@ -21,5 +21,6 @@
     "noImplicitAny": false,
     "downlevelIteration": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx"]
 }
