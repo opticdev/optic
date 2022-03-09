@@ -7,7 +7,7 @@ export interface SpecUpdatePlugin<T> {
     spec: OpenAPIV3.Document,
     options: T,
     context: SpecUpdatePluginContext
-  ): Promise<void>;
+  ): void;
 }
 
 export interface SpecUpdatePluginContext {}

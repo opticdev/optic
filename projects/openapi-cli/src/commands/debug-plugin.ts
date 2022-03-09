@@ -22,23 +22,9 @@ export function registerDebugPluginCommand(cli: Command) {
         return cli.error('OpenAPI specification file could not be found');
       }
 
-      const { jsonLike: spec, sourcemap } = await parseOpenAPIWithSourcemap(
-        absoluteSpecPath
-      );
-      const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
+      const template = createTemplate(exampleAddResourceSchema);
 
-      const specPatches = SpecPatches.generateByUpdatePlugin(
-        spec,
-        exampleAddResourceSchema,
-        { modelName: 'TestModel' }
-      );
-
-      const fileOperations = SpecFileOperations.fromSpecPatches(
-        specPatches,
-        sourcemap
-      );
-
-      const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
+      const updatedSpecFiles = template(specPath, { modelName: 'TestModel' });
 
       for await (let writtenFilePath of SpecFiles.writeFiles(
         updatedSpecFiles
@@ -48,7 +34,29 @@ export function registerDebugPluginCommand(cli: Command) {
     });
 }
 
-async function exampleAddResourceSchema(
+function createTemplate(plugin) {
+  return async function* (absoluteSpecPath, options) {
+    const { jsonLike: spec, sourcemap } = await parseOpenAPIWithSourcemap(
+      absoluteSpecPath
+    );
+    const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
+
+    const specPatches = SpecPatches.generateByUpdatePlugin(
+      spec,
+      plugin,
+      options
+    );
+
+    const fileOperations = SpecFileOperations.fromSpecPatches(
+      specPatches,
+      sourcemap
+    );
+
+    return SpecFiles.patch(specFiles, fileOperations);
+  };
+}
+
+function exampleAddResourceSchema(
   spec: OpenAPIV3.Document,
   options: { modelName: string },
   _context: {}
