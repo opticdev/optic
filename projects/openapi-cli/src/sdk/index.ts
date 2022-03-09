@@ -6,6 +6,7 @@ import {
   SpecTemplate,
   OpenAPIV3,
 } from '../specs';
+import invariant from 'ts-invariant';
 
 export { SpecTemplate, OpenAPIV3 };
 
@@ -14,6 +15,10 @@ export async function applyTemplate<T>(
   absoluteSpecPath: string,
   options: T
 ): Promise<void> {
+  invariant(
+    absoluteSpecPath.indexOf('/') === 0,
+    'applyTemplate requires an absolute path to the spec file'
+  );
   const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
     absoluteSpecPath
   );
