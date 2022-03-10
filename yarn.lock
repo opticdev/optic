@@ -3200,13 +3200,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prop-types@npm:*, @types/prop-types@npm:^15.7.4":
-  version: 15.7.4
-  resolution: "@types/prop-types@npm:15.7.4"
-  checksum: ef6e1899e59b876c273811b1bd845022fc66d5a3d11cb38a25b6c566b30514ae38fe20a40f67622f362a4f4f7f9224e22d8da101cff3d6e97e11d7b4c307cfc1
-  languageName: node
-  linkType: hard
-
 "@types/qs@npm:*":
   version: 6.9.7
   resolution: "@types/qs@npm:6.9.7"
@@ -3218,24 +3211,6 @@ __metadata:
   version: 1.2.4
   resolution: "@types/range-parser@npm:1.2.4"
   checksum: b7c0dfd5080a989d6c8bb0b6750fc0933d9acabeb476da6fe71d8bdf1ab65e37c136169d84148034802f48378ab94e3c37bb4ef7656b2bec2cb9c0f8d4146a95
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^17.0.39":
-  version: 17.0.39
-  resolution: "@types/react@npm:17.0.39"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: bf04d3c2894559012710d595553e12b422d3b91cd8f4f7e122d8cb044ba9c2ba17f6e8a4e09581359cc5509ddc59cd8c8fabd6774f3505a40a45393f074d6e6e
-  languageName: node
-  linkType: hard
-
-"@types/scheduler@npm:*":
-  version: 0.16.2
-  resolution: "@types/scheduler@npm:0.16.2"
-  checksum: b6b4dcfeae6deba2e06a70941860fb1435730576d3689225a421280b7742318d1548b3d22c1f66ab68e414f346a9542f29240bc955b6332c5b11e561077583bc
   languageName: node
   linkType: hard
 
@@ -3352,8 +3327,6 @@ __metadata:
     "@types/lodash.isequal": ^4.5.5
     "@types/nice-try": ^2.1.0
     "@types/node": ^17.0.15
-    "@types/prop-types": ^15.7.4
-    "@types/react": ^17.0.39
     "@types/uuid": ^8.3.1
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-io": "workspace:*"
@@ -3362,12 +3335,10 @@ __metadata:
     babel-jest: ^27.5.0
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     chai: ^4.3.4
+    chalk: ^4.1.2
     commander: ^8.3.0
     dotenv: ^11.0.0
     fs-extra: ^10.0.0
-    ink: ^3.2.0
-    ink-link: ^2.0.0
-    ink-testing-library: ^2.1.0
     is-url: ^1.2.4
     jest: ^27.5.0
     jshint: ^2.13.4
@@ -3378,8 +3349,6 @@ __metadata:
     nice-try: ^3.0.0
     node-fetch: ^2.6.7
     prettier: ^2.4.1
-    prop-types: ^15.8.1
-    react: ^17.0.2
     ts-invariant: ^0.9.4
     ts-jest: ^27.0.7
     ts-node: ^10.3.1
@@ -4395,7 +4364,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^4.0.0, chalk@npm:^4.1.0":
+"chalk@npm:^4.0.0, chalk@npm:^4.1.0, chalk@npm:^4.1.2":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
   dependencies:
@@ -4815,13 +4784,6 @@ __metadata:
   dependencies:
     cssom: ~0.3.6
   checksum: 5f05e6fd2e3df0b44695c2f08b9ef38b011862b274e320665176467c0725e44a53e341bc4959a41176e83b66064ab786262e7380fd1cabeae6efee0d255bb4e3
-  languageName: node
-  linkType: hard
-
-"csstype@npm:^3.0.2":
-  version: 3.0.10
-  resolution: "csstype@npm:3.0.10"
-  checksum: 20a8fa324f2b33ddf94aa7507d1b6ab3daa6f3cc308888dc50126585d7952f2471de69b2dbe0635d1fdc31223fef8e070842691877e725caf456e2378685a631
   languageName: node
   linkType: hard
 
@@ -5934,19 +5896,6 @@ __metadata:
     ink: ">=3.0.0"
     react: ">=16.8.0"
   checksum: 863e4a56a65c426442d2be704b36d33bb1e38a59dbe49cf36c8d0f6402b44e18d183ccf8b436f5e673d5929f5a372a17ed27fd94f0a2f5895f09c2b197b730e1
-  languageName: node
-  linkType: hard
-
-"ink-link@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "ink-link@npm:2.0.0"
-  dependencies:
-    prop-types: ^15.7.2
-    terminal-link: ^2.1.1
-  peerDependencies:
-    ink: ">=3.0.0"
-    react: ">=16.8.0"
-  checksum: cde7b0c4051ecc8fc8ca978f70e17348f24faed413dc72489ee7cc3a515eced03ec51471a092bd3aca549fcc4af29d0619e0e5230553a38dd2e79df653955b80
   languageName: node
   linkType: hard
 
@@ -8463,7 +8412,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.7.2":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -9351,7 +9300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"terminal-link@npm:^2.0.0, terminal-link@npm:^2.1.1":
+"terminal-link@npm:^2.0.0":
   version: 2.1.1
   resolution: "terminal-link@npm:2.1.1"
   dependencies:
