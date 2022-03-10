@@ -11,6 +11,8 @@ import { addDeleteOperation } from './templates/operations/delete';
 import { applyTemplate } from '../../sdk';
 
 export async function newResource(resourceName, pluralResourceName) {
+  // TODO: the SDK should probably help with the generation of new files
+  // and allow ergonomic use of a SpecTemplate to do so
   const titleResourceName = titleCase(resourceName);
   const version = getResourceVersion();
   const collectionPath = `/${pluralResourceName}`;
@@ -29,7 +31,7 @@ export async function newResource(resourceName, pluralResourceName) {
 }
 
 export async function addOperation(
-  specFilePath,
+  specFilePath, // TODO: consider how workflows can provided with more sophisticated context
   operation,
   resourceName,
   pluralResourceName
@@ -39,6 +41,8 @@ export async function addOperation(
   const itemPath = `${collectionPath}/{${resourceName}_id}`;
   switch (operation) {
     case 'all':
+      // TODO: consider how this impacts performance (round trip to the FS for each call)
+      // and whether that's something we need to address here
       await applyTemplate(addCreateOperation, specFilePath, {
         collectionPath,
         resourceName,
