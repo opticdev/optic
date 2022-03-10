@@ -2,7 +2,7 @@ import { ensureIdParameter } from '../parameters';
 import { buildItemResponseSchema, ensureRelationSchema } from '../schemas';
 import { commonHeaders, commonResponses, refs } from '../common';
 import { OpenAPIV3 } from 'openapi-types';
-import { SpecTemplate } from '../../../sdk';
+import { SpecTemplate } from '../../../../sdk';
 
 export const addGetOperation = SpecTemplate.create(
   'add-get-operation',

@@ -9,7 +9,7 @@ import {
   paginationParameters,
   refs,
 } from '../common';
-import { SpecTemplate } from '../../../sdk';
+import { SpecTemplate } from '../../../../sdk';
 
 export const addListOperation = SpecTemplate.create(
   'add-list-operation',
