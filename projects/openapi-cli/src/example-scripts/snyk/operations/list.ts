@@ -9,21 +9,28 @@ import {
   paginationParameters,
   refs,
 } from '../common';
+import { SpecTemplate } from '../../../sdk';
 
-export function addListOperation(
-  spec: OpenAPIV3.Document,
-  collectionPath: string,
-  resourceName: string,
-  titleResourceName: string
-): void {
-  if (!spec.paths) spec.paths = {};
-  if (!spec.paths[collectionPath]) spec.paths[collectionPath] = {};
-  spec.paths[collectionPath]!.get = buildListOperation(
-    resourceName,
-    titleResourceName
-  );
-  ensureRelationSchema(spec, titleResourceName);
-}
+export const addListOperation = SpecTemplate.create(
+  'add-list-operation',
+  function addListOperation(
+    spec: OpenAPIV3.Document,
+    options: {
+      collectionPath: string;
+      resourceName: string;
+      titleResourceName: string;
+    }
+  ): void {
+    const { collectionPath, resourceName, titleResourceName } = options;
+    if (!spec.paths) spec.paths = {};
+    if (!spec.paths[collectionPath]) spec.paths[collectionPath] = {};
+    spec.paths[collectionPath]!.get = buildListOperation(
+      resourceName,
+      titleResourceName
+    );
+    ensureRelationSchema(spec, titleResourceName);
+  }
+);
 
 function buildListOperation(
   resourceName: string,

@@ -2,22 +2,29 @@ import { ensureIdParameter } from '../parameters';
 import { buildItemResponseSchema, ensureRelationSchema } from '../schemas';
 import { commonHeaders, commonResponses, refs } from '../common';
 import { OpenAPIV3 } from 'openapi-types';
+import { SpecTemplate } from '../../../sdk';
 
-export function addGetOperation(
-  spec: OpenAPIV3.Document,
-  itemPath: string,
-  resourceName: string,
-  titleResourceName: string
-): void {
-  if (!spec.paths) spec.paths = {};
-  if (!spec.paths[itemPath]) spec.paths[itemPath] = {};
-  spec.paths[itemPath]!.get = buildGetOperation(
-    resourceName,
-    titleResourceName
-  );
-  ensureIdParameter(spec, resourceName, titleResourceName);
-  ensureRelationSchema(spec, titleResourceName);
-}
+export const addGetOperation = SpecTemplate.create(
+  'add-get-operation',
+  function addGetOperation(
+    spec: OpenAPIV3.Document,
+    options: {
+      itemPath: string;
+      resourceName: string;
+      titleResourceName: string;
+    }
+  ): void {
+    const { itemPath, resourceName, titleResourceName } = options;
+    if (!spec.paths) spec.paths = {};
+    if (!spec.paths[itemPath]) spec.paths[itemPath] = {};
+    spec.paths[itemPath]!.get = buildGetOperation(
+      resourceName,
+      titleResourceName
+    );
+    ensureIdParameter(spec, resourceName, titleResourceName);
+    ensureRelationSchema(spec, titleResourceName);
+  }
+);
 
 function buildGetOperation(
   resourceName: string,

@@ -5,28 +5,36 @@ import {
   buildItemResponseSchema,
   ensureRelationSchema,
 } from '../schemas';
+import { SpecTemplate } from '../../../sdk';
 
-export function addCreateOperation(
-  spec: OpenAPIV3.Document,
-  collectionPath: string,
-  resourceName: string,
-  titleResourceName: string
-): void {
-  if (!spec.paths) spec.paths = {};
-  if (!spec.paths[collectionPath]) spec.paths[collectionPath] = {};
-  if (!spec.components) spec.components = {};
-  if (!spec.components.schemas) spec.components.schemas = {};
-  spec.paths[collectionPath]!.post = buildCreateOperation(
-    resourceName,
-    titleResourceName
-  );
-  const attributes =
-    spec.components?.schemas?.[`${titleResourceName}Attributes`];
-  if (!attributes)
-    throw new Error(`Could not find ${titleResourceName}Attributes schema`);
-  spec.components.schemas[`${titleResourceName}CreateAttributes`] = attributes;
-  ensureRelationSchema(spec, titleResourceName);
-}
+export const addCreateOperation = SpecTemplate.create(
+  'add-create-operation',
+  function addCreateOperation(
+    spec: OpenAPIV3.Document,
+    options: {
+      collectionPath: string;
+      resourceName: string;
+      titleResourceName: string;
+    }
+  ): void {
+    const { collectionPath, resourceName, titleResourceName } = options;
+    if (!spec.paths) spec.paths = {};
+    if (!spec.paths[collectionPath]) spec.paths[collectionPath] = {};
+    if (!spec.components) spec.components = {};
+    if (!spec.components.schemas) spec.components.schemas = {};
+    spec.paths[collectionPath]!.post = buildCreateOperation(
+      resourceName,
+      titleResourceName
+    );
+    const attributes =
+      spec.components?.schemas?.[`${titleResourceName}Attributes`];
+    if (!attributes)
+      throw new Error(`Could not find ${titleResourceName}Attributes schema`);
+    spec.components.schemas[`${titleResourceName}CreateAttributes`] =
+      attributes;
+    ensureRelationSchema(spec, titleResourceName);
+  }
+);
 
 function buildCreateOperation(
   resourceName: string,
