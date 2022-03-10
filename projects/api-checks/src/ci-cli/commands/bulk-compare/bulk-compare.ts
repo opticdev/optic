@@ -415,7 +415,7 @@ const runBulkCompare = async ({
           console.log(
             `from: ${comparison.inputs.from || 'Empty Spec'} to: ${
               comparison.inputs.to || 'Empty Spec'
-            } - ${comparison.opticWebUrl}}`
+            } - ${comparison.opticWebUrl}`
           );
         }
 
