@@ -22,5 +22,5 @@
     "downlevelIteration": true
   },
   "include": ["src"],
-  "exclude": ["**/*.test.ts", "**/*.test.tsx"]
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "./build/**/*"]
 }
