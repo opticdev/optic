@@ -1,5 +1,5 @@
 {
-  "name": "@useoptic/optic-ci",
+  "name": "@useoptic/rulesets-base",
   "packageManager": "yarn@3.0.2",
   "version": "0.22.24",
   "main": "build/index.js",
@@ -37,20 +37,6 @@
   "jest": {
     "testPathIgnorePatterns": [
       "build"
-    ],
-    "moduleNameMapper": {
-      "^nimma/fallbacks$": [
-        "<rootDir>../../node_modules/nimma/dist/cjs/fallbacks/index.js",
-        "<rootDir>../../../../node_modules/nimma/dist/cjs/fallbacks/index.js"
-      ],
-      "^nimma/legacy$": [
-        "<rootDir>../../node_modules/nimma/dist/legacy/cjs/index.js",
-        "<rootDir>../../../../node_modules/nimma/dist/legacy/cjs/index.js"
-      ],
-      "csv-parse/sync": [
-        "<rootDir>../../node_modules/csv-parse/dist/cjs/sync.cjs",
-        "<rootDir>../../../../node_modules/csv-parse/dist/cjs/sync.cjs"
-      ]
-    }
+    ]
   }
 }
