@@ -96,7 +96,7 @@ module.exports = {
 
 ```js
 // optic/standardOperations.js
-const { ApiCheckService, check } = require("@useoptic/api-checks");
+const { ApiCheckService, check } = require("@useoptic/rulesets-base");
 const { expect } = require("chai"); // this can be substituted for other test assertion libraries
 
 const standardOperations = check("require operation summary")
@@ -117,4 +117,8 @@ module.exports = () => {
 
 ### Join the beta!
 
-Do you like `optic-ci`? It solves this problem well because people just like you joined our Beta, connected with us on Slack and started helping us learn really fast. Join our beta to work directly with Optic's team to help us make OpenAPI and API-first easy for teams to adopt!
+We're exploring how to make writing OpenAPI, writing optic rules and standardizing APIs easy for everyone - join our beta and let us help you:
+- Drive adoption of OpenAPI in your team
+- Write custom rules and checks specific to your team's standards
+
+You can join by signing up on our [website](https://www.useoptic.com/).
