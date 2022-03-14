@@ -8,6 +8,7 @@ import {
   uploadRun,
 } from '../utils/shared-upload';
 import { BulkCompareJson, BulkUploadJson } from '../../types';
+import { UserError } from '../../errors';
 
 export const bulkUploadCiRun = async (
   opticClient: OpticBackendClient,
@@ -15,7 +16,13 @@ export const bulkUploadCiRun = async (
   ciContext: string,
   ciProvider: 'github' | 'circleci'
 ): Promise<BulkUploadJson | null> => {
-  const contextFileBuffer = await loadFile(ciContext);
+  let contextFileBuffer: Buffer;
+  try {
+    contextFileBuffer = await loadFile(ciContext);
+  } catch (e) {
+    console.error(e);
+    throw new UserError();
+  }
   const normalizedCiContext = normalizeCiContext(ciProvider, contextFileBuffer);
 
   const { comparisons } = bulkCompareOutput;
