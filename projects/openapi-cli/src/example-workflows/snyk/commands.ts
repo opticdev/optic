@@ -16,8 +16,7 @@ function newResourceCommand() {
     .addArgument(
       new Argument('<plural-resource-name>', '[plural-resource-name]')
     )
-    .action(async (args) => {
-      const [resourceName, pluralResourceName] = args;
+    .action(async (resourceName, pluralResourceName) => {
       return newResource(resourceName, pluralResourceName);
     });
 
@@ -32,15 +31,16 @@ function addOperationCommand() {
     .addArgument(
       new Argument('<plural-resource-name>', '[plural-resource-name]')
     )
-    .action(async (args) => {
-      const [specFilePath, operation, resourceName, pluralResourceName] = args;
-      return addOperation(
-        specFilePath,
-        operation,
-        resourceName,
-        pluralResourceName
-      );
-    });
+    .action(
+      async (specFilePath, operation, resourceName, pluralResourceName) => {
+        return addOperation(
+          specFilePath,
+          operation,
+          resourceName,
+          pluralResourceName
+        );
+      }
+    );
 
   return command;
 }
