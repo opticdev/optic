@@ -8,6 +8,8 @@ import {
   OpenAPIV3,
 } from '../specs';
 import invariant from 'ts-invariant';
+import * as fs from 'fs-extra';
+import * as path from 'path';
 
 export { SpecTemplate, OpenAPIV3 };
 
@@ -20,6 +22,11 @@ export async function createSpecFile<T>(
   invariant(
     absoluteFilePath.indexOf('/') === 0,
     'createSpecFile requires an absolute path for a new spec file'
+  );
+  let dirPath = path.dirname(absoluteFilePath);
+  invariant(
+    await fs.pathExists(dirPath),
+    `path ${dirPath} must exist to create a new spec file at ${absoluteFilePath}`
   );
 
   const newSpecFile = SpecFile.create(absoluteFilePath);
