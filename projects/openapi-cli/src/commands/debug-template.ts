@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
-import { OpenAPIV3, SpecTemplate, applyTemplate } from '../sdk';
+import { OpenAPIV3, SpecTemplate, applyTemplate } from '../workflows';
 
 export function registerDebugTemplateCommand(cli: Command) {
   cli
