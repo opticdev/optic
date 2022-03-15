@@ -84,7 +84,7 @@ export const registerBulkCompare = (
             return process.exit(1);
           }
 
-          validateUploadRequirements(uploadResults, cliConfig, ciContext);
+          validateUploadRequirements(uploadResults, cliConfig);
 
           await runBulkCompare({
             checkService,
@@ -398,7 +398,6 @@ const runBulkCompare = async ({
     );
 
     // We've validated the shape in validateUploadRequirements
-    const ciContextNotNull = ciContext!;
     const ciProvider = cliConfig.ciProvider!;
     const opticToken = cliConfig.opticToken!;
     const { token, provider } = cliConfig.gitProvider!;
@@ -408,8 +407,8 @@ const runBulkCompare = async ({
       const bulkUploadOutput = await bulkUploadCiRun(
         opticClient,
         bulkCompareOutput,
-        ciContextNotNull,
-        ciProvider
+        ciProvider,
+        ciContext
       );
       if (bulkUploadOutput) {
         console.log(
