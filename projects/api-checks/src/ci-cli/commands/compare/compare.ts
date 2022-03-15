@@ -153,7 +153,7 @@ const runCompare = async ({
     console.log('Stopping. Could not load two specifications to compare');
     // TODO add in better error messaging here
     console.error(e);
-    throw new UserError(e);
+    throw new UserError();
   });
   console.log('Specs loaded - running comparison');
 
@@ -227,7 +227,7 @@ const runCompare = async ({
             });
           } catch (e) {
             console.log(
-              'Failed to post comment to github - exiting with a zero exit code.'
+              'Failed to post comment to github - exiting with comparison rules run exit code.'
             );
             console.error(e);
             if ((e as Error).name !== 'UserError') {
@@ -238,7 +238,7 @@ const runCompare = async ({
       }
     } catch (e) {
       console.log(
-        'Error uploading the run to Optic - exiting with a zero exit code.'
+        'Error uploading the run to Optic - exiting with comparison rules run exit code.'
       );
       console.error(e);
 

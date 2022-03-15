@@ -22,9 +22,10 @@ import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 import { DocumentedBody } from '../shapes/body';
 import { flushEvents, trackEvent } from '../segment';
 
-export function registerUpdateCommand(cli: Command) {
-  cli
-    .command('update')
+export function updateCommand(): Command {
+  const command = new Command('update');
+
+  command
     .usage('openapi.yml')
     .argument('<openapi-file>', 'an OpenAPI spec file to update')
     .description(
@@ -33,7 +34,7 @@ export function registerUpdateCommand(cli: Command) {
     .action(async (specPath) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
-        return cli.error('OpenAPI specification file could not be found');
+        return command.error('OpenAPI specification file could not be found');
       }
 
       const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
@@ -144,4 +145,6 @@ export function registerUpdateCommand(cli: Command) {
 
       await flushEvents();
     });
+
+  return command;
 }

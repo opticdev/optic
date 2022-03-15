@@ -7,6 +7,7 @@ import {
   normalizeCiContext,
 } from '../utils/shared-upload';
 import { UploadJson } from '../../types';
+import { UserError } from '../../errors';
 import { OpenAPIV3, CompareFileJson } from '@useoptic/openapi-utilities';
 
 export const uploadCiRun = async (
@@ -19,7 +20,13 @@ export const uploadCiRun = async (
   opticClient: OpticBackendClient,
   runArgs: CiRunArgs
 ): Promise<UploadJson> => {
-  const contextFileBuffer = await loadFile(ciContext);
+  let contextFileBuffer: Buffer;
+  try {
+    contextFileBuffer = await loadFile(ciContext);
+  } catch (e) {
+    console.error(e);
+    throw new UserError();
+  }
 
   const normalizedCiContext = normalizeCiContext(ciProvider, contextFileBuffer);
 
