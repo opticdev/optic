@@ -12,14 +12,12 @@ import {
 import { specFromInputToResults } from './load-spec';
 import { UserError } from '../../errors';
 import { CliConfig, NormalizedCiContext } from '../../types';
+import { SUPPORTED_CI_PROVIDERS, SUPPORTED_GIT_PROVIDERS } from '../constants';
 
 export const validateUploadRequirements = (
   uploadResults: boolean,
-  cliConfig: CliConfig,
-  ciContext?: string
+  cliConfig: CliConfig
 ) => {
-  const supportedGitProviders = ['github'];
-  const supportedCiProviders = ['github', 'circleci'];
   if (uploadResults) {
     // If uploadResults, we should have a valid optic token, git provider and ciContext
     if (!cliConfig.opticToken) {
@@ -34,9 +32,9 @@ export const validateUploadRequirements = (
       );
     }
 
-    if (!supportedCiProviders.includes(cliConfig.ciProvider)) {
+    if (!SUPPORTED_CI_PROVIDERS.includes(cliConfig.ciProvider)) {
       throw new UserError(
-        `Unsupported gitProvider supplied - currently supported git providers are: ${supportedCiProviders.join(
+        `Unsupported gitProvider supplied - currently supported git providers are: ${SUPPORTED_CI_PROVIDERS.join(
           ', '
         )}`
       );
@@ -48,21 +46,15 @@ export const validateUploadRequirements = (
       );
     }
 
-    if (!supportedGitProviders.includes(cliConfig.gitProvider.provider)) {
+    if (!SUPPORTED_GIT_PROVIDERS.includes(cliConfig.gitProvider.provider)) {
       throw new UserError(
-        `Unsupported gitProvider supplied - currently supported git providers are: ${supportedGitProviders.join(
+        `Unsupported gitProvider supplied - currently supported git providers are: ${SUPPORTED_GIT_PROVIDERS.join(
           ', '
         )}`
       );
     }
     if (!cliConfig.gitProvider.token) {
       throw new UserError(`No gitProvider.token was supplied`);
-    }
-
-    if (!ciContext) {
-      throw new UserError(
-        'Expected --ci-context to be set when used with --upload-results'
-      );
     }
   }
 };
@@ -99,6 +91,7 @@ const startSession = async (
   return sessionId;
 };
 
+// https://github.com/opticdev/issues/issues/236 - to deprecate
 export const normalizeCiContext = (
   provider: 'github' | 'circleci',
   contextBuffer: Buffer
