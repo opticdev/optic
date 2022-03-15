@@ -2,7 +2,6 @@ import { PatchImpact, OperationGroup, Operation } from '../../patches';
 import { ShapePatch } from '../../shapes/patches';
 import { ShapeLocation } from '../../shapes';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { OpenAPIV3 } from '..';
 
 export { newSpecPatches } from './generators/new-spec';
 export { templatePatches } from './generators/template';

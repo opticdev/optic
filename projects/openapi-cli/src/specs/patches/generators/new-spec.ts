@@ -17,7 +17,7 @@ export function* newSpecPatches<T>(
     groupedOperations: [
       OperationGroup.create(`setup minimal viable OpenAPI spec file`, {
         op: 'add',
-        path: '/',
+        path: '',
         value: newSpec,
       }),
     ],
