@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { CliConfig, NormalizedCiContext } from '../../types';
@@ -8,25 +8,38 @@ import { getContextFromCircleCiEnvironment } from './context-readers/circle-ci';
 import { getContextFromGithubEnvironment } from './context-readers/github-actions';
 import path from 'path';
 
-export const registerCreateContext = (
-  cli: Command,
-  provider: CliConfig['ciProvider']
-) => {
-  cli.command('create-context').action(
-    wrapActionHandlerWithSentry(async () => {
-      if (!provider) {
-        throw new UserError('Cannot create context without a provider');
-      }
-      if (!SUPPORTED_CI_PROVIDERS.includes(provider)) {
-        throw new UserError(
-          `Unexpected provider '${provider}', supported ci providers are: ${SUPPORTED_CI_PROVIDERS.join(
-            ', '
-          )}`
-        );
-      }
-      createContext(provider);
-    })
-  );
+export const registerCreateContext = (cli: Command) => {
+  cli
+    .command('create-context')
+    .addOption(
+      new Option(
+        '--provider <provider>',
+        `the ci provider that this command should try extract the relevant values from. supported providers are: ${SUPPORTED_CI_PROVIDERS.join(
+          ', '
+        )}`
+      ).choices([...SUPPORTED_CI_PROVIDERS])
+    )
+    .action(
+      wrapActionHandlerWithSentry(
+        async ({
+          provider,
+        }: {
+          provider: typeof SUPPORTED_CI_PROVIDERS[number];
+        }) => {
+          if (!provider) {
+            throw new UserError('Cannot create context without a provider');
+          }
+          if (!SUPPORTED_CI_PROVIDERS.includes(provider)) {
+            throw new UserError(
+              `Unexpected provider '${provider}', supported ci providers are: ${SUPPORTED_CI_PROVIDERS.join(
+                ', '
+              )}`
+            );
+          }
+          createContext(provider);
+        }
+      )
+    );
 };
 
 const createContext = (provider: NonNullable<CliConfig['ciProvider']>) => {

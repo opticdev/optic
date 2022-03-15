@@ -21,7 +21,7 @@ export function makeCiCliWithNamedRules(
     `for ${forProject}, running optic api-check ${packageJson.version}`
   );
 
-  registerCreateContext(cli, options.ciProvider);
+  registerCreateContext(cli);
   registerCompare(cli, forProject, rulesetServices, options);
   registerBulkCompare(cli, forProject, rulesetServices, options);
 
