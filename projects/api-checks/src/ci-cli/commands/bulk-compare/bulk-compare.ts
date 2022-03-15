@@ -222,32 +222,37 @@ export const parseJsonComparisonInput = async (
   comparisons: Map<string, Comparison>;
   skippedParsing: boolean;
 }> => {
-  const fileOutput = await loadFile(input);
-  let skippedParsing = false;
-  const output = JSON.parse(fileOutput.toString());
-  const initialComparisons: Map<string, Comparison> = new Map();
-  for (const comparison of output.comparisons || []) {
-    if (!comparison.context) {
-      console.log(
-        `Comparison doesn't match expected format, found: ${JSON.stringify(
-          comparison
-        )}`
-      );
-      skippedParsing = true;
-      continue;
+  try {
+    const fileOutput = await loadFile(input);
+    let skippedParsing = false;
+    const output = JSON.parse(fileOutput.toString());
+    const initialComparisons: Map<string, Comparison> = new Map();
+    for (const comparison of output.comparisons || []) {
+      if (!comparison.context) {
+        console.log(
+          `Comparison doesn't match expected format, found: ${JSON.stringify(
+            comparison
+          )}`
+        );
+        skippedParsing = true;
+        continue;
+      }
+      const id = uuidv4();
+
+      initialComparisons.set(id, {
+        id,
+        fromFileName: comparison.from,
+        toFileName: comparison.to,
+        context: comparison.context,
+        loading: true,
+      });
     }
-    const id = uuidv4();
 
-    initialComparisons.set(id, {
-      id,
-      fromFileName: comparison.from,
-      toFileName: comparison.to,
-      context: comparison.context,
-      loading: true,
-    });
+    return { comparisons: initialComparisons, skippedParsing };
+  } catch (e) {
+    console.error(e);
+    throw new UserError();
   }
-
-  return { comparisons: initialComparisons, skippedParsing };
 };
 
 const runBulkCompare = async ({
@@ -430,7 +435,7 @@ const runBulkCompare = async ({
             });
           } catch (e) {
             console.log(
-              'Failed to post comment to github - exiting with a zero exit code.'
+              'Failed to post comment to github - exiting with comparison rules run exit code.'
             );
             console.error(e);
             if ((e as Error).name !== 'UserError') {
@@ -443,7 +448,7 @@ const runBulkCompare = async ({
       }
     } catch (e) {
       console.log(
-        'Error uploading the run to Optic - exiting with a zero exit code.'
+        'Error uploading the run to Optic - exiting with comparison rules run exit code.'
       );
       console.error(e);
 
