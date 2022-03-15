@@ -24,13 +24,13 @@ export const validateUploadRequirements = (
     // If uploadResults, we should have a valid optic token, git provider and ciContext
     if (!cliConfig.opticToken) {
       throw new UserError(
-        'Expected an opticToken to be set in cliOptions when used with --upload-results - check usage of makeCiCli or makeCiCliWithNamedRules'
+        'Expected an opticToken to be set in cliOptions when used with --upload-results - check optic.config.js file'
       );
     }
 
     if (!cliConfig.ciProvider) {
       throw new UserError(
-        'Expected an ciProvider to be set in cliOptions when used with --upload-results - check usage of makeCiCli or makeCiCliWithNamedRules'
+        'Expected an ciProvider to be set in cliOptions when used with --upload-results - check optic.config.js file'
       );
     }
 
@@ -44,7 +44,7 @@ export const validateUploadRequirements = (
 
     if (!cliConfig.gitProvider) {
       throw new UserError(
-        'Expected an gitProvider to be set in cliOptions when used with --upload-results - check usage of makeCiCli or makeCiCliWithNamedRules'
+        'Expected an gitProvider to be set in cliOptions when used with --upload-results - check optic.config.js file'
       );
     }
 

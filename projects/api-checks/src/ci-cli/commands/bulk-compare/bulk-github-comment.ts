@@ -6,6 +6,7 @@ import {
 } from '../utils/shared-comment';
 import { generateHashForComparison } from '../utils/comparison-hash';
 import { BulkUploadJson } from '../../types';
+import { UserError } from '../../errors';
 
 export const sendBulkGithubMessage = async ({
   githubToken,
@@ -32,21 +33,25 @@ export const sendBulkGithubMessage = async ({
     auth: githubToken,
   });
 
-  const {
-    data: requestedReviewers,
-  } = await octokit.pulls.listRequestedReviewers({
-    owner,
-    repo,
-    pull_number,
-  });
+  try {
+    const { data: requestedReviewers } =
+      await octokit.pulls.listRequestedReviewers({
+        owner,
+        repo,
+        pull_number,
+      });
 
-  trackEvent('optic_ci.bulk_github_comment', `${owner}-optic-ci`, {
-    owner,
-    repo,
-    pull_number,
-    number_of_reviewers:
-      requestedReviewers.users.length + requestedReviewers.teams.length,
-  });
+    trackEvent('optic_ci.bulk_github_comment', `${owner}-optic-ci`, {
+      owner,
+      repo,
+      pull_number,
+      number_of_reviewers:
+        requestedReviewers.users.length + requestedReviewers.teams.length,
+    });
+  } catch (e) {
+    console.error(e);
+    throw new UserError();
+  }
 
   const comparisonsHash = generateHashForComparison(
     comparisons.map((comparison) => ({
@@ -57,13 +62,19 @@ export const sendBulkGithubMessage = async ({
 
   // Given we don't have the comment id; we need to fetch all comments on a PR.
   // We don't want to spam the comments, we want to update to the latest
-  const maybeOpticCommentId = await findOpticCommentId(
-    octokit,
-    comparisonsHash,
-    owner,
-    repo,
-    pull_number
-  );
+  let maybeOpticCommentId: number | null;
+  try {
+    maybeOpticCommentId = await findOpticCommentId(
+      octokit,
+      comparisonsHash,
+      owner,
+      repo,
+      pull_number
+    );
+  } catch (e) {
+    console.error(e);
+    throw new UserError();
+  }
 
   const renderedComparisons = comparisons.map((comparison) => {
     const { opticWebUrl, changes, inputs, results } = comparison;
@@ -104,19 +115,24 @@ ${renderedComparisons.join(`\n---\n`)}
 How can Optic be improved? Leave your feedback [here](${OPTIC_COMMENT_SURVEY_LINK})
   `;
 
-  if (maybeOpticCommentId) {
-    await octokit.rest.issues.updateComment({
-      owner,
-      repo,
-      comment_id: maybeOpticCommentId,
-      body,
-    });
-  } else {
-    await octokit.rest.issues.createComment({
-      owner,
-      repo,
-      issue_number: pull_number,
-      body,
-    });
+  try {
+    if (maybeOpticCommentId) {
+      await octokit.rest.issues.updateComment({
+        owner,
+        repo,
+        comment_id: maybeOpticCommentId,
+        body,
+      });
+    } else {
+      await octokit.rest.issues.createComment({
+        owner,
+        repo,
+        issue_number: pull_number,
+        body,
+      });
+    }
+  } catch (e) {
+    console.error(e);
+    throw new UserError();
   }
 };
