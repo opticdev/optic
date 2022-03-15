@@ -4,6 +4,7 @@ import { program as cli } from 'commander';
 
 import { updateCommand } from './commands/update';
 import { registerDebugTemplateCommand } from './commands/debug-template';
+import { debugWorkflowsCommand } from './commands/debug-workflows';
 import { CliConfig } from './config';
 import { initSegment } from './segment';
 
@@ -15,7 +16,7 @@ export function makeCli(config: CliConfig) {
   cli.addCommand(updateCommand());
   registerDebugTemplateCommand(cli);
 
-  // cli.addCommand(debugWorkflowsCommand());
+  cli.addCommand(debugWorkflowsCommand());
 
   return cli;
 }
