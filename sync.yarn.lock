@@ -3387,6 +3387,8 @@ __metadata:
     prettier: ^2.4.1
     ts-node: ^10.4.0
     typescript: ^4.4.4
+  bin:
+    example-snyk-api-checks: build/index.js
   languageName: unknown
   linkType: soft
 
