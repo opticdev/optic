@@ -1,7 +1,7 @@
 import { commonResponses, refs } from '../common';
 import { ensureIdParameter } from '../parameters';
 import { OpenAPIV3 } from 'openapi-types';
-import { SpecTemplate } from '../../../../sdk';
+import { SpecTemplate } from '@useoptic/openapi-cli';
 
 export const addDeleteOperation = SpecTemplate.create(
   'add-delete-operation',

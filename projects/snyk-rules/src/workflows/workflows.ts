@@ -8,7 +8,7 @@ import { addListOperation } from './templates/operations/list';
 import { addGetOperation } from './templates/operations/get';
 import { addUpdateOperation } from './templates/operations/update';
 import { addDeleteOperation } from './templates/operations/delete';
-import { applyTemplate } from '../../sdk';
+import { applyTemplate } from '@useoptic/openapi-cli';
 
 export async function newResource(resourceName, pluralResourceName) {
   // TODO: the SDK should probably help with the generation of new files

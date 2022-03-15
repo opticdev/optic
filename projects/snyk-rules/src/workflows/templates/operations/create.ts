@@ -1,29 +1,28 @@
 import { commonHeaders, commonResponses, refs } from '../common';
-import { ensureIdParameter } from '../parameters';
+import { OpenAPIV3 } from 'openapi-types';
 import {
+  buildCreateRequestSchema,
   buildItemResponseSchema,
-  buildUpdateRequestSchema,
   ensureRelationSchema,
 } from '../schemas';
-import { OpenAPIV3 } from 'openapi-types';
-import { SpecTemplate } from '../../../../sdk';
+import { SpecTemplate } from '@useoptic/openapi-cli';
 
-export const addUpdateOperation = SpecTemplate.create(
-  'add-update-operation',
-  function addUpdateOperation(
+export const addCreateOperation = SpecTemplate.create(
+  'add-create-operation',
+  function addCreateOperation(
     spec: OpenAPIV3.Document,
     options: {
-      itemPath: string;
+      collectionPath: string;
       resourceName: string;
       titleResourceName: string;
     }
   ): void {
-    const { itemPath, resourceName, titleResourceName } = options;
+    const { collectionPath, resourceName, titleResourceName } = options;
     if (!spec.paths) spec.paths = {};
-    if (!spec.paths[itemPath]) spec.paths[itemPath] = {};
+    if (!spec.paths[collectionPath]) spec.paths[collectionPath] = {};
     if (!spec.components) spec.components = {};
     if (!spec.components.schemas) spec.components.schemas = {};
-    spec.paths[itemPath]!.patch = buildUpdateOperation(
+    spec.paths[collectionPath]!.post = buildCreateOperation(
       resourceName,
       titleResourceName
     );
@@ -31,14 +30,13 @@ export const addUpdateOperation = SpecTemplate.create(
       spec.components?.schemas?.[`${titleResourceName}Attributes`];
     if (!attributes)
       throw new Error(`Could not find ${titleResourceName}Attributes schema`);
-    spec.components.schemas[`${titleResourceName}UpdateAttributes`] =
+    spec.components.schemas[`${titleResourceName}CreateAttributes`] =
       attributes;
-    ensureIdParameter(spec, resourceName, titleResourceName);
     ensureRelationSchema(spec, titleResourceName);
   }
 );
 
-function buildUpdateOperation(
+function buildCreateOperation(
   resourceName: string,
   titleResourceName: string
 ): OpenAPIV3.OperationObject {
@@ -46,26 +44,23 @@ function buildUpdateOperation(
     resourceName,
     titleResourceName
   );
-  const updateRequestSchema = buildUpdateRequestSchema(titleResourceName);
+  const createRequestSchema = buildCreateRequestSchema(titleResourceName);
   return {
-    summary: `Update an instance of ${resourceName}`,
-    description: `Update an instance of ${resourceName}`,
-    operationId: `update${titleResourceName}`,
+    summary: `Create a new ${resourceName}`,
+    description: `Create a new ${resourceName}`,
+    operationId: `create${titleResourceName}`,
     tags: [titleResourceName],
-    parameters: [
-      refs.parameters.version,
-      { $ref: `#/components/parameters/${titleResourceName}Id` },
-    ],
+    parameters: [refs.parameters.version],
     requestBody: {
       content: {
         'application/json': {
-          schema: updateRequestSchema,
+          schema: createRequestSchema,
         },
       },
     },
     responses: {
-      '200': {
-        description: `Instance of ${resourceName} is updated`,
+      '201': {
+        description: `Created ${resourceName} successfully`,
         headers: commonHeaders,
         content: {
           'application/vnd.api+json': {
@@ -73,7 +68,6 @@ function buildUpdateOperation(
           },
         },
       },
-      '204': refs.responses['204'],
       ...commonResponses,
     },
   };
