@@ -24,7 +24,7 @@ export const applyPatch: SpecFileReconciler<Config> = async function applyPatch<
   );
 
   const newDocument = jsonpatch.applyPatch(
-    parsed.value,
+    parsed.value || {},
     operations
   ).newDocument;
 
