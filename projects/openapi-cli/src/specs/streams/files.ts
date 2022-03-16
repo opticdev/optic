@@ -36,6 +36,17 @@ export class SpecFileOperations {
       };
     }
   }
+
+  static async *fromNewFilePatches(
+    absoluteFilePath: string,
+    specPatches: SpecPatches
+  ): SpecFileOperations {
+    let operations = SpecPatches.operations(specPatches);
+
+    for await (let operation of operations) {
+      yield { filePath: absoluteFilePath, operation };
+    }
+  }
 }
 
 export interface SpecFiles extends Iterable<SpecFile> {}

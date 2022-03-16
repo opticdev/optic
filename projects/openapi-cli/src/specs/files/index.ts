@@ -10,6 +10,10 @@ export interface SpecFile {
 }
 
 export class SpecFile {
+  static create(path: string): SpecFile {
+    return { path, contents: '' };
+  }
+
   static async applyPatch(
     self: SpecFile,
     operations: Operation[]

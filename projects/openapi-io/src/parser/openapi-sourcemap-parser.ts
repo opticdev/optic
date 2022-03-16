@@ -58,6 +58,37 @@ export async function parseOpenAPIWithSourcemap(
   return { jsonLike: resolver.schema as any, sourcemap: sourcemap };
 }
 
+// only useful for testing. Do not load user specs this way
+export async function parseOpenAPIFromMemory(
+  openapi: OpenAPIV3.Document
+): Promise<{ jsonLike: OpenAPIV3.Document }> {
+  const resolver = new $RefParser();
+
+  const sourcemap = new JsonSchemaSourcemap('openapi.yaml');
+
+  await resolver.resolve(openapi, {
+    resolve: {
+      http: {
+        headers: {
+          accept: '*/*',
+        },
+      },
+    },
+  });
+
+  dereference(
+    resolver,
+    {
+      ...$RefParserOptions.defaults,
+      path: path,
+      dereference: { circular: false },
+    },
+    sourcemap
+  );
+
+  return { jsonLike: resolver.schema as any };
+}
+
 export async function parseOpenAPIFromRepoWithSourcemap(
   name: string,
   repoPath: string,
