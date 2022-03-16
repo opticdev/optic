@@ -2,6 +2,7 @@ import { Command, Argument } from 'commander';
 import { createSpecFile, SpecTemplate, OpenAPIV3 } from '../lib';
 import * as fs from 'fs';
 import * as path from 'path';
+import { applyTemplate } from '../workflows';
 
 export function debugWorkflowsCommand(): Command {
   const command = new Command('debug-workflow');
@@ -30,15 +31,14 @@ async function createResourceFile(
   resourceName: string,
   resourceFilePath: string
 ) {
-  await createSpecFile(
-    resourceFilePath,
-    {
-      title: `${resourceName} Resource`,
-      version: '1.0.0',
-    },
-    newResourceFileTemplate,
-    { resourceName }
-  );
+  await createSpecFile(resourceFilePath, {
+    title: `${resourceName} Resource`,
+    version: '1.0.0',
+  });
+
+  await applyTemplate(newResourceFileTemplate, resourceFilePath, {
+    resourceName,
+  });
 }
 
 const newResourceFileTemplate = SpecTemplate.create(

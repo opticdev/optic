@@ -15,9 +15,7 @@ export { SpecTemplate, OpenAPIV3 };
 
 export async function createSpecFile<T>(
   absoluteFilePath: string,
-  info: OpenAPIV3.InfoObject,
-  template: SpecTemplate<T>,
-  options: T
+  info: OpenAPIV3.InfoObject
 ) {
   invariant(
     absoluteFilePath.indexOf('/') === 0,
@@ -30,7 +28,7 @@ export async function createSpecFile<T>(
   );
 
   const newSpecFile = SpecFile.create(absoluteFilePath);
-  const specPatches = SpecPatches.generateForNewSpec(info, template, options);
+  const specPatches = SpecPatches.generateForNewSpec(info);
 
   const fileOperations = SpecFileOperations.fromNewFilePatches(
     newSpecFile.path,
