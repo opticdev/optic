@@ -87,11 +87,7 @@ export const registerCompare = (
           }
 
           const parsedContext = parseContextObject(options.context);
-          validateUploadRequirements(
-            options.uploadResults,
-            cliConfig,
-            options.ciContext
-          );
+          validateUploadRequirements(options.uploadResults, cliConfig);
 
           await runCompare({
             from: options.from,
@@ -190,7 +186,6 @@ const runCompare = async ({
     console.log('Uploading files to Optic...');
 
     // We've validated the shape in validateUploadRequirements
-    const ciContextNotNull = ciContext!;
     const ciProvider = cliConfig.ciProvider!;
     const opticToken = cliConfig.opticToken!;
     const { token, provider } = cliConfig.gitProvider!;
@@ -201,13 +196,13 @@ const runCompare = async ({
         compareOutput,
         parsedFrom.jsonLike,
         parsedTo.jsonLike,
-        ciContextNotNull,
         ciProvider,
         opticClient,
         {
           from: from ? path.join(process.cwd(), from) : from,
           to: to ? path.join(process.cwd(), to) : to,
-        }
+        },
+        ciContext
       );
 
       if (uploadOutput) {

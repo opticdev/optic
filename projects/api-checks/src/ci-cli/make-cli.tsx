@@ -6,6 +6,7 @@ import { initSentry } from './sentry';
 import { initSegment } from './segment';
 import { CliConfig } from './types';
 import { OpticCINamedRulesets } from '../sdk/ruleset';
+import { registerCreateContext } from './commands/create-context/create-context';
 const packageJson = require('../../package.json');
 
 export function makeCiCliWithNamedRules(
@@ -20,6 +21,7 @@ export function makeCiCliWithNamedRules(
     `for ${forProject}, running optic api-check ${packageJson.version}`
   );
 
+  registerCreateContext(cli);
   registerCompare(cli, forProject, rulesetServices, options);
   registerBulkCompare(cli, forProject, rulesetServices, options);
 

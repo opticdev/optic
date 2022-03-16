@@ -107,13 +107,13 @@ test('uploading a file', async () => {
     compareOutput,
     defaultEmptySpec,
     defaultEmptySpec,
-    'githubContext',
     'github',
     mockOpticClient,
     {
       from: UploadSlot.FromFile,
       to: UploadSlot.ToFile,
-    }
+    },
+    'githubContext'
   );
 
   expect(mockedLoadFile.mock.calls.length).toBe(1);
@@ -146,13 +146,14 @@ test('uploading a file with only partial slots open', async () => {
     compareOutput,
     defaultEmptySpec,
     defaultEmptySpec,
-    'githubContext',
+
     'github',
     mockOpticClient,
     {
       from: UploadSlot.FromFile,
       to: UploadSlot.ToFile,
-    }
+    },
+    'githubContext'
   );
 
   expect(mockedLoadFile.mock.calls.length).toBe(1);
@@ -189,12 +190,12 @@ test('uploads files where from is not specified', async () => {
     compareOutput,
     defaultEmptySpec,
     defaultEmptySpec,
-    'githubContext',
     'github',
     mockOpticClient,
     {
       to: UploadSlot.ToFile,
-    }
+    },
+    'githubContext'
   );
 
   expect(mockedLoadFile.mock.calls.length).toBe(1);

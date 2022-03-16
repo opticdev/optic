@@ -51,7 +51,6 @@ const cli = makeCiCli('play-thing', checker, {
     token: process.env.GITHUB_TOKEN || '123',
     provider: 'github',
   },
-  ciProvider: 'github',
 });
 
 cli.parse(process.argv);
