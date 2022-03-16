@@ -66,6 +66,16 @@ export async function parseOpenAPIFromMemory(
 
   const sourcemap = new JsonSchemaSourcemap('openapi.yaml');
 
+  await resolver.resolve(openapi, {
+    resolve: {
+      http: {
+        headers: {
+          accept: '*/*',
+        },
+      },
+    },
+  });
+
   dereference(
     resolver,
     {
