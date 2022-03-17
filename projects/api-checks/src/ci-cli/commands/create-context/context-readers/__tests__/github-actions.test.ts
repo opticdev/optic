@@ -26,6 +26,7 @@ test('get context from github environments', () => {
 
   expect(getContextFromGithubEnvironment()).toEqual({
     organization: 'opticdev',
+    user: '',
     pull_request: 515,
     run: 123,
     commit_hash: '7d3736f2b38af7f69fd51e43465fd74375aaca2d',

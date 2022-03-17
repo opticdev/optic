@@ -16,6 +16,7 @@ export type CliConfig = {
 
 export type NormalizedCiContext = {
   organization: string;
+  user?: string;
   pull_request: number;
   run: number;
   commit_hash: string;
