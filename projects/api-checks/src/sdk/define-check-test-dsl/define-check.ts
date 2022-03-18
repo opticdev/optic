@@ -52,7 +52,11 @@ export class ApiCheckImpl<CheckConfig> {
 
     if (!this.check.implementation) test.skip('', () => {});
 
-    if (typeof jest !== 'undefined' && this.check.implementation) {
+    if (
+      typeof jest !== 'undefined' &&
+      this.check.implementation &&
+      process.env['RUN_CHECK_JEST_TESTS']
+    ) {
       // @ts-ignore
       const { test, expect } = global;
 
