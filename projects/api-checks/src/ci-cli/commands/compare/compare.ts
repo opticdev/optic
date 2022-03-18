@@ -21,6 +21,7 @@ import { uploadCiRun } from './upload';
 import { sendGithubMessage } from './github-comment';
 import { logComparison } from '../utils/comparison-renderer';
 import path from 'path';
+import { loadCiContext } from '../create-context/load-context';
 
 const parseContextObject = (context?: string): any => {
   try {
@@ -182,6 +183,12 @@ const runCompare = async ({
     );
   }
 
+  const isInCi = process.env.CI === 'true';
+  const normalizedCiContext =
+    isInCi && cliConfig.ciProvider
+      ? await loadCiContext(cliConfig.ciProvider, ciContext)
+      : undefined;
+
   if (uploadResults && changes.length > 0) {
     console.log('Uploading files to Optic...');
 
@@ -247,14 +254,21 @@ const runCompare = async ({
 
   const hasError = results.some((result) => !result.passed);
 
-  trackEvent('optic_ci.compare', `${projectName}-optic-ci`, {
-    isInCi: process.env.CI === 'true',
-    numberOfErrors: results.reduce(
-      (count, result) => (result.passed ? count : count + 1),
-      0
-    ),
-    numberOfChanges: changes.length,
-  });
+  trackEvent(
+    'optic_ci.compare',
+    (normalizedCiContext && normalizedCiContext.user) ||
+      `${projectName}-optic-ci`,
+    {
+      isInCi: process.env.CI === 'true',
+      projectName,
+      numberOfErrors: results.reduce(
+        (count, result) => (result.passed ? count : count + 1),
+        0
+      ),
+      numberOfChanges: changes.length,
+      ...(normalizedCiContext || {}),
+    }
+  );
 
   await flushEvents();
   if (hasError) {
