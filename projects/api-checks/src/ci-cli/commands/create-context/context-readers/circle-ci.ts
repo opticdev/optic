@@ -9,20 +9,7 @@ export const getContextFromCircleCiEnvironment = (): NormalizedCiContext => {
   const branch_name = process.env.CIRCLE_BRANCH;
   const commit_hash = process.env.CIRCLE_SHA1;
   const run = process.env.CIRCLE_BUILD_NUM;
-  let user: string = '';
-
-  const command = `git log -1 --pretty=format:'%an'`;
-  try {
-    user = execSync(
-      command,
-      { 
-        cwd: process.cwd(),
-        timeout: 2000
-      },
-    ).toString();
-  } catch (err) {
-    user = '';
-  }
+  const user = process.env.COMMIT_USER ?? '';
 
   if (!pull_request) {
     throw new UserError(
@@ -66,7 +53,9 @@ export const getContextFromCircleCiEnvironment = (): NormalizedCiContext => {
     );
   }
 
-  console.log(`returning user: ${user}`);
+  if (user === '') {
+    console.log(`Could not identify commit author. set 'COMMIT_USER' to provide this information.`);
+  }
 
   return {
     organization,
