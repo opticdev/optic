@@ -1,6 +1,5 @@
 import { UserError } from '../../../errors';
 import { NormalizedCiContext } from '../../../types';
-import { execSync } from 'child_process';
 
 export const getContextFromCircleCiEnvironment = (): NormalizedCiContext => {
   const organization = process.env.CIRCLE_PROJECT_USERNAME;
