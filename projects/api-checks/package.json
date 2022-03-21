@@ -11,7 +11,7 @@
     "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\"",
     "ws:build": "yarn build",
     "ws:clean": "rm -rf build",
-    "ws:test": "yarn dev:test",
+    "ws:test": "RUN_CHECK_JEST_TESTS=YES yarn dev:test",
     "dev:test": "jest --colors",
     "local:run": "ts-node ./src/run-local.ts"
   },
