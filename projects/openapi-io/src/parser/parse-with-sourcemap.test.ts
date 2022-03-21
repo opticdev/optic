@@ -1,5 +1,5 @@
 import {
-  parseOpenAPIFromMemory,
+  dereferenceOpenAPI,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
 } from './openapi-sourcemap-parser';
@@ -24,8 +24,8 @@ function prepSnapshot(result: ParseOpenAPIResult) {
   return result;
 }
 
-it('can parse a json schema spec with references from memory', async () => {
-  const results = await parseOpenAPIFromMemory({
+it('can deference a json schema spec with references', async () => {
+  const results = await dereferenceOpenAPI({
     openapi: '3.0.1',
     paths: {
       '/abc': {
