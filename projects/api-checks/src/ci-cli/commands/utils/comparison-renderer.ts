@@ -83,6 +83,6 @@ export const logComparison = (
   }
 
   console.log(`${numberOfChanges} changes detected`);
-  console.log(chalk.red.bold(`${passedNumberOfChecks} checks passed`));
-  console.log(chalk.green.bold(`${failedNumberOfChecks} checks failed`));
+  console.log(chalk.green.bold(`${passedNumberOfChecks} checks passed`));
+  console.log(chalk.red.bold(`${failedNumberOfChecks} checks failed`));
 };

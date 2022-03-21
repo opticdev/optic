@@ -27,6 +27,7 @@ import { createOpticClient } from '../utils/optic-client';
 import { bulkUploadCiRun } from './bulk-upload';
 import { sendBulkGithubMessage } from './bulk-github-comment';
 import { logComparison } from '../utils/comparison-renderer';
+import { loadCiContext } from '../create-context/load-context';
 
 export const registerBulkCompare = (
   cli: Command,
@@ -280,6 +281,13 @@ const runBulkCompare = async ({
   let numberOfComparisonsWithAChange = 0;
   let hasChecksFailing = false;
   let hasError = false;
+  const isInCi = process.env.CI;
+
+  const normalizedCiContext =
+    isInCi && cliConfig.ciProvider
+      ? await loadCiContext(cliConfig.ciProvider, ciContext)
+      : undefined;
+
   const { comparisons: initialComparisons, skippedParsing } =
     await parseJsonComparisonInput(input);
 
@@ -323,13 +331,20 @@ const runBulkCompare = async ({
     },
   });
 
-  trackEvent('optic_ci.bulk_compare', `${projectName}-optic-ci`, {
-    isInCi: process.env.CI === 'true',
-    numberOfErrors,
-    numberOfComparisons: initialComparisons.size,
-    numberOfComparisonsWithErrors,
-    numberOfComparisonsWithAChange,
-  });
+  trackEvent(
+    'optic_ci.bulk_compare',
+    (normalizedCiContext && normalizedCiContext.user) ||
+      `${projectName}-optic-ci`,
+    {
+      isInCi,
+      numberOfErrors,
+      projectName,
+      numberOfComparisons: initialComparisons.size,
+      numberOfComparisonsWithErrors,
+      numberOfComparisonsWithAChange,
+      ...(normalizedCiContext || {}),
+    }
+  );
 
   if (output === 'json') {
     console.log(JSON.stringify([...finalComparisons.values()], null, 2));
@@ -386,7 +401,7 @@ const runBulkCompare = async ({
       };
     }),
   };
-  if (uploadResults) {
+  if (uploadResults && normalizedCiContext) {
     const numberOfUploads = bulkCompareOutput.comparisons.filter(
       (comparison) => comparison.changes.length > 0
     ).length;
@@ -407,8 +422,7 @@ const runBulkCompare = async ({
       const bulkUploadOutput = await bulkUploadCiRun(
         opticClient,
         bulkCompareOutput,
-        ciProvider,
-        ciContext
+        normalizedCiContext
       );
       if (bulkUploadOutput) {
         console.log(

@@ -26,6 +26,7 @@ test('get context from circleci environments', () => {
 
   expect(getContextFromCircleCiEnvironment()).toEqual({
     organization: 'opticdev',
+    user: '',
     pull_request: 515,
     run: 123,
     commit_hash: '7d3736f2b38af7f69fd51e43465fd74375aaca2d',
@@ -45,4 +46,24 @@ test('get context throws error with invalid PR url', () => {
   expect(() => {
     getContextFromCircleCiEnvironment();
   }).toThrowError(UserError);
+});
+
+test('get context from circleci environments with optional user', () => {
+  process.env.CIRCLE_PROJECT_USERNAME = 'opticdev';
+  process.env.CIRCLE_PULL_REQUEST = 'https://github.com/org/project/pull/515';
+  process.env.CIRCLE_PROJECT_REPONAME = 'monorail';
+  process.env.CIRCLE_BRANCH = 'feature-1';
+  process.env.CIRCLE_SHA1 = '7d3736f2b38af7f69fd51e43465fd74375aaca2d';
+  process.env.CIRCLE_BUILD_NUM = '123';
+  process.env.OPTIC_COMMIT_USER = 'lou';
+
+  expect(getContextFromCircleCiEnvironment()).toEqual({
+    organization: 'opticdev',
+    user: 'lou',
+    pull_request: 515,
+    run: 123,
+    commit_hash: '7d3736f2b38af7f69fd51e43465fd74375aaca2d',
+    repo: 'monorail',
+    branch_name: 'feature-1',
+  });
 });
