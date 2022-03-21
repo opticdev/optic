@@ -13,7 +13,7 @@ export const getContextFromGithubEnvironment = (): NormalizedCiContext => {
   let user: string = '';
   if (typeof process.env.GITHUB_CONTEXT === "string") {
     const github_context = JSON.parse(process.env.GITHUB_CONTEXT);
-    user = github_context.event.user?.login;
+    user = (github_context.event?.pull_request?.head?.user?.login) ?? '';
   }
 
   if (!organization) {
@@ -52,7 +52,7 @@ expected format 'refs/pull/<pr_number>/merge' - this needs to be triggered off t
     );
   }
 
-  if (user === '') {
+  if (user === '' || typeof user === 'undefined') {
     console.log(`Could not identify commit author from 'GITHUB_CONTEXT', ignoring.`);
   }
 
