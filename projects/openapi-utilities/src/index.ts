@@ -26,6 +26,7 @@ import {
   ResponseLocation,
   BodyLocation,
   BodyExampleLocation,
+  ComponentSchemaLocation,
   FieldLocation,
   ChangeType,
 } from './openapi3/sdk/types';
@@ -74,6 +75,7 @@ export {
   ResponseLocation,
   BodyLocation,
   BodyExampleLocation,
+  ComponentSchemaLocation,
   FieldLocation,
   ChangeType,
   queryChangelog,

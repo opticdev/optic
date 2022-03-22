@@ -21,7 +21,7 @@ export type ShapeLocation =
 export interface DocumentedBody {
   body: Body;
   schema: SchemaObject | null;
-  bodyLocation: ShapeLocation | null;
+  shapeLocation: ShapeLocation | null;
   specJsonPath: string;
 }
 

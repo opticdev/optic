@@ -598,7 +598,7 @@ export class OpenAPITraverser
       schemaName
     );
     const conceptualPath = jsonPointer.decode(jsonPath);
-    const conceptualLocation = { schemaName };
+    const conceptualLocation = { inComponentSchema: { schemaName } };
 
     if (isNotReferenceObject(schema)) {
       this.checkJsonTrail(jsonPath, schema);

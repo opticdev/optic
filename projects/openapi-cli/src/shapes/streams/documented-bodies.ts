@@ -1,6 +1,7 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
   BodyExampleLocation,
+  ComponentSchemaLocation,
   IFact,
   OpenApiFact,
 } from '@useoptic/openapi-utilities';
@@ -30,7 +31,7 @@ export class DocumentedBodies {
         .conceptualLocation as BodyExampleLocation;
       let jsonPath = exampleFact.location.jsonPath;
 
-      let bodyLocation = conceptualLocation; // bit nasty, relying on BodyExampleLocation being a superset of BodyLocation
+      let shapeLocation = conceptualLocation; // bit nasty, relying on BodyExampleLocation being a superset of BodyLocation
 
       let bodyPath =
         'singular' in conceptualLocation
@@ -45,14 +46,14 @@ export class DocumentedBodies {
         yield {
           schema,
           body,
-          bodyLocation,
+          shapeLocation,
           specJsonPath: bodyPath,
         };
       } else {
         yield {
           body,
           schema: null,
-          bodyLocation,
+          shapeLocation,
           specJsonPath: bodyPath,
         };
       }
@@ -64,12 +65,14 @@ export class DocumentedBodies {
     spec: OpenAPIV3.Document
   ): AsyncIterable<DocumentedBody> {
     for await (let exampleFact of exampleFacts) {
-      let exampleBody = exampleFact.value;
+      console.log(exampleFact);
       let body = {
-        value: exampleBody.value,
+        value: exampleFact.value,
       };
 
       let jsonPath = exampleFact.location.jsonPath;
+      let conceptualLocation = exampleFact.location
+        .conceptualLocation as ComponentSchemaLocation;
 
       let expectedSchemaPath = jsonPointerHelpers.pop(jsonPath); // example lives nested in schema
 
@@ -80,7 +83,7 @@ export class DocumentedBodies {
         yield {
           schema,
           body,
-          bodyLocation: null,
+          shapeLocation: conceptualLocation,
           specJsonPath: expectedSchemaPath,
         };
       }

@@ -94,7 +94,7 @@ export function updateCommand(): Command {
         const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
 
         for await (let documentedBody of documentedBodies) {
-          let { specJsonPath, bodyLocation } = documentedBody;
+          let { specJsonPath, shapeLocation } = documentedBody;
 
           if (updatedSchemasByPath.has(specJsonPath)) {
             documentedBody.schema = updatedSchemasByPath.get(specJsonPath)!;
@@ -107,7 +107,7 @@ export function updateCommand(): Command {
               documentedBody,
               patch
             );
-            yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation);
+            yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
           }
 
           updatedSchemasByPath.set(specJsonPath, documentedBody.schema!);

@@ -96,7 +96,9 @@ export type FieldLocation = OperationLocation &
   );
 
 export type ComponentSchemaLocation = ConceptualLocationBase & {
-  schemaName: string;
+  inComponentSchema: {
+    schemaName: string;
+  };
 };
 
 export type IPathComponent = string;
