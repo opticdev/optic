@@ -86,7 +86,9 @@ export class OpenAPITraverser
     }
 
     if (this.input.components && this.input.components.schemas) {
-      for (let [name, schema] of Object.entries(this.input.components)) {
+      for (let [name, schema] of Object.entries(
+        this.input.components.schemas
+      )) {
         yield* this.traverseComponentSchema(schema, name);
       }
     }
@@ -586,7 +588,7 @@ export class OpenAPITraverser
   }
 
   *traverseComponentSchema(
-    schema: OpenAPIV3.SchemaObject,
+    schema: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject,
     schemaName: string
   ): IterableIterator<IFact<OpenApiFact>> {
     const jsonPath = jsonPointer.append(
@@ -595,16 +597,26 @@ export class OpenAPITraverser
       'schemas',
       schemaName
     );
-    this.checkJsonTrail(jsonPath, schema);
-    const conceptualPath = ['copmonents', 'schema', schemaName];
+    const conceptualPath = jsonPointer.decode(jsonPath);
     const conceptualLocation = { schemaName };
 
-    if (schema.example) {
-      yield this.onComponentSchemaExample(
-        schema.example,
-        jsonPointer.append(jsonPath, 'example'),
-        [...conceptualPath, 'examples'],
-        conceptualLocation
+    if (isNotReferenceObject(schema)) {
+      console.log(jsonPath);
+      this.checkJsonTrail(jsonPath, schema);
+
+      if (schema.example) {
+        yield this.onComponentSchemaExample(
+          schema.example,
+          jsonPointer.append(jsonPath, 'example'),
+          [...conceptualPath, 'example'],
+          conceptualLocation
+        );
+      }
+    } else {
+      console.warn(
+        `Expected a flattened spec, found a reference at: ${conceptualPath.join(
+          ' > '
+        )}`
       );
     }
   }
