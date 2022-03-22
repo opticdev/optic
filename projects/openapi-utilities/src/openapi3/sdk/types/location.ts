@@ -1,48 +1,51 @@
 import { OpenApiKind } from './openApiKinds';
 
 type ConceptualLocationBase = {
+  path?: string;
+  method?: string;
+};
+
+export type OperationLocation = ConceptualLocationBase & {
   path: string;
   method: string;
 };
 
-export type OperationLocation = ConceptualLocationBase;
-
-export type QueryParameterLocation = ConceptualLocationBase & {
+export type QueryParameterLocation = OperationLocation & {
   inRequest: {
     query: string;
   };
 };
 
-export type PathParameterLocation = ConceptualLocationBase & {
+export type PathParameterLocation = OperationLocation & {
   inRequest: {
     path: string;
   };
 };
 
-export type HeaderParameterLocation = ConceptualLocationBase & {
+export type HeaderParameterLocation = OperationLocation & {
   inRequest: {
     header: string;
   };
 };
 
-export type ResponseHeaderLocation = ConceptualLocationBase & {
+export type ResponseHeaderLocation = OperationLocation & {
   inResponse: {
     header: string;
     statusCode: string;
   };
 };
 
-export type RequestLocation = ConceptualLocationBase & {
+export type RequestLocation = OperationLocation & {
   inRequest: {};
 };
 
-export type ResponseLocation = ConceptualLocationBase & {
+export type ResponseLocation = OperationLocation & {
   inResponse: {
     statusCode: string;
   };
 };
 
-export type BodyLocation = ConceptualLocationBase &
+export type BodyLocation = OperationLocation &
   // Request body
   (| {
         inRequest: {
@@ -71,7 +74,7 @@ export type BodyExampleLocation = BodyLocation &
       }
   );
 
-export type FieldLocation = ConceptualLocationBase &
+export type FieldLocation = OperationLocation &
   (
     | {
         inRequest: {
@@ -92,7 +95,7 @@ export type FieldLocation = ConceptualLocationBase &
       }
   );
 
-export type ComponentSchemaLocation = {
+export type ComponentSchemaLocation = ConceptualLocationBase & {
   schemaName: string;
 };
 

@@ -1,5 +1,4 @@
 import {
-  ConceptualLocation,
   IChange,
   IPathComponent,
   OpenApiFact,
