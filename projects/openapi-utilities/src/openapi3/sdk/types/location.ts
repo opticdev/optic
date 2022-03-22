@@ -92,6 +92,10 @@ export type FieldLocation = ConceptualLocationBase &
       }
   );
 
+export type ComponentSchemaLocation = {
+  schemaName: string;
+};
+
 export type IPathComponent = string;
 
 export type ILocation = {
@@ -123,4 +127,8 @@ export type ILocation = {
   | { conceptualLocation: BodyLocation; kind: OpenApiKind.Body }
   | { conceptualLocation: BodyExampleLocation; kind: OpenApiKind.BodyExample }
   | { conceptualLocation: FieldLocation; kind: OpenApiKind.Field }
+  | {
+      conceptualLocation: ComponentSchemaLocation;
+      kind: OpenApiKind.ComponentSchemaExample;
+    }
 );

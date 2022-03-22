@@ -12,6 +12,7 @@ import {
   BodyLocation,
   BodyExampleLocation,
   FieldLocation,
+  ComponentSchemaLocation,
 } from './location';
 import { OpenApiKind, OpenApiParameterKind } from './openApiKinds';
 import { LookupLineResultWithFilepath } from '../../../render/ast-helpers';
@@ -31,6 +32,7 @@ export {
   BodyLocation,
   BodyExampleLocation,
   FieldLocation,
+  ComponentSchemaLocation,
 };
 export type ConceptualLocation = ILocation['conceptualLocation'];
 
@@ -42,7 +44,8 @@ export type OpenApiFact =
   | OpenApiHeaderFact
   | OpenApiBodyFact
   | OpenApiBodyExampleFact
-  | OpenApiFieldFact;
+  | OpenApiFieldFact
+  | OpenApiComponentSchemaExampleFact;
 
 export interface OpenApiOperationFact
   extends Omit<
@@ -81,6 +84,10 @@ export interface OpenApiHeaderFact extends OpenAPIV3.HeaderObject {
 
 export interface OpenApiRequestParameterFact
   extends OpenAPIV3.ParameterObject {}
+
+export interface OpenApiComponentSchemaExampleFact {
+  value: any;
+}
 
 export interface Traverse<DocSchema, FactSchema> {
   format: string;

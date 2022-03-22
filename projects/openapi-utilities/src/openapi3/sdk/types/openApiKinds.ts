@@ -12,6 +12,7 @@ export enum OpenApiKind {
   Field = 'field',
   Array = 'array',
   Primitive = 'primitive',
+  ComponentSchemaExample = 'component-schema-example',
 }
 
 export type OpenApiParameterKind = Extract<
