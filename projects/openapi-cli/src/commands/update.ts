@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
-import { tap, merge } from '../lib/async-tools';
+import { tap, concat } from '../lib/async-tools';
 import {
   SpecFacts,
   SpecFile,
@@ -83,8 +83,7 @@ export function updateCommand(): Command {
         SpecFacts.componentSchemaExamples(facts)
       );
 
-      const exampleBodies = merge(
-        DocumentedBodies.fromBodyExampleFacts(bodyExampleFacts, spec),
+      const exampleBodies = concat(
         DocumentedBodies.fromComponentSchemaExampleFacts(
           componentExampleFacts,
           spec
@@ -108,7 +107,7 @@ export function updateCommand(): Command {
               documentedBody,
               patch
             );
-            yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation!);
+            yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation);
           }
 
           updatedSchemasByPath.set(specJsonPath, documentedBody.schema!);
