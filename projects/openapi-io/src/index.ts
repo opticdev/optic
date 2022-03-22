@@ -4,7 +4,7 @@ import { loadSpecFromFile, loadSpecFromUrl } from './loaders/file';
 import {
   JsonPath,
   JsonSchemaSourcemap,
-  parseOpenAPIFromMemory,
+  dereferenceOpenAPI,
   parseOpenAPIFromRepoWithSourcemap,
   ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
@@ -24,7 +24,7 @@ export {
   loadSpecFromBranch,
   parseOpenAPIWithSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
-  parseOpenAPIFromMemory,
+  dereferenceOpenAPI,
   JsonSchemaSourcemap,
   loadYaml,
   isYaml,
