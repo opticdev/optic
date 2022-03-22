@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
-import { tap } from '../lib/async-tools';
+import { tap, merge } from '../lib/async-tools';
 import {
   SpecFacts,
   SpecFile,
@@ -16,11 +16,13 @@ import {
   SpecPatches,
   SpecFiles,
   BodyExampleFact,
+  ComponentSchemaExampleFact,
 } from '../specs';
 
 import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 import { DocumentedBody } from '../shapes/body';
 import { flushEvents, trackEvent } from '../segment';
+import { ComponentSchemaExampleFacts } from '../specs/streams/facts';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -51,10 +53,15 @@ export function updateCommand(): Command {
         updatedFilesCount: 0,
         filesWithOverwrittenYamlComments: new Set<string>(),
 
-        observeExamples: tap<BodyExampleFact>((exampleFact) => {
+        observeBodyExamples: tap<BodyExampleFact>((exampleFact) => {
           stats.examplesCount++;
           if (exampleFact.value.externalValue) stats.externalExamplesCount++;
         }),
+        observeComponentSchemaExamples: tap<ComponentSchemaExampleFact>(
+          (_exampleFact) => {
+            stats.examplesCount++;
+          }
+        ),
         observePatches: tap<SpecPatch>((_patch) => {
           stats.patchesCount++;
         }),
@@ -69,12 +76,19 @@ export function updateCommand(): Command {
       };
 
       const facts = SpecFacts.fromOpenAPISpec(spec);
-      const bodyExampleFacts = stats.observeExamples(
+      const bodyExampleFacts = stats.observeBodyExamples(
         SpecFacts.bodyExamples(facts)
       );
-      const exampleBodies = DocumentedBodies.fromBodyExampleFacts(
-        bodyExampleFacts,
-        spec
+      const componentExampleFacts = stats.observeComponentSchemaExamples(
+        SpecFacts.componentSchemaExamples(facts)
+      );
+
+      const exampleBodies = merge(
+        DocumentedBodies.fromBodyExampleFacts(bodyExampleFacts, spec),
+        DocumentedBodies.fromComponentSchemaExampleFacts(
+          componentExampleFacts,
+          spec
+        )
       );
 
       const specPatches = (async function* (documentedBodies): SpecPatches {

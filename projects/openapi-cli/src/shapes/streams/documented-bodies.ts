@@ -5,7 +5,7 @@ import {
   OpenApiFact,
 } from '@useoptic/openapi-utilities';
 
-import { BodyExampleFacts } from '../../specs';
+import { BodyExampleFacts, ComponentSchemaExampleFacts } from '../../specs';
 import { OpenAPIV3 } from '../../specs';
 import { DocumentedBody } from '../body';
 
@@ -54,6 +54,34 @@ export class DocumentedBodies {
           schema: null,
           bodyLocation,
           specJsonPath: bodyPath,
+        };
+      }
+    }
+  }
+
+  static async *fromComponentSchemaExampleFacts(
+    exampleFacts: ComponentSchemaExampleFacts,
+    spec: OpenAPIV3.Document
+  ): AsyncIterable<DocumentedBody> {
+    for await (let exampleFact of exampleFacts) {
+      let exampleBody = exampleFact.value;
+      let body = {
+        value: exampleBody.value,
+      };
+
+      let jsonPath = exampleFact.location.jsonPath;
+
+      let expectedSchemaPath = jsonPointerHelpers.pop(jsonPath); // example lives nested in schema
+
+      let resolvedSchema = jsonPointerHelpers.tryGet(spec, expectedSchemaPath);
+
+      if (resolvedSchema.match) {
+        let schema = resolvedSchema.value;
+        yield {
+          schema,
+          body,
+          bodyLocation: null,
+          specJsonPath: expectedSchemaPath,
         };
       }
     }

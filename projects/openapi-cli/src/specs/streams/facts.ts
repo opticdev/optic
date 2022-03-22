@@ -6,14 +6,19 @@ import {
   OpenApiBodyExampleFact,
   OpenApiKind,
   OpenApiBodyFact,
+  OpenApiComponentSchemaExampleFact,
 } from '@useoptic/openapi-utilities';
 
 export interface SpecFacts extends AsyncIterable<IFact<OpenApiFact>> {}
 export interface BodyExampleFacts
   extends AsyncIterable<IFact<OpenApiBodyExampleFact>> {}
 export interface BodyFacts extends AsyncIterable<IFact<OpenApiBodyFact>> {}
+export interface ComponentSchemaExampleFacts
+  extends AsyncIterable<IFact<OpenApiComponentSchemaExampleFact>> {}
 
 export type BodyExampleFact = IFact<OpenApiBodyExampleFact>;
+export type ComponentSchemaExampleFact =
+  IFact<OpenApiComponentSchemaExampleFact>;
 
 export class SpecFacts {
   static async *fromOpenAPISpec(spec: OpenAPIV3.Document): SpecFacts {
@@ -32,6 +37,16 @@ export class SpecFacts {
     }
   }
 
+  static async *componentSchemaExamples(
+    facts: AsyncIterable<IFact<OpenApiFact>>
+  ): ComponentSchemaExampleFacts {
+    for await (let fact of facts) {
+      if (fact.location.kind === OpenApiKind.ComponentSchemaExample) {
+        yield fact as IFact<OpenApiComponentSchemaExampleFact>;
+      }
+    }
+  }
+
   static async *bodyFacts(facts: AsyncIterable<IFact<OpenApiFact>>): BodyFacts {
     for await (let fact of facts) {
       if (fact.location.kind === OpenApiKind.Body) {
@@ -42,3 +57,4 @@ export class SpecFacts {
 }
 
 export class BodyExampleFacts {}
+export class ComponentSchemaExampleFacts {}

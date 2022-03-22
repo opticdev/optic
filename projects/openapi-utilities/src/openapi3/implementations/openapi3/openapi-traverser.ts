@@ -601,7 +601,6 @@ export class OpenAPITraverser
     const conceptualLocation = { schemaName };
 
     if (isNotReferenceObject(schema)) {
-      console.log(jsonPath);
       this.checkJsonTrail(jsonPath, schema);
 
       if (schema.example) {
