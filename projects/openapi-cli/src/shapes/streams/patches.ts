@@ -16,7 +16,7 @@ export class ShapePatches {
     let i = 0;
     while (!patchesExhausted && i < MAX_ITERATIONS) {
       i++;
-      if (!schema || !schema.type) {
+      if (!schema || (!schema.type && !Schema.isPolymorphic(schema))) {
         let newSchema = Schema.baseFromValue(body.value);
 
         yield newSchemaPatch(newSchema, schema || null, {
