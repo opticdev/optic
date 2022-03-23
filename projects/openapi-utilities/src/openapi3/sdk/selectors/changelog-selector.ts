@@ -51,6 +51,7 @@ export class ChangelogSelector {
   filterToOperation(httpMethod: OpenAPIV3.HttpMethods, pathPattern: string) {
     return this.filter(
       (change) =>
+        'path' in change.location.conceptualLocation &&
         change.location.conceptualLocation.path === pathPattern &&
         change.location.conceptualLocation.method === httpMethod
     );
@@ -157,6 +158,7 @@ export class ChangelogSelector {
   ): IChange<OpenApiOperationFact> | false {
     const changedOperation = this.filterKind(OpenApiKind.Operation).find(
       (operation: IChange<OpenApiOperationFact>) =>
+        'path' in operation.location.conceptualLocation &&
         operation.location.conceptualLocation.path === pathPattern &&
         operation.location.conceptualLocation.method === httpMethod
     );

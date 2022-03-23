@@ -1,9 +1,6 @@
 import { OpenApiKind } from './openApiKinds';
 
-type ConceptualLocationBase = {
-  path?: string;
-  method?: string;
-};
+type ConceptualLocationBase = {};
 
 export type OperationLocation = ConceptualLocationBase & {
   path: string;
