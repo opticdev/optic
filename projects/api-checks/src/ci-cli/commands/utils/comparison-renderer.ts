@@ -2,6 +2,7 @@ import {
   ResultWithSourcemap,
   IChange,
   OpenApiFact,
+  OperationLocation,
 } from '@useoptic/openapi-utilities';
 
 import groupBy from 'lodash.groupby';
@@ -30,12 +31,19 @@ export const logComparison = (
   const groupedResults = groupBy(
     comparison.results,
     (result) =>
-      `${result.change.location.conceptualLocation.method}-${result.change.location.conceptualLocation.path}`
+      `${
+        (result.change.location.conceptualLocation as OperationLocation).method
+      }-${
+        (result.change.location.conceptualLocation as OperationLocation).path
+      }`
   );
 
   for (const operationResults of Object.values(groupedResults)) {
-    const { method, path } =
+    const conceptualLocation =
       operationResults[0].change.location.conceptualLocation;
+    if (!('path' in conceptualLocation)) continue;
+    const { method, path } = conceptualLocation;
+
     const allPassed = operationResults.every((result) => result.passed);
     const renderedResults = operationResults.filter(
       (result) => options.verbose || !result.passed
