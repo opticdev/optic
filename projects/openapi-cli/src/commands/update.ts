@@ -19,7 +19,6 @@ import {
   ComponentSchemaExampleFact,
 } from '../specs';
 
-import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 import { DocumentedBody } from '../shapes/body';
 import { flushEvents, trackEvent } from '../segment';
 import { ComponentSchemaExampleFacts } from '../specs/streams/facts';

@@ -12,7 +12,7 @@ export function jsonBody(
       value,
       contentType: 'application/json',
     },
-    bodyLocation: null,
+    shapeLocation: null,
     schema,
     specJsonPath: jsonPointerHelpers.compile(['/documented-body-fixture']),
   };
@@ -28,7 +28,7 @@ export function jsonBodyInRequest(
       contentType: 'application/json',
     },
     schema,
-    bodyLocation: {
+    shapeLocation: {
       path: '/example',
       method: 'post',
       inRequest: {

@@ -44,9 +44,13 @@ export const logComparison = (
       ? chalk.bold.bgGreen.white(' PASS ')
       : chalk.bold.bgRed.white(' FAIL ');
 
-    console.log(
-      `${getIndent(1)}${resultNode} ${chalk.bold(method.toUpperCase())} ${path}`
-    );
+    if (method && path) {
+      console.log(
+        `${getIndent(1)}${resultNode} ${chalk.bold(
+          method.toUpperCase()
+        )} ${path}`
+      );
+    }
 
     for (const result of renderedResults) {
       const icon = result.passed ? chalk.green('✔') : chalk.red('x');
