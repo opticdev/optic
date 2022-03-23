@@ -65,7 +65,6 @@ export class DocumentedBodies {
     spec: OpenAPIV3.Document
   ): AsyncIterable<DocumentedBody> {
     for await (let exampleFact of exampleFacts) {
-      console.log(exampleFact);
       let body = {
         value: exampleFact.value,
       };

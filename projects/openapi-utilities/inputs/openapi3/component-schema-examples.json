@@ -90,8 +90,13 @@
           }
         }
       },
-      "PrimitiveSchema": {
-        "example": 31
+      "MistypedSchema": {
+        "example": 31,
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
       }
     }
   }

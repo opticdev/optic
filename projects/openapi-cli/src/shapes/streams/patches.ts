@@ -16,10 +16,10 @@ export class ShapePatches {
     let i = 0;
     while (!patchesExhausted && i < MAX_ITERATIONS) {
       i++;
-      if (!schema) {
+      if (!schema || !schema.type) {
         let newSchema = Schema.baseFromValue(body.value);
 
-        yield newSchemaPatch(newSchema, {
+        yield newSchemaPatch(newSchema, schema || null, {
           location: shapeLocation || undefined,
         });
 
