@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
-import { tap, concat } from '../lib/async-tools';
+import { tap, forkable, merge } from '../lib/async-tools';
 import {
   SpecFacts,
   SpecFile,
@@ -74,15 +74,17 @@ export function updateCommand(): Command {
         }),
       };
 
-      const facts = SpecFacts.fromOpenAPISpec(spec);
+      const facts = forkable(SpecFacts.fromOpenAPISpec(spec));
       const bodyExampleFacts = stats.observeBodyExamples(
-        SpecFacts.bodyExamples(facts)
+        SpecFacts.bodyExamples(facts.fork())
       );
       const componentExampleFacts = stats.observeComponentSchemaExamples(
-        SpecFacts.componentSchemaExamples(facts)
+        SpecFacts.componentSchemaExamples(facts.fork())
       );
+      facts.start();
 
-      const exampleBodies = concat(
+      const exampleBodies = merge(
+        DocumentedBodies.fromBodyExampleFacts(bodyExampleFacts, spec),
         DocumentedBodies.fromComponentSchemaExampleFacts(
           componentExampleFacts,
           spec
