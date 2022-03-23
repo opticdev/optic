@@ -28,7 +28,9 @@ export class SpecPatch {
     const inResponse = 'inResponse' in location;
     const inComponentSchema = 'inComponentSchema' in location;
 
-    const schemaPath = jsonPointerHelpers.append(bodySpecPath, 'schema');
+    const schemaPath = inComponentSchema
+      ? bodySpecPath
+      : jsonPointerHelpers.append(bodySpecPath, 'schema');
 
     return {
       description: `update ${
