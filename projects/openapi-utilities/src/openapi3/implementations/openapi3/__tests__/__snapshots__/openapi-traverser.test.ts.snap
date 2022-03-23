@@ -457,7 +457,9 @@ Array [
   Object {
     "location": Object {
       "conceptualLocation": Object {
-        "schemaName": "ObjectSchema",
+        "inComponentSchema": Object {
+          "schemaName": "ObjectSchema",
+        },
       },
       "conceptualPath": Array [
         "components",
@@ -510,7 +512,9 @@ Array [
   Object {
     "location": Object {
       "conceptualLocation": Object {
-        "schemaName": "UntypedSchema",
+        "inComponentSchema": Object {
+          "schemaName": "UntypedSchema",
+        },
       },
       "conceptualPath": Array [
         "components",
@@ -563,15 +567,17 @@ Array [
   Object {
     "location": Object {
       "conceptualLocation": Object {
-        "schemaName": "PrimitiveSchema",
+        "inComponentSchema": Object {
+          "schemaName": "MistypedSchema",
+        },
       },
       "conceptualPath": Array [
         "components",
         "schemas",
-        "PrimitiveSchema",
+        "MistypedSchema",
         "example",
       ],
-      "jsonPath": "/components/schemas/PrimitiveSchema/example",
+      "jsonPath": "/components/schemas/MistypedSchema/example",
       "kind": "component-schema-example",
     },
     "value": 31,
