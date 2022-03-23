@@ -55,8 +55,19 @@ test('get context from github environments with optional commit user', () => {
   process.env.GITHUB_SHA = '7d3736f2b38af7f69fd51e43465fd74375aaca2d';
   process.env.GITHUB_REPOSITORY = 'optidev/monorail';
   process.env.GITHUB_HEAD_REF = 'feature-1';
-  process.env.GITHUB_CONTEXT = '{ "event": { "user": { "login": "lou" }}}';
-
+  process.env.GITHUB_CONTEXT = `
+  {
+    "event": {
+      "pull_request": {
+        "head": {
+          "user": {
+            "login": "lou"
+          }
+        }
+      }
+    }
+  }
+`;
 
   expect(getContextFromGithubEnvironment()).toEqual({
     organization: 'opticdev',
