@@ -281,7 +281,7 @@ const runBulkCompare = async ({
   let numberOfComparisonsWithAChange = 0;
   let hasChecksFailing = false;
   let hasError = false;
-  const isInCi = process.env.CI;
+  const isInCi = process.env.CI && Boolean(cliConfig.ciProvider);
 
   const normalizedCiContext =
     isInCi && cliConfig.ciProvider

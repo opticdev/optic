@@ -183,7 +183,7 @@ const runCompare = async ({
     );
   }
 
-  const isInCi = process.env.CI === 'true';
+  const isInCi = process.env.CI === 'true' && Boolean(cliConfig.ciProvider);
   const normalizedCiContext =
     isInCi && cliConfig.ciProvider
       ? await loadCiContext(cliConfig.ciProvider, ciContext)
