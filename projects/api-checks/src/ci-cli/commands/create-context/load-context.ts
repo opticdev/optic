@@ -7,7 +7,7 @@ import { DEFAULT_CONTEXT_PATH } from '../constants';
 export async function loadCiContext(
   ciProvider: 'github' | 'circleci',
   ciContext?: string
-): Promise<NormalizedCiContext> {
+): Promise<NormalizedCiContext | undefined> {
   let normalizedCiContext: NormalizedCiContext;
   if (ciContext) {
     // Legacy flow
@@ -17,7 +17,7 @@ export async function loadCiContext(
       normalizedCiContext = normalizeCiContext(ciProvider, contextFileBuffer);
     } catch (e) {
       console.error(e);
-      throw new UserError();
+      return undefined;
     }
   } else {
     console.log(
@@ -34,7 +34,7 @@ export async function loadCiContext(
       normalizedCiContext = JSON.parse(contextFileBuffer.toString());
     } catch (e) {
       console.error(e);
-      throw new UserError();
+      return undefined;
     }
   }
   return normalizedCiContext;
