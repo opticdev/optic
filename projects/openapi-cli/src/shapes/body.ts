@@ -4,16 +4,24 @@ import { OpenAPIV3 } from '../specs/index';
 import { SchemaObject, Schema } from './schema';
 
 export interface Body {
-  contentType: string;
+  contentType?: string;
   value: any;
 }
 
 export type { BodyLocation };
 
+export type ShapeLocation =
+  | BodyLocation
+  | {
+      inComponentSchema: {
+        schemaName: string;
+      };
+    };
+
 export interface DocumentedBody {
   body: Body;
   schema: SchemaObject | null;
-  bodyLocation: BodyLocation | null;
+  shapeLocation: ShapeLocation | null;
   specJsonPath: string;
 }
 

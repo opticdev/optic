@@ -6,7 +6,9 @@ import {
   OpenApiBodyExampleFact,
   OpenApiFieldFact,
   OpenApiOperationFact,
+  OpenApiRequestFact,
   OpenApiResponseFact,
+  OpenApiComponentSchemaExampleFact,
   Traverse,
   OpenApiFact,
   OperationLocation,
@@ -19,7 +21,7 @@ import {
   BodyExampleLocation,
   QueryParameterLocation,
   FieldLocation,
-  OpenApiRequestFact,
+  ComponentSchemaLocation,
   IFact,
 } from '../../sdk/types';
 import { IPathComponent } from '../../sdk/types';
@@ -81,6 +83,14 @@ export class OpenAPITraverser
       yield* traverseIfPresent(OpenAPIV3.HttpMethods.DELETE);
       yield* traverseIfPresent(OpenAPIV3.HttpMethods.HEAD);
       yield* traverseIfPresent(OpenAPIV3.HttpMethods.OPTIONS);
+    }
+
+    if (this.input.components && this.input.components.schemas) {
+      for (let [name, schema] of Object.entries(
+        this.input.components.schemas
+      )) {
+        yield* this.traverseComponentSchema(schema, name);
+      }
     }
   }
 
@@ -577,6 +587,39 @@ export class OpenAPITraverser
     }
   }
 
+  *traverseComponentSchema(
+    schema: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject,
+    schemaName: string
+  ): IterableIterator<IFact<OpenApiFact>> {
+    const jsonPath = jsonPointer.append(
+      '',
+      'components',
+      'schemas',
+      schemaName
+    );
+    const conceptualPath = jsonPointer.decode(jsonPath);
+    const conceptualLocation = { inComponentSchema: { schemaName } };
+
+    if (isNotReferenceObject(schema)) {
+      this.checkJsonTrail(jsonPath, schema);
+
+      if (schema.example) {
+        yield this.onComponentSchemaExample(
+          schema.example,
+          jsonPointer.append(jsonPath, 'example'),
+          [...conceptualPath, 'example'],
+          conceptualLocation
+        );
+      }
+    } else {
+      console.warn(
+        `Expected a flattened spec, found a reference at: ${conceptualPath.join(
+          ' > '
+        )}`
+      );
+    }
+  }
+
   ///////////////////////////////////////////////////////////////////////////////////
 
   getSchemaWithoutNestedThings(
@@ -761,6 +804,23 @@ export class OpenAPITraverser
   ): Omit<OpenAPIV3.ResponseObject, 'headers' | 'content'> {
     const { headers, content, ...responseWithoutNestedThings } = response;
     return responseWithoutNestedThings;
+  }
+
+  onComponentSchemaExample(
+    example: any,
+    jsonPath: string,
+    conceptualPath: IPathComponent[],
+    conceptualLocation: ComponentSchemaLocation
+  ): IFact<OpenApiComponentSchemaExampleFact> {
+    return {
+      value: example,
+      location: {
+        jsonPath,
+        conceptualPath,
+        kind: OpenApiKind.ComponentSchemaExample,
+        conceptualLocation,
+      },
+    };
   }
 
   // helper

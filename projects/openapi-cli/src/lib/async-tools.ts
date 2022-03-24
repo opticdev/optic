@@ -3,9 +3,7 @@ export * from 'axax/esnext';
 // Fork an async iterable and share the backpressure (preventing memory bloat, but
 // reading at rate of slowest consumer).
 // Won't allow new forks once consumption has started through `forkable.start()`.
-export function forkable<T>(
-  iterable: AsyncIterable<T>
-): {
+export function forkable<T>(iterable: AsyncIterable<T>): {
   fork: () => AsyncIterable<T>;
   start: () => void;
 } {
@@ -123,4 +121,12 @@ export function tap<T>(
       yield chunk;
     }
   };
+}
+
+export async function* concat<T>(
+  ...iters: AsyncIterable<T>[]
+): AsyncIterable<T> {
+  for (let iter of iters) {
+    yield* iter;
+  }
 }

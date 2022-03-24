@@ -7,7 +7,7 @@ import {
 import {
   ApiCheckDsl,
   Result,
-  ConceptualLocation,
+  OperationLocation,
   IFact,
   ILocation,
   OpenApiFact,
@@ -51,7 +51,7 @@ export class SpectralDsl implements ApiCheckDsl {
       const location: ILocation = {
         conceptualLocation: (matchingOperation
           ? matchingOperation.location.conceptualLocation
-          : { path: 'This Specification', method: '' }) as ConceptualLocation,
+          : { path: 'This Specification', method: '' }) as OperationLocation,
         jsonPath: jsonPointerHelpers.compile(
           spectralResult.path.map((i) => i.toString())
         ),

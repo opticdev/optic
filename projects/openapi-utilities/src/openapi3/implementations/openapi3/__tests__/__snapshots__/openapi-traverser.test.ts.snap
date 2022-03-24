@@ -452,6 +452,139 @@ Array [
 ]
 `;
 
+exports[`can extract component schema example facts from specs 1`] = `
+Array [
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inComponentSchema": Object {
+          "schemaName": "ObjectSchema",
+        },
+      },
+      "conceptualPath": Array [
+        "components",
+        "schemas",
+        "ObjectSchema",
+        "example",
+      ],
+      "jsonPath": "/components/schemas/ObjectSchema/example",
+      "kind": "component-schema-example",
+    },
+    "value": Object {
+      "version": Object {
+        "id": "v2.0",
+        "links": Array [
+          Object {
+            "href": "http://127.0.0.1:8774/v2/",
+            "rel": "self",
+          },
+          Object {
+            "href": "http://docs.openstack.org/api/openstack-compute/2/os-compute-devguide-2.pdf",
+            "rel": "describedby",
+            "type": "application/pdf",
+          },
+          Object {
+            "href": "http://docs.openstack.org/api/openstack-compute/2/wadl/os-compute-2.wadl",
+            "rel": "describedby",
+            "type": "application/vnd.sun.wadl+xml",
+          },
+          Object {
+            "href": "http://docs.openstack.org/api/openstack-compute/2/wadl/os-compute-2.wadl",
+            "rel": "describedby",
+            "type": "application/vnd.sun.wadl+xml",
+          },
+        ],
+        "media-types": Array [
+          Object {
+            "base": "application/xml",
+            "type": "application/vnd.openstack.compute+xml;version=2",
+          },
+          Object {
+            "base": "application/json",
+            "type": "application/vnd.openstack.compute+json;version=2",
+          },
+        ],
+        "status": "CURRENT",
+        "updated": "2011-01-21T11:33:21Z",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inComponentSchema": Object {
+          "schemaName": "UntypedSchema",
+        },
+      },
+      "conceptualPath": Array [
+        "components",
+        "schemas",
+        "UntypedSchema",
+        "example",
+      ],
+      "jsonPath": "/components/schemas/UntypedSchema/example",
+      "kind": "component-schema-example",
+    },
+    "value": Object {
+      "version": Object {
+        "id": "v2.0",
+        "links": Array [
+          Object {
+            "href": "http://127.0.0.1:8774/v2/",
+            "rel": "self",
+          },
+          Object {
+            "href": "http://docs.openstack.org/api/openstack-compute/2/os-compute-devguide-2.pdf",
+            "rel": "describedby",
+            "type": "application/pdf",
+          },
+          Object {
+            "href": "http://docs.openstack.org/api/openstack-compute/2/wadl/os-compute-2.wadl",
+            "rel": "describedby",
+            "type": "application/vnd.sun.wadl+xml",
+          },
+          Object {
+            "href": "http://docs.openstack.org/api/openstack-compute/2/wadl/os-compute-2.wadl",
+            "rel": "describedby",
+            "type": "application/vnd.sun.wadl+xml",
+          },
+        ],
+        "media-types": Array [
+          Object {
+            "base": "application/xml",
+            "type": "application/vnd.openstack.compute+xml;version=2",
+          },
+          Object {
+            "base": "application/json",
+            "type": "application/vnd.openstack.compute+json;version=2",
+          },
+        ],
+        "status": "CURRENT",
+        "updated": "2011-01-21T11:33:21Z",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inComponentSchema": Object {
+          "schemaName": "MistypedSchema",
+        },
+      },
+      "conceptualPath": Array [
+        "components",
+        "schemas",
+        "MistypedSchema",
+        "example",
+      ],
+      "jsonPath": "/components/schemas/MistypedSchema/example",
+      "kind": "component-schema-example",
+    },
+    "value": 31,
+  },
+]
+`;
+
 exports[`can extract facts from specs 1`] = `
 Array [
   Object {

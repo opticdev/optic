@@ -10,17 +10,17 @@ const MAX_ITERATIONS = 100;
 
 export class ShapePatches {
   static *generateBodyAdditions(documentedBody: DocumentedBody): ShapePatches {
-    let { body, schema, bodyLocation } = documentedBody;
+    let { body, schema, shapeLocation } = documentedBody;
 
     let patchesExhausted = false;
     let i = 0;
     while (!patchesExhausted && i < MAX_ITERATIONS) {
       i++;
-      if (!schema) {
+      if (!schema || (!schema.type && !Schema.isPolymorphic(schema))) {
         let newSchema = Schema.baseFromValue(body.value);
 
-        yield newSchemaPatch(newSchema, {
-          location: bodyLocation || undefined,
+        yield newSchemaPatch(newSchema, schema || null, {
+          location: shapeLocation || undefined,
         });
 
         schema = newSchema;
@@ -32,7 +32,7 @@ export class ShapePatches {
 
       for (let shapeDiff of shapeDiffs) {
         let diffPatches = generateShapePatchesByDiff(shapeDiff, schema, {
-          location: bodyLocation || undefined,
+          location: shapeLocation || undefined,
         });
 
         for (let patch of diffPatches) {
