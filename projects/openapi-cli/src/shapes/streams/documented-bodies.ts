@@ -1,11 +1,12 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
   BodyExampleLocation,
+  ComponentSchemaLocation,
   IFact,
   OpenApiFact,
 } from '@useoptic/openapi-utilities';
 
-import { BodyExampleFacts } from '../../specs';
+import { BodyExampleFacts, ComponentSchemaExampleFacts } from '../../specs';
 import { OpenAPIV3 } from '../../specs';
 import { DocumentedBody } from '../body';
 
@@ -30,7 +31,7 @@ export class DocumentedBodies {
         .conceptualLocation as BodyExampleLocation;
       let jsonPath = exampleFact.location.jsonPath;
 
-      let bodyLocation = conceptualLocation; // bit nasty, relying on BodyExampleLocation being a superset of BodyLocation
+      let shapeLocation = conceptualLocation; // bit nasty, relying on BodyExampleLocation being a superset of BodyLocation
 
       let bodyPath =
         'singular' in conceptualLocation
@@ -45,15 +46,44 @@ export class DocumentedBodies {
         yield {
           schema,
           body,
-          bodyLocation,
+          shapeLocation,
           specJsonPath: bodyPath,
         };
       } else {
         yield {
           body,
           schema: null,
-          bodyLocation,
+          shapeLocation,
           specJsonPath: bodyPath,
+        };
+      }
+    }
+  }
+
+  static async *fromComponentSchemaExampleFacts(
+    exampleFacts: ComponentSchemaExampleFacts,
+    spec: OpenAPIV3.Document
+  ): AsyncIterable<DocumentedBody> {
+    for await (let exampleFact of exampleFacts) {
+      let body = {
+        value: exampleFact.value,
+      };
+
+      let jsonPath = exampleFact.location.jsonPath;
+      let conceptualLocation = exampleFact.location
+        .conceptualLocation as ComponentSchemaLocation;
+
+      let expectedSchemaPath = jsonPointerHelpers.pop(jsonPath); // example lives nested in schema
+
+      let resolvedSchema = jsonPointerHelpers.tryGet(spec, expectedSchemaPath);
+
+      if (resolvedSchema.match) {
+        let schema = resolvedSchema.value;
+        yield {
+          schema,
+          body,
+          shapeLocation: conceptualLocation,
+          specJsonPath: expectedSchemaPath,
         };
       }
     }

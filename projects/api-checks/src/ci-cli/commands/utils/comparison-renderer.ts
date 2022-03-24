@@ -2,6 +2,7 @@ import {
   ResultWithSourcemap,
   IChange,
   OpenApiFact,
+  OperationLocation,
 } from '@useoptic/openapi-utilities';
 
 import groupBy from 'lodash.groupby';
@@ -30,12 +31,19 @@ export const logComparison = (
   const groupedResults = groupBy(
     comparison.results,
     (result) =>
-      `${result.change.location.conceptualLocation.method}-${result.change.location.conceptualLocation.path}`
+      `${
+        (result.change.location.conceptualLocation as OperationLocation).method
+      }-${
+        (result.change.location.conceptualLocation as OperationLocation).path
+      }`
   );
 
   for (const operationResults of Object.values(groupedResults)) {
-    const { method, path } =
+    const conceptualLocation =
       operationResults[0].change.location.conceptualLocation;
+    if (!('path' in conceptualLocation)) continue;
+    const { method, path } = conceptualLocation;
+
     const allPassed = operationResults.every((result) => result.passed);
     const renderedResults = operationResults.filter(
       (result) => options.verbose || !result.passed
@@ -44,9 +52,13 @@ export const logComparison = (
       ? chalk.bold.bgGreen.white(' PASS ')
       : chalk.bold.bgRed.white(' FAIL ');
 
-    console.log(
-      `${getIndent(1)}${resultNode} ${chalk.bold(method.toUpperCase())} ${path}`
-    );
+    if (method && path) {
+      console.log(
+        `${getIndent(1)}${resultNode} ${chalk.bold(
+          method.toUpperCase()
+        )} ${path}`
+      );
+    }
 
     for (const result of renderedResults) {
       const icon = result.passed ? chalk.green('✔') : chalk.red('x');

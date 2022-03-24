@@ -1,9 +1,9 @@
 export type { Body } from './body';
-import { BodyLocation } from './body';
+import { ShapeLocation } from './body';
 
 export { observeBodyShape } from './observations';
 
-export type ShapeLocation = BodyLocation;
+export type { ShapeLocation };
 
 export { DocumentedBodies } from './streams/documented-bodies';
 

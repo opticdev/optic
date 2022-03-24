@@ -30,3 +30,12 @@ it('can extract body example facts from specs', async () => {
   traverser.traverse(spec);
   expect([...traverser.facts()]).toMatchSnapshot();
 });
+
+it('can extract component schema example facts from specs', async () => {
+  const traverser = new OpenAPITraverser();
+  const spec = await jsonFromFile(
+    './inputs/openapi3/component-schema-examples.json'
+  );
+  traverser.traverse(spec);
+  expect([...traverser.facts()]).toMatchSnapshot();
+});

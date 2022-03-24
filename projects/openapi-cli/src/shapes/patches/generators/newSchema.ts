@@ -4,12 +4,13 @@ import { OperationGroup, PatchImpact, ShapePatch } from '..';
 
 export function newSchemaPatch(
   schema: SchemaObject,
+  typelessSchema: SchemaObject | null,
   shapeContext: { location?: ShapeLocation }
 ): ShapePatch {
   let groupedOperations = [
     OperationGroup.create(
       'add schema object',
-      ...Schema.mergeOperations(null, schema)
+      ...Schema.mergeOperations(typelessSchema, schema)
     ),
   ];
 

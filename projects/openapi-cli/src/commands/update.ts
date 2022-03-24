@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
-import { tap } from '../lib/async-tools';
+import { tap, forkable, merge } from '../lib/async-tools';
 import {
   SpecFacts,
   SpecFile,
@@ -16,11 +16,12 @@ import {
   SpecPatches,
   SpecFiles,
   BodyExampleFact,
+  ComponentSchemaExampleFact,
 } from '../specs';
 
-import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 import { DocumentedBody } from '../shapes/body';
 import { flushEvents, trackEvent } from '../segment';
+import { ComponentSchemaExampleFacts } from '../specs/streams/facts';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -51,10 +52,15 @@ export function updateCommand(): Command {
         updatedFilesCount: 0,
         filesWithOverwrittenYamlComments: new Set<string>(),
 
-        observeExamples: tap<BodyExampleFact>((exampleFact) => {
+        observeBodyExamples: tap<BodyExampleFact>((exampleFact) => {
           stats.examplesCount++;
           if (exampleFact.value.externalValue) stats.externalExamplesCount++;
         }),
+        observeComponentSchemaExamples: tap<ComponentSchemaExampleFact>(
+          (_exampleFact) => {
+            stats.examplesCount++;
+          }
+        ),
         observePatches: tap<SpecPatch>((_patch) => {
           stats.patchesCount++;
         }),
@@ -68,20 +74,28 @@ export function updateCommand(): Command {
         }),
       };
 
-      const facts = SpecFacts.fromOpenAPISpec(spec);
-      const bodyExampleFacts = stats.observeExamples(
-        SpecFacts.bodyExamples(facts)
+      const facts = forkable(SpecFacts.fromOpenAPISpec(spec));
+      const bodyExampleFacts = stats.observeBodyExamples(
+        SpecFacts.bodyExamples(facts.fork())
       );
-      const exampleBodies = DocumentedBodies.fromBodyExampleFacts(
-        bodyExampleFacts,
-        spec
+      const componentExampleFacts = stats.observeComponentSchemaExamples(
+        SpecFacts.componentSchemaExamples(facts.fork())
+      );
+      facts.start();
+
+      const exampleBodies = merge(
+        DocumentedBodies.fromBodyExampleFacts(bodyExampleFacts, spec),
+        DocumentedBodies.fromComponentSchemaExampleFacts(
+          componentExampleFacts,
+          spec
+        )
       );
 
       const specPatches = (async function* (documentedBodies): SpecPatches {
         const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
 
         for await (let documentedBody of documentedBodies) {
-          let { specJsonPath, bodyLocation } = documentedBody;
+          let { specJsonPath, shapeLocation } = documentedBody;
 
           if (updatedSchemasByPath.has(specJsonPath)) {
             documentedBody.schema = updatedSchemasByPath.get(specJsonPath)!;
@@ -94,7 +108,7 @@ export function updateCommand(): Command {
               documentedBody,
               patch
             );
-            yield SpecPatch.fromShapePatch(patch, specJsonPath, bodyLocation!);
+            yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
           }
 
           updatedSchemasByPath.set(specJsonPath, documentedBody.schema!);

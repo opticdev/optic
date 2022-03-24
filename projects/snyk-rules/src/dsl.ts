@@ -25,6 +25,7 @@ import {
   OpenApiFact,
   ChangeType,
   ShouldOrMust,
+  OperationLocation,
 } from '@useoptic/openapi-utilities';
 import { genericEntityRuleImpl } from '@useoptic/api-checks/build/sdk/generic-entity-rule-impl';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
@@ -68,7 +69,7 @@ export interface SynkApiCheckContext {
 }
 
 export interface SnykEntityRule<T, A>
-  extends EntityRule<T, ConceptualLocation, SynkApiCheckContext, A> {}
+  extends EntityRule<T, OperationLocation, SynkApiCheckContext, A> {}
 
 export class SnykApiCheckDsl implements ApiCheckDsl {
   private checks: Promise<Result>[] = [];
@@ -85,9 +86,9 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
     return this.checks;
   }
 
-  getContext(location: ILocation): ConceptualLocation & SynkApiCheckContext {
+  getContext(location: ILocation): OperationLocation & SynkApiCheckContext {
     return {
-      ...location.conceptualLocation,
+      ...(location.conceptualLocation as OperationLocation),
       ...this.providedContext,
     };
   }
@@ -133,7 +134,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
       selectJsonPath,
       ...genericEntityRuleImpl<
         OpenApiOperationFact,
-        ConceptualLocation,
+        OperationLocation,
         SynkApiCheckContext,
         OpenAPIV3.OperationObject
       >(
@@ -251,7 +252,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
     return {
       queryParameter: genericEntityRuleImpl<
         OpenApiRequestParameterFact,
-        ConceptualLocation,
+        OperationLocation,
         SynkApiCheckContext,
         OpenAPIV3.ParameterObject
       >(
@@ -265,7 +266,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
       ),
       pathParameter: genericEntityRuleImpl<
         OpenApiRequestParameterFact,
-        ConceptualLocation,
+        OperationLocation,
         SynkApiCheckContext,
         OpenAPIV3.ParameterObject
       >(
@@ -279,7 +280,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
       ),
       header: genericEntityRuleImpl<
         OpenApiRequestParameterFact,
-        ConceptualLocation,
+        OperationLocation,
         SynkApiCheckContext,
         OpenAPIV3.ParameterObject
       >(
@@ -300,7 +301,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
     return {
       ...genericEntityRuleImpl<
         OpenApiResponseFact,
-        ConceptualLocation,
+        OperationLocation,
         SynkApiCheckContext,
         OpenAPIV3.ResponsesObject
       >(
@@ -314,7 +315,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
       ),
       headers: genericEntityRuleImpl<
         OpenApiHeaderFact,
-        ConceptualLocation,
+        OperationLocation,
         SynkApiCheckContext,
         OpenAPIV3.HeaderObject
       >(
@@ -374,7 +375,7 @@ export class SnykApiCheckDsl implements ApiCheckDsl {
     const dsl = this;
     return genericEntityRuleImpl<
       OpenApiFieldFact,
-      ConceptualLocation,
+      OperationLocation,
       SynkApiCheckContext,
       OpenAPIV3.SchemaObject
     >(

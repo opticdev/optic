@@ -26,13 +26,20 @@ export class SpecPatch {
     location: ShapeLocation
   ) {
     const inResponse = 'inResponse' in location;
+    const inComponentSchema = 'inComponentSchema' in location;
 
-    const schemaPath = jsonPointerHelpers.append(bodySpecPath, 'schema');
+    const schemaPath = inComponentSchema
+      ? bodySpecPath
+      : jsonPointerHelpers.append(bodySpecPath, 'schema');
 
     return {
-      description: `update ${inResponse ? 'response' : 'request'} body: ${
-        shapePatch.description
-      }`,
+      description: `update ${
+        inComponentSchema
+          ? 'component schema'
+          : inResponse
+          ? 'response body'
+          : 'request body'
+      }: ${shapePatch.description}`,
       impact: shapePatch.impact,
       groupedOperations: shapePatch.groupedOperations.map((group) => {
         return {
