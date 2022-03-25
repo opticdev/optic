@@ -91,3 +91,5 @@ export class SpecFiles {
     }
   }
 }
+
+export class SpecFilesAsync {}
