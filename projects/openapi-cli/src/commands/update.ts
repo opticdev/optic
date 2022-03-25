@@ -34,7 +34,7 @@ export function updateCommand(): Command {
       'update an OpenAPI specification from examples or observed traffic'
     )
     .action(async (specPath) => {
-      const updateResult = await update(specPath);
+      const updateResult = await updateAction(specPath);
 
       if (updateResult.err) {
         return command.error(updateResult.val);
@@ -77,7 +77,7 @@ export function updateCommand(): Command {
   return command;
 }
 
-export async function update(specPath: string): Promise<
+export async function updateAction(specPath: string): Promise<
   Result<
     {
       stats: {
@@ -108,7 +108,8 @@ export async function update(specPath: string): Promise<
     patchesCount: 0,
     updatedFilesCount: 0,
     filesWithOverwrittenYamlComments: new Set<string>(),
-
+  };
+  const observers = {
     observeBodyExamples: tap<BodyExampleFact>((exampleFact) => {
       stats.examplesCount++;
       if (exampleFact.value.externalValue) stats.externalExamplesCount++;
@@ -132,10 +133,10 @@ export async function update(specPath: string): Promise<
   };
 
   const facts = forkable(SpecFacts.fromOpenAPISpec(spec));
-  const bodyExampleFacts = stats.observeBodyExamples(
+  const bodyExampleFacts = observers.observeBodyExamples(
     SpecFacts.bodyExamples(facts.fork())
   );
-  const componentExampleFacts = stats.observeComponentSchemaExamples(
+  const componentExampleFacts = observers.observeComponentSchemaExamples(
     SpecFacts.componentSchemaExamples(facts.fork())
   );
   facts.start();
@@ -168,15 +169,15 @@ export async function update(specPath: string): Promise<
   })(exampleBodies);
 
   // additions only, so we only safely extend the spec
-  const specAdditions = stats.observePatches(
+  const specAdditions = observers.observePatches(
     SpecPatches.additions(specPatches)
   );
 
-  const fileOperations = stats.observeFileOperations(
+  const fileOperations = observers.observeFileOperations(
     SpecFileOperations.fromSpecPatches(specAdditions, sourcemap)
   );
 
-  const updatedSpecFiles = stats.observeUpdatedFiles(
+  const updatedSpecFiles = observers.observeUpdatedFiles(
     SpecFiles.patch(specFiles, fileOperations)
   );
 
