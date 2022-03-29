@@ -16,12 +16,12 @@ import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { trackEvent, flushEvents } from '../../segment';
-import { CliConfig } from '../../types';
+import { CliConfig, NormalizedCiContext } from '../../types';
 import { uploadCiRun } from './upload';
 import { sendGithubMessage } from './github-comment';
 import { logComparison } from '../utils/comparison-renderer';
 import path from 'path';
-import { loadCiContext } from '../create-context/load-context';
+import { loadCiContext } from '../utils/load-context';
 
 const parseContextObject = (context?: string): any => {
   try {
@@ -183,17 +183,15 @@ const runCompare = async ({
     );
   }
 
-  const isInCi = process.env.CI === 'true';
-  const normalizedCiContext =
-    isInCi && cliConfig.ciProvider
-      ? await loadCiContext(cliConfig.ciProvider, ciContext)
-      : undefined;
+  let normalizedCiContext: NormalizedCiContext | null = null;
+  if (uploadResults && cliConfig.ciProvider) {
+    normalizedCiContext = await loadCiContext(cliConfig.ciProvider, ciContext);
+  }
 
-  if (uploadResults && changes.length > 0) {
+  if (normalizedCiContext && uploadResults && changes.length > 0) {
     console.log('Uploading files to Optic...');
 
     // We've validated the shape in validateUploadRequirements
-    const ciProvider = cliConfig.ciProvider!;
     const opticToken = cliConfig.opticToken!;
     const { token, provider } = cliConfig.gitProvider!;
     const opticClient = createOpticClient(opticToken);
@@ -203,13 +201,12 @@ const runCompare = async ({
         compareOutput,
         parsedFrom.jsonLike,
         parsedTo.jsonLike,
-        ciProvider,
         opticClient,
         {
           from: from ? path.join(process.cwd(), from) : from,
           to: to ? path.join(process.cwd(), to) : to,
         },
-        ciContext
+        normalizedCiContext
       );
 
       if (uploadOutput) {

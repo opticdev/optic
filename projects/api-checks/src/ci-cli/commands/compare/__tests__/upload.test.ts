@@ -3,9 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { uploadCiRun } from '../upload';
 import { OpticBackendClient, UploadSlot } from '../../utils/optic-client';
 import { mockGhContext } from '../../utils/__tests__/mock-context';
-import { loadFile } from '../../utils/files';
 import { uploadFileToS3 } from '../../utils/s3';
 import { defaultEmptySpec } from '@useoptic/openapi-utilities';
+import { NormalizedCiContext } from '../../../types';
 
 jest.mock('../../utils/optic-client');
 jest.mock('../../utils/files');
@@ -30,7 +30,6 @@ const mockMarkUploadAsComplete =
 const mockGetSession = mockOpticClient.getSession as jest.MockedFunction<
   typeof mockOpticClient.getSession
 >;
-const mockedLoadFile = loadFile as jest.MockedFunction<typeof loadFile>;
 const mockedUploadFileToS3 = uploadFileToS3 as jest.MockedFunction<
   typeof uploadFileToS3
 >;
@@ -44,6 +43,15 @@ const compareOutput = {
     } as any,
   ],
 };
+const normalizeCiContext: NormalizedCiContext = {
+  organization: '',
+  repo: '',
+  pull_request: 1,
+  run: 1,
+  commit_hash: '',
+  branch_name: '',
+  user: null,
+};
 
 let fileBufferMap: Record<string, Buffer> = {
   [UploadSlot.CheckResults]: Buffer.from(JSON.stringify(compareOutput)),
@@ -53,10 +61,6 @@ let fileBufferMap: Record<string, Buffer> = {
 };
 
 beforeEach(() => {
-  mockedLoadFile.mockImplementation(async (filePath: string) => {
-    return fileBufferMap[filePath as UploadSlot] || Buffer.from('abc');
-  });
-
   mockGetSession.mockReturnValue(
     Promise.resolve({
       web_url: '/the_web_url',
@@ -78,7 +82,6 @@ beforeEach(() => {
 
 afterEach(() => {
   // Clear all instances and calls to constructor and all methods:
-  mockedLoadFile.mockClear();
   mockedUploadFileToS3.mockClear();
   MockedOpticBackendClient.mockClear();
   mockedStartSession.mockClear();
@@ -107,16 +110,14 @@ test('uploading a file', async () => {
     compareOutput,
     defaultEmptySpec,
     defaultEmptySpec,
-    'github',
     mockOpticClient,
     {
       from: UploadSlot.FromFile,
       to: UploadSlot.ToFile,
     },
-    'githubContext'
+    normalizeCiContext
   );
 
-  expect(mockedLoadFile.mock.calls.length).toBe(1);
   expect(mockedStartSession.mock.calls.length).toBe(1);
   expect(mockedUploadFileToS3.mock.calls.length).toBe(numberOfFiles);
   for (const uploadSlot of githubUploadSlots) {
@@ -146,17 +147,14 @@ test('uploading a file with only partial slots open', async () => {
     compareOutput,
     defaultEmptySpec,
     defaultEmptySpec,
-
-    'github',
     mockOpticClient,
     {
       from: UploadSlot.FromFile,
       to: UploadSlot.ToFile,
     },
-    'githubContext'
+    normalizeCiContext
   );
 
-  expect(mockedLoadFile.mock.calls.length).toBe(1);
   expect(mockedStartSession.mock.calls.length).toBe(1);
   expect(mockedUploadFileToS3.mock.calls.length).toBe(returnedSlots.length);
   for (const uploadSlot of returnedSlots) {
@@ -190,15 +188,13 @@ test('uploads files where from is not specified', async () => {
     compareOutput,
     defaultEmptySpec,
     defaultEmptySpec,
-    'github',
     mockOpticClient,
     {
       to: UploadSlot.ToFile,
     },
-    'githubContext'
+    normalizeCiContext
   );
 
-  expect(mockedLoadFile.mock.calls.length).toBe(1);
   expect(mockedStartSession.mock.calls.length).toBe(1);
   expect(mockedUploadFileToS3.mock.calls.length).toBe(numberOfFiles);
   for (const uploadSlot of [UploadSlot.ToFile, UploadSlot.CheckResults]) {

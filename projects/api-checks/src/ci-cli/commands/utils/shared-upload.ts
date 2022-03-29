@@ -97,9 +97,9 @@ export const normalizeCiContext = (
   contextBuffer: Buffer
 ): NormalizedCiContext => {
   if (provider === 'github') {
-    return readAndValidateGithubContext(contextBuffer);
+    return { ...readAndValidateGithubContext(contextBuffer), user: null };
   } else {
-    return readAndValidateCircleCiContext(contextBuffer);
+    return { ...readAndValidateCircleCiContext(contextBuffer), user: null };
   }
 };
 

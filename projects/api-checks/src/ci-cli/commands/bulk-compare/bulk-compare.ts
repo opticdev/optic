@@ -22,12 +22,12 @@ import {
 import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { UserError } from '../../errors';
 import { trackEvent, flushEvents } from '../../segment';
-import { CliConfig, BulkCompareJson } from '../../types';
+import { CliConfig, BulkCompareJson, NormalizedCiContext } from '../../types';
 import { createOpticClient } from '../utils/optic-client';
 import { bulkUploadCiRun } from './bulk-upload';
 import { sendBulkGithubMessage } from './bulk-github-comment';
 import { logComparison } from '../utils/comparison-renderer';
-import { loadCiContext } from '../create-context/load-context';
+import { loadCiContext } from '../utils/load-context';
 
 export const registerBulkCompare = (
   cli: Command,
@@ -281,12 +281,11 @@ const runBulkCompare = async ({
   let numberOfComparisonsWithAChange = 0;
   let hasChecksFailing = false;
   let hasError = false;
-  const isInCi = process.env.CI;
 
-  const normalizedCiContext =
-    isInCi && cliConfig.ciProvider
-      ? await loadCiContext(cliConfig.ciProvider, ciContext)
-      : undefined;
+  let normalizedCiContext: NormalizedCiContext | null = null;
+  if (uploadResults && cliConfig.ciProvider) {
+    normalizedCiContext = await loadCiContext(cliConfig.ciProvider, ciContext);
+  }
 
   const { comparisons: initialComparisons, skippedParsing } =
     await parseJsonComparisonInput(input);
@@ -336,7 +335,7 @@ const runBulkCompare = async ({
     (normalizedCiContext && normalizedCiContext.user) ||
       `${projectName}-optic-ci`,
     {
-      isInCi,
+      isInCi: process.env.CI === 'true',
       numberOfErrors,
       projectName,
       numberOfComparisons: initialComparisons.size,
