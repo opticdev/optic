@@ -5,19 +5,19 @@ data itself.
 ## Docker Container Usage
 
 The simplest use-case is to attach to a running docker container and observe its
-traffic:
+traffic. After [Building the container image](#Building-the-container-image), run:
 
 ```
 docker run -it -e SNIFF_PORT=80 -e SNIFF_INTERFACE=any \
   --network=container:4dd7916f077e \
   --mount type=bind,source=`pwd`,target=/out \
-  public.ecr.aws/optic/baseline:latest
+  optic-baseline:local
 ```
 
-where --network=container:4dd7916f077e uses the container ID from docker ps of
+where --network=container:4dd7916f077e uses the container ID from `docker ps` of
 the target container.
 
-There are 3 environment values, set with -e for docker run to customize with:
+There are 3 environment values, set with -e on the `docker run` command:
 
 - `SNIFF_PORT`: The port to sniff. This is the internal port of the container,
 not the host-side value (e.g. 80 for a --expose 8000:80).
@@ -26,7 +26,7 @@ not the host-side value (e.g. 80 for a --expose 8000:80).
 always eth0.
 
 - `OPTIC_OPENAPI_PATH`: The in-container path for the OpenAPI spec. The
-directory that contains this needs to be mounted with a --mount.
+directory that contains this needs to be mounted with `--mount`.
 
 ### Attaching and Detaching from a running container
 
@@ -109,7 +109,7 @@ sudo ts-node src/cli/index.ts baseline openapi.yaml --sniff-port 3001 --sniff-in
 
 ## Building the container image
 
-Run `task openapi-diff:docker:build` to build a container. It will locally build to 
+Run `task openapi-diff:docker:build` to build a container. The task will build a container image `optic-baseline` with tag `local`. You can also manually build the container without using task with `docker build optic-baseline:local .`
 
 ## Tests
 
@@ -143,25 +143,3 @@ sudo yarn dev:test
 ```
 
 Root is required for sniffing.
-
-
-## Release Process
-
-This is manual for now.
-
-The docker image relies on the public `@useoptic/openapi-diff` npm package. This needs to be released first.
-
-### npm package
-
-Manually run the release job at https://github.com/opticdev/poc-governance-tools/actions/workflows/release.yaml
-
-### Docker Build & Push
-
-Use the task commands to build the docker image and push it with the current
-version of the npm package.
-
-```
-PUBLIC_TAG=$(npm view @useoptic/openapi-diff version) task openapi-diff:docker:build openapi-diff:docker:push:public
-```
-
-Note: You will need to be authenticated into the optic account to push to the optic container registry.
