@@ -17,9 +17,8 @@ Design better APIs · Improve quality · Ship faster. It starts with having the 
 
 ### In this repo are the open source libraries powering Optic
 
-- `openapi-io` - is how Optic reads and writes your OpenAPI specification, even if it is spread across multiple files
-- `openapi-utilities` - query facts from an OpenAPI file and compute a changelog between two versions of the specification.
-- `api-checks` - includes the SDKs for authoring and running your own `optic-ci` checks
+- `optic-ci` - the tool used to compare specs and enforce your rules for your API
+- `rulesets-base` - includes the SDKs for authoring and running your own `optic-ci` checks
 
 ## Migrating from Optic 10 to Optic 11
 
