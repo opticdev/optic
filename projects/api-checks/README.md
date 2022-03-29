@@ -38,9 +38,13 @@ $ node ./consolidate-open-api-files.js
 # For github actions
 $ echo $GITHUB_CONTEXT > ./ci-context.json
 
+# Generate contextual information about the run from the environment.
+# Current valid providers: [github, circleci]
+$ node ./cli.js create-context --provider <provider>
+
 # Run the compare files
 # this will run compare, and upload the files to optic cloud
-$ node ./cli.js compare --from ./from.json --to ./to.json --context "{\"createdAt\":1639434455822}" --upload-results --ci-context ./ci-context.json
+$ node ./cli.js compare --from ./from.json --to ./to.json --context "{\"createdAt\":1639434455822}" --upload-results
 ```
 
 ### Expected contexts
@@ -58,10 +62,13 @@ The easiest way to dump this is from github actions:
 Expected JSON values are:
 ```json
 {
-  "CIRCLE_REPOSITORY_URL": "https://github.com/owner/repo_name",
+  "CIRCLE_PROJECT_USERNAME": "owner",
+  "CIRCLE_PULL_REQUEST": "https://github.com/owner/repo_name/pull/10",
+  "CIRCLE_PROJECT_REPONAME": "repo_name",
   "CIRCLE_BRANCH": "fix/the-git-branch-name",
-  "CIRCLE_PR_NUMBER": 10,
+  "CIRCLE_SHA1": "e756e8e68f5daaed86fafe76cd8e51400d70946a",
   "CIRCLE_BUILD_NUM": 1,
-  "CIRCLE_SHA1": "e756e8e68f5daaed86fafe76cd8e51400d70946a"
-}
+  "CIRCLE_PR_USERNAME": "pr_author",
 ```
+
+**Note** `CIRCLE_PR_USERNAME` is not always available - the variable `OPTIC_COMMIT_USER` may be set instead with a user value (such as the commit author from Git).

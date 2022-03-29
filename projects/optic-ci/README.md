@@ -14,7 +14,7 @@ yarn global add @useoptic/optic-ci
 
 **Comparing files:**
 
-`optic-ci` always takes two versions of your OpenAPI specification. If you are working in Git compare across branches:
+`optic-ci` always takes two versions of your OpenAPI specification. If you are working in Git you can compare across branches:
 
 ```bash
 optic-ci compare --from main:openapi.yaml --to feature/xyz:openapi.yaml
@@ -26,7 +26,7 @@ When you are just trying to learn how `optic-ci` works, make a copy of your Open
 optic-ci compare --from openapi-v1.yaml --to openapi-v2.yaml
 ```
 
-Give it a try! Make a required response property optional or add a required query parameter! There are many ways to break and API.
+Give it a try! Make a required response property optional, or add a required query parameter! There are many ways to break an API.
 
 ### Apply your team's naming checks
 

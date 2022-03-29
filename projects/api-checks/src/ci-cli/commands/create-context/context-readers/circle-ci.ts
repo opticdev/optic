@@ -8,7 +8,8 @@ export const getContextFromCircleCiEnvironment = (): NormalizedCiContext => {
   const branch_name = process.env.CIRCLE_BRANCH;
   const commit_hash = process.env.CIRCLE_SHA1;
   const run = process.env.CIRCLE_BUILD_NUM;
-  const user = (process.env.OPTIC_COMMIT_USER || process.env.CIRCLE_PR_USERNAME) ?? '';
+  const user =
+    (process.env.OPTIC_COMMIT_USER || process.env.CIRCLE_PR_USERNAME) ?? null;
 
   if (!pull_request) {
     throw new UserError(
@@ -53,7 +54,9 @@ export const getContextFromCircleCiEnvironment = (): NormalizedCiContext => {
   }
 
   if (user === '') {
-    console.log(`Could not identify commit author. set 'OPTIC_COMMIT_USER' to provide this information.`);
+    console.log(
+      `Could not identify commit author. set 'OPTIC_COMMIT_USER' to provide this information.`
+    );
   }
 
   return {
