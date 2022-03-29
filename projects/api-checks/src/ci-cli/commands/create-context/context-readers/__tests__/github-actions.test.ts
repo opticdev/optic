@@ -8,6 +8,7 @@ const originalEnv = {
   GITHUB_SHA: process.env.GITHUB_SHA,
   GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
   GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF,
+  GITHUB_CONTEXT: process.env.GITHUB_CONTEXT,
 };
 
 afterAll(() => {
@@ -26,7 +27,7 @@ test('get context from github environments', () => {
 
   expect(getContextFromGithubEnvironment()).toEqual({
     organization: 'opticdev',
-    user: '',
+    user: null,
     pull_request: 515,
     run: 123,
     commit_hash: '7d3736f2b38af7f69fd51e43465fd74375aaca2d',

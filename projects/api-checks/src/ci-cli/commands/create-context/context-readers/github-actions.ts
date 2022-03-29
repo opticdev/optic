@@ -10,14 +10,16 @@ export const getContextFromGithubEnvironment = (): NormalizedCiContext => {
   const commit_hash = process.env.GITHUB_SHA;
   const repo = process.env.GITHUB_REPOSITORY?.split('/')[1];
   const branch_name = process.env.GITHUB_HEAD_REF;
-  let user: string = '';
-  
+  let user: string | null = null;
+
   try {
-    const github_context = JSON.parse((process.env.GITHUB_CONTEXT) ?? '{}');
-    user = github_context.event!.pull_request!.head!.user!.login
- }  catch (e) {
-    console.log(`Could not identify commit author from 'GITHUB_CONTEXT', ignoring.`);
- }
+    const github_context = JSON.parse(process.env.GITHUB_CONTEXT ?? '{}');
+    user = github_context.event!.pull_request!.head!.user!.login;
+  } catch (e) {
+    console.log(
+      `Could not identify commit author from 'GITHUB_CONTEXT', ignoring.`
+    );
+  }
 
   if (!organization) {
     throw new UserError(

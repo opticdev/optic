@@ -1,20 +1,12 @@
 import path from 'path';
 import { CompareFileJson } from '@useoptic/openapi-utilities';
 import { OpticBackendClient, UploadSlot } from '../utils/optic-client';
-import { loadFile } from '../utils';
-import {
-  loadAndValidateSpecFiles,
-  normalizeCiContext,
-  uploadRun,
-} from '../utils/shared-upload';
+import { loadAndValidateSpecFiles, uploadRun } from '../utils/shared-upload';
 import {
   BulkCompareJson,
   BulkUploadJson,
   NormalizedCiContext,
 } from '../../types';
-import { UserError } from '../../errors';
-import { DEFAULT_CONTEXT_PATH } from '../constants';
-import { loadCiContext } from '../create-context/load-context';
 
 export const bulkUploadCiRun = async (
   opticClient: OpticBackendClient,

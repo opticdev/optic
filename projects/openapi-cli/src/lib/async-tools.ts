@@ -130,3 +130,11 @@ export async function* concat<T>(
     yield* iter;
   }
 }
+
+export async function collect<T>(source: AsyncIterable<T>): Promise<T[]> {
+  let results: T[] = [];
+  for await (let item of source) {
+    results.push(item);
+  }
+  return results;
+}

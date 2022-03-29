@@ -13,7 +13,7 @@ export type { SpecFilesSourcemap, SpecFileOperation } from './files';
 // patches and operations
 export { SpecPatch } from './patches';
 export { SpecPatches } from './streams/patches';
-export { SpecFileOperations, SpecFiles } from './streams/files';
+export { SpecFileOperations, SpecFiles, SpecFilesAsync } from './streams/files';
 export {
   SpecFacts,
   BodyExampleFacts,
