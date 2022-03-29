@@ -20,7 +20,6 @@ Design better APIs · Improve quality · Ship faster. It starts with having the 
 - `openapi-io` - is how Optic reads and writes your OpenAPI specification, even if it is spread across multiple files
 - `openapi-utilities` - query facts from an OpenAPI file and compute a changelog between two versions of the specification.
 - `api-checks` - includes the SDKs for authoring and running your own `optic-ci` checks
-- `openapi-diff-experiment` - compares actual traffic against the specification, and provides helpers to surgically patch the OpenAPI specification
 
 ## Migrating from Optic 10 to Optic 11
 

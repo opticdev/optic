@@ -1,3 +1,5 @@
+> **Note:** openapi-diff is not under active development, and support is currently limited. To see our latest efforts, check out the rest of the [Optic tools](https://www.useoptic.com/blog/optic-for-openapi).
+
 openapi-diff provides a simple way to generate an OpenAPI spec from captured
 traffic. It sniffs network traffic to generate the spec but does not store the
 data itself.
