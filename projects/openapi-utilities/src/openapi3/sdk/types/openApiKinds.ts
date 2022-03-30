@@ -8,10 +8,7 @@ export enum OpenApiKind {
   Response = 'response',
   Body = 'body',
   BodyExample = 'body-example',
-  Object = 'object',
   Field = 'field',
-  Array = 'array',
-  Primitive = 'primitive',
   ComponentSchemaExample = 'component-schema-example',
 }
 

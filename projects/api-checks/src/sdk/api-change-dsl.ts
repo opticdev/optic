@@ -4,19 +4,15 @@ import {
   IChange,
   IFact,
   ILocation,
-  OpenApiFact,
   OpenApiFieldFact,
-  OpenApiHeaderFact,
   OpenApiKind,
-  OpenApiOperationFact,
-  OpenApiRequestParameterFact,
-  OpenApiResponseFact,
   OpenAPIV3,
   queryChangelog,
   ApiCheckDsl,
   DocsLinkHelper,
   EntityRule,
   Result,
+  ChangeVariant,
   ShouldOrMust,
 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
@@ -33,8 +29,8 @@ export class ApiChangeDsl implements ApiCheckDsl {
   private checks: Promise<Result>[] = [];
 
   constructor(
-    private nextFacts: IFact<OpenApiFact>[],
-    private changelog: IChange<OpenApiFact>[],
+    private nextFacts: IFact[],
+    private changelog: IChange[],
     private currentJsonLike: OpenAPIV3.Document,
     private nextJsonLike: OpenAPIV3.Document,
     private providedContext: ApiCheckDslContext
@@ -54,17 +50,11 @@ export class ApiChangeDsl implements ApiCheckDsl {
   get operations() {
     const operations = this.changelog.filter(
       (i) => i.location.kind === OpenApiKind.Operation
-    );
+    ) as ChangeVariant<OpenApiKind.Operation>[];
 
-    const added = operations.filter((i) =>
-      Boolean(i.added)
-    ) as IChange<OpenApiOperationFact>[];
-    const removed = operations.filter((i) =>
-      Boolean(i.removed)
-    ) as IChange<OpenApiOperationFact>[];
-    const changes = operations.filter((i) =>
-      Boolean(i.changed)
-    ) as IChange<OpenApiOperationFact>[];
+    const added = operations.filter((i) => Boolean(i.added));
+    const removed = operations.filter((i) => Boolean(i.removed));
+    const changes = operations.filter((i) => Boolean(i.changed));
 
     const locations = [
       ...added.map((i) => i.location),
@@ -91,7 +81,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
     return {
       selectJsonPath,
       ...genericEntityRuleImpl<
-        OpenApiOperationFact,
+        OpenApiKind.Operation,
         ConceptualLocation,
         ApiCheckDslContext,
         OpenAPIV3.OperationObject
@@ -108,7 +98,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
   }
 
   get specification() {
-    const change: IChange<any> = {
+    const change: IChange = {
       location: {
         conceptualLocation: { path: 'Specification', method: '' },
         jsonPath: '/',
@@ -149,7 +139,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
 
     return {
       queryParameter: genericEntityRuleImpl<
-        OpenApiRequestParameterFact,
+        OpenApiKind.QueryParameter,
         ConceptualLocation,
         ApiCheckDslContext,
         OpenAPIV3.ParameterObject
@@ -163,7 +153,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
         (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
       pathParameter: genericEntityRuleImpl<
-        OpenApiRequestParameterFact,
+        OpenApiKind.PathParameter,
         ConceptualLocation,
         ApiCheckDslContext,
         OpenAPIV3.ParameterObject
@@ -177,7 +167,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
         (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
       headerParameter: genericEntityRuleImpl<
-        OpenApiRequestParameterFact,
+        OpenApiKind.HeaderParameter,
         ConceptualLocation,
         ApiCheckDslContext,
         OpenAPIV3.ParameterObject
@@ -191,7 +181,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
         (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
       bodyProperties: genericEntityRuleImpl<
-        OpenApiFieldFact,
+        OpenApiKind.Field,
         ConceptualLocation,
         ApiCheckDslContext,
         OpenAPIV3.SchemaObject
@@ -216,7 +206,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
 
     return {
       ...genericEntityRuleImpl<
-        OpenApiResponseFact,
+        OpenApiKind.Response,
         ConceptualLocation,
         ApiCheckDslContext,
         OpenAPIV3.ResponsesObject
@@ -230,7 +220,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
         (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
       bodyProperties: genericEntityRuleImpl<
-        OpenApiFieldFact,
+        OpenApiKind.Field,
         ConceptualLocation,
         ApiCheckDslContext,
         OpenAPIV3.SchemaObject
@@ -248,7 +238,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
         (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
       ),
       header: genericEntityRuleImpl<
-        OpenApiHeaderFact,
+        OpenApiKind.ResponseHeader,
         ConceptualLocation,
         ApiCheckDslContext,
         OpenAPIV3.HeaderObject
@@ -270,7 +260,7 @@ export class ApiChangeDsl implements ApiCheckDsl {
   > {
     const dsl = this;
     return genericEntityRuleImpl<
-      OpenApiFieldFact,
+      OpenApiKind.Field,
       ConceptualLocation,
       ApiCheckDslContext,
       OpenAPIV3.SchemaObject

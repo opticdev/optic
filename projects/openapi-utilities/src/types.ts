@@ -1,4 +1,4 @@
-import { IChange, OpenApiFact } from './openapi3/sdk/types';
+import { IChange } from './openapi3/sdk/types';
 import { LookupLineResultWithFilepath } from './render/ast-helpers';
 
 export interface ShouldOrMust<G> {
@@ -92,7 +92,7 @@ export interface Result {
   isShould: boolean;
   error?: string;
   passed: boolean;
-  change: IChange<OpenApiFact>;
+  change: IChange;
   docsLink?: string;
   effectiveOnDate?: Date;
 }
@@ -134,7 +134,7 @@ export function newDocsLinkHelper(): DocsLinkHelper {
 }
 
 export async function runCheck(
-  change: IChange<OpenApiFact>,
+  change: IChange,
   docsLink: DocsLinkHelper,
   where: string,
   condition: string,

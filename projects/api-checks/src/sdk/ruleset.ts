@@ -1,6 +1,5 @@
 import { ApiCheckDsl } from '@useoptic/openapi-utilities';
 import { ApiCheckService } from './api-check-service';
-import { ApiCheckDslContext } from './api-change-dsl';
 
 export type OpticCIRuleset<DSL extends ApiCheckDsl> = {
   [key: string]: (dsl: DSL) => void;

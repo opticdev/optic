@@ -12,15 +12,18 @@ import {
 } from '@useoptic/openapi-utilities';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 
+const packageJson = require('../../../../package.json');
+
 export const generateSpecResults = async <T extends {}>(
   checkService: ApiCheckService<T>,
   from: ParseOpenAPIResult,
   to: ParseOpenAPIResult,
   context: any
 ): Promise<{
-  changes: IChange<OpenApiFact>[];
+  changes: IChange[];
   results: ResultWithSourcemap[];
   projectRootDir: string | false;
+  version: string;
 }> => {
   const fromJsonLike = from.jsonLike!;
   const toJsonLike = to.jsonLike!;
@@ -36,8 +39,8 @@ export const generateSpecResults = async <T extends {}>(
   );
 
   const changes = factsToChangelog(currentFacts, nextFacts);
-  const changesWithSourcemap: IChange<OpenApiFact>[] = await Promise.all(
-    changes.map(async (change) => {
+  const changesWithSourcemap: IChange[] = await Promise.all(
+    changes.map(async (change: IChange): Promise<IChange> => {
       return {
         ...change,
         location: {
@@ -47,7 +50,7 @@ export const generateSpecResults = async <T extends {}>(
               ? await findFileAndLinesFromBefore(change.location.jsonPath)
               : await findFileAndLinesFromAfter(change.location.jsonPath),
         },
-      };
+      } as IChange;
     })
   );
 
@@ -76,5 +79,6 @@ export const generateSpecResults = async <T extends {}>(
     changes: changesWithSourcemap,
     results: resultsWithSourcemap,
     projectRootDir: await inGit(process.cwd()),
+    version: packageJson.version,
   };
 };

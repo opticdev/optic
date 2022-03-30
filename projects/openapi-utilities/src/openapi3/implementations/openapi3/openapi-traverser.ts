@@ -1,16 +1,9 @@
 import {
   OpenApiKind,
-  OpenApiHeaderFact,
   OpenApiRequestParameterFact,
-  OpenApiBodyFact,
-  OpenApiBodyExampleFact,
   OpenApiFieldFact,
   OpenApiOperationFact,
-  OpenApiRequestFact,
-  OpenApiResponseFact,
-  OpenApiComponentSchemaExampleFact,
   Traverse,
-  OpenApiFact,
   OperationLocation,
   ResponseHeaderLocation,
   RequestLocation,
@@ -23,11 +16,12 @@ import {
   FieldLocation,
   ComponentSchemaLocation,
   IFact,
+  FactVariant,
 } from '../../sdk/types';
 import { IPathComponent } from '../../sdk/types';
 import invariant from 'ts-invariant';
 import { jsonPointerHelpers as jsonPointer } from '@useoptic/json-pointer-helpers';
-import { OpenAPI, OpenAPIV3 } from 'openapi-types';
+import { OpenAPIV3 } from 'openapi-types';
 
 export function normalizeOpenApiPath(path: string): string {
   return path
@@ -47,9 +41,7 @@ const isNotReferenceObject = <T extends {}>(
   return !('$ref' in maybeReference);
 };
 
-export class OpenAPITraverser
-  implements Traverse<OpenAPIV3.Document, OpenApiFact>
-{
+export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   format = 'openapi3';
 
   input: OpenAPIV3.Document | undefined = undefined;
@@ -58,7 +50,7 @@ export class OpenAPITraverser
     this.input = input;
   }
 
-  *facts(): IterableIterator<IFact<OpenApiFact>> {
+  *facts(): IterableIterator<IFact> {
     if (!this.input) return;
 
     for (let [pathPattern, paths] of Object.entries(this.input.paths)) {
@@ -66,7 +58,7 @@ export class OpenAPITraverser
 
       const traverseIfPresent = function* (
         method: OpenAPIV3.HttpMethods
-      ): IterableIterator<IFact<OpenApiFact>> {
+      ): IterableIterator<IFact> {
         const pathObject = paths?.[method];
         if (pathObject) {
           yield* traverser.traverseOperations(pathObject, method, pathPattern, {
@@ -99,7 +91,7 @@ export class OpenAPITraverser
     method: string,
     pathPattern: string,
     location: OperationLocation
-  ): IterableIterator<IFact<OpenApiFact>> {
+  ): IterableIterator<IFact> {
     const jsonPath = jsonPointer.append('', 'paths', pathPattern, method);
     this.checkJsonTrail(jsonPath, operation);
     const normalizedPath = normalizeOpenApiPath(pathPattern);
@@ -172,7 +164,7 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ResponseLocation
-  ): IterableIterator<IFact<OpenApiFact>> {
+  ): IterableIterator<IFact> {
     yield* this.traverseResponseHeaders(
       response,
       jsonPath,
@@ -211,7 +203,7 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: OperationLocation
-  ): IterableIterator<IFact<OpenApiFact>> {
+  ): IterableIterator<IFact> {
     const locationForParameter = (parameter: OpenAPIV3.ParameterObject) => {
       let paramLocation:
         | PathParameterLocation
@@ -295,7 +287,11 @@ export class OpenAPITraverser
       | PathParameterLocation
       | QueryParameterLocation
       | HeaderParameterLocation
-  ): undefined | IFact<OpenApiRequestParameterFact> {
+  ):
+    | undefined
+    | FactVariant<OpenApiKind.HeaderParameter>
+    | FactVariant<OpenApiKind.PathParameter>
+    | FactVariant<OpenApiKind.QueryParameter> {
     this.checkJsonTrail(jsonPath, parameter);
     const value: OpenApiRequestParameterFact = {
       ...parameter,
@@ -339,7 +335,7 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ResponseLocation
-  ): IterableIterator<IFact<OpenApiFact>> {
+  ): IterableIterator<IFact> {
     if (response.headers) {
       for (let [name, header] of Object.entries(response.headers)) {
         if (isNotReferenceObject(header)) {
@@ -373,9 +369,9 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ResponseHeaderLocation
-  ): IFact<OpenApiHeaderFact> {
+  ): FactVariant<OpenApiKind.ResponseHeader> {
     this.checkJsonTrail(jsonPath, header);
-    const value: OpenApiHeaderFact = {
+    const value = {
       name,
       ...header,
     };
@@ -398,7 +394,7 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: BodyLocation
-  ): IterableIterator<IFact<OpenApiFact>> {
+  ): IterableIterator<IFact> {
     this.checkJsonTrail(jsonPath, body);
     const { schema, examples, example } = body;
 
@@ -476,7 +472,7 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: FieldLocation
-  ): IterableIterator<IFact<OpenApiFact>> {
+  ): IterableIterator<IFact> {
     this.checkJsonTrail(jsonPath, schema);
     yield this.onField(
       key,
@@ -495,7 +491,7 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: FieldLocation
-  ): IterableIterator<IFact<OpenApiFact>> {
+  ): IterableIterator<IFact> {
     this.checkJsonTrail(jsonPath, schema);
     if (schema.oneOf || schema.anyOf || schema.allOf) {
       const schemas = [
@@ -590,7 +586,7 @@ export class OpenAPITraverser
   *traverseComponentSchema(
     schema: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject,
     schemaName: string
-  ): IterableIterator<IFact<OpenApiFact>> {
+  ): IterableIterator<IFact> {
     const jsonPath = jsonPointer.append(
       '',
       'components',
@@ -641,9 +637,9 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: BodyLocation
-  ): IFact<OpenApiBodyFact> {
+  ): FactVariant<OpenApiKind.Body> {
     const flatSchema = this.getSchemaWithoutNestedThings(schema);
-    const value: OpenApiBodyFact = {
+    const value = {
       contentType,
       flatSchema,
     };
@@ -665,7 +661,7 @@ export class OpenAPITraverser
     conceptualPath: IPathComponent[],
     conceptualLocation: BodyExampleLocation,
     name?: string
-  ): IFact<OpenApiBodyExampleFact> {
+  ): FactVariant<OpenApiKind.BodyExample> {
     return {
       value: {
         contentType,
@@ -688,7 +684,7 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: FieldLocation
-  ): IFact<OpenApiFieldFact> {
+  ): FactVariant<OpenApiKind.Field> {
     this.checkJsonTrail(jsonPath, schema);
     const flatSchema = this.getSchemaWithoutNestedThings(schema);
 
@@ -730,7 +726,7 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: OperationLocation
-  ): IFact<OpenApiOperationFact> {
+  ): FactVariant<OpenApiKind.Operation> {
     this.checkJsonTrail(jsonPath, operation);
     const flatOperation = this.getOperationWithoutNestedThings(operation);
     const value: OpenApiOperationFact = {
@@ -753,10 +749,10 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: RequestLocation
-  ): IFact<OpenApiRequestFact> {
+  ): FactVariant<OpenApiKind.Request> {
     this.checkJsonTrail(jsonPath, request);
     const flatRequest = this.getRequestWithoutNestedThings(request);
-    const value: OpenApiRequestFact = {
+    const value = {
       ...flatRequest,
     };
     return {
@@ -782,10 +778,10 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ResponseLocation
-  ): IFact<OpenApiResponseFact> {
+  ): FactVariant<OpenApiKind.Response> {
     this.checkJsonTrail(jsonPath, response);
     const flatResponse = this.getResponseWithoutNestedThings(response);
-    const value: OpenApiResponseFact = {
+    const value = {
       ...flatResponse,
       statusCode,
     };
@@ -811,7 +807,7 @@ export class OpenAPITraverser
     jsonPath: string,
     conceptualPath: IPathComponent[],
     conceptualLocation: ComponentSchemaLocation
-  ): IFact<OpenApiComponentSchemaExampleFact> {
+  ): FactVariant<OpenApiKind.ComponentSchemaExample> {
     return {
       value: example,
       location: {

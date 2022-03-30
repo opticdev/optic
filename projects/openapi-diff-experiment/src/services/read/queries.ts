@@ -10,7 +10,7 @@ import {
   OpenApiKind,
   OpenApiOperationFact,
   OpenApiRequestParameterFact,
-  OpenApiResponseFact,
+  FactVariant,
   OpenAPITraverser,
   OpenAPIV3,
   QueryParameterLocation,
@@ -38,7 +38,7 @@ export function openApiQueries(
 
   const responses = facts.filter(
     (i) => i.location.kind === OpenApiKind.Response
-  ) as IFact<OpenApiResponseFact>[];
+  ) as FactVariant<OpenApiKind.Response>[];
 
   const paths = operations.map((i) => i.path).sort();
 
@@ -86,7 +86,7 @@ export function openApiQueries(
           i.location.conceptualLocation.inRequest &&
           i.location.conceptualLocation.path === path &&
           i.location.conceptualLocation.method === method
-      ) as IFact<OpenApiBodyFact>[];
+      ) as FactVariant<OpenApiKind.Body>[];
 
       return requestBodyFacts.map((body) => {
         const schema = jsonPointerHelpers.get(
@@ -115,15 +115,17 @@ export function openApiQueries(
       return forOperation.map((res) => {
         const statusCodeMatcher = res.value.statusCode.toString();
 
-        const contentTypes = (facts.filter(
-          (i) =>
-            i.location.kind === OpenApiKind.Body &&
-            'inResponse' in i.location.conceptualLocation &&
-            i.location.conceptualLocation.path === path &&
-            i.location.conceptualLocation.method === method &&
-            i.location.conceptualLocation.inResponse.statusCode ===
-              statusCodeMatcher
-        ) as IFact<OpenApiBodyFact>[]).map((i) => {
+        const contentTypes = (
+          facts.filter(
+            (i) =>
+              i.location.kind === OpenApiKind.Body &&
+              'inResponse' in i.location.conceptualLocation &&
+              i.location.conceptualLocation.path === path &&
+              i.location.conceptualLocation.method === method &&
+              i.location.conceptualLocation.inResponse.statusCode ===
+                statusCodeMatcher
+          ) as FactVariant<OpenApiKind.Body>[]
+        ).map((i) => {
           const schema = jsonPointerHelpers.get(
             document,
             jsonPointerHelpers.append(i.location.jsonPath, 'schema')

@@ -1,8 +1,9 @@
 import { ResultWithSourcemap } from './types';
-import { IChange, OpenApiFact } from './openapi3/sdk/types';
+import { IChange } from './openapi3/sdk/types';
 
 export type CompareFileJson = {
   results: ResultWithSourcemap[];
-  changes: IChange<OpenApiFact>[];
+  changes: IChange[];
   projectRootDir?: string | false;
+  version?: string;
 };

@@ -10,7 +10,6 @@ import {
   OperationLocation,
   IFact,
   ILocation,
-  OpenApiFact,
   OpenApiKind,
   OpenAPIV3,
 } from '@useoptic/openapi-utilities';
@@ -25,7 +24,7 @@ export class SpectralDsl implements ApiCheckDsl {
 
   constructor(
     private nextJson: OpenAPIV3.Document,
-    private nextFacts: IFact<OpenApiFact>[],
+    private nextFacts: IFact[],
     private ruleset: RulesetDefinition | Ruleset
   ) {
     this.spectralChecksResults = this.run();

@@ -22,7 +22,7 @@ export function newDocsLinkHelper(): DocsLinkHelper {
 }
 
 export async function runCheck(
-  change: IChange<OpenApiFact>,
+  change: IChange,
   docsLink: DocsLinkHelper,
   where: string,
   condition: string,

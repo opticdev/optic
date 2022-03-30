@@ -89,52 +89,88 @@ export interface OpenApiComponentSchemaExampleFact {
   value: any;
 }
 
-export interface Traverse<DocSchema, FactSchema> {
+export interface Traverse<DocSchema> {
   format: string;
   traverse(input: DocSchema): void;
-  facts(): IterableIterator<IFact<FactSchema>>;
+  facts(): IterableIterator<IFact>;
 }
 
-export interface IFact<KindSchema> {
-  location: ILocation;
-  value: KindSchema;
-}
+export type OpenApiKindToFact = {
+  [OpenApiKind.Operation]: OpenApiOperationFact;
+  [OpenApiKind.Request]: OpenApiRequestFact;
+  [OpenApiKind.QueryParameter]: OpenApiRequestParameterFact;
+  [OpenApiKind.PathParameter]: OpenApiRequestParameterFact;
+  [OpenApiKind.HeaderParameter]: OpenApiRequestParameterFact;
+  [OpenApiKind.ResponseHeader]: OpenApiHeaderFact;
+  [OpenApiKind.Response]: OpenApiResponseFact;
+  [OpenApiKind.Body]: OpenApiBodyFact;
+  [OpenApiKind.BodyExample]: OpenApiBodyExampleFact;
+  [OpenApiKind.Field]: OpenApiFieldFact;
+  [OpenApiKind.ComponentSchemaExample]: OpenApiComponentSchemaExampleFact;
+};
 
+export interface FactVariant<FactKind extends OpenApiKind> {
+  location: Extract<ILocation, { kind: FactKind }>;
+  value: OpenApiKindToFact[FactKind];
+}
 export enum ChangeType {
   Added = 'added',
   Changed = 'changed',
   Removed = 'removed',
 }
 
-type BaseChange = {
-  location: ILocation & {
+export type ChangeVariant<FactKind extends OpenApiKind> = {
+  location: Extract<ILocation, { kind: FactKind }> & {
     sourcemap?: LookupLineResultWithFilepath;
   };
-};
+} & (
+  | {
+      changeType: ChangeType.Added;
+      added: OpenApiKindToFact[FactKind];
+      changed?: undefined;
+      removed?: undefined;
+    }
+  | {
+      changeType: ChangeType.Changed;
+      added?: undefined;
+      changed: {
+        before: OpenApiKindToFact[FactKind];
+        after: OpenApiKindToFact[FactKind];
+      };
+      removed?: undefined;
+    }
+  | {
+      changeType: ChangeType.Removed;
+      added?: undefined;
+      changed?: undefined;
+      removed: {
+        before: OpenApiKindToFact[FactKind];
+      };
+    }
+);
 
-export type IChange<T> = BaseChange &
-  (
-    | {
-        changeType: ChangeType.Added;
-        added: T;
-        changed?: undefined;
-        removed?: undefined;
-      }
-    | {
-        changeType: ChangeType.Changed;
-        added?: undefined;
-        changed: {
-          before: T;
-          after: T;
-        };
-        removed?: undefined;
-      }
-    | {
-        changeType: ChangeType.Removed;
-        added?: undefined;
-        changed?: undefined;
-        removed: {
-          before: T;
-        };
-      }
-  );
+export type IFact =
+  | FactVariant<OpenApiKind.Operation>
+  | FactVariant<OpenApiKind.Request>
+  | FactVariant<OpenApiKind.QueryParameter>
+  | FactVariant<OpenApiKind.PathParameter>
+  | FactVariant<OpenApiKind.HeaderParameter>
+  | FactVariant<OpenApiKind.ResponseHeader>
+  | FactVariant<OpenApiKind.Response>
+  | FactVariant<OpenApiKind.Body>
+  | FactVariant<OpenApiKind.BodyExample>
+  | FactVariant<OpenApiKind.Field>
+  | FactVariant<OpenApiKind.ComponentSchemaExample>;
+
+export type IChange =
+  | ChangeVariant<OpenApiKind.Operation>
+  | ChangeVariant<OpenApiKind.Request>
+  | ChangeVariant<OpenApiKind.QueryParameter>
+  | ChangeVariant<OpenApiKind.PathParameter>
+  | ChangeVariant<OpenApiKind.HeaderParameter>
+  | ChangeVariant<OpenApiKind.ResponseHeader>
+  | ChangeVariant<OpenApiKind.Response>
+  | ChangeVariant<OpenApiKind.Body>
+  | ChangeVariant<OpenApiKind.BodyExample>
+  | ChangeVariant<OpenApiKind.Field>
+  | ChangeVariant<OpenApiKind.ComponentSchemaExample>;

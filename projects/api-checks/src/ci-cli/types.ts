@@ -34,8 +34,9 @@ export type UploadJson = {
 export type BulkCompareJson = {
   comparisons: {
     results: ResultWithSourcemap[];
-    changes: IChange<OpenApiFact>[];
+    changes: IChange[];
     projectRootDir?: string | false;
+    version: string;
     inputs: {
       from?: string;
       to?: string;
@@ -46,7 +47,7 @@ export type BulkCompareJson = {
 export type BulkUploadJson = {
   comparisons: {
     results: ResultWithSourcemap[];
-    changes: IChange<OpenApiFact>[];
+    changes: IChange[];
     inputs: {
       from?: string;
       to?: string;
