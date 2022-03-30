@@ -225,12 +225,12 @@ export class OpticBackendClient extends JsonHttpClient {
   public async getUploadUrls(sessionId: string): Promise<UploadUrl[]> {
     const response = await this.getJson<{
       upload_urls: UploadUrl[];
-    }>(`/api/run/${sessionId}/upload`);
+    }>(`/api/runs/${sessionId}/uploads`);
     return response.upload_urls;
   }
 
   public async startSession(session: Session): Promise<string> {
-    const { id: sessionId } = await this.postJson(`/api/run`, {
+    const { id: sessionId } = await this.postJson(`/api/runs`, {
       ...session,
     });
     return sessionId;
@@ -240,13 +240,13 @@ export class OpticBackendClient extends JsonHttpClient {
     sessionId: string,
     uploadId: string
   ): Promise<void> {
-    await this.patchJson(`/api/run/${sessionId}/upload/${uploadId}`, {
+    await this.patchJson(`/api/runs/${sessionId}/uploads/${uploadId}`, {
       status: 'Unverified',
     });
   }
 
   public async getSession(sessionId: string): Promise<GetSessionResponse> {
-    return this.getJson<GetSessionResponse>(`/api/run/${sessionId}`);
+    return this.getJson<GetSessionResponse>(`/api/runs/${sessionId}`);
   }
 }
 
