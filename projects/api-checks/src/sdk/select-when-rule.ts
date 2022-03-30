@@ -61,28 +61,28 @@ export function createSelectJsonPathHelper(
                 kind: 'custom-json-path',
               } as any;
 
-              const fakeChange: IChange<any> | null =
+              const fakeChange: IChange | null =
                 nextResults.length > 0 && currentResults.length === 0
-                  ? {
+                  ? ({
                       added: nextResults,
                       changeType: ChangeType.Added,
                       location,
-                    }
+                    } as IChange)
                   : currentResults.length > 0 && nextResults.length === 0
-                  ? {
+                  ? ({
                       changeType: ChangeType.Removed,
                       location,
                       removed: { before: currentResults },
-                    }
+                    } as IChange)
                   : !equals(currentResults, nextResults)
-                  ? {
+                  ? ({
                       changeType: ChangeType.Changed,
                       location,
                       changed: {
                         before: currentResults,
                         after: nextResults,
                       },
-                    }
+                    } as IChange)
                   : null;
 
               if (shouldRun && fakeChange) {

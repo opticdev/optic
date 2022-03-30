@@ -8,25 +8,33 @@ import {
   EntityRule,
   Result,
   StructuralContext,
+  FactVariant,
+  ChangeVariant,
+  OpenApiKindToFact,
 } from '@useoptic/openapi-utilities';
 import equals from 'lodash.isequal';
 import { IPathComponent } from '@useoptic/openapi-utilities/build/openapi3/sdk/types';
 import { runCheck, newDocsLinkHelper } from '../utils';
 
 export function genericEntityRuleImpl<
-  NarrowedOpenApiFact, // TODO require Type to be a type of `OpenApiFact`
+  FactKind extends OpenApiKind,
   ApiContext,
   DslContext,
   OpenApiEntityType
 >(
   openApiKind: OpenApiKind,
-  changelog: IChange<OpenApiFact>[],
-  nextFacts: IFact<OpenApiFact>[],
-  describeWhere: (fact: NarrowedOpenApiFact) => string,
+  changelog: IChange[],
+  nextFacts: IFact[],
+  describeWhere: (fact: OpenApiKindToFact[FactKind]) => string,
   getContext: (location: ILocation) => ApiContext & DslContext,
   pushCheck: (...check: Promise<Result>[]) => void,
   getSpecItem: (pointer: string) => OpenApiEntityType
-): EntityRule<NarrowedOpenApiFact, ApiContext, DslContext, OpenApiEntityType> {
+): EntityRule<
+  OpenApiKindToFact[FactKind],
+  ApiContext,
+  DslContext,
+  OpenApiEntityType
+> {
   const wasParentAdded = (location: IPathComponent[]) => {
     return changelog.some((i) => {
       if (i.added) {
@@ -108,24 +116,29 @@ export function genericEntityRuleImpl<
     (i) => i.location.kind === openApiKind
   );
 
-  const added = changesForKind.filter((i) =>
-    Boolean(i.added)
-  ) as IChange<NarrowedOpenApiFact>[];
-  const removed = changesForKind.filter((i) =>
-    Boolean(i.removed)
-  ) as IChange<NarrowedOpenApiFact>[];
-  const changes = changesForKind.filter((i) =>
-    Boolean(i.changed)
-  ) as IChange<NarrowedOpenApiFact>[];
+  const added = changesForKind.filter((i) => Boolean(i.added)) as Extract<
+    IChange,
+    ChangeVariant<FactKind>
+  >[];
+  const removed = changesForKind.filter((i) => Boolean(i.removed)) as Extract<
+    IChange,
+    ChangeVariant<FactKind>
+  >[];
+  const changes = changesForKind.filter((i) => Boolean(i.changed)) as Extract<
+    IChange,
+    ChangeVariant<FactKind>
+  >[];
 
-  const requirements: IFact<NarrowedOpenApiFact>[] = nextFacts.filter(
-    (i) => i.location.kind === openApiKind
-  ) as IFact<NarrowedOpenApiFact>[];
+  const requirements: Extract<IFact, FactVariant<FactKind>>[] =
+    nextFacts.filter((i) => i.location.kind === openApiKind) as Extract<
+      IFact,
+      FactVariant<FactKind>
+    >[];
 
   const addedHandler: (
     must: boolean
   ) => EntityRule<
-    NarrowedOpenApiFact,
+    OpenApiKindToFact[FactKind],
     ApiContext,
     DslContext,
     OpenApiEntityType
@@ -171,7 +184,7 @@ export function genericEntityRuleImpl<
   const removedHandler: (
     must: boolean
   ) => EntityRule<
-    NarrowedOpenApiFact,
+    OpenApiKindToFact[FactKind],
     ApiContext,
     DslContext,
     OpenApiEntityType
@@ -207,7 +220,7 @@ export function genericEntityRuleImpl<
     must: boolean,
     onlyAttributes: string[]
   ) => EntityRule<
-    NarrowedOpenApiFact,
+    OpenApiKindToFact[FactKind],
     ApiContext,
     DslContext,
     OpenApiEntityType
@@ -267,7 +280,7 @@ export function genericEntityRuleImpl<
     must: boolean,
     onlyAttributes: string[]
   ) => EntityRule<
-    NarrowedOpenApiFact,
+    OpenApiKindToFact[FactKind],
     ApiContext,
     DslContext,
     OpenApiEntityType
@@ -360,7 +373,7 @@ export function genericEntityRuleImpl<
   const requirementsHandler: (
     must: boolean
   ) => EntityRule<
-    NarrowedOpenApiFact,
+    OpenApiKindToFact[FactKind],
     ApiContext,
     DslContext,
     OpenApiEntityType

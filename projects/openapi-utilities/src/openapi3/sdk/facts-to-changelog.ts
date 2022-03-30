@@ -1,17 +1,14 @@
-import { IFact, IChange, OpenApiFact, ChangeType } from './types';
+import { IFact, IChange, ChangeType } from './types';
 
 import equals from 'fast-deep-equal';
 
 const PATH_DELIMITER = '-=-';
-type FactLookup = Map<string, IFact<OpenApiFact>>;
+type FactLookup = Map<string, IFact>;
 
 const getConceptualPathIdentifier = (conceptualPath: string[]): string =>
   conceptualPath.join(PATH_DELIMITER);
 
-export function factsToChangelog(
-  past: IFact<OpenApiFact>[],
-  current: IFact<OpenApiFact>[]
-): IChange<OpenApiFact>[] {
+export function factsToChangelog(past: IFact[], current: IFact[]): IChange[] {
   const pastFactsLookup: FactLookup = new Map();
   const currentFactsLookup: FactLookup = new Map();
   for (const fact of past) {
@@ -49,21 +46,27 @@ export function factsToChangelog(
       : false;
   });
 
-  const addedChanges: IChange<OpenApiFact>[] = added.map((added) => ({
-    location: added.location,
-    added: added.value,
-    changeType: ChangeType.Added,
-  }));
+  const addedChanges = added.map(
+    (added) =>
+      ({
+        location: added.location,
+        added: added.value,
+        changeType: ChangeType.Added,
+      } as IChange)
+  );
 
-  const removedChanges: IChange<OpenApiFact>[] = removed.map((removed) => ({
-    location: removed.location,
-    removed: {
-      before: removed.value,
-    },
-    changeType: ChangeType.Removed,
-  }));
+  const removedChanges = removed.map(
+    (removed) =>
+      ({
+        location: removed.location,
+        removed: {
+          before: removed.value,
+        },
+        changeType: ChangeType.Removed,
+      } as IChange)
+  );
 
-  const changedChanges: IChange<OpenApiFact>[] = updated.map((past) => {
+  const changedChanges = updated.map((past) => {
     const after = currentFactsLookup.get(
       getConceptualPathIdentifier(past.location.conceptualPath)
     )!;
@@ -75,7 +78,7 @@ export function factsToChangelog(
         after: after.value,
       },
       changeType: ChangeType.Changed,
-    };
+    } as IChange;
   });
 
   return [...addedChanges, ...removedChanges, ...changedChanges];

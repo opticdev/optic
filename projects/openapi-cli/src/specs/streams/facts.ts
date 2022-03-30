@@ -2,23 +2,22 @@ import {
   OpenAPIV3,
   OpenAPITraverser,
   IFact,
-  OpenApiFact,
-  OpenApiBodyExampleFact,
   OpenApiKind,
-  OpenApiBodyFact,
-  OpenApiComponentSchemaExampleFact,
+  FactVariant,
+  isFactVariant,
 } from '@useoptic/openapi-utilities';
 
-export interface SpecFacts extends AsyncIterable<IFact<OpenApiFact>> {}
+export interface SpecFacts extends AsyncIterable<IFact> {}
 export interface BodyExampleFacts
-  extends AsyncIterable<IFact<OpenApiBodyExampleFact>> {}
-export interface BodyFacts extends AsyncIterable<IFact<OpenApiBodyFact>> {}
+  extends AsyncIterable<FactVariant<OpenApiKind.BodyExample>> {}
+export interface BodyFacts
+  extends AsyncIterable<FactVariant<OpenApiKind.Body>> {}
 export interface ComponentSchemaExampleFacts
-  extends AsyncIterable<IFact<OpenApiComponentSchemaExampleFact>> {}
+  extends AsyncIterable<FactVariant<OpenApiKind.ComponentSchemaExample>> {}
 
-export type BodyExampleFact = IFact<OpenApiBodyExampleFact>;
+export type BodyExampleFact = FactVariant<OpenApiKind.BodyExample>;
 export type ComponentSchemaExampleFact =
-  IFact<OpenApiComponentSchemaExampleFact>;
+  FactVariant<OpenApiKind.ComponentSchemaExample>;
 
 export class SpecFacts {
   static async *fromOpenAPISpec(spec: OpenAPIV3.Document): SpecFacts {
@@ -27,30 +26,28 @@ export class SpecFacts {
     yield* traverser.facts();
   }
 
-  static async *bodyExamples(
-    facts: AsyncIterable<IFact<OpenApiFact>>
-  ): BodyExampleFacts {
+  static async *bodyExamples(facts: AsyncIterable<IFact>): BodyExampleFacts {
     for await (let fact of facts) {
-      if (fact.location.kind === OpenApiKind.BodyExample) {
-        yield fact as IFact<OpenApiBodyExampleFact>;
+      if (isFactVariant(fact, OpenApiKind.BodyExample)) {
+        yield fact;
       }
     }
   }
 
   static async *componentSchemaExamples(
-    facts: AsyncIterable<IFact<OpenApiFact>>
+    facts: AsyncIterable<IFact>
   ): ComponentSchemaExampleFacts {
     for await (let fact of facts) {
-      if (fact.location.kind === OpenApiKind.ComponentSchemaExample) {
-        yield fact as IFact<OpenApiComponentSchemaExampleFact>;
+      if (isFactVariant(fact, OpenApiKind.ComponentSchemaExample)) {
+        yield fact;
       }
     }
   }
 
-  static async *bodyFacts(facts: AsyncIterable<IFact<OpenApiFact>>): BodyFacts {
+  static async *bodyFacts(facts: AsyncIterable<IFact>): BodyFacts {
     for await (let fact of facts) {
-      if (fact.location.kind === OpenApiKind.Body) {
-        yield fact as IFact<OpenApiBodyFact>;
+      if (isFactVariant(fact, OpenApiKind.Body)) {
+        yield fact;
       }
     }
   }

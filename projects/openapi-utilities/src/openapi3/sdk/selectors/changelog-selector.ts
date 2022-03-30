@@ -1,16 +1,9 @@
-import {
-  IChange,
-  IPathComponent,
-  OpenApiFact,
-  OpenApiKind,
-  OpenApiOperationFact,
-  OpenApiRequestParameterFact,
-} from '../types';
+import { IChange, IPathComponent, ChangeVariant, OpenApiKind } from '../types';
 import equals from 'lodash.isequal';
 import { OpenAPIV3 } from 'openapi-types';
 
 export class ChangelogSelector {
-  constructor(private changelog: IChange<OpenApiFact>[]) {}
+  constructor(private changelog: IChange[]) {}
 
   changes() {
     return this.changelog;
@@ -22,7 +15,7 @@ export class ChangelogSelector {
     );
   }
 
-  findParent(child: IChange<OpenApiFact>) {
+  findParent(child: IChange) {
     return this.changelog.find((change) =>
       parentOfChild(
         change.location.conceptualPath,
@@ -31,7 +24,7 @@ export class ChangelogSelector {
     );
   }
 
-  findChildren(parent: IChange<OpenApiFact>) {
+  findChildren(parent: IChange) {
     return this.changelog.filter((change) =>
       parentOfChild(
         parent.location.conceptualPath,
@@ -40,11 +33,9 @@ export class ChangelogSelector {
     );
   }
 
-  filter<G = OpenApiFact>(predicate: (change: IChange<G>) => boolean) {
+  filter(predicate: (change: IChange) => boolean) {
     return new ChangelogSelector(
-      this.changelog.filter(
-        predicate as (change: IChange<OpenApiFact>) => boolean
-      )
+      this.changelog.filter(predicate as (change: IChange) => boolean)
     );
   }
 
@@ -94,24 +85,18 @@ export class ChangelogSelector {
     );
   }
 
-  find<G = OpenApiFact>(
-    predicate: (change: IChange<G>) => boolean
-  ): IChange<G> | undefined {
-    return this.changelog.find(
-      predicate as (change: IChange<OpenApiFact>) => boolean
-    ) as IChange<G> | undefined;
+  find(predicate: (change: IChange) => boolean): IChange | undefined {
+    return this.changelog.find(predicate as (change: IChange) => boolean) as
+      | IChange
+      | undefined;
   }
 
-  some<G = OpenApiFact>(predicate: (change: IChange<G>) => boolean): boolean {
-    return this.changelog.some(
-      predicate as (change: IChange<OpenApiFact>) => boolean
-    );
+  some(predicate: (change: IChange) => boolean): boolean {
+    return this.changelog.some(predicate as (change: IChange) => boolean);
   }
 
-  every<G = OpenApiFact>(predicate: (change: IChange<G>) => boolean): boolean {
-    return this.changelog.every(
-      predicate as (change: IChange<OpenApiFact>) => boolean
-    );
+  every(predicate: (change: IChange) => boolean): boolean {
+    return this.changelog.every(predicate as (change: IChange) => boolean);
   }
 
   onlyAdded() {
@@ -155,21 +140,22 @@ export class ChangelogSelector {
   hasOperationChanged(
     httpMethod: OpenAPIV3.HttpMethods,
     pathPattern: string
-  ): IChange<OpenApiOperationFact> | false {
-    const changedOperation = this.filterKind(OpenApiKind.Operation).find(
-      (operation: IChange<OpenApiOperationFact>) =>
-        'path' in operation.location.conceptualLocation &&
-        operation.location.conceptualLocation.path === pathPattern &&
-        operation.location.conceptualLocation.method === httpMethod
-    );
+  ): ChangeVariant<OpenApiKind.Operation> | false {
+    const changedOperation =
+      (this.filterKind(OpenApiKind.Operation).find(
+        (change) =>
+          'path' in change.location.conceptualLocation &&
+          change.location.conceptualLocation.path === pathPattern &&
+          change.location.conceptualLocation.method === httpMethod
+      ) as ChangeVariant<OpenApiKind.Operation>) || undefined;
     return changedOperation || false;
   }
 
   hasQueryParameterChanged(
     name: string
-  ): IChange<OpenApiRequestParameterFact> | false {
-    const changeQueryParam = this.filterToQueryParameters().find(
-      (param: IChange<OpenApiRequestParameterFact>) => {
+  ): ChangeVariant<OpenApiKind.QueryParameter> | false {
+    const changeQueryParam =
+      (this.filterToQueryParameters().find((param) => {
         if ('inRequest' in param.location.conceptualLocation) {
           if ('query' in param.location.conceptualLocation.inRequest) {
             return param.location.conceptualLocation.inRequest.query === name;
@@ -177,16 +163,15 @@ export class ChangelogSelector {
         }
 
         return false;
-      }
-    );
+      }) as ChangeVariant<OpenApiKind.QueryParameter>) || undefined;
     return changeQueryParam || false;
   }
 
   hasHeaderParameterChanged(
     name: string
-  ): IChange<OpenApiRequestParameterFact> | false {
-    const changeQueryParam = this.filterToHeaderParameters().find(
-      (param: IChange<OpenApiRequestParameterFact>) => {
+  ): ChangeVariant<OpenApiKind.HeaderParameter> | false {
+    const changeQueryParam =
+      (this.filterToHeaderParameters().find((param) => {
         if ('inRequest' in param.location.conceptualLocation) {
           if ('header' in param.location.conceptualLocation.inRequest) {
             return param.location.conceptualLocation.inRequest.header === name;
@@ -194,13 +179,12 @@ export class ChangelogSelector {
         }
 
         return false;
-      }
-    );
+      }) as ChangeVariant<OpenApiKind.HeaderParameter>) || undefined;
     return changeQueryParam || false;
   }
 }
 
-export function queryChangelog(changelog: IChange<OpenApiFact>[]) {
+export function queryChangelog(changelog: IChange[]) {
   return new ChangelogSelector(changelog);
 }
 

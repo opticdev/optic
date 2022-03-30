@@ -53,6 +53,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/cli@npm:^7.17.0":
+  version: 7.17.6
+  resolution: "@babel/cli@npm:7.17.6"
+  dependencies:
+    "@jridgewell/trace-mapping": ^0.3.4
+    "@nicolo-ribaudo/chokidar-2": 2.1.8-no-fsevents.3
+    chokidar: ^3.4.0
+    commander: ^4.0.1
+    convert-source-map: ^1.1.0
+    fs-readdir-recursive: ^1.1.0
+    glob: ^7.0.0
+    make-dir: ^2.1.0
+    slash: ^2.0.0
+    source-map: ^0.5.0
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  dependenciesMeta:
+    "@nicolo-ribaudo/chokidar-2":
+      optional: true
+    chokidar:
+      optional: true
+  bin:
+    babel: ./bin/babel.js
+    babel-external-helpers: ./bin/babel-external-helpers.js
+  checksum: 362c9baf14e3984bad2388647941e0ce3bf1894a5f25cd8595ca0b9bdcd8b94eb06d15eef6590e2215cfc5a191e186ae65c0c6214ed4a3eec226bd0eacc37c44
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.16.7":
   version: 7.16.7
   resolution: "@babel/code-frame@npm:7.16.7"
@@ -2202,6 +2230,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jridgewell/trace-mapping@npm:^0.3.4":
+  version: 0.3.4
+  resolution: "@jridgewell/trace-mapping@npm:0.3.4"
+  dependencies:
+    "@jridgewell/resolve-uri": ^3.0.3
+    "@jridgewell/sourcemap-codec": ^1.4.10
+  checksum: ab8bce84bbbc8c34f3ba8325ed926f8f2d3098983c10442a80c55764c4eb6e47d5b92d8ff20a0dd868c3e76a3535651fd8a0138182c290dbfc8396195685c37b
+  languageName: node
+  linkType: hard
+
 "@jsdevtools/ono@npm:^7.1.3":
   version: 7.1.3
   resolution: "@jsdevtools/ono@npm:7.1.3"
@@ -3412,6 +3450,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@useoptic/openapi-cli@workspace:projects/openapi-cli"
   dependencies:
+    "@babel/cli": ^7.17.0
     "@babel/core": ^7.17.0
     "@babel/plugin-transform-runtime": ^7.16.0
     "@babel/preset-env": ^7.16.0
@@ -3428,6 +3467,7 @@ __metadata:
     analytics-node: ^6.0.0
     axax: ^0.2.2
     babel-jest: ^27.5.1
+    babel-plugin-inline-dotenv: ^1.7.0
     commander: ^9.0.0
     fast-deep-equal: ^3.1.3
     is-url: ^1.2.4
@@ -4019,6 +4059,20 @@ __metadata:
   dependencies:
     object.assign: ^4.1.0
   checksum: c9d24415bcc608d0db7d4c8540d8002ac2f94e2573d2eadced137a29d9eab7e25d2cbb4bc6b9db65cf6ee7430f7dd011d19c911a9a778f0533b4a05ce8292c9b
+  languageName: node
+  linkType: hard
+
+"babel-plugin-inline-dotenv@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "babel-plugin-inline-dotenv@npm:1.7.0"
+  dependencies:
+    dotenv: ^16.0.0
+  peerDependencies:
+    dotenv-expand: ">= 5.0.0"
+  peerDependenciesMeta:
+    dotenv-expand:
+      optional: true
+  checksum: 1203b100b84d247a0db5d1f2565f452e1afa3f747e5ad872ddbf3533b49ec2173ba2c99d22c05fa902914da8de331fbc714132c2eda7b0a2a26fa909dbb10a67
   languageName: node
   linkType: hard
 
@@ -5063,6 +5117,13 @@ __metadata:
   version: 11.0.0
   resolution: "dotenv@npm:11.0.0"
   checksum: 48df9e85ea1d41b3096afc1990b9b1bd966deb6c9e056cd43f14e755f3ef1e5d477c3b05afc7ca651e31320c26a9b7dc375bc3313777352c51e6a2f539ea1ffc
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.0.0":
+  version: 16.0.0
+  resolution: "dotenv@npm:16.0.0"
+  checksum: 664cebb51f0a9a1d1b930f51f0271e72e26d62feaecc9dc03df39453dd494b4e724809ca480fb3ec3213382b1ed3f791aaeb83569a137f9329ce58efd4853dbf
   languageName: node
   linkType: hard
 

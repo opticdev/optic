@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   defaultEmptySpec,
   IChange,
-  OpenApiFact,
   validateOpenApiV3Document,
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
@@ -103,6 +102,13 @@ export const registerBulkCompare = (
     );
 };
 
+type ComparisonData = {
+  changes: IChange[];
+  results: ResultWithSourcemap[];
+  projectRootDir: string | false;
+  version: string;
+};
+
 type Comparison = {
   id: string;
   fromFileName?: string;
@@ -114,11 +120,7 @@ type Comparison = {
   | {
       loading: false;
       error: false;
-      data: {
-        changes: IChange<OpenApiFact>[];
-        results: ResultWithSourcemap[];
-        projectRootDir: string | false;
-      };
+      data: ComparisonData;
     }
 );
 
@@ -139,14 +141,7 @@ const compareSpecs = async ({
 }: {
   checkService: ApiCheckService<any>;
   comparisons: Map<string, Comparison>;
-  onComparisonComplete: (
-    id: string,
-    data: {
-      changes: IChange<OpenApiFact>[];
-      results: ResultWithSourcemap[];
-      projectRootDir: string | false;
-    }
-  ) => void;
+  onComparisonComplete: (id: string, data: ComparisonData) => void;
   onComparisonError: (id: string, error: any) => void;
 }) => {
   const PARALLEL_REQUESTS = 4;
@@ -164,11 +159,7 @@ const compareSpecs = async ({
       id,
       new Promise<{
         id: string;
-        data: {
-          changes: IChange<OpenApiFact>[];
-          results: ResultWithSourcemap[];
-          projectRootDir: string | false;
-        };
+        data: ComparisonData;
       }>(async (resolve, reject) => {
         try {
           const [from, to] = await Promise.all([
@@ -179,7 +170,7 @@ const compareSpecs = async ({
           validateOpenApiV3Document(from.jsonLike);
           validateOpenApiV3Document(to.jsonLike);
 
-          const { results, changes, projectRootDir } =
+          const { results, changes, projectRootDir, version } =
             await generateSpecResults(
               checkService,
               from,
@@ -192,6 +183,7 @@ const compareSpecs = async ({
               results,
               changes,
               projectRootDir,
+              version,
             },
           });
         } catch (e) {
@@ -296,7 +288,8 @@ const runBulkCompare = async ({
   await compareSpecs({
     checkService,
     comparisons: initialComparisons,
-    onComparisonComplete: (id, { results, changes, projectRootDir }) => {
+    onComparisonComplete: (id, comparison) => {
+      const { results, changes } = comparison;
       if (results.some((result) => !result.passed)) {
         hasChecksFailing = true;
         numberOfComparisonsWithErrors += 1;
@@ -312,11 +305,7 @@ const runBulkCompare = async ({
         ...initialComparisons.get(id)!,
         loading: false,
         error: false,
-        data: {
-          results,
-          changes,
-          projectRootDir,
-        },
+        data: comparison,
       });
     },
     onComparisonError: (id, error) => {
@@ -393,6 +382,7 @@ const runBulkCompare = async ({
         results: comparison.data.results,
         changes: comparison.data.changes,
         projectRootDir: comparison.data.projectRootDir,
+        version: comparison.data.version,
         inputs: {
           from: comparison.fromFileName,
           to: comparison.toFileName,
@@ -412,7 +402,6 @@ const runBulkCompare = async ({
     );
 
     // We've validated the shape in validateUploadRequirements
-    const ciProvider = cliConfig.ciProvider!;
     const opticToken = cliConfig.opticToken!;
     const { token, provider } = cliConfig.gitProvider!;
     const opticClient = createOpticClient(opticToken);

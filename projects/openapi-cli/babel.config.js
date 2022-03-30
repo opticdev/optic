@@ -4,7 +4,19 @@ module.exports = {
     '@babel/preset-react',
     '@babel/preset-typescript',
   ],
-  plugins: ['@babel/plugin-transform-runtime'],
+  plugins: [
+    '@babel/plugin-transform-runtime',
+    [
+      'inline-dotenv',
+      {
+        path:
+          process.env.NODE_ENV === 'production'
+            ? '../../../../etc/openapi-cli/.env.build.production'
+            : './.env.build',
+        systemVar: 'disable', // only replace values from dotenv file, not process.env
+      },
+    ],
+  ],
   env: {
     production: {
       ignore: ['**/*.test.ts', '**/*.test.tsx'],
