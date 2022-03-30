@@ -2,6 +2,7 @@ import {
   ResultWithSourcemap,
   IChange,
   OpenApiFact,
+  OpenApiKind,
   OperationLocation,
 } from '@useoptic/openapi-utilities';
 
@@ -52,7 +53,11 @@ export const logComparison = (
       ? chalk.bold.bgGreen.white(' PASS ')
       : chalk.bold.bgRed.white(' FAIL ');
 
-    if (method && path) {
+    if (!method || !path) {
+      console.log(
+        `${getIndent(1)}${resultNode} ${chalk.bold('Specification')}`
+      );
+    } else {
       console.log(
         `${getIndent(1)}${resultNode} ${chalk.bold(
           method.toUpperCase()

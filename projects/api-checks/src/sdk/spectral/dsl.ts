@@ -56,7 +56,7 @@ export class SpectralDsl implements ApiCheckDsl {
         ),
         conceptualPath: [],
         kind: 'API' as any,
-      };
+      } as any;
 
       return {
         condition: spectralResult.code.toString(),

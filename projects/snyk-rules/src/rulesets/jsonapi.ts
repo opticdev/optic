@@ -117,7 +117,7 @@ export const rules = {
 
         // Empty patch 204 content
         if (
-          ['delete', 'patch'].includes(context.method) &&
+          ['delete', 'patch'].includes(context.method || '') &&
           response.statusCode === '204'
         ) {
           expect(
@@ -134,7 +134,7 @@ export const rules = {
 
         // JSON:API data property
         if (
-          ['get', 'post'].includes(context.method) &&
+          ['get', 'post'].includes(context.method || '') &&
           ['200', '201'].includes(response.statusCode)
         ) {
           expect(
@@ -146,7 +146,7 @@ export const rules = {
 
         // JSON:API jsonapi property
         if (
-          !['patch', 'delete'].includes(context.method) &&
+          !['patch', 'delete'].includes(context.method || '') &&
           ['200', '201'].includes(response.statusCode)
         ) {
           expect(
@@ -181,7 +181,7 @@ export const rules = {
 
         // Top-level self links
         if (
-          (['get', 'patch'].includes(context.method) &&
+          (['get', 'patch'].includes(context.method || '') &&
             response.statusCode === '200') ||
           (context.method === 'post' && response.statusCode === '201')
         ) {
@@ -207,8 +207,9 @@ export const rules = {
           'ending_before',
           'limit',
         ];
-        const parameterNames = ((specItem.parameters ||
-          []) as OpenAPIV3.ParameterObject[]).map((parameter) => {
+        const parameterNames = (
+          (specItem.parameters || []) as OpenAPIV3.ParameterObject[]
+        ).map((parameter) => {
           return parameter.name;
         });
         if (!operation.pathPattern.match(/\{[a-z]*?_?id\}$/)) {
@@ -272,7 +273,7 @@ export const rules = {
 
         // Response data
         if (
-          ['get', 'post'].includes(context.method) &&
+          ['get', 'post'].includes(context.method || '') &&
           ['200', '201'].includes(response.statusCode)
         ) {
           const responseSchema =
