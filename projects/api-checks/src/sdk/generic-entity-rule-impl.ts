@@ -22,7 +22,7 @@ export function genericEntityRuleImpl<
   DslContext,
   OpenApiEntityType
 >(
-  openApiKind: OpenApiKind,
+  openApiKind: FactKind,
   changelog: IChange[],
   nextFacts: IFact[],
   describeWhere: (fact: OpenApiKindToFact[FactKind]) => string,

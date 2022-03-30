@@ -16,6 +16,7 @@ import {
   FieldLocation,
   ComponentSchemaLocation,
   IFact,
+  OpenApiSpecificationFact,
   FactVariant,
 } from '../../sdk/types';
 import { IPathComponent } from '../../sdk/types';
@@ -52,6 +53,8 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
 
   *facts(): IterableIterator<IFact> {
     if (!this.input) return;
+
+    yield* this.onSpecification(this.input);
 
     for (let [pathPattern, paths] of Object.entries(this.input.paths)) {
       const traverser = this;
@@ -618,16 +621,36 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
 
   ///////////////////////////////////////////////////////////////////////////////////
 
-  getSchemaWithoutNestedThings(
+  *onSpecification(
+    specification: OpenAPIV3.Document
+  ): IterableIterator<FactVariant<OpenApiKind.Specification>> {
+    yield {
+      location: {
+        jsonPath: '',
+        conceptualPath: [],
+        conceptualLocation: {},
+        kind: OpenApiKind.Specification,
+      },
+      value: this.getSpecificationFact(specification),
+    };
+  }
+
+  getSpecificationFact(
+    specification: OpenAPIV3.Document
+  ): OpenApiSpecificationFact {
+    const { paths, components, ...specificationFact } = specification;
+    return specificationFact;
+  }
+
+  getSchemaFact(
     schema: OpenAPIV3.SchemaObject
   ): Omit<OpenAPIV3.SchemaObject, 'item' | 'required' | 'properties'> {
     if (schema.type === 'array') {
-      const { items, required, properties, ...schemaWithoutNestedThings } =
-        schema;
-      return schemaWithoutNestedThings;
+      const { items, required, properties, ...schemaFact } = schema;
+      return schemaFact;
     } else {
-      const { required, properties, ...schemaWithoutNestedThings } = schema;
-      return schemaWithoutNestedThings;
+      const { required, properties, ...schemaFact } = schema;
+      return schemaFact;
     }
   }
 
@@ -638,7 +661,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     conceptualPath: IPathComponent[],
     location: BodyLocation
   ): FactVariant<OpenApiKind.Body> {
-    const flatSchema = this.getSchemaWithoutNestedThings(schema);
+    const flatSchema = this.getSchemaFact(schema);
     const value = {
       contentType,
       flatSchema,
@@ -686,7 +709,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     location: FieldLocation
   ): FactVariant<OpenApiKind.Field> {
     this.checkJsonTrail(jsonPath, schema);
-    const flatSchema = this.getSchemaWithoutNestedThings(schema);
+    const flatSchema = this.getSchemaFact(schema);
 
     const value: OpenApiFieldFact = {
       key,
@@ -704,19 +727,14 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     };
   }
 
-  getOperationWithoutNestedThings(
+  getOperationFact(
     operation: OpenAPIV3.OperationObject
   ): Omit<
     OpenAPIV3.OperationObject,
     'parameters' | 'responses' | 'requestBody'
   > {
-    const {
-      parameters,
-      requestBody,
-      responses,
-      ...operationWithoutNestedThings
-    } = operation;
-    return operationWithoutNestedThings;
+    const { parameters, requestBody, responses, ...operationFact } = operation;
+    return operationFact;
   }
 
   onOperation(
@@ -728,7 +746,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     location: OperationLocation
   ): FactVariant<OpenApiKind.Operation> {
     this.checkJsonTrail(jsonPath, operation);
-    const flatOperation = this.getOperationWithoutNestedThings(operation);
+    const flatOperation = this.getOperationFact(operation);
     const value: OpenApiOperationFact = {
       ...flatOperation,
       method,
@@ -751,7 +769,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     location: RequestLocation
   ): FactVariant<OpenApiKind.Request> {
     this.checkJsonTrail(jsonPath, request);
-    const flatRequest = this.getRequestWithoutNestedThings(request);
+    const flatRequest = this.getRequestFact(request);
     const value = {
       ...flatRequest,
     };
@@ -765,11 +783,11 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
       value,
     };
   }
-  getRequestWithoutNestedThings(
+  getRequestFact(
     request: OpenAPIV3.RequestBodyObject
   ): Omit<OpenAPIV3.RequestBodyObject, 'content'> {
-    const { content, ...requestWithoutNestedThings } = request;
-    return requestWithoutNestedThings;
+    const { content, ...requestFact } = request;
+    return requestFact;
   }
 
   onResponse(
@@ -780,7 +798,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     location: ResponseLocation
   ): FactVariant<OpenApiKind.Response> {
     this.checkJsonTrail(jsonPath, response);
-    const flatResponse = this.getResponseWithoutNestedThings(response);
+    const flatResponse = this.getResponseFact(response);
     const value = {
       ...flatResponse,
       statusCode,
@@ -795,11 +813,11 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
       value,
     };
   }
-  getResponseWithoutNestedThings(
+  getResponseFact(
     response: OpenAPIV3.ResponseObject
   ): Omit<OpenAPIV3.ResponseObject, 'headers' | 'content'> {
-    const { headers, content, ...responseWithoutNestedThings } = response;
-    return responseWithoutNestedThings;
+    const { headers, content, ...responseFact } = response;
+    return responseFact;
   }
 
   onComponentSchemaExample(

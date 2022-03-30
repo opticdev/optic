@@ -9,16 +9,13 @@ import {
   OpenAPIV3,
   queryChangelog,
   ApiCheckDsl,
-  DocsLinkHelper,
   EntityRule,
   Result,
   ChangeVariant,
-  ShouldOrMust,
 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { genericEntityRuleImpl } from './generic-entity-rule-impl';
 import { createSelectJsonPathHelper } from './select-when-rule';
-import { runCheck, newDocsLinkHelper } from '../utils';
 
 export interface ApiCheckDslContext {}
 
@@ -98,40 +95,22 @@ export class ApiChangeDsl implements ApiCheckDsl {
   }
 
   get specification() {
-    const change: IChange = {
-      location: {
-        conceptualLocation: { path: 'Specification', method: '' },
-        jsonPath: '/',
-        conceptualPath: [],
-        kind: 'API',
-      },
-    } as any;
+    const dsl = this;
 
-    const value: ShouldOrMust<
-      (
-        document: OpenAPIV3.Document,
-        context: ApiCheckDslContext,
-        docs: DocsLinkHelper
-      ) => Promise<void> | void
-    > = {
-      must: (statement, handler) => {
-        const docsHelper = newDocsLinkHelper();
-        this.checks.push(
-          runCheck(
-            change,
-            docsHelper,
-            'this specification: ',
-            statement,
-            true,
-            () => handler(this.nextJsonLike, this.providedContext, docsHelper)
-          )
-        );
-      },
-    };
-
-    return {
-      requirement: value,
-    };
+    return genericEntityRuleImpl<
+      OpenApiKind.Specification,
+      ConceptualLocation,
+      ApiCheckDslContext,
+      OpenAPIV3.Document
+    >(
+      OpenApiKind.Specification,
+      dsl.changelog,
+      dsl.nextFacts,
+      () => `Specification`,
+      (location) => dsl.getContext(location),
+      (...items) => dsl.checks.push(...items),
+      (pointer: string) => jsonPointerHelpers.get(dsl.nextJsonLike, pointer)
+    );
   }
 
   get request() {

@@ -1,8 +1,6 @@
 import { OpenApiKind } from './openApiKinds';
 
-type ConceptualLocationBase = {};
-
-export type OperationLocation = ConceptualLocationBase & {
+export type OperationLocation = {
   path: string;
   method: string;
 };
@@ -92,7 +90,7 @@ export type FieldLocation = OperationLocation &
       }
   );
 
-export type ComponentSchemaLocation = ConceptualLocationBase & {
+export type ComponentSchemaLocation = {
   inComponentSchema: {
     schemaName: string;
   };
@@ -104,6 +102,10 @@ export type ILocation = {
   jsonPath: string;
   conceptualPath: IPathComponent[];
 } & (
+  | {
+      conceptualLocation: {};
+      kind: OpenApiKind.Specification;
+    }
   | {
       conceptualLocation: OperationLocation;
       kind: OpenApiKind.Operation;
