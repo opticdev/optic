@@ -10,12 +10,13 @@
   "bin": "build/cli.js",
   "scripts": {
     "dev:test": "jest --colors",
-    "build": "yarn tsc --build --verbose",
+    "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\"",
     "ws:build": "yarn build",
     "ws:clean": "rm -rf build",
     "ws:test": "yarn dev:test"
   },
   "devDependencies": {
+    "@babel/cli": "^7.17.0",
     "@babel/core": "^7.17.0",
     "@babel/plugin-transform-runtime": "^7.16.0",
     "@babel/preset-env": "^7.16.0",
@@ -27,6 +28,7 @@
     "@types/json-stable-stringify": "^1.0.33",
     "@types/node": "^17.0.15",
     "babel-jest": "^27.5.1",
+    "babel-plugin-inline-dotenv": "^1.7.0",
     "jest": "^27.5.1",
     "prettier": "^2.4.1",
     "ts-node": "^10.4.0",

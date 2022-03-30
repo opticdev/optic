@@ -36,9 +36,9 @@ export function makeCli(config: CliConfig) {
 async function readConfig(): Promise<CliConfig> {
   return {
     analytics: {
-      segment: process.env.SEGMENT_KEY
+      segment: process.env.OPTIC_OPENCLI_SEGMENT_KEY
         ? {
-            key: process.env.SEGMENT_KEY,
+            key: process.env.OPTIC_OPENCLI_SEGMENT_KEY,
           }
         : null,
     },
