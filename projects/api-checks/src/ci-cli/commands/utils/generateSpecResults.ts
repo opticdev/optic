@@ -12,6 +12,8 @@ import {
 } from '@useoptic/openapi-utilities';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 
+const packageJson = require('../../../../package.json');
+
 export const generateSpecResults = async <T extends {}>(
   checkService: ApiCheckService<T>,
   from: ParseOpenAPIResult,
@@ -21,6 +23,7 @@ export const generateSpecResults = async <T extends {}>(
   changes: IChange<OpenApiFact>[];
   results: ResultWithSourcemap[];
   projectRootDir: string | false;
+  version: string;
 }> => {
   const fromJsonLike = from.jsonLike!;
   const toJsonLike = to.jsonLike!;
@@ -76,5 +79,6 @@ export const generateSpecResults = async <T extends {}>(
     changes: changesWithSourcemap,
     results: resultsWithSourcemap,
     projectRootDir: await inGit(process.cwd()),
+    version: packageJson.version,
   };
 };

@@ -5,4 +5,5 @@ export type CompareFileJson = {
   results: ResultWithSourcemap[];
   changes: IChange<OpenApiFact>[];
   projectRootDir?: string | false;
+  version?: string;
 };
