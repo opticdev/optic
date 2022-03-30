@@ -29,7 +29,11 @@ import {
   ComponentSchemaLocation,
   FieldLocation,
   ChangeType,
+  FactVariant,
+  ChangeVariant,
+  OpenApiKindToFact,
 } from './openapi3/sdk/types';
+import { isFactVariant, isChangeVariant } from './openapi3/sdk/isType';
 import {
   ChangelogSelector,
   queryChangelog,
@@ -86,6 +90,11 @@ export {
   ChangelogSelector,
   LookupLineResult,
   LookupLineResultWithFilepath,
+  FactVariant,
+  ChangeVariant,
+  OpenApiKindToFact,
+  isFactVariant,
+  isChangeVariant,
 };
 
 export * from './types';

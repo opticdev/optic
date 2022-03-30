@@ -1,14 +1,10 @@
 import { createHash } from 'crypto';
 import stableStringify from 'json-stable-stringify';
-import {
-  IChange,
-  OpenApiFact,
-  ResultWithSourcemap,
-} from '@useoptic/openapi-utilities';
+import { IChange, ResultWithSourcemap } from '@useoptic/openapi-utilities';
 
 type Comparison = {
   results: ResultWithSourcemap[];
-  changes: IChange<OpenApiFact>[];
+  changes: IChange[];
 };
 
 export const generateHashForComparison = (

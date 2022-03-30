@@ -14,9 +14,9 @@ import { RulesetDefinition } from '@stoplight/spectral-core';
 
 export type DslConstructorInput<Context> = {
   context: Context;
-  nextFacts: IFact<OpenApiFact>[];
-  currentFacts: IFact<OpenApiFact>[];
-  changelog: IChange<OpenApiFact>[];
+  nextFacts: IFact[];
+  currentFacts: IFact[];
+  changelog: IChange[];
   nextJsonLike: OpenAPIV3.Document;
   currentJsonLike: OpenAPIV3.Document;
 };

@@ -20,7 +20,7 @@ export const generateSpecResults = async <T extends {}>(
   to: ParseOpenAPIResult,
   context: any
 ): Promise<{
-  changes: IChange<OpenApiFact>[];
+  changes: IChange[];
   results: ResultWithSourcemap[];
   projectRootDir: string | false;
   version: string;
@@ -39,8 +39,8 @@ export const generateSpecResults = async <T extends {}>(
   );
 
   const changes = factsToChangelog(currentFacts, nextFacts);
-  const changesWithSourcemap: IChange<OpenApiFact>[] = await Promise.all(
-    changes.map(async (change) => {
+  const changesWithSourcemap: IChange[] = await Promise.all(
+    changes.map(async (change: IChange): Promise<IChange> => {
       return {
         ...change,
         location: {
@@ -50,7 +50,7 @@ export const generateSpecResults = async <T extends {}>(
               ? await findFileAndLinesFromBefore(change.location.jsonPath)
               : await findFileAndLinesFromAfter(change.location.jsonPath),
         },
-      };
+      } as IChange;
     })
   );
 

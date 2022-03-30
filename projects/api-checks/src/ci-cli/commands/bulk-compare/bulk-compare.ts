@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   defaultEmptySpec,
   IChange,
-  OpenApiFact,
   validateOpenApiV3Document,
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
@@ -104,7 +103,7 @@ export const registerBulkCompare = (
 };
 
 type ComparisonData = {
-  changes: IChange<OpenApiFact>[];
+  changes: IChange[];
   results: ResultWithSourcemap[];
   projectRootDir: string | false;
   version: string;

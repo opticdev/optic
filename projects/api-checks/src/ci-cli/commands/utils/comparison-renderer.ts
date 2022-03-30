@@ -14,7 +14,7 @@ const getIndent = (depth: number): string => ' '.repeat(depth * 2);
 export const logComparison = (
   comparison: {
     results: ResultWithSourcemap[];
-    changes: IChange<OpenApiFact>[];
+    changes: IChange[];
   },
   options: {
     output: 'pretty' | 'plain';
