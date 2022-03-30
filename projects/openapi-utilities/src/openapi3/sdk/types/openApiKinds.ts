@@ -1,4 +1,5 @@
 export enum OpenApiKind {
+  Specification = 'specification',
   Operation = 'operation',
   Request = 'request',
   QueryParameter = 'query-parameter',

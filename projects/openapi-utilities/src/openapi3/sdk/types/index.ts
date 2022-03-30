@@ -45,7 +45,11 @@ export type OpenApiFact =
   | OpenApiBodyFact
   | OpenApiBodyExampleFact
   | OpenApiFieldFact
+  | OpenApiSpecificationFact
   | OpenApiComponentSchemaExampleFact;
+
+export interface OpenApiSpecificationFact
+  extends Omit<OpenAPIV3.Document, 'paths' | 'components'> {}
 
 export interface OpenApiOperationFact
   extends Omit<
@@ -96,6 +100,7 @@ export interface Traverse<DocSchema> {
 }
 
 export type OpenApiKindToFact = {
+  [OpenApiKind.Specification]: OpenApiSpecificationFact;
   [OpenApiKind.Operation]: OpenApiOperationFact;
   [OpenApiKind.Request]: OpenApiRequestFact;
   [OpenApiKind.QueryParameter]: OpenApiRequestParameterFact;
@@ -150,6 +155,7 @@ export type ChangeVariant<FactKind extends OpenApiKind> = {
 );
 
 export type IFact =
+  | FactVariant<OpenApiKind.Specification>
   | FactVariant<OpenApiKind.Operation>
   | FactVariant<OpenApiKind.Request>
   | FactVariant<OpenApiKind.QueryParameter>
@@ -163,6 +169,7 @@ export type IFact =
   | FactVariant<OpenApiKind.ComponentSchemaExample>;
 
 export type IChange =
+  | ChangeVariant<OpenApiKind.Specification>
   | ChangeVariant<OpenApiKind.Operation>
   | ChangeVariant<OpenApiKind.Request>
   | ChangeVariant<OpenApiKind.QueryParameter>
