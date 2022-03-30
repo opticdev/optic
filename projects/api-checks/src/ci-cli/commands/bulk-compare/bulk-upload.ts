@@ -34,6 +34,7 @@ export const bulkUploadCiRun = async (
       changes: comparison.changes,
       results: comparison.results,
       projectRootDir: comparison.projectRootDir,
+      version: comparison.version,
     };
     const fileMap: Record<UploadSlot, Buffer> = {
       [UploadSlot.CheckResults]: Buffer.from(JSON.stringify(checkResults)),

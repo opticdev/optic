@@ -188,7 +188,9 @@ const runCompare = async ({
     normalizedCiContext = await loadCiContext(cliConfig.ciProvider, ciContext);
   }
 
-  if (normalizedCiContext && uploadResults && changes.length > 0) {
+  if (uploadResults && changes.length === 0) {
+    console.log('No changes were detected, not uploading anything');
+  } else if (uploadResults && normalizedCiContext) {
     console.log('Uploading files to Optic...');
 
     // We've validated the shape in validateUploadRequirements
@@ -245,8 +247,6 @@ const runCompare = async ({
         SentryClient?.captureException(e);
       }
     }
-  } else if (uploadResults) {
-    console.log('No changes were detected, not uploading anything');
   }
 
   const hasError = results.some((result) => !result.passed);
