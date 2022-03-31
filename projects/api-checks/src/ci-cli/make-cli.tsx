@@ -16,9 +16,7 @@ export function makeCiCliWithNamedRules(
 ) {
   initSentry(packageJson.version);
   initSegment();
-  trackEvent('optic-ci-run', forProject, {
-    version: packageJson.version,
-  });
+  trackEvent('optic-ci-run', forProject, { });
 
   cli.version(
     `for ${forProject}, running optic api-check ${packageJson.version}`

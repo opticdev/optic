@@ -1,4 +1,5 @@
 import Analytics from 'analytics-node';
+const packageJson = require('../../package.json');
 
 let analytics: Analytics | null = null;
 
@@ -12,6 +13,9 @@ export const trackEvent = (
   userId: string,
   properties?: any
 ) => {
+  if (typeof properties === 'object') {
+    properties.version = packageJson.version
+  }
   if (analytics) {
     analytics.track({
       event: eventName,

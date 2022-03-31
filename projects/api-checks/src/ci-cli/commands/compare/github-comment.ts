@@ -53,6 +53,8 @@ export const sendGithubMessage = async ({
       pull_number,
       number_of_reviewers:
         requestedReviewers.users.length + requestedReviewers.teams.length,
+      org_repo_pr: 
+        `${owner}/${repo}/${pull_number}`,
     });
   } catch (e) {
     console.error(e);

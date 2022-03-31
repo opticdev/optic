@@ -331,6 +331,8 @@ const runBulkCompare = async ({
       numberOfComparisonsWithErrors,
       numberOfComparisonsWithAChange,
       ...(normalizedCiContext || {}),
+      org_repo_pr: 
+        `${normalizedCiContext?.organization}/${normalizedCiContext?.repo}/${normalizedCiContext?.pull_request}`,
     }
   );
 
