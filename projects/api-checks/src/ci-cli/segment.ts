@@ -11,16 +11,17 @@ export const initSegment = () => {
 export const trackEvent = (
   eventName: string,
   userId: string,
-  properties?: any
+  properties?: Object
 ) => {
-  if (typeof properties === 'object') {
-    properties.version = packageJson.version
+  const mergedProperties: Object = {
+    version: packageJson.version,
+    ...(properties ? properties : {})
   }
   if (analytics) {
     analytics.track({
       event: eventName,
       userId,
-      properties,
+      properties: mergedProperties
     });
   }
 };
