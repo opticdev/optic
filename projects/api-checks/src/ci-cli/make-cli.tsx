@@ -3,7 +3,7 @@ import { ApiCheckService } from '../sdk/api-check-service';
 import { registerCompare } from './commands/compare';
 import { registerBulkCompare } from './commands/bulk-compare';
 import { initSentry } from './sentry';
-import { initSegment } from './segment';
+import { initSegment, trackEvent } from './segment';
 import { CliConfig } from './types';
 import { OpticCINamedRulesets } from '../sdk/ruleset';
 import { registerCreateContext } from './commands/create-context/create-context';
@@ -16,6 +16,9 @@ export function makeCiCliWithNamedRules(
 ) {
   initSentry(packageJson.version);
   initSegment();
+  trackEvent('optic-ci-run', forProject, {
+    version: packageJson.version,
+  });
 
   cli.version(
     `for ${forProject}, running optic api-check ${packageJson.version}`

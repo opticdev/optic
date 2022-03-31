@@ -6,7 +6,7 @@ import { updateCommand } from './commands/update';
 import { registerDebugTemplateCommand } from './commands/debug-template';
 import { debugWorkflowsCommand } from './commands/debug-workflows';
 import { CliConfig } from './config';
-import { initSegment } from './segment';
+import { initSegment, trackEvent } from './segment';
 
 const packageJson = require('../package.json');
 
@@ -27,6 +27,9 @@ export function makeCli(config: CliConfig) {
   if (config.analytics.segment) {
     initSegment(config.analytics.segment);
   }
+  trackEvent('openapi-cli-run', 'openapi-cli', {
+    version: packageJson.version,
+  });
 
   const cli = makeCli(config);
 
