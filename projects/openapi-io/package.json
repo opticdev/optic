@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/openapi-io",
-  "version": "0.24.6",
+  "version": "0.24.7",
   "packageManager": "yarn@3.0.2",
   "main": "build/index.js",
   "types": "build/index.d.ts",
