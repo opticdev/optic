@@ -6,7 +6,11 @@ import { initSentry } from './sentry';
 import { initSegment, trackEvent } from './segment';
 import { CliConfig } from './types';
 import { OpticCINamedRulesets } from '../sdk/ruleset';
-import { registerCreateContext } from './commands/create-context/create-context';
+import {
+  registerCreateContext,
+  registerCreateGithubContext,
+} from './commands/create-context/create-github-context';
+import { registerCreateManualContext } from './commands/create-context/create-manual-context';
 const packageJson = require('../../package.json');
 
 export function makeCiCliWithNamedRules(
@@ -23,6 +27,8 @@ export function makeCiCliWithNamedRules(
   );
 
   registerCreateContext(cli);
+  registerCreateGithubContext(cli);
+  registerCreateManualContext(cli);
   registerCompare(cli, forProject, rulesetServices, options);
   registerBulkCompare(cli, forProject, rulesetServices, options);
 
