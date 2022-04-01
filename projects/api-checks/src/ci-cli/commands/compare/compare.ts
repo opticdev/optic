@@ -263,7 +263,8 @@ const runCompare = async ({
         0
       ),
       numberOfChanges: changes.length,
-      ...(normalizedCiContext || {}),
+      ...(normalizedCiContext ?  
+        { ...normalizedCiContext, org_repo_pr: `${normalizedCiContext.organization}/${normalizedCiContext.repo}/${normalizedCiContext.pull_request}` } : {})
     }
   );
 

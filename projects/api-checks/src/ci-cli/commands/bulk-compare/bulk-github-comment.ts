@@ -45,6 +45,7 @@ export const sendBulkGithubMessage = async ({
       owner,
       repo,
       pull_number,
+      org_repo_pr: `${owner}/${repo}/${pull_number}`,
       number_of_reviewers:
         requestedReviewers.users.length + requestedReviewers.teams.length,
     });
