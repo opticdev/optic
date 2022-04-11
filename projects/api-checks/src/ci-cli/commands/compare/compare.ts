@@ -195,10 +195,11 @@ const runCompare = async ({
 
     // We've validated the shape in validateUploadRequirements
     const opticToken = cliConfig.opticToken!;
-    const { token, provider } = cliConfig.gitProvider!;
+    const { token } = cliConfig.gitProvider!;
     const opticClient = createOpticClient(opticToken);
 
     try {
+      const { git_provider } = await opticClient.getMyOrganization();
       const uploadOutput = await uploadCiRun(
         compareOutput,
         parsedFrom.jsonLike,
@@ -218,7 +219,7 @@ const runCompare = async ({
         );
 
         // In the future we can add different git providers
-        if (provider === 'github') {
+        if (git_provider === 'github') {
           console.log('Posting comment to github...');
           try {
             await sendGithubMessage({
@@ -263,8 +264,12 @@ const runCompare = async ({
         0
       ),
       numberOfChanges: changes.length,
-      ...(normalizedCiContext ?  
-        { ...normalizedCiContext, org_repo_pr: `${normalizedCiContext.organization}/${normalizedCiContext.repo}/${normalizedCiContext.pull_request}` } : {})
+      ...(normalizedCiContext
+        ? {
+            ...normalizedCiContext,
+            org_repo_pr: `${normalizedCiContext.organization}/${normalizedCiContext.repo}/${normalizedCiContext.pull_request}`,
+          }
+        : {}),
     }
   );
 

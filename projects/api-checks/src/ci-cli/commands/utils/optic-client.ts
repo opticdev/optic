@@ -199,6 +199,14 @@ type GetSessionResponse = {
   files: SessionFile[];
 };
 
+type GetMyOrganizationResponse = {
+  id: string;
+  name: string;
+  git_api_url: string;
+  git_web_url: string;
+  git_provider: string;
+};
+
 export class OpticBackendClient extends JsonHttpClient {
   constructor(
     private baseUrl: string,
@@ -247,6 +255,10 @@ export class OpticBackendClient extends JsonHttpClient {
 
   public async getSession(sessionId: string): Promise<GetSessionResponse> {
     return this.getJson<GetSessionResponse>(`/api/runs/${sessionId}`);
+  }
+
+  public async getMyOrganization(): Promise<GetMyOrganizationResponse> {
+    return this.getJson<GetMyOrganizationResponse>(`/api/my-organization`);
   }
 }
 
