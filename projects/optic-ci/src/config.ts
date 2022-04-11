@@ -9,7 +9,6 @@ import { CheckConfiguration } from './checker';
  *  token: process.env.OPTIC_TOKEN,
  *  gitProvider: {
  *    token: process.env.GITHUB_TOKEN,
- *    provider: 'github'
  *  },
  * checks: [
  *
@@ -20,7 +19,6 @@ type OpticConfiguration = {
   token?: string;
   gitProvider?: {
     token: string;
-    provider: 'github';
   };
   checks?: CheckConfiguration[];
 };
