@@ -12,7 +12,7 @@ import {
 import { specFromInputToResults } from './load-spec';
 import { UserError } from '../../errors';
 import { CliConfig, NormalizedCiContext } from '../../types';
-import { SUPPORTED_CI_PROVIDERS } from '../constants';
+import { SUPPORTED_GITHUB_CI_PROVIDERS } from '../constants';
 
 export const validateUploadRequirements = (
   uploadResults: boolean,
@@ -32,9 +32,9 @@ export const validateUploadRequirements = (
       );
     }
 
-    if (!SUPPORTED_CI_PROVIDERS.includes(cliConfig.ciProvider)) {
+    if (!SUPPORTED_GITHUB_CI_PROVIDERS.includes(cliConfig.ciProvider)) {
       throw new UserError(
-        `Unsupported ciProvider supplied - currently supported git providers are: ${SUPPORTED_CI_PROVIDERS.join(
+        `Unsupported gitProvider supplied - currently supported git providers are: ${SUPPORTED_GITHUB_CI_PROVIDERS.join(
           ', '
         )}`
       );

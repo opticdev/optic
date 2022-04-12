@@ -9,6 +9,7 @@ export type CliConfig = {
   gitProvider?: {
     token: string;
   };
+  // TODO deprecate ciProvider
   ciProvider?: 'github' | 'circleci';
 };
 

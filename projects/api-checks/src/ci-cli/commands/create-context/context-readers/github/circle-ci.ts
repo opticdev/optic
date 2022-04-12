@@ -1,5 +1,5 @@
-import { UserError } from '../../../errors';
-import { NormalizedCiContext } from '../../../types';
+import { UserError } from '../../../../errors';
+import { NormalizedCiContext } from '../../../../types';
 
 export const getContextFromCircleCiEnvironment = (): NormalizedCiContext => {
   const organization = process.env.CIRCLE_PROJECT_USERNAME;
@@ -53,7 +53,7 @@ export const getContextFromCircleCiEnvironment = (): NormalizedCiContext => {
     );
   }
 
-  if (user === '') {
+  if (user === null) {
     console.log(
       `Could not identify commit author. set 'OPTIC_COMMIT_USER' to provide this information.`
     );

@@ -1,4 +1,4 @@
-import { UserError } from '../../../../errors';
+import { UserError } from '../../../../../errors';
 import { getContextFromCircleCiEnvironment } from '../circle-ci';
 
 const originalEnv = {

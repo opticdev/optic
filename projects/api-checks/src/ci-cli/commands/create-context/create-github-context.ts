@@ -2,10 +2,13 @@ import fs from 'fs';
 import { Command, Option } from 'commander';
 import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry } from '../../sentry';
-import { CliConfig, NormalizedCiContext } from '../../types';
-import { DEFAULT_CONTEXT_PATH, SUPPORTED_CI_PROVIDERS } from '../constants';
-import { getContextFromCircleCiEnvironment } from './context-readers/circle-ci';
-import { getContextFromGithubEnvironment } from './context-readers/github-actions';
+import { NormalizedCiContext } from '../../types';
+import {
+  DEFAULT_CONTEXT_PATH,
+  SUPPORTED_GITHUB_CI_PROVIDERS,
+} from '../constants';
+import { getContextFromCircleCiEnvironment } from './context-readers/github/circle-ci';
+import { getContextFromGithubEnvironment } from './context-readers/github/github-actions';
 import path from 'path';
 
 export const registerCreateContext = (cli: Command) => {
@@ -15,17 +18,17 @@ export const registerCreateContext = (cli: Command) => {
     .addOption(
       new Option(
         '--provider <provider>',
-        `the ci provider that this command should try extract the relevant values from. supported providers are: ${SUPPORTED_CI_PROVIDERS.join(
+        `the ci provider that this command should try extract the relevant values from. supported providers are: ${SUPPORTED_GITHUB_CI_PROVIDERS.join(
           ', '
         )}`
-      ).choices([...SUPPORTED_CI_PROVIDERS])
+      ).choices([...SUPPORTED_GITHUB_CI_PROVIDERS])
     )
     .action(
       wrapActionHandlerWithSentry(
         async ({
           provider,
         }: {
-          provider: typeof SUPPORTED_CI_PROVIDERS[number];
+          provider: typeof SUPPORTED_GITHUB_CI_PROVIDERS[number];
         }) => {
           console.warn(
             '[DEPRECATION WARNING] - This command will be deprecated in the future, please use `create-github-context` instead'
@@ -33,9 +36,9 @@ export const registerCreateContext = (cli: Command) => {
           if (!provider) {
             throw new UserError('Cannot create context without a provider');
           }
-          if (!SUPPORTED_CI_PROVIDERS.includes(provider)) {
+          if (!SUPPORTED_GITHUB_CI_PROVIDERS.includes(provider)) {
             throw new UserError(
-              `Unexpected provider '${provider}', supported ci providers are: ${SUPPORTED_CI_PROVIDERS.join(
+              `Unexpected provider '${provider}', supported ci providers are: ${SUPPORTED_GITHUB_CI_PROVIDERS.join(
                 ', '
               )}`
             );
@@ -56,24 +59,24 @@ export const registerCreateGithubContext = (cli: Command) => {
     .addOption(
       new Option(
         '--provider <provider>',
-        `the ci provider that this command should try extract the relevant values from. supported providers are: ${SUPPORTED_CI_PROVIDERS.join(
+        `the ci provider that this command should try extract the relevant values from. supported providers are: ${SUPPORTED_GITHUB_CI_PROVIDERS.join(
           ', '
         )}`
-      ).choices([...SUPPORTED_CI_PROVIDERS])
+      ).choices([...SUPPORTED_GITHUB_CI_PROVIDERS])
     )
     .action(
       wrapActionHandlerWithSentry(
         async ({
           provider,
         }: {
-          provider: typeof SUPPORTED_CI_PROVIDERS[number];
+          provider: typeof SUPPORTED_GITHUB_CI_PROVIDERS[number];
         }) => {
           if (!provider) {
             throw new UserError('Cannot create context without a provider');
           }
-          if (!SUPPORTED_CI_PROVIDERS.includes(provider)) {
+          if (!SUPPORTED_GITHUB_CI_PROVIDERS.includes(provider)) {
             throw new UserError(
-              `Unexpected provider '${provider}', supported ci providers are: ${SUPPORTED_CI_PROVIDERS.join(
+              `Unexpected provider '${provider}', supported ci providers are: ${SUPPORTED_GITHUB_CI_PROVIDERS.join(
                 ', '
               )}`
             );
@@ -84,7 +87,9 @@ export const registerCreateGithubContext = (cli: Command) => {
     );
 };
 
-const createContext = (provider: NonNullable<CliConfig['ciProvider']>) => {
+const createContext = (
+  provider: typeof SUPPORTED_GITHUB_CI_PROVIDERS[number]
+) => {
   let normalizedContext: NormalizedCiContext;
   if (provider === 'github') {
     normalizedContext = getContextFromGithubEnvironment();
