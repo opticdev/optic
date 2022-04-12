@@ -22,9 +22,10 @@ import { OpticCINamedRulesets } from '../../../sdk/ruleset';
 import { UserError } from '../../errors';
 import { trackEvent, flushEvents } from '../../segment';
 import { CliConfig, BulkCompareJson, NormalizedCiContext } from '../../types';
-import { createOpticClient } from '../utils/optic-client';
+import { createOpticClient } from '../../clients/optic-client';
 import { bulkUploadCiRun } from './bulk-upload';
 import { sendBulkGithubMessage } from './bulk-github-comment';
+import { sendBulkGitlabMessage } from './bulk-gitlab-comment';
 import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
 
@@ -412,7 +413,8 @@ const runBulkCompare = async ({
     const opticClient = createOpticClient(opticToken);
 
     try {
-      const { git_provider } = await opticClient.getMyOrganization();
+      const { git_provider, git_api_url } =
+        await opticClient.getMyOrganization();
       const bulkUploadOutput = await bulkUploadCiRun(
         opticClient,
         bulkCompareOutput,
@@ -431,7 +433,6 @@ const runBulkCompare = async ({
           );
         }
 
-        // In the future we can add different git providers
         if (git_provider === 'github') {
           console.log('Posting comment to github...');
 
@@ -439,10 +440,29 @@ const runBulkCompare = async ({
             await sendBulkGithubMessage({
               githubToken: token,
               uploadOutput: bulkUploadOutput,
+              baseUrl: git_api_url,
             });
           } catch (e) {
             console.log(
               'Failed to post comment to github - exiting with comparison rules run exit code.'
+            );
+            console.error(e);
+            if ((e as Error).name !== 'UserError') {
+              SentryClient?.captureException(e);
+            }
+          }
+        } else if (git_provider === 'gitlab') {
+          console.log('Posting comment to gitlab...');
+
+          try {
+            await sendBulkGitlabMessage({
+              gitlabToken: token,
+              uploadOutput: bulkUploadOutput,
+              baseUrl: git_api_url,
+            });
+          } catch (e) {
+            console.log(
+              'Failed to post comment to gitlab - exiting with comparison rules run exit code.'
             );
             console.error(e);
             if ((e as Error).name !== 'UserError') {

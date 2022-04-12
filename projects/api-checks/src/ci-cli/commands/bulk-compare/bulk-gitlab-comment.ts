@@ -1,17 +1,16 @@
-import { Octokit } from '@octokit/rest';
 import { trackEvent } from '../../segment';
-import { findOpticCommentId } from '../utils/shared-comment';
-import { generateHashForComparison } from '../utils/comparison-hash';
+import { GitlabClient } from '../../clients/gitlab-client';
 import { BulkUploadJson } from '../../types';
+import { generateHashForComparison } from '../utils/comparison-hash';
 import { UserError } from '../../errors';
 import { createBulkCommentBody } from './comment';
 
-export const sendBulkGithubMessage = async ({
-  githubToken,
+export const sendBulkGitlabMessage = async ({
+  gitlabToken,
   uploadOutput,
   baseUrl,
 }: {
-  githubToken: string;
+  gitlabToken: string;
   uploadOutput: BulkUploadJson;
   baseUrl: string;
 }) => {
@@ -28,32 +27,26 @@ export const sendBulkGithubMessage = async ({
     console.log('No comparisons were found, exiting.');
     return;
   }
-
-  const octokit = new Octokit({
-    auth: githubToken,
-    baseUrl,
-  });
-
+  const gitlabClient = new GitlabClient(baseUrl, gitlabToken);
+  const projectPath = encodeURIComponent(`${owner}/${repo}`);
   try {
-    const { data: requestedReviewers } =
-      await octokit.pulls.listRequestedReviewers({
-        owner,
-        repo,
-        pull_number,
-      });
+    const reviewers = await gitlabClient.listMergeRequestReviewers(
+      projectPath,
+      pull_number
+    );
 
-    trackEvent('optic_ci.bulk_github_comment', `${owner}-optic-ci`, {
+    trackEvent('optic_ci.bulk_gitlab_comment', `${owner}-optic-ci`, {
       owner,
       repo,
       pull_number,
       org_repo_pr: `${owner}/${repo}/${pull_number}`,
-      number_of_reviewers:
-        requestedReviewers.users.length + requestedReviewers.teams.length,
+      number_of_reviewers: reviewers.length,
     });
   } catch (e) {
     console.error(e);
     throw new UserError();
   }
+
   const comparisonsHash = generateHashForComparison(
     comparisons.map((comparison) => ({
       results: comparison.results,
@@ -69,15 +62,19 @@ export const sendBulkGithubMessage = async ({
 
   // Given we don't have the comment id; we need to fetch all comments on a PR.
   // We don't want to spam the comments, we want to update to the latest
-  let maybeOpticCommentId: number | null;
+  let maybeOpticCommentId: number | null = null;
   try {
-    maybeOpticCommentId = await findOpticCommentId(
-      octokit,
-      comparisonsHash,
-      owner,
-      repo,
+    const mergeRequestComments = await gitlabClient.listMergeRequestComment(
+      projectPath,
       pull_number
     );
+    const matchingComment = mergeRequestComments.find((comment) => {
+      return new RegExp(comparisonsHash).test(comment.body);
+    });
+
+    if (matchingComment) {
+      maybeOpticCommentId = matchingComment.id;
+    }
   } catch (e) {
     console.error(e);
     throw new UserError();
@@ -85,19 +82,18 @@ export const sendBulkGithubMessage = async ({
 
   try {
     if (maybeOpticCommentId) {
-      await octokit.rest.issues.updateComment({
-        owner,
-        repo,
-        comment_id: maybeOpticCommentId,
-        body,
-      });
+      await gitlabClient.updateMergeRequestComment(
+        projectPath,
+        pull_number,
+        maybeOpticCommentId,
+        body
+      );
     } else {
-      await octokit.rest.issues.createComment({
-        owner,
-        repo,
-        issue_number: pull_number,
-        body,
-      });
+      await gitlabClient.createMergeRequestComment(
+        projectPath,
+        pull_number,
+        body
+      );
     }
   } catch (e) {
     console.error(e);

@@ -2,7 +2,7 @@ import {
   defaultEmptySpec,
   validateOpenApiV3Document,
 } from '@useoptic/openapi-utilities';
-import { OpticBackendClient, UploadSlot } from './optic-client';
+import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
 import { uploadFileToS3 } from './s3';
 import { parseSpecVersion } from './compare-input-parser';
 import {
