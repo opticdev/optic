@@ -1,6 +1,5 @@
 import {
   IChange,
-  OpenApiFact,
   ResultWithSourcemap,
   CompareFileJson,
 } from '@useoptic/openapi-utilities';
@@ -9,7 +8,6 @@ export type CliConfig = {
   opticToken?: string;
   gitProvider?: {
     token: string;
-    provider: 'github';
   };
   // TODO deprecate ciProvider
   ciProvider?: 'github' | 'circleci';

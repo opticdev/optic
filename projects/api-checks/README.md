@@ -17,7 +17,6 @@ const cli = makeCiCli('my_cli', checker, {
   opticToken: process.env.OPTIC_TOKEN,
   gitProvider: {
     token: process.env.GITHUB_TOKEN,
-    provider: 'github',
   },
   ciProvider: 'github',
 });

@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { uploadCiRun } from '../upload';
-import { OpticBackendClient, UploadSlot } from '../../utils/optic-client';
+import { OpticBackendClient, UploadSlot } from '../../../clients/optic-client';
 import { mockGhContext } from '../../utils/__tests__/mock-context';
 import { uploadFileToS3 } from '../../utils/s3';
 import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 import { NormalizedCiContext } from '../../../types';
 
-jest.mock('../../utils/optic-client');
+jest.mock('../../../clients/optic-client');
 jest.mock('../../utils/files');
 jest.mock('../../utils/s3');
 

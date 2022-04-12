@@ -1,4 +1,4 @@
-import { OpticBackendClient, UploadSlot } from '../utils/optic-client';
+import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
 import { CiRunArgs, uploadRun } from '../utils/shared-upload';
 import { NormalizedCiContext, UploadJson } from '../../types';
 import { OpenAPIV3, CompareFileJson } from '@useoptic/openapi-utilities';

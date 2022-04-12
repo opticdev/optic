@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { createOpticClient } from '../utils/optic-client';
+import { createOpticClient } from '../../clients/optic-client';
 
 import {
   defaultEmptySpec,
@@ -22,6 +22,7 @@ import { sendGithubMessage } from './github-comment';
 import { logComparison } from '../utils/comparison-renderer';
 import path from 'path';
 import { loadCiContext } from '../utils/load-context';
+import { sendGitlabMessage } from './gitlab-comment';
 
 const parseContextObject = (context?: string): any => {
   try {
@@ -195,10 +196,12 @@ const runCompare = async ({
 
     // We've validated the shape in validateUploadRequirements
     const opticToken = cliConfig.opticToken!;
-    const { token, provider } = cliConfig.gitProvider!;
+    const { token } = cliConfig.gitProvider!;
     const opticClient = createOpticClient(opticToken);
 
     try {
+      const { git_provider, git_api_url } =
+        await opticClient.getMyOrganization();
       const uploadOutput = await uploadCiRun(
         compareOutput,
         parsedFrom.jsonLike,
@@ -217,18 +220,36 @@ const runCompare = async ({
           `Results of this run can be found at: ${uploadOutput.opticWebUrl}`
         );
 
-        // In the future we can add different git providers
-        if (provider === 'github') {
+        if (git_provider === 'github') {
           console.log('Posting comment to github...');
           try {
             await sendGithubMessage({
               githubToken: token,
               compareOutput,
               uploadOutput,
+              baseUrl: git_api_url,
             });
           } catch (e) {
             console.log(
               'Failed to post comment to github - exiting with comparison rules run exit code.'
+            );
+            console.error(e);
+            if ((e as Error).name !== 'UserError') {
+              SentryClient?.captureException(e);
+            }
+          }
+        } else if (git_provider === 'gitlab') {
+          console.log('Posting comment to gitlab...');
+          try {
+            await sendGitlabMessage({
+              gitlabToken: token,
+              compareOutput,
+              uploadOutput,
+              baseUrl: git_api_url,
+            });
+          } catch (e) {
+            console.log(
+              'Failed to post comment to gitlab - exiting with comparison rules run exit code.'
             );
             console.error(e);
             if ((e as Error).name !== 'UserError') {
@@ -263,8 +284,12 @@ const runCompare = async ({
         0
       ),
       numberOfChanges: changes.length,
-      ...(normalizedCiContext ?  
-        { ...normalizedCiContext, org_repo_pr: `${normalizedCiContext.organization}/${normalizedCiContext.repo}/${normalizedCiContext.pull_request}` } : {})
+      ...(normalizedCiContext
+        ? {
+            ...normalizedCiContext,
+            org_repo_pr: `${normalizedCiContext.organization}/${normalizedCiContext.repo}/${normalizedCiContext.pull_request}`,
+          }
+        : {}),
     }
   );
 

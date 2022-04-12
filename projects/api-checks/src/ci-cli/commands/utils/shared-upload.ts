@@ -2,7 +2,7 @@ import {
   defaultEmptySpec,
   validateOpenApiV3Document,
 } from '@useoptic/openapi-utilities';
-import { OpticBackendClient, UploadSlot } from './optic-client';
+import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
 import { uploadFileToS3 } from './s3';
 import { parseSpecVersion } from './compare-input-parser';
 import {
@@ -12,10 +12,7 @@ import {
 import { specFromInputToResults } from './load-spec';
 import { UserError } from '../../errors';
 import { CliConfig, NormalizedCiContext } from '../../types';
-import {
-  SUPPORTED_GITHUB_CI_PROVIDERS,
-  SUPPORTED_GIT_PROVIDERS,
-} from '../constants';
+import { SUPPORTED_GITHUB_CI_PROVIDERS } from '../constants';
 
 export const validateUploadRequirements = (
   uploadResults: boolean,
@@ -46,14 +43,6 @@ export const validateUploadRequirements = (
     if (!cliConfig.gitProvider) {
       throw new UserError(
         'Expected an gitProvider to be set in cliOptions when used with --upload-results - check optic.config.js file'
-      );
-    }
-
-    if (!SUPPORTED_GIT_PROVIDERS.includes(cliConfig.gitProvider.provider)) {
-      throw new UserError(
-        `Unsupported gitProvider supplied - currently supported git providers are: ${SUPPORTED_GIT_PROVIDERS.join(
-          ', '
-        )}`
       );
     }
     if (!cliConfig.gitProvider.token) {
