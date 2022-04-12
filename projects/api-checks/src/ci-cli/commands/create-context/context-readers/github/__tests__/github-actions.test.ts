@@ -1,4 +1,4 @@
-import { UserError } from '../../../../errors';
+import { UserError } from '../../../../../errors';
 import { getContextFromGithubEnvironment } from '../github-actions';
 
 const originalEnv = {
