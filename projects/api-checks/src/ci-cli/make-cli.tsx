@@ -11,6 +11,7 @@ import {
   registerCreateGithubContext,
 } from './commands/create-context/create-github-context';
 import { registerCreateManualContext } from './commands/create-context/create-manual-context';
+import { registerCreateGitlabContext } from './commands/create-context/create-gitlab-context';
 const packageJson = require('../../package.json');
 
 export function makeCiCliWithNamedRules(
@@ -28,6 +29,7 @@ export function makeCiCliWithNamedRules(
 
   registerCreateContext(cli);
   registerCreateGithubContext(cli);
+  registerCreateGitlabContext(cli);
   registerCreateManualContext(cli);
   registerCompare(cli, forProject, rulesetServices, options);
   registerBulkCompare(cli, forProject, rulesetServices, options);
