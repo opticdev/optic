@@ -1,6 +1,6 @@
 import path from 'path';
 import { CompareFileJson } from '@useoptic/openapi-utilities';
-import { OpticBackendClient, UploadSlot } from '../utils/optic-client';
+import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
 import { loadAndValidateSpecFiles, uploadRun } from '../utils/shared-upload';
 import {
   BulkCompareJson,
