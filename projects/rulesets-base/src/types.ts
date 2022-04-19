@@ -7,7 +7,9 @@ type FactVariantWithRaw<T extends OpenApiKind> = FactVariant<T> & {
 
 // Value constructs
 export type RuleContext = {
-  endpoint: Operation;
+  endpoint: Operation & {
+    change: 'added' | 'changed' | 'removed' | null;
+  };
   custom: any; // user defined context
 };
 
