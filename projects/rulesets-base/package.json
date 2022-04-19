@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/rulesets-base",
   "packageManager": "yarn@3.0.2",
-  "version": "0.24.9",
+  "version": "0.24.10",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -15,6 +15,10 @@
     "ws:clean": "rm -rf build",
     "ws:test": "yarn dev:test",
     "compare": "yarn ts-node src/index.tsx compare"
+  },
+  "dependencies": {
+    "@useoptic/api-checks": "workspace:^",
+    "@useoptic/openapi-utilities": "workspace:^"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",
@@ -30,9 +34,6 @@
     "prettier": "^2.4.1",
     "ts-node": "^10.4.0",
     "typescript": "^4.4.4"
-  },
-  "dependencies": {
-    "@useoptic/api-checks": "workspace:*"
   },
   "jest": {
     "testPathIgnorePatterns": [

@@ -33,6 +33,7 @@ import {
   FactVariant,
   ChangeVariant,
   OpenApiKindToFact,
+  OpenApiRequestFact,
 } from './openapi3/sdk/types';
 import { isFactVariant, isChangeVariant } from './openapi3/sdk/isType';
 import {
@@ -97,6 +98,7 @@ export {
   OpenApiKindToFact,
   isFactVariant,
   isChangeVariant,
+  OpenApiRequestFact,
 };
 
 export * from './types';
