@@ -10,6 +10,7 @@ import {
 import invariant from 'ts-invariant';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { flushEvents, trackEvent } from '../segment';
 
 export { SpecTemplate, OpenAPIV3 };
 
@@ -39,6 +40,18 @@ export async function createSpecFile<T>(
 
   for await (let _writtenFilePath of SpecFiles.writeFiles(updatedSpecFiles)) {
   }
+
+  trackEvent(
+    'openapi_cli.workflows.spec_file_created',
+    'openapi_cli', // TODO: determine more useful userId
+    {}
+  );
+
+  try {
+    await flushEvents();
+  } catch (err) {
+    console.warn('Could not flush usage analytics (non-critical)');
+  }
 }
 
 export async function applyTemplate<T>(
@@ -65,5 +78,17 @@ export async function applyTemplate<T>(
   const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
 
   for await (let _writtenFilePath of SpecFiles.writeFiles(updatedSpecFiles)) {
+  }
+
+  trackEvent(
+    'openapi_cli.workflows.template_applied',
+    'openapi_cli', // TODO: determine more useful userId
+    {}
+  );
+
+  try {
+    await flushEvents();
+  } catch (err) {
+    console.warn('Could not flush usage analytics (non-critical)');
   }
 }
