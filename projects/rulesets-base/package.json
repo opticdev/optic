@@ -36,6 +36,9 @@
     "typescript": "^4.4.4"
   },
   "jest": {
+    "testMatch": [
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ],
     "testPathIgnorePatterns": [
       "build"
     ]
