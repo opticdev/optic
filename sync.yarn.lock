@@ -3482,6 +3482,7 @@ __metadata:
     is-url: ^1.2.4
     jest: ^27.5.1
     json-schema-traverse: ^1.0.0
+    node-machine-id: ^1.1.12
     prettier: ^2.4.1
     ts-invariant: ^0.9.4
     ts-node: ^10.4.0
@@ -8067,6 +8068,13 @@ __metadata:
   version: 0.4.0
   resolution: "node-int64@npm:0.4.0"
   checksum: d0b30b1ee6d961851c60d5eaa745d30b5c95d94bc0e74b81e5292f7c42a49e3af87f1eb9e89f59456f80645d679202537de751b7d72e9e40ceea40c5e449057e
+  languageName: node
+  linkType: hard
+
+"node-machine-id@npm:^1.1.12":
+  version: 1.1.12
+  resolution: "node-machine-id@npm:1.1.12"
+  checksum: e23088a0fb4a77a1d6484b7f09a22992fd3e0054d4f2e427692b4c7081e6cf30118ba07b6113b6c89f1ce46fd26ec5ab1d76dcaf6c10317717889124511283a5
   languageName: node
   linkType: hard
 
