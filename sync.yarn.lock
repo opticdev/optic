@@ -3439,7 +3439,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@useoptic/json-pointer-helpers@workspace:*, @useoptic/json-pointer-helpers@workspace:projects/json-pointer-helpers":
+"@useoptic/json-pointer-helpers@workspace:*, @useoptic/json-pointer-helpers@workspace:^, @useoptic/json-pointer-helpers@workspace:projects/json-pointer-helpers":
   version: 0.0.0-use.local
   resolution: "@useoptic/json-pointer-helpers@workspace:projects/json-pointer-helpers"
   dependencies:
@@ -3662,6 +3662,7 @@ __metadata:
     "@types/json-stable-stringify": ^1.0.33
     "@types/node": ^17.0.15
     "@useoptic/api-checks": "workspace:^"
+    "@useoptic/json-pointer-helpers": "workspace:^"
     "@useoptic/openapi-utilities": "workspace:^"
     babel-jest: ^27.5.1
     jest: ^27.5.1

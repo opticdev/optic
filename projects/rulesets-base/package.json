@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@useoptic/api-checks": "workspace:^",
+    "@useoptic/json-pointer-helpers": "workspace:^",
     "@useoptic/openapi-utilities": "workspace:^"
   },
   "devDependencies": {

@@ -8,7 +8,7 @@ import {
   isChangeVariant,
 } from '@useoptic/openapi-utilities';
 
-type NodeDetail<T extends OpenApiKind> = {
+export type NodeDetail<T extends OpenApiKind> = {
   before: FactVariant<T> | null;
   after: FactVariant<T> | null;
   change: ChangeVariant<T> | null;
@@ -17,38 +17,38 @@ type NodeDetail<T extends OpenApiKind> = {
 type ContentType = string;
 type StatusCode = string;
 
-type HeaderParameter = NodeDetail<OpenApiKind.HeaderParameter>;
-type PathParameter = NodeDetail<OpenApiKind.PathParameter>;
-type QueryParameter = NodeDetail<OpenApiKind.QueryParameter>;
+export type HeaderParameterNode = NodeDetail<OpenApiKind.HeaderParameter>;
+export type PathParameterNode = NodeDetail<OpenApiKind.PathParameter>;
+export type QueryParameterNode = NodeDetail<OpenApiKind.QueryParameter>;
 
-type Request = NodeDetail<OpenApiKind.Request> & {
-  bodies: Map<ContentType, Body>;
+export type RequestNode = NodeDetail<OpenApiKind.Request> & {
+  bodies: Map<ContentType, BodyNode>;
 };
 
-type Response = NodeDetail<OpenApiKind.Response> & {
+export type ResponseNode = NodeDetail<OpenApiKind.Response> & {
   statusCode: string;
   headers: Map<string, NodeDetail<OpenApiKind.ResponseHeader>>;
-  bodies: Map<ContentType, Body>;
+  bodies: Map<ContentType, BodyNode>;
 };
 
-type Body = NodeDetail<OpenApiKind.Body> & {
+export type BodyNode = NodeDetail<OpenApiKind.Body> & {
   fields: Map<string, NodeDetail<OpenApiKind.Field>>;
 };
 
-type Endpoint = NodeDetail<OpenApiKind.Operation> & {
+export type EndpointNode = NodeDetail<OpenApiKind.Operation> & {
   method: string;
   path: string;
 
-  headerParameters: Map<string, HeaderParameter>;
-  pathParameters: Map<string, PathParameter>;
-  queryParameters: Map<string, QueryParameter>;
-  request: Request;
-  responses: Map<StatusCode, Response>;
+  headerParameters: Map<string, HeaderParameterNode>;
+  pathParameters: Map<string, PathParameterNode>;
+  queryParameters: Map<string, QueryParameterNode>;
+  request: RequestNode;
+  responses: Map<StatusCode, ResponseNode>;
 };
 
-type OpenApiDocument = {
+export type OpenApiDocument = {
   specification: NodeDetail<OpenApiKind.Specification>;
-  endpoints: Map<string, Endpoint>;
+  endpoints: Map<string, EndpointNode>;
 };
 
 const getEndpointKey = ({ path, method }: { path: string; method: string }) =>
@@ -64,14 +64,14 @@ const createEmptyResponse = ({
   statusCode,
 }: {
   statusCode: string;
-}): Response => ({
+}): ResponseNode => ({
   ...createEmptyNodeDetail(),
   statusCode,
   headers: new Map(),
   bodies: new Map(),
 });
 
-const createEmptyBody = (): Body => ({
+const createEmptyBody = (): BodyNode => ({
   ...createEmptyNodeDetail(),
   fields: new Map(),
 });
@@ -82,7 +82,7 @@ const createEndpoint = ({
 }: {
   path: string;
   method: string;
-}): Endpoint => ({
+}): EndpointNode => ({
   ...createEmptyNodeDetail(),
   headerParameters: new Map(),
   pathParameters: new Map(),
@@ -123,7 +123,7 @@ const useFactToUpdate = (
         body: { contentType },
       } = fact.location.conceptualLocation.inResponse;
 
-      const responseChange: Response =
+      const responseChange =
         endpoint.responses.get(statusCode) ||
         createEmptyResponse({ statusCode });
       const responseBody =
@@ -164,7 +164,7 @@ const useFactToUpdate = (
     endpoint.headerParameters.set(headerKey, headerParameter);
   } else if (isFactVariant(fact, OpenApiKind.ResponseHeader)) {
     const { statusCode, header } = fact.location.conceptualLocation.inResponse;
-    const responseChange: Response =
+    const responseChange =
       endpoint.responses.get(statusCode) || createEmptyResponse({ statusCode });
 
     const headerParameter =
@@ -174,7 +174,7 @@ const useFactToUpdate = (
     endpoint.responses.set(statusCode, responseChange);
   } else if (isFactVariant(fact, OpenApiKind.Response)) {
     const { statusCode } = fact.location.conceptualLocation.inResponse;
-    const responseChange: Response =
+    const responseChange =
       endpoint.responses.get(statusCode) || createEmptyResponse({ statusCode });
 
     responseChange[key] = fact;
@@ -188,7 +188,7 @@ const useFactToUpdate = (
         body: { contentType },
       } = fact.location.conceptualLocation.inResponse;
 
-      const responseChange: Response =
+      const responseChange =
         endpoint.responses.get(statusCode) ||
         createEmptyResponse({ statusCode });
 
@@ -246,7 +246,7 @@ const useChangeToUpdate = (change: IChange, groupedFacts: OpenApiDocument) => {
         body: { contentType },
       } = change.location.conceptualLocation.inResponse;
 
-      const responseChange: Response =
+      const responseChange =
         endpoint.responses.get(statusCode) ||
         createEmptyResponse({ statusCode });
       const responseBody =
@@ -288,7 +288,7 @@ const useChangeToUpdate = (change: IChange, groupedFacts: OpenApiDocument) => {
   } else if (isChangeVariant(change, OpenApiKind.ResponseHeader)) {
     const { statusCode, header } =
       change.location.conceptualLocation.inResponse;
-    const responseChange: Response =
+    const responseChange =
       endpoint.responses.get(statusCode) || createEmptyResponse({ statusCode });
 
     const headerParameter =
@@ -298,7 +298,7 @@ const useChangeToUpdate = (change: IChange, groupedFacts: OpenApiDocument) => {
     endpoint.responses.set(statusCode, responseChange);
   } else if (isChangeVariant(change, OpenApiKind.Response)) {
     const { statusCode } = change.location.conceptualLocation.inResponse;
-    const responseChange: Response =
+    const responseChange =
       endpoint.responses.get(statusCode) || createEmptyResponse({ statusCode });
 
     responseChange[key] = change;
@@ -312,7 +312,7 @@ const useChangeToUpdate = (change: IChange, groupedFacts: OpenApiDocument) => {
         body: { contentType },
       } = change.location.conceptualLocation.inResponse;
 
-      const responseChange: Response =
+      const responseChange =
         endpoint.responses.get(statusCode) ||
         createEmptyResponse({ statusCode });
 
