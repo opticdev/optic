@@ -4,6 +4,7 @@
     "rootDir": "src",
     "declaration": true,
     "declarationMap": true,
+    "downlevelIteration": true,
     "sourceMap": true,
     "outDir": "build",
     "esModuleInterop": true,
