@@ -2,14 +2,19 @@ import {
   readDeferencedSpec,
   SpecFile,
   SpecFiles,
+  SpecPatch,
   SpecPatches,
   SpecFileOperations,
+  SpecFileOperation,
   SpecTemplate,
   OpenAPIV3,
+  ComponentSchemaExampleFacts,
 } from '../specs';
 import invariant from 'ts-invariant';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { flushEvents, trackEvent } from '../segment';
+import { tap } from '../lib/async-tools';
 
 export { SpecTemplate, OpenAPIV3 };
 
@@ -39,6 +44,18 @@ export async function createSpecFile<T>(
 
   for await (let _writtenFilePath of SpecFiles.writeFiles(updatedSpecFiles)) {
   }
+
+  trackEvent(
+    'openapi_cli.workflows.spec_file_created',
+    'openapi_cli', // TODO: determine more useful userId
+    {}
+  );
+
+  try {
+    await flushEvents();
+  } catch (err) {
+    console.warn('Could not flush usage analytics (non-critical)');
+  }
 }
 
 export async function applyTemplate<T>(
@@ -53,17 +70,58 @@ export async function applyTemplate<T>(
   const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
     absoluteSpecPath
   );
+
+  const stats = {
+    patchesCount: 0,
+    updatedFilesCount: 0,
+    filesWithOverwrittenYamlComments: new Set<string>(),
+  };
+  const observers = {
+    observePatchces: tap<SpecPatch>((specPatch) => {
+      stats.patchesCount++;
+    }),
+    observeFileOperations: tap<SpecFileOperation>((op) => {
+      const file = specFiles.find(({ path }) => path === op.filePath);
+      if (file && SpecFile.containsYamlComments(file))
+        stats.filesWithOverwrittenYamlComments.add(file.path);
+    }),
+    observeUpdatedFiles: tap<SpecFile>((_file) => {
+      stats.updatedFilesCount++;
+    }),
+  };
+
   const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
 
-  const specPatches = SpecPatches.generateByTemplate(spec, template, options);
-
-  const fileOperations = SpecFileOperations.fromSpecPatches(
-    specPatches,
-    sourcemap
+  const specPatches = observers.observePatchces(
+    SpecPatches.generateByTemplate(spec, template, options)
   );
 
-  const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
+  const fileOperations = observers.observeFileOperations(
+    SpecFileOperations.fromSpecPatches(specPatches, sourcemap)
+  );
+
+  const updatedSpecFiles = observers.observeUpdatedFiles(
+    SpecFiles.patch(specFiles, fileOperations)
+  );
 
   for await (let _writtenFilePath of SpecFiles.writeFiles(updatedSpecFiles)) {
+  }
+
+  trackEvent(
+    'openapi_cli.workflows.template_applied',
+    'openapi_cli', // TODO: determine more useful userId
+    {
+      templateName: template.name,
+      patchesCount: stats.patchesCount,
+      updatedFilesCount: stats.updatedFilesCount,
+      filesWithOverwrittenYamlCommentsCount:
+        stats.filesWithOverwrittenYamlComments.size,
+    }
+  );
+
+  try {
+    await flushEvents();
+  } catch (err) {
+    console.warn('Could not flush usage analytics (non-critical)');
   }
 }

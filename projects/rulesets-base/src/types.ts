@@ -1,6 +1,6 @@
 import { FactVariant, OpenApiKind } from '@useoptic/openapi-utilities';
 
-type FactVariantWithRaw<T extends OpenApiKind> = FactVariant<T> & {
+export type FactVariantWithRaw<T extends OpenApiKind> = FactVariant<T> & {
   // TODO add in typings from OAS3? Or how do we pick the correct variant based on rules
   raw: any;
 };
@@ -12,6 +12,8 @@ export type RuleContext = {
   };
   custom: any; // user defined context
 };
+
+export type Field = FactVariantWithRaw<OpenApiKind.Field>;
 
 export type Specification = FactVariantWithRaw<OpenApiKind.Specification>;
 
@@ -28,7 +30,7 @@ export type Operation = FactVariantWithRaw<OpenApiKind.Operation> & {
 export type Request = FactVariantWithRaw<OpenApiKind.Request> & {
   contentType: string;
   body: FactVariantWithRaw<OpenApiKind.Body>;
-  properties: FactVariantWithRaw<OpenApiKind.Field>[];
+  properties: Field[];
 };
 
 export type Response = FactVariantWithRaw<OpenApiKind.Response> & {
@@ -36,7 +38,7 @@ export type Response = FactVariantWithRaw<OpenApiKind.Response> & {
   statusCode: string;
   headers: FactVariantWithRaw<OpenApiKind.ResponseHeader>[];
   body: FactVariantWithRaw<OpenApiKind.Body>;
-  properties: FactVariantWithRaw<OpenApiKind.Field>[];
+  properties: Field[];
 };
 
 // Assertions

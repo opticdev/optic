@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/rulesets-base",
   "packageManager": "yarn@3.0.2",
-  "version": "0.24.12",
+  "version": "0.24.13",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@useoptic/api-checks": "workspace:^",
+    "@useoptic/json-pointer-helpers": "workspace:^",
     "@useoptic/openapi-utilities": "workspace:^"
   },
   "devDependencies": {
@@ -36,6 +37,9 @@
     "typescript": "^4.4.4"
   },
   "jest": {
+    "testMatch": [
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ],
     "testPathIgnorePatterns": [
       "build"
     ]

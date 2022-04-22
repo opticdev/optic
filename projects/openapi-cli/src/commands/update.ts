@@ -58,7 +58,7 @@ export function updateCommand(): Command {
         }`
       );
 
-      await trackEvent(
+      trackEvent(
         'openapi_cli.spec_updated_by_example',
         'openapi_cli', // TODO: determine more useful userId
         {
@@ -71,7 +71,11 @@ export function updateCommand(): Command {
         }
       );
 
-      await flushEvents();
+      try {
+        await flushEvents();
+      } catch (err) {
+        console.warn('Could not flush usage analytics (non-critical)');
+      }
     });
 
   return command;
