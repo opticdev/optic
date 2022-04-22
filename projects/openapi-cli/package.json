@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/openapi-cli",
   "packageManager": "yarn@3.0.2",
-  "version": "0.24.12",
+  "version": "0.24.13",
   "main": "build/lib.js",
   "types": "build/lib.d.ts",
   "files": [
@@ -44,6 +44,7 @@
     "fast-deep-equal": "^3.1.3",
     "is-url": "^1.2.4",
     "json-schema-traverse": "^1.0.0",
+    "node-machine-id": "^1.1.12",
     "ts-invariant": "^0.9.4",
     "ts-results": "^3.3.0"
   },

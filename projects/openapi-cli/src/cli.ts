@@ -5,7 +5,7 @@ import { program as cli } from 'commander';
 import { updateCommand } from './commands/update';
 import { registerDebugTemplateCommand } from './commands/debug-template';
 import { debugWorkflowsCommand } from './commands/debug-workflows';
-import { CliConfig } from './config';
+import { CliConfig, readConfig } from './config';
 import { initSegment, trackEvent } from './segment';
 
 const packageJson = require('../package.json');
@@ -22,7 +22,7 @@ export function makeCli(config: CliConfig) {
 }
 
 (async () => {
-  const config = await readConfig();
+  const config = readConfig();
 
   if (config.analytics.segment) {
     initSegment(config.analytics.segment);
@@ -35,15 +35,3 @@ export function makeCli(config: CliConfig) {
 
   cli.parse(process.argv);
 })();
-
-async function readConfig(): Promise<CliConfig> {
-  return {
-    analytics: {
-      segment: process.env.OPTIC_OPENCLI_SEGMENT_KEY
-        ? {
-            key: process.env.OPTIC_OPENCLI_SEGMENT_KEY,
-          }
-        : null,
-    },
-  };
-}

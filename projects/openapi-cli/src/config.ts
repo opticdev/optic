@@ -5,3 +5,15 @@ export interface CliConfig {
     };
   };
 }
+
+export function readConfig(): CliConfig {
+  return {
+    analytics: {
+      segment: process.env.OPTIC_OPENCLI_SEGMENT_KEY
+        ? {
+            key: process.env.OPTIC_OPENCLI_SEGMENT_KEY,
+          }
+        : null,
+    },
+  };
+}
