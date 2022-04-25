@@ -45,26 +45,26 @@ export type Response = FactVariantWithRaw<OpenApiKind.Response> & {
 type AssertionType =
   | 'specification'
   | 'operation'
-  | 'query-parameter'
-  | 'path-parameter'
-  | 'header-parameter'
+  | 'query-parameters'
+  | 'path-parameters'
+  | 'header-parameters'
   | 'request'
   | 'response'
-  | 'response-header'
+  | 'response-headers'
   | 'body'
-  | 'property';
+  | 'properties';
 
 type AssertionTypeToValue = {
   specification: Specification;
   operation: Operation;
-  'query-parameter': FactVariantWithRaw<OpenApiKind.QueryParameter>;
-  'path-parameter': FactVariantWithRaw<OpenApiKind.PathParameter>;
-  'header-parameter': FactVariantWithRaw<OpenApiKind.HeaderParameter>;
+  'query-parameters': FactVariantWithRaw<OpenApiKind.QueryParameter>[];
+  'path-parameters': FactVariantWithRaw<OpenApiKind.PathParameter>[];
+  'header-parameters': FactVariantWithRaw<OpenApiKind.HeaderParameter>[];
   request: Request;
   response: Response;
-  'response-header': FactVariantWithRaw<OpenApiKind.ResponseHeader>;
+  'response-headers': FactVariantWithRaw<OpenApiKind.ResponseHeader>[];
   body: FactVariantWithRaw<OpenApiKind.Body>;
-  property: FactVariantWithRaw<OpenApiKind.Field>;
+  properties: FactVariantWithRaw<OpenApiKind.Field>[];
 };
 
 type AssertionTypeToHelpers = {
@@ -73,16 +73,16 @@ type AssertionTypeToHelpers = {
     hasStatusCodes: (statusCodes: number[]) => void;
     matches: (structure: any) => void;
   };
-  'query-parameter': { matches: (structure: any) => void };
-  'path-parameter': { matches: (structure: any) => void };
-  'header-parameter': { matches: (structure: any) => void };
+  'query-parameters': { matches: (structure: any) => void };
+  'path-parameters': { matches: (structure: any) => void };
+  'header-parameters': { matches: (structure: any) => void };
   request: { matches: (structure: any) => void };
   response: { matches: (structure: any) => void };
-  'response-header': { matches: (structure: any) => void };
+  'response-headers': { matches: (structure: any) => void };
   body: {
     matches: (structure: any) => void;
   };
-  property: { matches: (structure: any) => void };
+  properties: { matches: (structure: any) => void };
 };
 
 type Assertion<T extends AssertionType> = (
@@ -107,18 +107,18 @@ export type Assertions<T extends AssertionType> = {
 export type SpecificationAssertions = Assertions<'specification'>;
 
 export type OperationAssertions = Assertions<'operation'> & {
-  queryParameters: Assertions<'query-parameter'>;
-  pathParameters: Assertions<'path-parameter'>;
-  headerParameters: Assertions<'header-parameter'>;
+  queryParameters: Assertions<'query-parameters'>;
+  pathParameters: Assertions<'path-parameters'>;
+  headerParameters: Assertions<'header-parameters'>;
 };
 
 export type RequestAssertions = Assertions<'request'> & {
   body: Assertions<'body'>;
-  property: Assertions<'property'>;
+  properties: Assertions<'properties'>;
 };
 
 export type ResponseAssertions = Assertions<'response'> & {
-  header: Assertions<'response-header'>;
+  headers: Assertions<'response-headers'>;
   body: Assertions<'body'>;
-  property: Assertions<'property'>;
+  properties: Assertions<'properties'>;
 };
