@@ -13,7 +13,7 @@ import {
   RequestNode,
   ResponseNode,
   NodeDetail,
-} from './group-facts';
+} from './rule-runner-types';
 
 type SpecFactsFrom = 'before' | 'after';
 
