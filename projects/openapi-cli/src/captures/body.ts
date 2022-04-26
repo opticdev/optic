@@ -37,6 +37,10 @@ export class CapturedBody {
     return { contentType, stream, size };
   }
 
+  static fromJSON(json: { [key: string]: any }, ...rest) {
+    return CapturedBody.from(JSON.stringify(json), ...rest);
+  }
+
   static body(body: CapturedBody) {
     return body.stream;
   }
