@@ -41,6 +41,11 @@ export class CapturedBody {
     return body.stream;
   }
 
+  static async arrayBuffer(body: CapturedBody) {
+    const { buffer, byteOffset, byteLength } = await consumeBody(body);
+    return buffer.slice(byteOffset, byteOffset + byteLength);
+  }
+
   static async json(body) {
     const text = await CapturedBody.text(body);
     return JSON.parse(text);
