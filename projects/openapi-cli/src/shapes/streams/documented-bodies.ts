@@ -91,21 +91,22 @@ export class DocumentedBodies {
     }
   }
 
-  static async *fromCapturedBodies(
-    capturedBodies: CapturedBodies,
-    spec: OpenAPIV3.Document
-  ): AsyncIterable<Result<DocumentedBody, string>> {
-    for await (let capturedBody of capturedBodies) {
-      let { contentType } = capturedBody;
+  // static async *fromCapturedBodies(
+  //   capturedBodies: CapturedBodies,
+  //   spec: OpenAPIV3.Document
+  // ): AsyncIterable<Result<DocumentedBody, string>> {
+  //   for await (let capturedBody of capturedBodies) {
+  //     let { contentType } = capturedBody;
 
-      if (!contentType || contentType.startsWith('application/json')) {
-        let value;
-        try {
-          value = await CapturedBody.json(capturedBody);
-        } catch (err) {
-          yield Err('Could not parse captured body as json');
-        }
-      }
-    }
-  }
+  //     if (!contentType || contentType.startsWith('application/json')) {
+  //       let value;
+  //       try {
+  //         value = await CapturedBody.json(capturedBody);
+  //       } catch (err) {
+  //         yield Err('Could not parse captured body as json');
+  //       }
+
+  //     }
+  //   }
+  // }
 }
