@@ -1,4 +1,4 @@
-import { OpenAPIV3, Result } from '@useoptic/openapi-utilities';
+import { OpenAPIV3, Result, IFact, IChange } from '@useoptic/openapi-utilities';
 import { createOperation } from './data-constructors';
 import { Rules, RulesetData, EndpointNode } from './rule-runner-types';
 import {
@@ -9,6 +9,12 @@ import {
 } from './utils';
 
 import { Ruleset, OperationRule } from '../rules';
+import {
+  createOperationAssertions,
+  AssertionResult,
+  assertionLifecycleToText,
+} from './assertions';
+import { Operation } from '../types';
 
 const getOperationRules = (rules: Rules[]): (OperationRule & RulesetData)[] => {
   const operationRules: (OperationRule & RulesetData)[] = [];
@@ -40,6 +46,49 @@ const getOperationRules = (rules: Rules[]): (OperationRule & RulesetData)[] => {
   return operationRules;
 };
 
+const createOperationResult = (
+  assertionResult: AssertionResult,
+  operation: Operation,
+  rule: OperationRule
+): Result => ({
+  where: `${assertionLifecycleToText(
+    assertionResult.type
+  )} operation: ${operation.method.toUpperCase()} ${operation.path}`,
+  isMust: true,
+  change: assertionResult.changeOrFact,
+  name: rule.name,
+  condition: assertionResult.condition,
+  passed: assertionResult.passed,
+  error: assertionResult.error,
+  docsLink: rule.docsLink,
+  isShould: false,
+});
+
+const createParameterResult = (
+  assertionResult: AssertionResult,
+  parameter: {
+    type: 'header parameter' | 'query parameter' | 'path parameter';
+    name: string;
+    path: string;
+    method: string;
+  },
+  rule: OperationRule
+): Result => ({
+  where: `${assertionLifecycleToText(assertionResult.type)} ${
+    parameter.type
+  }: ${parameter.name} in operation: ${parameter.method.toUpperCase()} ${
+    parameter.path
+  }`,
+  isMust: true,
+  change: assertionResult.changeOrFact,
+  name: rule.name,
+  condition: assertionResult.condition,
+  passed: assertionResult.passed,
+  error: assertionResult.error,
+  docsLink: rule.docsLink,
+  isShould: false,
+});
+
 export const runOperationRules = ({
   operation,
   rules,
@@ -56,6 +105,7 @@ export const runOperationRules = ({
   const operationRules = getOperationRules(rules);
   const beforeOperation = createOperation(operation, 'before', beforeApiSpec);
   const afterOperation = createOperation(operation, 'after', afterApiSpec);
+  const results: Result[] = [];
 
   for (const operationRule of operationRules) {
     if (beforeOperation) {
@@ -68,13 +118,94 @@ export const runOperationRules = ({
         !operationRule.matches ||
         operationRule.matches(beforeOperation, beforeRulesContext)
       ) {
-        // TODO pass in assertions + catch rule errors
-        // TODO create helper for this
-        // operationRule.rule()
-        // TODO run operation rules
-        // TODO run query parameters
-        // TODO run header param
-        // TODO run path param
+        const operationAssertions = createOperationAssertions();
+        // Register the user's rule definition
+        operationRule.rule(operationAssertions, beforeRulesContext);
+
+        // Run the user's rules
+        results.push(
+          ...operationAssertions
+            .runBefore(beforeOperation, operation.change)
+            .map((assertionResult) =>
+              createOperationResult(
+                assertionResult,
+                beforeOperation,
+                operationRule
+              )
+            )
+        );
+
+        for (const [
+          key,
+          beforeParameter,
+        ] of beforeOperation.headerParameters.entries()) {
+          const maybeChange =
+            operation.headerParameters.get(key)?.change || null;
+
+          results.push(
+            ...operationAssertions.headerParameter
+              .runBefore(beforeParameter, maybeChange)
+              .map((assertionResult) =>
+                createParameterResult(
+                  assertionResult,
+                  {
+                    name: key,
+                    type: 'header parameter',
+                    method: operation.method,
+                    path: operation.path,
+                  },
+                  operationRule
+                )
+              )
+          );
+        }
+
+        for (const [
+          key,
+          beforeParameter,
+        ] of beforeOperation.pathParameters.entries()) {
+          const maybeChange = operation.pathParameters.get(key)?.change || null;
+          results.push(
+            ...operationAssertions.pathParameter
+              .runBefore(beforeParameter, maybeChange)
+              .map((assertionResult) =>
+                createParameterResult(
+                  assertionResult,
+                  {
+                    name: key,
+                    type: 'path parameter',
+                    method: operation.method,
+                    path: operation.path,
+                  },
+                  operationRule
+                )
+              )
+          );
+        }
+
+        for (const [
+          key,
+          beforeParameter,
+        ] of beforeOperation.queryParameters.entries()) {
+          const maybeChange =
+            operation.queryParameters.get(key)?.change || null;
+          results.push(
+            ...operationAssertions.queryParameter
+              .runBefore(beforeParameter, maybeChange)
+              .map((assertionResult) =>
+                createParameterResult(
+                  assertionResult,
+                  {
+                    name: key,
+                    type: 'query parameter',
+                    method: operation.method,
+                    path: operation.path,
+                  },
+                  operationRule
+                )
+              )
+          );
+        }
       }
     }
 
@@ -89,16 +220,106 @@ export const runOperationRules = ({
         !operationRule.matches ||
         operationRule.matches(afterOperation, afterRulesContext)
       ) {
-        // TODO pass in assertions + catch rule errors
-        // TODO create helper for this
-        // operationRule.rule()
-        // TODO run operation rules
-        // TODO run query parameters
-        // TODO run header param
-        // TODO run path param
+        const operationAssertions = createOperationAssertions();
+
+        // Register the user's rule definition
+        operationRule.rule(operationAssertions, afterRulesContext);
+
+        // Run the user's rules
+        results.push(
+          ...operationAssertions
+            .runAfter(beforeOperation, afterOperation, operation.change)
+            .map((assertionResult) =>
+              createOperationResult(
+                assertionResult,
+                afterOperation,
+                operationRule
+              )
+            )
+        );
+
+        for (const [
+          key,
+          afterParameter,
+        ] of afterOperation.headerParameters.entries()) {
+          const maybeBeforeParameter =
+            beforeOperation?.headerParameters.get(key) || null;
+          const maybeChange =
+            operation.headerParameters.get(key)?.change || null;
+
+          results.push(
+            ...operationAssertions.headerParameter
+              .runAfter(maybeBeforeParameter, afterParameter, maybeChange)
+              .map((assertionResult) =>
+                createParameterResult(
+                  assertionResult,
+                  {
+                    name: key,
+                    type: 'header parameter',
+                    method: operation.method,
+                    path: operation.path,
+                  },
+                  operationRule
+                )
+              )
+          );
+        }
+
+        for (const [
+          key,
+          afterParameter,
+        ] of afterOperation.pathParameters.entries()) {
+          const maybeBeforeParameter =
+            beforeOperation?.pathParameters.get(key) || null;
+          const maybeChange = operation.pathParameters.get(key)?.change || null;
+
+          results.push(
+            ...operationAssertions.pathParameter
+              .runAfter(maybeBeforeParameter, afterParameter, maybeChange)
+              .map((assertionResult) =>
+                createParameterResult(
+                  assertionResult,
+                  {
+                    name: key,
+                    type: 'header parameter',
+                    method: operation.method,
+                    path: operation.path,
+                  },
+                  operationRule
+                )
+              )
+          );
+        }
+
+        for (const [
+          key,
+          afterParameter,
+        ] of afterOperation.queryParameters.entries()) {
+          const maybeBeforeParameter =
+            beforeOperation?.queryParameters.get(key) || null;
+          const maybeChange =
+            operation.queryParameters.get(key)?.change || null;
+
+          results.push(
+            ...operationAssertions.queryParameter
+              .runAfter(maybeBeforeParameter, afterParameter, maybeChange)
+              .map((assertionResult) =>
+                createParameterResult(
+                  assertionResult,
+                  {
+                    name: key,
+                    type: 'header parameter',
+                    method: operation.method,
+                    path: operation.path,
+                  },
+                  operationRule
+                )
+              )
+          );
+        }
       }
     }
   }
 
-  return [];
+  return results;
 };

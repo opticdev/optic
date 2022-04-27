@@ -20,9 +20,12 @@ export type Specification = FactVariantWithRaw<OpenApiKind.Specification>;
 export type Operation = FactVariantWithRaw<OpenApiKind.Operation> & {
   path: string;
   method: string;
-  queryParameters: FactVariantWithRaw<OpenApiKind.QueryParameter>[];
-  pathParameters: FactVariantWithRaw<OpenApiKind.PathParameter>[];
-  headerParameters: FactVariantWithRaw<OpenApiKind.HeaderParameter>[];
+  queryParameters: Map<string, FactVariantWithRaw<OpenApiKind.QueryParameter>>;
+  pathParameters: Map<string, FactVariantWithRaw<OpenApiKind.PathParameter>>;
+  headerParameters: Map<
+    string,
+    FactVariantWithRaw<OpenApiKind.HeaderParameter>
+  >;
   requests: Request[];
   responses: Response[];
 };
@@ -30,44 +33,44 @@ export type Operation = FactVariantWithRaw<OpenApiKind.Operation> & {
 export type Request = FactVariantWithRaw<OpenApiKind.Request> & {
   contentType: string;
   body: FactVariantWithRaw<OpenApiKind.Body>;
-  properties: Field[];
+  properties: Map<string, Field>;
 };
 
 export type Response = FactVariantWithRaw<OpenApiKind.Response> & {
   contentType: string;
   statusCode: string;
-  headers: FactVariantWithRaw<OpenApiKind.ResponseHeader>[];
+  headers: Map<string, FactVariantWithRaw<OpenApiKind.ResponseHeader>>;
   body: FactVariantWithRaw<OpenApiKind.Body>;
-  properties: Field[];
+  properties: Map<string, Field>;
 };
 
 // Assertions
-type AssertionType =
+export type AssertionType =
   | 'specification'
   | 'operation'
-  | 'query-parameters'
-  | 'path-parameters'
-  | 'header-parameters'
+  | 'query-parameter'
+  | 'path-parameter'
+  | 'header-parameter'
   | 'request'
   | 'response'
-  | 'response-headers'
+  | 'response-header'
   | 'body'
-  | 'properties';
+  | 'property';
 
-type AssertionTypeToValue = {
+export type AssertionTypeToValue = {
   specification: Specification;
   operation: Operation;
-  'query-parameters': FactVariantWithRaw<OpenApiKind.QueryParameter>[];
-  'path-parameters': FactVariantWithRaw<OpenApiKind.PathParameter>[];
-  'header-parameters': FactVariantWithRaw<OpenApiKind.HeaderParameter>[];
+  'query-parameter': FactVariantWithRaw<OpenApiKind.QueryParameter>;
+  'path-parameter': FactVariantWithRaw<OpenApiKind.PathParameter>;
+  'header-parameter': FactVariantWithRaw<OpenApiKind.HeaderParameter>;
   request: Request;
   response: Response;
-  'response-headers': FactVariantWithRaw<OpenApiKind.ResponseHeader>[];
+  'response-header': FactVariantWithRaw<OpenApiKind.ResponseHeader>;
   body: FactVariantWithRaw<OpenApiKind.Body>;
-  properties: FactVariantWithRaw<OpenApiKind.Field>[];
+  property: FactVariantWithRaw<OpenApiKind.Field>;
 };
 
-type AssertionTypeToHelpers = {
+export type AssertionTypeToHelpers = {
   specification: { matches: (structure: any) => void };
   operation: {
     hasStatusCodes: (statusCodes: number[]) => void;
@@ -82,43 +85,44 @@ type AssertionTypeToHelpers = {
   body: {
     matches: (structure: any) => void;
   };
-  properties: { matches: (structure: any) => void };
+  property: { matches: (structure: any) => void };
 };
 
-type Assertion<T extends AssertionType> = (
+export type Assertion<T extends AssertionType> = (
+  condition: string,
   assertion: (value: AssertionTypeToValue[T]) => void
 ) => void;
 
-type ChangedAssertion<T extends AssertionType> = (
+export type ChangedAssertion<T extends AssertionType> = (
+  condition: string,
   assertion: (
     before: AssertionTypeToValue[T],
-    after: AssertionTypeToValue[T],
-    context: RuleContext
+    after: AssertionTypeToValue[T]
   ) => void
 ) => void;
 
 export type Assertions<T extends AssertionType> = {
-  requirement: AssertionTypeToHelpers[T] & Assertion<T>;
-  added: AssertionTypeToHelpers[T] & Assertion<T>;
-  changed: AssertionTypeToHelpers[T] & ChangedAssertion<T>;
-  removed: AssertionTypeToHelpers[T] & Assertion<T>;
+  requirement: /*AssertionTypeToHelpers[T] & */ Assertion<T>;
+  added: /*AssertionTypeToHelpers[T] & */ Assertion<T>;
+  changed: /*AssertionTypeToHelpers[T] & */ ChangedAssertion<T>;
+  removed: /*AssertionTypeToHelpers[T] & */ Assertion<T>;
 };
 
 export type SpecificationAssertions = Assertions<'specification'>;
 
 export type OperationAssertions = Assertions<'operation'> & {
-  queryParameters: Assertions<'query-parameters'>;
-  pathParameters: Assertions<'path-parameters'>;
-  headerParameters: Assertions<'header-parameters'>;
+  queryParameter: Assertions<'query-parameter'>;
+  pathParameter: Assertions<'path-parameter'>;
+  headerParameter: Assertions<'header-parameter'>;
 };
 
 export type RequestAssertions = Assertions<'request'> & {
   body: Assertions<'body'>;
-  properties: Assertions<'properties'>;
+  properties: Assertions<'property'>;
 };
 
 export type ResponseAssertions = Assertions<'response'> & {
-  headers: Assertions<'response-headers'>;
+  header: Assertions<'response-header'>;
   body: Assertions<'body'>;
-  properties: Assertions<'properties'>;
+  property: Assertions<'property'>;
 };

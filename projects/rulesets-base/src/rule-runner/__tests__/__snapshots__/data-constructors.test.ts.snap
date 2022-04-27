@@ -2,7 +2,7 @@
 
 exports[`createOperation with after key 1`] = `
 Object {
-  "headerParameters": Array [],
+  "headerParameters": Map {},
   "location": Object {
     "conceptualLocation": Object {
       "method": "get",
@@ -18,8 +18,8 @@ Object {
   },
   "method": "get",
   "path": "/store/order/{orderId}",
-  "pathParameters": Array [
-    Object {
+  "pathParameters": Map {
+    "orderId" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -64,8 +64,8 @@ Object {
         },
       },
     },
-  ],
-  "queryParameters": Array [],
+  },
+  "queryParameters": Map {},
   "raw": Object {
     "description": "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions",
     "operationId": "getOrderById",
@@ -293,7 +293,7 @@ Object {
         },
       },
       "contentType": "application/xml",
-      "headers": Array [],
+      "headers": Map {},
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -312,8 +312,8 @@ Object {
         "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200",
         "kind": "response",
       },
-      "properties": Array [
-        Object {
+      "properties": Map {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/id" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -353,7 +353,7 @@ Object {
             "required": true,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/petId" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -393,7 +393,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/quantity" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -433,7 +433,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/shipDate" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -473,7 +473,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/status" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -523,7 +523,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/complete" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -563,7 +563,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/summary" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -603,7 +603,7 @@ Object {
             "required": false,
           },
         },
-      ],
+      },
       "raw": Object {
         "content": Object {
           "application/json": Object {
@@ -782,7 +782,7 @@ Object {
         },
       },
       "contentType": "application/json",
-      "headers": Array [],
+      "headers": Map {},
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -801,8 +801,8 @@ Object {
         "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200",
         "kind": "response",
       },
-      "properties": Array [
-        Object {
+      "properties": Map {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/id" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -842,7 +842,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/petId" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -882,7 +882,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/quantity" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -922,7 +922,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/shipDate" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -962,7 +962,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/status" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1012,7 +1012,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/complete" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1052,7 +1052,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/summary" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1092,7 +1092,7 @@ Object {
             "required": false,
           },
         },
-      ],
+      },
       "raw": Object {
         "content": Object {
           "application/json": Object {
@@ -1242,7 +1242,7 @@ Object {
         },
       },
       "contentType": "application/json",
-      "headers": Array [],
+      "headers": Map {},
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -1261,8 +1261,8 @@ Object {
         "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404",
         "kind": "response",
       },
-      "properties": Array [
-        Object {
+      "properties": Map {
+        "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/code" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1302,7 +1302,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/type" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1340,7 +1340,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/message" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1378,7 +1378,7 @@ Object {
             "required": false,
           },
         },
-      ],
+      },
       "raw": Object {
         "content": Object {
           "application/json": Object {
@@ -1423,7 +1423,7 @@ Object {
 
 exports[`createOperation with before key 1`] = `
 Object {
-  "headerParameters": Array [],
+  "headerParameters": Map {},
   "location": Object {
     "conceptualLocation": Object {
       "method": "get",
@@ -1439,8 +1439,8 @@ Object {
   },
   "method": "get",
   "path": "/store/order/{orderId}",
-  "pathParameters": Array [
-    Object {
+  "pathParameters": Map {
+    "orderId" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -1485,8 +1485,8 @@ Object {
         },
       },
     },
-  ],
-  "queryParameters": Array [],
+  },
+  "queryParameters": Map {},
   "raw": Object {
     "description": "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions",
     "operationId": "getOrderById",
@@ -1686,7 +1686,7 @@ Object {
         },
       },
       "contentType": "application/xml",
-      "headers": Array [],
+      "headers": Map {},
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -1705,8 +1705,8 @@ Object {
         "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200",
         "kind": "response",
       },
-      "properties": Array [
-        Object {
+      "properties": Map {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/id" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1746,7 +1746,7 @@ Object {
             "required": true,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/petId" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1786,7 +1786,7 @@ Object {
             "required": true,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/quantity" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1826,7 +1826,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/shipDate" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1866,7 +1866,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/status" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1916,7 +1916,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/complete" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1956,7 +1956,7 @@ Object {
             "required": false,
           },
         },
-      ],
+      },
       "raw": Object {
         "content": Object {
           "application/json": Object {
@@ -2124,7 +2124,7 @@ Object {
         },
       },
       "contentType": "application/json",
-      "headers": Array [],
+      "headers": Map {},
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -2143,8 +2143,8 @@ Object {
         "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200",
         "kind": "response",
       },
-      "properties": Array [
-        Object {
+      "properties": Map {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/id" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -2184,7 +2184,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/petId" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -2224,7 +2224,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/quantity" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -2264,7 +2264,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/shipDate" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -2304,7 +2304,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/status" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -2354,7 +2354,7 @@ Object {
             "required": false,
           },
         },
-        Object {
+        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/complete" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -2394,7 +2394,7 @@ Object {
             "required": false,
           },
         },
-      ],
+      },
       "raw": Object {
         "content": Object {
           "application/json": Object {
@@ -2627,8 +2627,8 @@ Object {
     "jsonPath": "/paths/~1pet/put/requestBody",
     "kind": "request",
   },
-  "properties": Array [
-    Object {
+  "properties": Map {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/id" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -2665,7 +2665,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/category" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -2715,7 +2715,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/category/properties/id" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -2754,7 +2754,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/category/properties/name" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -2791,7 +2791,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/photoUrls" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -2837,7 +2837,7 @@ Object {
         "required": true,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/tags" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -2895,7 +2895,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/tags/items/properties/id" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -2936,7 +2936,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/tags/items/properties/name" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -2975,7 +2975,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/status" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -3022,7 +3022,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/number" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -3057,7 +3057,7 @@ Object {
         "required": true,
       },
     },
-  ],
+  },
   "raw": Object {
     "content": Object {
       "application/json": Object {
@@ -3274,8 +3274,8 @@ Object {
     "jsonPath": "/paths/~1pet/put/requestBody",
     "kind": "request",
   },
-  "properties": Array [
-    Object {
+  "properties": Map {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/id" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -3312,7 +3312,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/category" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -3362,7 +3362,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/category/properties/id" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -3401,7 +3401,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/category/properties/name" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -3438,7 +3438,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/name" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -3475,7 +3475,7 @@ Object {
         "required": true,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/photoUrls" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -3521,7 +3521,7 @@ Object {
         "required": true,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/tags" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -3579,7 +3579,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/tags/items/properties/id" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -3620,7 +3620,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/tags/items/properties/name" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -3659,7 +3659,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/status" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
@@ -3706,7 +3706,7 @@ Object {
         "required": false,
       },
     },
-  ],
+  },
   "raw": Object {
     "content": Object {
       "application/json": Object {
@@ -3990,7 +3990,7 @@ Object {
     },
   },
   "contentType": "application/json",
-  "headers": Array [],
+  "headers": Map {},
   "location": Object {
     "conceptualLocation": Object {
       "inResponse": Object {
@@ -4009,8 +4009,8 @@ Object {
     "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200",
     "kind": "response",
   },
-  "properties": Array [
-    Object {
+  "properties": Map {
+    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/id" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -4052,7 +4052,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -4107,7 +4107,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category/properties/id" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -4151,7 +4151,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category/properties/name" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -4193,7 +4193,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/name" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -4235,7 +4235,7 @@ Object {
         "required": true,
       },
     },
-    Object {
+    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/photoUrls" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -4286,7 +4286,7 @@ Object {
         "required": true,
       },
     },
-    Object {
+    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -4349,7 +4349,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags/items/properties/id" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -4395,7 +4395,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags/items/properties/name" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -4439,7 +4439,7 @@ Object {
         "required": false,
       },
     },
-    Object {
+    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/status" => Object {
       "location": Object {
         "conceptualLocation": Object {
           "inResponse": Object {
@@ -4491,7 +4491,7 @@ Object {
         "required": false,
       },
     },
-  ],
+  },
   "raw": Object {
     "content": Object {
       "application/json": Object {

@@ -21,13 +21,13 @@ const createFactsWithRaw = <T extends OpenApiKind>(
   nodeDetailMap: Map<string, NodeDetail<T>>,
   key: SpecFactsFrom,
   openApiSpec: OpenAPIV3.Document
-): FactVariantWithRaw<T>[] => {
-  const factsWithRaw: FactVariantWithRaw<T>[] = [];
+): Map<string, FactVariantWithRaw<T>> => {
+  const factsWithRaw: Map<string, FactVariantWithRaw<T>> = new Map();
 
-  for (const [_, nodeDetail] of nodeDetailMap.entries()) {
+  for (const [name, nodeDetail] of nodeDetailMap.entries()) {
     const nodeFact = nodeDetail[key];
     if (nodeFact) {
-      factsWithRaw.push({
+      factsWithRaw.set(name, {
         ...nodeFact,
         raw: jsonPointerHelpers.get(openApiSpec, nodeFact.location.jsonPath),
       });
