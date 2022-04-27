@@ -12,13 +12,4 @@ export interface DocumentedInteraction {
   interaction: CapturedInteraction;
   operation: Operation;
   specJsonPath: string;
-
-  requestBody: null | {
-    schema: SchemaObject;
-    specJsonPath: string;
-  };
-  responseBody: null | {
-    schema: SchemaObject;
-    specJsonPath: string;
-  };
 }

@@ -1,28 +1,35 @@
 import { JsonPath } from '@useoptic/openapi-io';
 import { OpenAPIV3 } from '../../specs';
+import { SchemaObject } from '../../shapes';
 
 export enum OperationDiffResultKind {
-  Matched = 'Matched',
   MatchedRequestBody = 'MatchedRequestBody',
   MatchedResponseBody = 'MatchedRequestBody',
-  UnmatchedPath = 'UnmatchedPath',
-  UnmatchedMethod = 'UnmatchedMethod',
   UnmatchedRequestBody = 'UnmatchedRequestBody',
   UnmatchedResponseBody = 'UnmatchedRequestBody',
 }
 
 export type OperationDiffResult = {} & (
   | {
-      kind: OperationDiffResultKind.Matched;
-      operationPath: JsonPath;
-      path: string;
-      method: OpenAPIV3.HttpMethods;
+      kind: OperationDiffResultKind.MatchedRequestBody;
+      schema: SchemaObject;
+      contentType: string;
+      specPath: string;
     }
   | {
-      kind: OperationDiffResultKind.UnmatchedPath;
+      kind: OperationDiffResultKind.MatchedResponseBody;
+      schema: SchemaObject;
+      contentType: string;
+      statusCode: number;
+      specPath: string;
     }
   | {
-      kind: OperationDiffResultKind.UnmatchedMethod;
-      matchedPath;
+      kind: OperationDiffResultKind.UnmatchedRequestBody;
+      contentType: string;
+    }
+  | {
+      kind: OperationDiffResultKind.UnmatchedResponseBody;
+      contentType: string;
+      statusCode: number;
     }
 );
