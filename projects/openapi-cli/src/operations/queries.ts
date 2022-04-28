@@ -3,7 +3,7 @@ import { Option, Some, None, Result, Ok, Err } from 'ts-results';
 import invariant from 'ts-invariant';
 import equals from 'fast-deep-equal';
 
-class OperationQueries {
+export class OperationQueries {
   static async fromFacts(facts: OperationFacts): Promise<OperationQueries> {
     const operations: Array<{
       pathPattern: string;
@@ -22,8 +22,7 @@ class OperationQueries {
   }
 
   patterns: string[];
-  patternsAsComponents: string[][];
-
+  patternsAsComponents: [string, string[]][];
   constructor(
     private operations: Array<{
       pathPattern: string;
@@ -31,10 +30,11 @@ class OperationQueries {
       specPath: string;
     }>
   ) {
-    this.patterns = operations.map(({ pathPattern }) => pathPattern);
-    this.patternsAsComponents = this.patterns.map((pattern) =>
-      fragmentize(pattern)
-    );
+    this.patterns = this.operations.map(({ pathPattern }) => pathPattern);
+    this.patternsAsComponents = this.patterns.map((pattern) => [
+      pattern,
+      fragmentize(pattern),
+    ]);
   }
 
   findSpecPath(
@@ -46,17 +46,35 @@ class OperationQueries {
       'operation specPath for can not be found for paths with host and / or protocol'
     );
 
+    const matchedPatternResult = this.matchPathPattern(path);
+    if (matchedPatternResult.err) return matchedPatternResult;
+
+    let maybeMatchedPattern = matchedPatternResult.unwrap();
+    if (maybeMatchedPattern.none) return Ok(None);
+    let matchedPattern = maybeMatchedPattern.unwrap();
+
+    const operation = this.operations.find(
+      (op) => op.pathPattern == matchedPattern && op.method == method
+    );
+
+    if (!operation) return Ok(None);
+
+    return Ok(Some(operation.specPath));
+  }
+
+  private matchPathPattern(path: string): Result<Option<string>, string> {
     const componentizedPath = fragmentize(path);
 
     // start with all patterns that match by length
     let qualifiedPatterns = this.patternsAsComponents.filter(
-      (path) => path.length === componentizedPath.length
+      ([, patternComponents]) =>
+        patternComponents.length === componentizedPath.length
     );
 
     // reduce qualified patterns by comparing component by component
     componentizedPath.forEach((pathComponent, componentIndex) => {
-      qualifiedPatterns = qualifiedPatterns.filter((pattern) => {
-        const patternComponent = pattern[componentIndex];
+      qualifiedPatterns = qualifiedPatterns.filter(([, patternComponents]) => {
+        const patternComponent = patternComponents[componentIndex][1];
         return (
           pathComponent === patternComponent ||
           isParameterTemplate(patternComponent)
@@ -65,12 +83,13 @@ class OperationQueries {
     });
 
     if (qualifiedPatterns.length > 1) {
-      const exactMatch = qualifiedPatterns.find((pattern) =>
-        equals(pattern, componentizedPath)
+      const exactMatch = qualifiedPatterns.find(([, patternComponents]) =>
+        equals(patternComponents, componentizedPath)
       );
 
       if (exactMatch) {
-        // TODO: look up spec path an return
+        let [pattern] = exactMatch;
+        Ok(Some(pattern));
       }
 
       return Err('Path matched multiple operations');
