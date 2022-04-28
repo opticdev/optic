@@ -4,7 +4,7 @@ import { OperationLocation } from '@useoptic/openapi-utilities';
 import { SchemaObject } from '../shapes';
 
 export type Operation = OpenAPIV3.OperationObject & {
-  path: string;
+  pathPattern: string;
   method: OpenAPIV3.HttpMethods;
 };
 

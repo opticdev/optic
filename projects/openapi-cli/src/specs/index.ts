@@ -18,10 +18,12 @@ export {
   SpecFacts,
   BodyExampleFacts,
   ComponentSchemaExampleFacts,
+  OperationFacts,
 } from './streams/facts';
 export type {
   BodyExampleFact,
   ComponentSchemaExampleFact,
+  OperationFact,
 } from './streams/facts';
 
 // templates
