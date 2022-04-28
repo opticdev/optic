@@ -4,13 +4,13 @@ import invariant from 'ts-invariant';
 import equals from 'fast-deep-equal';
 
 export class OperationQueries {
-  static async fromFacts(facts: OperationFacts): Promise<OperationQueries> {
+  static fromFacts(facts: Iterable<OperationFact>): OperationQueries {
     const operations: Array<{
       pathPattern: string;
       method: OpenAPIV3.HttpMethods;
       specPath: string;
     }> = [];
-    for await (let fact of facts) {
+    for (let fact of facts) {
       operations.push({
         pathPattern: fact.value.pathPattern,
         method: fact.value.method as OpenAPIV3.HttpMethods,
