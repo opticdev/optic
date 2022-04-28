@@ -1,4 +1,4 @@
-import { OpenAPIV3, Result, IFact, IChange } from '@useoptic/openapi-utilities';
+import { OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 import { createOperation } from './data-constructors';
 import { Rules, RulesetData, EndpointNode } from './rule-runner-types';
 import {

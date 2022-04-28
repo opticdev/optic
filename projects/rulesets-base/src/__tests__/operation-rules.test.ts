@@ -4,7 +4,7 @@ import { RuleRunner } from '../rule-runner';
 import { OperationRule } from '../rules';
 import { createRuleInputs } from './helpers';
 
-describe('operation', () => {
+describe('OperationRule', () => {
   test('matches', () => {
     const json: OpenAPIV3.Document = {
       ...defaultEmptySpec,
@@ -86,6 +86,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(true);
@@ -107,6 +108,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(false);
@@ -160,6 +162,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(beforeJson, afterJson)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(true);
@@ -184,6 +187,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(beforeJson, afterJson)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(false);
@@ -238,6 +242,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(true);
@@ -270,6 +275,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(false);
@@ -283,11 +289,13 @@ describe('operation', () => {
           name: 'operation removal',
           rule: (operationAssertions) => {
             operationAssertions.removed(
-              'must not remove an operation',
+              'must not remove an operation without summary `hello`',
               (operation) => {
-                throw new RuleError({
-                  message: 'cannot remove an operation',
-                });
+                if (operation.value.summary !== 'hello') {
+                  throw new RuleError({
+                    message: 'cannot remove an operation',
+                  });
+                }
               }
             );
           },
@@ -300,6 +308,7 @@ describe('operation', () => {
           paths: {
             '/api/users': {
               get: {
+                summary: 'hello',
                 responses: {},
               },
             },
@@ -307,18 +316,12 @@ describe('operation', () => {
         };
         const after: OpenAPIV3.Document = {
           ...defaultEmptySpec,
-          paths: {
-            '/api/users': {
-              get: {
-                operationId: 'get-users',
-                responses: {},
-              },
-            },
-          },
+          paths: {},
         };
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(true);
@@ -343,6 +346,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(false);
@@ -397,6 +401,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(true);
@@ -424,6 +429,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(false);
@@ -482,6 +488,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(true);
@@ -519,6 +526,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(false);
@@ -583,6 +591,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(true);
@@ -627,6 +636,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(false);
@@ -684,6 +694,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(true);
@@ -722,6 +733,7 @@ describe('operation', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(before, after)
         );
+        expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
           expect(result.passed).toBe(false);

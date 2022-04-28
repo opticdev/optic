@@ -197,6 +197,22 @@ type OperationAssertionsRunner = AssertionRunner<'operation'> & {
   pathParameter: AssertionRunner<'path-parameter'>;
 };
 
+type RequestAssertionsRunner = {
+  body: AssertionRunner<'request-body'>;
+  property: AssertionRunner<'property'>;
+};
+
+type ResponseAssertionsRunner = {
+  header: AssertionRunner<'response-header'>;
+  body: AssertionRunner<'response-body'>;
+  property: AssertionRunner<'property'>;
+};
+
+export const createSpecificationAssertions =
+  (): AssertionRunner<'specification'> => {
+    return new AssertionRunner<'specification'>();
+  };
+
 export const createOperationAssertions = (): OperationAssertionsRunner => {
   const operationAssertions: any = new AssertionRunner<'operation'>();
   const queryParameterAssertions = new AssertionRunner<'query-parameter'>();
@@ -208,4 +224,28 @@ export const createOperationAssertions = (): OperationAssertionsRunner => {
   operationAssertions.pathParameter = pathParameterAssertions;
 
   return operationAssertions as OperationAssertionsRunner;
+};
+
+export const createRequestAssertions = (): RequestAssertionsRunner => {
+  const requestAssertions: any = {};
+  const bodyAssertions = new AssertionRunner<'request-body'>();
+  const propertyAssertions = new AssertionRunner<'property'>();
+
+  requestAssertions.body = bodyAssertions;
+  requestAssertions.property = propertyAssertions;
+
+  return requestAssertions as RequestAssertionsRunner;
+};
+
+export const createResponseAssertions = (): ResponseAssertionsRunner => {
+  const responseAssertions: any = {};
+  const headerAssertions = new AssertionRunner<'response-header'>();
+  const bodyAssertions = new AssertionRunner<'response-body'>();
+  const propertyAssertions = new AssertionRunner<'property'>();
+
+  responseAssertions.header = headerAssertions;
+  responseAssertions.body = bodyAssertions;
+  responseAssertions.property = propertyAssertions;
+
+  return responseAssertions as ResponseAssertionsRunner;
 };

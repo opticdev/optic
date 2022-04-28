@@ -15,6 +15,12 @@ import {
 } from './utils';
 
 import { Ruleset, RequestRule } from '../rules';
+import {
+  assertionLifecycleToText,
+  AssertionResult,
+  createRequestAssertions,
+} from './assertions';
+import { Field, Operation, Request } from '../types';
 
 const getRequestRules = (rules: Rules[]): (RequestRule & RulesetData)[] => {
   const requestRules: (RequestRule & RulesetData)[] = [];
@@ -46,6 +52,51 @@ const getRequestRules = (rules: Rules[]): (RequestRule & RulesetData)[] => {
   return requestRules;
 };
 
+const createRequestBodyResult = (
+  assertionResult: AssertionResult,
+  request: Request,
+  operation: Operation,
+  rule: RequestRule
+): Result => ({
+  where: `${assertionLifecycleToText(
+    assertionResult.type
+  )} request with content-type: ${
+    request.contentType
+  } in operation: ${operation.method.toUpperCase()} ${operation.path}`,
+  isMust: true,
+  change: assertionResult.changeOrFact,
+  name: rule.name,
+  condition: assertionResult.condition,
+  passed: assertionResult.passed,
+  error: assertionResult.error,
+  docsLink: rule.docsLink,
+  isShould: false,
+});
+
+const createRequestPropertyResult = (
+  assertionResult: AssertionResult,
+  property: Field,
+  request: Request,
+  operation: Operation,
+  rule: RequestRule
+): Result => ({
+  where: `${assertionLifecycleToText(
+    assertionResult.type
+  )} property: ${property.location.conceptualLocation.jsonSchemaTrail.join(
+    '/'
+  )} request body: ${
+    request.contentType
+  } in operation: ${operation.method.toUpperCase()} ${operation.path}`,
+  isMust: true,
+  change: assertionResult.changeOrFact,
+  name: rule.name,
+  condition: assertionResult.condition,
+  passed: assertionResult.passed,
+  error: assertionResult.error,
+  docsLink: rule.docsLink,
+  isShould: false,
+});
+
 export const runRequestRules = ({
   operation,
   request,
@@ -61,7 +112,7 @@ export const runRequestRules = ({
   beforeApiSpec: OpenAPIV3.Document;
   afterApiSpec: OpenAPIV3.Document;
 }) => {
-  const result: Result[] = [];
+  const results: Result[] = [];
   const requestRules = getRequestRules(rules);
   const beforeOperation = createOperation(operation, 'before', beforeApiSpec);
   const afterOperation = createOperation(operation, 'after', afterApiSpec);
@@ -71,6 +122,8 @@ export const runRequestRules = ({
         beforeOperation,
         customRuleContext
       );
+      const requestAssertions = createRequestAssertions();
+      requestRule.rule(requestAssertions, beforeRulesContext);
 
       for (const contentType of request.bodies.keys()) {
         const beforeRequest = createRequest(
@@ -84,12 +137,41 @@ export const runRequestRules = ({
             !requestRule.matches ||
             requestRule.matches(beforeRequest, beforeRulesContext)
           ) {
-            // TODO pass in assertions + catch rule errors
-            // TODO create helper for this
-            // RequestRule.rule()
-            // run request rules
-            // run request body rule
-            // run request property rules
+            results.push(
+              ...requestAssertions.body
+                .runBefore(
+                  beforeRequest,
+                  request.bodies.get(contentType)?.change || null
+                )
+                .map((assertionResult) =>
+                  createRequestBodyResult(
+                    assertionResult,
+                    beforeRequest,
+                    beforeOperation,
+                    requestRule
+                  )
+                )
+            );
+
+            for (const [key, property] of beforeRequest.properties.entries()) {
+              const propertyChange =
+                request.bodies.get(contentType)?.fields.get(key)?.change ||
+                null;
+
+              results.push(
+                ...requestAssertions.property
+                  .runBefore(property, propertyChange)
+                  .map((assertionResult) =>
+                    createRequestPropertyResult(
+                      assertionResult,
+                      property,
+                      beforeRequest,
+                      beforeOperation,
+                      requestRule
+                    )
+                  )
+              );
+            }
           }
         }
       }
@@ -101,8 +183,15 @@ export const runRequestRules = ({
         customRuleContext,
         operation.change?.changeType || null
       );
-
+      const requestAssertions = createRequestAssertions();
+      requestRule.rule(requestAssertions, afterRulesContext);
       for (const contentType of request.bodies.keys()) {
+        const maybeBeforeRequest = createRequest(
+          request,
+          contentType,
+          'before',
+          beforeApiSpec
+        );
         const afterRequest = createRequest(
           request,
           contentType,
@@ -114,17 +203,49 @@ export const runRequestRules = ({
             !requestRule.matches ||
             requestRule.matches(afterRequest, afterRulesContext)
           ) {
-            // TODO pass in assertions + catch rule errors
-            // TODO create helper for this
-            // RequestRule.rule()
-            // run request rules
-            // run request body rule
-            // run request property rules
+            results.push(
+              ...requestAssertions.body
+                .runAfter(
+                  maybeBeforeRequest,
+                  afterRequest,
+                  request.bodies.get(contentType)?.change || null
+                )
+                .map((assertionResult) =>
+                  createRequestBodyResult(
+                    assertionResult,
+                    afterRequest,
+                    afterOperation,
+                    requestRule
+                  )
+                )
+            );
+
+            for (const [key, property] of afterRequest.properties.entries()) {
+              const maybeBeforeProperty =
+                maybeBeforeRequest?.properties.get(key) || null;
+              const propertyChange =
+                request.bodies.get(contentType)?.fields.get(key)?.change ||
+                null;
+
+              results.push(
+                ...requestAssertions.property
+                  .runAfter(maybeBeforeProperty, property, propertyChange)
+                  .map((assertionResult) =>
+                    createRequestPropertyResult(
+                      assertionResult,
+                      property,
+                      afterRequest,
+                      afterOperation,
+                      requestRule
+                    )
+                  )
+              );
+            }
           }
         }
       }
     }
   }
 
-  return result;
+  return results;
 };

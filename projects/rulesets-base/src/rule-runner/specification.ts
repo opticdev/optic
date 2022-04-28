@@ -9,6 +9,11 @@ import {
 } from './utils';
 
 import { Ruleset, SpecificationRule } from '../rules';
+import {
+  createSpecificationAssertions,
+  AssertionResult,
+  assertionLifecycleToText,
+} from './assertions';
 
 const getSpecificationRules = (
   rules: Rules[]
@@ -42,6 +47,21 @@ const getSpecificationRules = (
   return specificationRules;
 };
 
+const createSpecificationResult = (
+  assertionResult: AssertionResult,
+  rule: SpecificationRule
+): Result => ({
+  where: `${assertionLifecycleToText(assertionResult.type)} specification`,
+  isMust: true,
+  change: assertionResult.changeOrFact,
+  name: rule.name,
+  condition: assertionResult.condition,
+  passed: assertionResult.passed,
+  error: assertionResult.error,
+  docsLink: rule.docsLink,
+  isShould: false,
+});
+
 export const runSpecificationRules = ({
   specification,
   rules,
@@ -55,7 +75,7 @@ export const runSpecificationRules = ({
   beforeApiSpec: OpenAPIV3.Document;
   afterApiSpec: OpenAPIV3.Document;
 }) => {
-  const result: Result[] = [];
+  const results: Result[] = [];
   const specificationRules = getSpecificationRules(rules);
   const specificationRuleContext = createEmptyRuleContext(customRuleContext);
   const beforeSpecification = createSpecification(
@@ -74,9 +94,19 @@ export const runSpecificationRules = ({
         !specificationRule.matches ||
         specificationRule.matches(beforeSpecification, specificationRuleContext)
       ) {
-        // TODO pass in assertions + catch rule errors
-        // TODO create helper for this
-        // specificationRule.rule()
+        const specificationAssertions = createSpecificationAssertions();
+        specificationRule.rule(
+          specificationAssertions,
+          specificationRuleContext
+        );
+
+        results.push(
+          ...specificationAssertions
+            .runBefore(beforeSpecification, specification.change)
+            .map((assertionResult) =>
+              createSpecificationResult(assertionResult, specificationRule)
+            )
+        );
       }
     }
 
@@ -85,11 +115,26 @@ export const runSpecificationRules = ({
         !specificationRule.matches ||
         specificationRule.matches(afterSpecification, specificationRuleContext)
       ) {
-        // TODO pass in assertions + catch rule errors
-        // specificationRule.rule()
+        const specificationAssertions = createSpecificationAssertions();
+        specificationRule.rule(
+          specificationAssertions,
+          specificationRuleContext
+        );
+
+        results.push(
+          ...specificationAssertions
+            .runAfter(
+              beforeSpecification,
+              afterSpecification,
+              specification.change
+            )
+            .map((assertionResult) =>
+              createSpecificationResult(assertionResult, specificationRule)
+            )
+        );
       }
     }
   }
 
-  return result;
+  return results;
 };

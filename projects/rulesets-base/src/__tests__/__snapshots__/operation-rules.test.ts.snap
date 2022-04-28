@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`operation assertions added failing assertion 1`] = `
+exports[`OperationRule assertions added failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -35,7 +35,7 @@ Array [
 ]
 `;
 
-exports[`operation assertions added passing assertion 1`] = `
+exports[`OperationRule assertions added passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -71,7 +71,7 @@ Array [
 ]
 `;
 
-exports[`operation assertions changed failing assertion 1`] = `
+exports[`OperationRule assertions changed failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -114,7 +114,7 @@ Array [
 ]
 `;
 
-exports[`operation assertions changed passing assertion 1`] = `
+exports[`OperationRule assertions changed passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -156,7 +156,7 @@ Array [
 ]
 `;
 
-exports[`operation assertions removed failing assertion 1`] = `
+exports[`OperationRule assertions removed failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -181,7 +181,7 @@ Array [
         },
       },
     },
-    "condition": "must not remove an operation",
+    "condition": "must not remove an operation without summary \`hello\`",
     "docsLink": undefined,
     "error": "cannot remove an operation",
     "isMust": true,
@@ -193,9 +193,45 @@ Array [
 ]
 `;
 
-exports[`operation assertions removed passing assertion 1`] = `Array []`;
+exports[`OperationRule assertions removed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "removed": Object {
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/api/users",
+          "summary": "hello",
+        },
+      },
+    },
+    "condition": "must not remove an operation without summary \`hello\`",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation removal",
+    "passed": true,
+    "where": "removed operation: GET /api/users",
+  },
+]
+`;
 
-exports[`operation assertions requirement failing assertion 1`] = `
+exports[`OperationRule assertions requirement failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -239,7 +275,7 @@ Array [
 ]
 `;
 
-exports[`operation assertions requirement passing assertion 1`] = `
+exports[`OperationRule assertions requirement passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -285,7 +321,7 @@ Array [
 ]
 `;
 
-exports[`operation headerParameter assertions added failing assertion 1`] = `
+exports[`OperationRule headerParameter assertions added failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -326,7 +362,7 @@ Array [
 ]
 `;
 
-exports[`operation headerParameter assertions added passing assertion 1`] = `
+exports[`OperationRule headerParameter assertions added passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -368,7 +404,7 @@ Array [
 ]
 `;
 
-exports[`operation headerParameter assertions changed failing assertion 1`] = `
+exports[`OperationRule headerParameter assertions changed failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -416,7 +452,7 @@ Array [
 ]
 `;
 
-exports[`operation headerParameter assertions changed passing assertion 1`] = `
+exports[`OperationRule headerParameter assertions changed passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -464,7 +500,7 @@ Array [
 ]
 `;
 
-exports[`operation headerParameter assertions removed failing assertion 1`] = `
+exports[`OperationRule headerParameter assertions removed failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -508,7 +544,7 @@ Array [
 ]
 `;
 
-exports[`operation headerParameter assertions removed passing assertion 1`] = `
+exports[`OperationRule headerParameter assertions removed passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -551,7 +587,7 @@ Array [
 ]
 `;
 
-exports[`operation headerParameter assertions requirement failing assertion 1`] = `
+exports[`OperationRule headerParameter assertions requirement failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -595,7 +631,7 @@ Array [
 ]
 `;
 
-exports[`operation headerParameter assertions requirement passing assertion 1`] = `
+exports[`OperationRule headerParameter assertions requirement passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -641,7 +677,7 @@ Array [
 ]
 `;
 
-exports[`operation pathParameter assertions added failing assertion 1`] = `
+exports[`OperationRule pathParameter assertions added failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -682,7 +718,7 @@ Array [
 ]
 `;
 
-exports[`operation pathParameter assertions added passing assertion 1`] = `
+exports[`OperationRule pathParameter assertions added passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -724,7 +760,7 @@ Array [
 ]
 `;
 
-exports[`operation pathParameter assertions changed failing assertion 1`] = `
+exports[`OperationRule pathParameter assertions changed failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -772,7 +808,7 @@ Array [
 ]
 `;
 
-exports[`operation pathParameter assertions changed passing assertion 1`] = `
+exports[`OperationRule pathParameter assertions changed passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -820,7 +856,7 @@ Array [
 ]
 `;
 
-exports[`operation pathParameter assertions removed failing assertion 1`] = `
+exports[`OperationRule pathParameter assertions removed failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -864,7 +900,7 @@ Array [
 ]
 `;
 
-exports[`operation pathParameter assertions removed passing assertion 1`] = `
+exports[`OperationRule pathParameter assertions removed passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -907,7 +943,7 @@ Array [
 ]
 `;
 
-exports[`operation pathParameter assertions requirement failing assertion 1`] = `
+exports[`OperationRule pathParameter assertions requirement failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -951,7 +987,7 @@ Array [
 ]
 `;
 
-exports[`operation pathParameter assertions requirement passing assertion 1`] = `
+exports[`OperationRule pathParameter assertions requirement passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -997,7 +1033,7 @@ Array [
 ]
 `;
 
-exports[`operation queryParameter assertions added failing assertion 1`] = `
+exports[`OperationRule queryParameter assertions added failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -1038,7 +1074,7 @@ Array [
 ]
 `;
 
-exports[`operation queryParameter assertions added passing assertion 1`] = `
+exports[`OperationRule queryParameter assertions added passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -1080,7 +1116,7 @@ Array [
 ]
 `;
 
-exports[`operation queryParameter assertions changed failing assertion 1`] = `
+exports[`OperationRule queryParameter assertions changed failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -1128,7 +1164,7 @@ Array [
 ]
 `;
 
-exports[`operation queryParameter assertions changed passing assertion 1`] = `
+exports[`OperationRule queryParameter assertions changed passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -1176,7 +1212,7 @@ Array [
 ]
 `;
 
-exports[`operation queryParameter assertions removed failing assertion 1`] = `
+exports[`OperationRule queryParameter assertions removed failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -1220,7 +1256,7 @@ Array [
 ]
 `;
 
-exports[`operation queryParameter assertions removed passing assertion 1`] = `
+exports[`OperationRule queryParameter assertions removed passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -1263,7 +1299,7 @@ Array [
 ]
 `;
 
-exports[`operation queryParameter assertions requirement failing assertion 1`] = `
+exports[`OperationRule queryParameter assertions requirement failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -1307,7 +1343,7 @@ Array [
 ]
 `;
 
-exports[`operation queryParameter assertions requirement passing assertion 1`] = `
+exports[`OperationRule queryParameter assertions requirement passing assertion 1`] = `
 Array [
   Object {
     "change": Object {

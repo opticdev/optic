@@ -31,6 +31,7 @@ export class RuleRunner {
       changes: changelog,
     });
 
+    console.log(groupedFacts.specification);
     const specificationResults = runSpecificationRules({
       specification: groupedFacts.specification,
       rules: this.rules,

@@ -18,9 +18,6 @@ export class SpecificationRule {
     if (!config.name) {
       throw new Error('Expected a name in SpecificationRule');
     }
-    if (!config.matches) {
-      throw new Error('Expected a matches object in SpecificationRule');
-    }
     if (!config.rule) {
       throw new Error('Expected a rule definition in SpecificationRule');
     }

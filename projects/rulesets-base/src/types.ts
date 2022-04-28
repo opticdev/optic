@@ -51,10 +51,9 @@ export type AssertionType =
   | 'query-parameter'
   | 'path-parameter'
   | 'header-parameter'
-  | 'request'
-  | 'response'
   | 'response-header'
-  | 'body'
+  | 'request-body'
+  | 'response-body'
   | 'property';
 
 export type AssertionTypeToValue = {
@@ -63,10 +62,9 @@ export type AssertionTypeToValue = {
   'query-parameter': FactVariantWithRaw<OpenApiKind.QueryParameter>;
   'path-parameter': FactVariantWithRaw<OpenApiKind.PathParameter>;
   'header-parameter': FactVariantWithRaw<OpenApiKind.HeaderParameter>;
-  request: Request;
-  response: Response;
   'response-header': FactVariantWithRaw<OpenApiKind.ResponseHeader>;
-  body: FactVariantWithRaw<OpenApiKind.Body>;
+  'request-body': Request;
+  'response-body': Response;
   property: FactVariantWithRaw<OpenApiKind.Field>;
 };
 
@@ -116,13 +114,13 @@ export type OperationAssertions = Assertions<'operation'> & {
   headerParameter: Assertions<'header-parameter'>;
 };
 
-export type RequestAssertions = Assertions<'request'> & {
-  body: Assertions<'body'>;
-  properties: Assertions<'property'>;
+export type RequestAssertions = {
+  body: Assertions<'request-body'>;
+  property: Assertions<'property'>;
 };
 
-export type ResponseAssertions = Assertions<'response'> & {
+export type ResponseAssertions = {
   header: Assertions<'response-header'>;
-  body: Assertions<'body'>;
+  body: Assertions<'response-body'>;
   property: Assertions<'property'>;
 };
