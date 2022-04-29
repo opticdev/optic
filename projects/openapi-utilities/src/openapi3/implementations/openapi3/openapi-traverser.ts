@@ -42,6 +42,10 @@ const isNotReferenceObject = <T extends {}>(
   return !('$ref' in maybeReference);
 };
 
+const isObject = (value: any) => {
+  return typeof value === 'object' && !Array.isArray(value) && value !== null;
+};
+
 export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   format = 'openapi3';
 
@@ -116,7 +120,13 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     );
     const requestBody = operation.requestBody;
     if (requestBody) {
-      if (isNotReferenceObject(requestBody)) {
+      if (!isObject(requestBody)) {
+        console.warn(
+          `Expected an object at: ${conceptualPath.join(
+            ' >'
+          )}, found ${requestBody}`
+        );
+      } else if (isNotReferenceObject(requestBody)) {
         for (let [contentType, body] of Object.entries(
           requestBody.content || {}
         ))
@@ -143,7 +153,13 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     }
 
     for (let [statusCode, response] of Object.entries(operation.responses)) {
-      if (isNotReferenceObject(response)) {
+      if (!isObject(response)) {
+        console.warn(
+          `Expected an object at: ${conceptualPath.join(
+            ' >'
+          )}, found ${response}`
+        );
+      } else if (isNotReferenceObject(response)) {
         yield* this.traverseResponse(
           response,
           statusCode,
@@ -234,7 +250,13 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     if (operation.parameters) {
       this.checkJsonTrail(jsonPath, operation.parameters);
       for (let [i, parameter] of Object.entries(operation.parameters)) {
-        if (isNotReferenceObject(parameter)) {
+        if (!isObject(parameter)) {
+          console.warn(
+            `Expected an object at: ${conceptualPath.join(
+              ' >'
+            )}, found ${parameter}`
+          );
+        } else if (isNotReferenceObject(parameter)) {
           const location = locationForParameter(parameter);
           if (location) {
             let fact = this.onRequestParameter(
@@ -341,7 +363,13 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   ): IterableIterator<IFact> {
     if (response.headers) {
       for (let [name, header] of Object.entries(response.headers)) {
-        if (isNotReferenceObject(header)) {
+        if (!isObject(header)) {
+          console.warn(
+            `Expected an object at: ${conceptualPath.join(
+              ' >'
+            )}, found ${header}`
+          );
+        } else if (isNotReferenceObject(header)) {
           yield this.onResponseHeader(
             name,
             header,
@@ -402,7 +430,11 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     const { schema, examples, example } = body;
 
     if (schema) {
-      if (isNotReferenceObject(schema)) {
+      if (!isObject(schema)) {
+        console.warn(
+          `Expected an object at: ${conceptualPath.join(' >')}, found ${schema}`
+        );
+      } else if (isNotReferenceObject(schema)) {
         yield this.onContentForBody(
           schema,
           contentType,
@@ -430,7 +462,13 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
 
     if (examples) {
       for (let [name, example] of Object.entries(examples)) {
-        if (isNotReferenceObject(example)) {
+        if (!isObject(example)) {
+          console.warn(
+            `Expected an object at: ${conceptualPath.join(
+              ' >'
+            )}, found ${example}`
+          );
+        } else if (isNotReferenceObject(example)) {
           yield this.onBodyExample(
             example,
             contentType,
@@ -450,21 +488,13 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     }
 
     if (example) {
-      if (isNotReferenceObject(example)) {
-        yield this.onBodyExample(
-          { value: example },
-          contentType,
-          jsonPointer.append(jsonPath, 'example'),
-          [...conceptualPath, 'example'],
-          { ...location, singular: true }
-        );
-      } else {
-        console.warn(
-          `Expected a flattened spec, found a reference at: ${conceptualPath.join(
-            ' > '
-          )}`
-        );
-      }
+      yield this.onBodyExample(
+        { value: example },
+        contentType,
+        jsonPointer.append(jsonPath, 'example'),
+        [...conceptualPath, 'example'],
+        { ...location, singular: true }
+      );
     }
   }
 
@@ -517,7 +547,13 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           '' + branchIndex,
         ];
 
-        if (isNotReferenceObject(branchSchema)) {
+        if (!isObject(branchSchema)) {
+          console.warn(
+            `Expected an object at: ${conceptualPath.join(
+              ' >'
+            )}, found ${branchSchema}`
+          );
+        } else if (isNotReferenceObject(branchSchema)) {
           yield* this.traverseSchema(
             branchSchema,
             jsonPointer.append(jsonPath, branchType, '' + branchIndex),
@@ -538,7 +574,13 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         for (let [key, fieldSchema] of Object.entries(
           schema.properties || {}
         )) {
-          if (isNotReferenceObject(fieldSchema)) {
+          if (!isObject(fieldSchema)) {
+            console.warn(
+              `Expected an object at: ${conceptualPath.join(
+                ' >'
+              )}, found ${fieldSchema}`
+            );
+          } else if (isNotReferenceObject(fieldSchema)) {
             yield* this.traverseField(
               key,
               fieldSchema,
@@ -561,7 +603,13 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         break;
       case 'array':
         const arrayItems = schema.items;
-        if (isNotReferenceObject(arrayItems)) {
+        if (!isObject(arrayItems)) {
+          console.warn(
+            `Expected an object at: ${conceptualPath.join(
+              ' >'
+            )}, found ${arrayItems}`
+          );
+        } else if (isNotReferenceObject(arrayItems)) {
           yield* this.traverseSchema(
             arrayItems,
             jsonPointer.append(jsonPath, 'items'),
@@ -599,7 +647,11 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     const conceptualPath = jsonPointer.decode(jsonPath);
     const conceptualLocation = { inComponentSchema: { schemaName } };
 
-    if (isNotReferenceObject(schema)) {
+    if (!isObject(schema)) {
+      console.warn(
+        `Expected an object at: ${conceptualPath.join(' >')}, found ${schema}`
+      );
+    } else if (isNotReferenceObject(schema)) {
       this.checkJsonTrail(jsonPath, schema);
 
       if (schema.example) {

@@ -5291,6 +5291,130 @@ Array [
 ]
 `;
 
+exports[`handles example schemas as strings 1`] = `
+Array [
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {},
+      "conceptualPath": Array [],
+      "jsonPath": "",
+      "kind": "specification",
+    },
+    "value": Object {
+      "info": Object {
+        "title": "Empty",
+        "version": "0.0.0",
+      },
+      "openapi": "3.0.1",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "method": "patch",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "patch",
+      ],
+      "jsonPath": "/paths/~1example/patch",
+      "kind": "operation",
+    },
+    "value": Object {
+      "method": "patch",
+      "pathPattern": "/example",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "patch",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "patch",
+        "responses",
+        "200",
+        "application/json",
+      ],
+      "jsonPath": "/paths/~1example/patch/responses/200/content/application~1json",
+      "kind": "body",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "flatSchema": Object {
+        "type": "string",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "body": Object {
+            "contentType": "application/json",
+          },
+          "statusCode": "200",
+        },
+        "method": "patch",
+        "path": "/example",
+        "singular": true,
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "patch",
+        "responses",
+        "200",
+        "application/json",
+        "example",
+      ],
+      "jsonPath": "/paths/~1example/patch/responses/200/content/application~1json/example",
+      "kind": "body-example",
+    },
+    "value": Object {
+      "contentType": "application/json",
+      "name": undefined,
+      "value": "hello",
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inResponse": Object {
+          "statusCode": "200",
+        },
+        "method": "patch",
+        "path": "/example",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/example",
+        "patch",
+        "responses",
+        "200",
+      ],
+      "jsonPath": "/paths/~1example/patch/responses/200",
+      "kind": "response",
+    },
+    "value": Object {
+      "description": "hello",
+      "statusCode": "200",
+    },
+  },
+]
+`;
+
 exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
 Array [
   Object {
