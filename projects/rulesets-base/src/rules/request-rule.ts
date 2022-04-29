@@ -18,9 +18,6 @@ export class RequestRule {
     if (!config.name) {
       throw new Error('Expected a name in RequestRule');
     }
-    if (!config.matches) {
-      throw new Error('Expected a matches object in RequestRule');
-    }
     if (!config.rule) {
       throw new Error('Expected a rule definition in RequestRule');
     }

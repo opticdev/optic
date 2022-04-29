@@ -22,9 +22,6 @@ export class Ruleset {
     if (!config.name) {
       throw new Error('Expected a name in Ruleset');
     }
-    if (!config.matches) {
-      throw new Error('Expected a matches object in Ruleset');
-    }
     if (!config.rules) {
       throw new Error('Expected a rules array in Ruleset');
     }

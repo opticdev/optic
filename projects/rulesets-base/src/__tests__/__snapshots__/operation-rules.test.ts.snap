@@ -1,0 +1,1390 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OperationRule assertions added failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": "operation does not have \`description\`",
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": false,
+    "where": "added operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions added passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "method": "post",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "post",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "post",
+        ],
+        "jsonPath": "/paths/~1api~1users/post",
+        "kind": "operation",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "where": "added operation: POST /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions changed failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "method": "get",
+          "operationId": "get-users-changed",
+          "pathPattern": "/api/users",
+        },
+        "before": Object {
+          "method": "get",
+          "operationId": "get-users",
+          "pathPattern": "/api/users",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "must not change an operationId",
+    "docsLink": undefined,
+    "error": "cannot change operationId",
+    "isMust": true,
+    "isShould": false,
+    "name": "operation operationId",
+    "passed": false,
+    "where": "changed operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions changed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "method": "get",
+          "operationId": "get-users",
+          "pathPattern": "/api/users",
+        },
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "must not change an operationId",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation operationId",
+    "passed": true,
+    "where": "changed operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions removed failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "removed": Object {
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+    },
+    "condition": "must not remove an operation without summary \`hello\`",
+    "docsLink": undefined,
+    "error": "cannot remove an operation",
+    "isMust": true,
+    "isShould": false,
+    "name": "operation removal",
+    "passed": false,
+    "where": "removed operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions removed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "removed": Object {
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/api/users",
+          "summary": "hello",
+        },
+      },
+    },
+    "condition": "must not remove an operation without summary \`hello\`",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation removal",
+    "passed": true,
+    "where": "removed operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions requirement failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "headerParameters": Map {},
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "method": "get",
+      "path": "/api/users",
+      "pathParameters": Map {},
+      "queryParameters": Map {},
+      "raw": Object {
+        "responses": Object {},
+      },
+      "requests": Array [],
+      "responses": Array [],
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": "operation does not have \`description\`",
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": false,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions requirement passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "headerParameters": Map {},
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "method": "get",
+      "path": "/api/users",
+      "pathParameters": Map {},
+      "queryParameters": Map {},
+      "raw": Object {
+        "description": "hello",
+        "responses": Object {},
+      },
+      "requests": Array [],
+      "responses": Array [],
+      "value": Object {
+        "description": "hello",
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule headerParameter assertions added failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "in": "header",
+        "name": "new-param",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": "parameter does not have \`description\`",
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": false,
+    "where": "added header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule headerParameter assertions added passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "in": "header",
+        "name": "new-param",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "where": "added header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule headerParameter assertions changed failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "header",
+          "name": "new-param",
+          "required": true,
+        },
+        "before": Object {
+          "in": "header",
+          "name": "new-param",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": "must not make parameter required",
+    "docsLink": undefined,
+    "error": "cannot make parameter required",
+    "isMust": true,
+    "isShould": false,
+    "name": "optional to required parameter",
+    "passed": false,
+    "where": "changed header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule headerParameter assertions changed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "header",
+          "name": "new-param",
+        },
+        "before": Object {
+          "in": "header",
+          "name": "new-param",
+          "required": true,
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": "must not make parameter required",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "optional to required parameter",
+    "passed": true,
+    "where": "changed header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule headerParameter assertions removed failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+      "removed": Object {
+        "before": Object {
+          "in": "header",
+          "name": "new-param",
+          "required": true,
+        },
+      },
+    },
+    "condition": "cannot remove a required parameter",
+    "docsLink": undefined,
+    "error": "required parameter cannot be removed",
+    "isMust": true,
+    "isShould": false,
+    "name": "removed parameters",
+    "passed": false,
+    "where": "removed header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule headerParameter assertions removed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+      "removed": Object {
+        "before": Object {
+          "in": "header",
+          "name": "new-param",
+        },
+      },
+    },
+    "condition": "cannot remove a required parameter",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "removed parameters",
+    "passed": true,
+    "where": "removed header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule headerParameter assertions requirement failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "hello",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+      "raw": Object {
+        "in": "header",
+        "name": "hello",
+      },
+      "value": Object {
+        "in": "header",
+        "name": "hello",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": "parameter does not have \`description\`",
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": false,
+    "where": "requirement for header parameter: hello in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule headerParameter assertions requirement passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "hello",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+      "raw": Object {
+        "description": "hello",
+        "in": "header",
+        "name": "hello",
+      },
+      "value": Object {
+        "description": "hello",
+        "in": "header",
+        "name": "hello",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "where": "requirement for header parameter: hello in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule pathParameter assertions added failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "in": "path",
+        "name": "new-param",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "path": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": "parameter does not have \`description\`",
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": false,
+    "where": "added header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule pathParameter assertions added passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "in": "path",
+        "name": "new-param",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "path": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "where": "added header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule pathParameter assertions changed failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "path",
+          "name": "new-param",
+          "required": true,
+        },
+        "before": Object {
+          "in": "path",
+          "name": "new-param",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "path": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+    },
+    "condition": "must not make parameter required",
+    "docsLink": undefined,
+    "error": "cannot make parameter required",
+    "isMust": true,
+    "isShould": false,
+    "name": "optional to required parameter",
+    "passed": false,
+    "where": "changed header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule pathParameter assertions changed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "path",
+          "name": "new-param",
+        },
+        "before": Object {
+          "in": "path",
+          "name": "new-param",
+          "required": true,
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "path": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+    },
+    "condition": "must not make parameter required",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "optional to required parameter",
+    "passed": true,
+    "where": "changed header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule pathParameter assertions removed failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "path": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+      "removed": Object {
+        "before": Object {
+          "in": "path",
+          "name": "new-param",
+          "required": true,
+        },
+      },
+    },
+    "condition": "cannot remove a required parameter",
+    "docsLink": undefined,
+    "error": "required parameter cannot be removed",
+    "isMust": true,
+    "isShould": false,
+    "name": "removed parameters",
+    "passed": false,
+    "where": "removed path parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule pathParameter assertions removed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "path": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+      "removed": Object {
+        "before": Object {
+          "in": "path",
+          "name": "new-param",
+        },
+      },
+    },
+    "condition": "cannot remove a required parameter",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "removed parameters",
+    "passed": true,
+    "where": "removed path parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule pathParameter assertions requirement failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "path": "hello",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+      "raw": Object {
+        "in": "path",
+        "name": "hello",
+      },
+      "value": Object {
+        "in": "path",
+        "name": "hello",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": "parameter does not have \`description\`",
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": false,
+    "where": "requirement for header parameter: hello in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule pathParameter assertions requirement passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "path": "hello",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "path",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "path-parameter",
+      },
+      "raw": Object {
+        "description": "hello",
+        "in": "path",
+        "name": "hello",
+      },
+      "value": Object {
+        "description": "hello",
+        "in": "path",
+        "name": "hello",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "where": "requirement for header parameter: hello in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule queryParameter assertions added failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "in": "query",
+        "name": "new-param",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": "parameter does not have \`description\`",
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": false,
+    "where": "added header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule queryParameter assertions added passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "in": "query",
+        "name": "new-param",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "where": "added header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule queryParameter assertions changed failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "query",
+          "name": "new-param",
+          "required": true,
+        },
+        "before": Object {
+          "in": "query",
+          "name": "new-param",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": "must not make parameter required",
+    "docsLink": undefined,
+    "error": "cannot make parameter required",
+    "isMust": true,
+    "isShould": false,
+    "name": "optional to required parameter",
+    "passed": false,
+    "where": "changed header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule queryParameter assertions changed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "query",
+          "name": "new-param",
+        },
+        "before": Object {
+          "in": "query",
+          "name": "new-param",
+          "required": true,
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": "must not make parameter required",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "optional to required parameter",
+    "passed": true,
+    "where": "changed header parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule queryParameter assertions removed failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+      "removed": Object {
+        "before": Object {
+          "in": "query",
+          "name": "new-param",
+          "required": true,
+        },
+      },
+    },
+    "condition": "cannot remove a required parameter",
+    "docsLink": undefined,
+    "error": "required parameter cannot be removed",
+    "isMust": true,
+    "isShould": false,
+    "name": "removed parameters",
+    "passed": false,
+    "where": "removed query parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule queryParameter assertions removed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+      "removed": Object {
+        "before": Object {
+          "in": "query",
+          "name": "new-param",
+        },
+      },
+    },
+    "condition": "cannot remove a required parameter",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "removed parameters",
+    "passed": true,
+    "where": "removed query parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule queryParameter assertions requirement failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "hello",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+      "raw": Object {
+        "in": "query",
+        "name": "hello",
+      },
+      "value": Object {
+        "in": "query",
+        "name": "hello",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": "parameter does not have \`description\`",
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": false,
+    "where": "requirement for header parameter: hello in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule queryParameter assertions requirement passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "hello",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+      "raw": Object {
+        "description": "hello",
+        "in": "query",
+        "name": "hello",
+      },
+      "value": Object {
+        "description": "hello",
+        "in": "query",
+        "name": "hello",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "where": "requirement for header parameter: hello in operation: GET /api/users",
+  },
+]
+`;
