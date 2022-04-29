@@ -10,14 +10,6 @@ Array [
         "jsonPath": "",
         "kind": "specification",
       },
-      "raw": Object {
-        "info": Object {
-          "title": "Empty",
-          "version": "0.0.0",
-        },
-        "openapi": "3.1.3",
-        "paths": Object {},
-      },
       "value": Object {
         "info": Object {
           "title": "Empty",
@@ -47,15 +39,6 @@ Array [
         "conceptualPath": Array [],
         "jsonPath": "",
         "kind": "specification",
-      },
-      "raw": Object {
-        "info": Object {
-          "title": "Empty",
-          "version": "0.0.0",
-        },
-        "openapi": "3.1.3",
-        "paths": Object {},
-        "x-stability": "abc",
       },
       "value": Object {
         "info": Object {
