@@ -30,7 +30,9 @@ export class OperationQueries {
       specPath: string;
     }>
   ) {
-    this.patterns = this.operations.map(({ pathPattern }) => pathPattern);
+    this.patterns = [
+      ...new Set(this.operations.map(({ pathPattern }) => pathPattern)),
+    ];
     this.patternsAsComponents = this.patterns.map((pattern) => [
       pattern,
       fragmentize(pattern),
@@ -74,7 +76,7 @@ export class OperationQueries {
     // reduce qualified patterns by comparing component by component
     componentizedPath.forEach((pathComponent, componentIndex) => {
       qualifiedPatterns = qualifiedPatterns.filter(([, patternComponents]) => {
-        const patternComponent = patternComponents[componentIndex][1];
+        const patternComponent = patternComponents[componentIndex];
         return (
           pathComponent === patternComponent ||
           isParameterTemplate(patternComponent)
@@ -94,7 +96,8 @@ export class OperationQueries {
 
       return Err('Path matched multiple operations');
     } else if (qualifiedPatterns.length === 1) {
-      return Ok(None); // TODO: return matched spec path
+      let [pattern] = qualifiedPatterns[0];
+      return Ok(Some(pattern));
     } else {
       return Ok(None);
     }

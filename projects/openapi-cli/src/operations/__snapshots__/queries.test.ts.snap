@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OperationsQueries findSpecPath can match / 1`] = `"debug-path-0-get"`;
+
+exports[`OperationsQueries findSpecPath will match concrete paths in set 1`] = `"debug-path-1-get"`;

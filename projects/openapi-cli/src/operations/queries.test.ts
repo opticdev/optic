@@ -3,8 +3,6 @@ import { SpecFacts, OpenAPIV3 } from '../specs';
 import { collect } from '../lib/async-tools';
 import { petstore } from '../tests/fixtures/facts';
 
-const gitHubOpenApiPaths = require('../tests/inputs/githubpaths.json');
-
 const { HttpMethods } = OpenAPIV3;
 
 describe('OperationsQueries', () => {
@@ -15,17 +13,30 @@ describe('OperationsQueries', () => {
   });
 
   describe('findSpecPath', () => {
+    const testPaths = [
+      '/',
+      '/app/hook/config',
+      '/orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}',
+    ];
+
     const queries = new OperationQueries(
-      gitHubOpenApiPaths.map((pathPattern, i) => ({
-        pathPattern,
-        method: HttpMethods.GET,
-        specPath: `debug-path-${i}`, // spec paths don't have to be actual OpenAPI paths, just be unique
-      }))
+      testPaths.flatMap((pathPattern, i) => [
+        {
+          pathPattern,
+          method: HttpMethods.GET,
+          specPath: `debug-path-${i}-get`, // spec paths don't have to be actual OpenAPI paths, just be unique
+        },
+        {
+          pathPattern,
+          method: HttpMethods.POST,
+          specPath: `debug-path-${i}-post`,
+        },
+      ])
     );
 
     it('will not match paths outside of set', () => {
       const result = queries
-        .findSpecPath('/not-a-github-path', HttpMethods.GET)
+        .findSpecPath('/not-a-valid-path', HttpMethods.GET)
         .expect('unambigious paths to be ok');
 
       expect(result.none).toBe(true);
@@ -46,7 +57,7 @@ describe('OperationsQueries', () => {
         .expect('unambigious paths to be ok');
 
       expect(result.some).toBe(true);
-      expect(result).toMatchSnapshot();
+      expect(result.unwrap()).toMatchSnapshot();
     });
   });
 });
