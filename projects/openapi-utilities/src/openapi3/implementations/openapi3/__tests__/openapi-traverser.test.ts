@@ -39,3 +39,36 @@ it('can extract component schema example facts from specs', async () => {
   traverser.traverse(spec);
   expect([...traverser.facts()]).toMatchSnapshot();
 });
+
+it('handles example schemas as strings', () => {
+  const traverser = new OpenAPITraverser();
+  const spec: any = {
+    openapi: '3.0.1',
+    paths: {
+      '/example': {
+        patch: {
+          responses: {
+            '200': {
+              description: 'hello',
+              content: {
+                'application/json': {
+                  example: 'hello',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    info: {
+      version: '0.0.0',
+      title: 'Empty',
+    },
+  };
+
+  traverser.traverse(spec);
+  expect([...traverser.facts()]).toMatchSnapshot();
+});
