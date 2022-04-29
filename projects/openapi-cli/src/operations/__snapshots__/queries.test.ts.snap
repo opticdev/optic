@@ -9,3 +9,5 @@ exports[`OperationsQueries findSpecPath can match / 1`] = `"debug-path-0-get"`;
 exports[`OperationsQueries findSpecPath will match concrete paths in set 1`] = `"debug-path-1-get"`;
 
 exports[`OperationsQueries findSpecPath will match concrete paths with parameters set 1`] = `"debug-path-2-get"`;
+
+exports[`OperationsQueries findSpecPath will match method 1`] = `"debug-path-1-post"`;

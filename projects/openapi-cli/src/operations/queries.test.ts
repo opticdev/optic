@@ -2,6 +2,7 @@ import { OperationQueries } from './queries';
 import { SpecFacts, OpenAPIV3 } from '../specs';
 import { collect } from '../lib/async-tools';
 import { petstore } from '../tests/fixtures/facts';
+import { isThrowStatement } from '@babel/types';
 
 const { HttpMethods } = OpenAPIV3;
 
@@ -81,6 +82,23 @@ describe('OperationsQueries', () => {
           '/orgs/an-org/actions/runner-groups/group-1',
           HttpMethods.GET
         )
+        .expect('unambigious paths to be ok');
+
+      expect(result.none).toBe(true);
+    });
+
+    it('will match method', () => {
+      const result = queries
+        .findSpecPath('/app/hook/config', HttpMethods.POST)
+        .expect('unambigious paths to be ok');
+
+      expect(result.some).toBe(true);
+      expect(result.unwrap()).toMatchSnapshot();
+    });
+
+    it('will not operations without matching method', () => {
+      const result = queries
+        .findSpecPath('/app/hook/config', HttpMethods.DELETE)
         .expect('unambigious paths to be ok');
 
       expect(result.none).toBe(true);
