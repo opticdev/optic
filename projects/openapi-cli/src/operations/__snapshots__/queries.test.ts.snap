@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`OperationsQueries findSpecPath ambigious paths will match exact matches 1`] = `"debug-path-3-get"`;
+
+exports[`OperationsQueries findSpecPath ambigious paths will match parameterized path 1`] = `"debug-path-5-get"`;
+
 exports[`OperationsQueries findSpecPath can match / 1`] = `"debug-path-0-get"`;
 
 exports[`OperationsQueries findSpecPath will match concrete paths in set 1`] = `"debug-path-1-get"`;
+
+exports[`OperationsQueries findSpecPath will match concrete paths with parameters set 1`] = `"debug-path-2-get"`;

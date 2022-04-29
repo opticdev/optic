@@ -13,13 +13,16 @@ describe('OperationsQueries', () => {
   });
 
   describe('findSpecPath', () => {
-    const testPaths = [
+    let testPaths = [
       '/',
       '/app/hook/config',
       '/orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}',
+      '/venues/top',
+      '/venues/featured',
+      '/venues/{venueId}',
     ];
 
-    const queries = new OperationQueries(
+    let queries = new OperationQueries(
       testPaths.flatMap((pathPattern, i) => [
         {
           pathPattern,
@@ -51,13 +54,57 @@ describe('OperationsQueries', () => {
       expect(result.unwrap()).toMatchSnapshot();
     });
 
-    it('will match concrete paths in set', async () => {
+    it('will match concrete paths in set', () => {
       const result = queries
         .findSpecPath('/app/hook/config', HttpMethods.GET)
         .expect('unambigious paths to be ok');
 
       expect(result.some).toBe(true);
       expect(result.unwrap()).toMatchSnapshot();
+    });
+
+    it('will match concrete paths with parameters set', () => {
+      const result = queries
+        .findSpecPath(
+          '/orgs/an-org/actions/runner-groups/group-1/repositories/repo-1',
+          HttpMethods.GET
+        )
+        .expect('unambigious paths to be ok');
+
+      expect(result.some).toBe(true);
+      expect(result.unwrap()).toMatchSnapshot();
+    });
+
+    it('will not match partial paths', () => {
+      const result = queries
+        .findSpecPath(
+          '/orgs/an-org/actions/runner-groups/group-1',
+          HttpMethods.GET
+        )
+        .expect('unambigious paths to be ok');
+
+      expect(result.none).toBe(true);
+    });
+
+    // known limitation -- nested ambiguous may not work properly
+    describe('ambigious paths', () => {
+      it('will match exact matches', () => {
+        const result = queries
+          .findSpecPath('/venues/top', HttpMethods.GET)
+          .expect('exact matching paths to be ok');
+
+        expect(result.some).toBe(true);
+        expect(result.unwrap()).toMatchSnapshot();
+      });
+
+      it('will match parameterized path', () => {
+        const result = queries
+          .findSpecPath('/venues/venue123', HttpMethods.GET)
+          .expect('unnested parameterized paths to be ok');
+
+        expect(result.some).toBe(true);
+        expect(result.unwrap()).toMatchSnapshot();
+      });
     });
   });
 });

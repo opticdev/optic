@@ -91,10 +91,10 @@ export class OperationQueries {
 
       if (exactMatch) {
         let [pattern] = exactMatch;
-        Ok(Some(pattern));
+        return Ok(Some(pattern));
+      } else {
+        return Err('Path matched multiple operations');
       }
-
-      return Err('Path matched multiple operations');
     } else if (qualifiedPatterns.length === 1) {
       let [pattern] = qualifiedPatterns[0];
       return Ok(Some(pattern));
