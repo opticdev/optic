@@ -1,4 +1,3 @@
-import path from 'path';
 import { CompareFileJson } from '@useoptic/openapi-utilities';
 import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
 import { loadAndValidateSpecFiles, uploadRun } from '../utils/shared-upload';
@@ -7,6 +6,8 @@ import {
   BulkUploadJson,
   NormalizedCiContext,
 } from '../../types';
+import { inGit } from '@useoptic/openapi-io';
+import { getRelativeRepoPath } from '../utils/get-relative-path';
 
 export const bulkUploadCiRun = async (
   opticClient: OpticBackendClient,
@@ -23,6 +24,7 @@ export const bulkUploadCiRun = async (
   }
 
   const uploadedComparisons = [];
+  const gitRootPath = await inGit(process.cwd());
 
   // TODO make this run in parallel w/ bottleneck
   for (const comparison of filteredComparisons) {
@@ -46,10 +48,10 @@ export const bulkUploadCiRun = async (
       fileMap,
       {
         from: comparison.inputs.from
-          ? path.join(process.cwd(), comparison.inputs.from)
+          ? getRelativeRepoPath(comparison.inputs.from, gitRootPath)
           : comparison.inputs.from,
         to: comparison.inputs.to
-          ? path.join(process.cwd(), comparison.inputs.to)
+          ? getRelativeRepoPath(comparison.inputs.to, gitRootPath)
           : comparison.inputs.to,
       },
       normalizedCiContext

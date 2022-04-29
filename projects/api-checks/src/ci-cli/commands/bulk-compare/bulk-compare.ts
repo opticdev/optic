@@ -7,7 +7,7 @@ import {
   validateOpenApiV3Document,
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
-import { ParseOpenAPIResult } from '@useoptic/openapi-io';
+import { inGit, ParseOpenAPIResult } from '@useoptic/openapi-io';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import {
@@ -28,6 +28,7 @@ import { sendBulkGithubMessage } from './bulk-github-comment';
 import { sendBulkGitlabMessage } from './bulk-gitlab-comment';
 import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
+import { getRelativeRepoPath } from '../utils/get-relative-path';
 
 export const registerBulkCompare = (
   cli: Command,
@@ -106,7 +107,6 @@ export const registerBulkCompare = (
 type ComparisonData = {
   changes: IChange[];
   results: ResultWithSourcemap[];
-  projectRootDir: string | false;
   version: string;
 };
 
@@ -171,19 +171,17 @@ const compareSpecs = async ({
           validateOpenApiV3Document(from.jsonLike);
           validateOpenApiV3Document(to.jsonLike);
 
-          const { results, changes, projectRootDir, version } =
-            await generateSpecResults(
-              checkService,
-              from,
-              to,
-              comparison.context
-            );
+          const { results, changes, version } = await generateSpecResults(
+            checkService,
+            from,
+            to,
+            comparison.context
+          );
           resolve({
             id,
             data: {
               results,
               changes,
-              projectRootDir,
               version,
             },
           });
@@ -387,7 +385,6 @@ const runBulkCompare = async ({
       return {
         results: comparison.data.results,
         changes: comparison.data.changes,
-        projectRootDir: comparison.data.projectRootDir,
         version: comparison.data.version,
         inputs: {
           from: comparison.fromFileName,
