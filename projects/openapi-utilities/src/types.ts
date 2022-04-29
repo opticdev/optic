@@ -1,4 +1,4 @@
-import { IChange } from './openapi3/sdk/types';
+import { IChange, IFact } from './openapi3/sdk/types';
 import { LookupLineResultWithFilepath } from './render/ast-helpers';
 
 export interface ShouldOrMust<G> {
@@ -88,13 +88,17 @@ export interface EntityRule<G, ApiContext, DSLContext, OpenApiEntityType> {
 export interface Result {
   where: string;
   condition: string;
-  isMust: boolean;
-  isShould: boolean;
   error?: string;
   passed: boolean;
-  change: IChange;
+  change: IChange | IFact; // IFact for `requirement`
   docsLink?: string;
+  // new
+  name?: string;
+
+  // to deprecate
   effectiveOnDate?: Date;
+  isShould: boolean;
+  isMust: boolean;
 }
 
 export type ResultWithSourcemap = Result & {

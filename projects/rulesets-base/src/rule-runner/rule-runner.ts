@@ -1,27 +1,22 @@
 import { IFact, IChange, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
-import {
-  Ruleset,
-  SpecificationRule,
-  OperationRule,
-  RequestRule,
-  ResponseRule,
-} from '../rules';
-import { groupFacts } from './group-facts';
 
-type Rules =
-  | Ruleset
-  | SpecificationRule
-  | OperationRule
-  | RequestRule
-  | ResponseRule;
+import { Rules } from './rule-runner-types';
+import { groupFacts } from './group-facts';
+import { runSpecificationRules } from './specification';
+import { runOperationRules } from './operation';
+import { runRequestRules } from './request';
+import { runResponseRules } from './response';
 
 export class RuleRunner {
-  constructor(private rules: Rules) {}
+  constructor(private rules: Rules[]) {}
 
   runRulesWithFacts({
+    context,
     currentFacts,
     nextFacts,
     changelog,
+    currentJsonLike: beforeApiSpec,
+    nextJsonLike: afterApiSpec,
   }: {
     context: any;
     nextFacts: IFact[];
@@ -36,6 +31,50 @@ export class RuleRunner {
       changes: changelog,
     });
 
-    return [];
+    console.log(groupedFacts.specification);
+    const specificationResults = runSpecificationRules({
+      specification: groupedFacts.specification,
+      rules: this.rules,
+      customRuleContext: context,
+      beforeApiSpec,
+      afterApiSpec,
+    });
+
+    const endpointResults: Result[] = [];
+
+    for (const endpoint of groupedFacts.endpoints.values()) {
+      const operationResults = runOperationRules({
+        operation: endpoint,
+        rules: this.rules,
+        customRuleContext: context,
+        beforeApiSpec,
+        afterApiSpec,
+      });
+      endpointResults.push(...operationResults);
+
+      const requestRules = runRequestRules({
+        operation: endpoint,
+        request: endpoint.request,
+        rules: this.rules,
+        customRuleContext: context,
+        beforeApiSpec,
+        afterApiSpec,
+      });
+      endpointResults.push(...requestRules);
+
+      for (const response of endpoint.responses.values()) {
+        const responseRules = runResponseRules({
+          operation: endpoint,
+          response: response,
+          rules: this.rules,
+          customRuleContext: context,
+          beforeApiSpec,
+          afterApiSpec,
+        });
+        endpointResults.push(...responseRules);
+      }
+    }
+
+    return [...specificationResults, ...endpointResults];
   }
 }

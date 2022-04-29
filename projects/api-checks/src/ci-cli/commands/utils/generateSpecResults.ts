@@ -5,7 +5,6 @@ import {
 } from '@useoptic/openapi-io';
 import {
   factsToChangelog,
-  OpenApiFact,
   IChange,
   ResultWithSourcemap,
   ChangeType,
@@ -22,7 +21,6 @@ export const generateSpecResults = async <T extends {}>(
 ): Promise<{
   changes: IChange[];
   results: ResultWithSourcemap[];
-  projectRootDir: string | false;
   version: string;
 }> => {
   const fromJsonLike = from.jsonLike!;
@@ -78,7 +76,6 @@ export const generateSpecResults = async <T extends {}>(
   return {
     changes: changesWithSourcemap,
     results: resultsWithSourcemap,
-    projectRootDir: await inGit(process.cwd()),
     version: packageJson.version,
   };
 };

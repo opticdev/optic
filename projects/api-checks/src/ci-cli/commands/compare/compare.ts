@@ -23,6 +23,8 @@ import { logComparison } from '../utils/comparison-renderer';
 import path from 'path';
 import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
+import { getRelativeRepoPath } from '../utils/get-relative-path';
+import { inGit } from '@useoptic/openapi-io';
 
 const parseContextObject = (context?: string): any => {
   try {
@@ -200,6 +202,7 @@ const runCompare = async ({
     const opticClient = createOpticClient(opticToken);
 
     try {
+      const gitRootPath = await inGit(process.cwd());
       const { git_provider, git_api_url } =
         await opticClient.getMyOrganization();
       const uploadOutput = await uploadCiRun(
@@ -208,8 +211,8 @@ const runCompare = async ({
         parsedTo.jsonLike,
         opticClient,
         {
-          from: from ? path.join(process.cwd(), from) : from,
-          to: to ? path.join(process.cwd(), to) : to,
+          from: from ? getRelativeRepoPath(from, gitRootPath) : from,
+          to: to ? getRelativeRepoPath(to, gitRootPath) : to,
         },
         normalizedCiContext
       );
