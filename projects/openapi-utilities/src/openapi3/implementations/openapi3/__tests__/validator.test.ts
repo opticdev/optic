@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import { OpenAPIV3 } from 'openapi-types';
 
 import { defaultEmptySpec } from '../../../constants';
 import { validateOpenApiV3Document } from '../validator';
@@ -97,4 +98,47 @@ test('open api doc with extra custom parameters', () => {
       },
     },
   });
+});
+
+test('processValidatorErrors', () => {
+  const json: any = {
+    ...defaultEmptySpec,
+    paths: {
+      '/api/users/{userId}': {
+        get: {
+          responses: {
+            '200': {
+              description: 'hello',
+              headers: { isgood: { schema: {} } },
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      hello: {
+                        type: 'array',
+                        items: 'no',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            '400': {
+              description: 'hello',
+              headers: { isgood: { schema: {} } },
+              content: {
+                'application/json': {
+                  schema: {},
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+  expect(() => {
+    validateOpenApiV3Document(json);
+  }).toThrowErrorMatchingSnapshot();
 });
