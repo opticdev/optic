@@ -42,7 +42,14 @@ export class OperationQueries {
   findSpecPath(
     path: string,
     method: OpenAPIV3.HttpMethods
-  ): Result<Option<string>, string> {
+  ): Result<
+    Option<{
+      pathPattern: string;
+      method: OpenAPIV3.HttpMethods;
+      specPath: string;
+    }>,
+    string
+  > {
     invariant(
       path.startsWith('/'),
       'operation specPath for can not be found for paths with host and / or protocol'
@@ -61,7 +68,7 @@ export class OperationQueries {
 
     if (!operation) return Ok(None);
 
-    return Ok(Some(operation.specPath));
+    return Ok(Some(operation));
   }
 
   private matchPathPattern(path: string): Result<Option<string>, string> {
