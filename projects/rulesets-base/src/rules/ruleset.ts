@@ -1,6 +1,7 @@
 import { OperationRule } from './operation-rule';
 import { RequestRule } from './request-rule';
 import { ResponseRule } from './response-rule';
+import { ResponseBodyRule } from './response-body-rule';
 import { SpecificationRule } from './specification-rule';
 import { RuleContext } from '../types';
 
@@ -8,7 +9,13 @@ type RulesetConfig = {
   name: string;
   docsLink?: string;
   matches?: (context: RuleContext) => boolean;
-  rules: (SpecificationRule | OperationRule | RequestRule | ResponseRule)[];
+  rules: (
+    | SpecificationRule
+    | OperationRule
+    | RequestRule
+    | ResponseRule
+    | ResponseBodyRule
+  )[];
 };
 
 export class Ruleset {

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`processValidatorErrors 1`] = `
+"[
+  {
+    \\"message\\": \\"Invalid value at instancePath\\",
+    \\"instancePath\\": \\"/paths/~1api~1users~1{userId}/get/responses/200/content/application~1json/schema/properties/hello/items\\",
+    \\"value\\": \\"no\\"
+  }
+]"
+`;

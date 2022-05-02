@@ -127,27 +127,16 @@ describe('createResponse', () => {
   const responseWithBothKeys = groupedFacts.endpoints
     .get('get /pet/findByStatus')!
     .responses.get('200')!;
-  const contentType = 'application/json';
 
   test('response with before key', () => {
     expect(
-      createResponse(
-        responseWithBothKeys,
-        contentType,
-        'before',
-        beforeOpenApiJson
-      )
+      createResponse(responseWithBothKeys, 'before', beforeOpenApiJson)
     ).toMatchSnapshot();
   });
 
   test('response with after key', () => {
     expect(
-      createResponse(
-        responseWithBothKeys,
-        contentType,
-        'after',
-        afterOpenApiJson
-      )
+      createResponse(responseWithBothKeys, 'after', afterOpenApiJson)
     ).toMatchSnapshot();
   });
 
@@ -155,7 +144,6 @@ describe('createResponse', () => {
     expect(
       createResponse(
         { ...responseWithBothKeys, before: null },
-        contentType,
         'before',
         beforeOpenApiJson
       )
@@ -166,29 +154,6 @@ describe('createResponse', () => {
     expect(
       createResponse(
         { ...responseWithBothKeys, after: null },
-        contentType,
-        'after',
-        afterOpenApiJson
-      )
-    ).toBe(null);
-  });
-
-  test('response body with no before key', () => {
-    expect(
-      createResponse(
-        responseWithBothKeys,
-        'not a valid content type',
-        'before',
-        beforeOpenApiJson
-      )
-    ).toBe(null);
-  });
-
-  test('response body with no after key', () => {
-    expect(
-      createResponse(
-        responseWithBothKeys,
-        'not a valid content type',
         'after',
         afterOpenApiJson
       )
@@ -198,7 +163,6 @@ describe('createResponse', () => {
 
 describe('createOperation', () => {
   test('with before key', () => {
-    console.log(groupedFacts.endpoints.keys());
     const endpoint = groupedFacts.endpoints.get('get /store/order/{orderId}')!;
     expect(
       createOperation(endpoint, 'before', beforeOpenApiJson)

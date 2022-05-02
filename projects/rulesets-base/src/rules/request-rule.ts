@@ -1,9 +1,9 @@
-import { Request, RequestAssertions, RuleContext } from '../types';
+import { RequestBody, RequestAssertions, RuleContext } from '../types';
 
 type RequestRuleConfig = {
   name: string;
   docsLink?: string;
-  matches?: (request: Request, context: RuleContext) => boolean;
+  matches?: (request: RequestBody, context: RuleContext) => boolean;
   rule: (request: RequestAssertions, context: RuleContext) => void;
 };
 

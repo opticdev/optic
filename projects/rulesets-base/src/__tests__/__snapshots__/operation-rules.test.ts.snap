@@ -235,7 +235,6 @@ exports[`OperationRule assertions requirement failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
-      "headerParameters": Map {},
       "location": Object {
         "conceptualLocation": Object {
           "method": "get",
@@ -249,15 +248,6 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "method": "get",
-      "path": "/api/users",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
-      "raw": Object {
-        "responses": Object {},
-      },
-      "requests": Array [],
-      "responses": Array [],
       "value": Object {
         "method": "get",
         "pathPattern": "/api/users",
@@ -279,7 +269,6 @@ exports[`OperationRule assertions requirement passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
-      "headerParameters": Map {},
       "location": Object {
         "conceptualLocation": Object {
           "method": "get",
@@ -293,16 +282,6 @@ Array [
         "jsonPath": "/paths/~1api~1users/get",
         "kind": "operation",
       },
-      "method": "get",
-      "path": "/api/users",
-      "pathParameters": Map {},
-      "queryParameters": Map {},
-      "raw": Object {
-        "description": "hello",
-        "responses": Object {},
-      },
-      "requests": Array [],
-      "responses": Array [],
       "value": Object {
         "description": "hello",
         "method": "get",
@@ -610,10 +589,6 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "header-parameter",
       },
-      "raw": Object {
-        "in": "header",
-        "name": "hello",
-      },
       "value": Object {
         "in": "header",
         "name": "hello",
@@ -653,11 +628,6 @@ Array [
         ],
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "header-parameter",
-      },
-      "raw": Object {
-        "description": "hello",
-        "in": "header",
-        "name": "hello",
       },
       "value": Object {
         "description": "hello",
@@ -966,10 +936,6 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "path-parameter",
       },
-      "raw": Object {
-        "in": "path",
-        "name": "hello",
-      },
       "value": Object {
         "in": "path",
         "name": "hello",
@@ -1009,11 +975,6 @@ Array [
         ],
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "path-parameter",
-      },
-      "raw": Object {
-        "description": "hello",
-        "in": "path",
-        "name": "hello",
       },
       "value": Object {
         "description": "hello",
@@ -1322,10 +1283,6 @@ Array [
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "query-parameter",
       },
-      "raw": Object {
-        "in": "query",
-        "name": "hello",
-      },
       "value": Object {
         "in": "query",
         "name": "hello",
@@ -1365,11 +1322,6 @@ Array [
         ],
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
         "kind": "query-parameter",
-      },
-      "raw": Object {
-        "description": "hello",
-        "in": "query",
-        "name": "hello",
       },
       "value": Object {
         "description": "hello",

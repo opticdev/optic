@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`RequestRule body assertions added failing assertion 1`] = `
+exports[`ResponseBodyRule body assertions added failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -11,10 +11,11 @@ Array [
       "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
@@ -23,25 +24,27 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
         "kind": "body",
       },
     },
     "condition": "must contain a type",
     "docsLink": undefined,
-    "error": "request does not have \`type\`",
+    "error": "response does not have \`type\`",
     "isMust": true,
     "isShould": false,
-    "name": "request type",
+    "name": "response type",
     "passed": false,
-    "where": "added request with content-type: application/json in operation: GET /api/users",
+    "where": "added response status code: 200 with content-type: application/json  in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule body assertions added passing assertion 1`] = `
+exports[`ResponseBodyRule body assertions added passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -54,10 +57,11 @@ Array [
       "changeType": "added",
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
@@ -66,9 +70,11 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
         "kind": "body",
       },
     },
@@ -77,14 +83,14 @@ Array [
     "error": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "request type",
+    "name": "response type",
     "passed": true,
-    "where": "added request with content-type: application/json in operation: GET /api/users",
+    "where": "added response status code: 200 with content-type: application/json  in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule body assertions changed failing assertion 1`] = `
+exports[`ResponseBodyRule body assertions changed failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -99,16 +105,18 @@ Array [
         "before": Object {
           "contentType": "application/json",
           "flatSchema": Object {
+            "description": "123",
             "type": "array",
           },
         },
       },
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
@@ -117,25 +125,27 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
         "kind": "body",
       },
     },
     "condition": "must not change root body shape",
     "docsLink": undefined,
-    "error": "request must not change type",
+    "error": "response must not change type",
     "isMust": true,
     "isShould": false,
-    "name": "request shape",
+    "name": "response shape",
     "passed": false,
-    "where": "changed request with content-type: application/json in operation: GET /api/users",
+    "where": "changed response status code: 200 with content-type: application/json  in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule body assertions changed passing assertion 1`] = `
+exports[`ResponseBodyRule body assertions changed passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -144,7 +154,7 @@ Array [
         "after": Object {
           "contentType": "application/json",
           "flatSchema": Object {
-            "description": "abc",
+            "description": "12",
             "type": "array",
           },
         },
@@ -158,10 +168,11 @@ Array [
       },
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
@@ -170,9 +181,11 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
         "kind": "body",
       },
     },
@@ -181,24 +194,25 @@ Array [
     "error": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "request shape",
+    "name": "response shape",
     "passed": true,
-    "where": "changed request with content-type: application/json in operation: GET /api/users",
+    "where": "changed response status code: 200 with content-type: application/json  in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule body assertions removed failing assertion 1`] = `
+exports[`ResponseBodyRule body assertions removed failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
       "changeType": "removed",
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
@@ -207,9 +221,11 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
         "kind": "body",
       },
       "removed": Object {
@@ -228,22 +244,23 @@ Array [
     "isShould": false,
     "name": "request removal",
     "passed": false,
-    "where": "removed request with content-type: application/json in operation: GET /api/users",
+    "where": "removed response status code: 200 with content-type: application/json  in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule body assertions removed passing assertion 1`] = `
+exports[`ResponseBodyRule body assertions removed passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
       "changeType": "removed",
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
@@ -252,9 +269,11 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
         "kind": "body",
       },
       "removed": Object {
@@ -273,21 +292,22 @@ Array [
     "isShould": false,
     "name": "request removal",
     "passed": true,
-    "where": "removed request with content-type: application/json in operation: GET /api/users",
+    "where": "removed response status code: 200 with content-type: application/json  in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule body assertions requirement failing assertion 1`] = `
+exports[`ResponseBodyRule body assertions requirement failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
@@ -296,9 +316,11 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
         "kind": "body",
       },
       "value": Object {
@@ -308,26 +330,27 @@ Array [
     },
     "condition": "must contain a type",
     "docsLink": undefined,
-    "error": "request body does not have \`type\`",
+    "error": "response body does not have \`type\`",
     "isMust": true,
     "isShould": false,
-    "name": "request type",
+    "name": "response type",
     "passed": false,
-    "where": "requirement for request with content-type: application/json in operation: GET /api/users",
+    "where": "requirement for response status code: 200 with content-type: application/json  in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule body assertions requirement passing assertion 1`] = `
+exports[`ResponseBodyRule body assertions requirement passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "method": "get",
           "path": "/api/users",
@@ -336,9 +359,11 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
         "kind": "body",
       },
       "value": Object {
@@ -353,23 +378,24 @@ Array [
     "error": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "request type",
+    "name": "response type",
     "passed": true,
-    "where": "requirement for request with content-type: application/json in operation: GET /api/users",
+    "where": "requirement for response status code: 200 with content-type: application/json  in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule property assertions added failing assertion 1`] = `
+exports[`ResponseBodyRule property assertions added failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
             "hello",
@@ -381,10 +407,12 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
           "hello",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
       "value": Object {
@@ -400,21 +428,22 @@ Array [
     "isShould": false,
     "name": "request type",
     "passed": false,
-    "where": "requirement for property: hello request body: application/json in operation: GET /api/users",
+    "where": "requirement for property: hello in response status code: 200 with content-type: application/json in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule property assertions added passing assertion 1`] = `
+exports[`ResponseBodyRule property assertions added passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
             "hello",
@@ -426,10 +455,12 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
           "hello",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
       "value": Object {
@@ -447,12 +478,12 @@ Array [
     "isShould": false,
     "name": "request type",
     "passed": true,
-    "where": "requirement for property: hello request body: application/json in operation: GET /api/users",
+    "where": "requirement for property: hello in response status code: 200 with content-type: application/json in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule property assertions changed failing assertion 1`] = `
+exports[`ResponseBodyRule property assertions changed failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -476,10 +507,11 @@ Array [
       },
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
             "items",
@@ -492,11 +524,13 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
           "items",
           "hello",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/items/properties/hello",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/items/properties/hello",
         "kind": "field",
       },
     },
@@ -507,12 +541,12 @@ Array [
     "isShould": false,
     "name": "property type",
     "passed": false,
-    "where": "changed property: items/hello request body: application/json in operation: GET /api/users",
+    "where": "changed property: items/hello in response status code: 200 with content-type: application/json in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule property assertions changed passing assertion 1`] = `
+exports[`ResponseBodyRule property assertions changed passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
@@ -537,10 +571,11 @@ Array [
       },
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
             "items",
@@ -553,11 +588,13 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
           "items",
           "hello",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/items/properties/hello",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/items/properties/hello",
         "kind": "field",
       },
     },
@@ -568,22 +605,23 @@ Array [
     "isShould": false,
     "name": "property type",
     "passed": true,
-    "where": "changed property: items/hello request body: application/json in operation: GET /api/users",
+    "where": "changed property: items/hello in response status code: 200 with content-type: application/json in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule property assertions removed failing assertion 1`] = `
+exports[`ResponseBodyRule property assertions removed failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
       "changeType": "removed",
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
             "goodbye",
@@ -595,10 +633,12 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
           "goodbye",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/goodbye",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/goodbye",
         "kind": "field",
       },
       "removed": Object {
@@ -618,22 +658,23 @@ Array [
     "isShould": false,
     "name": "request removal",
     "passed": false,
-    "where": "removed property: goodbye request body: application/json in operation: GET /api/users",
+    "where": "removed property: goodbye in response status code: 200 with content-type: application/json in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule property assertions removed passing assertion 1`] = `
+exports[`ResponseBodyRule property assertions removed passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
       "changeType": "removed",
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
             "goodbye",
@@ -645,10 +686,12 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
           "goodbye",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/goodbye",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/goodbye",
         "kind": "field",
       },
       "removed": Object {
@@ -668,21 +711,22 @@ Array [
     "isShould": false,
     "name": "request removal",
     "passed": true,
-    "where": "removed property: goodbye request body: application/json in operation: GET /api/users",
+    "where": "removed property: goodbye in response status code: 200 with content-type: application/json in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule property assertions requirement failing assertion 1`] = `
+exports[`ResponseBodyRule property assertions requirement failing assertion 1`] = `
 Array [
   Object {
     "change": Object {
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
             "hello",
@@ -694,10 +738,12 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
           "hello",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
       "value": Object {
@@ -711,23 +757,24 @@ Array [
     "error": "field does not have \`type\`",
     "isMust": true,
     "isShould": false,
-    "name": "request type",
+    "name": "response type",
     "passed": false,
-    "where": "requirement for property: hello request body: application/json in operation: GET /api/users",
+    "where": "requirement for property: hello in response status code: 200 with content-type: application/json in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`RequestRule property assertions requirement passing assertion 1`] = `
+exports[`ResponseBodyRule property assertions requirement passing assertion 1`] = `
 Array [
   Object {
     "change": Object {
       "location": Object {
         "conceptualLocation": Object {
-          "inRequest": Object {
+          "inResponse": Object {
             "body": Object {
               "contentType": "application/json",
             },
+            "statusCode": "200",
           },
           "jsonSchemaTrail": Array [
             "hello",
@@ -739,10 +786,12 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "responses",
+          "200",
           "application/json",
           "hello",
         ],
-        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json/schema/properties/hello",
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json/schema/properties/hello",
         "kind": "field",
       },
       "value": Object {
@@ -758,9 +807,9 @@ Array [
     "error": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "request type",
+    "name": "response type",
     "passed": true,
-    "where": "requirement for property: hello request body: application/json in operation: GET /api/users",
+    "where": "requirement for property: hello in response status code: 200 with content-type: application/json in operation: GET /api/users",
   },
 ]
 `;

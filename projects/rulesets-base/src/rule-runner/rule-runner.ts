@@ -5,6 +5,7 @@ import { groupFacts } from './group-facts';
 import { runSpecificationRules } from './specification';
 import { runOperationRules } from './operation';
 import { runRequestRules } from './request';
+import { runResponseBodyRules } from './response-body';
 import { runResponseRules } from './response';
 
 export class RuleRunner {
@@ -31,7 +32,6 @@ export class RuleRunner {
       changes: changelog,
     });
 
-    console.log(groupedFacts.specification);
     const specificationResults = runSpecificationRules({
       specification: groupedFacts.specification,
       rules: this.rules,
@@ -71,7 +71,16 @@ export class RuleRunner {
           beforeApiSpec,
           afterApiSpec,
         });
-        endpointResults.push(...responseRules);
+
+        const responseBodyRules = runResponseBodyRules({
+          operation: endpoint,
+          response: response,
+          rules: this.rules,
+          customRuleContext: context,
+          beforeApiSpec,
+          afterApiSpec,
+        });
+        endpointResults.push(...responseBodyRules, ...responseRules);
       }
     }
 

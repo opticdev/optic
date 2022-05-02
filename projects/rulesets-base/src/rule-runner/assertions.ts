@@ -1,4 +1,5 @@
 import { ChangeType, IChange, IFact } from '@useoptic/openapi-utilities';
+import pick from 'lodash.pick';
 import { RuleError } from '../errors';
 import {
   Assertion,
@@ -80,7 +81,14 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(before);
           results.push({
             passed: true,
-            changeOrFact: change,
+            changeOrFact: pick(
+              change,
+              'changeType',
+              'added',
+              'removed',
+              'changed',
+              'location'
+            ) as IChange,
             condition,
             type: 'removed',
           });
@@ -88,7 +96,14 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (e instanceof RuleError) {
             results.push({
               passed: false,
-              changeOrFact: change,
+              changeOrFact: pick(
+                change,
+                'changeType',
+                'added',
+                'removed',
+                'changed',
+                'location'
+              ) as IChange,
               condition,
               error: e.toString(),
               type: 'removed',
@@ -110,10 +125,12 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
     if (this.requirementAssertions.length > 0) {
       for (const [condition, assertion] of this.requirementAssertions) {
         try {
+          // location
+          // value
           assertion(after);
           results.push({
             passed: true,
-            changeOrFact: after,
+            changeOrFact: pick(after, 'value', 'location') as IFact,
             condition,
             type: 'requirement',
           });
@@ -121,7 +138,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (e instanceof RuleError) {
             results.push({
               passed: false,
-              changeOrFact: after,
+              changeOrFact: pick(after, 'value', 'location') as IFact,
               condition,
               error: e.toString(),
               type: 'requirement',
@@ -141,7 +158,14 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(after);
           results.push({
             passed: true,
-            changeOrFact: change,
+            changeOrFact: pick(
+              change,
+              'changeType',
+              'added',
+              'removed',
+              'changed',
+              'location'
+            ) as IChange,
             condition,
             type: 'added',
           });
@@ -149,7 +173,14 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (e instanceof RuleError) {
             results.push({
               passed: false,
-              changeOrFact: change,
+              changeOrFact: pick(
+                change,
+                'changeType',
+                'added',
+                'removed',
+                'changed',
+                'location'
+              ) as IChange,
               condition,
               error: e.toString(),
               type: 'added',
@@ -170,7 +201,14 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(before, after);
           results.push({
             passed: true,
-            changeOrFact: change,
+            changeOrFact: pick(
+              change,
+              'changeType',
+              'added',
+              'removed',
+              'changed',
+              'location'
+            ) as IChange,
             condition,
             type: 'changed',
           });
@@ -178,7 +216,14 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (e instanceof RuleError) {
             results.push({
               passed: false,
-              changeOrFact: change,
+              changeOrFact: pick(
+                change,
+                'changeType',
+                'added',
+                'removed',
+                'changed',
+                'location'
+              ) as IChange,
               condition,
               error: e.toString(),
               type: 'changed',
@@ -204,6 +249,9 @@ type RequestAssertionsRunner = {
 
 type ResponseAssertionsRunner = {
   header: AssertionRunner<'response-header'>;
+};
+
+type ResponseBodyAssertionsRunner = {
   body: AssertionRunner<'response-body'>;
   property: AssertionRunner<'property'>;
 };
@@ -240,12 +288,22 @@ export const createRequestAssertions = (): RequestAssertionsRunner => {
 export const createResponseAssertions = (): ResponseAssertionsRunner => {
   const responseAssertions: any = {};
   const headerAssertions = new AssertionRunner<'response-header'>();
-  const bodyAssertions = new AssertionRunner<'response-body'>();
-  const propertyAssertions = new AssertionRunner<'property'>();
 
   responseAssertions.header = headerAssertions;
-  responseAssertions.body = bodyAssertions;
-  responseAssertions.property = propertyAssertions;
 
   return responseAssertions as ResponseAssertionsRunner;
 };
+
+export const createResponseBodyAssertions =
+  (): ResponseBodyAssertionsRunner => {
+    const responseBodyAssertions: any = {};
+    const headerAssertions = new AssertionRunner<'response-header'>();
+    const bodyAssertions = new AssertionRunner<'response-body'>();
+    const propertyAssertions = new AssertionRunner<'property'>();
+
+    responseBodyAssertions.header = headerAssertions;
+    responseBodyAssertions.body = bodyAssertions;
+    responseBodyAssertions.property = propertyAssertions;
+
+    return responseBodyAssertions as ResponseBodyAssertionsRunner;
+  };

@@ -3,9 +3,10 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
   Operation,
   Specification,
-  Request,
+  RequestBody,
   Response,
   FactVariantWithRaw,
+  ResponseBody,
 } from '../types';
 import {
   OpenApiDocument,
@@ -13,6 +14,7 @@ import {
   RequestNode,
   ResponseNode,
   NodeDetail,
+  BodyNode,
 } from './rule-runner-types';
 
 type SpecFactsFrom = 'before' | 'after';
@@ -42,7 +44,7 @@ export const createRequest = (
   contentType: string,
   key: SpecFactsFrom,
   openApiSpec: OpenAPIV3.Document
-): Request | null => {
+): RequestBody | null => {
   const requestFact = request[key];
   const requestBody = request.bodies.get(contentType);
   const requestBodyFact = requestBody?.[key];
@@ -51,48 +53,68 @@ export const createRequest = (
   }
 
   return {
-    ...requestFact,
-    raw: jsonPointerHelpers.get(openApiSpec, requestFact.location.jsonPath),
+    ...requestBodyFact,
+    raw: jsonPointerHelpers.get(openApiSpec, requestBodyFact.location.jsonPath),
     contentType,
-    body: {
-      ...requestBodyFact,
-      raw: jsonPointerHelpers.get(
-        openApiSpec,
-        requestBodyFact.location.jsonPath
-      ),
-    },
     properties: createFactsWithRaw(requestBody.fields, key, openApiSpec),
   };
 };
 
 export const createResponse = (
   response: ResponseNode,
-  contentType: string,
   key: SpecFactsFrom,
   openApiSpec: OpenAPIV3.Document
 ): Response | null => {
   const responseFact = response[key];
-  const responseBody = response.bodies.get(contentType);
-  const responseBodyFact = responseBody?.[key];
-  if (!responseFact || !responseBody || !responseBodyFact) {
+  if (!responseFact) {
     return null;
+  }
+
+  const bodies: ResponseBody[] = [];
+  for (const [contentType, bodyNode] of response.bodies.entries()) {
+    const responseBody = createResponseBody(
+      bodyNode,
+      response.statusCode,
+      contentType,
+      key,
+      openApiSpec
+    );
+
+    if (responseBody) {
+      bodies.push(responseBody);
+    }
   }
 
   return {
     ...responseFact,
     raw: jsonPointerHelpers.get(openApiSpec, responseFact.location.jsonPath),
-    contentType,
     statusCode: response.statusCode,
-    body: {
-      ...responseBodyFact,
-      raw: jsonPointerHelpers.get(
-        openApiSpec,
-        responseBodyFact.location.jsonPath
-      ),
-    },
-    properties: createFactsWithRaw(responseBody.fields, key, openApiSpec),
-    // Note that headers are unique per status code, not status code + content type - TODO to see and ensure response headers aren't double triggered by rules
+    bodies,
     headers: createFactsWithRaw(response.headers, key, openApiSpec),
+  };
+};
+
+export const createResponseBody = (
+  bodyNode: BodyNode,
+  statusCode: string,
+  contentType: string,
+  key: SpecFactsFrom,
+  openApiSpec: OpenAPIV3.Document
+): ResponseBody | null => {
+  const responseBodyFact = bodyNode?.[key];
+  if (!responseBodyFact) {
+    return null;
+  }
+
+  return {
+    ...responseBodyFact,
+    raw: jsonPointerHelpers.get(
+      openApiSpec,
+      responseBodyFact.location.jsonPath
+    ),
+    contentType,
+    statusCode: statusCode,
+    properties: createFactsWithRaw(bodyNode.fields, key, openApiSpec),
   };
 };
 
@@ -107,8 +129,8 @@ export const createOperation = (
     return null;
   }
 
-  const requests: Request[] = [];
-  const responses: Response[] = [];
+  const requests: RequestBody[] = [];
+  const responses = new Map<string, Response>();
 
   for (const contentType of endpoint.request.bodies.keys()) {
     const request = createRequest(
@@ -123,16 +145,14 @@ export const createOperation = (
   }
 
   for (const responseNode of endpoint.responses.values()) {
-    for (const contentType of responseNode.bodies.keys()) {
-      const response = createResponse(
-        responseNode,
-        contentType,
-        key,
-        openApiSpec
-      );
-      if (response) {
-        responses.push(response);
-      }
+    const response = createResponse(
+      responseNode,
+
+      key,
+      openApiSpec
+    );
+    if (response) {
+      responses.set(responseNode.statusCode, response);
     }
   }
 

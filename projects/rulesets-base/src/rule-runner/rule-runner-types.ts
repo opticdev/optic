@@ -9,6 +9,7 @@ import {
   SpecificationRule,
   OperationRule,
   RequestRule,
+  ResponseBodyRule,
   ResponseRule,
 } from '../rules';
 
@@ -21,7 +22,8 @@ export type Rules =
   | SpecificationRule
   | OperationRule
   | RequestRule
-  | ResponseRule;
+  | ResponseRule
+  | ResponseBodyRule;
 
 export type NodeDetail<T extends OpenApiKind> = {
   before: FactVariant<T> | null;
