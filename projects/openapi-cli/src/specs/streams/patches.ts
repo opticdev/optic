@@ -10,6 +10,13 @@ import {
   templatePatches,
 } from '../patches';
 import { SpecTemplate } from '../templates';
+import {
+  DocumentedBodies,
+  DocumentedBody,
+  SchemaObject,
+  ShapePatches,
+} from '../../shapes';
+import { DocumentedInteractions } from '../../operations/streams/documented-interactions';
 import invariant from 'ts-invariant';
 
 export interface SpecPatches extends AsyncIterable<SpecPatch> {}
@@ -40,4 +47,27 @@ export class SpecPatches {
   static async *generateForNewSpec<T>(info: OpenAPIV3.InfoObject): SpecPatches {
     yield* newSpecPatches(info);
   }
+
+  static async *fromDocumentedBodies(
+    documentedBodies: DocumentedBodies
+  ): SpecPatches {
+    const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
+
+    for await (let documentedBody of documentedBodies) {
+      let { specJsonPath, shapeLocation } = documentedBody;
+
+      if (updatedSchemasByPath.has(specJsonPath)) {
+        documentedBody.schema = updatedSchemasByPath.get(specJsonPath)!;
+      }
+
+      for (let patch of ShapePatches.generateBodyAdditions(documentedBody)) {
+        documentedBody = DocumentedBody.applyShapePatch(documentedBody, patch);
+        yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
+      }
+
+      updatedSchemasByPath.set(specJsonPath, documentedBody.schema!);
+    }
+  }
+
+  static async *fromDocumentedInteractions(): SpecPatches {}
 }

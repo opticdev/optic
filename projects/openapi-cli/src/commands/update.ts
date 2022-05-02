@@ -153,28 +153,11 @@ export async function updateAction(specPath: string): Promise<
     )
   );
 
-  const specPatches = (async function* (documentedBodies): SpecPatches {
-    const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
-
-    for await (let documentedBody of documentedBodies) {
-      let { specJsonPath, shapeLocation } = documentedBody;
-
-      if (updatedSchemasByPath.has(specJsonPath)) {
-        documentedBody.schema = updatedSchemasByPath.get(specJsonPath)!;
-      }
-
-      for (let patch of ShapePatches.generateBodyAdditions(documentedBody)) {
-        documentedBody = DocumentedBody.applyShapePatch(documentedBody, patch);
-        yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
-      }
-
-      updatedSchemasByPath.set(specJsonPath, documentedBody.schema!);
-    }
-  })(exampleBodies);
+  const examplePatches = SpecPatches.fromDocumentedBodies(exampleBodies);
 
   // additions only, so we only safely extend the spec
   const specAdditions = observers.observePatches(
-    SpecPatches.additions(specPatches)
+    SpecPatches.additions(examplePatches)
   );
 
   const fileOperations = observers.observeFileOperations(

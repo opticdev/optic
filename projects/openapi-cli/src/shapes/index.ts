@@ -1,4 +1,5 @@
 export type { Body } from './body';
+export { DocumentedBody } from './body';
 import { ShapeLocation } from './body';
 
 export { observeBodyShape } from './observations';
