@@ -26,21 +26,24 @@ export type Operation = FactVariantWithRaw<OpenApiKind.Operation> & {
     string,
     FactVariantWithRaw<OpenApiKind.HeaderParameter>
   >;
-  requests: Request[];
-  responses: Response[];
+  requests: RequestBody[];
+  responses: Map<string, Response>;
 };
 
-export type Request = FactVariantWithRaw<OpenApiKind.Request> & {
+export type RequestBody = FactVariantWithRaw<OpenApiKind.Body> & {
   contentType: string;
-  body: FactVariantWithRaw<OpenApiKind.Body>;
   properties: Map<string, Field>;
 };
 
 export type Response = FactVariantWithRaw<OpenApiKind.Response> & {
-  contentType: string;
   statusCode: string;
   headers: Map<string, FactVariantWithRaw<OpenApiKind.ResponseHeader>>;
-  body: FactVariantWithRaw<OpenApiKind.Body>;
+  bodies: ResponseBody[];
+};
+
+export type ResponseBody = FactVariantWithRaw<OpenApiKind.Body> & {
+  contentType: string;
+  statusCode: string;
   properties: Map<string, Field>;
 };
 
@@ -51,6 +54,7 @@ export type AssertionType =
   | 'query-parameter'
   | 'path-parameter'
   | 'header-parameter'
+  | 'response'
   | 'response-header'
   | 'request-body'
   | 'response-body'
@@ -63,8 +67,9 @@ export type AssertionTypeToValue = {
   'path-parameter': FactVariantWithRaw<OpenApiKind.PathParameter>;
   'header-parameter': FactVariantWithRaw<OpenApiKind.HeaderParameter>;
   'response-header': FactVariantWithRaw<OpenApiKind.ResponseHeader>;
-  'request-body': Request;
-  'response-body': Response;
+  response: Response;
+  'request-body': RequestBody;
+  'response-body': ResponseBody;
   property: FactVariantWithRaw<OpenApiKind.Field>;
 };
 
@@ -77,12 +82,10 @@ export type AssertionTypeToHelpers = {
   'query-parameters': { matches: (structure: any) => void };
   'path-parameters': { matches: (structure: any) => void };
   'header-parameters': { matches: (structure: any) => void };
-  request: { matches: (structure: any) => void };
   response: { matches: (structure: any) => void };
   'response-headers': { matches: (structure: any) => void };
-  body: {
-    matches: (structure: any) => void;
-  };
+  'request-body': { matches: (structure: any) => void };
+  'response-body': { matches: (structure: any) => void };
   property: { matches: (structure: any) => void };
 };
 
@@ -121,6 +124,9 @@ export type RequestAssertions = {
 
 export type ResponseAssertions = {
   header: Assertions<'response-header'>;
+};
+
+export type ResponseBodyAssertions = {
   body: Assertions<'response-body'>;
   property: Assertions<'property'>;
 };

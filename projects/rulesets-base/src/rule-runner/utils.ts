@@ -42,7 +42,7 @@ export const createEmptyRuleContext = (custom: any): RuleContext => ({
     pathParameters: new Map(),
     headerParameters: new Map(),
     requests: [],
-    responses: [],
+    responses: new Map(),
   },
 });
 

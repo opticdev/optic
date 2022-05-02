@@ -211,109 +211,11 @@ Object {
     ],
   },
   "requests": Array [],
-  "responses": Array [
-    Object {
-      "body": Object {
-        "location": Object {
-          "conceptualLocation": Object {
-            "inResponse": Object {
-              "body": Object {
-                "contentType": "application/xml",
-              },
-              "statusCode": "200",
-            },
-            "method": "get",
-            "path": "/store/order/{orderId}",
-          },
-          "conceptualPath": Array [
-            "operations",
-            "/store/order/{}",
-            "get",
-            "responses",
-            "200",
-            "application/xml",
-          ],
-          "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml",
-          "kind": "body",
-        },
-        "raw": Object {
-          "schema": Object {
-            "properties": Object {
-              "complete": Object {
-                "default": false,
-                "type": "boolean",
-              },
-              "id": Object {
-                "format": "int64",
-                "type": "integer",
-              },
-              "petId": Object {
-                "format": "int64",
-                "type": "integer",
-              },
-              "quantity": Object {
-                "format": "int32",
-                "type": "integer",
-              },
-              "shipDate": Object {
-                "format": "date-time",
-                "type": "string",
-              },
-              "status": Object {
-                "description": "Order Status",
-                "enum": Array [
-                  "placed",
-                  "delivered",
-                  "canceled",
-                ],
-                "type": "string",
-              },
-              "summary": Object {
-                "description": "Human readable summary of order",
-                "type": "string",
-              },
-            },
-            "required": Array [
-              "id",
-            ],
-            "type": "object",
-            "xml": Object {
-              "name": "Order",
-            },
-          },
-        },
-        "value": Object {
+  "responses": Map {
+    "200" => Object {
+      "bodies": Array [
+        Object {
           "contentType": "application/xml",
-          "flatSchema": Object {
-            "type": "object",
-            "xml": Object {
-              "name": "Order",
-            },
-          },
-        },
-      },
-      "contentType": "application/xml",
-      "headers": Map {},
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "statusCode": "200",
-          },
-          "method": "get",
-          "path": "/store/order/{orderId}",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/store/order/{}",
-          "get",
-          "responses",
-          "200",
-        ],
-        "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200",
-        "kind": "response",
-      },
-      "properties": Map {
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/id" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -322,9 +224,6 @@ Object {
                 },
                 "statusCode": "200",
               },
-              "jsonSchemaTrail": Array [
-                "id",
-              ],
               "method": "get",
               "path": "/store/order/{orderId}",
             },
@@ -335,423 +234,199 @@ Object {
               "responses",
               "200",
               "application/xml",
-              "id",
             ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/id",
-            "kind": "field",
+            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml",
+            "kind": "body",
           },
-          "raw": Object {
-            "format": "int64",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-            "key": "id",
-            "required": true,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/petId" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/xml",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "petId",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/xml",
-              "petId",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/petId",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "int64",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-            "key": "petId",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/quantity" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/xml",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "quantity",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/xml",
-              "quantity",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/quantity",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "int32",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int32",
-              "type": "integer",
-            },
-            "key": "quantity",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/shipDate" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/xml",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "shipDate",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/xml",
-              "shipDate",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/shipDate",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "date-time",
-            "type": "string",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "date-time",
-              "type": "string",
-            },
-            "key": "shipDate",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/status" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/xml",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "status",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/xml",
-              "status",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/status",
-            "kind": "field",
-          },
-          "raw": Object {
-            "description": "Order Status",
-            "enum": Array [
-              "placed",
-              "delivered",
-              "canceled",
-            ],
-            "type": "string",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "description": "Order Status",
-              "enum": Array [
-                "placed",
-                "delivered",
-                "canceled",
-              ],
-              "type": "string",
-            },
-            "key": "status",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/complete" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/xml",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "complete",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/xml",
-              "complete",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/complete",
-            "kind": "field",
-          },
-          "raw": Object {
-            "default": false,
-            "type": "boolean",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "default": false,
-              "type": "boolean",
-            },
-            "key": "complete",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/summary" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/xml",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "summary",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/xml",
-              "summary",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/summary",
-            "kind": "field",
-          },
-          "raw": Object {
-            "description": "Human readable summary of order",
-            "type": "string",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "description": "Human readable summary of order",
-              "type": "string",
-            },
-            "key": "summary",
-            "required": false,
-          },
-        },
-      },
-      "raw": Object {
-        "content": Object {
-          "application/json": Object {
-            "schema": Object {
-              "properties": Object {
-                "complete": Object {
-                  "default": false,
-                  "type": "boolean",
-                },
-                "id": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "petId": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "quantity": Object {
-                  "format": "int32",
-                  "type": "integer",
-                },
-                "shipDate": Object {
-                  "format": "date-time",
-                  "type": "string",
-                },
-                "status": Object {
-                  "description": "Order Status",
-                  "enum": Array [
-                    "placed",
-                    "delivered",
-                    "canceled",
+          "properties": Map {
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/id" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "id",
                   ],
-                  "type": "string",
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
                 },
-                "summary": Object {
-                  "description": "Human readable summary of order",
-                  "type": "string",
-                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "id",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/id",
+                "kind": "field",
               },
-              "type": "object",
-              "xml": Object {
-                "name": "Order",
-              },
-            },
-          },
-          "application/xml": Object {
-            "schema": Object {
-              "properties": Object {
-                "complete": Object {
-                  "default": false,
-                  "type": "boolean",
-                },
-                "id": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "petId": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "quantity": Object {
-                  "format": "int32",
-                  "type": "integer",
-                },
-                "shipDate": Object {
-                  "format": "date-time",
-                  "type": "string",
-                },
-                "status": Object {
-                  "description": "Order Status",
-                  "enum": Array [
-                    "placed",
-                    "delivered",
-                    "canceled",
-                  ],
-                  "type": "string",
-                },
-                "summary": Object {
-                  "description": "Human readable summary of order",
-                  "type": "string",
-                },
-              },
-              "required": Array [
-                "id",
-              ],
-              "type": "object",
-              "xml": Object {
-                "name": "Order",
-              },
-            },
-          },
-        },
-        "description": "successful operation",
-      },
-      "statusCode": "200",
-      "value": Object {
-        "description": "successful operation",
-        "statusCode": "200",
-      },
-    },
-    Object {
-      "body": Object {
-        "location": Object {
-          "conceptualLocation": Object {
-            "inResponse": Object {
-              "body": Object {
-                "contentType": "application/json",
-              },
-              "statusCode": "200",
-            },
-            "method": "get",
-            "path": "/store/order/{orderId}",
-          },
-          "conceptualPath": Array [
-            "operations",
-            "/store/order/{}",
-            "get",
-            "responses",
-            "200",
-            "application/json",
-          ],
-          "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json",
-          "kind": "body",
-        },
-        "raw": Object {
-          "schema": Object {
-            "properties": Object {
-              "complete": Object {
-                "default": false,
-                "type": "boolean",
-              },
-              "id": Object {
+              "raw": Object {
                 "format": "int64",
                 "type": "integer",
               },
-              "petId": Object {
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "key": "id",
+                "required": true,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/petId" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "petId",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "petId",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/petId",
+                "kind": "field",
+              },
+              "raw": Object {
                 "format": "int64",
                 "type": "integer",
               },
-              "quantity": Object {
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "key": "petId",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/quantity" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "quantity",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "quantity",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/quantity",
+                "kind": "field",
+              },
+              "raw": Object {
                 "format": "int32",
                 "type": "integer",
               },
-              "shipDate": Object {
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "key": "quantity",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/shipDate" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "shipDate",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "shipDate",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/shipDate",
+                "kind": "field",
+              },
+              "raw": Object {
                 "format": "date-time",
                 "type": "string",
               },
-              "status": Object {
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "date-time",
+                  "type": "string",
+                },
+                "key": "shipDate",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/status" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "status",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "status",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/status",
+                "kind": "field",
+              },
+              "raw": Object {
                 "description": "Order Status",
                 "enum": Array [
                   "placed",
@@ -760,28 +435,529 @@ Object {
                 ],
                 "type": "string",
               },
-              "summary": Object {
+              "value": Object {
+                "flatSchema": Object {
+                  "description": "Order Status",
+                  "enum": Array [
+                    "placed",
+                    "delivered",
+                    "canceled",
+                  ],
+                  "type": "string",
+                },
+                "key": "status",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/complete" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "complete",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "complete",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/complete",
+                "kind": "field",
+              },
+              "raw": Object {
+                "default": false,
+                "type": "boolean",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "default": false,
+                  "type": "boolean",
+                },
+                "key": "complete",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/summary" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "summary",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "summary",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/summary",
+                "kind": "field",
+              },
+              "raw": Object {
                 "description": "Human readable summary of order",
                 "type": "string",
               },
+              "value": Object {
+                "flatSchema": Object {
+                  "description": "Human readable summary of order",
+                  "type": "string",
+                },
+                "key": "summary",
+                "required": false,
+              },
             },
-            "type": "object",
-            "xml": Object {
-              "name": "Order",
+          },
+          "raw": Object {
+            "schema": Object {
+              "properties": Object {
+                "complete": Object {
+                  "default": false,
+                  "type": "boolean",
+                },
+                "id": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "petId": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "quantity": Object {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "shipDate": Object {
+                  "format": "date-time",
+                  "type": "string",
+                },
+                "status": Object {
+                  "description": "Order Status",
+                  "enum": Array [
+                    "placed",
+                    "delivered",
+                    "canceled",
+                  ],
+                  "type": "string",
+                },
+                "summary": Object {
+                  "description": "Human readable summary of order",
+                  "type": "string",
+                },
+              },
+              "required": Array [
+                "id",
+              ],
+              "type": "object",
+              "xml": Object {
+                "name": "Order",
+              },
+            },
+          },
+          "statusCode": "200",
+          "value": Object {
+            "contentType": "application/xml",
+            "flatSchema": Object {
+              "type": "object",
+              "xml": Object {
+                "name": "Order",
+              },
             },
           },
         },
-        "value": Object {
+        Object {
           "contentType": "application/json",
-          "flatSchema": Object {
-            "type": "object",
-            "xml": Object {
-              "name": "Order",
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "method": "get",
+              "path": "/store/order/{orderId}",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/store/order/{}",
+              "get",
+              "responses",
+              "200",
+              "application/json",
+            ],
+            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json",
+            "kind": "body",
+          },
+          "properties": Map {
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/id" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "id",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "id",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/id",
+                "kind": "field",
+              },
+              "raw": Object {
+                "format": "int64",
+                "type": "integer",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "key": "id",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/petId" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "petId",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "petId",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/petId",
+                "kind": "field",
+              },
+              "raw": Object {
+                "format": "int64",
+                "type": "integer",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "key": "petId",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/quantity" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "quantity",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "quantity",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/quantity",
+                "kind": "field",
+              },
+              "raw": Object {
+                "format": "int32",
+                "type": "integer",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "key": "quantity",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/shipDate" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "shipDate",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "shipDate",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/shipDate",
+                "kind": "field",
+              },
+              "raw": Object {
+                "format": "date-time",
+                "type": "string",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "date-time",
+                  "type": "string",
+                },
+                "key": "shipDate",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/status" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "status",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "status",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/status",
+                "kind": "field",
+              },
+              "raw": Object {
+                "description": "Order Status",
+                "enum": Array [
+                  "placed",
+                  "delivered",
+                  "canceled",
+                ],
+                "type": "string",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "description": "Order Status",
+                  "enum": Array [
+                    "placed",
+                    "delivered",
+                    "canceled",
+                  ],
+                  "type": "string",
+                },
+                "key": "status",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/complete" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "complete",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "complete",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/complete",
+                "kind": "field",
+              },
+              "raw": Object {
+                "default": false,
+                "type": "boolean",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "default": false,
+                  "type": "boolean",
+                },
+                "key": "complete",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/summary" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "summary",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "summary",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/summary",
+                "kind": "field",
+              },
+              "raw": Object {
+                "description": "Human readable summary of order",
+                "type": "string",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "description": "Human readable summary of order",
+                  "type": "string",
+                },
+                "key": "summary",
+                "required": false,
+              },
+            },
+          },
+          "raw": Object {
+            "schema": Object {
+              "properties": Object {
+                "complete": Object {
+                  "default": false,
+                  "type": "boolean",
+                },
+                "id": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "petId": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "quantity": Object {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "shipDate": Object {
+                  "format": "date-time",
+                  "type": "string",
+                },
+                "status": Object {
+                  "description": "Order Status",
+                  "enum": Array [
+                    "placed",
+                    "delivered",
+                    "canceled",
+                  ],
+                  "type": "string",
+                },
+                "summary": Object {
+                  "description": "Human readable summary of order",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+              "xml": Object {
+                "name": "Order",
+              },
+            },
+          },
+          "statusCode": "200",
+          "value": Object {
+            "contentType": "application/json",
+            "flatSchema": Object {
+              "type": "object",
+              "xml": Object {
+                "name": "Order",
+              },
             },
           },
         },
-      },
-      "contentType": "application/json",
+      ],
       "headers": Map {},
       "location": Object {
         "conceptualLocation": Object {
@@ -800,298 +976,6 @@ Object {
         ],
         "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200",
         "kind": "response",
-      },
-      "properties": Map {
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/id" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "id",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "id",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/id",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "int64",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-            "key": "id",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/petId" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "petId",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "petId",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/petId",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "int64",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-            "key": "petId",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/quantity" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "quantity",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "quantity",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/quantity",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "int32",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int32",
-              "type": "integer",
-            },
-            "key": "quantity",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/shipDate" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "shipDate",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "shipDate",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/shipDate",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "date-time",
-            "type": "string",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "date-time",
-              "type": "string",
-            },
-            "key": "shipDate",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/status" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "status",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "status",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/status",
-            "kind": "field",
-          },
-          "raw": Object {
-            "description": "Order Status",
-            "enum": Array [
-              "placed",
-              "delivered",
-              "canceled",
-            ],
-            "type": "string",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "description": "Order Status",
-              "enum": Array [
-                "placed",
-                "delivered",
-                "canceled",
-              ],
-              "type": "string",
-            },
-            "key": "status",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/complete" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "complete",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "complete",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/complete",
-            "kind": "field",
-          },
-          "raw": Object {
-            "default": false,
-            "type": "boolean",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "default": false,
-              "type": "boolean",
-            },
-            "key": "complete",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/summary" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "summary",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "summary",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/summary",
-            "kind": "field",
-          },
-          "raw": Object {
-            "description": "Human readable summary of order",
-            "type": "string",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "description": "Human readable summary of order",
-              "type": "string",
-            },
-            "key": "summary",
-            "required": false,
-          },
-        },
       },
       "raw": Object {
         "content": Object {
@@ -1193,55 +1077,207 @@ Object {
         "statusCode": "200",
       },
     },
-    Object {
-      "body": Object {
-        "location": Object {
-          "conceptualLocation": Object {
-            "inResponse": Object {
-              "body": Object {
-                "contentType": "application/json",
-              },
-              "statusCode": "404",
-            },
-            "method": "get",
-            "path": "/store/order/{orderId}",
+    "400" => Object {
+      "bodies": Array [],
+      "headers": Map {},
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "400",
           },
-          "conceptualPath": Array [
-            "operations",
-            "/store/order/{}",
-            "get",
-            "responses",
-            "404",
-            "application/json",
-          ],
-          "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json",
-          "kind": "body",
+          "method": "get",
+          "path": "/store/order/{orderId}",
         },
-        "raw": Object {
-          "schema": Object {
-            "properties": Object {
-              "code": Object {
+        "conceptualPath": Array [
+          "operations",
+          "/store/order/{}",
+          "get",
+          "responses",
+          "400",
+        ],
+        "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/400",
+        "kind": "response",
+      },
+      "raw": Object {
+        "content": Object {},
+        "description": "Invalid ID supplied",
+      },
+      "statusCode": "400",
+      "value": Object {
+        "description": "Invalid ID supplied",
+        "statusCode": "400",
+      },
+    },
+    "404" => Object {
+      "bodies": Array [
+        Object {
+          "contentType": "application/json",
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "404",
+              },
+              "method": "get",
+              "path": "/store/order/{orderId}",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/store/order/{}",
+              "get",
+              "responses",
+              "404",
+              "application/json",
+            ],
+            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json",
+            "kind": "body",
+          },
+          "properties": Map {
+            "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/code" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "404",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "code",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "404",
+                  "application/json",
+                  "code",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/code",
+                "kind": "field",
+              },
+              "raw": Object {
                 "format": "int32",
                 "type": "integer",
               },
-              "message": Object {
-                "type": "string",
-              },
-              "type": Object {
-                "type": "string",
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "key": "code",
+                "required": false,
               },
             },
-            "type": "object",
+            "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/type" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "404",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "type",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "404",
+                  "application/json",
+                  "type",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/type",
+                "kind": "field",
+              },
+              "raw": Object {
+                "type": "string",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "type": "string",
+                },
+                "key": "type",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/message" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "404",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "message",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "404",
+                  "application/json",
+                  "message",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/message",
+                "kind": "field",
+              },
+              "raw": Object {
+                "type": "string",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "type": "string",
+                },
+                "key": "message",
+                "required": false,
+              },
+            },
+          },
+          "raw": Object {
+            "schema": Object {
+              "properties": Object {
+                "code": Object {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "message": Object {
+                  "type": "string",
+                },
+                "type": Object {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "statusCode": "404",
+          "value": Object {
+            "contentType": "application/json",
+            "flatSchema": Object {
+              "type": "object",
+            },
           },
         },
-        "value": Object {
-          "contentType": "application/json",
-          "flatSchema": Object {
-            "type": "object",
-          },
-        },
-      },
-      "contentType": "application/json",
+      ],
       "headers": Map {},
       "location": Object {
         "conceptualLocation": Object {
@@ -1260,124 +1296,6 @@ Object {
         ],
         "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404",
         "kind": "response",
-      },
-      "properties": Map {
-        "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/code" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "404",
-              },
-              "jsonSchemaTrail": Array [
-                "code",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "404",
-              "application/json",
-              "code",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/code",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "int32",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int32",
-              "type": "integer",
-            },
-            "key": "code",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/type" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "404",
-              },
-              "jsonSchemaTrail": Array [
-                "type",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "404",
-              "application/json",
-              "type",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/type",
-            "kind": "field",
-          },
-          "raw": Object {
-            "type": "string",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "type": "string",
-            },
-            "key": "type",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/message" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "404",
-              },
-              "jsonSchemaTrail": Array [
-                "message",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "404",
-              "application/json",
-              "message",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404/content/application~1json/schema/properties/message",
-            "kind": "field",
-          },
-          "raw": Object {
-            "type": "string",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "type": "string",
-            },
-            "key": "message",
-            "required": false,
-          },
-        },
       },
       "raw": Object {
         "content": Object {
@@ -1407,7 +1325,7 @@ Object {
         "statusCode": "404",
       },
     },
-  ],
+  },
   "value": Object {
     "description": "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions",
     "method": "get",
@@ -1607,106 +1525,11 @@ Object {
     ],
   },
   "requests": Array [],
-  "responses": Array [
-    Object {
-      "body": Object {
-        "location": Object {
-          "conceptualLocation": Object {
-            "inResponse": Object {
-              "body": Object {
-                "contentType": "application/xml",
-              },
-              "statusCode": "200",
-            },
-            "method": "get",
-            "path": "/store/order/{orderId}",
-          },
-          "conceptualPath": Array [
-            "operations",
-            "/store/order/{}",
-            "get",
-            "responses",
-            "200",
-            "application/xml",
-          ],
-          "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml",
-          "kind": "body",
-        },
-        "raw": Object {
-          "schema": Object {
-            "properties": Object {
-              "complete": Object {
-                "default": false,
-                "type": "boolean",
-              },
-              "id": Object {
-                "format": "int64",
-                "type": "integer",
-              },
-              "petId": Object {
-                "format": "int64",
-                "type": "integer",
-              },
-              "quantity": Object {
-                "format": "int32",
-                "type": "integer",
-              },
-              "shipDate": Object {
-                "format": "date-time",
-                "type": "string",
-              },
-              "status": Object {
-                "description": "Order Status",
-                "enum": Array [
-                  "placed",
-                  "approved",
-                  "delivered",
-                ],
-                "type": "string",
-              },
-            },
-            "required": Array [
-              "id",
-              "petId",
-            ],
-            "type": "object",
-            "xml": Object {
-              "name": "Order",
-            },
-          },
-        },
-        "value": Object {
+  "responses": Map {
+    "200" => Object {
+      "bodies": Array [
+        Object {
           "contentType": "application/xml",
-          "flatSchema": Object {
-            "type": "object",
-            "xml": Object {
-              "name": "Order",
-            },
-          },
-        },
-      },
-      "contentType": "application/xml",
-      "headers": Map {},
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "statusCode": "200",
-          },
-          "method": "get",
-          "path": "/store/order/{orderId}",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/store/order/{}",
-          "get",
-          "responses",
-          "200",
-        ],
-        "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200",
-        "kind": "response",
-      },
-      "properties": Map {
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/id" => Object {
           "location": Object {
             "conceptualLocation": Object {
               "inResponse": Object {
@@ -1715,9 +1538,6 @@ Object {
                 },
                 "statusCode": "200",
               },
-              "jsonSchemaTrail": Array [
-                "id",
-              ],
               "method": "get",
               "path": "/store/order/{orderId}",
             },
@@ -1728,376 +1548,199 @@ Object {
               "responses",
               "200",
               "application/xml",
-              "id",
             ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/id",
-            "kind": "field",
+            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml",
+            "kind": "body",
           },
-          "raw": Object {
-            "format": "int64",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-            "key": "id",
-            "required": true,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/petId" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/xml",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "petId",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/xml",
-              "petId",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/petId",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "int64",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-            "key": "petId",
-            "required": true,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/quantity" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/xml",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "quantity",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/xml",
-              "quantity",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/quantity",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "int32",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int32",
-              "type": "integer",
-            },
-            "key": "quantity",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/shipDate" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/xml",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "shipDate",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/xml",
-              "shipDate",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/shipDate",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "date-time",
-            "type": "string",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "date-time",
-              "type": "string",
-            },
-            "key": "shipDate",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/status" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/xml",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "status",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/xml",
-              "status",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/status",
-            "kind": "field",
-          },
-          "raw": Object {
-            "description": "Order Status",
-            "enum": Array [
-              "placed",
-              "approved",
-              "delivered",
-            ],
-            "type": "string",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "description": "Order Status",
-              "enum": Array [
-                "placed",
-                "approved",
-                "delivered",
-              ],
-              "type": "string",
-            },
-            "key": "status",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/complete" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/xml",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "complete",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/xml",
-              "complete",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/complete",
-            "kind": "field",
-          },
-          "raw": Object {
-            "default": false,
-            "type": "boolean",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "default": false,
-              "type": "boolean",
-            },
-            "key": "complete",
-            "required": false,
-          },
-        },
-      },
-      "raw": Object {
-        "content": Object {
-          "application/json": Object {
-            "schema": Object {
-              "properties": Object {
-                "complete": Object {
-                  "default": false,
-                  "type": "boolean",
-                },
-                "id": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "petId": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "quantity": Object {
-                  "format": "int32",
-                  "type": "integer",
-                },
-                "shipDate": Object {
-                  "format": "date-time",
-                  "type": "string",
-                },
-                "status": Object {
-                  "description": "Order Status",
-                  "enum": Array [
-                    "placed",
-                    "approved",
-                    "delivered",
+          "properties": Map {
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/id" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "id",
                   ],
-                  "type": "string",
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
                 },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "id",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/id",
+                "kind": "field",
               },
-              "type": "object",
-              "xml": Object {
-                "name": "Order",
-              },
-            },
-          },
-          "application/xml": Object {
-            "schema": Object {
-              "properties": Object {
-                "complete": Object {
-                  "default": false,
-                  "type": "boolean",
-                },
-                "id": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "petId": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "quantity": Object {
-                  "format": "int32",
-                  "type": "integer",
-                },
-                "shipDate": Object {
-                  "format": "date-time",
-                  "type": "string",
-                },
-                "status": Object {
-                  "description": "Order Status",
-                  "enum": Array [
-                    "placed",
-                    "approved",
-                    "delivered",
-                  ],
-                  "type": "string",
-                },
-              },
-              "required": Array [
-                "id",
-                "petId",
-              ],
-              "type": "object",
-              "xml": Object {
-                "name": "Order",
-              },
-            },
-          },
-        },
-        "description": "successful operation",
-      },
-      "statusCode": "200",
-      "value": Object {
-        "description": "successful operation",
-        "statusCode": "200",
-      },
-    },
-    Object {
-      "body": Object {
-        "location": Object {
-          "conceptualLocation": Object {
-            "inResponse": Object {
-              "body": Object {
-                "contentType": "application/json",
-              },
-              "statusCode": "200",
-            },
-            "method": "get",
-            "path": "/store/order/{orderId}",
-          },
-          "conceptualPath": Array [
-            "operations",
-            "/store/order/{}",
-            "get",
-            "responses",
-            "200",
-            "application/json",
-          ],
-          "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json",
-          "kind": "body",
-        },
-        "raw": Object {
-          "schema": Object {
-            "properties": Object {
-              "complete": Object {
-                "default": false,
-                "type": "boolean",
-              },
-              "id": Object {
+              "raw": Object {
                 "format": "int64",
                 "type": "integer",
               },
-              "petId": Object {
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "key": "id",
+                "required": true,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/petId" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "petId",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "petId",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/petId",
+                "kind": "field",
+              },
+              "raw": Object {
                 "format": "int64",
                 "type": "integer",
               },
-              "quantity": Object {
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "key": "petId",
+                "required": true,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/quantity" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "quantity",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "quantity",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/quantity",
+                "kind": "field",
+              },
+              "raw": Object {
                 "format": "int32",
                 "type": "integer",
               },
-              "shipDate": Object {
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "key": "quantity",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/shipDate" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "shipDate",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "shipDate",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/shipDate",
+                "kind": "field",
+              },
+              "raw": Object {
                 "format": "date-time",
                 "type": "string",
               },
-              "status": Object {
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "date-time",
+                  "type": "string",
+                },
+                "key": "shipDate",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/status" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "status",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "status",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/status",
+                "kind": "field",
+              },
+              "raw": Object {
                 "description": "Order Status",
                 "enum": Array [
                   "placed",
@@ -2106,24 +1749,442 @@ Object {
                 ],
                 "type": "string",
               },
+              "value": Object {
+                "flatSchema": Object {
+                  "description": "Order Status",
+                  "enum": Array [
+                    "placed",
+                    "approved",
+                    "delivered",
+                  ],
+                  "type": "string",
+                },
+                "key": "status",
+                "required": false,
+              },
             },
-            "type": "object",
-            "xml": Object {
-              "name": "Order",
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/complete" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/xml",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "complete",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/xml",
+                  "complete",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1xml/schema/properties/complete",
+                "kind": "field",
+              },
+              "raw": Object {
+                "default": false,
+                "type": "boolean",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "default": false,
+                  "type": "boolean",
+                },
+                "key": "complete",
+                "required": false,
+              },
+            },
+          },
+          "raw": Object {
+            "schema": Object {
+              "properties": Object {
+                "complete": Object {
+                  "default": false,
+                  "type": "boolean",
+                },
+                "id": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "petId": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "quantity": Object {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "shipDate": Object {
+                  "format": "date-time",
+                  "type": "string",
+                },
+                "status": Object {
+                  "description": "Order Status",
+                  "enum": Array [
+                    "placed",
+                    "approved",
+                    "delivered",
+                  ],
+                  "type": "string",
+                },
+              },
+              "required": Array [
+                "id",
+                "petId",
+              ],
+              "type": "object",
+              "xml": Object {
+                "name": "Order",
+              },
+            },
+          },
+          "statusCode": "200",
+          "value": Object {
+            "contentType": "application/xml",
+            "flatSchema": Object {
+              "type": "object",
+              "xml": Object {
+                "name": "Order",
+              },
             },
           },
         },
-        "value": Object {
+        Object {
           "contentType": "application/json",
-          "flatSchema": Object {
-            "type": "object",
-            "xml": Object {
-              "name": "Order",
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "method": "get",
+              "path": "/store/order/{orderId}",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/store/order/{}",
+              "get",
+              "responses",
+              "200",
+              "application/json",
+            ],
+            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json",
+            "kind": "body",
+          },
+          "properties": Map {
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/id" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "id",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "id",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/id",
+                "kind": "field",
+              },
+              "raw": Object {
+                "format": "int64",
+                "type": "integer",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "key": "id",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/petId" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "petId",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "petId",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/petId",
+                "kind": "field",
+              },
+              "raw": Object {
+                "format": "int64",
+                "type": "integer",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "key": "petId",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/quantity" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "quantity",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "quantity",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/quantity",
+                "kind": "field",
+              },
+              "raw": Object {
+                "format": "int32",
+                "type": "integer",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "key": "quantity",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/shipDate" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "shipDate",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "shipDate",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/shipDate",
+                "kind": "field",
+              },
+              "raw": Object {
+                "format": "date-time",
+                "type": "string",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "format": "date-time",
+                  "type": "string",
+                },
+                "key": "shipDate",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/status" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "status",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "status",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/status",
+                "kind": "field",
+              },
+              "raw": Object {
+                "description": "Order Status",
+                "enum": Array [
+                  "placed",
+                  "approved",
+                  "delivered",
+                ],
+                "type": "string",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "description": "Order Status",
+                  "enum": Array [
+                    "placed",
+                    "approved",
+                    "delivered",
+                  ],
+                  "type": "string",
+                },
+                "key": "status",
+                "required": false,
+              },
+            },
+            "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/complete" => Object {
+              "location": Object {
+                "conceptualLocation": Object {
+                  "inResponse": Object {
+                    "body": Object {
+                      "contentType": "application/json",
+                    },
+                    "statusCode": "200",
+                  },
+                  "jsonSchemaTrail": Array [
+                    "complete",
+                  ],
+                  "method": "get",
+                  "path": "/store/order/{orderId}",
+                },
+                "conceptualPath": Array [
+                  "operations",
+                  "/store/order/{}",
+                  "get",
+                  "responses",
+                  "200",
+                  "application/json",
+                  "complete",
+                ],
+                "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/complete",
+                "kind": "field",
+              },
+              "raw": Object {
+                "default": false,
+                "type": "boolean",
+              },
+              "value": Object {
+                "flatSchema": Object {
+                  "default": false,
+                  "type": "boolean",
+                },
+                "key": "complete",
+                "required": false,
+              },
+            },
+          },
+          "raw": Object {
+            "schema": Object {
+              "properties": Object {
+                "complete": Object {
+                  "default": false,
+                  "type": "boolean",
+                },
+                "id": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "petId": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "quantity": Object {
+                  "format": "int32",
+                  "type": "integer",
+                },
+                "shipDate": Object {
+                  "format": "date-time",
+                  "type": "string",
+                },
+                "status": Object {
+                  "description": "Order Status",
+                  "enum": Array [
+                    "placed",
+                    "approved",
+                    "delivered",
+                  ],
+                  "type": "string",
+                },
+              },
+              "type": "object",
+              "xml": Object {
+                "name": "Order",
+              },
+            },
+          },
+          "statusCode": "200",
+          "value": Object {
+            "contentType": "application/json",
+            "flatSchema": Object {
+              "type": "object",
+              "xml": Object {
+                "name": "Order",
+              },
             },
           },
         },
-      },
-      "contentType": "application/json",
+      ],
       "headers": Map {},
       "location": Object {
         "conceptualLocation": Object {
@@ -2142,258 +2203,6 @@ Object {
         ],
         "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200",
         "kind": "response",
-      },
-      "properties": Map {
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/id" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "id",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "id",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/id",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "int64",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-            "key": "id",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/petId" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "petId",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "petId",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/petId",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "int64",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-            "key": "petId",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/quantity" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "quantity",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "quantity",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/quantity",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "int32",
-            "type": "integer",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "int32",
-              "type": "integer",
-            },
-            "key": "quantity",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/shipDate" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "shipDate",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "shipDate",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/shipDate",
-            "kind": "field",
-          },
-          "raw": Object {
-            "format": "date-time",
-            "type": "string",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "format": "date-time",
-              "type": "string",
-            },
-            "key": "shipDate",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/status" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "status",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "status",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/status",
-            "kind": "field",
-          },
-          "raw": Object {
-            "description": "Order Status",
-            "enum": Array [
-              "placed",
-              "approved",
-              "delivered",
-            ],
-            "type": "string",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "description": "Order Status",
-              "enum": Array [
-                "placed",
-                "approved",
-                "delivered",
-              ],
-              "type": "string",
-            },
-            "key": "status",
-            "required": false,
-          },
-        },
-        "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/complete" => Object {
-          "location": Object {
-            "conceptualLocation": Object {
-              "inResponse": Object {
-                "body": Object {
-                  "contentType": "application/json",
-                },
-                "statusCode": "200",
-              },
-              "jsonSchemaTrail": Array [
-                "complete",
-              ],
-              "method": "get",
-              "path": "/store/order/{orderId}",
-            },
-            "conceptualPath": Array [
-              "operations",
-              "/store/order/{}",
-              "get",
-              "responses",
-              "200",
-              "application/json",
-              "complete",
-            ],
-            "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/200/content/application~1json/schema/properties/complete",
-            "kind": "field",
-          },
-          "raw": Object {
-            "default": false,
-            "type": "boolean",
-          },
-          "value": Object {
-            "flatSchema": Object {
-              "default": false,
-              "type": "boolean",
-            },
-            "key": "complete",
-            "required": false,
-          },
-        },
       },
       "raw": Object {
         "content": Object {
@@ -2488,7 +2297,69 @@ Object {
         "statusCode": "200",
       },
     },
-  ],
+    "400" => Object {
+      "bodies": Array [],
+      "headers": Map {},
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "400",
+          },
+          "method": "get",
+          "path": "/store/order/{orderId}",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/store/order/{}",
+          "get",
+          "responses",
+          "400",
+        ],
+        "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/400",
+        "kind": "response",
+      },
+      "raw": Object {
+        "content": Object {},
+        "description": "Invalid ID supplied",
+      },
+      "statusCode": "400",
+      "value": Object {
+        "description": "Invalid ID supplied",
+        "statusCode": "400",
+      },
+    },
+    "404" => Object {
+      "bodies": Array [],
+      "headers": Map {},
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "404",
+          },
+          "method": "get",
+          "path": "/store/order/{orderId}",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/store/order/{}",
+          "get",
+          "responses",
+          "404",
+        ],
+        "jsonPath": "/paths/~1store~1order~1{orderId}/get/responses/404",
+        "kind": "response",
+      },
+      "raw": Object {
+        "content": Object {},
+        "description": "Order not found",
+      },
+      "statusCode": "404",
+      "value": Object {
+        "description": "Order not found",
+        "statusCode": "404",
+      },
+    },
+  },
   "value": Object {
     "description": "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions",
     "method": "get",
@@ -2504,117 +2375,14 @@ Object {
 
 exports[`createRequest request with after key 1`] = `
 Object {
-  "body": Object {
-    "location": Object {
-      "conceptualLocation": Object {
-        "inRequest": Object {
-          "body": Object {
-            "contentType": "application/json",
-          },
-        },
-        "method": "put",
-        "path": "/pet",
-      },
-      "conceptualPath": Array [
-        "operations",
-        "/pet",
-        "put",
-        "application/json",
-      ],
-      "jsonPath": "/paths/~1pet/put/requestBody/content/application~1json",
-      "kind": "body",
-    },
-    "raw": Object {
-      "schema": Object {
-        "properties": Object {
-          "category": Object {
-            "properties": Object {
-              "id": Object {
-                "format": "int64",
-                "type": "integer",
-              },
-              "name": Object {
-                "type": "string",
-              },
-            },
-            "type": "object",
-            "xml": Object {
-              "name": "Category",
-            },
-          },
-          "id": Object {
-            "format": "int64",
-            "type": "integer",
-          },
-          "number": Object {
-            "type": "string",
-          },
-          "photoUrls": Object {
-            "items": Object {
-              "type": "string",
-            },
-            "type": "array",
-            "xml": Object {
-              "name": "photoUrl",
-              "wrapped": true,
-            },
-          },
-          "status": Object {
-            "description": "pet status in the store",
-            "enum": Array [
-              "available",
-              "pending",
-              "sold",
-            ],
-            "type": "string",
-          },
-          "tags": Object {
-            "items": Object {
-              "properties": Object {
-                "id": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "name": Object {
-                  "type": "string",
-                },
-              },
-              "type": "object",
-              "xml": Object {
-                "name": "Tag",
-              },
-            },
-            "type": "array",
-            "xml": Object {
-              "name": "tag",
-              "wrapped": true,
-            },
-          },
-        },
-        "required": Array [
-          "number",
-          "photoUrls",
-        ],
-        "type": "object",
-        "xml": Object {
-          "name": "Pet",
-        },
-      },
-    },
-    "value": Object {
-      "contentType": "application/json",
-      "flatSchema": Object {
-        "type": "object",
-        "xml": Object {
-          "name": "Pet",
-        },
-      },
-    },
-  },
   "contentType": "application/json",
   "location": Object {
     "conceptualLocation": Object {
-      "inRequest": Object {},
+      "inRequest": Object {
+        "body": Object {
+          "contentType": "application/json",
+        },
+      },
       "method": "put",
       "path": "/pet",
     },
@@ -2622,10 +2390,10 @@ Object {
       "operations",
       "/pet",
       "put",
-      "requestBody",
+      "application/json",
     ],
-    "jsonPath": "/paths/~1pet/put/requestBody",
-    "kind": "request",
+    "jsonPath": "/paths/~1pet/put/requestBody/content/application~1json",
+    "kind": "body",
   },
   "properties": Map {
     "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/id" => Object {
@@ -3059,121 +2827,51 @@ Object {
     },
   },
   "raw": Object {
-    "content": Object {
-      "application/json": Object {
-        "schema": Object {
+    "schema": Object {
+      "properties": Object {
+        "category": Object {
           "properties": Object {
-            "category": Object {
-              "properties": Object {
-                "id": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "name": Object {
-                  "type": "string",
-                },
-              },
-              "type": "object",
-              "xml": Object {
-                "name": "Category",
-              },
-            },
             "id": Object {
               "format": "int64",
               "type": "integer",
             },
-            "number": Object {
+            "name": Object {
               "type": "string",
-            },
-            "photoUrls": Object {
-              "items": Object {
-                "type": "string",
-              },
-              "type": "array",
-              "xml": Object {
-                "name": "photoUrl",
-                "wrapped": true,
-              },
-            },
-            "status": Object {
-              "description": "pet status in the store",
-              "enum": Array [
-                "available",
-                "pending",
-                "sold",
-              ],
-              "type": "string",
-            },
-            "tags": Object {
-              "items": Object {
-                "properties": Object {
-                  "id": Object {
-                    "format": "int64",
-                    "type": "integer",
-                  },
-                  "name": Object {
-                    "type": "string",
-                  },
-                },
-                "type": "object",
-                "xml": Object {
-                  "name": "Tag",
-                },
-              },
-              "type": "array",
-              "xml": Object {
-                "name": "tag",
-                "wrapped": true,
-              },
             },
           },
-          "required": Array [
-            "number",
-            "photoUrls",
-          ],
           "type": "object",
           "xml": Object {
-            "name": "Pet",
+            "name": "Category",
           },
         },
-      },
-    },
-    "description": "Pet object that needs to be added to the store",
-    "required": true,
-  },
-  "value": Object {
-    "description": "Pet object that needs to be added to the store",
-    "required": true,
-  },
-}
-`;
-
-exports[`createRequest request with before key 1`] = `
-Object {
-  "body": Object {
-    "location": Object {
-      "conceptualLocation": Object {
-        "inRequest": Object {
-          "body": Object {
-            "contentType": "application/json",
+        "id": Object {
+          "format": "int64",
+          "type": "integer",
+        },
+        "number": Object {
+          "type": "string",
+        },
+        "photoUrls": Object {
+          "items": Object {
+            "type": "string",
+          },
+          "type": "array",
+          "xml": Object {
+            "name": "photoUrl",
+            "wrapped": true,
           },
         },
-        "method": "put",
-        "path": "/pet",
-      },
-      "conceptualPath": Array [
-        "operations",
-        "/pet",
-        "put",
-        "application/json",
-      ],
-      "jsonPath": "/paths/~1pet/put/requestBody/content/application~1json",
-      "kind": "body",
-    },
-    "raw": Object {
-      "schema": Object {
-        "properties": Object {
-          "category": Object {
+        "status": Object {
+          "description": "pet status in the store",
+          "enum": Array [
+            "available",
+            "pending",
+            "sold",
+          ],
+          "type": "string",
+        },
+        "tags": Object {
+          "items": Object {
             "properties": Object {
               "id": Object {
                 "format": "int64",
@@ -3185,83 +2883,48 @@ Object {
             },
             "type": "object",
             "xml": Object {
-              "name": "Category",
+              "name": "Tag",
             },
           },
-          "id": Object {
-            "format": "int64",
-            "type": "integer",
+          "type": "array",
+          "xml": Object {
+            "name": "tag",
+            "wrapped": true,
           },
-          "name": Object {
-            "example": "doggie",
-            "type": "string",
-          },
-          "photoUrls": Object {
-            "items": Object {
-              "type": "string",
-            },
-            "type": "array",
-            "xml": Object {
-              "name": "photoUrl",
-              "wrapped": true,
-            },
-          },
-          "status": Object {
-            "description": "pet status in the store",
-            "enum": Array [
-              "available",
-              "pending",
-              "sold",
-            ],
-            "type": "string",
-          },
-          "tags": Object {
-            "items": Object {
-              "properties": Object {
-                "id": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "name": Object {
-                  "type": "string",
-                },
-              },
-              "type": "object",
-              "xml": Object {
-                "name": "Tag",
-              },
-            },
-            "type": "array",
-            "xml": Object {
-              "name": "tag",
-              "wrapped": true,
-            },
-          },
-        },
-        "required": Array [
-          "name",
-          "photoUrls",
-        ],
-        "type": "object",
-        "xml": Object {
-          "name": "Pet",
         },
       },
-    },
-    "value": Object {
-      "contentType": "application/json",
-      "flatSchema": Object {
-        "type": "object",
-        "xml": Object {
-          "name": "Pet",
-        },
+      "required": Array [
+        "number",
+        "photoUrls",
+      ],
+      "type": "object",
+      "xml": Object {
+        "name": "Pet",
       },
     },
   },
+  "value": Object {
+    "contentType": "application/json",
+    "flatSchema": Object {
+      "type": "object",
+      "xml": Object {
+        "name": "Pet",
+      },
+    },
+  },
+}
+`;
+
+exports[`createRequest request with before key 1`] = `
+Object {
   "contentType": "application/json",
   "location": Object {
     "conceptualLocation": Object {
-      "inRequest": Object {},
+      "inRequest": Object {
+        "body": Object {
+          "contentType": "application/json",
+        },
+      },
       "method": "put",
       "path": "/pet",
     },
@@ -3269,10 +2932,10 @@ Object {
       "operations",
       "/pet",
       "put",
-      "requestBody",
+      "application/json",
     ],
-    "jsonPath": "/paths/~1pet/put/requestBody",
-    "kind": "request",
+    "jsonPath": "/paths/~1pet/put/requestBody/content/application~1json",
+    "kind": "body",
   },
   "properties": Map {
     "/paths/~1pet/put/requestBody/content/application~1json/schema/properties/id" => Object {
@@ -3708,204 +3371,430 @@ Object {
     },
   },
   "raw": Object {
-    "content": Object {
-      "application/json": Object {
-        "schema": Object {
+    "schema": Object {
+      "properties": Object {
+        "category": Object {
           "properties": Object {
-            "category": Object {
-              "properties": Object {
-                "id": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "name": Object {
-                  "type": "string",
-                },
-              },
-              "type": "object",
-              "xml": Object {
-                "name": "Category",
-              },
-            },
             "id": Object {
               "format": "int64",
               "type": "integer",
             },
             "name": Object {
-              "example": "doggie",
               "type": "string",
-            },
-            "photoUrls": Object {
-              "items": Object {
-                "type": "string",
-              },
-              "type": "array",
-              "xml": Object {
-                "name": "photoUrl",
-                "wrapped": true,
-              },
-            },
-            "status": Object {
-              "description": "pet status in the store",
-              "enum": Array [
-                "available",
-                "pending",
-                "sold",
-              ],
-              "type": "string",
-            },
-            "tags": Object {
-              "items": Object {
-                "properties": Object {
-                  "id": Object {
-                    "format": "int64",
-                    "type": "integer",
-                  },
-                  "name": Object {
-                    "type": "string",
-                  },
-                },
-                "type": "object",
-                "xml": Object {
-                  "name": "Tag",
-                },
-              },
-              "type": "array",
-              "xml": Object {
-                "name": "tag",
-                "wrapped": true,
-              },
             },
           },
-          "required": Array [
-            "name",
-            "photoUrls",
-          ],
           "type": "object",
           "xml": Object {
-            "name": "Pet",
+            "name": "Category",
+          },
+        },
+        "id": Object {
+          "format": "int64",
+          "type": "integer",
+        },
+        "name": Object {
+          "example": "doggie",
+          "type": "string",
+        },
+        "photoUrls": Object {
+          "items": Object {
+            "type": "string",
+          },
+          "type": "array",
+          "xml": Object {
+            "name": "photoUrl",
+            "wrapped": true,
+          },
+        },
+        "status": Object {
+          "description": "pet status in the store",
+          "enum": Array [
+            "available",
+            "pending",
+            "sold",
+          ],
+          "type": "string",
+        },
+        "tags": Object {
+          "items": Object {
+            "properties": Object {
+              "id": Object {
+                "format": "int64",
+                "type": "integer",
+              },
+              "name": Object {
+                "type": "string",
+              },
+            },
+            "type": "object",
+            "xml": Object {
+              "name": "Tag",
+            },
+          },
+          "type": "array",
+          "xml": Object {
+            "name": "tag",
+            "wrapped": true,
           },
         },
       },
-      "application/xml": Object {
-        "schema": Object {
-          "properties": Object {
-            "category": Object {
-              "properties": Object {
-                "id": Object {
-                  "format": "int64",
-                  "type": "integer",
-                },
-                "name": Object {
-                  "type": "string",
-                },
-              },
-              "type": "object",
-              "xml": Object {
-                "name": "Category",
-              },
-            },
-            "id": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-            "name": Object {
-              "example": "doggie",
-              "type": "string",
-            },
-            "photoUrls": Object {
-              "items": Object {
-                "type": "string",
-              },
-              "type": "array",
-              "xml": Object {
-                "name": "photoUrl",
-                "wrapped": true,
-              },
-            },
-            "status": Object {
-              "description": "pet status in the store",
-              "enum": Array [
-                "available",
-                "pending",
-                "sold",
-              ],
-              "type": "string",
-            },
-            "tags": Object {
-              "items": Object {
-                "properties": Object {
-                  "id": Object {
-                    "format": "int64",
-                    "type": "integer",
-                  },
-                  "name": Object {
-                    "type": "string",
-                  },
-                },
-                "type": "object",
-                "xml": Object {
-                  "name": "Tag",
-                },
-              },
-              "type": "array",
-              "xml": Object {
-                "name": "tag",
-                "wrapped": true,
-              },
-            },
-          },
-          "required": Array [
-            "name",
-            "photoUrls",
-          ],
-          "type": "object",
-          "xml": Object {
-            "name": "Pet",
-          },
-        },
+      "required": Array [
+        "name",
+        "photoUrls",
+      ],
+      "type": "object",
+      "xml": Object {
+        "name": "Pet",
       },
     },
-    "description": "Pet object that needs to be added to the store",
-    "required": true,
   },
   "value": Object {
-    "description": "Pet object that needs to be added to the store",
-    "required": true,
+    "contentType": "application/json",
+    "flatSchema": Object {
+      "type": "object",
+      "xml": Object {
+        "name": "Pet",
+      },
+    },
   },
 }
 `;
 
 exports[`createResponse response with after key 1`] = `
 Object {
-  "body": Object {
-    "location": Object {
-      "conceptualLocation": Object {
-        "inResponse": Object {
-          "body": Object {
-            "contentType": "application/json",
+  "bodies": Array [
+    Object {
+      "contentType": "application/xml",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/xml",
+            },
+            "statusCode": "200",
           },
-          "statusCode": "200",
+          "method": "get",
+          "path": "/pet/findByStatus",
         },
-        "method": "get",
-        "path": "/pet/findByStatus",
+        "conceptualPath": Array [
+          "operations",
+          "/pet/findByStatus",
+          "get",
+          "responses",
+          "200",
+          "application/xml",
+        ],
+        "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml",
+        "kind": "body",
       },
-      "conceptualPath": Array [
-        "operations",
-        "/pet/findByStatus",
-        "get",
-        "responses",
-        "200",
-        "application/json",
-      ],
-      "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json",
-      "kind": "body",
-    },
-    "raw": Object {
-      "schema": Object {
-        "items": Object {
-          "properties": Object {
-            "category": Object {
+      "properties": Map {
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/id" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/xml",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "id",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/xml",
+              "items",
+              "id",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/id",
+            "kind": "field",
+          },
+          "raw": Object {
+            "format": "int64",
+            "type": "integer",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "format": "int64",
+              "type": "integer",
+            },
+            "key": "id",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/category" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/xml",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "category",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/xml",
+              "items",
+              "category",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/category",
+            "kind": "field",
+          },
+          "raw": Object {
+            "properties": Object {
+              "id": Object {
+                "format": "int64",
+                "type": "integer",
+              },
+              "name": Object {
+                "type": "string",
+              },
+            },
+            "type": "object",
+            "xml": Object {
+              "name": "Category",
+            },
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "type": "object",
+              "xml": Object {
+                "name": "Category",
+              },
+            },
+            "key": "category",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/category/properties/id" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/xml",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "category",
+                "id",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/xml",
+              "items",
+              "category",
+              "id",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/category/properties/id",
+            "kind": "field",
+          },
+          "raw": Object {
+            "format": "int64",
+            "type": "integer",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "format": "int64",
+              "type": "integer",
+            },
+            "key": "id",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/category/properties/name" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/xml",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "category",
+                "name",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/xml",
+              "items",
+              "category",
+              "name",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/category/properties/name",
+            "kind": "field",
+          },
+          "raw": Object {
+            "type": "string",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "type": "string",
+            },
+            "key": "name",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/name" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/xml",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "name",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/xml",
+              "items",
+              "name",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/name",
+            "kind": "field",
+          },
+          "raw": Object {
+            "example": "doggie",
+            "type": "string",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "example": "doggie",
+              "type": "string",
+            },
+            "key": "name",
+            "required": true,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/photoUrls" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/xml",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "photoUrls",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/xml",
+              "items",
+              "photoUrls",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/photoUrls",
+            "kind": "field",
+          },
+          "raw": Object {
+            "items": Object {
+              "type": "string",
+            },
+            "type": "array",
+            "xml": Object {
+              "name": "photoUrl",
+              "wrapped": true,
+            },
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "type": "array",
+              "xml": Object {
+                "name": "photoUrl",
+                "wrapped": true,
+              },
+            },
+            "key": "photoUrls",
+            "required": true,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/tags" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/xml",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "tags",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/xml",
+              "items",
+              "tags",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/tags",
+            "kind": "field",
+          },
+          "raw": Object {
+            "items": Object {
               "properties": Object {
                 "id": Object {
                   "format": "int64",
@@ -3917,28 +3806,157 @@ Object {
               },
               "type": "object",
               "xml": Object {
-                "name": "Category",
+                "name": "Tag",
               },
             },
-            "id": Object {
-              "format": "int64",
-              "type": "integer",
+            "type": "array",
+            "xml": Object {
+              "name": "tag",
+              "wrapped": true,
             },
-            "name": Object {
-              "example": "doggie",
-              "type": "string",
-            },
-            "photoUrls": Object {
-              "items": Object {
-                "type": "string",
-              },
+          },
+          "value": Object {
+            "flatSchema": Object {
               "type": "array",
               "xml": Object {
-                "name": "photoUrl",
+                "name": "tag",
                 "wrapped": true,
               },
             },
-            "status": Object {
+            "key": "tags",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/tags/items/properties/id" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/xml",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "tags",
+                "items",
+                "id",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/xml",
+              "items",
+              "tags",
+              "items",
+              "id",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/tags/items/properties/id",
+            "kind": "field",
+          },
+          "raw": Object {
+            "format": "int64",
+            "type": "integer",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "format": "int64",
+              "type": "integer",
+            },
+            "key": "id",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/tags/items/properties/name" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/xml",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "tags",
+                "items",
+                "name",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/xml",
+              "items",
+              "tags",
+              "items",
+              "name",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/tags/items/properties/name",
+            "kind": "field",
+          },
+          "raw": Object {
+            "type": "string",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "type": "string",
+            },
+            "key": "name",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/status" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/xml",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "status",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/xml",
+              "items",
+              "status",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1xml/schema/items/properties/status",
+            "kind": "field",
+          },
+          "raw": Object {
+            "description": "pet status in the store",
+            "enum": Array [
+              "available",
+              "pending",
+              "sold",
+            ],
+            "type": "string",
+          },
+          "value": Object {
+            "flatSchema": Object {
               "description": "pet status in the store",
               "enum": Array [
                 "available",
@@ -3947,8 +3965,16 @@ Object {
               ],
               "type": "string",
             },
-            "tags": Object {
-              "items": Object {
+            "key": "status",
+            "required": false,
+          },
+        },
+      },
+      "raw": Object {
+        "schema": Object {
+          "items": Object {
+            "properties": Object {
+              "category": Object {
                 "properties": Object {
                   "id": Object {
                     "format": "int64",
@@ -3960,36 +3986,676 @@ Object {
                 },
                 "type": "object",
                 "xml": Object {
-                  "name": "Tag",
+                  "name": "Category",
                 },
               },
+              "id": Object {
+                "format": "int64",
+                "type": "integer",
+              },
+              "name": Object {
+                "example": "doggie",
+                "type": "string",
+              },
+              "photoUrls": Object {
+                "items": Object {
+                  "type": "string",
+                },
+                "type": "array",
+                "xml": Object {
+                  "name": "photoUrl",
+                  "wrapped": true,
+                },
+              },
+              "status": Object {
+                "description": "pet status in the store",
+                "enum": Array [
+                  "available",
+                  "pending",
+                  "sold",
+                ],
+                "type": "string",
+              },
+              "tags": Object {
+                "items": Object {
+                  "properties": Object {
+                    "id": Object {
+                      "format": "int64",
+                      "type": "integer",
+                    },
+                    "name": Object {
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                  "xml": Object {
+                    "name": "Tag",
+                  },
+                },
+                "type": "array",
+                "xml": Object {
+                  "name": "tag",
+                  "wrapped": true,
+                },
+              },
+            },
+            "required": Array [
+              "name",
+              "photoUrls",
+            ],
+            "type": "object",
+            "xml": Object {
+              "name": "Pet",
+            },
+          },
+          "type": "array",
+        },
+      },
+      "statusCode": "200",
+      "value": Object {
+        "contentType": "application/xml",
+        "flatSchema": Object {
+          "type": "array",
+        },
+      },
+    },
+    Object {
+      "contentType": "application/json",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/pet/findByStatus",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/pet/findByStatus",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+      "properties": Map {
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/id" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "id",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/json",
+              "items",
+              "id",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/id",
+            "kind": "field",
+          },
+          "raw": Object {
+            "format": "int64",
+            "type": "integer",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "format": "int64",
+              "type": "integer",
+            },
+            "key": "id",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "category",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/json",
+              "items",
+              "category",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category",
+            "kind": "field",
+          },
+          "raw": Object {
+            "properties": Object {
+              "id": Object {
+                "format": "int64",
+                "type": "integer",
+              },
+              "name": Object {
+                "type": "string",
+              },
+            },
+            "type": "object",
+            "xml": Object {
+              "name": "Category",
+            },
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "type": "object",
+              "xml": Object {
+                "name": "Category",
+              },
+            },
+            "key": "category",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category/properties/id" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "category",
+                "id",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/json",
+              "items",
+              "category",
+              "id",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category/properties/id",
+            "kind": "field",
+          },
+          "raw": Object {
+            "format": "int64",
+            "type": "integer",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "format": "int64",
+              "type": "integer",
+            },
+            "key": "id",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category/properties/name" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "category",
+                "name",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/json",
+              "items",
+              "category",
+              "name",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category/properties/name",
+            "kind": "field",
+          },
+          "raw": Object {
+            "type": "string",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "type": "string",
+            },
+            "key": "name",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/name" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "name",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/json",
+              "items",
+              "name",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/name",
+            "kind": "field",
+          },
+          "raw": Object {
+            "example": "doggie",
+            "type": "string",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "example": "doggie",
+              "type": "string",
+            },
+            "key": "name",
+            "required": true,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/photoUrls" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "photoUrls",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/json",
+              "items",
+              "photoUrls",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/photoUrls",
+            "kind": "field",
+          },
+          "raw": Object {
+            "items": Object {
+              "type": "string",
+            },
+            "type": "array",
+            "xml": Object {
+              "name": "photoUrl",
+              "wrapped": true,
+            },
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "type": "array",
+              "xml": Object {
+                "name": "photoUrl",
+                "wrapped": true,
+              },
+            },
+            "key": "photoUrls",
+            "required": true,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "tags",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/json",
+              "items",
+              "tags",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags",
+            "kind": "field",
+          },
+          "raw": Object {
+            "items": Object {
+              "properties": Object {
+                "id": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "name": Object {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+              "xml": Object {
+                "name": "Tag",
+              },
+            },
+            "type": "array",
+            "xml": Object {
+              "name": "tag",
+              "wrapped": true,
+            },
+          },
+          "value": Object {
+            "flatSchema": Object {
               "type": "array",
               "xml": Object {
                 "name": "tag",
                 "wrapped": true,
               },
             },
-          },
-          "required": Array [
-            "name",
-            "photoUrls",
-          ],
-          "type": "object",
-          "xml": Object {
-            "name": "Pet",
+            "key": "tags",
+            "required": false,
           },
         },
-        "type": "array",
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags/items/properties/id" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "tags",
+                "items",
+                "id",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/json",
+              "items",
+              "tags",
+              "items",
+              "id",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags/items/properties/id",
+            "kind": "field",
+          },
+          "raw": Object {
+            "format": "int64",
+            "type": "integer",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "format": "int64",
+              "type": "integer",
+            },
+            "key": "id",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags/items/properties/name" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "tags",
+                "items",
+                "name",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/json",
+              "items",
+              "tags",
+              "items",
+              "name",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags/items/properties/name",
+            "kind": "field",
+          },
+          "raw": Object {
+            "type": "string",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "type": "string",
+            },
+            "key": "name",
+            "required": false,
+          },
+        },
+        "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/status" => Object {
+          "location": Object {
+            "conceptualLocation": Object {
+              "inResponse": Object {
+                "body": Object {
+                  "contentType": "application/json",
+                },
+                "statusCode": "200",
+              },
+              "jsonSchemaTrail": Array [
+                "items",
+                "status",
+              ],
+              "method": "get",
+              "path": "/pet/findByStatus",
+            },
+            "conceptualPath": Array [
+              "operations",
+              "/pet/findByStatus",
+              "get",
+              "responses",
+              "200",
+              "application/json",
+              "items",
+              "status",
+            ],
+            "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/status",
+            "kind": "field",
+          },
+          "raw": Object {
+            "description": "pet status in the store",
+            "enum": Array [
+              "available",
+              "pending",
+              "sold",
+            ],
+            "type": "string",
+          },
+          "value": Object {
+            "flatSchema": Object {
+              "description": "pet status in the store",
+              "enum": Array [
+                "available",
+                "pending",
+                "sold",
+              ],
+              "type": "string",
+            },
+            "key": "status",
+            "required": false,
+          },
+        },
+      },
+      "raw": Object {
+        "schema": Object {
+          "items": Object {
+            "properties": Object {
+              "category": Object {
+                "properties": Object {
+                  "id": Object {
+                    "format": "int64",
+                    "type": "integer",
+                  },
+                  "name": Object {
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+                "xml": Object {
+                  "name": "Category",
+                },
+              },
+              "id": Object {
+                "format": "int64",
+                "type": "integer",
+              },
+              "name": Object {
+                "example": "doggie",
+                "type": "string",
+              },
+              "photoUrls": Object {
+                "items": Object {
+                  "type": "string",
+                },
+                "type": "array",
+                "xml": Object {
+                  "name": "photoUrl",
+                  "wrapped": true,
+                },
+              },
+              "status": Object {
+                "description": "pet status in the store",
+                "enum": Array [
+                  "available",
+                  "pending",
+                  "sold",
+                ],
+                "type": "string",
+              },
+              "tags": Object {
+                "items": Object {
+                  "properties": Object {
+                    "id": Object {
+                      "format": "int64",
+                      "type": "integer",
+                    },
+                    "name": Object {
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                  "xml": Object {
+                    "name": "Tag",
+                  },
+                },
+                "type": "array",
+                "xml": Object {
+                  "name": "tag",
+                  "wrapped": true,
+                },
+              },
+            },
+            "required": Array [
+              "name",
+              "photoUrls",
+            ],
+            "type": "object",
+            "xml": Object {
+              "name": "Pet",
+            },
+          },
+          "type": "array",
+        },
+      },
+      "statusCode": "200",
+      "value": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "array",
+        },
       },
     },
-    "value": Object {
-      "contentType": "application/json",
-      "flatSchema": Object {
-        "type": "array",
-      },
-    },
-  },
-  "contentType": "application/json",
+  ],
   "headers": Map {},
   "location": Object {
     "conceptualLocation": Object {
@@ -4008,489 +4674,6 @@ Object {
     ],
     "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200",
     "kind": "response",
-  },
-  "properties": Map {
-    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/id" => Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": Array [
-            "items",
-            "id",
-          ],
-          "method": "get",
-          "path": "/pet/findByStatus",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/pet/findByStatus",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "items",
-          "id",
-        ],
-        "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/id",
-        "kind": "field",
-      },
-      "raw": Object {
-        "format": "int64",
-        "type": "integer",
-      },
-      "value": Object {
-        "flatSchema": Object {
-          "format": "int64",
-          "type": "integer",
-        },
-        "key": "id",
-        "required": false,
-      },
-    },
-    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category" => Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": Array [
-            "items",
-            "category",
-          ],
-          "method": "get",
-          "path": "/pet/findByStatus",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/pet/findByStatus",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "items",
-          "category",
-        ],
-        "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category",
-        "kind": "field",
-      },
-      "raw": Object {
-        "properties": Object {
-          "id": Object {
-            "format": "int64",
-            "type": "integer",
-          },
-          "name": Object {
-            "type": "string",
-          },
-        },
-        "type": "object",
-        "xml": Object {
-          "name": "Category",
-        },
-      },
-      "value": Object {
-        "flatSchema": Object {
-          "type": "object",
-          "xml": Object {
-            "name": "Category",
-          },
-        },
-        "key": "category",
-        "required": false,
-      },
-    },
-    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category/properties/id" => Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": Array [
-            "items",
-            "category",
-            "id",
-          ],
-          "method": "get",
-          "path": "/pet/findByStatus",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/pet/findByStatus",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "items",
-          "category",
-          "id",
-        ],
-        "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category/properties/id",
-        "kind": "field",
-      },
-      "raw": Object {
-        "format": "int64",
-        "type": "integer",
-      },
-      "value": Object {
-        "flatSchema": Object {
-          "format": "int64",
-          "type": "integer",
-        },
-        "key": "id",
-        "required": false,
-      },
-    },
-    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category/properties/name" => Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": Array [
-            "items",
-            "category",
-            "name",
-          ],
-          "method": "get",
-          "path": "/pet/findByStatus",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/pet/findByStatus",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "items",
-          "category",
-          "name",
-        ],
-        "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/category/properties/name",
-        "kind": "field",
-      },
-      "raw": Object {
-        "type": "string",
-      },
-      "value": Object {
-        "flatSchema": Object {
-          "type": "string",
-        },
-        "key": "name",
-        "required": false,
-      },
-    },
-    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/name" => Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": Array [
-            "items",
-            "name",
-          ],
-          "method": "get",
-          "path": "/pet/findByStatus",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/pet/findByStatus",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "items",
-          "name",
-        ],
-        "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/name",
-        "kind": "field",
-      },
-      "raw": Object {
-        "example": "doggie",
-        "type": "string",
-      },
-      "value": Object {
-        "flatSchema": Object {
-          "example": "doggie",
-          "type": "string",
-        },
-        "key": "name",
-        "required": true,
-      },
-    },
-    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/photoUrls" => Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": Array [
-            "items",
-            "photoUrls",
-          ],
-          "method": "get",
-          "path": "/pet/findByStatus",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/pet/findByStatus",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "items",
-          "photoUrls",
-        ],
-        "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/photoUrls",
-        "kind": "field",
-      },
-      "raw": Object {
-        "items": Object {
-          "type": "string",
-        },
-        "type": "array",
-        "xml": Object {
-          "name": "photoUrl",
-          "wrapped": true,
-        },
-      },
-      "value": Object {
-        "flatSchema": Object {
-          "type": "array",
-          "xml": Object {
-            "name": "photoUrl",
-            "wrapped": true,
-          },
-        },
-        "key": "photoUrls",
-        "required": true,
-      },
-    },
-    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags" => Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": Array [
-            "items",
-            "tags",
-          ],
-          "method": "get",
-          "path": "/pet/findByStatus",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/pet/findByStatus",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "items",
-          "tags",
-        ],
-        "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags",
-        "kind": "field",
-      },
-      "raw": Object {
-        "items": Object {
-          "properties": Object {
-            "id": Object {
-              "format": "int64",
-              "type": "integer",
-            },
-            "name": Object {
-              "type": "string",
-            },
-          },
-          "type": "object",
-          "xml": Object {
-            "name": "Tag",
-          },
-        },
-        "type": "array",
-        "xml": Object {
-          "name": "tag",
-          "wrapped": true,
-        },
-      },
-      "value": Object {
-        "flatSchema": Object {
-          "type": "array",
-          "xml": Object {
-            "name": "tag",
-            "wrapped": true,
-          },
-        },
-        "key": "tags",
-        "required": false,
-      },
-    },
-    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags/items/properties/id" => Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": Array [
-            "items",
-            "tags",
-            "items",
-            "id",
-          ],
-          "method": "get",
-          "path": "/pet/findByStatus",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/pet/findByStatus",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "items",
-          "tags",
-          "items",
-          "id",
-        ],
-        "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags/items/properties/id",
-        "kind": "field",
-      },
-      "raw": Object {
-        "format": "int64",
-        "type": "integer",
-      },
-      "value": Object {
-        "flatSchema": Object {
-          "format": "int64",
-          "type": "integer",
-        },
-        "key": "id",
-        "required": false,
-      },
-    },
-    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags/items/properties/name" => Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": Array [
-            "items",
-            "tags",
-            "items",
-            "name",
-          ],
-          "method": "get",
-          "path": "/pet/findByStatus",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/pet/findByStatus",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "items",
-          "tags",
-          "items",
-          "name",
-        ],
-        "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/tags/items/properties/name",
-        "kind": "field",
-      },
-      "raw": Object {
-        "type": "string",
-      },
-      "value": Object {
-        "flatSchema": Object {
-          "type": "string",
-        },
-        "key": "name",
-        "required": false,
-      },
-    },
-    "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/status" => Object {
-      "location": Object {
-        "conceptualLocation": Object {
-          "inResponse": Object {
-            "body": Object {
-              "contentType": "application/json",
-            },
-            "statusCode": "200",
-          },
-          "jsonSchemaTrail": Array [
-            "items",
-            "status",
-          ],
-          "method": "get",
-          "path": "/pet/findByStatus",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/pet/findByStatus",
-          "get",
-          "responses",
-          "200",
-          "application/json",
-          "items",
-          "status",
-        ],
-        "jsonPath": "/paths/~1pet~1findByStatus/get/responses/200/content/application~1json/schema/items/properties/status",
-        "kind": "field",
-      },
-      "raw": Object {
-        "description": "pet status in the store",
-        "enum": Array [
-          "available",
-          "pending",
-          "sold",
-        ],
-        "type": "string",
-      },
-      "value": Object {
-        "flatSchema": Object {
-          "description": "pet status in the store",
-          "enum": Array [
-            "available",
-            "pending",
-            "sold",
-          ],
-          "type": "string",
-        },
-        "key": "status",
-        "required": false,
-      },
-    },
   },
   "raw": Object {
     "content": Object {

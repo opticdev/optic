@@ -1,32 +1,34 @@
 import { OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 
-import { createOperation, createRequest } from './data-constructors';
+import { createOperation, createResponse } from './data-constructors';
 import {
   Rules,
   RulesetData,
   EndpointNode,
-  RequestNode,
+  ResponseNode,
 } from './rule-runner-types';
 import {
-  createRulesetMatcher,
-  getRuleAliases,
   createAfterOperationContext,
   createBeforeOperationContext,
+  createRulesetMatcher,
+  getRuleAliases,
 } from './utils';
 
-import { Ruleset, RequestRule } from '../rules';
+import { Ruleset, ResponseBodyRule } from '../rules';
 import {
   assertionLifecycleToText,
   AssertionResult,
-  createRequestAssertions,
+  createResponseBodyAssertions,
 } from './assertions';
-import { Field, Operation, RequestBody } from '../types';
+import { Field, Operation, ResponseBody } from '../types';
 
-const getRequestRules = (rules: Rules[]): (RequestRule & RulesetData)[] => {
-  const requestRules: (RequestRule & RulesetData)[] = [];
+const getResponseBodyRules = (
+  rules: Rules[]
+): (ResponseBodyRule & RulesetData)[] => {
+  const responseRule: (ResponseBodyRule & RulesetData)[] = [];
   for (const ruleOrRuleset of rules) {
-    if (ruleOrRuleset instanceof RequestRule) {
-      requestRules.push({
+    if (ruleOrRuleset instanceof ResponseBodyRule) {
+      responseRule.push({
         ...ruleOrRuleset,
         aliases: [],
       });
@@ -34,8 +36,8 @@ const getRequestRules = (rules: Rules[]): (RequestRule & RulesetData)[] => {
 
     if (ruleOrRuleset instanceof Ruleset) {
       for (const rule of ruleOrRuleset.rules) {
-        if (rule instanceof RequestRule) {
-          requestRules.push({
+        if (rule instanceof ResponseBodyRule) {
+          responseRule.push({
             ...rule,
             matches: createRulesetMatcher({
               ruleMatcher: rule.matches,
@@ -49,20 +51,20 @@ const getRequestRules = (rules: Rules[]): (RequestRule & RulesetData)[] => {
     }
   }
 
-  return requestRules;
+  return responseRule;
 };
 
-const createRequestBodyResult = (
+const createResponseBodyResult = (
   assertionResult: AssertionResult,
-  request: RequestBody,
+  response: ResponseBody,
   operation: Operation,
-  rule: RequestRule
+  rule: ResponseBodyRule
 ): Result => ({
   where: `${assertionLifecycleToText(
     assertionResult.type
-  )} request with content-type: ${
-    request.contentType
-  } in operation: ${operation.method.toUpperCase()} ${operation.path}`,
+  )} response status code: ${response.statusCode} with content-type: ${
+    response.contentType
+  }  in operation: ${operation.method.toUpperCase()} ${operation.path}`,
   isMust: true,
   change: assertionResult.changeOrFact,
   name: rule.name,
@@ -73,19 +75,19 @@ const createRequestBodyResult = (
   isShould: false,
 });
 
-const createRequestPropertyResult = (
+const createResponsePropertyResult = (
   assertionResult: AssertionResult,
   property: Field,
-  request: RequestBody,
+  response: ResponseBody,
   operation: Operation,
-  rule: RequestRule
+  rule: ResponseBodyRule
 ): Result => ({
   where: `${assertionLifecycleToText(
     assertionResult.type
   )} property: ${property.location.conceptualLocation.jsonSchemaTrail.join(
     '/'
-  )} request body: ${
-    request.contentType
+  )} in response status code: ${response.statusCode} with content-type: ${
+    response.contentType
   } in operation: ${operation.method.toUpperCase()} ${operation.path}`,
   isMust: true,
   change: assertionResult.changeOrFact,
@@ -97,77 +99,72 @@ const createRequestPropertyResult = (
   isShould: false,
 });
 
-export const runRequestRules = ({
+export const runResponseBodyRules = ({
   operation,
-  request,
+  response,
   rules,
   customRuleContext,
   beforeApiSpec,
   afterApiSpec,
 }: {
   operation: EndpointNode;
-  request: RequestNode;
+  response: ResponseNode;
   rules: Rules[];
   customRuleContext: any;
   beforeApiSpec: OpenAPIV3.Document;
   afterApiSpec: OpenAPIV3.Document;
 }) => {
   const results: Result[] = [];
-  const requestRules = getRequestRules(rules);
+  const responseRules = getResponseBodyRules(rules);
   const beforeOperation = createOperation(operation, 'before', beforeApiSpec);
   const afterOperation = createOperation(operation, 'after', afterApiSpec);
-  for (const requestRule of requestRules) {
+  for (const responseRule of responseRules) {
     if (beforeOperation) {
       const beforeRulesContext = createBeforeOperationContext(
         beforeOperation,
         customRuleContext
       );
-      const requestAssertions = createRequestAssertions();
-      requestRule.rule(requestAssertions, beforeRulesContext);
+      const responseAssertions = createResponseBodyAssertions();
+      responseRule.rule(responseAssertions, beforeRulesContext);
 
-      for (const contentType of request.bodies.keys()) {
-        const beforeRequest = createRequest(
-          request,
-          contentType,
-          'before',
-          beforeApiSpec
-        );
-        if (beforeRequest) {
+      const beforeResponse = createResponse(response, 'before', beforeApiSpec);
+      if (beforeResponse) {
+        for (const beforeBody of beforeResponse.bodies) {
           if (
-            !requestRule.matches ||
-            requestRule.matches(beforeRequest, beforeRulesContext)
+            !responseRule.matches ||
+            responseRule.matches(beforeBody, beforeRulesContext)
           ) {
             results.push(
-              ...requestAssertions.body
+              ...responseAssertions.body
                 .runBefore(
-                  beforeRequest,
-                  request.bodies.get(contentType)?.change || null
+                  beforeBody,
+                  response.bodies.get(beforeBody.contentType)?.change || null
                 )
                 .map((assertionResult) =>
-                  createRequestBodyResult(
+                  createResponseBodyResult(
                     assertionResult,
-                    beforeRequest,
+                    beforeBody,
                     beforeOperation,
-                    requestRule
+                    responseRule
                   )
                 )
             );
 
-            for (const [key, property] of beforeRequest.properties.entries()) {
+            for (const [key, property] of beforeBody.properties.entries()) {
               const propertyChange =
-                request.bodies.get(contentType)?.fields.get(key)?.change ||
-                null;
+                response.bodies.get(beforeBody.contentType)?.fields.get(key)
+                  ?.change || null;
 
               results.push(
-                ...requestAssertions.property
+                ...responseAssertions.property
                   .runBefore(property, propertyChange)
                   .map((assertionResult) =>
-                    createRequestPropertyResult(
+                    createResponsePropertyResult(
                       assertionResult,
                       property,
-                      beforeRequest,
+                      beforeBody,
                       beforeOperation,
-                      requestRule
+                      responseRule
                     )
                   )
               );
@@ -183,60 +180,60 @@ export const runRequestRules = ({
         customRuleContext,
         operation.change?.changeType || null
       );
-      const requestAssertions = createRequestAssertions();
-      requestRule.rule(requestAssertions, afterRulesContext);
-      for (const contentType of request.bodies.keys()) {
-        const maybeBeforeRequest = createRequest(
-          request,
-          contentType,
-          'before',
-          beforeApiSpec
-        );
-        const afterRequest = createRequest(
-          request,
-          contentType,
-          'after',
-          afterApiSpec
-        );
-        if (afterRequest) {
+      const responseAssertions = createResponseBodyAssertions();
+      responseRule.rule(responseAssertions, afterRulesContext);
+
+      const maybeBeforeResponse = createResponse(
+        response,
+        'before',
+        beforeApiSpec
+      );
+      const afterResponse = createResponse(response, 'after', afterApiSpec);
+      if (afterResponse) {
+        for (const afterBody of afterResponse.bodies) {
+          const maybeBeforeBody =
+            maybeBeforeResponse?.bodies.find(
+              (body) => body.contentType === afterBody.contentType
+            ) || null;
           if (
-            !requestRule.matches ||
-            requestRule.matches(afterRequest, afterRulesContext)
+            !responseRule.matches ||
+            responseRule.matches(afterBody, afterRulesContext)
           ) {
             results.push(
-              ...requestAssertions.body
+              ...responseAssertions.body
                 .runAfter(
-                  maybeBeforeRequest,
-                  afterRequest,
-                  request.bodies.get(contentType)?.change || null
+                  maybeBeforeBody,
+                  afterBody,
+                  response.bodies.get(afterBody.contentType)?.change || null
                 )
                 .map((assertionResult) =>
-                  createRequestBodyResult(
+                  createResponseBodyResult(
                     assertionResult,
-                    afterRequest,
+                    afterBody,
                     afterOperation,
-                    requestRule
+                    responseRule
                   )
                 )
             );
 
-            for (const [key, property] of afterRequest.properties.entries()) {
+            for (const [key, property] of afterBody.properties.entries()) {
               const maybeBeforeProperty =
-                maybeBeforeRequest?.properties.get(key) || null;
+                maybeBeforeBody?.properties.get(key) || null;
+
               const propertyChange =
-                request.bodies.get(contentType)?.fields.get(key)?.change ||
-                null;
+                response.bodies.get(afterBody.contentType)?.fields.get(key)
+                  ?.change || null;
 
               results.push(
-                ...requestAssertions.property
+                ...responseAssertions.property
                   .runAfter(maybeBeforeProperty, property, propertyChange)
                   .map((assertionResult) =>
-                    createRequestPropertyResult(
+                    createResponsePropertyResult(
                       assertionResult,
                       property,
-                      afterRequest,
+                      afterBody,
                       afterOperation,
-                      requestRule
+                      responseRule
                     )
                   )
               );

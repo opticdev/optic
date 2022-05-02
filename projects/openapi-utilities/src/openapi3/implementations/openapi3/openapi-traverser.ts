@@ -36,6 +36,9 @@ export function normalizeOpenApiPath(path: string): string {
     .join('/');
 }
 
+const getReadableLocation = (jsonPath: string): string =>
+  jsonPointer.decode(jsonPath).join(' > ');
+
 const isNotReferenceObject = <T extends {}>(
   maybeReference: T | OpenAPIV3.ReferenceObject
 ): maybeReference is Exclude<T, OpenAPIV3.ReferenceObject> => {
@@ -122,8 +125,8 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     if (requestBody) {
       if (!isObject(requestBody)) {
         console.warn(
-          `Expected an object at: ${conceptualPath.join(
-            ' >'
+          `Expected an object at: ${getReadableLocation(
+            jsonPointer.append(jsonPath, 'requestBody')
           )}, found ${requestBody}`
         );
       } else if (isNotReferenceObject(requestBody)) {
@@ -145,32 +148,37 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         );
       } else {
         console.warn(
-          `Expected a flattened spec, found a reference at: ${conceptualPath.join(
-            ' > '
+          `Expected a flattened spec, found a reference at: ${getReadableLocation(
+            jsonPointer.append(jsonPath, 'requestBody')
           )}`
         );
       }
     }
 
     for (let [statusCode, response] of Object.entries(operation.responses)) {
+      const nextJsonPath = jsonPointer.append(
+        jsonPath,
+        'responses',
+        statusCode
+      );
       if (!isObject(response)) {
         console.warn(
-          `Expected an object at: ${conceptualPath.join(
-            ' >'
+          `Expected an object at: ${getReadableLocation(
+            nextJsonPath
           )}, found ${response}`
         );
       } else if (isNotReferenceObject(response)) {
         yield* this.traverseResponse(
           response,
           statusCode,
-          jsonPointer.append(jsonPath, 'responses', statusCode),
+          nextJsonPath,
           [...conceptualPath, 'responses', statusCode],
           { ...location, inResponse: { statusCode } }
         );
       } else {
         console.warn(
-          `Expected a flattened spec, found a reference at: ${conceptualPath.join(
-            ' > '
+          `Expected a flattened spec, found a reference at: ${getReadableLocation(
+            nextJsonPath
           )}`
         );
       }
@@ -250,10 +258,11 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     if (operation.parameters) {
       this.checkJsonTrail(jsonPath, operation.parameters);
       for (let [i, parameter] of Object.entries(operation.parameters)) {
+        const nextJsonPath = jsonPointer.append(jsonPath, i);
         if (!isObject(parameter)) {
           console.warn(
-            `Expected an object at: ${conceptualPath.join(
-              ' >'
+            `Expected an object at: ${getReadableLocation(
+              nextJsonPath
             )}, found ${parameter}`
           );
         } else if (isNotReferenceObject(parameter)) {
@@ -261,7 +270,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           if (location) {
             let fact = this.onRequestParameter(
               parameter,
-              jsonPointer.append(jsonPath, i),
+              nextJsonPath,
               [...conceptualPath, parameter.in, parameter.name],
               location
             );
@@ -269,8 +278,8 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           }
         } else {
           console.warn(
-            `Expected a flattened spec, found a reference at: ${conceptualPath.join(
-              ' > '
+            `Expected a flattened spec, found a reference at: ${getReadableLocation(
+              nextJsonPath
             )}`
           );
         }
@@ -363,17 +372,18 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   ): IterableIterator<IFact> {
     if (response.headers) {
       for (let [name, header] of Object.entries(response.headers)) {
+        const nextJsonPath = jsonPointer.append(jsonPath, 'headers', name);
         if (!isObject(header)) {
           console.warn(
-            `Expected an object at: ${conceptualPath.join(
-              ' >'
+            `Expected an object at: ${getReadableLocation(
+              nextJsonPath
             )}, found ${header}`
           );
         } else if (isNotReferenceObject(header)) {
           yield this.onResponseHeader(
             name,
             header,
-            jsonPointer.append(jsonPath, 'headers', name),
+            nextJsonPath,
             [...conceptualPath, 'headers', name],
             {
               ...location,
@@ -385,8 +395,8 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           );
         } else {
           console.warn(
-            `Expected a flattened spec, found a reference at: ${conceptualPath.join(
-              ' > '
+            `Expected a flattened spec, found a reference at: ${getReadableLocation(
+              nextJsonPath
             )}`
           );
         }
@@ -417,8 +427,6 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     };
   }
 
-  *traverseLinks() {}
-
   *traverseBody(
     body: OpenAPIV3.MediaTypeObject,
     contentType: string,
@@ -430,9 +438,12 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     const { schema, examples, example } = body;
 
     if (schema) {
+      const nextJsonPath = jsonPointer.append(jsonPath, 'schema');
       if (!isObject(schema)) {
         console.warn(
-          `Expected an object at: ${conceptualPath.join(' >')}, found ${schema}`
+          `Expected an object at: ${getReadableLocation(
+            nextJsonPath
+          )}, found ${schema}`
         );
       } else if (isNotReferenceObject(schema)) {
         yield this.onContentForBody(
@@ -442,19 +453,14 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           conceptualPath,
           location
         );
-        yield* this.traverseSchema(
-          schema,
-          jsonPointer.append(jsonPath, 'schema'),
-          conceptualPath,
-          {
-            ...location,
-            jsonSchemaTrail: [],
-          }
-        );
+        yield* this.traverseSchema(schema, nextJsonPath, conceptualPath, {
+          ...location,
+          jsonSchemaTrail: [],
+        });
       } else {
         console.warn(
-          `Expected a flattened spec, found a reference at: ${conceptualPath.join(
-            ' > '
+          `Expected a flattened spec, found a reference at: ${getReadableLocation(
+            nextJsonPath
           )}`
         );
       }
@@ -462,25 +468,26 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
 
     if (examples) {
       for (let [name, example] of Object.entries(examples)) {
+        const nextJsonPath = jsonPointer.append(jsonPath, 'examples', name);
         if (!isObject(example)) {
           console.warn(
-            `Expected an object at: ${conceptualPath.join(
-              ' >'
+            `Expected an object at: ${getReadableLocation(
+              nextJsonPath
             )}, found ${example}`
           );
         } else if (isNotReferenceObject(example)) {
           yield this.onBodyExample(
             example,
             contentType,
-            jsonPointer.append(jsonPath, 'examples', name),
+            nextJsonPath,
             [...conceptualPath, 'examples', name],
             { ...location, name },
             name
           );
         } else {
           console.warn(
-            `Expected a flattened spec, found a reference at: ${conceptualPath.join(
-              ' > '
+            `Expected a flattened spec, found a reference at: ${getReadableLocation(
+              nextJsonPath
             )}`
           );
         }
@@ -541,6 +548,11 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         }));
       });
       for (let { branchType, branchIndex, branchSchema } of schemas) {
+        const newJsonPath = jsonPointer.append(
+          jsonPath,
+          branchType,
+          '' + branchIndex
+        );
         const newConceptualPath = [
           ...conceptualPath,
           branchType,
@@ -549,21 +561,21 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
 
         if (!isObject(branchSchema)) {
           console.warn(
-            `Expected an object at: ${conceptualPath.join(
-              ' >'
+            `Expected an object at: ${getReadableLocation(
+              newJsonPath
             )}, found ${branchSchema}`
           );
         } else if (isNotReferenceObject(branchSchema)) {
           yield* this.traverseSchema(
             branchSchema,
-            jsonPointer.append(jsonPath, branchType, '' + branchIndex),
+            newJsonPath,
             newConceptualPath,
             location
           );
         } else {
           console.warn(
-            `Expected a flattened spec, found a reference at: ${newConceptualPath.join(
-              ' > '
+            `Expected a flattened spec, found a reference at: ${getReadableLocation(
+              newJsonPath
             )}`
           );
         }
@@ -574,18 +586,19 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         for (let [key, fieldSchema] of Object.entries(
           schema.properties || {}
         )) {
+          const nextJsonPath = jsonPointer.append(jsonPath, 'properties', key);
           if (!isObject(fieldSchema)) {
             console.warn(
-              `Expected an object at: ${conceptualPath.join(
-                ' >'
-              )}, found ${fieldSchema}`
+              `Expected an object at: ${getReadableLocation(
+                jsonPath
+              )}, nextJsonPath ${fieldSchema}`
             );
           } else if (isNotReferenceObject(fieldSchema)) {
             yield* this.traverseField(
               key,
               fieldSchema,
               (schema.required || []).includes(key),
-              jsonPointer.append(jsonPath, 'properties', key),
+              nextJsonPath,
               [...conceptualPath, key],
               {
                 ...location,
@@ -594,8 +607,8 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
             );
           } else {
             console.warn(
-              `Expected a flattened spec, found a reference at: ${conceptualPath.join(
-                ' > '
+              `Expected a flattened spec, found a reference at: ${getReadableLocation(
+                nextJsonPath
               )}`
             );
           }
@@ -603,16 +616,17 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         break;
       case 'array':
         const arrayItems = schema.items;
+        const nextJsonPath = jsonPointer.append(jsonPath, 'items');
         if (!isObject(arrayItems)) {
           console.warn(
-            `Expected an object at: ${conceptualPath.join(
-              ' >'
+            `Expected an object at: ${getReadableLocation(
+              nextJsonPath
             )}, found ${arrayItems}`
           );
         } else if (isNotReferenceObject(arrayItems)) {
           yield* this.traverseSchema(
             arrayItems,
-            jsonPointer.append(jsonPath, 'items'),
+            nextJsonPath,
             [...conceptualPath, 'items'],
             {
               ...location,
@@ -621,8 +635,8 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
           );
         } else {
           console.warn(
-            `Expected a flattened spec, found a reference at: ${conceptualPath.join(
-              ' > '
+            `Expected a flattened spec, found a reference at: ${getReadableLocation(
+              nextJsonPath
             )}`
           );
         }
@@ -646,10 +660,13 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     );
     const conceptualPath = jsonPointer.decode(jsonPath);
     const conceptualLocation = { inComponentSchema: { schemaName } };
+    const nextJsonPath = jsonPointer.append(jsonPath, 'example');
 
     if (!isObject(schema)) {
       console.warn(
-        `Expected an object at: ${conceptualPath.join(' >')}, found ${schema}`
+        `Expected an object at: ${getReadableLocation(
+          nextJsonPath
+        )}, found ${schema}`
       );
     } else if (isNotReferenceObject(schema)) {
       this.checkJsonTrail(jsonPath, schema);
@@ -657,15 +674,15 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
       if (schema.example) {
         yield this.onComponentSchemaExample(
           schema.example,
-          jsonPointer.append(jsonPath, 'example'),
+          nextJsonPath,
           [...conceptualPath, 'example'],
           conceptualLocation
         );
       }
     } else {
       console.warn(
-        `Expected a flattened spec, found a reference at: ${conceptualPath.join(
-          ' > '
+        `Expected a flattened spec, found a reference at: ${getReadableLocation(
+          nextJsonPath
         )}`
       );
     }

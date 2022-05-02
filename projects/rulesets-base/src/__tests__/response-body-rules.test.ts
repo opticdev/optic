@@ -1,39 +1,48 @@
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
 import { RuleRunner } from '../rule-runner';
-import { RequestRule } from '../rules';
+import { ResponseBodyRule } from '../rules';
 import { createRuleInputs } from './helpers';
 
-describe('RequestRule', () => {
+describe('ResponseBodyRule', () => {
   describe('matches', () => {
     const json: OpenAPIV3.Document = {
       ...defaultEmptySpec,
       paths: {
         '/api/users': {
           get: {
-            requestBody: {
-              content: {
-                'application/json': {
-                  schema: {},
+            responses: {
+              '200': {
+                description: 'hello',
+                content: {
+                  'application/xml': {
+                    schema: {},
+                  },
                 },
               },
             },
-            responses: {},
           },
         },
         '/api/users/{userId}': {
           get: {
-            requestBody: {
-              content: {
-                'application/json': {
-                  schema: {},
+            responses: {
+              '200': {
+                description: 'hello',
+                content: {
+                  'application/json': {
+                    schema: {},
+                  },
                 },
-                'application/xml': {
-                  schema: {},
+              },
+              '400': {
+                description: 'hello',
+                content: {
+                  'application/json': {
+                    schema: {},
+                  },
                 },
               },
             },
-            responses: {},
           },
         },
       },
@@ -42,60 +51,65 @@ describe('RequestRule', () => {
     test('match operation', () => {
       const mockFn = jest.fn();
       const ruleRunner = new RuleRunner([
-        new RequestRule({
+        new ResponseBodyRule({
           name: 'request',
-          matches: (request, ruleContext) =>
+          matches: (response, ruleContext) =>
             ruleContext.operation.method === 'get' &&
             ruleContext.operation.path === '/api/users',
-          rule: (requestAssertions) => {
-            requestAssertions.body.requirement('triggers test', mockFn);
+          rule: (responseBodyAssertions) => {
+            responseBodyAssertions.body.requirement('triggers test', mockFn);
           },
         }),
       ]);
       ruleRunner.runRulesWithFacts(createRuleInputs(json, json));
 
       expect(mockFn.mock.calls.length).toBe(1);
-      const requestFromCallArg = mockFn.mock.calls[0][0];
-      expect(requestFromCallArg.contentType).toBe('application/json');
-      expect(requestFromCallArg.location.jsonPath).toBe(
-        '/paths/~1api~1users/get/requestBody/content/application~1json'
+      const responseFromCallArg = mockFn.mock.calls[0][0];
+      expect(responseFromCallArg.contentType).toBe('application/xml');
+      expect(responseFromCallArg.location.jsonPath).toBe(
+        '/paths/~1api~1users/get/responses/200/content/application~1xml'
       );
     });
 
-    test('match request with content type', () => {
+    test('match response with content type', () => {
       const mockFn = jest.fn();
       const ruleRunner = new RuleRunner([
-        new RequestRule({
+        new ResponseBodyRule({
           name: 'request',
-          matches: (request) => request.contentType === 'application/xml',
-          rule: (requestAssertions) => {
-            requestAssertions.body.requirement('triggers test', mockFn);
+          matches: (request) => request.contentType === 'application/json',
+          rule: (responseBodyAssertions) => {
+            responseBodyAssertions.body.requirement('triggers test', mockFn);
           },
         }),
       ]);
       ruleRunner.runRulesWithFacts(createRuleInputs(json, json));
 
-      expect(mockFn.mock.calls.length).toBe(1);
-      const requestFromCallArg = mockFn.mock.calls[0][0];
-      expect(requestFromCallArg.contentType).toBe('application/xml');
-      expect(requestFromCallArg.location.jsonPath).toBe(
-        '/paths/~1api~1users~1{userId}/get/requestBody/content/application~1xml'
-      );
+      expect(mockFn.mock.calls.length).toBe(2);
+      for (const callArgs of mockFn.mock.calls) {
+        const responseFromCallArg = callArgs[0];
+        expect(responseFromCallArg.contentType).toBe('application/json');
+        expect(['200', '400'].includes(responseFromCallArg.statusCode)).toBe(
+          true
+        );
+        expect(responseFromCallArg.location.jsonPath).toMatch(
+          /^\/paths\/~1api~1users~1{userId}\/get\/responses\/(200|400)\/content\/application~1json$/
+        );
+      }
     });
   });
 
   describe('body assertions', () => {
     describe('requirement', () => {
       const ruleRunner = new RuleRunner([
-        new RequestRule({
-          name: 'request type',
-          rule: (requestAssertions) => {
-            requestAssertions.body.requirement(
+        new ResponseBodyRule({
+          name: 'response type',
+          rule: (responseBodyAssertions) => {
+            responseBodyAssertions.body.requirement(
               'must contain a type',
-              (request) => {
-                if (!request.value.flatSchema.type) {
+              (response) => {
+                if (!response.value.flatSchema.type) {
                   throw new RuleError({
-                    message: 'request body does not have `type`',
+                    message: 'response body does not have `type`',
                   });
                 }
               }
@@ -110,16 +124,18 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'string',
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'string',
+                        },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -140,14 +156,16 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {},
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {},
+                      },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -165,16 +183,19 @@ describe('RequestRule', () => {
 
     describe('added', () => {
       const ruleRunner = new RuleRunner([
-        new RequestRule({
-          name: 'request type',
-          rule: (requestAssertions) => {
-            requestAssertions.body.added('must contain a type', (request) => {
-              if (!request.value.flatSchema.type) {
-                throw new RuleError({
-                  message: 'request does not have `type`',
-                });
+        new ResponseBodyRule({
+          name: 'response type',
+          rule: (responseBodyAssertions) => {
+            responseBodyAssertions.body.added(
+              'must contain a type',
+              (response) => {
+                if (!response.value.flatSchema.type) {
+                  throw new RuleError({
+                    message: 'response does not have `type`',
+                  });
+                }
               }
-            });
+            );
           },
         }),
       ]);
@@ -185,16 +206,18 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'string',
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'string',
+                        },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -216,14 +239,16 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {},
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {},
+                      },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -242,17 +267,17 @@ describe('RequestRule', () => {
 
     describe('changed', () => {
       const ruleRunner = new RuleRunner([
-        new RequestRule({
-          name: 'request shape',
-          rule: (requestAssertions) => {
-            requestAssertions.body.changed(
+        new ResponseBodyRule({
+          name: 'response shape',
+          rule: (responseBodyAssertions) => {
+            responseBodyAssertions.body.changed(
               'must not change root body shape',
               (before, after) => {
                 if (
                   before.value.flatSchema.type !== after.value.flatSchema.type
                 ) {
                   throw new RuleError({
-                    message: 'request must not change type',
+                    message: 'response must not change type',
                   });
                 }
               }
@@ -267,20 +292,22 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'array',
-                        description: '123',
-                        items: {
-                          type: 'string',
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'array',
+                          description: '123',
+                          items: {
+                            type: 'string',
+                          },
                         },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -290,20 +317,22 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'array',
-                        description: 'abc',
-                        items: {
-                          type: 'number',
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'array',
+                          description: '12',
+                          items: {
+                            type: 'number',
+                          },
                         },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -324,19 +353,22 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'array',
-                        items: {
-                          type: 'string',
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'array',
+                          description: '123',
+                          items: {
+                            type: 'string',
+                          },
                         },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -346,17 +378,19 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'object',
-                        properties: {},
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'object',
+                          properties: {},
+                        },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -374,10 +408,10 @@ describe('RequestRule', () => {
 
     describe('removed', () => {
       const ruleRunner = new RuleRunner([
-        new RequestRule({
+        new ResponseBodyRule({
           name: 'request removal',
-          rule: (requestAssertions) => {
-            requestAssertions.body.removed(
+          rule: (responseBodyAssertions) => {
+            responseBodyAssertions.body.removed(
               'cannot remove bodies with array schema',
               (request) => {
                 if (request.value.flatSchema.type === 'array') {
@@ -397,16 +431,18 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'string',
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'string',
+                        },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -437,19 +473,21 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'array',
-                        items: {
-                          type: 'string',
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'array',
+                          items: {
+                            type: 'string',
+                          },
                         },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -479,10 +517,10 @@ describe('RequestRule', () => {
   describe('property assertions', () => {
     describe('requirement', () => {
       const ruleRunner = new RuleRunner([
-        new RequestRule({
-          name: 'request type',
-          rule: (requestAssertions) => {
-            requestAssertions.property.requirement(
+        new ResponseBodyRule({
+          name: 'response type',
+          rule: (responseBodyAssertions) => {
+            responseBodyAssertions.property.requirement(
               'must contain a type',
               (property) => {
                 if (!property.value.flatSchema.type) {
@@ -508,14 +546,49 @@ describe('RequestRule', () => {
                       schema: {
                         type: 'object',
                         properties: {
-                          hello: {
-                            type: 'string',
+                          hello: {},
+                        },
+                      },
+                    },
+                  },
+                },
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'object',
+                          properties: {
+                            hello: {
+                              type: 'string',
+                            },
                           },
                         },
                       },
                     },
                   },
                 },
+              },
+            },
+          },
+        };
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(json, json)
+        );
+        expect(results).toMatchSnapshot();
+        expect(results.length > 0).toBe(true);
+        for (const result of results) {
+          expect(result.passed).toBe(true);
+        }
+      });
+
+      test('failing assertion', () => {
+        const json: OpenAPIV3.Document = {
+          ...defaultEmptySpec,
+          paths: {
+            '/api/users': {
+              get: {
                 responses: {
                   '200': {
                     description: 'hello',
@@ -538,39 +611,6 @@ describe('RequestRule', () => {
         const results = ruleRunner.runRulesWithFacts(
           createRuleInputs(json, json)
         );
-        expect(results).toMatchSnapshot();
-        expect(results.length > 0).toBe(true);
-        for (const result of results) {
-          expect(result.passed).toBe(true);
-        }
-      });
-
-      test('failing assertion', () => {
-        const json: OpenAPIV3.Document = {
-          ...defaultEmptySpec,
-          paths: {
-            '/api/users': {
-              get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'object',
-                        properties: {
-                          hello: {},
-                        },
-                      },
-                    },
-                  },
-                },
-                responses: {},
-              },
-            },
-          },
-        };
-        const results = ruleRunner.runRulesWithFacts(
-          createRuleInputs(json, json)
-        );
         expect(results.length > 0).toBe(true);
         expect(results).toMatchSnapshot();
         for (const result of results) {
@@ -581,10 +621,10 @@ describe('RequestRule', () => {
 
     describe('added', () => {
       const ruleRunner = new RuleRunner([
-        new RequestRule({
+        new ResponseBodyRule({
           name: 'request type',
-          rule: (requestAssertions) => {
-            requestAssertions.property.requirement(
+          rule: (responseBodyAssertions) => {
+            responseBodyAssertions.property.requirement(
               'must contain a type',
               (property) => {
                 if (!property.value.flatSchema.type) {
@@ -604,21 +644,23 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'object',
-                        properties: {
-                          hello: {
-                            type: 'string',
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'object',
+                          properties: {
+                            hello: {
+                              type: 'string',
+                            },
                           },
                         },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -640,19 +682,21 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'object',
-                        properties: {
-                          hello: {},
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'object',
+                          properties: {
+                            hello: {},
+                          },
                         },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -671,10 +715,10 @@ describe('RequestRule', () => {
 
     describe('changed', () => {
       const ruleRunner = new RuleRunner([
-        new RequestRule({
+        new ResponseBodyRule({
           name: 'property type',
-          rule: (requestAssertions) => {
-            requestAssertions.property.changed(
+          rule: (responseBodyAssertions) => {
+            responseBodyAssertions.property.changed(
               'must not change property type',
               (before, after) => {
                 if (
@@ -696,18 +740,21 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'array',
-                        description: '123',
-                        items: {
-                          type: 'object',
-                          properties: {
-                            hello: {
-                              type: 'string',
-                              format: 'uuid',
+                responses: {
+                  '200': {
+                    description: '123',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'array',
+                          description: '123',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              hello: {
+                                type: 'string',
+                                format: 'uuid',
+                              },
                             },
                           },
                         },
@@ -715,7 +762,6 @@ describe('RequestRule', () => {
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -725,18 +771,21 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'array',
-                        description: '123',
-                        items: {
-                          type: 'object',
-                          properties: {
-                            hello: {
-                              type: 'string',
-                              format: 'date',
+                responses: {
+                  '200': {
+                    description: '123',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'array',
+                          description: '123',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              hello: {
+                                type: 'string',
+                                format: 'date',
+                              },
                             },
                           },
                         },
@@ -744,7 +793,6 @@ describe('RequestRule', () => {
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -765,18 +813,21 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'array',
-                        description: '123',
-                        items: {
-                          type: 'object',
-                          properties: {
-                            hello: {
-                              type: 'string',
-                              format: 'uuid',
+                responses: {
+                  '200': {
+                    description: '123',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'array',
+                          description: '123',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              hello: {
+                                type: 'string',
+                                format: 'uuid',
+                              },
                             },
                           },
                         },
@@ -784,7 +835,6 @@ describe('RequestRule', () => {
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -794,17 +844,20 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'array',
-                        description: '123',
-                        items: {
-                          type: 'object',
-                          properties: {
-                            hello: {
-                              type: 'number',
+                responses: {
+                  '200': {
+                    description: ' 123',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'array',
+                          description: '123',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              hello: {
+                                type: 'number',
+                              },
                             },
                           },
                         },
@@ -812,7 +865,6 @@ describe('RequestRule', () => {
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -830,10 +882,10 @@ describe('RequestRule', () => {
 
     describe('removed', () => {
       const ruleRunner = new RuleRunner([
-        new RequestRule({
+        new ResponseBodyRule({
           name: 'request removal',
-          rule: (requestAssertions) => {
-            requestAssertions.property.removed(
+          rule: (responseBodyAssertions) => {
+            responseBodyAssertions.property.removed(
               'cannot remove bodies required property',
               (property) => {
                 if (property.value.required) {
@@ -853,24 +905,26 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'object',
-                        properties: {
-                          hello: {
-                            type: 'string',
-                          },
-                          goodbye: {
-                            type: 'string',
+                responses: {
+                  '200': {
+                    description: '123',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'object',
+                          properties: {
+                            hello: {
+                              type: 'string',
+                            },
+                            goodbye: {
+                              type: 'string',
+                            },
                           },
                         },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -880,21 +934,23 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'object',
-                        properties: {
-                          hello: {
-                            type: 'string',
+                responses: {
+                  '200': {
+                    description: '123',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'object',
+                          properties: {
+                            hello: {
+                              type: 'string',
+                            },
                           },
                         },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -915,25 +971,27 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'object',
-                        required: ['goodbye'],
-                        properties: {
-                          hello: {
-                            type: 'string',
-                          },
-                          goodbye: {
-                            type: 'string',
+                responses: {
+                  '200': {
+                    description: '123',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'object',
+                          required: ['goodbye'],
+                          properties: {
+                            hello: {
+                              type: 'string',
+                            },
+                            goodbye: {
+                              type: 'string',
+                            },
                           },
                         },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
@@ -943,21 +1001,23 @@ describe('RequestRule', () => {
           paths: {
             '/api/users': {
               get: {
-                requestBody: {
-                  content: {
-                    'application/json': {
-                      schema: {
-                        type: 'object',
-                        properties: {
-                          hello: {
-                            type: 'string',
+                responses: {
+                  '200': {
+                    description: '123',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'object',
+                          properties: {
+                            hello: {
+                              type: 'string',
+                            },
                           },
                         },
                       },
                     },
                   },
                 },
-                responses: {},
               },
             },
           },
