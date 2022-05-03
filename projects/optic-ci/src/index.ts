@@ -27,7 +27,8 @@ const getRuleRunner = (rules?: Rule[], checks?: CheckConfiguration[]) => {
       opticToken: config.token,
       gitProvider: config.gitProvider,
       ciProvider: 'github',
-    }
+    },
+    config.generateContext
   );
 
   cli.parse(process.argv);
