@@ -1,34 +1,42 @@
-import {
-  ParseOpenAPIResult,
-  sourcemapReader,
-  inGit,
-} from '@useoptic/openapi-io';
+import { ParseOpenAPIResult, sourcemapReader } from '@useoptic/openapi-io';
 import {
   factsToChangelog,
   IChange,
   ResultWithSourcemap,
   ChangeType,
+  OpenAPIV3,
+  IFact,
+  OpenAPITraverser,
 } from '@useoptic/openapi-utilities';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 
 const packageJson = require('../../../../package.json');
 
+const traverseSpec = (jsonSpec: OpenAPIV3.Document): IFact[] => {
+  const currentTraverser = new OpenAPITraverser();
+
+  currentTraverser.traverse(jsonSpec);
+
+  return [...currentTraverser.facts()];
+};
+
 export const generateSpecResults = async <T extends {}>(
   checkService: ApiCheckService<T>,
-  from: ParseOpenAPIResult,
-  to: ParseOpenAPIResult,
+  from: ParseOpenAPIResult & { isEmptySpec: boolean },
+  to: ParseOpenAPIResult & { isEmptySpec: boolean },
   context: any
 ): Promise<{
   changes: IChange[];
   results: ResultWithSourcemap[];
   version: string;
 }> => {
-  const fromJsonLike = from.jsonLike!;
-  const toJsonLike = to.jsonLike!;
-  const { currentFacts, nextFacts } = checkService.generateFacts(
-    fromJsonLike,
-    toJsonLike
-  );
+  const fromJsonLike = from.jsonLike;
+  const toJsonLike = to.jsonLike;
+  // If we have an empty spec, the facts should be [] - we keep the jsonLike values
+  // in order to have a standard typing - we mainly use facts here to make assertions
+  const currentFacts = from.isEmptySpec ? [] : traverseSpec(fromJsonLike);
+  const nextFacts = to.isEmptySpec ? [] : traverseSpec(toJsonLike);
+
   const { findFileAndLines: findFileAndLinesFromBefore } = sourcemapReader(
     from.sourcemap
   );
@@ -55,8 +63,8 @@ export const generateSpecResults = async <T extends {}>(
   const results = await checkService.runRulesWithFacts({
     currentJsonLike: fromJsonLike,
     nextJsonLike: toJsonLike,
-    currentFacts,
-    nextFacts,
+    currentFacts: currentFacts,
+    nextFacts: nextFacts,
     changelog: changes,
     context,
   });

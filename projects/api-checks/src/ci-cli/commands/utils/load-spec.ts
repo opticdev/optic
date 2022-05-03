@@ -12,7 +12,11 @@ import { OpenAPIV3 } from 'openapi-types';
 export async function specFromInputToResults(
   input: SpecFromInput,
   workingDir: string = process.cwd()
-): Promise<ParseOpenAPIResult> {
+): Promise<
+  ParseOpenAPIResult & {
+    isEmptySpec: boolean;
+  }
+> {
   switch (input.from) {
     case SpecVersionFrom.empty: {
       const emptySpecName = 'empty.json';
@@ -30,6 +34,7 @@ export async function specFromInputToResults(
       return {
         jsonLike,
         sourcemap,
+        isEmptySpec: true,
       };
     }
     case SpecVersionFrom.git: {
@@ -37,15 +42,21 @@ export async function specFromInputToResults(
       if (!gitRepo) {
         throw new Error(`${workingDir} is not a git repo`);
       }
-      return await parseOpenAPIFromRepoWithSourcemap(
-        input.name,
-        gitRepo,
-        input.branch
-      );
+      return {
+        ...(await parseOpenAPIFromRepoWithSourcemap(
+          input.name,
+          gitRepo,
+          input.branch
+        )),
+        isEmptySpec: false,
+      };
     }
     case SpecVersionFrom.file:
-      return await parseOpenAPIWithSourcemap(
-        path.resolve(workingDir, input.filePath)
-      );
+      return {
+        ...(await parseOpenAPIWithSourcemap(
+          path.resolve(workingDir, input.filePath)
+        )),
+        isEmptySpec: false,
+      };
   }
 }

@@ -20,7 +20,6 @@ import { CliConfig, NormalizedCiContext } from '../../types';
 import { uploadCiRun } from './upload';
 import { sendGithubMessage } from './github-comment';
 import { logComparison } from '../utils/comparison-renderer';
-import path from 'path';
 import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
 import { getRelativeRepoPath } from '../utils/get-relative-path';
