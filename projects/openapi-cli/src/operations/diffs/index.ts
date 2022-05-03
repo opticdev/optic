@@ -1,13 +1,16 @@
-import { DocumentedInteraction } from '..';
+import { Operation } from '..';
+import { CapturedInteraction } from '../../captures';
 import { OpenAPIV3 } from '../../specs';
 import { OperationDiffResult } from './result';
 import { OperationDiffTraverser } from './traverser';
 
+export type { OperationDiffResult };
+
 export function* diffInteractionByOperation(
-  interaction: DocumentedInteraction,
-  schema: OpenAPIV3.Document
+  interaction: CapturedInteraction,
+  operation: Operation
 ): IterableIterator<OperationDiffResult> {
   const traverser = new OperationDiffTraverser();
-  traverser.traverse(interaction.interaction, interaction.operation);
+  traverser.traverse(interaction, operation);
   yield* traverser.results();
 }
