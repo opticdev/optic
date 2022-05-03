@@ -7,7 +7,6 @@ import {
   validateOpenApiV3Document,
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
-import { ApiCheckService } from '../../../sdk/api-check-service';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import {
   loadFile,
@@ -27,6 +26,7 @@ import { sendBulkGithubMessage } from './bulk-github-comment';
 import { sendBulkGitlabMessage } from './bulk-gitlab-comment';
 import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
+import { RuleRunner } from '../../../types';
 
 export const registerBulkCompare = (
   cli: Command,
@@ -140,7 +140,7 @@ const compareSpecs = async ({
   onComparisonComplete,
   onComparisonError,
 }: {
-  checkService: ApiCheckService<any>;
+  checkService: RuleRunner;
   comparisons: Map<string, Comparison>;
   onComparisonComplete: (id: string, data: ComparisonData) => void;
   onComparisonError: (id: string, error: any) => void;
@@ -257,7 +257,7 @@ const runBulkCompare = async ({
   ciContext,
   cliConfig,
 }: {
-  checkService: ApiCheckService<any>;
+  checkService: RuleRunner;
   input: string;
   verbose: boolean;
   projectName: string;

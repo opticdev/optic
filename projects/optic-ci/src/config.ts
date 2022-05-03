@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import { Rule } from '@useoptic/rulesets-base';
 
 import { OPTIC_CONFIG_PATH } from './constants';
 import { CheckConfiguration } from './checker';
@@ -10,9 +11,7 @@ import { CheckConfiguration } from './checker';
  *  gitProvider: {
  *    token: process.env.GITHUB_TOKEN,
  *  },
- * checks: [
- *
- * ]
+ * rules: []
  */
 
 type OpticConfiguration = {
@@ -21,6 +20,7 @@ type OpticConfiguration = {
     token: string;
   };
   checks?: CheckConfiguration[];
+  rules?: Rule[];
 };
 
 const findOpticConfigPath = (dir: string): string | null => {

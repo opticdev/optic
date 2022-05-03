@@ -8,7 +8,7 @@ import {
   IFact,
   OpenAPITraverser,
 } from '@useoptic/openapi-utilities';
-import { ApiCheckService } from '../../../sdk/api-check-service';
+import { RuleRunner } from '../../../types';
 
 const packageJson = require('../../../../package.json');
 
@@ -20,8 +20,8 @@ const traverseSpec = (jsonSpec: OpenAPIV3.Document): IFact[] => {
   return [...currentTraverser.facts()];
 };
 
-export const generateSpecResults = async <T extends {}>(
-  checkService: ApiCheckService<T>,
+export const generateSpecResults = async (
+  checkService: RuleRunner,
   from: ParseOpenAPIResult & { isEmptySpec: boolean },
   to: ParseOpenAPIResult & { isEmptySpec: boolean },
   context: any
@@ -60,6 +60,7 @@ export const generateSpecResults = async <T extends {}>(
     })
   );
 
+  // TODO RA-V2 - remove the await from checkservice running
   const results = await checkService.runRulesWithFacts({
     currentJsonLike: fromJsonLike,
     nextJsonLike: toJsonLike,
@@ -73,6 +74,7 @@ export const generateSpecResults = async <T extends {}>(
     results.map(async (result) => {
       return {
         ...result,
+        // TODO RA-V2 - don't redo sourcemap generation
         // Ok this is stupid that we need to recalculate the change - but there's some code somewhere stripping out the change.sourcemap
         // and I can't figure out where - it's also really concerning that we're allowing user run code to strip our functional code here
         sourcemap: await findFileAndLinesFromAfter(

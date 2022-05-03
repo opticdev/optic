@@ -12,6 +12,7 @@ import {
 } from './commands/create-context/create-github-context';
 import { registerCreateManualContext } from './commands/create-context/create-manual-context';
 import { registerCreateGitlabContext } from './commands/create-context/create-gitlab-context';
+import { RuleRunner } from '../types';
 const packageJson = require('../../package.json');
 
 export function makeCiCliWithNamedRules(
@@ -37,9 +38,9 @@ export function makeCiCliWithNamedRules(
   return cli;
 }
 
-export function makeCiCli<T>(
+export function makeCiCli(
   forProject: string,
-  checkService: ApiCheckService<T>,
+  checkService: RuleRunner,
   options: CliConfig = {}
 ) {
   return makeCiCliWithNamedRules(
