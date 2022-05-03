@@ -17,7 +17,6 @@ import {
   ShapePatches,
 } from '../../shapes';
 import { DocumentedInteractions, OperationPatches } from '../../operations';
-import invariant from 'ts-invariant';
 import { CapturedInteractions } from '../../captures';
 
 export interface SpecPatches extends AsyncIterable<SpecPatch> {}
