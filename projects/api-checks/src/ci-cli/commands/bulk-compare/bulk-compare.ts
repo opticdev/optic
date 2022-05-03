@@ -7,7 +7,6 @@ import {
   validateOpenApiV3Document,
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
-import { inGit, ParseOpenAPIResult } from '@useoptic/openapi-io';
 import { ApiCheckService } from '../../../sdk/api-check-service';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import {
@@ -28,7 +27,6 @@ import { sendBulkGithubMessage } from './bulk-github-comment';
 import { sendBulkGitlabMessage } from './bulk-gitlab-comment';
 import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
-import { getRelativeRepoPath } from '../utils/get-relative-path';
 
 export const registerBulkCompare = (
   cli: Command,
@@ -125,7 +123,9 @@ type Comparison = {
     }
 );
 
-const loadSpecFile = async (fileName?: string): Promise<ParseOpenAPIResult> => {
+const loadSpecFile = async (
+  fileName?: string
+): Promise<ReturnType<typeof specFromInputToResults>> => {
   return specFromInputToResults(
     parseSpecVersion(fileName, defaultEmptySpec),
     process.cwd()
