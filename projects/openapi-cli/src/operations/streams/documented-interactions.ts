@@ -4,6 +4,7 @@ import { OpenAPIV3, SpecFacts } from '../../specs';
 import { OperationQueries } from '../queries';
 import { collect } from '../../lib/async-tools';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { Option, Some, None } from 'ts-results';
 
 export interface DocumentedInteractions
   extends AsyncIterable<DocumentedInteraction> {}
@@ -11,11 +12,16 @@ export interface DocumentedInteractions
 export class DocumentedInteractions {
   static async *fromCapturedInteractions(
     interactions: CapturedInteractions,
-    spec: OpenAPIV3.Document
+    spec: OpenAPIV3.Document,
+    specUpdates?: AsyncIterable<OpenAPIV3.Document>
   ): AsyncIterable<DocumentedInteraction> {
+    // assumption: no new operations will be added over the life-time of this stream
     const facts = SpecFacts.fromOpenAPISpec(spec);
     const operationFacts = await collect(SpecFacts.operationFacts(facts));
     const queries = OperationQueries.fromFacts(operationFacts);
+
+    const specUpdatesIterator =
+      specUpdates && specUpdates[Symbol.asyncIterator]();
 
     for await (let interaction of interactions) {
       // find matching interaction operation by matching path and method
@@ -49,6 +55,11 @@ export class DocumentedInteractions {
         },
         specJsonPath: matchedOperation.specPath,
       };
+
+      if (specUpdatesIterator) {
+        let newSpec = await specUpdatesIterator.next();
+        spec = newSpec.value;
+      }
     }
   }
 }

@@ -23,6 +23,8 @@ import { Ok, Err, Result } from 'ts-results';
 
 import { DocumentedBody } from '../shapes/body';
 import { flushEvents, trackEvent } from '../segment';
+import { CapturedInteractions } from '../captures';
+import { DocumentedInteractions } from '../operations/streams/documented-interactions';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -34,7 +36,7 @@ export function updateCommand(): Command {
       'update an OpenAPI specification from examples or observed traffic'
     )
     .action(async (specPath) => {
-      const updateResult = await updateAction(specPath);
+      const updateResult = await updateByExample(specPath);
 
       if (updateResult.err) {
         return command.error(updateResult.val);
@@ -81,7 +83,7 @@ export function updateCommand(): Command {
   return command;
 }
 
-export async function updateAction(specPath: string): Promise<
+export async function updateByExample(specPath: string): Promise<
   Result<
     {
       stats: {
@@ -153,11 +155,13 @@ export async function updateAction(specPath: string): Promise<
     )
   );
 
-  const examplePatches = SpecPatches.fromDocumentedBodies(exampleBodies);
+  // const capturedBodies = // combined from matched bodies and new bodies generated from patches?
+
+  const bodyPatches = SpecPatches.fromDocumentedBodies(exampleBodies);
 
   // additions only, so we only safely extend the spec
   const specAdditions = observers.observePatches(
-    SpecPatches.additions(examplePatches)
+    SpecPatches.additions(bodyPatches)
   );
 
   const fileOperations = observers.observeFileOperations(
@@ -172,4 +176,30 @@ export async function updateAction(specPath: string): Promise<
     stats,
     results: updatedSpecFiles,
   });
+}
+
+export async function updateByInteractions(
+  specPath: string,
+  interactions: CapturedInteractions
+): Promise<Result<{}, string>> {
+  const absoluteSpecPath = Path.resolve(specPath);
+  if (!(await fs.pathExists(absoluteSpecPath))) {
+    return Err('OpenAPI specification file could not be found');
+  }
+
+  const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
+    absoluteSpecPath
+  );
+  const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
+
+  const documentedInteractions =
+    DocumentedInteractions.fromCapturedInteractions(interactions, spec);
+
+  // const operationPatches =
+
+  // const documentedBodies = interaction bodies, spec + operationPatches
+
+  // const bodyPatches
+
+  return Ok({});
 }

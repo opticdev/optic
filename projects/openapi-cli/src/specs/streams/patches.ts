@@ -1,5 +1,5 @@
 import { OpenAPIV3 } from '..';
-import { filter, flatMap } from '../../lib/async-tools';
+import { filter, flatMap, Subject } from '../../lib/async-tools';
 import JsonPatch from 'fast-json-patch';
 import {
   SpecPatch,
@@ -16,8 +16,9 @@ import {
   SchemaObject,
   ShapePatches,
 } from '../../shapes';
-import { DocumentedInteractions } from '../../operations/streams/documented-interactions';
+import { DocumentedInteractions, OperationPatches } from '../../operations';
 import invariant from 'ts-invariant';
+import { CapturedInteractions } from '../../captures';
 
 export interface SpecPatches extends AsyncIterable<SpecPatch> {}
 
@@ -69,5 +70,40 @@ export class SpecPatches {
     }
   }
 
-  static async *fromDocumentedInteractions(): SpecPatches {}
+  static async *fromInteractions(
+    interactions: CapturedInteractions,
+    spec: OpenAPIV3.Document
+  ): SpecPatches {
+    const updatingSpec = new Subject<OpenAPIV3.Document>();
+    const specUpdates = updatingSpec.iterator;
+
+    const documentedInteractions =
+      DocumentedInteractions.fromCapturedInteractions(
+        interactions,
+        spec,
+        specUpdates
+      );
+
+    for await (let documentedInteraction of documentedInteractions) {
+      const operationPatches =
+        OperationPatches.generateRequestResponseAdditions(
+          documentedInteraction
+        );
+
+      let patchedSpec = spec;
+      for (let patch of operationPatches) {
+        const specPatch = SpecPatch.fromOperationPatch(
+          patch,
+          documentedInteraction.specJsonPath
+        );
+
+        patchedSpec = SpecPatch.applyPatch(specPatch, patchedSpec);
+        yield specPatch;
+      }
+      spec = patchedSpec;
+      updatingSpec.onNext(spec);
+    }
+
+    updatingSpec.onCompleted();
+  }
 }

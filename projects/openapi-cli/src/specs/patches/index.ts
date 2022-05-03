@@ -2,6 +2,9 @@ import { PatchImpact, OperationGroup, Operation } from '../../patches';
 import { ShapePatch } from '../../shapes/patches';
 import { ShapeLocation } from '../../shapes';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { OperationPatch } from '../../operations';
+import { OpenAPIV3 } from '..';
+import JsonPatch from 'fast-json-patch';
 
 export { newSpecPatches } from './generators/new-spec';
 export { templatePatches } from './generators/template';
@@ -51,5 +54,35 @@ export class SpecPatch {
         };
       }),
     };
+  }
+
+  static fromOperationPatch(
+    operationPatch: OperationPatch,
+    operationSpecPath: string
+  ): SpecPatch {
+    // TODO: implement actual conversion as OperationPatch is implemented
+
+    return {
+      description: `update operation`,
+      impact: [PatchImpact.Addition],
+      groupedOperations: [],
+    };
+  }
+
+  static applyPatch(patch: SpecPatch, spec: OpenAPIV3.Document) {
+    const result = JsonPatch.applyPatch(
+      spec,
+      [...SpecPatch.operations(patch)],
+      undefined,
+      false // don't mutate the original spec
+    );
+
+    return result.newDocument!;
+  }
+
+  static *operations(patch: ShapePatch): IterableIterator<Operation> {
+    for (let group of patch.groupedOperations) {
+      yield* OperationGroup.operations(group);
+    }
   }
 }
