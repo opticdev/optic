@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/optic-ci",
   "packageManager": "yarn@3.0.2",
-  "version": "0.24.18",
+  "version": "0.24.19",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -25,6 +25,7 @@
     "@types/jest": "^26.0.24",
     "@types/json-stable-stringify": "^1.0.33",
     "@types/node": "^17.0.15",
+    "@useoptic/rulesets-base": "workspace:*",
     "babel-jest": "^27.5.1",
     "jest": "^27.5.1",
     "prettier": "^2.4.1",
@@ -33,6 +34,9 @@
   },
   "dependencies": {
     "@useoptic/api-checks": "workspace:*"
+  },
+  "peerDependencies": {
+    "@useoptic/rulesets-base": "workspace:*"
   },
   "jest": {
     "testPathIgnorePatterns": [

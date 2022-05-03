@@ -33,6 +33,7 @@ const defaultChecks: CheckConfiguration[] = [
 ];
 
 export const buildCheckerFromConfig = (checks?: CheckConfiguration[]) => {
+  // TODO RA-V2 deprecate this
   checks = checks || defaultChecks;
   const baseChecker = new ApiCheckService<ApiCheckDslContext>();
 

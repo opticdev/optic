@@ -1,6 +1,6 @@
 import { OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 import { createOperation } from './data-constructors';
-import { Rules, RulesetData, EndpointNode } from './rule-runner-types';
+import { RulesetData, EndpointNode } from './rule-runner-types';
 import {
   createRulesetMatcher,
   getRuleAliases,
@@ -14,9 +14,9 @@ import {
   AssertionResult,
   assertionLifecycleToText,
 } from './assertions';
-import { Operation } from '../types';
+import { Operation, Rule } from '../types';
 
-const getOperationRules = (rules: Rules[]): (OperationRule & RulesetData)[] => {
+const getOperationRules = (rules: Rule[]): (OperationRule & RulesetData)[] => {
   const operationRules: (OperationRule & RulesetData)[] = [];
   for (const ruleOrRuleset of rules) {
     if (ruleOrRuleset instanceof OperationRule) {
@@ -97,7 +97,7 @@ export const runOperationRules = ({
   afterApiSpec,
 }: {
   operation: EndpointNode;
-  rules: Rules[];
+  rules: Rule[];
   customRuleContext: any;
   beforeApiSpec: OpenAPIV3.Document;
   afterApiSpec: OpenAPIV3.Document;

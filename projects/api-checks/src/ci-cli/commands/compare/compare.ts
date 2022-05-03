@@ -5,7 +5,6 @@ import {
   defaultEmptySpec,
   validateOpenApiV3Document,
 } from '@useoptic/openapi-utilities';
-import { ApiCheckService } from '../../../sdk/api-check-service';
 import {
   parseSpecVersion,
   specFromInputToResults,
@@ -24,6 +23,7 @@ import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
 import { getRelativeRepoPath } from '../utils/get-relative-path';
 import { inGit } from '@useoptic/openapi-io';
+import { RuleRunner } from '../../../types';
 
 const parseContextObject = (context?: string): any => {
   try {
@@ -123,7 +123,7 @@ const runCompare = async ({
 }: {
   from?: string;
   to?: string;
-  apiCheckService: ApiCheckService<any>;
+  apiCheckService: RuleRunner;
   context: any;
   uploadResults: boolean;
   ciContext?: string;

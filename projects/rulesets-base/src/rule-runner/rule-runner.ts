@@ -1,15 +1,15 @@
 import { IFact, IChange, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 
-import { Rules } from './rule-runner-types';
 import { groupFacts } from './group-facts';
 import { runSpecificationRules } from './specification';
 import { runOperationRules } from './operation';
 import { runRequestRules } from './request';
 import { runResponseBodyRules } from './response-body';
 import { runResponseRules } from './response';
+import { Rule } from '../types';
 
 export class RuleRunner {
-  constructor(private rules: Rules[]) {}
+  constructor(private rules: Rule[]) {}
 
   runRulesWithFacts({
     context,
