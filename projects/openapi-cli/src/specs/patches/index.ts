@@ -64,12 +64,18 @@ export class SpecPatch {
     operationPatch: OperationPatch,
     operationSpecPath: string
   ): SpecPatch {
-    // TODO: implement actual conversion as OperationPatch is implemented
-
     return {
-      description: `update operation`,
-      impact: [PatchImpact.Addition],
-      groupedOperations: [],
+      description: `operation: ${operationPatch.description}`,
+      impact: operationPatch.impact,
+      groupedOperations: operationPatch.groupedOperations.map((group) => {
+        return {
+          ...group,
+          operations: group.operations.map((op) => ({
+            ...op,
+            path: jsonPointerHelpers.join(operationSpecPath, op.path),
+          })),
+        };
+      }),
     };
   }
 
