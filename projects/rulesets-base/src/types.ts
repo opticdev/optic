@@ -1,9 +1,25 @@
 import { FactVariant, OpenApiKind } from '@useoptic/openapi-utilities';
+import {
+  Ruleset,
+  SpecificationRule,
+  OperationRule,
+  RequestRule,
+  ResponseBodyRule,
+  ResponseRule,
+} from './rules';
 
 export type FactVariantWithRaw<T extends OpenApiKind> = FactVariant<T> & {
   // TODO add in typings from OAS3? Or how do we pick the correct variant based on rules
   raw: any;
 };
+
+export type Rule =
+  | Ruleset
+  | SpecificationRule
+  | OperationRule
+  | RequestRule
+  | ResponseRule
+  | ResponseBodyRule;
 
 // Value constructs
 export type RuleContext = {

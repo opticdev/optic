@@ -1,7 +1,7 @@
 import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 
 import { createSpecification } from './data-constructors';
-import { Rules, RulesetData, NodeDetail } from './rule-runner-types';
+import { RulesetData, NodeDetail } from './rule-runner-types';
 import {
   createRulesetMatcher,
   getRuleAliases,
@@ -14,9 +14,10 @@ import {
   AssertionResult,
   assertionLifecycleToText,
 } from './assertions';
+import { Rule } from '../types';
 
 const getSpecificationRules = (
-  rules: Rules[]
+  rules: Rule[]
 ): (SpecificationRule & RulesetData)[] => {
   const specificationRules: (SpecificationRule & RulesetData)[] = [];
   for (const ruleOrRuleset of rules) {
@@ -70,7 +71,7 @@ export const runSpecificationRules = ({
   afterApiSpec,
 }: {
   specification: NodeDetail<OpenApiKind.Specification>;
-  rules: Rules[];
+  rules: Rule[];
   customRuleContext: any;
   beforeApiSpec: OpenAPIV3.Document;
   afterApiSpec: OpenAPIV3.Document;

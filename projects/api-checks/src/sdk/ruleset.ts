@@ -1,4 +1,5 @@
 import { ApiCheckDsl } from '@useoptic/openapi-utilities';
+import { RuleRunner } from '../types';
 import { ApiCheckService } from './api-check-service';
 
 export type OpticCIRuleset<DSL extends ApiCheckDsl> = {
@@ -31,9 +32,9 @@ export function disableRules<DSL extends ApiCheckDsl>(
 }
 
 export type OpticCINamedRulesets = {
-  default: ApiCheckService<any>;
+  default: RuleRunner;
 } & {
   // actually any, could be multiple DSL kinds / contexts in the same CLI
   // ie one we made, one the community made, one a customer built in-house
-  [key: string]: ApiCheckService<any> | undefined;
+  [key: string]: RuleRunner | undefined;
 };
