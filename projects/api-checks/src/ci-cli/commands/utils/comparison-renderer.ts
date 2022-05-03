@@ -1,8 +1,6 @@
 import {
   ResultWithSourcemap,
   IChange,
-  OpenApiFact,
-  OpenApiKind,
   OperationLocation,
 } from '@useoptic/openapi-utilities';
 
@@ -42,8 +40,6 @@ export const logComparison = (
   for (const operationResults of Object.values(groupedResults)) {
     const conceptualLocation =
       operationResults[0].change.location.conceptualLocation;
-    if (!('path' in conceptualLocation)) continue;
-    const { method, path } = conceptualLocation;
 
     const allPassed = operationResults.every((result) => result.passed);
     const renderedResults = operationResults.filter(
@@ -53,11 +49,12 @@ export const logComparison = (
       ? chalk.bold.bgGreen.white(' PASS ')
       : chalk.bold.bgRed.white(' FAIL ');
 
-    if (!method || !path) {
+    if (!('path' in conceptualLocation)) {
       console.log(
         `${getIndent(1)}${resultNode} ${chalk.bold('Specification')}`
       );
     } else {
+      const { method, path } = conceptualLocation;
       console.log(
         `${getIndent(1)}${resultNode} ${chalk.bold(
           method.toUpperCase()
