@@ -1,5 +1,5 @@
 import { JsonSchemaSourcemap, isYaml } from '@useoptic/openapi-io';
-import { Operation } from '../../patches';
+import { PatchOperation } from '../../patches';
 import { applyPatch } from './reconcilers';
 
 export type SpecFilesSourcemap = JsonSchemaSourcemap;
@@ -16,7 +16,7 @@ export class SpecFile {
 
   static async applyPatch(
     self: SpecFile,
-    operations: Operation[]
+    operations: PatchOperation[]
   ): Promise<SpecFile> {
     const result = await applyPatch(self.path, self.contents, operations);
 
@@ -47,5 +47,5 @@ export type SpecFilePatchResult = {
 
 export interface SpecFileOperation {
   filePath: string;
-  operation: Operation;
+  operation: PatchOperation;
 }

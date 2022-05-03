@@ -2,8 +2,8 @@ import { OperationDiffResult } from '../diffs';
 import { Operation } from '..';
 import {
   PatchImpact,
-  OperationGroup,
-  Operation as PatchOperation,
+  PatchOperationGroup,
+  PatchOperation,
 } from '../../patches';
 import JsonPatch from 'fast-json-patch';
 
@@ -15,13 +15,13 @@ export function* generateOperationPatchesByDiff(
 export interface OperationPatch {
   description: string;
   impact: PatchImpact[];
-  groupedOperations: OperationGroup[];
+  groupedOperations: PatchOperationGroup[];
 }
 
 export class OperationPatch {
   static *operations(patch: OperationPatch): IterableIterator<PatchOperation> {
     for (let group of patch.groupedOperations) {
-      yield* OperationGroup.operations(group);
+      yield* PatchOperationGroup.operations(group);
     }
   }
 

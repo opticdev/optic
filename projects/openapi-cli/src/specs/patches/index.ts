@@ -1,4 +1,8 @@
-import { PatchImpact, OperationGroup, Operation } from '../../patches';
+import {
+  PatchImpact,
+  PatchOperationGroup,
+  PatchOperation,
+} from '../../patches';
 import { ShapePatch } from '../../shapes/patches';
 import { ShapeLocation } from '../../shapes';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
@@ -16,11 +20,11 @@ export type {
 export interface SpecPatch {
   description: string;
   impact: PatchImpact[];
-  groupedOperations: OperationGroup[];
+  groupedOperations: PatchOperationGroup[];
 }
 
-export { PatchImpact, OperationGroup };
-export type { Operation };
+export { PatchImpact, PatchOperationGroup as OperationGroup };
+export type { PatchOperation as Operation };
 
 export class SpecPatch {
   static fromShapePatch(
@@ -80,9 +84,9 @@ export class SpecPatch {
     return result.newDocument!;
   }
 
-  static *operations(patch: ShapePatch): IterableIterator<Operation> {
+  static *operations(patch: ShapePatch): IterableIterator<PatchOperation> {
     for (let group of patch.groupedOperations) {
-      yield* OperationGroup.operations(group);
+      yield* PatchOperationGroup.operations(group);
     }
   }
 }
