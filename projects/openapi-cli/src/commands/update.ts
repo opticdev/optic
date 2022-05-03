@@ -181,7 +181,15 @@ export async function updateByExample(specPath: string): Promise<
 export async function updateByInteractions(
   specPath: string,
   interactions: CapturedInteractions
-): Promise<Result<{}, string>> {
+): Promise<
+  Result<
+    {
+      stats: {};
+      results: SpecFilesAsync;
+    },
+    string
+  >
+> {
   const absoluteSpecPath = Path.resolve(specPath);
   if (!(await fs.pathExists(absoluteSpecPath))) {
     return Err('OpenAPI specification file could not be found');
@@ -192,14 +200,20 @@ export async function updateByInteractions(
   );
   const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
 
-  const documentedInteractions =
-    DocumentedInteractions.fromCapturedInteractions(interactions, spec);
+  const patches = SpecPatches.fromInteractions(interactions, spec);
 
-  // const operationPatches =
+  // additions only, so we only safely extend the spec
+  const specAdditions = SpecPatches.additions(patches);
 
-  // const documentedBodies = interaction bodies, spec + operationPatches
+  const fileOperations = SpecFileOperations.fromSpecPatches(
+    specAdditions,
+    sourcemap
+  );
 
-  // const bodyPatches
+  const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
 
-  return Ok({});
+  return Ok({
+    stats: {},
+    results: updatedSpecFiles,
+  });
 }
