@@ -3,6 +3,7 @@ import {
   FactVariant,
   OpenApiKind,
 } from '@useoptic/openapi-utilities';
+import { Assertion, ChangedAssertion, AssertionType } from '../types';
 
 export type RulesetData = {
   aliases: string[];
@@ -50,3 +51,10 @@ export type OpenApiDocument = {
   specification: NodeDetail<OpenApiKind.Specification>;
   endpoints: Map<string, EndpointNode>;
 };
+
+export type CallableAssertion<T extends AssertionType> = Parameters<
+  Assertion<T>
+>[1];
+export type CallableChangedAssertion<T extends AssertionType> = Parameters<
+  ChangedAssertion<T>
+>[1];
