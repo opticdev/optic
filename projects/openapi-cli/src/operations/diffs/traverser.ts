@@ -1,11 +1,10 @@
 import { CapturedInteraction } from '../../captures';
-import { DocumentedInteraction, Operation } from '..';
+import { Operation } from '..';
 import { OperationDiffResult } from './result';
 import { OpenAPIV3 } from '../../specs';
 import invariant from 'ts-invariant';
 
 import { visitRequestBody, visitResponses } from './visitors';
-import { stringify } from 'querystring';
 
 export class OperationDiffTraverser {
   private interaction?: CapturedInteraction;

@@ -1,7 +1,3 @@
-import { JsonPath } from '@useoptic/openapi-io';
-import { OpenAPIV3 } from '../../specs';
-import { SchemaObject } from '../../shapes';
-
 export enum OperationDiffResultKind {
   // Request Body
   MissingRequestBody = 'MissingRequestBody',
