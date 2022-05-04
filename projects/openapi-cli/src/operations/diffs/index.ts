@@ -1,9 +1,10 @@
 import { Operation } from '..';
 import { CapturedInteraction } from '../../captures';
-import { OperationDiffResult } from './result';
+import { OperationDiffResult, OperationDiffResultKind } from './result';
 import { OperationDiffTraverser } from './traverser';
 
 export type { OperationDiffResult };
+export { OperationDiffResultKind };
 
 export function* diffInteractionByOperation(
   interaction: CapturedInteraction,

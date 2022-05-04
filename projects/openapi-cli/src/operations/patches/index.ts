@@ -7,6 +7,9 @@ import {
 } from '../../patches';
 import JsonPatch from 'fast-json-patch';
 
+export type { PatchOperation };
+export { PatchOperationGroup, PatchImpact };
+
 export function* generateOperationPatchesByDiff(
   diff: OperationDiffResult,
   operation: Operation
