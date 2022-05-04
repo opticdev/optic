@@ -42,12 +42,14 @@ export const registerCompare = (
   cli: Command,
   projectName: string,
   rulesetServices: OpticCINamedRulesets,
-  cliConfig: CliConfig
+  cliConfig: CliConfig,
+  generateContext: () => Object
 ) => {
   cli
     .command('compare')
     .option('--from <from>', 'from file or rev:file, defaults empty spec')
     .option('--to <to>', 'to file or rev:file, defaults empty spec')
+    // TODO RA-V2 - remove context as cli arg
     .option('--context <context>', 'json of context')
     .option('--verbose', 'show all checks, even passing', false)
     .option('--ruleset <ruleset>', 'name of ruleset to run', 'default')
@@ -89,7 +91,9 @@ export const registerCompare = (
             );
           }
 
-          const parsedContext = parseContextObject(options.context);
+          const parsedContext = options.context
+            ? parseContextObject(options.context)
+            : generateContext();
           validateUploadRequirements(options.uploadResults, cliConfig);
 
           await runCompare({

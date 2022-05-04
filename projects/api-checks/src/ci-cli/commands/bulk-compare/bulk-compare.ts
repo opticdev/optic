@@ -32,7 +32,8 @@ export const registerBulkCompare = (
   cli: Command,
   projectName: string,
   rulesetServices: OpticCINamedRulesets,
-  cliConfig: CliConfig
+  cliConfig: CliConfig,
+  generateContext: () => Object = () => ({})
 ) => {
   cli
     .command('bulk-compare')
@@ -95,6 +96,7 @@ export const registerBulkCompare = (
             ciContext,
             projectName,
             cliConfig,
+            generateContext,
           });
           process.exit(0);
         }
@@ -209,7 +211,8 @@ const compareSpecs = async ({
 };
 
 export const parseJsonComparisonInput = async (
-  input: string
+  input: string,
+  generateContext: () => Object
 ): Promise<{
   comparisons: Map<string, Comparison>;
   skippedParsing: boolean;
@@ -220,22 +223,14 @@ export const parseJsonComparisonInput = async (
     const output = JSON.parse(fileOutput.toString());
     const initialComparisons: Map<string, Comparison> = new Map();
     for (const comparison of output.comparisons || []) {
-      if (!comparison.context) {
-        console.log(
-          `Comparison doesn't match expected format, found: ${JSON.stringify(
-            comparison
-          )}`
-        );
-        skippedParsing = true;
-        continue;
-      }
       const id = uuidv4();
 
       initialComparisons.set(id, {
         id,
         fromFileName: comparison.from,
         toFileName: comparison.to,
-        context: comparison.context,
+        // TODO RA-V2 - remove context as argument for bulk input
+        context: comparison.context || generateContext(),
         loading: true,
       });
     }
@@ -256,6 +251,7 @@ const runBulkCompare = async ({
   uploadResults,
   ciContext,
   cliConfig,
+  generateContext,
 }: {
   checkService: RuleRunner;
   input: string;
@@ -265,6 +261,7 @@ const runBulkCompare = async ({
   uploadResults: boolean;
   ciContext?: string;
   cliConfig: CliConfig;
+  generateContext: () => Object;
 }) => {
   console.log('Reading input file...');
   let numberOfErrors = 0;
@@ -279,7 +276,7 @@ const runBulkCompare = async ({
   }
 
   const { comparisons: initialComparisons, skippedParsing } =
-    await parseJsonComparisonInput(input);
+    await parseJsonComparisonInput(input, generateContext);
 
   console.log(`Bulk comparing ${initialComparisons.size} comparisons`);
   const finalComparisons = new Map(initialComparisons);

@@ -55,4 +55,58 @@ describe('SpecificationRule', () => {
       }
     });
   });
+
+  describe('custom matchers', () => {
+    describe('matches', () => {
+      const ruleRunner = new RuleRunner([
+        new SpecificationRule({
+          name: 'operation description',
+          rule: (specificationAssertions) => {
+            specificationAssertions.requirement.matches({
+              info: {
+                license: {},
+              },
+            });
+          },
+        }),
+      ]);
+
+      test('passing assertion', () => {
+        const json = {
+          ...defaultEmptySpec,
+          info: {
+            ...defaultEmptySpec.info,
+            license: {
+              name: 'MIT',
+              url: 'some-url',
+            },
+          },
+        };
+
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(json, json)
+        );
+        expect(results.length > 0).toBe(true);
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(true);
+        }
+      });
+
+      test('failing assertion', () => {
+        const json = {
+          ...defaultEmptySpec,
+        };
+
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(json, json)
+        );
+        expect(results.length > 0).toBe(true);
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(false);
+        }
+      });
+    });
+  });
 });

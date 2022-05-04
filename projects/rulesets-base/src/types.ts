@@ -89,20 +89,26 @@ export type AssertionTypeToValue = {
   property: FactVariantWithRaw<OpenApiKind.Field>;
 };
 
+type MatchesFn = (
+  structure: any,
+  options?: {
+    strict?: boolean;
+  }
+) => void;
 export type AssertionTypeToHelpers = {
-  specification: { matches: (structure: any) => void };
+  specification: { matches: MatchesFn };
   operation: {
     hasStatusCodes: (statusCodes: number[]) => void;
-    matches: (structure: any) => void;
+    matches: MatchesFn;
   };
-  'query-parameters': { matches: (structure: any) => void };
-  'path-parameters': { matches: (structure: any) => void };
-  'header-parameters': { matches: (structure: any) => void };
-  response: { matches: (structure: any) => void };
-  'response-headers': { matches: (structure: any) => void };
-  'request-body': { matches: (structure: any) => void };
-  'response-body': { matches: (structure: any) => void };
-  property: { matches: (structure: any) => void };
+  'query-parameter': { matches: MatchesFn };
+  'path-parameter': { matches: MatchesFn };
+  'header-parameter': { matches: MatchesFn };
+  response: { matches: MatchesFn };
+  'response-header': { matches: MatchesFn };
+  'request-body': { matches: MatchesFn };
+  'response-body': { matches: MatchesFn };
+  property: { matches: MatchesFn };
 };
 
 export type Assertion<T extends AssertionType> = (
@@ -119,10 +125,10 @@ export type ChangedAssertion<T extends AssertionType> = (
 ) => void;
 
 export type Assertions<T extends AssertionType> = {
-  requirement: /*AssertionTypeToHelpers[T] & */ Assertion<T>;
-  added: /*AssertionTypeToHelpers[T] & */ Assertion<T>;
-  changed: /*AssertionTypeToHelpers[T] & */ ChangedAssertion<T>;
-  removed: /*AssertionTypeToHelpers[T] & */ Assertion<T>;
+  requirement: AssertionTypeToHelpers[T] & Assertion<T>;
+  added: AssertionTypeToHelpers[T] & Assertion<T>;
+  changed: AssertionTypeToHelpers[T] & ChangedAssertion<T>;
+  removed: AssertionTypeToHelpers[T] & Assertion<T>;
 };
 
 export type SpecificationAssertions = Assertions<'specification'>;

@@ -1,15 +1,19 @@
 import { ChangeType, IChange, IFact } from '@useoptic/openapi-utilities';
 import pick from 'lodash.pick';
-import { RuleError } from '../errors';
+import { RuleError, UserRuleError } from '../errors';
 import {
   Assertion,
   ChangedAssertion,
   Assertions,
   AssertionType,
   AssertionTypeToValue,
+  AssertionTypeToHelpers,
 } from '../types';
-
-// TODO figure out how to add on specific assertion helpers
+import { createSpecificationHelpers } from './matchers/specification-matchers';
+import {
+  CallableAssertion,
+  CallableChangedAssertion,
+} from './rule-runner-types';
 
 type AssertionLifecycle = 'requirement' | 'added' | 'changed' | 'removed';
 
@@ -29,6 +33,18 @@ export type AssertionResult =
       error: string;
     };
 
+const sanitizeFact = (fact: IFact): IFact =>
+  pick(fact, 'value', 'location') as IFact;
+const sanitizeChange = (change: IChange): IChange =>
+  pick(
+    change,
+    'changeType',
+    'added',
+    'removed',
+    'changed',
+    'location'
+  ) as IChange;
+
 export const assertionLifecycleToText = (
   assertionLifecycle: AssertionResult['type']
 ): string =>
@@ -37,33 +53,98 @@ export const assertionLifecycleToText = (
     : assertionLifecycle;
 
 class AssertionRunner<T extends AssertionType> implements Assertions<T> {
-  private requirementAssertions: [string, Parameters<Assertion<T>>[1]][];
-  private addedAssertions: [string, Parameters<Assertion<T>>[1]][];
-  private changedAssertions: [string, Parameters<ChangedAssertion<T>>[1]][];
-  private removedAssertions: [string, Parameters<Assertion<T>>[1]][];
+  private requirementAssertions: [string, CallableAssertion<T>][];
+  private addedAssertions: [string, CallableAssertion<T>][];
+  private changedAssertions: [string, CallableChangedAssertion<T>][];
+  private removedAssertions: [string, CallableAssertion<T>][];
 
-  constructor() {
+  constructor(private type: T) {
     this.requirementAssertions = [];
     this.addedAssertions = [];
     this.changedAssertions = [];
     this.removedAssertions = [];
   }
 
-  requirement: Assertion<T> = (condition, assertion) => {
-    this.requirementAssertions.push([condition, assertion]);
+  private createAssertionHelpers = (
+    assertionKey:
+      | 'requirementAssertions'
+      | 'addedAssertions'
+      | 'changedAssertions'
+      | 'removedAssertions'
+  ): AssertionTypeToHelpers[T] => {
+    const registerAssertion = (
+      condition: string,
+      assertion: CallableAssertion<T>
+    ) => {
+      if (assertionKey === 'changedAssertions') {
+        this.changedAssertions.push([
+          condition,
+          (before, after) => {
+            assertion(after);
+          },
+        ]);
+      } else {
+        this[assertionKey].push([condition, assertion]);
+      }
+    };
+
+    // ts cannot infer through the blocks here that the registerAssertion function and
+    // the value match up - which means we have to cast `as any`
+    return {
+      specification: createSpecificationHelpers(registerAssertion as any),
+      // TODO implement the rest
+      operation: {} as AssertionTypeToHelpers['operation'],
+      'query-parameter': {} as AssertionTypeToHelpers['query-parameter'],
+      'path-parameter': {} as AssertionTypeToHelpers['path-parameter'],
+      'header-parameter': {} as AssertionTypeToHelpers['header-parameter'],
+      response: {} as AssertionTypeToHelpers['response'],
+      'response-header': {} as AssertionTypeToHelpers['response-header'],
+      'request-body': {} as AssertionTypeToHelpers['request-body'],
+      'response-body': {} as AssertionTypeToHelpers['response-body'],
+      property: {} as AssertionTypeToHelpers['property'],
+    }[this.type];
   };
 
-  added: Assertion<T> = (condition, assertion) => {
-    this.addedAssertions.push([condition, assertion]);
+  private createAssertion = (
+    key: 'requirementAssertions' | 'addedAssertions' | 'removedAssertions'
+  ): Assertion<T> & AssertionTypeToHelpers[T] => {
+    const baseAssertion: Assertion<T> = (condition, assertion) => {
+      this[key].push([condition, assertion]);
+    };
+    for (const [k, v] of Object.entries(this.createAssertionHelpers(key))) {
+      baseAssertion[k] = v;
+    }
+    return baseAssertion as Assertion<T> & AssertionTypeToHelpers[T];
   };
 
-  changed: ChangedAssertion<T> = (condition, assertion) => {
-    this.changedAssertions.push([condition, assertion]);
+  private createChangedAssertion = (): ChangedAssertion<T> &
+    AssertionTypeToHelpers[T] => {
+    const baseAssertion: ChangedAssertion<T> = (condition, assertion) => {
+      this.changedAssertions.push([condition, assertion]);
+    };
+    for (const [k, v] of Object.entries(
+      this.createAssertionHelpers('changedAssertions')
+    )) {
+      baseAssertion[k] = v;
+    }
+    return baseAssertion as ChangedAssertion<T> & AssertionTypeToHelpers[T];
   };
 
-  removed: Assertion<T> = (condition, assertion) => {
-    this.removedAssertions.push([condition, assertion]);
-  };
+  get requirement() {
+    return this.createAssertion('requirementAssertions');
+  }
+
+  get added() {
+    return this.createAssertion('addedAssertions');
+  }
+
+  get changed() {
+    return this.createChangedAssertion();
+  }
+
+  get removed() {
+    return this.createAssertion('removedAssertions');
+  }
 
   runBefore(
     before: AssertionTypeToValue[T],
@@ -81,14 +162,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(before);
           results.push({
             passed: true,
-            changeOrFact: pick(
-              change,
-              'changeType',
-              'added',
-              'removed',
-              'changed',
-              'location'
-            ) as IChange,
+            changeOrFact: sanitizeChange(change),
             condition,
             type: 'removed',
           });
@@ -96,18 +170,16 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (e instanceof RuleError) {
             results.push({
               passed: false,
-              changeOrFact: pick(
-                change,
-                'changeType',
-                'added',
-                'removed',
-                'changed',
-                'location'
-              ) as IChange,
+              changeOrFact: sanitizeChange(change),
               condition,
               error: e.toString(),
               type: 'removed',
             });
+          } else {
+            const err = e as Error;
+            console.error('Error running rules:');
+            console.error(err);
+            throw new UserRuleError(err);
           }
         }
       }
@@ -125,12 +197,10 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
     if (this.requirementAssertions.length > 0) {
       for (const [condition, assertion] of this.requirementAssertions) {
         try {
-          // location
-          // value
           assertion(after);
           results.push({
             passed: true,
-            changeOrFact: pick(after, 'value', 'location') as IFact,
+            changeOrFact: sanitizeFact(after),
             condition,
             type: 'requirement',
           });
@@ -138,11 +208,16 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (e instanceof RuleError) {
             results.push({
               passed: false,
-              changeOrFact: pick(after, 'value', 'location') as IFact,
+              changeOrFact: sanitizeFact(after),
               condition,
               error: e.toString(),
               type: 'requirement',
             });
+          } else {
+            const err = e as Error;
+            console.error('Error running rules:');
+            console.error(err);
+            throw new UserRuleError(err);
           }
         }
       }
@@ -158,14 +233,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(after);
           results.push({
             passed: true,
-            changeOrFact: pick(
-              change,
-              'changeType',
-              'added',
-              'removed',
-              'changed',
-              'location'
-            ) as IChange,
+            changeOrFact: sanitizeChange(change),
             condition,
             type: 'added',
           });
@@ -173,18 +241,16 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (e instanceof RuleError) {
             results.push({
               passed: false,
-              changeOrFact: pick(
-                change,
-                'changeType',
-                'added',
-                'removed',
-                'changed',
-                'location'
-              ) as IChange,
+              changeOrFact: sanitizeChange(change),
               condition,
               error: e.toString(),
               type: 'added',
             });
+          } else {
+            const err = e as Error;
+            console.error('Error running rules:');
+            console.error(err);
+            throw new UserRuleError(err);
           }
         }
       }
@@ -201,14 +267,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(before, after);
           results.push({
             passed: true,
-            changeOrFact: pick(
-              change,
-              'changeType',
-              'added',
-              'removed',
-              'changed',
-              'location'
-            ) as IChange,
+            changeOrFact: sanitizeChange(change),
             condition,
             type: 'changed',
           });
@@ -216,18 +275,16 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (e instanceof RuleError) {
             results.push({
               passed: false,
-              changeOrFact: pick(
-                change,
-                'changeType',
-                'added',
-                'removed',
-                'changed',
-                'location'
-              ) as IChange,
+              changeOrFact: sanitizeChange(change),
               condition,
               error: e.toString(),
               type: 'changed',
             });
+          } else {
+            const err = e as Error;
+            console.error('Error running rules:');
+            console.error(err);
+            throw new UserRuleError(err);
           }
         }
       }
@@ -258,14 +315,14 @@ type ResponseBodyAssertionsRunner = {
 
 export const createSpecificationAssertions =
   (): AssertionRunner<'specification'> => {
-    return new AssertionRunner<'specification'>();
+    return new AssertionRunner('specification');
   };
 
 export const createOperationAssertions = (): OperationAssertionsRunner => {
-  const operationAssertions: any = new AssertionRunner<'operation'>();
-  const queryParameterAssertions = new AssertionRunner<'query-parameter'>();
-  const headerParameterAssertions = new AssertionRunner<'header-parameter'>();
-  const pathParameterAssertions = new AssertionRunner<'path-parameter'>();
+  const operationAssertions: any = new AssertionRunner('operation');
+  const queryParameterAssertions = new AssertionRunner('query-parameter');
+  const headerParameterAssertions = new AssertionRunner('header-parameter');
+  const pathParameterAssertions = new AssertionRunner('path-parameter');
 
   operationAssertions.queryParameter = queryParameterAssertions;
   operationAssertions.headerParameter = headerParameterAssertions;
@@ -276,8 +333,8 @@ export const createOperationAssertions = (): OperationAssertionsRunner => {
 
 export const createRequestAssertions = (): RequestAssertionsRunner => {
   const requestAssertions: any = {};
-  const bodyAssertions = new AssertionRunner<'request-body'>();
-  const propertyAssertions = new AssertionRunner<'property'>();
+  const bodyAssertions = new AssertionRunner('request-body');
+  const propertyAssertions = new AssertionRunner('property');
 
   requestAssertions.body = bodyAssertions;
   requestAssertions.property = propertyAssertions;
@@ -287,7 +344,7 @@ export const createRequestAssertions = (): RequestAssertionsRunner => {
 
 export const createResponseAssertions = (): ResponseAssertionsRunner => {
   const responseAssertions: any = {};
-  const headerAssertions = new AssertionRunner<'response-header'>();
+  const headerAssertions = new AssertionRunner('response-header');
 
   responseAssertions.header = headerAssertions;
 
@@ -297,9 +354,9 @@ export const createResponseAssertions = (): ResponseAssertionsRunner => {
 export const createResponseBodyAssertions =
   (): ResponseBodyAssertionsRunner => {
     const responseBodyAssertions: any = {};
-    const headerAssertions = new AssertionRunner<'response-header'>();
-    const bodyAssertions = new AssertionRunner<'response-body'>();
-    const propertyAssertions = new AssertionRunner<'property'>();
+    const headerAssertions = new AssertionRunner('response-header');
+    const bodyAssertions = new AssertionRunner('response-body');
+    const propertyAssertions = new AssertionRunner('property');
 
     responseBodyAssertions.header = headerAssertions;
     responseBodyAssertions.body = bodyAssertions;
