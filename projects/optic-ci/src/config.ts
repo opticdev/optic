@@ -11,7 +11,8 @@ import { CheckConfiguration } from './checker';
  *  gitProvider: {
  *    token: process.env.GITHUB_TOKEN,
  *  },
- * rules: []
+ * rules: [],
+ * generateContext: () => ({})
  */
 
 type OpticConfiguration = {
@@ -19,8 +20,10 @@ type OpticConfiguration = {
   gitProvider?: {
     token: string;
   };
+  // TODO RA-V2 - remove checks
   checks?: CheckConfiguration[];
   rules?: Rule[];
+  generateContext?: () => Object;
 };
 
 const findOpticConfigPath = (dir: string): string | null => {

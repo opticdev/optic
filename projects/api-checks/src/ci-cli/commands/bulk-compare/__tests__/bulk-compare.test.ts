@@ -34,7 +34,7 @@ describe('parseJsonComparisonInput', () => {
       );
     });
     const { comparisons: output, skippedParsing } =
-      await parseJsonComparisonInput('abcdef');
+      await parseJsonComparisonInput('abcdef', () => ({}));
     const expectedOutputs = [
       ['a', 'b', { abc: 123 }],
       ['c', 'd', { cde: 'test' }],
@@ -65,7 +65,7 @@ describe('parseJsonComparisonInput', () => {
       );
     });
     const { comparisons: output, skippedParsing } =
-      await parseJsonComparisonInput('abcdef');
+      await parseJsonComparisonInput('abcdef', () => ({}));
     expect(output.size).toBe(1);
     expect(skippedParsing).toBe(false);
     output.forEach((line) => {
@@ -88,7 +88,7 @@ describe('parseJsonComparisonInput', () => {
       );
     });
     const { comparisons: output, skippedParsing } =
-      await parseJsonComparisonInput('abcdef');
+      await parseJsonComparisonInput('abcdef', () => ({}));
     expect(output.size).toBe(1);
     expect(skippedParsing).toBe(false);
     output.forEach((line) => {
@@ -97,7 +97,7 @@ describe('parseJsonComparisonInput', () => {
     mockedLoadFile.mockClear();
   });
 
-  test("ignores rows that don't have the expected format", async () => {
+  test('handles context when not supplied', async () => {
     mockedLoadFile.mockImplementation(async () => {
       return Buffer.from(
         JSON.stringify({
@@ -105,22 +105,20 @@ describe('parseJsonComparisonInput', () => {
             {
               from: 'a',
               to: 'b',
-              context: {},
-            },
-            {
-              from: 'c',
             },
           ],
         })
       );
     });
-    const { comparisons: output, skippedParsing } =
-      await parseJsonComparisonInput('abcdef');
+    const { comparisons: output } = await parseJsonComparisonInput(
+      'abcdef',
+      () => ({ custom: '1' })
+    );
     expect(output.size).toBe(1);
-    expect(skippedParsing).toBe(true);
     output.forEach((line) => {
       expect(line.fromFileName).toBe('a');
       expect(line.toFileName).toBe('b');
+      expect(line.context).toEqual({ custom: '1' });
     });
     mockedLoadFile.mockClear();
   });
