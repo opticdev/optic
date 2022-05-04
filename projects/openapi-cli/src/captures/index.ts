@@ -14,7 +14,7 @@ export interface CapturedInteraction {
     // TODO: add support for headers and query params
   };
   response: {
-    statusCode: number;
+    statusCode: string;
     body: CapturedBody | null;
     // TODO: add support headers
   };

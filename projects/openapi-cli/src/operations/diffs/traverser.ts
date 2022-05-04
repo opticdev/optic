@@ -37,7 +37,7 @@ export class OperationDiffTraverser {
         return [code, response];
       })
     );
-    yield* visitResponses(interaction, responses);
+    yield* visitResponses(interaction.response, responses);
   }
 }
 

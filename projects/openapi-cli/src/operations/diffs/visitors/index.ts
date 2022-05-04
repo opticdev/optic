@@ -10,8 +10,4 @@ export interface OperationDiffVisitor<T> {
 }
 
 export { visitRequestBody } from './request-body';
-
-export function* visitResponses(
-  interaction: CapturedInteraction,
-  spec: { [code: string]: OpenAPIV3.ResponseObject }
-): IterableIterator<OperationDiffResult> {}
+export { visitResponses } from './responses';
