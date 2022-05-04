@@ -19,6 +19,7 @@ export type OperationDiffResult = {} & (
     }
   | {
       kind: OperationDiffResultKind.UnmatchedResponseStatusCode;
+      contentType: string | null;
       statusCode: string;
     }
   | {

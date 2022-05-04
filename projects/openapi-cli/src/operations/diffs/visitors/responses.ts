@@ -16,6 +16,7 @@ export function* visitResponses(
       yield {
         kind: OperationDiffResultKind.UnmatchedResponseStatusCode,
         statusCode: capturedResponse.statusCode,
+        contentType: capturedResponse.body?.contentType || null,
       };
     }
 

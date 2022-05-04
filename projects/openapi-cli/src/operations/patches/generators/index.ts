@@ -3,6 +3,7 @@ import { OperationPatch } from '..';
 import { OperationDiffResult } from '../../diffs';
 
 import { requestBodyPatches } from './request-body';
+import { responsesPatches } from './responses';
 
 export interface DiffOperationPatchGenerator {
   (
@@ -14,4 +15,5 @@ export interface DiffOperationPatchGenerator {
 
 export const diffOperationPatchGenerators: DiffOperationPatchGenerator[] = [
   requestBodyPatches,
+  responsesPatches,
 ];

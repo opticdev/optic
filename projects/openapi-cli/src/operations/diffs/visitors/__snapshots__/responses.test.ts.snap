@@ -12,6 +12,7 @@ Array [
 exports[`visitResponses detects an unspecified response 1`] = `
 Array [
   Object {
+    "contentType": null,
     "kind": "UnmatchedResponseStatusCode",
     "statusCode": "400",
   },
