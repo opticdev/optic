@@ -3,33 +3,22 @@ import { OpenAPIV3 } from '../../specs';
 import { SchemaObject } from '../../shapes';
 
 export enum OperationDiffResultKind {
-  MatchedRequestBody = 'MatchedRequestBody',
-  MatchedResponseBody = 'MatchedRequestBody',
   UnmatchedRequestBody = 'UnmatchedRequestBody',
-  UnmatchedResponseBody = 'UnmatchedRequestBody',
+  MissingRequestBody = 'MissingRequestBody',
+  UnmatchedResponseBody = 'UnmatchdResponseBody',
 }
 
 export type OperationDiffResult = {} & (
   | {
-      kind: OperationDiffResultKind.MatchedRequestBody;
-      schema: SchemaObject;
-      contentType: string;
-      specPath: string;
-    }
-  | {
-      kind: OperationDiffResultKind.MatchedResponseBody;
-      schema: SchemaObject;
-      contentType: string;
-      statusCode: number;
-      specPath: string;
-    }
-  | {
       kind: OperationDiffResultKind.UnmatchedRequestBody;
-      contentType: string;
+      contentType: string | null;
+    }
+  | {
+      kind: OperationDiffResultKind.MissingRequestBody;
     }
   | {
       kind: OperationDiffResultKind.UnmatchedResponseBody;
-      contentType: string;
+      contentType: string | null;
       statusCode: number;
     }
 );

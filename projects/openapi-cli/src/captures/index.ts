@@ -10,12 +10,15 @@ export interface CapturedInteraction {
     host: string;
     method: OpenAPIV3.HttpMethods;
     path: string;
-    body: CapturedBody;
+    body: CapturedBody | null;
     // TODO: add support for headers and query params
   };
   response: {
     statusCode: number;
-    body: CapturedBody;
+    body: CapturedBody | null;
     // TODO: add support headers
   };
 }
+
+export type CapturedRequest = CapturedInteraction['request'];
+export type CapturedResponse = CapturedInteraction['response'];

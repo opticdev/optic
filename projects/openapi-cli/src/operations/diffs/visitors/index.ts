@@ -1,5 +1,5 @@
-import { CapturedInteraction } from '../../../captures';
-import { OperationDiffResult } from '../result';
+import { CapturedInteraction, CapturedInteractions } from '../../../captures';
+import { OperationDiffResult, OperationDiffResultKind } from '../result';
 import { OpenAPIV3 } from '../../../specs';
 
 export interface OperationDiffVisitor<T> {
@@ -9,10 +9,7 @@ export interface OperationDiffVisitor<T> {
   ): IterableIterator<OperationDiffResult>;
 }
 
-export function* visitRequestBody(
-  interaction: CapturedInteraction,
-  spec?: OpenAPIV3.RequestBodyObject
-): IterableIterator<OperationDiffResult> {}
+export { visitRequestBody } from './request-body';
 
 export function* visitResponses(
   interaction: CapturedInteraction,

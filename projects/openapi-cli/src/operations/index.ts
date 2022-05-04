@@ -15,3 +15,6 @@ export interface DocumentedInteraction {
   operation: Operation;
   specJsonPath: string;
 }
+
+const HttpMethods = OpenAPIV3.HttpMethods;
+export { HttpMethods };

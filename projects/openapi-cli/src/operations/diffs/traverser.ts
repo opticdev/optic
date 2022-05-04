@@ -26,7 +26,7 @@ export class OperationDiffTraverser {
       !requestBody || isNotReferenceObject(requestBody),
       `operation expected to not have any references, found in request body, pathPattern=${operation.pathPattern} method=${operation.method}`
     );
-    yield* visitRequestBody(interaction, requestBody);
+    yield* visitRequestBody(interaction.request, requestBody);
 
     const responses = Object.fromEntries(
       Object.entries(operation.responses).map(([code, response]) => {
