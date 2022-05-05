@@ -1126,7 +1126,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": false,
-    "where": "added header parameter: new-param in operation: GET /api/users",
+    "where": "added path parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -1168,7 +1168,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": true,
-    "where": "added header parameter: new-param in operation: GET /api/users",
+    "where": "added path parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -1216,7 +1216,7 @@ Array [
     "isShould": false,
     "name": "optional to required parameter",
     "passed": false,
-    "where": "changed header parameter: new-param in operation: GET /api/users",
+    "where": "changed path parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -1264,7 +1264,7 @@ Array [
     "isShould": false,
     "name": "optional to required parameter",
     "passed": true,
-    "where": "changed header parameter: new-param in operation: GET /api/users",
+    "where": "changed path parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -1391,7 +1391,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": false,
-    "where": "requirement for header parameter: hello in operation: GET /api/users",
+    "where": "requirement for path parameter: hello in operation: GET /api/users",
   },
 ]
 `;
@@ -1432,7 +1432,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": true,
-    "where": "requirement for header parameter: hello in operation: GET /api/users",
+    "where": "requirement for path parameter: hello in operation: GET /api/users",
   },
 ]
 `;
@@ -1473,7 +1473,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": false,
-    "where": "added header parameter: new-param in operation: GET /api/users",
+    "where": "added query parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -1515,7 +1515,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": true,
-    "where": "added header parameter: new-param in operation: GET /api/users",
+    "where": "added query parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -1563,7 +1563,7 @@ Array [
     "isShould": false,
     "name": "optional to required parameter",
     "passed": false,
-    "where": "changed header parameter: new-param in operation: GET /api/users",
+    "where": "changed query parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -1611,7 +1611,7 @@ Array [
     "isShould": false,
     "name": "optional to required parameter",
     "passed": true,
-    "where": "changed header parameter: new-param in operation: GET /api/users",
+    "where": "changed query parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -1738,7 +1738,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": false,
-    "where": "requirement for header parameter: hello in operation: GET /api/users",
+    "where": "requirement for query parameter: hello in operation: GET /api/users",
   },
 ]
 `;
@@ -1779,7 +1779,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": true,
-    "where": "requirement for header parameter: hello in operation: GET /api/users",
+    "where": "requirement for query parameter: hello in operation: GET /api/users",
   },
 ]
 `;

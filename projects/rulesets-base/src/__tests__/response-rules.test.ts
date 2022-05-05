@@ -2,7 +2,7 @@ import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
 import { Matchers, RuleRunner } from '../rule-runner';
 import { ResponseRule } from '../rules';
-import { createRuleInputs } from './helpers';
+import { createRuleInputs } from '../test-helpers';
 
 describe('ResponseRule', () => {
   describe('matches', () => {

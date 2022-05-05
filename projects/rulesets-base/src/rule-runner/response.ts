@@ -9,15 +9,17 @@ import {
   getRuleAliases,
 } from './utils';
 
-import { Ruleset, ResponseRule } from '../rules';
+import { Rule, Ruleset, ResponseRule } from '../rules';
 import {
   assertionLifecycleToText,
   AssertionResult,
   createResponseAssertions,
 } from './assertions';
-import { Rule, Operation, Response } from '../types';
+import { Operation, Response } from '../types';
 
-const getResponseRules = (rules: Rule[]): (ResponseRule & RulesetData)[] => {
+const getResponseRules = (
+  rules: (Ruleset | Rule)[]
+): (ResponseRule & RulesetData)[] => {
   const responseRule: (ResponseRule & RulesetData)[] = [];
   for (const ruleOrRuleset of rules) {
     if (ruleOrRuleset instanceof ResponseRule) {
@@ -100,7 +102,8 @@ export const runResponseRules = ({
 }: {
   operation: EndpointNode;
   response: ResponseNode;
-  rules: Rule[];
+  rules: (Ruleset | Rule)[];
+
   customRuleContext: any;
   beforeApiSpec: OpenAPIV3.Document;
   afterApiSpec: OpenAPIV3.Document;

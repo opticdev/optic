@@ -8,15 +8,17 @@ import {
   createBeforeOperationContext,
 } from './utils';
 
-import { Ruleset, OperationRule } from '../rules';
+import { Rule, Ruleset, OperationRule } from '../rules';
 import {
   createOperationAssertions,
   AssertionResult,
   assertionLifecycleToText,
 } from './assertions';
-import { Operation, Rule } from '../types';
+import { Operation } from '../types';
 
-const getOperationRules = (rules: Rule[]): (OperationRule & RulesetData)[] => {
+const getOperationRules = (
+  rules: (Ruleset | Rule)[]
+): (OperationRule & RulesetData)[] => {
   const operationRules: (OperationRule & RulesetData)[] = [];
   for (const ruleOrRuleset of rules) {
     if (ruleOrRuleset instanceof OperationRule) {
@@ -97,7 +99,7 @@ export const runOperationRules = ({
   afterApiSpec,
 }: {
   operation: EndpointNode;
-  rules: Rule[];
+  rules: (Ruleset | Rule)[];
   customRuleContext: any;
   beforeApiSpec: OpenAPIV3.Document;
   afterApiSpec: OpenAPIV3.Document;
@@ -281,7 +283,7 @@ export const runOperationRules = ({
                   assertionResult,
                   {
                     name: key,
-                    type: 'header parameter',
+                    type: 'path parameter',
                     method: operation.method,
                     path: operation.path,
                   },
@@ -308,7 +310,7 @@ export const runOperationRules = ({
                   assertionResult,
                   {
                     name: key,
-                    type: 'header parameter',
+                    type: 'query parameter',
                     method: operation.method,
                     path: operation.path,
                   },

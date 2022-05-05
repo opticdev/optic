@@ -5,17 +5,18 @@ import { ResponseBodyRule } from './response-body-rule';
 import { SpecificationRule } from './specification-rule';
 import { RuleContext } from '../types';
 
+export type Rule =
+  | SpecificationRule
+  | OperationRule
+  | RequestRule
+  | ResponseRule
+  | ResponseBodyRule;
+
 type RulesetConfig = {
   name: string;
   docsLink?: string;
   matches?: (context: RuleContext) => boolean;
-  rules: (
-    | SpecificationRule
-    | OperationRule
-    | RequestRule
-    | ResponseRule
-    | ResponseBodyRule
-  )[];
+  rules: Rule[];
 };
 
 export class Ruleset {

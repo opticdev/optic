@@ -2,8 +2,11 @@ import {
   OpenAPIV3,
   OpenAPITraverser,
   factsToChangelog,
+  Result,
+  defaultEmptySpec,
 } from '@useoptic/openapi-utilities';
-import { RuleRunner } from '../rule-runner';
+import { RuleRunner } from './rule-runner';
+import { Rule, Ruleset } from './rules';
 
 export const createRuleInputs = (
   beforeJson: OpenAPIV3.Document,
@@ -27,3 +30,20 @@ export const createRuleInputs = (
     nextJsonLike: afterJson,
   };
 };
+
+export const runRulesWithInputs = (
+  rules: (Rule | Ruleset)[],
+  beforeJson: OpenAPIV3.Document,
+  afterJson: OpenAPIV3.Document
+): Result[] => {
+  const ruleRunner = new RuleRunner(rules);
+  return ruleRunner.runRulesWithFacts(createRuleInputs(beforeJson, afterJson));
+};
+
+export const createEmptySpec = (): OpenAPIV3.Document => ({
+  ...defaultEmptySpec,
+  paths: {},
+  info: {
+    ...defaultEmptySpec.info,
+  },
+});

@@ -9,15 +9,17 @@ import {
   createBeforeOperationContext,
 } from './utils';
 
-import { Ruleset, RequestRule } from '../rules';
+import { Rule, Ruleset, RequestRule } from '../rules';
 import {
   assertionLifecycleToText,
   AssertionResult,
   createRequestAssertions,
 } from './assertions';
-import { Rule, Field, Operation, RequestBody } from '../types';
+import { Field, Operation, RequestBody } from '../types';
 
-const getRequestRules = (rules: Rule[]): (RequestRule & RulesetData)[] => {
+const getRequestRules = (
+  rules: (Ruleset | Rule)[]
+): (RequestRule & RulesetData)[] => {
   const requestRules: (RequestRule & RulesetData)[] = [];
   for (const ruleOrRuleset of rules) {
     if (ruleOrRuleset instanceof RequestRule) {
@@ -102,7 +104,7 @@ export const runRequestRules = ({
 }: {
   operation: EndpointNode;
   request: RequestNode;
-  rules: Rule[];
+  rules: (Ruleset | Rule)[];
   customRuleContext: any;
   beforeApiSpec: OpenAPIV3.Document;
   afterApiSpec: OpenAPIV3.Document;
