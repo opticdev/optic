@@ -1,6 +1,6 @@
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
-import { RuleRunner } from '../rule-runner';
+import { RuleRunner, Matchers } from '../rule-runner';
 import { OperationRule } from '../rules';
 import { createRuleInputs } from './helpers';
 
@@ -351,6 +351,320 @@ describe('OperationRule', () => {
         for (const result of results) {
           expect(result.passed).toBe(false);
         }
+      });
+    });
+
+    describe('custom matchers', () => {
+      describe('matches', () => {
+        const ruleRunner = new RuleRunner([
+          new OperationRule({
+            name: 'operation description',
+            rule: (operationAssertions) => {
+              operationAssertions.added.matches({
+                description: Matchers.string,
+              });
+            },
+          }),
+        ]);
+
+        test('passing assertion', () => {
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  description: 'hello',
+                  responses: {},
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(defaultEmptySpec, json)
+          );
+          expect(results.length > 0).toBe(true);
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(true);
+          }
+        });
+
+        test('failing assertion', () => {
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {},
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(defaultEmptySpec, json)
+          );
+          expect(results.length > 0).toBe(true);
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(false);
+          }
+        });
+      });
+
+      describe('hasRequests', () => {
+        const ruleRunner = new RuleRunner([
+          new OperationRule({
+            name: 'operation description',
+            rule: (operationAssertions) => {
+              operationAssertions.changed.hasRequests([
+                { contentType: 'application/json' },
+              ]);
+            },
+          }),
+        ]);
+
+        test('passing assertion', () => {
+          const before: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {},
+                },
+              },
+            },
+          };
+          const after: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  operationId: 'get-users',
+                  requestBody: {
+                    content: {
+                      'application/json': {
+                        schema: {},
+                      },
+                    },
+                  },
+                  responses: {},
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(before, after)
+          );
+          expect(results.length > 0).toBe(true);
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(true);
+          }
+        });
+
+        test('failing assertion', () => {
+          const before: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {},
+                },
+              },
+            },
+          };
+          const after: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  operationId: 'get-users',
+                  requestBody: {
+                    content: {
+                      'application/notjson': {
+                        schema: {},
+                      },
+                    },
+                  },
+                  responses: {},
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(before, after)
+          );
+          expect(results.length > 0).toBe(true);
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(false);
+          }
+        });
+      });
+
+      describe('hasResponses', () => {
+        const ruleRunner = new RuleRunner([
+          new OperationRule({
+            name: 'operation description',
+            rule: (operationAssertions) => {
+              operationAssertions.removed.hasResponses([
+                { statusCode: '200' },
+                { statusCode: '400', contentType: 'application/json' },
+              ]);
+            },
+          }),
+        ]);
+
+        test('passing assertion', () => {
+          const before: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {
+                    '200': {
+                      description: 'hi',
+                      content: {
+                        'application/abc': {
+                          schema: {},
+                        },
+                      },
+                    },
+                    '400': {
+                      description: 'hi',
+                      content: {
+                        'application/json': {
+                          schema: {},
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          };
+
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(before, defaultEmptySpec)
+          );
+          expect(results.length > 0).toBe(true);
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(true);
+          }
+        });
+
+        test('failing assertion', () => {
+          const before: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {
+                    '200': {
+                      description: 'hi',
+                      content: {
+                        'application/abc': {
+                          schema: {},
+                        },
+                      },
+                    },
+                    '400': {
+                      description: 'hi',
+                      content: {
+                        'application/notjson': {
+                          schema: {},
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          };
+
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(before, defaultEmptySpec)
+          );
+          expect(results.length > 0).toBe(true);
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(false);
+          }
+        });
+      });
+
+      describe.each([
+        ['hasHeaderParameterMatching', 'header'],
+        ['hasQueryParameterMatching', 'query'],
+        ['hasPathParameterMatching', 'path'],
+      ])('%s', (assertionName, parameter) => {
+        const ruleRunner = new RuleRunner([
+          new OperationRule({
+            name: 'parameter description',
+            rule: (operationAssertions) => {
+              operationAssertions.requirement[assertionName]({
+                description: Matchers.string,
+              });
+            },
+          }),
+        ]);
+        test('passing assertion', () => {
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  parameters: [
+                    {
+                      name: 'hello',
+                      in: parameter,
+                      description: 'hello',
+                    },
+                  ],
+                  responses: {},
+                },
+              },
+            },
+          };
+
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(json, json)
+          );
+          expect(results.length > 0).toBe(true);
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(true);
+          }
+        });
+
+        test('failing assertion', () => {
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  parameters: [
+                    {
+                      name: 'hello',
+                      in: parameter,
+                    },
+                  ],
+                  responses: {},
+                },
+              },
+            },
+          };
+
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(json, json)
+          );
+          expect(results.length > 0).toBe(true);
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(false);
+          }
+        });
       });
     });
   });

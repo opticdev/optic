@@ -10,10 +10,14 @@ import {
   AssertionTypeToHelpers,
 } from '../types';
 import { createSpecificationHelpers } from './matchers/specification-matchers';
+import { createOperationHelpers } from './matchers/operation-matchers';
+import { createResponseHelpers } from './matchers/response-matchers';
 import {
   CallableAssertion,
   CallableChangedAssertion,
 } from './rule-runner-types';
+import { createRequestBodyHelpers } from './matchers/request-body-matchers';
+import { createResponseBodyHelpers } from './matchers/response-body-matchers';
 
 type AssertionLifecycle = 'requirement' | 'added' | 'changed' | 'removed';
 
@@ -92,16 +96,15 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
     // the value match up - which means we have to cast `as any`
     return {
       specification: createSpecificationHelpers(registerAssertion as any),
-      // TODO implement the rest
-      operation: {} as AssertionTypeToHelpers['operation'],
-      'query-parameter': {} as AssertionTypeToHelpers['query-parameter'],
-      'path-parameter': {} as AssertionTypeToHelpers['path-parameter'],
-      'header-parameter': {} as AssertionTypeToHelpers['header-parameter'],
-      response: {} as AssertionTypeToHelpers['response'],
-      'response-header': {} as AssertionTypeToHelpers['response-header'],
-      'request-body': {} as AssertionTypeToHelpers['request-body'],
-      'response-body': {} as AssertionTypeToHelpers['response-body'],
-      property: {} as AssertionTypeToHelpers['property'],
+      operation: createOperationHelpers(registerAssertion as any),
+      'query-parameter': {},
+      'path-parameter': {},
+      'header-parameter': {},
+      response: createResponseHelpers(registerAssertion as any),
+      'response-header': {},
+      'request-body': createRequestBodyHelpers(registerAssertion as any),
+      'response-body': createResponseBodyHelpers(registerAssertion as any),
+      property: {},
     }[this.type];
   };
 
@@ -304,7 +307,7 @@ type RequestAssertionsRunner = {
   property: AssertionRunner<'property'>;
 };
 
-type ResponseAssertionsRunner = {
+type ResponseAssertionsRunner = AssertionRunner<'response'> & {
   header: AssertionRunner<'response-header'>;
 };
 
@@ -343,7 +346,7 @@ export const createRequestAssertions = (): RequestAssertionsRunner => {
 };
 
 export const createResponseAssertions = (): ResponseAssertionsRunner => {
-  const responseAssertions: any = {};
+  const responseAssertions: any = new AssertionRunner('response');
   const headerAssertions = new AssertionRunner('response-header');
 
   responseAssertions.header = headerAssertions;

@@ -98,17 +98,38 @@ type MatchesFn = (
 export type AssertionTypeToHelpers = {
   specification: { matches: MatchesFn };
   operation: {
-    hasStatusCodes: (statusCodes: number[]) => void;
+    hasQueryParameterMatching: MatchesFn;
+    hasPathParameterMatching: MatchesFn;
+    hasHeaderParameterMatching: MatchesFn;
+    hasRequests: (
+      requests: {
+        contentType: string;
+      }[]
+    ) => void;
+    hasResponses: (
+      responses: {
+        contentType?: string;
+        statusCode: string;
+      }[]
+    ) => void;
     matches: MatchesFn;
   };
-  'query-parameter': { matches: MatchesFn };
-  'path-parameter': { matches: MatchesFn };
-  'header-parameter': { matches: MatchesFn };
-  response: { matches: MatchesFn };
-  'response-header': { matches: MatchesFn };
+  'query-parameter': {};
+  'path-parameter': {};
+  'header-parameter': {};
+  response: {
+    hasResponseHeaderMatching: (
+      name: string,
+      structure: any,
+      options?: {
+        strict?: boolean;
+      }
+    ) => void;
+  };
+  'response-header': {};
   'request-body': { matches: MatchesFn };
   'response-body': { matches: MatchesFn };
-  property: { matches: MatchesFn };
+  property: {};
 };
 
 export type Assertion<T extends AssertionType> = (
@@ -144,7 +165,7 @@ export type RequestAssertions = {
   property: Assertions<'property'>;
 };
 
-export type ResponseAssertions = {
+export type ResponseAssertions = Assertions<'response'> & {
   header: Assertions<'response-header'>;
 };
 
