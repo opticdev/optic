@@ -835,6 +835,111 @@ Array [
 ]
 `;
 
+exports[`breaking changes ruleset root request body type change 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "type": "object",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": "not change request property type",
+    "docsLink": undefined,
+    "error": "expected request body property to not change type",
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent request property type changes",
+    "passed": false,
+    "where": "changed request with content-type: application/json in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`breaking changes ruleset root response body type change 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "contentType": "application/json",
+          "flatSchema": Object {
+            "type": "number",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": "not change response property type",
+    "docsLink": undefined,
+    "error": "expected response body property to not change type",
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent response property type changes",
+    "passed": false,
+    "where": "changed response status code: 200 with content-type: application/json  in operation: GET /api/users",
+  },
+]
+`;
+
 exports[`breaking changes ruleset valid changes 1`] = `
 Array [
   Object {

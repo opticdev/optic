@@ -506,6 +506,61 @@ describe('breaking changes ruleset', () => {
     expect(results.some((result) => !result.passed)).toBe(true);
   });
 
+  test('root request body type change', () => {
+    const beforeJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      id: {
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            responses: {},
+          },
+        },
+      },
+    };
+    const afterJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+            responses: {},
+          },
+        },
+      },
+    };
+    const results = TestHelpers.runRulesWithInputs(
+      [new BreakingChangesRuleset()],
+      beforeJson,
+      afterJson
+    );
+    expect(results.length > 0).toBe(true);
+
+    expect(results).toMatchSnapshot();
+    expect(results.some((result) => !result.passed)).toBe(true);
+  });
+
   test('response property removed', () => {
     const beforeJson: OpenAPIV3.Document = {
       ...TestHelpers.createEmptySpec(),
@@ -703,6 +758,60 @@ describe('breaking changes ruleset', () => {
     expect(results).toMatchSnapshot();
     expect(results.some((result) => !result.passed)).toBe(true);
   });
+
+  test('root response body type change', () => {
+    const beforeJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {
+              '200': {
+                description: 'response',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'number',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const afterJson: OpenAPIV3.Document = {
+      ...TestHelpers.createEmptySpec(),
+      paths: {
+        '/api/users': {
+          get: {
+            responses: {
+              '200': {
+                description: 'response',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const results = TestHelpers.runRulesWithInputs(
+      [new BreakingChangesRuleset()],
+      beforeJson,
+      afterJson
+    );
+    expect(results.length > 0).toBe(true);
+
+    expect(results).toMatchSnapshot();
+    expect(results.some((result) => !result.passed)).toBe(true);
+  });
 });
 
 describe('breaking change ruleset configuration', () => {
@@ -732,9 +841,9 @@ describe('breaking change ruleset configuration', () => {
     };
     const results = TestHelpers.runRulesWithInputs(
       [
-        new BreakingChangesRuleset(
-          (context) => context.operation.method !== 'post'
-        ),
+        new BreakingChangesRuleset({
+          matches: (context) => context.operation.method !== 'post',
+        }),
       ],
       beforeJson,
       afterJson

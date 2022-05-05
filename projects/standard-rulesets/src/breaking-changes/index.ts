@@ -20,7 +20,12 @@ const breakingChangeRules: Rule[] = [
 ];
 
 export class BreakingChangesRuleset extends Ruleset {
-  constructor(matches?: Ruleset['matches']) {
+  constructor(
+    config: {
+      matches?: Ruleset['matches'];
+    } = {}
+  ) {
+    const { matches } = config;
     super({
       name: 'Breaking changes ruleset',
       matches,
