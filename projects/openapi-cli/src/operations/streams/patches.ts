@@ -18,7 +18,9 @@ export class OperationPatches {
       for (let patch of patches) {
         if (!OperationPatch.isAddition(patch)) continue;
 
-        operation = OperationPatch.applyTo(patch, operation);
+        operation = OperationPatch.applyTo(patch, operation).expect(
+          'operation patch should apply to operation'
+        );
         yield patch;
       }
     }

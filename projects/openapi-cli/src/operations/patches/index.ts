@@ -5,7 +5,8 @@ import {
   PatchOperationGroup,
   PatchOperation,
 } from '../../patches';
-import JsonPatch from 'fast-json-patch';
+import JsonPatch, { JsonPatchError } from 'fast-json-patch';
+import { Result, Ok, Err } from 'ts-results';
 
 export type { PatchOperation };
 export { PatchOperationGroup, PatchImpact };
@@ -35,14 +36,22 @@ export class OperationPatch {
   static applyTo(
     patch: OperationPatch,
     operation: Operation | null
-  ): Operation {
-    const result = JsonPatch.applyPatch(
-      operation,
-      [...OperationPatch.operations(patch)],
-      undefined,
-      false // don't mutate the original schema
-    );
+  ): Result<Operation, JsonPatchError> {
+    try {
+      const result = JsonPatch.applyPatch(
+        operation,
+        [...OperationPatch.operations(patch)],
+        true, // validate ops so we get useful error messages
+        false // don't mutate the original schema
+      );
 
-    return result.newDocument!;
+      return Ok(result.newDocument!);
+    } catch (err) {
+      if (err instanceof JsonPatchError) {
+        return Err(err);
+      } else {
+        throw err;
+      }
+    }
   }
 }
