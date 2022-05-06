@@ -1,8 +1,8 @@
 import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
-import { RuleRunner } from '../rule-runner';
+import { Matchers, RuleRunner } from '../rule-runner';
 import { ResponseRule } from '../rules';
-import { createRuleInputs } from './helpers';
+import { createRuleInputs } from '../test-helpers';
 
 describe('ResponseRule', () => {
   describe('matches', () => {
@@ -89,6 +89,81 @@ describe('ResponseRule', () => {
         '/paths/~1api~1users~1{userId}/get/responses/400/headers/isgood'
       );
       // }
+    });
+  });
+
+  describe('assertion helpers', () => {
+    const ruleRunner = new RuleRunner([
+      new ResponseRule({
+        name: 'request',
+        rule: (responseAssertions) => {
+          responseAssertions.requirement.hasResponseHeaderMatching('isgood', {
+            description: Matchers.string,
+          });
+        },
+      }),
+    ]);
+
+    test('passing assertion', () => {
+      const json: OpenAPIV3.Document = {
+        ...defaultEmptySpec,
+        paths: {
+          '/api/users': {
+            get: {
+              responses: {
+                '200': {
+                  description: 'hello',
+                  headers: { isgood: { description: 'hello', schema: {} } },
+                  content: {
+                    'application/xml': {
+                      schema: {},
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+      const results = ruleRunner.runRulesWithFacts(
+        createRuleInputs(json, json)
+      );
+      expect(results.length > 0).toBe(true);
+      expect(results).toMatchSnapshot();
+      for (const result of results) {
+        expect(result.passed).toBe(true);
+      }
+    });
+
+    test('failing assertion', () => {
+      const json: OpenAPIV3.Document = {
+        ...defaultEmptySpec,
+        paths: {
+          '/api/users': {
+            get: {
+              responses: {
+                '200': {
+                  description: 'hello',
+                  headers: { isnotgood: { description: 'hello', schema: {} } },
+                  content: {
+                    'application/xml': {
+                      schema: {},
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+      const results = ruleRunner.runRulesWithFacts(
+        createRuleInputs(json, json)
+      );
+      expect(results.length > 0).toBe(true);
+      expect(results).toMatchSnapshot();
+      for (const result of results) {
+        expect(result.passed).toBe(false);
+      }
     });
   });
 

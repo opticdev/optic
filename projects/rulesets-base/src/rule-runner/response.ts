@@ -9,15 +9,17 @@ import {
   getRuleAliases,
 } from './utils';
 
-import { Ruleset, ResponseRule } from '../rules';
+import { Rule, Ruleset, ResponseRule } from '../rules';
 import {
   assertionLifecycleToText,
   AssertionResult,
   createResponseAssertions,
 } from './assertions';
-import { Rule, Operation, Response } from '../types';
+import { Operation, Response } from '../types';
 
-const getResponseRules = (rules: Rule[]): (ResponseRule & RulesetData)[] => {
+const getResponseRules = (
+  rules: (Ruleset | Rule)[]
+): (ResponseRule & RulesetData)[] => {
   const responseRule: (ResponseRule & RulesetData)[] = [];
   for (const ruleOrRuleset of rules) {
     if (ruleOrRuleset instanceof ResponseRule) {
@@ -46,6 +48,27 @@ const getResponseRules = (rules: Rule[]): (ResponseRule & RulesetData)[] => {
 
   return responseRule;
 };
+
+const createResponseResult = (
+  assertionResult: AssertionResult,
+  response: Response,
+  operation: Operation,
+  rule: ResponseRule
+): Result => ({
+  where: `${assertionLifecycleToText(
+    assertionResult.type
+  )} response status code: ${
+    response.statusCode
+  } in operation: ${operation.method.toUpperCase()} ${operation.path}`,
+  isMust: true,
+  change: assertionResult.changeOrFact,
+  name: rule.name,
+  condition: assertionResult.condition,
+  passed: assertionResult.passed,
+  error: assertionResult.error,
+  docsLink: rule.docsLink,
+  isShould: false,
+});
 
 const createResponseHeaderResult = (
   assertionResult: AssertionResult,
@@ -79,7 +102,8 @@ export const runResponseRules = ({
 }: {
   operation: EndpointNode;
   response: ResponseNode;
-  rules: Rule[];
+  rules: (Ruleset | Rule)[];
+
   customRuleContext: any;
   beforeApiSpec: OpenAPIV3.Document;
   afterApiSpec: OpenAPIV3.Document;
@@ -102,6 +126,18 @@ export const runResponseRules = ({
         (!responseRule.matches ||
           responseRule.matches(beforeResponse, beforeRulesContext))
       ) {
+        results.push(
+          ...responseAssertions
+            .runBefore(beforeResponse, response.change)
+            .map((assertionResult) =>
+              createResponseResult(
+                assertionResult,
+                beforeResponse,
+                beforeOperation,
+                responseRule
+              )
+            )
+        );
         for (const [key, header] of beforeResponse.headers.entries()) {
           const headerChange = response.headers.get(key)?.change || null;
 
@@ -141,6 +177,18 @@ export const runResponseRules = ({
         (!responseRule.matches ||
           responseRule.matches(afterResponse, afterRulesContext))
       ) {
+        results.push(
+          ...responseAssertions
+            .runAfter(maybeBeforeResponse, afterResponse, response.change)
+            .map((assertionResult) =>
+              createResponseResult(
+                assertionResult,
+                afterResponse,
+                afterOperation,
+                responseRule
+              )
+            )
+        );
         for (const [key, header] of afterResponse.headers.entries()) {
           const maybeBeforeHeader =
             maybeBeforeResponse?.headers.get(key) || null;

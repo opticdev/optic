@@ -1,3 +1,17 @@
+export class Matcher {
+  constructor(private matcher: (value: any) => boolean) {}
+
+  match(value: any): boolean {
+    return this.matcher(value);
+  }
+}
+
+export const Matchers = {
+  string: new Matcher((value) => typeof value === 'string'),
+  boolean: new Matcher((value) => typeof value === 'boolean'),
+  number: new Matcher((value) => typeof value === 'number'),
+};
+
 function setEquals<T>(as: Set<T>, bs: Set<T>): boolean {
   if (as.size !== bs.size) return false;
   for (var a of as) if (!bs.has(a)) return false;
@@ -30,8 +44,6 @@ const arraysMatcher = (
     }
   }
 
-  // TODO implement a check that each matched index can only be used once
-
   return [...referenceMatchResults.values()].every(
     (matchedIndices) => matchedIndices.length > 0
   );
@@ -45,8 +57,9 @@ export const valuesMatcher = (
   strict: boolean = false
 ): boolean => {
   // handle null / array
-  if (reference === null || typeof reference !== 'object') {
-    // TODO implement some sort of matcher block here for generic "strings" or other primitives
+  if (reference instanceof Matcher) {
+    return reference.match(objectToMatch);
+  } else if (reference === null || typeof reference !== 'object') {
     return reference === objectToMatch;
   } else if (Array.isArray(reference)) {
     return (

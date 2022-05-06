@@ -1,7 +1,7 @@
 {
   "name": "openapi-workspaces",
   "private": true,
-  "version": "0.24.20",
+  "version": "0.24.21",
   "workspaces": [
     "projects/json-pointer-helpers",
     "projects/openapi-io",
@@ -11,6 +11,7 @@
     "projects/rulesets-base",
     "projects/snyk-rules",
     "projects/optic-ci",
-    "projects/openapi-cli"
+    "projects/openapi-cli",
+    "projects/standard-rulesets"
   ]
 }

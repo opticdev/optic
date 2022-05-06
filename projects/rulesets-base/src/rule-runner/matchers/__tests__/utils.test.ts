@@ -1,4 +1,4 @@
-import { valuesMatcher } from '../utils';
+import { valuesMatcher, Matcher, Matchers } from '../utils';
 import { exampleJsonSpec } from './petstore.base';
 
 describe('valuesMatcher', () => {
@@ -65,6 +65,63 @@ describe('valuesMatcher', () => {
         security: [{ petstore_auth: ['read:pets'] }],
       };
       expect(valuesMatcher(reference, valueToMatch)).toBe(true);
+    });
+  });
+
+  describe('custom matchers', () => {
+    test('string', () => {
+      const valueToMatch = exampleJsonSpec.info;
+      const reference = {
+        termsOfService: Matchers.string,
+      };
+      expect(valuesMatcher(reference, valueToMatch)).toBe(true);
+
+      const nonMatchedReference = {
+        version: Matchers.string,
+      };
+      expect(valuesMatcher(nonMatchedReference, valueToMatch)).toBe(false);
+    });
+
+    test('boolean', () => {
+      const valueToMatch = exampleJsonSpec.info;
+      const reference = {
+        published: Matchers.boolean,
+      };
+      expect(valuesMatcher(reference, valueToMatch)).toBe(true);
+
+      const nonMatchedReference = {
+        termsOfService: Matchers.boolean,
+      };
+      expect(valuesMatcher(nonMatchedReference, valueToMatch)).toBe(false);
+    });
+
+    test('number', () => {
+      const valueToMatch = exampleJsonSpec.info;
+      const reference = {
+        version: Matchers.number,
+      };
+      expect(valuesMatcher(reference, valueToMatch)).toBe(true);
+
+      const nonMatchedReference = {
+        termsOfService: Matchers.number,
+      };
+      expect(valuesMatcher(nonMatchedReference, valueToMatch)).toBe(false);
+    });
+
+    test('custom implementation', () => {
+      const urlMatcher = new Matcher(
+        (value: any) => typeof value === 'string' && /^https?/i.test(value)
+      );
+      const valueToMatch = exampleJsonSpec.info;
+      const reference = {
+        termsOfService: urlMatcher,
+      };
+      expect(valuesMatcher(reference, valueToMatch)).toBe(true);
+
+      const nonMatchedReference = {
+        description: urlMatcher,
+      };
+      expect(valuesMatcher(nonMatchedReference, valueToMatch)).toBe(false);
     });
   });
 

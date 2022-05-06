@@ -2,7 +2,7 @@ import { defaultEmptySpec, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
 import { RuleRunner } from '../rule-runner';
 import { ResponseBodyRule } from '../rules';
-import { createRuleInputs } from './helpers';
+import { createRuleInputs } from '../test-helpers';
 
 describe('ResponseBodyRule', () => {
   describe('matches', () => {
@@ -510,6 +510,109 @@ describe('ResponseBodyRule', () => {
         for (const result of results) {
           expect(result.passed).toBe(false);
         }
+      });
+    });
+
+    describe('custom matchers', () => {
+      describe('matches', () => {
+        const ruleRunner = new RuleRunner([
+          new ResponseBodyRule({
+            name: 'request type',
+            rule: (responseAssertions) => {
+              responseAssertions.body.added.matches({
+                schema: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'string',
+                    },
+                  },
+                },
+              });
+            },
+          }),
+        ]);
+        test('passing assertion', () => {
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {
+                    '200': {
+                      description: '',
+                      content: {
+                        'application/json': {
+                          schema: {
+                            type: 'object',
+                            properties: {
+                              id: {
+                                type: 'string',
+                              },
+                              name: {
+                                type: 'string',
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(defaultEmptySpec, json)
+          );
+          expect(results.length > 0).toBe(true);
+
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(true);
+          }
+        });
+
+        test('failing assertion', () => {
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {
+                    '200': {
+                      description: '',
+                      content: {
+                        'application/json': {
+                          schema: {
+                            type: 'object',
+                            properties: {
+                              notid: {
+                                type: 'string',
+                              },
+                              name: {
+                                type: 'string',
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(defaultEmptySpec, json)
+          );
+          expect(results.length > 0).toBe(true);
+
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(false);
+          }
+        });
       });
     });
   });
