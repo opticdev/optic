@@ -10,11 +10,16 @@ import { Result, Ok, Err } from 'ts-results';
 
 export type { PatchOperation };
 export { PatchOperationGroup, PatchImpact };
+import { diffOperationPatchGenerators } from './generators';
 
 export function* generateOperationPatchesByDiff(
   diff: OperationDiffResult,
   operation: Operation
-): IterableIterator<OperationPatch> {}
+): IterableIterator<OperationPatch> {
+  for (let generator of diffOperationPatchGenerators) {
+    yield* generator(diff, operation);
+  }
+}
 
 export interface OperationPatch {
   description: string;
