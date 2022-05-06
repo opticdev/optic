@@ -2,7 +2,7 @@ import { JsonSchemaSourcemap, isYaml } from '@useoptic/openapi-io';
 import { PatchOperation } from '../../patches';
 import { applyPatch } from './reconcilers';
 
-export type SpecFilesSourcemap = JsonSchemaSourcemap;
+export { JsonSchemaSourcemap as SpecFilesSourcemap };
 
 export interface SpecFile {
   path: string;

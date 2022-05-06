@@ -7,7 +7,9 @@ import {
   SpecFacts,
   SpecFile,
   SpecFileOperation,
+  OpenAPIV3,
   readDeferencedSpec,
+  SpecFilesSourcemap,
 } from '../specs';
 import { DocumentedBodies, ShapePatches, SchemaObject } from '../shapes';
 import {
@@ -179,7 +181,8 @@ export async function updateByExample(specPath: string): Promise<
 }
 
 export async function updateByInteractions(
-  specPath: string,
+  spec: OpenAPIV3.Document,
+  sourcemap: SpecFilesSourcemap,
   interactions: CapturedInteractions
 ): Promise<
   Result<
@@ -190,14 +193,6 @@ export async function updateByInteractions(
     string
   >
 > {
-  const absoluteSpecPath = Path.resolve(specPath);
-  if (!(await fs.pathExists(absoluteSpecPath))) {
-    return Err('OpenAPI specification file could not be found');
-  }
-
-  const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
-    absoluteSpecPath
-  );
   const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
 
   const patches = SpecPatches.fromInteractions(interactions, spec);

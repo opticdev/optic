@@ -7,8 +7,8 @@ export { OpenAPIV3 } from '@useoptic/openapi-utilities';
 export type SpecLocation = ShapeLocation; // TODO: add union of all conceptual locations
 
 // files
-export { SpecFile } from './files';
-export type { SpecFilesSourcemap, SpecFileOperation } from './files';
+export { SpecFile, SpecFilesSourcemap } from './files';
+export type { SpecFileOperation } from './files';
 
 // patches and operations
 export { SpecPatch } from './patches';
