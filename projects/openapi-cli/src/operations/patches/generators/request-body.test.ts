@@ -28,9 +28,44 @@ describe('requestBodyPatches', () => {
     expect(patches).toMatchSnapshot();
 
     for (let patch of patches) {
-      let result = OperationPatch.applyTo(patch, operationWithoutRequestBody);
+      let patchedOperation = OperationPatch.applyTo(
+        patch,
+        operationWithoutRequestBody
+      ).expect('operation patch should apply to operation');
 
-      result.expect('operation patch should apply to operation');
+      expect(patchedOperation).toMatchSnapshot();
+    }
+  });
+
+  it('generates a patch for a missing request body', () => {
+    const operationWithRequestBody = operationFixture({
+      content: {
+        'application/json': {},
+      },
+      required: true,
+    });
+
+    const requestWithoutBody = interactionFixture(null);
+
+    let [diff] = [
+      ...diffInteractionByOperation(
+        requestWithoutBody,
+        operationWithRequestBody
+      ),
+    ];
+    expect(diff.kind).toBe(OperationDiffResultKind.MissingRequestBody);
+
+    let patches = [...requestBodyPatches(diff, operationWithRequestBody)];
+    expect(patches).toHaveLength(1);
+    expect(patches).toMatchSnapshot();
+
+    for (let patch of patches) {
+      let patchedOperation = OperationPatch.applyTo(
+        patch,
+        operationWithRequestBody
+      ).expect('operation patch should apply to operation');
+
+      expect(patchedOperation).toMatchSnapshot();
     }
   });
 });

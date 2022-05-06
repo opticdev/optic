@@ -1,5 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`requestBodyPatches generates a patch for a missing request body 1`] = `
+Array [
+  Object {
+    "description": "make request body optional",
+    "groupedOperations": Array [
+      Object {
+        "intent": "make request body optional",
+        "operations": Array [
+          Object {
+            "op": "replace",
+            "path": "/requestBody/required",
+            "value": false,
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+  },
+]
+`;
+
+exports[`requestBodyPatches generates a patch for a missing request body 2`] = `
+Object {
+  "method": "post",
+  "pathPattern": "/some-path",
+  "requestBody": Object {
+    "content": Object {
+      "application/json": Object {},
+    },
+    "required": false,
+  },
+  "responses": Object {},
+}
+`;
+
 exports[`requestBodyPatches generates a patch for an unspecified request body 1`] = `
 Array [
   Object {
@@ -34,4 +72,17 @@ Array [
     ],
   },
 ]
+`;
+
+exports[`requestBodyPatches generates a patch for an unspecified request body 2`] = `
+Object {
+  "method": "post",
+  "pathPattern": "/some-path",
+  "requestBody": Object {
+    "content": Object {
+      "application/json": Object {},
+    },
+  },
+  "responses": Object {},
+}
 `;
