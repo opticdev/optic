@@ -68,6 +68,61 @@ describe('requestBodyPatches', () => {
       expect(patchedOperation).toMatchSnapshot();
     }
   });
+
+  it('generates a patch for a unmatched request body content type', () => {
+    const operationWithJsonBody = operationFixture({
+      content: {
+        'application/json': {},
+      },
+      required: true,
+    });
+
+    const csvRequest = interactionFixture(
+      CapturedBody.from('item1,item2', 'text/csv')
+    );
+
+    let [diff] = [
+      ...diffInteractionByOperation(csvRequest, operationWithJsonBody),
+    ];
+    expect(diff.kind).toBe(OperationDiffResultKind.UnmatchedRequestBody);
+
+    let patches = [...requestBodyPatches(diff, operationWithJsonBody)];
+    expect(patches).toHaveLength(1);
+    expect(patches).toMatchSnapshot();
+
+    for (let patch of patches) {
+      let patchedOperation = OperationPatch.applyTo(
+        patch,
+        operationWithJsonBody
+      ).expect('operation patch should apply to operation');
+
+      expect(patchedOperation).toMatchSnapshot();
+    }
+  });
+
+  it('does not generate new patches for captured bodies with an unknown content type', () => {
+    const operationWithJsonBody = operationFixture({
+      content: {
+        'application/json': {},
+      },
+      required: true,
+    });
+
+    const missingContentTypeRequest = interactionFixture(
+      CapturedBody.from('test-body')
+    );
+
+    let [diff] = [
+      ...diffInteractionByOperation(
+        missingContentTypeRequest,
+        operationWithJsonBody
+      ),
+    ];
+    expect(diff.kind).toBe(OperationDiffResultKind.UnmatchedRequestBody);
+
+    let patches = [...requestBodyPatches(diff, operationWithJsonBody)];
+    expect(patches).toHaveLength(0);
+  });
 });
 
 function operationFixture(

@@ -65,7 +65,7 @@ function* unmatchedRequestBodyPatches(
   );
 
   yield {
-    description: `add body for content type '${contentType}' as a valid request body type`,
+    description: `add '${contentType}' body as a valid request body type`,
     impact: [PatchImpact.Addition, PatchImpact.BackwardsCompatible],
     groupedOperations,
   };
