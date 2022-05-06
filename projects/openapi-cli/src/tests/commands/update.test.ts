@@ -53,7 +53,7 @@ describe('update command', () => {
   describe('update by interactions', () => {
     it('can generate updated spec files for new request bodies', async () => {
       const spec = specFixture({
-        '/examples/1': {
+        '/examples/{exampleId}': {
           [HttpMethods.POST]: {
             responses: {},
           },
@@ -63,7 +63,7 @@ describe('update command', () => {
 
       const interactions = [
         interactionFixture(
-          '/examples/1',
+          '/examples/3',
           HttpMethods.POST,
           CapturedBody.fromJSON({ id: 'an-id' }, 'application/json')
         ),
