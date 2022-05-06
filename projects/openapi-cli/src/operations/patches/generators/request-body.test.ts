@@ -34,6 +34,13 @@ describe('requestBodyPatches', () => {
       ).expect('operation patch should apply to operation');
 
       expect(patchedOperation).toMatchSnapshot();
+
+      expect([
+        ...diffInteractionByOperation(
+          interactionWithRequestBody,
+          patchedOperation
+        ),
+      ]).toHaveLength(0);
     }
   });
 
@@ -66,6 +73,10 @@ describe('requestBodyPatches', () => {
       ).expect('operation patch should apply to operation');
 
       expect(patchedOperation).toMatchSnapshot();
+
+      expect([
+        ...diffInteractionByOperation(requestWithoutBody, patchedOperation),
+      ]).toHaveLength(0);
     }
   });
 
@@ -97,6 +108,9 @@ describe('requestBodyPatches', () => {
       ).expect('operation patch should apply to operation');
 
       expect(patchedOperation).toMatchSnapshot();
+      expect([
+        ...diffInteractionByOperation(csvRequest, patchedOperation),
+      ]).toHaveLength(0);
     }
   });
 
@@ -132,7 +146,11 @@ function operationFixture(
     requestBody,
     method: HttpMethods.POST,
     pathPattern: '/some-path',
-    responses: {},
+    responses: {
+      '200': {
+        description: 'success',
+      },
+    },
   };
 }
 

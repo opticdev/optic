@@ -33,6 +33,9 @@ describe('responsesPatches', () => {
       );
 
       expect(patchedOperation).toMatchSnapshot();
+      expect([
+        ...diffInteractionByOperation(unspecifiedResponse, patchedOperation),
+      ]).toHaveLength(0);
     }
   });
 
@@ -66,6 +69,9 @@ describe('responsesPatches', () => {
       );
 
       expect(patchedOperation).toMatchSnapshot();
+      expect([
+        ...diffInteractionByOperation(unspecifiedResponse, patchedOperation),
+      ]).toHaveLength(0);
     }
   });
 
@@ -94,6 +100,9 @@ describe('responsesPatches', () => {
       );
 
       expect(patchedOperation).toMatchSnapshot();
+      expect([
+        ...diffInteractionByOperation(emptyResponse, patchedOperation),
+      ]).toHaveLength(0);
     }
   });
 });

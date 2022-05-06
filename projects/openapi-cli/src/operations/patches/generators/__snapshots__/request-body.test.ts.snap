@@ -34,7 +34,11 @@ Object {
     },
     "required": false,
   },
-  "responses": Object {},
+  "responses": Object {
+    "200": Object {
+      "description": "success",
+    },
+  },
 }
 `;
 
@@ -73,7 +77,11 @@ Object {
     },
     "required": true,
   },
-  "responses": Object {},
+  "responses": Object {
+    "200": Object {
+      "description": "success",
+    },
+  },
 }
 `;
 
@@ -122,6 +130,10 @@ Object {
       "application/json": Object {},
     },
   },
-  "responses": Object {},
+  "responses": Object {
+    "200": Object {
+      "description": "success",
+    },
+  },
 }
 `;
