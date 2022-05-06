@@ -156,6 +156,449 @@ Array [
 ]
 `;
 
+exports[`OperationRule assertions custom matchers hasHeaderParameterMatching failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "have parameter matching shape",
+    "docsLink": undefined,
+    "error": "Could not find a partial match in header parameters",
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": false,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasHeaderParameterMatching passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "have parameter matching shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasPathParameterMatching failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "have parameter matching shape",
+    "docsLink": undefined,
+    "error": "Could not find a partial match in path parameters",
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": false,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasPathParameterMatching passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "have parameter matching shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasQueryParameterMatching failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "have parameter matching shape",
+    "docsLink": undefined,
+    "error": "Could not find a partial match in query parameters",
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": false,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasQueryParameterMatching passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "have parameter matching shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasRequests failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "method": "get",
+          "operationId": "get-users",
+          "pathPattern": "/api/users",
+        },
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "have requests with content-type",
+    "docsLink": undefined,
+    "error": "Operation does not have request with content-type application/json",
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": false,
+    "where": "changed operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasRequests passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "method": "get",
+          "operationId": "get-users",
+          "pathPattern": "/api/users",
+        },
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "have requests with content-type",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "where": "changed operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasResponses failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "removed": Object {
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+    },
+    "condition": "have responses",
+    "docsLink": undefined,
+    "error": "Operation does not have response with content-type application/json for status code 400 ",
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": false,
+    "where": "removed operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasResponses passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "removed": Object {
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+    },
+    "condition": "have responses",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "where": "removed operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers matches failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "match expected shape",
+    "docsLink": undefined,
+    "error": "Expected a partial match.
+      
+      Expected value:
+      {
+  \\"description\\": {}
+}
+      
+      Received value:
+      {
+  \\"responses\\": {}
+}",
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": false,
+    "where": "added operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers matches passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "where": "added operation: GET /api/users",
+  },
+]
+`;
+
 exports[`OperationRule assertions removed failing assertion 1`] = `
 Array [
   Object {
@@ -683,7 +1126,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": false,
-    "where": "added header parameter: new-param in operation: GET /api/users",
+    "where": "added path parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -725,7 +1168,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": true,
-    "where": "added header parameter: new-param in operation: GET /api/users",
+    "where": "added path parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -773,7 +1216,7 @@ Array [
     "isShould": false,
     "name": "optional to required parameter",
     "passed": false,
-    "where": "changed header parameter: new-param in operation: GET /api/users",
+    "where": "changed path parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -821,7 +1264,7 @@ Array [
     "isShould": false,
     "name": "optional to required parameter",
     "passed": true,
-    "where": "changed header parameter: new-param in operation: GET /api/users",
+    "where": "changed path parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -948,7 +1391,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": false,
-    "where": "requirement for header parameter: hello in operation: GET /api/users",
+    "where": "requirement for path parameter: hello in operation: GET /api/users",
   },
 ]
 `;
@@ -989,7 +1432,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": true,
-    "where": "requirement for header parameter: hello in operation: GET /api/users",
+    "where": "requirement for path parameter: hello in operation: GET /api/users",
   },
 ]
 `;
@@ -1030,7 +1473,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": false,
-    "where": "added header parameter: new-param in operation: GET /api/users",
+    "where": "added query parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -1072,7 +1515,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": true,
-    "where": "added header parameter: new-param in operation: GET /api/users",
+    "where": "added query parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -1120,7 +1563,7 @@ Array [
     "isShould": false,
     "name": "optional to required parameter",
     "passed": false,
-    "where": "changed header parameter: new-param in operation: GET /api/users",
+    "where": "changed query parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -1168,7 +1611,7 @@ Array [
     "isShould": false,
     "name": "optional to required parameter",
     "passed": true,
-    "where": "changed header parameter: new-param in operation: GET /api/users",
+    "where": "changed query parameter: new-param in operation: GET /api/users",
   },
 ]
 `;
@@ -1295,7 +1738,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": false,
-    "where": "requirement for header parameter: hello in operation: GET /api/users",
+    "where": "requirement for query parameter: hello in operation: GET /api/users",
   },
 ]
 `;
@@ -1336,7 +1779,7 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": true,
-    "where": "requirement for header parameter: hello in operation: GET /api/users",
+    "where": "requirement for query parameter: hello in operation: GET /api/users",
   },
 ]
 `;

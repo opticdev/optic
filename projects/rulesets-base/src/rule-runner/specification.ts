@@ -8,16 +8,15 @@ import {
   createEmptyRuleContext,
 } from './utils';
 
-import { Ruleset, SpecificationRule } from '../rules';
+import { Rule, Ruleset, SpecificationRule } from '../rules';
 import {
   createSpecificationAssertions,
   AssertionResult,
   assertionLifecycleToText,
 } from './assertions';
-import { Rule } from '../types';
 
 const getSpecificationRules = (
-  rules: Rule[]
+  rules: (Ruleset | Rule)[]
 ): (SpecificationRule & RulesetData)[] => {
   const specificationRules: (SpecificationRule & RulesetData)[] = [];
   for (const ruleOrRuleset of rules) {
@@ -71,7 +70,7 @@ export const runSpecificationRules = ({
   afterApiSpec,
 }: {
   specification: NodeDetail<OpenApiKind.Specification>;
-  rules: Rule[];
+  rules: (Ruleset | Rule)[];
   customRuleContext: any;
   beforeApiSpec: OpenAPIV3.Document;
   afterApiSpec: OpenAPIV3.Document;

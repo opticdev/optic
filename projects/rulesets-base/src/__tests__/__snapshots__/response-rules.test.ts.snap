@@ -1,5 +1,83 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ResponseRule assertion helpers failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200",
+        "kind": "response",
+      },
+      "value": Object {
+        "description": "hello",
+        "statusCode": "200",
+      },
+    },
+    "condition": "have response header matching shape",
+    "docsLink": undefined,
+    "error": "Could not find a partial match in header parameters",
+    "isMust": true,
+    "isShould": false,
+    "name": "request",
+    "passed": false,
+    "where": "requirement for response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseRule assertion helpers passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200",
+        "kind": "response",
+      },
+      "value": Object {
+        "description": "hello",
+        "statusCode": "200",
+      },
+    },
+    "condition": "have response header matching shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request",
+    "passed": true,
+    "where": "requirement for response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
 exports[`ResponseRule header assertions added failing assertion 1`] = `
 Array [
   Object {

@@ -2,7 +2,7 @@ import { defaultEmptySpec } from '@useoptic/openapi-utilities';
 import { RuleError } from '../errors';
 import { RuleRunner } from '../rule-runner';
 import { SpecificationRule } from '../rules';
-import { createRuleInputs } from './helpers';
+import { createRuleInputs } from '../test-helpers';
 
 describe('SpecificationRule', () => {
   describe('requirement', () => {

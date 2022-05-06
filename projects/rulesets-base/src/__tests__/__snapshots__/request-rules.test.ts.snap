@@ -188,6 +188,119 @@ Array [
 ]
 `;
 
+exports[`RequestRule body assertions custom matchers matches failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "object",
+        },
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": "match expected shape",
+    "docsLink": undefined,
+    "error": "Expected a partial match.
+      
+      Expected value:
+      {
+  \\"schema\\": {
+    \\"type\\": \\"object\\",
+    \\"properties\\": {
+      \\"id\\": {
+        \\"type\\": \\"string\\"
+      }
+    }
+  }
+}
+      
+      Received value:
+      {
+  \\"schema\\": {
+    \\"type\\": \\"object\\",
+    \\"properties\\": {
+      \\"notid\\": {
+        \\"type\\": \\"string\\"
+      },
+      \\"name\\": {
+        \\"type\\": \\"string\\"
+      }
+    }
+  }
+}",
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": false,
+    "where": "added request with content-type: application/json in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`RequestRule body assertions custom matchers matches passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "object",
+        },
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": "match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "where": "added request with content-type: application/json in operation: GET /api/users",
+  },
+]
+`;
+
 exports[`RequestRule body assertions removed failing assertion 1`] = `
 Array [
   Object {

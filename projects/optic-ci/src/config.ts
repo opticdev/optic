@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { Rule } from '@useoptic/rulesets-base';
+import { Rule, Ruleset } from '@useoptic/rulesets-base';
 
 import { OPTIC_CONFIG_PATH } from './constants';
 import { CheckConfiguration } from './checker';
@@ -22,7 +22,7 @@ type OpticConfiguration = {
   };
   // TODO RA-V2 - remove checks
   checks?: CheckConfiguration[];
-  rules?: Rule[];
+  rules?: (Ruleset | Rule)[];
   generateContext?: () => Object;
 };
 

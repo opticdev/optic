@@ -6,10 +6,10 @@ import { runOperationRules } from './operation';
 import { runRequestRules } from './request';
 import { runResponseBodyRules } from './response-body';
 import { runResponseRules } from './response';
-import { Rule } from '../types';
+import { Rule, Ruleset } from '../rules';
 
 export class RuleRunner {
-  constructor(private rules: Rule[]) {}
+  constructor(private rules: (Ruleset | Rule)[]) {}
 
   runRulesWithFacts({
     context,
