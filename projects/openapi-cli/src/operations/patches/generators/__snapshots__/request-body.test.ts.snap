@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`requestBodyPatches generates a patch for an unspecified request body 1`] = `
+Array [
+  Object {
+    "description": "add body for content type 'application/json' as a valid request body type",
+    "groupedOperations": Array [
+      Object {
+        "intent": "add request body to operation",
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/requestBody",
+            "value": Object {
+              "content": Object {},
+            },
+          },
+        ],
+      },
+      Object {
+        "intent": "add application/json as content type",
+        "operations": Array [
+          Object {
+            "op": "add",
+            "path": "/requestBody/content/application~1json",
+            "value": Object {},
+          },
+        ],
+      },
+    ],
+    "impact": Array [
+      "Addition",
+      "BackwardsCompatible",
+    ],
+  },
+]
+`;

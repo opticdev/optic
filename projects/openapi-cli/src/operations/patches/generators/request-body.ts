@@ -2,8 +2,6 @@ import { OperationDiffResult, OperationDiffResultKind } from '../../diffs';
 import { OperationPatch, PatchOperationGroup, PatchImpact } from '..';
 import { Operation } from '../..';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { OpenAPIV3 } from '../../../specs';
-import { OpenAPI } from 'openapi-types';
 
 export function* requestBodyPatches(
   diff: OperationDiffResult,
@@ -50,7 +48,7 @@ function* unmatchedRequestBodyPatches(
     groupedOperations.push(
       PatchOperationGroup.create(`add request body to operation`, {
         op: 'add',
-        path: 'requestBody',
+        path: jsonPointerHelpers.compile(['requestBody']),
         value: {
           content: {},
         },

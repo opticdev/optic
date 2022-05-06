@@ -1,6 +1,5 @@
-import { CapturedInteraction, CapturedInteractions } from '../../../captures';
-import { OperationDiffResult, OperationDiffResultKind } from '../result';
-import { OpenAPIV3 } from '../../../specs';
+import { CapturedInteraction } from '../../../captures';
+import { OperationDiffResult } from '../result';
 
 export interface OperationDiffVisitor<T> {
   (
