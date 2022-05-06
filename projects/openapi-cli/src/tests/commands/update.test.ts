@@ -1,4 +1,4 @@
-import { updateAction } from '../../commands/update';
+import { updateByExample } from '../../commands/update';
 import { collect } from '../../lib/async-tools';
 import Path from 'path';
 
@@ -6,7 +6,7 @@ describe('update command', () => {
   it('will return an error when trying to update and non-existent spec', async () => {
     const path = Path.join(__dirname, 'a-file-that-doesn-exist.yml');
 
-    const results = await updateAction(path);
+    const results = await updateByExample(path);
 
     expect(results.err).toBe(true);
   });
@@ -17,7 +17,7 @@ describe('update command', () => {
       '../../../../openapi-utilities/inputs/openapi3/component-schema-examples.json'
     );
 
-    const results = await updateAction(path);
+    const results = await updateByExample(path);
     const { stats, results: updatedSpecFiles } = results.expect(
       'example spec can be read and processed'
     );
@@ -35,7 +35,7 @@ describe('update command', () => {
       '../../../../openapi-utilities/inputs/openapi3/operation-examples-with-partial-schemas.json'
     );
 
-    const results = await updateAction(path);
+    const results = await updateByExample(path);
     const { stats, results: updatedSpecFiles } = results.expect(
       'example spec can be read and processed'
     );
