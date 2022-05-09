@@ -1,6 +1,8 @@
 import { BodyLocation } from '@useoptic/openapi-utilities';
 import { ShapePatch } from '.';
+import { CapturedBody } from '../captures';
 import { SchemaObject, Schema } from './schema';
+import { Result, Ok, Err } from 'ts-results';
 
 export interface Body {
   contentType?: string;

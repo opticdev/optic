@@ -1,5 +1,6 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
+  BodyLocation,
   BodyExampleLocation,
   ComponentSchemaLocation,
   IFact,
@@ -9,8 +10,10 @@ import { Result, Ok, Err } from 'ts-results';
 
 import { BodyExampleFacts, ComponentSchemaExampleFacts } from '../../specs';
 import { OpenAPIV3 } from '../../specs';
-import { DocumentedBody } from '../body';
+import { Body, DocumentedBody } from '../body';
 import { CapturedBody, CapturedBodies } from '../../captures';
+import { DocumentedInteraction } from '../../operations';
+import { request } from 'http';
 
 export type { DocumentedBody };
 
@@ -91,22 +94,79 @@ export class DocumentedBodies {
     }
   }
 
-  // static async *fromCapturedBodies(
-  //   capturedBodies: CapturedBodies,
-  //   spec: OpenAPIV3.Document
-  // ): AsyncIterable<Result<DocumentedBody, string>> {
-  //   for await (let capturedBody of capturedBodies) {
-  //     let { contentType } = capturedBody;
+  static async *fromDocumentedInteraction({
+    interaction,
+    specJsonPath,
+    operation,
+  }: DocumentedInteraction): AsyncIterable<DocumentedBody> {
+    if (interaction.request.body) {
+      let { contentType } = interaction.request.body;
+      let decodedBodyResult = await decodeCapturedBody(
+        interaction.request.body
+      );
+      if (decodedBodyResult.err) {
+        console.warn(
+          'Could not decode body of captured interaction:',
+          decodedBodyResult.val
+        );
+      } else if (contentType) {
+        let shapeLocation: BodyLocation = {
+          path: operation.pathPattern,
+          method: operation.method,
+          inRequest: {
+            body: {
+              contentType,
+            },
+          },
+        };
 
-  //     if (!contentType || contentType.startsWith('application/json')) {
-  //       let value;
-  //       try {
-  //         value = await CapturedBody.json(capturedBody);
-  //       } catch (err) {
-  //         yield Err('Could not parse captured body as json');
-  //       }
+        let bodyOperationPath = jsonPointerHelpers.compile([
+          'requestBody',
+          'content',
+          contentType,
+        ]);
+        let bodySpecPath = jsonPointerHelpers.join(
+          specJsonPath,
+          bodyOperationPath
+        );
 
-  //     }
-  //   }
-  // }
+        let resolvedSchema = jsonPointerHelpers.tryGet(
+          operation,
+          bodyOperationPath
+        );
+
+        yield {
+          schema: resolvedSchema.match ? resolvedSchema.value : null,
+          body: decodedBodyResult.unwrap(),
+          shapeLocation,
+          specJsonPath: bodySpecPath,
+        };
+      } // consider what to do when there's no content type (happens, as seen in the past)
+    }
+
+    if (interaction.response.body) {
+    }
+
+    let capturedBodies = [];
+  }
+}
+
+async function decodeCapturedBody(
+  capturedBody: CapturedBody
+): Promise<Result<Body, string>> {
+  // parse the interaction bytes
+  let { contentType } = capturedBody;
+
+  if (!contentType || contentType.startsWith('application/json')) {
+    let value;
+    try {
+      value = await CapturedBody.json(capturedBody);
+
+      return Err('todo: implement');
+    } catch (err) {
+      return Err('Could not parse captured body as json');
+    }
+  }
+
+  return Err('Could not decode captured body');
 }
