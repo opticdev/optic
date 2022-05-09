@@ -110,6 +110,9 @@ export class ApiCheckService<Context> {
   // an `oas`, which might be incompatible.
   useSpectralOasRuleset(rules: SpectralRules) {
     const runner = (input: DslConstructorInput<Context>) => {
+      if ((input.nextJsonLike as any)['x-optic-ci-empty-spec'] === true) {
+        return [];
+      }
       const dsl = new SpectralDsl(input.nextJsonLike, input.nextFacts, {
         extends: [[oas as RulesetDefinition, 'all']],
         rules,

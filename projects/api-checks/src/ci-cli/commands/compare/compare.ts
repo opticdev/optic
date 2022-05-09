@@ -5,7 +5,6 @@ import {
   defaultEmptySpec,
   validateOpenApiV3Document,
 } from '@useoptic/openapi-utilities';
-import { ApiCheckService } from '../../../sdk/api-check-service';
 import {
   parseSpecVersion,
   specFromInputToResults,
@@ -20,9 +19,11 @@ import { CliConfig, NormalizedCiContext } from '../../types';
 import { uploadCiRun } from './upload';
 import { sendGithubMessage } from './github-comment';
 import { logComparison } from '../utils/comparison-renderer';
-import path from 'path';
 import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
+import { getRelativeRepoPath } from '../utils/get-relative-path';
+import { inGit } from '@useoptic/openapi-io';
+import { RuleRunner } from '../../../types';
 
 const parseContextObject = (context?: string): any => {
   try {
@@ -41,12 +42,14 @@ export const registerCompare = (
   cli: Command,
   projectName: string,
   rulesetServices: OpticCINamedRulesets,
-  cliConfig: CliConfig
+  cliConfig: CliConfig,
+  generateContext: () => Object
 ) => {
   cli
     .command('compare')
     .option('--from <from>', 'from file or rev:file, defaults empty spec')
     .option('--to <to>', 'to file or rev:file, defaults empty spec')
+    // TODO RA-V2 - remove context as cli arg
     .option('--context <context>', 'json of context')
     .option('--verbose', 'show all checks, even passing', false)
     .option('--ruleset <ruleset>', 'name of ruleset to run', 'default')
@@ -88,7 +91,9 @@ export const registerCompare = (
             );
           }
 
-          const parsedContext = parseContextObject(options.context);
+          const parsedContext = options.context
+            ? parseContextObject(options.context)
+            : generateContext();
           validateUploadRequirements(options.uploadResults, cliConfig);
 
           await runCompare({
@@ -122,7 +127,7 @@ const runCompare = async ({
 }: {
   from?: string;
   to?: string;
-  apiCheckService: ApiCheckService<any>;
+  apiCheckService: RuleRunner;
   context: any;
   uploadResults: boolean;
   ciContext?: string;
@@ -200,6 +205,7 @@ const runCompare = async ({
     const opticClient = createOpticClient(opticToken);
 
     try {
+      const gitRootPath = await inGit(process.cwd());
       const { git_provider, git_api_url } =
         await opticClient.getMyOrganization();
       const uploadOutput = await uploadCiRun(
@@ -208,8 +214,8 @@ const runCompare = async ({
         parsedTo.jsonLike,
         opticClient,
         {
-          from: from ? path.join(process.cwd(), from) : from,
-          to: to ? path.join(process.cwd(), to) : to,
+          from: from ? getRelativeRepoPath(from, gitRootPath) : from,
+          to: to ? getRelativeRepoPath(to, gitRootPath) : to,
         },
         normalizedCiContext
       );

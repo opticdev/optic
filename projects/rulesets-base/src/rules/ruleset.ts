@@ -1,14 +1,22 @@
 import { OperationRule } from './operation-rule';
 import { RequestRule } from './request-rule';
 import { ResponseRule } from './response-rule';
+import { ResponseBodyRule } from './response-body-rule';
 import { SpecificationRule } from './specification-rule';
 import { RuleContext } from '../types';
+
+export type Rule =
+  | SpecificationRule
+  | OperationRule
+  | RequestRule
+  | ResponseRule
+  | ResponseBodyRule;
 
 type RulesetConfig = {
   name: string;
   docsLink?: string;
   matches?: (context: RuleContext) => boolean;
-  rules: (SpecificationRule | OperationRule | RequestRule | ResponseRule)[];
+  rules: Rule[];
 };
 
 export class Ruleset {
@@ -21,9 +29,6 @@ export class Ruleset {
     // this could be invoked via javascript so we still to check
     if (!config.name) {
       throw new Error('Expected a name in Ruleset');
-    }
-    if (!config.matches) {
-      throw new Error('Expected a matches object in Ruleset');
     }
     if (!config.rules) {
       throw new Error('Expected a rules array in Ruleset');

@@ -1,5 +1,4 @@
 import { program as cli } from 'commander';
-import { ApiCheckService } from '../sdk/api-check-service';
 import { registerCompare } from './commands/compare';
 import { registerBulkCompare } from './commands/bulk-compare';
 import { initSentry } from './sentry';
@@ -12,12 +11,14 @@ import {
 } from './commands/create-context/create-github-context';
 import { registerCreateManualContext } from './commands/create-context/create-manual-context';
 import { registerCreateGitlabContext } from './commands/create-context/create-gitlab-context';
+import { RuleRunner } from '../types';
 const packageJson = require('../../package.json');
 
 export function makeCiCliWithNamedRules(
   forProject: string,
   rulesetServices: OpticCINamedRulesets,
-  options: CliConfig = {}
+  options: CliConfig = {},
+  generateContext: () => Object = () => ({})
 ) {
   initSentry(packageJson.version);
   initSegment();
@@ -31,20 +32,28 @@ export function makeCiCliWithNamedRules(
   registerCreateGithubContext(cli);
   registerCreateGitlabContext(cli);
   registerCreateManualContext(cli);
-  registerCompare(cli, forProject, rulesetServices, options);
-  registerBulkCompare(cli, forProject, rulesetServices, options);
+  registerCompare(cli, forProject, rulesetServices, options, generateContext);
+  registerBulkCompare(
+    cli,
+    forProject,
+    rulesetServices,
+    options,
+    generateContext
+  );
 
   return cli;
 }
 
-export function makeCiCli<T>(
+export function makeCiCli(
   forProject: string,
-  checkService: ApiCheckService<T>,
-  options: CliConfig = {}
+  checkService: RuleRunner,
+  options: CliConfig = {},
+  generateContext: () => Object = () => ({})
 ) {
   return makeCiCliWithNamedRules(
     forProject,
     { default: checkService },
-    options
+    options,
+    generateContext
   );
 }

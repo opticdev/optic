@@ -20,80 +20,112 @@ export type Specification = FactVariantWithRaw<OpenApiKind.Specification>;
 export type Operation = FactVariantWithRaw<OpenApiKind.Operation> & {
   path: string;
   method: string;
-  queryParameters: FactVariantWithRaw<OpenApiKind.QueryParameter>[];
-  pathParameters: FactVariantWithRaw<OpenApiKind.PathParameter>[];
-  headerParameters: FactVariantWithRaw<OpenApiKind.HeaderParameter>[];
-  requests: Request[];
-  responses: Response[];
+  queryParameters: Map<string, FactVariantWithRaw<OpenApiKind.QueryParameter>>;
+  pathParameters: Map<string, FactVariantWithRaw<OpenApiKind.PathParameter>>;
+  headerParameters: Map<
+    string,
+    FactVariantWithRaw<OpenApiKind.HeaderParameter>
+  >;
+  requests: RequestBody[];
+  responses: Map<string, Response>;
 };
 
-export type Request = FactVariantWithRaw<OpenApiKind.Request> & {
+export type RequestBody = FactVariantWithRaw<OpenApiKind.Body> & {
   contentType: string;
-  body: FactVariantWithRaw<OpenApiKind.Body>;
-  properties: Field[];
+  properties: Map<string, Field>;
 };
 
 export type Response = FactVariantWithRaw<OpenApiKind.Response> & {
+  statusCode: string;
+  headers: Map<string, FactVariantWithRaw<OpenApiKind.ResponseHeader>>;
+  bodies: ResponseBody[];
+};
+
+export type ResponseBody = FactVariantWithRaw<OpenApiKind.Body> & {
   contentType: string;
   statusCode: string;
-  headers: FactVariantWithRaw<OpenApiKind.ResponseHeader>[];
-  body: FactVariantWithRaw<OpenApiKind.Body>;
-  properties: Field[];
+  properties: Map<string, Field>;
 };
 
 // Assertions
-type AssertionType =
+export type AssertionType =
   | 'specification'
   | 'operation'
   | 'query-parameter'
   | 'path-parameter'
   | 'header-parameter'
-  | 'request'
   | 'response'
   | 'response-header'
-  | 'body'
+  | 'request-body'
+  | 'response-body'
   | 'property';
 
-type AssertionTypeToValue = {
+export type AssertionTypeToValue = {
   specification: Specification;
   operation: Operation;
   'query-parameter': FactVariantWithRaw<OpenApiKind.QueryParameter>;
   'path-parameter': FactVariantWithRaw<OpenApiKind.PathParameter>;
   'header-parameter': FactVariantWithRaw<OpenApiKind.HeaderParameter>;
-  request: Request;
-  response: Response;
   'response-header': FactVariantWithRaw<OpenApiKind.ResponseHeader>;
-  body: FactVariantWithRaw<OpenApiKind.Body>;
+  response: Response;
+  'request-body': RequestBody;
+  'response-body': ResponseBody;
   property: FactVariantWithRaw<OpenApiKind.Field>;
 };
 
-type AssertionTypeToHelpers = {
-  specification: { matches: (structure: any) => void };
+type MatchesFn = (
+  structure: any,
+  options?: {
+    strict?: boolean;
+  }
+) => void;
+export type AssertionTypeToHelpers = {
+  specification: { matches: MatchesFn };
   operation: {
-    hasStatusCodes: (statusCodes: number[]) => void;
-    matches: (structure: any) => void;
+    hasQueryParameterMatching: MatchesFn;
+    hasPathParameterMatching: MatchesFn;
+    hasHeaderParameterMatching: MatchesFn;
+    hasRequests: (
+      requests: {
+        contentType: string;
+      }[]
+    ) => void;
+    hasResponses: (
+      responses: {
+        contentType?: string;
+        statusCode: string;
+      }[]
+    ) => void;
+    matches: MatchesFn;
   };
-  'query-parameter': { matches: (structure: any) => void };
-  'path-parameter': { matches: (structure: any) => void };
-  'header-parameter': { matches: (structure: any) => void };
-  request: { matches: (structure: any) => void };
-  response: { matches: (structure: any) => void };
-  'response-header': { matches: (structure: any) => void };
-  body: {
-    matches: (structure: any) => void;
+  'query-parameter': {};
+  'path-parameter': {};
+  'header-parameter': {};
+  response: {
+    hasResponseHeaderMatching: (
+      name: string,
+      structure: any,
+      options?: {
+        strict?: boolean;
+      }
+    ) => void;
   };
-  property: { matches: (structure: any) => void };
+  'response-header': {};
+  'request-body': { matches: MatchesFn };
+  'response-body': { matches: MatchesFn };
+  property: {};
 };
 
-type Assertion<T extends AssertionType> = (
+export type Assertion<T extends AssertionType> = (
+  condition: string,
   assertion: (value: AssertionTypeToValue[T]) => void
 ) => void;
 
-type ChangedAssertion<T extends AssertionType> = (
+export type ChangedAssertion<T extends AssertionType> = (
+  condition: string,
   assertion: (
     before: AssertionTypeToValue[T],
-    after: AssertionTypeToValue[T],
-    context: RuleContext
+    after: AssertionTypeToValue[T]
   ) => void
 ) => void;
 
@@ -107,18 +139,21 @@ export type Assertions<T extends AssertionType> = {
 export type SpecificationAssertions = Assertions<'specification'>;
 
 export type OperationAssertions = Assertions<'operation'> & {
-  queryParameters: Assertions<'query-parameter'>;
-  pathParameters: Assertions<'path-parameter'>;
-  headerParameters: Assertions<'header-parameter'>;
+  queryParameter: Assertions<'query-parameter'>;
+  pathParameter: Assertions<'path-parameter'>;
+  headerParameter: Assertions<'header-parameter'>;
 };
 
-export type RequestAssertions = Assertions<'request'> & {
-  body: Assertions<'body'>;
+export type RequestAssertions = {
+  body: Assertions<'request-body'>;
   property: Assertions<'property'>;
 };
 
 export type ResponseAssertions = Assertions<'response'> & {
   header: Assertions<'response-header'>;
-  body: Assertions<'body'>;
+};
+
+export type ResponseBodyAssertions = {
+  body: Assertions<'response-body'>;
   property: Assertions<'property'>;
 };

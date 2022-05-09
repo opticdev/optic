@@ -1,79 +1,78 @@
-## Optic CI packaged with standard rules
+## Optic CI
 
-Install
+Installation
 
 ```bash
-npm install -g @useoptic/optic-ci
+npm install -D @useoptic/optic-ci
 ```
 
 ```bash
-yarn global add @useoptic/optic-ci
+yarn add -D @useoptic/optic-ci
 ```
 
-### Catch breaking changes between versions:
+`optic-ci` reads config from the folder it's run from - this is used to configure the changelog, and rules. By signing up for the beta you can get an OPTIC_TOKEN which will allow you to visualize changes between APIs and the rules that your team has defined. 
 
-**Comparing files:**
-
-`optic-ci` always takes two versions of your OpenAPI specification. If you are working in Git you can compare across branches:
-
-```bash
-optic-ci compare --from main:openapi.yaml --to feature/xyz:openapi.yaml
+```javascript
+// optic.config.js
+module.exports = {
+  token: process.env.OPTIC_TOKEN,
+  gitProvider: {
+   token: process.env.GITHUB_TOKEN,
+  },
+}
 ```
 
-When you are just trying to learn how `optic-ci` works, make a copy of your OpenAPI file, make a small change, and run compare on both versions:
+## Standard rulesets
 
-```bash
-optic-ci compare --from openapi-v1.yaml --to openapi-v2.yaml
+Optic comes bundled with standard rulesets ([details here](../standard-rulesets/README.md)). You can install this by running:
+
+```
+npm install -D @useoptic/standard-rulesets
 ```
 
-Give it a try! Make a required response property optional, or add a required query parameter! There are many ways to break an API.
+```
+yarn add -D @useoptic/standard-rulesets
+```
+
+### Catch breaking changes between versions
+
+Turn on breaking changes detection between every API change.
+
+```javascript
+const { BreakingChangesRuleset } = require('@useoptic/standard-rulesets');
+
+module.exports = {
+  // optic.config.js
+  ...
+  rules: [
+    new BreakingChangesRuleset()
+  ],
+}
+```
 
 ### Apply your team's naming checks
 
-`optic-ci` ships with the ability to enforce standard naming rules. Add the rules to your `optic.config.js` to tell Optic about your team's casing strategy. An example of this is:
+Turn on breaking changes detection between every API change.
 
-```js
-// optic.config.js
+```javascript
+const { NamingChangesRuleset } = require('@useoptic/standard-rulesets');
+
 module.exports = {
-  checks: [
-    { name: 'optic-breaking-changes' }, // on by default
-    {
-      name: 'optic-named-checks',
-      config: {
-        requestHeaders: {
-          rule: 'snake_case',
-          applies: 'always',
-        },
-        queryParameters: {
-          rule: 'snake_case',
-          applies: 'always',
-        },
-        requestProperties: {
-          rule: 'snake_case',
-          applies: 'always',
-        },
-        responseProperties: {
-          rule: 'snake_case',
-          applies: 'always',
-        },
-        responseHeaders: {
-          rule: 'snake_case',
-          applies: 'always',
-        },
-      },
-    },
+  // optic.config.js
+  ...
+  rules: [
+    new NamingChangesRuleset({
+      applies: 'always', // also available: 'added' | 'addedOrChanged'
+      options: { // valid formats are: 'camelCase' | 'Capital-Param-Case' | 'param-case' | 'PascalCase' | 'snake_case'
+        properties: 'camelCase',
+        queryParameters: 'camelCase',
+        requestHeaders: 'camelCase',
+        responseHeaders: 'camelCase',
+      }
+    })
   ],
-};
+}
 ```
-
-Rule options: `camelCase` | `PascalCase` | `snake_case` | `param-case` | `none`.
-Applies options: `whenAdded` | `always` | `whenAddedOrChanged`.
-
-Optic understands that if you suddenly turn on naming rules for a legacy API, it will fail on a lot of existing surface area. This is not helpful because changing those names is a breaking change.
-
-We suggest users also set `applyNamingRules: whenAdded` so that these rules only fail if improperly named surface area is added to the API (ie it governs new endpoints, fields, headers, etc but not old ones). If you want it to fail everywhere (not suggested), you can set it to `always`.
-
-Give it a try -- add a name that does not follow the standard!
 
 ### Join the beta!
 

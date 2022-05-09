@@ -7,8 +7,6 @@ import {
   validateOpenApiV3Document,
   ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
-import { ParseOpenAPIResult } from '@useoptic/openapi-io';
-import { ApiCheckService } from '../../../sdk/api-check-service';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import {
   loadFile,
@@ -28,12 +26,14 @@ import { sendBulkGithubMessage } from './bulk-github-comment';
 import { sendBulkGitlabMessage } from './bulk-gitlab-comment';
 import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
+import { RuleRunner } from '../../../types';
 
 export const registerBulkCompare = (
   cli: Command,
   projectName: string,
   rulesetServices: OpticCINamedRulesets,
-  cliConfig: CliConfig
+  cliConfig: CliConfig,
+  generateContext: () => Object = () => ({})
 ) => {
   cli
     .command('bulk-compare')
@@ -96,6 +96,7 @@ export const registerBulkCompare = (
             ciContext,
             projectName,
             cliConfig,
+            generateContext,
           });
           process.exit(0);
         }
@@ -106,7 +107,6 @@ export const registerBulkCompare = (
 type ComparisonData = {
   changes: IChange[];
   results: ResultWithSourcemap[];
-  projectRootDir: string | false;
   version: string;
 };
 
@@ -125,7 +125,9 @@ type Comparison = {
     }
 );
 
-const loadSpecFile = async (fileName?: string): Promise<ParseOpenAPIResult> => {
+const loadSpecFile = async (
+  fileName?: string
+): Promise<ReturnType<typeof specFromInputToResults>> => {
   return specFromInputToResults(
     parseSpecVersion(fileName, defaultEmptySpec),
     process.cwd()
@@ -140,7 +142,7 @@ const compareSpecs = async ({
   onComparisonComplete,
   onComparisonError,
 }: {
-  checkService: ApiCheckService<any>;
+  checkService: RuleRunner;
   comparisons: Map<string, Comparison>;
   onComparisonComplete: (id: string, data: ComparisonData) => void;
   onComparisonError: (id: string, error: any) => void;
@@ -171,19 +173,17 @@ const compareSpecs = async ({
           validateOpenApiV3Document(from.jsonLike);
           validateOpenApiV3Document(to.jsonLike);
 
-          const { results, changes, projectRootDir, version } =
-            await generateSpecResults(
-              checkService,
-              from,
-              to,
-              comparison.context
-            );
+          const { results, changes, version } = await generateSpecResults(
+            checkService,
+            from,
+            to,
+            comparison.context
+          );
           resolve({
             id,
             data: {
               results,
               changes,
-              projectRootDir,
               version,
             },
           });
@@ -211,7 +211,8 @@ const compareSpecs = async ({
 };
 
 export const parseJsonComparisonInput = async (
-  input: string
+  input: string,
+  generateContext: () => Object
 ): Promise<{
   comparisons: Map<string, Comparison>;
   skippedParsing: boolean;
@@ -222,22 +223,14 @@ export const parseJsonComparisonInput = async (
     const output = JSON.parse(fileOutput.toString());
     const initialComparisons: Map<string, Comparison> = new Map();
     for (const comparison of output.comparisons || []) {
-      if (!comparison.context) {
-        console.log(
-          `Comparison doesn't match expected format, found: ${JSON.stringify(
-            comparison
-          )}`
-        );
-        skippedParsing = true;
-        continue;
-      }
       const id = uuidv4();
 
       initialComparisons.set(id, {
         id,
         fromFileName: comparison.from,
         toFileName: comparison.to,
-        context: comparison.context,
+        // TODO RA-V2 - remove context as argument for bulk input
+        context: comparison.context || generateContext(),
         loading: true,
       });
     }
@@ -258,8 +251,9 @@ const runBulkCompare = async ({
   uploadResults,
   ciContext,
   cliConfig,
+  generateContext,
 }: {
-  checkService: ApiCheckService<any>;
+  checkService: RuleRunner;
   input: string;
   verbose: boolean;
   projectName: string;
@@ -267,6 +261,7 @@ const runBulkCompare = async ({
   uploadResults: boolean;
   ciContext?: string;
   cliConfig: CliConfig;
+  generateContext: () => Object;
 }) => {
   console.log('Reading input file...');
   let numberOfErrors = 0;
@@ -281,7 +276,7 @@ const runBulkCompare = async ({
   }
 
   const { comparisons: initialComparisons, skippedParsing } =
-    await parseJsonComparisonInput(input);
+    await parseJsonComparisonInput(input, generateContext);
 
   console.log(`Bulk comparing ${initialComparisons.size} comparisons`);
   const finalComparisons = new Map(initialComparisons);
@@ -387,7 +382,6 @@ const runBulkCompare = async ({
       return {
         results: comparison.data.results,
         changes: comparison.data.changes,
-        projectRootDir: comparison.data.projectRootDir,
         version: comparison.data.version,
         inputs: {
           from: comparison.fromFileName,

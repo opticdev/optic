@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import { Rule, Ruleset } from '@useoptic/rulesets-base';
 
 import { OPTIC_CONFIG_PATH } from './constants';
 import { CheckConfiguration } from './checker';
@@ -10,9 +11,8 @@ import { CheckConfiguration } from './checker';
  *  gitProvider: {
  *    token: process.env.GITHUB_TOKEN,
  *  },
- * checks: [
- *
- * ]
+ * rules: [],
+ * generateContext: () => ({})
  */
 
 type OpticConfiguration = {
@@ -20,7 +20,10 @@ type OpticConfiguration = {
   gitProvider?: {
     token: string;
   };
+  // TODO RA-V2 - remove checks
   checks?: CheckConfiguration[];
+  rules?: (Ruleset | Rule)[];
+  generateContext?: () => Object;
 };
 
 const findOpticConfigPath = (dir: string): string | null => {

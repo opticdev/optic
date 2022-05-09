@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/openapi-utilities",
-  "version": "0.24.13",
+  "version": "0.24.21",
   "packageManager": "yarn@3.0.2",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -22,7 +22,6 @@
     "@types/js-yaml": "^4.0.5",
     "@types/lodash.sortby": "^4.7.6",
     "@types/node": "^17.0.15",
-    "@useoptic/openapi-io": "workspace:*",
     "babel-jest": "^27.5.1",
     "fs-extra": "^10.0.0",
     "jest": "^27.5.1",

@@ -1,36 +1,42 @@
-import {
-  ParseOpenAPIResult,
-  sourcemapReader,
-  inGit,
-} from '@useoptic/openapi-io';
+import { ParseOpenAPIResult, sourcemapReader } from '@useoptic/openapi-io';
 import {
   factsToChangelog,
-  OpenApiFact,
   IChange,
   ResultWithSourcemap,
   ChangeType,
+  OpenAPIV3,
+  IFact,
+  OpenAPITraverser,
 } from '@useoptic/openapi-utilities';
-import { ApiCheckService } from '../../../sdk/api-check-service';
+import { RuleRunner } from '../../../types';
 
 const packageJson = require('../../../../package.json');
 
-export const generateSpecResults = async <T extends {}>(
-  checkService: ApiCheckService<T>,
-  from: ParseOpenAPIResult,
-  to: ParseOpenAPIResult,
+const traverseSpec = (jsonSpec: OpenAPIV3.Document): IFact[] => {
+  const currentTraverser = new OpenAPITraverser();
+
+  currentTraverser.traverse(jsonSpec);
+
+  return [...currentTraverser.facts()];
+};
+
+export const generateSpecResults = async (
+  checkService: RuleRunner,
+  from: ParseOpenAPIResult & { isEmptySpec: boolean },
+  to: ParseOpenAPIResult & { isEmptySpec: boolean },
   context: any
 ): Promise<{
   changes: IChange[];
   results: ResultWithSourcemap[];
-  projectRootDir: string | false;
   version: string;
 }> => {
-  const fromJsonLike = from.jsonLike!;
-  const toJsonLike = to.jsonLike!;
-  const { currentFacts, nextFacts } = checkService.generateFacts(
-    fromJsonLike,
-    toJsonLike
-  );
+  const fromJsonLike = from.jsonLike;
+  const toJsonLike = to.jsonLike;
+  // If we have an empty spec, the facts should be [] - we keep the jsonLike values
+  // in order to have a standard typing - we mainly use facts here to make assertions
+  const currentFacts = from.isEmptySpec ? [] : traverseSpec(fromJsonLike);
+  const nextFacts = to.isEmptySpec ? [] : traverseSpec(toJsonLike);
+
   const { findFileAndLines: findFileAndLinesFromBefore } = sourcemapReader(
     from.sourcemap
   );
@@ -54,11 +60,12 @@ export const generateSpecResults = async <T extends {}>(
     })
   );
 
+  // TODO RA-V2 - remove the await from checkservice running
   const results = await checkService.runRulesWithFacts({
     currentJsonLike: fromJsonLike,
     nextJsonLike: toJsonLike,
-    currentFacts,
-    nextFacts,
+    currentFacts: currentFacts,
+    nextFacts: nextFacts,
     changelog: changes,
     context,
   });
@@ -67,6 +74,7 @@ export const generateSpecResults = async <T extends {}>(
     results.map(async (result) => {
       return {
         ...result,
+        // TODO RA-V2 - don't redo sourcemap generation
         // Ok this is stupid that we need to recalculate the change - but there's some code somewhere stripping out the change.sourcemap
         // and I can't figure out where - it's also really concerning that we're allowing user run code to strip our functional code here
         sourcemap: await findFileAndLinesFromAfter(
@@ -78,7 +86,6 @@ export const generateSpecResults = async <T extends {}>(
   return {
     changes: changesWithSourcemap,
     results: resultsWithSourcemap,
-    projectRootDir: await inGit(process.cwd()),
     version: packageJson.version,
   };
 };

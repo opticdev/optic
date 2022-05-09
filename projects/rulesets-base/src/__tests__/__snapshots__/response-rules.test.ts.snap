@@ -1,0 +1,480 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ResponseRule assertion helpers failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200",
+        "kind": "response",
+      },
+      "value": Object {
+        "description": "hello",
+        "statusCode": "200",
+      },
+    },
+    "condition": "have response header matching shape",
+    "docsLink": undefined,
+    "error": "Could not find a partial match in header parameters",
+    "isMust": true,
+    "isShould": false,
+    "name": "request",
+    "passed": false,
+    "where": "requirement for response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseRule assertion helpers passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200",
+        "kind": "response",
+      },
+      "value": Object {
+        "description": "hello",
+        "statusCode": "200",
+      },
+    },
+    "condition": "have response header matching shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request",
+    "passed": true,
+    "where": "requirement for response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseRule header assertions added failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "name": "isnotsogood",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "isnotsogood",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "isnotsogood",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isnotsogood",
+        "kind": "response-header",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": "header does not have \`description\`",
+    "isMust": true,
+    "isShould": false,
+    "name": "response header type",
+    "passed": false,
+    "where": "added response header: isnotsogood in response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseRule header assertions added passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "yes",
+        "name": "isgood",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "isgood",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "isgood",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isgood",
+        "kind": "response-header",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "response header type",
+    "passed": true,
+    "where": "added response header: isgood in response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseRule header assertions changed failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "description": "yes",
+          "name": "isgood",
+          "required": true,
+        },
+        "before": Object {
+          "description": "yes",
+          "name": "isgood",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "isgood",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "isgood",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isgood",
+        "kind": "response-header",
+      },
+    },
+    "condition": "must not make header optional -> required",
+    "docsLink": undefined,
+    "error": "must not make header optional -> required",
+    "isMust": true,
+    "isShould": false,
+    "name": "header required type",
+    "passed": false,
+    "where": "changed response header: isgood in response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseRule header assertions changed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "description": "yes",
+          "name": "isgood",
+        },
+        "before": Object {
+          "description": "yes",
+          "name": "isgood",
+          "required": true,
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "isgood",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "isgood",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isgood",
+        "kind": "response-header",
+      },
+    },
+    "condition": "must not make header optional -> required",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "header required type",
+    "passed": true,
+    "where": "changed response header: isgood in response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseRule header assertions does not get double called for each body 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "isgood",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "isgood",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isgood",
+        "kind": "response-header",
+      },
+      "value": Object {
+        "description": "yes",
+        "name": "isgood",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "response header type",
+    "passed": true,
+    "where": "requirement for response header: isgood in response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseRule header assertions removed failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "isgood",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "isgood",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isgood",
+        "kind": "response-header",
+      },
+      "removed": Object {
+        "before": Object {
+          "description": "yes",
+          "name": "isgood",
+          "required": true,
+        },
+      },
+    },
+    "condition": "cannot remove required header",
+    "docsLink": undefined,
+    "error": "cannot remove required header",
+    "isMust": true,
+    "isShould": false,
+    "name": "response header removal",
+    "passed": false,
+    "where": "removed response header: isgood in response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseRule header assertions removed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "isgood",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "isgood",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isgood",
+        "kind": "response-header",
+      },
+      "removed": Object {
+        "before": Object {
+          "description": "yes",
+          "name": "isgood",
+        },
+      },
+    },
+    "condition": "cannot remove required header",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "response header removal",
+    "passed": true,
+    "where": "removed response header: isgood in response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseRule header assertions requirement failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "isnotsogood",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "isnotsogood",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isnotsogood",
+        "kind": "response-header",
+      },
+      "value": Object {
+        "name": "isnotsogood",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": "header does not have \`description\`",
+    "isMust": true,
+    "isShould": false,
+    "name": "response header type",
+    "passed": false,
+    "where": "requirement for response header: isnotsogood in response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseRule header assertions requirement passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "header": "isgood",
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "headers",
+          "isgood",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/headers/isgood",
+        "kind": "response-header",
+      },
+      "value": Object {
+        "description": "yes",
+        "name": "isgood",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "response header type",
+    "passed": true,
+    "where": "requirement for response header: isgood in response status code: 200 in operation: GET /api/users",
+  },
+]
+`;

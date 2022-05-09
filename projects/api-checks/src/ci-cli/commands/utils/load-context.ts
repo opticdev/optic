@@ -31,6 +31,12 @@ export async function loadCiContext(
     // TODO also allow users to specify the paths - also requires validation
     try {
       const contextFileBuffer = await loadFile(DEFAULT_CONTEXT_PATH);
+      console.log(
+        `Found context file from default path ${path.join(
+          process.cwd(),
+          DEFAULT_CONTEXT_PATH
+        )}`
+      );
       normalizedCiContext = JSON.parse(contextFileBuffer.toString());
     } catch (e) {
       console.error(e);
