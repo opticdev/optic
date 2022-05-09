@@ -12,7 +12,7 @@ dotenv.config({
 
 module.exports = {
   token: process.env.OPTIC_TOKEN,
-  provider: {
+  gitProvider: {
     token: process.env.GITHUB_TOKEN,
   },
   rules: [
