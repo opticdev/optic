@@ -621,3 +621,34 @@ Array [
   },
 ]
 `;
+
+exports[`update command update by interactions wont generate duplicate patches for multiple interactions for the same operations 1`] = `
+Array [
+  Object {
+    "contents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/examples/{exampleId}\\": {
+      \\"post\\": {
+        \\"responses\\": {
+          \\"200\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          }
+        },
+        \\"requestBody\\": {
+          \\"content\\": {
+            \\"application/json\\": {}
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}",
+    "path": "/tmp/test-openapi.json",
+  },
+]
+`;

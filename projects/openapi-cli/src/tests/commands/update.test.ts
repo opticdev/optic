@@ -84,6 +84,45 @@ describe('update command', () => {
       expect(specFiles).toHaveLength(1);
       expect(specFiles).toMatchSnapshot();
     });
+
+    it('wont generate duplicate patches for multiple interactions for the same operations', async () => {
+      const spec = specFixture({
+        '/examples/{exampleId}': {
+          [HttpMethods.POST]: {
+            responses: {},
+          },
+        },
+      });
+      const sourcemap = sourcemapFixture(spec);
+
+      const interactions = [
+        interactionFixture(
+          '/examples/3',
+          HttpMethods.POST,
+          CapturedBody.fromJSON({ id: 'an-id' }, 'application/json')
+        ),
+        interactionFixture(
+          '/examples/4',
+          HttpMethods.POST,
+          CapturedBody.fromJSON({ id: 'another-id' }, 'application/json')
+        ),
+      ];
+
+      const results = await updateByInteractions(
+        spec,
+        sourcemap,
+        from(interactions)
+      );
+
+      const { stats, results: updatedSpecFiles } = results.expect(
+        'example spec can be updated'
+      );
+
+      let specFiles = await collect(updatedSpecFiles);
+
+      expect(specFiles).toHaveLength(1);
+      expect(specFiles).toMatchSnapshot();
+    });
   });
 });
 
