@@ -75,11 +75,10 @@ export const generateSpecResults = async (
       return {
         ...result,
         // TODO RA-V2 - don't redo sourcemap generation
-        // Ok this is stupid that we need to recalculate the change - but there's some code somewhere stripping out the change.sourcemap
-        // and I can't figure out where - it's also really concerning that we're allowing user run code to strip our functional code here
-        sourcemap: await findFileAndLinesFromAfter(
-          result.change.location.jsonPath
-        ),
+        sourcemap:
+          (result.change as any).changeType === ChangeType.Removed
+            ? await findFileAndLinesFromBefore(result.change.location.jsonPath)
+            : await findFileAndLinesFromAfter(result.change.location.jsonPath),
       };
     })
   );
