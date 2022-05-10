@@ -51,7 +51,7 @@ describe('update command', () => {
   });
 
   describe('update by interactions', () => {
-    it('can generate updated spec files for new request bodies', async () => {
+    it('generates updated spec files for new request bodies', async () => {
       const spec = specFixture({
         '/examples/{exampleId}': {
           [HttpMethods.POST]: {
@@ -85,7 +85,7 @@ describe('update command', () => {
       expect(specFiles).toMatchSnapshot();
     });
 
-    it('wont generate duplicate patches for multiple interactions for the same operations', async () => {
+    it('generate patches for multiple interactions for the same operations', async () => {
       const spec = specFixture({
         '/examples/{exampleId}': {
           [HttpMethods.POST]: {
@@ -109,6 +109,105 @@ describe('update command', () => {
           HttpMethods.POST,
           CapturedBody.fromJSON({ id: 'another-id' }, 'application/json')
         ),
+      ];
+
+      const results = await updateByInteractions(
+        spec,
+        sourcemap,
+        from(interactions)
+      );
+
+      const { stats, results: updatedSpecFiles } = results.expect(
+        'example spec can be updated'
+      );
+
+      let specFiles = await collect(updatedSpecFiles);
+
+      expect(specFiles).toHaveLength(1);
+      expect(specFiles).toMatchSnapshot();
+    });
+
+    it('generates patches for response bodies', async () => {
+      const spec = specFixture({
+        '/examples/{exampleId}': {
+          [HttpMethods.POST]: {
+            responses: {},
+          },
+          [HttpMethods.DELETE]: {
+            responses: {},
+          },
+        },
+      });
+      const sourcemap = sourcemapFixture(spec);
+
+      const interactions = [
+        interactionFixture(
+          '/examples/3',
+          HttpMethods.POST,
+          null,
+          '201',
+          CapturedBody.fromJSON(
+            { id: 'an-id', optionalField: 123 },
+            'application/json'
+          )
+        ),
+        interactionFixture(
+          '/examples/4',
+          HttpMethods.POST,
+          null,
+          '201',
+          CapturedBody.fromJSON({ id: 'another-id' }, 'application/json')
+        ),
+        interactionFixture(
+          '/examples/4',
+          HttpMethods.POST,
+          null,
+          '400',
+          CapturedBody.fromJSON(
+            { error: 'an error message' },
+            'application/json'
+          )
+        ),
+        interactionFixture(
+          '/examples/4',
+          HttpMethods.DELETE,
+          null,
+          '204',
+          null
+        ),
+      ];
+
+      const results = await updateByInteractions(
+        spec,
+        sourcemap,
+        from(interactions)
+      );
+
+      const { stats, results: updatedSpecFiles } = results.expect(
+        'example spec can be updated'
+      );
+
+      let specFiles = await collect(updatedSpecFiles);
+
+      expect(specFiles).toHaveLength(1);
+      expect(specFiles).toMatchSnapshot();
+    });
+
+    it('ignores interactions for undocumented operations', async () => {
+      const spec = specFixture({
+        '/examples/{exampleId}': {
+          [HttpMethods.POST]: {
+            responses: {},
+          },
+        },
+      });
+      const sourcemap = sourcemapFixture(spec);
+
+      const interactions = [
+        interactionFixture('/examples/3', HttpMethods.POST),
+        interactionFixture('/examples/4', HttpMethods.POST),
+        interactionFixture('/examples/4', HttpMethods.DELETE),
+        interactionFixture('/examples', HttpMethods.POST),
       ];
 
       const results = await updateByInteractions(
