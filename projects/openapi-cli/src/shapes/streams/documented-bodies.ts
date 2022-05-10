@@ -129,9 +129,14 @@ export class DocumentedBodies {
           bodyOperationPath
         );
 
+        let expectedSchemaPath = jsonPointerHelpers.append(
+          bodyOperationPath,
+          'schema'
+        );
+
         let resolvedSchema = jsonPointerHelpers.tryGet(
           operation,
-          bodyOperationPath
+          expectedSchemaPath
         );
 
         yield {
@@ -183,9 +188,13 @@ export class DocumentedBodies {
           bodyOperationPath
         );
 
+        let expectedSchemaPath = jsonPointerHelpers.append(
+          bodyOperationPath,
+          'schema'
+        );
         let resolvedSchema = jsonPointerHelpers.tryGet(
           operation,
-          bodyOperationPath
+          expectedSchemaPath
         );
 
         yield {
