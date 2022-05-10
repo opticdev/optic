@@ -6,6 +6,7 @@ import {
   QueryParameterLocation,
   PathParameterLocation,
   HeaderParameterLocation,
+  CookieParameterLocation,
   ResponseHeaderLocation,
   ResponseLocation,
   RequestLocation,
@@ -26,6 +27,7 @@ export {
   QueryParameterLocation,
   PathParameterLocation,
   HeaderParameterLocation,
+  CookieParameterLocation,
   ResponseHeaderLocation,
   ResponseLocation,
   RequestLocation,
@@ -106,6 +108,7 @@ export type OpenApiKindToFact = {
   [OpenApiKind.QueryParameter]: OpenApiRequestParameterFact;
   [OpenApiKind.PathParameter]: OpenApiRequestParameterFact;
   [OpenApiKind.HeaderParameter]: OpenApiRequestParameterFact;
+  [OpenApiKind.CookieParameter]: OpenApiRequestParameterFact;
   [OpenApiKind.ResponseHeader]: OpenApiHeaderFact;
   [OpenApiKind.Response]: OpenApiResponseFact;
   [OpenApiKind.Body]: OpenApiBodyFact;

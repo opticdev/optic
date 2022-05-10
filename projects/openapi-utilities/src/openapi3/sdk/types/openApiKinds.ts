@@ -5,6 +5,7 @@ export enum OpenApiKind {
   QueryParameter = 'query-parameter',
   PathParameter = 'path-parameter',
   HeaderParameter = 'header-parameter',
+  CookieParameter = 'cookie-parameter',
   ResponseHeader = 'response-header',
   Response = 'response',
   Body = 'body',
