@@ -14,15 +14,11 @@ export function* visitResponses(
 
   if (!responseMatch) {
     const statusCode = parseInt(capturedResponse.statusCode, 10);
-    if (statusCode >= 200 && statusCode < 500) {
-      // TODO: consider whether this range check should be on the patching side,
-      // as that's where we want to control what to patch. the diff is factually correct, right?
-      yield {
-        kind: OperationDiffResultKind.UnmatchedResponseStatusCode,
-        statusCode: capturedResponse.statusCode,
-        contentType: capturedResponse.body?.contentType || null,
-      };
-    }
+    yield {
+      kind: OperationDiffResultKind.UnmatchedResponseStatusCode,
+      statusCode: capturedResponse.statusCode,
+      contentType: capturedResponse.body?.contentType || null,
+    };
 
     return; // no response, no more to diff
   }

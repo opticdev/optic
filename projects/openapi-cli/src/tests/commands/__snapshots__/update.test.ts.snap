@@ -848,6 +848,38 @@ Array [
 ]
 `;
 
+exports[`update command update by interactions only generates patches for 2xx, 3xx and 4xx responses 1`] = `
+Array [
+  Object {
+    "contents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/examples/{exampleId}\\": {
+      \\"post\\": {
+        \\"responses\\": {
+          \\"201\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          },
+          \\"302\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          },
+          \\"400\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}",
+    "path": "/tmp/test-openapi.json",
+  },
+]
+`;
+
 exports[`update command update by interactions only generates patches for request bodies with 2xx and 3xx responses 1`] = `
 Array [
   Object {

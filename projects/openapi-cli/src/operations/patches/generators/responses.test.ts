@@ -39,6 +39,24 @@ describe('responsesPatches', () => {
     }
   });
 
+  it('does not generate a patch for an unspecified response status code other than 2xx, 3xx or 4xx', () => {
+    const operation = operationFixture({
+      '200': {
+        description: 'success',
+      },
+    });
+
+    const unspecifiedResponse = interactionFixture('500', null);
+
+    let [diff] = [
+      ...diffInteractionByOperation(unspecifiedResponse, operation),
+    ];
+    expect(diff.kind).toBe(OperationDiffResultKind.UnmatchedResponseStatusCode);
+
+    let patches = [...responsesPatches(diff, operation)];
+    expect(patches).toHaveLength(0);
+  });
+
   it('generates a patch for an unspecified response body', () => {
     const operation = operationFixture({
       '200': {
@@ -110,11 +128,9 @@ describe('responsesPatches', () => {
 function operationFixture(
   responses: OpenAPIV3.ResponsesObject = {}
 ): Operation {
-  return {
-    method: HttpMethods.POST,
-    pathPattern: '/some-path',
+  return Operation.fromOperationObject('/some-path', HttpMethods.POST, {
     responses,
-  };
+  });
 }
 
 function interactionFixture(

@@ -156,7 +156,13 @@ export class DocumentedBodies {
       } // TODO: consider what to do when there's no content type (happens, as seen in the past)
     }
 
-    if (interaction.response.body) {
+    if (
+      interaction.response.body &&
+      capturedStatusCode >= 200 &&
+      capturedStatusCode < 500
+    ) {
+      // TODO: consider whether this belongs here, and not in something more specific to patches
+      // (as it decides basically what and what not to generate patches for  from)
       let { contentType } = interaction.response.body;
       let matchedResponse = findResponse(
         operation,

@@ -391,6 +391,40 @@ describe('update command', () => {
       expect(specFiles).toHaveLength(1);
       expect(specFiles).toMatchSnapshot();
     });
+
+    it('only generates patches for 2xx, 3xx and 4xx responses', async () => {
+      const spec = specFixture({
+        '/examples/{exampleId}': {
+          [HttpMethods.POST]: {
+            responses: {},
+          },
+        },
+      });
+      const sourcemap = sourcemapFixture(spec);
+
+      const interactions = [
+        interactionFixture('/examples/3', HttpMethods.POST, null, '101'),
+        interactionFixture('/examples/3', HttpMethods.POST, null, '201'),
+        interactionFixture('/examples/3', HttpMethods.POST, null, '302'),
+        interactionFixture('/examples/3', HttpMethods.POST, null, '400'),
+        interactionFixture('/examples/3', HttpMethods.DELETE, null, '500'),
+      ];
+
+      const results = await updateByInteractions(
+        spec,
+        sourcemap,
+        from(interactions)
+      );
+
+      const { stats, results: updatedSpecFiles } = results.expect(
+        'example spec can be updated'
+      );
+
+      let specFiles = await collect(updatedSpecFiles);
+
+      expect(specFiles).toHaveLength(1);
+      expect(specFiles).toMatchSnapshot();
+    });
   });
 });
 
