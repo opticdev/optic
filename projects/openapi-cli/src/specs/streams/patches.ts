@@ -116,16 +116,12 @@ export class SpecPatches {
       const documentedBodies = DocumentedBodies.fromDocumentedInteraction(
         documentedInteraction
       );
-      const bodyPatches = SpecPatches.fromDocumentedBodies(documentedBodies);
+      const bodySpectPatches =
+        SpecPatches.fromDocumentedBodies(documentedBodies);
 
-      for await (let patch of bodyPatches) {
-        const specPatch = SpecPatch.fromOperationPatch(
-          patch,
-          documentedInteraction.specJsonPath
-        );
-
-        patchedSpec = SpecPatch.applyPatch(specPatch, patchedSpec);
-        yield specPatch;
+      for await (let patch of bodySpectPatches) {
+        patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
+        yield patch;
       }
 
       spec = patchedSpec;
