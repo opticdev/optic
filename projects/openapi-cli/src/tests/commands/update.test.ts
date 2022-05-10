@@ -225,6 +225,121 @@ describe('update command', () => {
       expect(specFiles).toHaveLength(1);
       expect(specFiles).toMatchSnapshot();
     });
+
+    it('generates patches to extend existing request or response bodies', async () => {
+      const spec = specFixture({
+        '/examples/{exampleId}': {
+          [HttpMethods.POST]: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      id: {
+                        type: 'string',
+                      },
+                    },
+                    required: ['id'],
+                  },
+                },
+              },
+            },
+            responses: {
+              '201': {
+                description: 'created resource',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'string',
+                        },
+                      },
+                      required: ['id'],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+      const sourcemap = sourcemapFixture(spec);
+
+      const interactions = [
+        interactionFixture(
+          '/examples/3',
+          HttpMethods.POST,
+          CapturedBody.fromJSON(
+            {
+              id: 'an-id',
+              newField: 123,
+              optionalBoolean: true,
+            },
+            'application/json'
+          ),
+          '201',
+          CapturedBody.fromJSON(
+            { id: 'an-id', newField: 123 },
+            'application/json'
+          )
+        ),
+        interactionFixture(
+          '/examples/3',
+          HttpMethods.POST,
+          CapturedBody.fromJSON(
+            {
+              id: 'an-id',
+              newField: 123,
+            },
+            'application/json'
+          ),
+          '201',
+          CapturedBody.fromJSON(
+            {
+              id: 'an-id',
+              newField: 123,
+              optionalBoolean: true,
+            },
+            'application/json'
+          )
+        ),
+        // interactionFixture(
+        //   '/examples/3',
+        //   HttpMethods.POST,
+        //   CapturedBody.fromJSON(
+        //     {
+        //       id: 'an-id',
+        //     },
+        //     'application/json'
+        //   ),
+        //   '400',
+        //   CapturedBody.fromJSON(
+        //     {
+        //       error: 'missing field newField',
+        //     },
+        //     'application/json'
+        //   )
+        // ),
+      ];
+
+      const results = await updateByInteractions(
+        spec,
+        sourcemap,
+        from(interactions)
+      );
+
+      const { stats, results: updatedSpecFiles } = results.expect(
+        'example spec can be updated'
+      );
+
+      let specFiles = await collect(updatedSpecFiles);
+
+      expect(specFiles).toHaveLength(1);
+      expect(specFiles).toMatchSnapshot();
+    });
   });
 });
 

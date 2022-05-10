@@ -706,6 +706,79 @@ Array [
 ]
 `;
 
+exports[`update command update by interactions generates patches to extend existing request or response bodies 1`] = `
+Array [
+  Object {
+    "contents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/examples/{exampleId}\\": {
+      \\"post\\": {
+        \\"requestBody\\": {
+          \\"content\\": {
+            \\"application/json\\": {
+              \\"schema\\": {
+                \\"type\\": \\"object\\",
+                \\"properties\\": {
+                  \\"id\\": {
+                    \\"type\\": \\"string\\"
+                  },
+                  \\"newField\\": {
+                    \\"type\\": \\"number\\"
+                  },
+                  \\"optionalBoolean\\": {
+                    \\"type\\": \\"boolean\\"
+                  }
+                },
+                \\"required\\": [
+                  \\"id\\",
+                  \\"newField\\"
+                ]
+              }
+            }
+          }
+        },
+        \\"responses\\": {
+          \\"201\\": {
+            \\"description\\": \\"created resource\\",
+            \\"content\\": {
+              \\"application/json\\": {
+                \\"schema\\": {
+                  \\"type\\": \\"object\\",
+                  \\"properties\\": {
+                    \\"id\\": {
+                      \\"type\\": \\"string\\"
+                    },
+                    \\"newField\\": {
+                      \\"type\\": \\"number\\"
+                    },
+                    \\"optionalBoolean\\": {
+                      \\"type\\": \\"boolean\\"
+                    }
+                  },
+                  \\"required\\": [
+                    \\"id\\",
+                    \\"newField\\",
+                    \\"optionalBoolean\\"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}",
+    "path": "/tmp/test-openapi.json",
+  },
+]
+`;
+
 exports[`update command update by interactions generates updated spec files for new request bodies 1`] = `
 Array [
   Object {
