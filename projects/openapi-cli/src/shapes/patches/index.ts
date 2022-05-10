@@ -2,9 +2,13 @@ import { ShapeLocation } from '../body';
 import { ShapeDiffResult } from '../diffs';
 import { SchemaObject, Schema } from '../schema';
 
-import { PatchImpact, OperationGroup, Operation } from '../../patches';
+import {
+  PatchImpact,
+  PatchOperationGroup,
+  PatchOperation,
+} from '../../patches';
 
-export { PatchImpact, OperationGroup };
+export { PatchImpact, PatchOperationGroup as OperationGroup };
 
 import { diffShapePatchGenerators, newSchemaPatch } from './generators';
 
@@ -23,13 +27,13 @@ export { newSchemaPatch };
 export interface ShapePatch {
   description: string;
   impact: PatchImpact[];
-  groupedOperations: OperationGroup[];
+  groupedOperations: PatchOperationGroup[];
 }
 
 export class ShapePatch {
-  static *operations(patch: ShapePatch): IterableIterator<Operation> {
+  static *operations(patch: ShapePatch): IterableIterator<PatchOperation> {
     for (let group of patch.groupedOperations) {
-      yield* OperationGroup.operations(group);
+      yield* PatchOperationGroup.operations(group);
     }
   }
 

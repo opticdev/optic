@@ -1,7 +1,7 @@
 import { OpenAPIV3 } from '../specs/index';
 import { ShapePatch } from './patches';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { Operation } from '../patches';
+import { PatchOperation } from '../patches';
 import JsonPatch from 'fast-json-patch';
 
 export type SchemaObject = OpenAPIV3.SchemaObject;
@@ -49,7 +49,7 @@ export class Schema {
   static *mergeOperations(
     currentSchema: SchemaObject | null,
     newSchema: SchemaObject
-  ): IterableIterator<Operation> {
+  ): IterableIterator<PatchOperation> {
     if (currentSchema === null) {
       yield {
         op: 'add',

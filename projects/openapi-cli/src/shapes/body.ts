@@ -1,6 +1,5 @@
 import { BodyLocation } from '@useoptic/openapi-utilities';
 import { ShapePatch } from '.';
-import { OpenAPIV3 } from '../specs/index';
 import { SchemaObject, Schema } from './schema';
 
 export interface Body {

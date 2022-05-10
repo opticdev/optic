@@ -3624,6 +3624,7 @@ __metadata:
     fs-extra: ^10.0.0
     jest: ^27.5.1
     js-yaml: ^4.1.0
+    lodash.isequal: ^4.5.0
     lodash.sortby: ^4.7.0
     openapi-schema-validator: ^10.0.0
     openapi-types: ^9.3.0
@@ -3649,7 +3650,9 @@ __metadata:
     "@types/node": ^17.0.15
     "@useoptic/api-checks": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
+    "@useoptic/standard-rulesets": "workspace:^"
     babel-jest: ^27.5.1
+    dotenv: ^16.0.0
     jest: ^27.5.1
     prettier: ^2.4.1
     ts-node: ^10.4.0
@@ -3688,7 +3691,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@useoptic/standard-rulesets@workspace:projects/standard-rulesets":
+"@useoptic/standard-rulesets@workspace:^, @useoptic/standard-rulesets@workspace:projects/standard-rulesets":
   version: 0.0.0-use.local
   resolution: "@useoptic/standard-rulesets@workspace:projects/standard-rulesets"
   dependencies:

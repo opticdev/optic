@@ -7,7 +7,9 @@ import {
   SpecFacts,
   SpecFile,
   SpecFileOperation,
+  OpenAPIV3,
   readDeferencedSpec,
+  SpecFilesSourcemap,
 } from '../specs';
 import { DocumentedBodies, ShapePatches, SchemaObject } from '../shapes';
 import {
@@ -23,6 +25,8 @@ import { Ok, Err, Result } from 'ts-results';
 
 import { DocumentedBody } from '../shapes/body';
 import { flushEvents, trackEvent } from '../segment';
+import { CapturedInteractions } from '../captures';
+import { DocumentedInteractions } from '../operations/streams/documented-interactions';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -34,7 +38,7 @@ export function updateCommand(): Command {
       'update an OpenAPI specification from examples or observed traffic'
     )
     .action(async (specPath) => {
-      const updateResult = await updateAction(specPath);
+      const updateResult = await updateByExample(specPath);
 
       if (updateResult.err) {
         return command.error(updateResult.val);
@@ -81,7 +85,7 @@ export function updateCommand(): Command {
   return command;
 }
 
-export async function updateAction(specPath: string): Promise<
+export async function updateByExample(specPath: string): Promise<
   Result<
     {
       stats: {
@@ -153,28 +157,13 @@ export async function updateAction(specPath: string): Promise<
     )
   );
 
-  const specPatches = (async function* (documentedBodies): SpecPatches {
-    const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
+  // const capturedBodies = // combined from matched bodies and new bodies generated from patches?
 
-    for await (let documentedBody of documentedBodies) {
-      let { specJsonPath, shapeLocation } = documentedBody;
-
-      if (updatedSchemasByPath.has(specJsonPath)) {
-        documentedBody.schema = updatedSchemasByPath.get(specJsonPath)!;
-      }
-
-      for (let patch of ShapePatches.generateBodyAdditions(documentedBody)) {
-        documentedBody = DocumentedBody.applyShapePatch(documentedBody, patch);
-        yield SpecPatch.fromShapePatch(patch, specJsonPath, shapeLocation!);
-      }
-
-      updatedSchemasByPath.set(specJsonPath, documentedBody.schema!);
-    }
-  })(exampleBodies);
+  const bodyPatches = SpecPatches.fromDocumentedBodies(exampleBodies);
 
   // additions only, so we only safely extend the spec
   const specAdditions = observers.observePatches(
-    SpecPatches.additions(specPatches)
+    SpecPatches.additions(bodyPatches)
   );
 
   const fileOperations = observers.observeFileOperations(
@@ -187,6 +176,39 @@ export async function updateAction(specPath: string): Promise<
 
   return Ok({
     stats,
+    results: updatedSpecFiles,
+  });
+}
+
+export async function updateByInteractions(
+  spec: OpenAPIV3.Document,
+  sourcemap: SpecFilesSourcemap,
+  interactions: CapturedInteractions
+): Promise<
+  Result<
+    {
+      stats: {};
+      results: SpecFilesAsync;
+    },
+    string
+  >
+> {
+  const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
+
+  const patches = SpecPatches.fromInteractions(interactions, spec);
+
+  // additions only, so we only safely extend the spec
+  const specAdditions = SpecPatches.additions(patches);
+
+  const fileOperations = SpecFileOperations.fromSpecPatches(
+    specAdditions,
+    sourcemap
+  );
+
+  const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
+
+  return Ok({
+    stats: {},
     results: updatedSpecFiles,
   });
 }
