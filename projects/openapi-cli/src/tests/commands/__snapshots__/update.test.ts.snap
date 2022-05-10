@@ -847,3 +847,53 @@ Array [
   },
 ]
 `;
+
+exports[`update command update by interactions only generates patches for request bodies with 2xx and 3xx responses 1`] = `
+Array [
+  Object {
+    "contents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/examples/{exampleId}\\": {
+      \\"post\\": {
+        \\"requestBody\\": {
+          \\"content\\": {
+            \\"application/json\\": {
+              \\"schema\\": {
+                \\"type\\": \\"object\\",
+                \\"properties\\": {
+                  \\"id\\": {
+                    \\"type\\": \\"string\\"
+                  },
+                  \\"newField\\": {
+                    \\"type\\": \\"number\\"
+                  }
+                },
+                \\"required\\": [
+                  \\"id\\",
+                  \\"newField\\"
+                ]
+              }
+            }
+          }
+        },
+        \\"responses\\": {
+          \\"201\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          },
+          \\"400\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}",
+    "path": "/tmp/test-openapi.json",
+  },
+]
+`;

@@ -306,23 +306,74 @@ describe('update command', () => {
             'application/json'
           )
         ),
-        // interactionFixture(
-        //   '/examples/3',
-        //   HttpMethods.POST,
-        //   CapturedBody.fromJSON(
-        //     {
-        //       id: 'an-id',
-        //     },
-        //     'application/json'
-        //   ),
-        //   '400',
-        //   CapturedBody.fromJSON(
-        //     {
-        //       error: 'missing field newField',
-        //     },
-        //     'application/json'
-        //   )
-        // ),
+      ];
+
+      const results = await updateByInteractions(
+        spec,
+        sourcemap,
+        from(interactions)
+      );
+
+      const { stats, results: updatedSpecFiles } = results.expect(
+        'example spec can be updated'
+      );
+
+      let specFiles = await collect(updatedSpecFiles);
+
+      expect(specFiles).toHaveLength(1);
+      expect(specFiles).toMatchSnapshot();
+    });
+
+    it('only generates patches for request bodies with 2xx and 3xx responses', async () => {
+      const spec = specFixture({
+        '/examples/{exampleId}': {
+          [HttpMethods.POST]: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      id: {
+                        type: 'string',
+                      },
+                    },
+                    required: ['id'],
+                  },
+                },
+              },
+            },
+            responses: {},
+          },
+        },
+      });
+      const sourcemap = sourcemapFixture(spec);
+
+      const interactions = [
+        interactionFixture(
+          '/examples/3',
+          HttpMethods.POST,
+          CapturedBody.fromJSON(
+            {
+              id: 'an-id',
+              newField: 123,
+            },
+            'application/json'
+          ),
+          '201'
+        ),
+        interactionFixture(
+          '/examples/3',
+          HttpMethods.POST,
+          CapturedBody.fromJSON(
+            {
+              // should not be learned, leaving newField as required
+              id: 'an-id',
+            },
+            'application/json'
+          ),
+          '400'
+        ),
       ];
 
       const results = await updateByInteractions(

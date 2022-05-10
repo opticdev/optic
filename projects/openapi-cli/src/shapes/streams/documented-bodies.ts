@@ -98,7 +98,15 @@ export class DocumentedBodies {
     specJsonPath,
     operation,
   }: DocumentedInteraction): AsyncIterable<DocumentedBody> {
-    if (interaction.request.body) {
+    const capturedStatusCode = parseInt(interaction.response.statusCode, 10);
+
+    if (
+      interaction.request.body &&
+      capturedStatusCode >= 200 &&
+      capturedStatusCode < 400
+    ) {
+      // TODO: consider whether this belongs here, and not in something more specific to patches
+      // (as it decides basically what and what not to generate patches for  from)
       let { contentType } = interaction.request.body;
       let decodedBodyResult = await decodeCapturedBody(
         interaction.request.body
