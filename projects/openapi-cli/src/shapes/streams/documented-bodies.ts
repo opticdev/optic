@@ -12,8 +12,7 @@ import { BodyExampleFacts, ComponentSchemaExampleFacts } from '../../specs';
 import { OpenAPIV3 } from '../../specs';
 import { Body, DocumentedBody } from '../body';
 import { CapturedBody, CapturedBodies } from '../../captures';
-import { DocumentedInteraction } from '../../operations';
-import { request } from 'http';
+import { DocumentedInteraction, findResponse } from '../../operations';
 
 export type { DocumentedBody };
 
@@ -145,9 +144,58 @@ export class DocumentedBodies {
     }
 
     if (interaction.response.body) {
-    }
+      let { contentType } = interaction.response.body;
+      let matchedResponse = findResponse(
+        operation,
+        interaction.response.statusCode
+      );
 
-    let capturedBodies = [];
+      let decodedBodyResult = await decodeCapturedBody(
+        interaction.response.body
+      );
+      if (decodedBodyResult.err) {
+        console.warn(
+          'Could not decode body of captured interaction:',
+          decodedBodyResult.val
+        );
+      } else if (contentType && matchedResponse) {
+        let [, statusCode] = matchedResponse;
+
+        let shapeLocation: BodyLocation = {
+          path: operation.pathPattern,
+          method: operation.method,
+          inResponse: {
+            body: {
+              contentType,
+            },
+            statusCode,
+          },
+        };
+
+        let bodyOperationPath = jsonPointerHelpers.compile([
+          'responses',
+          statusCode,
+          'content',
+          contentType,
+        ]);
+        let bodySpecPath = jsonPointerHelpers.join(
+          specJsonPath,
+          bodyOperationPath
+        );
+
+        let resolvedSchema = jsonPointerHelpers.tryGet(
+          operation,
+          bodyOperationPath
+        );
+
+        yield {
+          schema: resolvedSchema.match ? resolvedSchema.value : null,
+          body: decodedBodyResult.unwrap(),
+          shapeLocation,
+          specJsonPath: bodySpecPath,
+        };
+      } // consider what to do when there's no content type (happens, as seen in the past)
+    }
   }
 }
 

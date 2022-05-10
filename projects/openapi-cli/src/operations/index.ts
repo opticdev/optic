@@ -55,3 +55,45 @@ export interface DocumentedInteraction {
 
 const HttpMethods = OpenAPIV3.HttpMethods;
 export { HttpMethods };
+
+export function findResponse(
+  { responses }: Pick<Operation, 'responses'>,
+  statusCode: string
+): [OpenAPIV3.ResponseObject, string] | null {
+  let exactMatch: [OpenAPIV3.ResponseObject, string] | null = null;
+  let rangeMatch: [OpenAPIV3.ResponseObject, string] | null = null;
+  let defaultMatch: [OpenAPIV3.ResponseObject, string] | null = null;
+
+  // oldskool for loop, because no object.find and work arounds are messy
+  for (let [code, response] of Object.entries(responses)) {
+    if (code === statusCode) {
+      exactMatch = [response, code];
+      break; // exact match found, so we can stop looking
+    }
+
+    if (
+      !rangeMatch &&
+      statusRangePattern.test(statusCode) &&
+      statusCode.substring(0, 1) === code.substring(0, 1)
+    ) {
+      rangeMatch = [response, code];
+      continue;
+    }
+
+    if (!defaultMatch && code === 'default') {
+      defaultMatch = [response, code];
+    }
+
+    if (exactMatch && rangeMatch && defaultMatch) break;
+  }
+
+  return exactMatch || rangeMatch || defaultMatch;
+}
+
+const statusRangePattern = /[245]xx/;
+
+const isNotReferenceObject = <T extends {}>(
+  maybeReference: T | OpenAPIV3.ReferenceObject
+): maybeReference is Exclude<T, OpenAPIV3.ReferenceObject> => {
+  return !('$ref' in maybeReference);
+};
