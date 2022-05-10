@@ -99,7 +99,10 @@ describe('update command', () => {
         interactionFixture(
           '/examples/3',
           HttpMethods.POST,
-          CapturedBody.fromJSON({ id: 'an-id' }, 'application/json')
+          CapturedBody.fromJSON(
+            { id: 'an-id', optionalField: 123 },
+            'application/json'
+          )
         ),
         interactionFixture(
           '/examples/4',

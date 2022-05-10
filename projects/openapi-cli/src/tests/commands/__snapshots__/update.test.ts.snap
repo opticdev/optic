@@ -606,7 +606,19 @@ Array [
         },
         \\"requestBody\\": {
           \\"content\\": {
-            \\"application/json\\": {}
+            \\"application/json\\": {
+              \\"schema\\": {
+                \\"type\\": \\"object\\",
+                \\"properties\\": {
+                  \\"id\\": {
+                    \\"type\\": \\"string\\"
+                  }
+                },
+                \\"required\\": [
+                  \\"id\\"
+                ]
+              }
+            }
           }
         }
       }
@@ -637,7 +649,22 @@ Array [
         },
         \\"requestBody\\": {
           \\"content\\": {
-            \\"application/json\\": {}
+            \\"application/json\\": {
+              \\"schema\\": {
+                \\"type\\": \\"object\\",
+                \\"properties\\": {
+                  \\"id\\": {
+                    \\"type\\": \\"string\\"
+                  },
+                  \\"optionalField\\": {
+                    \\"type\\": \\"number\\"
+                  }
+                },
+                \\"required\\": [
+                  \\"id\\"
+                ]
+              }
+            }
           }
         }
       }
