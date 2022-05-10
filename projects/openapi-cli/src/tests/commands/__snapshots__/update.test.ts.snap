@@ -888,31 +888,7 @@ Array [
   \\"paths\\": {
     \\"/examples/{exampleId}\\": {
       \\"post\\": {
-        \\"requestBody\\": {
-          \\"content\\": {
-            \\"application/json\\": {
-              \\"schema\\": {
-                \\"type\\": \\"object\\",
-                \\"properties\\": {
-                  \\"id\\": {
-                    \\"type\\": \\"string\\"
-                  },
-                  \\"newField\\": {
-                    \\"type\\": \\"number\\"
-                  }
-                },
-                \\"required\\": [
-                  \\"id\\",
-                  \\"newField\\"
-                ]
-              }
-            }
-          }
-        },
         \\"responses\\": {
-          \\"201\\": {
-            \\"description\\": \\"automatically documented through Optic\\"
-          },
           \\"400\\": {
             \\"description\\": \\"automatically documented through Optic\\"
           }

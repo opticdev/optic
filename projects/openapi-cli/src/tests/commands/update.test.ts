@@ -328,21 +328,6 @@ describe('update command', () => {
       const spec = specFixture({
         '/examples/{exampleId}': {
           [HttpMethods.POST]: {
-            requestBody: {
-              content: {
-                'application/json': {
-                  schema: {
-                    type: 'object',
-                    properties: {
-                      id: {
-                        type: 'string',
-                      },
-                    },
-                    required: ['id'],
-                  },
-                },
-              },
-            },
             responses: {},
           },
         },
@@ -354,20 +339,8 @@ describe('update command', () => {
           '/examples/3',
           HttpMethods.POST,
           CapturedBody.fromJSON(
+            // should not be learned
             {
-              id: 'an-id',
-              newField: 123,
-            },
-            'application/json'
-          ),
-          '201'
-        ),
-        interactionFixture(
-          '/examples/3',
-          HttpMethods.POST,
-          CapturedBody.fromJSON(
-            {
-              // should not be learned, leaving newField as required
               id: 'an-id',
             },
             'application/json'
