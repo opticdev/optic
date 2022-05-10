@@ -140,7 +140,7 @@ export class DocumentedBodies {
           shapeLocation,
           specJsonPath: bodySpecPath,
         };
-      } // consider what to do when there's no content type (happens, as seen in the past)
+      } // TODO: consider what to do when there's no content type (happens, as seen in the past)
     }
 
     if (interaction.response.body) {
@@ -194,7 +194,7 @@ export class DocumentedBodies {
           shapeLocation,
           specJsonPath: bodySpecPath,
         };
-      } // consider what to do when there's no content type (happens, as seen in the past)
+      } // TODO: consider what to do when there's no content type (happens, as seen in the past)
     }
   }
 }
@@ -205,16 +205,19 @@ async function decodeCapturedBody(
   // parse the interaction bytes
   let { contentType } = capturedBody;
 
-  if (!contentType || contentType.startsWith('application/json')) {
+  if (contentType && contentType.startsWith('application/json')) {
     let value;
     try {
       value = await CapturedBody.json(capturedBody);
-
-      return Err('todo: implement');
     } catch (err) {
       return Err('Could not parse captured body as json');
     }
-  }
+
+    return Ok({
+      contentType,
+      value,
+    });
+  } // TODO: consider what to do when there's no content type (happens, as seen in the past)
 
   return Err('Could not decode captured body');
 }
