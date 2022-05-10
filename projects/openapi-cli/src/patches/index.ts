@@ -1,11 +1,11 @@
-import { Operation } from 'fast-json-patch';
+import { Operation as PatchOperation } from 'fast-json-patch';
 
-export interface OperationGroup {
+export interface PatchOperationGroup {
   intent: string; // human readable
-  operations: Operation[];
+  operations: PatchOperation[];
 }
 
-export type { Operation };
+export type { PatchOperation };
 
 export enum PatchImpact {
   BackwardsCompatible = 'BackwardsCompatible',
@@ -14,12 +14,17 @@ export enum PatchImpact {
   Addition = 'Addition',
 }
 
-export class OperationGroup {
-  static create(intent: string, ...operations: Operation[]): OperationGroup {
+export class PatchOperationGroup {
+  static create(
+    intent: string,
+    ...operations: PatchOperation[]
+  ): PatchOperationGroup {
     return { intent, operations };
   }
 
-  static *operations(group: OperationGroup): IterableIterator<Operation> {
+  static *operations(
+    group: PatchOperationGroup
+  ): IterableIterator<PatchOperation> {
     yield* group.operations;
   }
 }

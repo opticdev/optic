@@ -199,7 +199,7 @@ export class JsonSchemaSourcemap {
     }
   }
 
-  async addFileIfMissingFromContents(
+  addFileIfMissingFromContents(
     filePath: string,
     contents: string,
     fileIndex: number

@@ -14,10 +14,13 @@ export interface BodyFacts
   extends AsyncIterable<FactVariant<OpenApiKind.Body>> {}
 export interface ComponentSchemaExampleFacts
   extends AsyncIterable<FactVariant<OpenApiKind.ComponentSchemaExample>> {}
+export interface OperationFacts
+  extends AsyncIterable<FactVariant<OpenApiKind.Operation>> {}
 
 export type BodyExampleFact = FactVariant<OpenApiKind.BodyExample>;
 export type ComponentSchemaExampleFact =
   FactVariant<OpenApiKind.ComponentSchemaExample>;
+export type OperationFact = FactVariant<OpenApiKind.Operation>;
 
 export class SpecFacts {
   static async *fromOpenAPISpec(spec: OpenAPIV3.Document): SpecFacts {
@@ -51,7 +54,16 @@ export class SpecFacts {
       }
     }
   }
+
+  static async *operationFacts(facts: AsyncIterable<IFact>): OperationFacts {
+    for await (let fact of facts) {
+      if (isFactVariant(fact, OpenApiKind.Operation)) {
+        yield fact;
+      }
+    }
+  }
 }
 
 export class BodyExampleFacts {}
 export class ComponentSchemaExampleFacts {}
+export class OperationFacts {}

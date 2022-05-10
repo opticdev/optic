@@ -590,3 +590,34 @@ Object {
   "updatedFilesCount": 1,
 }
 `;
+
+exports[`update command update by interactions can generate updated spec files for new request bodies 1`] = `
+Array [
+  Object {
+    "contents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/examples/{exampleId}\\": {
+      \\"post\\": {
+        \\"responses\\": {
+          \\"200\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          }
+        },
+        \\"requestBody\\": {
+          \\"content\\": {
+            \\"application/json\\": {}
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}",
+    "path": "/tmp/test-openapi.json",
+  },
+]
+`;
