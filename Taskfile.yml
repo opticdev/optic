@@ -1,6 +1,11 @@
 # https://taskfile.dev/#/installation
 version: "3"
 
+includes:
+  openapi-utilities:
+    taskfile: projects/openapi-utilities/Taskfile.yml
+    dir: projects/openapi-utilities
+
 tasks:
   default:
     desc: Perform a clean build
