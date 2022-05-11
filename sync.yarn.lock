@@ -3298,6 +3298,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/stream-chain@npm:*, @types/stream-chain@npm:^2":
+  version: 2.0.1
+  resolution: "@types/stream-chain@npm:2.0.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 6a59da0374a74ad6aff48c669c72d3060d428d1015af94b00d290ede68706781a8419daf490af7935f0f9f2796da6965aead74ad1795f72c488630451241db55
+  languageName: node
+  linkType: hard
+
+"@types/stream-json@npm:^1":
+  version: 1.7.2
+  resolution: "@types/stream-json@npm:1.7.2"
+  dependencies:
+    "@types/node": "*"
+    "@types/stream-chain": "*"
+  checksum: f11e1332f2f0ec38626890d37d3091303067b5f3c5136811821070a1ce40f848a7745f179913ff20516f92c080082c4db6e3ea66d62549222d50965903030f24
+  languageName: node
+  linkType: hard
+
 "@types/urijs@npm:^1.19.16":
   version: 1.19.17
   resolution: "@types/urijs@npm:1.19.17"
@@ -3479,6 +3498,8 @@ __metadata:
     "@types/jest": ^26.0.24
     "@types/json-stable-stringify": ^1.0.33
     "@types/node": ^17.0.15
+    "@types/stream-chain": ^2
+    "@types/stream-json": ^1
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
@@ -3493,6 +3514,8 @@ __metadata:
     json-schema-traverse: ^1.0.0
     node-machine-id: ^1.1.12
     prettier: ^2.4.1
+    stream-chain: ^2.2.5
+    stream-json: ^1.7.4
     ts-invariant: ^0.9.4
     ts-node: ^10.4.0
     ts-results: ^3.3.0
@@ -9295,6 +9318,22 @@ __metadata:
   version: 1.5.0
   resolution: "statuses@npm:1.5.0"
   checksum: c469b9519de16a4bb19600205cffb39ee471a5f17b82589757ca7bd40a8d92ebb6ed9f98b5a540c5d302ccbc78f15dc03cc0280dd6e00df1335568a5d5758a5c
+  languageName: node
+  linkType: hard
+
+"stream-chain@npm:^2.2.5":
+  version: 2.2.5
+  resolution: "stream-chain@npm:2.2.5"
+  checksum: c83cbf504bd11e2bcbe761a92801295b3decac7ffa4092ceffca2eb1b5d0763bcc511fa22cd8044e8a18c21ca66794fd10c8d9cd1292a3e6c0d83a4194c6b8ed
+  languageName: node
+  linkType: hard
+
+"stream-json@npm:^1.7.4":
+  version: 1.7.4
+  resolution: "stream-json@npm:1.7.4"
+  dependencies:
+    stream-chain: ^2.2.5
+  checksum: 50aca250cedde7b35fcc12b3f4936d28431f351392f25f1baa7898b618d363368f8049af07c486ce7c47ee19ea15fd31642df0819e62e514c6193f1e2b05d85e
   languageName: node
   linkType: hard
 

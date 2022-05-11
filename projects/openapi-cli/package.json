@@ -27,6 +27,8 @@
     "@types/jest": "^26.0.24",
     "@types/json-stable-stringify": "^1.0.33",
     "@types/node": "^17.0.15",
+    "@types/stream-chain": "^2",
+    "@types/stream-json": "^1",
     "babel-jest": "^27.5.1",
     "babel-plugin-inline-dotenv": "^1.7.0",
     "jest": "^27.5.1",
@@ -45,6 +47,8 @@
     "is-url": "^1.2.4",
     "json-schema-traverse": "^1.0.0",
     "node-machine-id": "^1.1.12",
+    "stream-chain": "^2.2.5",
+    "stream-json": "^1.7.4",
     "ts-invariant": "^0.9.4",
     "ts-results": "^3.3.0"
   },
