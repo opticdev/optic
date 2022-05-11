@@ -1,8 +1,11 @@
-import { Readable, pipeline } from 'stream';
+import { Readable } from 'stream';
 import invariant from 'ts-invariant';
 import { withParser as pickWithParser } from 'stream-json/filters/Pick';
 import { streamArray } from 'stream-json/streamers/StreamArray';
 import { chain } from 'stream-chain'; // replace with  stream.compose once it stabilises
+import HarSchemas from 'har-schema';
+import Ajv, { SchemaObject } from 'ajv';
+import ajvFormats from 'ajv-formats';
 
 export interface HarEntries extends AsyncIterable<HttpArchive.Entry> {}
 
@@ -21,9 +24,32 @@ export class HarEntries {
 
     const rawEntries = chain([source, parseEntries, streamEntries]);
 
+    const ajv = new Ajv({
+      allErrors: true,
+      strict: false,
+      schemas: [
+        ...Object.values(HarSchemas).map((rawSchema) => {
+          let schema = rawSchema as SchemaObject;
+          let { $schema, ...rest } = schema;
+          return {
+            ...rest,
+          };
+        }),
+      ],
+    });
+
+    const validator = ajvFormats(ajv, { mode: 'fast' });
+
+    const validate = validator.getSchema<HttpArchive.Entry>('entry.json')!;
+
     try {
       for await (let { value } of rawEntries) {
-        yield value as HttpArchive.Entry; // TODO: validate these entries, because this is risky af
+        if (validate(value)) {
+          yield value;
+        } else {
+          // TODO: yield a Result, so we can propagate this error rather than deciding on skip here
+          console.warn('HAR entry not valid', validate.errors);
+        }
       }
     } catch (err) {
       if (err instanceof Error && err.message.includes('Parser')) {
