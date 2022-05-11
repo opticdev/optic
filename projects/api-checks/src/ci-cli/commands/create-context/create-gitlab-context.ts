@@ -60,7 +60,8 @@ const createContext = (
 
   const contextFilePath = path.join(process.cwd(), DEFAULT_CONTEXT_PATH);
   if (fs.existsSync(contextFilePath)) {
-    console.log(`Context file already exists at ${contextFilePath}`);
+    console.error(`Context file already exists at ${contextFilePath}`);
+    throw new UserError();
   } else {
     fs.writeFileSync(
       contextFilePath,
