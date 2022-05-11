@@ -742,6 +742,35 @@ Array [
     "location": Object {
       "conceptualLocation": Object {
         "inRequest": Object {
+          "cookie": "debug",
+        },
+        "method": "post",
+        "path": "/pet/{petId}/uploadImage",
+      },
+      "conceptualPath": Array [
+        "operations",
+        "/pet/{}/uploadImage",
+        "post",
+        "parameters",
+        "cookie",
+        "debug",
+      ],
+      "jsonPath": "/paths/~1pet~1{petId}~1uploadImage/post/parameters/1",
+      "kind": "cookie-parameter",
+    },
+    "value": Object {
+      "description": "A debug token",
+      "in": "cookie",
+      "name": "debug",
+      "schema": Object {
+        "type": "integer",
+      },
+    },
+  },
+  Object {
+    "location": Object {
+      "conceptualLocation": Object {
+        "inRequest": Object {
           "body": Object {
             "contentType": "multipart/form-data",
           },
