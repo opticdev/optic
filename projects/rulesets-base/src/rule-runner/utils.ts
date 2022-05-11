@@ -60,6 +60,7 @@ export const createSpecificationRuleContext = (
     queryParameters: new Map(),
     pathParameters: new Map(),
     headerParameters: new Map(),
+    cookieParameters: new Map(),
     requests: [],
     responses: new Map(),
   },

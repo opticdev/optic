@@ -70,7 +70,11 @@ const createOperationResult = (
 const createParameterResult = (
   assertionResult: AssertionResult,
   parameter: {
-    type: 'header parameter' | 'query parameter' | 'path parameter';
+    type:
+      | 'header parameter'
+      | 'query parameter'
+      | 'path parameter'
+      | 'cookie parameter';
     name: string;
     path: string;
     method: string;
@@ -218,6 +222,30 @@ export const runOperationRules = ({
                   {
                     name: key,
                     type: 'query parameter',
+                    method: operation.method,
+                    path: operation.path,
+                  },
+                  operationRule
+                )
+              )
+          );
+        }
+
+        for (const [
+          key,
+          beforeParameter,
+        ] of beforeOperation.cookieParameters.entries()) {
+          const maybeChange =
+            operation.cookieParameters.get(key)?.change || null;
+          results.push(
+            ...operationAssertions.cookieParameter
+              .runBefore(beforeParameter, maybeChange)
+              .map((assertionResult) =>
+                createParameterResult(
+                  assertionResult,
+                  {
+                    name: key,
+                    type: 'cookie parameter',
                     method: operation.method,
                     path: operation.path,
                   },
