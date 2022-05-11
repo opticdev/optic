@@ -4,6 +4,7 @@ import { createPropertyNamingChecks } from './propertyNames';
 import { createQueryParameterChecks } from './queryParameters';
 import { createRequestHeaderParameterChecks } from './requestHeaders';
 import { createResponseHeaderParameterChecks } from './responseHeader';
+import { createCookieParameterChecks } from './cookieParameters';
 
 export class NamingChangesRuleset extends Ruleset {
   constructor(config: {
@@ -57,6 +58,11 @@ export class NamingChangesRuleset extends Ruleset {
     if (options.requestHeaders) {
       namingChangeRules.push(
         createRequestHeaderParameterChecks(applies, options.requestHeaders)
+      );
+    }
+    if (options.cookieParameters) {
+      namingChangeRules.push(
+        createCookieParameterChecks(applies, options.cookieParameters)
       );
     }
     if (options.responseHeaders) {
