@@ -21,8 +21,17 @@ export class HarEntries {
 
     const rawEntries = chain([source, parseEntries, streamEntries]);
 
-    for await (let { key, value } of rawEntries) {
-      yield value as HttpArchive.Entry; // TODO: validate these entries, because this is risky af
+    try {
+      for await (let { value } of rawEntries) {
+        yield value as HttpArchive.Entry; // TODO: validate these entries, because this is risky af
+      }
+    } catch (err) {
+      if (err instanceof Error && err.message.includes('Parser')) {
+        // duck typing, but it's the best we've got
+        throw new Error(`Source could not be read as HAR: ${err.message}`);
+      } else {
+        throw err;
+      }
     }
   }
 }

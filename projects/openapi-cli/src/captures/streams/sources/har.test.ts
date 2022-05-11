@@ -28,4 +28,25 @@ describe('HarEntries', () => {
 
     expect(getEntries).rejects.toThrowError('ENOENT');
   });
+
+  describe('will only read HAR files', () => {
+    it('will not produce any entries when they do not exist at expected path', async () => {
+      let source = fs.createReadStream(
+        Path.join(__dirname, '../../../tests/inputs/githubpaths.json')
+      );
+
+      let entries = await collect(HarEntries.fromReadable(source));
+      expect(entries).toHaveLength(0);
+    });
+
+    it('throws an error when file isnt json', async () => {
+      let source = fs.createReadStream(Path.join(__dirname, './har.ts'));
+
+      const getEntries = async () => {
+        await collect(HarEntries.fromReadable(source));
+      };
+
+      expect(getEntries).rejects.toThrowError('could not be read as HAR');
+    });
+  });
 });
