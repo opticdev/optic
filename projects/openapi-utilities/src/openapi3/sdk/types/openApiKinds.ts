@@ -19,6 +19,7 @@ export type OpenApiParameterKind = Extract<
   | OpenApiKind.HeaderParameter
   | OpenApiKind.PathParameter
   | OpenApiKind.QueryParameter
+  | OpenApiKind.CookieParameter
 >;
 
 // allow for iterations and `.includes` calls
@@ -26,4 +27,5 @@ export const OpenApiParameterKind: OpenApiKind[] = [
   OpenApiKind.HeaderParameter,
   OpenApiKind.PathParameter,
   OpenApiKind.QueryParameter,
+  OpenApiKind.CookieParameter,
 ];

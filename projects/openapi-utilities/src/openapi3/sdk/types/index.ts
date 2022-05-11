@@ -164,6 +164,7 @@ export type IFact =
   | FactVariant<OpenApiKind.QueryParameter>
   | FactVariant<OpenApiKind.PathParameter>
   | FactVariant<OpenApiKind.HeaderParameter>
+  | FactVariant<OpenApiKind.CookieParameter>
   | FactVariant<OpenApiKind.ResponseHeader>
   | FactVariant<OpenApiKind.Response>
   | FactVariant<OpenApiKind.Body>
@@ -178,6 +179,7 @@ export type IChange =
   | ChangeVariant<OpenApiKind.QueryParameter>
   | ChangeVariant<OpenApiKind.PathParameter>
   | ChangeVariant<OpenApiKind.HeaderParameter>
+  | ChangeVariant<OpenApiKind.CookieParameter>
   | ChangeVariant<OpenApiKind.ResponseHeader>
   | ChangeVariant<OpenApiKind.Response>
   | ChangeVariant<OpenApiKind.Body>

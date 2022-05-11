@@ -329,7 +329,8 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     | undefined
     | FactVariant<OpenApiKind.HeaderParameter>
     | FactVariant<OpenApiKind.PathParameter>
-    | FactVariant<OpenApiKind.QueryParameter> {
+    | FactVariant<OpenApiKind.QueryParameter>
+    | FactVariant<OpenApiKind.CookieParameter> {
     this.checkJsonTrail(jsonPath, parameter);
     const value: OpenApiRequestParameterFact = {
       ...parameter,
@@ -362,6 +363,16 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
             conceptualPath,
             kind: OpenApiKind.PathParameter,
             conceptualLocation: location as PathParameterLocation,
+          },
+          value,
+        };
+      case 'cookie':
+        return {
+          location: {
+            jsonPath,
+            conceptualPath,
+            kind: OpenApiKind.CookieParameter,
+            conceptualLocation: location as CookieParameterLocation,
           },
           value,
         };
