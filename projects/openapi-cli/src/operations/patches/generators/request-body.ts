@@ -6,8 +6,17 @@ import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 export function* requestBodyPatches(
   diff: OperationDiffResult,
   operation: Operation,
-  context?: {}
+  context?: {
+    statusCode: string;
+  }
 ): IterableIterator<OperationPatch> {
+  if (context) {
+    let numericalStatusCode = parseInt(context.statusCode, 10);
+    if (numericalStatusCode < 200 || numericalStatusCode >= 400) {
+      return; // only patch 2xx and 3xx status codes
+    }
+  }
+
   if (diff.kind === OperationDiffResultKind.MissingRequestBody) {
     yield* missingRequestBodyPatches();
   } else if (diff.kind === OperationDiffResultKind.UnmatchedRequestBody) {

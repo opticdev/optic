@@ -10,6 +10,19 @@ import { Instance as Chalk } from 'chalk';
 
 const getIndent = (depth: number): string => ' '.repeat(depth * 2);
 
+// raw string value
+const formatRawValue = (value: string, indent: string): string => {
+  try {
+    const parsedValue = JSON.parse(value);
+    return (
+      indent +
+      JSON.stringify(parsedValue, null, 2).replace(/\n/g, '\n' + indent)
+    );
+  } catch (e) {
+    return value;
+  }
+};
+
 export const logComparison = (
   comparison: {
     results: ResultWithSourcemap[];
@@ -68,10 +81,19 @@ export const logComparison = (
         result.isMust ? 'must' : 'should'
       } ${result.condition}`;
 
+      if (result.name) {
+        console.log(`${getIndent(2)}Rule: ${result.name}`);
+      }
       console.log(`${getIndent(2)}${icon} ${requirement}`);
 
       if (!result.passed) {
         console.log(getIndent(3) + chalk.red(result.error));
+        if (result.expected && result.received) {
+          console.log(getIndent(3) + chalk.red('Expected Value:'));
+          console.log(formatRawValue(result.expected, getIndent(3)));
+          console.log(getIndent(3) + chalk.red('Received Value:'));
+          console.log(formatRawValue(result.received, getIndent(3)));
+        }
       }
       if (result.docsLink) {
         console.log(

@@ -591,7 +591,7 @@ Object {
 }
 `;
 
-exports[`update command update by interactions can generate updated spec files for new request bodies 1`] = `
+exports[`update command update by interactions generate patches for multiple interactions for the same operations 1`] = `
 Array [
   Object {
     "contents": "{
@@ -606,7 +606,291 @@ Array [
         },
         \\"requestBody\\": {
           \\"content\\": {
-            \\"application/json\\": {}
+            \\"application/json\\": {
+              \\"schema\\": {
+                \\"type\\": \\"object\\",
+                \\"properties\\": {
+                  \\"id\\": {
+                    \\"type\\": \\"string\\"
+                  },
+                  \\"optionalField\\": {
+                    \\"type\\": \\"number\\"
+                  }
+                },
+                \\"required\\": [
+                  \\"id\\"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}",
+    "path": "/tmp/test-openapi.json",
+  },
+]
+`;
+
+exports[`update command update by interactions generates patches for response bodies 1`] = `
+Array [
+  Object {
+    "contents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/examples/{exampleId}\\": {
+      \\"post\\": {
+        \\"responses\\": {
+          \\"201\\": {
+            \\"description\\": \\"automatically documented through Optic\\",
+            \\"content\\": {
+              \\"application/json\\": {
+                \\"schema\\": {
+                  \\"type\\": \\"object\\",
+                  \\"properties\\": {
+                    \\"id\\": {
+                      \\"type\\": \\"string\\"
+                    },
+                    \\"optionalField\\": {
+                      \\"type\\": \\"number\\"
+                    }
+                  },
+                  \\"required\\": [
+                    \\"id\\"
+                  ]
+                }
+              }
+            }
+          },
+          \\"400\\": {
+            \\"description\\": \\"automatically documented through Optic\\",
+            \\"content\\": {
+              \\"application/json\\": {
+                \\"schema\\": {
+                  \\"type\\": \\"object\\",
+                  \\"properties\\": {
+                    \\"error\\": {
+                      \\"type\\": \\"string\\"
+                    }
+                  },
+                  \\"required\\": [
+                    \\"error\\"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      \\"delete\\": {
+        \\"responses\\": {
+          \\"204\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}",
+    "path": "/tmp/test-openapi.json",
+  },
+]
+`;
+
+exports[`update command update by interactions generates patches to extend existing request or response bodies 1`] = `
+Array [
+  Object {
+    "contents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/examples/{exampleId}\\": {
+      \\"post\\": {
+        \\"requestBody\\": {
+          \\"content\\": {
+            \\"application/json\\": {
+              \\"schema\\": {
+                \\"type\\": \\"object\\",
+                \\"properties\\": {
+                  \\"id\\": {
+                    \\"type\\": \\"string\\"
+                  },
+                  \\"newField\\": {
+                    \\"type\\": \\"number\\"
+                  },
+                  \\"optionalBoolean\\": {
+                    \\"type\\": \\"boolean\\"
+                  }
+                },
+                \\"required\\": [
+                  \\"id\\",
+                  \\"newField\\"
+                ]
+              }
+            }
+          }
+        },
+        \\"responses\\": {
+          \\"201\\": {
+            \\"description\\": \\"created resource\\",
+            \\"content\\": {
+              \\"application/json\\": {
+                \\"schema\\": {
+                  \\"type\\": \\"object\\",
+                  \\"properties\\": {
+                    \\"id\\": {
+                      \\"type\\": \\"string\\"
+                    },
+                    \\"newField\\": {
+                      \\"type\\": \\"number\\"
+                    },
+                    \\"optionalBoolean\\": {
+                      \\"type\\": \\"boolean\\"
+                    }
+                  },
+                  \\"required\\": [
+                    \\"id\\",
+                    \\"newField\\",
+                    \\"optionalBoolean\\"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}",
+    "path": "/tmp/test-openapi.json",
+  },
+]
+`;
+
+exports[`update command update by interactions generates updated spec files for new request bodies 1`] = `
+Array [
+  Object {
+    "contents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/examples/{exampleId}\\": {
+      \\"post\\": {
+        \\"responses\\": {
+          \\"200\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          }
+        },
+        \\"requestBody\\": {
+          \\"content\\": {
+            \\"application/json\\": {
+              \\"schema\\": {
+                \\"type\\": \\"object\\",
+                \\"properties\\": {
+                  \\"id\\": {
+                    \\"type\\": \\"string\\"
+                  }
+                },
+                \\"required\\": [
+                  \\"id\\"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}",
+    "path": "/tmp/test-openapi.json",
+  },
+]
+`;
+
+exports[`update command update by interactions ignores interactions for undocumented operations 1`] = `
+Array [
+  Object {
+    "contents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/examples/{exampleId}\\": {
+      \\"post\\": {
+        \\"responses\\": {
+          \\"200\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}",
+    "path": "/tmp/test-openapi.json",
+  },
+]
+`;
+
+exports[`update command update by interactions only generates patches for 2xx, 3xx and 4xx responses 1`] = `
+Array [
+  Object {
+    "contents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/examples/{exampleId}\\": {
+      \\"post\\": {
+        \\"responses\\": {
+          \\"201\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          },
+          \\"302\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          },
+          \\"400\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
+          }
+        }
+      }
+    }
+  },
+  \\"info\\": {
+    \\"version\\": \\"0.0.0\\",
+    \\"title\\": \\"Empty\\"
+  }
+}",
+    "path": "/tmp/test-openapi.json",
+  },
+]
+`;
+
+exports[`update command update by interactions only generates patches for request bodies with 2xx and 3xx responses 1`] = `
+Array [
+  Object {
+    "contents": "{
+  \\"openapi\\": \\"3.0.1\\",
+  \\"paths\\": {
+    \\"/examples/{exampleId}\\": {
+      \\"post\\": {
+        \\"responses\\": {
+          \\"400\\": {
+            \\"description\\": \\"automatically documented through Optic\\"
           }
         }
       }

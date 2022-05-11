@@ -9,7 +9,9 @@ export interface DiffOperationPatchGenerator {
   (
     diff: OperationDiffResult,
     operation: Operation,
-    context?: {}
+    context?: {
+      statusCode: string;
+    }
   ): IterableIterator<OperationPatch>;
 }
 
