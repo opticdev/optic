@@ -57,6 +57,8 @@ const createSpecificationResult = (
   name: rule.name,
   condition: assertionResult.condition,
   passed: assertionResult.passed,
+  received: assertionResult.received,
+  expected: assertionResult.expected,
   error: assertionResult.error,
   docsLink: rule.docsLink,
   isShould: false,
