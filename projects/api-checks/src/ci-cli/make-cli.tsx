@@ -45,7 +45,6 @@ export async function makeCiCliWithNamedRules(
 ) {
   initSentry(packageJson.version);
   const projectName = await getProjectName();
-  console.log(projectName);
   initSegment();
   trackEvent('optic-ci-run', projectName);
 

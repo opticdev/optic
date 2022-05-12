@@ -36,6 +36,7 @@ import {
   OpenApiRequestFact,
 } from './openapi3/sdk/types';
 import { isFactVariant, isChangeVariant } from './openapi3/sdk/isType';
+// TODO RA-V2 - deprecate old exports - start
 import {
   ChangelogSelector,
   queryChangelog,
@@ -46,6 +47,8 @@ import {
   renderFlatOpenAPI,
   RenderFlatOpenAPI,
 } from './render/render-flat-openapi';
+// TODO RA-V2 - deprecate old exports - end
+
 import {
   LookupLineResult,
   LookupLineResultWithFilepath,
