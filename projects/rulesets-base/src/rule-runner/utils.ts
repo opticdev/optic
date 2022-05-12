@@ -1,5 +1,6 @@
 import { OpenApiKind } from '@useoptic/openapi-utilities';
-import { Operation, RuleContext } from '../types';
+import { Operation, RuleContext, Specification } from '../types';
+import { NodeDetail } from './rule-runner-types';
 
 export const getRulesetRuleId = (rulesetName: string, ruleName: string) =>
   `${rulesetName}:${ruleName}`;
@@ -24,8 +25,26 @@ export const getRuleAliases = (
   ruleName: string
 ): string[] => [getRulesetRuleId(rulesetName, ruleName), rulesetName];
 
-export const createEmptyRuleContext = (custom: any): RuleContext => ({
+const getSpecificationChange = (
+  specificationNode: NodeDetail<OpenApiKind.Specification>
+) => {
+  return specificationNode.after?.value['x-optic-ci-empty-spec'] === true
+    ? 'removed'
+    : specificationNode.before?.value['x-optic-ci-empty-spec'] === true
+    ? 'added'
+    : specificationNode.change?.changeType || null;
+};
+
+export const createSpecificationRuleContext = (
+  specification: Specification,
+  custom: any,
+  specificationNode: NodeDetail<OpenApiKind.Specification>
+): RuleContext => ({
   custom,
+  specification: {
+    ...specification,
+    change: getSpecificationChange(specificationNode),
+  },
   operation: {
     location: {
       jsonPath: '',
@@ -46,25 +65,26 @@ export const createEmptyRuleContext = (custom: any): RuleContext => ({
   },
 });
 
-export const createBeforeOperationContext = (
-  operation: Operation,
-  custom: any
-): RuleContext => ({
+export const createOperationContext = ({
+  specification,
+  specificationNode,
+  operation,
+  operationChangeType,
   custom,
-  operation: {
-    ...operation,
-    change: null, // change is null for before operations
+}: {
+  specification: Specification;
+  specificationNode: NodeDetail<OpenApiKind.Specification>;
+  operation: Operation;
+  operationChangeType: RuleContext['operation']['change'];
+  custom: any;
+}): RuleContext => ({
+  custom,
+  specification: {
+    ...specification,
+    change: getSpecificationChange(specificationNode),
   },
-});
-
-export const createAfterOperationContext = (
-  operation: Operation,
-  custom: any,
-  changeType: RuleContext['operation']['change']
-): RuleContext => ({
-  custom,
   operation: {
     ...operation,
-    change: changeType,
+    change: operationChangeType,
   },
 });

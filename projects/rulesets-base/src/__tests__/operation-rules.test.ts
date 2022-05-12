@@ -51,6 +51,52 @@ describe('OperationRule', () => {
     }
   });
 
+  describe('rulesContext', () => {
+    const json: OpenAPIV3.Document = {
+      ...defaultEmptySpec,
+      servers: [{ url: 'http://optic.com' }],
+      paths: {
+        '/api/users': {
+          get: {
+            description: 'hello',
+            responses: {},
+          },
+        },
+      },
+    };
+    test('before', () => {
+      const mockFn = jest.fn();
+      const ruleRunner = new RuleRunner([
+        new OperationRule({
+          name: 'operation description',
+          rule: mockFn,
+        }),
+      ]);
+
+      ruleRunner.runRulesWithFacts(createRuleInputs(json, defaultEmptySpec));
+
+      expect(mockFn.mock.calls.length > 0).toBe(true);
+      const ruleContext = mockFn.mock.calls[0][1];
+      expect(ruleContext).toMatchSnapshot();
+    });
+
+    test('after', () => {
+      const mockFn = jest.fn();
+      const ruleRunner = new RuleRunner([
+        new OperationRule({
+          name: 'operation description',
+          rule: mockFn,
+        }),
+      ]);
+
+      ruleRunner.runRulesWithFacts(createRuleInputs(defaultEmptySpec, json));
+
+      expect(mockFn.mock.calls.length > 0).toBe(true);
+      const ruleContext = mockFn.mock.calls[0][1];
+      expect(ruleContext).toMatchSnapshot();
+    });
+  });
+
   describe('assertions', () => {
     describe('requirement', () => {
       const ruleRunner = new RuleRunner([
