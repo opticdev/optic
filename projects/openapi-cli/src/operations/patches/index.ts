@@ -14,10 +14,13 @@ import { diffOperationPatchGenerators } from './generators';
 
 export function* generateOperationPatchesByDiff(
   diff: OperationDiffResult,
-  operation: Operation
+  operation: Operation,
+  context?: {
+    statusCode: string;
+  }
 ): IterableIterator<OperationPatch> {
   for (let generator of diffOperationPatchGenerators) {
-    yield* generator(diff, operation);
+    yield* generator(diff, operation, context);
   }
 }
 

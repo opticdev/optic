@@ -1,15 +1,26 @@
 export class Matcher {
-  constructor(private matcher: (value: any) => boolean) {}
+  constructor(
+    private matcher: (value: any) => boolean,
+    private name?: string
+  ) {}
 
   match(value: any): boolean {
     return this.matcher(value);
   }
+
+  toString() {
+    return this.name ? `Matcher.${this.name}` : 'CustomMatcher';
+  }
+
+  toJSON() {
+    return this.toString();
+  }
 }
 
 export const Matchers = {
-  string: new Matcher((value) => typeof value === 'string'),
-  boolean: new Matcher((value) => typeof value === 'boolean'),
-  number: new Matcher((value) => typeof value === 'number'),
+  string: new Matcher((value) => typeof value === 'string', 'string'),
+  boolean: new Matcher((value) => typeof value === 'boolean', 'boolean'),
+  number: new Matcher((value) => typeof value === 'number', 'number'),
 };
 
 function setEquals<T>(as: Set<T>, bs: Set<T>): boolean {

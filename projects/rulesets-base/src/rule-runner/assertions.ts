@@ -28,6 +28,8 @@ export type AssertionResult =
       condition: string;
       type: AssertionLifecycle;
       error?: undefined;
+      received?: undefined;
+      expected?: undefined;
     }
   | {
       passed: false;
@@ -35,6 +37,8 @@ export type AssertionResult =
       condition: string;
       type: AssertionLifecycle;
       error: string;
+      received?: string;
+      expected?: string;
     };
 
 const sanitizeFact = (fact: IFact): IFact =>
@@ -176,6 +180,8 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
               changeOrFact: sanitizeChange(change),
               condition,
               error: e.toString(),
+              received: JSON.stringify(e.details.received),
+              expected: JSON.stringify(e.details.expected),
               type: 'removed',
             });
           } else {
@@ -213,6 +219,8 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
               passed: false,
               changeOrFact: sanitizeFact(after),
               condition,
+              received: JSON.stringify(e.details.received),
+              expected: JSON.stringify(e.details.expected),
               error: e.toString(),
               type: 'requirement',
             });
@@ -246,6 +254,8 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
               passed: false,
               changeOrFact: sanitizeChange(change),
               condition,
+              received: JSON.stringify(e.details.received),
+              expected: JSON.stringify(e.details.expected),
               error: e.toString(),
               type: 'added',
             });
@@ -280,6 +290,8 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
               passed: false,
               changeOrFact: sanitizeChange(change),
               condition,
+              received: JSON.stringify(e.details.received),
+              expected: JSON.stringify(e.details.expected),
               error: e.toString(),
               type: 'changed',
             });

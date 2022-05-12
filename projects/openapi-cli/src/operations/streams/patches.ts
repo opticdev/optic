@@ -13,7 +13,9 @@ export class OperationPatches {
     let diffs = diffInteractionByOperation(interaction, operation);
 
     for (let diff of diffs) {
-      let patches = generateOperationPatchesByDiff(diff, operation);
+      let patches = generateOperationPatchesByDiff(diff, operation, {
+        statusCode: interaction.response.statusCode,
+      });
 
       for (let patch of patches) {
         if (!OperationPatch.isAddition(patch)) continue;

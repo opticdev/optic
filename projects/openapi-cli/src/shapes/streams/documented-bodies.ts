@@ -1,5 +1,6 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
+  BodyLocation,
   BodyExampleLocation,
   ComponentSchemaLocation,
   IFact,
@@ -9,8 +10,9 @@ import { Result, Ok, Err } from 'ts-results';
 
 import { BodyExampleFacts, ComponentSchemaExampleFacts } from '../../specs';
 import { OpenAPIV3 } from '../../specs';
-import { DocumentedBody } from '../body';
+import { Body, DocumentedBody } from '../body';
 import { CapturedBody, CapturedBodies } from '../../captures';
+import { DocumentedInteraction, findResponse } from '../../operations';
 
 export type { DocumentedBody };
 
@@ -91,22 +93,154 @@ export class DocumentedBodies {
     }
   }
 
-  // static async *fromCapturedBodies(
-  //   capturedBodies: CapturedBodies,
-  //   spec: OpenAPIV3.Document
-  // ): AsyncIterable<Result<DocumentedBody, string>> {
-  //   for await (let capturedBody of capturedBodies) {
-  //     let { contentType } = capturedBody;
+  static async *fromDocumentedInteraction({
+    interaction,
+    specJsonPath,
+    operation,
+  }: DocumentedInteraction): AsyncIterable<DocumentedBody> {
+    const capturedStatusCode = parseInt(interaction.response.statusCode, 10);
 
-  //     if (!contentType || contentType.startsWith('application/json')) {
-  //       let value;
-  //       try {
-  //         value = await CapturedBody.json(capturedBody);
-  //       } catch (err) {
-  //         yield Err('Could not parse captured body as json');
-  //       }
+    if (
+      interaction.request.body &&
+      capturedStatusCode >= 200 &&
+      capturedStatusCode < 400
+    ) {
+      // TODO: consider whether this belongs here, and not in something more specific to patches
+      // (as it decides basically what and what not to generate patches for  from)
+      let { contentType } = interaction.request.body;
+      let decodedBodyResult = await decodeCapturedBody(
+        interaction.request.body
+      );
+      if (decodedBodyResult.err) {
+        console.warn(
+          'Could not decode body of captured interaction:',
+          decodedBodyResult.val
+        );
+      } else if (contentType) {
+        let shapeLocation: BodyLocation = {
+          path: operation.pathPattern,
+          method: operation.method,
+          inRequest: {
+            body: {
+              contentType,
+            },
+          },
+        };
 
-  //     }
-  //   }
-  // }
+        let bodyOperationPath = jsonPointerHelpers.compile([
+          'requestBody',
+          'content',
+          contentType,
+        ]);
+        let bodySpecPath = jsonPointerHelpers.join(
+          specJsonPath,
+          bodyOperationPath
+        );
+
+        let expectedSchemaPath = jsonPointerHelpers.append(
+          bodyOperationPath,
+          'schema'
+        );
+
+        let resolvedSchema = jsonPointerHelpers.tryGet(
+          operation,
+          expectedSchemaPath
+        );
+
+        yield {
+          schema: resolvedSchema.match ? resolvedSchema.value : null,
+          body: decodedBodyResult.unwrap(),
+          shapeLocation,
+          specJsonPath: bodySpecPath,
+        };
+      } // TODO: consider what to do when there's no content type (happens, as seen in the past)
+    }
+
+    if (
+      interaction.response.body &&
+      capturedStatusCode >= 200 &&
+      capturedStatusCode < 500
+    ) {
+      // TODO: consider whether this belongs here, and not in something more specific to patches
+      // (as it decides basically what and what not to generate patches for  from)
+      let { contentType } = interaction.response.body;
+      let matchedResponse = findResponse(
+        operation,
+        interaction.response.statusCode
+      );
+
+      let decodedBodyResult = await decodeCapturedBody(
+        interaction.response.body
+      );
+      if (decodedBodyResult.err) {
+        console.warn(
+          'Could not decode body of captured interaction:',
+          decodedBodyResult.val
+        );
+      } else if (contentType && matchedResponse) {
+        let [, statusCode] = matchedResponse;
+
+        let shapeLocation: BodyLocation = {
+          path: operation.pathPattern,
+          method: operation.method,
+          inResponse: {
+            body: {
+              contentType,
+            },
+            statusCode,
+          },
+        };
+
+        let bodyOperationPath = jsonPointerHelpers.compile([
+          'responses',
+          statusCode,
+          'content',
+          contentType,
+        ]);
+        let bodySpecPath = jsonPointerHelpers.join(
+          specJsonPath,
+          bodyOperationPath
+        );
+
+        let expectedSchemaPath = jsonPointerHelpers.append(
+          bodyOperationPath,
+          'schema'
+        );
+        let resolvedSchema = jsonPointerHelpers.tryGet(
+          operation,
+          expectedSchemaPath
+        );
+
+        yield {
+          schema: resolvedSchema.match ? resolvedSchema.value : null,
+          body: decodedBodyResult.unwrap(),
+          shapeLocation,
+          specJsonPath: bodySpecPath,
+        };
+      } // TODO: consider what to do when there's no content type (happens, as seen in the past)
+    }
+  }
+}
+
+async function decodeCapturedBody(
+  capturedBody: CapturedBody
+): Promise<Result<Body, string>> {
+  // parse the interaction bytes
+  let { contentType } = capturedBody;
+
+  if (contentType && contentType.startsWith('application/json')) {
+    let value;
+    try {
+      value = await CapturedBody.json(capturedBody);
+    } catch (err) {
+      return Err('Could not parse captured body as json');
+    }
+
+    return Ok({
+      contentType,
+      value,
+    });
+  } // TODO: consider what to do when there's no content type (happens, as seen in the past)
+
+  return Err('Could not decode captured body');
 }
