@@ -39,6 +39,12 @@ export const buildCheckerFromConfig = (checks?: CheckConfiguration[]) => {
 
   for (const check of checks) {
     if (check.type === 'custom') {
+      if (
+        !baseChecker.getExecutionDate &&
+        check.checkService.getExecutionDate
+      ) {
+        baseChecker.getExecutionDate = check.checkService.getExecutionDate;
+      }
       // TODO do something with name to identify check service
       baseChecker.mergeWith(check.checkService);
     } else if (check.name === 'optic-named-checks') {
