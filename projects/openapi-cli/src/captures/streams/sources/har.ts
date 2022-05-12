@@ -115,6 +115,7 @@ export declare namespace HttpArchive {
 
   interface PostData {
     mimeType: string;
+    encoding?: string;
     params: Param[];
     text: string;
     comment?: string;
