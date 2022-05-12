@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CapturedIntearction.fromHarEntry can create a CapturedInteraction from a HttpArchive.Entry 1`] = `
+Object {
+  "request": Object {
+    "body": null,
+    "host": "petstore.swagger.io",
+    "method": "get",
+    "path": "/v2/store/inventory",
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": "application/json",
+      "size": 133,
+      "stream": Readable {
+        "_events": Object {},
+        "_eventsCount": 0,
+        "_maxListeners": undefined,
+        "_read": [Function],
+        "_readableState": ReadableState {
+          "autoDestroy": true,
+          "awaitDrainWriters": null,
+          "buffer": BufferList {
+            "head": null,
+            "length": 0,
+            "tail": null,
+          },
+          "closeEmitted": false,
+          "closed": false,
+          "constructed": true,
+          "dataEmitted": false,
+          "decoder": null,
+          "defaultEncoding": "utf8",
+          "destroyed": false,
+          "emitClose": true,
+          "emittedReadable": false,
+          "encoding": null,
+          "endEmitted": false,
+          "ended": false,
+          "errorEmitted": false,
+          "errored": null,
+          "flowing": null,
+          "highWaterMark": 16,
+          "length": 0,
+          "multiAwaitDrain": false,
+          "needReadable": false,
+          "objectMode": true,
+          "pipes": Array [],
+          "readableListening": false,
+          "reading": false,
+          "readingMore": false,
+          "resumeScheduled": false,
+          "sync": true,
+          Symbol(kPaused): null,
+        },
+        Symbol(kCapture): false,
+      },
+    },
+    "statusCode": "200",
+  },
+}
+`;

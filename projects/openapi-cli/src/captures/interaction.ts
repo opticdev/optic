@@ -2,7 +2,7 @@ import { CapturedBody } from './body';
 import { OpenAPIV3 } from '../specs';
 import { HttpArchive } from './streams/sources/har';
 import { URL } from 'url';
-import { HttpMethods } from '../operations';
+import { HttpMethods, Operation } from '../operations';
 import invariant from 'ts-invariant';
 import { Buffer } from 'buffer';
 
@@ -25,6 +25,10 @@ export class CapturedInteraction {
     const url = new URL(entry.request.url);
 
     const method = HttpMethods[entry.request.method];
+    invariant(
+      Operation.isHttpMethod(method),
+      `expect HAR entry to have a valid request method`
+    );
 
     let requestBody: CapturedBody | null = null;
     let responseBody: CapturedBody | null = null;
