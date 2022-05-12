@@ -5,7 +5,7 @@ import { RulesetData, NodeDetail } from './rule-runner-types';
 import {
   createRulesetMatcher,
   getRuleAliases,
-  createEmptyRuleContext,
+  createSpecificationRuleContext,
 } from './utils';
 
 import { Rule, Ruleset, SpecificationRule } from '../rules';
@@ -79,12 +79,12 @@ export const runSpecificationRules = ({
 }) => {
   const results: Result[] = [];
   const specificationRules = getSpecificationRules(rules);
-  const specificationRuleContext = createEmptyRuleContext(customRuleContext);
   const beforeSpecification = createSpecification(
     specification,
     'before',
     beforeApiSpec
   );
+
   const afterSpecification = createSpecification(
     specification,
     'after',
@@ -92,6 +92,12 @@ export const runSpecificationRules = ({
   );
   for (const specificationRule of specificationRules) {
     if (beforeSpecification) {
+      const specificationRuleContext = createSpecificationRuleContext(
+        beforeSpecification,
+        customRuleContext,
+        specification
+      );
+
       if (
         !specificationRule.matches ||
         specificationRule.matches(beforeSpecification, specificationRuleContext)
@@ -113,6 +119,11 @@ export const runSpecificationRules = ({
     }
 
     if (afterSpecification) {
+      const specificationRuleContext = createSpecificationRuleContext(
+        afterSpecification,
+        customRuleContext,
+        specification
+      );
       if (
         !specificationRule.matches ||
         specificationRule.matches(afterSpecification, specificationRuleContext)

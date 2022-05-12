@@ -44,6 +44,7 @@ export class RuleRunner {
 
     for (const endpoint of groupedFacts.endpoints.values()) {
       const operationResults = runOperationRules({
+        specification: groupedFacts.specification,
         operation: endpoint,
         rules: this.rules,
         customRuleContext: context,
@@ -53,6 +54,7 @@ export class RuleRunner {
       endpointResults.push(...operationResults);
 
       const requestRules = runRequestRules({
+        specification: groupedFacts.specification,
         operation: endpoint,
         request: endpoint.request,
         rules: this.rules,
@@ -64,6 +66,7 @@ export class RuleRunner {
 
       for (const response of endpoint.responses.values()) {
         const responseRules = runResponseRules({
+          specification: groupedFacts.specification,
           operation: endpoint,
           response: response,
           rules: this.rules,
@@ -73,6 +76,7 @@ export class RuleRunner {
         });
 
         const responseBodyRules = runResponseBodyRules({
+          specification: groupedFacts.specification,
           operation: endpoint,
           response: response,
           rules: this.rules,
