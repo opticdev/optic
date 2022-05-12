@@ -7,6 +7,9 @@ export type FactVariantWithRaw<T extends OpenApiKind> = FactVariant<T> & {
 
 // Value constructs
 export type RuleContext = {
+  specification: Specification & {
+    change: 'added' | 'changed' | 'removed' | null;
+  };
   operation: Operation & {
     change: 'added' | 'changed' | 'removed' | null;
   };

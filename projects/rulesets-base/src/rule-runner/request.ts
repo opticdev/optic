@@ -1,12 +1,20 @@
-import { OpenAPIV3, Result } from '@useoptic/openapi-utilities';
+import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 
-import { createOperation, createRequest } from './data-constructors';
-import { RulesetData, EndpointNode, RequestNode } from './rule-runner-types';
+import {
+  createOperation,
+  createRequest,
+  createSpecification,
+} from './data-constructors';
+import {
+  RulesetData,
+  EndpointNode,
+  RequestNode,
+  NodeDetail,
+} from './rule-runner-types';
 import {
   createRulesetMatcher,
   getRuleAliases,
-  createAfterOperationContext,
-  createBeforeOperationContext,
+  createOperationContext,
 } from './utils';
 
 import { Rule, Ruleset, RequestRule } from '../rules';
@@ -99,6 +107,7 @@ const createRequestPropertyResult = (
 });
 
 export const runRequestRules = ({
+  specification,
   operation,
   request,
   rules,
@@ -106,6 +115,7 @@ export const runRequestRules = ({
   beforeApiSpec,
   afterApiSpec,
 }: {
+  specification: NodeDetail<OpenApiKind.Specification>;
   operation: EndpointNode;
   request: RequestNode;
   rules: (Ruleset | Rule)[];
@@ -115,14 +125,27 @@ export const runRequestRules = ({
 }) => {
   const results: Result[] = [];
   const requestRules = getRequestRules(rules);
+  const beforeSpecification = createSpecification(
+    specification,
+    'before',
+    beforeApiSpec
+  );
   const beforeOperation = createOperation(operation, 'before', beforeApiSpec);
+  const afterSpecification = createSpecification(
+    specification,
+    'after',
+    afterApiSpec
+  );
   const afterOperation = createOperation(operation, 'after', afterApiSpec);
   for (const requestRule of requestRules) {
-    if (beforeOperation) {
-      const beforeRulesContext = createBeforeOperationContext(
-        beforeOperation,
-        customRuleContext
-      );
+    if (beforeOperation && beforeSpecification) {
+      const beforeRulesContext = createOperationContext({
+        operation: beforeOperation,
+        custom: customRuleContext,
+        operationChangeType: operation.change?.changeType || null,
+        specification: beforeSpecification,
+        specificationNode: specification,
+      });
       const requestAssertions = createRequestAssertions();
       requestRule.rule(requestAssertions, beforeRulesContext);
 
@@ -178,12 +201,14 @@ export const runRequestRules = ({
       }
     }
 
-    if (afterOperation) {
-      const afterRulesContext = createAfterOperationContext(
-        afterOperation,
-        customRuleContext,
-        operation.change?.changeType || null
-      );
+    if (afterOperation && afterSpecification) {
+      const afterRulesContext = createOperationContext({
+        operation: afterOperation,
+        custom: customRuleContext,
+        operationChangeType: operation.change?.changeType || null,
+        specification: afterSpecification,
+        specificationNode: specification,
+      });
       const requestAssertions = createRequestAssertions();
       requestRule.rule(requestAssertions, afterRulesContext);
       for (const contentType of request.bodies.keys()) {

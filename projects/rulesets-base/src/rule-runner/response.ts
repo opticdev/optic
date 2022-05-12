@@ -1,10 +1,18 @@
-import { OpenAPIV3, Result } from '@useoptic/openapi-utilities';
+import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
 
-import { createOperation, createResponse } from './data-constructors';
-import { RulesetData, EndpointNode, ResponseNode } from './rule-runner-types';
 import {
-  createAfterOperationContext,
-  createBeforeOperationContext,
+  createOperation,
+  createResponse,
+  createSpecification,
+} from './data-constructors';
+import {
+  RulesetData,
+  EndpointNode,
+  ResponseNode,
+  NodeDetail,
+} from './rule-runner-types';
+import {
+  createOperationContext,
   createRulesetMatcher,
   getRuleAliases,
 } from './utils';
@@ -97,6 +105,7 @@ const createResponseHeaderResult = (
 });
 
 export const runResponseRules = ({
+  specification,
   operation,
   response,
   rules,
@@ -104,6 +113,7 @@ export const runResponseRules = ({
   beforeApiSpec,
   afterApiSpec,
 }: {
+  specification: NodeDetail<OpenApiKind.Specification>;
   operation: EndpointNode;
   response: ResponseNode;
   rules: (Ruleset | Rule)[];
@@ -114,14 +124,27 @@ export const runResponseRules = ({
 }) => {
   const results: Result[] = [];
   const responseRules = getResponseRules(rules);
+  const beforeSpecification = createSpecification(
+    specification,
+    'before',
+    beforeApiSpec
+  );
   const beforeOperation = createOperation(operation, 'before', beforeApiSpec);
+  const afterSpecification = createSpecification(
+    specification,
+    'after',
+    afterApiSpec
+  );
   const afterOperation = createOperation(operation, 'after', afterApiSpec);
   for (const responseRule of responseRules) {
-    if (beforeOperation) {
-      const beforeRulesContext = createBeforeOperationContext(
-        beforeOperation,
-        customRuleContext
-      );
+    if (beforeOperation && beforeSpecification) {
+      const beforeRulesContext = createOperationContext({
+        operation: beforeOperation,
+        custom: customRuleContext,
+        operationChangeType: operation.change?.changeType || null,
+        specification: beforeSpecification,
+        specificationNode: specification,
+      });
       const beforeResponse = createResponse(response, 'before', beforeApiSpec);
       const responseAssertions = createResponseAssertions();
       responseRule.rule(responseAssertions, beforeRulesContext);
@@ -162,12 +185,14 @@ export const runResponseRules = ({
       }
     }
 
-    if (afterOperation) {
-      const afterRulesContext = createAfterOperationContext(
-        afterOperation,
-        customRuleContext,
-        operation.change?.changeType || null
-      );
+    if (afterOperation && afterSpecification) {
+      const afterRulesContext = createOperationContext({
+        operation: afterOperation,
+        custom: customRuleContext,
+        operationChangeType: operation.change?.changeType || null,
+        specification: afterSpecification,
+        specificationNode: specification,
+      });
       const maybeBeforeResponse = createResponse(
         response,
         'before',
