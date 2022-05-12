@@ -27,6 +27,7 @@ export type StandardApiChecks = {
     | false;
 };
 
+// TODO RA-V2 - deprecate old standard ruels
 export function makeApiChecksForStandards(
   config: StandardApiChecks,
   service: ApiCheckService<ApiCheckDslContext> = new ApiCheckService<ApiCheckDslContext>()
