@@ -94,6 +94,8 @@ export interface Result {
   docsLink?: string;
   // new
   name?: string;
+  expected?: string; // JSON string values
+  received?: string; // JSON string values
 
   // to deprecate
   effectiveOnDate?: Date;

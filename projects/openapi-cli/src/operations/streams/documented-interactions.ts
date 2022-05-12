@@ -4,7 +4,6 @@ import { OpenAPIV3, SpecFacts } from '../../specs';
 import { OperationQueries } from '../queries';
 import { collect } from '../../lib/async-tools';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { Option, Some, None } from 'ts-results';
 
 export interface DocumentedInteractions
   extends AsyncIterable<DocumentedInteraction> {}
@@ -41,18 +40,18 @@ export class DocumentedInteractions {
       }
       const matchedOperation = matchedOperationResult.unwrap().unwrap();
 
-      let operation = jsonPointerHelpers.get(
+      let operationObject = jsonPointerHelpers.get(
         spec,
         matchedOperation.specPath
       ) as OpenAPIV3.OperationObject; // given the validation we've done above, this should be safe
 
       yield {
         interaction,
-        operation: {
-          pathPattern: matchedOperation.pathPattern,
-          method: matchedOperation.method,
-          ...operation,
-        },
+        operation: Operation.fromOperationObject(
+          matchedOperation.pathPattern,
+          matchedOperation.method,
+          operationObject
+        ),
         specJsonPath: matchedOperation.specPath,
       };
 

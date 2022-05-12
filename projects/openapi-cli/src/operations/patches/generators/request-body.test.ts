@@ -137,6 +137,47 @@ describe('requestBodyPatches', () => {
     let patches = [...requestBodyPatches(diff, operationWithJsonBody)];
     expect(patches).toHaveLength(0);
   });
+
+  it('does not generate new patches in the context of a non 2xx or 3xx status code', () => {
+    const operationWithoutRequestBody = operationFixture(null);
+
+    const request = interactionFixture(
+      CapturedBody.fromJSON({ id: 'test' }, 'application/json')
+    );
+
+    let [diff] = [
+      ...diffInteractionByOperation(request, operationWithoutRequestBody),
+    ];
+    expect(diff.kind).toBe(OperationDiffResultKind.UnmatchedRequestBody);
+
+    let patches = [
+      ...requestBodyPatches(diff, operationWithoutRequestBody, {
+        statusCode: '101',
+      }),
+    ];
+    expect(patches).toHaveLength(0);
+
+    patches = [
+      ...requestBodyPatches(diff, operationWithoutRequestBody, {
+        statusCode: '200',
+      }),
+    ];
+    expect(patches).toHaveLength(1);
+
+    patches = [
+      ...requestBodyPatches(diff, operationWithoutRequestBody, {
+        statusCode: '302',
+      }),
+    ];
+    expect(patches).toHaveLength(1);
+
+    patches = [
+      ...requestBodyPatches(diff, operationWithoutRequestBody, {
+        statusCode: '400',
+      }),
+    ];
+    expect(patches).toHaveLength(0);
+  });
 });
 
 function operationFixture(

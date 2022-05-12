@@ -1,6 +1,6 @@
 import { OpenAPIV3 } from '..';
 import { filter, flatMap, Subject } from '../../lib/async-tools';
-import JsonPatch from 'fast-json-patch';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
   SpecPatch,
   PatchImpact,
@@ -16,7 +16,11 @@ import {
   SchemaObject,
   ShapePatches,
 } from '../../shapes';
-import { DocumentedInteractions, OperationPatches } from '../../operations';
+import {
+  DocumentedInteractions,
+  OperationPatches,
+  OperationPatch,
+} from '../../operations';
 import { CapturedInteractions } from '../../captures';
 
 export interface SpecPatches extends AsyncIterable<SpecPatch> {}
@@ -84,13 +88,20 @@ export class SpecPatches {
       );
 
     for await (let documentedInteraction of documentedInteractions) {
+      // phase one: operation patches
       const operationPatches =
         OperationPatches.generateRequestResponseAdditions(
           documentedInteraction
         );
 
       let patchedSpec = spec;
+
+      let patchedOperation = documentedInteraction.operation;
       for (let patch of operationPatches) {
+        patchedOperation = OperationPatch.applyTo(
+          patch,
+          patchedOperation
+        ).expect('generated operation patch should apply to operation');
         const specPatch = SpecPatch.fromOperationPatch(
           patch,
           documentedInteraction.specJsonPath
@@ -99,6 +110,20 @@ export class SpecPatches {
         patchedSpec = SpecPatch.applyPatch(specPatch, patchedSpec);
         yield specPatch;
       }
+
+      // phase two: body patches
+      documentedInteraction.operation = patchedOperation;
+      const documentedBodies = DocumentedBodies.fromDocumentedInteraction(
+        documentedInteraction
+      );
+      const bodySpectPatches =
+        SpecPatches.fromDocumentedBodies(documentedBodies);
+
+      for await (let patch of bodySpectPatches) {
+        patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
+        yield patch;
+      }
+
       spec = patchedSpec;
       updatingSpec.onNext(spec);
     }

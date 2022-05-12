@@ -29,6 +29,11 @@ function* unmatchedStatusCode(
 
   const { statusCode, contentType } = diff;
 
+  const numericalStatusCode = parseInt(statusCode, 10);
+  if (numericalStatusCode < 200 || numericalStatusCode >= 500) {
+    return; // only document 2xx, 3xx and 4xx
+  }
+
   const responseObject: OpenAPIV3.ResponseObject = {
     description: 'automatically documented through Optic', // required, no longer in v3.1
   };

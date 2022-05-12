@@ -4,9 +4,11 @@ import { runCommand } from './workflows/commands';
 import { updateCommand } from '@useoptic/openapi-cli';
 
 const apiCheckService = newSnykApiCheckService();
-const cli = makeCiCli('sweater-comb', apiCheckService);
+(async () => {
+  const cli = await makeCiCli(apiCheckService);
 
-cli.addCommand(runCommand());
-cli.addCommand(updateCommand());
+  cli.addCommand(runCommand());
+  cli.addCommand(updateCommand());
 
-cli.parse(process.argv);
+  cli.parse(process.argv);
+})();

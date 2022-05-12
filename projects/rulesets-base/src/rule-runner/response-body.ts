@@ -66,6 +66,8 @@ const createResponseBodyResult = (
   condition: assertionResult.condition,
   passed: assertionResult.passed,
   error: assertionResult.error,
+  received: assertionResult.received,
+  expected: assertionResult.expected,
   docsLink: rule.docsLink,
   isShould: false,
 });
@@ -90,6 +92,8 @@ const createResponsePropertyResult = (
   condition: assertionResult.condition,
   passed: assertionResult.passed,
   error: assertionResult.error,
+  received: assertionResult.received,
+  expected: assertionResult.expected,
   docsLink: rule.docsLink,
   isShould: false,
 });
