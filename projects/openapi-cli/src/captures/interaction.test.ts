@@ -4,6 +4,7 @@ import { HarEntries, HttpArchive } from './streams/sources/har';
 import { collect } from '../lib/async-tools';
 import fs from 'fs';
 import Path from 'path';
+import { Readable } from 'stream';
 
 describe('CapturedIntearction.fromHarEntry', () => {
   let testEntries: HttpArchive.Entry[];
@@ -20,7 +21,9 @@ describe('CapturedIntearction.fromHarEntry', () => {
     let testEntry = testEntries[1];
     let interaction = CapturedInteraction.fromHarEntry(testEntry);
 
-    expect(interaction).toMatchSnapshot();
+    expect(interaction).toMatchSnapshot({
+      response: { body: matchBody() },
+    });
   });
 
   it('includes request bodies', () => {
@@ -32,7 +35,10 @@ describe('CapturedIntearction.fromHarEntry', () => {
     expect(testEntry).toBeTruthy();
 
     let interaction = CapturedInteraction.fromHarEntry(testEntry);
-    expect(interaction).toMatchSnapshot();
+    expect(interaction).toMatchSnapshot({
+      request: { body: matchBody() },
+      response: { body: matchBody() },
+    });
 
     let parsingBody = CapturedBody.json(interaction.request.body);
     expect(parsingBody).resolves.toMatchObject({});
@@ -47,7 +53,9 @@ describe('CapturedIntearction.fromHarEntry', () => {
     expect(testEntry).toBeTruthy();
 
     let interaction = CapturedInteraction.fromHarEntry(testEntry);
-    expect(interaction).toMatchSnapshot();
+    expect(interaction).toMatchSnapshot({
+      response: { body: matchBody() },
+    });
 
     let parsingBody = CapturedBody.json(interaction.response.body);
     expect(parsingBody).resolves.toMatchObject({});
@@ -69,7 +77,10 @@ describe('CapturedIntearction.fromHarEntry', () => {
     testEntry.request.postData.encoding = encoding;
 
     let interaction = CapturedInteraction.fromHarEntry(testEntry);
-    expect(interaction).toMatchSnapshot();
+    expect(interaction).toMatchSnapshot({
+      request: { body: matchBody() },
+      response: { body: matchBody() },
+    });
 
     let parsingBody = CapturedBody.json(interaction.request.body);
     expect(parsingBody).resolves.toMatchObject({});
@@ -91,9 +102,15 @@ describe('CapturedIntearction.fromHarEntry', () => {
     testEntry.response.content.encoding = encoding;
 
     let interaction = CapturedInteraction.fromHarEntry(testEntry);
-    expect(interaction).toMatchSnapshot();
+    expect(interaction).toMatchSnapshot({
+      response: { body: matchBody() },
+    });
 
     let parsingBody = CapturedBody.json(interaction.response.body);
     expect(parsingBody).resolves.toMatchObject({});
   });
 });
+
+function matchBody() {
+  return { stream: expect.any(Readable) };
+}
