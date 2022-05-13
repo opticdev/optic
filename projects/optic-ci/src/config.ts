@@ -15,7 +15,7 @@ import { CheckConfiguration } from './checker';
  * generateContext: () => ({})
  */
 
-type OpticConfiguration = {
+export type OpticConfiguration = {
   token?: string;
   gitProvider?: {
     token: string;

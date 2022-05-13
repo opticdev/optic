@@ -31,7 +31,7 @@ type SpectralRules = Extract<
 >['rules'];
 
 export class ApiCheckService<Context> {
-  constructor(private getExecutionDate?: (context: Context) => Date) {}
+  constructor(public getExecutionDate?: (context: Context) => Date) {}
 
   public rules: Rule<Context>[] = [];
 

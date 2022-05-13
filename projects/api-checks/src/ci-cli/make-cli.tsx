@@ -1,4 +1,5 @@
 import { program as cli } from 'commander';
+import { exec } from 'child_process';
 import { registerCompare } from './commands/compare';
 import { registerBulkCompare } from './commands/bulk-compare';
 import { initSentry } from './sentry';
@@ -14,28 +15,51 @@ import { registerCreateGitlabContext } from './commands/create-context/create-gi
 import { RuleRunner } from '../types';
 const packageJson = require('../../package.json');
 
-export function makeCiCliWithNamedRules(
-  forProject: string,
+export async function getProjectName(): Promise<string> {
+  try {
+    const stdout = new Promise<string>((resolve, reject) => {
+      exec(
+        'basename `git rev-parse --show-toplevel`',
+        {
+          cwd: process.cwd(),
+        },
+        (error, stdout) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(stdout);
+          }
+        }
+      );
+    });
+    return stdout;
+  } catch (e) {
+    return 'unknown-project';
+  }
+}
+
+export async function makeCiCliWithNamedRules(
   rulesetServices: OpticCINamedRulesets,
   options: CliConfig = {},
   generateContext: () => Object = () => ({})
 ) {
   initSentry(packageJson.version);
+  const projectName = await getProjectName();
   initSegment();
-  trackEvent('optic-ci-run', forProject);
+  trackEvent('optic-ci-run', projectName);
 
   cli.version(
-    `for ${forProject}, running optic api-check ${packageJson.version}`
+    `for ${projectName}, running optic api-check ${packageJson.version}`
   );
 
   registerCreateContext(cli);
   registerCreateGithubContext(cli);
   registerCreateGitlabContext(cli);
   registerCreateManualContext(cli);
-  registerCompare(cli, forProject, rulesetServices, options, generateContext);
+  registerCompare(cli, projectName, rulesetServices, options, generateContext);
   registerBulkCompare(
     cli,
-    forProject,
+    projectName,
     rulesetServices,
     options,
     generateContext
@@ -44,14 +68,12 @@ export function makeCiCliWithNamedRules(
   return cli;
 }
 
-export function makeCiCli(
-  forProject: string,
+export async function makeCiCli(
   checkService: RuleRunner,
   options: CliConfig = {},
   generateContext: () => Object = () => ({})
 ) {
   return makeCiCliWithNamedRules(
-    forProject,
     { default: checkService },
     options,
     generateContext

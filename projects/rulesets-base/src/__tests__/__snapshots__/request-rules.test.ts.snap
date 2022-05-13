@@ -32,10 +32,12 @@ Array [
     "condition": "must contain a type",
     "docsLink": undefined,
     "error": "request does not have \`type\`",
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request type",
     "passed": false,
+    "received": undefined,
     "where": "added request with content-type: application/json in operation: GET /api/users",
   },
 ]
@@ -75,10 +77,12 @@ Array [
     "condition": "must contain a type",
     "docsLink": undefined,
     "error": undefined,
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request type",
     "passed": true,
+    "received": undefined,
     "where": "added request with content-type: application/json in operation: GET /api/users",
   },
 ]
@@ -126,10 +130,12 @@ Array [
     "condition": "must not change root body shape",
     "docsLink": undefined,
     "error": "request must not change type",
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request shape",
     "passed": false,
+    "received": undefined,
     "where": "changed request with content-type: application/json in operation: GET /api/users",
   },
 ]
@@ -179,10 +185,12 @@ Array [
     "condition": "must not change root body shape",
     "docsLink": undefined,
     "error": undefined,
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request shape",
     "passed": true,
+    "received": undefined,
     "where": "changed request with content-type: application/json in operation: GET /api/users",
   },
 ]
@@ -221,38 +229,13 @@ Array [
     },
     "condition": "match expected shape",
     "docsLink": undefined,
-    "error": "Expected a partial match.
-      
-      Expected value:
-      {
-  \\"schema\\": {
-    \\"type\\": \\"object\\",
-    \\"properties\\": {
-      \\"id\\": {
-        \\"type\\": \\"string\\"
-      }
-    }
-  }
-}
-      
-      Received value:
-      {
-  \\"schema\\": {
-    \\"type\\": \\"object\\",
-    \\"properties\\": {
-      \\"notid\\": {
-        \\"type\\": \\"string\\"
-      },
-      \\"name\\": {
-        \\"type\\": \\"string\\"
-      }
-    }
-  }
-}",
+    "error": "Expected a partial match",
+    "expected": "{\\"schema\\":{\\"type\\":\\"object\\",\\"properties\\":{\\"id\\":{\\"type\\":\\"string\\"}}}}",
     "isMust": true,
     "isShould": false,
     "name": "request type",
     "passed": false,
+    "received": "{\\"schema\\":{\\"type\\":\\"object\\",\\"properties\\":{\\"notid\\":{\\"type\\":\\"string\\"},\\"name\\":{\\"type\\":\\"string\\"}}}}",
     "where": "added request with content-type: application/json in operation: GET /api/users",
   },
 ]
@@ -292,10 +275,12 @@ Array [
     "condition": "match expected shape",
     "docsLink": undefined,
     "error": undefined,
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request type",
     "passed": true,
+    "received": undefined,
     "where": "added request with content-type: application/json in operation: GET /api/users",
   },
 ]
@@ -337,10 +322,12 @@ Array [
     "condition": "cannot remove bodies with array schema",
     "docsLink": undefined,
     "error": "cannot remove bodies with array schema",
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request removal",
     "passed": false,
+    "received": undefined,
     "where": "removed request with content-type: application/json in operation: GET /api/users",
   },
 ]
@@ -382,10 +369,12 @@ Array [
     "condition": "cannot remove bodies with array schema",
     "docsLink": undefined,
     "error": undefined,
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request removal",
     "passed": true,
+    "received": undefined,
     "where": "removed request with content-type: application/json in operation: GET /api/users",
   },
 ]
@@ -422,10 +411,12 @@ Array [
     "condition": "must contain a type",
     "docsLink": undefined,
     "error": "request body does not have \`type\`",
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request type",
     "passed": false,
+    "received": undefined,
     "where": "requirement for request with content-type: application/json in operation: GET /api/users",
   },
 ]
@@ -464,10 +455,12 @@ Array [
     "condition": "must contain a type",
     "docsLink": undefined,
     "error": undefined,
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request type",
     "passed": true,
+    "received": undefined,
     "where": "requirement for request with content-type: application/json in operation: GET /api/users",
   },
 ]
@@ -509,10 +502,12 @@ Array [
     "condition": "must contain a type",
     "docsLink": undefined,
     "error": "field does not have \`type\`",
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request type",
     "passed": false,
+    "received": undefined,
     "where": "requirement for property: hello request body: application/json in operation: GET /api/users",
   },
 ]
@@ -556,10 +551,12 @@ Array [
     "condition": "must contain a type",
     "docsLink": undefined,
     "error": undefined,
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request type",
     "passed": true,
+    "received": undefined,
     "where": "requirement for property: hello request body: application/json in operation: GET /api/users",
   },
 ]
@@ -616,10 +613,12 @@ Array [
     "condition": "must not change property type",
     "docsLink": undefined,
     "error": "must not change type",
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "property type",
     "passed": false,
+    "received": undefined,
     "where": "changed property: items/hello request body: application/json in operation: GET /api/users",
   },
 ]
@@ -677,10 +676,12 @@ Array [
     "condition": "must not change property type",
     "docsLink": undefined,
     "error": undefined,
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "property type",
     "passed": true,
+    "received": undefined,
     "where": "changed property: items/hello request body: application/json in operation: GET /api/users",
   },
 ]
@@ -727,10 +728,12 @@ Array [
     "condition": "cannot remove bodies required property",
     "docsLink": undefined,
     "error": "cannot remove bodies with array schema",
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request removal",
     "passed": false,
+    "received": undefined,
     "where": "removed property: goodbye request body: application/json in operation: GET /api/users",
   },
 ]
@@ -777,10 +780,12 @@ Array [
     "condition": "cannot remove bodies required property",
     "docsLink": undefined,
     "error": undefined,
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request removal",
     "passed": true,
+    "received": undefined,
     "where": "removed property: goodbye request body: application/json in operation: GET /api/users",
   },
 ]
@@ -822,10 +827,12 @@ Array [
     "condition": "must contain a type",
     "docsLink": undefined,
     "error": "field does not have \`type\`",
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request type",
     "passed": false,
+    "received": undefined,
     "where": "requirement for property: hello request body: application/json in operation: GET /api/users",
   },
 ]
@@ -869,10 +876,12 @@ Array [
     "condition": "must contain a type",
     "docsLink": undefined,
     "error": undefined,
+    "expected": undefined,
     "isMust": true,
     "isShould": false,
     "name": "request type",
     "passed": true,
+    "received": undefined,
     "where": "requirement for property: hello request body: application/json in operation: GET /api/users",
   },
 ]

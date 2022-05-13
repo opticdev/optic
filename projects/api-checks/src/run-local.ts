@@ -45,12 +45,14 @@ const checker: ApiCheckService<ApiCheckDslContext> = makeApiChecksForStandards({
   },
 });
 
-const cli = makeCiCli('play-thing', checker, {
-  opticToken: process.env.OPTIC_TOKEN || '123',
-  gitProvider: {
-    token: process.env.GITHUB_TOKEN || '123',
-  },
-  ciProvider: 'github',
-});
+(async () => {
+  const cli = await makeCiCli(checker, {
+    opticToken: process.env.OPTIC_TOKEN || '123',
+    gitProvider: {
+      token: process.env.GITHUB_TOKEN || '123',
+    },
+    ciProvider: 'github',
+  });
 
-cli.parse(process.argv);
+  cli.parse(process.argv);
+})();

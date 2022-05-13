@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/openapi-io",
-  "version": "0.24.22",
+  "version": "0.25.3",
   "packageManager": "yarn@3.0.2",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -53,6 +53,7 @@
     "json-stable-stringify": "^1.0.1",
     "lodash.sortby": "^4.7.0",
     "node-fetch": "^2.6.7",
+    "openapi-types": "^11.0.0",
     "ts-invariant": "^0.9.3",
     "yaml-ast-parser": "^0.0.43"
   },

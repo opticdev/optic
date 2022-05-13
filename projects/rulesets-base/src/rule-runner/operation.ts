@@ -1,11 +1,10 @@
-import { OpenAPIV3, Result } from '@useoptic/openapi-utilities';
-import { createOperation } from './data-constructors';
-import { RulesetData, EndpointNode } from './rule-runner-types';
+import { OpenApiKind, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
+import { createOperation, createSpecification } from './data-constructors';
+import { RulesetData, EndpointNode, NodeDetail } from './rule-runner-types';
 import {
   createRulesetMatcher,
   getRuleAliases,
-  createAfterOperationContext,
-  createBeforeOperationContext,
+  createOperationContext,
 } from './utils';
 
 import { Rule, Ruleset, OperationRule } from '../rules';
@@ -60,6 +59,8 @@ const createOperationResult = (
   change: assertionResult.changeOrFact,
   name: rule.name,
   condition: assertionResult.condition,
+  received: assertionResult.received,
+  expected: assertionResult.expected,
   passed: assertionResult.passed,
   error: assertionResult.error,
   docsLink: rule.docsLink,
@@ -85,6 +86,8 @@ const createParameterResult = (
   change: assertionResult.changeOrFact,
   name: rule.name,
   condition: assertionResult.condition,
+  received: assertionResult.received,
+  expected: assertionResult.expected,
   passed: assertionResult.passed,
   error: assertionResult.error,
   docsLink: rule.docsLink,
@@ -92,12 +95,14 @@ const createParameterResult = (
 });
 
 export const runOperationRules = ({
+  specification,
   operation,
   rules,
   customRuleContext,
   beforeApiSpec,
   afterApiSpec,
 }: {
+  specification: NodeDetail<OpenApiKind.Specification>;
   operation: EndpointNode;
   rules: (Ruleset | Rule)[];
   customRuleContext: any;
@@ -105,16 +110,29 @@ export const runOperationRules = ({
   afterApiSpec: OpenAPIV3.Document;
 }): Result[] => {
   const operationRules = getOperationRules(rules);
+  const beforeSpecification = createSpecification(
+    specification,
+    'before',
+    beforeApiSpec
+  );
   const beforeOperation = createOperation(operation, 'before', beforeApiSpec);
+  const afterSpecification = createSpecification(
+    specification,
+    'after',
+    afterApiSpec
+  );
   const afterOperation = createOperation(operation, 'after', afterApiSpec);
   const results: Result[] = [];
 
   for (const operationRule of operationRules) {
-    if (beforeOperation) {
-      const beforeRulesContext = createBeforeOperationContext(
-        beforeOperation,
-        customRuleContext
-      );
+    if (beforeOperation && beforeSpecification) {
+      const beforeRulesContext = createOperationContext({
+        operation: beforeOperation,
+        custom: customRuleContext,
+        operationChangeType: operation.change?.changeType || null,
+        specification: beforeSpecification,
+        specificationNode: specification,
+      });
 
       if (
         !operationRule.matches ||
@@ -211,12 +229,14 @@ export const runOperationRules = ({
       }
     }
 
-    if (afterOperation) {
-      const afterRulesContext = createAfterOperationContext(
-        afterOperation,
-        customRuleContext,
-        operation.change?.changeType || null
-      );
+    if (afterOperation && afterSpecification) {
+      const afterRulesContext = createOperationContext({
+        operation: afterOperation,
+        custom: customRuleContext,
+        operationChangeType: operation.change?.changeType || null,
+        specification: afterSpecification,
+        specificationNode: specification,
+      });
 
       if (
         !operationRule.matches ||

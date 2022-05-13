@@ -7,7 +7,7 @@ import {
   LookupLineResult,
   resolveJsonPointerInYamlAst,
 } from './ast-helpers';
-import { jsonPointerHelpers } from '../../../json-pointer-helpers';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export type RenderFlatOpenAPI = {
   openapi: OpenAPIV3.Document;
