@@ -235,8 +235,6 @@ export const runOperationRules = ({
           key,
           beforeParameter,
         ] of beforeOperation.cookieParameters.entries()) {
-          console.log('key', key);
-          console.log('beforeParameter', beforeParameter);
           const maybeChange =
             operation.cookieParameters.get(key)?.change || null;
           results.push(
