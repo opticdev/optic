@@ -175,148 +175,157 @@ describe('breaking changes ruleset', () => {
     expect(results.some((result) => !result.passed)).toBe(true);
   });
 
-  test('required query parameter added', () => {
-    const beforeJson: OpenAPIV3.Document = {
-      ...TestHelpers.createEmptySpec(),
-      paths: {
-        '/api/users': {
-          get: {
-            responses: {},
+  test.each(['query', 'cookie'])(
+    'required %p parameter added',
+    (location: string) => {
+      const beforeJson: OpenAPIV3.Document = {
+        ...TestHelpers.createEmptySpec(),
+        paths: {
+          '/api/users': {
+            get: {
+              responses: {},
+            },
           },
         },
-      },
-    };
-    const afterJson: OpenAPIV3.Document = {
-      ...TestHelpers.createEmptySpec(),
-      paths: {
-        '/api/users': {
-          get: {
-            parameters: [
-              {
-                name: 'required',
-                in: 'query',
-                required: true,
-                schema: {
-                  type: 'string',
+      };
+      const afterJson: OpenAPIV3.Document = {
+        ...TestHelpers.createEmptySpec(),
+        paths: {
+          '/api/users': {
+            get: {
+              parameters: [
+                {
+                  name: 'required',
+                  in: location,
+                  required: true,
+                  schema: {
+                    type: 'string',
+                  },
                 },
-              },
-            ],
-            responses: {},
+              ],
+              responses: {},
+            },
           },
         },
-      },
-    };
-    const results = TestHelpers.runRulesWithInputs(
-      [new BreakingChangesRuleset()],
-      beforeJson,
-      afterJson
-    );
-    expect(results.length > 0).toBe(true);
+      };
+      const results = TestHelpers.runRulesWithInputs(
+        [new BreakingChangesRuleset()],
+        beforeJson,
+        afterJson
+      );
+      expect(results.length > 0).toBe(true);
 
-    expect(results).toMatchSnapshot();
-    expect(results.some((result) => !result.passed)).toBe(true);
-  });
+      expect(results).toMatchSnapshot();
+      expect(results.some((result) => !result.passed)).toBe(true);
+    }
+  );
 
-  test('query parameter optional to required', () => {
-    const beforeJson: OpenAPIV3.Document = {
-      ...TestHelpers.createEmptySpec(),
-      paths: {
-        '/api/users': {
-          get: {
-            parameters: [
-              {
-                name: 'version',
-                in: 'query',
-                schema: {
-                  type: 'string',
+  test.each(['query', 'cookie'])(
+    '%p parameter optional to required',
+    (location: string) => {
+      const beforeJson: OpenAPIV3.Document = {
+        ...TestHelpers.createEmptySpec(),
+        paths: {
+          '/api/users': {
+            get: {
+              parameters: [
+                {
+                  name: 'version',
+                  in: location,
+                  schema: {
+                    type: 'string',
+                  },
                 },
-              },
-            ],
-            responses: {},
+              ],
+              responses: {},
+            },
           },
         },
-      },
-    };
-    const afterJson: OpenAPIV3.Document = {
-      ...TestHelpers.createEmptySpec(),
-      paths: {
-        '/api/users': {
-          get: {
-            parameters: [
-              {
-                name: 'version',
-                in: 'query',
-                required: true,
-                schema: {
-                  type: 'string',
+      };
+      const afterJson: OpenAPIV3.Document = {
+        ...TestHelpers.createEmptySpec(),
+        paths: {
+          '/api/users': {
+            get: {
+              parameters: [
+                {
+                  name: 'version',
+                  in: location,
+                  required: true,
+                  schema: {
+                    type: 'string',
+                  },
                 },
-              },
-            ],
-            responses: {},
+              ],
+              responses: {},
+            },
           },
         },
-      },
-    };
-    const results = TestHelpers.runRulesWithInputs(
-      [new BreakingChangesRuleset()],
-      beforeJson,
-      afterJson
-    );
-    expect(results.length > 0).toBe(true);
+      };
+      const results = TestHelpers.runRulesWithInputs(
+        [new BreakingChangesRuleset()],
+        beforeJson,
+        afterJson
+      );
+      expect(results.length > 0).toBe(true);
 
-    expect(results).toMatchSnapshot();
-    expect(results.some((result) => !result.passed)).toBe(true);
-  });
+      expect(results).toMatchSnapshot();
+      expect(results.some((result) => !result.passed)).toBe(true);
+    }
+  );
 
-  test('query parameter type change', () => {
-    const beforeJson: OpenAPIV3.Document = {
-      ...TestHelpers.createEmptySpec(),
-      paths: {
-        '/api/users': {
-          get: {
-            parameters: [
-              {
-                name: 'version',
-                in: 'query',
-                schema: {
-                  type: 'string',
+  test.each(['query', 'cookie'])(
+    '%p parameter type change',
+    (location: string) => {
+      const beforeJson: OpenAPIV3.Document = {
+        ...TestHelpers.createEmptySpec(),
+        paths: {
+          '/api/users': {
+            get: {
+              parameters: [
+                {
+                  name: 'version',
+                  in: location,
+                  schema: {
+                    type: 'string',
+                  },
                 },
-              },
-            ],
-            responses: {},
+              ],
+              responses: {},
+            },
           },
         },
-      },
-    };
-    const afterJson: OpenAPIV3.Document = {
-      ...TestHelpers.createEmptySpec(),
-      paths: {
-        '/api/users': {
-          get: {
-            parameters: [
-              {
-                name: 'version',
-                in: 'query',
-                schema: {
-                  type: 'number',
+      };
+      const afterJson: OpenAPIV3.Document = {
+        ...TestHelpers.createEmptySpec(),
+        paths: {
+          '/api/users': {
+            get: {
+              parameters: [
+                {
+                  name: 'version',
+                  in: location,
+                  schema: {
+                    type: 'number',
+                  },
                 },
-              },
-            ],
-            responses: {},
+              ],
+              responses: {},
+            },
           },
         },
-      },
-    };
-    const results = TestHelpers.runRulesWithInputs(
-      [new BreakingChangesRuleset()],
-      beforeJson,
-      afterJson
-    );
-    expect(results.length > 0).toBe(true);
+      };
+      const results = TestHelpers.runRulesWithInputs(
+        [new BreakingChangesRuleset()],
+        beforeJson,
+        afterJson
+      );
+      expect(results.length > 0).toBe(true);
 
-    expect(results).toMatchSnapshot();
-    expect(results.some((result) => !result.passed)).toBe(true);
-  });
+      expect(results).toMatchSnapshot();
+      expect(results.some((result) => !result.passed)).toBe(true);
+    }
+  );
 
   test('required request property added', () => {
     const beforeJson: OpenAPIV3.Document = {

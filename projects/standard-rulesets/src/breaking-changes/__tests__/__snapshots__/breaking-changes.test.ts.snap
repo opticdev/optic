@@ -1,12 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`breaking changes ruleset operation removal 1`] = `
+exports[`breaking changes ruleset "cookie" parameter optional to required 1`] = `
 Array [
   Object {
     "change": Object {
-      "changeType": "removed",
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "cookie",
+          "name": "version",
+          "required": true,
+          "schema": Object {
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "version",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
       "location": Object {
         "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "version",
+          },
           "method": "get",
           "path": "/api/users",
         },
@@ -14,32 +34,185 @@ Array [
           "operations",
           "/api/users",
           "get",
+          "parameters",
+          "cookie",
+          "version",
         ],
-        "jsonPath": "/paths/~1api~1users/get",
-        "kind": "operation",
-      },
-      "removed": Object {
-        "before": Object {
-          "method": "get",
-          "pathPattern": "/api/users",
-        },
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
       },
     },
-    "condition": "not remove operation",
+    "condition": "not make an optional parameter required",
     "docsLink": undefined,
-    "error": "cannot remove an operation",
+    "error": "cannot make an optional parameter required",
     "expected": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "Prevent operation removal",
+    "name": "prevent new required cookie parameters",
     "passed": false,
     "received": undefined,
-    "where": "removed operation: GET /api/users",
+    "where": "changed cookie parameter: version in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "cookie",
+          "name": "version",
+          "required": true,
+          "schema": Object {
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "version",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "version",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "version",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "not change parameter type",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameter type changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed cookie parameter: version in operation: GET /api/users",
   },
 ]
 `;
 
-exports[`breaking changes ruleset query parameter optional to required 1`] = `
+exports[`breaking changes ruleset "cookie" parameter type change 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "cookie",
+          "name": "version",
+          "schema": Object {
+            "type": "number",
+          },
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "version",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "version",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "version",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "not make an optional parameter required",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent new required cookie parameters",
+    "passed": true,
+    "received": undefined,
+    "where": "changed cookie parameter: version in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "cookie",
+          "name": "version",
+          "schema": Object {
+            "type": "number",
+          },
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "version",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "version",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "version",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "not change parameter type",
+    "docsLink": undefined,
+    "error": "expected cookie parameter to not change type",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameter type changes",
+    "passed": false,
+    "received": undefined,
+    "where": "changed cookie parameter: version in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`breaking changes ruleset "query" parameter optional to required 1`] = `
 Array [
   Object {
     "change": Object {
@@ -146,7 +319,7 @@ Array [
 ]
 `;
 
-exports[`breaking changes ruleset query parameter type change 1`] = `
+exports[`breaking changes ruleset "query" parameter type change 1`] = `
 Array [
   Object {
     "change": Object {
@@ -247,6 +420,45 @@ Array [
     "passed": false,
     "received": undefined,
     "where": "changed query parameter: version in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`breaking changes ruleset operation removal 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "removed": Object {
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+    },
+    "condition": "not remove operation",
+    "docsLink": undefined,
+    "error": "cannot remove an operation",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "Prevent operation removal",
+    "passed": false,
+    "received": undefined,
+    "where": "removed operation: GET /api/users",
   },
 ]
 `;
@@ -477,7 +689,54 @@ Array [
 ]
 `;
 
-exports[`breaking changes ruleset required query parameter added 1`] = `
+exports[`breaking changes ruleset required "cookie" parameter added 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "in": "cookie",
+        "name": "required",
+        "required": true,
+        "schema": Object {
+          "type": "string",
+        },
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "required",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "required",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "not add required cookie parameter",
+    "docsLink": undefined,
+    "error": "cannot add a required cookie parameter to an existing operation",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent new required cookie parameters",
+    "passed": false,
+    "received": undefined,
+    "where": "added cookie parameter: required in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`breaking changes ruleset required "query" parameter added 1`] = `
 Array [
   Object {
     "change": Object {
