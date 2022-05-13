@@ -34,6 +34,11 @@ tasks:
     cmds:
       - yarn workspaces foreach -pv --no-private run ws:test
 
+  update-snapshots:
+    desc: Update snapshots
+    cmds:
+      - yarn workspaces foreach -pv --no-private run ws:test -u
+
   openapi-diff:docker:build:
     desc: Build the interactive baseline image used to generate OpenAPI specs
     dir: projects/openapi-diff
