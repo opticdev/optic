@@ -2,6 +2,8 @@ import { Ruleset, Rule } from '@useoptic/rulesets-base';
 import { preventOperationRemoval } from './preventOperationRemoval';
 import { preventQueryParameterRequired } from './preventQueryParameterRequired';
 import { preventQueryParameterTypeChange } from './preventQueryParameterTypeChange';
+import { preventCookieParameterRequired } from './preventCookieParameterRequired';
+import { preventCookieParameterTypeChange } from './preventCookieParameterTypeChange';
 import { preventRequestPropertyRequired } from './preventRequestPropertyRequired';
 import { preventRequestPropertyTypeChange } from './preventRequestPropertyTypeChange';
 import { preventResponsePropertyOptional } from './preventResponsePropertyOptional';
@@ -12,6 +14,8 @@ const breakingChangeRules: Rule[] = [
   preventOperationRemoval,
   preventQueryParameterRequired,
   preventQueryParameterTypeChange,
+  preventCookieParameterRequired,
+  preventCookieParameterTypeChange,
   preventRequestPropertyRequired,
   preventRequestPropertyTypeChange,
   preventResponsePropertyOptional,

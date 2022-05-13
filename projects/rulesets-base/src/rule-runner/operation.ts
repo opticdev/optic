@@ -235,6 +235,8 @@ export const runOperationRules = ({
           key,
           beforeParameter,
         ] of beforeOperation.cookieParameters.entries()) {
+          console.log('key', key);
+          console.log('beforeParameter', beforeParameter);
           const maybeChange =
             operation.cookieParameters.get(key)?.change || null;
           results.push(
@@ -359,6 +361,33 @@ export const runOperationRules = ({
                   {
                     name: key,
                     type: 'query parameter',
+                    method: operation.method,
+                    path: operation.path,
+                  },
+                  operationRule
+                )
+              )
+          );
+        }
+
+        for (const [
+          key,
+          afterParameter,
+        ] of afterOperation.cookieParameters.entries()) {
+          const maybeBeforeParameter =
+            beforeOperation?.cookieParameters.get(key) || null;
+          const maybeChange =
+            operation.cookieParameters.get(key)?.change || null;
+
+          results.push(
+            ...operationAssertions.cookieParameter
+              .runAfter(maybeBeforeParameter, afterParameter, maybeChange)
+              .map((assertionResult) =>
+                createParameterResult(
+                  assertionResult,
+                  {
+                    name: key,
+                    type: 'cookie parameter',
                     method: operation.method,
                     path: operation.path,
                   },
