@@ -9,6 +9,12 @@ import { preventRequestPropertyTypeChange } from './preventRequestPropertyTypeCh
 import { preventResponsePropertyOptional } from './preventResponsePropertyOptional';
 import { preventResponsePropertyRemoval } from './preventResponsePropertyRemoval';
 import { preventResponsePropertyTypeChange } from './preventResponsePropertyTypeChange';
+import {
+  preventQueryParameterEnumBreak,
+  preventCookieParameterEnumBreak,
+  preventPathParameterEnumBreak,
+  preventHeaderParameterEnumBreak,
+} from './preventParameterEnumBreak';
 
 const breakingChangeRules: Rule[] = [
   preventOperationRemoval,
@@ -21,6 +27,10 @@ const breakingChangeRules: Rule[] = [
   preventResponsePropertyOptional,
   preventResponsePropertyRemoval,
   preventResponsePropertyTypeChange,
+  preventQueryParameterEnumBreak,
+  preventCookieParameterEnumBreak,
+  preventPathParameterEnumBreak,
+  preventHeaderParameterEnumBreak,
 ];
 
 export class BreakingChangesRuleset extends Ruleset {
