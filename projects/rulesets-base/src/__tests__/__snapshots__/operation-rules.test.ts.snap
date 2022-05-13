@@ -1867,6 +1867,7 @@ Object {
   "custom": Object {},
   "operation": Object {
     "change": "added",
+    "cookieParameters": Map {},
     "headerParameters": Map {},
     "location": Object {
       "conceptualLocation": Object {
@@ -1946,6 +1947,7 @@ Object {
   "custom": Object {},
   "operation": Object {
     "change": "removed",
+    "cookieParameters": Map {},
     "headerParameters": Map {},
     "location": Object {
       "conceptualLocation": Object {
