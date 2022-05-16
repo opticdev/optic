@@ -639,63 +639,6 @@ Array [
     "received": undefined,
     "where": "changed path parameter: test in operation: GET /api/users",
   },
-  Object {
-    "change": Object {
-      "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "in": "path",
-          "name": "test",
-          "schema": Object {
-            "enum": Array [
-              "b",
-            ],
-            "type": "string",
-          },
-        },
-        "before": Object {
-          "in": "path",
-          "name": "test",
-          "schema": Object {
-            "enum": Array [
-              "a",
-              "b",
-            ],
-            "type": "string",
-          },
-        },
-      },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "path": "test",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/api/users",
-          "get",
-          "parameters",
-          "path",
-          "test",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "path-parameter",
-      },
-    },
-    "condition": "not make an optional path parameter required",
-    "docsLink": undefined,
-    "error": undefined,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "prevent requiring existing path parameters",
-    "passed": true,
-    "received": undefined,
-    "where": "changed path parameter: test in operation: GET /api/users",
-  },
 ]
 `;
 
@@ -1534,60 +1477,6 @@ Array [
     "isMust": true,
     "isShould": false,
     "name": "prevent path parameters type changes",
-    "passed": true,
-    "received": undefined,
-    "where": "changed path parameter: test in operation: GET /api/users",
-  },
-  Object {
-    "change": Object {
-      "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "in": "path",
-          "name": "test",
-          "schema": Object {
-            "enum": Array [
-              "a",
-              "b",
-            ],
-            "type": "string",
-          },
-        },
-        "before": Object {
-          "in": "path",
-          "name": "test",
-          "schema": Object {
-            "type": "string",
-          },
-        },
-      },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "path": "test",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/api/users",
-          "get",
-          "parameters",
-          "path",
-          "test",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "path-parameter",
-      },
-    },
-    "condition": "not make an optional path parameter required",
-    "docsLink": undefined,
-    "error": undefined,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "prevent requiring existing path parameters",
     "passed": true,
     "received": undefined,
     "where": "changed path parameter: test in operation: GET /api/users",

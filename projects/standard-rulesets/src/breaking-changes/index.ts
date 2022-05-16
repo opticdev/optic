@@ -14,13 +14,11 @@ import {
 import {
   preventNewRequiredQueryParameter,
   preventNewRequiredCookieParameter,
-  preventNewRequiredPathParameter,
   preventNewRequiredHeaderParameter,
 } from './preventNewRequiredParameter';
 import {
   preventRequireExistingQueryParameter,
   preventRequireExistingCookieParameter,
-  preventRequireExistingPathParameter,
   preventRequireExistingHeaderParameter,
 } from './preventRequireExistingParameter';
 import {
@@ -37,7 +35,6 @@ const breakingChangeRules: Rule[] = [
   preventHeaderParameterTypeChange,
   preventNewRequiredCookieParameter,
   preventNewRequiredHeaderParameter,
-  preventNewRequiredPathParameter,
   preventNewRequiredQueryParameter,
   preventOperationRemoval,
   preventPathParameterEnumBreak,
@@ -48,7 +45,6 @@ const breakingChangeRules: Rule[] = [
   preventRequestPropertyTypeChange,
   preventRequireExistingCookieParameter,
   preventRequireExistingHeaderParameter,
-  preventRequireExistingPathParameter,
   preventRequireExistingQueryParameter,
   preventResponsePropertyOptional,
   preventResponsePropertyRemoval,

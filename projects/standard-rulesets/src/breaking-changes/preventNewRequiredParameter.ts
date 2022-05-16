@@ -32,8 +32,5 @@ export const preventNewRequiredQueryParameter =
 export const preventNewRequiredCookieParameter =
   getPreventNewRequiredParameter('cookie');
 
-export const preventNewRequiredPathParameter =
-  getPreventNewRequiredParameter('path');
-
 export const preventNewRequiredHeaderParameter =
   getPreventNewRequiredParameter('header');

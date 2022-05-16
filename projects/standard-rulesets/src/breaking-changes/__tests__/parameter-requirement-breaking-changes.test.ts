@@ -3,7 +3,7 @@ import { TestHelpers } from '@useoptic/rulesets-base';
 import { BreakingChangesRuleset } from '../index';
 
 describe('breaking changes ruleset - parameter requirement change', () => {
-  test.each(['query', 'cookie', 'path', 'header'])(
+  test.each(['query', 'cookie', 'header'])(
     'required %p parameter added',
     (location: string) => {
       const beforeJson: OpenAPIV3.Document = {
@@ -48,7 +48,7 @@ describe('breaking changes ruleset - parameter requirement change', () => {
     }
   );
 
-  test.each(['query', 'cookie', 'path', 'header'])(
+  test.each(['query', 'cookie', 'header'])(
     '%p parameter optional to required',
     (location: string) => {
       const beforeJson: OpenAPIV3.Document = {

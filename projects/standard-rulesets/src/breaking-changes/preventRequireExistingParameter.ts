@@ -30,8 +30,5 @@ export const preventRequireExistingQueryParameter =
 export const preventRequireExistingCookieParameter =
   getPreventRequireExistingParameter('cookie');
 
-export const preventRequireExistingPathParameter =
-  getPreventRequireExistingParameter('path');
-
 export const preventRequireExistingHeaderParameter =
   getPreventRequireExistingParameter('header');
