@@ -524,6 +524,102 @@ describe('OperationRule', () => {
         });
       });
 
+      describe('matchesOneOf', () => {
+        const ruleRunner = new RuleRunner([
+          new OperationRule({
+            name: 'operation description',
+            rule: (operationAssertions) => {
+              operationAssertions.added.matchesOneOf([
+                {
+                  description: Matchers.string,
+                },
+                {
+                  summary: Matchers.string,
+                },
+              ]);
+            },
+          }),
+        ]);
+        test('passing assertion', () => {
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  description: 'hello',
+                  responses: {},
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(defaultEmptySpec, json)
+          );
+          expect(results.length > 0).toBe(true);
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(true);
+          }
+        });
+
+        test('failing assertion', () => {
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {},
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(defaultEmptySpec, json)
+          );
+          expect(results.length > 0).toBe(true);
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(false);
+          }
+        });
+
+        test('inverted assertion', () => {
+          const ruleRunner = new RuleRunner([
+            new OperationRule({
+              name: 'operation description',
+              rule: (operationAssertions) => {
+                operationAssertions.added.not.matchesOneOf([
+                  {
+                    description: Matchers.string,
+                  },
+                  {
+                    summary: Matchers.string,
+                  },
+                ]);
+              },
+            }),
+          ]);
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {},
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(defaultEmptySpec, json)
+          );
+          expect(results.length > 0).toBe(true);
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(true);
+          }
+        });
+      });
+
       describe('hasRequests', () => {
         const ruleRunner = new RuleRunner([
           new OperationRule({

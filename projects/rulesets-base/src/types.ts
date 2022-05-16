@@ -88,10 +88,19 @@ type MatchesFn = (
     strict?: boolean;
   }
 ) => void;
+
+type MatchesOneOfFn = (
+  structures: any[],
+  options?: {
+    strict?: boolean;
+  }
+) => void;
+
 export type AssertionTypeToHelpers = {
   specification: {
     not: AssertionTypeToHelpers['specification'];
     matches: MatchesFn;
+    matchesOneOf: MatchesOneOfFn;
   };
   operation: {
     not: AssertionTypeToHelpers['operation'];
@@ -111,6 +120,7 @@ export type AssertionTypeToHelpers = {
       }[]
     ) => void;
     matches: MatchesFn;
+    matchesOneOf: MatchesOneOfFn;
   };
   'query-parameter': {};
   'path-parameter': {};
@@ -130,10 +140,12 @@ export type AssertionTypeToHelpers = {
   'request-body': {
     not: AssertionTypeToHelpers['request-body'];
     matches: MatchesFn;
+    matchesOneOf: MatchesOneOfFn;
   };
   'response-body': {
     not: AssertionTypeToHelpers['response-body'];
     matches: MatchesFn;
+    matchesOneOf: MatchesOneOfFn;
   };
   property: {};
 };

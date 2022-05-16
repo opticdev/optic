@@ -957,6 +957,118 @@ Array [
 ]
 `;
 
+exports[`OperationRule assertions custom matchers matchesOneOf failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "match expected shape",
+    "docsLink": undefined,
+    "error": "Expected at least one partial match",
+    "expected": "[{\\"description\\":\\"Matcher.string\\"},{\\"summary\\":\\"Matcher.string\\"}]",
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": false,
+    "received": "{\\"responses\\":{}}",
+    "where": "added operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers matchesOneOf inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "not match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "received": undefined,
+    "where": "added operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers matchesOneOf passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "received": undefined,
+    "where": "added operation: GET /api/users",
+  },
+]
+`;
+
 exports[`OperationRule assertions custom matchers not does not bleed into different assertions 1`] = `
 Array [
   Object {

@@ -672,6 +672,182 @@ describe('ResponseBodyRule', () => {
           }
         });
       });
+
+      describe('matchesOneOf', () => {
+        const ruleRunner = new RuleRunner([
+          new ResponseBodyRule({
+            name: 'request type',
+            rule: (responseAssertions) => {
+              responseAssertions.body.added.matchesOneOf([
+                {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      id: {
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+                {
+                  schema: {
+                    type: 'array',
+                    items: {},
+                  },
+                },
+              ]);
+            },
+          }),
+        ]);
+        test('passing assertion', () => {
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {
+                    '200': {
+                      description: '',
+                      content: {
+                        'application/json': {
+                          schema: {
+                            type: 'object',
+                            properties: {
+                              id: {
+                                type: 'string',
+                              },
+                              name: {
+                                type: 'string',
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(defaultEmptySpec, json)
+          );
+          expect(results.length > 0).toBe(true);
+
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(true);
+          }
+        });
+
+        test('failing assertion', () => {
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {
+                    '200': {
+                      description: '',
+                      content: {
+                        'application/json': {
+                          schema: {
+                            type: 'object',
+                            properties: {
+                              notid: {
+                                type: 'string',
+                              },
+                              name: {
+                                type: 'string',
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(defaultEmptySpec, json)
+          );
+          expect(results.length > 0).toBe(true);
+
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(false);
+          }
+        });
+
+        test('inverted assertion', () => {
+          const ruleRunner = new RuleRunner([
+            new ResponseBodyRule({
+              name: 'request type',
+              rule: (responseAssertions) => {
+                responseAssertions.body.added.not.matchesOneOf([
+                  {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'string',
+                        },
+                      },
+                    },
+                  },
+                  {
+                    schema: {
+                      type: 'array',
+                      items: {},
+                    },
+                  },
+                ]);
+              },
+            }),
+          ]);
+
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {
+                    '200': {
+                      description: '',
+                      content: {
+                        'application/json': {
+                          schema: {
+                            type: 'object',
+                            properties: {
+                              notid: {
+                                type: 'string',
+                              },
+                              name: {
+                                type: 'string',
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(defaultEmptySpec, json)
+          );
+          expect(results.length > 0).toBe(true);
+
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(true);
+          }
+        });
+      });
     });
   });
 

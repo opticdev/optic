@@ -49,6 +49,44 @@ export const createRequestBodyHelpers = (
           }
         });
       },
+      matchesOneOf: (
+        references: any[],
+        options: {
+          strict?: boolean;
+        } = {}
+      ) => {
+        addAssertion(conditionPrefix + 'match expected shape', (value) => {
+          const { strict = false } = options;
+          if (isNot) {
+            const matchesNone = references.every(
+              (reference) => !valuesMatcher(reference, value.raw, strict)
+            );
+
+            if (!matchesNone) {
+              throw new RuleError({
+                message: strict
+                  ? 'Expected to not find any exact matches'
+                  : 'Expected to not find any partial matches',
+                received: value.raw,
+                expected: references,
+              });
+            }
+          } else {
+            const matchesAtleastOne = references.some((reference) =>
+              valuesMatcher(reference, value.raw, strict)
+            );
+            if (!matchesAtleastOne) {
+              throw new RuleError({
+                message: strict
+                  ? 'Expected at least one exact match'
+                  : 'Expected at least one partial match',
+                received: value.raw,
+                expected: references,
+              });
+            }
+          }
+        });
+      },
     };
   };
   return createAssertions(false);
