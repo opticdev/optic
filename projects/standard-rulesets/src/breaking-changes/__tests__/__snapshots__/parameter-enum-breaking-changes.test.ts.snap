@@ -1,121 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`enum breaking changes ruleset "cookie" parameter enum narrowing 1`] = `
+exports[`breaking changes ruleset - parameter enum change "cookie" parameter enum narrowing 1`] = `
 Array [
-  Object {
-    "change": Object {
-      "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "in": "cookie",
-          "name": "test",
-          "schema": Object {
-            "enum": Array [
-              "b",
-            ],
-            "type": "string",
-          },
-        },
-        "before": Object {
-          "in": "cookie",
-          "name": "test",
-          "schema": Object {
-            "enum": Array [
-              "a",
-              "b",
-            ],
-            "type": "string",
-          },
-        },
-      },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "cookie": "test",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/api/users",
-          "get",
-          "parameters",
-          "cookie",
-          "test",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "cookie-parameter",
-      },
-    },
-    "condition": "not make an optional parameter required",
-    "docsLink": undefined,
-    "error": undefined,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "prevent new required cookie parameters",
-    "passed": true,
-    "received": undefined,
-    "where": "changed cookie parameter: test in operation: GET /api/users",
-  },
-  Object {
-    "change": Object {
-      "changeType": "changed",
-      "changed": Object {
-        "after": Object {
-          "in": "cookie",
-          "name": "test",
-          "schema": Object {
-            "enum": Array [
-              "b",
-            ],
-            "type": "string",
-          },
-        },
-        "before": Object {
-          "in": "cookie",
-          "name": "test",
-          "schema": Object {
-            "enum": Array [
-              "a",
-              "b",
-            ],
-            "type": "string",
-          },
-        },
-      },
-      "location": Object {
-        "conceptualLocation": Object {
-          "inRequest": Object {
-            "cookie": "test",
-          },
-          "method": "get",
-          "path": "/api/users",
-        },
-        "conceptualPath": Array [
-          "operations",
-          "/api/users",
-          "get",
-          "parameters",
-          "cookie",
-          "test",
-        ],
-        "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "cookie-parameter",
-      },
-    },
-    "condition": "not change parameter type",
-    "docsLink": undefined,
-    "error": undefined,
-    "expected": undefined,
-    "isMust": true,
-    "isShould": false,
-    "name": "prevent cookie parameter type changes",
-    "passed": true,
-    "received": undefined,
-    "where": "changed cookie parameter: test in operation: GET /api/users",
-  },
   Object {
     "change": Object {
       "changeType": "changed",
@@ -230,10 +116,124 @@ Array [
     "received": undefined,
     "where": "changed cookie parameter: test in operation: GET /api/users",
   },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "cookie",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "a",
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "not make an optional parameter required",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed cookie parameter: test in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "cookie",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "a",
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "not change parameter type",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed cookie parameter: test in operation: GET /api/users",
+  },
 ]
 `;
 
-exports[`enum breaking changes ruleset "header" parameter enum narrowing 1`] = `
+exports[`breaking changes ruleset - parameter enum change "header" parameter enum narrowing 1`] = `
 Array [
   Object {
     "change": Object {
@@ -349,10 +349,124 @@ Array [
     "received": undefined,
     "where": "changed header parameter: test in operation: GET /api/users",
   },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "header",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "header",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "a",
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": "not make an optional parameter required",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent header parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed header parameter: test in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "header",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "header",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "a",
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": "not change parameter type",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent header parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed header parameter: test in operation: GET /api/users",
+  },
 ]
 `;
 
-exports[`enum breaking changes ruleset "path" parameter enum narrowing 1`] = `
+exports[`breaking changes ruleset - parameter enum change "path" parameter enum narrowing 1`] = `
 Array [
   Object {
     "change": Object {
@@ -468,17 +582,12 @@ Array [
     "received": undefined,
     "where": "changed path parameter: test in operation: GET /api/users",
   },
-]
-`;
-
-exports[`enum breaking changes ruleset "query" parameter enum narrowing 1`] = `
-Array [
   Object {
     "change": Object {
       "changeType": "changed",
       "changed": Object {
         "after": Object {
-          "in": "query",
+          "in": "path",
           "name": "test",
           "schema": Object {
             "enum": Array [
@@ -488,7 +597,7 @@ Array [
           },
         },
         "before": Object {
-          "in": "query",
+          "in": "path",
           "name": "test",
           "schema": Object {
             "enum": Array [
@@ -502,7 +611,7 @@ Array [
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
-            "query": "test",
+            "path": "test",
           },
           "method": "get",
           "path": "/api/users",
@@ -512,11 +621,11 @@ Array [
           "/api/users",
           "get",
           "parameters",
-          "query",
+          "path",
           "test",
         ],
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "query-parameter",
+        "kind": "path-parameter",
       },
     },
     "condition": "not make an optional parameter required",
@@ -525,17 +634,17 @@ Array [
     "expected": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "prevent new required query parameters",
+    "name": "prevent path parameters enum breaking changes",
     "passed": true,
     "received": undefined,
-    "where": "changed query parameter: test in operation: GET /api/users",
+    "where": "changed path parameter: test in operation: GET /api/users",
   },
   Object {
     "change": Object {
       "changeType": "changed",
       "changed": Object {
         "after": Object {
-          "in": "query",
+          "in": "path",
           "name": "test",
           "schema": Object {
             "enum": Array [
@@ -545,7 +654,7 @@ Array [
           },
         },
         "before": Object {
-          "in": "query",
+          "in": "path",
           "name": "test",
           "schema": Object {
             "enum": Array [
@@ -559,7 +668,7 @@ Array [
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
-            "query": "test",
+            "path": "test",
           },
           "method": "get",
           "path": "/api/users",
@@ -569,11 +678,11 @@ Array [
           "/api/users",
           "get",
           "parameters",
-          "query",
+          "path",
           "test",
         ],
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "query-parameter",
+        "kind": "path-parameter",
       },
     },
     "condition": "not change parameter type",
@@ -582,11 +691,16 @@ Array [
     "expected": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "prevent query parameter type changes",
+    "name": "prevent path parameters enum breaking changes",
     "passed": true,
     "received": undefined,
-    "where": "changed query parameter: test in operation: GET /api/users",
+    "where": "changed path parameter: test in operation: GET /api/users",
   },
+]
+`;
+
+exports[`breaking changes ruleset - parameter enum change "query" parameter enum narrowing 1`] = `
+Array [
   Object {
     "change": Object {
       "changeType": "changed",
@@ -701,17 +815,22 @@ Array [
     "received": undefined,
     "where": "changed query parameter: test in operation: GET /api/users",
   },
-]
-`;
-
-exports[`enum breaking changes ruleset enum added to "cookie" parameter 1`] = `
-Array [
   Object {
     "change": Object {
       "changeType": "changed",
       "changed": Object {
         "after": Object {
-          "in": "cookie",
+          "in": "query",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "query",
           "name": "test",
           "schema": Object {
             "enum": Array [
@@ -721,18 +840,11 @@ Array [
             "type": "string",
           },
         },
-        "before": Object {
-          "in": "cookie",
-          "name": "test",
-          "schema": Object {
-            "type": "string",
-          },
-        },
       },
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
-            "cookie": "test",
+            "query": "test",
           },
           "method": "get",
           "path": "/api/users",
@@ -742,11 +854,11 @@ Array [
           "/api/users",
           "get",
           "parameters",
-          "cookie",
+          "query",
           "test",
         ],
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "cookie-parameter",
+        "kind": "query-parameter",
       },
     },
     "condition": "not make an optional parameter required",
@@ -755,17 +867,27 @@ Array [
     "expected": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "prevent new required cookie parameters",
+    "name": "prevent query parameters enum breaking changes",
     "passed": true,
     "received": undefined,
-    "where": "changed cookie parameter: test in operation: GET /api/users",
+    "where": "changed query parameter: test in operation: GET /api/users",
   },
   Object {
     "change": Object {
       "changeType": "changed",
       "changed": Object {
         "after": Object {
-          "in": "cookie",
+          "in": "query",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "query",
           "name": "test",
           "schema": Object {
             "enum": Array [
@@ -775,18 +897,11 @@ Array [
             "type": "string",
           },
         },
-        "before": Object {
-          "in": "cookie",
-          "name": "test",
-          "schema": Object {
-            "type": "string",
-          },
-        },
       },
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
-            "cookie": "test",
+            "query": "test",
           },
           "method": "get",
           "path": "/api/users",
@@ -796,11 +911,11 @@ Array [
           "/api/users",
           "get",
           "parameters",
-          "cookie",
+          "query",
           "test",
         ],
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "cookie-parameter",
+        "kind": "query-parameter",
       },
     },
     "condition": "not change parameter type",
@@ -809,11 +924,16 @@ Array [
     "expected": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "prevent cookie parameter type changes",
+    "name": "prevent query parameters enum breaking changes",
     "passed": true,
     "received": undefined,
-    "where": "changed cookie parameter: test in operation: GET /api/users",
+    "where": "changed query parameter: test in operation: GET /api/users",
   },
+]
+`;
+
+exports[`breaking changes ruleset - parameter enum change enum added to "cookie" parameter 1`] = `
+Array [
   Object {
     "change": Object {
       "changeType": "changed",
@@ -922,10 +1042,118 @@ Array [
     "received": undefined,
     "where": "changed cookie parameter: test in operation: GET /api/users",
   },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "cookie",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "a",
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "test",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "not make an optional parameter required",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed cookie parameter: test in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "cookie",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "a",
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "test",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "not change parameter type",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed cookie parameter: test in operation: GET /api/users",
+  },
 ]
 `;
 
-exports[`enum breaking changes ruleset enum added to "header" parameter 1`] = `
+exports[`breaking changes ruleset - parameter enum change enum added to "header" parameter 1`] = `
 Array [
   Object {
     "change": Object {
@@ -1035,10 +1263,118 @@ Array [
     "received": undefined,
     "where": "changed header parameter: test in operation: GET /api/users",
   },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "header",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "a",
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "header",
+          "name": "test",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": "not make an optional parameter required",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent header parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed header parameter: test in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "header",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "a",
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "header",
+          "name": "test",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": "not change parameter type",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent header parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed header parameter: test in operation: GET /api/users",
+  },
 ]
 `;
 
-exports[`enum breaking changes ruleset enum added to "path" parameter 1`] = `
+exports[`breaking changes ruleset - parameter enum change enum added to "path" parameter 1`] = `
 Array [
   Object {
     "change": Object {
@@ -1148,17 +1484,12 @@ Array [
     "received": undefined,
     "where": "changed path parameter: test in operation: GET /api/users",
   },
-]
-`;
-
-exports[`enum breaking changes ruleset enum added to "query" parameter 1`] = `
-Array [
   Object {
     "change": Object {
       "changeType": "changed",
       "changed": Object {
         "after": Object {
-          "in": "query",
+          "in": "path",
           "name": "test",
           "schema": Object {
             "enum": Array [
@@ -1169,7 +1500,7 @@ Array [
           },
         },
         "before": Object {
-          "in": "query",
+          "in": "path",
           "name": "test",
           "schema": Object {
             "type": "string",
@@ -1179,7 +1510,7 @@ Array [
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
-            "query": "test",
+            "path": "test",
           },
           "method": "get",
           "path": "/api/users",
@@ -1189,11 +1520,11 @@ Array [
           "/api/users",
           "get",
           "parameters",
-          "query",
+          "path",
           "test",
         ],
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "query-parameter",
+        "kind": "path-parameter",
       },
     },
     "condition": "not make an optional parameter required",
@@ -1202,17 +1533,17 @@ Array [
     "expected": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "prevent new required query parameters",
+    "name": "prevent path parameters enum breaking changes",
     "passed": true,
     "received": undefined,
-    "where": "changed query parameter: test in operation: GET /api/users",
+    "where": "changed path parameter: test in operation: GET /api/users",
   },
   Object {
     "change": Object {
       "changeType": "changed",
       "changed": Object {
         "after": Object {
-          "in": "query",
+          "in": "path",
           "name": "test",
           "schema": Object {
             "enum": Array [
@@ -1223,7 +1554,7 @@ Array [
           },
         },
         "before": Object {
-          "in": "query",
+          "in": "path",
           "name": "test",
           "schema": Object {
             "type": "string",
@@ -1233,7 +1564,7 @@ Array [
       "location": Object {
         "conceptualLocation": Object {
           "inRequest": Object {
-            "query": "test",
+            "path": "test",
           },
           "method": "get",
           "path": "/api/users",
@@ -1243,11 +1574,11 @@ Array [
           "/api/users",
           "get",
           "parameters",
-          "query",
+          "path",
           "test",
         ],
         "jsonPath": "/paths/~1api~1users/get/parameters/0",
-        "kind": "query-parameter",
+        "kind": "path-parameter",
       },
     },
     "condition": "not change parameter type",
@@ -1256,11 +1587,16 @@ Array [
     "expected": undefined,
     "isMust": true,
     "isShould": false,
-    "name": "prevent query parameter type changes",
+    "name": "prevent path parameters enum breaking changes",
     "passed": true,
     "received": undefined,
-    "where": "changed query parameter: test in operation: GET /api/users",
+    "where": "changed path parameter: test in operation: GET /api/users",
   },
+]
+`;
+
+exports[`breaking changes ruleset - parameter enum change enum added to "query" parameter 1`] = `
+Array [
   Object {
     "change": Object {
       "changeType": "changed",
@@ -1366,6 +1702,114 @@ Array [
     "isShould": false,
     "name": "prevent query parameters enum breaking changes",
     "passed": false,
+    "received": undefined,
+    "where": "changed query parameter: test in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "query",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "a",
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "query",
+          "name": "test",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": "not make an optional parameter required",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent query parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed query parameter: test in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "query",
+          "name": "test",
+          "schema": Object {
+            "enum": Array [
+              "a",
+              "b",
+            ],
+            "type": "string",
+          },
+        },
+        "before": Object {
+          "in": "query",
+          "name": "test",
+          "schema": Object {
+            "type": "string",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "query": "test",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "query",
+          "test",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "query-parameter",
+      },
+    },
+    "condition": "not change parameter type",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent query parameters enum breaking changes",
+    "passed": true,
     "received": undefined,
     "where": "changed query parameter: test in operation: GET /api/users",
   },

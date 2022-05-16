@@ -1,9 +1,5 @@
 import { Ruleset, Rule } from '@useoptic/rulesets-base';
 import { preventOperationRemoval } from './preventOperationRemoval';
-import { preventQueryParameterRequired } from './preventQueryParameterRequired';
-import { preventQueryParameterTypeChange } from './preventQueryParameterTypeChange';
-import { preventCookieParameterRequired } from './preventCookieParameterRequired';
-import { preventCookieParameterTypeChange } from './preventCookieParameterTypeChange';
 import { preventRequestPropertyRequired } from './preventRequestPropertyRequired';
 import { preventRequestPropertyTypeChange } from './preventRequestPropertyTypeChange';
 import { preventResponsePropertyOptional } from './preventResponsePropertyOptional';
@@ -15,22 +11,38 @@ import {
   preventPathParameterEnumBreak,
   preventHeaderParameterEnumBreak,
 } from './preventParameterEnumBreak';
+import {
+  preventQueryParameterRequired,
+  preventCookieParameterRequired,
+  preventPathParameterRequired,
+  preventHeaderParameterRequired,
+} from './preventParameterRequired';
+import {
+  preventQueryParameterTypeChange,
+  preventCookieParameterTypeChange,
+  preventPathParameterTypeChange,
+  preventHeaderParameterTypeChange,
+} from './preventParameterTypeChange';
 
 const breakingChangeRules: Rule[] = [
-  preventOperationRemoval,
-  preventQueryParameterRequired,
-  preventQueryParameterTypeChange,
+  preventCookieParameterEnumBreak,
   preventCookieParameterRequired,
   preventCookieParameterTypeChange,
+  preventHeaderParameterEnumBreak,
+  preventHeaderParameterRequired,
+  preventHeaderParameterTypeChange,
+  preventOperationRemoval,
+  preventPathParameterEnumBreak,
+  preventPathParameterRequired,
+  preventPathParameterTypeChange,
+  preventQueryParameterEnumBreak,
+  preventQueryParameterRequired,
+  preventQueryParameterTypeChange,
   preventRequestPropertyRequired,
   preventRequestPropertyTypeChange,
   preventResponsePropertyOptional,
   preventResponsePropertyRemoval,
   preventResponsePropertyTypeChange,
-  preventQueryParameterEnumBreak,
-  preventCookieParameterEnumBreak,
-  preventPathParameterEnumBreak,
-  preventHeaderParameterEnumBreak,
 ];
 
 export class BreakingChangesRuleset extends Ruleset {

@@ -2,24 +2,15 @@ import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { TestHelpers } from '@useoptic/rulesets-base';
 import { BreakingChangesRuleset } from '../index';
 
-describe('enum breaking changes ruleset', () => {
+describe('breaking changes ruleset - parameter requirement change', () => {
   test.each(['query', 'cookie', 'path', 'header'])(
-    'enum added to %p parameter',
+    'required %p parameter added',
     (location: string) => {
       const beforeJson: OpenAPIV3.Document = {
         ...TestHelpers.createEmptySpec(),
         paths: {
           '/api/users': {
             get: {
-              parameters: [
-                {
-                  name: 'test',
-                  in: location,
-                  schema: {
-                    type: 'string',
-                  },
-                },
-              ],
               responses: {},
             },
           },
@@ -32,11 +23,11 @@ describe('enum breaking changes ruleset', () => {
             get: {
               parameters: [
                 {
-                  name: 'test',
+                  name: 'required',
                   in: location,
+                  required: true,
                   schema: {
                     type: 'string',
-                    enum: ['a', 'b'], // a new enum is added
                   },
                 },
               ],
@@ -58,7 +49,7 @@ describe('enum breaking changes ruleset', () => {
   );
 
   test.each(['query', 'cookie', 'path', 'header'])(
-    '%p parameter enum narrowing',
+    '%p parameter optional to required',
     (location: string) => {
       const beforeJson: OpenAPIV3.Document = {
         ...TestHelpers.createEmptySpec(),
@@ -67,11 +58,10 @@ describe('enum breaking changes ruleset', () => {
             get: {
               parameters: [
                 {
-                  name: 'test',
+                  name: 'version',
                   in: location,
                   schema: {
                     type: 'string',
-                    enum: ['a', 'b'],
                   },
                 },
               ],
@@ -87,11 +77,11 @@ describe('enum breaking changes ruleset', () => {
             get: {
               parameters: [
                 {
-                  name: 'test',
+                  name: 'version',
                   in: location,
+                  required: true,
                   schema: {
                     type: 'string',
-                    enum: ['b'], // enum values are restricted
                   },
                 },
               ],

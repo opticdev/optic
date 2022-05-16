@@ -1,40 +1,7 @@
-import {
-  Assertions,
-  AssertionType,
-  OperationRule,
-  RuleError,
-  OperationAssertions,
-} from '@useoptic/rulesets-base';
-
+import { OperationRule, RuleError } from '@useoptic/rulesets-base';
+import { getOperationAssertionsParameter } from './helpers/getOperationAssertionsParameter';
+import { ParameterIn } from './helpers/types';
 import { OpenAPIV3 } from 'openapi-types';
-
-type ParameterIn = 'cookie' | 'query' | 'header' | 'path';
-type ParamAssertionType = Extract<
-  AssertionType,
-  'query-parameter' | 'path-parameter' | 'header-parameter' | 'cookie-parameter'
->;
-
-const unhandledCase = (x: never) => {
-  throw new Error(`received unexpected runtime value ${x}`);
-};
-
-const getOperationAssertionsParameter = (
-  operationAssertions: OperationAssertions,
-  parameterIn: ParameterIn
-): Assertions<ParamAssertionType> => {
-  switch (parameterIn) {
-    case 'query':
-      return operationAssertions.queryParameter;
-    case 'path':
-      return operationAssertions.pathParameter;
-    case 'cookie':
-      return operationAssertions.cookieParameter;
-    case 'header':
-      return operationAssertions.headerParameter;
-    default:
-      return unhandledCase(parameterIn);
-  }
-};
 
 const enumWasNarrowed = (before: any[], after: any[]): boolean => {
   if (after.length < before.length) return true;
