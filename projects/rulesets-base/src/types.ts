@@ -29,6 +29,10 @@ export type Operation = FactVariantWithRaw<OpenApiKind.Operation> & {
     string,
     FactVariantWithRaw<OpenApiKind.HeaderParameter>
   >;
+  cookieParameters: Map<
+    string,
+    FactVariantWithRaw<OpenApiKind.CookieParameter>
+  >;
   requests: RequestBody[];
   responses: Map<string, Response>;
 };
@@ -57,6 +61,7 @@ export type AssertionType =
   | 'query-parameter'
   | 'path-parameter'
   | 'header-parameter'
+  | 'cookie-parameter'
   | 'response'
   | 'response-header'
   | 'request-body'
@@ -69,6 +74,7 @@ export type AssertionTypeToValue = {
   'query-parameter': FactVariantWithRaw<OpenApiKind.QueryParameter>;
   'path-parameter': FactVariantWithRaw<OpenApiKind.PathParameter>;
   'header-parameter': FactVariantWithRaw<OpenApiKind.HeaderParameter>;
+  'cookie-parameter': FactVariantWithRaw<OpenApiKind.CookieParameter>;
   'response-header': FactVariantWithRaw<OpenApiKind.ResponseHeader>;
   response: Response;
   'request-body': RequestBody;
@@ -82,12 +88,26 @@ type MatchesFn = (
     strict?: boolean;
   }
 ) => void;
+
+type MatchesOneOfFn = (
+  structures: any[],
+  options?: {
+    strict?: boolean;
+  }
+) => void;
+
 export type AssertionTypeToHelpers = {
-  specification: { matches: MatchesFn };
+  specification: {
+    not: AssertionTypeToHelpers['specification'];
+    matches: MatchesFn;
+    matchesOneOf: MatchesOneOfFn;
+  };
   operation: {
+    not: AssertionTypeToHelpers['operation'];
     hasQueryParameterMatching: MatchesFn;
     hasPathParameterMatching: MatchesFn;
     hasHeaderParameterMatching: MatchesFn;
+    hasCookieParameterMatching: MatchesFn;
     hasRequests: (
       requests: {
         contentType: string;
@@ -100,11 +120,14 @@ export type AssertionTypeToHelpers = {
       }[]
     ) => void;
     matches: MatchesFn;
+    matchesOneOf: MatchesOneOfFn;
   };
   'query-parameter': {};
   'path-parameter': {};
   'header-parameter': {};
+  'cookie-parameter': {};
   response: {
+    not: AssertionTypeToHelpers['response'];
     hasResponseHeaderMatching: (
       name: string,
       structure: any,
@@ -114,8 +137,16 @@ export type AssertionTypeToHelpers = {
     ) => void;
   };
   'response-header': {};
-  'request-body': { matches: MatchesFn };
-  'response-body': { matches: MatchesFn };
+  'request-body': {
+    not: AssertionTypeToHelpers['request-body'];
+    matches: MatchesFn;
+    matchesOneOf: MatchesOneOfFn;
+  };
+  'response-body': {
+    not: AssertionTypeToHelpers['response-body'];
+    matches: MatchesFn;
+    matchesOneOf: MatchesOneOfFn;
+  };
   property: {};
 };
 
@@ -145,6 +176,7 @@ export type OperationAssertions = Assertions<'operation'> & {
   queryParameter: Assertions<'query-parameter'>;
   pathParameter: Assertions<'path-parameter'>;
   headerParameter: Assertions<'header-parameter'>;
+  cookieParameter: Assertions<'cookie-parameter'>;
 };
 
 export type RequestAssertions = {

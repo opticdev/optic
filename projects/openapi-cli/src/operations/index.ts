@@ -45,6 +45,10 @@ export class Operation {
       responses,
     };
   }
+
+  static isHttpMethod(method: string): method is OpenAPIV3.HttpMethods {
+    return !!Object.values(HttpMethods).find((m) => m === method);
+  }
 }
 
 export interface DocumentedInteraction {

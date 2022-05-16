@@ -9,25 +9,85 @@ export const createResponseBodyHelpers = (
     assertion: CallableAssertion<'response-body'>
   ) => void
 ): AssertionTypeToHelpers['response-body'] => {
-  return {
-    matches: (
-      reference: any,
-      options: {
-        strict?: boolean;
-      } = {}
-    ) => {
-      addAssertion('match expected shape', (value) => {
-        const { strict = false } = options;
-        if (!valuesMatcher(reference, value.raw, strict)) {
-          throw new RuleError({
-            message: strict
-              ? 'Expected an exact match'
-              : 'Expected a partial match',
-            received: value.raw,
-            expected: reference,
-          });
-        }
-      });
-    },
+  const createAssertions = (
+    isNot: boolean
+  ): AssertionTypeToHelpers['response-body'] => {
+    const conditionPrefix = isNot ? 'not ' : '';
+
+    return {
+      get not(): AssertionTypeToHelpers['response-body'] {
+        return createAssertions(true);
+      },
+      matches: (
+        reference: any,
+        options: {
+          strict?: boolean;
+        } = {}
+      ) => {
+        addAssertion(conditionPrefix + 'match expected shape', (value) => {
+          const { strict = false } = options;
+          if (isNot) {
+            if (valuesMatcher(reference, value.raw, strict)) {
+              throw new RuleError({
+                message: strict
+                  ? 'Expected to not find an exact match'
+                  : 'Expected to not find a partial match',
+                received: value.raw,
+                expected: reference,
+              });
+            }
+          } else {
+            if (!valuesMatcher(reference, value.raw, strict)) {
+              throw new RuleError({
+                message: strict
+                  ? 'Expected an exact match'
+                  : 'Expected a partial match',
+                received: value.raw,
+                expected: reference,
+              });
+            }
+          }
+        });
+      },
+      matchesOneOf: (
+        references: any[],
+        options: {
+          strict?: boolean;
+        } = {}
+      ) => {
+        addAssertion(conditionPrefix + 'match expected shape', (value) => {
+          const { strict = false } = options;
+          if (isNot) {
+            const matchesNone = references.every(
+              (reference) => !valuesMatcher(reference, value.raw, strict)
+            );
+
+            if (!matchesNone) {
+              throw new RuleError({
+                message: strict
+                  ? 'Expected to not find any exact matches'
+                  : 'Expected to not find any partial matches',
+                received: value.raw,
+                expected: references,
+              });
+            }
+          } else {
+            const matchesAtleastOne = references.some((reference) =>
+              valuesMatcher(reference, value.raw, strict)
+            );
+            if (!matchesAtleastOne) {
+              throw new RuleError({
+                message: strict
+                  ? 'Expected at least one exact match'
+                  : 'Expected at least one partial match',
+                received: value.raw,
+                expected: references,
+              });
+            }
+          }
+        });
+      },
+    };
   };
+  return createAssertions(false);
 };

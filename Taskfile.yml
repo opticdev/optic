@@ -1,6 +1,11 @@
 # https://taskfile.dev/#/installation
 version: "3"
 
+includes:
+  openapi-utilities:
+    taskfile: projects/openapi-utilities/Taskfile.yml
+    dir: projects/openapi-utilities
+
 tasks:
   default:
     desc: Perform a clean build
@@ -28,6 +33,11 @@ tasks:
     desc: Test
     cmds:
       - yarn workspaces foreach -pv --no-private run ws:test
+
+  update-snapshots:
+    desc: Update snapshots
+    cmds:
+      - yarn workspaces foreach -pv --no-private run ws:test -u
 
   openapi-diff:docker:build:
     desc: Build the interactive baseline image used to generate OpenAPI specs

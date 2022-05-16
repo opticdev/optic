@@ -9,30 +9,56 @@ export const createResponseHelpers = (
     assertion: CallableAssertion<'response'>
   ) => void
 ): AssertionTypeToHelpers['response'] => {
-  return {
-    hasResponseHeaderMatching: (
-      name: string,
-      reference: any,
-      options: {
-        strict?: boolean;
-      } = {}
-    ) => {
-      const { strict = false } = options;
+  const createAssertions = (
+    isNot: boolean
+  ): AssertionTypeToHelpers['response'] => {
+    const conditionPrefix = isNot ? 'not ' : '';
 
-      addAssertion('have response header matching shape', (response) => {
-        const headerMatchingShapeAndName = [...response.headers.entries()].find(
-          ([headerName, responseHeader]) =>
-            name === headerName &&
-            valuesMatcher(reference, responseHeader.raw, strict)
+    return {
+      get not(): AssertionTypeToHelpers['response'] {
+        return createAssertions(true);
+      },
+      hasResponseHeaderMatching: (
+        name: string,
+        reference: any,
+        options: {
+          strict?: boolean;
+        } = {}
+      ) => {
+        const { strict = false } = options;
+
+        addAssertion(
+          conditionPrefix + 'have response header matching shape',
+          (response) => {
+            const headerMatchingShapeAndName = [
+              ...response.headers.entries(),
+            ].find(
+              ([headerName, responseHeader]) =>
+                name === headerName &&
+                valuesMatcher(reference, responseHeader.raw, strict)
+            );
+            if (isNot) {
+              if (headerMatchingShapeAndName) {
+                throw new RuleError({
+                  message: `Found a ${
+                    strict ? 'exact' : 'partial'
+                  } match in header parameters`,
+                });
+              }
+            } else {
+              if (!headerMatchingShapeAndName) {
+                throw new RuleError({
+                  message: `Could not find a ${
+                    strict ? 'exact' : 'partial'
+                  } match in header parameters`,
+                });
+              }
+            }
+          }
         );
-        if (!headerMatchingShapeAndName) {
-          throw new RuleError({
-            message: `Could not find a ${
-              strict ? 'exact' : 'partial'
-            } match in header parameters`,
-          });
-        }
-      });
-    },
+      },
+    };
   };
+
+  return createAssertions(false);
 };

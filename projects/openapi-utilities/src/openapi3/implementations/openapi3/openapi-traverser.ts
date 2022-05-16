@@ -10,6 +10,7 @@ import {
   ResponseLocation,
   PathParameterLocation,
   HeaderParameterLocation,
+  CookieParameterLocation,
   BodyLocation,
   BodyExampleLocation,
   QueryParameterLocation,
@@ -235,7 +236,8 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
       let paramLocation:
         | PathParameterLocation
         | QueryParameterLocation
-        | HeaderParameterLocation;
+        | HeaderParameterLocation
+        | CookieParameterLocation;
 
       if (parameter.in === 'query') {
         paramLocation = { ...location, inRequest: { query: parameter.name } };
@@ -246,8 +248,9 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
         };
       } else if (parameter.in === 'path') {
         paramLocation = { ...location, inRequest: { path: parameter.name } };
+      } else if (parameter.in === 'cookie') {
+        paramLocation = { ...location, inRequest: { cookie: parameter.name } };
       } else {
-        // @todo add cookie
         console.warn('Found a parameter that was not handled');
         return;
       }
@@ -321,11 +324,13 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
       | PathParameterLocation
       | QueryParameterLocation
       | HeaderParameterLocation
+      | CookieParameterLocation
   ):
     | undefined
     | FactVariant<OpenApiKind.HeaderParameter>
     | FactVariant<OpenApiKind.PathParameter>
-    | FactVariant<OpenApiKind.QueryParameter> {
+    | FactVariant<OpenApiKind.QueryParameter>
+    | FactVariant<OpenApiKind.CookieParameter> {
     this.checkJsonTrail(jsonPath, parameter);
     const value: OpenApiRequestParameterFact = {
       ...parameter,
@@ -358,6 +363,16 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
             conceptualPath,
             kind: OpenApiKind.PathParameter,
             conceptualLocation: location as PathParameterLocation,
+          },
+          value,
+        };
+      case 'cookie':
+        return {
+          location: {
+            jsonPath,
+            conceptualPath,
+            kind: OpenApiKind.CookieParameter,
+            conceptualLocation: location as CookieParameterLocation,
           },
           value,
         };

@@ -24,6 +24,7 @@ module.exports = {
         queryParameters: 'camelCase',
         requestHeaders: 'camelCase',
         responseHeaders: 'camelCase',
+        cookieParameters: 'camelCase',
       },
     }),
   ],

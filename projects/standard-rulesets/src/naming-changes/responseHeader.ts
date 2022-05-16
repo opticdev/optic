@@ -11,7 +11,7 @@ export const createResponseHeaderParameterChecks = (
   applies: typeof appliesWhen[number],
   format: typeof casing[number]
 ) => {
-  const caseCondition = `request header parameter must be ${format} when ${applies}`;
+  const caseCondition = `response header parameter must be ${format} when ${applies}`;
   const parameterTest = (
     parameter: FactVariantWithRaw<OpenApiKind.ResponseHeader>
   ) => {
