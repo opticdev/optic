@@ -15,9 +15,8 @@ export class DocumentedInteractions {
     specUpdates?: AsyncIterable<OpenAPIV3.Document>
   ): AsyncIterable<DocumentedInteraction> {
     // assumption: no new operations will be added over the life-time of this stream
-    const facts = SpecFacts.fromOpenAPISpec(spec);
-    const operationFacts = await collect(SpecFacts.operationFacts(facts));
-    const queries = OperationQueries.fromFacts(operationFacts);
+    const facts = await collect(SpecFacts.fromOpenAPISpec(spec));
+    const queries = OperationQueries.fromFacts(facts);
 
     const specUpdatesIterator =
       specUpdates && specUpdates[Symbol.asyncIterator]();

@@ -16,6 +16,38 @@ Object {
 }
 `;
 
+exports[`OperationsQueries findSpecPath base urls will match operations prefixed by the path of a base url 1`] = `
+Object {
+  "method": "get",
+  "pathPattern": "/app/hook/config",
+  "specPath": "debug-path-1-get",
+}
+`;
+
+exports[`OperationsQueries findSpecPath base urls will match operations prefixed by the path of a base url with multiple components 1`] = `
+Object {
+  "method": "get",
+  "pathPattern": "/app/hook/config",
+  "specPath": "debug-path-1-get",
+}
+`;
+
+exports[`OperationsQueries findSpecPath base urls will match operations prefixed by the path of a relative base url 1`] = `
+Object {
+  "method": "get",
+  "pathPattern": "/app/hook/config",
+  "specPath": "debug-path-1-get",
+}
+`;
+
+exports[`OperationsQueries findSpecPath base urls will match operations prefixed by the path of an absolute base url 1`] = `
+Object {
+  "method": "get",
+  "pathPattern": "/app/hook/config",
+  "specPath": "debug-path-1-get",
+}
+`;
+
 exports[`OperationsQueries findSpecPath can match / 1`] = `
 Object {
   "method": "get",

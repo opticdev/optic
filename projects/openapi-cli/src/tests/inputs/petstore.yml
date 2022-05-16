@@ -3,6 +3,9 @@ info:
   title: Swagger Petstore
   version: 1.0.0
 paths:
-  /v2/store/inventory:
+  /store/inventory:
     get:
       responses: {}
+servers:
+  - url: http://petstore.swagger.io/v2
+  - url: https://petstore.swagger.io/v2
