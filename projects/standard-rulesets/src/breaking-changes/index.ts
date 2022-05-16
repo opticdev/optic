@@ -12,11 +12,17 @@ import {
   preventHeaderParameterEnumBreak,
 } from './preventParameterEnumBreak';
 import {
-  preventQueryParameterRequired,
-  preventCookieParameterRequired,
-  preventPathParameterRequired,
-  preventHeaderParameterRequired,
-} from './preventParameterRequired';
+  preventNewRequiredQueryParameter,
+  preventNewRequiredCookieParameter,
+  preventNewRequiredPathParameter,
+  preventNewRequiredHeaderParameter,
+} from './preventNewRequiredParameter';
+import {
+  preventRequireExistingQueryParameter,
+  preventRequireExistingCookieParameter,
+  preventRequireExistingPathParameter,
+  preventRequireExistingHeaderParameter,
+} from './preventRequireExistingParameter';
 import {
   preventQueryParameterTypeChange,
   preventCookieParameterTypeChange,
@@ -26,20 +32,24 @@ import {
 
 const breakingChangeRules: Rule[] = [
   preventCookieParameterEnumBreak,
-  preventCookieParameterRequired,
   preventCookieParameterTypeChange,
   preventHeaderParameterEnumBreak,
-  preventHeaderParameterRequired,
   preventHeaderParameterTypeChange,
+  preventNewRequiredCookieParameter,
+  preventNewRequiredHeaderParameter,
+  preventNewRequiredPathParameter,
+  preventNewRequiredQueryParameter,
   preventOperationRemoval,
   preventPathParameterEnumBreak,
-  preventPathParameterRequired,
   preventPathParameterTypeChange,
   preventQueryParameterEnumBreak,
-  preventQueryParameterRequired,
   preventQueryParameterTypeChange,
   preventRequestPropertyRequired,
   preventRequestPropertyTypeChange,
+  preventRequireExistingCookieParameter,
+  preventRequireExistingHeaderParameter,
+  preventRequireExistingPathParameter,
+  preventRequireExistingQueryParameter,
   preventResponsePropertyOptional,
   preventResponsePropertyRemoval,
   preventResponsePropertyTypeChange,
