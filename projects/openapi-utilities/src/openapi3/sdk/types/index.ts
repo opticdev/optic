@@ -6,6 +6,7 @@ import {
   QueryParameterLocation,
   PathParameterLocation,
   HeaderParameterLocation,
+  CookieParameterLocation,
   ResponseHeaderLocation,
   ResponseLocation,
   RequestLocation,
@@ -26,6 +27,7 @@ export {
   QueryParameterLocation,
   PathParameterLocation,
   HeaderParameterLocation,
+  CookieParameterLocation,
   ResponseHeaderLocation,
   ResponseLocation,
   RequestLocation,
@@ -106,6 +108,7 @@ export type OpenApiKindToFact = {
   [OpenApiKind.QueryParameter]: OpenApiRequestParameterFact;
   [OpenApiKind.PathParameter]: OpenApiRequestParameterFact;
   [OpenApiKind.HeaderParameter]: OpenApiRequestParameterFact;
+  [OpenApiKind.CookieParameter]: OpenApiRequestParameterFact;
   [OpenApiKind.ResponseHeader]: OpenApiHeaderFact;
   [OpenApiKind.Response]: OpenApiResponseFact;
   [OpenApiKind.Body]: OpenApiBodyFact;
@@ -161,6 +164,7 @@ export type IFact =
   | FactVariant<OpenApiKind.QueryParameter>
   | FactVariant<OpenApiKind.PathParameter>
   | FactVariant<OpenApiKind.HeaderParameter>
+  | FactVariant<OpenApiKind.CookieParameter>
   | FactVariant<OpenApiKind.ResponseHeader>
   | FactVariant<OpenApiKind.Response>
   | FactVariant<OpenApiKind.Body>
@@ -175,6 +179,7 @@ export type IChange =
   | ChangeVariant<OpenApiKind.QueryParameter>
   | ChangeVariant<OpenApiKind.PathParameter>
   | ChangeVariant<OpenApiKind.HeaderParameter>
+  | ChangeVariant<OpenApiKind.CookieParameter>
   | ChangeVariant<OpenApiKind.ResponseHeader>
   | ChangeVariant<OpenApiKind.Response>
   | ChangeVariant<OpenApiKind.Body>

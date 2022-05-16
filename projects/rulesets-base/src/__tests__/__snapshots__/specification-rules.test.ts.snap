@@ -138,6 +138,7 @@ Object {
   "custom": Object {},
   "operation": Object {
     "change": null,
+    "cookieParameters": Map {},
     "headerParameters": Map {},
     "location": Object {
       "conceptualLocation": Object {
@@ -192,6 +193,7 @@ Object {
   "custom": Object {},
   "operation": Object {
     "change": null,
+    "cookieParameters": Map {},
     "headerParameters": Map {},
     "location": Object {
       "conceptualLocation": Object {
@@ -263,6 +265,7 @@ Object {
   "custom": Object {},
   "operation": Object {
     "change": null,
+    "cookieParameters": Map {},
     "headerParameters": Map {},
     "location": Object {
       "conceptualLocation": Object {
@@ -334,6 +337,7 @@ Object {
   "custom": Object {},
   "operation": Object {
     "change": null,
+    "cookieParameters": Map {},
     "headerParameters": Map {},
     "location": Object {
       "conceptualLocation": Object {

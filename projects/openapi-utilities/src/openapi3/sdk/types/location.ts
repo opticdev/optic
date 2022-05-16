@@ -23,6 +23,12 @@ export type HeaderParameterLocation = OperationLocation & {
   };
 };
 
+export type CookieParameterLocation = OperationLocation & {
+  inRequest: {
+    cookie: string;
+  };
+};
+
 export type ResponseHeaderLocation = OperationLocation & {
   inResponse: {
     header: string;
@@ -121,6 +127,10 @@ export type ILocation = {
   | {
       conceptualLocation: HeaderParameterLocation;
       kind: OpenApiKind.HeaderParameter;
+    }
+  | {
+      conceptualLocation: CookieParameterLocation;
+      kind: OpenApiKind.CookieParameter;
     }
   | {
       conceptualLocation: ResponseHeaderLocation;

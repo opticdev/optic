@@ -1,0 +1,8 @@
+# https://taskfile.dev/#/installation
+version: "3"
+
+tasks:
+  test:
+    desc: Test
+    cmds:
+      - yarn run ws:test

@@ -104,6 +104,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
       'query-parameter': {},
       'path-parameter': {},
       'header-parameter': {},
+      'cookie-parameter': {},
       response: createResponseHelpers(registerAssertion as any),
       'response-header': {},
       'request-body': createRequestBodyHelpers(registerAssertion as any),
@@ -312,6 +313,7 @@ type OperationAssertionsRunner = AssertionRunner<'operation'> & {
   queryParameter: AssertionRunner<'query-parameter'>;
   headerParameter: AssertionRunner<'header-parameter'>;
   pathParameter: AssertionRunner<'path-parameter'>;
+  cookieParameter: AssertionRunner<'cookie-parameter'>;
 };
 
 type RequestAssertionsRunner = {
@@ -338,10 +340,12 @@ export const createOperationAssertions = (): OperationAssertionsRunner => {
   const queryParameterAssertions = new AssertionRunner('query-parameter');
   const headerParameterAssertions = new AssertionRunner('header-parameter');
   const pathParameterAssertions = new AssertionRunner('path-parameter');
+  const cookieParameterAssertions = new AssertionRunner('cookie-parameter');
 
   operationAssertions.queryParameter = queryParameterAssertions;
   operationAssertions.headerParameter = headerParameterAssertions;
   operationAssertions.pathParameter = pathParameterAssertions;
+  operationAssertions.cookieParameter = cookieParameterAssertions;
 
   return operationAssertions as OperationAssertionsRunner;
 };

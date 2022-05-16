@@ -100,6 +100,29 @@ export const createOperationHelpers = (
         }
       });
     },
+    hasCookieParameterMatching: (
+      parameterShape: any,
+      options: {
+        strict?: boolean;
+      } = {}
+    ) => {
+      const { strict = false } = options;
+
+      addAssertion('have parameter matching shape', (operation) => {
+        const parameterMatchingShape = [
+          ...operation.cookieParameters.values(),
+        ].find((cookieParameter) =>
+          valuesMatcher(parameterShape, cookieParameter.raw, strict)
+        );
+        if (!parameterMatchingShape) {
+          throw new RuleError({
+            message: `Could not find a ${
+              strict ? 'exact' : 'partial'
+            } match in cookie parameters`,
+          });
+        }
+      });
+    },
     hasRequests: (requests) => {
       addAssertion('have requests with content-type', (operation) => {
         const operationRequestContentTypes = new Set(

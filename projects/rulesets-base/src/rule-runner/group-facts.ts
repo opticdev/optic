@@ -48,6 +48,7 @@ const createEndpoint = ({
   headerParameters: new Map(),
   pathParameters: new Map(),
   queryParameters: new Map(),
+  cookieParameters: new Map(),
   request: {
     ...createEmptyNodeDetail(),
     bodies: new Map(),
@@ -123,6 +124,12 @@ const useFactToUpdate = (
       endpoint.headerParameters.get(headerKey) || createEmptyNodeDetail();
     headerParameter[key] = fact;
     endpoint.headerParameters.set(headerKey, headerParameter);
+  } else if (isFactVariant(fact, OpenApiKind.CookieParameter)) {
+    const cookieKey = fact.location.conceptualLocation.inRequest.cookie;
+    const cookieParameter =
+      endpoint.cookieParameters.get(cookieKey) || createEmptyNodeDetail();
+    cookieParameter[key] = fact;
+    endpoint.cookieParameters.set(cookieKey, cookieParameter);
   } else if (isFactVariant(fact, OpenApiKind.ResponseHeader)) {
     const { statusCode, header } = fact.location.conceptualLocation.inResponse;
     const responseChange =
@@ -246,6 +253,12 @@ const useChangeToUpdate = (change: IChange, groupedFacts: OpenApiDocument) => {
       endpoint.headerParameters.get(headerKey) || createEmptyNodeDetail();
     headerParameter[key] = change;
     endpoint.headerParameters.set(headerKey, headerParameter);
+  } else if (isChangeVariant(change, OpenApiKind.CookieParameter)) {
+    const cookieKey = change.location.conceptualLocation.inRequest.cookie;
+    const cookieParameter =
+      endpoint.cookieParameters.get(cookieKey) || createEmptyNodeDetail();
+    cookieParameter[key] = change;
+    endpoint.cookieParameters.set(cookieKey, cookieParameter);
   } else if (isChangeVariant(change, OpenApiKind.ResponseHeader)) {
     const { statusCode, header } =
       change.location.conceptualLocation.inResponse;

@@ -176,6 +176,11 @@ export const createOperation = (
       key,
       openApiSpec
     ),
+    cookieParameters: createFactsWithRaw(
+      endpoint.cookieParameters,
+      key,
+      openApiSpec
+    ),
     requests,
     responses,
   };

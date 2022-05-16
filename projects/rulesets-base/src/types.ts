@@ -29,6 +29,10 @@ export type Operation = FactVariantWithRaw<OpenApiKind.Operation> & {
     string,
     FactVariantWithRaw<OpenApiKind.HeaderParameter>
   >;
+  cookieParameters: Map<
+    string,
+    FactVariantWithRaw<OpenApiKind.CookieParameter>
+  >;
   requests: RequestBody[];
   responses: Map<string, Response>;
 };
@@ -57,6 +61,7 @@ export type AssertionType =
   | 'query-parameter'
   | 'path-parameter'
   | 'header-parameter'
+  | 'cookie-parameter'
   | 'response'
   | 'response-header'
   | 'request-body'
@@ -69,6 +74,7 @@ export type AssertionTypeToValue = {
   'query-parameter': FactVariantWithRaw<OpenApiKind.QueryParameter>;
   'path-parameter': FactVariantWithRaw<OpenApiKind.PathParameter>;
   'header-parameter': FactVariantWithRaw<OpenApiKind.HeaderParameter>;
+  'cookie-parameter': FactVariantWithRaw<OpenApiKind.CookieParameter>;
   'response-header': FactVariantWithRaw<OpenApiKind.ResponseHeader>;
   response: Response;
   'request-body': RequestBody;
@@ -88,6 +94,7 @@ export type AssertionTypeToHelpers = {
     hasQueryParameterMatching: MatchesFn;
     hasPathParameterMatching: MatchesFn;
     hasHeaderParameterMatching: MatchesFn;
+    hasCookieParameterMatching: MatchesFn;
     hasRequests: (
       requests: {
         contentType: string;
@@ -104,6 +111,7 @@ export type AssertionTypeToHelpers = {
   'query-parameter': {};
   'path-parameter': {};
   'header-parameter': {};
+  'cookie-parameter': {};
   response: {
     hasResponseHeaderMatching: (
       name: string,
@@ -145,6 +153,7 @@ export type OperationAssertions = Assertions<'operation'> & {
   queryParameter: Assertions<'query-parameter'>;
   pathParameter: Assertions<'path-parameter'>;
   headerParameter: Assertions<'header-parameter'>;
+  cookieParameter: Assertions<'cookie-parameter'>;
 };
 
 export type RequestAssertions = {
