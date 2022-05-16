@@ -1748,6 +1748,124 @@ Array [
       "changeType": "changed",
       "changed": Object {
         "after": Object {
+          "in": "cookie",
+          "name": "enum-widening",
+          "schema": Object {
+            "enum": Array [
+              1,
+              2,
+              3,
+            ],
+            "type": "number",
+          },
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "enum-widening",
+          "schema": Object {
+            "enum": Array [
+              1,
+              2,
+            ],
+            "type": "number",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "enum-widening",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "enum-widening",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/3",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "not make an optional parameter required",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent new required cookie parameters",
+    "passed": true,
+    "received": undefined,
+    "where": "changed cookie parameter: enum-widening in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "cookie",
+          "name": "enum-widening",
+          "schema": Object {
+            "enum": Array [
+              1,
+              2,
+              3,
+            ],
+            "type": "number",
+          },
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "enum-widening",
+          "schema": Object {
+            "enum": Array [
+              1,
+              2,
+            ],
+            "type": "number",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "enum-widening",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "enum-widening",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/3",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "not change parameter type",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameter type changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed cookie parameter: enum-widening in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
           "in": "query",
           "name": "required",
           "schema": Object {
@@ -1850,6 +1968,124 @@ Array [
       "changeType": "changed",
       "changed": Object {
         "after": Object {
+          "in": "cookie",
+          "name": "enum-widening",
+          "schema": Object {
+            "enum": Array [
+              1,
+              2,
+              3,
+            ],
+            "type": "number",
+          },
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "enum-widening",
+          "schema": Object {
+            "enum": Array [
+              1,
+              2,
+            ],
+            "type": "number",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "enum-widening",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "enum-widening",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/3",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "not remove possible values from a cookie parameter enum",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed cookie parameter: enum-widening in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "cookie",
+          "name": "enum-widening",
+          "schema": Object {
+            "enum": Array [
+              1,
+              2,
+              3,
+            ],
+            "type": "number",
+          },
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "enum-widening",
+          "schema": Object {
+            "enum": Array [
+              1,
+              2,
+            ],
+            "type": "number",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "enum-widening",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "enum-widening",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/3",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "not add an enum to restrict possible values for a cookie parameter",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent cookie parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed cookie parameter: enum-widening in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
           "in": "header",
           "name": "required",
           "required": true,
@@ -1946,6 +2182,114 @@ Array [
     "passed": true,
     "received": undefined,
     "where": "changed header parameter: required in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "header",
+          "name": "enum-removal",
+          "schema": Object {
+            "type": "number",
+          },
+        },
+        "before": Object {
+          "in": "header",
+          "name": "enum-removal",
+          "schema": Object {
+            "enum": Array [
+              1,
+              2,
+            ],
+            "type": "number",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "enum-removal",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "enum-removal",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/4",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": "not remove possible values from a header parameter enum",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent header parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed header parameter: enum-removal in operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "header",
+          "name": "enum-removal",
+          "schema": Object {
+            "type": "number",
+          },
+        },
+        "before": Object {
+          "in": "header",
+          "name": "enum-removal",
+          "schema": Object {
+            "enum": Array [
+              1,
+              2,
+            ],
+            "type": "number",
+          },
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "header": "enum-removal",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "header",
+          "enum-removal",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/4",
+        "kind": "header-parameter",
+      },
+    },
+    "condition": "not add an enum to restrict possible values for a header parameter",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "prevent header parameters enum breaking changes",
+    "passed": true,
+    "received": undefined,
+    "where": "changed header parameter: enum-removal in operation: GET /api/users",
   },
   Object {
     "change": Object {

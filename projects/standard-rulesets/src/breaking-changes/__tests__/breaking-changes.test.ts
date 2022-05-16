@@ -32,6 +32,22 @@ describe('breaking changes ruleset', () => {
                   type: 'string',
                 },
               },
+              {
+                name: 'enum-widening',
+                in: 'cookie',
+                schema: {
+                  type: 'number',
+                  enum: [1, 2],
+                },
+              },
+              {
+                name: 'enum-removal',
+                in: 'header',
+                schema: {
+                  type: 'number',
+                  enum: [1, 2],
+                },
+              },
             ],
             requestBody: {
               content: {
@@ -92,6 +108,21 @@ describe('breaking changes ruleset', () => {
                 required: true,
                 schema: {
                   type: 'string',
+                },
+              },
+              {
+                name: 'enum-widening',
+                in: 'cookie',
+                schema: {
+                  type: 'number',
+                  enum: [1, 2, 3],
+                },
+              },
+              {
+                name: 'enum-removal',
+                in: 'header',
+                schema: {
+                  type: 'number',
                 },
               },
             ],
