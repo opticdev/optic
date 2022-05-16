@@ -104,7 +104,7 @@ export function updateByTrafficCommand(): Command {
 
       const options = command.opts();
 
-      let interactions: CapturedInteractions | null = null;
+      const sources: CapturedInteractions[] = [];
 
       const observers = {
         observeInteraction: tap<CapturedInteraction>((interaction) => {
@@ -119,12 +119,14 @@ export function updateByTrafficCommand(): Command {
         }
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntries = HarEntries.fromReadable(harFile);
-        interactions = observers.observeInteraction(
-          CapturedInteractions.fromHarEntries(harEntries)
+        sources.push(
+          observers.observeInteraction(
+            CapturedInteractions.fromHarEntries(harEntries)
+          )
         );
       }
 
-      if (!interactions) {
+      if (sources.length < 1) {
         command.showHelpAfterError(true);
         return command.error(
           'Choose a capture method to update spec by traffic'
@@ -134,6 +136,8 @@ export function updateByTrafficCommand(): Command {
       const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
         absoluteSpecPath
       );
+
+      let interactions = merge(...sources);
 
       let updateResult = await updateByInteractions(
         spec,
