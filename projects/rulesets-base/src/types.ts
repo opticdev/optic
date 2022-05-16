@@ -89,8 +89,12 @@ type MatchesFn = (
   }
 ) => void;
 export type AssertionTypeToHelpers = {
-  specification: { matches: MatchesFn };
+  specification: {
+    not: AssertionTypeToHelpers['specification'];
+    matches: MatchesFn;
+  };
   operation: {
+    not: AssertionTypeToHelpers['operation'];
     hasQueryParameterMatching: MatchesFn;
     hasPathParameterMatching: MatchesFn;
     hasHeaderParameterMatching: MatchesFn;
@@ -113,6 +117,7 @@ export type AssertionTypeToHelpers = {
   'header-parameter': {};
   'cookie-parameter': {};
   response: {
+    not: AssertionTypeToHelpers['response'];
     hasResponseHeaderMatching: (
       name: string,
       structure: any,
@@ -122,8 +127,14 @@ export type AssertionTypeToHelpers = {
     ) => void;
   };
   'response-header': {};
-  'request-body': { matches: MatchesFn };
-  'response-body': { matches: MatchesFn };
+  'request-body': {
+    not: AssertionTypeToHelpers['request-body'];
+    matches: MatchesFn;
+  };
+  'response-body': {
+    not: AssertionTypeToHelpers['response-body'];
+    matches: MatchesFn;
+  };
   property: {};
 };
 

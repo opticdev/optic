@@ -9,25 +9,47 @@ export const createRequestBodyHelpers = (
     assertion: CallableAssertion<'request-body'>
   ) => void
 ): AssertionTypeToHelpers['request-body'] => {
-  return {
-    matches: (
-      reference: any,
-      options: {
-        strict?: boolean;
-      } = {}
-    ) => {
-      addAssertion('match expected shape', (value) => {
-        const { strict = false } = options;
-        if (!valuesMatcher(reference, value.raw, strict)) {
-          throw new RuleError({
-            message: strict
-              ? 'Expected an exact match'
-              : 'Expected a partial match',
-            received: value.raw,
-            expected: reference,
-          });
-        }
-      });
-    },
+  const createAssertions = (
+    isNot: boolean
+  ): AssertionTypeToHelpers['request-body'] => {
+    const conditionPrefix = isNot ? 'not ' : '';
+
+    return {
+      get not(): AssertionTypeToHelpers['response-body'] {
+        return createAssertions(true);
+      },
+      matches: (
+        reference: any,
+        options: {
+          strict?: boolean;
+        } = {}
+      ) => {
+        addAssertion(conditionPrefix + 'match expected shape', (value) => {
+          const { strict = false } = options;
+          if (isNot) {
+            if (valuesMatcher(reference, value.raw, strict)) {
+              throw new RuleError({
+                message: strict
+                  ? 'Expected to not find an exact match'
+                  : 'Expected to not find a partial match',
+                received: value.raw,
+                expected: reference,
+              });
+            }
+          } else {
+            if (!valuesMatcher(reference, value.raw, strict)) {
+              throw new RuleError({
+                message: strict
+                  ? 'Expected an exact match'
+                  : 'Expected a partial match',
+                received: value.raw,
+                expected: reference,
+              });
+            }
+          }
+        });
+      },
+    };
   };
+  return createAssertions(false);
 };

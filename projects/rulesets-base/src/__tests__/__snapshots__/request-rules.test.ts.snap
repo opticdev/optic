@@ -241,6 +241,51 @@ Array [
 ]
 `;
 
+exports[`RequestRule body assertions custom matchers matches inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "object",
+        },
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/requestBody/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": "not match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "where": "added request with content-type: application/json in operation: GET /api/users",
+  },
+]
+`;
+
 exports[`RequestRule body assertions custom matchers matches passing assertion 1`] = `
 Array [
   Object {

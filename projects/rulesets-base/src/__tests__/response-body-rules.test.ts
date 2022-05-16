@@ -613,6 +613,64 @@ describe('ResponseBodyRule', () => {
             expect(result.passed).toBe(false);
           }
         });
+
+        test('inverted assertion', () => {
+          const ruleRunner = new RuleRunner([
+            new ResponseBodyRule({
+              name: 'request type',
+              rule: (responseAssertions) => {
+                responseAssertions.body.added.not.matches({
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      id: {
+                        type: 'string',
+                      },
+                    },
+                  },
+                });
+              },
+            }),
+          ]);
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {
+                    '200': {
+                      description: '',
+                      content: {
+                        'application/json': {
+                          schema: {
+                            type: 'object',
+                            properties: {
+                              notid: {
+                                type: 'string',
+                              },
+                              name: {
+                                type: 'string',
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(defaultEmptySpec, json)
+          );
+          expect(results.length > 0).toBe(true);
+
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(true);
+          }
+        });
       });
     });
   });

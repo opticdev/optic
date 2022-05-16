@@ -191,6 +191,33 @@ describe('SpecificationRule', () => {
           expect(result.passed).toBe(false);
         }
       });
+
+      test('inverted assertion', () => {
+        const ruleRunner = new RuleRunner([
+          new SpecificationRule({
+            name: 'operation description',
+            rule: (specificationAssertions) => {
+              specificationAssertions.requirement.not.matches({
+                info: {
+                  license: {},
+                },
+              });
+            },
+          }),
+        ]);
+        const json = {
+          ...defaultEmptySpec,
+        };
+
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(json, json)
+        );
+        expect(results.length > 0).toBe(true);
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(true);
+        }
+      });
     });
   });
 });

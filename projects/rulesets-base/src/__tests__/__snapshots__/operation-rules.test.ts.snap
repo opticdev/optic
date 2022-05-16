@@ -164,6 +164,114 @@ Array [
 ]
 `;
 
+exports[`OperationRule assertions custom matchers hasCookieParameterMatching failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "have parameter matching shape",
+    "docsLink": undefined,
+    "error": "Could not find a partial match in cookie parameters",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": false,
+    "received": undefined,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasCookieParameterMatching inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "not have parameter matching shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "received": undefined,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasCookieParameterMatching passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "have parameter matching shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "received": undefined,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
 exports[`OperationRule assertions custom matchers hasHeaderParameterMatching failing assertion 1`] = `
 Array [
   Object {
@@ -194,6 +302,42 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": false,
+    "received": undefined,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasHeaderParameterMatching inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "not have parameter matching shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
     "received": undefined,
     "where": "requirement for operation: GET /api/users",
   },
@@ -272,6 +416,42 @@ Array [
 ]
 `;
 
+exports[`OperationRule assertions custom matchers hasPathParameterMatching inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "not have parameter matching shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "received": undefined,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
 exports[`OperationRule assertions custom matchers hasPathParameterMatching passing assertion 1`] = `
 Array [
   Object {
@@ -338,6 +518,42 @@ Array [
     "isShould": false,
     "name": "parameter description",
     "passed": false,
+    "received": undefined,
+    "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasQueryParameterMatching inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+    },
+    "condition": "not have parameter matching shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
     "received": undefined,
     "where": "requirement for operation: GET /api/users",
   },
@@ -418,6 +634,50 @@ Array [
     "isShould": false,
     "name": "operation description",
     "passed": false,
+    "received": undefined,
+    "where": "changed operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers hasRequests inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "method": "get",
+          "operationId": "get-users",
+          "pathPattern": "/api/users",
+        },
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "not have requests with content-type",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
     "received": undefined,
     "where": "changed operation: GET /api/users",
   },
@@ -507,6 +767,45 @@ Array [
 ]
 `;
 
+exports[`OperationRule assertions custom matchers hasResponses inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+      "removed": Object {
+        "before": Object {
+          "method": "get",
+          "pathPattern": "/api/users",
+        },
+      },
+    },
+    "condition": "not have responses",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "received": undefined,
+    "where": "removed operation: GET /api/users",
+  },
+]
+`;
+
 exports[`OperationRule assertions custom matchers hasResponses passing assertion 1`] = `
 Array [
   Object {
@@ -583,6 +882,43 @@ Array [
 ]
 `;
 
+exports[`OperationRule assertions custom matchers matches inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "not match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "received": undefined,
+    "where": "added operation: GET /api/users",
+  },
+]
+`;
+
 exports[`OperationRule assertions custom matchers matches passing assertion 1`] = `
 Array [
   Object {
@@ -608,6 +944,77 @@ Array [
       },
     },
     "condition": "match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "received": undefined,
+    "where": "added operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule assertions custom matchers not does not bleed into different assertions 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "received": undefined,
+    "where": "added operation: GET /api/users",
+  },
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "method": "get",
+        "pathPattern": "/api/users",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "not match expected shape",
     "docsLink": undefined,
     "error": undefined,
     "expected": undefined,
@@ -769,6 +1176,369 @@ Array [
     "passed": true,
     "received": undefined,
     "where": "requirement for operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule cookieParameter assertions added failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "in": "cookie",
+        "name": "new-param",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": "parameter does not have \`description\`",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": false,
+    "received": undefined,
+    "where": "added cookie parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule cookieParameter assertions added passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "description": "hello",
+        "in": "cookie",
+        "name": "new-param",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "received": undefined,
+    "where": "added cookie parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule cookieParameter assertions changed failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "cookie",
+          "name": "new-param",
+          "required": true,
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "new-param",
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "must not make parameter required",
+    "docsLink": undefined,
+    "error": "cannot make parameter required",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "optional to required parameter",
+    "passed": false,
+    "received": undefined,
+    "where": "changed cookie parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule cookieParameter assertions changed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "changed",
+      "changed": Object {
+        "after": Object {
+          "in": "cookie",
+          "name": "new-param",
+        },
+        "before": Object {
+          "in": "cookie",
+          "name": "new-param",
+          "required": true,
+        },
+      },
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+    },
+    "condition": "must not make parameter required",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "optional to required parameter",
+    "passed": true,
+    "received": undefined,
+    "where": "changed cookie parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule cookieParameter assertions removed failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+      "removed": Object {
+        "before": Object {
+          "in": "cookie",
+          "name": "new-param",
+          "required": true,
+        },
+      },
+    },
+    "condition": "cannot remove a required parameter",
+    "docsLink": undefined,
+    "error": "required parameter cannot be removed",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "removed parameters",
+    "passed": false,
+    "received": undefined,
+    "where": "removed cookie parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule cookieParameter assertions removed passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "changeType": "removed",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "new-param",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "new-param",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+      "removed": Object {
+        "before": Object {
+          "in": "cookie",
+          "name": "new-param",
+        },
+      },
+    },
+    "condition": "cannot remove a required parameter",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "removed parameters",
+    "passed": true,
+    "received": undefined,
+    "where": "removed cookie parameter: new-param in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule cookieParameter assertions requirement failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "hello",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+      "value": Object {
+        "in": "cookie",
+        "name": "hello",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": "parameter does not have \`description\`",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": false,
+    "received": undefined,
+    "where": "requirement for cookie parameter: hello in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`OperationRule cookieParameter assertions requirement passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inRequest": Object {
+            "cookie": "hello",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "parameters",
+          "cookie",
+          "hello",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/parameters/0",
+        "kind": "cookie-parameter",
+      },
+      "value": Object {
+        "description": "hello",
+        "in": "cookie",
+        "name": "hello",
+      },
+    },
+    "condition": "must contain a description",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "parameter description",
+    "passed": true,
+    "received": undefined,
+    "where": "requirement for cookie parameter: hello in operation: GET /api/users",
   },
 ]
 `;

@@ -41,6 +41,47 @@ Array [
 ]
 `;
 
+exports[`ResponseRule assertion helpers inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200",
+        "kind": "response",
+      },
+      "value": Object {
+        "description": "hello",
+        "statusCode": "200",
+      },
+    },
+    "condition": "not have response header matching shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request",
+    "passed": true,
+    "received": undefined,
+    "where": "requirement for response status code: 200 in operation: GET /api/users",
+  },
+]
+`;
+
 exports[`ResponseRule assertion helpers passing assertion 1`] = `
 Array [
   Object {
