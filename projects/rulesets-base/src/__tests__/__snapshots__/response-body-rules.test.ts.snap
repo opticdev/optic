@@ -257,7 +257,199 @@ Array [
 ]
 `;
 
+exports[`ResponseBodyRule body assertions custom matchers matches inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "object",
+        },
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": "not match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "where": "added response status code: 200 with content-type: application/json  in operation: GET /api/users",
+  },
+]
+`;
+
 exports[`ResponseBodyRule body assertions custom matchers matches passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "object",
+        },
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": "match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "where": "added response status code: 200 with content-type: application/json  in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseBodyRule body assertions custom matchers matchesOneOf failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "object",
+        },
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": "match expected shape",
+    "docsLink": undefined,
+    "error": "Expected at least one partial match",
+    "expected": "[{\\"schema\\":{\\"type\\":\\"object\\",\\"properties\\":{\\"id\\":{\\"type\\":\\"string\\"}}}},{\\"schema\\":{\\"type\\":\\"array\\",\\"items\\":{}}}]",
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": false,
+    "received": "{\\"schema\\":{\\"type\\":\\"object\\",\\"properties\\":{\\"notid\\":{\\"type\\":\\"string\\"},\\"name\\":{\\"type\\":\\"string\\"}}}}",
+    "where": "added response status code: 200 with content-type: application/json  in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseBodyRule body assertions custom matchers matchesOneOf inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "contentType": "application/json",
+        "flatSchema": Object {
+          "type": "object",
+        },
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "inResponse": Object {
+            "body": Object {
+              "contentType": "application/json",
+            },
+            "statusCode": "200",
+          },
+          "method": "get",
+          "path": "/api/users",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users",
+          "get",
+          "responses",
+          "200",
+          "application/json",
+        ],
+        "jsonPath": "/paths/~1api~1users/get/responses/200/content/application~1json",
+        "kind": "body",
+      },
+    },
+    "condition": "not match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "request type",
+    "passed": true,
+    "received": undefined,
+    "where": "added response status code: 200 with content-type: application/json  in operation: GET /api/users",
+  },
+]
+`;
+
+exports[`ResponseBodyRule body assertions custom matchers matchesOneOf passing assertion 1`] = `
 Array [
   Object {
     "change": Object {

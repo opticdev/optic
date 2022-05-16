@@ -65,6 +65,14 @@
               "type": "integer",
               "format": "int64"
             }
+          },
+          {
+            "name": "debug",
+            "in": "cookie",
+            "description": "A debug token",
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
         "requestBody": {

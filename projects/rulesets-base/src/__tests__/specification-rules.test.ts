@@ -191,6 +191,122 @@ describe('SpecificationRule', () => {
           expect(result.passed).toBe(false);
         }
       });
+
+      test('inverted assertion', () => {
+        const ruleRunner = new RuleRunner([
+          new SpecificationRule({
+            name: 'operation description',
+            rule: (specificationAssertions) => {
+              specificationAssertions.requirement.not.matches({
+                info: {
+                  license: {},
+                },
+              });
+            },
+          }),
+        ]);
+        const json = {
+          ...defaultEmptySpec,
+        };
+
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(json, json)
+        );
+        expect(results.length > 0).toBe(true);
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(true);
+        }
+      });
+    });
+
+    describe('matchesOneOf', () => {
+      const ruleRunner = new RuleRunner([
+        new SpecificationRule({
+          name: 'operation description',
+          rule: (specificationAssertions) => {
+            specificationAssertions.requirement.matchesOneOf([
+              {
+                info: {
+                  license: {},
+                },
+              },
+              {
+                security: [],
+              },
+            ]);
+          },
+        }),
+      ]);
+
+      test('passing assertion', () => {
+        const json = {
+          ...defaultEmptySpec,
+          info: {
+            ...defaultEmptySpec.info,
+            license: {
+              name: 'MIT',
+              url: 'some-url',
+            },
+          },
+        };
+
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(json, json)
+        );
+        expect(results.length > 0).toBe(true);
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(true);
+        }
+      });
+
+      test('failing assertion', () => {
+        const json = {
+          ...defaultEmptySpec,
+        };
+
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(json, json)
+        );
+        expect(results.length > 0).toBe(true);
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(false);
+        }
+      });
+
+      test('inverted assertion', () => {
+        const ruleRunner = new RuleRunner([
+          new SpecificationRule({
+            name: 'operation description',
+            rule: (specificationAssertions) => {
+              specificationAssertions.requirement.not.matchesOneOf([
+                {
+                  info: {
+                    license: {},
+                  },
+                },
+                {
+                  security: [],
+                },
+              ]);
+            },
+          }),
+        ]);
+        const json = {
+          ...defaultEmptySpec,
+        };
+
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(json, json)
+        );
+        expect(results.length > 0).toBe(true);
+        expect(results).toMatchSnapshot();
+        for (const result of results) {
+          expect(result.passed).toBe(true);
+        }
+      });
     });
   });
 });

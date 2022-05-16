@@ -21,6 +21,7 @@ type StatusCode = string;
 export type HeaderParameterNode = NodeDetail<OpenApiKind.HeaderParameter>;
 export type PathParameterNode = NodeDetail<OpenApiKind.PathParameter>;
 export type QueryParameterNode = NodeDetail<OpenApiKind.QueryParameter>;
+export type CookieParameterNode = NodeDetail<OpenApiKind.CookieParameter>;
 
 export type RequestNode = NodeDetail<OpenApiKind.Request> & {
   bodies: Map<ContentType, BodyNode>;
@@ -43,6 +44,7 @@ export type EndpointNode = NodeDetail<OpenApiKind.Operation> & {
   headerParameters: Map<string, HeaderParameterNode>;
   pathParameters: Map<string, PathParameterNode>;
   queryParameters: Map<string, QueryParameterNode>;
+  cookieParameters: Map<string, CookieParameterNode>;
   request: RequestNode;
   responses: Map<StatusCode, ResponseNode>;
 };
