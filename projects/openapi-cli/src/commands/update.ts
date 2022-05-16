@@ -11,7 +11,7 @@ import {
   readDeferencedSpec,
   SpecFilesSourcemap,
 } from '../specs';
-import { DocumentedBodies, ShapePatches, SchemaObject } from '../shapes';
+import { DocumentedBodies } from '../shapes';
 import {
   SpecFileOperations,
   SpecPatch,
@@ -23,10 +23,12 @@ import {
 } from '../specs';
 import { Ok, Err, Result } from 'ts-results';
 
-import { DocumentedBody } from '../shapes/body';
 import { flushEvents, trackEvent } from '../segment';
-import { CapturedInteractions } from '../captures';
-import { DocumentedInteractions } from '../operations/streams/documented-interactions';
+import {
+  CapturedInteraction,
+  CapturedInteractions,
+  HarEntries,
+} from '../captures';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -79,6 +81,76 @@ export function updateCommand(): Command {
         await flushEvents();
       } catch (err) {
         console.warn('Could not flush usage analytics (non-critical)');
+      }
+    })
+    .addCommand(updateByTrafficCommand());
+
+  return command;
+}
+
+export function updateByTrafficCommand(): Command {
+  const command = new Command('traffic');
+
+  command
+    .usage('openapi.yml')
+    .argument('<openapi-file>', 'an OpenAPI spec file to update')
+    .description('update an OpenAPI specification from observed traffic')
+    .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
+    .action(async (specPath) => {
+      const absoluteSpecPath = Path.resolve(specPath);
+      if (!(await fs.pathExists(absoluteSpecPath))) {
+        return command.error('OpenAPI specification file could not be found');
+      }
+
+      const options = command.opts();
+
+      let interactions: CapturedInteractions | null = null;
+
+      const observers = {
+        observeInteraction: tap<CapturedInteraction>((interaction) => {
+          console.log('interaction', interaction);
+        }),
+      };
+
+      if (options.har) {
+        let absoluteHarPath = Path.resolve(options.har);
+        if (!(await fs.pathExists(absoluteHarPath))) {
+          return command.error('Har file could not be found at given path');
+        }
+        let harFile = fs.createReadStream(absoluteHarPath);
+        let harEntries = HarEntries.fromReadable(harFile);
+        interactions = observers.observeInteraction(
+          CapturedInteractions.fromHarEntries(harEntries)
+        );
+      }
+
+      if (!interactions) {
+        command.showHelpAfterError(true);
+        return command.error(
+          'Choose a capture method to update spec by traffic'
+        );
+      }
+
+      const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
+        absoluteSpecPath
+      );
+
+      let updateResult = await updateByInteractions(
+        spec,
+        sourcemap,
+        interactions
+      );
+
+      if (updateResult.err) {
+        return command.error(updateResult.val);
+      }
+
+      let { results: updatedSpecFiles } = updateResult.val;
+
+      for await (let writtenFilePath of SpecFiles.writeFiles(
+        updatedSpecFiles
+      )) {
+        console.log(`Updated ${writtenFilePath}`);
       }
     });
 
