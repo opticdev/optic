@@ -12,7 +12,7 @@ const getPreventRequireExistingParameter = (parameterIn: ParameterIn) =>
       );
 
       parameter.changed(
-        'not make an optional parameter required',
+        `not make an optional ${parameterIn} parameter required`,
         (before, after) => {
           if (!before.value.required && after.value.required) {
             throw new RuleError({
