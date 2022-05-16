@@ -17,7 +17,7 @@ const packageJson = require('../../package.json');
 
 export async function getProjectName(): Promise<string> {
   try {
-    const stdout = new Promise<string>((resolve, reject) => {
+    const stdoutPromise = new Promise<string>((resolve, reject) => {
       exec(
         'basename `git rev-parse --show-toplevel`',
         {
@@ -32,6 +32,7 @@ export async function getProjectName(): Promise<string> {
         }
       );
     });
+    const stdout = await stdoutPromise;
     return stdout;
   } catch (e) {
     return 'unknown-project';
