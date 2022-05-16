@@ -4,7 +4,7 @@ import { ParameterIn } from './helpers/types';
 
 const getPreventParameterTypeChange = (parameterIn: ParameterIn) =>
   new OperationRule({
-    name: `prevent ${parameterIn} parameters enum breaking changes`,
+    name: `prevent ${parameterIn} parameters type changes`,
     rule: (operationAssertions, _ruleContext) => {
       const parameter = getOperationAssertionsParameter(
         operationAssertions,

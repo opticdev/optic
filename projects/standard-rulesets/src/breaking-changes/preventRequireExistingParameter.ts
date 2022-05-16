@@ -4,7 +4,7 @@ import { ParameterIn } from './helpers/types';
 
 const getPreventRequireExistingParameter = (parameterIn: ParameterIn) =>
   new OperationRule({
-    name: `prevent ${parameterIn} parameters enum breaking changes`,
+    name: `prevent requiring existing ${parameterIn} parameters`,
     rule: (operationAssertions, _ruleContext) => {
       const parameter = getOperationAssertionsParameter(
         operationAssertions,
@@ -16,7 +16,7 @@ const getPreventRequireExistingParameter = (parameterIn: ParameterIn) =>
         (before, after) => {
           if (!before.value.required && after.value.required) {
             throw new RuleError({
-              message: 'cannot make an optional parameter required',
+              message: `cannot make an optional ${parameterIn} parameter required`,
             });
           }
         }

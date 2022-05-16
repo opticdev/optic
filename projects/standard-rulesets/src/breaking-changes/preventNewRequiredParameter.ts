@@ -4,7 +4,7 @@ import { ParameterIn } from './helpers/types';
 
 const getPreventNewRequiredParameter = (parameterIn: ParameterIn) =>
   new OperationRule({
-    name: `prevent ${parameterIn} parameters enum breaking changes`,
+    name: `prevent new required ${parameterIn} parameters`,
     matches: (_operation, ruleContext) =>
       ruleContext.operation.change !== 'added', // rule doesn't apply for new operations
     rule: (operationAssertions, _ruleContext) => {
