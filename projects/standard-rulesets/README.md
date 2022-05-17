@@ -44,6 +44,7 @@ The rules that are enforced are:
 - prevent removing a response body property
 - prevent changing response body property required -> optional
 - prevent changing response body property types
+- prevent removing a response status code
 
 ## Naming Change rules
 
