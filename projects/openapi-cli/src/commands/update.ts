@@ -2,14 +2,13 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
-import { tap, forkable, merge } from '../lib/async-tools';
+import { tap, forkable, merge, Subject } from '../lib/async-tools';
 import {
   SpecFacts,
   SpecFile,
   SpecFileOperation,
   OpenAPIV3,
   readDeferencedSpec,
-  SpecFilesSourcemap,
 } from '../specs';
 import { DocumentedBodies } from '../shapes';
 import {
@@ -29,6 +28,7 @@ import {
   CapturedInteractions,
   HarEntries,
 } from '../captures';
+import { DocumentedInteractions } from '../operations';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -263,10 +263,37 @@ export async function updateByInteractions(
   spec: OpenAPIV3.Document,
   interactions: CapturedInteractions
 ): Promise<Result<SpecPatches, string>> {
-  const patches = SpecPatches.fromInteractions(interactions, spec);
+  const updatingSpec = new Subject<OpenAPIV3.Document>();
+  const specUpdates = updatingSpec.iterator;
+
+  const documentedInteractions =
+    DocumentedInteractions.fromCapturedInteractions(
+      interactions,
+      spec,
+      specUpdates
+    );
+
+  const specPatches = (async function* (): SpecPatches {
+    let patchedSpec = spec;
+    for await (let documentedInteraction of documentedInteractions) {
+      let patches = SpecPatches.fromDocumentedInteraction(
+        documentedInteraction,
+        patchedSpec
+      );
+
+      for await (let patch of patches) {
+        patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
+        yield patch;
+      }
+
+      updatingSpec.onNext(patchedSpec);
+    }
+
+    updatingSpec.onCompleted();
+  })();
 
   // additions only, so we only safely extend the spec
-  const specAdditions = SpecPatches.additions(patches);
+  const specAdditions = SpecPatches.additions(specPatches);
 
   return Ok(specAdditions);
 }

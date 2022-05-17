@@ -1,6 +1,5 @@
 import { OpenAPIV3 } from '..';
-import { filter, flatMap, Subject } from '../../lib/async-tools';
-import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { filter, flatMap } from '../../lib/async-tools';
 import {
   SpecPatch,
   PatchImpact,
@@ -17,7 +16,7 @@ import {
   ShapePatches,
 } from '../../shapes';
 import {
-  DocumentedInteractions,
+  DocumentedInteraction,
   OperationPatches,
   OperationPatch,
 } from '../../operations';
@@ -73,61 +72,41 @@ export class SpecPatches {
     }
   }
 
-  static async *fromInteractions(
-    interactions: CapturedInteractions,
+  static async *fromDocumentedInteraction(
+    documentedInteraction: DocumentedInteraction,
     spec: OpenAPIV3.Document
   ): SpecPatches {
-    const updatingSpec = new Subject<OpenAPIV3.Document>();
-    const specUpdates = updatingSpec.iterator;
+    // phase one: operation patches
+    const operationPatches = OperationPatches.generateRequestResponseAdditions(
+      documentedInteraction
+    );
 
-    const documentedInteractions =
-      DocumentedInteractions.fromCapturedInteractions(
-        interactions,
-        spec,
-        specUpdates
+    let patchedSpec = spec;
+
+    let patchedOperation = documentedInteraction.operation;
+    for (let patch of operationPatches) {
+      patchedOperation = OperationPatch.applyTo(patch, patchedOperation).expect(
+        'generated operation patch should apply to operation'
+      );
+      const specPatch = SpecPatch.fromOperationPatch(
+        patch,
+        documentedInteraction.specJsonPath
       );
 
-    for await (let documentedInteraction of documentedInteractions) {
-      // phase one: operation patches
-      const operationPatches =
-        OperationPatches.generateRequestResponseAdditions(
-          documentedInteraction
-        );
-
-      let patchedSpec = spec;
-
-      let patchedOperation = documentedInteraction.operation;
-      for (let patch of operationPatches) {
-        patchedOperation = OperationPatch.applyTo(
-          patch,
-          patchedOperation
-        ).expect('generated operation patch should apply to operation');
-        const specPatch = SpecPatch.fromOperationPatch(
-          patch,
-          documentedInteraction.specJsonPath
-        );
-
-        patchedSpec = SpecPatch.applyPatch(specPatch, patchedSpec);
-        yield specPatch;
-      }
-
-      // phase two: body patches
-      documentedInteraction.operation = patchedOperation;
-      const documentedBodies = DocumentedBodies.fromDocumentedInteraction(
-        documentedInteraction
-      );
-      const bodySpectPatches =
-        SpecPatches.fromDocumentedBodies(documentedBodies);
-
-      for await (let patch of bodySpectPatches) {
-        patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
-        yield patch;
-      }
-
-      spec = patchedSpec;
-      updatingSpec.onNext(spec);
+      patchedSpec = SpecPatch.applyPatch(specPatch, patchedSpec);
+      yield specPatch;
     }
 
-    updatingSpec.onCompleted();
+    // phase two: body patches
+    documentedInteraction.operation = patchedOperation;
+    const documentedBodies = DocumentedBodies.fromDocumentedInteraction(
+      documentedInteraction
+    );
+    const bodySpectPatches = SpecPatches.fromDocumentedBodies(documentedBodies);
+
+    for await (let patch of bodySpectPatches) {
+      patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
+      yield patch;
+    }
   }
 }
