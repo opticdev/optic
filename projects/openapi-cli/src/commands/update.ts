@@ -110,12 +110,6 @@ export function updateByTrafficCommand(): Command {
 
       const sources: CapturedInteractions[] = [];
 
-      const observers = {
-        observeInteraction: tap<CapturedInteraction>((interaction) => {
-          console.log('interaction', interaction);
-        }),
-      };
-
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
@@ -123,11 +117,7 @@ export function updateByTrafficCommand(): Command {
         }
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntries = HarEntries.fromReadable(harFile);
-        sources.push(
-          observers.observeInteraction(
-            CapturedInteractions.fromHarEntries(harEntries)
-          )
-        );
+        sources.push(CapturedInteractions.fromHarEntries(harEntries));
       }
 
       if (sources.length < 1) {
@@ -159,7 +149,57 @@ export function updateByTrafficCommand(): Command {
 
       const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
 
-      const countingObservations = count(updateObservations);
+      const keepingStats = (async function () {
+        type ObservedOperation = { pathPattern: string; method: string };
+        let stats = {
+          matchedOperations: new Map<string, ObservedOperation>(),
+          patchCountByOperation: new Map<string, number>(),
+        };
+
+        for await (let observation of updateObservations) {
+          if (
+            observation.kind ===
+            UpdateObservationKind.InteractionMatchedOperation
+          ) {
+            let { method, pathPattern } = observation;
+            let key = `${method}-${pathPattern}`;
+            if (!stats.matchedOperations.has(key)) {
+              console.log(
+                `Matched first interaction to documented operation: ${method.toUpperCase()} ${pathPattern}`
+              );
+            }
+            stats.matchedOperations.set(key, { method, pathPattern });
+          } else if (
+            observation.kind === UpdateObservationKind.InteractionPatchGenerated
+          ) {
+            let { method, pathPattern } = observation;
+            let key = `${method}-${pathPattern}`;
+            let count = stats.patchCountByOperation.get(key) || 0;
+            stats.patchCountByOperation.set(key, count + 1);
+          }
+        }
+
+        if (stats.matchedOperations.size < 1) {
+          console.log(`No matching operations found`);
+        }
+
+        for (let [
+          key,
+          { method, pathPattern },
+        ] of stats.matchedOperations.entries()) {
+          const patchCount = stats.patchCountByOperation.get(key);
+
+          if (patchCount && patchCount > 0) {
+            console.log(
+              `Applied ${patchCount} patches for ${method.toUpperCase()} ${pathPattern}`
+            );
+          } else {
+            console.log(
+              `No changes detected for ${method.toUpperCase()} ${pathPattern}`
+            );
+          }
+        }
+      })();
 
       for await (let writtenFilePath of SpecFiles.writeFiles(
         updatedSpecFiles
@@ -167,7 +207,7 @@ export function updateByTrafficCommand(): Command {
         console.log(`Updated ${writtenFilePath}`);
       }
 
-      await countingObservations;
+      await keepingStats;
     });
 
   return command;
