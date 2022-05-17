@@ -28,7 +28,7 @@ import {
   preventHeaderParameterTypeChange,
 } from './preventParameterTypeChange';
 
-const breakingChangeRules: Rule[] = [
+const breakingChangeRules = [
   preventCookieParameterEnumBreak,
   preventCookieParameterTypeChange,
   preventHeaderParameterEnumBreak,
@@ -51,17 +51,32 @@ const breakingChangeRules: Rule[] = [
   preventResponsePropertyTypeChange,
 ];
 
+type RuleNames<R extends Rule[]> = R[number]['name'];
+type BreakingChangesRuleName = RuleNames<typeof breakingChangeRules>;
+
 export class BreakingChangesRuleset extends Ruleset {
   constructor(
     config: {
       matches?: Ruleset['matches'];
+      exemptions?: BreakingChangesRuleName[];
     } = {}
   ) {
-    const { matches } = config;
+    const { matches, exemptions = [] } = config;
+    const notExemptedRules = breakingChangeRules.filter(
+      (r) => !(exemptions as string[]).includes(r.name)
+    );
     super({
       name: 'Breaking changes ruleset',
       matches,
-      rules: breakingChangeRules,
+      rules: notExemptedRules,
     });
   }
 }
+
+// Demo
+new BreakingChangesRuleset({
+  exemptions: [
+    'prevent operation removal',
+    'prevent removing response property',
+  ],
+});

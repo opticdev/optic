@@ -13,17 +13,17 @@ export type Rule =
   | ResponseBodyRule;
 
 type RulesetConfig = {
-  name: string;
-  docsLink?: string;
-  matches?: (context: RuleContext) => boolean;
-  rules: Rule[];
+  name: Ruleset['name'];
+  docsLink?: Ruleset['docsLink'];
+  matches?: Ruleset['matches'];
+  rules: Ruleset['rules'];
 };
 
 export class Ruleset {
-  public name: RulesetConfig['name'];
-  public docsLink: RulesetConfig['docsLink'];
-  public matches: RulesetConfig['matches'];
-  public rules: RulesetConfig['rules'];
+  public name: string;
+  public docsLink?: string;
+  public matches?: (context: RuleContext) => boolean;
+  public rules: Rule[];
 
   constructor(config: RulesetConfig) {
     // this could be invoked via javascript so we still to check

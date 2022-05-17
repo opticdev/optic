@@ -2,9 +2,12 @@ import { OperationRule, RuleError } from '@useoptic/rulesets-base';
 import { getOperationAssertionsParameter } from './helpers/getOperationAssertionsParameter';
 import { ParameterIn } from './helpers/types';
 
+const getRuleName = <P extends ParameterIn>(parameterIn: P) =>
+  `prevent requiring existing ${parameterIn} parameters` as const;
+
 const getPreventRequireExistingParameter = (parameterIn: ParameterIn) =>
   new OperationRule({
-    name: `prevent requiring existing ${parameterIn} parameters`,
+    name: getRuleName(parameterIn),
     rule: (operationAssertions, _ruleContext) => {
       const parameter = getOperationAssertionsParameter(
         operationAssertions,
