@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
-import { tap, forkable, merge, Subject } from '../lib/async-tools';
+import { tap, forkable, merge, count, Subject } from '../lib/async-tools';
 import {
   SpecFacts,
   SpecFile,
@@ -28,7 +28,11 @@ import {
   CapturedInteractions,
   HarEntries,
 } from '../captures';
-import { DocumentedInteractions } from '../operations';
+import {
+  DocumentedInteraction,
+  DocumentedInteractions,
+  Operation,
+} from '../operations';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -145,7 +149,8 @@ export function updateByTrafficCommand(): Command {
         return command.error(updateResult.val);
       }
 
-      let updatePatches = updateResult.unwrap();
+      let { results: updatePatches, observations: updateObservations } =
+        updateResult.unwrap();
 
       const fileOperations = SpecFileOperations.fromSpecPatches(
         updatePatches,
@@ -154,11 +159,15 @@ export function updateByTrafficCommand(): Command {
 
       const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
 
+      const countingObservations = count(updateObservations);
+
       for await (let writtenFilePath of SpecFiles.writeFiles(
         updatedSpecFiles
       )) {
         console.log(`Updated ${writtenFilePath}`);
       }
+
+      await countingObservations;
     });
 
   return command;
@@ -262,9 +271,29 @@ export async function updateByExample(specPath: string): Promise<
 export async function updateByInteractions(
   spec: OpenAPIV3.Document,
   interactions: CapturedInteractions
-): Promise<Result<SpecPatches, string>> {
+): Promise<
+  Result<{ results: SpecPatches; observations: UpdateObservations }, string>
+> {
   const updatingSpec = new Subject<OpenAPIV3.Document>();
   const specUpdates = updatingSpec.iterator;
+
+  const observing = new Subject<UpdateObservation>();
+  const observers = {
+    documentedInteraction(interaction: DocumentedInteraction) {
+      observing.onNext({
+        kind: UpdateObservationKind.InteractionMatchedOperation,
+        pathPattern: interaction.operation.pathPattern,
+        method: interaction.operation.method,
+      });
+    },
+    interactionPatch(interaction: DocumentedInteraction, _patch: SpecPatch) {
+      observing.onNext({
+        kind: UpdateObservationKind.InteractionPatchGenerated,
+        pathPattern: interaction.operation.pathPattern,
+        method: interaction.operation.method,
+      });
+    },
+  };
 
   const documentedInteractions =
     DocumentedInteractions.fromCapturedInteractions(
@@ -276,6 +305,8 @@ export async function updateByInteractions(
   const specPatches = (async function* (): SpecPatches {
     let patchedSpec = spec;
     for await (let documentedInteraction of documentedInteractions) {
+      observers.documentedInteraction(documentedInteraction);
+
       let patches = SpecPatches.fromDocumentedInteraction(
         documentedInteraction,
         patchedSpec
@@ -284,6 +315,7 @@ export async function updateByInteractions(
       for await (let patch of patches) {
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
         yield patch;
+        observers.interactionPatch(documentedInteraction, patch);
       }
 
       updatingSpec.onNext(patchedSpec);
@@ -295,5 +327,33 @@ export async function updateByInteractions(
   // additions only, so we only safely extend the spec
   const specAdditions = SpecPatches.additions(specPatches);
 
-  return Ok(specAdditions);
+  // making sure we end observations once we're done generating patches
+  const observedResults = (async function* (): SpecPatches {
+    yield* specAdditions;
+    observing.onCompleted();
+  })();
+
+  return Ok({ results: observedResults, observations: observing.iterator });
 }
+
+export enum UpdateObservationKind {
+  InteractionMatchedOperation = 'interaction-matched-operation',
+  InteractionPatchGenerated = 'interaction-patch-generated',
+}
+
+export type UpdateObservation = {
+  kind: UpdateObservationKind;
+} & (
+  | {
+      kind: UpdateObservationKind.InteractionMatchedOperation;
+      pathPattern: string;
+      method: string;
+    }
+  | {
+      kind: UpdateObservationKind.InteractionPatchGenerated;
+      pathPattern: string;
+      method: string;
+    }
+);
+
+export interface UpdateObservations extends AsyncIterable<UpdateObservation> {}

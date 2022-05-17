@@ -1,8 +1,17 @@
-import { updateByExample, updateByInteractions } from '../../commands/update';
-import { collect, from } from '../../lib/async-tools';
+import {
+  updateByExample,
+  updateByInteractions,
+  UpdateObservations,
+} from '../../commands/update';
+import { collect, from, count } from '../../lib/async-tools';
 import Path from 'path';
 import { HttpMethods } from '../../operations';
-import { OpenAPIV3, SpecFilesSourcemap, SpecPatch } from '../../specs';
+import {
+  OpenAPIV3,
+  SpecFilesSourcemap,
+  SpecPatch,
+  SpecPatches,
+} from '../../specs';
 import { CapturedBody, CapturedInteraction } from '../../captures';
 
 describe('update command', () => {
@@ -70,7 +79,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await collect(
+      const specPatches = await resultingPatches(
         results.expect('example spec can be updated')
       );
 
@@ -106,7 +115,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await collect(
+      const specPatches = await resultingPatches(
         results.expect('example spec can be updated')
       );
 
@@ -167,7 +176,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await collect(
+      const specPatches = await resultingPatches(
         results.expect('example spec can be updated')
       );
 
@@ -195,7 +204,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await collect(
+      const specPatches = await resultingPatches(
         results.expect('example spec can be updated')
       );
 
@@ -288,7 +297,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await collect(
+      const specPatches = await resultingPatches(
         results.expect('example spec can be updated')
       );
 
@@ -324,7 +333,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await collect(
+      const specPatches = await resultingPatches(
         results.expect('example spec can be updated')
       );
 
@@ -353,7 +362,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await collect(
+      const specPatches = await resultingPatches(
         results.expect('example spec can be updated')
       );
 
@@ -403,6 +412,17 @@ function interactionFixture(
       body: responseBody,
     },
   };
+}
+
+async function resultingPatches(result: {
+  results: SpecPatches;
+  observations: UpdateObservations;
+}): Promise<SpecPatch[]> {
+  const patching = collect(result.results);
+  const observing = count(result.observations);
+
+  const [patches] = await Promise.all([patching, observing]);
+  return patches;
 }
 
 function patchSpec(spec, patches: SpecPatch[]) {
