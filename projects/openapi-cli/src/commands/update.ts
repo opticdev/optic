@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
+import Spinnies from 'spinnies';
 
 import { tap, forkable, merge, count, Subject } from '../lib/async-tools';
 import {
@@ -149,57 +150,7 @@ export function updateByTrafficCommand(): Command {
 
       const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
 
-      const keepingStats = (async function () {
-        type ObservedOperation = { pathPattern: string; method: string };
-        let stats = {
-          matchedOperations: new Map<string, ObservedOperation>(),
-          patchCountByOperation: new Map<string, number>(),
-        };
-
-        for await (let observation of updateObservations) {
-          if (
-            observation.kind ===
-            UpdateObservationKind.InteractionMatchedOperation
-          ) {
-            let { method, pathPattern } = observation;
-            let key = `${method}-${pathPattern}`;
-            if (!stats.matchedOperations.has(key)) {
-              console.log(
-                `Matched first interaction to documented operation: ${method.toUpperCase()} ${pathPattern}`
-              );
-            }
-            stats.matchedOperations.set(key, { method, pathPattern });
-          } else if (
-            observation.kind === UpdateObservationKind.InteractionPatchGenerated
-          ) {
-            let { method, pathPattern } = observation;
-            let key = `${method}-${pathPattern}`;
-            let count = stats.patchCountByOperation.get(key) || 0;
-            stats.patchCountByOperation.set(key, count + 1);
-          }
-        }
-
-        if (stats.matchedOperations.size < 1) {
-          console.log(`No matching operations found`);
-        }
-
-        for (let [
-          key,
-          { method, pathPattern },
-        ] of stats.matchedOperations.entries()) {
-          const patchCount = stats.patchCountByOperation.get(key);
-
-          if (patchCount && patchCount > 0) {
-            console.log(
-              `Applied ${patchCount} patches for ${method.toUpperCase()} ${pathPattern}`
-            );
-          } else {
-            console.log(
-              `No changes detected for ${method.toUpperCase()} ${pathPattern}`
-            );
-          }
-        }
-      })();
+      const renderingStats = renderUpdateStats(updateObservations);
 
       for await (let writtenFilePath of SpecFiles.writeFiles(
         updatedSpecFiles
@@ -207,7 +158,7 @@ export function updateByTrafficCommand(): Command {
         console.log(`Updated ${writtenFilePath}`);
       }
 
-      await keepingStats;
+      await renderingStats;
     });
 
   return command;
@@ -397,3 +348,65 @@ export type UpdateObservation = {
 );
 
 export interface UpdateObservations extends AsyncIterable<UpdateObservation> {}
+
+async function renderUpdateStats(updateObservations: UpdateObservations) {
+  type ObservedOperation = { pathPattern: string; method: string };
+  let stats = {
+    matchedOperations: new Map<string, ObservedOperation>(),
+    patchCountByOperation: new Map<string, number>(),
+  };
+
+  const progressIndicators = new Spinnies({
+    succeedColor: 'white',
+  });
+
+  for await (let observation of updateObservations) {
+    if (
+      observation.kind === UpdateObservationKind.InteractionMatchedOperation
+    ) {
+      let { method, pathPattern } = observation;
+      let key = `${method}-${pathPattern}`;
+      if (!stats.matchedOperations.has(key)) {
+        progressIndicators.add(key, {
+          text: `${method.toUpperCase()} ${pathPattern} - Matched first interaction`,
+        });
+      }
+      stats.matchedOperations.set(key, { method, pathPattern });
+    } else if (
+      observation.kind === UpdateObservationKind.InteractionPatchGenerated
+    ) {
+      let { method, pathPattern } = observation;
+      let key = `${method}-${pathPattern}`;
+      let count = (stats.patchCountByOperation.get(key) || 0) + 1;
+      progressIndicators.update(key, {
+        text: `${method.toUpperCase()} ${pathPattern} - ${count} patch${
+          count > 1 ? 'es' : ''
+        } applied`,
+      });
+      stats.patchCountByOperation.set(key, count);
+    }
+  }
+
+  if (stats.matchedOperations.size < 1) {
+    console.log(`No matching operations found`);
+  }
+
+  for (let [
+    key,
+    { method, pathPattern },
+  ] of stats.matchedOperations.entries()) {
+    const patchCount = stats.patchCountByOperation.get(key);
+
+    if (patchCount && patchCount > 0) {
+      progressIndicators.succeed(key, {
+        text: `${method.toUpperCase()} ${pathPattern} - ${patchCount} patch${
+          patchCount > 1 ? 'es' : ''
+        } applied`,
+      });
+    } else {
+      progressIndicators.succeed(key, {
+        text: `${method.toUpperCase()} ${pathPattern} - no patches necessary`,
+      });
+    }
+  }
+}
