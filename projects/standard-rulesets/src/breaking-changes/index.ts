@@ -1,23 +1,51 @@
 import { Ruleset, Rule } from '@useoptic/rulesets-base';
 import { preventOperationRemoval } from './preventOperationRemoval';
-import { preventQueryParameterRequired } from './preventQueryParameterRequired';
-import { preventQueryParameterTypeChange } from './preventQueryParameterTypeChange';
-import { preventCookieParameterRequired } from './preventCookieParameterRequired';
-import { preventCookieParameterTypeChange } from './preventCookieParameterTypeChange';
 import { preventRequestPropertyRequired } from './preventRequestPropertyRequired';
 import { preventRequestPropertyTypeChange } from './preventRequestPropertyTypeChange';
 import { preventResponsePropertyOptional } from './preventResponsePropertyOptional';
 import { preventResponsePropertyRemoval } from './preventResponsePropertyRemoval';
 import { preventResponsePropertyTypeChange } from './preventResponsePropertyTypeChange';
+import {
+  preventQueryParameterEnumBreak,
+  preventCookieParameterEnumBreak,
+  preventPathParameterEnumBreak,
+  preventHeaderParameterEnumBreak,
+} from './preventParameterEnumBreak';
+import {
+  preventNewRequiredQueryParameter,
+  preventNewRequiredCookieParameter,
+  preventNewRequiredHeaderParameter,
+} from './preventNewRequiredParameter';
+import {
+  preventRequireExistingQueryParameter,
+  preventRequireExistingCookieParameter,
+  preventRequireExistingHeaderParameter,
+} from './preventRequireExistingParameter';
+import {
+  preventQueryParameterTypeChange,
+  preventCookieParameterTypeChange,
+  preventPathParameterTypeChange,
+  preventHeaderParameterTypeChange,
+} from './preventParameterTypeChange';
 
 const breakingChangeRules: Rule[] = [
-  preventOperationRemoval,
-  preventQueryParameterRequired,
-  preventQueryParameterTypeChange,
-  preventCookieParameterRequired,
+  preventCookieParameterEnumBreak,
   preventCookieParameterTypeChange,
+  preventHeaderParameterEnumBreak,
+  preventHeaderParameterTypeChange,
+  preventNewRequiredCookieParameter,
+  preventNewRequiredHeaderParameter,
+  preventNewRequiredQueryParameter,
+  preventOperationRemoval,
+  preventPathParameterEnumBreak,
+  preventPathParameterTypeChange,
+  preventQueryParameterEnumBreak,
+  preventQueryParameterTypeChange,
   preventRequestPropertyRequired,
   preventRequestPropertyTypeChange,
+  preventRequireExistingCookieParameter,
+  preventRequireExistingHeaderParameter,
+  preventRequireExistingQueryParameter,
   preventResponsePropertyOptional,
   preventResponsePropertyRemoval,
   preventResponsePropertyTypeChange,

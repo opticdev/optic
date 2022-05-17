@@ -32,7 +32,139 @@ Array [
 ]
 `;
 
+exports[`SpecificationRule custom matchers matches inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {},
+        "conceptualPath": Array [],
+        "jsonPath": "",
+        "kind": "specification",
+      },
+      "value": Object {
+        "info": Object {
+          "title": "Empty",
+          "version": "0.0.0",
+        },
+        "openapi": "3.1.3",
+      },
+    },
+    "condition": "not match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "received": undefined,
+    "where": "requirement for specification",
+  },
+]
+`;
+
 exports[`SpecificationRule custom matchers matches passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {},
+        "conceptualPath": Array [],
+        "jsonPath": "",
+        "kind": "specification",
+      },
+      "value": Object {
+        "info": Object {
+          "license": Object {
+            "name": "MIT",
+            "url": "some-url",
+          },
+          "title": "Empty",
+          "version": "0.0.0",
+        },
+        "openapi": "3.1.3",
+      },
+    },
+    "condition": "match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "received": undefined,
+    "where": "requirement for specification",
+  },
+]
+`;
+
+exports[`SpecificationRule custom matchers matchesOneOf failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {},
+        "conceptualPath": Array [],
+        "jsonPath": "",
+        "kind": "specification",
+      },
+      "value": Object {
+        "info": Object {
+          "title": "Empty",
+          "version": "0.0.0",
+        },
+        "openapi": "3.1.3",
+      },
+    },
+    "condition": "match expected shape",
+    "docsLink": undefined,
+    "error": "Expected at least one partial match",
+    "expected": "[{\\"info\\":{\\"license\\":{}}},{\\"security\\":[]}]",
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": false,
+    "received": "{\\"openapi\\":\\"3.1.3\\",\\"paths\\":{},\\"info\\":{\\"version\\":\\"0.0.0\\",\\"title\\":\\"Empty\\"}}",
+    "where": "requirement for specification",
+  },
+]
+`;
+
+exports[`SpecificationRule custom matchers matchesOneOf inverted assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {},
+        "conceptualPath": Array [],
+        "jsonPath": "",
+        "kind": "specification",
+      },
+      "value": Object {
+        "info": Object {
+          "title": "Empty",
+          "version": "0.0.0",
+        },
+        "openapi": "3.1.3",
+      },
+    },
+    "condition": "not match expected shape",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation description",
+    "passed": true,
+    "received": undefined,
+    "where": "requirement for specification",
+  },
+]
+`;
+
+exports[`SpecificationRule custom matchers matchesOneOf passing assertion 1`] = `
 Array [
   Object {
     "change": Object {

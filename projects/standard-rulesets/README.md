@@ -35,9 +35,9 @@ const { BreakingChangesRuleset } = require('@useoptic/standard-rulesets');
 The rules that are enforced are:
 
 - prevent operation removal
-- prevent adding required query parameter
-- prevent changing query parameter optional -> required
-- prevent changing query parameter types
+- prevent adding new required query, cookie or header parameters
+- prevent changing query, cookie, or header parameter optional -> required
+- prevent changing query, cookie, path or header parameter types
 - prevent adding required request body property
 - prevent changing request body property optional -> required
 - prevent changing request body property types

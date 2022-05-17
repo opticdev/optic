@@ -165,6 +165,51 @@ describe('ResponseRule', () => {
         expect(result.passed).toBe(false);
       }
     });
+
+    test('inverted assertion', () => {
+      const ruleRunner = new RuleRunner([
+        new ResponseRule({
+          name: 'request',
+          rule: (responseAssertions) => {
+            responseAssertions.requirement.not.hasResponseHeaderMatching(
+              'isgood',
+              {
+                description: Matchers.string,
+              }
+            );
+          },
+        }),
+      ]);
+
+      const json: OpenAPIV3.Document = {
+        ...defaultEmptySpec,
+        paths: {
+          '/api/users': {
+            get: {
+              responses: {
+                '200': {
+                  description: 'hello',
+                  headers: { isnotgood: { description: 'hello', schema: {} } },
+                  content: {
+                    'application/xml': {
+                      schema: {},
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+      const results = ruleRunner.runRulesWithFacts(
+        createRuleInputs(json, json)
+      );
+      expect(results.length > 0).toBe(true);
+      expect(results).toMatchSnapshot();
+      for (const result of results) {
+        expect(result.passed).toBe(true);
+      }
+    });
   });
 
   describe('header assertions', () => {

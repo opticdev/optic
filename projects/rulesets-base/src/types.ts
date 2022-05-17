@@ -88,9 +88,22 @@ type MatchesFn = (
     strict?: boolean;
   }
 ) => void;
+
+type MatchesOneOfFn = (
+  structures: any[],
+  options?: {
+    strict?: boolean;
+  }
+) => void;
+
 export type AssertionTypeToHelpers = {
-  specification: { matches: MatchesFn };
+  specification: {
+    not: AssertionTypeToHelpers['specification'];
+    matches: MatchesFn;
+    matchesOneOf: MatchesOneOfFn;
+  };
   operation: {
+    not: AssertionTypeToHelpers['operation'];
     hasQueryParameterMatching: MatchesFn;
     hasPathParameterMatching: MatchesFn;
     hasHeaderParameterMatching: MatchesFn;
@@ -107,12 +120,14 @@ export type AssertionTypeToHelpers = {
       }[]
     ) => void;
     matches: MatchesFn;
+    matchesOneOf: MatchesOneOfFn;
   };
   'query-parameter': {};
   'path-parameter': {};
   'header-parameter': {};
   'cookie-parameter': {};
   response: {
+    not: AssertionTypeToHelpers['response'];
     hasResponseHeaderMatching: (
       name: string,
       structure: any,
@@ -122,8 +137,16 @@ export type AssertionTypeToHelpers = {
     ) => void;
   };
   'response-header': {};
-  'request-body': { matches: MatchesFn };
-  'response-body': { matches: MatchesFn };
+  'request-body': {
+    not: AssertionTypeToHelpers['request-body'];
+    matches: MatchesFn;
+    matchesOneOf: MatchesOneOfFn;
+  };
+  'response-body': {
+    not: AssertionTypeToHelpers['response-body'];
+    matches: MatchesFn;
+    matchesOneOf: MatchesOneOfFn;
+  };
   property: {};
 };
 
