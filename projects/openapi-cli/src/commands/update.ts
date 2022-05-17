@@ -137,19 +137,22 @@ export function updateByTrafficCommand(): Command {
         absoluteSpecPath
       );
 
+      const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
       let interactions = merge(...sources);
 
-      let updateResult = await updateByInteractions(
-        spec,
-        sourcemap,
-        interactions
-      );
-
+      let updateResult = await updateByInteractions(spec, interactions);
       if (updateResult.err) {
         return command.error(updateResult.val);
       }
 
-      let { results: updatedSpecFiles } = updateResult.val;
+      let updatePatches = updateResult.unwrap();
+
+      const fileOperations = SpecFileOperations.fromSpecPatches(
+        updatePatches,
+        sourcemap
+      );
+
+      const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
 
       for await (let writtenFilePath of SpecFiles.writeFiles(
         updatedSpecFiles
@@ -258,33 +261,12 @@ export async function updateByExample(specPath: string): Promise<
 
 export async function updateByInteractions(
   spec: OpenAPIV3.Document,
-  sourcemap: SpecFilesSourcemap,
   interactions: CapturedInteractions
-): Promise<
-  Result<
-    {
-      stats: {};
-      results: SpecFilesAsync;
-    },
-    string
-  >
-> {
-  const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
-
+): Promise<Result<SpecPatches, string>> {
   const patches = SpecPatches.fromInteractions(interactions, spec);
 
   // additions only, so we only safely extend the spec
   const specAdditions = SpecPatches.additions(patches);
 
-  const fileOperations = SpecFileOperations.fromSpecPatches(
-    specAdditions,
-    sourcemap
-  );
-
-  const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
-
-  return Ok({
-    stats: {},
-    results: updatedSpecFiles,
-  });
+  return Ok(specAdditions);
 }
