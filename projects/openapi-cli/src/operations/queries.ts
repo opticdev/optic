@@ -1,37 +1,71 @@
-import { OperationFacts, OperationFact, OpenAPIV3 } from '../specs';
+import {
+  OperationFacts,
+  OperationFact,
+  isFactVariant,
+  FactVariants,
+  OpenAPIV3,
+  SpecFactsIterable,
+} from '../specs';
 import { Option, Some, None, Result, Ok, Err } from 'ts-results';
 import invariant from 'ts-invariant';
 import equals from 'fast-deep-equal';
+import Url from 'url';
+import Path from 'path';
 
 export class OperationQueries {
-  static fromFacts(facts: Iterable<OperationFact>): OperationQueries {
+  static fromFacts(facts: SpecFactsIterable): OperationQueries {
     const operations: Array<{
       pathPattern: string;
       method: OpenAPIV3.HttpMethods;
       specPath: string;
     }> = [];
+    let baseUrls: string[] = [];
+
     for (let fact of facts) {
-      operations.push({
-        pathPattern: fact.value.pathPattern,
-        method: fact.value.method as OpenAPIV3.HttpMethods,
-        specPath: fact.location.jsonPath,
-      });
+      if (isFactVariant(fact, FactVariants.Operation)) {
+        operations.push({
+          pathPattern: fact.value.pathPattern,
+          method: fact.value.method as OpenAPIV3.HttpMethods,
+          specPath: fact.location.jsonPath,
+        });
+      } else if (isFactVariant(fact, FactVariants.Specification)) {
+        baseUrls = fact.value.servers?.map(({ url }) => url) || [];
+      }
     }
 
-    return new OperationQueries(operations);
+    return new OperationQueries(operations, baseUrls);
   }
 
-  patterns: string[];
-  patternsAsComponents: [string, string[]][];
+  private patterns: string[];
+  private patternsAsComponents: [string, string[]][];
+  private basePaths: string[];
+
   constructor(
     private operations: Array<{
       pathPattern: string;
       method: OpenAPIV3.HttpMethods;
       specPath: string;
-    }>
+    }>,
+    baseUrls: string[] = []
   ) {
+    this.basePaths =
+      baseUrls.length > 0
+        ? baseUrls.map((url) => {
+            // add absolute in case url is relative (valid in OpenAPI, ignored when absolute)
+            const parsed = new Url.URL(url, 'https://example.org');
+
+            return parsed.pathname;
+          })
+        : ['/'];
+
     this.patterns = [
-      ...new Set(this.operations.map(({ pathPattern }) => pathPattern)),
+      ...new Set(
+        this.basePaths.flatMap((basePath) => {
+          return this.operations.map(({ pathPattern }) =>
+            Path.join(basePath, pathPattern)
+          );
+        })
+      ),
     ];
     this.patternsAsComponents = this.patterns.map((pattern) => [
       pattern,
@@ -62,8 +96,12 @@ export class OperationQueries {
     if (maybeMatchedPattern.none) return Ok(None);
     let matchedPattern = maybeMatchedPattern.unwrap();
 
-    const operation = this.operations.find(
-      (op) => op.pathPattern == matchedPattern && op.method == method
+    const operation = this.operations.find((op) =>
+      this.basePaths.some(
+        (basePath) =>
+          Path.join(basePath, op.pathPattern) == matchedPattern &&
+          op.method == method
+      )
     );
 
     if (!operation) return Ok(None);

@@ -2,7 +2,11 @@ export { parseOpenAPIWithSourcemap as readDeferencedSpec } from '@useoptic/opena
 
 import { ShapeLocation } from '../shapes';
 
-export { OpenAPIV3 } from '@useoptic/openapi-utilities';
+export {
+  OpenAPIV3,
+  isFactVariant,
+  OpenApiKind as FactVariants,
+} from '@useoptic/openapi-utilities';
 
 export type SpecLocation = ShapeLocation; // TODO: add union of all conceptual locations
 
@@ -24,6 +28,7 @@ export type {
   BodyExampleFact,
   ComponentSchemaExampleFact,
   OperationFact,
+  SpecFactsIterable,
 } from './streams/facts';
 
 // templates
