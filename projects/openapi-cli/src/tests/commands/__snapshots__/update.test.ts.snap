@@ -592,316 +592,281 @@ Object {
 `;
 
 exports[`update command update by interactions generate patches for multiple interactions for the same operations 1`] = `
-Array [
-  Object {
-    "contents": "{
-  \\"openapi\\": \\"3.0.1\\",
-  \\"paths\\": {
-    \\"/examples/{exampleId}\\": {
-      \\"post\\": {
-        \\"responses\\": {
-          \\"200\\": {
-            \\"description\\": \\"automatically documented through Optic\\"
-          }
-        },
-        \\"requestBody\\": {
-          \\"content\\": {
-            \\"application/json\\": {
-              \\"schema\\": {
-                \\"type\\": \\"object\\",
-                \\"properties\\": {
-                  \\"id\\": {
-                    \\"type\\": \\"string\\"
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/examples/{exampleId}": Object {
+      "post": Object {
+        "requestBody": Object {
+          "content": Object {
+            "application/json": Object {
+              "schema": Object {
+                "properties": Object {
+                  "id": Object {
+                    "type": "string",
                   },
-                  \\"optionalField\\": {
-                    \\"type\\": \\"number\\"
-                  }
+                  "optionalField": Object {
+                    "type": "number",
+                  },
                 },
-                \\"required\\": [
-                  \\"id\\"
-                ]
-              }
-            }
-          }
-        }
-      }
-    }
+                "required": Array [
+                  "id",
+                ],
+                "type": "object",
+              },
+            },
+          },
+        },
+        "responses": Object {
+          "200": Object {
+            "description": "automatically documented through Optic",
+          },
+        },
+      },
+    },
   },
-  \\"info\\": {
-    \\"version\\": \\"0.0.0\\",
-    \\"title\\": \\"Empty\\"
-  }
-}",
-    "path": "/tmp/test-openapi.json",
-  },
-]
+}
 `;
 
 exports[`update command update by interactions generates patches for response bodies 1`] = `
-Array [
-  Object {
-    "contents": "{
-  \\"openapi\\": \\"3.0.1\\",
-  \\"paths\\": {
-    \\"/examples/{exampleId}\\": {
-      \\"post\\": {
-        \\"responses\\": {
-          \\"201\\": {
-            \\"description\\": \\"automatically documented through Optic\\",
-            \\"content\\": {
-              \\"application/json\\": {
-                \\"schema\\": {
-                  \\"type\\": \\"object\\",
-                  \\"properties\\": {
-                    \\"id\\": {
-                      \\"type\\": \\"string\\"
-                    },
-                    \\"optionalField\\": {
-                      \\"type\\": \\"number\\"
-                    }
-                  },
-                  \\"required\\": [
-                    \\"id\\"
-                  ]
-                }
-              }
-            }
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/examples/{exampleId}": Object {
+      "delete": Object {
+        "responses": Object {
+          "204": Object {
+            "description": "automatically documented through Optic",
           },
-          \\"400\\": {
-            \\"description\\": \\"automatically documented through Optic\\",
-            \\"content\\": {
-              \\"application/json\\": {
-                \\"schema\\": {
-                  \\"type\\": \\"object\\",
-                  \\"properties\\": {
-                    \\"error\\": {
-                      \\"type\\": \\"string\\"
-                    }
-                  },
-                  \\"required\\": [
-                    \\"error\\"
-                  ]
-                }
-              }
-            }
-          }
-        }
+        },
       },
-      \\"delete\\": {
-        \\"responses\\": {
-          \\"204\\": {
-            \\"description\\": \\"automatically documented through Optic\\"
-          }
-        }
-      }
-    }
+      "post": Object {
+        "responses": Object {
+          "201": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "id": Object {
+                      "type": "string",
+                    },
+                    "optionalField": Object {
+                      "type": "number",
+                    },
+                  },
+                  "required": Array [
+                    "id",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "automatically documented through Optic",
+          },
+          "400": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "error": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "error",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "automatically documented through Optic",
+          },
+        },
+      },
+    },
   },
-  \\"info\\": {
-    \\"version\\": \\"0.0.0\\",
-    \\"title\\": \\"Empty\\"
-  }
-}",
-    "path": "/tmp/test-openapi.json",
-  },
-]
+}
 `;
 
 exports[`update command update by interactions generates patches to extend existing request or response bodies 1`] = `
-Array [
-  Object {
-    "contents": "{
-  \\"openapi\\": \\"3.0.1\\",
-  \\"paths\\": {
-    \\"/examples/{exampleId}\\": {
-      \\"post\\": {
-        \\"requestBody\\": {
-          \\"content\\": {
-            \\"application/json\\": {
-              \\"schema\\": {
-                \\"type\\": \\"object\\",
-                \\"properties\\": {
-                  \\"id\\": {
-                    \\"type\\": \\"string\\"
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/examples/{exampleId}": Object {
+      "post": Object {
+        "requestBody": Object {
+          "content": Object {
+            "application/json": Object {
+              "schema": Object {
+                "properties": Object {
+                  "id": Object {
+                    "type": "string",
                   },
-                  \\"newField\\": {
-                    \\"type\\": \\"number\\"
+                  "newField": Object {
+                    "type": "number",
                   },
-                  \\"optionalBoolean\\": {
-                    \\"type\\": \\"boolean\\"
-                  }
+                  "optionalBoolean": Object {
+                    "type": "boolean",
+                  },
                 },
-                \\"required\\": [
-                  \\"id\\",
-                  \\"newField\\"
-                ]
-              }
-            }
-          }
+                "required": Array [
+                  "id",
+                  "newField",
+                ],
+                "type": "object",
+              },
+            },
+          },
         },
-        \\"responses\\": {
-          \\"201\\": {
-            \\"description\\": \\"created resource\\",
-            \\"content\\": {
-              \\"application/json\\": {
-                \\"schema\\": {
-                  \\"type\\": \\"object\\",
-                  \\"properties\\": {
-                    \\"id\\": {
-                      \\"type\\": \\"string\\"
+        "responses": Object {
+          "201": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "id": Object {
+                      "type": "string",
                     },
-                    \\"newField\\": {
-                      \\"type\\": \\"number\\"
+                    "newField": Object {
+                      "type": "number",
                     },
-                    \\"optionalBoolean\\": {
-                      \\"type\\": \\"boolean\\"
-                    }
+                    "optionalBoolean": Object {
+                      "type": "boolean",
+                    },
                   },
-                  \\"required\\": [
-                    \\"id\\",
-                    \\"newField\\",
-                    \\"optionalBoolean\\"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                  "required": Array [
+                    "id",
+                    "newField",
+                    "optionalBoolean",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "created resource",
+          },
+        },
+      },
+    },
   },
-  \\"info\\": {
-    \\"version\\": \\"0.0.0\\",
-    \\"title\\": \\"Empty\\"
-  }
-}",
-    "path": "/tmp/test-openapi.json",
-  },
-]
+}
 `;
 
 exports[`update command update by interactions generates updated spec files for new request bodies 1`] = `
-Array [
-  Object {
-    "contents": "{
-  \\"openapi\\": \\"3.0.1\\",
-  \\"paths\\": {
-    \\"/examples/{exampleId}\\": {
-      \\"post\\": {
-        \\"responses\\": {
-          \\"200\\": {
-            \\"description\\": \\"automatically documented through Optic\\"
-          }
-        },
-        \\"requestBody\\": {
-          \\"content\\": {
-            \\"application/json\\": {
-              \\"schema\\": {
-                \\"type\\": \\"object\\",
-                \\"properties\\": {
-                  \\"id\\": {
-                    \\"type\\": \\"string\\"
-                  }
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/examples/{exampleId}": Object {
+      "post": Object {
+        "requestBody": Object {
+          "content": Object {
+            "application/json": Object {
+              "schema": Object {
+                "properties": Object {
+                  "id": Object {
+                    "type": "string",
+                  },
                 },
-                \\"required\\": [
-                  \\"id\\"
-                ]
-              }
-            }
-          }
-        }
-      }
-    }
+                "required": Array [
+                  "id",
+                ],
+                "type": "object",
+              },
+            },
+          },
+        },
+        "responses": Object {
+          "200": Object {
+            "description": "automatically documented through Optic",
+          },
+        },
+      },
+    },
   },
-  \\"info\\": {
-    \\"version\\": \\"0.0.0\\",
-    \\"title\\": \\"Empty\\"
-  }
-}",
-    "path": "/tmp/test-openapi.json",
-  },
-]
+}
 `;
 
 exports[`update command update by interactions ignores interactions for undocumented operations 1`] = `
-Array [
-  Object {
-    "contents": "{
-  \\"openapi\\": \\"3.0.1\\",
-  \\"paths\\": {
-    \\"/examples/{exampleId}\\": {
-      \\"post\\": {
-        \\"responses\\": {
-          \\"200\\": {
-            \\"description\\": \\"automatically documented through Optic\\"
-          }
-        }
-      }
-    }
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
   },
-  \\"info\\": {
-    \\"version\\": \\"0.0.0\\",
-    \\"title\\": \\"Empty\\"
-  }
-}",
-    "path": "/tmp/test-openapi.json",
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/examples/{exampleId}": Object {
+      "post": Object {
+        "responses": Object {
+          "200": Object {
+            "description": "automatically documented through Optic",
+          },
+        },
+      },
+    },
   },
-]
+}
 `;
 
 exports[`update command update by interactions only generates patches for 2xx, 3xx and 4xx responses 1`] = `
-Array [
-  Object {
-    "contents": "{
-  \\"openapi\\": \\"3.0.1\\",
-  \\"paths\\": {
-    \\"/examples/{exampleId}\\": {
-      \\"post\\": {
-        \\"responses\\": {
-          \\"201\\": {
-            \\"description\\": \\"automatically documented through Optic\\"
-          },
-          \\"302\\": {
-            \\"description\\": \\"automatically documented through Optic\\"
-          },
-          \\"400\\": {
-            \\"description\\": \\"automatically documented through Optic\\"
-          }
-        }
-      }
-    }
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
   },
-  \\"info\\": {
-    \\"version\\": \\"0.0.0\\",
-    \\"title\\": \\"Empty\\"
-  }
-}",
-    "path": "/tmp/test-openapi.json",
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/examples/{exampleId}": Object {
+      "post": Object {
+        "responses": Object {
+          "201": Object {
+            "description": "automatically documented through Optic",
+          },
+          "302": Object {
+            "description": "automatically documented through Optic",
+          },
+          "400": Object {
+            "description": "automatically documented through Optic",
+          },
+        },
+      },
+    },
   },
-]
+}
 `;
 
 exports[`update command update by interactions only generates patches for request bodies with 2xx and 3xx responses 1`] = `
-Array [
-  Object {
-    "contents": "{
-  \\"openapi\\": \\"3.0.1\\",
-  \\"paths\\": {
-    \\"/examples/{exampleId}\\": {
-      \\"post\\": {
-        \\"responses\\": {
-          \\"400\\": {
-            \\"description\\": \\"automatically documented through Optic\\"
-          }
-        }
-      }
-    }
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
   },
-  \\"info\\": {
-    \\"version\\": \\"0.0.0\\",
-    \\"title\\": \\"Empty\\"
-  }
-}",
-    "path": "/tmp/test-openapi.json",
+  "openapi": "3.0.1",
+  "paths": Object {
+    "/examples/{exampleId}": Object {
+      "post": Object {
+        "responses": Object {
+          "400": Object {
+            "description": "automatically documented through Optic",
+          },
+        },
+      },
+    },
   },
-]
+}
 `;

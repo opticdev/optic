@@ -44,6 +44,7 @@ The rules that are enforced are:
 - prevent removing a response body property
 - prevent changing response body property required -> optional
 - prevent changing response body property types
+- prevent removing a response status code
 
 Specific rules can be ignored with the `skipRules` attribute, and an accept list can be passed with `rulesOnly`:
 
