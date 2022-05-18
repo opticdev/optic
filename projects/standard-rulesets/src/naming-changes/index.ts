@@ -6,7 +6,7 @@ import { createRequestHeaderParameterChecks } from './requestHeaders';
 import { createResponseHeaderParameterChecks } from './responseHeader';
 import { createCookieParameterChecks } from './cookieParameters';
 
-export class NamingChangesRuleset extends Ruleset {
+export class NamingChangesRuleset extends Ruleset<Rule[]> {
   constructor(config: {
     applies: typeof appliesWhen[number];
     options?: NamingConfig;
