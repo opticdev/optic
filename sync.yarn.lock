@@ -3494,7 +3494,6 @@ __metadata:
     "@babel/plugin-transform-runtime": ^7.16.0
     "@babel/preset-env": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
-    "@babel/runtime": ^7.17.2
     "@types/analytics-node": ^3.1.7
     "@types/babel__core": ^7
     "@types/is-url": ^1.2.30
