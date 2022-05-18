@@ -8,6 +8,7 @@ import {
 } from '@useoptic/openapi-utilities';
 
 export interface SpecFacts extends AsyncIterable<IFact> {}
+export interface SpecFactsIterable extends Iterable<IFact> {}
 export interface BodyExampleFacts
   extends AsyncIterable<FactVariant<OpenApiKind.BodyExample>> {}
 export interface BodyFacts
@@ -21,6 +22,7 @@ export type BodyExampleFact = FactVariant<OpenApiKind.BodyExample>;
 export type ComponentSchemaExampleFact =
   FactVariant<OpenApiKind.ComponentSchemaExample>;
 export type OperationFact = FactVariant<OpenApiKind.Operation>;
+export type SpecFact = FactVariant<OpenApiKind.Specification>;
 
 export class SpecFacts {
   static async *fromOpenAPISpec(spec: OpenAPIV3.Document): SpecFacts {

@@ -1,17 +1,17 @@
 import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
+import Spinnies from 'spinnies';
 
-import { tap, forkable, merge } from '../lib/async-tools';
+import { tap, forkable, merge, count, Subject } from '../lib/async-tools';
 import {
   SpecFacts,
   SpecFile,
   SpecFileOperation,
   OpenAPIV3,
   readDeferencedSpec,
-  SpecFilesSourcemap,
 } from '../specs';
-import { DocumentedBodies, ShapePatches, SchemaObject } from '../shapes';
+import { DocumentedBodies } from '../shapes';
 import {
   SpecFileOperations,
   SpecPatch,
@@ -23,10 +23,17 @@ import {
 } from '../specs';
 import { Ok, Err, Result } from 'ts-results';
 
-import { DocumentedBody } from '../shapes/body';
 import { flushEvents, trackEvent } from '../segment';
-import { CapturedInteractions } from '../captures';
-import { DocumentedInteractions } from '../operations/streams/documented-interactions';
+import {
+  CapturedInteraction,
+  CapturedInteractions,
+  HarEntries,
+} from '../captures';
+import {
+  DocumentedInteraction,
+  DocumentedInteractions,
+  Operation,
+} from '../operations';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -80,6 +87,78 @@ export function updateCommand(): Command {
       } catch (err) {
         console.warn('Could not flush usage analytics (non-critical)');
       }
+    })
+    .addCommand(updateByTrafficCommand());
+
+  return command;
+}
+
+export function updateByTrafficCommand(): Command {
+  const command = new Command('traffic');
+
+  command
+    .usage('openapi.yml')
+    .argument('<openapi-file>', 'an OpenAPI spec file to update')
+    .description('update an OpenAPI specification from observed traffic')
+    .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
+    .action(async (specPath) => {
+      const absoluteSpecPath = Path.resolve(specPath);
+      if (!(await fs.pathExists(absoluteSpecPath))) {
+        return command.error('OpenAPI specification file could not be found');
+      }
+
+      const options = command.opts();
+
+      const sources: CapturedInteractions[] = [];
+
+      if (options.har) {
+        let absoluteHarPath = Path.resolve(options.har);
+        if (!(await fs.pathExists(absoluteHarPath))) {
+          return command.error('Har file could not be found at given path');
+        }
+        let harFile = fs.createReadStream(absoluteHarPath);
+        let harEntries = HarEntries.fromReadable(harFile);
+        sources.push(CapturedInteractions.fromHarEntries(harEntries));
+      }
+
+      if (sources.length < 1) {
+        command.showHelpAfterError(true);
+        return command.error(
+          'Choose a capture method to update spec by traffic'
+        );
+      }
+
+      const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
+        absoluteSpecPath
+      );
+
+      const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
+      let interactions = merge(...sources);
+
+      let updateResult = await updateByInteractions(spec, interactions);
+      if (updateResult.err) {
+        return command.error(updateResult.val);
+      }
+
+      let { results: updatePatches, observations: updateObservations } =
+        updateResult.unwrap();
+
+      const fileOperations = SpecFileOperations.fromSpecPatches(
+        updatePatches,
+        sourcemap
+      );
+
+      const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
+
+      const renderingStats = renderUpdateStats(updateObservations);
+
+      for await (let writtenFilePath of SpecFiles.writeFiles(
+        updatedSpecFiles
+      )) {
+        console.log(`Updated ${writtenFilePath}`);
+      }
+
+      await renderingStats;
     });
 
   return command;
@@ -182,33 +261,152 @@ export async function updateByExample(specPath: string): Promise<
 
 export async function updateByInteractions(
   spec: OpenAPIV3.Document,
-  sourcemap: SpecFilesSourcemap,
   interactions: CapturedInteractions
 ): Promise<
-  Result<
-    {
-      stats: {};
-      results: SpecFilesAsync;
-    },
-    string
-  >
+  Result<{ results: SpecPatches; observations: UpdateObservations }, string>
 > {
-  const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
+  const updatingSpec = new Subject<OpenAPIV3.Document>();
+  const specUpdates = updatingSpec.iterator;
 
-  const patches = SpecPatches.fromInteractions(interactions, spec);
+  const observing = new Subject<UpdateObservation>();
+  const observers = {
+    documentedInteraction(interaction: DocumentedInteraction) {
+      observing.onNext({
+        kind: UpdateObservationKind.InteractionMatchedOperation,
+        pathPattern: interaction.operation.pathPattern,
+        method: interaction.operation.method,
+      });
+    },
+    interactionPatch(interaction: DocumentedInteraction, _patch: SpecPatch) {
+      observing.onNext({
+        kind: UpdateObservationKind.InteractionPatchGenerated,
+        pathPattern: interaction.operation.pathPattern,
+        method: interaction.operation.method,
+      });
+    },
+  };
+
+  const documentedInteractions =
+    DocumentedInteractions.fromCapturedInteractions(
+      interactions,
+      spec,
+      specUpdates
+    );
+
+  const specPatches = (async function* (): SpecPatches {
+    let patchedSpec = spec;
+    for await (let documentedInteraction of documentedInteractions) {
+      observers.documentedInteraction(documentedInteraction);
+
+      let patches = SpecPatches.fromDocumentedInteraction(
+        documentedInteraction,
+        patchedSpec
+      );
+
+      for await (let patch of patches) {
+        patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
+        yield patch;
+        observers.interactionPatch(documentedInteraction, patch);
+      }
+
+      updatingSpec.onNext(patchedSpec);
+    }
+
+    updatingSpec.onCompleted();
+  })();
 
   // additions only, so we only safely extend the spec
-  const specAdditions = SpecPatches.additions(patches);
+  const specAdditions = SpecPatches.additions(specPatches);
 
-  const fileOperations = SpecFileOperations.fromSpecPatches(
-    specAdditions,
-    sourcemap
-  );
+  // making sure we end observations once we're done generating patches
+  const observedResults = (async function* (): SpecPatches {
+    yield* specAdditions;
+    observing.onCompleted();
+  })();
 
-  const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
+  return Ok({ results: observedResults, observations: observing.iterator });
+}
 
-  return Ok({
-    stats: {},
-    results: updatedSpecFiles,
+export enum UpdateObservationKind {
+  InteractionMatchedOperation = 'interaction-matched-operation',
+  InteractionPatchGenerated = 'interaction-patch-generated',
+}
+
+export type UpdateObservation = {
+  kind: UpdateObservationKind;
+} & (
+  | {
+      kind: UpdateObservationKind.InteractionMatchedOperation;
+      pathPattern: string;
+      method: string;
+    }
+  | {
+      kind: UpdateObservationKind.InteractionPatchGenerated;
+      pathPattern: string;
+      method: string;
+    }
+);
+
+export interface UpdateObservations extends AsyncIterable<UpdateObservation> {}
+
+async function renderUpdateStats(updateObservations: UpdateObservations) {
+  type ObservedOperation = { pathPattern: string; method: string };
+  let stats = {
+    matchedOperations: new Map<string, ObservedOperation>(),
+    patchCountByOperation: new Map<string, number>(),
+  };
+
+  const progressIndicators = new Spinnies({
+    succeedColor: 'white',
   });
+
+  for await (let observation of updateObservations) {
+    if (
+      observation.kind === UpdateObservationKind.InteractionMatchedOperation
+    ) {
+      let { method, pathPattern } = observation;
+      let key = `${method}-${pathPattern}`;
+      if (!stats.matchedOperations.has(key)) {
+        progressIndicators.add(key, {
+          text: `${method.toUpperCase()} ${pathPattern} - Matched first interaction`,
+        });
+      }
+      stats.matchedOperations.set(key, { method, pathPattern });
+    } else if (
+      observation.kind === UpdateObservationKind.InteractionPatchGenerated
+    ) {
+      let { method, pathPattern } = observation;
+      let key = `${method}-${pathPattern}`;
+      let count = (stats.patchCountByOperation.get(key) || 0) + 1;
+      progressIndicators.update(key, {
+        text: `${method.toUpperCase()} ${pathPattern} - ${count} patch${
+          count > 1 ? 'es' : ''
+        } applied`,
+      });
+      stats.patchCountByOperation.set(key, count);
+    }
+  }
+
+  if (stats.matchedOperations.size < 1) {
+    console.log(`No matching operations found`);
+  }
+
+  for (let [
+    key,
+    { method, pathPattern },
+  ] of stats.matchedOperations.entries()) {
+    const patchCount = stats.patchCountByOperation.get(key);
+
+    if (patchCount && patchCount > 0) {
+      progressIndicators.succeed(key, {
+        text: `${method.toUpperCase()} ${pathPattern} - ${patchCount} patch${
+          patchCount > 1 ? 'es' : ''
+        } applied`,
+      });
+    } else {
+      progressIndicators.succeed(key, {
+        text: `${method.toUpperCase()} ${pathPattern} - no patches necessary`,
+      });
+    }
+  }
 }
