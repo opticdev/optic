@@ -14,7 +14,7 @@ export type Rule =
 
 export type RuleNames<R extends Rule[]> = R[number]['name'];
 
-export type RulesetConfig<Rules extends Rule[] = []> = {
+export type RulesetConfig<Rules extends Rule[]> = {
   /**
    * A name for this ruleset
    */
@@ -46,7 +46,7 @@ export type RulesetConfig<Rules extends Rule[] = []> = {
   rulesOnly?: RuleNames<Rules>[];
 };
 
-export class Ruleset<Rules extends Rule[] = []> {
+export class Ruleset<Rules extends Rule[] = Rule[]> {
   public name: string;
   public docsLink?: string;
   public matches?: (context: RuleContext) => boolean;
