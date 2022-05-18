@@ -124,5 +124,61 @@ describe('OperationsQueries', () => {
         expect(result.unwrap()).toMatchSnapshot();
       });
     });
+
+    describe('base urls', () => {
+      let queries: OperationQueries;
+      beforeEach(() => {
+        queries = new OperationQueries(
+          testPaths.flatMap((pathPattern, i) => [
+            {
+              pathPattern,
+              method: HttpMethods.GET,
+              specPath: `debug-path-${i}-get`, // spec paths don't have to be actual OpenAPI paths, just be unique
+            },
+            {
+              pathPattern,
+              method: HttpMethods.POST,
+              specPath: `debug-path-${i}-post`,
+            },
+          ]),
+          ['https://useoptic.com/v1', '/v2', '/versions/v3']
+        );
+      });
+
+      it('will match operations prefixed by the path of an absolute base url', () => {
+        const result = queries
+          .findSpecPath('/v1/app/hook/config', HttpMethods.GET)
+          .expect('unambigious paths to be ok');
+
+        expect(result.some).toBe(true);
+        expect(result.unwrap()).toMatchSnapshot();
+      });
+
+      it('will not match non-prefixed operations when base urls given', () => {
+        const result = queries
+          .findSpecPath('/app/hook/config', HttpMethods.GET)
+          .expect('unambigious paths to be ok');
+
+        expect(result.none).toBe(true);
+      });
+
+      it('will match operations prefixed by the path of a relative base url', () => {
+        const result = queries
+          .findSpecPath('/v2/app/hook/config', HttpMethods.GET)
+          .expect('unambigious paths to be ok');
+
+        expect(result.some).toBe(true);
+        expect(result.unwrap()).toMatchSnapshot();
+      });
+
+      it('will match operations prefixed by the path of a base url with multiple components', () => {
+        const result = queries
+          .findSpecPath('/versions/v3/app/hook/config', HttpMethods.GET)
+          .expect('unambigious paths to be ok');
+
+        expect(result.some).toBe(true);
+        expect(result.unwrap()).toMatchSnapshot();
+      });
+    });
   });
 });

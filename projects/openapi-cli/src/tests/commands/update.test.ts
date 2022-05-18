@@ -1,8 +1,17 @@
-import { updateByExample, updateByInteractions } from '../../commands/update';
-import { collect, from } from '../../lib/async-tools';
+import {
+  updateByExample,
+  updateByInteractions,
+  UpdateObservations,
+} from '../../commands/update';
+import { collect, from, count } from '../../lib/async-tools';
 import Path from 'path';
 import { HttpMethods } from '../../operations';
-import { OpenAPIV3, SpecFilesSourcemap } from '../../specs';
+import {
+  OpenAPIV3,
+  SpecFilesSourcemap,
+  SpecPatch,
+  SpecPatches,
+} from '../../specs';
 import { CapturedBody, CapturedInteraction } from '../../captures';
 
 describe('update command', () => {
@@ -59,7 +68,6 @@ describe('update command', () => {
           },
         },
       });
-      const sourcemap = sourcemapFixture(spec);
 
       const interactions = [
         interactionFixture(
@@ -69,20 +77,16 @@ describe('update command', () => {
         ),
       ];
 
-      const results = await updateByInteractions(
-        spec,
-        sourcemap,
-        from(interactions)
+      const results = await updateByInteractions(spec, from(interactions));
+
+      const specPatches = await resultingPatches(
+        results.expect('example spec can be updated')
       );
 
-      const { stats, results: updatedSpecFiles } = results.expect(
-        'example spec can be updated'
-      );
+      expect(specPatches.length).toBeGreaterThan(0);
 
-      let specFiles = await collect(updatedSpecFiles);
-
-      expect(specFiles).toHaveLength(1);
-      expect(specFiles).toMatchSnapshot();
+      let updatedSpec = patchSpec(spec, specPatches);
+      expect(updatedSpec).toMatchSnapshot();
     });
 
     it('generate patches for multiple interactions for the same operations', async () => {
@@ -93,8 +97,6 @@ describe('update command', () => {
           },
         },
       });
-      const sourcemap = sourcemapFixture(spec);
-
       const interactions = [
         interactionFixture(
           '/examples/3',
@@ -111,20 +113,16 @@ describe('update command', () => {
         ),
       ];
 
-      const results = await updateByInteractions(
-        spec,
-        sourcemap,
-        from(interactions)
+      const results = await updateByInteractions(spec, from(interactions));
+
+      const specPatches = await resultingPatches(
+        results.expect('example spec can be updated')
       );
 
-      const { stats, results: updatedSpecFiles } = results.expect(
-        'example spec can be updated'
-      );
+      expect(specPatches.length).toBeGreaterThan(0);
 
-      let specFiles = await collect(updatedSpecFiles);
-
-      expect(specFiles).toHaveLength(1);
-      expect(specFiles).toMatchSnapshot();
+      let updatedSpec = patchSpec(spec, specPatches);
+      expect(updatedSpec).toMatchSnapshot();
     });
 
     it('generates patches for response bodies', async () => {
@@ -138,7 +136,6 @@ describe('update command', () => {
           },
         },
       });
-      const sourcemap = sourcemapFixture(spec);
 
       const interactions = [
         interactionFixture(
@@ -177,20 +174,16 @@ describe('update command', () => {
         ),
       ];
 
-      const results = await updateByInteractions(
-        spec,
-        sourcemap,
-        from(interactions)
+      const results = await updateByInteractions(spec, from(interactions));
+
+      const specPatches = await resultingPatches(
+        results.expect('example spec can be updated')
       );
 
-      const { stats, results: updatedSpecFiles } = results.expect(
-        'example spec can be updated'
-      );
+      expect(specPatches.length).toBeGreaterThan(0);
 
-      let specFiles = await collect(updatedSpecFiles);
-
-      expect(specFiles).toHaveLength(1);
-      expect(specFiles).toMatchSnapshot();
+      let updatedSpec = patchSpec(spec, specPatches);
+      expect(updatedSpec).toMatchSnapshot();
     });
 
     it('ignores interactions for undocumented operations', async () => {
@@ -201,7 +194,6 @@ describe('update command', () => {
           },
         },
       });
-      const sourcemap = sourcemapFixture(spec);
 
       const interactions = [
         interactionFixture('/examples/3', HttpMethods.POST),
@@ -210,20 +202,16 @@ describe('update command', () => {
         interactionFixture('/examples', HttpMethods.POST),
       ];
 
-      const results = await updateByInteractions(
-        spec,
-        sourcemap,
-        from(interactions)
+      const results = await updateByInteractions(spec, from(interactions));
+
+      const specPatches = await resultingPatches(
+        results.expect('example spec can be updated')
       );
 
-      const { stats, results: updatedSpecFiles } = results.expect(
-        'example spec can be updated'
-      );
+      expect(specPatches.length).toBeGreaterThan(0);
 
-      let specFiles = await collect(updatedSpecFiles);
-
-      expect(specFiles).toHaveLength(1);
-      expect(specFiles).toMatchSnapshot();
+      let updatedSpec = patchSpec(spec, specPatches);
+      expect(updatedSpec).toMatchSnapshot();
     });
 
     it('generates patches to extend existing request or response bodies', async () => {
@@ -266,7 +254,6 @@ describe('update command', () => {
           },
         },
       });
-      const sourcemap = sourcemapFixture(spec);
 
       const interactions = [
         interactionFixture(
@@ -308,20 +295,16 @@ describe('update command', () => {
         ),
       ];
 
-      const results = await updateByInteractions(
-        spec,
-        sourcemap,
-        from(interactions)
+      const results = await updateByInteractions(spec, from(interactions));
+
+      const specPatches = await resultingPatches(
+        results.expect('example spec can be updated')
       );
 
-      const { stats, results: updatedSpecFiles } = results.expect(
-        'example spec can be updated'
-      );
+      expect(specPatches.length).toBeGreaterThan(0);
 
-      let specFiles = await collect(updatedSpecFiles);
-
-      expect(specFiles).toHaveLength(1);
-      expect(specFiles).toMatchSnapshot();
+      let updatedSpec = patchSpec(spec, specPatches);
+      expect(updatedSpec).toMatchSnapshot();
     });
 
     it('only generates patches for request bodies with 2xx and 3xx responses', async () => {
@@ -332,7 +315,6 @@ describe('update command', () => {
           },
         },
       });
-      const sourcemap = sourcemapFixture(spec);
 
       const interactions = [
         interactionFixture(
@@ -349,20 +331,16 @@ describe('update command', () => {
         ),
       ];
 
-      const results = await updateByInteractions(
-        spec,
-        sourcemap,
-        from(interactions)
+      const results = await updateByInteractions(spec, from(interactions));
+
+      const specPatches = await resultingPatches(
+        results.expect('example spec can be updated')
       );
 
-      const { stats, results: updatedSpecFiles } = results.expect(
-        'example spec can be updated'
-      );
+      expect(specPatches.length).toBeGreaterThan(0);
 
-      let specFiles = await collect(updatedSpecFiles);
-
-      expect(specFiles).toHaveLength(1);
-      expect(specFiles).toMatchSnapshot();
+      let updatedSpec = patchSpec(spec, specPatches);
+      expect(updatedSpec).toMatchSnapshot();
     });
 
     it('only generates patches for 2xx, 3xx and 4xx responses', async () => {
@@ -373,7 +351,6 @@ describe('update command', () => {
           },
         },
       });
-      const sourcemap = sourcemapFixture(spec);
 
       const interactions = [
         interactionFixture('/examples/3', HttpMethods.POST, null, '101'),
@@ -383,20 +360,16 @@ describe('update command', () => {
         interactionFixture('/examples/3', HttpMethods.DELETE, null, '500'),
       ];
 
-      const results = await updateByInteractions(
-        spec,
-        sourcemap,
-        from(interactions)
+      const results = await updateByInteractions(spec, from(interactions));
+
+      const specPatches = await resultingPatches(
+        results.expect('example spec can be updated')
       );
 
-      const { stats, results: updatedSpecFiles } = results.expect(
-        'example spec can be updated'
-      );
+      expect(specPatches.length).toBeGreaterThan(0);
 
-      let specFiles = await collect(updatedSpecFiles);
-
-      expect(specFiles).toHaveLength(1);
-      expect(specFiles).toMatchSnapshot();
+      let updatedSpec = patchSpec(spec, specPatches);
+      expect(updatedSpec).toMatchSnapshot();
     });
   });
 });
@@ -439,4 +412,23 @@ function interactionFixture(
       body: responseBody,
     },
   };
+}
+
+async function resultingPatches(result: {
+  results: SpecPatches;
+  observations: UpdateObservations;
+}): Promise<SpecPatch[]> {
+  const patching = collect(result.results);
+  const observing = count(result.observations);
+
+  const [patches] = await Promise.all([patching, observing]);
+  return patches;
+}
+
+function patchSpec(spec, patches: SpecPatch[]) {
+  let updatedSpec = spec;
+  for (let patch of patches) {
+    updatedSpec = SpecPatch.applyPatch(patch, updatedSpec);
+  }
+  return updatedSpec;
 }
