@@ -3101,6 +3101,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.clonedeep@npm:^4":
+  version: 4.5.7
+  resolution: "@types/lodash.clonedeep@npm:4.5.7"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 20d6a20970b3b54b3c10cf17ace1cea49c4905d7f7cae2575a98108466e8d4c9bea3b3449d11ccaac4da1fc9bab225f477f4c2dbea8ba877cc47f629455efb69
+  languageName: node
+  linkType: hard
+
 "@types/lodash.flatten@npm:^4.4.6":
   version: 4.4.6
   resolution: "@types/lodash.flatten@npm:4.4.6"
@@ -3607,6 +3616,7 @@ __metadata:
     "@types/fs-extra": ^9.0.13
     "@types/is-url": ^1.2.30
     "@types/jest": ^26.0.24
+    "@types/lodash.clonedeep": ^4
     "@types/lodash.sortby": ^4.7.6
     "@types/micro": ^7.3.6
     "@types/micro-cors": ^0
@@ -3625,6 +3635,7 @@ __metadata:
     jest: ^27.5.1
     js-yaml: ^4.1.0
     json-stable-stringify: ^1.0.1
+    lodash.clonedeep: ^4.5.0
     lodash.sortby: ^4.7.0
     micro: ^9.3.4
     micro-cors: ^0.1.1
@@ -7632,6 +7643,13 @@ __metadata:
   dependencies:
     p-locate: ^4.1.0
   checksum: 83e51725e67517287d73e1ded92b28602e3ae5580b301fe54bfb76c0c723e3f285b19252e375712316774cf52006cb236aed5704692c32db0d5d089b69696e30
+  languageName: node
+  linkType: hard
+
+"lodash.clonedeep@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "lodash.clonedeep@npm:4.5.0"
+  checksum: 92c46f094b064e876a23c97f57f81fbffd5d760bf2d8a1c61d85db6d1e488c66b0384c943abee4f6af7debf5ad4e4282e74ff83177c9e63d8ff081a4837c3489
   languageName: node
   linkType: hard
 
