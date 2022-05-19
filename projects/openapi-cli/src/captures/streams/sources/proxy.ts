@@ -1,13 +1,14 @@
-import mockttp, { CompletedRequest, CompletedResponse } from 'mockttp';
+import * as mockttp from 'mockttp';
+import { CompletedRequest, CompletedResponse } from 'mockttp';
 import { Subject } from '../../../lib/async-tools';
 
 export interface ProxyInteractions extends AsyncIterable<Proxy.Interaction> {}
 
 export class ProxyInteractions {
-  static async *create(
+  static async create(
     targetHost: string,
     abort: AbortSignal // required, we don't want to ever let a proxy run indefinitely
-  ): ProxyInteractions {
+  ): Promise<[ProxyInteractions, string]> {
     const proxy = mockttp.getLocal({
       cors: false,
       debug: false,
@@ -64,12 +65,13 @@ export class ProxyInteractions {
     }
 
     await proxy.start();
-    // TODO: notify caller of start + url some other way
-    console.log(`proxy started, direct your traffic to ${proxy.url}`);
 
-    yield* interactions.iterator; // will iterate until abort is signalled
+    const stream = (async function* () {
+      yield* interactions.iterator;
+      await proxy.stop(); // clean up
+    })();
 
-    await proxy.stop(); // clean up
+    return [stream, proxy.url];
   }
 }
 
