@@ -42,7 +42,9 @@ export const createResponseHelpers = (
                 throw new RuleError({
                   message: `Found a ${
                     strict ? 'exact' : 'partial'
-                  } match in header parameters`,
+                  } match in header parameters with name ${name}. Value to match: ${JSON.stringify(
+                    reference
+                  )}`,
                 });
               }
             } else {
@@ -50,7 +52,9 @@ export const createResponseHelpers = (
                 throw new RuleError({
                   message: `Could not find a ${
                     strict ? 'exact' : 'partial'
-                  } match in header parameters`,
+                  } match in header parameters with name ${name}. Value to match: ${JSON.stringify(
+                    reference
+                  )}`,
                 });
               }
             }
