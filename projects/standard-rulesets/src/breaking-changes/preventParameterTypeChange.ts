@@ -2,9 +2,14 @@ import { OperationRule, RuleError } from '@useoptic/rulesets-base';
 import { getOperationAssertionsParameter } from './helpers/getOperationAssertionsParameter';
 import { ParameterIn } from './helpers/types';
 
+const getName = <P extends ParameterIn>(parameterIn: P) =>
+  `prevent ${parameterIn} parameters type changes` as const;
+
+export type PreventParameterTypeChangeRuleName = ReturnType<typeof getName>;
+
 const getPreventParameterTypeChange = (parameterIn: ParameterIn) =>
   new OperationRule({
-    name: `prevent ${parameterIn} parameters type changes`,
+    name: getName(parameterIn),
     rule: (operationAssertions, _ruleContext) => {
       const parameter = getOperationAssertionsParameter(
         operationAssertions,

@@ -2,9 +2,12 @@ import { OperationRule, RuleError } from '@useoptic/rulesets-base';
 import { getOperationAssertionsParameter } from './helpers/getOperationAssertionsParameter';
 import { ParameterIn } from './helpers/types';
 
+const getName = <P extends ParameterIn>(parameterIn: P) =>
+  `prevent new required ${parameterIn} parameters` as const;
+
 const getPreventNewRequiredParameter = (parameterIn: ParameterIn) =>
   new OperationRule({
-    name: `prevent new required ${parameterIn} parameters`,
+    name: getName(parameterIn),
     matches: (_operation, ruleContext) =>
       ruleContext.operation.change !== 'added', // rule doesn't apply for new operations
     rule: (operationAssertions, _ruleContext) => {

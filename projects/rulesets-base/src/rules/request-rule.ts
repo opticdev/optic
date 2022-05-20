@@ -1,19 +1,19 @@
 import { RequestBody, RequestAssertions, RuleContext } from '../types';
 
-type RequestRuleConfig = {
-  name: string;
+type RequestRuleConfig<RuleName extends string> = {
+  name: RuleName;
   docsLink?: string;
-  matches?: (request: RequestBody, context: RuleContext) => boolean;
-  rule: (request: RequestAssertions, context: RuleContext) => void;
+  matches?: RequestRule['matches'];
+  rule: RequestRule['rule'];
 };
 
-export class RequestRule {
-  public name: RequestRuleConfig['name'];
-  public docsLink: RequestRuleConfig['docsLink'];
-  public matches: RequestRuleConfig['matches'];
-  public rule: RequestRuleConfig['rule'];
+export class RequestRule<RuleName extends string = string> {
+  public name: RuleName;
+  public docsLink?: string;
+  public matches?: (request: RequestBody, context: RuleContext) => boolean;
+  public rule: (request: RequestAssertions, context: RuleContext) => void;
 
-  constructor(config: RequestRuleConfig) {
+  constructor(config: RequestRuleConfig<RuleName>) {
     // this could be invoked via javascript so we still to check
     if (!config.name) {
       throw new Error('Expected a name in RequestRule');

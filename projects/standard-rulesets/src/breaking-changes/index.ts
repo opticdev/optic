@@ -1,10 +1,11 @@
-import { Ruleset, Rule } from '@useoptic/rulesets-base';
+import { Ruleset, RulesetConfig } from '@useoptic/rulesets-base';
 import { preventOperationRemoval } from './preventOperationRemoval';
 import { preventRequestPropertyRequired } from './preventRequestPropertyRequired';
 import { preventRequestPropertyTypeChange } from './preventRequestPropertyTypeChange';
 import { preventResponsePropertyOptional } from './preventResponsePropertyOptional';
 import { preventResponsePropertyRemoval } from './preventResponsePropertyRemoval';
 import { preventResponsePropertyTypeChange } from './preventResponsePropertyTypeChange';
+import { preventResponseStatusCodeRemoval } from './preventResponseStatusCodeRemoval';
 import {
   preventQueryParameterEnumBreak,
   preventCookieParameterEnumBreak,
@@ -28,7 +29,7 @@ import {
   preventHeaderParameterTypeChange,
 } from './preventParameterTypeChange';
 
-const breakingChangeRules: Rule[] = [
+const breakingChangesRules = [
   preventCookieParameterEnumBreak,
   preventCookieParameterTypeChange,
   preventHeaderParameterEnumBreak,
@@ -49,19 +50,19 @@ const breakingChangeRules: Rule[] = [
   preventResponsePropertyOptional,
   preventResponsePropertyRemoval,
   preventResponsePropertyTypeChange,
+  preventResponseStatusCodeRemoval,
 ];
 
-export class BreakingChangesRuleset extends Ruleset {
+type BreakingChangesRules = typeof breakingChangesRules;
+
+export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
   constructor(
-    config: {
-      matches?: Ruleset['matches'];
-    } = {}
+    config: Omit<RulesetConfig<BreakingChangesRules>, 'name' | 'rules'>
   ) {
-    const { matches } = config;
     super({
+      ...config,
       name: 'Breaking changes ruleset',
-      matches,
-      rules: breakingChangeRules,
+      rules: breakingChangesRules,
     });
   }
 }

@@ -29,7 +29,7 @@ Array [
     },
     "condition": "have response header matching shape",
     "docsLink": undefined,
-    "error": "Could not find a partial match in header parameters",
+    "error": "Could not find a partial match in header parameters with name isgood. Value to match: {\\"description\\":\\"Matcher.string\\"}",
     "expected": undefined,
     "isMust": true,
     "isShould": false,

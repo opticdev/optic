@@ -21,9 +21,12 @@ const isSchemaWithEnum = (
   return 'enum' in obj && Array.isArray(obj.enum);
 };
 
-const getPreventParameterEnumBreak = (parameterIn: ParameterIn) =>
+const getRuleName = <P extends ParameterIn>(parameterIn: P) =>
+  `prevent ${parameterIn} parameters enum breaking changes` as const;
+
+const getPreventParameterEnumBreak = <P extends ParameterIn>(parameterIn: P) =>
   new OperationRule({
-    name: `prevent ${parameterIn} parameters enum breaking changes`,
+    name: getRuleName(parameterIn),
     rule: (operationAssertions, _ruleContext) => {
       const parameter = getOperationAssertionsParameter(
         operationAssertions,

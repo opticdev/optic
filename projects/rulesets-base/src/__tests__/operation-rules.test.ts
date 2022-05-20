@@ -522,6 +522,42 @@ describe('OperationRule', () => {
             expect(result.passed).toBe(true);
           }
         });
+
+        test('with custom message', () => {
+          const ruleRunner = new RuleRunner([
+            new OperationRule({
+              name: 'operation description',
+              rule: (operationAssertions) => {
+                operationAssertions.added.matches(
+                  {
+                    description: Matchers.string,
+                  },
+                  {
+                    errorMessage: 'this is a custom message',
+                  }
+                );
+              },
+            }),
+          ]);
+          const json: OpenAPIV3.Document = {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  responses: {},
+                },
+              },
+            },
+          };
+          const results = ruleRunner.runRulesWithFacts(
+            createRuleInputs(defaultEmptySpec, json)
+          );
+          expect(results.length > 0).toBe(true);
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(false);
+          }
+        });
       });
 
       describe('matchesOneOf', () => {

@@ -10415,3 +10415,437 @@ https://datatracker.ietf.org/doc/html/rfc8594
   },
 }
 `;
+
+exports[`circular references can derefence circular references 1`] = `
+Object {
+  "components": Object {
+    "schemas": Object {
+      "CircularExample": Object {
+        "properties": Object {
+          "circular_property": Object {
+            "additionalProperties": Object {
+              "$ref": "#/components/schemas/CircularExample",
+            },
+            "type": "object",
+          },
+          "id": Object {
+            "description": "identifier of the example",
+            "type": "string",
+          },
+          "name": Object {
+            "description": "name of the example",
+            "type": "string",
+          },
+        },
+        "title": "CircularExample",
+        "type": "object",
+      },
+    },
+  },
+  "info": Object {
+    "description": "Documentation of services",
+    "title": "Recursive Example",
+    "version": "1.0",
+  },
+  "openapi": "3.0.0",
+  "paths": Object {
+    "/api/example": Object {
+      "get": Object {
+        "deprecated": false,
+        "description": "example",
+        "operationId": "GetExample",
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "circular_property": Object {
+                      "additionalProperties": Object {
+                        "$ref": "#/components/schemas/CircularExample",
+                      },
+                      "type": "object",
+                    },
+                    "id": Object {
+                      "description": "identifier of the example",
+                      "type": "string",
+                    },
+                    "name": Object {
+                      "description": "name of the example",
+                      "type": "string",
+                    },
+                  },
+                  "title": "CircularExample",
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Successful operation",
+            "headers": Object {},
+          },
+        },
+        "summary": "Get example",
+      },
+    },
+  },
+}
+`;
+
+exports[`circular references circular references with chained circle ref 1`] = `
+Object {
+  "components": Object {
+    "schemas": Object {
+      "Organization": Object {
+        "properties": Object {
+          "id": Object {
+            "description": "identifier of the example",
+            "type": "string",
+          },
+          "name": Object {
+            "description": "name of the example",
+            "type": "string",
+          },
+          "user": Object {
+            "properties": Object {
+              "id": Object {
+                "description": "identifier of the example",
+                "type": "string",
+              },
+              "name": Object {
+                "description": "name of the example",
+                "type": "string",
+              },
+              "organization": Object {
+                "properties": Object {
+                  "id": Object {
+                    "description": "identifier of the example",
+                    "type": "string",
+                  },
+                  "name": Object {
+                    "description": "name of the example",
+                    "type": "string",
+                  },
+                  "user": Object {
+                    "$ref": "#/components/schemas/User",
+                  },
+                },
+                "title": "Organization",
+                "type": "object",
+              },
+            },
+            "title": "User",
+            "type": "object",
+          },
+        },
+        "title": "Organization",
+        "type": "object",
+      },
+      "User": Object {
+        "properties": Object {
+          "id": Object {
+            "description": "identifier of the example",
+            "type": "string",
+          },
+          "name": Object {
+            "description": "name of the example",
+            "type": "string",
+          },
+          "organization": Object {
+            "properties": Object {
+              "id": Object {
+                "description": "identifier of the example",
+                "type": "string",
+              },
+              "name": Object {
+                "description": "name of the example",
+                "type": "string",
+              },
+              "user": Object {
+                "$ref": "#/components/schemas/User",
+              },
+            },
+            "title": "Organization",
+            "type": "object",
+          },
+        },
+        "title": "User",
+        "type": "object",
+      },
+    },
+  },
+  "info": Object {
+    "description": "Documentation of services",
+    "title": "Recursive Example",
+    "version": "1.0",
+  },
+  "openapi": "3.0.0",
+  "paths": Object {
+    "/api/example": Object {
+      "get": Object {
+        "deprecated": false,
+        "description": "example",
+        "operationId": "GetExample",
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "id": Object {
+                      "description": "identifier of the example",
+                      "type": "string",
+                    },
+                    "name": Object {
+                      "description": "name of the example",
+                      "type": "string",
+                    },
+                    "organization": Object {
+                      "properties": Object {
+                        "id": Object {
+                          "description": "identifier of the example",
+                          "type": "string",
+                        },
+                        "name": Object {
+                          "description": "name of the example",
+                          "type": "string",
+                        },
+                        "user": Object {
+                          "$ref": "#/components/schemas/User",
+                        },
+                      },
+                      "title": "Organization",
+                      "type": "object",
+                    },
+                  },
+                  "title": "User",
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Successful operation",
+            "headers": Object {},
+          },
+        },
+        "summary": "Get example",
+      },
+    },
+  },
+}
+`;
+
+exports[`circular references circular references with expanded refs 1`] = `
+Object {
+  "components": Object {
+    "schemas": Object {
+      "CircularExample": Object {
+        "properties": Object {
+          "circular_property": Object {
+            "additionalProperties": Object {
+              "$ref": "#/components/schemas/CircularExample",
+            },
+            "type": "object",
+          },
+          "id": Object {
+            "description": "identifier of the example",
+            "type": "string",
+          },
+          "name": Object {
+            "description": "name of the example",
+            "type": "string",
+          },
+        },
+        "title": "CircularExample",
+        "type": "object",
+      },
+    },
+  },
+  "info": Object {
+    "description": "Documentation of services",
+    "title": "Recursive Example",
+    "version": "1.0",
+  },
+  "openapi": "3.0.0",
+  "paths": Object {
+    "/api/example": Object {
+      "get": Object {
+        "deprecated": false,
+        "description": "example",
+        "operationId": "GetExample",
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "circular_property": Object {
+                      "additionalProperties": Object {
+                        "$ref": "#/components/schemas/CircularExample",
+                      },
+                      "type": "object",
+                    },
+                    "id": Object {
+                      "description": "identifier of the example",
+                      "type": "string",
+                    },
+                    "name": Object {
+                      "description": "name of the example",
+                      "type": "string",
+                    },
+                  },
+                  "title": "CircularExample",
+                  "type": "object",
+                  "x-custom": "this is a custom field for expanding refs",
+                },
+              },
+            },
+            "description": "Successful operation",
+            "headers": Object {},
+          },
+        },
+        "summary": "Get example",
+      },
+    },
+  },
+}
+`;
+
+exports[`circular references circular references with multiple refs 1`] = `
+Object {
+  "components": Object {
+    "schemas": Object {
+      "UserDetails": Object {
+        "properties": Object {
+          "best_friend": Object {
+            "additionalProperties": Object {
+              "$ref": "#/components/schemas/UserDetails",
+            },
+            "type": "object",
+          },
+          "email": Object {
+            "description": "joe@maumas-house.net",
+            "type": "string",
+          },
+          "id": Object {
+            "description": "Unique ID",
+            "type": "number",
+          },
+          "name": Object {
+            "description": "User name",
+            "example": "Joe Mauma",
+            "type": "string",
+          },
+        },
+        "title": "UserDetails",
+        "type": "object",
+      },
+    },
+  },
+  "info": Object {
+    "description": "Self-referencing circular example",
+    "title": "Direct Recursive Example",
+    "version": "1.0",
+  },
+  "openapi": "3.0.0",
+  "paths": Object {
+    "/user/details": Object {
+      "get": Object {
+        "deprecated": false,
+        "description": "Get User Details",
+        "operationId": "GetUserDetails",
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "best_friend": Object {
+                      "additionalProperties": Object {
+                        "$ref": "#/components/schemas/UserDetails",
+                      },
+                      "type": "object",
+                    },
+                    "email": Object {
+                      "description": "joe@maumas-house.net",
+                      "type": "string",
+                    },
+                    "id": Object {
+                      "description": "Unique ID",
+                      "type": "number",
+                    },
+                    "name": Object {
+                      "description": "User name",
+                      "example": "Joe Mauma",
+                      "type": "string",
+                    },
+                  },
+                  "title": "UserDetails",
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Successful operation",
+            "headers": Object {},
+          },
+        },
+        "summary": "Get User Details",
+        "tags": Array [
+          "User",
+        ],
+      },
+      "post": Object {
+        "deprecated": false,
+        "description": "Get User Details",
+        "operationId": "GetUserDetails",
+        "requestBody": Object {
+          "content": Object {
+            "application/json": Object {
+              "schema": Object {
+                "properties": Object {
+                  "best_friend": Object {
+                    "additionalProperties": Object {
+                      "$ref": "#/components/schemas/UserDetails",
+                    },
+                    "type": "object",
+                  },
+                  "email": Object {
+                    "description": "joe@maumas-house.net",
+                    "type": "string",
+                  },
+                  "id": Object {
+                    "description": "Unique ID",
+                    "type": "number",
+                  },
+                  "name": Object {
+                    "description": "User name",
+                    "example": "Joe Mauma",
+                    "type": "string",
+                  },
+                },
+                "title": "UserDetails",
+                "type": "object",
+              },
+            },
+          },
+          "description": "Successful operation",
+        },
+        "responses": Object {
+          "200": Object {
+            "content": Object {},
+            "description": "Successful operation",
+            "headers": Object {},
+          },
+        },
+        "summary": "Get User Details",
+        "tags": Array [
+          "User",
+        ],
+      },
+    },
+  },
+  "tags": Array [
+    Object {
+      "name": "UserDetails",
+    },
+  ],
+}
+`;
