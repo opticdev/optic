@@ -32,5 +32,35 @@ describe('ProxyInteractions', () => {
     let capturedInteractions = await collect(interactions);
 
     expect(capturedInteractions).toHaveLength(1);
+
+    expect(capturedInteractions[0]).toMatchSnapshot(matchProxyInteraction());
   });
 });
+
+function matchProxyInteraction() {
+  return {
+    request: {
+      id: expect.any(String),
+      rawHeaders: expect.any(Array),
+      timingEvents: {
+        startTime: expect.any(Number),
+        startTimestamp: expect.any(Number),
+        bodyReceivedTimestamp: expect.any(Number),
+      },
+    },
+    response: {
+      id: expect.any(String),
+      headers: {
+        date: expect.any(String),
+      },
+      rawHeaders: expect.any(Array),
+      timingEvents: {
+        startTime: expect.any(Number),
+        startTimestamp: expect.any(Number),
+        bodyReceivedTimestamp: expect.any(Number),
+        headersSentTimestamp: expect.any(Number),
+        responseSentTimestamp: expect.any(Number),
+      },
+    },
+  };
+}

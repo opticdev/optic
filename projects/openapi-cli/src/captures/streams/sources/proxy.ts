@@ -1,5 +1,5 @@
 import * as mockttp from 'mockttp';
-import { CompletedRequest, CompletedResponse } from 'mockttp';
+import { CompletedRequest, CompletedResponse, CompletedBody } from 'mockttp';
 import { Subject } from '../../../lib/async-tools';
 
 export interface ProxyInteractions extends AsyncIterable<Proxy.Interaction> {}
@@ -36,16 +36,40 @@ export class ProxyInteractions {
 
     const interactions = new Subject<Proxy.Interaction>();
 
-    const requestsById = new Map<string, CompletedRequest>();
-    await proxy.on('request', (request) => {
+    const requestsById = new Map<string, Proxy.Request>();
+    // TODO: figure out if we can use OngoingRequest instead of captured, at which body
+    // hasn't been parsed yet and is available as stream
+    await proxy.on('request', (capturedRequest) => {
+      const {
+        matchedRuleId,
+        remoteIpAddress,
+        remotePort,
+        tags,
+        body,
+        ...rest
+      } = capturedRequest;
+
+      const request = {
+        ...rest,
+        body: { buffer: body.buffer },
+      };
+
       requestsById.set(request.id, request);
     });
 
-    await proxy.on('response', (response) => {
-      const { id } = response;
+    // TODO: figure out if we can use OngoingRequest instead of captured, at which body
+    // hasn't been parsed yet and is available as stream
+    await proxy.on('response', (capturedResponse) => {
+      const { id } = capturedResponse;
       const request = requestsById.get(id);
       if (!request) return;
 
+      const { tags, body, ...rest } = capturedResponse;
+
+      const response = {
+        ...rest,
+        body: { buffer: body.buffer },
+      };
       interactions.onNext({
         request,
         response,
@@ -77,10 +101,20 @@ export class ProxyInteractions {
 
 export declare namespace Proxy {
   interface Interaction {
-    request: CompletedRequest;
-    response: CompletedResponse;
+    request: Request;
+    response: Response;
   }
 
-  interface Request extends CompletedRequest {}
-  interface Response extends CompletedResponse {}
+  interface Request
+    extends Omit<
+      CompletedRequest,
+      'matchedRuleId' | 'remoteIpAddress' | 'remotePort' | 'tags' | 'body'
+    > {
+    body: Body;
+  }
+  interface Response extends Omit<CompletedResponse, 'tags' | 'body'> {
+    body: Body;
+  }
+
+  type Body = Pick<CompletedBody, 'buffer'>;
 }
