@@ -1,6 +1,7 @@
 import { CapturedBody } from './body';
 import { OpenAPIV3 } from '../specs';
 import { HttpArchive } from './streams/sources/har';
+import { Proxy } from './streams/sources/proxy';
 import { URL } from 'url';
 import { HttpMethods, Operation } from '../operations';
 import invariant from 'ts-invariant';
@@ -74,6 +75,36 @@ export class CapturedInteraction {
       },
       response: {
         statusCode: '' + entry.response.status,
+        body: responseBody,
+      },
+    };
+  }
+
+  static fromProxyInteraction(
+    proxyInteraction: Proxy.Interaction
+  ): CapturedInteraction {
+    const url = new URL(proxyInteraction.request.url);
+
+    const method = HttpMethods[proxyInteraction.request.method];
+    invariant(
+      Operation.isHttpMethod(method),
+      `expect proxy interaction to have a valid request method`
+    );
+
+    let requestBody: CapturedBody | null = null;
+    let responseBody: CapturedBody | null = null;
+
+    // TODO: extract captured bodies
+
+    return {
+      request: {
+        host: url.hostname,
+        method,
+        path: url.pathname,
+        body: requestBody,
+      },
+      response: {
+        statusCode: '' + proxyInteraction.response.statusCode,
         body: responseBody,
       },
     };
