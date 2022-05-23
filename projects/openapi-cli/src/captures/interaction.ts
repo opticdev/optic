@@ -1,7 +1,7 @@
 import { CapturedBody } from './body';
 import { OpenAPIV3 } from '../specs';
 import { HttpArchive } from './streams/sources/har';
-import { Proxy } from './streams/sources/proxy';
+import { ProxySource } from './streams/sources/proxy';
 import { URL } from 'url';
 import { HttpMethods, Operation } from '../operations';
 import invariant from 'ts-invariant';
@@ -81,7 +81,7 @@ export class CapturedInteraction {
   }
 
   static fromProxyInteraction(
-    proxyInteraction: Proxy.Interaction
+    proxyInteraction: ProxySource.Interaction
   ): CapturedInteraction {
     const url = new URL(proxyInteraction.request.url);
 
@@ -94,7 +94,29 @@ export class CapturedInteraction {
     let requestBody: CapturedBody | null = null;
     let responseBody: CapturedBody | null = null;
 
-    // TODO: extract captured bodies
+    const requestBodyBuffer = proxyInteraction.request.body.buffer;
+    if (requestBodyBuffer.length > 0) {
+      let contentType = proxyInteraction.request.headers['content-type'];
+      let contentLength = proxyInteraction.request.headers['content-length'];
+
+      requestBody = CapturedBody.from(
+        requestBodyBuffer,
+        contentType || null,
+        contentLength ? parseInt(contentLength, 10) : 0
+      );
+    }
+
+    const responseBodyBuffer = proxyInteraction.response.body.buffer;
+    if (responseBodyBuffer.length > 0) {
+      let contentType = proxyInteraction.response.headers['content-type'];
+      let contentLength = proxyInteraction.response.headers['content-length'];
+
+      responseBody = CapturedBody.from(
+        responseBodyBuffer,
+        contentType || null,
+        contentLength ? parseInt(contentLength, 10) : 0
+      );
+    }
 
     return {
       request: {

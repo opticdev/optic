@@ -102,3 +102,56 @@ Object {
   },
 }
 `;
+
+exports[`CapturedInteraction.fromProxyInteraction can create a CaturedInteraction from a ProxySource.Interaction 1`] = `
+Object {
+  "request": Object {
+    "body": null,
+    "host": "localhost",
+    "method": "get",
+    "path": "/test-path",
+  },
+  "response": Object {
+    "body": null,
+    "statusCode": "200",
+  },
+}
+`;
+
+exports[`CapturedInteraction.fromProxyInteraction includes request bodies 1`] = `
+Object {
+  "request": Object {
+    "body": Object {
+      "contentType": "text/plain",
+      "size": 9,
+      "stream": Any<Readable>,
+    },
+    "host": "localhost",
+    "method": "get",
+    "path": "/test-path",
+  },
+  "response": Object {
+    "body": null,
+    "statusCode": "200",
+  },
+}
+`;
+
+exports[`CapturedInteraction.fromProxyInteraction includes response bodies 1`] = `
+Object {
+  "request": Object {
+    "body": null,
+    "host": "localhost",
+    "method": "get",
+    "path": "/test-path",
+  },
+  "response": Object {
+    "body": Object {
+      "contentType": null,
+      "size": 0,
+      "stream": Any<Readable>,
+    },
+    "statusCode": "200",
+  },
+}
+`;

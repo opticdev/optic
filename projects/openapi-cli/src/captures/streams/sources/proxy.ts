@@ -2,7 +2,8 @@ import * as mockttp from 'mockttp';
 import { CompletedRequest, CompletedResponse, CompletedBody } from 'mockttp';
 import { Subject } from '../../../lib/async-tools';
 
-export interface ProxyInteractions extends AsyncIterable<Proxy.Interaction> {}
+export interface ProxyInteractions
+  extends AsyncIterable<ProxySource.Interaction> {}
 
 export class ProxyInteractions {
   static async create(
@@ -34,9 +35,9 @@ export class ProxyInteractions {
       }),
     });
 
-    const interactions = new Subject<Proxy.Interaction>();
+    const interactions = new Subject<ProxySource.Interaction>();
 
-    const requestsById = new Map<string, Proxy.Request>();
+    const requestsById = new Map<string, ProxySource.Request>();
     // TODO: figure out if we can use OngoingRequest instead of captured, at which body
     // hasn't been parsed yet and is available as stream
     await proxy.on('request', (capturedRequest) => {
@@ -99,7 +100,7 @@ export class ProxyInteractions {
   }
 }
 
-export declare namespace Proxy {
+export declare namespace ProxySource {
   interface Interaction {
     request: Request;
     response: Response;
