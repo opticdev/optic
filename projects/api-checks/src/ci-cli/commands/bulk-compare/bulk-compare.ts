@@ -346,9 +346,8 @@ const runBulkCompare = async ({
       if (comparison.loading) {
         console.log('loading');
       } else if (comparison.error) {
-        console.log(
-          `Error loading file: ${JSON.stringify(comparison.errorDetails)}`
-        );
+        console.log(`Error running rules`);
+        console.error(comparison.errorDetails);
       } else {
         logComparison(
           {

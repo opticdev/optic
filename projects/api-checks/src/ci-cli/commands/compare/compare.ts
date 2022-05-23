@@ -164,12 +164,19 @@ const runCompare = async ({
   const toName = to || 'Empty Spec';
   console.log(`Comparing ${fromName} to ${toName}\n`);
 
-  const compareOutput = await generateSpecResults(
-    apiCheckService,
-    parsedFrom,
-    parsedTo,
-    context
-  );
+  let compareOutput;
+  try {
+    compareOutput = await generateSpecResults(
+      apiCheckService,
+      parsedFrom,
+      parsedTo,
+      context
+    );
+  } catch (e) {
+    console.log('Error running rules');
+    console.error(e);
+    throw new UserError();
+  }
   const { results, changes } = compareOutput;
   if (output === 'json') {
     const filteredResults = verbose
