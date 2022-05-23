@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 import Spinnies from 'spinnies';
+import readline from 'readline';
 
 import { tap, forkable, merge, count, Subject } from '../lib/async-tools';
 import {
@@ -117,6 +118,7 @@ export function updateByTrafficCommand(): Command {
 
       let sourcesController = new AbortController();
       const sources: CapturedInteractions[] = [];
+      let interactiveCapture = false;
 
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
@@ -129,6 +131,12 @@ export function updateByTrafficCommand(): Command {
       }
 
       if (options.proxy) {
+        if (!process.stdin.isTTY) {
+          return command.error(
+            'Can only use --proxy when in an interactive terminal session'
+          );
+        }
+
         let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
           options.proxy,
           sourcesController.signal
@@ -139,6 +147,7 @@ export function updateByTrafficCommand(): Command {
         console.log(
           `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
         );
+        interactiveCapture = true;
       }
 
       if (sources.length < 1) {
@@ -172,11 +181,28 @@ export function updateByTrafficCommand(): Command {
 
       const renderingStats = renderUpdateStats(updateObservations);
 
-      for await (let writtenFilePath of SpecFiles.writeFiles(
-        updatedSpecFiles
-      )) {
-        console.log(`Updated ${writtenFilePath}`);
-      }
+      const handleUserSignals = (async function () {
+        if (interactiveCapture && process.stdin.isTTY) {
+          console.log('Press Enter to finish capturing traffic');
+          // wait for an empty new line on input, which should indicate hitting Enter / Return
+          let lines = readline.createInterface({ input: process.stdin });
+          for await (let line of lines) {
+            if (line.trim().length === 0) {
+              lines.close();
+              sourcesController.abort();
+            }
+          }
+        }
+      })();
+
+      const writingSpecFiles = (async function () {
+        for await (let writtenFilePath of SpecFiles.writeFiles(
+          updatedSpecFiles
+        )) {
+          console.log(`Updated ${writtenFilePath}`);
+        }
+      })();
+      await Promise.all([handleUserSignals, writingSpecFiles]);
 
       await renderingStats;
     });
