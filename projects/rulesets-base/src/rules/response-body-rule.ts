@@ -1,19 +1,19 @@
 import { ResponseBody, ResponseBodyAssertions, RuleContext } from '../types';
 
-type ResponseBodyRuleConfig = {
-  name: string;
+type ResponseBodyRuleConfig<RuleName extends string> = {
+  name: RuleName;
   docsLink?: string;
-  matches?: (response: ResponseBody, context: RuleContext) => boolean;
-  rule: (response: ResponseBodyAssertions, context: RuleContext) => void;
+  matches?: ResponseBodyRule['matches'];
+  rule: ResponseBodyRule['rule'];
 };
 
-export class ResponseBodyRule {
-  public name: ResponseBodyRuleConfig['name'];
-  public docsLink: ResponseBodyRuleConfig['docsLink'];
-  public matches: ResponseBodyRuleConfig['matches'];
-  public rule: ResponseBodyRuleConfig['rule'];
+export class ResponseBodyRule<RuleName extends string = string> {
+  public name: RuleName;
+  public docsLink?: string;
+  public matches?: (response: ResponseBody, context: RuleContext) => boolean;
+  public rule: (response: ResponseBodyAssertions, context: RuleContext) => void;
 
-  constructor(config: ResponseBodyRuleConfig) {
+  constructor(config: ResponseBodyRuleConfig<RuleName>) {
     // this could be invoked via javascript so we still to check
     if (!config.name) {
       throw new Error('Expected a name in ResponseRule');

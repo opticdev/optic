@@ -86,6 +86,7 @@ type MatchesFn = (
   structure: any,
   options?: {
     strict?: boolean;
+    errorMessage?: string;
   }
 ) => void;
 
@@ -93,6 +94,7 @@ type MatchesOneOfFn = (
   structures: any[],
   options?: {
     strict?: boolean;
+    errorMessage?: string;
   }
 ) => void;
 

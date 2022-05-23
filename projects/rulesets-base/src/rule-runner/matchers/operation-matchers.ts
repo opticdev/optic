@@ -21,14 +21,17 @@ export const createOperationHelpers = (
         reference: any,
         options: {
           strict?: boolean;
+          errorMessage?: string;
         } = {}
       ) => {
         addAssertion(conditionPrefix + 'match expected shape', (value) => {
-          const { strict = false } = options;
+          const { strict = false, errorMessage } = options;
           if (isNot) {
             if (valuesMatcher(reference, value.raw, strict)) {
               throw new RuleError({
-                message: strict
+                message: errorMessage
+                  ? errorMessage
+                  : strict
                   ? 'Expected to not find an exact match'
                   : 'Expected to not find a partial match',
                 received: value.raw,
@@ -38,7 +41,9 @@ export const createOperationHelpers = (
           } else {
             if (!valuesMatcher(reference, value.raw, strict)) {
               throw new RuleError({
-                message: strict
+                message: errorMessage
+                  ? errorMessage
+                  : strict
                   ? 'Expected an exact match'
                   : 'Expected a partial match',
                 received: value.raw,
@@ -52,10 +57,11 @@ export const createOperationHelpers = (
         references: any[],
         options: {
           strict?: boolean;
+          errorMessage?: string;
         } = {}
       ) => {
         addAssertion(conditionPrefix + 'match expected shape', (value) => {
-          const { strict = false } = options;
+          const { strict = false, errorMessage } = options;
           if (isNot) {
             const matchesNone = references.every(
               (reference) => !valuesMatcher(reference, value.raw, strict)
@@ -63,7 +69,9 @@ export const createOperationHelpers = (
 
             if (!matchesNone) {
               throw new RuleError({
-                message: strict
+                message: errorMessage
+                  ? errorMessage
+                  : strict
                   ? 'Expected to not find any exact matches'
                   : 'Expected to not find any partial matches',
                 received: value.raw,
@@ -76,7 +84,9 @@ export const createOperationHelpers = (
             );
             if (!matchesAtleastOne) {
               throw new RuleError({
-                message: strict
+                message: errorMessage
+                  ? errorMessage
+                  : strict
                   ? 'Expected at least one exact match'
                   : 'Expected at least one partial match',
                 received: value.raw,
@@ -95,7 +105,7 @@ export const createOperationHelpers = (
         const { strict = false } = options;
 
         addAssertion(
-          conditionPrefix + 'have parameter matching shape',
+          conditionPrefix + 'have query parameter matching shape',
           (operation) => {
             const parameterMatchingShape = [
               ...operation.queryParameters.values(),
@@ -132,7 +142,7 @@ export const createOperationHelpers = (
         const { strict = false } = options;
 
         addAssertion(
-          conditionPrefix + 'have parameter matching shape',
+          conditionPrefix + 'have path parameter matching shape',
           (operation) => {
             const parameterMatchingShape = [
               ...operation.pathParameters.values(),
@@ -144,7 +154,9 @@ export const createOperationHelpers = (
                 throw new RuleError({
                   message: `Found a ${
                     strict ? 'exact' : 'partial'
-                  } match in path parameters`,
+                  } match in path parameters. Value to match: ${JSON.stringify(
+                    parameterShape
+                  )}`,
                 });
               }
             } else {
@@ -152,7 +164,9 @@ export const createOperationHelpers = (
                 throw new RuleError({
                   message: `Could not find a ${
                     strict ? 'exact' : 'partial'
-                  } match in path parameters`,
+                  } match in path parameters. Value to match: ${JSON.stringify(
+                    parameterShape
+                  )}`,
                 });
               }
             }
@@ -169,7 +183,7 @@ export const createOperationHelpers = (
         const { strict = false } = options;
 
         addAssertion(
-          conditionPrefix + 'have parameter matching shape',
+          conditionPrefix + 'have header parameter matching shape',
           (operation) => {
             const parameterMatchingShape = [
               ...operation.headerParameters.values(),
@@ -181,7 +195,9 @@ export const createOperationHelpers = (
                 throw new RuleError({
                   message: `Found a ${
                     strict ? 'exact' : 'partial'
-                  } match in header parameters`,
+                  } match in header parameters. Value to match: ${JSON.stringify(
+                    parameterShape
+                  )}`,
                 });
               }
             } else {
@@ -189,7 +205,9 @@ export const createOperationHelpers = (
                 throw new RuleError({
                   message: `Could not find a ${
                     strict ? 'exact' : 'partial'
-                  } match in header parameters`,
+                  } match in header parameters. Value to match: ${JSON.stringify(
+                    parameterShape
+                  )}`,
                 });
               }
             }
@@ -205,7 +223,7 @@ export const createOperationHelpers = (
         const { strict = false } = options;
 
         addAssertion(
-          conditionPrefix + 'have parameter matching shape',
+          conditionPrefix + 'have cookie parameter matching shape',
           (operation) => {
             const parameterMatchingShape = [
               ...operation.cookieParameters.values(),
@@ -217,7 +235,9 @@ export const createOperationHelpers = (
                 throw new RuleError({
                   message: `Found a ${
                     strict ? 'exact' : 'partial'
-                  } match in cookie parameters`,
+                  } match in cookie parameters. Value to match: ${JSON.stringify(
+                    parameterShape
+                  )}`,
                 });
               }
             } else {
@@ -225,7 +245,9 @@ export const createOperationHelpers = (
                 throw new RuleError({
                   message: `Could not find a ${
                     strict ? 'exact' : 'partial'
-                  } match in cookie parameters`,
+                  } match in cookie parameters. Value to match: ${JSON.stringify(
+                    parameterShape
+                  )}`,
                 });
               }
             }

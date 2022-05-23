@@ -22,14 +22,17 @@ export const createRequestBodyHelpers = (
         reference: any,
         options: {
           strict?: boolean;
+          errorMessage?: string;
         } = {}
       ) => {
         addAssertion(conditionPrefix + 'match expected shape', (value) => {
-          const { strict = false } = options;
+          const { strict = false, errorMessage } = options;
           if (isNot) {
             if (valuesMatcher(reference, value.raw, strict)) {
               throw new RuleError({
-                message: strict
+                message: errorMessage
+                  ? errorMessage
+                  : strict
                   ? 'Expected to not find an exact match'
                   : 'Expected to not find a partial match',
                 received: value.raw,
@@ -39,7 +42,9 @@ export const createRequestBodyHelpers = (
           } else {
             if (!valuesMatcher(reference, value.raw, strict)) {
               throw new RuleError({
-                message: strict
+                message: errorMessage
+                  ? errorMessage
+                  : strict
                   ? 'Expected an exact match'
                   : 'Expected a partial match',
                 received: value.raw,
@@ -53,10 +58,11 @@ export const createRequestBodyHelpers = (
         references: any[],
         options: {
           strict?: boolean;
+          errorMessage?: string;
         } = {}
       ) => {
         addAssertion(conditionPrefix + 'match expected shape', (value) => {
-          const { strict = false } = options;
+          const { strict = false, errorMessage } = options;
           if (isNot) {
             const matchesNone = references.every(
               (reference) => !valuesMatcher(reference, value.raw, strict)
@@ -64,7 +70,9 @@ export const createRequestBodyHelpers = (
 
             if (!matchesNone) {
               throw new RuleError({
-                message: strict
+                message: errorMessage
+                  ? errorMessage
+                  : strict
                   ? 'Expected to not find any exact matches'
                   : 'Expected to not find any partial matches',
                 received: value.raw,
@@ -77,7 +85,9 @@ export const createRequestBodyHelpers = (
             );
             if (!matchesAtleastOne) {
               throw new RuleError({
-                message: strict
+                message: errorMessage
+                  ? errorMessage
+                  : strict
                   ? 'Expected at least one exact match'
                   : 'Expected at least one partial match',
                 received: value.raw,

@@ -1,9 +1,10 @@
-"use strict";
+'use strict';
 
-const $Ref = require("@apidevtools/json-schema-ref-parser/lib/ref");
-const Pointer = require("@apidevtools/json-schema-ref-parser/lib/pointer");
-const { ono } = require("@jsdevtools/ono");
-const url = require("@apidevtools/json-schema-ref-parser/lib/util/url");
+const $Ref = require('@apidevtools/json-schema-ref-parser/lib/ref');
+const Pointer = require('@apidevtools/json-schema-ref-parser/lib/pointer');
+const { ono } = require('@jsdevtools/ono');
+const url = require('@apidevtools/json-schema-ref-parser/lib/util/url');
+const clonedeep = require('lodash.clonedeep');
 
 module.exports = { dereference };
 
@@ -19,7 +20,7 @@ function dereference(parser, options, sourcemap) {
   let dereferenced = crawl(
     parser.schema,
     parser.$refs._root$Ref.path,
-    "#",
+    '#',
     new Set(),
     new Set(),
     new Map(),
@@ -64,9 +65,9 @@ function crawl(
 
   // if (path.includes("components")) console.log("A", path);
 
-  if (options.dereference.circular === "ignore" || !processedObjects.has(obj)) {
-    if (obj && typeof obj === "object" && !ArrayBuffer.isView(obj)) {
-      parents.add(obj);
+  if (options.dereference.circular === 'ignore' || !processedObjects.has(obj)) {
+    if (obj && typeof obj === 'object' && !ArrayBuffer.isView(obj)) {
+      parents.add(path);
       processedObjects.add(obj);
 
       if ($Ref.isAllowed$Ref(obj, options)) {
@@ -111,7 +112,7 @@ function crawl(
               obj[key] = dereferenced.value;
             }
           } else {
-            if (!parents.has(value)) {
+            if (!parents.has(keyPath)) {
               dereferenced = crawl(
                 value,
                 keyPath,
@@ -138,7 +139,7 @@ function crawl(
         }
       }
 
-      parents.delete(obj);
+      parents.delete(path);
     }
   }
 
@@ -172,16 +173,17 @@ function dereference$Ref(
   // console.log('Dereferencing $ref pointer "%s" \n at %s', $ref.$ref, path);
 
   let $refPath = url.resolve(path, $ref.$ref);
-  const internalRefPathFromRoot = path.substring(path.indexOf("#/"));
+  const internalRefPathFromRoot = path.substring(path.indexOf('#/'));
   sourcemap.logPointer($refPath, internalRefPathFromRoot);
 
   const cache = dereferencedCache.get($refPath);
-  if (cache) {
+  // TODO figure out how to make the cache work with circular refs
+  if (cache && !cache.circular) {
     const refKeys = Object.keys($ref);
     if (refKeys.length > 1) {
       const extraKeys = {};
       for (let key of refKeys) {
-        if (key !== "$ref" && !(key in cache.value)) {
+        if (key !== '$ref' && !(key in cache.value)) {
           extraKeys[key] = $ref[key];
         }
       }
@@ -205,11 +207,24 @@ function dereference$Ref(
 
   // Check for circular references
   let directCircular = pointer.circular;
-  let circular = directCircular || parents.has(pointer.value);
+  let circular = directCircular || parents.has(pointer.path);
   circular && foundCircularReference(path, $refs, options);
 
+  if (
+    circular &&
+    !directCircular &&
+    options.dereference.circular === 'ignore'
+  ) {
+    // The user has chosen to "ignore" circular references, so don't change the value
+    // dereferencedValue = $ref;
+    return {
+      circular: true,
+      value: $ref,
+    };
+  }
+
   // Dereference the JSON reference
-  let dereferencedValue = $Ref.dereference($ref, pointer.value);
+  let dereferencedValue = clonedeep($Ref.dereference($ref, pointer.value));
 
   // Crawl the dereferenced value (unless it's circular)
   if (!circular) {
@@ -228,15 +243,6 @@ function dereference$Ref(
     );
     circular = dereferenced.circular;
     dereferencedValue = dereferenced.value;
-  }
-
-  if (
-    circular &&
-    !directCircular &&
-    options.dereference.circular === "ignore"
-  ) {
-    // The user has chosen to "ignore" circular references, so don't change the value
-    dereferencedValue = $ref;
   }
 
   if (directCircular) {

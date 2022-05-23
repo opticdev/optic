@@ -44,6 +44,24 @@ The rules that are enforced are:
 - prevent removing a response body property
 - prevent changing response body property required -> optional
 - prevent changing response body property types
+- prevent removing a response status code
+
+Specific rules can be ignored with the `skipRules` attribute, and an accept list can be passed with `rulesOnly`:
+
+```javascript
+new BreakingChangesRuleset({
+  // the "prevent operation removal" rule won't apply. All other rules apply.
+  skipRules: ['prevent operation removal'],
+});
+
+new BreakingChangesRuleset({
+  // Only the two selected rules will apply.
+  rulesOnly: [
+    'prevent removing response property',
+    'prevent new required path parameters',
+  ],
+});
+```
 
 ## Naming Change rules
 

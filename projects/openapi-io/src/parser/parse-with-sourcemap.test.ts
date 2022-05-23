@@ -70,11 +70,6 @@ it('can parse a json schema spec with internal references to external references
     )
   );
 
-  // const abc = sourcemapReader(results.sourcemap).findFile(
-  //   "/example/internalRef/example/example/name"
-  // );
-  // console.log(abc);
-
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
 
@@ -115,31 +110,63 @@ it('can parse an OpenAPI file with nested URLs from file or git', async () => {
   );
 
   expect(fileResults.jsonLike).toMatchSnapshot();
-
-  // these would require the whole repo to be checked out
-
-  // const gitRepo = await inGit(process.cwd());
-  // invariant(gitRepo);
-  //
-  // const gitDatabaseObjectsResults = await parseOpenAPIFromRepoWithSourcemap(
-  //   'projects/openapi-workspaces/projects/openapi-io/inputs/openapi3/empty-with-url-ref.json',
-  //   gitRepo,
-  //   'master'
-  // );
-  //
-  // expect(gitDatabaseObjectsResults.jsonLike).toMatchSnapshot();
 });
 
-//
-// it("can parse a real schema spec with external references, resolved in any order", async () => {
-//   const results = await parseOpenAPIWithSourcemap(
-//     path.resolve(
-//       path.join(
-//         __dirname,
-//         "../../../snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/001-ok-add-property-field.yaml"
-//       )
-//     )
-//   );
-//
-//   expect(prepSnapshot(results)).toMatchSnapshot();
-// });
+describe('circular references', () => {
+  test('can derefence circular references', async () => {
+    const fileResults = await parseOpenAPIWithSourcemap(
+      path.resolve(
+        path.join(
+          __dirname,
+          '../../inputs/openapi3-with-references/circular-references.yaml'
+        )
+      )
+    );
+
+    JSON.stringify(fileResults.jsonLike);
+    expect(fileResults.jsonLike).toMatchSnapshot();
+  });
+
+  test('circular references with chained circle ref', async () => {
+    const fileResults = await parseOpenAPIWithSourcemap(
+      path.resolve(
+        path.join(
+          __dirname,
+          '../../inputs/openapi3-with-references/circular-references-multiple-chain.yaml'
+        )
+      )
+    );
+
+    // the resulting spec should be serializable
+    JSON.stringify(fileResults.jsonLike);
+    expect(fileResults.jsonLike).toMatchSnapshot();
+  });
+
+  test('circular references with expanded refs', async () => {
+    const fileResults = await parseOpenAPIWithSourcemap(
+      path.resolve(
+        path.join(
+          __dirname,
+          '../../inputs/openapi3-with-references/circular-references-with-expanded-refs.yaml'
+        )
+      )
+    );
+
+    JSON.stringify(fileResults.jsonLike);
+    expect(fileResults.jsonLike).toMatchSnapshot();
+  });
+
+  test('circular references with multiple refs', async () => {
+    const fileResults = await parseOpenAPIWithSourcemap(
+      path.resolve(
+        path.join(
+          __dirname,
+          '../../inputs/openapi3-with-references/circular-references-multiple-refs.yaml'
+        )
+      )
+    );
+
+    JSON.stringify(fileResults.jsonLike);
+    expect(fileResults.jsonLike).toMatchSnapshot();
+  });
+});

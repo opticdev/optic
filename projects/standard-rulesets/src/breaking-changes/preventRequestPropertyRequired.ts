@@ -1,7 +1,7 @@
 import { RequestRule, RuleError } from '@useoptic/rulesets-base';
 
 export const preventRequestPropertyRequired = new RequestRule({
-  name: 'prevent changing response property to optional',
+  name: 'prevent changing request property to required',
   rule: (requestAssertions, ruleContext) => {
     requestAssertions.property.added(
       'not add required request property',

@@ -1,19 +1,19 @@
 import { Operation, OperationAssertions, RuleContext } from '../types';
 
-type OperationRuleConfig = {
-  name: string;
+type OperationRuleConfig<RuleName extends string> = {
+  name: RuleName;
   docsLink?: string;
-  matches?: (operation: Operation, context: RuleContext) => boolean;
-  rule: (operation: OperationAssertions, context: RuleContext) => void;
+  matches?: OperationRule['matches'];
+  rule: OperationRule['rule'];
 };
 
-export class OperationRule {
-  public name: OperationRuleConfig['name'];
-  public docsLink: OperationRuleConfig['docsLink'];
-  public matches: OperationRuleConfig['matches'];
-  public rule: OperationRuleConfig['rule'];
+export class OperationRule<RuleName extends string = string> {
+  public name: RuleName;
+  public docsLink?: string;
+  public matches?: (operation: Operation, context: RuleContext) => boolean;
+  public rule: (operation: OperationAssertions, context: RuleContext) => void;
 
-  constructor(config: OperationRuleConfig) {
+  constructor(config: OperationRuleConfig<RuleName>) {
     // this could be invoked via javascript so we still to check
     if (!config.name) {
       throw new Error('Expected a name in OperationRule');
