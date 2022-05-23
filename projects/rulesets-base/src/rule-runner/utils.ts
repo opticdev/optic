@@ -81,7 +81,9 @@ export const createRuleContext = ({
         value: { pathPattern: '', method: '' },
         path: '',
         method: '',
-        raw: {},
+        raw: {
+          responses: {},
+        },
         change: null,
         queryParameters: new Map(),
         pathParameters: new Map(),

@@ -285,7 +285,9 @@ Object {
     "path": "",
     "pathParameters": Map {},
     "queryParameters": Map {},
-    "raw": Object {},
+    "raw": Object {
+      "responses": Object {},
+    },
     "requests": Array [],
     "responses": Map {},
     "value": Object {
@@ -340,7 +342,9 @@ Object {
     "path": "",
     "pathParameters": Map {},
     "queryParameters": Map {},
-    "raw": Object {},
+    "raw": Object {
+      "responses": Object {},
+    },
     "requests": Array [],
     "responses": Map {},
     "value": Object {
@@ -412,7 +416,9 @@ Object {
     "path": "",
     "pathParameters": Map {},
     "queryParameters": Map {},
-    "raw": Object {},
+    "raw": Object {
+      "responses": Object {},
+    },
     "requests": Array [],
     "responses": Map {},
     "value": Object {
@@ -484,7 +490,9 @@ Object {
     "path": "",
     "pathParameters": Map {},
     "queryParameters": Map {},
-    "raw": Object {},
+    "raw": Object {
+      "responses": Object {},
+    },
     "requests": Array [],
     "responses": Map {},
     "value": Object {

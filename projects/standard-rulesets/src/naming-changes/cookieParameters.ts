@@ -1,6 +1,6 @@
 import { OpenApiKind } from '@useoptic/openapi-utilities';
 import {
-  FactVariantWithRaw,
+  CookieParameter,
   OperationRule,
   RuleError,
 } from '@useoptic/rulesets-base';
@@ -13,9 +13,7 @@ export const createCookieParameterChecks = (
   format: typeof casing[number]
 ) => {
   const caseCondition = `cookie parameter must be ${format} when ${applies}`;
-  const parameterTest = (
-    parameter: FactVariantWithRaw<OpenApiKind.CookieParameter>
-  ) => {
+  const parameterTest = (parameter: CookieParameter) => {
     if (!isCase(parameter.value.name, format)) {
       throw new RuleError({
         message: `${parameter.value.name} is not ${format}`,
