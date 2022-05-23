@@ -1,3 +1,9 @@
+/**
+ * data-constructors take a Node from OpenAPIFactNodes and a before / after spec
+ * to construct it into a user facing data structure used in `matches` blocks and `rule assertions`
+ * some examples of these user facing data structures are `Operation`, `Specification`, `Response`
+ */
+
 import { OpenApiKind, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
@@ -9,7 +15,7 @@ import {
   ResponseBody,
 } from '../types';
 import {
-  OpenApiDocument,
+  OpenAPIFactNodes,
   EndpointNode,
   RequestNode,
   ResponseNode,
@@ -187,7 +193,7 @@ export const createOperation = (
 };
 
 export const createSpecification = (
-  specificationNode: OpenApiDocument['specification'],
+  specificationNode: OpenAPIFactNodes['specification'],
   key: SpecFactsFrom,
   openApiSpec: OpenAPIV3.Document
 ): Specification | null => {

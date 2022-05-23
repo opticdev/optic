@@ -8,7 +8,7 @@ import {
 import {
   BodyNode,
   EndpointNode,
-  OpenApiDocument,
+  OpenAPIFactNodes,
   ResponseNode,
 } from './rule-runner-types';
 
@@ -61,7 +61,7 @@ const createEndpoint = ({
 const useFactToUpdate = (
   fact: IFact,
   key: 'before' | 'after',
-  groupedFacts: OpenApiDocument
+  groupedFacts: OpenAPIFactNodes
 ) => {
   if (isFactVariant(fact, OpenApiKind.Specification)) {
     groupedFacts.specification[key] = fact;
@@ -190,7 +190,7 @@ const useFactToUpdate = (
 };
 
 // This is almost identical to the above - split out into two functions for better typescripting
-const useChangeToUpdate = (change: IChange, groupedFacts: OpenApiDocument) => {
+const useChangeToUpdate = (change: IChange, groupedFacts: OpenAPIFactNodes) => {
   const key = 'change';
   if (isChangeVariant(change, OpenApiKind.Specification)) {
     groupedFacts.specification[key] = change;
@@ -327,8 +327,8 @@ export const groupFacts = ({
   beforeFacts: IFact[];
   afterFacts: IFact[];
   changes: IChange[];
-}): OpenApiDocument => {
-  const groupedFacts: OpenApiDocument = {
+}): OpenAPIFactNodes => {
+  const groupedFacts: OpenAPIFactNodes = {
     specification: createEmptyNodeDetail(),
     endpoints: new Map(),
   };
