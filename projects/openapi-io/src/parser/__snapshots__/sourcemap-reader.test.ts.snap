@@ -28,17 +28,17 @@ exports[`reading sourcemaps resolve a large sampling of known-valid keys 1`] = `
 Array [
   Object {
     "endLine": 208,
-    "endPosition": 9637,
+    "endPosition": 9182,
     "filePath": "/001-ok-add-property-field.yaml",
     "startLine": 205,
-    "startPosition": 9476,
+    "startPosition": 9021,
   },
   Object {
     "endLine": 199,
-    "endPosition": 9278,
+    "endPosition": 8823,
     "filePath": "/001-ok-add-property-field.yaml",
     "startLine": 195,
-    "startPosition": 9103,
+    "startPosition": 8648,
   },
   Object {
     "endLine": 7,
@@ -126,10 +126,10 @@ Array [
   },
   Object {
     "endLine": 208,
-    "endPosition": 9637,
+    "endPosition": 9182,
     "filePath": "/001-ok-add-property-field.yaml",
     "startLine": 205,
-    "startPosition": 9476,
+    "startPosition": 9021,
   },
   Object {
     "endLine": 21,
@@ -147,10 +147,10 @@ Array [
   },
   Object {
     "endLine": 182,
-    "endPosition": 8818,
+    "endPosition": 8363,
     "filePath": "/001-ok-add-property-field.yaml",
     "startLine": 178,
-    "startPosition": 8653,
+    "startPosition": 8205,
   },
   Object {
     "endLine": 17,

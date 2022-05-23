@@ -63,7 +63,7 @@ describe('reading sourcemaps', () => {
       path.resolve(
         path.join(
           __dirname,
-          '../../../snyk-rules/end-end-tests/api-standards/resources/thing/2021-11-10/001-ok-add-property-field.yaml'
+          '../../inputs/openapi3/001-ok-add-property-field.yaml'
         )
       )
     );
