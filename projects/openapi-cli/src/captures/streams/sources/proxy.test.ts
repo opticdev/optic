@@ -8,6 +8,7 @@ describe('ProxyInteractions', () => {
   beforeAll(async () => {
     target = mockttp.getLocal();
     await target.forGet('/some-path').thenReply(200, 'Test response');
+    await target.forDelete('/some-path').thenReply(204);
     await target.start();
   });
 
@@ -34,6 +35,28 @@ describe('ProxyInteractions', () => {
     expect(capturedInteractions).toHaveLength(1);
 
     expect(capturedInteractions[0]).toMatchSnapshot(matchProxyInteraction());
+  });
+
+  it('encodes non-existing request / respons bodies as empty buffers', async () => {
+    const abortController = new AbortController();
+    const [interactions, proxyUrl] = await ProxyInteractions.create(
+      target.url,
+      abortController.signal
+    );
+
+    const requestDelete = bent(proxyUrl, 'DELETE', 204);
+    await requestDelete('/some-path');
+
+    abortController.abort();
+
+    let capturedInteractions = await collect(interactions);
+
+    expect(capturedInteractions).toHaveLength(1);
+
+    const [interaction] = capturedInteractions;
+
+    expect(interaction.request.body.buffer).toHaveLength(0);
+    expect(interaction.response.body.buffer).toHaveLength(0);
   });
 });
 
