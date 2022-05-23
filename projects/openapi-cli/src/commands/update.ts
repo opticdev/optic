@@ -28,12 +28,14 @@ import {
   CapturedInteraction,
   CapturedInteractions,
   HarEntries,
+  ProxyInteractions,
 } from '../captures';
 import {
   DocumentedInteraction,
   DocumentedInteractions,
   Operation,
 } from '../operations';
+import { AbortController } from 'node-abort-controller';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -101,6 +103,10 @@ export function updateByTrafficCommand(): Command {
     .argument('<openapi-file>', 'an OpenAPI spec file to update')
     .description('update an OpenAPI specification from observed traffic')
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
+    .option(
+      '--proxy <target-url>',
+      'accept traffic over a proxy targeting the actual service'
+    )
     .action(async (specPath) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
@@ -109,6 +115,7 @@ export function updateByTrafficCommand(): Command {
 
       const options = command.opts();
 
+      let sourcesController = new AbortController();
       const sources: CapturedInteractions[] = [];
 
       if (options.har) {
@@ -119,6 +126,19 @@ export function updateByTrafficCommand(): Command {
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntries = HarEntries.fromReadable(harFile);
         sources.push(CapturedInteractions.fromHarEntries(harEntries));
+      }
+
+      if (options.proxy) {
+        let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
+          options.proxy,
+          sourcesController.signal
+        );
+        sources.push(
+          CapturedInteractions.fromProxyInteractions(proxyInteractions)
+        );
+        console.log(
+          `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
+        );
       }
 
       if (sources.length < 1) {
