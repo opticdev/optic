@@ -5,7 +5,7 @@ import { RulesetData, NodeDetail } from './rule-runner-types';
 import {
   createRulesetMatcher,
   getRuleAliases,
-  createSpecificationRuleContext,
+  createRuleContext,
 } from './utils';
 
 import { Rule, Ruleset, SpecificationRule } from '../rules';
@@ -65,13 +65,13 @@ const createSpecificationResult = (
 });
 
 export const runSpecificationRules = ({
-  specification,
+  specificationNode,
   rules,
   customRuleContext,
   beforeApiSpec,
   afterApiSpec,
 }: {
-  specification: NodeDetail<OpenApiKind.Specification>;
+  specificationNode: NodeDetail<OpenApiKind.Specification>;
   rules: (Ruleset | Rule)[];
   customRuleContext: any;
   beforeApiSpec: OpenAPIV3.Document;
@@ -79,38 +79,39 @@ export const runSpecificationRules = ({
 }) => {
   const results: Result[] = [];
   const specificationRules = getSpecificationRules(rules);
+
   const beforeSpecification = createSpecification(
-    specification,
+    specificationNode,
     'before',
     beforeApiSpec
   );
-
   const afterSpecification = createSpecification(
-    specification,
+    specificationNode,
     'after',
     afterApiSpec
   );
+
   for (const specificationRule of specificationRules) {
+    // rules that are triggered and use the data from the `before` specification are: `removed`
     if (beforeSpecification) {
-      const specificationRuleContext = createSpecificationRuleContext(
-        beforeSpecification,
-        customRuleContext,
-        specification
-      );
+      const rulesContext = createRuleContext({
+        specification: beforeSpecification,
+        specificationNode: specificationNode,
+        custom: customRuleContext,
+      });
 
       if (
         !specificationRule.matches ||
-        specificationRule.matches(beforeSpecification, specificationRuleContext)
+        specificationRule.matches(beforeSpecification, rulesContext)
       ) {
         const specificationAssertions = createSpecificationAssertions();
-        specificationRule.rule(
-          specificationAssertions,
-          specificationRuleContext
-        );
+        // Register the user's rule definition, this is collected in the specificationAssertions object
+        specificationRule.rule(specificationAssertions, rulesContext);
 
+        // Run the user's rules that have been stored in specificationAssertions
         results.push(
           ...specificationAssertions
-            .runBefore(beforeSpecification, specification.change)
+            .runBefore(beforeSpecification, specificationNode.change)
             .map((assertionResult) =>
               createSpecificationResult(assertionResult, specificationRule)
             )
@@ -119,27 +120,26 @@ export const runSpecificationRules = ({
     }
 
     if (afterSpecification) {
-      const specificationRuleContext = createSpecificationRuleContext(
-        afterSpecification,
-        customRuleContext,
-        specification
-      );
+      const rulesContext = createRuleContext({
+        specification: afterSpecification,
+        specificationNode: specificationNode,
+        custom: customRuleContext,
+      });
       if (
         !specificationRule.matches ||
-        specificationRule.matches(afterSpecification, specificationRuleContext)
+        specificationRule.matches(afterSpecification, rulesContext)
       ) {
         const specificationAssertions = createSpecificationAssertions();
-        specificationRule.rule(
-          specificationAssertions,
-          specificationRuleContext
-        );
+        // Register the user's rule definition, this is collected in the specificationAssertions object
+        specificationRule.rule(specificationAssertions, rulesContext);
 
+        // Run the user's rules that have been stored in specificationAssertions
         results.push(
           ...specificationAssertions
             .runAfter(
               beforeSpecification,
               afterSpecification,
-              specification.change
+              specificationNode.change
             )
             .map((assertionResult) =>
               createSpecificationResult(assertionResult, specificationRule)

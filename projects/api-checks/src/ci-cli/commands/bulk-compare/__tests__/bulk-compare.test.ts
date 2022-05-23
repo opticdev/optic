@@ -122,4 +122,21 @@ describe('parseJsonComparisonInput', () => {
     });
     mockedLoadFile.mockClear();
   });
+
+  test('throws when from and to are not specified', async () => {
+    mockedLoadFile.mockImplementation(async () => {
+      return Buffer.from(
+        JSON.stringify({
+          comparisons: [
+            {
+              context: {},
+            },
+          ],
+        })
+      );
+    });
+    expect(parseJsonComparisonInput('abcdef', () => ({}))).rejects.toThrow();
+
+    mockedLoadFile.mockClear();
+  });
 });

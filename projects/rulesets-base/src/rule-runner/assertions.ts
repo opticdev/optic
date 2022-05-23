@@ -187,8 +187,6 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
             });
           } else {
             const err = e as Error;
-            console.error('Error running rules:');
-            console.error(err);
             throw new UserRuleError(err);
           }
         }
@@ -227,8 +225,6 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
             });
           } else {
             const err = e as Error;
-            console.error('Error running rules:');
-            console.error(err);
             throw new UserRuleError(err);
           }
         }
@@ -262,8 +258,6 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
             });
           } else {
             const err = e as Error;
-            console.error('Error running rules:');
-            console.error(err);
             throw new UserRuleError(err);
           }
         }
@@ -298,8 +292,6 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
             });
           } else {
             const err = e as Error;
-            console.error('Error running rules:');
-            console.error(err);
             throw new UserRuleError(err);
           }
         }

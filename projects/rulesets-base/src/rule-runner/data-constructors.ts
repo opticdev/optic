@@ -1,15 +1,23 @@
-import { OpenApiKind, OpenAPIV3 } from '@useoptic/openapi-utilities';
+/**
+ * data-constructors take a Node from OpenAPIFactNodes and a before / after spec
+ * to construct it into a user facing data structure used in `matches` blocks and `rule assertions`
+ * some examples of these user facing data structures are `Operation`, `Specification`, `Response`
+ */
+import {
+  OpenApiKind,
+  OpenAPIV3,
+  FactVariant,
+} from '@useoptic/openapi-utilities';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
   Operation,
   Specification,
   RequestBody,
   Response,
-  FactVariantWithRaw,
   ResponseBody,
 } from '../types';
 import {
-  OpenApiDocument,
+  OpenAPIFactNodes,
   EndpointNode,
   RequestNode,
   ResponseNode,
@@ -23,8 +31,8 @@ const createFactsWithRaw = <T extends OpenApiKind>(
   nodeDetailMap: Map<string, NodeDetail<T>>,
   key: SpecFactsFrom,
   openApiSpec: OpenAPIV3.Document
-): Map<string, FactVariantWithRaw<T>> => {
-  const factsWithRaw: Map<string, FactVariantWithRaw<T>> = new Map();
+): Map<string, FactVariant<T> & { raw: any }> => {
+  const factsWithRaw: Map<string, FactVariant<T> & { raw: any }> = new Map();
 
   for (const [name, nodeDetail] of nodeDetailMap.entries()) {
     const nodeFact = nodeDetail[key];
@@ -187,7 +195,7 @@ export const createOperation = (
 };
 
 export const createSpecification = (
-  specificationNode: OpenApiDocument['specification'],
+  specificationNode: OpenAPIFactNodes['specification'],
   key: SpecFactsFrom,
   openApiSpec: OpenAPIV3.Document
 ): Specification | null => {

@@ -1,6 +1,6 @@
 import { OpenApiKind } from '@useoptic/openapi-utilities';
 import {
-  FactVariantWithRaw,
+  HeaderParameter,
   OperationRule,
   RuleError,
 } from '@useoptic/rulesets-base';
@@ -12,9 +12,7 @@ export const createRequestHeaderParameterChecks = (
   format: typeof casing[number]
 ) => {
   const caseCondition = `request header parameter must be ${format} when ${applies}`;
-  const parameterTest = (
-    parameter: FactVariantWithRaw<OpenApiKind.HeaderParameter>
-  ) => {
+  const parameterTest = (parameter: HeaderParameter) => {
     if (!isCase(parameter.value.name, format)) {
       throw new RuleError({
         message: `${parameter.value.name} is not ${format}`,

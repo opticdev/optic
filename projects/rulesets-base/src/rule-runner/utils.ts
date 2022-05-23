@@ -35,57 +35,63 @@ const getSpecificationChange = (
     : specificationNode.change?.changeType || null;
 };
 
-export const createSpecificationRuleContext = (
-  specification: Specification,
-  custom: any,
-  specificationNode: NodeDetail<OpenApiKind.Specification>
-): RuleContext => ({
-  custom,
-  specification: {
-    ...specification,
-    change: getSpecificationChange(specificationNode),
-  },
-  operation: {
-    location: {
-      jsonPath: '',
-      conceptualLocation: { path: '', method: '' },
-      conceptualPath: [],
-      kind: OpenApiKind.Operation,
-    },
-    value: { pathPattern: '', method: '' },
-    path: '',
-    method: '',
-    raw: {},
-    change: null,
-    queryParameters: new Map(),
-    pathParameters: new Map(),
-    headerParameters: new Map(),
-    cookieParameters: new Map(),
-    requests: [],
-    responses: new Map(),
-  },
-});
-
-export const createOperationContext = ({
+export const createRuleContext = ({
   specification,
   specificationNode,
+  custom,
   operation,
   operationChangeType,
-  custom,
 }: {
   specification: Specification;
   specificationNode: NodeDetail<OpenApiKind.Specification>;
-  operation: Operation;
-  operationChangeType: RuleContext['operation']['change'];
   custom: any;
-}): RuleContext => ({
-  custom,
-  specification: {
-    ...specification,
-    change: getSpecificationChange(specificationNode),
-  },
-  operation: {
-    ...operation,
-    change: operationChangeType,
-  },
-});
+} & (
+  | { operation?: undefined; operationChangeType?: undefined }
+  | {
+      operation: Operation;
+      operationChangeType: RuleContext['operation']['change'];
+    }
+)): RuleContext => {
+  if (operation && operationChangeType !== undefined) {
+    return {
+      custom,
+      specification: {
+        ...specification,
+        change: getSpecificationChange(specificationNode),
+      },
+      operation: {
+        ...operation,
+        change: operationChangeType,
+      },
+    };
+  } else {
+    return {
+      custom,
+      specification: {
+        ...specification,
+        change: getSpecificationChange(specificationNode),
+      },
+      operation: {
+        location: {
+          jsonPath: '',
+          conceptualLocation: { path: '', method: '' },
+          conceptualPath: [],
+          kind: OpenApiKind.Operation,
+        },
+        value: { pathPattern: '', method: '' },
+        path: '',
+        method: '',
+        raw: {
+          responses: {},
+        },
+        change: null,
+        queryParameters: new Map(),
+        pathParameters: new Map(),
+        headerParameters: new Map(),
+        cookieParameters: new Map(),
+        requests: [],
+        responses: new Map(),
+      },
+    };
+  }
+};

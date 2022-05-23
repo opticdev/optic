@@ -1,11 +1,10 @@
-import { FactVariant, OpenApiKind } from '@useoptic/openapi-utilities';
+import {
+  FactVariant,
+  OpenApiKind,
+  OpenAPIV3,
+} from '@useoptic/openapi-utilities';
 
-export type FactVariantWithRaw<T extends OpenApiKind> = FactVariant<T> & {
-  // TODO add in typings from OAS3? Or how do we pick the correct variant based on rules
-  raw: any;
-};
-
-// Value constructs
+// Value constructs - these are types that represent the node you are working on
 export type RuleContext = {
   specification: Specification & {
     change: 'added' | 'changed' | 'removed' | null;
@@ -16,39 +15,61 @@ export type RuleContext = {
   custom: any; // user defined context
 };
 
-export type Field = FactVariantWithRaw<OpenApiKind.Field>;
+export type Specification = FactVariant<OpenApiKind.Specification> & {
+  raw: OpenAPIV3.Document;
+};
 
-export type Specification = FactVariantWithRaw<OpenApiKind.Specification>;
-
-export type Operation = FactVariantWithRaw<OpenApiKind.Operation> & {
+export type Operation = FactVariant<OpenApiKind.Operation> & {
+  raw: OpenAPIV3.OperationObject;
   path: string;
   method: string;
-  queryParameters: Map<string, FactVariantWithRaw<OpenApiKind.QueryParameter>>;
-  pathParameters: Map<string, FactVariantWithRaw<OpenApiKind.PathParameter>>;
-  headerParameters: Map<
-    string,
-    FactVariantWithRaw<OpenApiKind.HeaderParameter>
-  >;
-  cookieParameters: Map<
-    string,
-    FactVariantWithRaw<OpenApiKind.CookieParameter>
-  >;
+  queryParameters: Map<string, QueryParameter>;
+  pathParameters: Map<string, PathParameter>;
+  headerParameters: Map<string, HeaderParameter>;
+  cookieParameters: Map<string, CookieParameter>;
   requests: RequestBody[];
   responses: Map<string, Response>;
 };
 
-export type RequestBody = FactVariantWithRaw<OpenApiKind.Body> & {
+export type QueryParameter = FactVariant<OpenApiKind.QueryParameter> & {
+  raw: OpenAPIV3.ParameterObject;
+};
+
+export type PathParameter = FactVariant<OpenApiKind.PathParameter> & {
+  raw: OpenAPIV3.ParameterObject;
+};
+
+export type HeaderParameter = FactVariant<OpenApiKind.HeaderParameter> & {
+  raw: OpenAPIV3.ParameterObject;
+};
+
+export type CookieParameter = FactVariant<OpenApiKind.CookieParameter> & {
+  raw: OpenAPIV3.ParameterObject;
+};
+
+export type RequestBody = FactVariant<OpenApiKind.Body> & {
+  raw: OpenAPIV3.RequestBodyObject;
   contentType: string;
   properties: Map<string, Field>;
 };
 
-export type Response = FactVariantWithRaw<OpenApiKind.Response> & {
+export type Field = FactVariant<OpenApiKind.Field> & {
+  raw: OpenAPIV3.SchemaObject;
+};
+
+export type ResponseHeader = FactVariant<OpenApiKind.ResponseHeader> & {
+  raw: OpenAPIV3.HeaderObject;
+};
+
+export type Response = FactVariant<OpenApiKind.Response> & {
+  raw: OpenAPIV3.ResponseObject;
   statusCode: string;
-  headers: Map<string, FactVariantWithRaw<OpenApiKind.ResponseHeader>>;
+  headers: Map<string, ResponseHeader>;
   bodies: ResponseBody[];
 };
 
-export type ResponseBody = FactVariantWithRaw<OpenApiKind.Body> & {
+export type ResponseBody = FactVariant<OpenApiKind.Body> & {
+  raw: OpenAPIV3.MediaTypeObject;
   contentType: string;
   statusCode: string;
   properties: Map<string, Field>;
@@ -71,15 +92,15 @@ export type AssertionType =
 export type AssertionTypeToValue = {
   specification: Specification;
   operation: Operation;
-  'query-parameter': FactVariantWithRaw<OpenApiKind.QueryParameter>;
-  'path-parameter': FactVariantWithRaw<OpenApiKind.PathParameter>;
-  'header-parameter': FactVariantWithRaw<OpenApiKind.HeaderParameter>;
-  'cookie-parameter': FactVariantWithRaw<OpenApiKind.CookieParameter>;
-  'response-header': FactVariantWithRaw<OpenApiKind.ResponseHeader>;
+  'query-parameter': QueryParameter;
+  'path-parameter': PathParameter;
+  'header-parameter': HeaderParameter;
+  'cookie-parameter': CookieParameter;
+  'response-header': ResponseHeader;
   response: Response;
   'request-body': RequestBody;
   'response-body': ResponseBody;
-  property: FactVariantWithRaw<OpenApiKind.Field>;
+  property: Field;
 };
 
 type MatchesFn = (
@@ -98,57 +119,67 @@ type MatchesOneOfFn = (
   }
 ) => void;
 
+type SpecificationAssertionHelpers = {
+  not: SpecificationAssertionHelpers;
+  matches: MatchesFn;
+  matchesOneOf: MatchesOneOfFn;
+};
+
+type OperationAssertionHelpers = {
+  not: OperationAssertionHelpers;
+  hasQueryParameterMatching: MatchesFn;
+  hasPathParameterMatching: MatchesFn;
+  hasHeaderParameterMatching: MatchesFn;
+  hasCookieParameterMatching: MatchesFn;
+  hasRequests: (
+    requests: {
+      contentType: string;
+    }[]
+  ) => void;
+  hasResponses: (
+    responses: {
+      contentType?: string;
+      statusCode: string;
+    }[]
+  ) => void;
+  matches: MatchesFn;
+  matchesOneOf: MatchesOneOfFn;
+};
+
+type ResponseAssertionHelpers = {
+  not: ResponseAssertionHelpers;
+  hasResponseHeaderMatching: (
+    name: string,
+    structure: any,
+    options?: {
+      strict?: boolean;
+    }
+  ) => void;
+};
+
+type RequestBodyAssertionHelpers = {
+  not: AssertionTypeToHelpers['request-body'];
+  matches: MatchesFn;
+  matchesOneOf: MatchesOneOfFn;
+};
+
+type ResponseBodyAssertionHelpers = {
+  not: AssertionTypeToHelpers['response-body'];
+  matches: MatchesFn;
+  matchesOneOf: MatchesOneOfFn;
+};
+
 export type AssertionTypeToHelpers = {
-  specification: {
-    not: AssertionTypeToHelpers['specification'];
-    matches: MatchesFn;
-    matchesOneOf: MatchesOneOfFn;
-  };
-  operation: {
-    not: AssertionTypeToHelpers['operation'];
-    hasQueryParameterMatching: MatchesFn;
-    hasPathParameterMatching: MatchesFn;
-    hasHeaderParameterMatching: MatchesFn;
-    hasCookieParameterMatching: MatchesFn;
-    hasRequests: (
-      requests: {
-        contentType: string;
-      }[]
-    ) => void;
-    hasResponses: (
-      responses: {
-        contentType?: string;
-        statusCode: string;
-      }[]
-    ) => void;
-    matches: MatchesFn;
-    matchesOneOf: MatchesOneOfFn;
-  };
+  specification: SpecificationAssertionHelpers;
+  operation: OperationAssertionHelpers;
   'query-parameter': {};
   'path-parameter': {};
   'header-parameter': {};
   'cookie-parameter': {};
-  response: {
-    not: AssertionTypeToHelpers['response'];
-    hasResponseHeaderMatching: (
-      name: string,
-      structure: any,
-      options?: {
-        strict?: boolean;
-      }
-    ) => void;
-  };
+  response: ResponseAssertionHelpers;
   'response-header': {};
-  'request-body': {
-    not: AssertionTypeToHelpers['request-body'];
-    matches: MatchesFn;
-    matchesOneOf: MatchesOneOfFn;
-  };
-  'response-body': {
-    not: AssertionTypeToHelpers['response-body'];
-    matches: MatchesFn;
-    matchesOneOf: MatchesOneOfFn;
-  };
+  'request-body': RequestBodyAssertionHelpers;
+  'response-body': ResponseBodyAssertionHelpers;
   property: {};
 };
 
@@ -166,10 +197,10 @@ export type ChangedAssertion<T extends AssertionType> = (
 ) => void;
 
 export type Assertions<T extends AssertionType> = {
-  requirement: AssertionTypeToHelpers[T] & Assertion<T>;
-  added: AssertionTypeToHelpers[T] & Assertion<T>;
-  changed: AssertionTypeToHelpers[T] & ChangedAssertion<T>;
-  removed: AssertionTypeToHelpers[T] & Assertion<T>;
+  requirement: Assertion<T> & AssertionTypeToHelpers[T];
+  added: Assertion<T> & AssertionTypeToHelpers[T];
+  changed: ChangedAssertion<T> & AssertionTypeToHelpers[T];
+  removed: Assertion<T> & AssertionTypeToHelpers[T];
 };
 
 export type SpecificationAssertions = Assertions<'specification'>;

@@ -4,7 +4,7 @@ import { RulesetData, EndpointNode, NodeDetail } from './rule-runner-types';
 import {
   createRulesetMatcher,
   getRuleAliases,
-  createOperationContext,
+  createRuleContext,
 } from './utils';
 
 import { Rule, Ruleset, OperationRule } from '../rules';
@@ -99,15 +99,15 @@ const createParameterResult = (
 });
 
 export const runOperationRules = ({
-  specification,
-  operation,
+  specificationNode,
+  operationNode,
   rules,
   customRuleContext,
   beforeApiSpec,
   afterApiSpec,
 }: {
-  specification: NodeDetail<OpenApiKind.Specification>;
-  operation: EndpointNode;
+  specificationNode: NodeDetail<OpenApiKind.Specification>;
+  operationNode: EndpointNode;
   rules: (Ruleset | Rule)[];
   customRuleContext: any;
   beforeApiSpec: OpenAPIV3.Document;
@@ -115,41 +115,52 @@ export const runOperationRules = ({
 }): Result[] => {
   const operationRules = getOperationRules(rules);
   const beforeSpecification = createSpecification(
-    specification,
+    specificationNode,
     'before',
     beforeApiSpec
   );
-  const beforeOperation = createOperation(operation, 'before', beforeApiSpec);
+  const beforeOperation = createOperation(
+    operationNode,
+    'before',
+    beforeApiSpec
+  );
   const afterSpecification = createSpecification(
-    specification,
+    specificationNode,
     'after',
     afterApiSpec
   );
-  const afterOperation = createOperation(operation, 'after', afterApiSpec);
+  const afterOperation = createOperation(operationNode, 'after', afterApiSpec);
   const results: Result[] = [];
 
+  // Runs rules on all operations - this will:
+  // - run rules with values from the before spec (this will trigger `removed` rules)
+  // - run rules with values from the after spec (this will trigger `added`, `changed` and `requirement` rules)
+
+  // for each rule:
+  // - if there is a matches block, check if the current operation matches the rule `matches` condition
+  // - if yes, run the user's defined `rule`. for operations, this runs against the operation, headerParameters, queryParameters, pathParameters and cookie parameters
   for (const operationRule of operationRules) {
     if (beforeOperation && beforeSpecification) {
-      const beforeRulesContext = createOperationContext({
+      const ruleContext = createRuleContext({
         operation: beforeOperation,
         custom: customRuleContext,
-        operationChangeType: operation.change?.changeType || null,
+        operationChangeType: operationNode.change?.changeType || null,
         specification: beforeSpecification,
-        specificationNode: specification,
+        specificationNode: specificationNode,
       });
 
       if (
         !operationRule.matches ||
-        operationRule.matches(beforeOperation, beforeRulesContext)
+        operationRule.matches(beforeOperation, ruleContext)
       ) {
         const operationAssertions = createOperationAssertions();
-        // Register the user's rule definition
-        operationRule.rule(operationAssertions, beforeRulesContext);
+        // Register the user's rule definition, this is collected in the operationAssertions object
+        operationRule.rule(operationAssertions, ruleContext);
 
-        // Run the user's rules
+        // Run the user's rules that have been stored in operationAssertions
         results.push(
           ...operationAssertions
-            .runBefore(beforeOperation, operation.change)
+            .runBefore(beforeOperation, operationNode.change)
             .map((assertionResult) =>
               createOperationResult(
                 assertionResult,
@@ -164,8 +175,9 @@ export const runOperationRules = ({
           beforeParameter,
         ] of beforeOperation.headerParameters.entries()) {
           const maybeChange =
-            operation.headerParameters.get(key)?.change || null;
+            operationNode.headerParameters.get(key)?.change || null;
 
+          // Run the user's rules that have been stored in operationAssertions for headerParameters
           results.push(
             ...operationAssertions.headerParameter
               .runBefore(beforeParameter, maybeChange)
@@ -175,8 +187,8 @@ export const runOperationRules = ({
                   {
                     name: key,
                     type: 'header parameter',
-                    method: operation.method,
-                    path: operation.path,
+                    method: operationNode.method,
+                    path: operationNode.path,
                   },
                   operationRule
                 )
@@ -188,7 +200,10 @@ export const runOperationRules = ({
           key,
           beforeParameter,
         ] of beforeOperation.pathParameters.entries()) {
-          const maybeChange = operation.pathParameters.get(key)?.change || null;
+          const maybeChange =
+            operationNode.pathParameters.get(key)?.change || null;
+
+          // Run the user's rules that have been stored in operationAssertions for pathParameter
           results.push(
             ...operationAssertions.pathParameter
               .runBefore(beforeParameter, maybeChange)
@@ -198,8 +213,8 @@ export const runOperationRules = ({
                   {
                     name: key,
                     type: 'path parameter',
-                    method: operation.method,
-                    path: operation.path,
+                    method: operationNode.method,
+                    path: operationNode.path,
                   },
                   operationRule
                 )
@@ -212,7 +227,9 @@ export const runOperationRules = ({
           beforeParameter,
         ] of beforeOperation.queryParameters.entries()) {
           const maybeChange =
-            operation.queryParameters.get(key)?.change || null;
+            operationNode.queryParameters.get(key)?.change || null;
+
+          // Run the user's rules that have been stored in operationAssertions for queryParameter
           results.push(
             ...operationAssertions.queryParameter
               .runBefore(beforeParameter, maybeChange)
@@ -222,8 +239,8 @@ export const runOperationRules = ({
                   {
                     name: key,
                     type: 'query parameter',
-                    method: operation.method,
-                    path: operation.path,
+                    method: operationNode.method,
+                    path: operationNode.path,
                   },
                   operationRule
                 )
@@ -236,7 +253,9 @@ export const runOperationRules = ({
           beforeParameter,
         ] of beforeOperation.cookieParameters.entries()) {
           const maybeChange =
-            operation.cookieParameters.get(key)?.change || null;
+            operationNode.cookieParameters.get(key)?.change || null;
+
+          // Run the user's rules that have been stored in operationAssertions for cookieParameter
           results.push(
             ...operationAssertions.cookieParameter
               .runBefore(beforeParameter, maybeChange)
@@ -246,8 +265,8 @@ export const runOperationRules = ({
                   {
                     name: key,
                     type: 'cookie parameter',
-                    method: operation.method,
-                    path: operation.path,
+                    method: operationNode.method,
+                    path: operationNode.path,
                   },
                   operationRule
                 )
@@ -258,27 +277,27 @@ export const runOperationRules = ({
     }
 
     if (afterOperation && afterSpecification) {
-      const afterRulesContext = createOperationContext({
+      const ruleContext = createRuleContext({
         operation: afterOperation,
         custom: customRuleContext,
-        operationChangeType: operation.change?.changeType || null,
+        operationChangeType: operationNode.change?.changeType || null,
         specification: afterSpecification,
-        specificationNode: specification,
+        specificationNode: specificationNode,
       });
 
       if (
         !operationRule.matches ||
-        operationRule.matches(afterOperation, afterRulesContext)
+        operationRule.matches(afterOperation, ruleContext)
       ) {
         const operationAssertions = createOperationAssertions();
 
-        // Register the user's rule definition
-        operationRule.rule(operationAssertions, afterRulesContext);
+        // Register the user's rule definition, this is collected in the operationAssertions object
+        operationRule.rule(operationAssertions, ruleContext);
 
-        // Run the user's rules
+        // Run the user's rules that have been stored in operationAssertions
         results.push(
           ...operationAssertions
-            .runAfter(beforeOperation, afterOperation, operation.change)
+            .runAfter(beforeOperation, afterOperation, operationNode.change)
             .map((assertionResult) =>
               createOperationResult(
                 assertionResult,
@@ -295,8 +314,9 @@ export const runOperationRules = ({
           const maybeBeforeParameter =
             beforeOperation?.headerParameters.get(key) || null;
           const maybeChange =
-            operation.headerParameters.get(key)?.change || null;
+            operationNode.headerParameters.get(key)?.change || null;
 
+          // Run the user's rules that have been stored in operationAssertions for headerParameter
           results.push(
             ...operationAssertions.headerParameter
               .runAfter(maybeBeforeParameter, afterParameter, maybeChange)
@@ -306,8 +326,8 @@ export const runOperationRules = ({
                   {
                     name: key,
                     type: 'header parameter',
-                    method: operation.method,
-                    path: operation.path,
+                    method: operationNode.method,
+                    path: operationNode.path,
                   },
                   operationRule
                 )
@@ -321,8 +341,10 @@ export const runOperationRules = ({
         ] of afterOperation.pathParameters.entries()) {
           const maybeBeforeParameter =
             beforeOperation?.pathParameters.get(key) || null;
-          const maybeChange = operation.pathParameters.get(key)?.change || null;
+          const maybeChange =
+            operationNode.pathParameters.get(key)?.change || null;
 
+          // Run the user's rules that have been stored in operationAssertions for pathParameter
           results.push(
             ...operationAssertions.pathParameter
               .runAfter(maybeBeforeParameter, afterParameter, maybeChange)
@@ -332,8 +354,8 @@ export const runOperationRules = ({
                   {
                     name: key,
                     type: 'path parameter',
-                    method: operation.method,
-                    path: operation.path,
+                    method: operationNode.method,
+                    path: operationNode.path,
                   },
                   operationRule
                 )
@@ -348,8 +370,9 @@ export const runOperationRules = ({
           const maybeBeforeParameter =
             beforeOperation?.queryParameters.get(key) || null;
           const maybeChange =
-            operation.queryParameters.get(key)?.change || null;
+            operationNode.queryParameters.get(key)?.change || null;
 
+          // Run the user's rules that have been stored in operationAssertions for queryParameter
           results.push(
             ...operationAssertions.queryParameter
               .runAfter(maybeBeforeParameter, afterParameter, maybeChange)
@@ -359,8 +382,8 @@ export const runOperationRules = ({
                   {
                     name: key,
                     type: 'query parameter',
-                    method: operation.method,
-                    path: operation.path,
+                    method: operationNode.method,
+                    path: operationNode.path,
                   },
                   operationRule
                 )
@@ -375,8 +398,9 @@ export const runOperationRules = ({
           const maybeBeforeParameter =
             beforeOperation?.cookieParameters.get(key) || null;
           const maybeChange =
-            operation.cookieParameters.get(key)?.change || null;
+            operationNode.cookieParameters.get(key)?.change || null;
 
+          // Run the user's rules that have been stored in operationAssertions for cookieParameter
           results.push(
             ...operationAssertions.cookieParameter
               .runAfter(maybeBeforeParameter, afterParameter, maybeChange)
@@ -386,8 +410,8 @@ export const runOperationRules = ({
                   {
                     name: key,
                     type: 'cookie parameter',
-                    method: operation.method,
-                    path: operation.path,
+                    method: operationNode.method,
+                    path: operationNode.path,
                   },
                   operationRule
                 )
