@@ -26,14 +26,17 @@ export class RuleRunner {
     nextJsonLike: OpenAPIV3.Document;
     currentJsonLike: OpenAPIV3.Document;
   }): Result[] {
-    const groupedFacts = groupFacts({
+    // Groups the flat list of beforefacts, afterfacts and changes by location (e.g. operation, query parameter, response, response property, etc).
+    // A node can contain a before fact, after fact and or change.
+    const openApiFactNodes = groupFacts({
       beforeFacts: currentFacts,
       afterFacts: nextFacts,
       changes: changelog,
     });
 
+    // Run rules on specifications and collect the results
     const specificationResults = runSpecificationRules({
-      specification: groupedFacts.specification,
+      specificationNode: openApiFactNodes.specification,
       rules: this.rules,
       customRuleContext: context,
       beforeApiSpec,
@@ -42,10 +45,11 @@ export class RuleRunner {
 
     const endpointResults: Result[] = [];
 
-    for (const endpoint of groupedFacts.endpoints.values()) {
+    // For each endpoint from the endpoint fact nodes (this will include endpoints in both before and after specs) run rules and collect the results
+    for (const endpointNode of openApiFactNodes.endpoints.values()) {
       const operationResults = runOperationRules({
-        specification: groupedFacts.specification,
-        operation: endpoint,
+        specificationNode: openApiFactNodes.specification,
+        operationNode: endpointNode,
         rules: this.rules,
         customRuleContext: context,
         beforeApiSpec,
@@ -54,9 +58,9 @@ export class RuleRunner {
       endpointResults.push(...operationResults);
 
       const requestRules = runRequestRules({
-        specification: groupedFacts.specification,
-        operation: endpoint,
-        request: endpoint.request,
+        specificationNode: openApiFactNodes.specification,
+        operationNode: endpointNode,
+        requestNode: endpointNode.request,
         rules: this.rules,
         customRuleContext: context,
         beforeApiSpec,
@@ -64,11 +68,11 @@ export class RuleRunner {
       });
       endpointResults.push(...requestRules);
 
-      for (const response of endpoint.responses.values()) {
+      for (const responseNode of endpointNode.responses.values()) {
         const responseRules = runResponseRules({
-          specification: groupedFacts.specification,
-          operation: endpoint,
-          response: response,
+          specificationNode: openApiFactNodes.specification,
+          operationNode: endpointNode,
+          responseNode: responseNode,
           rules: this.rules,
           customRuleContext: context,
           beforeApiSpec,
@@ -76,9 +80,9 @@ export class RuleRunner {
         });
 
         const responseBodyRules = runResponseBodyRules({
-          specification: groupedFacts.specification,
-          operation: endpoint,
-          response: response,
+          specificationNode: openApiFactNodes.specification,
+          operationNode: endpointNode,
+          responseNode: responseNode,
           rules: this.rules,
           customRuleContext: context,
           beforeApiSpec,

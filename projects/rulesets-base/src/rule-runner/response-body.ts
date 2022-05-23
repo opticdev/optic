@@ -12,7 +12,7 @@ import {
   NodeDetail,
 } from './rule-runner-types';
 import {
-  createOperationContext,
+  createRuleContext,
   createRulesetMatcher,
   getRuleAliases,
 } from './utils';
@@ -107,17 +107,17 @@ const createResponsePropertyResult = (
 });
 
 export const runResponseBodyRules = ({
-  specification,
-  operation,
-  response,
+  specificationNode,
+  operationNode,
+  responseNode,
   rules,
   customRuleContext,
   beforeApiSpec,
   afterApiSpec,
 }: {
-  specification: NodeDetail<OpenApiKind.Specification>;
-  operation: EndpointNode;
-  response: ResponseNode;
+  specificationNode: NodeDetail<OpenApiKind.Specification>;
+  operationNode: EndpointNode;
+  responseNode: ResponseNode;
   rules: (Ruleset | Rule)[];
   customRuleContext: any;
   beforeApiSpec: OpenAPIV3.Document;
@@ -126,41 +126,60 @@ export const runResponseBodyRules = ({
   const results: Result[] = [];
   const responseRules = getResponseBodyRules(rules);
   const beforeSpecification = createSpecification(
-    specification,
+    specificationNode,
     'before',
     beforeApiSpec
   );
-  const beforeOperation = createOperation(operation, 'before', beforeApiSpec);
+  const beforeOperation = createOperation(
+    operationNode,
+    'before',
+    beforeApiSpec
+  );
   const afterSpecification = createSpecification(
-    specification,
+    specificationNode,
     'after',
     afterApiSpec
   );
-  const afterOperation = createOperation(operation, 'after', afterApiSpec);
+  const afterOperation = createOperation(operationNode, 'after', afterApiSpec);
+
+  // Runs rules on all responses bodies - this will:
+  // - run rules with values from the before spec (this will trigger `removed` rules)
+  // - run rules with values from the after spec (this will trigger `added`, `changed` and `requirement` rules)
+
+  // for each rule:
+  // - if there is a matches block, check if the current operation matches the rule `matches` condition
+  // - if yes, run the user's defined `rule`. for responses, this runs against the response body and response properties
   for (const responseRule of responseRules) {
     if (beforeOperation && beforeSpecification) {
-      const beforeRulesContext = createOperationContext({
+      const ruleContext = createRuleContext({
         operation: beforeOperation,
         custom: customRuleContext,
-        operationChangeType: operation.change?.changeType || null,
+        operationChangeType: operationNode.change?.changeType || null,
         specification: beforeSpecification,
-        specificationNode: specification,
+        specificationNode: specificationNode,
       });
       const responseAssertions = createResponseBodyAssertions();
-      responseRule.rule(responseAssertions, beforeRulesContext);
+      // Register the user's rule definition, this is collected in the responseAssertions object
+      responseRule.rule(responseAssertions, ruleContext);
 
-      const beforeResponse = createResponse(response, 'before', beforeApiSpec);
+      const beforeResponse = createResponse(
+        responseNode,
+        'before',
+        beforeApiSpec
+      );
       if (beforeResponse) {
         for (const beforeBody of beforeResponse.bodies) {
           if (
             !responseRule.matches ||
-            responseRule.matches(beforeBody, beforeRulesContext)
+            responseRule.matches(beforeBody, ruleContext)
           ) {
+            // Run the user's rules that have been stored in responseAssertions for body
             results.push(
               ...responseAssertions.body
                 .runBefore(
                   beforeBody,
-                  response.bodies.get(beforeBody.contentType)?.change || null
+                  responseNode.bodies.get(beforeBody.contentType)?.change ||
+                    null
                 )
                 .map((assertionResult) =>
                   createResponseBodyResult(
@@ -174,9 +193,10 @@ export const runResponseBodyRules = ({
 
             for (const [key, property] of beforeBody.properties.entries()) {
               const propertyChange =
-                response.bodies.get(beforeBody.contentType)?.fields.get(key)
+                responseNode.bodies.get(beforeBody.contentType)?.fields.get(key)
                   ?.change || null;
 
+              // Run the user's rules that have been stored in responseAssertions for property
               results.push(
                 ...responseAssertions.property
                   .runBefore(property, propertyChange)
@@ -197,22 +217,24 @@ export const runResponseBodyRules = ({
     }
 
     if (afterOperation && afterSpecification) {
-      const afterRulesContext = createOperationContext({
+      const ruleContext = createRuleContext({
         operation: afterOperation,
         custom: customRuleContext,
-        operationChangeType: operation.change?.changeType || null,
+        operationChangeType: operationNode.change?.changeType || null,
         specification: afterSpecification,
-        specificationNode: specification,
+        specificationNode: specificationNode,
       });
+      // Register the user's rule definition, this is collected in the responseAssertions object
       const responseAssertions = createResponseBodyAssertions();
-      responseRule.rule(responseAssertions, afterRulesContext);
+      // Run the user's rules that have been stored in responseAssertions
+      responseRule.rule(responseAssertions, ruleContext);
 
       const maybeBeforeResponse = createResponse(
-        response,
+        responseNode,
         'before',
         beforeApiSpec
       );
-      const afterResponse = createResponse(response, 'after', afterApiSpec);
+      const afterResponse = createResponse(responseNode, 'after', afterApiSpec);
       if (afterResponse) {
         for (const afterBody of afterResponse.bodies) {
           const maybeBeforeBody =
@@ -221,14 +243,15 @@ export const runResponseBodyRules = ({
             ) || null;
           if (
             !responseRule.matches ||
-            responseRule.matches(afterBody, afterRulesContext)
+            responseRule.matches(afterBody, ruleContext)
           ) {
+            // Run the user's rules that have been stored in responseAssertions for body
             results.push(
               ...responseAssertions.body
                 .runAfter(
                   maybeBeforeBody,
                   afterBody,
-                  response.bodies.get(afterBody.contentType)?.change || null
+                  responseNode.bodies.get(afterBody.contentType)?.change || null
                 )
                 .map((assertionResult) =>
                   createResponseBodyResult(
@@ -245,9 +268,10 @@ export const runResponseBodyRules = ({
                 maybeBeforeBody?.properties.get(key) || null;
 
               const propertyChange =
-                response.bodies.get(afterBody.contentType)?.fields.get(key)
+                responseNode.bodies.get(afterBody.contentType)?.fields.get(key)
                   ?.change || null;
 
+              // Run the user's rules that have been stored in responseAssertions for property
               results.push(
                 ...responseAssertions.property
                   .runAfter(maybeBeforeProperty, property, propertyChange)

@@ -49,7 +49,7 @@ export type EndpointNode = NodeDetail<OpenApiKind.Operation> & {
   responses: Map<StatusCode, ResponseNode>;
 };
 
-export type OpenApiDocument = {
+export type OpenAPIFactNodes = {
   specification: NodeDetail<OpenApiKind.Specification>;
   endpoints: Map<string, EndpointNode>;
 };

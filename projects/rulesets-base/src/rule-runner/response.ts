@@ -12,7 +12,7 @@ import {
   NodeDetail,
 } from './rule-runner-types';
 import {
-  createOperationContext,
+  createRuleContext,
   createRulesetMatcher,
   getRuleAliases,
 } from './utils';
@@ -105,17 +105,17 @@ const createResponseHeaderResult = (
 });
 
 export const runResponseRules = ({
-  specification,
-  operation,
-  response,
+  specificationNode,
+  operationNode,
+  responseNode,
   rules,
   customRuleContext,
   beforeApiSpec,
   afterApiSpec,
 }: {
-  specification: NodeDetail<OpenApiKind.Specification>;
-  operation: EndpointNode;
-  response: ResponseNode;
+  specificationNode: NodeDetail<OpenApiKind.Specification>;
+  operationNode: EndpointNode;
+  responseNode: ResponseNode;
   rules: (Ruleset | Rule)[];
 
   customRuleContext: any;
@@ -125,37 +125,55 @@ export const runResponseRules = ({
   const results: Result[] = [];
   const responseRules = getResponseRules(rules);
   const beforeSpecification = createSpecification(
-    specification,
+    specificationNode,
     'before',
     beforeApiSpec
   );
-  const beforeOperation = createOperation(operation, 'before', beforeApiSpec);
+  const beforeOperation = createOperation(
+    operationNode,
+    'before',
+    beforeApiSpec
+  );
   const afterSpecification = createSpecification(
-    specification,
+    specificationNode,
     'after',
     afterApiSpec
   );
-  const afterOperation = createOperation(operation, 'after', afterApiSpec);
+  const afterOperation = createOperation(operationNode, 'after', afterApiSpec);
+
+  // Runs rules on all responses  - this will:
+  // - run rules with values from the before spec (this will trigger `removed` rules)
+  // - run rules with values from the after spec (this will trigger `added`, `changed` and `requirement` rules)
+
+  // for each rule:
+  // - if there is a matches block, check if the current operation matches the rule `matches` condition
+  // - if yes, run the user's defined `rule`. for responses, this runs against the response and response headers
   for (const responseRule of responseRules) {
     if (beforeOperation && beforeSpecification) {
-      const beforeRulesContext = createOperationContext({
+      const ruleContext = createRuleContext({
         operation: beforeOperation,
         custom: customRuleContext,
-        operationChangeType: operation.change?.changeType || null,
+        operationChangeType: operationNode.change?.changeType || null,
         specification: beforeSpecification,
-        specificationNode: specification,
+        specificationNode: specificationNode,
       });
-      const beforeResponse = createResponse(response, 'before', beforeApiSpec);
+      const beforeResponse = createResponse(
+        responseNode,
+        'before',
+        beforeApiSpec
+      );
       const responseAssertions = createResponseAssertions();
-      responseRule.rule(responseAssertions, beforeRulesContext);
+      // Register the user's rule definition, this is collected in the responseAssertions object
+      responseRule.rule(responseAssertions, ruleContext);
       if (
         beforeResponse &&
         (!responseRule.matches ||
-          responseRule.matches(beforeResponse, beforeRulesContext))
+          responseRule.matches(beforeResponse, ruleContext))
       ) {
+        // Run the user's rules that have been stored in responseAssertions
         results.push(
           ...responseAssertions
-            .runBefore(beforeResponse, response.change)
+            .runBefore(beforeResponse, responseNode.change)
             .map((assertionResult) =>
               createResponseResult(
                 assertionResult,
@@ -166,8 +184,9 @@ export const runResponseRules = ({
             )
         );
         for (const [key, header] of beforeResponse.headers.entries()) {
-          const headerChange = response.headers.get(key)?.change || null;
+          const headerChange = responseNode.headers.get(key)?.change || null;
 
+          // Run the user's rules that have been stored in responseAssertions for header
           results.push(
             ...responseAssertions.header
               .runBefore(header, headerChange)
@@ -186,29 +205,32 @@ export const runResponseRules = ({
     }
 
     if (afterOperation && afterSpecification) {
-      const afterRulesContext = createOperationContext({
+      const ruleContext = createRuleContext({
         operation: afterOperation,
         custom: customRuleContext,
-        operationChangeType: operation.change?.changeType || null,
+        operationChangeType: operationNode.change?.changeType || null,
         specification: afterSpecification,
-        specificationNode: specification,
+        specificationNode: specificationNode,
       });
       const maybeBeforeResponse = createResponse(
-        response,
+        responseNode,
         'before',
         beforeApiSpec
       );
-      const afterResponse = createResponse(response, 'after', afterApiSpec);
+      const afterResponse = createResponse(responseNode, 'after', afterApiSpec);
       const responseAssertions = createResponseAssertions();
-      responseRule.rule(responseAssertions, afterRulesContext);
+      // Register the user's rule definition, this is collected in the responseAssertions object
+      responseRule.rule(responseAssertions, ruleContext);
+
       if (
         afterResponse &&
         (!responseRule.matches ||
-          responseRule.matches(afterResponse, afterRulesContext))
+          responseRule.matches(afterResponse, ruleContext))
       ) {
+        // Run the user's rules that have been stored in responseAssertions
         results.push(
           ...responseAssertions
-            .runAfter(maybeBeforeResponse, afterResponse, response.change)
+            .runAfter(maybeBeforeResponse, afterResponse, responseNode.change)
             .map((assertionResult) =>
               createResponseResult(
                 assertionResult,
@@ -222,8 +244,9 @@ export const runResponseRules = ({
           const maybeBeforeHeader =
             maybeBeforeResponse?.headers.get(key) || null;
 
-          const headerChange = response.headers.get(key)?.change || null;
+          const headerChange = responseNode.headers.get(key)?.change || null;
 
+          // Run the user's rules that have been stored in responseAssertions for header
           results.push(
             ...responseAssertions.header
               .runAfter(maybeBeforeHeader, header, headerChange)

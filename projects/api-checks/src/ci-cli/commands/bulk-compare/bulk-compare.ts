@@ -223,6 +223,9 @@ export const parseJsonComparisonInput = async (
     const output = JSON.parse(fileOutput.toString());
     const initialComparisons: Map<string, Comparison> = new Map();
     for (const comparison of output.comparisons || []) {
+      if (!comparison.from && !comparison.to) {
+        throw new Error('Cannot specify a comparison with no from or to files');
+      }
       const id = uuidv4();
 
       initialComparisons.set(id, {
@@ -346,9 +349,8 @@ const runBulkCompare = async ({
       if (comparison.loading) {
         console.log('loading');
       } else if (comparison.error) {
-        console.log(
-          `Error loading file: ${JSON.stringify(comparison.errorDetails)}`
-        );
+        console.log(`Error running rules`);
+        console.error(comparison.errorDetails);
       } else {
         logComparison(
           {

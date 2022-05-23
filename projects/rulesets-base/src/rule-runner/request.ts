@@ -14,7 +14,7 @@ import {
 import {
   createRulesetMatcher,
   getRuleAliases,
-  createOperationContext,
+  createRuleContext,
 } from './utils';
 
 import { Rule, Ruleset, RequestRule } from '../rules';
@@ -107,17 +107,17 @@ const createRequestPropertyResult = (
 });
 
 export const runRequestRules = ({
-  specification,
-  operation,
-  request,
+  specificationNode,
+  operationNode,
+  requestNode,
   rules,
   customRuleContext,
   beforeApiSpec,
   afterApiSpec,
 }: {
-  specification: NodeDetail<OpenApiKind.Specification>;
-  operation: EndpointNode;
-  request: RequestNode;
+  specificationNode: NodeDetail<OpenApiKind.Specification>;
+  operationNode: EndpointNode;
+  requestNode: RequestNode;
   rules: (Ruleset | Rule)[];
   customRuleContext: any;
   beforeApiSpec: OpenAPIV3.Document;
@@ -126,32 +126,45 @@ export const runRequestRules = ({
   const results: Result[] = [];
   const requestRules = getRequestRules(rules);
   const beforeSpecification = createSpecification(
-    specification,
+    specificationNode,
     'before',
     beforeApiSpec
   );
-  const beforeOperation = createOperation(operation, 'before', beforeApiSpec);
+  const beforeOperation = createOperation(
+    operationNode,
+    'before',
+    beforeApiSpec
+  );
   const afterSpecification = createSpecification(
-    specification,
+    specificationNode,
     'after',
     afterApiSpec
   );
-  const afterOperation = createOperation(operation, 'after', afterApiSpec);
+  const afterOperation = createOperation(operationNode, 'after', afterApiSpec);
+
+  // Runs rules on all requests - this will:
+  // - run rules with values from the before spec (this will trigger `removed` rules)
+  // - run rules with values from the after spec (this will trigger `added`, `changed` and `requirement` rules)
+
+  // for each rule:
+  // - if there is a matches block, check if the current operation matches the rule `matches` condition
+  // - if yes, run the user's defined `rule`. for requests, this runs against the request body and request properties
   for (const requestRule of requestRules) {
     if (beforeOperation && beforeSpecification) {
-      const beforeRulesContext = createOperationContext({
+      const ruleContext = createRuleContext({
         operation: beforeOperation,
         custom: customRuleContext,
-        operationChangeType: operation.change?.changeType || null,
+        operationChangeType: operationNode.change?.changeType || null,
         specification: beforeSpecification,
-        specificationNode: specification,
+        specificationNode: specificationNode,
       });
       const requestAssertions = createRequestAssertions();
-      requestRule.rule(requestAssertions, beforeRulesContext);
+      // Register the user's rule definition, this is collected in the requestAssertions object
+      requestRule.rule(requestAssertions, ruleContext);
 
-      for (const contentType of request.bodies.keys()) {
+      for (const contentType of requestNode.bodies.keys()) {
         const beforeRequest = createRequest(
-          request,
+          requestNode,
           contentType,
           'before',
           beforeApiSpec
@@ -159,13 +172,14 @@ export const runRequestRules = ({
         if (beforeRequest) {
           if (
             !requestRule.matches ||
-            requestRule.matches(beforeRequest, beforeRulesContext)
+            requestRule.matches(beforeRequest, ruleContext)
           ) {
+            // Run the user's rules that have been stored in requestAssertions for body
             results.push(
               ...requestAssertions.body
                 .runBefore(
                   beforeRequest,
-                  request.bodies.get(contentType)?.change || null
+                  requestNode.bodies.get(contentType)?.change || null
                 )
                 .map((assertionResult) =>
                   createRequestBodyResult(
@@ -179,9 +193,10 @@ export const runRequestRules = ({
 
             for (const [key, property] of beforeRequest.properties.entries()) {
               const propertyChange =
-                request.bodies.get(contentType)?.fields.get(key)?.change ||
+                requestNode.bodies.get(contentType)?.fields.get(key)?.change ||
                 null;
 
+              // Run the user's rules that have been stored in requestAssertions for property
               results.push(
                 ...requestAssertions.property
                   .runBefore(property, propertyChange)
@@ -202,24 +217,25 @@ export const runRequestRules = ({
     }
 
     if (afterOperation && afterSpecification) {
-      const afterRulesContext = createOperationContext({
+      const ruleContext = createRuleContext({
         operation: afterOperation,
         custom: customRuleContext,
-        operationChangeType: operation.change?.changeType || null,
+        operationChangeType: operationNode.change?.changeType || null,
         specification: afterSpecification,
-        specificationNode: specification,
+        specificationNode: specificationNode,
       });
       const requestAssertions = createRequestAssertions();
-      requestRule.rule(requestAssertions, afterRulesContext);
-      for (const contentType of request.bodies.keys()) {
+      // Register the user's rule definition, this is collected in the requestAssertions object
+      requestRule.rule(requestAssertions, ruleContext);
+      for (const contentType of requestNode.bodies.keys()) {
         const maybeBeforeRequest = createRequest(
-          request,
+          requestNode,
           contentType,
           'before',
           beforeApiSpec
         );
         const afterRequest = createRequest(
-          request,
+          requestNode,
           contentType,
           'after',
           afterApiSpec
@@ -227,14 +243,15 @@ export const runRequestRules = ({
         if (afterRequest) {
           if (
             !requestRule.matches ||
-            requestRule.matches(afterRequest, afterRulesContext)
+            requestRule.matches(afterRequest, ruleContext)
           ) {
+            // Run the user's rules that have been stored in requestAssertions for body
             results.push(
               ...requestAssertions.body
                 .runAfter(
                   maybeBeforeRequest,
                   afterRequest,
-                  request.bodies.get(contentType)?.change || null
+                  requestNode.bodies.get(contentType)?.change || null
                 )
                 .map((assertionResult) =>
                   createRequestBodyResult(
@@ -250,9 +267,10 @@ export const runRequestRules = ({
               const maybeBeforeProperty =
                 maybeBeforeRequest?.properties.get(key) || null;
               const propertyChange =
-                request.bodies.get(contentType)?.fields.get(key)?.change ||
+                requestNode.bodies.get(contentType)?.fields.get(key)?.change ||
                 null;
 
+              // Run the user's rules that have been stored in requestAssertions for property
               results.push(
                 ...requestAssertions.property
                   .runAfter(maybeBeforeProperty, property, propertyChange)

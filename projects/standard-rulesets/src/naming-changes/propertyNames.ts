@@ -1,6 +1,6 @@
 import { OpenApiKind } from '@useoptic/openapi-utilities';
 import {
-  FactVariantWithRaw,
+  Field,
   RequestRule,
   ResponseBodyRule,
   RuleError,
@@ -15,7 +15,7 @@ export const createPropertyNamingChecks = (
   const caseCondition = `property must be ${format} ${
     applies === 'always' ? applies : `when ${applies}`
   }`;
-  const propertyTest = (property: FactVariantWithRaw<OpenApiKind.Field>) => {
+  const propertyTest = (property: Field) => {
     if (!isCase(property.value.key, format)) {
       throw new RuleError({
         message: `${property.value.key} is not ${format}`,

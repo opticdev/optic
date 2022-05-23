@@ -51,7 +51,7 @@ const has201StatusCode = new OperationRule({
   docsLink: 'https://optic.com/standards/post-operations#statuscode201',
   rule: (operationAssertions) => {
     // You can use the helper
-    operationAssertions.requirement.hasStatusCodes([201]);
+    operationAssertions.requirement.hasResponses([{statusCode: "201"}]);
     // Or you can write this manually
     operationAssertions.requirement('must have 201 status code', (value) => {
       if (!value.responses.get('201'))) {
@@ -280,3 +280,7 @@ test('test that my rule works', () => {
   expect(ruleResults).toMatchSnapshot();
 })
 ```
+
+## Reference details
+
+Reference documentation can be found [here](./docs/Reference.md)
