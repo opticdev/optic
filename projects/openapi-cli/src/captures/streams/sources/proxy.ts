@@ -1,6 +1,7 @@
 import * as mockttp from 'mockttp';
 import { CompletedRequest, CompletedResponse, CompletedBody } from 'mockttp';
 import { Subject } from '../../../lib/async-tools';
+import { AbortSignal } from 'node-abort-controller'; // remove when Node v14 is out of LTS
 
 export interface ProxyInteractions
   extends AsyncIterable<ProxySource.Interaction> {}
