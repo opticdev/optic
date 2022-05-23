@@ -223,6 +223,9 @@ export const parseJsonComparisonInput = async (
     const output = JSON.parse(fileOutput.toString());
     const initialComparisons: Map<string, Comparison> = new Map();
     for (const comparison of output.comparisons || []) {
+      if (!comparison.from && !comparison.to) {
+        throw new Error('Cannot specify a comparison with no from or to files');
+      }
       const id = uuidv4();
 
       initialComparisons.set(id, {
