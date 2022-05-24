@@ -99,9 +99,10 @@ describe('OperationRule', () => {
 
   describe('assertions', () => {
     describe('requirement', () => {
+      const ruleName = 'operation description';
       const ruleRunner = new RuleRunner([
         new OperationRule({
-          name: 'operation description',
+          name: ruleName,
           rule: (operationAssertions) => {
             operationAssertions.requirement(
               'must contain a description',
@@ -159,6 +160,25 @@ describe('OperationRule', () => {
         for (const result of results) {
           expect(result.passed).toBe(false);
         }
+      });
+
+      test('exemption', () => {
+        const json: any = {
+          ...defaultEmptySpec,
+          paths: {
+            '/api/users': {
+              get: {
+                'x-optic-exemptions': [ruleName],
+                responses: {},
+              },
+            },
+          },
+        };
+
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(json, json)
+        );
+        expect(results.length).toBe(0);
       });
     });
 

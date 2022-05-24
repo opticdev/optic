@@ -90,9 +90,10 @@ describe('SpecificationRule', () => {
   });
 
   describe('requirement', () => {
+    const ruleName = 'operation description';
     const ruleRunner = new RuleRunner([
       new SpecificationRule({
-        name: 'operation description',
+        name: ruleName,
         rule: (specificationAssertions) => {
           specificationAssertions.requirement(
             'must contain x-stability',
@@ -137,6 +138,18 @@ describe('SpecificationRule', () => {
       for (const result of results) {
         expect(result.passed).toBe(false);
       }
+    });
+
+    test('exemption', () => {
+      const json = {
+        ...defaultEmptySpec,
+        'x-optic-exemptions': [ruleName],
+      };
+
+      const results = ruleRunner.runRulesWithFacts(
+        createRuleInputs(json, json)
+      );
+      expect(results.length).toBe(0);
     });
   });
 
