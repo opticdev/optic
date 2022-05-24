@@ -98,5 +98,8 @@ export const createRuleContext = ({
 
 export const isExempted = (raw: object, ruleName: string) => {
   const exemptions = raw['x-optic-exemptions'];
-  return Array.isArray(exemptions) && exemptions.includes(ruleName);
+  return (
+    exemptions === ruleName ||
+    (Array.isArray(exemptions) && exemptions.includes(ruleName))
+  );
 };

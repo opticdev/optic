@@ -168,7 +168,7 @@ describe('OperationRule', () => {
           paths: {
             '/api/users': {
               get: {
-                'x-optic-exemptions': [ruleName],
+                'x-optic-exemptions': ruleName,
                 responses: {},
               },
             },
