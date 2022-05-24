@@ -698,6 +698,85 @@ describe('naming changes', () => {
           }
         });
       });
+
+      describe('pathComponents', () => {
+        const namingChangeRuleset = new NamingChangesRuleset({
+          applies: applies as any,
+          options: {
+            pathComponents: 'param-case',
+          },
+        });
+        test('passing assertion', () => {
+          const before: OpenAPIV3.Document = {
+            ...TestHelpers.createEmptySpec(),
+            paths: {
+              '/api/user-list/{userId}': {
+                get: { responses: {} },
+              },
+            },
+          };
+          const after: OpenAPIV3.Document = {
+            ...TestHelpers.createEmptySpec(),
+            paths: {
+              '/api/users-list/{userId}': {
+                get: { responses: {} },
+              },
+            },
+          };
+          const beforeJson =
+            applies === 'always'
+              ? after
+              : applies === 'added'
+              ? TestHelpers.createEmptySpec()
+              : before;
+          const afterJson = after;
+          const results = TestHelpers.runRulesWithInputs(
+            [namingChangeRuleset],
+            beforeJson,
+            afterJson
+          );
+          expect(results.length > 0).toBe(true);
+
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(true);
+          }
+        });
+
+        test('failing assertion', () => {
+          const before: OpenAPIV3.Document = {
+            ...TestHelpers.createEmptySpec(),
+            paths: {},
+          };
+          const after: OpenAPIV3.Document = {
+            ...TestHelpers.createEmptySpec(),
+            paths: {
+              '/api/usersList/{userId}': {
+                get: { responses: {} },
+              },
+            },
+          };
+          const beforeJson =
+            applies === 'always'
+              ? after
+              : applies === 'added'
+              ? TestHelpers.createEmptySpec()
+              : before;
+          const afterJson = after;
+          const results = TestHelpers.runRulesWithInputs(
+            [namingChangeRuleset],
+            beforeJson,
+            afterJson
+          );
+
+          expect(results.length > 0).toBe(true);
+
+          expect(results).toMatchSnapshot();
+          for (const result of results) {
+            expect(result.passed).toBe(false);
+          }
+        });
+      });
     }
   );
 });

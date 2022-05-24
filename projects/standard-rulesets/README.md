@@ -77,6 +77,7 @@ new NamingChangesRuleset({
     properties: 'camelCase',
     queryParameters: 'camelCase',
     requestHeaders: 'camelCase',
+    pathComponents: 'param-case',
     responseHeaders: 'camelCase',
   },
 });

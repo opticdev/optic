@@ -1,5 +1,225 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`naming changes always pathComponents failing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/usersList/{userId}",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/usersList/{}",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1usersList~1{userId}/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/usersList/{userId}",
+      },
+    },
+    "condition": "path component must be param-case when always",
+    "docsLink": undefined,
+    "error": "usersList is not param-case",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation path component naming check",
+    "passed": false,
+    "received": undefined,
+    "where": "requirement for operation: GET /api/usersList/{userId}",
+  },
+]
+`;
+
+exports[`naming changes always pathComponents failing assertion 2`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "method": "get",
+        "pathPattern": "/api/usersList/{userId}",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/usersList/{userId}",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/usersList/{}",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1usersList~1{userId}/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "path component must be param-case when added",
+    "docsLink": undefined,
+    "error": "usersList is not param-case",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation path component naming check",
+    "passed": false,
+    "received": undefined,
+    "where": "added operation: GET /api/usersList/{userId}",
+  },
+]
+`;
+
+exports[`naming changes always pathComponents failing assertion 3`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "method": "get",
+        "pathPattern": "/api/usersList/{userId}",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/usersList/{userId}",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/usersList/{}",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1usersList~1{userId}/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "path component must be param-case when addedOrChanged",
+    "docsLink": undefined,
+    "error": "usersList is not param-case",
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation path component naming check",
+    "passed": false,
+    "received": undefined,
+    "where": "added operation: GET /api/usersList/{userId}",
+  },
+]
+`;
+
+exports[`naming changes always pathComponents passing assertion 1`] = `
+Array [
+  Object {
+    "change": Object {
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users-list/{userId}",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users-list/{}",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users-list~1{userId}/get",
+        "kind": "operation",
+      },
+      "value": Object {
+        "method": "get",
+        "pathPattern": "/api/users-list/{userId}",
+      },
+    },
+    "condition": "path component must be param-case when always",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation path component naming check",
+    "passed": true,
+    "received": undefined,
+    "where": "requirement for operation: GET /api/users-list/{userId}",
+  },
+]
+`;
+
+exports[`naming changes always pathComponents passing assertion 2`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "method": "get",
+        "pathPattern": "/api/users-list/{userId}",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users-list/{userId}",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users-list/{}",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users-list~1{userId}/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "path component must be param-case when added",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation path component naming check",
+    "passed": true,
+    "received": undefined,
+    "where": "added operation: GET /api/users-list/{userId}",
+  },
+]
+`;
+
+exports[`naming changes always pathComponents passing assertion 3`] = `
+Array [
+  Object {
+    "change": Object {
+      "added": Object {
+        "method": "get",
+        "pathPattern": "/api/users-list/{userId}",
+      },
+      "changeType": "added",
+      "location": Object {
+        "conceptualLocation": Object {
+          "method": "get",
+          "path": "/api/users-list/{userId}",
+        },
+        "conceptualPath": Array [
+          "operations",
+          "/api/users-list/{}",
+          "get",
+        ],
+        "jsonPath": "/paths/~1api~1users-list~1{userId}/get",
+        "kind": "operation",
+      },
+    },
+    "condition": "path component must be param-case when addedOrChanged",
+    "docsLink": undefined,
+    "error": undefined,
+    "expected": undefined,
+    "isMust": true,
+    "isShould": false,
+    "name": "operation path component naming check",
+    "passed": true,
+    "received": undefined,
+    "where": "added operation: GET /api/users-list/{userId}",
+  },
+]
+`;
+
 exports[`naming changes always queryParameters failing assertion 1`] = `
 Array [
   Object {
