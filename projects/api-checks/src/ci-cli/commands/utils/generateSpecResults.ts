@@ -8,7 +8,7 @@ import {
   IFact,
   OpenAPITraverser,
 } from '@useoptic/openapi-utilities';
-import { RuleRunner } from '../../../types';
+import { RuleRunner, SpectralInput } from '../../../types';
 
 const packageJson = require('../../../../package.json');
 
@@ -24,7 +24,8 @@ export const generateSpecResults = async (
   checkService: RuleRunner,
   from: ParseOpenAPIResult & { isEmptySpec: boolean },
   to: ParseOpenAPIResult & { isEmptySpec: boolean },
-  context: any
+  context: any,
+  spectralConfig?: SpectralInput
 ): Promise<{
   changes: IChange[];
   results: ResultWithSourcemap[];
@@ -61,7 +62,16 @@ export const generateSpecResults = async (
   );
 
   // TODO RA-V2 - remove the await from checkservice running
-  const results = await checkService.runRulesWithFacts({
+  const spectralResults =
+    spectralConfig && checkService.runSpectralRules
+      ? await checkService.runSpectralRules({
+          ruleset: spectralConfig,
+          nextJsonLike: toJsonLike,
+
+          nextFacts: nextFacts,
+        })
+      : [];
+  const ruleResults = await checkService.runRulesWithFacts({
     currentJsonLike: fromJsonLike,
     nextJsonLike: toJsonLike,
     currentFacts: currentFacts,
@@ -69,6 +79,8 @@ export const generateSpecResults = async (
     changelog: changes,
     context,
   });
+
+  const results = [...spectralResults, ...ruleResults];
 
   const resultsWithSourcemap = await Promise.all(
     results.map(async (result) => {

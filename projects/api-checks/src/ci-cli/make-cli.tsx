@@ -12,7 +12,7 @@ import {
 } from './commands/create-context/create-github-context';
 import { registerCreateManualContext } from './commands/create-context/create-manual-context';
 import { registerCreateGitlabContext } from './commands/create-context/create-gitlab-context';
-import { RuleRunner } from '../types';
+import { RuleRunner, SpectralInput } from '../types';
 const packageJson = require('../../package.json');
 
 export async function getProjectName(): Promise<string> {
@@ -42,7 +42,8 @@ export async function getProjectName(): Promise<string> {
 export async function makeCiCliWithNamedRules(
   rulesetServices: OpticCINamedRulesets,
   options: CliConfig = {},
-  generateContext: () => Object = () => ({})
+  generateContext: () => Object = () => ({}),
+  spectralConfig?: SpectralInput
 ) {
   initSentry(packageJson.version);
   const projectName = await getProjectName();
@@ -57,13 +58,21 @@ export async function makeCiCliWithNamedRules(
   registerCreateGithubContext(cli);
   registerCreateGitlabContext(cli);
   registerCreateManualContext(cli);
-  registerCompare(cli, projectName, rulesetServices, options, generateContext);
+  registerCompare(
+    cli,
+    projectName,
+    rulesetServices,
+    options,
+    generateContext,
+    spectralConfig
+  );
   registerBulkCompare(
     cli,
     projectName,
     rulesetServices,
     options,
-    generateContext
+    generateContext,
+    spectralConfig
   );
 
   return cli;
@@ -72,11 +81,13 @@ export async function makeCiCliWithNamedRules(
 export async function makeCiCli(
   checkService: RuleRunner,
   options: CliConfig = {},
-  generateContext: () => Object = () => ({})
+  generateContext: () => Object = () => ({}),
+  spectralConfig?: SpectralInput
 ) {
   return makeCiCliWithNamedRules(
     { default: checkService },
     options,
-    generateContext
+    generateContext,
+    spectralConfig
   );
 }

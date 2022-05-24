@@ -1,9 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 import { Rule, Ruleset } from '@useoptic/rulesets-base';
+import { RulesetDefinition as SpectralRulesetDefinition } from '@stoplight/spectral-core';
 
 import { OPTIC_CONFIG_PATH } from './constants';
-import { CheckConfiguration } from './checker';
 /**
  * Expected format
  * module.exports = {
@@ -20,10 +20,12 @@ export type OpticConfiguration = {
   gitProvider?: {
     token: string;
   };
-  // TODO RA-V2 - remove checks
-  checks?: CheckConfiguration[];
   rules?: (Ruleset | Rule)[];
   generateContext?: () => Object;
+  spectralConfig?: Extract<
+    SpectralRulesetDefinition,
+    { extends: any; rules: any }
+  >['rules'];
 };
 
 const findOpticConfigPath = (dir: string): string | null => {
