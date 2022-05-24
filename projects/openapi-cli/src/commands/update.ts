@@ -189,6 +189,8 @@ export function updateByTrafficCommand(): Command {
           for await (let line of lines) {
             if (line.trim().length === 0) {
               lines.close();
+              readline.moveCursor(process.stdin, 0, -1);
+              readline.clearLine(process.stdin, 1);
               sourcesController.abort();
             }
           }
