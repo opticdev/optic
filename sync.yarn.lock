@@ -3515,7 +3515,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@useoptic/api-checks@workspace:*, @useoptic/api-checks@workspace:^, @useoptic/api-checks@workspace:projects/api-checks":
+"@useoptic/api-checks@workspace:*, @useoptic/api-checks@workspace:projects/api-checks":
   version: 0.0.0-use.local
   resolution: "@useoptic/api-checks@workspace:projects/api-checks"
   dependencies:
@@ -3823,7 +3823,6 @@ __metadata:
     "@types/json-stable-stringify": ^1.0.33
     "@types/lodash.pick": ^4
     "@types/node": ^17.0.15
-    "@useoptic/api-checks": "workspace:^"
     "@useoptic/json-pointer-helpers": "workspace:^"
     "@useoptic/openapi-utilities": "workspace:^"
     babel-jest: ^27.5.1
