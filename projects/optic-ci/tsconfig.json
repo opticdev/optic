@@ -17,8 +17,10 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "noImplicitAny": false,
+    "downlevelIteration": true,
     "isolatedModules": true,
-    "noImplicitAny": false
+    "emitDeclarationOnly": true
   },
   "include": ["src"],
   "exclude": ["**/*.test.ts", "**/*.test.tsx", "./build/**/*", "examples/**"]
