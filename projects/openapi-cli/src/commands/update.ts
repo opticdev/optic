@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
 import Spinnies from 'spinnies';
+import readline from 'readline';
 
 import { tap, forkable, merge, count, Subject } from '../lib/async-tools';
 import {
@@ -28,12 +29,14 @@ import {
   CapturedInteraction,
   CapturedInteractions,
   HarEntries,
+  ProxyInteractions,
 } from '../captures';
 import {
   DocumentedInteraction,
   DocumentedInteractions,
   Operation,
 } from '../operations';
+import { AbortController } from 'node-abort-controller';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -101,6 +104,10 @@ export function updateByTrafficCommand(): Command {
     .argument('<openapi-file>', 'an OpenAPI spec file to update')
     .description('update an OpenAPI specification from observed traffic')
     .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
+    .option(
+      '--proxy <target-url>',
+      'accept traffic over a proxy targeting the actual service'
+    )
     .action(async (specPath) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
@@ -109,7 +116,9 @@ export function updateByTrafficCommand(): Command {
 
       const options = command.opts();
 
+      let sourcesController = new AbortController();
       const sources: CapturedInteractions[] = [];
+      let interactiveCapture = false;
 
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
@@ -119,6 +128,26 @@ export function updateByTrafficCommand(): Command {
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntries = HarEntries.fromReadable(harFile);
         sources.push(CapturedInteractions.fromHarEntries(harEntries));
+      }
+
+      if (options.proxy) {
+        if (!process.stdin.isTTY) {
+          return command.error(
+            'Can only use --proxy when in an interactive terminal session'
+          );
+        }
+
+        let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
+          options.proxy,
+          sourcesController.signal
+        );
+        sources.push(
+          CapturedInteractions.fromProxyInteractions(proxyInteractions)
+        );
+        console.log(
+          `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
+        );
+        interactiveCapture = true;
       }
 
       if (sources.length < 1) {
@@ -152,11 +181,30 @@ export function updateByTrafficCommand(): Command {
 
       const renderingStats = renderUpdateStats(updateObservations);
 
-      for await (let writtenFilePath of SpecFiles.writeFiles(
-        updatedSpecFiles
-      )) {
-        console.log(`Updated ${writtenFilePath}`);
-      }
+      const handleUserSignals = (async function () {
+        if (interactiveCapture && process.stdin.isTTY) {
+          console.log('Press Enter to finish capturing traffic');
+          // wait for an empty new line on input, which should indicate hitting Enter / Return
+          let lines = readline.createInterface({ input: process.stdin });
+          for await (let line of lines) {
+            if (line.trim().length === 0) {
+              lines.close();
+              readline.moveCursor(process.stdin, 0, -1);
+              readline.clearLine(process.stdin, 1);
+              sourcesController.abort();
+            }
+          }
+        }
+      })();
+
+      const writingSpecFiles = (async function () {
+        for await (let writtenFilePath of SpecFiles.writeFiles(
+          updatedSpecFiles
+        )) {
+          console.log(`Updated ${writtenFilePath}`);
+        }
+      })();
+      await Promise.all([handleUserSignals, writingSpecFiles]);
 
       await renderingStats;
     });

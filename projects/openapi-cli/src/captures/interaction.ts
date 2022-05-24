@@ -1,6 +1,7 @@
 import { CapturedBody } from './body';
 import { OpenAPIV3 } from '../specs';
 import { HttpArchive } from './streams/sources/har';
+import { ProxySource } from './streams/sources/proxy';
 import { URL } from 'url';
 import { HttpMethods, Operation } from '../operations';
 import invariant from 'ts-invariant';
@@ -74,6 +75,58 @@ export class CapturedInteraction {
       },
       response: {
         statusCode: '' + entry.response.status,
+        body: responseBody,
+      },
+    };
+  }
+
+  static fromProxyInteraction(
+    proxyInteraction: ProxySource.Interaction
+  ): CapturedInteraction {
+    const url = new URL(proxyInteraction.request.url);
+
+    const method = HttpMethods[proxyInteraction.request.method];
+    invariant(
+      Operation.isHttpMethod(method),
+      `expect proxy interaction to have a valid request method`
+    );
+
+    let requestBody: CapturedBody | null = null;
+    let responseBody: CapturedBody | null = null;
+
+    const requestBodyBuffer = proxyInteraction.request.body.buffer;
+    if (requestBodyBuffer.length > 0) {
+      let contentType = proxyInteraction.request.headers['content-type'];
+      let contentLength = proxyInteraction.request.headers['content-length'];
+
+      requestBody = CapturedBody.from(
+        requestBodyBuffer,
+        contentType || null,
+        contentLength ? parseInt(contentLength, 10) : 0
+      );
+    }
+
+    const responseBodyBuffer = proxyInteraction.response.body.buffer;
+    if (responseBodyBuffer.length > 0) {
+      let contentType = proxyInteraction.response.headers['content-type'];
+      let contentLength = proxyInteraction.response.headers['content-length'];
+
+      responseBody = CapturedBody.from(
+        responseBodyBuffer,
+        contentType || null,
+        contentLength ? parseInt(contentLength, 10) : 0
+      );
+    }
+
+    return {
+      request: {
+        host: url.hostname,
+        method,
+        path: url.pathname,
+        body: requestBody,
+      },
+      response: {
+        statusCode: '' + proxyInteraction.response.statusCode,
         body: responseBody,
       },
     };
