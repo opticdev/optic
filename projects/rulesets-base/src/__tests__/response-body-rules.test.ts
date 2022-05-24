@@ -100,9 +100,10 @@ describe('ResponseBodyRule', () => {
 
   describe('body assertions', () => {
     describe('requirement', () => {
+      const ruleName = 'response type';
       const ruleRunner = new RuleRunner([
         new ResponseBodyRule({
-          name: 'response type',
+          name: ruleName,
           rule: (responseBodyAssertions) => {
             responseBodyAssertions.body.requirement(
               'must contain a type',
@@ -178,6 +179,33 @@ describe('ResponseBodyRule', () => {
         for (const result of results) {
           expect(result.passed).toBe(false);
         }
+      });
+
+      test('exemption', () => {
+        const json: any = {
+          ...defaultEmptySpec,
+          paths: {
+            '/api/users': {
+              get: {
+                responses: {
+                  '200': {
+                    description: 'hello',
+                    content: {
+                      'application/json': {
+                        'x-optic-exemptions': [ruleName],
+                        schema: {},
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+        const results = ruleRunner.runRulesWithFacts(
+          createRuleInputs(json, json)
+        );
+        expect(results.length).toBe(0);
       });
     });
 

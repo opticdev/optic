@@ -15,6 +15,7 @@ import {
   createRulesetMatcher,
   getRuleAliases,
   createRuleContext,
+  isExempted,
 } from './utils';
 
 import { Rule, Ruleset, RequestRule } from '../rules';
@@ -170,10 +171,13 @@ export const runRequestRules = ({
           beforeApiSpec
         );
         if (beforeRequest) {
-          if (
+          const matches =
             !requestRule.matches ||
-            requestRule.matches(beforeRequest, ruleContext)
-          ) {
+            requestRule.matches(beforeRequest, ruleContext);
+
+          const exempted = isExempted(beforeRequest.raw, requestRule.name);
+
+          if (matches && !exempted) {
             // Run the user's rules that have been stored in requestAssertions for body
             results.push(
               ...requestAssertions.body
@@ -241,10 +245,13 @@ export const runRequestRules = ({
           afterApiSpec
         );
         if (afterRequest) {
-          if (
+          const matches =
             !requestRule.matches ||
-            requestRule.matches(afterRequest, ruleContext)
-          ) {
+            requestRule.matches(afterRequest, ruleContext);
+
+          const exempted = isExempted(afterRequest.raw, requestRule.name);
+
+          if (matches && !exempted) {
             // Run the user's rules that have been stored in requestAssertions for body
             results.push(
               ...requestAssertions.body

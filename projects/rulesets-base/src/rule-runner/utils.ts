@@ -1,4 +1,4 @@
-import { OpenApiKind } from '@useoptic/openapi-utilities';
+import { OpenApiKind, OpenAPIV3 } from '@useoptic/openapi-utilities';
 import { Operation, RuleContext, Specification } from '../types';
 import { NodeDetail } from './rule-runner-types';
 
@@ -94,4 +94,12 @@ export const createRuleContext = ({
       },
     };
   }
+};
+
+export const isExempted = (raw: object, ruleName: string) => {
+  const exemptions = raw['x-optic-exemptions'];
+  return (
+    exemptions === ruleName ||
+    (Array.isArray(exemptions) && exemptions.includes(ruleName))
+  );
 };
