@@ -5,6 +5,7 @@ import {
   createRulesetMatcher,
   getRuleAliases,
   createRuleContext,
+  isExempted,
 } from './utils';
 
 import { Rule, Ruleset, OperationRule } from '../rules';
@@ -149,10 +150,13 @@ export const runOperationRules = ({
         specificationNode: specificationNode,
       });
 
-      if (
+      const matches =
         !operationRule.matches ||
-        operationRule.matches(beforeOperation, ruleContext)
-      ) {
+        operationRule.matches(beforeOperation, ruleContext);
+
+      const exempted = isExempted(beforeOperation.raw, operationRule.name);
+
+      if (matches && !exempted) {
         const operationAssertions = createOperationAssertions();
         // Register the user's rule definition, this is collected in the operationAssertions object
         operationRule.rule(operationAssertions, ruleContext);
@@ -285,10 +289,13 @@ export const runOperationRules = ({
         specificationNode: specificationNode,
       });
 
-      if (
+      const matches =
         !operationRule.matches ||
-        operationRule.matches(afterOperation, ruleContext)
-      ) {
+        operationRule.matches(afterOperation, ruleContext);
+
+      const exempted = isExempted(afterOperation.raw, operationRule.name);
+
+      if (matches && !exempted) {
         const operationAssertions = createOperationAssertions();
 
         // Register the user's rule definition, this is collected in the operationAssertions object
