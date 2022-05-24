@@ -3,7 +3,6 @@ import fs from 'fs';
 import { Rule, Ruleset } from '@useoptic/rulesets-base';
 
 import { OPTIC_CONFIG_PATH } from './constants';
-import { CheckConfiguration } from './checker';
 /**
  * Expected format
  * module.exports = {
@@ -20,8 +19,6 @@ export type OpticConfiguration = {
   gitProvider?: {
     token: string;
   };
-  // TODO RA-V2 - remove checks
-  checks?: CheckConfiguration[];
   rules?: (Ruleset | Rule)[];
   generateContext?: () => Object;
 };
