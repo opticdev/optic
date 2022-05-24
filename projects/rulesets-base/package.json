@@ -17,7 +17,6 @@
     "compare": "yarn ts-node src/index.tsx compare"
   },
   "dependencies": {
-    "@useoptic/api-checks": "workspace:^",
     "@useoptic/json-pointer-helpers": "workspace:^",
     "@useoptic/openapi-utilities": "workspace:^",
     "lodash.pick": "^4.4.0"
