@@ -6,6 +6,7 @@ import {
   createRulesetMatcher,
   getRuleAliases,
   createRuleContext,
+  isExempted,
 } from './utils';
 
 import { Rule, Ruleset, SpecificationRule } from '../rules';
@@ -100,10 +101,16 @@ export const runSpecificationRules = ({
         custom: customRuleContext,
       });
 
-      if (
+      const matches =
         !specificationRule.matches ||
-        specificationRule.matches(beforeSpecification, rulesContext)
-      ) {
+        specificationRule.matches(beforeSpecification, rulesContext);
+
+      const exempted = isExempted(
+        beforeSpecification.raw,
+        specificationRule.name
+      );
+
+      if (matches && !exempted) {
         const specificationAssertions = createSpecificationAssertions();
         // Register the user's rule definition, this is collected in the specificationAssertions object
         specificationRule.rule(specificationAssertions, rulesContext);
@@ -125,10 +132,16 @@ export const runSpecificationRules = ({
         specificationNode: specificationNode,
         custom: customRuleContext,
       });
-      if (
+
+      const matches =
         !specificationRule.matches ||
-        specificationRule.matches(afterSpecification, rulesContext)
-      ) {
+        specificationRule.matches(afterSpecification, rulesContext);
+
+      const exempted = isExempted(
+        afterSpecification.raw,
+        specificationRule.name
+      );
+      if (matches && !exempted) {
         const specificationAssertions = createSpecificationAssertions();
         // Register the user's rule definition, this is collected in the specificationAssertions object
         specificationRule.rule(specificationAssertions, rulesContext);

@@ -15,6 +15,7 @@ import {
   createRuleContext,
   createRulesetMatcher,
   getRuleAliases,
+  isExempted,
 } from './utils';
 
 import { Rule, Ruleset, ResponseBodyRule } from '../rules';
@@ -169,10 +170,11 @@ export const runResponseBodyRules = ({
       );
       if (beforeResponse) {
         for (const beforeBody of beforeResponse.bodies) {
-          if (
+          const matches =
             !responseRule.matches ||
-            responseRule.matches(beforeBody, ruleContext)
-          ) {
+            responseRule.matches(beforeBody, ruleContext);
+          const exempted = isExempted(beforeBody.raw, responseRule.name);
+          if (matches && !exempted) {
             // Run the user's rules that have been stored in responseAssertions for body
             results.push(
               ...responseAssertions.body
@@ -241,10 +243,14 @@ export const runResponseBodyRules = ({
             maybeBeforeResponse?.bodies.find(
               (body) => body.contentType === afterBody.contentType
             ) || null;
-          if (
+
+          const matches =
             !responseRule.matches ||
-            responseRule.matches(afterBody, ruleContext)
-          ) {
+            responseRule.matches(afterBody, ruleContext);
+
+          const exempted = isExempted(afterBody.raw, responseRule.name);
+
+          if (matches && !exempted) {
             // Run the user's rules that have been stored in responseAssertions for body
             results.push(
               ...responseAssertions.body

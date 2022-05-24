@@ -93,9 +93,10 @@ describe('ResponseRule', () => {
   });
 
   describe('assertion helpers', () => {
+    const ruleName = 'request';
     const ruleRunner = new RuleRunner([
       new ResponseRule({
-        name: 'request',
+        name: ruleName,
         rule: (responseAssertions) => {
           responseAssertions.requirement.hasResponseHeaderMatching('isgood', {
             description: Matchers.string,
@@ -164,6 +165,34 @@ describe('ResponseRule', () => {
       for (const result of results) {
         expect(result.passed).toBe(false);
       }
+    });
+
+    test('exemption', () => {
+      const json: any = {
+        ...defaultEmptySpec,
+        paths: {
+          '/api/users': {
+            get: {
+              responses: {
+                '200': {
+                  'x-optic-exemptions': [ruleName],
+                  description: 'hello',
+                  headers: { isnotgood: { description: 'hello', schema: {} } },
+                  content: {
+                    'application/xml': {
+                      schema: {},
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+      const results = ruleRunner.runRulesWithFacts(
+        createRuleInputs(json, json)
+      );
+      expect(results.length).toBe(0);
     });
 
     test('inverted assertion', () => {

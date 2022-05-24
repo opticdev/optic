@@ -15,6 +15,7 @@ import {
   createRuleContext,
   createRulesetMatcher,
   getRuleAliases,
+  isExempted,
 } from './utils';
 
 import { Rule, Ruleset, ResponseRule } from '../rules';
@@ -165,41 +166,46 @@ export const runResponseRules = ({
       const responseAssertions = createResponseAssertions();
       // Register the user's rule definition, this is collected in the responseAssertions object
       responseRule.rule(responseAssertions, ruleContext);
-      if (
-        beforeResponse &&
-        (!responseRule.matches ||
-          responseRule.matches(beforeResponse, ruleContext))
-      ) {
-        // Run the user's rules that have been stored in responseAssertions
-        results.push(
-          ...responseAssertions
-            .runBefore(beforeResponse, responseNode.change)
-            .map((assertionResult) =>
-              createResponseResult(
-                assertionResult,
-                beforeResponse,
-                beforeOperation,
-                responseRule
-              )
-            )
-        );
-        for (const [key, header] of beforeResponse.headers.entries()) {
-          const headerChange = responseNode.headers.get(key)?.change || null;
 
-          // Run the user's rules that have been stored in responseAssertions for header
+      if (beforeResponse) {
+        const matches =
+          !responseRule.matches ||
+          responseRule.matches(beforeResponse, ruleContext);
+
+        const exempted = isExempted(beforeResponse.raw, responseRule.name);
+
+        if (matches && !exempted) {
+          // Run the user's rules that have been stored in responseAssertions
           results.push(
-            ...responseAssertions.header
-              .runBefore(header, headerChange)
+            ...responseAssertions
+              .runBefore(beforeResponse, responseNode.change)
               .map((assertionResult) =>
-                createResponseHeaderResult(
+                createResponseResult(
                   assertionResult,
-                  key,
                   beforeResponse,
                   beforeOperation,
                   responseRule
                 )
               )
           );
+          for (const [key, header] of beforeResponse.headers.entries()) {
+            const headerChange = responseNode.headers.get(key)?.change || null;
+
+            // Run the user's rules that have been stored in responseAssertions for header
+            results.push(
+              ...responseAssertions.header
+                .runBefore(header, headerChange)
+                .map((assertionResult) =>
+                  createResponseHeaderResult(
+                    assertionResult,
+                    key,
+                    beforeResponse,
+                    beforeOperation,
+                    responseRule
+                  )
+                )
+            );
+          }
         }
       }
     }
@@ -222,44 +228,48 @@ export const runResponseRules = ({
       // Register the user's rule definition, this is collected in the responseAssertions object
       responseRule.rule(responseAssertions, ruleContext);
 
-      if (
-        afterResponse &&
-        (!responseRule.matches ||
-          responseRule.matches(afterResponse, ruleContext))
-      ) {
-        // Run the user's rules that have been stored in responseAssertions
-        results.push(
-          ...responseAssertions
-            .runAfter(maybeBeforeResponse, afterResponse, responseNode.change)
-            .map((assertionResult) =>
-              createResponseResult(
-                assertionResult,
-                afterResponse,
-                afterOperation,
-                responseRule
-              )
-            )
-        );
-        for (const [key, header] of afterResponse.headers.entries()) {
-          const maybeBeforeHeader =
-            maybeBeforeResponse?.headers.get(key) || null;
+      if (afterResponse) {
+        const matches =
+          !responseRule.matches ||
+          responseRule.matches(afterResponse, ruleContext);
 
-          const headerChange = responseNode.headers.get(key)?.change || null;
+        const exempted = isExempted(afterResponse.raw, responseRule.name);
 
-          // Run the user's rules that have been stored in responseAssertions for header
+        if (matches && !exempted) {
+          // Run the user's rules that have been stored in responseAssertions
           results.push(
-            ...responseAssertions.header
-              .runAfter(maybeBeforeHeader, header, headerChange)
+            ...responseAssertions
+              .runAfter(maybeBeforeResponse, afterResponse, responseNode.change)
               .map((assertionResult) =>
-                createResponseHeaderResult(
+                createResponseResult(
                   assertionResult,
-                  key,
                   afterResponse,
                   afterOperation,
                   responseRule
                 )
               )
           );
+          for (const [key, header] of afterResponse.headers.entries()) {
+            const maybeBeforeHeader =
+              maybeBeforeResponse?.headers.get(key) || null;
+
+            const headerChange = responseNode.headers.get(key)?.change || null;
+
+            // Run the user's rules that have been stored in responseAssertions for header
+            results.push(
+              ...responseAssertions.header
+                .runAfter(maybeBeforeHeader, header, headerChange)
+                .map((assertionResult) =>
+                  createResponseHeaderResult(
+                    assertionResult,
+                    key,
+                    afterResponse,
+                    afterOperation,
+                    responseRule
+                  )
+                )
+            );
+          }
         }
       }
     }
