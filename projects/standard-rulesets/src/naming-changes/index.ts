@@ -5,6 +5,7 @@ import { createQueryParameterChecks } from './queryParameters';
 import { createRequestHeaderParameterChecks } from './requestHeaders';
 import { createResponseHeaderParameterChecks } from './responseHeader';
 import { createCookieParameterChecks } from './cookieParameters';
+import { createPathComponentChecks } from './pathComponents';
 
 export class NamingChangesRuleset extends Ruleset<Rule[]> {
   constructor(config: {
@@ -68,6 +69,11 @@ export class NamingChangesRuleset extends Ruleset<Rule[]> {
     if (options.responseHeaders) {
       namingChangeRules.push(
         createResponseHeaderParameterChecks(applies, options.responseHeaders)
+      );
+    }
+    if (options.pathComponents) {
+      namingChangeRules.push(
+        createPathComponentChecks(applies, options.pathComponents)
       );
     }
 
