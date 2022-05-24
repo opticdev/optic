@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/optic-ci",
   "packageManager": "yarn@3.0.2",
-  "version": "0.25.9",
+  "version": "0.25.11",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -10,24 +10,30 @@
   "bin": "build/index.js",
   "scripts": {
     "dev:test": "jest --colors",
-    "build": "yarn tsc --build --verbose",
+    "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\"",
     "ws:build": "yarn build",
     "ws:clean": "rm -rf build",
     "ws:test": "yarn dev:test",
     "local:run": "yarn ts-node src/index.ts"
   },
   "devDependencies": {
+    "@babel/cli": "^7.16.8",
     "@babel/core": "^7.17.0",
     "@babel/plugin-transform-runtime": "^7.16.0",
     "@babel/preset-env": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
+    "@types/analytics-node": "^3.1.7",
     "@types/babel__core": "^7",
+    "@types/is-url": "^1.2.30",
     "@types/jest": "^26.0.24",
     "@types/json-stable-stringify": "^1.0.33",
+    "@types/lodash.groupby": "^4.6.6",
     "@types/node": "^17.0.15",
+    "@types/uuid": "^8.3.1",
     "@useoptic/rulesets-base": "workspace:*",
-    "@useoptic/standard-rulesets": "workspace:^",
+    "@useoptic/standard-rulesets": "workspace:*",
     "babel-jest": "^27.5.1",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "dotenv": "^16.0.0",
     "jest": "^27.5.1",
     "prettier": "^2.4.1",
@@ -35,14 +41,27 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@useoptic/api-checks": "workspace:*"
-  },
-  "peerDependencies": {
-    "@useoptic/rulesets-base": "workspace:*"
+    "@babel/runtime": "^7.17.2",
+    "@octokit/rest": "^18.12.0",
+    "@sentry/node": "^6.17.6",
+    "@stoplight/spectral-core": "^1.8.1",
+    "@useoptic/openapi-io": "workspace:*",
+    "@useoptic/openapi-utilities": "workspace:*",
+    "@useoptic/rulesets-base": "workspace:*",
+    "analytics-node": "^6.0.0",
+    "commander": "^9.0.0",
+    "is-url": "^1.2.4",
+    "json-stable-stringify": "^1.0.1",
+    "lodash.groupby": "^4.6.0",
+    "node-fetch": "^2.6.7",
+    "uuid": "^8.3.2"
   },
   "jest": {
     "testPathIgnorePatterns": [
       "build"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
     ],
     "moduleNameMapper": {
       "^nimma/fallbacks$": [
@@ -52,10 +71,6 @@
       "^nimma/legacy$": [
         "<rootDir>../../node_modules/nimma/dist/legacy/cjs/index.js",
         "<rootDir>../../../../node_modules/nimma/dist/legacy/cjs/index.js"
-      ],
-      "csv-parse/sync": [
-        "<rootDir>../../node_modules/csv-parse/dist/cjs/sync.cjs",
-        "<rootDir>../../../../node_modules/csv-parse/dist/cjs/sync.cjs"
       ]
     }
   }

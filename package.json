@@ -1,13 +1,12 @@
 {
   "name": "openapi-workspaces",
   "private": true,
-  "version": "0.25.9",
+  "version": "0.25.11",
   "workspaces": [
     "projects/json-pointer-helpers",
     "projects/openapi-io",
     "projects/openapi-utilities",
     "projects/openapi-diff-experiment",
-    "projects/api-checks",
     "projects/rulesets-base",
     "projects/optic-ci",
     "projects/openapi-cli",
