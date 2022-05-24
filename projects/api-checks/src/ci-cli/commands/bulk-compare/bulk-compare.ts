@@ -26,14 +26,15 @@ import { sendBulkGithubMessage } from './bulk-github-comment';
 import { sendBulkGitlabMessage } from './bulk-gitlab-comment';
 import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
-import { RuleRunner } from '../../../types';
+import { RuleRunner, SpectralInput } from '../../../types';
 
 export const registerBulkCompare = (
   cli: Command,
   projectName: string,
   rulesetServices: OpticCINamedRulesets,
   cliConfig: CliConfig,
-  generateContext: () => Object = () => ({})
+  generateContext: () => Object = () => ({}),
+  spectralConfig?: SpectralInput
 ) => {
   cli
     .command('bulk-compare')
@@ -97,6 +98,7 @@ export const registerBulkCompare = (
             projectName,
             cliConfig,
             generateContext,
+            spectralConfig,
           });
           process.exit(0);
         }
@@ -141,11 +143,13 @@ const compareSpecs = async ({
   comparisons,
   onComparisonComplete,
   onComparisonError,
+  spectralConfig,
 }: {
   checkService: RuleRunner;
   comparisons: Map<string, Comparison>;
   onComparisonComplete: (id: string, data: ComparisonData) => void;
   onComparisonError: (id: string, error: any) => void;
+  spectralConfig?: SpectralInput;
 }) => {
   const PARALLEL_REQUESTS = 4;
   const inflightRequests = new Map<string, Promise<string>>();
@@ -177,7 +181,8 @@ const compareSpecs = async ({
             checkService,
             from,
             to,
-            comparison.context
+            comparison.context,
+            spectralConfig
           );
           resolve({
             id,
@@ -255,6 +260,7 @@ const runBulkCompare = async ({
   ciContext,
   cliConfig,
   generateContext,
+  spectralConfig,
 }: {
   checkService: RuleRunner;
   input: string;
@@ -265,6 +271,7 @@ const runBulkCompare = async ({
   ciContext?: string;
   cliConfig: CliConfig;
   generateContext: () => Object;
+  spectralConfig?: SpectralInput;
 }) => {
   console.log('Reading input file...');
   let numberOfErrors = 0;
@@ -286,6 +293,7 @@ const runBulkCompare = async ({
 
   await compareSpecs({
     checkService,
+    spectralConfig,
     comparisons: initialComparisons,
     onComparisonComplete: (id, comparison) => {
       const { results, changes } = comparison;
