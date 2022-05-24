@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/rulesets-base",
   "packageManager": "yarn@3.0.2",
-  "version": "0.25.10",
+  "version": "0.25.12",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -25,10 +25,12 @@
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",
-    "@babel/plugin-transform-runtime": "^7.16.0",
-    "@babel/preset-env": "^7.16.0",
-    "@babel/preset-typescript": "^7.16.0",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "^7.17.0",
+    "@babel/preset-react": "^7.17.0",
+    "@babel/preset-typescript": "^7.17.0",
     "@types/babel__core": "^7",
+    "@types/babel__preset-env": "^7",
     "@types/jest": "^26.0.24",
     "@types/json-stable-stringify": "^1.0.33",
     "@types/lodash.pick": "^4",
