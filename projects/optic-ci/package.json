@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/optic-ci",
   "packageManager": "yarn@3.0.2",
-  "version": "0.25.10",
+  "version": "0.25.11",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -47,6 +47,7 @@
     "@stoplight/spectral-core": "^1.8.1",
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
+    "@useoptic/rulesets-base": "workspace:*",
     "analytics-node": "^6.0.0",
     "commander": "^9.0.0",
     "is-url": "^1.2.4",
@@ -54,9 +55,6 @@
     "lodash.groupby": "^4.6.0",
     "node-fetch": "^2.6.7",
     "uuid": "^8.3.2"
-  },
-  "peerDependencies": {
-    "@useoptic/rulesets-base": "workspace:*"
   },
   "jest": {
     "testPathIgnorePatterns": [
