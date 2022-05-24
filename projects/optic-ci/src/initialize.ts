@@ -1,4 +1,4 @@
-import { makeCiCli } from '@useoptic/api-checks';
+import { makeCiCli } from './cli/make-cli';
 import { OpticConfiguration } from './config';
 import { initializeRuleRunner } from './rule-runner';
 
