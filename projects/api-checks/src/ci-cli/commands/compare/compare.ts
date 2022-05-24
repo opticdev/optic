@@ -23,7 +23,7 @@ import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
 import { getRelativeRepoPath } from '../utils/get-relative-path';
 import { inGit } from '@useoptic/openapi-io';
-import { RuleRunner } from '../../../types';
+import { RuleRunner, SpectralInput } from '../../../types';
 
 const parseContextObject = (context?: string): any => {
   try {
@@ -43,7 +43,8 @@ export const registerCompare = (
   projectName: string,
   rulesetServices: OpticCINamedRulesets,
   cliConfig: CliConfig,
-  generateContext: () => Object
+  generateContext: () => Object,
+  spectralConfig?: SpectralInput
 ) => {
   cli
     .command('compare')
@@ -107,6 +108,7 @@ export const registerCompare = (
             cliConfig: cliConfig,
             verbose: options.verbose,
             output: options.output,
+            spectralConfig,
           });
         }
       )
@@ -124,6 +126,7 @@ const runCompare = async ({
   projectName,
   output,
   verbose,
+  spectralConfig,
 }: {
   from?: string;
   to?: string;
@@ -135,6 +138,7 @@ const runCompare = async ({
   projectName: string;
   output: 'pretty' | 'plain' | 'json';
   verbose: boolean;
+  spectralConfig?: SpectralInput;
 }) => {
   console.log('Loading spec files');
   const [parsedFrom, parsedTo] = await Promise.all([
@@ -170,7 +174,8 @@ const runCompare = async ({
       apiCheckService,
       parsedFrom,
       parsedTo,
-      context
+      context,
+      spectralConfig
     );
   } catch (e) {
     console.log('Error running rules');

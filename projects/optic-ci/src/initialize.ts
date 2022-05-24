@@ -10,6 +10,7 @@ export const initializeCli = (config: OpticConfiguration) => {
       gitProvider: config.gitProvider,
       ciProvider: 'github',
     },
-    config.generateContext
+    config.generateContext,
+    config.spectralConfig
   );
 };

@@ -1,4 +1,21 @@
-import { IFact, IChange, OpenAPIV3, Result } from '@useoptic/openapi-utilities';
+import {
+  IFact,
+  IChange,
+  OpenAPIV3,
+  Result,
+  OperationLocation,
+  ILocation,
+  OpenApiKind,
+} from '@useoptic/openapi-utilities';
+import {
+  ISpectralDiagnostic,
+  Spectral,
+  RulesetDefinition as SpectralRulesetDefinition,
+} from '@stoplight/spectral-core';
+import { oas } from '@stoplight/spectral-rulesets';
+
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import isEqual from 'lodash.isequal';
 
 import { groupFacts } from './group-facts';
 import { runSpecificationRules } from './specification';
@@ -8,8 +25,67 @@ import { runResponseBodyRules } from './response-body';
 import { runResponseRules } from './response';
 import { Rule, Ruleset } from '../rules';
 
+type SpectralRules = Extract<
+  SpectralRulesetDefinition,
+  { extends: any; rules: any }
+>['rules'];
+
 export class RuleRunner {
   constructor(private rules: (Ruleset | Rule)[]) {}
+
+  async runSpectralRules({
+    ruleset,
+    nextFacts,
+    nextJsonLike,
+  }: {
+    ruleset: SpectralRules;
+    nextFacts: IFact[];
+    nextJsonLike: OpenAPIV3.Document;
+  }): Promise<Result[]> {
+    const spectral = new Spectral();
+    spectral.setRuleset({
+      extends: [[oas as SpectralRulesetDefinition, 'all']],
+      rules: ruleset,
+    });
+    const operations = nextFacts.filter(
+      (i) => i.location.kind === OpenApiKind.Operation
+    );
+
+    const results: ISpectralDiagnostic[] = await spectral.run(
+      nextJsonLike as any
+    );
+    const opticResult: Result[] = results.map((spectralResult) => {
+      const operationPath = spectralResult.path.slice(0, 3);
+      const matchingOperation = operations.find((i) =>
+        isEqual(i.location.conceptualPath, operationPath)
+      );
+
+      const location: ILocation = {
+        conceptualLocation: (matchingOperation
+          ? matchingOperation.location.conceptualLocation
+          : { path: 'This Specification', method: '' }) as OperationLocation,
+        jsonPath: jsonPointerHelpers.compile(
+          spectralResult.path.map((i) => i.toString())
+        ),
+        conceptualPath: [],
+        kind: 'API' as any,
+      } as any;
+
+      return {
+        condition: spectralResult.code.toString(),
+        passed: false,
+        error: spectralResult.message,
+        isMust: true,
+        isShould: false,
+        where: 'requirement ',
+        change: {
+          location,
+        } as any,
+      };
+    });
+
+    return opticResult;
+  }
 
   runRulesWithFacts({
     context,

@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { Rule, Ruleset } from '@useoptic/rulesets-base';
+import { RulesetDefinition as SpectralRulesetDefinition } from '@stoplight/spectral-core';
 
 import { OPTIC_CONFIG_PATH } from './constants';
 /**
@@ -21,6 +22,10 @@ export type OpticConfiguration = {
   };
   rules?: (Ruleset | Rule)[];
   generateContext?: () => Object;
+  spectralConfig?: Extract<
+    SpectralRulesetDefinition,
+    { extends: any; rules: any }
+  >['rules'];
 };
 
 const findOpticConfigPath = (dir: string): string | null => {
