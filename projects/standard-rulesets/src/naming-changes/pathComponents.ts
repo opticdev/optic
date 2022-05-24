@@ -16,7 +16,7 @@ export const createPathComponentChecks = (
     const pathComponents = path.split('/').filter(
       (component) =>
         // not empty
-        component.length &&
+        component.length > 0 &&
         // not a variable component
         !component.startsWith('{')
     );
@@ -33,16 +33,20 @@ export const createPathComponentChecks = (
     name: 'operation path component naming check',
     rule: (operationAssertions) => {
       if (applies === 'always') {
-        operationAssertions.requirement(caseCondition, (input) =>
-          check(input.path)
+        operationAssertions.requirement(caseCondition, (operation) =>
+          check(operation.path)
         );
       } else if (applies === 'addedOrChanged') {
-        operationAssertions.added(caseCondition, (input) => check(input.path));
-        operationAssertions.changed(caseCondition, (input) =>
-          check(input.path)
+        operationAssertions.added(caseCondition, (operation) =>
+          check(operation.path)
+        );
+        operationAssertions.changed(caseCondition, (operation) =>
+          check(operation.path)
         );
       } else if (applies === 'added') {
-        operationAssertions.added(caseCondition, (input) => check(input.path));
+        operationAssertions.added(caseCondition, (operation) =>
+          check(operation.path)
+        );
       }
     },
   });
