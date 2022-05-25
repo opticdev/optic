@@ -74,6 +74,7 @@ const createRequestBodyResult = (
   name: rule.name,
   condition: assertionResult.condition,
   passed: assertionResult.passed,
+  exempted: assertionResult.exempted,
   received: assertionResult.received,
   expected: assertionResult.expected,
   error: assertionResult.error,
@@ -177,13 +178,14 @@ export const runRequestRules = ({
 
           const exempted = isExempted(beforeRequest.raw, requestRule.name);
 
-          if (matches && !exempted) {
+          if (matches) {
             // Run the user's rules that have been stored in requestAssertions for body
             results.push(
               ...requestAssertions.body
                 .runBefore(
                   beforeRequest,
-                  requestNode.bodies.get(contentType)?.change || null
+                  requestNode.bodies.get(contentType)?.change || null,
+                  exempted
                 )
                 .map((assertionResult) =>
                   createRequestBodyResult(
@@ -203,7 +205,7 @@ export const runRequestRules = ({
               // Run the user's rules that have been stored in requestAssertions for property
               results.push(
                 ...requestAssertions.property
-                  .runBefore(property, propertyChange)
+                  .runBefore(property, propertyChange, exempted)
                   .map((assertionResult) =>
                     createRequestPropertyResult(
                       assertionResult,
@@ -251,14 +253,15 @@ export const runRequestRules = ({
 
           const exempted = isExempted(afterRequest.raw, requestRule.name);
 
-          if (matches && !exempted) {
+          if (matches) {
             // Run the user's rules that have been stored in requestAssertions for body
             results.push(
               ...requestAssertions.body
                 .runAfter(
                   maybeBeforeRequest,
                   afterRequest,
-                  requestNode.bodies.get(contentType)?.change || null
+                  requestNode.bodies.get(contentType)?.change || null,
+                  exempted
                 )
                 .map((assertionResult) =>
                   createRequestBodyResult(
@@ -280,7 +283,12 @@ export const runRequestRules = ({
               // Run the user's rules that have been stored in requestAssertions for property
               results.push(
                 ...requestAssertions.property
-                  .runAfter(maybeBeforeProperty, property, propertyChange)
+                  .runAfter(
+                    maybeBeforeProperty,
+                    property,
+                    propertyChange,
+                    exempted
+                  )
                   .map((assertionResult) =>
                     createRequestPropertyResult(
                       assertionResult,
