@@ -84,14 +84,18 @@ export const logComparison = (
       const icon = result.passed
         ? chalk.green('✔')
         : result.exempted
-        ? chalk.yellow('-')
+        ? chalk.white('✔')
         : chalk.red('x');
       const requirement = `${result.where} ${
         result.isMust ? 'must' : 'should'
       } ${result.condition}`;
 
       if (result.name) {
-        console.log(`${getIndent(2)}Rule: ${result.name}`);
+        console.log(
+          `${getIndent(2)}Rule: ${result.name}${
+            result.exempted ? ' (exempted)' : ''
+          }`
+        );
       }
       console.log(`${getIndent(2)}${icon} ${requirement}`);
 
@@ -105,12 +109,11 @@ export const logComparison = (
         }
       }
       if (!result.passed && result.exempted) {
-        console.log(getIndent(3) + chalk.yellow('Exempted'));
-        console.log(getIndent(3) + chalk.yellow(result.error));
+        console.log(getIndent(3) + result.error);
         if (result.expected && result.received) {
-          console.log(getIndent(3) + chalk.yellow('Expected Value:'));
+          console.log(getIndent(3) + 'Expected Value:');
           console.log(formatRawValue(result.expected, getIndent(3)));
-          console.log(getIndent(3) + chalk.yellow('Received Value:'));
+          console.log(getIndent(3) + 'Received Value:');
           console.log(formatRawValue(result.received, getIndent(3)));
         }
       }
@@ -141,7 +144,5 @@ export const logComparison = (
   console.log(`${numberOfChanges} changes detected`);
   console.log(chalk.green.bold(`${passedNumberOfChecks} checks passed`));
   console.log(chalk.red.bold(`${failedNumberOfChecks} checks failed`));
-  console.log(
-    chalk.yellow.bold(`${exemptedFailedNumberOfChecks} checks exempted`)
-  );
+  console.log(chalk.bold(`${exemptedFailedNumberOfChecks} checks exempted`));
 };
