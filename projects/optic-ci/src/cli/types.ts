@@ -79,6 +79,5 @@ export type RuleRunner = {
     changelog: IChange[];
     nextJsonLike: OpenAPIV3.Document;
     currentJsonLike: OpenAPIV3.Document;
-    // TODO RA-V2 remove Promise<Result[]>
-  }) => Result[] | Promise<Result[]>;
+  }) => Result[];
 };

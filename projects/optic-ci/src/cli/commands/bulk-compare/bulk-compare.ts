@@ -223,7 +223,6 @@ export const parseJsonComparisonInput = async (
         id,
         fromFileName: comparison.from,
         toFileName: comparison.to,
-        // TODO RA-V2 - remove context as argument for bulk input
         context: comparison.context || generateContext(),
         loading: true,
       });
