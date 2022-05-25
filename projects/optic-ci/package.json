@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/optic-ci",
   "packageManager": "yarn@3.0.2",
-  "version": "0.25.14",
+  "version": "0.25.15",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -52,6 +52,7 @@
     "@useoptic/openapi-utilities": "workspace:*",
     "@useoptic/rulesets-base": "workspace:*",
     "analytics-node": "^6.0.0",
+    "chalk": "^4.1.2",
     "commander": "^9.0.0",
     "is-url": "^1.2.4",
     "json-stable-stringify": "^1.0.1",

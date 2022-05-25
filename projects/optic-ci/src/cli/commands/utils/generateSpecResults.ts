@@ -61,17 +61,16 @@ export const generateSpecResults = async (
     })
   );
 
-  // TODO RA-V2 - remove the await from checkservice running
   const spectralResults =
     spectralConfig && checkService.runSpectralRules
       ? await checkService.runSpectralRules({
           ruleset: spectralConfig,
           nextJsonLike: toJsonLike,
-
           nextFacts: nextFacts,
         })
       : [];
-  const ruleResults = await checkService.runRulesWithFacts({
+
+  const ruleResults = checkService.runRulesWithFacts({
     currentJsonLike: fromJsonLike,
     nextJsonLike: toJsonLike,
     currentFacts: currentFacts,
@@ -86,7 +85,6 @@ export const generateSpecResults = async (
     results.map(async (result) => {
       return {
         ...result,
-        // TODO RA-V2 - don't redo sourcemap generation
         sourcemap:
           (result.change as any).changeType === ChangeType.Removed
             ? await findFileAndLinesFromBefore(result.change.location.jsonPath)
