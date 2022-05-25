@@ -49,7 +49,6 @@ export const registerCompare = (
     .command('compare')
     .option('--from <from>', 'from file or rev:file, defaults empty spec')
     .option('--to <to>', 'to file or rev:file, defaults empty spec')
-    // TODO RA-V2 - remove context as cli arg
     .option('--context <context>', 'json of context')
     .option('--verbose', 'show all checks, even passing', false)
     .option(
