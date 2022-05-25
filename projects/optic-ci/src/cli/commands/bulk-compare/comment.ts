@@ -9,8 +9,16 @@ export const createBulkCommentBody = (
 ) => {
   const renderedComparisons = comparisons.map((comparison) => {
     const { opticWebUrl, changes, inputs, results } = comparison;
-    const failingChecks = results.filter((result) => !result.passed).length;
-    const totalChecks = results.length;
+
+    let totalChecks = results.length;
+    let failingChecks = 0;
+    let exemptedFailingChecks = 0;
+
+    for (const result of results) {
+      if (result.passed) continue;
+      if (result.exempted) exemptedFailingChecks += 1;
+      else failingChecks += 1;
+    }
 
     const comparisonDescription =
       inputs.from && inputs.to
@@ -20,6 +28,12 @@ export const createBulkCommentBody = (
         : inputs.from && !inputs.to
         ? `removed spec \`${inputs.from}\``
         : 'empty specs';
+
+    const exemptedChunk =
+      exemptedFailingChecks > 0
+        ? ` ${exemptedFailingChecks} would have failed but were exempted.`
+        : '';
+
     const body = `
 #### Changelog for [${comparisonDescription}](${opticWebUrl})
 
@@ -27,10 +41,10 @@ export const createBulkCommentBody = (
 
   ${
     failingChecks > 0
-      ? `⚠️ **${failingChecks}** / **${totalChecks}** checks failed.`
+      ? `⚠️ **${failingChecks}** / **${totalChecks}** checks failed.${exemptedChunk}`
       : totalChecks > 0
-      ? `✅ all checks passed (**${totalChecks}**).`
-      : `ℹ️ No automated checks have run.`
+      ? `✅ all checks passed (**${totalChecks}**).${exemptedChunk}`
+      : `ℹ️  no automated checks have run.`
   }
 `;
     return body;

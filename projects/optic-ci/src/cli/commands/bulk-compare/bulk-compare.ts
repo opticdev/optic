@@ -282,11 +282,12 @@ const runBulkCompare = async ({
     comparisons: initialComparisons,
     onComparisonComplete: (id, comparison) => {
       const { results, changes } = comparison;
-      if (results.some((result) => !result.passed)) {
+      if (results.some((result) => !result.passed && !result.exempted)) {
         hasChecksFailing = true;
         numberOfComparisonsWithErrors += 1;
         numberOfErrors += results.reduce(
-          (count, result) => (result.passed ? count : count + 1),
+          (count, result) =>
+            result.passed || result.exempted ? count : count + 1,
           0
         );
       }

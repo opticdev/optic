@@ -153,7 +153,7 @@ const runCompare = async ({
   const toName = to || 'Empty Spec';
   console.log(`Comparing ${fromName} to ${toName}\n`);
 
-  let compareOutput;
+  let compareOutput: Awaited<ReturnType<typeof generateSpecResults>>;
   try {
     compareOutput = await generateSpecResults(
       apiCheckService,
@@ -171,7 +171,7 @@ const runCompare = async ({
   if (output === 'json') {
     const filteredResults = verbose
       ? results
-      : results.filter((x) => !x.passed);
+      : results.filter((x) => !x.passed && !x.exempted);
     console.log(JSON.stringify(filteredResults, null, 2));
   } else {
     logComparison(
@@ -273,7 +273,7 @@ const runCompare = async ({
     }
   }
 
-  const hasError = results.some((result) => !result.passed);
+  const hasError = results.some((result) => !result.passed && !result.exempted);
 
   trackEvent(
     'optic_ci.compare',
@@ -283,7 +283,8 @@ const runCompare = async ({
       isInCi: process.env.CI === 'true',
       projectName,
       numberOfErrors: results.reduce(
-        (count, result) => (result.passed ? count : count + 1),
+        (count, result) =>
+          result.passed || result.exempted ? count : count + 1,
         0
       ),
       numberOfChanges: changes.length,
