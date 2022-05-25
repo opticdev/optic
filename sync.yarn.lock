@@ -3487,6 +3487,7 @@ __metadata:
     analytics-node: ^6.0.0
     babel-jest: ^27.5.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
+    chalk: ^4.1.2
     commander: ^9.0.0
     dotenv: ^16.0.0
     is-url: ^1.2.4
@@ -4417,7 +4418,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^4.0.0, chalk@npm:^4.1.0":
+"chalk@npm:^4.0.0, chalk@npm:^4.1.0, chalk@npm:^4.1.2":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
   dependencies:
