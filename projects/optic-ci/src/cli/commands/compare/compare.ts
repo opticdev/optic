@@ -237,7 +237,7 @@ const runCompare = async ({
               'Failed to post comment to github - exiting with comparison rules run exit code.'
             );
             console.error(e);
-            if ((e as Error).name !== 'UserError') {
+            if (!(e instanceof UserError)) {
               SentryClient?.captureException(e);
             }
           }
@@ -255,7 +255,7 @@ const runCompare = async ({
               'Failed to post comment to gitlab - exiting with comparison rules run exit code.'
             );
             console.error(e);
-            if ((e as Error).name !== 'UserError') {
+            if (!(e instanceof UserError)) {
               SentryClient?.captureException(e);
             }
           }
@@ -267,7 +267,7 @@ const runCompare = async ({
       );
       console.error(e);
 
-      if ((e as Error).name !== 'UserError') {
+      if (!(e instanceof UserError)) {
         SentryClient?.captureException(e);
       }
     }
