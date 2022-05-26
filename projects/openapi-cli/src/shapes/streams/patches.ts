@@ -19,11 +19,13 @@ export class ShapePatches {
       if (!schema || (!schema.type && !Schema.isPolymorphic(schema))) {
         let newSchema = Schema.baseFromValue(body.value);
 
-        yield newSchemaPatch(newSchema, schema || null, {
+        let patch = newSchemaPatch(newSchema, schema || null, {
           location: shapeLocation || undefined,
         });
 
-        schema = newSchema;
+        yield patch;
+
+        schema = Schema.applyShapePatch(schema, patch);
       }
 
       let shapeDiffs = diffBodyBySchema(body, schema);
