@@ -172,7 +172,7 @@ Object {
   "examplesCount": 3,
   "externalExamplesCount": 0,
   "filesWithOverwrittenYamlComments": Set {},
-  "patchesCount": 23,
+  "patchesCount": 13,
   "updatedFilesCount": 1,
 }
 `;
@@ -586,7 +586,7 @@ Object {
   "examplesCount": 5,
   "externalExamplesCount": 0,
   "filesWithOverwrittenYamlComments": Set {},
-  "patchesCount": 54,
+  "patchesCount": 31,
   "updatedFilesCount": 1,
 }
 `;
