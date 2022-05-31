@@ -3195,6 +3195,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/whatwg-mimetype@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@types/whatwg-mimetype@npm:2.1.1"
+  checksum: c10093e0d3161deb64f999305e81e70f82ee2577c15c70b4d53ca8b92af389921b81188c34e4da816485f440463186a6bcd10b19f393fc3734d26a9d49a6d236
+  languageName: node
+  linkType: hard
+
 "@types/ws@npm:*":
   version: 8.5.3
   resolution: "@types/ws@npm:8.5.3"
@@ -3277,6 +3284,7 @@ __metadata:
     "@types/node": ^17.0.15
     "@types/stream-chain": ^2
     "@types/stream-json": ^1
+    "@types/whatwg-mimetype": ^2.1.1
     "@useoptic/json-pointer-helpers": "workspace:*"
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
@@ -3303,6 +3311,7 @@ __metadata:
     ts-node: ^10.4.0
     ts-results: ^3.3.0
     typescript: ^4.4.4
+    whatwg-mimetype: ^3.0.0
   bin:
     openapi-cli: build/cli.js
   languageName: unknown
@@ -9868,6 +9877,13 @@ __metadata:
   version: 2.3.0
   resolution: "whatwg-mimetype@npm:2.3.0"
   checksum: 23eb885940bcbcca4ff841c40a78e9cbb893ec42743993a42bf7aed16085b048b44b06f3402018931687153550f9a32d259dfa524e4f03577ab898b6965e5383
+  languageName: node
+  linkType: hard
+
+"whatwg-mimetype@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "whatwg-mimetype@npm:3.0.0"
+  checksum: ce08bbb36b6aaf64f3a84da89707e3e6a31e5ab1c1a2379fd68df79ba712a4ab090904f0b50e6693b0dafc8e6343a6157e40bf18fdffd26e513cf95ee2a59824
   languageName: node
   linkType: hard
 
