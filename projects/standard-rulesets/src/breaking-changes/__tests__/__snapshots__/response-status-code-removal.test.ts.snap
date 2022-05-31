@@ -33,6 +33,7 @@ Array [
     "condition": "not remove response status code",
     "docsLink": undefined,
     "error": "must not remove response status code",
+    "exempted": false,
     "expected": undefined,
     "isMust": true,
     "isShould": false,
