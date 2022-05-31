@@ -13,7 +13,11 @@ import { BodyExampleFacts, ComponentSchemaExampleFacts } from '../../specs';
 import { OpenAPIV3 } from '../../specs';
 import { Body, DocumentedBody } from '../body';
 import { CapturedBody, CapturedBodies } from '../../captures';
-import { DocumentedInteraction, findResponse } from '../../operations';
+import {
+  DocumentedInteraction,
+  findResponse,
+  findBody,
+} from '../../operations';
 
 export type { DocumentedBody };
 
@@ -108,7 +112,8 @@ export class DocumentedBodies {
     ) {
       // TODO: consider whether this belongs here, and not in something more specific to patches
       // (as it decides basically what and what not to generate patches for  from)
-      let { contentType } = interaction.request.body;
+      let { contentType: capturedContentType } = interaction.request.body;
+
       let decodedBodyResult = await decodeCapturedBody(
         interaction.request.body
       );
@@ -117,13 +122,9 @@ export class DocumentedBodies {
           'Could not decode body of captured interaction:',
           decodedBodyResult.val
         );
-      } else if (contentType) {
-        let { essence: contentTypeEssence } = new MIMEType(contentType);
-        let matchedContentType = operation.requestBody?.content[contentType]
-          ? contentType
-          : operation.requestBody?.content[contentTypeEssence]
-          ? contentTypeEssence
-          : null;
+      } else if (capturedContentType) {
+        let [, matchedContentType] = (operation.requestBody &&
+          findBody(operation.requestBody, capturedContentType)) || [null, null];
 
         if (!matchedContentType) return; // TODO: consider whether silently failing to produce a documented body is right
 
@@ -173,7 +174,7 @@ export class DocumentedBodies {
     ) {
       // TODO: consider whether this belongs here, and not in something more specific to patches
       // (as it decides basically what and what not to generate patches for  from)
-      let { contentType } = interaction.response.body;
+      let { contentType: capturedContentType } = interaction.response.body;
       let matchedResponse = findResponse(
         operation,
         interaction.response.statusCode
@@ -187,14 +188,12 @@ export class DocumentedBodies {
           'Could not decode body of captured interaction:',
           decodedBodyResult.val
         );
-      } else if (contentType && matchedResponse) {
+      } else if (capturedContentType && matchedResponse) {
         let [response, statusCode] = matchedResponse;
-        let { essence: contentTypeEssence } = new MIMEType(contentType);
-        let matchedContentType = response.content?.[contentType]
-          ? contentType
-          : response.content?.[contentTypeEssence]
-          ? contentTypeEssence
-          : null;
+        let [, matchedContentType] = findBody(
+          response,
+          capturedContentType
+        ) || [null, null];
 
         if (!matchedContentType) return; // TODO: consider whether silently failing to produce a documented body is right
 

@@ -1,8 +1,7 @@
 import { CapturedResponse } from '../../../captures';
 import { OpenAPIV3 } from '../../../specs';
 import { OperationDiffResult, OperationDiffResultKind } from '../result';
-import { findResponse } from '../..';
-import MIMEType from 'whatwg-mimetype';
+import { findResponse, findBody } from '../..';
 
 export function* visitResponses(
   capturedResponse: CapturedResponse,
@@ -26,22 +25,9 @@ export function* visitResponses(
 
   const [response] = responseMatch;
 
-  const rawContentType = capturedResponse.body?.contentType;
-  const capturedContentType = rawContentType
-    ? new MIMEType(rawContentType)
-    : null;
+  const matchedBody = findBody(response, capturedResponse.body?.contentType);
 
-  const contentSpec =
-    response.content && capturedContentType
-      ? Object.entries(response.content).find(([rawType]) => {
-          let parsed = new MIMEType(rawType);
-          return parsed.essence === capturedContentType.essence;
-        })?.[1]
-      : null;
-  // capturedResponse.body?.contentType &&
-  // response.content?.[capturedResponse.body.contentType];
-
-  if (!contentSpec && capturedResponse.body) {
+  if (!matchedBody && capturedResponse.body) {
     yield {
       kind: OperationDiffResultKind.UnmatchedResponseBody,
       contentType: capturedResponse.body.contentType,

@@ -130,4 +130,44 @@ describe('visitRequestBody', () => {
       1
     );
   });
+
+  it('matches request body content type range', () => {
+    const requestBodySpec = {
+      content: {
+        'application/json': {},
+        'text/*': {},
+        'text/plain': {},
+      },
+      required: true,
+    };
+
+    const exactMatch = {
+      host: 'test',
+      path: '/some-path',
+      method: HttpMethods.POST,
+      body: CapturedBody.from('a-plain-text-body', 'text/plain'),
+    };
+
+    const typeRangeMatch = {
+      host: 'test',
+      path: '/some-path',
+      method: HttpMethods.POST,
+      body: CapturedBody.from('a,csv,body', 'text/csv'),
+    };
+
+    const mismatchingType = {
+      host: 'test',
+      path: '/some-path',
+      method: HttpMethods.POST,
+      body: CapturedBody.fromJSON({}, 'application/xml'),
+    };
+
+    expect([...visitRequestBody(exactMatch, requestBodySpec)]).toHaveLength(0);
+    expect([...visitRequestBody(typeRangeMatch, requestBodySpec)]).toHaveLength(
+      0
+    );
+    expect([
+      ...visitRequestBody(mismatchingType, requestBodySpec),
+    ]).toHaveLength(1);
+  });
 });
