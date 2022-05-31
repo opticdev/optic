@@ -1,6 +1,7 @@
 import { CapturedRequest } from '../../../captures';
 import { OperationDiffResult, OperationDiffResultKind } from '../result';
 import { OpenAPIV3 } from '../../../specs';
+import MIMEType from 'whatwg-mimetype';
 
 export function* visitRequestBody(
   request: CapturedRequest,
@@ -27,8 +28,17 @@ export function* visitRequestBody(
     return; // no request body, nothing left to diff
   }
 
+  const requestBodyType = request.body.contentType
+    ? new MIMEType(request.body.contentType)
+    : null;
+
   const bodySpec =
-    request.body.contentType && spec.content[request.body.contentType];
+    (requestBodyType &&
+      Object.entries(spec.content).find(([rawType]) => {
+        let parsed = new MIMEType(rawType);
+        return parsed.essence == requestBodyType?.essence;
+      })?.[1]) ||
+    null;
 
   if (!bodySpec) {
     yield {
