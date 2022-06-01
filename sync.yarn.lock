@@ -3116,6 +3116,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/picomatch@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@types/picomatch@npm:2.3.0"
+  checksum: dde9572b6ca775185bd27a04ab050961f3e59b51863b1883669dcbf010aab394037af201ad9aa89373d9141cf1f5ba1f81266d3af09dfca5879298c128af928d
+  languageName: node
+  linkType: hard
+
 "@types/prettier@npm:^2.1.5":
   version: 2.4.3
   resolution: "@types/prettier@npm:2.4.3"
@@ -3506,6 +3513,7 @@ __metadata:
     "@types/json-stable-stringify": ^1.0.33
     "@types/lodash.groupby": ^4.6.6
     "@types/node": ^17.0.15
+    "@types/picomatch": ^2.3.0
     "@types/url-join": ^4.0.1
     "@types/uuid": ^8.3.1
     "@useoptic/openapi-io": "workspace:*"
@@ -3523,6 +3531,7 @@ __metadata:
     json-stable-stringify: ^1.0.1
     lodash.groupby: ^4.6.0
     node-fetch: ^2.6.7
+    picomatch: ^2.3.1
     prettier: ^2.4.1
     ts-node: ^10.8.0
     typescript: ^4.7.2
@@ -8205,7 +8214,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.2.3":
+"picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.2.3, picomatch@npm:^2.3.1":
   version: 2.3.1
   resolution: "picomatch@npm:2.3.1"
   checksum: 050c865ce81119c4822c45d3c84f1ced46f93a0126febae20737bd05ca20589c564d6e9226977df859ed5e03dc73f02584a2b0faad36e896936238238b0446cf
