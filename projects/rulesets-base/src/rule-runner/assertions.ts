@@ -24,6 +24,7 @@ type AssertionLifecycle = 'requirement' | 'added' | 'changed' | 'removed';
 export type AssertionResult =
   | {
       passed: true;
+      exempted?: boolean;
       changeOrFact: IChange | IFact;
       condition: string;
       type: AssertionLifecycle;
@@ -33,6 +34,7 @@ export type AssertionResult =
     }
   | {
       passed: false;
+      exempted?: boolean;
       changeOrFact: IChange | IFact;
       condition: string;
       type: AssertionLifecycle;
@@ -156,7 +158,8 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
 
   runBefore(
     before: AssertionTypeToValue[T],
-    change: IChange | null
+    change: IChange | null,
+    exempted: boolean
   ): AssertionResult[] {
     const results: AssertionResult[] = [];
 
@@ -170,6 +173,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(before);
           results.push({
             passed: true,
+            exempted,
             changeOrFact: sanitizeChange(change),
             condition,
             type: 'removed',
@@ -178,6 +182,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (e instanceof RuleError) {
             results.push({
               passed: false,
+              exempted,
               changeOrFact: sanitizeChange(change),
               condition,
               error: e.toString(),
@@ -199,7 +204,8 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
   runAfter(
     before: AssertionTypeToValue[T] | null,
     after: AssertionTypeToValue[T],
-    change: IChange | null
+    change: IChange | null,
+    exempted: boolean
   ): AssertionResult[] {
     const results: AssertionResult[] = [];
     if (this.requirementAssertions.length > 0) {
@@ -208,6 +214,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(after);
           results.push({
             passed: true,
+            exempted,
             changeOrFact: sanitizeFact(after),
             condition,
             type: 'requirement',
@@ -216,6 +223,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (e instanceof RuleError) {
             results.push({
               passed: false,
+              exempted,
               changeOrFact: sanitizeFact(after),
               condition,
               received: JSON.stringify(e.details.received),
@@ -241,6 +249,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(after);
           results.push({
             passed: true,
+            exempted,
             changeOrFact: sanitizeChange(change),
             condition,
             type: 'added',
@@ -249,6 +258,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (e instanceof RuleError) {
             results.push({
               passed: false,
+              exempted,
               changeOrFact: sanitizeChange(change),
               condition,
               received: JSON.stringify(e.details.received),
@@ -275,6 +285,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           assertion(before, after);
           results.push({
             passed: true,
+            exempted,
             changeOrFact: sanitizeChange(change),
             condition,
             type: 'changed',
@@ -283,6 +294,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
           if (e instanceof RuleError) {
             results.push({
               passed: false,
+              exempted,
               changeOrFact: sanitizeChange(change),
               condition,
               received: JSON.stringify(e.details.received),

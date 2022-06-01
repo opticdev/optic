@@ -74,6 +74,7 @@ const createResponseResult = (
   name: rule.name,
   condition: assertionResult.condition,
   passed: assertionResult.passed,
+  exempted: assertionResult.exempted,
   received: assertionResult.received,
   expected: assertionResult.expected,
   error: assertionResult.error,
@@ -98,6 +99,7 @@ const createResponseHeaderResult = (
   name: rule.name,
   condition: assertionResult.condition,
   passed: assertionResult.passed,
+  exempted: assertionResult.exempted,
   received: assertionResult.received,
   expected: assertionResult.expected,
   error: assertionResult.error,
@@ -174,11 +176,11 @@ export const runResponseRules = ({
 
         const exempted = isExempted(beforeResponse.raw, responseRule.name);
 
-        if (matches && !exempted) {
+        if (matches) {
           // Run the user's rules that have been stored in responseAssertions
           results.push(
             ...responseAssertions
-              .runBefore(beforeResponse, responseNode.change)
+              .runBefore(beforeResponse, responseNode.change, exempted)
               .map((assertionResult) =>
                 createResponseResult(
                   assertionResult,
@@ -194,7 +196,7 @@ export const runResponseRules = ({
             // Run the user's rules that have been stored in responseAssertions for header
             results.push(
               ...responseAssertions.header
-                .runBefore(header, headerChange)
+                .runBefore(header, headerChange, exempted)
                 .map((assertionResult) =>
                   createResponseHeaderResult(
                     assertionResult,
@@ -235,11 +237,16 @@ export const runResponseRules = ({
 
         const exempted = isExempted(afterResponse.raw, responseRule.name);
 
-        if (matches && !exempted) {
+        if (matches) {
           // Run the user's rules that have been stored in responseAssertions
           results.push(
             ...responseAssertions
-              .runAfter(maybeBeforeResponse, afterResponse, responseNode.change)
+              .runAfter(
+                maybeBeforeResponse,
+                afterResponse,
+                responseNode.change,
+                exempted
+              )
               .map((assertionResult) =>
                 createResponseResult(
                   assertionResult,
@@ -258,7 +265,7 @@ export const runResponseRules = ({
             // Run the user's rules that have been stored in responseAssertions for header
             results.push(
               ...responseAssertions.header
-                .runAfter(maybeBeforeHeader, header, headerChange)
+                .runAfter(maybeBeforeHeader, header, headerChange, exempted)
                 .map((assertionResult) =>
                   createResponseHeaderResult(
                     assertionResult,

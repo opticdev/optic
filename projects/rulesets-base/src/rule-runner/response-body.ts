@@ -74,6 +74,7 @@ const createResponseBodyResult = (
   name: rule.name,
   condition: assertionResult.condition,
   passed: assertionResult.passed,
+  exempted: assertionResult.exempted,
   error: assertionResult.error,
   received: assertionResult.received,
   expected: assertionResult.expected,
@@ -100,6 +101,7 @@ const createResponsePropertyResult = (
   name: rule.name,
   condition: assertionResult.condition,
   passed: assertionResult.passed,
+  exempted: assertionResult.exempted,
   error: assertionResult.error,
   received: assertionResult.received,
   expected: assertionResult.expected,
@@ -174,14 +176,15 @@ export const runResponseBodyRules = ({
             !responseRule.matches ||
             responseRule.matches(beforeBody, ruleContext);
           const exempted = isExempted(beforeBody.raw, responseRule.name);
-          if (matches && !exempted) {
+          if (matches) {
             // Run the user's rules that have been stored in responseAssertions for body
             results.push(
               ...responseAssertions.body
                 .runBefore(
                   beforeBody,
                   responseNode.bodies.get(beforeBody.contentType)?.change ||
-                    null
+                    null,
+                  exempted
                 )
                 .map((assertionResult) =>
                   createResponseBodyResult(
@@ -201,7 +204,7 @@ export const runResponseBodyRules = ({
               // Run the user's rules that have been stored in responseAssertions for property
               results.push(
                 ...responseAssertions.property
-                  .runBefore(property, propertyChange)
+                  .runBefore(property, propertyChange, exempted)
                   .map((assertionResult) =>
                     createResponsePropertyResult(
                       assertionResult,
@@ -250,14 +253,16 @@ export const runResponseBodyRules = ({
 
           const exempted = isExempted(afterBody.raw, responseRule.name);
 
-          if (matches && !exempted) {
+          if (matches) {
             // Run the user's rules that have been stored in responseAssertions for body
             results.push(
               ...responseAssertions.body
                 .runAfter(
                   maybeBeforeBody,
                   afterBody,
-                  responseNode.bodies.get(afterBody.contentType)?.change || null
+                  responseNode.bodies.get(afterBody.contentType)?.change ||
+                    null,
+                  exempted
                 )
                 .map((assertionResult) =>
                   createResponseBodyResult(
@@ -280,7 +285,12 @@ export const runResponseBodyRules = ({
               // Run the user's rules that have been stored in responseAssertions for property
               results.push(
                 ...responseAssertions.property
-                  .runAfter(maybeBeforeProperty, property, propertyChange)
+                  .runAfter(
+                    maybeBeforeProperty,
+                    property,
+                    propertyChange,
+                    exempted
+                  )
                   .map((assertionResult) =>
                     createResponsePropertyResult(
                       assertionResult,
