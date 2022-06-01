@@ -53,7 +53,7 @@ export function* requiredPatches(
   }
 
   // patch one: make required field optional
-  yield {
+  let makeOptionalPatch = {
     impact: [
       PatchImpact.Addition,
       !shapeContext.location
@@ -67,6 +67,9 @@ export function* requiredPatches(
       ...makeOptionalOperations(requiredArray.indexOf(diff.key)),
     ],
   };
+  if (makeOptionalPatch.groupedOperations.length > 0) {
+    yield makeOptionalPatch;
+  }
 
   // patch two: remove property
   yield {

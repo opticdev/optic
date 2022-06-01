@@ -36,7 +36,10 @@ export const logComparison = (
   const chalk = new Chalk({ level: options.output === 'plain' ? 0 : 1 });
   const totalNumberOfChecks = comparison.results.length;
   const failedNumberOfChecks = comparison.results.filter(
-    (result) => !result.passed
+    (result) => !result.passed && !result.exempted
+  ).length;
+  const exemptedFailedNumberOfChecks = comparison.results.filter(
+    (result) => !result.passed && result.exempted
   ).length;
   const passedNumberOfChecks = totalNumberOfChecks - failedNumberOfChecks;
   const numberOfChanges = comparison.changes.length;
@@ -54,9 +57,11 @@ export const logComparison = (
     const conceptualLocation =
       operationResults[0].change.location.conceptualLocation;
 
-    const allPassed = operationResults.every((result) => result.passed);
+    const allPassed = operationResults.every(
+      (result) => result.passed || result.exempted
+    );
     const renderedResults = operationResults.filter(
-      (result) => options.verbose || !result.passed
+      (result) => options.verbose || (!result.passed && !result.exempted)
     );
     const resultNode = allPassed
       ? chalk.bold.bgGreen.white(' PASS ')
@@ -76,17 +81,25 @@ export const logComparison = (
     }
 
     for (const result of renderedResults) {
-      const icon = result.passed ? chalk.green('✔') : chalk.red('x');
+      const icon = result.passed
+        ? chalk.green('✔')
+        : result.exempted
+        ? chalk.white('✔')
+        : chalk.red('x');
       const requirement = `${result.where} ${
         result.isMust ? 'must' : 'should'
       } ${result.condition}`;
 
       if (result.name) {
-        console.log(`${getIndent(2)}Rule: ${result.name}`);
+        console.log(
+          `${getIndent(2)}Rule: ${result.name}${
+            result.exempted ? ' (exempted)' : ''
+          }`
+        );
       }
       console.log(`${getIndent(2)}${icon} ${requirement}`);
 
-      if (!result.passed) {
+      if (!result.passed && !result.exempted) {
         console.log(getIndent(3) + chalk.red(result.error));
         if (result.expected && result.received) {
           console.log(getIndent(3) + chalk.red('Expected Value:'));
@@ -95,6 +108,16 @@ export const logComparison = (
           console.log(formatRawValue(result.received, getIndent(3)));
         }
       }
+      if (!result.passed && result.exempted) {
+        console.log(getIndent(3) + result.error);
+        if (result.expected && result.received) {
+          console.log(getIndent(3) + 'Expected Value:');
+          console.log(formatRawValue(result.expected, getIndent(3)));
+          console.log(getIndent(3) + 'Received Value:');
+          console.log(formatRawValue(result.received, getIndent(3)));
+        }
+      }
+
       if (result.docsLink) {
         console.log(
           `${getIndent(3)}Read more in our API Guide (${result.docsLink})`
@@ -121,4 +144,8 @@ export const logComparison = (
   console.log(`${numberOfChanges} changes detected`);
   console.log(chalk.green.bold(`${passedNumberOfChecks} checks passed`));
   console.log(chalk.red.bold(`${failedNumberOfChecks} checks failed`));
+
+  if (exemptedFailedNumberOfChecks > 0) {
+    console.log(chalk.bold(`${exemptedFailedNumberOfChecks} checks exempted`));
+  }
 };

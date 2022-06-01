@@ -83,4 +83,72 @@ describe('visitResponses', () => {
     expect(unmatchingResults).toHaveLength(1);
     expect(unmatchingResults).toMatchSnapshot();
   });
+
+  it('matches response bodies content types by type and subtype (essence)', () => {
+    const responses = {
+      '200': {
+        description: 'success',
+        content: {
+          'application/json': {},
+        },
+      },
+    };
+
+    const exactMatch: CapturedResponse = {
+      statusCode: '200',
+      body: CapturedBody.fromJSON({}, 'application/json'),
+    };
+
+    const parameterMismatch: CapturedResponse = {
+      statusCode: '200',
+      body: CapturedBody.fromJSON({}, 'application/json; charset=utf-8'),
+    };
+
+    const subtypeMisMatch: CapturedResponse = {
+      statusCode: '200',
+      body: CapturedBody.fromJSON({}, 'application/gzip'),
+    };
+
+    const typeMismatch: CapturedResponse = {
+      statusCode: '200',
+      body: CapturedBody.fromJSON({}, 'text/json'),
+    };
+
+    expect([...visitResponses(exactMatch, responses)]).toHaveLength(0);
+    expect([...visitResponses(parameterMismatch, responses)]).toHaveLength(0);
+    expect([...visitResponses(subtypeMisMatch, responses)]).toHaveLength(1);
+    expect([...visitResponses(typeMismatch, responses)]).toHaveLength(1);
+  });
+
+  it('matches response bodies content type ranges', () => {
+    const responses = {
+      '200': {
+        description: 'success',
+        content: {
+          'application/json': {},
+          'text/*': {},
+          'text/plain': {},
+        },
+      },
+    };
+
+    const exactMatch: CapturedResponse = {
+      statusCode: '200',
+      body: CapturedBody.from('a-plain-text-body', 'text/plain'),
+    };
+
+    const typeRangeMatch: CapturedResponse = {
+      statusCode: '200',
+      body: CapturedBody.from('a,csv,body', 'text/csv'),
+    };
+
+    const mismatchingType: CapturedResponse = {
+      statusCode: '200',
+      body: CapturedBody.fromJSON({}, 'application/xml'),
+    };
+
+    expect([...visitResponses(exactMatch, responses)]).toHaveLength(0);
+    expect([...visitResponses(typeRangeMatch, responses)]).toHaveLength(0);
+    expect([...visitResponses(mismatchingType, responses)]).toHaveLength(1);
+  });
 });

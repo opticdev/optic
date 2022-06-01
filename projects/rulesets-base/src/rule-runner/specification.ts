@@ -58,6 +58,7 @@ const createSpecificationResult = (
   name: rule.name,
   condition: assertionResult.condition,
   passed: assertionResult.passed,
+  exempted: assertionResult.exempted,
   received: assertionResult.received,
   expected: assertionResult.expected,
   error: assertionResult.error,
@@ -110,7 +111,7 @@ export const runSpecificationRules = ({
         specificationRule.name
       );
 
-      if (matches && !exempted) {
+      if (matches) {
         const specificationAssertions = createSpecificationAssertions();
         // Register the user's rule definition, this is collected in the specificationAssertions object
         specificationRule.rule(specificationAssertions, rulesContext);
@@ -118,7 +119,7 @@ export const runSpecificationRules = ({
         // Run the user's rules that have been stored in specificationAssertions
         results.push(
           ...specificationAssertions
-            .runBefore(beforeSpecification, specificationNode.change)
+            .runBefore(beforeSpecification, specificationNode.change, exempted)
             .map((assertionResult) =>
               createSpecificationResult(assertionResult, specificationRule)
             )
@@ -141,7 +142,7 @@ export const runSpecificationRules = ({
         afterSpecification.raw,
         specificationRule.name
       );
-      if (matches && !exempted) {
+      if (matches) {
         const specificationAssertions = createSpecificationAssertions();
         // Register the user's rule definition, this is collected in the specificationAssertions object
         specificationRule.rule(specificationAssertions, rulesContext);
@@ -152,7 +153,8 @@ export const runSpecificationRules = ({
             .runAfter(
               beforeSpecification,
               afterSpecification,
-              specificationNode.change
+              specificationNode.change,
+              exempted
             )
             .map((assertionResult) =>
               createSpecificationResult(assertionResult, specificationRule)

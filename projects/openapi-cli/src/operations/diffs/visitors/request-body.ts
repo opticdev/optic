@@ -1,6 +1,7 @@
 import { CapturedRequest } from '../../../captures';
 import { OperationDiffResult, OperationDiffResultKind } from '../result';
 import { OpenAPIV3 } from '../../../specs';
+import { findBody } from '../..';
 
 export function* visitRequestBody(
   request: CapturedRequest,
@@ -27,10 +28,9 @@ export function* visitRequestBody(
     return; // no request body, nothing left to diff
   }
 
-  const bodySpec =
-    request.body.contentType && spec.content[request.body.contentType];
+  const matchedBody = findBody(spec, request.body.contentType);
 
-  if (!bodySpec) {
+  if (!matchedBody) {
     yield {
       kind: OperationDiffResultKind.UnmatchedRequestBody,
       contentType: request.body.contentType,

@@ -90,6 +90,7 @@ export interface Result {
   condition: string;
   error?: string;
   passed: boolean;
+  exempted?: boolean;
   change: IChange | IFact; // IFact for `requirement`
   docsLink?: string;
   // new

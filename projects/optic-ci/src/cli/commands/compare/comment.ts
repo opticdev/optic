@@ -9,8 +9,20 @@ export const createCommentBody = (
   run: number,
   opticWebUrl: string
 ) => {
-  const failingChecks = results.filter((result) => !result.passed).length;
-  const totalChecks = results.length;
+  let totalChecks = results.length;
+  let failingChecks = 0;
+  let exemptedFailingChecks = 0;
+
+  for (const result of results) {
+    if (result.passed) continue;
+    if (result.exempted) exemptedFailingChecks += 1;
+    else failingChecks += 1;
+  }
+
+  const exemptedChunk =
+    exemptedFailingChecks > 0
+      ? ` ${exemptedFailingChecks} would have failed but were exempted.`
+      : '';
 
   const body = `<!-- DO NOT MODIFY - OPTIC IDENTIFIER: ${compareHash} -->
   ### New changes to your OpenAPI spec
@@ -21,12 +33,12 @@ export const createCommentBody = (
 
   ${
     failingChecks > 0
-      ? `⚠️ **${failingChecks}** / **${totalChecks}** checks failed.`
+      ? `⚠️ **${failingChecks}** / **${totalChecks}** checks failed.${exemptedChunk}`
       : totalChecks > 0
-      ? `✅ all checks passed (**${totalChecks}**).`
+      ? `✅ all checks passed (**${totalChecks}**).${exemptedChunk}`
       : `ℹ️ No automated checks have run.`
   }
-  
+
   For details, see [the Optic API Changelog](${opticWebUrl})
 
   ------

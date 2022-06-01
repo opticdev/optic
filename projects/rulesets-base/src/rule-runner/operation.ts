@@ -63,6 +63,7 @@ const createOperationResult = (
   received: assertionResult.received,
   expected: assertionResult.expected,
   passed: assertionResult.passed,
+  exempted: assertionResult.exempted,
   error: assertionResult.error,
   docsLink: rule.docsLink,
   isShould: false,
@@ -94,6 +95,7 @@ const createParameterResult = (
   received: assertionResult.received,
   expected: assertionResult.expected,
   passed: assertionResult.passed,
+  exempted: assertionResult.exempted,
   error: assertionResult.error,
   docsLink: rule.docsLink,
   isShould: false,
@@ -156,7 +158,7 @@ export const runOperationRules = ({
 
       const exempted = isExempted(beforeOperation.raw, operationRule.name);
 
-      if (matches && !exempted) {
+      if (matches) {
         const operationAssertions = createOperationAssertions();
         // Register the user's rule definition, this is collected in the operationAssertions object
         operationRule.rule(operationAssertions, ruleContext);
@@ -164,7 +166,7 @@ export const runOperationRules = ({
         // Run the user's rules that have been stored in operationAssertions
         results.push(
           ...operationAssertions
-            .runBefore(beforeOperation, operationNode.change)
+            .runBefore(beforeOperation, operationNode.change, exempted)
             .map((assertionResult) =>
               createOperationResult(
                 assertionResult,
@@ -184,7 +186,7 @@ export const runOperationRules = ({
           // Run the user's rules that have been stored in operationAssertions for headerParameters
           results.push(
             ...operationAssertions.headerParameter
-              .runBefore(beforeParameter, maybeChange)
+              .runBefore(beforeParameter, maybeChange, exempted)
               .map((assertionResult) =>
                 createParameterResult(
                   assertionResult,
@@ -210,7 +212,7 @@ export const runOperationRules = ({
           // Run the user's rules that have been stored in operationAssertions for pathParameter
           results.push(
             ...operationAssertions.pathParameter
-              .runBefore(beforeParameter, maybeChange)
+              .runBefore(beforeParameter, maybeChange, exempted)
               .map((assertionResult) =>
                 createParameterResult(
                   assertionResult,
@@ -236,7 +238,7 @@ export const runOperationRules = ({
           // Run the user's rules that have been stored in operationAssertions for queryParameter
           results.push(
             ...operationAssertions.queryParameter
-              .runBefore(beforeParameter, maybeChange)
+              .runBefore(beforeParameter, maybeChange, exempted)
               .map((assertionResult) =>
                 createParameterResult(
                   assertionResult,
@@ -262,7 +264,7 @@ export const runOperationRules = ({
           // Run the user's rules that have been stored in operationAssertions for cookieParameter
           results.push(
             ...operationAssertions.cookieParameter
-              .runBefore(beforeParameter, maybeChange)
+              .runBefore(beforeParameter, maybeChange, exempted)
               .map((assertionResult) =>
                 createParameterResult(
                   assertionResult,
@@ -295,7 +297,7 @@ export const runOperationRules = ({
 
       const exempted = isExempted(afterOperation.raw, operationRule.name);
 
-      if (matches && !exempted) {
+      if (matches) {
         const operationAssertions = createOperationAssertions();
 
         // Register the user's rule definition, this is collected in the operationAssertions object
@@ -304,7 +306,12 @@ export const runOperationRules = ({
         // Run the user's rules that have been stored in operationAssertions
         results.push(
           ...operationAssertions
-            .runAfter(beforeOperation, afterOperation, operationNode.change)
+            .runAfter(
+              beforeOperation,
+              afterOperation,
+              operationNode.change,
+              exempted
+            )
             .map((assertionResult) =>
               createOperationResult(
                 assertionResult,
@@ -326,7 +333,12 @@ export const runOperationRules = ({
           // Run the user's rules that have been stored in operationAssertions for headerParameter
           results.push(
             ...operationAssertions.headerParameter
-              .runAfter(maybeBeforeParameter, afterParameter, maybeChange)
+              .runAfter(
+                maybeBeforeParameter,
+                afterParameter,
+                maybeChange,
+                exempted
+              )
               .map((assertionResult) =>
                 createParameterResult(
                   assertionResult,
@@ -354,7 +366,12 @@ export const runOperationRules = ({
           // Run the user's rules that have been stored in operationAssertions for pathParameter
           results.push(
             ...operationAssertions.pathParameter
-              .runAfter(maybeBeforeParameter, afterParameter, maybeChange)
+              .runAfter(
+                maybeBeforeParameter,
+                afterParameter,
+                maybeChange,
+                exempted
+              )
               .map((assertionResult) =>
                 createParameterResult(
                   assertionResult,
@@ -382,7 +399,12 @@ export const runOperationRules = ({
           // Run the user's rules that have been stored in operationAssertions for queryParameter
           results.push(
             ...operationAssertions.queryParameter
-              .runAfter(maybeBeforeParameter, afterParameter, maybeChange)
+              .runAfter(
+                maybeBeforeParameter,
+                afterParameter,
+                maybeChange,
+                exempted
+              )
               .map((assertionResult) =>
                 createParameterResult(
                   assertionResult,
@@ -410,7 +432,12 @@ export const runOperationRules = ({
           // Run the user's rules that have been stored in operationAssertions for cookieParameter
           results.push(
             ...operationAssertions.cookieParameter
-              .runAfter(maybeBeforeParameter, afterParameter, maybeChange)
+              .runAfter(
+                maybeBeforeParameter,
+                afterParameter,
+                maybeChange,
+                exempted
+              )
               .map((assertionResult) =>
                 createParameterResult(
                   assertionResult,

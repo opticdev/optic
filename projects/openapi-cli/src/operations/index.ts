@@ -2,6 +2,7 @@ import { CapturedInteraction } from '../captures';
 import { OpenAPIV3 } from '../specs';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import invariant from 'ts-invariant';
+import MIMEType from 'whatwg-mimetype';
 
 export { DocumentedInteractions } from './streams/documented-interactions';
 export { OperationPatches } from './streams/patches';
@@ -92,6 +93,56 @@ export function findResponse(
   }
 
   return exactMatch || rangeMatch || defaultMatch;
+}
+
+export function findBody(
+  bodyObject: {
+    content?: { [media: string]: OpenAPIV3.MediaTypeObject };
+  },
+  contentType?: string | null
+): [OpenAPIV3.MediaTypeObject, string] | null {
+  if (!contentType) return null;
+  if (!bodyObject.content) return null;
+
+  let parsedType = MIMEType.parse(contentType);
+  if (!parsedType) return null;
+  let normalizedType = parsedType.toString();
+
+  let exactMatch: [OpenAPIV3.MediaTypeObject, string] | null = null;
+  let essenceMatch: [OpenAPIV3.MediaTypeObject, string] | null = null;
+  let typeRangeMatch: [OpenAPIV3.MediaTypeObject, string] | null = null;
+  let rangeMatch: [OpenAPIV3.MediaTypeObject, string] | null = null;
+
+  for (let [rawType, media] of Object.entries(bodyObject.content)) {
+    let type = new MIMEType(rawType);
+    let normalized = type.toString();
+
+    if (type.toString() === normalizedType) {
+      exactMatch = [media, normalized];
+      break; // exact match found, lets stop looking
+    }
+
+    if (!essenceMatch && type.essence === parsedType.essence) {
+      essenceMatch = [media, normalized];
+      continue;
+    }
+
+    if (
+      !typeRangeMatch &&
+      type.type === parsedType.type &&
+      type.subtype === '*'
+    ) {
+      typeRangeMatch = [media, normalized];
+    }
+
+    if (!rangeMatch && type.type === '*' && type.subtype === '*') {
+      rangeMatch = [media, normalized];
+    }
+
+    if (exactMatch && essenceMatch && typeRangeMatch && rangeMatch) break;
+  }
+
+  return exactMatch || essenceMatch || typeRangeMatch || rangeMatch;
 }
 
 const statusRangePattern = /[245]xx/;
