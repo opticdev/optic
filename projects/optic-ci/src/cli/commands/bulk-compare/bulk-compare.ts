@@ -1,15 +1,11 @@
 import { Command, Option } from 'commander';
-import { v4 as uuidv4 } from 'uuid';
 
 import {
   defaultEmptySpec,
-  IChange,
   validateOpenApiV3Document,
-  ResultWithSourcemap,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import {
-  loadFile,
   parseSpecVersion,
   specFromInputToResults,
   validateUploadRequirements,
@@ -26,21 +22,31 @@ import { sendBulkGitlabMessage } from './bulk-gitlab-comment';
 import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
 import { RuleRunner, SpectralInput } from '../../types';
+import {
+  getComparisonsFromGlob,
+  parseJsonComparisonInput,
+} from './input-generators';
+import { Comparison, ComparisonData } from './types';
 
 export const registerBulkCompare = (
   cli: Command,
   projectName: string,
   ruleRunner: RuleRunner,
   cliConfig: CliConfig,
-  generateContext: () => Object = () => ({}),
+  generateContext: (details: { fileName: string }) => Object = () => ({}),
   spectralConfig?: SpectralInput
 ) => {
   cli
     .command('bulk-compare')
-    .requiredOption(
+    .option(
       '--input <input>',
       'a csv with the from, to files, and context format: <from>,<to>,<jsonified context>'
     )
+    .option(
+      '--glob <glob>',
+      'a glob to filter specifications to match (e.g. "**/*.yml" or "**/specifications/*.json")'
+    )
+    .option('--base <base>', 'base ref to compare against')
     .option('--verbose', 'show all checks, even passing', false)
     .addOption(
       new Option(
@@ -61,57 +67,59 @@ export const registerBulkCompare = (
       wrapActionHandlerWithSentry(
         async ({
           input,
+          glob,
+          base,
           verbose,
           output = 'pretty',
           uploadResults,
           ciContext,
         }: {
-          input: string;
+          input?: string;
+          glob?: string;
+          base?: string;
           verbose: boolean;
           output?: 'pretty' | 'json' | 'plain';
           uploadResults: boolean;
           ciContext?: string;
         }) => {
           validateUploadRequirements(uploadResults, cliConfig);
-
-          await runBulkCompare({
-            checkService: ruleRunner,
-            input,
-            verbose,
-            output,
-            uploadResults,
-            ciContext,
-            projectName,
-            cliConfig,
-            generateContext,
-            spectralConfig,
-          });
+          if (!input && glob && base) {
+            await runBulkCompare({
+              checkService: ruleRunner,
+              verbose,
+              output,
+              uploadResults,
+              ciContext,
+              projectName,
+              cliConfig,
+              generateContext,
+              spectralConfig,
+              glob,
+              base,
+            });
+          } else if (input) {
+            await runBulkCompare({
+              checkService: ruleRunner,
+              input,
+              verbose,
+              output,
+              uploadResults,
+              ciContext,
+              projectName,
+              cliConfig,
+              generateContext,
+              spectralConfig,
+            });
+          } else {
+            throw new UserError(
+              'Expected --input or both --glob and --base to be provided as input'
+            );
+          }
           process.exit(0);
         }
       )
     );
 };
-
-type ComparisonData = {
-  changes: IChange[];
-  results: ResultWithSourcemap[];
-  version: string;
-};
-
-type Comparison = {
-  id: string;
-  fromFileName?: string;
-  toFileName?: string;
-  context: any;
-} & (
-  | { loading: true }
-  | { loading: false; error: true; errorDetails: any }
-  | {
-      loading: false;
-      error: false;
-      data: ComparisonData;
-    }
-);
 
 const loadSpecFile = async (
   fileName?: string
@@ -201,40 +209,6 @@ const compareSpecs = async ({
   await Promise.all([...inflightRequests.values()]);
 };
 
-export const parseJsonComparisonInput = async (
-  input: string,
-  generateContext: () => Object
-): Promise<{
-  comparisons: Map<string, Comparison>;
-  skippedParsing: boolean;
-}> => {
-  try {
-    const fileOutput = await loadFile(input);
-    let skippedParsing = false;
-    const output = JSON.parse(fileOutput.toString());
-    const initialComparisons: Map<string, Comparison> = new Map();
-    for (const comparison of output.comparisons || []) {
-      if (!comparison.from && !comparison.to) {
-        throw new Error('Cannot specify a comparison with no from or to files');
-      }
-      const id = uuidv4();
-
-      initialComparisons.set(id, {
-        id,
-        fromFileName: comparison.from,
-        toFileName: comparison.to,
-        context: comparison.context || generateContext(),
-        loading: true,
-      });
-    }
-
-    return { comparisons: initialComparisons, skippedParsing };
-  } catch (e) {
-    console.error(e);
-    throw new UserError();
-  }
-};
-
 const runBulkCompare = async ({
   checkService,
   input,
@@ -246,19 +220,22 @@ const runBulkCompare = async ({
   cliConfig,
   generateContext,
   spectralConfig,
+  glob,
+  base,
 }: {
   checkService: RuleRunner;
-  input: string;
   verbose: boolean;
   projectName: string;
   output: 'pretty' | 'json' | 'plain';
   uploadResults: boolean;
   ciContext?: string;
   cliConfig: CliConfig;
-  generateContext: () => Object;
+  generateContext: (details: { fileName: string }) => Object;
   spectralConfig?: SpectralInput;
-}) => {
-  console.log('Reading input file...');
+} & (
+  | { input: string; glob?: undefined; base?: undefined }
+  | { input?: undefined; glob: string; base: string }
+)) => {
   let numberOfErrors = 0;
   let numberOfComparisonsWithErrors = 0;
   let numberOfComparisonsWithAChange = 0;
@@ -270,8 +247,13 @@ const runBulkCompare = async ({
     normalizedCiContext = await loadCiContext(cliConfig.ciProvider, ciContext);
   }
 
-  const { comparisons: initialComparisons, skippedParsing } =
-    await parseJsonComparisonInput(input, generateContext);
+  const { comparisons: initialComparisons, skippedParsing } = input
+    ? await parseJsonComparisonInput(input, generateContext)
+    : await getComparisonsFromGlob(glob!, base!, generateContext);
+
+  if (initialComparisons.size === 0) {
+    throw new UserError('No comparisons were specified - exiting');
+  }
 
   console.log(`Bulk comparing ${initialComparisons.size} comparisons`);
   const finalComparisons = new Map(initialComparisons);
