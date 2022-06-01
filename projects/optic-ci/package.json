@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/optic-ci",
   "packageManager": "yarn@3.0.2",
-  "version": "0.25.17",
+  "version": "0.25.18",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -31,6 +31,7 @@
     "@types/json-stable-stringify": "^1.0.33",
     "@types/lodash.groupby": "^4.6.6",
     "@types/node": "^17.0.15",
+    "@types/picomatch": "^2.3.0",
     "@types/url-join": "^4.0.1",
     "@types/uuid": "^8.3.1",
     "@useoptic/rulesets-base": "workspace:*",
@@ -58,6 +59,7 @@
     "json-stable-stringify": "^1.0.1",
     "lodash.groupby": "^4.6.0",
     "node-fetch": "^2.6.7",
+    "picomatch": "^2.3.1",
     "url-join": "^4.0.1",
     "uuid": "^8.3.2"
   },

@@ -41,7 +41,7 @@ export async function getProjectName(): Promise<string> {
 export async function makeCiCli(
   checkService: RuleRunner,
   options: CliConfig = {},
-  generateContext: () => Object = () => ({}),
+  generateContext: (details: { fileName: string }) => Object = () => ({}),
   spectralConfig?: SpectralInput
 ) {
   initSentry(packageJson.version);
