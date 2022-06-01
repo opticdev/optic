@@ -175,10 +175,6 @@ export function updateByTrafficCommand(): Command {
       let { results: updatedSpecFiles, observations: fileObservations } =
         updateSpecFiles(updatePatches, sourcemap);
 
-      let observations = merge(updateObservations, fileObservations);
-
-      const renderingStats = renderUpdateStats(observations);
-
       const handleUserSignals = (async function () {
         if (interactiveCapture && process.stdin.isTTY) {
           console.log('Press Enter to finish capturing traffic');
@@ -202,9 +198,18 @@ export function updateByTrafficCommand(): Command {
           console.log(`Updated ${writtenFilePath}`);
         }
       })();
-      await Promise.all([handleUserSignals, writingSpecFiles]);
 
-      await renderingStats;
+      let observations = forkable(merge(updateObservations, fileObservations));
+      const renderingStats = renderUpdateStats(observations.fork());
+      const trackingStats = trackStats(observations.fork());
+      observations.start();
+
+      await Promise.all([
+        handleUserSignals,
+        writingSpecFiles,
+        renderingStats,
+        trackingStats,
+      ]);
     });
 
   return command;
@@ -523,5 +528,46 @@ async function renderUpdateStats(updateObservations: UpdateObservations) {
         text: `${method.toUpperCase()} ${pathPattern} - no patches necessary`,
       });
     }
+  }
+}
+
+async function trackStats(observations: UpdateObservations): Promise<void> {
+  const stats = {
+    capturedInteractionsCount: 0,
+    matchedInteractionsCount: 0,
+    filesWithOverwrittenYamlCommentsCount: 0,
+    patchesCount: 0,
+    updatedFilesCount: 0,
+  };
+
+  for await (let observation of observations) {
+    if (observation.kind === UpdateObservationKind.InteractionCaptured) {
+      stats.capturedInteractionsCount += 1;
+    } else if (
+      observation.kind === UpdateObservationKind.InteractionMatchedOperation
+    ) {
+      stats.matchedInteractionsCount += 1;
+    } else if (
+      observation.kind === UpdateObservationKind.InteractionPatchGenerated
+    ) {
+      stats.patchesCount += 1;
+    } else if (observation.kind === UpdateObservationKind.SpecFileUpdated) {
+      stats.updatedFilesCount += 1;
+      if (observation.overwrittenComments) {
+        stats.filesWithOverwrittenYamlCommentsCount += 1;
+      }
+    }
+  }
+
+  trackEvent(
+    'openapi_cli.spec_updated_by_traffic',
+    'openapi_cli', // TODO: determine more useful userId
+    stats
+  );
+
+  try {
+    await flushEvents();
+  } catch (err) {
+    console.warn('Could not flush usage analytics (non-critical)');
   }
 }
