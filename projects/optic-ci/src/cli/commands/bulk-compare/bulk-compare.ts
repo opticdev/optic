@@ -282,11 +282,12 @@ const runBulkCompare = async ({
     comparisons: initialComparisons,
     onComparisonComplete: (id, comparison) => {
       const { results, changes } = comparison;
-      if (results.some((result) => !result.passed)) {
+      if (results.some((result) => !result.passed && !result.exempted)) {
         hasChecksFailing = true;
         numberOfComparisonsWithErrors += 1;
         numberOfErrors += results.reduce(
-          (count, result) => (result.passed ? count : count + 1),
+          (count, result) =>
+            result.passed || result.exempted ? count : count + 1,
           0
         );
       }
@@ -436,7 +437,7 @@ const runBulkCompare = async ({
               'Failed to post comment to github - exiting with comparison rules run exit code.'
             );
             console.error(e);
-            if ((e as Error).name !== 'UserError') {
+            if (!(e instanceof UserError)) {
               SentryClient?.captureException(e);
             }
           }
@@ -454,7 +455,7 @@ const runBulkCompare = async ({
               'Failed to post comment to gitlab - exiting with comparison rules run exit code.'
             );
             console.error(e);
-            if ((e as Error).name !== 'UserError') {
+            if (!(e instanceof UserError)) {
               SentryClient?.captureException(e);
             }
           }
@@ -468,7 +469,7 @@ const runBulkCompare = async ({
       );
       console.error(e);
 
-      if ((e as Error).name !== 'UserError') {
+      if (!(e instanceof UserError)) {
         SentryClient?.captureException(e);
       }
     }

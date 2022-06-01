@@ -1,7 +1,7 @@
 import { CapturedResponse } from '../../../captures';
 import { OpenAPIV3 } from '../../../specs';
 import { OperationDiffResult, OperationDiffResultKind } from '../result';
-import { findResponse } from '../..';
+import { findResponse, findBody } from '../..';
 
 export function* visitResponses(
   capturedResponse: CapturedResponse,
@@ -25,11 +25,9 @@ export function* visitResponses(
 
   const [response] = responseMatch;
 
-  const contentSpec =
-    capturedResponse.body?.contentType &&
-    response.content?.[capturedResponse.body.contentType];
+  const matchedBody = findBody(response, capturedResponse.body?.contentType);
 
-  if (!contentSpec && capturedResponse.body) {
+  if (!matchedBody && capturedResponse.body) {
     yield {
       kind: OperationDiffResultKind.UnmatchedResponseBody,
       contentType: capturedResponse.body.contentType,

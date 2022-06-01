@@ -71,6 +71,8 @@ export function* additionalPropertiesPatches(
     );
   }
 
+  if (groupedOperations.length < 1) return;
+
   yield {
     description: `add property ${diff.key}`,
     impact: [

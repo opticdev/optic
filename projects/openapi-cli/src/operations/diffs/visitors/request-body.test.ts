@@ -82,4 +82,92 @@ describe('visitRequestBody', () => {
     expect(missingContentTypeResults).toHaveLength(1);
     expect(missingContentTypeResults).toMatchSnapshot();
   });
+
+  it('matches request body content type by type and subtype (essence)', () => {
+    const requestBodySpec = {
+      content: {
+        'application/json': {},
+      },
+      required: true,
+    };
+
+    const exactMatch = {
+      host: 'test',
+      path: '/some-path',
+      method: HttpMethods.POST,
+      body: CapturedBody.fromJSON({}, 'application/json'),
+    };
+
+    const parameterMismatch = {
+      host: 'test',
+      path: '/some-path',
+      method: HttpMethods.POST,
+      body: CapturedBody.fromJSON({}, 'application/json; charset=utf-8'),
+    };
+
+    const subtypeMisMatch = {
+      host: 'test',
+      path: '/some-path',
+      method: HttpMethods.POST,
+      body: CapturedBody.fromJSON({}, 'application/gzip'),
+    };
+
+    const typeMismatch = {
+      host: 'test',
+      path: '/some-path',
+      method: HttpMethods.POST,
+      body: CapturedBody.fromJSON({}, 'text/json'),
+    };
+
+    expect([...visitRequestBody(exactMatch, requestBodySpec)]).toHaveLength(0);
+    expect([
+      ...visitRequestBody(parameterMismatch, requestBodySpec),
+    ]).toHaveLength(0);
+    expect([
+      ...visitRequestBody(subtypeMisMatch, requestBodySpec),
+    ]).toHaveLength(1);
+    expect([...visitRequestBody(typeMismatch, requestBodySpec)]).toHaveLength(
+      1
+    );
+  });
+
+  it('matches request body content type range', () => {
+    const requestBodySpec = {
+      content: {
+        'application/json': {},
+        'text/*': {},
+        'text/plain': {},
+      },
+      required: true,
+    };
+
+    const exactMatch = {
+      host: 'test',
+      path: '/some-path',
+      method: HttpMethods.POST,
+      body: CapturedBody.from('a-plain-text-body', 'text/plain'),
+    };
+
+    const typeRangeMatch = {
+      host: 'test',
+      path: '/some-path',
+      method: HttpMethods.POST,
+      body: CapturedBody.from('a,csv,body', 'text/csv'),
+    };
+
+    const mismatchingType = {
+      host: 'test',
+      path: '/some-path',
+      method: HttpMethods.POST,
+      body: CapturedBody.fromJSON({}, 'application/xml'),
+    };
+
+    expect([...visitRequestBody(exactMatch, requestBodySpec)]).toHaveLength(0);
+    expect([...visitRequestBody(typeRangeMatch, requestBodySpec)]).toHaveLength(
+      0
+    );
+    expect([
+      ...visitRequestBody(mismatchingType, requestBodySpec),
+    ]).toHaveLength(1);
+  });
 });

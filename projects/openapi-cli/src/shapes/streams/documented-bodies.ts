@@ -7,12 +7,17 @@ import {
   OpenApiFact,
 } from '@useoptic/openapi-utilities';
 import { Result, Ok, Err } from 'ts-results';
+import MIMEType from 'whatwg-mimetype';
 
 import { BodyExampleFacts, ComponentSchemaExampleFacts } from '../../specs';
 import { OpenAPIV3 } from '../../specs';
 import { Body, DocumentedBody } from '../body';
 import { CapturedBody, CapturedBodies } from '../../captures';
-import { DocumentedInteraction, findResponse } from '../../operations';
+import {
+  DocumentedInteraction,
+  findResponse,
+  findBody,
+} from '../../operations';
 
 export type { DocumentedBody };
 
@@ -107,7 +112,8 @@ export class DocumentedBodies {
     ) {
       // TODO: consider whether this belongs here, and not in something more specific to patches
       // (as it decides basically what and what not to generate patches for  from)
-      let { contentType } = interaction.request.body;
+      let { contentType: capturedContentType } = interaction.request.body;
+
       let decodedBodyResult = await decodeCapturedBody(
         interaction.request.body
       );
@@ -116,13 +122,18 @@ export class DocumentedBodies {
           'Could not decode body of captured interaction:',
           decodedBodyResult.val
         );
-      } else if (contentType) {
+      } else if (capturedContentType) {
+        let [, matchedContentType] = (operation.requestBody &&
+          findBody(operation.requestBody, capturedContentType)) || [null, null];
+
+        if (!matchedContentType) return; // TODO: consider whether silently failing to produce a documented body is right
+
         let shapeLocation: BodyLocation = {
           path: operation.pathPattern,
           method: operation.method,
           inRequest: {
             body: {
-              contentType,
+              contentType: matchedContentType,
             },
           },
         };
@@ -130,7 +141,7 @@ export class DocumentedBodies {
         let bodyOperationPath = jsonPointerHelpers.compile([
           'requestBody',
           'content',
-          contentType,
+          matchedContentType,
         ]);
         let bodySpecPath = jsonPointerHelpers.join(
           specJsonPath,
@@ -163,7 +174,7 @@ export class DocumentedBodies {
     ) {
       // TODO: consider whether this belongs here, and not in something more specific to patches
       // (as it decides basically what and what not to generate patches for  from)
-      let { contentType } = interaction.response.body;
+      let { contentType: capturedContentType } = interaction.response.body;
       let matchedResponse = findResponse(
         operation,
         interaction.response.statusCode
@@ -177,15 +188,21 @@ export class DocumentedBodies {
           'Could not decode body of captured interaction:',
           decodedBodyResult.val
         );
-      } else if (contentType && matchedResponse) {
-        let [, statusCode] = matchedResponse;
+      } else if (capturedContentType && matchedResponse) {
+        let [response, statusCode] = matchedResponse;
+        let [, matchedContentType] = findBody(
+          response,
+          capturedContentType
+        ) || [null, null];
+
+        if (!matchedContentType) return; // TODO: consider whether silently failing to produce a documented body is right
 
         let shapeLocation: BodyLocation = {
           path: operation.pathPattern,
           method: operation.method,
           inResponse: {
             body: {
-              contentType,
+              contentType: matchedContentType,
             },
             statusCode,
           },
@@ -195,7 +212,7 @@ export class DocumentedBodies {
           'responses',
           statusCode,
           'content',
-          contentType,
+          matchedContentType,
         ]);
         let bodySpecPath = jsonPointerHelpers.join(
           specJsonPath,

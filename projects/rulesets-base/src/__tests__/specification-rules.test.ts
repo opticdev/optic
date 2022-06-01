@@ -149,7 +149,10 @@ describe('SpecificationRule', () => {
       const results = ruleRunner.runRulesWithFacts(
         createRuleInputs(json, json)
       );
-      expect(results.length).toBe(0);
+      expect(results.length).toBe(1);
+      const result = results[0];
+      expect(result.exempted).toBe(true);
+      expect(result.passed).toBe(false);
     });
   });
 
