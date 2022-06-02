@@ -1,4 +1,4 @@
-import { parseJsonComparisonInput } from '../bulk-compare';
+import { parseJsonComparisonInput } from '../input-generators';
 import { loadFile } from '../../utils';
 
 jest.mock('../../utils');

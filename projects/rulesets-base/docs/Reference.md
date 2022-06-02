@@ -85,7 +85,7 @@ Custom context can be generated from passing in a function to `optic.config.js`.
 ```javascript
 // optic.config.js
 module.exports = {
-  generateContext: () => {
+  generateContext: (details: {fileName: string}) => {
     value: 123,
     date: new Date()
   }

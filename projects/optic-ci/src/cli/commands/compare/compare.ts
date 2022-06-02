@@ -42,7 +42,7 @@ export const registerCompare = (
   projectName: string,
   ruleRunner: RuleRunner,
   cliConfig: CliConfig,
-  generateContext: () => Object,
+  generateContext: (details: { fileName: string }) => Object,
   spectralConfig?: SpectralInput
 ) => {
   cli
@@ -79,7 +79,9 @@ export const registerCompare = (
         }) => {
           const parsedContext = options.context
             ? parseContextObject(options.context)
-            : generateContext();
+            : generateContext({
+                fileName: options.to || options.from || '',
+              });
           validateUploadRequirements(options.uploadResults, cliConfig);
 
           await runCompare({

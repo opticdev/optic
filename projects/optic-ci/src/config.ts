@@ -12,7 +12,9 @@ import { OPTIC_CONFIG_PATH } from './constants';
  *    token: process.env.GITHUB_TOKEN,
  *  },
  * rules: [],
- * generateContext: () => ({})
+ * generateContext: (details: {
+ *  fileName: string
+ * }) => ({})
  */
 
 export type OpticConfiguration = {
@@ -21,7 +23,7 @@ export type OpticConfiguration = {
     token: string;
   };
   rules?: (Ruleset | Rule)[];
-  generateContext?: () => Object;
+  generateContext?: (details: { fileName: string }) => Object;
   spectralConfig?: Extract<
     SpectralRulesetDefinition,
     { extends: any; rules: any }
