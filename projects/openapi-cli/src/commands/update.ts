@@ -4,7 +4,7 @@ import * as fs from 'fs-extra';
 import Spinnies from 'spinnies';
 import readline from 'readline';
 
-import { tap, forkable, merge, count, Subject } from '../lib/async-tools';
+import { tap, forkable, merge, Subject } from '../lib/async-tools';
 import {
   SpecFacts,
   SpecFile,
@@ -19,6 +19,7 @@ import {
   SpecPatches,
   SpecFiles,
   SpecFilesAsync,
+  SpecFilesSourcemap,
   BodyExampleFact,
   ComponentSchemaExampleFact,
 } from '../specs';
@@ -161,7 +162,6 @@ export function updateByTrafficCommand(): Command {
         absoluteSpecPath
       );
 
-      const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
       let interactions = merge(...sources);
 
       let updateResult = await updateByInteractions(spec, interactions);
@@ -172,14 +172,8 @@ export function updateByTrafficCommand(): Command {
       let { results: updatePatches, observations: updateObservations } =
         updateResult.unwrap();
 
-      const fileOperations = SpecFileOperations.fromSpecPatches(
-        updatePatches,
-        sourcemap
-      );
-
-      const updatedSpecFiles = SpecFiles.patch(specFiles, fileOperations);
-
-      const renderingStats = renderUpdateStats(updateObservations);
+      let { results: updatedSpecFiles, observations: fileObservations } =
+        updateSpecFiles(updatePatches, sourcemap);
 
       const handleUserSignals = (async function () {
         if (interactiveCapture && process.stdin.isTTY) {
@@ -204,9 +198,18 @@ export function updateByTrafficCommand(): Command {
           console.log(`Updated ${writtenFilePath}`);
         }
       })();
-      await Promise.all([handleUserSignals, writingSpecFiles]);
 
-      await renderingStats;
+      let observations = forkable(merge(updateObservations, fileObservations));
+      const renderingStats = renderUpdateStats(observations.fork());
+      const trackingStats = trackStats(observations.fork());
+      observations.start();
+
+      await Promise.all([
+        handleUserSignals,
+        writingSpecFiles,
+        renderingStats,
+        trackingStats,
+      ]);
     });
 
   return command;
@@ -318,6 +321,13 @@ export async function updateByInteractions(
 
   const observing = new Subject<UpdateObservation>();
   const observers = {
+    capturedInteraction(interaction: CapturedInteraction) {
+      observing.onNext({
+        kind: UpdateObservationKind.InteractionCaptured,
+        path: interaction.request.path,
+        method: interaction.request.method,
+      });
+    },
     documentedInteraction(interaction: DocumentedInteraction) {
       observing.onNext({
         kind: UpdateObservationKind.InteractionMatchedOperation,
@@ -336,7 +346,7 @@ export async function updateByInteractions(
 
   const documentedInteractions =
     DocumentedInteractions.fromCapturedInteractions(
-      interactions,
+      tap(observers.capturedInteraction)(interactions),
       spec,
       specUpdates
     );
@@ -375,9 +385,61 @@ export async function updateByInteractions(
   return Ok({ results: observedResults, observations: observing.iterator });
 }
 
+function updateSpecFiles(
+  updatePatches: SpecPatches,
+  sourcemap: SpecFilesSourcemap
+): {
+  results: SpecFilesAsync;
+  observations: UpdateObservations;
+} {
+  const stats = {
+    filesWithOverwrittenYamlComments: new Set<string>(),
+  };
+  const observing = new Subject<UpdateObservation>();
+  const observers = {
+    fileOperation(op: SpecFileOperation) {
+      const file = specFiles.find(({ path }) => path === op.filePath);
+      if (file && SpecFile.containsYamlComments(file))
+        stats.filesWithOverwrittenYamlComments.add(file.path);
+    },
+    updatedFile(file: SpecFile) {
+      observing.onNext({
+        kind: UpdateObservationKind.SpecFileUpdated,
+        path: file.path,
+        overwrittenComments: stats.filesWithOverwrittenYamlComments.has(
+          file.path
+        ),
+      });
+    },
+  };
+
+  const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
+
+  const fileOperations = tap(observers.fileOperation)(
+    SpecFileOperations.fromSpecPatches(updatePatches, sourcemap)
+  );
+
+  const updatedSpecFiles = tap(observers.updatedFile)(
+    SpecFiles.patch(specFiles, fileOperations)
+  );
+
+  // making sure we end observations once we're done generating patches
+  const observedResults = (async function* (): SpecFilesAsync {
+    yield* updatedSpecFiles;
+    observing.onCompleted();
+  })();
+
+  return {
+    results: observedResults,
+    observations: observing.iterator,
+  };
+}
+
 export enum UpdateObservationKind {
+  InteractionCaptured = 'interaction-captured',
   InteractionMatchedOperation = 'interaction-matched-operation',
   InteractionPatchGenerated = 'interaction-patch-generated',
+  SpecFileUpdated = 'spec-file-updated',
 }
 
 export type UpdateObservation = {
@@ -392,6 +454,16 @@ export type UpdateObservation = {
       kind: UpdateObservationKind.InteractionPatchGenerated;
       pathPattern: string;
       method: string;
+    }
+  | {
+      kind: UpdateObservationKind.InteractionCaptured;
+      path: string;
+      method: string;
+    }
+  | {
+      kind: UpdateObservationKind.SpecFileUpdated;
+      path: string;
+      overwrittenComments: boolean;
     }
 );
 
@@ -456,5 +528,46 @@ async function renderUpdateStats(updateObservations: UpdateObservations) {
         text: `${method.toUpperCase()} ${pathPattern} - no patches necessary`,
       });
     }
+  }
+}
+
+async function trackStats(observations: UpdateObservations): Promise<void> {
+  const stats = {
+    capturedInteractionsCount: 0,
+    matchedInteractionsCount: 0,
+    filesWithOverwrittenYamlCommentsCount: 0,
+    patchesCount: 0,
+    updatedFilesCount: 0,
+  };
+
+  for await (let observation of observations) {
+    if (observation.kind === UpdateObservationKind.InteractionCaptured) {
+      stats.capturedInteractionsCount += 1;
+    } else if (
+      observation.kind === UpdateObservationKind.InteractionMatchedOperation
+    ) {
+      stats.matchedInteractionsCount += 1;
+    } else if (
+      observation.kind === UpdateObservationKind.InteractionPatchGenerated
+    ) {
+      stats.patchesCount += 1;
+    } else if (observation.kind === UpdateObservationKind.SpecFileUpdated) {
+      stats.updatedFilesCount += 1;
+      if (observation.overwrittenComments) {
+        stats.filesWithOverwrittenYamlCommentsCount += 1;
+      }
+    }
+  }
+
+  trackEvent(
+    'openapi_cli.spec_updated_by_traffic',
+    'openapi_cli', // TODO: determine more useful userId
+    stats
+  );
+
+  try {
+    await flushEvents();
+  } catch (err) {
+    console.warn('Could not flush usage analytics (non-critical)');
   }
 }
