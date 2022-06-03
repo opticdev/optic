@@ -4,6 +4,7 @@ import {
   resolveJsonPointerInYamlAst,
   ToSource,
 } from './openapi-sourcemap-parser';
+import * as YAML from 'yaml-ast-parser';
 import { Kind, YamlMap, YAMLNode, YAMLSequence } from 'yaml-ast-parser';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import {
@@ -20,6 +21,13 @@ export type ILookupPathResult = {
 export type ILookupFileResult = { filePath: string; startsAt: JsonPath };
 
 export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
+  const filesToYamlNode: Record<string, YAMLNode> = sourcemap.files.reduce(
+    (acc, file) => ({
+      ...acc,
+      [file.path]: YAML.safeLoad(file.contents),
+    }),
+    {}
+  );
   const rootFileNumber = sourcemap.files.find(
     (i) => i.path === sourcemap.rootFilePath
   )!.index;
@@ -32,7 +40,10 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
 
     const file = sourcemap.files.find((i) => i.path === fileResult.filePath)!;
 
-    const node = resolveJsonPointerInYamlAst(file.ast, fileResult.startsAt);
+    const node = resolveJsonPointerInYamlAst(
+      filesToYamlNode[file.path],
+      fileResult.startsAt
+    );
 
     if (node)
       return {
@@ -64,8 +75,6 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
 
       cursor.pathInRoot.push(component);
       const hitRef = sourcemap.refMappings[path] as ToSource | undefined;
-
-      // console.log(path, hitRef ? "GOT HIT" : "no HIT");
 
       if (hitRef) {
         const [file, startingPath] = hitRef;

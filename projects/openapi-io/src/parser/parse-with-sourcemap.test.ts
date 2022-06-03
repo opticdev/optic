@@ -112,6 +112,16 @@ it('can parse an OpenAPI file with nested URLs from file or git', async () => {
   expect(fileResults.jsonLike).toMatchSnapshot();
 });
 
+it('can generate a sourcemap and jsonLike that is serializable', async () => {
+  const fileResults = await parseOpenAPIWithSourcemap(
+    path.resolve(
+      path.join(__dirname, '../../inputs/openapi3/empty-with-url-ref.json')
+    )
+  );
+
+  JSON.stringify(fileResults);
+});
+
 describe('circular references', () => {
   test('can derefence circular references', async () => {
     const fileResults = await parseOpenAPIWithSourcemap(
