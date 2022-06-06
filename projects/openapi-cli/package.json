@@ -56,6 +56,7 @@
     "mockttp": "^3.0.0",
     "node-abort-controller": "^3.0.1",
     "node-machine-id": "^1.1.12",
+    "ora": "^6.1.0",
     "spinnies": "^0.5.1",
     "stream-chain": "^2.2.5",
     "stream-json": "^1.7.4",
