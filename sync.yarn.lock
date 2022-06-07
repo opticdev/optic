@@ -3432,7 +3432,6 @@ __metadata:
     "@types/node": ^17.0.15
     "@types/node-fetch": 2.5.12
     "@useoptic/json-pointer-helpers": "workspace:*"
-    "@useoptic/openapi-utilities": "workspace:*"
     babel-jest: ^27.5.1
     chai: ^4.3.4
     copyfiles: ^2.4.1
