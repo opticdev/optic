@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`reading sourcemaps can get file path of forign file for any pointer relative to flattened json 1`] = `"/Users/nicholaslim/Desktop/repos/monorail/projects/openapi-workspaces/projects/openapi-io/inputs/openapi3-with-references/definitions.yaml"`;
+exports[`reading sourcemaps can get file path of forign file for any pointer relative to flattened json 1`] = `"/projects/openapi-workspaces/projects/openapi-io/inputs/openapi3-with-references/definitions.yaml"`;
 
-exports[`reading sourcemaps can get file paths json pointer in main file relative to flattened json 1`] = `"/Users/nicholaslim/Desktop/repos/monorail/projects/openapi-workspaces/projects/openapi-io/inputs/openapi3-with-references/external-multiple.yaml"`;
+exports[`reading sourcemaps can get file paths json pointer in main file relative to flattened json 1`] = `"/projects/openapi-workspaces/projects/openapi-io/inputs/openapi3-with-references/external-multiple.yaml"`;
 
 exports[`reading sourcemaps lines in affected file for sub-property 1`] = `
 Object {
   "endLine": 8,
   "endPosition": 111,
-  "filePath": "/Users/nicholaslim/Desktop/repos/monorail/projects/openapi-workspaces/projects/openapi-io/inputs/openapi3-with-references/definitions.yaml",
+  "filePath": "/projects/openapi-workspaces/projects/openapi-io/inputs/openapi3-with-references/definitions.yaml",
   "startLine": 8,
   "startPosition": 98,
 }
@@ -18,7 +18,7 @@ exports[`reading sourcemaps lines in affected for object 1`] = `
 Object {
   "endLine": 7,
   "endPosition": 117,
-  "filePath": "/Users/nicholaslim/Desktop/repos/monorail/projects/openapi-workspaces/projects/openapi-io/inputs/openapi3-with-references/external-multiple.yaml",
+  "filePath": "/projects/openapi-workspaces/projects/openapi-io/inputs/openapi3-with-references/external-multiple.yaml",
   "startLine": 3,
   "startPosition": 37,
 }
