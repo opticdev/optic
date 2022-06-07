@@ -1,12 +1,12 @@
 import { WriteStream } from 'tty';
 import readline from 'readline';
-import chalk from 'chalk';
 
 type ObservedOperation = { pathPattern: string; method: string };
 
 const spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 
-export function updateReporter(stream: WriteStream) {
+export async function updateReporter(stream: WriteStream) {
+  const chalk = (await import('chalk')).default;
   let stats = {
     matchedOperations: new Map<string, ObservedOperation>(),
     patchCountByOperation: new Map<string, number>(),
@@ -24,9 +24,11 @@ export function updateReporter(stream: WriteStream) {
   function renderLine(lineIndex: number) {
     const line = lines[lineIndex];
     if (!line) return;
-    let rendered = `${line.spinner ? spinner[spinnerFrame] + ' ' : ''}${
-      line.prefix || ''
-    }${line.text || ''}`;
+    let renderedSpinner = line.spinner
+      ? chalk.hex('#87afff')(spinner[spinnerFrame] + ' ')
+      : '';
+
+    let rendered = `${renderedSpinner}${line.prefix || ''}${line.text || ''}`;
     let lineNo = lines.length - lineIndex; // naive, breaks as soon as lines wrap
     writeOnLine(stream, lineNo, rendered);
   }
