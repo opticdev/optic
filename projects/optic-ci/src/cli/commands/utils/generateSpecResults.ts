@@ -62,12 +62,12 @@ export const generateSpecResults = async (
   );
 
   const spectralResults =
-    spectralConfig && checkService.runSpectralRules
+    !to.isEmptySpec && spectralConfig && checkService.runSpectralRules
       ? await checkService.runSpectralRules({
-          ruleset: spectralConfig,
-          nextJsonLike: toJsonLike,
-          nextFacts: nextFacts,
-        })
+        ruleset: spectralConfig,
+        nextJsonLike: toJsonLike,
+        nextFacts: nextFacts,
+      })
       : [];
 
   const ruleResults = checkService.runRulesWithFacts({
