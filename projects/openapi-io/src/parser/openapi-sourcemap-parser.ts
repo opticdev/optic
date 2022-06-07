@@ -223,7 +223,6 @@ export class JsonSchemaSourcemap {
     }
   }
 }
-
 export function resolveJsonPointerInYamlAst(
   node: YAMLNode, // root ast
   pointer: string

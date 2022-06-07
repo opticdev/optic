@@ -2,8 +2,8 @@ import { SpecFromInput, SpecVersionFrom } from './compare-input-parser';
 import {
   JsonSchemaSourcemap,
   parseOpenAPIFromRepoWithSourcemap,
-  ParseOpenAPIResult,
   inGit,
+  ParseOpenAPIResult,
   parseOpenAPIWithSourcemap,
 } from '@useoptic/openapi-io';
 import path from 'path';

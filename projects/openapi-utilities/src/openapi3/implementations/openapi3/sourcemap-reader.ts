@@ -1,22 +1,50 @@
-import {
-  JsonPath,
-  JsonSchemaSourcemap,
-  resolveJsonPointerInYamlAst,
-  ToSource,
-} from './openapi-sourcemap-parser';
 import * as YAML from 'yaml-ast-parser';
-import { Kind, YamlMap, YAMLNode, YAMLSequence } from 'yaml-ast-parser';
+import {
+  Kind,
+  YamlMap,
+  YAMLNode,
+  YAMLSequence,
+  YAMLMapping,
+} from 'yaml-ast-parser';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import {
+  ILookupFileResult,
+  ILookupPathResult,
+  JsonPath,
+  SerializedSourcemap,
+  ToSource,
+} from './types';
 
-export type ILookupPathResult = {
-  filePath: string;
-  startsAt: JsonPath;
-  contents: string;
-  astNode: YAMLNode;
-};
-export type ILookupFileResult = { filePath: string; startsAt: JsonPath };
+export function resolveJsonPointerInYamlAst(
+  node: YAMLNode, // root ast
+  pointer: string
+): YAMLNode | undefined {
+  const decoded = jsonPointerHelpers.decode(pointer);
+  const isEmpty =
+    decoded.length === 0 || (decoded.length === 1 && decoded[0] === '');
 
-export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
+  if (isEmpty) return node;
+
+  const found: YAMLNode | undefined = decoded.reduce((current, path) => {
+    if (!current) return undefined;
+    const node: YAMLNode = current.key ? current.value : current;
+    const isNumericalKey =
+      !isNaN(Number(path)) && (node as any).hasOwnProperty('items');
+
+    if (isNumericalKey) {
+      return (node as YAMLSequence).items[Number(path)];
+    } else {
+      const field = node.mappings.find(
+        (i: YAMLMapping) => i.key.value === path
+      );
+      return field;
+    }
+  }, node as YAMLNode | undefined);
+
+  return found;
+}
+
+export function sourcemapReader(sourcemap: SerializedSourcemap) {
   const filesToYamlNode: Record<string, YAMLNode> = sourcemap.files.reduce(
     (acc, file) => ({
       ...acc,

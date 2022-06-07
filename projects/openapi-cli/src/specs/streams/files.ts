@@ -5,7 +5,7 @@ import {
   SpecFilesSourcemap,
 } from '..';
 import { Operation } from '../patches';
-import { sourcemapReader } from '@useoptic/openapi-io';
+import { sourcemapReader } from '@useoptic/openapi-utilities';
 import invariant from 'ts-invariant';
 import fs from 'fs-extra';
 

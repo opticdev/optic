@@ -1,13 +1,14 @@
-import { parseOpenAPIWithSourcemap } from './openapi-sourcemap-parser';
+// TODO get rid of fixture import so we don't have circular references
+import { parseOpenAPIWithSourcemap } from '../../../../../../openapi-io/src/parser/openapi-sourcemap-parser';
 import path from 'path';
-import { sourcemapReader } from './sourcemap-reader';
+import { sourcemapReader } from '../sourcemap-reader';
 
 const fixture = async () => {
   return await parseOpenAPIWithSourcemap(
     path.resolve(
       path.join(
         __dirname,
-        '../../inputs/openapi3-with-references/external-multiple.yaml'
+        '../../../../../../openapi-io/inputs/openapi3-with-references/external-multiple.yaml'
       )
     )
   );
@@ -63,7 +64,7 @@ describe('reading sourcemaps', () => {
       path.resolve(
         path.join(
           __dirname,
-          '../../inputs/openapi3/001-ok-add-property-field.yaml'
+          '../../../../../../openapi-io/inputs/openapi3/001-ok-add-property-field.yaml'
         )
       )
     );
