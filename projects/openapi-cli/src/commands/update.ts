@@ -483,7 +483,7 @@ async function renderUpdateStats(updateObservations: UpdateObservations) {
       observation.kind === UpdateObservationKind.InteractionMatchedOperation
     ) {
       let { method, pathPattern } = observation;
-      reporter.add({ method, pathPattern });
+      reporter.interaction({ method, pathPattern });
     } else if (
       observation.kind === UpdateObservationKind.InteractionPatchGenerated
     ) {

@@ -1,5 +1,6 @@
 import { WriteStream } from 'tty';
 import readline from 'readline';
+import invariant from 'ts-invariant';
 
 type ObservedOperation = { pathPattern: string; method: string };
 
@@ -9,8 +10,10 @@ export async function updateReporter(stream: WriteStream) {
   const chalk = (await import('chalk')).default;
   let stats = {
     matchedOperations: new Map<string, ObservedOperation>(),
+    matchedInteractionCountByOperation: new Map<string, number>(),
     patchSourcesByOperation: new Map<string, Set<string>>(),
     patchCountByOperation: new Map<string, number>(),
+    patchCountBySource: new Map<string, number>(),
   };
 
   const lines: {
@@ -58,30 +61,62 @@ export async function updateReporter(stream: WriteStream) {
 
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i];
-      if (!line.spinner) return;
+      if (!line.spinner) continue;
       renderLine(i);
     }
   }
 
   let animating = setInterval(animateSpinners, 80);
 
+  function operationLineText(id) {
+    if (!stats.matchedOperations.has(id)) return;
+
+    let patchCount = stats.patchCountByOperation.get(id) || 0;
+    let interactionCount =
+      stats.matchedInteractionCountByOperation.get(id) || 0;
+
+    return `${patchCount} ${chalk.dim(
+      `patch${patchCount !== 1 ? 'es' : ''}`
+    )} ${chalk.dim('/')} ${interactionCount} ${chalk.dim(
+      `interaction${interactionCount !== 1 ? 's' : ''}`
+    )}`;
+  }
+
   return {
-    add(op: ObservedOperation) {
+    interaction(op: ObservedOperation) {
       let id = operationId(op);
-      if (stats.matchedOperations.has(id)) return;
+      if (!stats.matchedOperations.has(id)) {
+        stats.matchedOperations.set(id, op);
+        stats.matchedInteractionCountByOperation.set(id, 1);
+        stats.patchCountByOperation.set(id, 0);
+        let prefix = `${op.method.toUpperCase()} ${op.pathPattern} ${chalk.dim(
+          '-'
+        )} `;
+        let text = operationLineText(id);
+        let spinner = true;
 
-      stats.matchedOperations.set(id, op);
-      let prefix = `${op.method.toUpperCase()} ${op.pathPattern} - `;
-      let text = `Matched first interaction`;
-      let spinner = true;
+        appendLine({ id, prefix, text, spinner });
+      } else {
+        let interactionCount =
+          stats.matchedInteractionCountByOperation.get(id)! + 1;
+        stats.matchedInteractionCountByOperation.set(id, interactionCount);
 
-      appendLine({ id, prefix, text, spinner });
+        let opLineIndex = lines.findIndex(
+          (line) => line.id === id && line.spinner
+        );
+        let line = lines[opLineIndex];
+        invariant(
+          line,
+          'each operation should be represented by a rendered line'
+        );
+
+        line.text = operationLineText(id);
+        renderLine(opLineIndex);
+      }
     },
     patch(op: ObservedOperation, capturedPath: string, description: string) {
       let id = operationId(op);
       let patchCount = (stats.patchCountByOperation.get(id) || 0) + 1;
-      let text = `${patchCount} patch${patchCount > 1 ? 'es' : ''} generated`;
-
       stats.patchCountByOperation.set(id, patchCount);
 
       let opLineIndex = lines.findIndex(
@@ -90,46 +125,44 @@ export async function updateReporter(stream: WriteStream) {
       if (opLineIndex <= -1) return;
 
       let line = lines[opLineIndex];
-      line.text = text;
+      line.text = operationLineText(id);
       renderLine(opLineIndex);
 
       if (!stats.patchSourcesByOperation.has(id)) {
         stats.patchSourcesByOperation.set(id, new Set());
       }
       let sources = stats.patchSourcesByOperation.get(id)!;
-      if (!sources.has(capturedPath)) {
-        sources.add(capturedPath);
+      let sourceId = `${id}-${capturedPath}`;
+      if (!sources.has(sourceId)) {
+        sources.add(sourceId);
+
+        stats.patchCountBySource.set(sourceId, 1);
 
         insertLine(
           {
-            id: `${id}-${capturedPath}`,
-            prefix: `${capturedPath}: `,
-            text: description,
-            icon: sources.size === 1 ? '  ↳' : '   ',
+            id: sourceId,
+            prefix: `${capturedPath} ${chalk.dim('-')} `,
+            text: `1 ${chalk.dim('patch')}`,
+            icon: chalk.dim('  │'),
             spinner: false,
           },
           opLineIndex + sources.size
         );
+      } else {
+        let sourcePatchCount = stats.patchCountBySource.get(sourceId)! + 1;
+
+        stats.patchCountBySource.set(sourceId, sourcePatchCount);
+
+        let sourcePatchLineIndex = lines.findIndex(
+          (line) => line.id === sourceId
+        );
+        if (sourcePatchLineIndex) {
+          let sourcePatchLine = lines[sourcePatchLineIndex];
+          sourcePatchLine.text = `${sourcePatchCount} ${chalk.dim('patches')}`;
+
+          renderLine(sourcePatchLineIndex);
+        }
       }
-    },
-    succeed(op: ObservedOperation) {
-      let id = operationId(op);
-      let lineIndex = lines.findIndex((line) => line.id === id && line.spinner);
-      if (lineIndex <= -1) return;
-      let line = lines[lineIndex];
-
-      let patchCount = stats.patchCountByOperation.get(id) || 0;
-      let text =
-        patchCount <= 0
-          ? `no patches necessary`
-          : `${patchCount} patch${patchCount > 1 ? 'es' : ''} applied`;
-      let icon =
-        patchCount <= 0 ? chalk.greenBright('✓') : chalk.blueBright('»');
-
-      line.icon = icon;
-      line.spinner = false;
-      line.text = text;
-      renderLine(lineIndex);
     },
 
     finish() {
@@ -145,8 +178,10 @@ export async function updateReporter(stream: WriteStream) {
         let patchCount = stats.patchCountByOperation.get(id) || 0;
         let text =
           patchCount <= 0
-            ? `no patches necessary`
-            : `${patchCount} patch${patchCount > 1 ? 'es' : ''} applied`;
+            ? chalk.dim(`no patches necessary`)
+            : `${patchCount} ${chalk.dim(
+                `patch${patchCount > 1 ? 'es' : ''} applied`
+              )}`;
         let icon =
           patchCount <= 0 ? chalk.greenBright('✓') : chalk.blueBright('»');
 
