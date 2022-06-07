@@ -9,6 +9,7 @@ export async function updateReporter(stream: WriteStream) {
   const chalk = (await import('chalk')).default;
   let stats = {
     matchedOperations: new Map<string, ObservedOperation>(),
+    patchSourcesByOperation: new Map<string, Set<string>>(),
     patchCountByOperation: new Map<string, number>(),
   };
 
@@ -43,6 +44,15 @@ export async function updateReporter(stream: WriteStream) {
     renderLine(len - 1);
   }
 
+  function insertLine(line, lineIndex) {
+    stream.write('\n');
+    lines.splice(lineIndex, 0, line);
+    for (let i = lineIndex; i < lines.length; i++) {
+      // re-render all lines below
+      renderLine(i);
+    }
+  }
+
   function animateSpinners() {
     spinnerFrame = ++spinnerFrame % spinner.length;
 
@@ -74,12 +84,33 @@ export async function updateReporter(stream: WriteStream) {
 
       stats.patchCountByOperation.set(id, patchCount);
 
-      let lineIndex = lines.findIndex((line) => line.id === id && line.spinner);
-      if (lineIndex <= -1) return;
+      let opLineIndex = lines.findIndex(
+        (line) => line.id === id && line.spinner
+      );
+      if (opLineIndex <= -1) return;
 
-      let line = lines[lineIndex];
+      let line = lines[opLineIndex];
       line.text = text;
-      renderLine(lineIndex);
+      renderLine(opLineIndex);
+
+      if (!stats.patchSourcesByOperation.has(id)) {
+        stats.patchSourcesByOperation.set(id, new Set());
+      }
+      let sources = stats.patchSourcesByOperation.get(id)!;
+      if (!sources.has(capturedPath)) {
+        sources.add(capturedPath);
+
+        insertLine(
+          {
+            id: `${id}-${capturedPath}`,
+            prefix: `${capturedPath}: `,
+            text: description,
+            icon: sources.size === 1 ? '  ↳' : '   ',
+            spinner: false,
+          },
+          opLineIndex + sources.size
+        );
+      }
     },
     succeed(op: ObservedOperation) {
       let id = operationId(op);
