@@ -1,7 +1,10 @@
 import { WriteStream } from 'tty';
 import readline from 'readline';
+import chalk from 'chalk';
 
 type ObservedOperation = { pathPattern: string; method: string };
+
+const spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 
 export function updateReporter(stream: WriteStream) {
   let stats = {
@@ -11,22 +14,19 @@ export function updateReporter(stream: WriteStream) {
 
   const lines: {
     id: string;
-    spinner?: Spinner;
+    spinner: boolean;
     prefix?: string;
     text?: string;
   }[] = [];
 
-  // function cursorToLine(lineIndex: number) {
-  //   let lineNo = lines.length - lineIndex - 1; // naive, breaks as soon as lines wrap
-  //   readline.cursorTo(stream, 0, lineNo);
-  // }
+  let spinnerFrame = 0;
 
   function renderLine(lineIndex: number) {
     const line = lines[lineIndex];
     if (!line) return;
-    let rendered = `${line.spinner?.frame() || ''} ${line.prefix || ''}${
-      line.text || ''
-    }`;
+    let rendered = `${line.spinner ? spinner[spinnerFrame] + ' ' : ''}${
+      line.prefix || ''
+    }${line.text || ''}`;
     let lineNo = lines.length - lineIndex; // naive, breaks as soon as lines wrap
     writeOnLine(stream, lineNo, rendered);
   }
@@ -37,6 +37,18 @@ export function updateReporter(stream: WriteStream) {
     renderLine(len - 1);
   }
 
+  function animateSpinners() {
+    spinnerFrame = ++spinnerFrame % spinner.length;
+
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i];
+      if (!line.spinner) return;
+      renderLine(i);
+    }
+  }
+
+  let animating = setInterval(animateSpinners, 80);
+
   return {
     add(op: ObservedOperation) {
       let id = operationId(op);
@@ -45,7 +57,7 @@ export function updateReporter(stream: WriteStream) {
       stats.matchedOperations.set(id, op);
       let prefix = `${op.method.toUpperCase()} ${op.pathPattern} - `;
       let text = `Matched first interaction`;
-      let spinner = new Spinner();
+      let spinner = true;
 
       appendLine({ id, prefix, text, spinner });
     },
@@ -79,7 +91,13 @@ export function updateReporter(stream: WriteStream) {
       renderLine(lineIndex);
     },
 
-    finish() {},
+    finish() {
+      clearInterval(animating);
+
+      if (stats.matchedOperations.size < 1) {
+        console.log(`No matching operations found`);
+      }
+    },
   };
 }
 
@@ -94,22 +112,4 @@ function writeOnLine(stream: WriteStream, lineNo: number, content: string) {
   readline.clearLine(stream, 1); // clear to the right of the cursor
   readline.cursorTo(stream, 0); // start of subject line
   readline.moveCursor(stream, 0, lineNo); // to start of original line
-}
-
-class Spinner {
-  current: number;
-  chars: string[];
-
-  constructor() {
-    this.current = 0;
-    this.chars = Spinner.spinners[0].split('');
-  }
-
-  static spinners: Array<string> = ['⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'];
-
-  frame() {
-    let char = this.chars[this.current];
-    this.current = ++this.current % this.chars.length;
-    return char;
-  }
 }

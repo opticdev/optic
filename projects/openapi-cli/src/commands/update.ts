@@ -1,7 +1,6 @@
 import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
-import Spinnies from 'spinnies';
 import readline from 'readline';
 import { updateReporter } from './reporters/update';
 
@@ -498,13 +497,11 @@ async function renderUpdateStats(updateObservations: UpdateObservations) {
     }
   }
 
-  if (stats.matchedOperations.size < 1) {
-    console.log(`No matching operations found`);
-  }
-
   for (let { method, pathPattern } of stats.matchedOperations.values()) {
     reporter.succeed({ method, pathPattern });
   }
+
+  reporter.finish();
 }
 
 async function trackStats(observations: UpdateObservations): Promise<void> {
