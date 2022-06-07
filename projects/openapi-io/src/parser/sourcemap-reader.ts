@@ -7,10 +7,6 @@ import {
 import * as YAML from 'yaml-ast-parser';
 import { Kind, YamlMap, YAMLNode, YAMLSequence } from 'yaml-ast-parser';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import {
-  LookupLineResultWithFilepath,
-  LookupLineResult,
-} from '@useoptic/openapi-utilities';
 
 export type ILookupPathResult = {
   filePath: string;
@@ -67,7 +63,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
       pathInCurrentFile: [],
     };
 
-    decoded.forEach((component, index) => {
+    decoded.forEach((component) => {
       const path = jsonPointerHelpers.compile([
         ...cursor.pathInCurrentFile,
         component,
@@ -114,7 +110,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
         startPosition,
         endPosition
       );
-      const result: LookupLineResultWithFilepath = {
+      const result = {
         filePath: lookupResult.filePath,
         startLine,
         endLine,
@@ -133,7 +129,7 @@ export function sourcemapReader(sourcemap: JsonSchemaSourcemap) {
       startPosition,
       endPosition
     );
-    const result: LookupLineResult = {
+    const result = {
       startLine,
       endLine,
       startPosition: startPosition,
