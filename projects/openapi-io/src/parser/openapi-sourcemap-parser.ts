@@ -1,7 +1,6 @@
 import $RefParser from '@apidevtools/json-schema-ref-parser';
 // @ts-ignore
 import * as $RefParserOptions from '@apidevtools/json-schema-ref-parser/lib/options';
-import * as YAML from 'yaml-ast-parser';
 import { YAMLMapping, YAMLNode, YAMLSequence } from 'yaml-ast-parser';
 import * as fs from 'fs-extra';
 // @ts-ignore
@@ -148,13 +147,10 @@ export async function parseOpenAPIFromRepoWithSourcemap(
 }
 
 export type JsonPath = string;
-export type JsonPathExploded = string[];
 export type FileReference = number;
 
-export type DerefToSource = [YAMLNode, FileReference, JsonPath];
 export type ToSource = [FileReference, JsonPath];
 
-// assumptions change because not serializing
 export class JsonSchemaSourcemap {
   constructor(public rootFilePath: string) {}
 
@@ -163,7 +159,6 @@ export class JsonSchemaSourcemap {
     index: number;
     contents: string;
     sha256: string;
-    ast: YAMLNode;
   }> = [];
 
   public refMappings: { [key: JsonPath]: ToSource } = {};
@@ -173,27 +168,21 @@ export class JsonSchemaSourcemap {
       const response = await fetch(filePath);
       const asText = await response.text();
 
-      const yamlAst: YAMLNode = YAML.safeLoad(asText);
-
       this.files.push({
         path: filePath,
         contents: asText,
         sha256: Hex.stringify(sha256(asText)),
         index: fileIndex,
-        ast: yamlAst,
       });
     } else {
       if (!this.files.find((i) => i.path === filePath)) {
         const contents = (await fs.readFile(filePath)).toString();
-        // add the ast to the cache
-        const yamlAst: YAMLNode = YAML.safeLoad(contents);
 
         this.files.push({
           path: filePath,
           sha256: Hex.stringify(sha256(contents)),
           contents,
           index: fileIndex,
-          ast: yamlAst,
         });
       }
     }
@@ -205,15 +194,11 @@ export class JsonSchemaSourcemap {
     fileIndex: number
   ) {
     if (!this.files.find((i) => i.path === filePath)) {
-      // add the ast to the cache
-      const yamlAst: YAMLNode = YAML.safeLoad(contents);
-
       this.files.push({
         path: filePath,
         index: fileIndex,
         contents,
         sha256: Hex.stringify(sha256(contents)),
-        ast: yamlAst,
       });
     }
   }
