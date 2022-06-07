@@ -4,6 +4,7 @@ import { OpenAPIV3 } from 'openapi-types';
 import { IChange, ChangeType, IFact } from '../../sdk/types';
 import { OpenAPITraverser } from './openapi-traverser';
 import { ResultWithSourcemap } from '../../../types';
+import { RuleRunner, SpectralInput } from './types';
 
 const traverseSpec = (jsonSpec: OpenAPIV3.Document): IFact[] => {
   const currentTraverser = new OpenAPITraverser();
@@ -14,11 +15,11 @@ const traverseSpec = (jsonSpec: OpenAPIV3.Document): IFact[] => {
 };
 
 export const generateSpecResults = async (
-  checkService: any,
+  checkService: RuleRunner,
   from: ParseOpenAPIResult & { isEmptySpec: boolean },
   to: ParseOpenAPIResult & { isEmptySpec: boolean },
   context: any,
-  spectralConfig?: any
+  spectralConfig?: SpectralInput
 ): Promise<{
   changes: IChange[];
   results: ResultWithSourcemap[];
