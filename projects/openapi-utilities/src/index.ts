@@ -44,6 +44,8 @@ import {
 } from './render/ast-helpers';
 export { defaultEmptySpec } from './openapi3/constants';
 export * from './ci-types';
+export { generateSpecResults } from './openapi3/implementations/openapi3/generate-spec-results';
+export * from './openapi3/implementations/openapi3/types';
 
 export {
   validateOpenApiV3Document,
