@@ -195,7 +195,7 @@ export function updateByTrafficCommand(): Command {
         for await (let writtenFilePath of SpecFiles.writeFiles(
           updatedSpecFiles
         )) {
-          console.log(`Updated ${writtenFilePath}`);
+          // console.log(`Updated ${writtenFilePath}`);
         }
       })();
 
@@ -476,11 +476,6 @@ export type UpdateObservation = {
 export interface UpdateObservations extends AsyncIterable<UpdateObservation> {}
 
 async function renderUpdateStats(updateObservations: UpdateObservations) {
-  type ObservedOperation = { pathPattern: string; method: string };
-  let stats = {
-    matchedOperations: new Map<string, ObservedOperation>(),
-  };
-
   const reporter = await updateReporter(process.stderr);
 
   for await (let observation of updateObservations) {
@@ -495,10 +490,6 @@ async function renderUpdateStats(updateObservations: UpdateObservations) {
       let { method, pathPattern, capturedPath, description } = observation;
       reporter.patch({ method, pathPattern }, capturedPath, description);
     }
-  }
-
-  for (let { method, pathPattern } of stats.matchedOperations.values()) {
-    reporter.succeed({ method, pathPattern });
   }
 
   reporter.finish();

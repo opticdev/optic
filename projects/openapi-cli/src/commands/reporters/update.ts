@@ -14,6 +14,7 @@ export async function updateReporter(stream: WriteStream) {
 
   const lines: {
     id: string;
+    icon?: string;
     spinner: boolean;
     prefix?: string;
     text?: string;
@@ -27,8 +28,11 @@ export async function updateReporter(stream: WriteStream) {
     let renderedSpinner = line.spinner
       ? chalk.hex('#87afff')(spinner[spinnerFrame] + ' ')
       : '';
+    let icon = line.icon ? line.icon + ' ' : '';
 
-    let rendered = `${renderedSpinner}${line.prefix || ''}${line.text || ''}`;
+    let rendered = `${renderedSpinner}${icon}${line.prefix || ''}${
+      line.text || ''
+    }`;
     let lineNo = lines.length - lineIndex; // naive, breaks as soon as lines wrap
     writeOnLine(stream, lineNo, rendered);
   }
@@ -79,22 +83,47 @@ export async function updateReporter(stream: WriteStream) {
     },
     succeed(op: ObservedOperation) {
       let id = operationId(op);
+      let lineIndex = lines.findIndex((line) => line.id === id && line.spinner);
+      if (lineIndex <= -1) return;
+      let line = lines[lineIndex];
+
       let patchCount = stats.patchCountByOperation.get(id) || 0;
       let text =
         patchCount <= 0
           ? `no patches necessary`
           : `${patchCount} patch${patchCount > 1 ? 'es' : ''} applied`;
+      let icon =
+        patchCount <= 0 ? chalk.greenBright('✓') : chalk.blueBright('»');
 
-      let lineIndex = lines.findIndex((line) => line.id === id && line.spinner);
-      if (lineIndex <= -1) return;
-
-      let line = lines[lineIndex];
+      line.icon = icon;
+      line.spinner = false;
       line.text = text;
       renderLine(lineIndex);
     },
 
     finish() {
       clearInterval(animating);
+
+      for (let id of stats.matchedOperations.keys()) {
+        let lineIndex = lines.findIndex(
+          (line) => line.id === id && line.spinner
+        );
+        if (lineIndex <= -1) return;
+        let line = lines[lineIndex];
+
+        let patchCount = stats.patchCountByOperation.get(id) || 0;
+        let text =
+          patchCount <= 0
+            ? `no patches necessary`
+            : `${patchCount} patch${patchCount > 1 ? 'es' : ''} applied`;
+        let icon =
+          patchCount <= 0 ? chalk.greenBright('✓') : chalk.blueBright('»');
+
+        line.icon = icon;
+        line.spinner = false;
+        line.text = text;
+        renderLine(lineIndex);
+      }
 
       if (stats.matchedOperations.size < 1) {
         console.log(`No matching operations found`);
