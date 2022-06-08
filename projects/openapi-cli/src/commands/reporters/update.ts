@@ -241,7 +241,7 @@ export async function updateReporter(stream: WriteStream, cwd: string) {
         let patchCount = stats.patchCountByOperation.get(id) || 0;
         let text =
           patchCount <= 0
-            ? chalk.dim(`no patches necessary`)
+            ? chalk.dim(`traffic and spec match`)
             : `${patchCount} ${chalk.dim(
                 `patch${patchCount > 1 ? 'es' : ''} applied`
               )}`;
