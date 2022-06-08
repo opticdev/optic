@@ -42,6 +42,9 @@ export class RuleRunner {
     nextFacts: IFact[];
     nextJsonLike: OpenAPIV3.Document;
   }): Promise<Result[]> {
+    if ((nextJsonLike as any)['x-optic-ci-empty-spec'] === true) {
+      return [];
+    }
     const spectral = new Spectral();
     spectral.setRuleset({
       extends: [[oas as SpectralRulesetDefinition, 'all']],
