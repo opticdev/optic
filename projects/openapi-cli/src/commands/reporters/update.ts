@@ -37,7 +37,8 @@ export async function updateReporter(stream: WriteStream) {
     let rendered = `${renderedSpinner}${icon}${line.prefix || ''}${
       line.text || ''
     }`;
-    let lineNo = lines.length - lineIndex; // naive, breaks as soon as lines wrap
+    let lineNo = lines.length - lineIndex; //naive, breaks as soon as lines wrap
+    // TODO: cap line width to available columns or implement wrapping
     writeOnLine(stream, lineNo, rendered);
   }
 
@@ -82,6 +83,12 @@ export async function updateReporter(stream: WriteStream) {
     )}`;
   }
 
+  appendLine({ id: 'footer-empty-line' });
+  appendLine({
+    id: 'footer-exit-message',
+    text: '> Press Enter to finish and apply the patches',
+  });
+
   return {
     interaction(op: ObservedOperation) {
       let id = operationId(op);
@@ -95,7 +102,11 @@ export async function updateReporter(stream: WriteStream) {
         let text = operationLineText(id);
         let spinner = true;
 
-        appendLine({ id, prefix, text, spinner });
+        if (stats.matchedOperations.size === 1) {
+          insertLine({ id: 'header-empty-line' }, 0);
+        }
+
+        insertLine({ id, prefix, text, spinner }, lines.length - 2); // add to the bottom
       } else {
         let interactionCount =
           stats.matchedInteractionCountByOperation.get(id)! + 1;
@@ -190,6 +201,13 @@ export async function updateReporter(stream: WriteStream) {
         line.text = text;
         renderLine(lineIndex);
       }
+
+      let footerLineIndex = lines.findIndex(
+        (line) => line.id === 'footer-exit-message'
+      )!;
+      let footerLine = lines[footerLineIndex];
+      footerLine.text = 'Finished and applied patches';
+      renderLine(footerLineIndex);
 
       if (stats.matchedOperations.size < 1) {
         console.log(`No matching operations found`);

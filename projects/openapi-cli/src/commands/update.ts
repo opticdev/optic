@@ -177,7 +177,6 @@ export function updateByTrafficCommand(): Command {
 
       const handleUserSignals = (async function () {
         if (interactiveCapture && process.stdin.isTTY) {
-          console.log('Press Enter to finish capturing traffic');
           // wait for an empty new line on input, which should indicate hitting Enter / Return
           let lines = readline.createInterface({ input: process.stdin });
           for await (let line of lines) {
