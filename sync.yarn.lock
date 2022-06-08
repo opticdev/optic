@@ -3154,6 +3154,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/slice-ansi@npm:^4":
+  version: 4.0.0
+  resolution: "@types/slice-ansi@npm:4.0.0"
+  checksum: 343086bc4e686349382b386a6fb49d632fb4dd08ecc08f1b9872815199efe8db7648731e56c1d10dc0f596fe77a8fce6136e0067136f8e0cefda6b29797aa4f1
+  languageName: node
+  linkType: hard
+
 "@types/socket.io-parser@npm:*":
   version: 2.2.1
   resolution: "@types/socket.io-parser@npm:2.2.1"
@@ -3308,6 +3315,7 @@ __metadata:
     "@types/jest": ^26.0.24
     "@types/json-stable-stringify": ^1.0.33
     "@types/node": ^17.0.15
+    "@types/slice-ansi": ^4
     "@types/stream-chain": ^2
     "@types/stream-json": ^1
     "@types/whatwg-mimetype": ^2.1.1
@@ -3331,8 +3339,10 @@ __metadata:
     node-abort-controller: ^3.0.1
     node-machine-id: ^1.1.12
     prettier: ^2.4.1
+    slice-ansi: ^4.0.0
     stream-chain: ^2.2.5
     stream-json: ^1.7.4
+    strip-ansi: ^6.0.1
     ts-invariant: ^0.9.4
     ts-node: ^10.8.1
     ts-results: ^3.3.0
@@ -9069,6 +9079,17 @@ __metadata:
     astral-regex: ^2.0.0
     is-fullwidth-code-point: ^3.0.0
   checksum: 5ec6d022d12e016347e9e3e98a7eb2a592213a43a65f1b61b74d2c78288da0aded781f665807a9f3876b9daa9ad94f64f77d7633a0458876c3a4fdc4eb223f24
+  languageName: node
+  linkType: hard
+
+"slice-ansi@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "slice-ansi@npm:4.0.0"
+  dependencies:
+    ansi-styles: ^4.0.0
+    astral-regex: ^2.0.0
+    is-fullwidth-code-point: ^3.0.0
+  checksum: 4a82d7f085b0e1b070e004941ada3c40d3818563ac44766cca4ceadd2080427d337554f9f99a13aaeb3b4a94d9964d9466c807b3d7b7541d1ec37ee32d308756
   languageName: node
   linkType: hard
 

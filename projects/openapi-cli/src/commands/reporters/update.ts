@@ -1,6 +1,8 @@
 import { WriteStream } from 'tty';
 import readline from 'readline';
 import invariant from 'ts-invariant';
+import stripAnsi from 'strip-ansi';
+import sliceAnsi from 'slice-ansi';
 
 type ObservedOperation = { pathPattern: string; method: string };
 
@@ -8,6 +10,9 @@ const spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', 
 
 export async function updateReporter(stream: WriteStream) {
   const chalk = (await import('chalk')).default;
+  // const stripAnsi = (await import('strip-ansi')).default;
+  // const sliceAnsi = (await import('slice-ansi')).default;
+
   let stats = {
     matchedOperations: new Map<string, ObservedOperation>(),
     matchedInteractionCountByOperation: new Map<string, number>(),
@@ -37,6 +42,10 @@ export async function updateReporter(stream: WriteStream) {
     let rendered = `${renderedSpinner}${icon}${line.prefix || ''}${
       line.text || ''
     }`;
+    if (stripAnsi(rendered).length > stream.columns) {
+      rendered = sliceAnsi(rendered, 0, stream.columns);
+    }
+
     let lineNo = lines.length - lineIndex; //naive, breaks as soon as lines wrap
     // TODO: cap line width to available columns or implement wrapping
     writeOnLine(stream, lineNo, rendered);
@@ -82,6 +91,14 @@ export async function updateReporter(stream: WriteStream) {
       `interaction${interactionCount !== 1 ? 's' : ''}`
     )}`;
   }
+
+  function onTerminalResize() {
+    for (let i = 0; i < lines.length; i++) {
+      renderLine(i);
+    }
+  }
+
+  stream.on('resize', onTerminalResize);
 
   appendLine({ id: 'footer-empty-line' });
   appendLine({
@@ -212,6 +229,8 @@ export async function updateReporter(stream: WriteStream) {
       if (stats.matchedOperations.size < 1) {
         console.log(`No matching operations found`);
       }
+
+      stream.removeListener('resize', onTerminalResize);
     },
   };
 }

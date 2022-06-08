@@ -30,6 +30,7 @@
     "@types/jest": "^26.0.24",
     "@types/json-stable-stringify": "^1.0.33",
     "@types/node": "^17.0.15",
+    "@types/slice-ansi": "^4",
     "@types/stream-chain": "^2",
     "@types/stream-json": "^1",
     "@types/whatwg-mimetype": "^2.1.1",
@@ -57,8 +58,10 @@
     "mockttp": "^3.0.0",
     "node-abort-controller": "^3.0.1",
     "node-machine-id": "^1.1.12",
+    "slice-ansi": "^4.0.0",
     "stream-chain": "^2.2.5",
     "stream-json": "^1.7.4",
+    "strip-ansi": "^6.0.1",
     "ts-invariant": "^0.9.4",
     "ts-results": "^3.3.0",
     "whatwg-mimetype": "^3.0.0"
