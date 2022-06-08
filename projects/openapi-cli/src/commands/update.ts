@@ -475,7 +475,7 @@ export type UpdateObservation = {
 export interface UpdateObservations extends AsyncIterable<UpdateObservation> {}
 
 async function renderUpdateStats(updateObservations: UpdateObservations) {
-  const reporter = await updateReporter(process.stderr);
+  const reporter = await updateReporter(process.stderr, process.cwd());
 
   for await (let observation of updateObservations) {
     if (observation.kind === UpdateObservationKind.InteractionCaptured) {
@@ -491,6 +491,9 @@ async function renderUpdateStats(updateObservations: UpdateObservations) {
     ) {
       let { method, pathPattern, capturedPath, description } = observation;
       reporter.patch({ method, pathPattern }, capturedPath, description);
+    } else if (observation.kind === UpdateObservationKind.SpecFileUpdated) {
+      let { path } = observation;
+      reporter.fileUpdated(path);
     }
   }
 

@@ -3,17 +3,17 @@ import readline from 'readline';
 import invariant from 'ts-invariant';
 import stripAnsi from 'strip-ansi';
 import sliceAnsi from 'slice-ansi';
+import Path from 'path';
 
 type ObservedOperation = { pathPattern: string; method: string };
 
 const spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 
-export async function updateReporter(stream: WriteStream) {
+export async function updateReporter(stream: WriteStream, cwd: string) {
   const chalk = (await import('chalk')).default;
-  // const stripAnsi = (await import('strip-ansi')).default;
-  // const sliceAnsi = (await import('slice-ansi')).default;
 
   let stats = {
+    filesUpdated: Array.from<string>([]),
     interactionsCount: 0,
     matchedOperations: new Map<string, ObservedOperation>(),
     matchedInteractionsCount: 0,
@@ -224,6 +224,9 @@ export async function updateReporter(stream: WriteStream) {
         }
       }
     },
+    fileUpdated(path: string) {
+      stats.filesUpdated.push(path);
+    },
 
     finish() {
       clearInterval(animating);
@@ -260,6 +263,29 @@ export async function updateReporter(stream: WriteStream) {
           ? 'Finished and applied patches'
           : 'Finished without applying any patches';
       renderLine(footerLineIndex);
+
+      if (stats.filesUpdated.length > 0) {
+        appendLine({ id: 'summary-margin' });
+        for (let i = 0; i < stats.filesUpdated.length; i++) {
+          let path = stats.filesUpdated[i];
+          let id = `file-update--${path}`;
+
+          let relativePath = Path.relative(cwd, path);
+          let isFarRemoved = relativePath
+            .split(Path.sep)
+            .slice(0, 4)
+            .every((component) => component === '..');
+
+          appendLine({
+            id,
+            text: `${chalk.dim('Updated')} ${
+              isFarRemoved || relativePath.length + 5 > path.length
+                ? path
+                : relativePath
+            }`,
+          });
+        }
+      }
 
       stream.removeListener('resize', onTerminalResize);
     },
