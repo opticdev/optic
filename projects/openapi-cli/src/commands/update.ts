@@ -478,11 +478,14 @@ async function renderUpdateStats(updateObservations: UpdateObservations) {
   const reporter = await updateReporter(process.stderr);
 
   for await (let observation of updateObservations) {
-    if (
+    if (observation.kind === UpdateObservationKind.InteractionCaptured) {
+      let { path, method } = observation;
+      reporter.capturedInteraction({ path, method });
+    } else if (
       observation.kind === UpdateObservationKind.InteractionMatchedOperation
     ) {
       let { method, pathPattern } = observation;
-      reporter.interaction({ method, pathPattern });
+      reporter.matchedInteraction({ method, pathPattern });
     } else if (
       observation.kind === UpdateObservationKind.InteractionPatchGenerated
     ) {

@@ -14,7 +14,9 @@ export async function updateReporter(stream: WriteStream) {
   // const sliceAnsi = (await import('slice-ansi')).default;
 
   let stats = {
+    interactionsCount: 0,
     matchedOperations: new Map<string, ObservedOperation>(),
+    matchedInteractionsCount: 0,
     matchedInteractionCountByOperation: new Map<string, number>(),
     patchSourcesByOperation: new Map<string, Set<string>>(),
     patchCountByOperation: new Map<string, number>(),
@@ -88,8 +90,28 @@ export async function updateReporter(stream: WriteStream) {
     return `${patchCount} ${chalk.dim(
       `patch${patchCount !== 1 ? 'es' : ''}`
     )} ${chalk.dim('/')} ${interactionCount} ${chalk.dim(
-      `interaction${interactionCount !== 1 ? 's' : ''}`
+      `request${interactionCount !== 1 ? 's' : ''}`
     )}`;
+  }
+
+  function updateFooter() {
+    let totalCount = stats.interactionsCount;
+    let matchedCount = stats.matchedInteractionsCount;
+
+    let statsLineIndex = lines.findIndex((line) => line.id === 'footer-stats');
+    let statsLine = lines[statsLineIndex];
+    invariant(statsLine, 'expect stats line to exist when footer lines');
+
+    statsLine.spinner = totalCount === 0;
+    statsLine.text =
+      totalCount === 0
+        ? chalk.dim(
+            'No requests that match any documented paths + methods found yet'
+          )
+        : `${matchedCount} ${chalk.dim('matched')} ${chalk.dim(
+            '/'
+          )} ${totalCount} ${chalk.dim('total observed requests')}`;
+    renderLine(statsLineIndex);
   }
 
   function onTerminalResize() {
@@ -101,14 +123,21 @@ export async function updateReporter(stream: WriteStream) {
   stream.on('resize', onTerminalResize);
 
   appendLine({ id: 'footer-empty-line' });
+  appendLine({ id: 'footer-stats' });
   appendLine({
     id: 'footer-exit-message',
     text: '> Press Enter to finish and apply the patches',
   });
+  updateFooter();
 
   return {
-    interaction(op: ObservedOperation) {
+    capturedInteraction({ path, method }: { path: string; method: string }) {
+      stats.interactionsCount++;
+      updateFooter();
+    },
+    matchedInteraction(op: ObservedOperation) {
       let id = operationId(op);
+
       if (!stats.matchedOperations.has(id)) {
         stats.matchedOperations.set(id, op);
         stats.matchedInteractionCountByOperation.set(id, 1);
@@ -120,10 +149,10 @@ export async function updateReporter(stream: WriteStream) {
         let spinner = true;
 
         if (stats.matchedOperations.size === 1) {
-          insertLine({ id: 'header-empty-line' }, 0);
+          insertLine({ id: 'header-margin-top' }, 0);
         }
 
-        insertLine({ id, prefix, text, spinner }, lines.length - 2); // add to the bottom
+        insertLine({ id, prefix, text, spinner }, lines.length - 3); // add to the bottom
       } else {
         let interactionCount =
           stats.matchedInteractionCountByOperation.get(id)! + 1;
@@ -141,6 +170,9 @@ export async function updateReporter(stream: WriteStream) {
         line.text = operationLineText(id);
         renderLine(opLineIndex);
       }
+
+      stats.matchedInteractionsCount++;
+      updateFooter();
     },
     patch(op: ObservedOperation, capturedPath: string, description: string) {
       let id = operationId(op);
@@ -223,12 +255,11 @@ export async function updateReporter(stream: WriteStream) {
         (line) => line.id === 'footer-exit-message'
       )!;
       let footerLine = lines[footerLineIndex];
-      footerLine.text = 'Finished and applied patches';
+      footerLine.text =
+        stats.matchedOperations.size > 0
+          ? 'Finished and applied patches'
+          : 'Finished without applying any patches';
       renderLine(footerLineIndex);
-
-      if (stats.matchedOperations.size < 1) {
-        console.log(`No matching operations found`);
-      }
 
       stream.removeListener('resize', onTerminalResize);
     },
