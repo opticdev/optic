@@ -10,6 +10,8 @@ import {
 } from './types';
 import { sourcemapReader } from './sourcemap-reader';
 
+const packageJson = require('../../../../package.json');
+
 const traverseSpec = (jsonSpec: OpenAPIV3.Document): IFact[] => {
   const currentTraverser = new OpenAPITraverser();
 
@@ -27,6 +29,7 @@ export const generateSpecResults = async (
 ): Promise<{
   changes: IChange[];
   results: ResultWithSourcemap[];
+  version: string;
 }> => {
   const fromJsonLike = from.jsonLike;
   const toJsonLike = to.jsonLike;
@@ -92,5 +95,6 @@ export const generateSpecResults = async (
   return {
     changes: changesWithSourcemap,
     results: resultsWithSourcemap,
+    version: packageJson.version,
   };
 };
