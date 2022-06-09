@@ -57,7 +57,7 @@ type BreakingChangesRules = typeof breakingChangesRules;
 
 export class BreakingChangesRuleset extends Ruleset<BreakingChangesRules> {
   constructor(
-    config: Omit<RulesetConfig<BreakingChangesRules>, 'name' | 'rules'>
+    config: Omit<RulesetConfig<BreakingChangesRules>, 'name' | 'rules'> = {}
   ) {
     super({
       ...config,

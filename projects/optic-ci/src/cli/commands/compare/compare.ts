@@ -4,12 +4,14 @@ import { createOpticClient } from '../../clients/optic-client';
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
+  generateSpecResults,
+  RuleRunner,
+  SpectralInput,
 } from '@useoptic/openapi-utilities';
 import {
   parseSpecVersion,
   specFromInputToResults,
   validateUploadRequirements,
-  generateSpecResults,
 } from '../utils';
 import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
@@ -22,7 +24,6 @@ import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
 import { getRelativeRepoPath } from '../utils/get-relative-path';
 import { inGit } from '@useoptic/openapi-io';
-import { RuleRunner, SpectralInput } from '../../types';
 
 const parseContextObject = (context?: string): any => {
   try {

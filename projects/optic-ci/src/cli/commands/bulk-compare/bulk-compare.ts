@@ -3,13 +3,15 @@ import { Command, Option } from 'commander';
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
+  generateSpecResults,
+  RuleRunner,
+  SpectralInput,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import {
   parseSpecVersion,
   specFromInputToResults,
   validateUploadRequirements,
-  generateSpecResults,
 } from '../utils';
 
 import { UserError } from '../../errors';
@@ -21,12 +23,13 @@ import { sendBulkGithubMessage } from './bulk-github-comment';
 import { sendBulkGitlabMessage } from './bulk-gitlab-comment';
 import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
-import { RuleRunner, SpectralInput } from '../../types';
 import {
   getComparisonsFromGlob,
   parseJsonComparisonInput,
 } from './input-generators';
 import { Comparison, ComparisonData } from './types';
+
+const packageJson = require('../../../../package.json');
 
 export const registerBulkCompare = (
   cli: Command,
@@ -171,7 +174,7 @@ const compareSpecs = async ({
           validateOpenApiV3Document(from.jsonLike);
           validateOpenApiV3Document(to.jsonLike);
 
-          const { results, changes, version } = await generateSpecResults(
+          const { results, changes } = await generateSpecResults(
             checkService,
             from,
             to,
@@ -183,7 +186,7 @@ const compareSpecs = async ({
             data: {
               results,
               changes,
-              version,
+              version: packageJson.version,
             },
           });
         } catch (e) {
