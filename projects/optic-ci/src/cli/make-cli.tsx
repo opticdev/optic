@@ -11,7 +11,7 @@ import {
 } from './commands/create-context/create-github-context';
 import { registerCreateManualContext } from './commands/create-context/create-manual-context';
 import { registerCreateGitlabContext } from './commands/create-context/create-gitlab-context';
-import { RuleRunner, SpectralInput } from './types';
+import { RuleRunner, SpectralInput } from '@useoptic/openapi-utilities';
 const packageJson = require('../../package.json');
 
 export async function getProjectName(): Promise<string> {

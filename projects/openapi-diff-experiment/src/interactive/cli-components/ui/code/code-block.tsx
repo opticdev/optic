@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import { JsonSchemaSourcemap, sourcemapReader } from '@useoptic/openapi-io';
+import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
+import { sourcemapReader } from '@useoptic/openapi-utilities';
 import os from 'os';
 import { jsonPatcher } from '../../../../services/patch/incremental-json-patch/json-patcher';
 import invariant from 'ts-invariant';

@@ -1,16 +1,14 @@
-import { ParseOpenAPIResult, sourcemapReader } from '@useoptic/openapi-io';
+import { OpenAPIV3 } from 'openapi-types';
+import { factsToChangelog } from '../../sdk/facts-to-changelog';
+import { IChange, ChangeType, IFact } from '../../sdk/types';
+import { OpenAPITraverser } from './openapi-traverser';
+import { ResultWithSourcemap } from '../../../types';
 import {
-  factsToChangelog,
-  IChange,
-  ResultWithSourcemap,
-  ChangeType,
-  OpenAPIV3,
-  IFact,
-  OpenAPITraverser,
-} from '@useoptic/openapi-utilities';
-import { RuleRunner, SpectralInput } from '../../types';
-
-const packageJson = require('../../../../package.json');
+  FileWithSerializedSourcemap,
+  RuleRunner,
+  SpectralInput,
+} from './types';
+import { sourcemapReader } from './sourcemap-reader';
 
 const traverseSpec = (jsonSpec: OpenAPIV3.Document): IFact[] => {
   const currentTraverser = new OpenAPITraverser();
@@ -22,14 +20,13 @@ const traverseSpec = (jsonSpec: OpenAPIV3.Document): IFact[] => {
 
 export const generateSpecResults = async (
   checkService: RuleRunner,
-  from: ParseOpenAPIResult & { isEmptySpec: boolean },
-  to: ParseOpenAPIResult & { isEmptySpec: boolean },
+  from: FileWithSerializedSourcemap & { isEmptySpec: boolean },
+  to: FileWithSerializedSourcemap & { isEmptySpec: boolean },
   context: any,
   spectralConfig?: SpectralInput
 ): Promise<{
   changes: IChange[];
   results: ResultWithSourcemap[];
-  version: string;
 }> => {
   const fromJsonLike = from.jsonLike;
   const toJsonLike = to.jsonLike;
@@ -95,6 +92,5 @@ export const generateSpecResults = async (
   return {
     changes: changesWithSourcemap,
     results: resultsWithSourcemap,
-    version: packageJson.version,
   };
 };

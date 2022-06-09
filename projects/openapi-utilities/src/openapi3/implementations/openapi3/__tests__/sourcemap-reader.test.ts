@@ -1,20 +1,24 @@
-import { parseOpenAPIWithSourcemap } from './openapi-sourcemap-parser';
+// TODO get rid of fixture import so we don't have circular references
+import { parseOpenAPIWithSourcemap } from '../../../../../../openapi-io/src/parser/openapi-sourcemap-parser';
 import path from 'path';
-import { sourcemapReader } from './sourcemap-reader';
+import { sourcemapReader } from '../sourcemap-reader';
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
 const fixture = async () => {
   return await parseOpenAPIWithSourcemap(
     path.resolve(
       path.join(
         __dirname,
-        '../../inputs/openapi3-with-references/external-multiple.yaml'
+        '../../../../../../openapi-io/inputs/openapi3-with-references/external-multiple.yaml'
       )
     )
   );
 };
 
-function stripCwd(file: string) {
-  return file.replace(process.cwd(), '');
+async function stripCwd(file: string) {
+  const { stdout } = await exec('git rev-parse --show-toplevel');
+  return file.replace(stdout.trim(), '');
 }
 
 describe('reading sourcemaps', () => {
@@ -25,7 +29,7 @@ describe('reading sourcemaps', () => {
       '/properties/user/example/name'
     );
     expect(node?.filePath.endsWith('definitions.yaml')).toBeTruthy();
-    expect(stripCwd(node!.filePath)).toMatchSnapshot();
+    expect(await stripCwd(node!.filePath)).toMatchSnapshot();
   });
 
   it('can get file paths json pointer in main file relative to flattened json', async () => {
@@ -34,7 +38,7 @@ describe('reading sourcemaps', () => {
     const node = sourcemapReader(results.sourcemap).findFile('/properties');
 
     expect(node!.filePath.endsWith('external-multiple.yaml')).toBeTruthy();
-    expect(stripCwd(node!.filePath)).toMatchSnapshot();
+    expect(await stripCwd(node!.filePath)).toMatchSnapshot();
   });
 
   it('lines in affected file for sub-property', async () => {
@@ -43,7 +47,7 @@ describe('reading sourcemaps', () => {
     const node = await sourcemapReader(results.sourcemap).findFileAndLines(
       '/properties/user/example/name'
     );
-    node!.filePath = stripCwd(node!.filePath);
+    node!.filePath = await stripCwd(node!.filePath);
     expect(node).toMatchSnapshot();
   });
 
@@ -54,7 +58,7 @@ describe('reading sourcemaps', () => {
       '/properties'
     );
 
-    node!.filePath = stripCwd(node!.filePath);
+    node!.filePath = await stripCwd(node!.filePath);
     expect(node).toMatchSnapshot();
   });
 
@@ -63,7 +67,7 @@ describe('reading sourcemaps', () => {
       path.resolve(
         path.join(
           __dirname,
-          '../../inputs/openapi3/001-ok-add-property-field.yaml'
+          '../../../../../../openapi-io/inputs/openapi3/001-ok-add-property-field.yaml'
         )
       )
     );
