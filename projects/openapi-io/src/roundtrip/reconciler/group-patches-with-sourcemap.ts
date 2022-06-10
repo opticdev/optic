@@ -1,4 +1,5 @@
-import { JsonSchemaSourcemap, sourcemapReader } from '../../index';
+import { JsonSchemaSourcemap } from '../../index';
+import { sourcemapReader } from '@useoptic/openapi-utilities';
 import { Operation } from 'fast-json-patch';
 
 import invariant from 'ts-invariant';

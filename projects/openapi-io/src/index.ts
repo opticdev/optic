@@ -1,4 +1,3 @@
-import { sourcemapReader } from './parser/sourcemap-reader';
 import { inGit, loadSpecFromBranch } from './loaders/file-on-branch';
 import { loadSpecFromFile, loadSpecFromUrl } from './loaders/file';
 import {
@@ -17,7 +16,6 @@ import {
 import { collectFilePatchesFromInMemoryUpdates } from './roundtrip/reconciler';
 
 export {
-  sourcemapReader,
   loadSpecFromFile,
   inGit,
   loadSpecFromUrl,

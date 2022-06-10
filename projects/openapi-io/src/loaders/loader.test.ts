@@ -1,9 +1,8 @@
-import * as path from "path";
-import { loadSpecFromFile, loadSpecFromUrl } from "./file";
-import { inGit, loadSpecFromBranch } from "./file-on-branch";
-import { SpecLoaderResult } from "./types";
-import { serialize } from "jest-serializer";
-import { ParseOpenAPIResult } from "../parser/openapi-sourcemap-parser";
+import * as path from 'path';
+import { loadSpecFromFile, loadSpecFromUrl } from './file';
+import { inGit, loadSpecFromBranch } from './file-on-branch';
+import { SpecLoaderResult } from './types';
+import { serialize } from 'jest-serializer';
 
 const cwd = process.cwd();
 
@@ -16,34 +15,34 @@ function prepSnapshot(result: SpecLoaderResult) {
   return result;
 }
 
-it("can parse an OpenAPI spec with external references", async () => {
+it('can parse an OpenAPI spec with external references', async () => {
   const results = await loadSpecFromFile(
     path.join(
       __dirname,
-      "../../inputs/openapi3-with-references/external-multiple.yaml"
+      '../../inputs/openapi3-with-references/external-multiple.yaml'
     ),
     false
   );
   expect(prepSnapshot(results)).toMatchSnapshot();
 });
 
-it("can parse an OpenAPI spec repo branches", async () => {
+it('can parse an OpenAPI spec repo branches', async () => {
   const gitRepo = await inGit(
-    path.resolve(__dirname, "../../inputs/git-repo/petstore0.json")
+    path.resolve(__dirname, '../../inputs/git-repo/petstore0.json')
   );
   if (gitRepo) {
     const onFeature = await loadSpecFromBranch(
-      "petstore0.json",
+      'petstore0.json',
       gitRepo,
-      "feature/1",
+      'feature/1',
       {},
       false
     );
     expect(prepSnapshot(onFeature)).toMatchSnapshot();
     const onMain = await loadSpecFromBranch(
-      "petstore0.json",
+      'petstore0.json',
       gitRepo,
-      "main",
+      'main',
       {},
       false
     );
@@ -51,23 +50,23 @@ it("can parse an OpenAPI spec repo branches", async () => {
   }
 });
 
-it("can parse an OpenAPI spec with references in repo branches", async () => {
+it('can parse an OpenAPI spec with references in repo branches', async () => {
   const gitRepo = await inGit(
-    path.resolve(__dirname, "../../inputs/git-repo/external-multiple.yaml")
+    path.resolve(__dirname, '../../inputs/git-repo/external-multiple.yaml')
   );
   if (gitRepo) {
     const onFeature = await loadSpecFromBranch(
-      "external-multiple.yaml",
+      'external-multiple.yaml',
       gitRepo,
-      "feature/1",
+      'feature/1',
       {},
       false
     );
     expect(prepSnapshot(onFeature)).toMatchSnapshot();
     const onMain = await loadSpecFromBranch(
-      "external-multiple.yaml",
+      'external-multiple.yaml',
       gitRepo,
-      "main",
+      'main',
       {},
       false
     );

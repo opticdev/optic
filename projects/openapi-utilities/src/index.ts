@@ -37,6 +37,7 @@ import {
   OpenApiRequestFact,
 } from './openapi3/sdk/types';
 import { isFactVariant, isChangeVariant } from './openapi3/sdk/isType';
+import { sourcemapReader } from './openapi3/implementations/openapi3/sourcemap-reader';
 
 import {
   LookupLineResult,
@@ -44,8 +45,11 @@ import {
 } from './render/ast-helpers';
 export { defaultEmptySpec } from './openapi3/constants';
 export * from './ci-types';
+export { generateSpecResults } from './openapi3/implementations/openapi3/generate-spec-results';
+export * from './openapi3/implementations/openapi3/types';
 
 export {
+  sourcemapReader,
   validateOpenApiV3Document,
   OpenApiFact,
   OpenAPITraverser,

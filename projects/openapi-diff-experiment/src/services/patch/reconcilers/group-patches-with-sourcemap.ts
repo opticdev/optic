@@ -1,4 +1,5 @@
-import { JsonSchemaSourcemap, sourcemapReader } from '@useoptic/openapi-io';
+import { JsonSchemaSourcemap } from '@useoptic/openapi-io';
+import { sourcemapReader } from '@useoptic/openapi-utilities';
 import { Operation } from 'fast-json-patch';
 
 export type JsonPatchesByFile = { [key: string]: Operation[] };

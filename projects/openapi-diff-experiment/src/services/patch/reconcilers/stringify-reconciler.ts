@@ -9,13 +9,7 @@ import {
   groupPatchesWithSourcemap,
   JsonPatchesByFile,
 } from './group-patches-with-sourcemap';
-import {
-  sourcemapReader,
-  isJson,
-  isYaml,
-  loadYaml,
-  writeYaml,
-} from '@useoptic/openapi-io';
+import { isJson, isYaml, loadYaml, writeYaml } from '@useoptic/openapi-io';
 import { Operation } from 'fast-json-patch';
 import fs from 'fs-extra';
 

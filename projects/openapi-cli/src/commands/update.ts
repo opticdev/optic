@@ -1,8 +1,8 @@
 import { Command } from 'commander';
 import Path from 'path';
 import * as fs from 'fs-extra';
-import Spinnies from 'spinnies';
 import readline from 'readline';
+import { updateReporter } from './reporters/update';
 
 import { tap, forkable, merge, Subject } from '../lib/async-tools';
 import {
@@ -177,7 +177,6 @@ export function updateByTrafficCommand(): Command {
 
       const handleUserSignals = (async function () {
         if (interactiveCapture && process.stdin.isTTY) {
-          console.log('Press Enter to finish capturing traffic');
           // wait for an empty new line on input, which should indicate hitting Enter / Return
           let lines = readline.createInterface({ input: process.stdin });
           for await (let line of lines) {
@@ -195,7 +194,7 @@ export function updateByTrafficCommand(): Command {
         for await (let writtenFilePath of SpecFiles.writeFiles(
           updatedSpecFiles
         )) {
-          console.log(`Updated ${writtenFilePath}`);
+          // console.log(`Updated ${writtenFilePath}`);
         }
       })();
 
@@ -331,15 +330,18 @@ export async function updateByInteractions(
     documentedInteraction(interaction: DocumentedInteraction) {
       observing.onNext({
         kind: UpdateObservationKind.InteractionMatchedOperation,
+        capturedPath: interaction.interaction.request.path,
         pathPattern: interaction.operation.pathPattern,
         method: interaction.operation.method,
       });
     },
-    interactionPatch(interaction: DocumentedInteraction, _patch: SpecPatch) {
+    interactionPatch(interaction: DocumentedInteraction, patch: SpecPatch) {
       observing.onNext({
         kind: UpdateObservationKind.InteractionPatchGenerated,
+        capturedPath: interaction.interaction.request.path,
         pathPattern: interaction.operation.pathPattern,
         method: interaction.operation.method,
+        description: patch.description,
       });
     },
   };
@@ -447,13 +449,16 @@ export type UpdateObservation = {
 } & (
   | {
       kind: UpdateObservationKind.InteractionMatchedOperation;
+      capturedPath: string;
       pathPattern: string;
       method: string;
     }
   | {
       kind: UpdateObservationKind.InteractionPatchGenerated;
+      capturedPath: string;
       pathPattern: string;
       method: string;
+      description: string;
     }
   | {
       kind: UpdateObservationKind.InteractionCaptured;
@@ -470,65 +475,29 @@ export type UpdateObservation = {
 export interface UpdateObservations extends AsyncIterable<UpdateObservation> {}
 
 async function renderUpdateStats(updateObservations: UpdateObservations) {
-  type ObservedOperation = { pathPattern: string; method: string };
-  let stats = {
-    matchedOperations: new Map<string, ObservedOperation>(),
-    patchCountByOperation: new Map<string, number>(),
-  };
-
-  const progressIndicators = new Spinnies({
-    succeedColor: 'white',
-  });
+  const reporter = await updateReporter(process.stderr, process.cwd());
 
   for await (let observation of updateObservations) {
-    if (
+    if (observation.kind === UpdateObservationKind.InteractionCaptured) {
+      let { path, method } = observation;
+      reporter.capturedInteraction({ path, method });
+    } else if (
       observation.kind === UpdateObservationKind.InteractionMatchedOperation
     ) {
       let { method, pathPattern } = observation;
-      let key = `${method}-${pathPattern}`;
-      if (!stats.matchedOperations.has(key)) {
-        progressIndicators.add(key, {
-          text: `${method.toUpperCase()} ${pathPattern} - Matched first interaction`,
-        });
-      }
-      stats.matchedOperations.set(key, { method, pathPattern });
+      reporter.matchedInteraction({ method, pathPattern });
     } else if (
       observation.kind === UpdateObservationKind.InteractionPatchGenerated
     ) {
-      let { method, pathPattern } = observation;
-      let key = `${method}-${pathPattern}`;
-      let count = (stats.patchCountByOperation.get(key) || 0) + 1;
-      progressIndicators.update(key, {
-        text: `${method.toUpperCase()} ${pathPattern} - ${count} patch${
-          count > 1 ? 'es' : ''
-        } applied`,
-      });
-      stats.patchCountByOperation.set(key, count);
+      let { method, pathPattern, capturedPath, description } = observation;
+      reporter.patch({ method, pathPattern }, capturedPath, description);
+    } else if (observation.kind === UpdateObservationKind.SpecFileUpdated) {
+      let { path } = observation;
+      reporter.fileUpdated(path);
     }
   }
 
-  if (stats.matchedOperations.size < 1) {
-    console.log(`No matching operations found`);
-  }
-
-  for (let [
-    key,
-    { method, pathPattern },
-  ] of stats.matchedOperations.entries()) {
-    const patchCount = stats.patchCountByOperation.get(key);
-
-    if (patchCount && patchCount > 0) {
-      progressIndicators.succeed(key, {
-        text: `${method.toUpperCase()} ${pathPattern} - ${patchCount} patch${
-          patchCount > 1 ? 'es' : ''
-        } applied`,
-      });
-    } else {
-      progressIndicators.succeed(key, {
-        text: `${method.toUpperCase()} ${pathPattern} - no patches necessary`,
-      });
-    }
-  }
+  reporter.finish();
 }
 
 async function trackStats(observations: UpdateObservations): Promise<void> {
