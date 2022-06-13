@@ -1,3 +1,4 @@
+import { Octokit } from '@octokit/rest';
 import { Command } from 'commander';
 import { createOpticClient } from '../../clients/optic-client';
 
@@ -12,6 +13,7 @@ import {
   UserError,
   trackEvent,
   flushEvents,
+  sendGithubMessage,
 } from '@useoptic/openapi-utilities';
 import {
   parseSpecVersion,
@@ -21,7 +23,6 @@ import {
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import { CliConfig } from '../../types';
 import { uploadCiRun } from './upload';
-import { sendGithubMessage } from './github-comment';
 import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
 import { getRelativeRepoPath } from '../utils/path';
@@ -238,12 +239,14 @@ const runCompare = async ({
 
         if (git_provider === 'github') {
           console.log('Posting comment to github...');
+          const octokit = new Octokit({
+            auth: token,
+            baseUrl: git_api_url,
+          });
           try {
-            await sendGithubMessage({
-              githubToken: token,
+            await sendGithubMessage(octokit, {
               compareOutput,
               uploadOutput,
-              baseUrl: git_api_url,
             });
           } catch (e) {
             console.log(

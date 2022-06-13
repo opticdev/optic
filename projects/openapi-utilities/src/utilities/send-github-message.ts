@@ -6,17 +6,16 @@ import { CompareFileJson, UploadJson } from '../ci-types';
 import { UserError } from '../errors';
 import { createCommentBody } from './compare-comment';
 
-export const sendGithubMessage = async ({
-  githubToken,
-  compareOutput,
-  uploadOutput,
-  baseUrl,
-}: {
-  githubToken: string;
-  compareOutput: CompareFileJson;
-  uploadOutput: UploadJson;
-  baseUrl: string;
-}) => {
+export const sendGithubMessage = async (
+  octokit: Octokit,
+  {
+    compareOutput,
+    uploadOutput,
+  }: {
+    compareOutput: CompareFileJson;
+    uploadOutput: UploadJson;
+  }
+) => {
   const { results, changes } = compareOutput;
   const compareHash = generateHashForComparison({
     results,
@@ -35,10 +34,6 @@ export const sendGithubMessage = async ({
     console.log('No changes were found, exiting.');
     return;
   }
-  const octokit = new Octokit({
-    auth: githubToken,
-    baseUrl,
-  });
 
   try {
     const { data: requestedReviewers } =
