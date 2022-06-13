@@ -18,7 +18,12 @@ const fixture = async () => {
 
 async function stripCwd(file: string) {
   const { stdout } = await exec('git rev-parse --show-toplevel');
-  return file.replace(stdout.trim(), '');
+  return (
+    file
+      .replace(stdout.trim(), '')
+      // strip out monorail prefixes
+      .replace('/projects/openapi-workspaces', '')
+  );
 }
 
 describe('reading sourcemaps', () => {

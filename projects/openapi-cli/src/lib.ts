@@ -2,7 +2,7 @@ import { initSegment } from './segment';
 import { readConfig } from './config';
 
 export * from './workflows';
-export { updateCommand } from './commands/update';
+export { updateByExampleCommand as updateCommand } from './commands/update-by-example';
 export { OpenAPIV3 } from './specs';
 
 function initAnalytics() {
