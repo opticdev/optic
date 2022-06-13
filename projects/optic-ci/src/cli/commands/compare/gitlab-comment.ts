@@ -1,6 +1,6 @@
 import { trackEvent } from '../../segment';
 import { generateHashForComparison } from '../utils/comparison-hash';
-import { CompareJson, UploadJson } from '../../types';
+import { CompareFileJson, UploadJson } from '@useoptic/openapi-utilities';
 import { UserError } from '../../errors';
 import { createCommentBody } from './comment';
 import { GitlabClient } from '../../clients/gitlab-client';
@@ -12,7 +12,7 @@ export const sendGitlabMessage = async ({
   baseUrl,
 }: {
   gitlabToken: string;
-  compareOutput: CompareJson;
+  compareOutput: CompareFileJson;
   uploadOutput: UploadJson;
   baseUrl: string;
 }) => {

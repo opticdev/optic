@@ -2,7 +2,7 @@ import { Octokit } from '@octokit/rest';
 import { trackEvent } from '../../segment';
 import { findOpticCommentId } from '../utils/shared-comment';
 import { generateHashForComparison } from '../utils/comparison-hash';
-import { CompareJson, UploadJson } from '../../types';
+import { CompareFileJson, UploadJson } from '@useoptic/openapi-utilities';
 import { UserError } from '../../errors';
 import { createCommentBody } from './comment';
 
@@ -13,7 +13,7 @@ export const sendGithubMessage = async ({
   baseUrl,
 }: {
   githubToken: string;
-  compareOutput: CompareJson;
+  compareOutput: CompareFileJson;
   uploadOutput: UploadJson;
   baseUrl: string;
 }) => {

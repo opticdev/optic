@@ -2,11 +2,12 @@ import { Command } from 'commander';
 import { createOpticClient } from '../../clients/optic-client';
 
 import {
-  defaultEmptySpec,
-  validateOpenApiV3Document,
-  generateSpecResults,
+  NormalizedCiContext,
   RuleRunner,
   SpectralInput,
+  defaultEmptySpec,
+  generateSpecResults,
+  validateOpenApiV3Document,
 } from '@useoptic/openapi-utilities';
 import {
   parseSpecVersion,
@@ -16,7 +17,7 @@ import {
 import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import { trackEvent, flushEvents } from '../../segment';
-import { CliConfig, NormalizedCiContext } from '../../types';
+import { CliConfig } from '../../types';
 import { uploadCiRun } from './upload';
 import { sendGithubMessage } from './github-comment';
 import { logComparison } from '../utils/comparison-renderer';

@@ -1,5 +1,5 @@
 import { UserError } from '../../../../errors';
-import { NormalizedCiContext } from '../../../../types';
+import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 
 export const getContextFromGitlabEnvironment = (): NormalizedCiContext => {
   const organization = process.env.CI_PROJECT_NAMESPACE;

@@ -1,6 +1,6 @@
 import { trackEvent } from '../../segment';
 import { GitlabClient } from '../../clients/gitlab-client';
-import { BulkUploadJson } from '../../types';
+import { BulkUploadJson } from '@useoptic/openapi-utilities';
 import { generateHashForComparison } from '../utils/comparison-hash';
 import { UserError } from '../../errors';
 import { createBulkCommentBody } from './comment';

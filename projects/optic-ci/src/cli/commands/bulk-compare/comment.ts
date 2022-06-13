@@ -1,4 +1,4 @@
-import { BulkUploadJson } from '../../types';
+import { BulkUploadJson } from '@useoptic/openapi-utilities';
 import { OPTIC_COMMENT_SURVEY_LINK } from '../utils/shared-comment';
 
 export const createBulkCommentBody = (

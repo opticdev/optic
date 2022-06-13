@@ -3,7 +3,7 @@ import path from 'path';
 import { Command, Option } from 'commander';
 import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry } from '../../sentry';
-import { NormalizedCiContext } from '../../types';
+import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 import {
   DEFAULT_CONTEXT_PATH,
   SUPPORTED_GITLAB_CI_PROVIDERS,

@@ -2,7 +2,7 @@ import { Octokit } from '@octokit/rest';
 import { trackEvent } from '../../segment';
 import { findOpticCommentId } from '../utils/shared-comment';
 import { generateHashForComparison } from '../utils/comparison-hash';
-import { BulkUploadJson } from '../../types';
+import { BulkUploadJson } from '@useoptic/openapi-utilities';
 import { UserError } from '../../errors';
 import { createBulkCommentBody } from './comment';
 
