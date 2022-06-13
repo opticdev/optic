@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node';
 import { UserRuleError } from '@useoptic/rulesets-base';
-import { UserError } from './errors';
+import { UserError } from '@useoptic/openapi-utilities';
 
 export let SentryClient: Sentry.NodeClient | null = null;
 

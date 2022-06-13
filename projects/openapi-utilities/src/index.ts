@@ -48,6 +48,17 @@ export * from './ci-types';
 export { generateSpecResults } from './openapi3/implementations/openapi3/generate-spec-results';
 export * from './openapi3/implementations/openapi3/types';
 
+export { UserError } from './errors';
+export {
+  findOpticCommentId,
+  OPTIC_COMMENT_SURVEY_LINK,
+} from './utilities/shared-comment';
+export { createCommentBody } from './utilities/compare-comment';
+export { generateHashForComparison } from './utilities/comparison-hash';
+export { logComparison } from './utilities/comparison-render';
+export { sendGithubMessage } from './utilities/send-github-message';
+export { trackEvent, initSegment, flushEvents } from './utilities/segment';
+
 export {
   sourcemapReader,
   validateOpenApiV3Document,

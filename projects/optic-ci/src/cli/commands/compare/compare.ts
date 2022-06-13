@@ -8,19 +8,20 @@ import {
   defaultEmptySpec,
   generateSpecResults,
   validateOpenApiV3Document,
+  logComparison,
+  UserError,
+  trackEvent,
+  flushEvents,
 } from '@useoptic/openapi-utilities';
 import {
   parseSpecVersion,
   specFromInputToResults,
   validateUploadRequirements,
 } from '../utils';
-import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
-import { trackEvent, flushEvents } from '../../segment';
 import { CliConfig } from '../../types';
 import { uploadCiRun } from './upload';
 import { sendGithubMessage } from './github-comment';
-import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
 import { getRelativeRepoPath } from '../utils/path';

@@ -1,5 +1,5 @@
-import { CompareFileJson } from '@useoptic/openapi-utilities';
-import { OPTIC_COMMENT_SURVEY_LINK } from '../utils/shared-comment';
+import { CompareFileJson } from '../ci-types';
+import { OPTIC_COMMENT_SURVEY_LINK } from './shared-comment';
 
 export const createCommentBody = (
   results: CompareFileJson['results'],

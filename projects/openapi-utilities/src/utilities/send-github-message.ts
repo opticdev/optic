@@ -1,13 +1,10 @@
 import { Octokit } from '@octokit/rest';
-import {
-  CompareFileJson,
-  UploadJson,
-  findOpticCommentId,
-  generateHashForComparison,
-  createCommentBody,
-  UserError,
-  trackEvent,
-} from '@useoptic/openapi-utilities';
+import { trackEvent } from './segment';
+import { findOpticCommentId } from './shared-comment';
+import { generateHashForComparison } from './comparison-hash';
+import { CompareFileJson, UploadJson } from '../ci-types';
+import { UserError } from '../errors';
+import { createCommentBody } from './compare-comment';
 
 export const sendGithubMessage = async ({
   githubToken,

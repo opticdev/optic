@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { loadFile } from '../utils';
 
-import { UserError } from '../../errors';
+import { UserError } from '@useoptic/openapi-utilities';
 import { Comparison } from './types';
 import path from 'path';
 import { getGitRootPath } from '../utils/path';

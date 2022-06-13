@@ -1,4 +1,4 @@
-import { UserError } from '../../../../errors';
+import { UserError } from '@useoptic/openapi-utilities';
 import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 
 export const getContextFromGitlabEnvironment = (): NormalizedCiContext => {

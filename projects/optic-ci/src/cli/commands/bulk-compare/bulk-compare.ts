@@ -8,6 +8,10 @@ import {
   SpectralInput,
   BulkCompareJson,
   NormalizedCiContext,
+  logComparison,
+  UserError,
+  trackEvent,
+  flushEvents,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import {
@@ -16,14 +20,11 @@ import {
   validateUploadRequirements,
 } from '../utils';
 
-import { UserError } from '../../errors';
-import { trackEvent, flushEvents } from '../../segment';
 import { CliConfig } from '../../types';
 import { createOpticClient } from '../../clients/optic-client';
 import { bulkUploadCiRun } from './bulk-upload';
 import { sendBulkGithubMessage } from './bulk-github-comment';
 import { sendBulkGitlabMessage } from './bulk-gitlab-comment';
-import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
 import {
   getComparisonsFromGlob,
