@@ -92,9 +92,13 @@ export function updateCommand(): Command {
         );
       }
 
-      const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
-        absoluteSpecPath
-      );
+      const specReadResult = await readDeferencedSpec(absoluteSpecPath);
+      if (specReadResult.err) {
+        command.error(
+          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`
+        );
+      }
+      const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
 
       let interactions = merge(...sources);
 

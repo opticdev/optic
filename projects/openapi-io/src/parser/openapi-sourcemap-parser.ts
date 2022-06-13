@@ -14,6 +14,8 @@ import { OpenAPIV3 } from 'openapi-types';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import isUrl from 'is-url';
 
+export { JSONParserError } from '@apidevtools/json-schema-ref-parser';
+
 export type ParseOpenAPIResult = {
   jsonLike: OpenAPIV3.Document;
   sourcemap: JsonSchemaSourcemap;

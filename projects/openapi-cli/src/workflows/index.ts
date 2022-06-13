@@ -67,9 +67,9 @@ export async function applyTemplate<T>(
     absoluteSpecPath.indexOf('/') === 0,
     'applyTemplate requires an absolute path to the spec file'
   );
-  const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
-    absoluteSpecPath
-  );
+  const { jsonLike: spec, sourcemap } = (
+    await readDeferencedSpec(absoluteSpecPath)
+  ).unwrap();
 
   const stats = {
     patchesCount: 0,

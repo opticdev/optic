@@ -97,9 +97,9 @@ export async function updateByExample(specPath: string): Promise<
     return Err('OpenAPI specification file could not be found');
   }
 
-  const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
-    absoluteSpecPath
-  );
+  const { jsonLike: spec, sourcemap } = (
+    await readDeferencedSpec(absoluteSpecPath)
+  ).unwrap();
   const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
 
   const stats = {
