@@ -15,6 +15,7 @@ import {
   flushEvents,
   sendGithubMessage,
 } from '@useoptic/openapi-utilities';
+import { generateHashForComparison } from '../utils/comparison-hash';
 import {
   parseSpecVersion,
   specFromInputToResults,
@@ -243,8 +244,13 @@ const runCompare = async ({
             auth: token,
             baseUrl: git_api_url,
           });
+          const compareHash = generateHashForComparison({
+            results,
+            changes,
+          });
           try {
             await sendGithubMessage(octokit, {
+              compareHash,
               compareOutput,
               uploadOutput,
             });

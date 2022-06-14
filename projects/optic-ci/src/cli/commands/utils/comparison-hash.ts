@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 import stableStringify from 'json-stable-stringify';
-import { IChange, ResultWithSourcemap } from '../index';
+import { IChange, ResultWithSourcemap } from '@useoptic/openapi-utilities';
 
 type Comparison = {
   results: ResultWithSourcemap[];

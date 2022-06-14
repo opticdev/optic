@@ -1,11 +1,11 @@
 import { GitlabClient } from '../../clients/gitlab-client';
 import {
   BulkUploadJson,
-  generateHashForComparison,
   UserError,
   trackEvent,
 } from '@useoptic/openapi-utilities';
 import { createBulkCommentBody } from './comment';
+import { generateHashForComparison } from '../utils/comparison-hash';
 
 export const sendBulkGitlabMessage = async ({
   gitlabToken,
