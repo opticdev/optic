@@ -6,7 +6,7 @@ import { updateCommand } from './commands/update';
 import { registerDebugTemplateCommand } from './commands/debug-template';
 import { debugWorkflowsCommand } from './commands/debug-workflows';
 import { CliConfig, readConfig } from './config';
-import { initSegment, trackEvent } from '@useoptic/openapi-utilities';
+import { initSegment, trackEvent } from './segment';
 
 const packageJson = require('../package.json');
 
