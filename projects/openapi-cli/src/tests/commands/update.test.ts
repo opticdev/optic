@@ -325,6 +325,98 @@ describe('update command', () => {
       let updatedSpec = patchSpec(spec, specPatches);
       expect(updatedSpec).toMatchSnapshot();
     });
+
+    it('generates patches for existing request bodies, matching by various content type formats', async () => {
+      const spec = specFixture({
+        '/examples/{exampleId}': {
+          [HttpMethods.POST]: {
+            requestBody: {
+              content: {
+                'application/json; charset=utf-8': {},
+                'application/*': {},
+              },
+            },
+            responses: {},
+          },
+        },
+      });
+
+      const interactions = [
+        interactionFixture(
+          '/examples/3',
+          HttpMethods.POST,
+          CapturedBody.fromJSON(
+            { id: 'an-id' },
+            'application/json; charset=utf-8'
+          )
+        ),
+        interactionFixture(
+          '/examples/3',
+          HttpMethods.POST,
+          CapturedBody.fromJSON({ id: 'an-id' }, 'application/gzip')
+        ),
+      ];
+
+      const results = await updateByInteractions(spec, from(interactions));
+
+      const specPatches = await resultingPatches(
+        results.expect('example spec can be updated')
+      );
+
+      expect(specPatches.length).toBeGreaterThan(0);
+
+      let updatedSpec = patchSpec(spec, specPatches);
+      expect(updatedSpec).toMatchSnapshot();
+    });
+
+    it('generates patches for existing response bodies, matching by various content type formats', async () => {
+      const spec = specFixture({
+        '/examples/{exampleId}': {
+          [HttpMethods.POST]: {
+            responses: {
+              201: {
+                description: 'created',
+                content: {
+                  'application/json; charset=utf-8': {},
+                  'application/*': {},
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const interactions = [
+        interactionFixture(
+          '/examples/3',
+          HttpMethods.POST,
+          null,
+          '201',
+          CapturedBody.fromJSON(
+            { id: 'an-id' },
+            'application/json; charset=utf-8'
+          )
+        ),
+        interactionFixture(
+          '/examples/3',
+          HttpMethods.POST,
+          null,
+          '201',
+          CapturedBody.fromJSON({ id: 'an-id' }, 'application/gzip')
+        ),
+      ];
+
+      const results = await updateByInteractions(spec, from(interactions));
+
+      const specPatches = await resultingPatches(
+        results.expect('example spec can be updated')
+      );
+
+      expect(specPatches.length).toBeGreaterThan(0);
+
+      let updatedSpec = patchSpec(spec, specPatches);
+      expect(updatedSpec).toMatchSnapshot();
+    });
   });
 });
 
