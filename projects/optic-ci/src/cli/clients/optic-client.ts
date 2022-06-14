@@ -17,6 +17,8 @@ export enum UploadSlot {
   FromFile = 'FromFile',
   ToFile = 'ToFile',
   CheckResults = 'CheckResults',
+  FromSourceMap = 'FromSourceMap',
+  ToSourceMap = 'ToSourceMap',
 }
 
 export type UploadUrl = {
