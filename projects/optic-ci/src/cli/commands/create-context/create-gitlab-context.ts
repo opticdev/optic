@@ -10,9 +10,19 @@ import {
 } from '../constants';
 import { getContextFromGitlabEnvironment } from './context-readers/gitlab/gitlab-ci';
 
-export const registerCreateGitlabContext = (cli: Command) => {
+export const registerCreateGitlabContext = (
+  cli: Command,
+  hideCommand: boolean
+) => {
   cli
-    .command('create-gitlab-context')
+    .command(
+      'create-gitlab-context',
+      hideCommand
+        ? {
+            hidden: true,
+          }
+        : {}
+    )
     .addHelpText(
       'before',
       'Creates a context object used for uploading specs to Optic cloud. This is intended to be used with gitlab.'

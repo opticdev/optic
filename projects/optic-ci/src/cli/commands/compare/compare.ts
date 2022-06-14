@@ -44,10 +44,18 @@ export const registerCompare = (
   ruleRunner: RuleRunner,
   cliConfig: CliConfig,
   generateContext: (details: { fileName: string }) => Object,
+  hideCommand: boolean,
   spectralConfig?: SpectralInput
 ) => {
   cli
-    .command('compare')
+    .command(
+      'compare',
+      hideCommand
+        ? {
+            hidden: true,
+          }
+        : {}
+    )
     .option('--from <from>', 'from file or rev:file, defaults empty spec')
     .option('--to <to>', 'to file or rev:file, defaults empty spec')
     .option('--context <context>', 'json of context')
