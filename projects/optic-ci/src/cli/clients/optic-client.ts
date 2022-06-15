@@ -21,6 +21,12 @@ export enum UploadSlot {
   ToSourceMap = 'ToSourceMap',
 }
 
+export enum LegacyUploadSlot {
+  FromFile = 'FromFile',
+  ToFile = 'ToFile',
+  CheckResults = 'CheckResults',
+}
+
 export type UploadUrl = {
   id: string;
   slot: UploadSlot;

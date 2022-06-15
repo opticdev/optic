@@ -1,4 +1,7 @@
-import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
+import {
+  OpticBackendClient,
+  LegacyUploadSlot,
+} from '../../clients/optic-client';
 import { CiRunArgs, uploadRun } from '../utils/shared-upload';
 import { NormalizedCiContext, UploadJson } from '../../types';
 import { OpenAPIV3, CompareFileJson } from '@useoptic/openapi-utilities';
@@ -12,10 +15,10 @@ export const uploadCiRun = async (
   runArgs: CiRunArgs,
   normalizedCiContext: NormalizedCiContext
 ): Promise<UploadJson> => {
-  const fileMap: Record<UploadSlot, Buffer> = {
-    [UploadSlot.CheckResults]: Buffer.from(JSON.stringify(compareOutput)),
-    [UploadSlot.FromFile]: Buffer.from(JSON.stringify(fromFile)),
-    [UploadSlot.ToFile]: Buffer.from(JSON.stringify(toFile)),
+  const fileMap: Record<LegacyUploadSlot, Buffer> = {
+    [LegacyUploadSlot.CheckResults]: Buffer.from(JSON.stringify(compareOutput)),
+    [LegacyUploadSlot.FromFile]: Buffer.from(JSON.stringify(fromFile)),
+    [LegacyUploadSlot.ToFile]: Buffer.from(JSON.stringify(toFile)),
   };
 
   const { web_url: opticWebUrl } = await uploadRun(

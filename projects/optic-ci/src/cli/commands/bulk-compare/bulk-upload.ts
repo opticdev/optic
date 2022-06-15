@@ -1,5 +1,9 @@
 import { CompareFileJson } from '@useoptic/openapi-utilities';
-import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
+import {
+  LegacyUploadSlot,
+  OpticBackendClient,
+  UploadSlot,
+} from '../../clients/optic-client';
 import { loadAndValidateSpecFiles, uploadRun } from '../utils/shared-upload';
 import {
   BulkCompareJson,
@@ -38,10 +42,12 @@ export const bulkUploadCiRun = async (
       projectRootDir: comparison.projectRootDir,
       version: comparison.version,
     };
-    const fileMap: Record<UploadSlot, Buffer> = {
-      [UploadSlot.CheckResults]: Buffer.from(JSON.stringify(checkResults)),
-      [UploadSlot.FromFile]: fromFileS3Buffer,
-      [UploadSlot.ToFile]: toFileS3Buffer,
+    const fileMap: Record<LegacyUploadSlot, Buffer> = {
+      [LegacyUploadSlot.CheckResults]: Buffer.from(
+        JSON.stringify(checkResults)
+      ),
+      [LegacyUploadSlot.FromFile]: fromFileS3Buffer,
+      [LegacyUploadSlot.ToFile]: toFileS3Buffer,
     };
     const { web_url: opticWebUrl } = await uploadRun(
       opticClient,
