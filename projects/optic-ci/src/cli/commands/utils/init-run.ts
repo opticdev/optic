@@ -21,6 +21,12 @@ const NEEDED_SLOTS = [
   UploadSlot.ToSourceMap,
 ];
 
+// 5 minutes
+const RUN_TIMEOUT = 1000 * 60 * 5;
+
+// 5 seconds
+const POLL_INTERVAL = 5000;
+
 export async function initRun(
   client: OpticBackendClient,
   specs: SpecInput[]
@@ -90,7 +96,7 @@ async function waitForSession(
   sessionId: string
 ): Promise<GetSessionResponse> {
   // timeout in 5 minutes for now
-  const timeout = new Date(new Date().getTime() + 1000 * 60 * 5);
+  const timeout = new Date(new Date().getTime() + RUN_TIMEOUT);
 
   while (new Date() < timeout) {
     const session = await client.getSession(sessionId);
@@ -98,7 +104,7 @@ async function waitForSession(
       return session;
     }
 
-    await sleep(5000);
+    await sleep(POLL_INTERVAL);
   }
 
   throw new Error('Timed out waiting for execution to complete');
