@@ -54,6 +54,7 @@ export {
   OPTIC_COMMENT_SURVEY_LINK,
 } from './utilities/shared-comment';
 export { createCommentBody } from './utilities/compare-comment';
+export { generateHashForComparison } from './utilities/comparison-hash';
 export { logComparison } from './utilities/comparison-render';
 export { sendGithubMessage } from './utilities/send-github-message';
 export { trackEvent, initSegment, flushEvents } from './utilities/segment';
