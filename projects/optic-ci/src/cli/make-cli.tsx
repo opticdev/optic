@@ -12,6 +12,7 @@ import {
 import { registerCreateManualContext } from './commands/create-context/create-manual-context';
 import { registerCreateGitlabContext } from './commands/create-context/create-gitlab-context';
 import { RuleRunner, SpectralInput } from '@useoptic/openapi-utilities';
+import { registerCloudCompare } from './commands/cloud-compare/cloud-compare';
 const packageJson = require('../../package.json');
 
 export async function getProjectName(): Promise<string> {
@@ -44,6 +45,22 @@ export async function makeCiCli(
   generateContext: (details: { fileName: string }) => Object = () => ({}),
   spectralConfig?: SpectralInput
 ) {
+  return _makeCiCliInternal(
+    checkService,
+    options,
+    false,
+    generateContext,
+    spectralConfig
+  );
+}
+
+export async function _makeCiCliInternal(
+  checkService: RuleRunner,
+  options: CliConfig = {},
+  directlyCalled: boolean,
+  generateContext: (details: { fileName: string }) => Object = () => ({}),
+  spectralConfig?: SpectralInput
+) {
   initSentry(packageJson.version);
   const projectName = await getProjectName();
   initSegment();
@@ -52,10 +69,12 @@ export async function makeCiCli(
   cli.version(
     `for ${projectName}, running optic api-check ${packageJson.version}`
   );
+  const shouldHideV1Commands = directlyCalled;
+  const shouldHideV2Commands = !directlyCalled;
 
-  registerCreateContext(cli);
+  registerCreateContext(cli, shouldHideV1Commands);
   registerCreateGithubContext(cli);
-  registerCreateGitlabContext(cli);
+  registerCreateGitlabContext(cli, shouldHideV1Commands);
   registerCreateManualContext(cli);
   registerCompare(
     cli,
@@ -63,6 +82,7 @@ export async function makeCiCli(
     checkService,
     options,
     generateContext,
+    shouldHideV1Commands,
     spectralConfig
   );
   registerBulkCompare(
@@ -71,8 +91,11 @@ export async function makeCiCli(
     checkService,
     options,
     generateContext,
+    shouldHideV1Commands,
     spectralConfig
   );
+
+  registerCloudCompare(cli, shouldHideV2Commands);
 
   return cli;
 }
