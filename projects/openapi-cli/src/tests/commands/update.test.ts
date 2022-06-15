@@ -333,7 +333,6 @@ describe('update command', () => {
             requestBody: {
               content: {
                 'application/json; charset=utf-8': {},
-                'application/*': {},
               },
             },
             responses: {},
@@ -353,7 +352,10 @@ describe('update command', () => {
         interactionFixture(
           '/examples/3',
           HttpMethods.POST,
-          CapturedBody.fromJSON({ id: 'an-id' }, 'application/gzip')
+          CapturedBody.fromJSON(
+            { id: 'an-id', name: 'a-name' },
+            'application/json'
+          )
         ),
       ];
 
@@ -378,7 +380,6 @@ describe('update command', () => {
                 description: 'created',
                 content: {
                   'application/json; charset=utf-8': {},
-                  'application/*': {},
                 },
               },
             },
@@ -402,7 +403,10 @@ describe('update command', () => {
           HttpMethods.POST,
           null,
           '201',
-          CapturedBody.fromJSON({ id: 'an-id' }, 'application/gzip')
+          CapturedBody.fromJSON(
+            { id: 'an-id', name: 'a-name' },
+            'application/json'
+          )
         ),
       ];
 
