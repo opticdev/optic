@@ -27,7 +27,7 @@ const NEEDED_SLOTS = [
 export async function initRun(
   client: OpticBackendClient,
   specs: SpecInput[]
-): Promise<string[]> {
+): Promise<GetSessionResponse[]> {
   const runPromises = specs.map((spec) => runSingle(client, spec));
 
   return await Promise.all(runPromises);
@@ -36,7 +36,7 @@ export async function initRun(
 async function runSingle(
   client: OpticBackendClient,
   specInput: SpecInput
-): Promise<string> {
+): Promise<GetSessionResponse> {
   const [fromResults, toResults] = await Promise.all([
     specFromInputToResults(specInput.from),
     specFromInputToResults(specInput.to),
@@ -58,10 +58,7 @@ async function runSingle(
   await client.startSession(sessionId);
 
   // loop and wait for session to complete
-  const result = await waitForSession(client, sessionId);
-  console.log(result);
-
-  return 'whatever';
+  return await waitForSession(client, sessionId);
 }
 
 async function upload(
