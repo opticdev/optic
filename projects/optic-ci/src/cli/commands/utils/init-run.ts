@@ -1,5 +1,5 @@
 import { SpecFromInput } from './compare-input-parser';
-import { specFromInputToResults } from './load-spec';
+import { specFromInputToResults, ParseResult } from './load-spec';
 import {
   GetSessionResponse,
   OpticBackendClient,
@@ -7,15 +7,12 @@ import {
   UploadSlot,
 } from '../../clients/optic-client';
 import { uploadFileToS3 } from './s3';
-import { ParseOpenAPIResult } from '@useoptic/openapi-io';
 
 export type SpecInput = {
   from: SpecFromInput;
   to: SpecFromInput;
   id: string;
 };
-
-type ParseResult = ParseOpenAPIResult & { isEmptySpec: boolean };
 
 const NEEDED_SLOTS = [
   UploadSlot.FromFile,
@@ -69,14 +66,14 @@ async function upload(
 ) {
   const urls = await client.getUploadUrls(sessionId, NEEDED_SLOTS);
 
-  const bufData = [
+  const bufSources = [
     fromResults.jsonLike,
     toResults.jsonLike,
     fromResults.sourcemap,
     toResults.sourcemap,
   ];
   const uploadPromises = NEEDED_SLOTS.map((_, i) =>
-    uploadFileToS3(urls[i].url, Buffer.from(JSON.stringify(bufData[i])))
+    uploadFileToS3(urls[i].url, Buffer.from(JSON.stringify(bufSources[i])))
   );
 
   await Promise.all(uploadPromises);
