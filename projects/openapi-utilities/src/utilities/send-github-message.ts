@@ -1,13 +1,13 @@
 import { Octokit } from '@octokit/rest';
 import { trackEvent } from './segment';
 import { findOpticCommentId } from './shared-comment';
-import { generateHashForComparison } from './comparison-hash';
 import { CompareFileJson, UploadJson } from '../ci-types';
 import { UserError } from '../errors';
 import { createCommentBody } from './compare-comment';
 
 export const sendGithubMessage = async (
   octokit: Octokit,
+  compareHash: string,
   {
     compareOutput,
     uploadOutput,
@@ -17,10 +17,6 @@ export const sendGithubMessage = async (
   }
 ) => {
   const { results, changes } = compareOutput;
-  const compareHash = generateHashForComparison({
-    results,
-    changes,
-  });
   const { opticWebUrl, ciContext } = uploadOutput;
   const {
     organization: owner,

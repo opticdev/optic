@@ -11,12 +11,11 @@ import {
 import { registerCreateManualContext } from './commands/create-context/create-manual-context';
 import { registerCreateGitlabContext } from './commands/create-context/create-gitlab-context';
 import { registerCloudCompare } from './commands/cloud-compare/cloud-compare';
+import { RuleRunner, SpectralInput } from '@useoptic/openapi-utilities';
 import {
-  RuleRunner,
-  SpectralInput,
-  initSegment,
   trackEvent,
-} from '@useoptic/openapi-utilities';
+  initSegment,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 const packageJson = require('../../package.json');
 
 export async function getProjectName(): Promise<string> {

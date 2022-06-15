@@ -1,6 +1,12 @@
 import { Octokit } from '@octokit/rest';
 import { Command } from 'commander';
 import { createOpticClient } from '../../clients/optic-client';
+import { generateHashForComparison } from '@useoptic/openapi-utilities/build/utilities/comparison-hash';
+import {
+  trackEvent,
+  flushEvents,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { sendGithubMessage } from '@useoptic/openapi-utilities/build/utilities/send-github-message';
 
 import {
   NormalizedCiContext,
@@ -11,9 +17,6 @@ import {
   validateOpenApiV3Document,
   logComparison,
   UserError,
-  trackEvent,
-  flushEvents,
-  sendGithubMessage,
 } from '@useoptic/openapi-utilities';
 import {
   parseSpecVersion,
@@ -243,8 +246,12 @@ const runCompare = async ({
             auth: token,
             baseUrl: git_api_url,
           });
+          const compareHash = generateHashForComparison({
+            results,
+            changes,
+          });
           try {
-            await sendGithubMessage(octokit, {
+            await sendGithubMessage(octokit, compareHash, {
               compareOutput,
               uploadOutput,
             });

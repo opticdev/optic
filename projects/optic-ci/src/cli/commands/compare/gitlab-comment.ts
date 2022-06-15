@@ -1,11 +1,11 @@
 import {
   CompareFileJson,
   UploadJson,
-  generateHashForComparison,
   UserError,
-  trackEvent,
   createCommentBody,
 } from '@useoptic/openapi-utilities';
+import { generateHashForComparison } from '@useoptic/openapi-utilities/build/utilities/comparison-hash';
+import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { GitlabClient } from '../../clients/gitlab-client';
 
 export const sendGitlabMessage = async ({

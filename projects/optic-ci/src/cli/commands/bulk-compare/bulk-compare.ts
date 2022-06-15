@@ -10,9 +10,11 @@ import {
   NormalizedCiContext,
   logComparison,
   UserError,
-  trackEvent,
-  flushEvents,
 } from '@useoptic/openapi-utilities';
+import {
+  flushEvents,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import {
   parseSpecVersion,
