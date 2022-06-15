@@ -32,10 +32,15 @@ type SessionFile = {
   url: string;
 };
 
-type GetSessionResponse = {
+export enum SessionStatus {
+  Ready = 'ready',
+  NotReady = 'not_ready',
+}
+
+export type GetSessionResponse = {
   web_url: string;
   session: Session;
-  status: 'ready' | 'not_ready';
+  status: SessionStatus;
   files: SessionFile[];
 };
 

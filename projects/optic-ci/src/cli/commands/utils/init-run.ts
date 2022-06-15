@@ -1,6 +1,11 @@
 import { SpecFromInput } from './compare-input-parser';
 import { specFromInputToResults } from './load-spec';
-import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
+import {
+  GetSessionResponse,
+  OpticBackendClient,
+  SessionStatus,
+  UploadSlot,
+} from '../../clients/optic-client';
 import { uploadFileToS3 } from './s3';
 import { ParseOpenAPIResult } from '@useoptic/openapi-io';
 
@@ -53,6 +58,8 @@ async function runSingle(
   await client.startSession(sessionId);
 
   // loop and wait for session to complete
+  const result = await waitForSession(client, sessionId);
+  console.log(result);
 
   return 'whatever';
 }
@@ -82,4 +89,27 @@ async function upload(
   );
 
   await Promise.all(markCompletePromises);
+}
+
+async function waitForSession(
+  client: OpticBackendClient,
+  sessionId: string
+): Promise<GetSessionResponse> {
+  // timeout in 5 minutes for now
+  const timeout = new Date(new Date().getTime() + 1000 * 60 * 5);
+
+  while (new Date() < timeout) {
+    const session = await client.getSession(sessionId);
+    if (session.status === SessionStatus.Ready) {
+      return session;
+    }
+
+    await sleep(5000);
+  }
+
+  throw new Error('Timed out waiting for execution to complete');
+}
+
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
