@@ -118,12 +118,12 @@ export function findBody(
     let normalized = type.toString();
 
     if (type.toString() === normalizedType) {
-      exactMatch = [media, normalized];
+      exactMatch = [media, rawType];
       break; // exact match found, lets stop looking
     }
 
     if (!essenceMatch && type.essence === parsedType.essence) {
-      essenceMatch = [media, normalized];
+      essenceMatch = [media, rawType];
       continue;
     }
 
@@ -132,11 +132,11 @@ export function findBody(
       type.type === parsedType.type &&
       type.subtype === '*'
     ) {
-      typeRangeMatch = [media, normalized];
+      typeRangeMatch = [media, rawType];
     }
 
     if (!rangeMatch && type.type === '*' && type.subtype === '*') {
-      rangeMatch = [media, normalized];
+      rangeMatch = [media, rawType];
     }
 
     if (exactMatch && essenceMatch && typeRangeMatch && rangeMatch) break;

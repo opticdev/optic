@@ -11,10 +11,17 @@ import { getContextFromCircleCiEnvironment } from './context-readers/github/circ
 import { getContextFromGithubEnvironment } from './context-readers/github/github-actions';
 import path from 'path';
 
-export const registerCreateContext = (cli: Command) => {
+export const registerCreateContext = (cli: Command, hideCommand: boolean) => {
   // TODO deprecate this
   cli
-    .command('create-context')
+    .command(
+      'create-context',
+      hideCommand
+        ? {
+            hidden: true,
+          }
+        : {}
+    )
     .addOption(
       new Option(
         '--provider <provider>',

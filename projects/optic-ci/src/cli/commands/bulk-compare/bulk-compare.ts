@@ -37,10 +37,18 @@ export const registerBulkCompare = (
   ruleRunner: RuleRunner,
   cliConfig: CliConfig,
   generateContext: (details: { fileName: string }) => Object = () => ({}),
+  hideCommand: boolean,
   spectralConfig?: SpectralInput
 ) => {
   cli
-    .command('bulk-compare')
+    .command(
+      'bulk-compare',
+      hideCommand
+        ? {
+            hidden: true,
+          }
+        : {}
+    )
     .option(
       '--input <input>',
       'a csv with the from, to files, and context format: <from>,<to>,<jsonified context>'
