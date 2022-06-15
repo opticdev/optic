@@ -70,10 +70,18 @@ export class OpticBackendClient extends JsonHttpClient {
     });
   };
 
-  public async getUploadUrls(sessionId: string): Promise<UploadUrl[]> {
+  public async getUploadUrls(
+    sessionId: string,
+    slots: UploadSlot[] = []
+  ): Promise<UploadUrl[]> {
+    let params = '';
+    if (slots.length > 0) {
+      params = '?' + new URLSearchParams({ slots: slots.join(',') }).toString();
+    }
+
     const response = await this.getJson<{
       upload_urls: UploadUrl[];
-    }>(`/api/runs/${sessionId}/uploads`);
+    }>(`/api/runs/${sessionId}/uploads${params}`);
     return response.upload_urls;
   }
 
