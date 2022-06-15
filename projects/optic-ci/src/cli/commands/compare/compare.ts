@@ -298,11 +298,6 @@ const runCompare = async ({
           result.passed || result.exempted ? count : count + 1,
         0
       ),
-      numberOfExemptions: results.reduce(
-        (count, result) =>
-          result.passed || !result.exempted ? count : count + 1,
-        0
-      ),
       numberOfChanges: changes.length,
       ...(normalizedCiContext
         ? {

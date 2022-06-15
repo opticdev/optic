@@ -248,10 +248,8 @@ const runBulkCompare = async ({
   | { input?: undefined; glob: string; base: string }
 )) => {
   let numberOfErrors = 0;
-  let numberOfExemptions = 0;
   let numberOfComparisonsWithErrors = 0;
   let numberOfComparisonsWithAChange = 0;
-  let numberOfComparisonsWithExemptions = 0;
   let hasChecksFailing = false;
   let hasError = false;
 
@@ -286,14 +284,6 @@ const runBulkCompare = async ({
           0
         );
       }
-      if (results.some((result) => !result.passed && result.exempted)) {
-        numberOfComparisonsWithExemptions += 1;
-        numberOfExemptions += results.reduce(
-          (count, result) =>
-            result.passed || !result.exempted ? count : count + 1,
-          0
-        );
-      }
       if (changes.length > 0) {
         numberOfComparisonsWithAChange += 1;
       }
@@ -322,12 +312,10 @@ const runBulkCompare = async ({
     {
       isInCi: process.env.CI === 'true',
       numberOfErrors,
-      numberOfExemptions,
       projectName,
       numberOfComparisons: initialComparisons.size,
       numberOfComparisonsWithErrors,
       numberOfComparisonsWithAChange,
-      numberOfComparisonsWithExemptions,
       ...(normalizedCiContext
         ? {
             ...normalizedCiContext,
