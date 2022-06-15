@@ -1,12 +1,16 @@
 import { SpecFromInput } from './compare-input-parser';
 import { specFromInputToResults } from './load-spec';
 import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
+import { uploadFileToS3 } from './s3';
+import { ParseOpenAPIResult } from '@useoptic/openapi-io';
 
 export type SpecInput = {
   from: SpecFromInput;
   to: SpecFromInput;
   id: string;
 };
+
+type ParseResult = ParseOpenAPIResult & { isEmptySpec: boolean };
 
 const NEEDED_SLOTS = [
   UploadSlot.FromFile,
@@ -33,7 +37,7 @@ async function runSingle(
     specFromInputToResults(specInput.to),
   ]);
 
-  const sessionId = await client.startSession({
+  const sessionId = await client.createSession({
     owner: '',
     repo: '',
     commit_hash: '',
@@ -44,7 +48,38 @@ async function runSingle(
     to_arg: '',
   });
 
-  const urls = await client.getUploadUrls(sessionId, NEEDED_SLOTS);
+  await upload(client, sessionId, fromResults, toResults);
+
+  await client.startSession(sessionId);
+
+  // loop and wait for session to complete
 
   return 'whatever';
+}
+
+async function upload(
+  client: OpticBackendClient,
+  sessionId: string,
+  fromResults: ParseResult,
+  toResults: ParseResult
+) {
+  const urls = await client.getUploadUrls(sessionId, NEEDED_SLOTS);
+
+  const bufData = [
+    fromResults.jsonLike,
+    toResults.jsonLike,
+    fromResults.sourcemap,
+    toResults.sourcemap,
+  ];
+  const uploadPromises = NEEDED_SLOTS.map((_, i) =>
+    uploadFileToS3(urls[i].url, Buffer.from(JSON.stringify(bufData[i])))
+  );
+
+  await Promise.all(uploadPromises);
+
+  const markCompletePromises = urls.map((url) =>
+    client.markUploadAsComplete(sessionId, url.id)
+  );
+
+  await Promise.all(markCompletePromises);
 }

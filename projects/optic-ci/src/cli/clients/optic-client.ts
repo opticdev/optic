@@ -85,11 +85,15 @@ export class OpticBackendClient extends JsonHttpClient {
     return response.upload_urls;
   }
 
-  public async startSession(session: Session): Promise<string> {
+  public async createSession(session: Session): Promise<string> {
     const { id: sessionId } = await this.postJson(`/api/runs`, {
       ...session,
     });
     return sessionId;
+  }
+
+  public async startSession(sessionId: string): Promise<void> {
+    await this.postJson(`/api/runs/${sessionId}/start`, {});
   }
 
   public async markUploadAsComplete(

@@ -69,7 +69,7 @@ const startSession = async (
   runArgs: CiRunArgs,
   ciContext: NormalizedCiContext
 ): Promise<string> => {
-  const sessionId = await opticClient.startSession({
+  const sessionId = await opticClient.createSession({
     owner: ciContext.organization,
     repo: ciContext.repo,
     commit_hash: ciContext.commit_hash,
