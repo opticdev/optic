@@ -30,18 +30,20 @@ export class ShapeDiffTraverser {
   traverse(
     bodyValue: any,
     schema: SchemaObject
-  ): Result<null, SchemaCompilationError> {
+  ): Result<void, SchemaCompilationError> {
     this.bodyValue = bodyValue;
     try {
       this.validate = this.validator.compile(prepareSchemaForDiff(schema));
     } catch (err) {
+      // Catching and not throwing is okay here. `validator.compile` is stateless, with all state for the validator
+      // being contained by the function that now doesn't get assigned.
       const wrapped = new SchemaCompilationError(err as Error);
       return Err(wrapped);
     }
 
     this.validate(bodyValue);
 
-    return Ok(null);
+    return Ok.EMPTY;
   }
 
   *results(): IterableIterator<ShapeDiffResult> {

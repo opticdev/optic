@@ -33,6 +33,8 @@ export class ShapePatches {
       let patchCount = 0;
 
       for (let shapeDiff of shapeDiffs) {
+        // consuming Result<ShapeDiffs> directly ignores any schema compilation errors
+        // TODO: consider making this more explicit
         let diffPatches = generateShapePatchesByDiff(shapeDiff, schema, {
           location: shapeLocation || undefined,
         });
