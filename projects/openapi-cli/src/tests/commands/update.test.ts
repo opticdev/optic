@@ -421,6 +421,79 @@ describe('update command', () => {
       let updatedSpec = patchSpec(spec, specPatches);
       expect(updatedSpec).toMatchSnapshot();
     });
+
+    it('does not generate patches for bodies with invalid schemas', async () => {
+      const spec = specFixture({
+        '/examples/{exampleId}': {
+          [HttpMethods.POST]: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      id: {
+                        nullable: true, // nullable without a `type` is invalid JSON Schema
+                      },
+                    },
+                    required: ['id'],
+                  },
+                },
+              },
+            },
+            responses: {
+              '201': {
+                description: 'created resource',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'string',
+                        },
+                      },
+                      required: ['id'],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const interactions = [
+        interactionFixture(
+          '/examples/3',
+          HttpMethods.POST,
+          CapturedBody.fromJSON(
+            {
+              id: 'an-id',
+              newField: 123,
+              optionalBoolean: true,
+            },
+            'application/json'
+          ),
+          '201',
+          CapturedBody.fromJSON(
+            { id: 'an-id', newField: 123 },
+            'application/json'
+          )
+        ),
+      ];
+
+      const results = await updateByInteractions(spec, from(interactions));
+
+      const specPatches = await resultingPatches(
+        results.expect('example spec can be updated')
+      );
+
+      expect(specPatches.length).toBeGreaterThan(0);
+
+      let updatedSpec = patchSpec(spec, specPatches);
+      expect(updatedSpec).toMatchSnapshot();
+    });
   });
 });
 
