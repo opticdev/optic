@@ -1,27 +1,22 @@
 import { Octokit } from '@octokit/rest';
-import { trackEvent } from '../../segment';
-import { findOpticCommentId } from '../utils/shared-comment';
-import { generateHashForComparison } from '../utils/comparison-hash';
-import { CompareJson, UploadJson } from '../../types';
-import { UserError } from '../../errors';
-import { createCommentBody } from './comment';
+import { trackEvent } from './segment';
+import { findOpticCommentId } from './shared-comment';
+import { CompareFileJson, UploadJson } from '../ci-types';
+import { UserError } from '../errors';
+import { createCommentBody } from './compare-comment';
 
-export const sendGithubMessage = async ({
-  githubToken,
-  compareOutput,
-  uploadOutput,
-  baseUrl,
-}: {
-  githubToken: string;
-  compareOutput: CompareJson;
-  uploadOutput: UploadJson;
-  baseUrl: string;
-}) => {
+export const sendGithubMessage = async (
+  octokit: Octokit,
+  compareHash: string,
+  {
+    compareOutput,
+    uploadOutput,
+  }: {
+    compareOutput: CompareFileJson;
+    uploadOutput: UploadJson;
+  }
+) => {
   const { results, changes } = compareOutput;
-  const compareHash = generateHashForComparison({
-    results,
-    changes,
-  });
   const { opticWebUrl, ciContext } = uploadOutput;
   const {
     organization: owner,
@@ -35,10 +30,6 @@ export const sendGithubMessage = async ({
     console.log('No changes were found, exiting.');
     return;
   }
-  const octokit = new Octokit({
-    auth: githubToken,
-    baseUrl,
-  });
 
   try {
     const { data: requestedReviewers } =

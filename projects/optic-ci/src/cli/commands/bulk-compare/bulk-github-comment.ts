@@ -1,9 +1,11 @@
 import { Octokit } from '@octokit/rest';
-import { trackEvent } from '../../segment';
-import { findOpticCommentId } from '../utils/shared-comment';
-import { generateHashForComparison } from '../utils/comparison-hash';
-import { BulkUploadJson } from '../../types';
-import { UserError } from '../../errors';
+import {
+  BulkUploadJson,
+  findOpticCommentId,
+  UserError,
+} from '@useoptic/openapi-utilities';
+import { generateHashForComparison } from '@useoptic/openapi-utilities/build/utilities/comparison-hash';
+import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { createBulkCommentBody } from './comment';
 
 export const sendBulkGithubMessage = async ({

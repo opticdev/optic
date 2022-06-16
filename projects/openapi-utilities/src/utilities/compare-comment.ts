@@ -1,9 +1,9 @@
-import { CompareJson } from '../../types';
-import { OPTIC_COMMENT_SURVEY_LINK } from '../utils/shared-comment';
+import { CompareFileJson } from '../ci-types';
+import { OPTIC_COMMENT_SURVEY_LINK } from './shared-comment';
 
 export const createCommentBody = (
-  results: CompareJson['results'],
-  changes: CompareJson['changes'],
+  results: CompareFileJson['results'],
+  changes: CompareFileJson['changes'],
   compareHash: string,
   commit_hash: string,
   run: number,

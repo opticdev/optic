@@ -1,8 +1,11 @@
-import { trackEvent } from '../../segment';
-import { generateHashForComparison } from '../utils/comparison-hash';
-import { CompareJson, UploadJson } from '../../types';
-import { UserError } from '../../errors';
-import { createCommentBody } from './comment';
+import {
+  CompareFileJson,
+  UploadJson,
+  UserError,
+  createCommentBody,
+} from '@useoptic/openapi-utilities';
+import { generateHashForComparison } from '@useoptic/openapi-utilities/build/utilities/comparison-hash';
+import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { GitlabClient } from '../../clients/gitlab-client';
 
 export const sendGitlabMessage = async ({
@@ -12,7 +15,7 @@ export const sendGitlabMessage = async ({
   baseUrl,
 }: {
   gitlabToken: string;
-  compareOutput: CompareJson;
+  compareOutput: CompareFileJson;
   uploadOutput: UploadJson;
   baseUrl: string;
 }) => {
