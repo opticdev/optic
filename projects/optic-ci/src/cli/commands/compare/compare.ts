@@ -22,7 +22,7 @@ import { sendGithubMessage } from './github-comment';
 import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
-import { getRelativeRepoPath } from '../utils/get-relative-path';
+import { getRelativeRepoPath } from '../utils/path';
 import { inGit } from '@useoptic/openapi-io';
 
 const parseContextObject = (context?: string): any => {

@@ -7,8 +7,8 @@ import { loadFile } from '../utils';
 
 import { UserError } from '../../errors';
 import { Comparison } from './types';
-import { getRelativeRepoPath } from '../utils/get-relative-path';
 import path from 'path';
+import { getGitRootPath } from '../utils/path';
 
 const exec = promisify(callbackExec);
 
@@ -60,10 +60,7 @@ export const getComparisonsFromGlob = async (
   skippedParsing: boolean;
 }> => {
   console.log(`Running bulk-compare with glob ${glob}`);
-  const { stdout: gitRootUntrimmed } = await exec(
-    'git rev-parse --show-toplevel'
-  );
-  const gitRoot = gitRootUntrimmed.trim();
+  const gitRoot = await getGitRootPath();
   // Gets the git tree at the `base` branch
   const { stdout: baseFiles } = await exec(
     'git ls-tree -r --name-only --full-tree ' + base

@@ -7,7 +7,7 @@ import {
   NormalizedCiContext,
 } from '../../types';
 import { inGit } from '@useoptic/openapi-io';
-import { getRelativeRepoPath } from '../utils/get-relative-path';
+import { getRelativeRepoPath } from '../utils/path';
 
 export const bulkUploadCiRun = async (
   opticClient: OpticBackendClient,
