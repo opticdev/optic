@@ -21,6 +21,7 @@ import {
   specFromInputToResults,
   validateUploadRequirements,
 } from '../utils';
+import { newExemptionsCount } from '../utils/count-exemptions';
 
 import { CliConfig } from '../../types';
 import { createOpticClient } from '../../clients/optic-client';
@@ -257,6 +258,7 @@ const runBulkCompare = async ({
   let numberOfComparisonsWithAChange = 0;
   let hasChecksFailing = false;
   let hasError = false;
+  let numberOfExemptionsAdded = 0;
 
   let normalizedCiContext: NormalizedCiContext | null = null;
   if (uploadResults && cliConfig.ciProvider) {
@@ -298,6 +300,9 @@ const runBulkCompare = async ({
         error: false,
         data: comparison,
       });
+      for (const change of changes) {
+        numberOfExemptionsAdded += newExemptionsCount(change);
+      }
     },
     onComparisonError: (id, error) => {
       hasError = true;
@@ -321,6 +326,7 @@ const runBulkCompare = async ({
       numberOfComparisons: initialComparisons.size,
       numberOfComparisonsWithErrors,
       numberOfComparisonsWithAChange,
+      numberOfExemptionsAdded,
       ...(normalizedCiContext
         ? {
             ...normalizedCiContext,

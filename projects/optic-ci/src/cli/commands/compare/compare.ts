@@ -30,6 +30,7 @@ import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
 import { getRelativeRepoPath } from '../utils/path';
 import { inGit } from '@useoptic/openapi-io';
+import { newExemptionsCount } from '../utils/count-exemptions';
 
 const parseContextObject = (context?: string): any => {
   try {
@@ -298,6 +299,11 @@ const runCompare = async ({
 
   const hasError = results.some((result) => !result.passed && !result.exempted);
 
+  let numberOfExemptionsAdded = 0;
+  for (const change of changes) {
+    numberOfExemptionsAdded += newExemptionsCount(change);
+  }
+
   trackEvent(
     'optic_ci.compare',
     (normalizedCiContext && normalizedCiContext.user) ||
@@ -310,6 +316,7 @@ const runCompare = async ({
           result.passed || result.exempted ? count : count + 1,
         0
       ),
+      numberOfExemptionsAdded,
       numberOfChanges: changes.length,
       ...(normalizedCiContext
         ? {
