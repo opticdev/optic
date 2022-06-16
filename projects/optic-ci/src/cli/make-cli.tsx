@@ -3,7 +3,6 @@ import { exec } from 'child_process';
 import { registerCompare } from './commands/compare';
 import { registerBulkCompare } from './commands/bulk-compare';
 import { initSentry } from './sentry';
-import { initSegment, trackEvent } from './segment';
 import { CliConfig } from './types';
 import {
   registerCreateContext,
@@ -11,8 +10,12 @@ import {
 } from './commands/create-context/create-github-context';
 import { registerCreateManualContext } from './commands/create-context/create-manual-context';
 import { registerCreateGitlabContext } from './commands/create-context/create-gitlab-context';
-import { RuleRunner, SpectralInput } from '@useoptic/openapi-utilities';
 import { registerCloudCompare } from './commands/cloud-compare/cloud-compare';
+import { RuleRunner, SpectralInput } from '@useoptic/openapi-utilities';
+import {
+  trackEvent,
+  initSegment,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 const packageJson = require('../../package.json');
 
 export async function getProjectName(): Promise<string> {

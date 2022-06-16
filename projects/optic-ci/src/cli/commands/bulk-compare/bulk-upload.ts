@@ -1,11 +1,12 @@
-import { CompareFileJson } from '@useoptic/openapi-utilities';
-import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
-import { loadAndValidateSpecFiles, uploadRun } from '../utils/shared-upload';
 import {
+  CompareFileJson,
   BulkCompareJson,
   BulkUploadJson,
   NormalizedCiContext,
-} from '../../types';
+} from '@useoptic/openapi-utilities';
+import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
+import { loadAndValidateSpecFiles, uploadRun } from '../utils/shared-upload';
+import {} from '../../types';
 import { inGit } from '@useoptic/openapi-io';
 import { getRelativeRepoPath } from '../utils/path';
 
