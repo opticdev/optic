@@ -1,4 +1,4 @@
-import { UserError } from '../../../../../errors';
+import { UserError } from '@useoptic/openapi-utilities';
 import { getContextFromCircleCiEnvironment } from '../circle-ci';
 
 const originalEnv = {

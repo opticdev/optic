@@ -8,12 +8,14 @@ import {
   SpecFileOperation,
   SpecTemplate,
   OpenAPIV3,
-  ComponentSchemaExampleFacts,
 } from '../specs';
 import invariant from 'ts-invariant';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { flushEvents, trackEvent } from '../segment';
+import {
+  flushEvents,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 import { tap } from '../lib/async-tools';
 
 export { SpecTemplate, OpenAPIV3 };

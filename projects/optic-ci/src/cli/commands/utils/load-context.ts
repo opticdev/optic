@@ -1,8 +1,8 @@
-import { NormalizedCiContext } from '../../types';
+import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 import { loadFile, normalizeCiContext } from '.';
 import path from 'path';
 import { DEFAULT_CONTEXT_PATH } from '../constants';
-import { UserError } from '../../errors';
+import { UserError } from '@useoptic/openapi-utilities';
 
 export async function loadCiContext(
   ciProvider: 'github' | 'circleci',
