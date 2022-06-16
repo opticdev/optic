@@ -5,12 +5,11 @@ import { exec as callbackExec } from 'child_process';
 import { Command } from 'commander';
 import Ajv from 'ajv';
 import yaml from 'js-yaml';
-import { defaultEmptySpec } from '@useoptic/openapi-utilities';
+import { defaultEmptySpec, UserError } from '@useoptic/openapi-utilities';
 import { createOpticClient } from '../../clients/optic-client';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { parseSpecVersion, SpecFromInput } from '../utils';
 import { getGitRootPath, getRelativeRepoPath } from '../utils/path';
-import { UserError } from '../../errors';
 
 const exec = promisify(callbackExec);
 
