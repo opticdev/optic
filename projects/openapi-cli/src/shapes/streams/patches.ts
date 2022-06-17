@@ -10,7 +10,10 @@ const MAX_ITERATIONS = 100;
 
 export class ShapePatches {
   static *generateBodyAdditions(documentedBody: DocumentedBody): ShapePatches {
-    let { body, schema, shapeLocation } = documentedBody;
+    let { body: optionalBody, schema, shapeLocation } = documentedBody;
+
+    if (optionalBody.none) return; // no patches if there is no body
+    let body = optionalBody.unwrap();
 
     let patchesExhausted = false;
     let i = 0;

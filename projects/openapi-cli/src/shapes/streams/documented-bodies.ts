@@ -6,7 +6,7 @@ import {
   IFact,
   OpenApiFact,
 } from '@useoptic/openapi-utilities';
-import { Result, Ok, Err } from 'ts-results';
+import { Result, Ok, Err, Option, Some, None } from 'ts-results';
 import MIMEType from 'whatwg-mimetype';
 
 import { BodyExampleFacts, ComponentSchemaExampleFacts } from '../../specs';
@@ -54,13 +54,13 @@ export class DocumentedBodies {
         let schema = resolvedSchema.value;
         yield {
           schema,
-          body,
+          body: Some(body),
           shapeLocation,
           specJsonPath: bodyPath,
         };
       } else {
         yield {
-          body,
+          body: Some(body),
           schema: null,
           shapeLocation,
           specJsonPath: bodyPath,
@@ -90,7 +90,7 @@ export class DocumentedBodies {
         let schema = resolvedSchema.value;
         yield {
           schema,
-          body,
+          body: Some(body),
           shapeLocation: conceptualLocation,
           specJsonPath: expectedSchemaPath,
         };
@@ -112,11 +112,10 @@ export class DocumentedBodies {
     ) {
       // TODO: consider whether this belongs here, and not in something more specific to patches
       // (as it decides basically what and what not to generate patches for  from)
-      let { contentType: capturedContentType } = interaction.request.body;
+      let capturedBody = interaction.request.body;
+      let { contentType: capturedContentType } = capturedBody;
 
-      let decodedBodyResult = await decodeCapturedBody(
-        interaction.request.body
-      );
+      let decodedBodyResult = await decodeCapturedBody(capturedBody);
       if (decodedBodyResult.err) {
         console.warn(
           'Could not decode body of captured interaction:',
@@ -161,6 +160,7 @@ export class DocumentedBodies {
         yield {
           schema: resolvedSchema.match ? resolvedSchema.value : null,
           body: decodedBodyResult.unwrap(),
+          bodySource: capturedBody,
           shapeLocation,
           specJsonPath: bodySpecPath,
         };
@@ -174,15 +174,14 @@ export class DocumentedBodies {
     ) {
       // TODO: consider whether this belongs here, and not in something more specific to patches
       // (as it decides basically what and what not to generate patches for  from)
-      let { contentType: capturedContentType } = interaction.response.body;
+      let capturedBody = interaction.response.body;
+      let { contentType: capturedContentType } = capturedBody;
       let matchedResponse = findResponse(
         operation,
         interaction.response.statusCode
       );
 
-      let decodedBodyResult = await decodeCapturedBody(
-        interaction.response.body
-      );
+      let decodedBodyResult = await decodeCapturedBody(capturedBody);
       if (decodedBodyResult.err) {
         console.warn(
           'Could not decode body of captured interaction:',
@@ -231,6 +230,7 @@ export class DocumentedBodies {
         yield {
           schema: resolvedSchema.match ? resolvedSchema.value : null,
           body: decodedBodyResult.unwrap(),
+          bodySource: capturedBody,
           shapeLocation,
           specJsonPath: bodySpecPath,
         };
@@ -241,7 +241,7 @@ export class DocumentedBodies {
 
 async function decodeCapturedBody(
   capturedBody: CapturedBody
-): Promise<Result<Body, string>> {
+): Promise<Result<Option<Body>, string>> {
   // parse the interaction bytes
   let { contentType } = capturedBody;
 
@@ -253,11 +253,13 @@ async function decodeCapturedBody(
       return Err('Could not parse captured body as json');
     }
 
-    return Ok({
-      contentType,
-      value,
-    });
+    return Ok(
+      Some({
+        contentType,
+        value,
+      })
+    );
   } // TODO: consider what to do when there's no content type (happens, as seen in the past)
 
-  return Err('Could not decode captured body');
+  return Ok(None); // no decoded body available
 }
