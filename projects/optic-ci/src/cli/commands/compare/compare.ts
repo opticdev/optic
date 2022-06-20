@@ -1,29 +1,36 @@
+import { Octokit } from '@octokit/rest';
 import { Command } from 'commander';
 import { createOpticClient } from '../../clients/optic-client';
+import { generateHashForComparison } from '@useoptic/openapi-utilities/build/utilities/comparison-hash';
+import {
+  trackEvent,
+  flushEvents,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { sendGithubMessage } from '@useoptic/openapi-utilities/build/utilities/send-github-message';
 
 import {
-  defaultEmptySpec,
-  validateOpenApiV3Document,
-  generateSpecResults,
+  NormalizedCiContext,
   RuleRunner,
   SpectralInput,
+  defaultEmptySpec,
+  generateSpecResults,
+  validateOpenApiV3Document,
+  logComparison,
+  UserError,
 } from '@useoptic/openapi-utilities';
 import {
   parseSpecVersion,
   specFromInputToResults,
   validateUploadRequirements,
 } from '../utils';
-import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
-import { trackEvent, flushEvents } from '../../segment';
-import { CliConfig, NormalizedCiContext } from '../../types';
+import { CliConfig } from '../../types';
 import { uploadCiRun } from './upload';
-import { sendGithubMessage } from './github-comment';
-import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
-import { getRelativeRepoPath } from '../utils/get-relative-path';
+import { getRelativeRepoPath } from '../utils/path';
 import { inGit } from '@useoptic/openapi-io';
+import { newExemptionsCount } from '../utils/count-exemptions';
 
 const parseContextObject = (context?: string): any => {
   try {
@@ -236,12 +243,18 @@ const runCompare = async ({
 
         if (git_provider === 'github') {
           console.log('Posting comment to github...');
+          const octokit = new Octokit({
+            auth: token,
+            baseUrl: git_api_url,
+          });
+          const compareHash = generateHashForComparison({
+            results,
+            changes,
+          });
           try {
-            await sendGithubMessage({
-              githubToken: token,
+            await sendGithubMessage(octokit, compareHash, {
               compareOutput,
               uploadOutput,
-              baseUrl: git_api_url,
             });
           } catch (e) {
             console.log(
@@ -286,6 +299,11 @@ const runCompare = async ({
 
   const hasError = results.some((result) => !result.passed && !result.exempted);
 
+  let numberOfExemptionsAdded = 0;
+  for (const change of changes) {
+    numberOfExemptionsAdded += newExemptionsCount(change);
+  }
+
   trackEvent(
     'optic_ci.compare',
     (normalizedCiContext && normalizedCiContext.user) ||
@@ -298,6 +316,7 @@ const runCompare = async ({
           result.passed || result.exempted ? count : count + 1,
         0
       ),
+      numberOfExemptionsAdded,
       numberOfChanges: changes.length,
       ...(normalizedCiContext
         ? {

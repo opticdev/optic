@@ -6,22 +6,28 @@ import {
   generateSpecResults,
   RuleRunner,
   SpectralInput,
+  BulkCompareJson,
+  NormalizedCiContext,
+  logComparison,
+  UserError,
 } from '@useoptic/openapi-utilities';
+import {
+  flushEvents,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import {
   parseSpecVersion,
   specFromInputToResults,
   validateUploadRequirements,
 } from '../utils';
+import { newExemptionsCount } from '../utils/count-exemptions';
 
-import { UserError } from '../../errors';
-import { trackEvent, flushEvents } from '../../segment';
-import { CliConfig, BulkCompareJson, NormalizedCiContext } from '../../types';
+import { CliConfig } from '../../types';
 import { createOpticClient } from '../../clients/optic-client';
 import { bulkUploadCiRun } from './bulk-upload';
 import { sendBulkGithubMessage } from './bulk-github-comment';
 import { sendBulkGitlabMessage } from './bulk-gitlab-comment';
-import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
 import {
   getComparisonsFromGlob,
@@ -252,6 +258,7 @@ const runBulkCompare = async ({
   let numberOfComparisonsWithAChange = 0;
   let hasChecksFailing = false;
   let hasError = false;
+  let numberOfExemptionsAdded = 0;
 
   let normalizedCiContext: NormalizedCiContext | null = null;
   if (uploadResults && cliConfig.ciProvider) {
@@ -293,6 +300,9 @@ const runBulkCompare = async ({
         error: false,
         data: comparison,
       });
+      for (const change of changes) {
+        numberOfExemptionsAdded += newExemptionsCount(change);
+      }
     },
     onComparisonError: (id, error) => {
       hasError = true;
@@ -316,6 +326,7 @@ const runBulkCompare = async ({
       numberOfComparisons: initialComparisons.size,
       numberOfComparisonsWithErrors,
       numberOfComparisonsWithAChange,
+      numberOfExemptionsAdded,
       ...(normalizedCiContext
         ? {
             ...normalizedCiContext,

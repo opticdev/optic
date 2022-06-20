@@ -3,8 +3,12 @@ import {
   LegacyUploadSlot,
 } from '../../clients/optic-client';
 import { CiRunArgs, uploadRun } from '../utils/shared-upload';
-import { NormalizedCiContext, UploadJson } from '../../types';
-import { OpenAPIV3, CompareFileJson } from '@useoptic/openapi-utilities';
+import {
+  OpenAPIV3,
+  CompareFileJson,
+  NormalizedCiContext,
+  UploadJson,
+} from '@useoptic/openapi-utilities';
 
 export const uploadCiRun = async (
   // CompareFileJson should be the same as CompareJson - this is read from the FE so we need to keep this stable

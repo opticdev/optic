@@ -4,9 +4,9 @@ import path from 'path';
 import { Command } from 'commander';
 
 import { DEFAULT_CONTEXT_PATH } from '../constants';
-import { NormalizedCiContext } from '../../types';
+import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '../../sentry';
-import { UserError } from '../../errors';
+import { UserError } from '@useoptic/openapi-utilities';
 
 type ContextOptions = {
   owner: string;

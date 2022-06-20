@@ -1,6 +1,8 @@
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
+  NormalizedCiContext,
+  UserError,
 } from '@useoptic/openapi-utilities';
 import {
   LegacyUploadSlot,
@@ -14,8 +16,7 @@ import {
   readAndValidateCircleCiContext,
 } from './ci-context-parsers';
 import { specFromInputToResults } from './load-spec';
-import { UserError } from '../../errors';
-import { CliConfig, NormalizedCiContext } from '../../types';
+import { CliConfig } from '../../types';
 import { SUPPORTED_GITHUB_CI_PROVIDERS } from '../constants';
 
 export const validateUploadRequirements = (

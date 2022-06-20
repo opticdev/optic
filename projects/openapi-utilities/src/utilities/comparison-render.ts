@@ -1,8 +1,4 @@
-import {
-  ResultWithSourcemap,
-  IChange,
-  OperationLocation,
-} from '@useoptic/openapi-utilities';
+import { ResultWithSourcemap, IChange, OperationLocation } from '..';
 
 import groupBy from 'lodash.groupby';
 import isUrl from 'is-url';
