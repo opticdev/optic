@@ -1,73 +1,68 @@
-import { SessionStatus } from '../../../clients/optic-client';
 import { waitForSession } from '../wait-for-session';
 import { OpticBackendClient } from '../../../clients/optic-client';
 
 jest.mock('../../../clients/optic-client');
 
-const MockedOpticBackendClient = OpticBackendClient as jest.MockedClass<
-  typeof OpticBackendClient
->;
-
-const client = new MockedOpticBackendClient('', async () => '');
-const mockGetSession = client.getSession as jest.MockedFunction<
-  typeof client.getSession
+let MockedOpticBackendClient: jest.MockedClass<typeof OpticBackendClient>;
+let client: OpticBackendClient;
+let mockGetSessionStatus: jest.MockedFunction<
+  OpticBackendClient['getSessionStatus']
 >;
 
 describe('waitForSession', () => {
-  const getSessionDefaults = {
-    web_url: 'https://example.com/session',
-    session: {
-      owner: '',
-      repo: '',
-      commit_hash: '',
-      pull_request: 0,
-      run: 0,
-      branch_name: '',
-      from_arg: '',
-      to_arg: '',
-    },
-    files: [],
-  };
+  beforeEach(() => {
+    MockedOpticBackendClient = OpticBackendClient as jest.MockedClass<
+      typeof OpticBackendClient
+    >;
+
+    client = new MockedOpticBackendClient('', async () => '');
+    mockGetSessionStatus = client.getSessionStatus as jest.MockedFunction<
+      typeof client.getSessionStatus
+    >;
+  });
 
   afterEach(() => {
     MockedOpticBackendClient.mockClear();
-    mockGetSession.mockClear();
+    mockGetSessionStatus.mockClear();
   });
 
   test('should time out', async () => {
-    mockGetSession.mockReturnValue(
+    mockGetSessionStatus.mockReturnValue(
       Promise.resolve({
-        ...getSessionDefaults,
-        status: SessionStatus.NotReady,
+        status: 'started',
+        metadata: {
+          polling_wait_time: 0.01,
+        },
       })
     );
 
-    expect(async () => {
-      await waitForSession(client, 'sessionId', 5, 1);
-    }).toThrow('Timed out waiting for execution to complete');
+    await expect(async () => {
+      await waitForSession(client, 'sessionId', 200);
+    }).rejects.toThrow('Timed out waiting for execution to complete');
   });
 
   test('should wait for success result', async () => {
-    mockGetSession
+    mockGetSessionStatus
       .mockReturnValueOnce(
         Promise.resolve({
-          ...getSessionDefaults,
-          status: SessionStatus.NotReady,
+          status: 'started',
+          metadata: {
+            polling_wait_time: 0.01,
+          },
         })
       )
       .mockReturnValueOnce(
         Promise.resolve({
-          ...getSessionDefaults,
-          status: SessionStatus.Ready,
+          status: 'completed',
+          metadata: {
+            polling_wait_time: 0.01,
+          },
         })
       );
 
-    const result = await waitForSession(client, 'sessionId', 5, 1);
+    const result = await waitForSession(client, 'sessionId', 200);
 
-    expect(mockGetSession).toHaveBeenCalledTimes(2);
-    expect(result).toEqual({
-      ...getSessionDefaults,
-      status: SessionStatus.Ready,
-    });
+    expect(mockGetSessionStatus).toHaveBeenCalledTimes(2);
+    expect(result).toEqual(null);
   });
 });
