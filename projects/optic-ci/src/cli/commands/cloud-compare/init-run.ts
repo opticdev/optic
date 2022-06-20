@@ -25,7 +25,7 @@ const NEEDED_SLOTS = [
 const RUN_TIMEOUT = 1000 * 60 * 5;
 
 // 5 seconds
-const POLL_INTERVAL = 5000;
+const DEFAULT_POLL_INTERVAL = 5000;
 
 export async function initRun(
   client: OpticBackendClient,
@@ -61,7 +61,8 @@ async function runSingle(
   await client.startSession(sessionId);
 
   // loop and wait for session to complete
-  return await waitForSession(client, sessionId, RUN_TIMEOUT, POLL_INTERVAL);
+  await waitForSession(client, sessionId, RUN_TIMEOUT, DEFAULT_POLL_INTERVAL);
+  return client.getSession(sessionId);
 }
 
 async function upload(

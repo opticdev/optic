@@ -50,6 +50,13 @@ export type GetSessionResponse = {
   files: SessionFile[];
 };
 
+export type GetSessionStatusResponse = {
+  status: 'completed' | 'started';
+  metadata: {
+    polling_wait_time: number;
+  };
+};
+
 type GetMyOrganizationResponse = {
   id: string;
   name: string;
@@ -118,6 +125,14 @@ export class OpticBackendClient extends JsonHttpClient {
 
   public async getSession(sessionId: string): Promise<GetSessionResponse> {
     return this.getJson<GetSessionResponse>(`/api/runs/${sessionId}`);
+  }
+
+  public async getSessionStatus(
+    sessionId: string
+  ): Promise<GetSessionStatusResponse> {
+    return this.getJson<GetSessionStatusResponse>(
+      `/api/runs/${sessionId}/status`
+    );
   }
 
   public async getMyOrganization(): Promise<GetMyOrganizationResponse> {
