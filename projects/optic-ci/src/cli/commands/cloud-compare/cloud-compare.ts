@@ -163,8 +163,8 @@ const cloudCompare = async (token: string, base: string) => {
     })
   );
 
-  const hasError = resultFiles.some((results) => {
-    results.results.some((result) => !result.passed && !result.exempted);
+  const hasError = resultFiles.some((file) => {
+    return file.results.some((result) => !result.passed && !result.exempted);
   });
 
   if (hasError) {
