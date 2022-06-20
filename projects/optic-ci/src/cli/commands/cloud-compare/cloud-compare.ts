@@ -5,8 +5,12 @@ import { exec as callbackExec } from 'child_process';
 import { Command } from 'commander';
 import Ajv from 'ajv';
 import yaml from 'js-yaml';
-import { defaultEmptySpec, UserError } from '@useoptic/openapi-utilities';
-import { createOpticClient } from '../../clients/optic-client';
+import {
+  CompareFileJson,
+  defaultEmptySpec,
+  UserError,
+} from '@useoptic/openapi-utilities';
+import { createOpticClient, UploadSlot } from '../../clients/optic-client';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { parseSpecVersion, SpecFromInput } from '../utils';
 import { getGitRootPath } from '../utils/path';
@@ -143,5 +147,31 @@ const cloudCompare = async (token: string, base: string) => {
 
   const context = await loadCiContext();
 
-  await initRun(opticClient, specInputs, base, context);
+  const sessions = await initRun(opticClient, specInputs, base, context);
+  const resultFiles: CompareFileJson[] = await Promise.all(
+    sessions.map(async (session) => {
+      const resultsFile = sessions[0].files.find(
+        (f) => f.slot === UploadSlot.CheckResults
+      );
+      if (!resultsFile) {
+        throw new Error('Could not load the results file');
+      }
+
+      return fetch(resultsFile.url, {
+        headers: { accept: 'application/json' },
+      }).then((res) => res.json());
+    })
+  );
+
+  const hasError = resultFiles.some((results) => {
+    results.results.some((result) => !result.passed && !result.exempted);
+  });
+
+  if (hasError) {
+    console.log('Finished running comparison - exiting with error');
+    return process.exit(1);
+  } else {
+    console.log('Finished running comparison - exiting');
+    return process.exit(0);
+  }
 };
