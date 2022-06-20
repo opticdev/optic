@@ -15,12 +15,15 @@ export const init = async (): Promise<void> => {
     return;
   }
   if (fs.existsSync(configFile)) {
-    console.error(
-      `Error: a pre-existing "${configFile}" file was found. If you wish to re-run "init", remove this file first.`
-    );
+    console.error(`Error: a pre-existing "${configFile}" file was found.`);
     return;
   }
   const openApiSpecs = await findOpenAPISpecs();
+  console.log(
+    `Optic found ${openApiSpecs.length} candidate OpenAPI spec files.`
+  );
+  console.log(`Writing optic onfiguration file...`);
   const opticConfig = generateOpticConfig(openApiSpecs);
   await writeOpticConfig(opticConfig);
+  console.log(`Optic onfiguration file was written to ${configFile}.`);
 };
