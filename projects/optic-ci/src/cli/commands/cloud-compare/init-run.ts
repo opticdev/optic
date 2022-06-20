@@ -1,11 +1,11 @@
-import { SpecFromInput } from './compare-input-parser';
-import { specFromInputToResults, ParseResult } from './load-spec';
+import { SpecFromInput } from '../utils/compare-input-parser';
+import { specFromInputToResults, ParseResult } from '../utils/load-spec';
 import {
   GetSessionResponse,
   OpticBackendClient,
   UploadSlot,
 } from '../../clients/optic-client';
-import { uploadFileToS3 } from './s3';
+import { uploadFileToS3 } from '../utils/s3';
 import { waitForSession } from './wait-for-session';
 
 export type SpecInput = {

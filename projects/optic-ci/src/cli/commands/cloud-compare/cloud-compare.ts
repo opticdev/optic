@@ -9,7 +9,8 @@ import { defaultEmptySpec, UserError } from '@useoptic/openapi-utilities';
 import { createOpticClient } from '../../clients/optic-client';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { parseSpecVersion, SpecFromInput } from '../utils';
-import { getGitRootPath, getRelativeRepoPath } from '../utils/path';
+import { getGitRootPath } from '../utils/path';
+import { initRun } from './init-run';
 
 const exec = promisify(callbackExec);
 
@@ -139,5 +140,5 @@ const cloudCompare = async (token: string, base: string) => {
 
   const opticClient = createOpticClient(token);
 
-  // await initRuns(opticClient, specInputs)
+  await initRun(opticClient, specInputs);
 };
