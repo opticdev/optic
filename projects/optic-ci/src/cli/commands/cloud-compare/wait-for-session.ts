@@ -3,8 +3,7 @@ import { OpticBackendClient } from '../../clients/optic-client';
 export async function waitForSession(
   client: OpticBackendClient,
   sessionId: string,
-  timeout: number,
-  pollInterval: number
+  timeout: number
 ): Promise<null> {
   // timeout in 5 minutes for now
   const timeoutEnd = new Date(new Date().getTime() + timeout);
@@ -20,7 +19,7 @@ export async function waitForSession(
       return null;
     }
 
-    await sleep(polling_wait_time);
+    await sleep(polling_wait_time * 1000);
   }
 
   throw new Error('Timed out waiting for execution to complete');

@@ -11,6 +11,7 @@ import { wrapActionHandlerWithSentry } from '../../sentry';
 import { parseSpecVersion, SpecFromInput } from '../utils';
 import { getGitRootPath } from '../utils/path';
 import { initRun } from './init-run';
+import { loadCiContext } from '../utils/load-context';
 
 const exec = promisify(callbackExec);
 
@@ -140,5 +141,7 @@ const cloudCompare = async (token: string, base: string) => {
 
   const opticClient = createOpticClient(token);
 
-  await initRun(opticClient, specInputs);
+  const context = await loadCiContext();
+
+  await initRun(opticClient, specInputs, base, context);
 };

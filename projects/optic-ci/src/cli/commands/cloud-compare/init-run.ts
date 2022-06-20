@@ -7,11 +7,13 @@ import {
 } from '../../clients/optic-client';
 import { uploadFileToS3 } from '../utils/s3';
 import { waitForSession } from './wait-for-session';
+import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 
 export type SpecInput = {
   from: SpecFromInput;
   to: SpecFromInput;
   id: string;
+  path: string;
 };
 
 const NEEDED_SLOTS = [
@@ -24,21 +26,24 @@ const NEEDED_SLOTS = [
 // 5 minutes
 const RUN_TIMEOUT = 1000 * 60 * 5;
 
-// 5 seconds
-const DEFAULT_POLL_INTERVAL = 5000;
-
 export async function initRun(
   client: OpticBackendClient,
-  specs: SpecInput[]
+  specs: SpecInput[],
+  baseBranch: string,
+  context: NormalizedCiContext
 ): Promise<GetSessionResponse[]> {
-  const runPromises = specs.map((spec) => runSingle(client, spec));
+  const runPromises = specs.map((spec) =>
+    runSingle(client, spec, baseBranch, context)
+  );
 
   return await Promise.all(runPromises);
 }
 
 async function runSingle(
   client: OpticBackendClient,
-  specInput: SpecInput
+  specInput: SpecInput,
+  baseBranch: string,
+  context: NormalizedCiContext
 ): Promise<GetSessionResponse> {
   const [fromResults, toResults] = await Promise.all([
     specFromInputToResults(specInput.from),
@@ -46,14 +51,14 @@ async function runSingle(
   ]);
 
   const sessionId = await client.createSession({
-    owner: '',
-    repo: '',
-    commit_hash: '',
-    pull_request: 0,
-    run: 0,
-    branch_name: '',
-    from_arg: '',
-    to_arg: '',
+    owner: context.organization,
+    repo: context.repo,
+    commit_hash: context.commit_hash,
+    pull_request: context.pull_request,
+    run: context.run,
+    branch_name: context.branch_name,
+    from_arg: `${baseBranch}:${specInput.path}`,
+    to_arg: specInput.path,
   });
 
   await upload(client, sessionId, fromResults, toResults);
@@ -61,7 +66,7 @@ async function runSingle(
   await client.startSession(sessionId);
 
   // loop and wait for session to complete
-  await waitForSession(client, sessionId, RUN_TIMEOUT, DEFAULT_POLL_INTERVAL);
+  await waitForSession(client, sessionId, RUN_TIMEOUT);
   return client.getSession(sessionId);
 }
 
