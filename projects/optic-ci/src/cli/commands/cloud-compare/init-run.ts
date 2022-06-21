@@ -45,6 +45,7 @@ async function runSingle(
   baseBranch: string,
   context: NormalizedCiContext
 ): Promise<GetSessionResponse> {
+  console.log(`Running comparison for ${specInput.path} against ${baseBranch}`);
   const [fromResults, toResults] = await Promise.all([
     specFromInputToResults(specInput.from),
     specFromInputToResults(specInput.to),
@@ -59,10 +60,15 @@ async function runSingle(
     branch_name: context.branch_name,
     from_arg: `${baseBranch}:${specInput.path}`,
     to_arg: specInput.path,
+    status: 'started',
   });
-
+  console.log(
+    `Uploading input files for ${specInput.path} against ${baseBranch}`
+  );
   await upload(client, sessionId, fromResults, toResults);
-
+  console.log(
+    `Finished uploading input files for ${specInput.path} against ${baseBranch}`
+  );
   await client.startSession(sessionId);
 
   // loop and wait for session to complete
