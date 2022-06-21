@@ -4,6 +4,7 @@ import { generateOpticConfigYml } from './generate-optic-config';
 import { writeOpticConfig } from './write-optic-config';
 import { hasGit, isInGitRepo } from './check-git';
 import { configFile } from './constants';
+import { getValidSpecs } from './get-valid-specs';
 
 export const init = async (): Promise<void> => {
   if (!(await hasGit())) {
@@ -18,12 +19,11 @@ export const init = async (): Promise<void> => {
     console.error(`Error: a pre-existing "${configFile}" file was found.`);
     return;
   }
-  const openApiSpecs = await findOpenAPISpecs();
-  console.log(
-    `Optic found ${openApiSpecs.length} candidate OpenAPI spec files.`
-  );
-  console.log(`Writing Optic onfiguration file...`);
-  const opticConfigYml = generateOpticConfigYml(openApiSpecs);
+  const openApiSpecPaths = await findOpenAPISpecs();
+  console.log(`Found ${openApiSpecPaths.length} candidate OpenAPI spec files.`);
+  const validSpecs = await getValidSpecs(openApiSpecPaths);
+  console.log(`${validSpecs.length} of which are valid OpenAPI files.`);
+  const opticConfigYml = generateOpticConfigYml(validSpecs);
   await writeOpticConfig(opticConfigYml);
   console.log(`Optic onfiguration file was written to ${configFile}.`);
 };
