@@ -1,24 +1,29 @@
-import { ShapeDiffTraverser, JsonSchemaKnownKeyword } from './traverser';
+import {
+  ShapeDiffTraverser,
+  JsonSchemaKnownKeyword,
+  SchemaCompilationError,
+} from './traverser';
 import { ShapeDiffResult, ShapeDiffResultKind } from './result';
 import { Body } from '../body';
 import { SchemaObject } from '../schema';
+import { Result, Ok, Err } from 'ts-results';
 
 export type { ShapeDiffResult };
 export { ShapeDiffResultKind };
 export { JsonSchemaKnownKeyword };
+export { SchemaCompilationError };
 
-export function* diffBodyBySchema(
+export function diffBodyBySchema(
   body: Body,
   schema: SchemaObject
-): IterableIterator<ShapeDiffResult> {
-  yield* diffValueBySchema(body.value, schema);
+): ReturnType<typeof diffValueBySchema> {
+  return diffValueBySchema(body.value, schema);
 }
 
-export function* diffValueBySchema(
+export function diffValueBySchema(
   value: any,
   schema: SchemaObject
-): IterableIterator<ShapeDiffResult> {
+): Result<IterableIterator<ShapeDiffResult>, SchemaCompilationError> {
   let traverser = new ShapeDiffTraverser();
-  traverser.traverse(value, schema);
-  yield* traverser.results();
+  return traverser.traverse(value, schema).map(() => traverser.results());
 }

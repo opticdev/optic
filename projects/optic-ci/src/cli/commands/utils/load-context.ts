@@ -5,11 +5,11 @@ import { DEFAULT_CONTEXT_PATH } from '../constants';
 import { UserError } from '@useoptic/openapi-utilities';
 
 export async function loadCiContext(
-  ciProvider: 'github' | 'circleci',
+  ciProvider?: 'github' | 'circleci',
   ciContext?: string
 ): Promise<NormalizedCiContext> {
   let normalizedCiContext: NormalizedCiContext;
-  if (ciContext) {
+  if (ciContext && ciProvider) {
     // Legacy flow
     // https://github.com/opticdev/issues/issues/236 - to deprecate
     try {

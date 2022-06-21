@@ -2,16 +2,17 @@ import { BodyLocation } from '../../shapes/body';
 import { DocumentedBody } from '../../shapes/body';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { Schema, SchemaObject } from '../../shapes';
+import { Some } from 'ts-results';
 
 export function jsonBody(
   value: any,
   schema: SchemaObject | null = null
 ): DocumentedBody {
   return {
-    body: {
+    body: Some({
       value,
       contentType: 'application/json',
-    },
+    }),
     shapeLocation: null,
     schema,
     specJsonPath: jsonPointerHelpers.compile(['/documented-body-fixture']),
@@ -23,10 +24,10 @@ export function jsonBodyInRequest(
   schema: SchemaObject | null
 ): DocumentedBody {
   return {
-    body: {
+    body: Some({
       value,
       contentType: 'application/json',
-    },
+    }),
     schema,
     shapeLocation: {
       path: '/example',

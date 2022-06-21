@@ -9,14 +9,12 @@ import {
 import path from 'path';
 import { OpenAPIV3 } from '@useoptic/openapi-utilities';
 
+export type ParseResult = ParseOpenAPIResult & { isEmptySpec: boolean };
+
 export async function specFromInputToResults(
   input: SpecFromInput,
   workingDir: string = process.cwd()
-): Promise<
-  ParseOpenAPIResult & {
-    isEmptySpec: boolean;
-  }
-> {
+): Promise<ParseResult> {
   switch (input.from) {
     case SpecVersionFrom.empty: {
       const emptySpecName = 'empty.json';
