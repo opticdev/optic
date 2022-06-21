@@ -1,13 +1,15 @@
 import fs from 'fs';
+import path from 'path';
 import { dump } from 'js-yaml';
 import { findOpenAPISpecs } from './find-openapi-specs';
 import { generateOpticConfig } from './generate-optic-config';
 import { writeOpticConfig } from './write-optic-config';
-import { hasGit, isInGitRepo } from './check-git';
+import { hasGit, isInGitRepo, getRootPath } from './git-utils';
 import { configFile } from './constants';
 import { getValidSpecs } from './get-valid-specs';
 
 export const init = async (): Promise<void> => {
+  // Sanity checks
   if (!(await hasGit())) {
     console.error('Error: git must be available in PATH for "init" to work.');
     return;
@@ -18,24 +20,35 @@ export const init = async (): Promise<void> => {
     return;
   }
 
-  if (fs.existsSync(configFile)) {
-    console.error(`Error: a pre-existing "${configFile}" file was found.`);
+  const gitRoot = await getRootPath();
+  const configPath = path.join(gitRoot, configFile);
+
+  if (fs.existsSync(configPath)) {
+    console.error(
+      `Error: a configuration file already exists at ${configPath}.`
+    );
     return;
   }
 
-  console.log('Running Optic initialization...');
+  console.log('Initializing Optic...');
 
+  // Find valid spec files
   const openApiSpecPaths = await findOpenAPISpecs();
   const validSpecs = await getValidSpecs(openApiSpecPaths);
+
   console.log(
     `Found ${openApiSpecPaths.length} candidate OpenAPI specification files, ${validSpecs.length} of which are valid.`
   );
 
+  // Write configuration
   if (validSpecs.length) {
-    const opticConfig = generateOpticConfig(validSpecs);
-    await writeOpticConfig(dump(opticConfig));
+    const opticConfig = generateOpticConfig(validSpecs, gitRoot);
+    const opticConfigYml = dump(opticConfig);
+    await writeOpticConfig(opticConfigYml, configPath);
 
-    console.log(`The following identifiers were generated in ${configFile}:\n`);
+    console.log(
+      `The following specification files were identified in ${configPath}:\n`
+    );
 
     for (const spec of opticConfig.files) {
       console.log(`  path: ${spec.path}`);
@@ -43,11 +56,11 @@ export const init = async (): Promise<void> => {
     }
 
     console.log(
-      'Those ids are meant to be stable: if you wish to change them, change them now.'
+      'These IDs are meant to be stable, but you can change them now before committing your changes.'
     );
   } else {
     console.error(
-      'No specification files found: failed to write Optic config file.'
+      'No valid specification files were found: not writing Optic configuration file.'
     );
   }
 };

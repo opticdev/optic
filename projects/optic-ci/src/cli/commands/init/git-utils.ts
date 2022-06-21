@@ -19,3 +19,13 @@ export const isInGitRepo = async (): Promise<boolean> =>
     const command = `git rev-parse --is-inside-work-tree`;
     exec(command, cb);
   });
+
+export const getRootPath = async (): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const cb = (err: unknown, stdout: string, stderr: string) => {
+      if (err || stderr || !stdout) reject();
+      resolve(stdout.trim());
+    };
+    const command = `git rev-parse --show-toplevel`;
+    exec(command, cb);
+  });
