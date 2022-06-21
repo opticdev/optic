@@ -1,4 +1,6 @@
 import fs from 'fs';
+import path from 'path';
+
 import { configFile } from './constants';
 
 export const writeOpticConfig = async (config: string) =>
@@ -7,5 +9,6 @@ export const writeOpticConfig = async (config: string) =>
       if (err) reject(err);
       resolve();
     };
-    fs.writeFile(configFile, config, cb);
+    const configPath = path.join(process.cwd(), configFile);
+    fs.writeFile(configPath, config, cb);
   });
