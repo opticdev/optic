@@ -17,6 +17,14 @@ export enum UploadSlot {
   FromFile = 'FromFile',
   ToFile = 'ToFile',
   CheckResults = 'CheckResults',
+  FromSourceMap = 'FromSourceMap',
+  ToSourceMap = 'ToSourceMap',
+}
+
+export enum LegacyUploadSlot {
+  FromFile = 'FromFile',
+  ToFile = 'ToFile',
+  CheckResults = 'CheckResults',
 }
 
 export type UploadUrl = {
@@ -30,11 +38,23 @@ type SessionFile = {
   url: string;
 };
 
-type GetSessionResponse = {
+export enum SessionStatus {
+  Ready = 'ready',
+  NotReady = 'not_ready',
+}
+
+export type GetSessionResponse = {
   web_url: string;
   session: Session;
-  status: 'ready' | 'not_ready';
+  status: SessionStatus;
   files: SessionFile[];
+};
+
+export type GetSessionStatusResponse = {
+  status: 'completed' | 'started';
+  metadata: {
+    polling_wait_time: number;
+  };
 };
 
 type GetMyOrganizationResponse = {
@@ -68,18 +88,30 @@ export class OpticBackendClient extends JsonHttpClient {
     });
   };
 
-  public async getUploadUrls(sessionId: string): Promise<UploadUrl[]> {
+  public async getUploadUrls(
+    sessionId: string,
+    slots: UploadSlot[] = []
+  ): Promise<UploadUrl[]> {
+    let params = '';
+    if (slots.length > 0) {
+      params = '?' + new URLSearchParams({ slots: slots.join(',') }).toString();
+    }
+
     const response = await this.getJson<{
       upload_urls: UploadUrl[];
-    }>(`/api/runs/${sessionId}/uploads`);
+    }>(`/api/runs/${sessionId}/uploads${params}`);
     return response.upload_urls;
   }
 
-  public async startSession(session: Session): Promise<string> {
+  public async createSession(session: Session): Promise<string> {
     const { id: sessionId } = await this.postJson(`/api/runs`, {
       ...session,
     });
     return sessionId;
+  }
+
+  public async startSession(sessionId: string): Promise<void> {
+    await this.postJson(`/api/runs/${sessionId}/start`, {});
   }
 
   public async markUploadAsComplete(
@@ -93,6 +125,14 @@ export class OpticBackendClient extends JsonHttpClient {
 
   public async getSession(sessionId: string): Promise<GetSessionResponse> {
     return this.getJson<GetSessionResponse>(`/api/runs/${sessionId}`);
+  }
+
+  public async getSessionStatus(
+    sessionId: string
+  ): Promise<GetSessionStatusResponse> {
+    return this.getJson<GetSessionStatusResponse>(
+      `/api/runs/${sessionId}/status`
+    );
   }
 
   public async getMyOrganization(): Promise<GetMyOrganizationResponse> {

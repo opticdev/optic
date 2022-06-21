@@ -1,6 +1,8 @@
 import {
   updateByInteractions,
   UpdateObservations,
+  UpdateObservationKind,
+  UpdateObservation,
 } from '../../commands/update';
 import { collect, from, count } from '../../lib/async-tools';
 import { HttpMethods } from '../../operations';
@@ -421,6 +423,155 @@ describe('update command', () => {
       let updatedSpec = patchSpec(spec, specPatches);
       expect(updatedSpec).toMatchSnapshot();
     });
+
+    it('does not generate patches for bodies with invalid schemas', async () => {
+      const spec = specFixture({
+        '/examples/{exampleId}': {
+          [HttpMethods.POST]: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      id: {
+                        nullable: true, // nullable without a `type` is invalid JSON Schema
+                      },
+                    },
+                    required: ['id'],
+                  },
+                },
+              },
+            },
+            responses: {
+              '201': {
+                description: 'created resource',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'string',
+                        },
+                      },
+                      required: ['id'],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const interactions = [
+        interactionFixture(
+          '/examples/3',
+          HttpMethods.POST,
+          CapturedBody.fromJSON(
+            {
+              id: 'an-id',
+              newField: 123,
+              optionalBoolean: true,
+            },
+            'application/json'
+          ),
+          '201',
+          CapturedBody.fromJSON(
+            { id: 'an-id', newField: 123 },
+            'application/json'
+          )
+        ),
+      ];
+
+      const results = await updateByInteractions(spec, from(interactions));
+
+      const specPatches = await resultingPatches(
+        results.expect('example spec can be updated')
+      );
+
+      expect(specPatches.length).toBeGreaterThan(0);
+
+      let updatedSpec = patchSpec(spec, specPatches);
+      expect(updatedSpec).toMatchSnapshot();
+    });
+
+    it('adds bodies for unsupported content types, but does not generate schemas for them', async () => {
+      const spec = specFixture({
+        '/examples/{exampleId}': {
+          [HttpMethods.POST]: {
+            responses: {
+              201: {
+                description: 'created response',
+                content: {},
+              },
+            },
+          },
+        },
+      });
+
+      const interactions = [
+        interactionFixture(
+          // update command does not support generating csv bodies definitions
+          '/examples/3',
+          HttpMethods.POST,
+          null,
+          '201',
+          CapturedBody.from('id,name\n,an-id,a-name', 'text/csv')
+        ),
+        interactionFixture(
+          // update command does not support generating xml bodies definitions
+          '/examples/4',
+          HttpMethods.POST,
+          null,
+          '201',
+          CapturedBody.from(
+            '<example><id>3</id><name>a-name</name></example>',
+            'application/xml'
+          )
+        ),
+        interactionFixture(
+          '/examples/5',
+          HttpMethods.POST,
+          null,
+          '201',
+          CapturedBody.fromJSON(
+            { id: 'an-id', name: 'a-name' },
+            'application/json'
+          )
+        ),
+      ];
+
+      const results = (
+        await updateByInteractions(spec, from(interactions))
+      ).expect('example spec can be updated');
+
+      const [specPatches, observations] = await Promise.all([
+        collect(results.results),
+        collect(results.observations),
+      ]);
+
+      expect(specPatches.length).toBeGreaterThan(0);
+
+      let updatedSpec = patchSpec(spec, specPatches);
+      expect(updatedSpec).toMatchSnapshot();
+
+      const bodyMatchObservations = observationsOfKind(
+        observations,
+        UpdateObservationKind.InteractionBodyMatched
+      );
+
+      const xmlBodyObservation = bodyMatchObservations.find(
+        (observation) => observation.capturedContentType === 'application/xml'
+      );
+      const csvBodyObservation = bodyMatchObservations.find(
+        (observation) => observation.capturedContentType === 'text/csv'
+      );
+
+      expect(xmlBodyObservation?.decodable).toBe(false);
+      expect(csvBodyObservation?.decodable).toBe(false);
+    });
   });
 });
 
@@ -481,4 +632,15 @@ function patchSpec(spec, patches: SpecPatch[]) {
     updatedSpec = SpecPatch.applyPatch(patch, updatedSpec);
   }
   return updatedSpec;
+}
+
+function observationsOfKind<K extends UpdateObservationKind>(
+  observations: UpdateObservation[],
+  kind: K
+): Array<UpdateObservation & { kind: K }> {
+  return observations.filter<UpdateObservation & { kind: K }>(
+    (observation): observation is UpdateObservation & { kind: K } => {
+      return observation.kind === kind;
+    }
+  );
 }

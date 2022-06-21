@@ -4,6 +4,8 @@ import { ShapeDiffResult } from './result';
 import Ajv, { ErrorObject, ValidateFunction } from 'ajv';
 import { OpenAPIV3 } from '../../specs';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { Ono } from '@jsdevtools/ono';
+import { Result, Ok, Err } from 'ts-results';
 
 import { diffVisitors } from './visitors';
 
@@ -20,14 +22,28 @@ export class ShapeDiffTraverser {
       allErrors: true,
       validateFormats: false,
       strictSchema: false,
+      strictTypes: false,
       useDefaults: true,
     });
   }
 
-  traverse(bodyValue: any, schema: SchemaObject) {
+  traverse(
+    bodyValue: any,
+    schema: SchemaObject
+  ): Result<void, SchemaCompilationError> {
     this.bodyValue = bodyValue;
-    this.validate = this.validator.compile(prepareSchemaForDiff(schema));
+    try {
+      this.validate = this.validator.compile(prepareSchemaForDiff(schema));
+    } catch (err) {
+      // Catching and not throwing is okay here. `validator.compile` is stateless, with all state for the validator
+      // being contained by the function that now doesn't get assigned.
+      const wrapped = new SchemaCompilationError(err as Error);
+      return Err(wrapped);
+    }
+
     this.validate(bodyValue);
+
+    return Ok.EMPTY;
   }
 
   *results(): IterableIterator<ShapeDiffResult> {
@@ -102,6 +118,13 @@ export enum JsonSchemaKnownKeyword {
   additionalProperties = 'additionalProperties',
   type = 'type',
   oneOf = 'oneOf',
+}
+
+export class SchemaCompilationError extends Error {
+  constructor(ajvError: Error) {
+    super(`Error compiling schema: ${ajvError.message}`);
+    Ono.extend(this, ajvError);
+  }
 }
 
 /*
