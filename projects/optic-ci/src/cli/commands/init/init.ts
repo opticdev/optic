@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { findOpenAPISpecs } from './find-openapi-specs';
-import { generateOpticConfig } from './generate-optic-config';
+import { generateOpticConfigYml } from './generate-optic-config';
 import { writeOpticConfig } from './write-optic-config';
 import { hasGit, isInGitRepo } from './check-git';
 import { configFile } from './constants';
@@ -23,7 +23,7 @@ export const init = async (): Promise<void> => {
     `Optic found ${openApiSpecs.length} candidate OpenAPI spec files.`
   );
   console.log(`Writing optic onfiguration file...`);
-  const opticConfig = generateOpticConfig(openApiSpecs);
-  await writeOpticConfig(opticConfig);
+  const opticConfigYml = generateOpticConfigYml(openApiSpecs);
+  await writeOpticConfig(opticConfigYml);
   console.log(`Optic onfiguration file was written to ${configFile}.`);
 };
