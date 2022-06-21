@@ -51,7 +51,7 @@ export class SpecPatches {
     yield* newSpecPatches(info);
   }
 
-  static async *fromDocumentedBodies(
+  static async *shapeAdditions(
     documentedBodies: DocumentedBodies
   ): SpecPatches {
     const updatedSchemasByPath: Map<string, SchemaObject> = new Map();
@@ -72,41 +72,20 @@ export class SpecPatches {
     }
   }
 
-  static async *fromDocumentedInteraction(
-    documentedInteraction: DocumentedInteraction,
-    spec: OpenAPIV3.Document
-  ): SpecPatches {
-    // phase one: operation patches
+  static async *operationAdditions(
+    documentedInteraction: DocumentedInteraction
+  ) {
     const operationPatches = OperationPatches.generateRequestResponseAdditions(
       documentedInteraction
     );
 
-    let patchedSpec = spec;
-
-    let patchedOperation = documentedInteraction.operation;
     for (let patch of operationPatches) {
-      patchedOperation = OperationPatch.applyTo(patch, patchedOperation).expect(
-        'generated operation patch should apply to operation'
-      );
       const specPatch = SpecPatch.fromOperationPatch(
         patch,
         documentedInteraction.specJsonPath
       );
 
-      patchedSpec = SpecPatch.applyPatch(specPatch, patchedSpec);
       yield specPatch;
-    }
-
-    // phase two: body patches
-    documentedInteraction.operation = patchedOperation;
-    const documentedBodies = DocumentedBodies.fromDocumentedInteraction(
-      documentedInteraction
-    );
-    const bodySpectPatches = SpecPatches.fromDocumentedBodies(documentedBodies);
-
-    for await (let patch of bodySpectPatches) {
-      patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
-      yield patch;
     }
   }
 }

@@ -30,6 +30,7 @@ import {
 } from '../captures';
 import { DocumentedInteraction, DocumentedInteractions } from '../operations';
 import { AbortController } from 'node-abort-controller';
+import { DocumentedBodies } from '../shapes';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -201,12 +202,26 @@ export async function updateByInteractions(
     for await (let documentedInteraction of documentedInteractions) {
       observers.documentedInteraction(documentedInteraction);
 
-      let patches = SpecPatches.fromDocumentedInteraction(
+      // phase one: operation patches, making sure all requests / responses are documented
+      let opPatches = SpecPatches.operationAdditions(documentedInteraction);
+
+      for await (let patch of opPatches) {
+        patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
+        yield patch;
+        observers.interactionPatch(documentedInteraction, patch);
+      }
+
+      // phase two: shape patches, describing request / response bodies in detail
+      documentedInteraction = DocumentedInteraction.updateOperation(
         documentedInteraction,
         patchedSpec
       );
+      let documentedBodies = DocumentedBodies.fromDocumentedInteraction(
+        documentedInteraction
+      );
+      let shapePatches = SpecPatches.shapeAdditions(documentedBodies);
 
-      for await (let patch of patches) {
+      for await (let patch of shapePatches) {
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
         yield patch;
         observers.interactionPatch(documentedInteraction, patch);

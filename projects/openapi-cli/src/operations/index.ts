@@ -58,6 +58,30 @@ export interface DocumentedInteraction {
   specJsonPath: string;
 }
 
+export class DocumentedInteraction {
+  static updateOperation(
+    self: DocumentedInteraction,
+    spec: OpenAPIV3.Document
+  ) {
+    let operationObject = jsonPointerHelpers.get(spec, self.specJsonPath) as
+      | OpenAPIV3.OperationObject
+      | undefined;
+    invariant(
+      operationObject,
+      'operation object has to exist in spec to update operation of DocumentationInteraction'
+    );
+
+    return {
+      ...self,
+      operation: Operation.fromOperationObject(
+        self.operation.pathPattern,
+        self.operation.method,
+        operationObject
+      ),
+    };
+  }
+}
+
 const HttpMethods = OpenAPIV3.HttpMethods;
 export { HttpMethods };
 
