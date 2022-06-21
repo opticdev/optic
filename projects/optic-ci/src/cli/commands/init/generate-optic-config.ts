@@ -1,12 +1,13 @@
-import { dump } from 'js-yaml';
+import path from 'path';
 import { getFileId } from './get-file-id';
 import { SpecWithPath } from './types';
 
-export const generateOpticConfig = (specs: SpecWithPath[]) => ({
-  files: specs.map(({ path, spec }) => ({ path, id: getFileId(spec) })),
-});
+const getFileName = (filePath: string) =>
+  (path.basename(filePath) || 'openapi').replace(/\s/g, '-');
 
-export const generateOpticConfigYml = (specs: SpecWithPath[]): string => {
-  const configObject = generateOpticConfig(specs);
-  return dump(configObject);
-};
+export const generateOpticConfig = (specs: SpecWithPath[]) => ({
+  files: specs.map(({ path, spec }) => ({
+    path,
+    id: getFileId(spec, getFileName(path)),
+  })),
+});
