@@ -1,6 +1,7 @@
 import fs from 'fs';
+import { dump } from 'js-yaml';
 import { findOpenAPISpecs } from './find-openapi-specs';
-import { generateOpticConfigYml } from './generate-optic-config';
+import { generateOpticConfig } from './generate-optic-config';
 import { writeOpticConfig } from './write-optic-config';
 import { hasGit, isInGitRepo } from './check-git';
 import { configFile } from './constants';
@@ -22,13 +23,31 @@ export const init = async (): Promise<void> => {
     return;
   }
 
+  console.log('Running Optic initialization...');
+
   const openApiSpecPaths = await findOpenAPISpecs();
-  console.log(`Found ${openApiSpecPaths.length} candidate OpenAPI spec files.`);
-
   const validSpecs = await getValidSpecs(openApiSpecPaths);
-  console.log(`${validSpecs.length} of which are valid OpenAPI files.`);
+  console.log(
+    `Found ${openApiSpecPaths.length} candidate OpenAPI spec files, ${validSpecs.length} of which are valid OpenAPI specification files.`
+  );
 
-  const opticConfigYml = generateOpticConfigYml(validSpecs);
-  await writeOpticConfig(opticConfigYml);
-  console.log(`Optic onfiguration file was written to ${configFile}.`);
+  if (validSpecs.length) {
+    const opticConfig = generateOpticConfig(validSpecs);
+    await writeOpticConfig(dump(opticConfig));
+
+    console.log(`The following identifiers were generated in ${configFile}:\n`);
+
+    for (const spec of opticConfig.files) {
+      console.log(`  path: ${spec.path}`);
+      console.log(`  id: ${spec.id}\n`);
+    }
+
+    console.log(
+      'Those ids are meant to be stable: if you wish to change them, change them now.'
+    );
+  } else {
+    console.error(
+      'No specification files found: failed to write Optic config file.'
+    );
+  }
 };
