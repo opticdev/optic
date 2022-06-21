@@ -30,7 +30,7 @@ import {
 } from '../captures';
 import { DocumentedInteraction, DocumentedInteractions } from '../operations';
 import { AbortController } from 'node-abort-controller';
-import { DocumentedBodies } from '../shapes';
+import { DocumentedBodies, DocumentedBody } from '../shapes';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -171,6 +171,20 @@ export async function updateByInteractions(
         method: interaction.request.method,
       });
     },
+    documentedInteractionBody(
+      interaction: DocumentedInteraction,
+      body: DocumentedBody
+    ) {
+      observing.onNext({
+        kind: UpdateObservationKind.InteractionBodyMatched,
+        capturedPath: interaction.interaction.request.path,
+        pathPattern: interaction.operation.pathPattern,
+        method: interaction.operation.method,
+
+        decodable: body.body.some,
+        capturedContentType: body.bodySource!.contentType,
+      });
+    },
     documentedInteraction(interaction: DocumentedInteraction) {
       observing.onNext({
         kind: UpdateObservationKind.InteractionMatchedOperation,
@@ -219,7 +233,11 @@ export async function updateByInteractions(
       let documentedBodies = DocumentedBodies.fromDocumentedInteraction(
         documentedInteraction
       );
-      let shapePatches = SpecPatches.shapeAdditions(documentedBodies);
+      let shapePatches = SpecPatches.shapeAdditions(
+        tap((body: DocumentedBody) => {
+          observers.documentedInteractionBody(documentedInteraction, body);
+        })(documentedBodies)
+      );
 
       for await (let patch of shapePatches) {
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
@@ -296,6 +314,7 @@ function updateSpecFiles(
 }
 
 export enum UpdateObservationKind {
+  InteractionBodyMatched = 'interaction-body-matched',
   InteractionCaptured = 'interaction-captured',
   InteractionMatchedOperation = 'interaction-matched-operation',
   InteractionPatchGenerated = 'interaction-patch-generated',
@@ -305,6 +324,15 @@ export enum UpdateObservationKind {
 export type UpdateObservation = {
   kind: UpdateObservationKind;
 } & (
+  | {
+      kind: UpdateObservationKind.InteractionBodyMatched;
+      capturedPath: string;
+      pathPattern: string;
+      method: string;
+
+      capturedContentType: string | null;
+      decodable: boolean;
+    }
   | {
       kind: UpdateObservationKind.InteractionMatchedOperation;
       capturedPath: string;
