@@ -393,6 +393,7 @@ async function trackStats(observations: UpdateObservations): Promise<void> {
     filesWithOverwrittenYamlCommentsCount: 0,
     patchesCount: 0,
     updatedFilesCount: 0,
+    unsupportedContentTypeCounts: {},
   };
 
   for await (let observation of observations) {
@@ -411,13 +412,28 @@ async function trackStats(observations: UpdateObservations): Promise<void> {
       if (observation.overwrittenComments) {
         stats.filesWithOverwrittenYamlCommentsCount += 1;
       }
+    } else if (
+      observation.kind === UpdateObservationKind.InteractionBodyMatched
+    ) {
+      if (!observation.decodable && observation.capturedContentType) {
+        let count =
+          stats.unsupportedContentTypeCounts[observation.capturedContentType] ||
+          0;
+        stats.unsupportedContentTypeCounts[observation.capturedContentType] =
+          count + 1;
+      }
     }
   }
 
   trackEvent(
     'openapi_cli.spec_updated_by_traffic',
     'openapi_cli', // TODO: determine more useful userId
-    stats
+    {
+      ...stats,
+      unsupportedContentTypes: [
+        ...Object.keys(stats.unsupportedContentTypeCounts),
+      ], // set cast as array
+    }
   );
 
   try {
