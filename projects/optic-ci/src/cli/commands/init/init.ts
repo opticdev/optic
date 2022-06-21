@@ -22,7 +22,7 @@ export const init = async (): Promise<void> => {
   console.log(
     `Optic found ${openApiSpecs.length} candidate OpenAPI spec files.`
   );
-  console.log(`Writing optic onfiguration file...`);
+  console.log(`Writing Optic onfiguration file...`);
   const opticConfigYml = generateOpticConfigYml(openApiSpecs);
   await writeOpticConfig(opticConfigYml);
   console.log(`Optic onfiguration file was written to ${configFile}.`);
