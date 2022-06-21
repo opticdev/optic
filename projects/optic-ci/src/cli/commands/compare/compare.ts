@@ -1,25 +1,31 @@
+import { Octokit } from '@octokit/rest';
 import { Command } from 'commander';
 import { createOpticClient } from '../../clients/optic-client';
+import { generateHashForComparison } from '@useoptic/openapi-utilities/build/utilities/comparison-hash';
+import {
+  trackEvent,
+  flushEvents,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { sendGithubMessage } from '@useoptic/openapi-utilities/build/utilities/send-github-message';
 
 import {
-  defaultEmptySpec,
-  validateOpenApiV3Document,
-  generateSpecResults,
+  NormalizedCiContext,
   RuleRunner,
   SpectralInput,
+  defaultEmptySpec,
+  generateSpecResults,
+  validateOpenApiV3Document,
+  logComparison,
+  UserError,
 } from '@useoptic/openapi-utilities';
 import {
   parseSpecVersion,
   specFromInputToResults,
   validateUploadRequirements,
 } from '../utils';
-import { UserError } from '../../errors';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
-import { trackEvent, flushEvents } from '../../segment';
-import { CliConfig, NormalizedCiContext } from '../../types';
+import { CliConfig } from '../../types';
 import { uploadCiRun } from './upload';
-import { sendGithubMessage } from './github-comment';
-import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
 import { sendGitlabMessage } from './gitlab-comment';
 import { getRelativeRepoPath } from '../utils/path';
@@ -237,12 +243,18 @@ const runCompare = async ({
 
         if (git_provider === 'github') {
           console.log('Posting comment to github...');
+          const octokit = new Octokit({
+            auth: token,
+            baseUrl: git_api_url,
+          });
+          const compareHash = generateHashForComparison({
+            results,
+            changes,
+          });
           try {
-            await sendGithubMessage({
-              githubToken: token,
+            await sendGithubMessage(octokit, compareHash, {
               compareOutput,
               uploadOutput,
-              baseUrl: git_api_url,
             });
           } catch (e) {
             console.log(

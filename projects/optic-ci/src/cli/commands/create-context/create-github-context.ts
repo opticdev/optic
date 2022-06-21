@@ -1,8 +1,8 @@
 import fs from 'fs';
 import { Command, Option } from 'commander';
-import { UserError } from '../../errors';
+import { UserError } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '../../sentry';
-import { NormalizedCiContext } from '../../types';
+import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 import {
   DEFAULT_CONTEXT_PATH,
   SUPPORTED_GITHUB_CI_PROVIDERS,

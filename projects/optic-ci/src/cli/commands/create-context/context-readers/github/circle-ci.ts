@@ -1,5 +1,5 @@
-import { UserError } from '../../../../errors';
-import { NormalizedCiContext } from '../../../../types';
+import { UserError } from '@useoptic/openapi-utilities';
+import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 
 export const getContextFromCircleCiEnvironment = (): NormalizedCiContext => {
   const organization = process.env.CIRCLE_PROJECT_USERNAME;

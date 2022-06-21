@@ -6,7 +6,15 @@ import {
   generateSpecResults,
   RuleRunner,
   SpectralInput,
+  BulkCompareJson,
+  NormalizedCiContext,
+  logComparison,
+  UserError,
 } from '@useoptic/openapi-utilities';
+import {
+  flushEvents,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
 import {
   parseSpecVersion,
@@ -15,14 +23,11 @@ import {
 } from '../utils';
 import { newExemptionsCount } from '../utils/count-exemptions';
 
-import { UserError } from '../../errors';
-import { trackEvent, flushEvents } from '../../segment';
-import { CliConfig, BulkCompareJson, NormalizedCiContext } from '../../types';
+import { CliConfig } from '../../types';
 import { createOpticClient } from '../../clients/optic-client';
 import { bulkUploadCiRun } from './bulk-upload';
 import { sendBulkGithubMessage } from './bulk-github-comment';
 import { sendBulkGitlabMessage } from './bulk-gitlab-comment';
-import { logComparison } from '../utils/comparison-renderer';
 import { loadCiContext } from '../utils/load-context';
 import {
   getComparisonsFromGlob,

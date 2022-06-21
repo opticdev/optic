@@ -1,7 +1,14 @@
-import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
+import {
+  OpticBackendClient,
+  LegacyUploadSlot,
+} from '../../clients/optic-client';
 import { CiRunArgs, uploadRun } from '../utils/shared-upload';
-import { NormalizedCiContext, UploadJson } from '../../types';
-import { OpenAPIV3, CompareFileJson } from '@useoptic/openapi-utilities';
+import {
+  OpenAPIV3,
+  CompareFileJson,
+  NormalizedCiContext,
+  UploadJson,
+} from '@useoptic/openapi-utilities';
 
 export const uploadCiRun = async (
   // CompareFileJson should be the same as CompareJson - this is read from the FE so we need to keep this stable
@@ -12,10 +19,10 @@ export const uploadCiRun = async (
   runArgs: CiRunArgs,
   normalizedCiContext: NormalizedCiContext
 ): Promise<UploadJson> => {
-  const fileMap: Record<UploadSlot, Buffer> = {
-    [UploadSlot.CheckResults]: Buffer.from(JSON.stringify(compareOutput)),
-    [UploadSlot.FromFile]: Buffer.from(JSON.stringify(fromFile)),
-    [UploadSlot.ToFile]: Buffer.from(JSON.stringify(toFile)),
+  const fileMap: Record<LegacyUploadSlot, Buffer> = {
+    [LegacyUploadSlot.CheckResults]: Buffer.from(JSON.stringify(compareOutput)),
+    [LegacyUploadSlot.FromFile]: Buffer.from(JSON.stringify(fromFile)),
+    [LegacyUploadSlot.ToFile]: Buffer.from(JSON.stringify(toFile)),
   };
 
   const { web_url: opticWebUrl } = await uploadRun(

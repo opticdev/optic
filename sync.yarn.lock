@@ -3478,18 +3478,28 @@ __metadata:
     "@babel/preset-env": ^7.17.0
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
+    "@octokit/rest": ^18.12.0
+    "@types/analytics-node": ^3.1.7
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
+    "@types/is-url": ^1.2.30
     "@types/jest": ^26.0.24
     "@types/js-yaml": ^4.0.5
+    "@types/json-stable-stringify": ^1.0.33
+    "@types/lodash.groupby": ^4.6.6
     "@types/lodash.sortby": ^4.7.6
     "@types/node": ^17.0.15
     "@useoptic/json-pointer-helpers": "workspace:*"
+    analytics-node: ^6.0.0
     babel-jest: ^27.5.1
+    chalk: ^4.1.2
     fast-deep-equal: ^3.1.3
     fs-extra: ^10.0.0
+    is-url: ^1.2.4
     jest: ^27.5.1
     js-yaml: ^4.1.0
+    json-stable-stringify: ^1.0.1
+    lodash.groupby: ^4.6.0
     lodash.isequal: ^4.5.0
     lodash.sortby: ^4.7.0
     openapi-schema-validator: ^10.0.0
@@ -3516,14 +3526,12 @@ __metadata:
     "@octokit/rest": ^18.12.0
     "@sentry/node": ^6.17.6
     "@stoplight/spectral-core": ^1.8.1
-    "@types/analytics-node": ^3.1.7
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
     "@types/is-url": ^1.2.30
     "@types/jest": ^26.0.24
     "@types/js-yaml": ^4.0.5
     "@types/json-stable-stringify": ^1.0.33
-    "@types/lodash.groupby": ^4.6.6
     "@types/node": ^17.0.15
     "@types/picomatch": ^2.3.0
     "@types/url-join": ^4.0.1
@@ -3533,7 +3541,6 @@ __metadata:
     "@useoptic/rulesets-base": "workspace:*"
     "@useoptic/standard-rulesets": "workspace:*"
     ajv: ^8.11.0
-    analytics-node: ^6.0.0
     babel-jest: ^27.5.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     chalk: ^4.1.2
@@ -3543,7 +3550,6 @@ __metadata:
     jest: ^27.5.1
     js-yaml: ^4.1.0
     json-stable-stringify: ^1.0.1
-    lodash.groupby: ^4.6.0
     node-fetch: ^2.6.7
     picomatch: ^2.3.1
     prettier: ^2.4.1

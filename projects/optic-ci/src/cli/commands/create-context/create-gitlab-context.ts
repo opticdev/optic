@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import { Command, Option } from 'commander';
-import { UserError } from '../../errors';
+import { UserError } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '../../sentry';
-import { NormalizedCiContext } from '../../types';
+import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 import {
   DEFAULT_CONTEXT_PATH,
   SUPPORTED_GITLAB_CI_PROVIDERS,

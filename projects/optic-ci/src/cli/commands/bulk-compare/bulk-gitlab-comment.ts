@@ -1,8 +1,7 @@
-import { trackEvent } from '../../segment';
 import { GitlabClient } from '../../clients/gitlab-client';
-import { BulkUploadJson } from '../../types';
-import { generateHashForComparison } from '../utils/comparison-hash';
-import { UserError } from '../../errors';
+import { BulkUploadJson, UserError } from '@useoptic/openapi-utilities';
+import { generateHashForComparison } from '@useoptic/openapi-utilities/build/utilities/comparison-hash';
+import { trackEvent } from '@useoptic/openapi-utilities/build/utilities/segment';
 import { createBulkCommentBody } from './comment';
 
 export const sendBulkGitlabMessage = async ({

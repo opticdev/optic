@@ -1,11 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { uploadCiRun } from '../upload';
-import { OpticBackendClient, UploadSlot } from '../../../clients/optic-client';
+import {
+  OpticBackendClient,
+  SessionStatus,
+  UploadSlot,
+} from '../../../clients/optic-client';
 import { mockGhContext } from '../../utils/__tests__/mock-context';
 import { uploadFileToS3 } from '../../utils/s3';
-import { defaultEmptySpec } from '@useoptic/openapi-utilities';
-import { NormalizedCiContext } from '../../../types';
+import {
+  defaultEmptySpec,
+  NormalizedCiContext,
+} from '@useoptic/openapi-utilities';
 
 jest.mock('../../../clients/optic-client');
 jest.mock('../../utils/files');
@@ -17,8 +23,8 @@ const MockedOpticBackendClient = OpticBackendClient as jest.MockedClass<
 const mockOpticClient = new MockedOpticBackendClient('', () =>
   Promise.resolve('')
 );
-const mockedStartSession = mockOpticClient.startSession as jest.MockedFunction<
-  typeof mockOpticClient.startSession
+const mockedStartSession = mockOpticClient.createSession as jest.MockedFunction<
+  typeof mockOpticClient.createSession
 >;
 const mockGetUploadUrls = mockOpticClient.getUploadUrls as jest.MockedFunction<
   typeof mockOpticClient.getUploadUrls
@@ -74,7 +80,7 @@ beforeEach(() => {
         from_arg: '',
         to_arg: '',
       },
-      status: 'ready',
+      status: SessionStatus.Ready,
       files: [],
     })
   );

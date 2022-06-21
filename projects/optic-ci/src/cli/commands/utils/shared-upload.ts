@@ -1,8 +1,14 @@
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
+  NormalizedCiContext,
+  UserError,
 } from '@useoptic/openapi-utilities';
-import { OpticBackendClient, UploadSlot } from '../../clients/optic-client';
+import {
+  LegacyUploadSlot,
+  OpticBackendClient,
+  UploadSlot,
+} from '../../clients/optic-client';
 import { uploadFileToS3 } from './s3';
 import { parseSpecVersion } from './compare-input-parser';
 import {
@@ -10,8 +16,7 @@ import {
   readAndValidateCircleCiContext,
 } from './ci-context-parsers';
 import { specFromInputToResults } from './load-spec';
-import { UserError } from '../../errors';
-import { CliConfig, NormalizedCiContext } from '../../types';
+import { CliConfig } from '../../types';
 import { SUPPORTED_GITHUB_CI_PROVIDERS } from '../constants';
 
 export const validateUploadRequirements = (
@@ -69,7 +74,7 @@ const startSession = async (
   runArgs: CiRunArgs,
   ciContext: NormalizedCiContext
 ): Promise<string> => {
-  const sessionId = await opticClient.startSession({
+  const sessionId = await opticClient.createSession({
     owner: ciContext.organization,
     repo: ciContext.repo,
     commit_hash: ciContext.commit_hash,
@@ -120,7 +125,7 @@ export const loadAndValidateSpecFiles = async (from?: string, to?: string) => {
 
 export const uploadRun = async (
   opticClient: OpticBackendClient,
-  fileMap: Record<UploadSlot, Buffer>,
+  fileMap: Record<LegacyUploadSlot, Buffer>,
   runArgs: CiRunArgs,
   ciContext: NormalizedCiContext
 ) => {
