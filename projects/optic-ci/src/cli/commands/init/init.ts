@@ -28,7 +28,7 @@ export const init = async (): Promise<void> => {
   const openApiSpecPaths = await findOpenAPISpecs();
   const validSpecs = await getValidSpecs(openApiSpecPaths);
   console.log(
-    `Found ${openApiSpecPaths.length} candidate OpenAPI spec files, ${validSpecs.length} of which are valid OpenAPI specification files.`
+    `Found ${openApiSpecPaths.length} candidate OpenAPI specification files, ${validSpecs.length} of which are valid.`
   );
 
   if (validSpecs.length) {
