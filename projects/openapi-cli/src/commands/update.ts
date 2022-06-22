@@ -33,6 +33,7 @@ import {
 } from '../captures';
 import { DocumentedInteraction, DocumentedInteractions } from '../operations';
 import { AbortController } from 'node-abort-controller';
+import { DocumentedBodies, DocumentedBody } from '../shapes';
 
 export function updateCommand(): Command {
   const command = new Command('update');
@@ -95,9 +96,13 @@ export function updateCommand(): Command {
         );
       }
 
-      const { jsonLike: spec, sourcemap } = await readDeferencedSpec(
-        absoluteSpecPath
-      );
+      const specReadResult = await readDeferencedSpec(absoluteSpecPath);
+      if (specReadResult.err) {
+        command.error(
+          `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`
+        );
+      }
+      const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
 
       let interactions = merge(...sources);
 
@@ -169,6 +174,20 @@ export async function updateByInteractions(
         method: interaction.request.method,
       });
     },
+    documentedInteractionBody(
+      interaction: DocumentedInteraction,
+      body: DocumentedBody
+    ) {
+      observing.onNext({
+        kind: UpdateObservationKind.InteractionBodyMatched,
+        capturedPath: interaction.interaction.request.path,
+        pathPattern: interaction.operation.pathPattern,
+        method: interaction.operation.method,
+
+        decodable: body.body.some,
+        capturedContentType: body.bodySource!.contentType,
+      });
+    },
     documentedInteraction(interaction: DocumentedInteraction) {
       observing.onNext({
         kind: UpdateObservationKind.InteractionMatchedOperation,
@@ -200,12 +219,30 @@ export async function updateByInteractions(
     for await (let documentedInteraction of documentedInteractions) {
       observers.documentedInteraction(documentedInteraction);
 
-      let patches = SpecPatches.fromDocumentedInteraction(
+      // phase one: operation patches, making sure all requests / responses are documented
+      let opPatches = SpecPatches.operationAdditions(documentedInteraction);
+
+      for await (let patch of opPatches) {
+        patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
+        yield patch;
+        observers.interactionPatch(documentedInteraction, patch);
+      }
+
+      // phase two: shape patches, describing request / response bodies in detail
+      documentedInteraction = DocumentedInteraction.updateOperation(
         documentedInteraction,
         patchedSpec
       );
+      let documentedBodies = DocumentedBodies.fromDocumentedInteraction(
+        documentedInteraction
+      );
+      let shapePatches = SpecPatches.shapeAdditions(
+        tap((body: DocumentedBody) => {
+          observers.documentedInteractionBody(documentedInteraction, body);
+        })(documentedBodies)
+      );
 
-      for await (let patch of patches) {
+      for await (let patch of shapePatches) {
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
         yield patch;
         observers.interactionPatch(documentedInteraction, patch);
@@ -280,6 +317,7 @@ function updateSpecFiles(
 }
 
 export enum UpdateObservationKind {
+  InteractionBodyMatched = 'interaction-body-matched',
   InteractionCaptured = 'interaction-captured',
   InteractionMatchedOperation = 'interaction-matched-operation',
   InteractionPatchGenerated = 'interaction-patch-generated',
@@ -289,6 +327,15 @@ export enum UpdateObservationKind {
 export type UpdateObservation = {
   kind: UpdateObservationKind;
 } & (
+  | {
+      kind: UpdateObservationKind.InteractionBodyMatched;
+      capturedPath: string;
+      pathPattern: string;
+      method: string;
+
+      capturedContentType: string | null;
+      decodable: boolean;
+    }
   | {
       kind: UpdateObservationKind.InteractionMatchedOperation;
       capturedPath: string;
@@ -349,6 +396,7 @@ async function trackStats(observations: UpdateObservations): Promise<void> {
     filesWithOverwrittenYamlCommentsCount: 0,
     patchesCount: 0,
     updatedFilesCount: 0,
+    unsupportedContentTypeCounts: {},
   };
 
   for await (let observation of observations) {
@@ -367,13 +415,28 @@ async function trackStats(observations: UpdateObservations): Promise<void> {
       if (observation.overwrittenComments) {
         stats.filesWithOverwrittenYamlCommentsCount += 1;
       }
+    } else if (
+      observation.kind === UpdateObservationKind.InteractionBodyMatched
+    ) {
+      if (!observation.decodable && observation.capturedContentType) {
+        let count =
+          stats.unsupportedContentTypeCounts[observation.capturedContentType] ||
+          0;
+        stats.unsupportedContentTypeCounts[observation.capturedContentType] =
+          count + 1;
+      }
     }
   }
 
   trackEvent(
     'openapi_cli.spec_updated_by_traffic',
     'openapi_cli', // TODO: determine more useful userId
-    stats
+    {
+      ...stats,
+      unsupportedContentTypes: [
+        ...Object.keys(stats.unsupportedContentTypeCounts),
+      ], // set cast as array
+    }
   );
 
   try {

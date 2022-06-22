@@ -7,6 +7,6 @@ const petstorePath = Path.join(
 );
 
 export async function* petstore(): SpecFacts {
-  const { jsonLike: spec } = await readDeferencedSpec(petstorePath);
+  const { jsonLike: spec } = (await readDeferencedSpec(petstorePath)).unwrap();
   yield* SpecFacts.fromOpenAPISpec(spec);
 }
