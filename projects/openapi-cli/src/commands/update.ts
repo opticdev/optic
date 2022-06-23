@@ -21,10 +21,7 @@ import {
 } from '../specs';
 import { Ok, Result } from 'ts-results';
 
-import {
-  flushEvents,
-  trackEvent,
-} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { flushEvents, trackEvent } from '../segment';
 import {
   CapturedInteraction,
   CapturedInteractions,
