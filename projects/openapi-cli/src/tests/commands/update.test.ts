@@ -573,6 +573,61 @@ describe('update command', () => {
       expect(csvBodyObservation?.decodable).toBe(false);
     });
   });
+
+  it('generates patches for all standard json content types', async () => {
+    const spec = specFixture({
+      '/examples/{exampleId}': {
+        [HttpMethods.POST]: {
+          responses: {},
+        },
+        [HttpMethods.DELETE]: {
+          responses: {},
+        },
+      },
+    });
+
+    const interactions = [
+      interactionFixture(
+        '/examples/3',
+        HttpMethods.POST,
+        null,
+        '201',
+        CapturedBody.fromJSON(
+          { id: 'an-id', optionalField: 123 },
+          'application/vnd.api+json' // IETF RFC 6839
+        )
+      ),
+      interactionFixture(
+        '/examples/4',
+        HttpMethods.POST,
+        null,
+        '201',
+        CapturedBody.fromJSON(
+          { id: 'another-id', opticField: 'woo' },
+          'application/vnd.optic+json' // IETF RFC 6839
+        )
+      ),
+      interactionFixture(
+        '/examples/5',
+        HttpMethods.POST,
+        null,
+        '400',
+        CapturedBody.fromJSON({ error: 'an error message' }, 'text/json') // WHATWG-mimesniff  https://mimesniff.spec.whatwg.org/#mime-type-groups
+      ),
+      interactionFixture('/examples/4', HttpMethods.DELETE, null, '204', null),
+    ];
+
+    const results = await updateByInteractions(spec, from(interactions));
+
+    const specPatches = await resultingPatches(
+      results.expect('example spec can be updated')
+    );
+
+    expect(specPatches.length).toBeGreaterThan(0);
+
+    let updatedSpec = patchSpec(spec, specPatches);
+    expect(updatedSpec).toMatchSnapshot();
+  });
 });
 
 function specFixture(paths: OpenAPIV3.PathsObject = {}): OpenAPIV3.Document {
