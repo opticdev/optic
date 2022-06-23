@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import fetch from 'node-fetch';
 import path from 'path';
 import { promisify } from 'util';
 import { exec as callbackExec } from 'child_process';
@@ -10,6 +11,7 @@ import {
   defaultEmptySpec,
   UserError,
 } from '@useoptic/openapi-utilities';
+
 import { createOpticClient, UploadSlot } from '../../clients/optic-client';
 import { wrapActionHandlerWithSentry } from '../../sentry';
 import { parseSpecVersion, SpecFromInput } from '../utils';
@@ -146,11 +148,12 @@ const cloudCompare = async (token: string, base: string) => {
   const opticClient = createOpticClient(token);
 
   const context = await loadCiContext();
+  console.log('Running changelog');
 
   const sessions = await initRun(opticClient, specInputs, base, context);
   const resultFiles: CompareFileJson[] = await Promise.all(
     sessions.map(async (session) => {
-      const resultsFile = sessions[0].files.find(
+      const resultsFile = session.files.find(
         (f) => f.slot === UploadSlot.CheckResults
       );
       if (!resultsFile) {
@@ -162,10 +165,21 @@ const cloudCompare = async (token: string, base: string) => {
       }).then((res) => res.json());
     })
   );
+  let hasError = false;
 
-  const hasError = resultFiles.some((file) => {
-    return file.results.some((result) => !result.passed && !result.exempted);
-  });
+  for (let i = 0; i < resultFiles.length; i++) {
+    const resultFile = resultFiles[i];
+    const session = sessions[i];
+    const specInput = specInputs[i];
+    if (
+      resultFile.results.some((result) => !result.passed && !result.exempted)
+    ) {
+      hasError = true;
+    }
+    console.log(
+      `Comparison for ${specInput.path} can be found at: ${session.web_url}`
+    );
+  }
 
   if (hasError) {
     console.log('Finished running comparison - exiting with error');

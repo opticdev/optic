@@ -18,6 +18,7 @@ export async function waitForSession(
     if (status === 'completed') {
       return null;
     }
+    // TODO handle status === 'error'
 
     await sleep(polling_wait_time * 1000);
   }

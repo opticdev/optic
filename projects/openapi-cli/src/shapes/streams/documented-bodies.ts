@@ -245,7 +245,15 @@ async function decodeCapturedBody(
   // parse the interaction bytes
   let { contentType } = capturedBody;
 
-  if (contentType && contentType.startsWith('application/json')) {
+  let parsedType = contentType && MIMEType.parse(contentType);
+
+  if (!contentType || !parsedType) return Ok(None); // for now, we'll only attempt decoding when we know a content type
+
+  if (
+    parsedType.essence === 'application/json' || // IETF RFC 4627
+    parsedType.essence === 'text/json' || // valid JSON type according to WHATWG-mimesniff  https://mimesniff.spec.whatwg.org/#mime-type-groups
+    parsedType.subtype.endsWith('+json') // IETF RFC 6839
+  ) {
     let value;
     try {
       value = await CapturedBody.json(capturedBody);
