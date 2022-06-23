@@ -1,26 +1,40 @@
 import { OpticBackendClient } from '../../clients/optic-client';
 
+const MAX_ALLOWABLE_FAILURES = 3;
+
 export async function waitForSession(
   client: OpticBackendClient,
   sessionId: string,
-  timeout: number
+  timeout: number,
+  defaultPollingWaitTime: number = 5
 ): Promise<null> {
+  let consecutiveFailures = 0;
+  let pollingWaitTime = defaultPollingWaitTime;
   // timeout in 5 minutes for now
   const timeoutEnd = new Date(new Date().getTime() + timeout);
 
   while (new Date() < timeoutEnd) {
-    const {
-      status,
-      metadata: {
-        polling_wait_time, // in seconds
-      },
-    } = await client.getSessionStatus(sessionId);
-    if (status === 'completed') {
-      return null;
+    try {
+      const {
+        status,
+        metadata: {
+          polling_wait_time, // in seconds
+        },
+      } = await client.getSessionStatus(sessionId);
+      pollingWaitTime = polling_wait_time;
+      consecutiveFailures = 0;
+      if (status === 'completed') {
+        return null;
+      }
+      // TODO handle status === 'error'
+    } catch (e) {
+      consecutiveFailures++;
+      if (consecutiveFailures >= MAX_ALLOWABLE_FAILURES) {
+        throw e;
+      }
     }
-    // TODO handle status === 'error'
 
-    await sleep(polling_wait_time * 1000);
+    await sleep(pollingWaitTime * 1000);
   }
 
   throw new Error('Timed out waiting for execution to complete');
