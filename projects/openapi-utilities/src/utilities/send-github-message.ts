@@ -2,7 +2,6 @@ import { Octokit } from '@octokit/rest';
 import { trackEvent } from './segment';
 import { findOpticCommentId } from './shared-comment';
 import { CompareFileJson, UploadJson } from '../ci-types';
-import { UserError } from '../errors';
 import { createCommentBody } from './compare-comment';
 
 export const sendGithubMessage = async (
@@ -14,7 +13,8 @@ export const sendGithubMessage = async (
   }: {
     compareOutput: CompareFileJson;
     uploadOutput: UploadJson;
-  }
+  },
+  handleError: (e: any) => void
 ) => {
   const { results, changes } = compareOutput;
   const { opticWebUrl, ciContext } = uploadOutput;
@@ -48,8 +48,7 @@ export const sendGithubMessage = async (
       org_repo_pr: `${owner}/${repo}/${pull_number}`,
     });
   } catch (e) {
-    console.error(e);
-    throw new UserError();
+    return handleError(e);
   }
 
   // Given we don't have the comment id; we need to fetch all comments on a PR.
@@ -64,8 +63,7 @@ export const sendGithubMessage = async (
       pull_number
     );
   } catch (e) {
-    console.error(e);
-    throw new UserError();
+    return handleError(e);
   }
   const body = createCommentBody(
     results,
@@ -93,7 +91,6 @@ export const sendGithubMessage = async (
       });
     }
   } catch (e) {
-    console.error(e);
-    throw new UserError();
+    return handleError(e);
   }
 };
