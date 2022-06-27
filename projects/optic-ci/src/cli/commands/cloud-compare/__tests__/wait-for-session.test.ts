@@ -41,6 +41,41 @@ describe('waitForSession', () => {
     }).rejects.toThrow('Timed out waiting for execution to complete');
   });
 
+  test('should continue if intermittent error', async () => {
+    mockGetSessionStatus
+      .mockReturnValueOnce(
+        Promise.resolve({
+          status: 'started',
+          metadata: {
+            polling_wait_time: 0.01,
+          },
+        })
+      )
+      .mockRejectedValueOnce(new Error())
+      .mockReturnValueOnce(
+        Promise.resolve({
+          status: 'completed',
+          metadata: {
+            polling_wait_time: 0.01,
+          },
+        })
+      );
+
+    const result = await waitForSession(client, 'sessionId', 200);
+
+    expect(mockGetSessionStatus).toHaveBeenCalledTimes(3);
+    expect(result).toEqual(null);
+  });
+
+  test('should error if maximum allowable consecutive failures is reached', async () => {
+    mockGetSessionStatus.mockRejectedValue(new Error('some error'));
+
+    await expect(async () => {
+      await waitForSession(client, 'sessionId', 200, 0.01);
+    }).rejects.toThrow('some error');
+    expect(mockGetSessionStatus).toHaveBeenCalledTimes(3);
+  });
+
   test('should wait for success result', async () => {
     mockGetSessionStatus
       .mockReturnValueOnce(
