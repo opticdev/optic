@@ -11,6 +11,8 @@ type Session = {
   branch_name: string;
   from_arg: string | null;
   to_arg: string | null;
+  status: 'completed' | 'started' | 'noop' | 'error';
+  metadata?: any;
 };
 
 export enum UploadSlot {
@@ -51,7 +53,7 @@ export type GetSessionResponse = {
 };
 
 export type GetSessionStatusResponse = {
-  status: 'completed' | 'started';
+  status: Session['status'];
   metadata: {
     polling_wait_time: number;
   };
@@ -103,12 +105,18 @@ export class OpticBackendClient extends JsonHttpClient {
     return response.upload_urls;
   }
 
-  public async createSession(
-    session: Session & {
-      status?: 'started' | 'completed';
-      spec_id?: string;
-    }
-  ): Promise<string> {
+  public async createSession(session: {
+    owner: string;
+    repo: string;
+    commit_hash: string;
+    pull_request: number;
+    run: number;
+    branch_name: string;
+    from_arg: string | null;
+    to_arg: string | null;
+    status?: 'started' | 'completed';
+    spec_id?: string;
+  }): Promise<string> {
     const { id: sessionId } = await this.postJson(`/api/runs`, {
       ...session,
     });

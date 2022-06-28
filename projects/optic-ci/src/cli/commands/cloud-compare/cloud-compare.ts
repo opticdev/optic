@@ -9,6 +9,7 @@ import yaml from 'js-yaml';
 import {
   CompareFileJson,
   defaultEmptySpec,
+  logComparison,
   UserError,
 } from '@useoptic/openapi-utilities';
 
@@ -29,15 +30,20 @@ export const registerCloudCompare = (cli: Command, hideCommand: boolean) => {
       'base ref to compare against, defaults to the master branch',
       'master'
     )
+    .option('--verbose', 'show all checks, even passing', false)
     .action(
-      wrapActionHandlerWithSentry(async ({ base }: { base: string }) => {
-        const token = process.env.OPTIC_TOKEN;
-        if (!token) {
-          throw new UserError('OPTIC_TOKEN environment variable is not set');
-        }
+      wrapActionHandlerWithSentry(
+        async ({ base, verbose }: { base: string; verbose: boolean }) => {
+          const token = process.env.OPTIC_TOKEN;
+          if (!token) {
+            throw new UserError(
+              'OPTIC_TOKEN environment variable is not set. You can generate an optic token through our app at https://app.useoptic.com'
+            );
+          }
 
-        await cloudCompare(token, base);
-      })
+          await cloudCompare(token, base, verbose);
+        }
+      )
     );
 };
 
@@ -125,15 +131,15 @@ const parseFileInputs = async (
   };
 };
 
-const cloudCompare = async (token: string, base: string) => {
-  // TODO in the future the optic config could live in different
-  // search for optic.yml at the root of the repo?
+const cloudCompare = async (token: string, base: string, verbose: boolean) => {
   const gitRootPath = await getGitRootPath();
   const expectedYmlPath = path.join(gitRootPath, OPTIC_YML_NAME);
   try {
     await fs.access(expectedYmlPath);
   } catch (e) {
-    throw new UserError('Could not find an optic.yml at the root of the repo');
+    throw new UserError(
+      'Could not find an optic.yml at the root of the repo. Create an optic.yml file with a list of files to run optic against. Run `npx @useoptic/optic-ci@latest init` to generate a file.'
+    );
   }
   const yml = yaml.load(await fs.readFile(expectedYmlPath, 'utf-8'));
 
@@ -148,11 +154,14 @@ const cloudCompare = async (token: string, base: string) => {
   const opticClient = createOpticClient(token);
 
   const context = await loadCiContext();
-  console.log('Running changelog');
 
   const sessions = await initRun(opticClient, specInputs, base, context);
-  const resultFiles: CompareFileJson[] = await Promise.all(
+  const resultFiles: (CompareFileJson | null)[] = await Promise.all(
     sessions.map(async (session) => {
+      if (session.session.status !== 'completed') {
+        return null;
+      }
+
       const resultsFile = session.files.find(
         (f) => f.slot === UploadSlot.CheckResults
       );
@@ -171,14 +180,33 @@ const cloudCompare = async (token: string, base: string) => {
     const resultFile = resultFiles[i];
     const session = sessions[i];
     const specInput = specInputs[i];
-    if (
-      resultFile.results.some((result) => !result.passed && !result.exempted)
-    ) {
-      hasError = true;
+    console.log(`Comparison for ${specInput.path}`);
+
+    if (resultFile) {
+      // the run completed
+      if (
+        resultFile.results.some((result) => !result.passed && !result.exempted)
+      ) {
+        hasError = true;
+      }
+      logComparison(resultFile, {
+        output: 'pretty',
+        verbose,
+      });
+      console.log(
+        `Comparison for ${specInput.path} can be found at: ${session.web_url}`
+      );
+    } else {
+      if (session.session.status === 'error') {
+        const errorMessage = session.session.metadata?.error?.message;
+        console.log(`There was an error running the comparison.`);
+        errorMessage && console.error(errorMessage);
+      } else if (session.session.status === 'noop') {
+        console.log(
+          'No changes were detected, not doing anything for this comparison.'
+        );
+      }
     }
-    console.log(
-      `Comparison for ${specInput.path} can be found at: ${session.web_url}`
-    );
   }
 
   if (hasError) {

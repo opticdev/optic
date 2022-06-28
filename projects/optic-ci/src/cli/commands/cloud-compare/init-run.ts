@@ -72,6 +72,9 @@ async function runSingle(
   );
   await client.startSession(sessionId);
 
+  console.log(
+    `Generating results for ${specInput.path} against ${baseBranch}...`
+  );
   // loop and wait for session to complete
   await waitForSession(client, sessionId, RUN_TIMEOUT);
   return client.getSession(sessionId);
