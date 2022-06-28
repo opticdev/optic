@@ -61,6 +61,7 @@ async function runSingle(
     from_arg: `${baseBranch}:${specInput.path}`,
     to_arg: specInput.path,
     status: 'started',
+    spec_id: specInput.id,
   });
   console.log(
     `Uploading input files for ${specInput.path} against ${baseBranch}`

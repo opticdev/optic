@@ -252,10 +252,18 @@ const runCompare = async ({
             changes,
           });
           try {
-            await sendGithubMessage(octokit, compareHash, {
-              compareOutput,
-              uploadOutput,
-            });
+            await sendGithubMessage(
+              octokit,
+              compareHash,
+              {
+                compareOutput,
+                uploadOutput,
+              },
+              (e) => {
+                console.error(e);
+                throw new UserError();
+              }
+            );
           } catch (e) {
             console.log(
               'Failed to post comment to github - exiting with comparison rules run exit code.'

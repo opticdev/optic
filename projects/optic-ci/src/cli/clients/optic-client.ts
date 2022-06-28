@@ -106,6 +106,7 @@ export class OpticBackendClient extends JsonHttpClient {
   public async createSession(
     session: Session & {
       status?: 'started' | 'completed';
+      spec_id?: string;
     }
   ): Promise<string> {
     const { id: sessionId } = await this.postJson(`/api/runs`, {
