@@ -23,10 +23,9 @@ export async function waitForSession(
       } = await client.getSessionStatus(sessionId);
       pollingWaitTime = polling_wait_time;
       consecutiveFailures = 0;
-      if (status === 'completed') {
+      if (status !== 'started') {
         return null;
       }
-      // TODO handle status === 'error'
     } catch (e) {
       consecutiveFailures++;
       if (consecutiveFailures >= MAX_ALLOWABLE_FAILURES) {

@@ -61,6 +61,7 @@ async function runSingle(
     from_arg: `${baseBranch}:${specInput.path}`,
     to_arg: specInput.path,
     status: 'started',
+    spec_id: specInput.id,
   });
   console.log(
     `Uploading input files for ${specInput.path} against ${baseBranch}`
@@ -71,6 +72,9 @@ async function runSingle(
   );
   await client.startSession(sessionId);
 
+  console.log(
+    `Generating results for ${specInput.path} against ${baseBranch}...`
+  );
   // loop and wait for session to complete
   await waitForSession(client, sessionId, RUN_TIMEOUT);
   return client.getSession(sessionId);
