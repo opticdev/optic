@@ -56,7 +56,7 @@ export const init = async (): Promise<void> => {
     }
 
     console.log(
-      'These IDs are meant to be stable, but you can change them now before committing your changes.'
+      'These IDs are stable identifiers for your API specifications that will appear in Optic. You can change them now before you check in the optic.yml file.'
     );
   } else {
     console.error(

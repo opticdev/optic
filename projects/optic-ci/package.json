@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/optic-ci",
   "packageManager": "yarn@3.0.2",
-  "version": "0.26.6",
+  "version": "0.26.7",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
