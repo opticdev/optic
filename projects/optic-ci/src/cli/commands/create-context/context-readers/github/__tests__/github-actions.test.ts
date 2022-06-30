@@ -1,5 +1,9 @@
+import fs from 'fs/promises';
 import { UserError } from '@useoptic/openapi-utilities';
 import { getContextFromGithubEnvironment } from '../github-actions';
+
+jest.mock('fs/promises');
+const mockReadFile = fs.readFile as jest.MockedFunction<typeof fs.readFile>;
 
 const originalEnv = {
   GITHUB_REPOSITORY_OWNER: process.env.GITHUB_REPOSITORY_OWNER,
@@ -15,9 +19,10 @@ afterAll(() => {
   for (const [key, value] of Object.entries(originalEnv)) {
     process.env[key] = value;
   }
+  mockReadFile.mockClear();
 });
 
-test('get context from github environments', () => {
+test('get context from github environments', async () => {
   process.env.GITHUB_REPOSITORY_OWNER = 'opticdev';
   process.env.GITHUB_REF = 'refs/pull/515/merge';
   process.env.GITHUB_RUN_NUMBER = '123';
@@ -25,7 +30,7 @@ test('get context from github environments', () => {
   process.env.GITHUB_REPOSITORY = 'optidev/monorail';
   process.env.GITHUB_HEAD_REF = 'feature-1';
 
-  expect(getContextFromGithubEnvironment()).toEqual({
+  expect(await getContextFromGithubEnvironment()).toEqual({
     organization: 'opticdev',
     user: null,
     pull_request: 515,
@@ -36,7 +41,7 @@ test('get context from github environments', () => {
   });
 });
 
-test('get context from non-pull request actions', () => {
+test('get context from non-pull request actions', async () => {
   process.env.GITHUB_REPOSITORY_OWNER = 'opticdev';
   process.env.GITHUB_REF = 'refs/heads/feature-branch-1';
   process.env.GITHUB_RUN_NUMBER = '123';
@@ -44,33 +49,37 @@ test('get context from non-pull request actions', () => {
   process.env.GITHUB_REPOSITORY = 'optidev/monorail';
   process.env.GITHUB_HEAD_REF = 'feature-branch-1';
 
-  expect(() => {
-    getContextFromGithubEnvironment();
-  }).toThrowError(UserError);
+  expect(async () => {
+    await getContextFromGithubEnvironment();
+  }).rejects.toThrowError(UserError);
 });
 
-test('get context from github environments with optional commit user', () => {
+test('get head sha from github context', async () => {
+  process.env.GITHUB_EVENT_PATH = '123123';
   process.env.GITHUB_REPOSITORY_OWNER = 'opticdev';
   process.env.GITHUB_REF = 'refs/pull/515/merge';
   process.env.GITHUB_RUN_NUMBER = '123';
-  process.env.GITHUB_SHA = '7d3736f2b38af7f69fd51e43465fd74375aaca2d';
+  process.env.GITHUB_SHA = 'asdasd';
   process.env.GITHUB_REPOSITORY = 'optidev/monorail';
   process.env.GITHUB_HEAD_REF = 'feature-1';
-  process.env.GITHUB_CONTEXT = `
-  {
-    "event": {
-      "pull_request": {
-        "head": {
-          "user": {
-            "login": "lou"
-          }
-        }
-      }
-    }
-  }
-`;
+  mockReadFile.mockImplementation(() =>
+    Promise.resolve(
+      Buffer.from(
+        JSON.stringify({
+          pull_request: {
+            head: {
+              user: {
+                login: 'lou',
+              },
+              sha: '7d3736f2b38af7f69fd51e43465fd74375aaca2d',
+            },
+          },
+        })
+      )
+    )
+  );
 
-  expect(getContextFromGithubEnvironment()).toEqual({
+  expect(await getContextFromGithubEnvironment()).toEqual({
     organization: 'opticdev',
     user: 'lou',
     pull_request: 515,

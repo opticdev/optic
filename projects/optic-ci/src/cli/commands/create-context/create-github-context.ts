@@ -50,7 +50,7 @@ export const registerCreateContext = (cli: Command, hideCommand: boolean) => {
               )}`
             );
           }
-          createContext(provider);
+          await createContext(provider);
         }
       )
     );
@@ -88,18 +88,18 @@ export const registerCreateGithubContext = (cli: Command) => {
               )}`
             );
           }
-          createContext(provider);
+          await createContext(provider);
         }
       )
     );
 };
 
-const createContext = (
+const createContext = async (
   provider: typeof SUPPORTED_GITHUB_CI_PROVIDERS[number]
 ) => {
   let normalizedContext: NormalizedCiContext;
   if (provider === 'github') {
-    normalizedContext = getContextFromGithubEnvironment();
+    normalizedContext = await getContextFromGithubEnvironment();
   } else if (provider === 'circleci') {
     normalizedContext = getContextFromCircleCiEnvironment();
   } else {
