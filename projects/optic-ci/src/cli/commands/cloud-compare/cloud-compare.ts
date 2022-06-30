@@ -135,13 +135,21 @@ const parseFileInputs = async (
 // This ensures we have fetched the master branch.
 const fetchBase = async (base: string) => {
   const baseParts = base.split('/');
-  if (baseParts.length !== 2) {
-    throw new UserError(
-      `base must be in format 'remote/branch', e.g. 'origin/master'`
-    );
+  let origin: string;
+  let branch: string;
+  if (baseParts.length === 2) {
+    [origin, branch] = baseParts;
+  } else {
+    origin = 'origin';
+    branch = base;
   }
-  const [origin, branch] = baseParts;
-  await exec(`git fetch ${origin} ${branch}`);
+
+  try {
+    await exec(`git rev-parse --verify ${branch}`);
+  } catch (e) {
+    // branch doesn't exist, fetch it
+    await exec(`git fetch ${origin} ${branch}`);
+  }
 };
 
 const cloudCompare = async (token: string, base: string, verbose: boolean) => {
