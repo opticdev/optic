@@ -27,8 +27,8 @@ export const registerCloudCompare = (cli: Command, hideCommand: boolean) => {
     .command('run', hideCommand ? { hidden: true } : {})
     .option(
       '--base <base>',
-      'base to compare against, defaults to origin/master',
-      'origin/master'
+      'base to compare against, defaults to master',
+      'master'
     )
     .option('--verbose', 'show all checks, even passing', false)
     .action(
@@ -131,29 +131,7 @@ const parseFileInputs = async (
   };
 };
 
-// Depending on how the git repo is checked out, we may not have all the branches.
-// This ensures we have fetched the master branch.
-const fetchBase = async (base: string) => {
-  const baseParts = base.split('/');
-  let origin: string;
-  let branch: string;
-  if (baseParts.length === 2) {
-    [origin, branch] = baseParts;
-  } else {
-    origin = 'origin';
-    branch = base;
-  }
-
-  try {
-    await exec(`git rev-parse --verify ${branch}`);
-  } catch (e) {
-    // branch doesn't exist, fetch it
-    await exec(`git fetch ${origin} ${branch}`);
-  }
-};
-
 const cloudCompare = async (token: string, base: string, verbose: boolean) => {
-  await fetchBase(base);
   const gitRootPath = await getGitRootPath();
   const expectedYmlPath = path.join(gitRootPath, OPTIC_YML_NAME);
   try {
