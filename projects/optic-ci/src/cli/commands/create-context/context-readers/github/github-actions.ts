@@ -15,11 +15,7 @@ export const getContextFromGithubEnvironment = (): NormalizedCiContext => {
   try {
     const github_context = JSON.parse(process.env.GITHUB_CONTEXT ?? '{}');
     user = github_context.event!.pull_request!.head!.user!.login;
-  } catch (e) {
-    console.log(
-      `Could not identify commit author from 'GITHUB_CONTEXT', ignoring.`
-    );
-  }
+  } catch (e) {}
 
   if (!organization) {
     throw new UserError(
