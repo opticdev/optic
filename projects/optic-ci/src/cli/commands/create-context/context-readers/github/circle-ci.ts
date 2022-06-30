@@ -53,12 +53,6 @@ export const getContextFromCircleCiEnvironment = (): NormalizedCiContext => {
     );
   }
 
-  if (user === null) {
-    console.log(
-      `Could not identify commit author. set 'OPTIC_COMMIT_USER' to provide this information.`
-    );
-  }
-
   return {
     organization,
     user,

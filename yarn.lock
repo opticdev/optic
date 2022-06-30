@@ -2335,6 +2335,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/core@npm:7.3.1":
+  version: 7.3.1
+  resolution: "@sentry/core@npm:7.3.1"
+  dependencies:
+    "@sentry/hub": 7.3.1
+    "@sentry/types": 7.3.1
+    "@sentry/utils": 7.3.1
+    tslib: ^1.9.3
+  checksum: db5d98d2c588f5cf37984b54319f9bbb01c7db1334c58b8242031857d1cf9a60105c52b592672d17c2aa5c792e455499913b52a83ed6bd10d7bb678f27221aa1
+  languageName: node
+  linkType: hard
+
 "@sentry/hub@npm:6.19.7":
   version: 6.19.7
   resolution: "@sentry/hub@npm:6.19.7"
@@ -2343,6 +2355,17 @@ __metadata:
     "@sentry/utils": 6.19.7
     tslib: ^1.9.3
   checksum: 10bb1c5cba1b0f1e27a3dd0a186c22f94aeaf11c4662890ab07b2774f46f46af78d61e3ba71d76edc750a7b45af86edd032f35efecdb4efa2eaf551080ccdcb1
+  languageName: node
+  linkType: hard
+
+"@sentry/hub@npm:7.3.1":
+  version: 7.3.1
+  resolution: "@sentry/hub@npm:7.3.1"
+  dependencies:
+    "@sentry/types": 7.3.1
+    "@sentry/utils": 7.3.1
+    tslib: ^1.9.3
+  checksum: aa4e4dd149ce2a3b2293d0727a99a2bbb0d16ddac07cec9365085d17fc37e5da385ab066a57a25c61cebd582504505041435293f3e1b9711ebaa094a3a25be7c
   languageName: node
   linkType: hard
 
@@ -2373,10 +2396,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/node@npm:^7.3.1":
+  version: 7.3.1
+  resolution: "@sentry/node@npm:7.3.1"
+  dependencies:
+    "@sentry/core": 7.3.1
+    "@sentry/hub": 7.3.1
+    "@sentry/types": 7.3.1
+    "@sentry/utils": 7.3.1
+    cookie: ^0.4.1
+    https-proxy-agent: ^5.0.0
+    lru_map: ^0.3.3
+    tslib: ^1.9.3
+  checksum: e1f5820e6be20b2f260083c17f54db917c9083f86781452550f08d448c5b26feff2a1f8818d18bbf0c4711ccc692d5c20e96a4bb2c366f2b113872604a042835
+  languageName: node
+  linkType: hard
+
 "@sentry/types@npm:6.19.7":
   version: 6.19.7
   resolution: "@sentry/types@npm:6.19.7"
   checksum: f46ef74a33376ad6ea9b128115515c58eb9369d89293c60aa67abca26b5d5d519aa4d0a736db56ae0d75ffd816643d62187018298523cbc2e6c2fb3a6b2a9035
+  languageName: node
+  linkType: hard
+
+"@sentry/types@npm:7.3.1":
+  version: 7.3.1
+  resolution: "@sentry/types@npm:7.3.1"
+  checksum: b75919d5b6490215ad1d15735342d0f60e5044c5de162fe47af704f14a27f458dd8b7b37484f9b0fc9749fa8c34aa90feaff7abdb4f8cbb92a4b9139860f6bd2
   languageName: node
   linkType: hard
 
@@ -2387,6 +2433,16 @@ __metadata:
     "@sentry/types": 6.19.7
     tslib: ^1.9.3
   checksum: a000223b9c646c64e3565e79cace1eeb75114342b768367c4dddd646476c215eb1bddfb70c63f05e2352d3bce2d7d415344e4757a001605d0e01ac74da5dd306
+  languageName: node
+  linkType: hard
+
+"@sentry/utils@npm:7.3.1":
+  version: 7.3.1
+  resolution: "@sentry/utils@npm:7.3.1"
+  dependencies:
+    "@sentry/types": 7.3.1
+    tslib: ^1.9.3
+  checksum: 37fb6db19c5a4eb79b8322c31f091e6bce39d8a5e4c8fe5232d9b554ad45dd72b25f7b3ac7c65cb35e3d2dc1097bf8578dbdc996e8f8df19fbb027cb446ecc8b
   languageName: node
   linkType: hard
 
@@ -3308,6 +3364,7 @@ __metadata:
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@jsdevtools/ono": ^7.1.3
+    "@sentry/node": ^7.3.1
     "@types/analytics-node": ^3.1.7
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
