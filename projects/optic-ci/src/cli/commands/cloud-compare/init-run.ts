@@ -8,6 +8,7 @@ import {
 import { uploadFileToS3 } from '../utils/s3';
 import { waitForSession } from './wait-for-session';
 import { NormalizedCiContext } from '@useoptic/openapi-utilities';
+import Bottleneck from 'bottleneck';
 
 export type SpecInput = {
   from: SpecFromInput;
@@ -30,12 +31,18 @@ export async function initRun(
   client: OpticBackendClient,
   specs: SpecInput[],
   baseBranch: string,
-  context: NormalizedCiContext
+  context: NormalizedCiContext,
+  maxConcurrent: number | null
 ): Promise<GetSessionResponse[]> {
-  const runPromises = specs.map((spec) =>
-    runSingle(client, spec, baseBranch, context)
-  );
+  const limiter = new Bottleneck({ maxConcurrent });
+  const runner = (spec: SpecInput) =>
+    runSingle(client, spec, baseBranch, context);
+  const wrapped = limiter.wrap(runner);
 
+  const runPromises: Promise<GetSessionResponse>[] = [];
+  for (const spec of specs) {
+    runPromises.push(wrapped(spec));
+  }
   return await Promise.all(runPromises);
 }
 
