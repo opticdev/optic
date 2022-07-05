@@ -61,7 +61,13 @@ export const registerBulkCompare = (
     )
     .option(
       '--glob <glob>',
-      'a glob to filter specifications to match (e.g. "**/*.yml" or "**/specifications/*.json")'
+      'a glob to filter specifications to match (e.g. "**/*.yml" or "**/specifications/*.json"). Also takes \
+comma separated values (e.g. "**/*.yml,**/*.json")'
+    )
+    .option(
+      '--ignore <ignore>',
+      'an ignore glob to ignore certain matches (e.g. "**/*.yml" or "**/specifications/*.json"). Also takes \
+comma separated values (e.g. "**/*.yml,**/*.json")'
     )
     .option('--base <base>', 'base ref to compare against')
     .option('--verbose', 'show all checks, even passing', false)
@@ -90,11 +96,13 @@ export const registerBulkCompare = (
           output = 'pretty',
           uploadResults,
           ciContext,
+          ignore,
         }: {
           input?: string;
           glob?: string;
           base?: string;
           verbose: boolean;
+          ignore?: string;
           output?: 'pretty' | 'json' | 'plain';
           uploadResults: boolean;
           ciContext?: string;
@@ -113,6 +121,7 @@ export const registerBulkCompare = (
               spectralConfig,
               glob,
               base,
+              ignore,
             });
           } else if (input) {
             await runBulkCompare({
@@ -239,6 +248,7 @@ const runBulkCompare = async ({
   spectralConfig,
   glob,
   base,
+  ignore,
 }: {
   checkService: RuleRunner;
   verbose: boolean;
@@ -250,8 +260,8 @@ const runBulkCompare = async ({
   generateContext: (details: { fileName: string }) => Object;
   spectralConfig?: SpectralInput;
 } & (
-  | { input: string; glob?: undefined; base?: undefined }
-  | { input?: undefined; glob: string; base: string }
+  | { input: string; glob?: undefined; base?: undefined; ignore?: undefined }
+  | { input?: undefined; glob: string; base: string; ignore?: string }
 )) => {
   let numberOfErrors = 0;
   let numberOfComparisonsWithErrors = 0;
@@ -267,7 +277,7 @@ const runBulkCompare = async ({
 
   const { comparisons: initialComparisons, skippedParsing } = input
     ? await parseJsonComparisonInput(input, generateContext)
-    : await getComparisonsFromGlob(glob!, base!, generateContext);
+    : await getComparisonsFromGlob(glob!, ignore || '', base!, generateContext);
 
   if (initialComparisons.size === 0) {
     throw new UserError('No comparisons were specified - exiting');

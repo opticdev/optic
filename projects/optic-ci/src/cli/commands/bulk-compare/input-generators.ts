@@ -51,45 +51,60 @@ export const parseJsonComparisonInput = async (
   }
 };
 
+// Gets the git tree at the `base` branch
+const getBaseFiles = async (base: string): Promise<string[]> => {
+  const baseFilesStr = await exec(
+    'git ls-tree -r --name-only --full-tree ' + base
+  );
+
+  return baseFilesStr.stdout.split('\n');
+};
+
+// Gets the git tree at the checked out git branch, including unstaged / staged, excluding deleted and gitignored files
+const getHeadFiles = async (gitRoot: string): Promise<string[]> => {
+  const headFiles = (
+    await exec(`git ls-files -co --exclude-standard --full-name ${gitRoot}`)
+  ).stdout.split('\n');
+  const deletedHeadFilesStdout = (
+    await exec(`git ls-files --full-name --deleted ${gitRoot}`)
+  ).stdout.split('\n');
+  const deletedHeadFiles = new Set(deletedHeadFilesStdout);
+
+  return headFiles.filter((name) => !deletedHeadFiles.has(name));
+};
+
 export const getComparisonsFromGlob = async (
   glob: string,
+  ignore: string,
   base: string,
   generateContext: (details: { fileName: string }) => Object
 ): Promise<{
   comparisons: Map<string, Comparison>;
   skippedParsing: boolean;
 }> => {
-  console.log(`Running bulk-compare with glob ${glob}`);
+  const globs = glob.split(',').filter((g) => g !== '');
+  const ignores = ignore.split(',').filter((s) => s !== '');
+  console.log(`Running bulk-compare with globs ${globs.join(' ')}`);
   const gitRoot = await getGitRootPath();
-  // Gets the git tree at the `base` branch
-  const { stdout: baseFiles } = await exec(
-    'git ls-tree -r --name-only --full-tree ' + base
-  );
-  // Gets the git tree at the checked out git branch, including unstaged / staged, excluding deleted and gitignored files
-  const { stdout: headFiles } = await exec(
-    `git ls-files -co --exclude-standard --full-name ${gitRoot}`
-  );
-  const { stdout: deletedHeadFilesStdout } = await exec(
-    `git ls-files --full-name --deleted ${gitRoot}`
+  const baseFiles = await getBaseFiles(base);
+  const headFiles = await getHeadFiles(gitRoot);
+
+  const { matchingBaseFiles, matchingHeadFiles } = applyGlobFilters(
+    baseFiles,
+    headFiles,
+    {
+      matches: globs,
+      ignores: ignores,
+    }
   );
 
-  const filterByGlob = pm(glob);
-  const deletedHeadFiles = new Set(deletedHeadFilesStdout.split('\n'));
-  const matchingBaseFiles = new Set(
-    baseFiles.split('\n').filter((name) => filterByGlob(name))
-  );
-  const matchingHeadFiles = new Set(
-    headFiles
-      .split('\n')
-      .filter((name) => filterByGlob(name) && !deletedHeadFiles.has(name))
-  );
   const fileUnion = new Set([...matchingBaseFiles, ...matchingHeadFiles]);
 
   const comparisons = new Map<string, Comparison>();
 
   for (const fileName of fileUnion) {
     const absolutePath = path.join(gitRoot, fileName);
-    console.log(`Found file ${fileName} matching ${glob}`);
+    console.log(`Found file ${fileName}`);
     const id = uuidv4();
     comparisons.set(id, {
       id,
@@ -108,4 +123,34 @@ export const getComparisonsFromGlob = async (
     comparisons,
     skippedParsing: false,
   };
+};
+
+export const applyGlobFilters = (
+  baseFiles: string[],
+  headFiles: string[],
+  globs: {
+    matches: string[];
+    ignores: string[];
+  }
+): {
+  matchingBaseFiles: Set<string>;
+  matchingHeadFiles: Set<string>;
+} => {
+  const globMatchers = globs.matches.map((g) => pm(g));
+  const ignoreMatchers = globs.ignores.map((i) => pm(i));
+  const matchingBaseFiles = new Set(
+    baseFiles
+      .filter((name) => globMatchers.some((globFilter) => globFilter(name)))
+      .filter((name) =>
+        ignoreMatchers.every((ignoreFilter) => !ignoreFilter(name))
+      )
+  );
+  const matchingHeadFiles = new Set(
+    headFiles
+      .filter((name) => globMatchers.some((globFilter) => globFilter(name)))
+      .filter((name) =>
+        ignoreMatchers.every((ignoreFilter) => !ignoreFilter(name))
+      )
+  );
+  return { matchingBaseFiles, matchingHeadFiles };
 };
