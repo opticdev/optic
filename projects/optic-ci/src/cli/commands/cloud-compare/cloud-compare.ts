@@ -30,22 +30,10 @@ export const registerCloudCompare = (cli: Command, hideCommand: boolean) => {
       'base to compare against, defaults to master',
       'master'
     )
-    .option(
-      '--max-concurrent <maxConcurrent>',
-      'handles at most this number of specification files at the same time'
-    )
     .option('--verbose', 'show all checks, even passing', false)
     .action(
       wrapActionHandlerWithSentry(
-        async ({
-          base,
-          verbose,
-          maxConcurrent,
-        }: {
-          base: string;
-          verbose: boolean;
-          maxConcurrent?: string;
-        }) => {
+        async ({ base, verbose }: { base: string; verbose: boolean }) => {
           const token = process.env.OPTIC_TOKEN;
           if (!token) {
             throw new UserError(
@@ -53,13 +41,7 @@ export const registerCloudCompare = (cli: Command, hideCommand: boolean) => {
             );
           }
 
-          const maxConcurrentNumber = parseInt(maxConcurrent ?? '');
-
-          const maxConcurrentDefaulted = isNaN(maxConcurrentNumber)
-            ? null
-            : maxConcurrentNumber;
-
-          await cloudCompare(token, base, verbose, maxConcurrentDefaulted);
+          await cloudCompare(token, base, verbose);
         }
       )
     );
@@ -149,12 +131,7 @@ const parseFileInputs = async (
   };
 };
 
-const cloudCompare = async (
-  token: string,
-  base: string,
-  verbose: boolean,
-  maxConcurrent: number | null
-) => {
+const cloudCompare = async (token: string, base: string, verbose: boolean) => {
   const gitRootPath = await getGitRootPath();
   const expectedYmlPath = path.join(gitRootPath, OPTIC_YML_NAME);
   try {
@@ -178,13 +155,7 @@ const cloudCompare = async (
 
   const context = await loadCiContext();
 
-  const sessions = await initRun(
-    opticClient,
-    specInputs,
-    base,
-    context,
-    maxConcurrent
-  );
+  const sessions = await initRun(opticClient, specInputs, base, context);
   const resultFiles: (CompareFileJson | null)[] = await Promise.all(
     sessions.map(async (session) => {
       if (session.session.status !== 'completed') {

@@ -26,23 +26,19 @@ const NEEDED_SLOTS = [
 
 // 5 minutes
 const RUN_TIMEOUT = 1000 * 60 * 5;
+const MAX_CONCURRENT = 5;
 
 export async function initRun(
   client: OpticBackendClient,
   specs: SpecInput[],
   baseBranch: string,
-  context: NormalizedCiContext,
-  maxConcurrent: number | null
+  context: NormalizedCiContext
 ): Promise<GetSessionResponse[]> {
-  const limiter = new Bottleneck({ maxConcurrent });
+  const limiter = new Bottleneck({ maxConcurrent: MAX_CONCURRENT });
   const runner = (spec: SpecInput) =>
     runSingle(client, spec, baseBranch, context);
   const wrapped = limiter.wrap(runner);
-
-  const runPromises: Promise<GetSessionResponse>[] = [];
-  for (const spec of specs) {
-    runPromises.push(wrapped(spec));
-  }
+  const runPromises = specs.map((spec) => wrapped(spec));
   return await Promise.all(runPromises);
 }
 
