@@ -19,6 +19,10 @@ import { parseSpecVersion, SpecFromInput } from '../utils';
 import { getGitRootPath } from '../utils/path';
 import { initRun } from './init-run';
 import { loadCiContext } from '../utils/load-context';
+import {
+  trackEvent,
+  flushEvents,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 
 const exec = promisify(callbackExec);
 
@@ -208,6 +212,15 @@ const cloudCompare = async (token: string, base: string, verbose: boolean) => {
       }
     }
   }
+
+  trackEvent(
+    'optic-ci.cloud_compare',
+    `${context.organization}/${context.repo}`,
+    {
+      numberOfRepos: specInputs.length,
+    }
+  );
+  await flushEvents();
 
   if (hasError) {
     console.log('Finished running comparison - exiting with error');
