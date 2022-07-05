@@ -2,6 +2,7 @@
 
 import { program as cli } from 'commander';
 
+import { addCommand } from './commands/add';
 import { updateCommand } from './commands/update';
 import { registerDebugTemplateCommand } from './commands/debug-template';
 import { debugWorkflowsCommand } from './commands/debug-workflows';
@@ -14,6 +15,7 @@ const packageJson = require('../package.json');
 export function makeCli(config: CliConfig) {
   cli.version(packageJson.version);
 
+  cli.addCommand(addCommand());
   cli.addCommand(updateCommand());
   registerDebugTemplateCommand(cli);
 
