@@ -52,6 +52,25 @@ export class Operation {
   }
 }
 
+export enum UndocumentedOperationType {
+  MissingMethod = 'missing-method',
+  MissingPath = 'missing-path',
+}
+
+export type UndocumentedOperation = {
+  type: UndocumentedOperationType;
+  pathPattern: string;
+  method: OpenAPIV3.HttpMethods;
+} & (
+  | {
+      type: UndocumentedOperationType.MissingMethod;
+      pathJsonPath: string;
+    }
+  | {
+      type: UndocumentedOperationType.MissingPath;
+    }
+);
+
 export interface DocumentedInteraction {
   interaction: CapturedInteraction;
   operation: Operation;
