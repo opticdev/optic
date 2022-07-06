@@ -9,6 +9,7 @@ import { uploadFileToS3 } from '../utils/s3';
 import { waitForSession } from './wait-for-session';
 import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 import Bottleneck from 'bottleneck';
+import { logger } from '../../../logger';
 
 export type SpecInput = {
   from: SpecFromInput;
@@ -48,7 +49,9 @@ async function runSingle(
   baseBranch: string,
   context: NormalizedCiContext
 ): Promise<GetSessionResponse> {
-  console.log(`Running comparison for ${specInput.path} against ${baseBranch}`);
+  logger.debug(
+    `Running comparison for ${specInput.path} against ${baseBranch}`
+  );
   const [fromResults, toResults] = await Promise.all([
     specFromInputToResults(specInput.from),
     specFromInputToResults(specInput.to),
@@ -66,16 +69,16 @@ async function runSingle(
     status: 'started',
     spec_id: specInput.id,
   });
-  console.log(
+  logger.debug(
     `Uploading input files for ${specInput.path} against ${baseBranch}`
   );
   await upload(client, sessionId, fromResults, toResults);
-  console.log(
+  logger.debug(
     `Finished uploading input files for ${specInput.path} against ${baseBranch}`
   );
   await client.startSession(sessionId);
 
-  console.log(
+  logger.debug(
     `Generating results for ${specInput.path} against ${baseBranch}...`
   );
   // loop and wait for session to complete
