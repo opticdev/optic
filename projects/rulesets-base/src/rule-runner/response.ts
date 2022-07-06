@@ -31,16 +31,16 @@ const getResponseRules = (
 ): (ResponseRule & RulesetData)[] => {
   const responseRule: (ResponseRule & RulesetData)[] = [];
   for (const ruleOrRuleset of rules) {
-    if (ruleOrRuleset instanceof ResponseRule) {
+    if (ResponseRule.isInstance(ruleOrRuleset)) {
       responseRule.push({
         ...ruleOrRuleset,
         aliases: [],
       });
     }
 
-    if (ruleOrRuleset instanceof Ruleset) {
+    if (Ruleset.isInstance(ruleOrRuleset)) {
       for (const rule of ruleOrRuleset.rules) {
-        if (rule instanceof ResponseRule) {
+        if (ResponseRule.isInstance(rule)) {
           responseRule.push({
             ...rule,
             matches: createRulesetMatcher({

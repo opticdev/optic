@@ -28,8 +28,8 @@ export const wrapActionHandlerWithSentry = <
       console.error(err.message);
       if (
         SentryClient &&
-        !(e instanceof UserError) &&
-        !(e instanceof UserRuleError)
+        !UserError.isInstance(e) &&
+        !UserRuleError.isInstance(e)
       ) {
         SentryClient.captureException(e);
       }

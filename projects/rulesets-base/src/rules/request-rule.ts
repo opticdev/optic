@@ -8,6 +8,7 @@ type RequestRuleConfig<RuleName extends string> = {
 };
 
 export class RequestRule<RuleName extends string = string> {
+  public type: 'request-rule';
   public name: RuleName;
   public docsLink?: string;
   public matches?: (request: RequestBody, context: RuleContext) => boolean;
@@ -25,5 +26,10 @@ export class RequestRule<RuleName extends string = string> {
     this.docsLink = config.docsLink;
     this.matches = config.matches;
     this.rule = config.rule;
+    this.type = 'request-rule';
+  }
+
+  static isInstance(v: any): v is RequestRule {
+    return v?.type === 'request-rule';
   }
 }

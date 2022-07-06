@@ -8,6 +8,7 @@ type SpecificationRuleConfig<RuleName extends string> = {
 };
 
 export class SpecificationRule<RuleName extends string = string> {
+  public type: 'specification-rule';
   public name: RuleName;
   public docsLink?: string;
   public matches?: (
@@ -31,5 +32,10 @@ export class SpecificationRule<RuleName extends string = string> {
     this.docsLink = config.docsLink;
     this.matches = config.matches;
     this.rule = config.rule;
+    this.type = 'specification-rule';
+  }
+
+  static isInstance(v: any): v is SpecificationRule {
+    return v?.type === 'specification-rule';
   }
 }

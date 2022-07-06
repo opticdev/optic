@@ -47,6 +47,7 @@ export type RulesetConfig<Rules extends Rule[]> = {
 };
 
 export class Ruleset<Rules extends Rule[] = Rule[]> {
+  public type: 'ruleset';
   public name: string;
   public docsLink?: string;
   public matches?: (context: RuleContext) => boolean;
@@ -71,5 +72,10 @@ export class Ruleset<Rules extends Rule[] = Rule[]> {
     this.docsLink = config.docsLink;
     this.matches = config.matches;
     this.rules = rules;
+    this.type = 'ruleset';
+  }
+
+  static isInstance(v: any): v is Ruleset {
+    return v?.type === 'ruleset';
   }
 }
