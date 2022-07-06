@@ -1,15 +1,15 @@
-import { OpenAPIV3 } from '../..';
-import { SpecDiffResult, SpecDiffResultKind } from '../result';
+import { OpenAPIV3 } from '../../../specs';
+import { OperationDiffResult, OperationDiffResultKind } from '../result';
 import { Option } from 'ts-results';
 
 export function* visitMethod(
   method: OpenAPIV3.HttpMethods,
   spec: Option<OpenAPIV3.OperationObject>,
   context: { pathPattern: string }
-): IterableIterator<SpecDiffResult> {
+): IterableIterator<OperationDiffResult> {
   if (spec.none) {
     yield {
-      kind: SpecDiffResultKind.UnmatchedMethod,
+      kind: OperationDiffResultKind.UnmatchedMethod,
       subject: method,
       pathPattern: context.pathPattern,
     };
