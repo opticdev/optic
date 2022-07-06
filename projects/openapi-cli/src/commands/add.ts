@@ -3,8 +3,8 @@ import { Result, Ok, Err } from 'ts-results';
 import Path from 'path';
 import * as fs from 'fs-extra';
 
-import { Subject, tap } from '../lib/async-tools';
-import { HttpMethods } from '../operations/index';
+import * as AT from '../lib/async-tools';
+import { HttpMethods, HttpMethod, UndocumentedOperations } from '../operations';
 import {
   OpenAPIV3,
   SpecFile,
@@ -71,20 +71,53 @@ export function addCommand(): Command {
 }
 
 interface ParsedOperation {
-  methods: Array<typeof HttpMethods>;
+  methods: Array<HttpMethod>;
   pathPattern: string;
 }
 
 async function addOperations(
   spec: OpenAPIV3.Document,
-  operations: ParsedOperation[]
+  requiredOperations: ParsedOperation[]
 ): Promise<
   Result<
     { results: SpecPatches; observations: AsyncIterable<AddObservation> },
     string
   >
 > {
-  return Err('unimplemented');
+  const updatingSpec = new AT.Subject<OpenAPIV3.Document>();
+  const specUpdates = updatingSpec.iterator;
+
+  const observing = new AT.Subject<AddObservation>();
+
+  const undocumentedOperations = UndocumentedOperations.fromPairs(
+    AT.from(requiredOperations),
+    spec,
+    specUpdates
+  );
+
+  const specPatches = (async function* (): SpecPatches {
+    let patchedSpec = spec;
+    for await (let undocumentedOperation of undocumentedOperations) {
+      console.log(undocumentedOperation);
+
+      // TODO: generate patches
+
+      updatingSpec.onNext(patchedSpec);
+    }
+
+    updatingSpec.onCompleted();
+  })();
+
+  // additions only, so we only safely extend the spec
+  const specAdditions = SpecPatches.additions(specPatches);
+
+  // making sure we end observations once we're done generating patches
+  const observedResults = (async function* (): SpecPatches {
+    yield* specAdditions;
+    observing.onCompleted();
+  })();
+
+  return Ok({ results: observedResults, observations: observing.iterator });
 }
 
 function updateSpecFiles(
@@ -97,7 +130,7 @@ function updateSpecFiles(
   const stats = {
     filesWithOverwrittenYamlComments: new Set<string>(),
   };
-  const observing = new Subject<AddObservation>();
+  const observing = new AT.Subject<AddObservation>();
   const observers = {
     fileOperation(op: SpecFileOperation) {
       const file = specFiles.find(({ path }) => path === op.filePath);
@@ -117,11 +150,11 @@ function updateSpecFiles(
 
   const specFiles = [...SpecFiles.fromSourceMap(sourcemap)];
 
-  const fileOperations = tap(observers.fileOperation)(
+  const fileOperations = AT.tap(observers.fileOperation)(
     SpecFileOperations.fromSpecPatches(updatePatches, sourcemap)
   );
 
-  const updatedSpecFiles = tap(observers.updatedFile)(
+  const updatedSpecFiles = AT.tap(observers.updatedFile)(
     SpecFiles.patch(specFiles, fileOperations)
   );
 
@@ -164,13 +197,13 @@ function parseOperations(
     let rawMethods = components[i * 2];
     let pathPattern = components[i * 2 + 1];
 
-    let methods: Array<typeof HttpMethods> = [];
+    let methods: Array<HttpMethod> = [];
     for (let maybeMethod of rawMethods.split(',')) {
       let method = HttpMethods[maybeMethod.toUpperCase()];
       if (!method) {
         return Err(`Could not parse '${maybeMethod}' as a valid HTTP method`);
       }
-      methods.push(method);
+      methods.push(method as HttpMethod);
     }
 
     let pair = { methods, pathPattern };

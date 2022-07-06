@@ -105,6 +105,7 @@ export class DocumentedInteraction {
 
 const HttpMethods = OpenAPIV3.HttpMethods;
 export { HttpMethods };
+export type HttpMethod = OpenAPIV3.HttpMethods;
 
 export function findResponse(
   { responses }: Pick<Operation, 'responses'>,
