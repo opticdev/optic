@@ -26,14 +26,12 @@ export class UndocumentedOperations {
 
       for (let diff of diffs) {
         if (diff.kind === OperationDiffResultKind.UnmatchedPath) {
-          for (let method of operation.methods) {
-            yield {
-              type: UndocumentedOperationType.MissingPath,
-              pathPattern: diff.subject,
-              method,
-              spec: spec.paths,
-            };
-          }
+          yield {
+            type: UndocumentedOperationType.MissingPath,
+            pathPattern: diff.subject,
+            methods: operation.methods,
+            spec: spec.paths,
+          };
         } else if (diff.kind === OperationDiffResultKind.UnmatchedMethod) {
           yield {
             type: UndocumentedOperationType.MissingMethod,

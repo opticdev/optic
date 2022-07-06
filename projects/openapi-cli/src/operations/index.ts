@@ -61,15 +61,16 @@ export enum UndocumentedOperationType {
 export type UndocumentedOperation = {
   type: UndocumentedOperationType;
   pathPattern: string;
-  method: OpenAPIV3.HttpMethods;
 } & (
   | {
       type: UndocumentedOperationType.MissingMethod;
       spec: OpenAPIV3.PathItemObject;
+      method: OpenAPIV3.HttpMethods;
     }
   | {
       type: UndocumentedOperationType.MissingPath;
       spec: OpenAPIV3.PathsObject;
+      methods: OpenAPIV3.HttpMethods[];
     }
 );
 
