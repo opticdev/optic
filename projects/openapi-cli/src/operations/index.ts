@@ -7,6 +7,7 @@ import MIMEType from 'whatwg-mimetype';
 export { DocumentedInteractions } from './streams/documented-interactions';
 export { OperationPatches } from './streams/patches';
 export { OperationPatch } from './patches';
+export { UndocumentedOperations } from './streams/undocumented';
 
 export interface Operation extends OpenAPIV3.OperationObject {
   pathPattern: string;
@@ -64,10 +65,11 @@ export type UndocumentedOperation = {
 } & (
   | {
       type: UndocumentedOperationType.MissingMethod;
-      pathJsonPath: string;
+      spec: OpenAPIV3.PathItemObject;
     }
   | {
       type: UndocumentedOperationType.MissingPath;
+      spec: OpenAPIV3.PathsObject;
     }
 );
 
