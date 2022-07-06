@@ -11,6 +11,7 @@ import invariant from 'ts-invariant';
 import equals from 'fast-deep-equal';
 import Url from 'url';
 import Path from 'path';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export class OperationQueries {
   static fromFacts(facts: SpecFactsIterable): OperationQueries {
@@ -73,7 +74,7 @@ export class OperationQueries {
     ]);
   }
 
-  findSpecPath(
+  findOperation(
     path: string,
     method: OpenAPIV3.HttpMethods
   ): Result<
@@ -107,6 +108,44 @@ export class OperationQueries {
     if (!operation) return Ok(None);
 
     return Ok(Some(operation));
+  }
+
+  findPathPattern(path: string): Result<
+    Option<{
+      pathPattern: string;
+      specPath: string;
+      methods: OpenAPIV3.HttpMethods[];
+    }>,
+    string
+  > {
+    invariant(
+      path.startsWith('/'),
+      'operation specPath for can not be found for paths with host and / or protocol'
+    );
+
+    const matchedPatternResult = this.matchPathPattern(path);
+    if (matchedPatternResult.err) return matchedPatternResult;
+
+    const matchedPatternOption = matchedPatternResult.val;
+
+    return Ok(
+      matchedPatternOption.map((matchedPattern) => {
+        const methods = this.operations
+          .filter((op) =>
+            this.basePaths.some(
+              (basePath) =>
+                Path.join(basePath, op.pathPattern) == matchedPattern
+            )
+          )
+          .map((op) => op.method);
+
+        return {
+          pathPattern: matchedPattern,
+          methods,
+          specPath: jsonPointerHelpers.compile(['paths', matchedPattern]),
+        };
+      })
+    );
   }
 
   private matchPathPattern(path: string): Result<Option<string>, string> {

@@ -2,7 +2,6 @@ import { OperationQueries } from './queries';
 import { SpecFacts, OpenAPIV3 } from '../specs';
 import { collect } from '../lib/async-tools';
 import { petstore } from '../tests/fixtures/facts';
-import { isThrowStatement } from '@babel/types';
 
 const { HttpMethods } = OpenAPIV3;
 
@@ -40,7 +39,7 @@ describe('OperationsQueries', () => {
 
     it('will not match paths outside of set', () => {
       const result = queries
-        .findSpecPath('/not-a-valid-path', HttpMethods.GET)
+        .findOperation('/not-a-valid-path', HttpMethods.GET)
         .expect('unambigious paths to be ok');
 
       expect(result.none).toBe(true);
@@ -48,7 +47,7 @@ describe('OperationsQueries', () => {
 
     it('can match /', () => {
       const result = queries
-        .findSpecPath('/', HttpMethods.GET)
+        .findOperation('/', HttpMethods.GET)
         .expect('unambigious paths to be ok');
 
       expect(result.some).toBe(true);
@@ -57,7 +56,7 @@ describe('OperationsQueries', () => {
 
     it('will match concrete paths in set', () => {
       const result = queries
-        .findSpecPath('/app/hook/config', HttpMethods.GET)
+        .findOperation('/app/hook/config', HttpMethods.GET)
         .expect('unambigious paths to be ok');
 
       expect(result.some).toBe(true);
@@ -66,7 +65,7 @@ describe('OperationsQueries', () => {
 
     it('will match concrete paths with parameters set', () => {
       const result = queries
-        .findSpecPath(
+        .findOperation(
           '/orgs/an-org/actions/runner-groups/group-1/repositories/repo-1',
           HttpMethods.GET
         )
@@ -78,7 +77,7 @@ describe('OperationsQueries', () => {
 
     it('will not match partial paths', () => {
       const result = queries
-        .findSpecPath(
+        .findOperation(
           '/orgs/an-org/actions/runner-groups/group-1',
           HttpMethods.GET
         )
@@ -89,7 +88,7 @@ describe('OperationsQueries', () => {
 
     it('will match method', () => {
       const result = queries
-        .findSpecPath('/app/hook/config', HttpMethods.POST)
+        .findOperation('/app/hook/config', HttpMethods.POST)
         .expect('unambigious paths to be ok');
 
       expect(result.some).toBe(true);
@@ -98,7 +97,7 @@ describe('OperationsQueries', () => {
 
     it('will not operations without matching method', () => {
       const result = queries
-        .findSpecPath('/app/hook/config', HttpMethods.DELETE)
+        .findOperation('/app/hook/config', HttpMethods.DELETE)
         .expect('unambigious paths to be ok');
 
       expect(result.none).toBe(true);
@@ -108,7 +107,7 @@ describe('OperationsQueries', () => {
     describe('ambigious paths', () => {
       it('will match exact matches', () => {
         const result = queries
-          .findSpecPath('/venues/top', HttpMethods.GET)
+          .findOperation('/venues/top', HttpMethods.GET)
           .expect('exact matching paths to be ok');
 
         expect(result.some).toBe(true);
@@ -117,7 +116,7 @@ describe('OperationsQueries', () => {
 
       it('will match parameterized path', () => {
         const result = queries
-          .findSpecPath('/venues/venue123', HttpMethods.GET)
+          .findOperation('/venues/venue123', HttpMethods.GET)
           .expect('unnested parameterized paths to be ok');
 
         expect(result.some).toBe(true);
@@ -147,7 +146,7 @@ describe('OperationsQueries', () => {
 
       it('will match operations prefixed by the path of an absolute base url', () => {
         const result = queries
-          .findSpecPath('/v1/app/hook/config', HttpMethods.GET)
+          .findOperation('/v1/app/hook/config', HttpMethods.GET)
           .expect('unambigious paths to be ok');
 
         expect(result.some).toBe(true);
@@ -156,7 +155,7 @@ describe('OperationsQueries', () => {
 
       it('will not match non-prefixed operations when base urls given', () => {
         const result = queries
-          .findSpecPath('/app/hook/config', HttpMethods.GET)
+          .findOperation('/app/hook/config', HttpMethods.GET)
           .expect('unambigious paths to be ok');
 
         expect(result.none).toBe(true);
@@ -164,7 +163,7 @@ describe('OperationsQueries', () => {
 
       it('will match operations prefixed by the path of a relative base url', () => {
         const result = queries
-          .findSpecPath('/v2/app/hook/config', HttpMethods.GET)
+          .findOperation('/v2/app/hook/config', HttpMethods.GET)
           .expect('unambigious paths to be ok');
 
         expect(result.some).toBe(true);
@@ -173,7 +172,7 @@ describe('OperationsQueries', () => {
 
       it('will match operations prefixed by the path of a base url with multiple components', () => {
         const result = queries
-          .findSpecPath('/versions/v3/app/hook/config', HttpMethods.GET)
+          .findOperation('/versions/v3/app/hook/config', HttpMethods.GET)
           .expect('unambigious paths to be ok');
 
         expect(result.some).toBe(true);
