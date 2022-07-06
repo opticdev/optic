@@ -8,6 +8,7 @@ type ResponseBodyRuleConfig<RuleName extends string> = {
 };
 
 export class ResponseBodyRule<RuleName extends string = string> {
+  public type: 'response-body-rule';
   public name: RuleName;
   public docsLink?: string;
   public matches?: (response: ResponseBody, context: RuleContext) => boolean;
@@ -25,5 +26,10 @@ export class ResponseBodyRule<RuleName extends string = string> {
     this.docsLink = config.docsLink;
     this.matches = config.matches;
     this.rule = config.rule;
+    this.type = 'response-body-rule';
+  }
+
+  static isInstance(v: any): v is ResponseBodyRule {
+    return v?.type === 'response-body-rule';
   }
 }

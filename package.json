@@ -1,7 +1,7 @@
 {
   "name": "openapi-workspaces",
   "private": true,
-  "version": "0.26.14",
+  "version": "0.26.15",
   "workspaces": [
     "projects/json-pointer-helpers",
     "projects/openapi-io",

@@ -179,7 +179,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
             type: 'removed',
           });
         } catch (e) {
-          if (e instanceof RuleError) {
+          if (RuleError.isInstance(e)) {
             results.push({
               passed: false,
               exempted,
@@ -220,7 +220,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
             type: 'requirement',
           });
         } catch (e) {
-          if (e instanceof RuleError) {
+          if (RuleError.isInstance(e)) {
             results.push({
               passed: false,
               exempted,
@@ -255,7 +255,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
             type: 'added',
           });
         } catch (e) {
-          if (e instanceof RuleError) {
+          if (RuleError.isInstance(e)) {
             results.push({
               passed: false,
               exempted,
@@ -291,7 +291,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
             type: 'changed',
           });
         } catch (e) {
-          if (e instanceof RuleError) {
+          if (RuleError.isInstance(e)) {
             results.push({
               passed: false,
               exempted,

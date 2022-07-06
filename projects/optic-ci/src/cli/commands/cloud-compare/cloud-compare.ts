@@ -23,6 +23,7 @@ import {
   trackEvent,
   flushEvents,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { logger } from '../../../logger';
 
 const exec = promisify(callbackExec);
 
@@ -159,6 +160,8 @@ const cloudCompare = async (token: string, base: string, verbose: boolean) => {
 
   const context = await loadCiContext();
 
+  logger.info(`Running ${specInputs.length} comparisons...`);
+
   const sessions = await initRun(opticClient, specInputs, base, context);
   const resultFiles: (CompareFileJson | null)[] = await Promise.all(
     sessions.map(async (session) => {
@@ -184,7 +187,7 @@ const cloudCompare = async (token: string, base: string, verbose: boolean) => {
     const resultFile = resultFiles[i];
     const session = sessions[i];
     const specInput = specInputs[i];
-    console.log(`Comparison for ${specInput.path}`);
+    logger.info(`Comparison for ${specInput.path}`);
 
     if (resultFile) {
       // the run completed
@@ -197,16 +200,16 @@ const cloudCompare = async (token: string, base: string, verbose: boolean) => {
         output: 'pretty',
         verbose,
       });
-      console.log(
+      logger.info(
         `Comparison for ${specInput.path} can be found at: ${session.web_url}`
       );
     } else {
       if (session.session.status === 'error') {
         const errorMessage = session.session.metadata?.error?.message;
-        console.log(`There was an error running the comparison.`);
+        logger.info(`There was an error running the comparison.`);
         errorMessage && console.error(errorMessage);
       } else if (session.session.status === 'noop') {
-        console.log(
+        logger.info(
           'No changes were detected, not doing anything for this comparison.'
         );
       }
@@ -223,10 +226,10 @@ const cloudCompare = async (token: string, base: string, verbose: boolean) => {
   await flushEvents();
 
   if (hasError) {
-    console.log('Finished running comparison - exiting with error');
+    logger.info('Finished running comparison - exiting with error');
     return process.exit(1);
   } else {
-    console.log('Finished running comparison - exiting');
+    logger.info('Finished running comparison - exiting');
     return process.exit(0);
   }
 };

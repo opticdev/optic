@@ -21,16 +21,16 @@ const getSpecificationRules = (
 ): (SpecificationRule & RulesetData)[] => {
   const specificationRules: (SpecificationRule & RulesetData)[] = [];
   for (const ruleOrRuleset of rules) {
-    if (ruleOrRuleset instanceof SpecificationRule) {
+    if (SpecificationRule.isInstance(ruleOrRuleset)) {
       specificationRules.push({
         ...ruleOrRuleset,
         aliases: [],
       });
     }
 
-    if (ruleOrRuleset instanceof Ruleset) {
+    if (Ruleset.isInstance(ruleOrRuleset)) {
       for (const rule of ruleOrRuleset.rules) {
-        if (rule instanceof SpecificationRule) {
+        if (SpecificationRule.isInstance(rule)) {
           specificationRules.push({
             ...rule,
             matches: createRulesetMatcher({
