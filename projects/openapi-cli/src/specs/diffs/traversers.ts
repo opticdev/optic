@@ -4,7 +4,7 @@ import { SpecDiffResult } from './result';
 import { visitPath, visitMethod } from './visitors';
 import { Some, None } from 'ts-results';
 
-export class SpecDiffTraverser {
+export class SpecOperationDiffTraverser {
   private operation?: {
     pathPattern: string;
     methods: OpenAPIV3.HttpMethods[];

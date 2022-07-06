@@ -1,9 +1,16 @@
 import { OpenAPIV3 } from '../..';
-import { SpecDiffResult } from '../result';
+import { SpecDiffResult, SpecDiffResultKind } from '../result';
 import { Option } from 'ts-results';
 
 export function* visitPath(
-  input: string,
+  path: string,
   spec: Option<OpenAPIV3.PathItemObject>,
   context: { pathPattern: Option<string> }
-): IterableIterator<SpecDiffResult> {}
+): IterableIterator<SpecDiffResult> {
+  if (spec.none) {
+    yield {
+      kind: SpecDiffResultKind.UnmatchedPath,
+      subject: path,
+    };
+  }
+}
