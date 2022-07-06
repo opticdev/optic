@@ -180,4 +180,82 @@ describe('OperationsQueries', () => {
       });
     });
   });
+
+  describe('findPathPattern', () => {
+    let testPaths = [
+      '/',
+      '/app/hook/config',
+      '/orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}',
+      '/venues/top',
+      '/venues/featured',
+      '/venues/{venueId}',
+    ];
+
+    let queries = new OperationQueries(
+      testPaths.flatMap((pathPattern, i) => [
+        {
+          pathPattern,
+          method: HttpMethods.GET,
+          specPath: `debug-path-${i}-get`, // spec paths don't have to be actual OpenAPI paths, just be unique
+        },
+      ]),
+      ['https://useoptic.com/v1', '/v2', '/versions/v3']
+    );
+
+    it('will not match paths outside of set', () => {
+      const result = queries
+        .findPathPattern('/not-a-valid-path')
+        .expect('unambigious paths to be ok');
+
+      expect(result.none).toBe(true);
+    });
+
+    it('can match /', () => {
+      const result = queries
+        .findPathPattern('/')
+        .expect('unambigious paths to be ok');
+
+      expect(result.some).toBe(true);
+      expect(result.unwrap()).toMatchSnapshot();
+    });
+
+    it('will match concrete paths in set', () => {
+      const result = queries
+        .findPathPattern('/app/hook/config')
+        .expect('unambigious paths to be ok');
+
+      expect(result.some).toBe(true);
+      expect(result.unwrap()).toMatchSnapshot();
+    });
+
+    it('will match concrete paths with parameters set', () => {
+      const result = queries
+        .findPathPattern(
+          '/orgs/an-org/actions/runner-groups/group-1/repositories/repo-1'
+        )
+        .expect('unambigious paths to be ok');
+
+      expect(result.some).toBe(true);
+      expect(result.unwrap()).toMatchSnapshot();
+    });
+
+    it('will not match partial paths', () => {
+      const result = queries
+        .findPathPattern('/orgs/an-org/actions/runner-groups/group-1')
+        .expect('unambigious paths to be ok');
+
+      expect(result.none).toBe(true);
+    });
+
+    it('will match a parameterised pattern', () => {
+      const result = queries
+        .findPathPattern(
+          '/orgs/{org}/actions/runner-groups/{none_documented_name}/repositories/{repository_id}'
+        )
+        .expect('unambigious paths to be ok');
+
+      expect(result.some).toBe(true);
+      expect(result.unwrap()).toMatchSnapshot();
+    });
+  });
 });

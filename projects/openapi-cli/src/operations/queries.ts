@@ -90,7 +90,7 @@ export class OperationQueries {
       'operation specPath for can not be found for paths with host and / or protocol'
     );
 
-    const matchedPatternResult = this.findPathPattern(path);
+    const matchedPatternResult = this.matchPathPattern(path);
     if (matchedPatternResult.err) return matchedPatternResult;
 
     let maybeMatchedPattern = matchedPatternResult.unwrap();
@@ -110,7 +110,36 @@ export class OperationQueries {
     return Ok(Some(operation));
   }
 
-  findPathPattern(path: string): Result<Option<string>, string> {
+  findPathPattern(pathPattern: string): Result<Option<string>, string> {
+    invariant(
+      pathPattern.startsWith('/'),
+      'path pattern for can not be found for paths with host and / or protocol'
+    );
+
+    // path patterns are assumed not have base paths included, but the matcher _does_
+    if (this.basePaths.length > 0) {
+      pathPattern = Path.join(this.basePaths[0], pathPattern);
+    }
+
+    const matchedPatternResult = this.matchPathPattern(pathPattern);
+    if (matchedPatternResult.err) return matchedPatternResult;
+
+    let maybeMatchedPattern = matchedPatternResult.unwrap();
+    if (maybeMatchedPattern.none) return Ok(None);
+    let matchedPattern = maybeMatchedPattern.unwrap();
+
+    const operation = this.operations.find((op) =>
+      this.basePaths.some(
+        (basePath) => Path.join(basePath, op.pathPattern) == matchedPattern
+      )
+    );
+
+    if (!operation) return Ok(None);
+
+    return Ok(Some(operation.pathPattern));
+  }
+
+  matchPathPattern(path: string): Result<Option<string>, string> {
     const componentizedPath = fragmentize(path);
 
     // start with all patterns that match by length
