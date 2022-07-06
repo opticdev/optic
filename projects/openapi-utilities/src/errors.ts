@@ -11,6 +11,6 @@ export class UserError extends Error {
   }
 
   static isInstance(v: any): v is UserError {
-    return v?.type === 'rule-error';
+    return v?.type === 'user-error';
   }
 }
