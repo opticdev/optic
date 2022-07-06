@@ -21,16 +21,16 @@ const getOperationRules = (
 ): (OperationRule & RulesetData)[] => {
   const operationRules: (OperationRule & RulesetData)[] = [];
   for (const ruleOrRuleset of rules) {
-    if (ruleOrRuleset instanceof OperationRule) {
+    if (OperationRule.isInstance(ruleOrRuleset)) {
       operationRules.push({
         ...ruleOrRuleset,
         aliases: [],
       });
     }
 
-    if (ruleOrRuleset instanceof Ruleset) {
+    if (Ruleset.isInstance(ruleOrRuleset)) {
       for (const rule of ruleOrRuleset.rules) {
-        if (rule instanceof OperationRule) {
+        if (OperationRule.isInstance(rule)) {
           operationRules.push({
             ...rule,
             matches: createRulesetMatcher({

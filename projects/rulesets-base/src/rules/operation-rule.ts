@@ -8,6 +8,7 @@ type OperationRuleConfig<RuleName extends string> = {
 };
 
 export class OperationRule<RuleName extends string = string> {
+  public type: 'operation-rule';
   public name: RuleName;
   public docsLink?: string;
   public matches?: (operation: Operation, context: RuleContext) => boolean;
@@ -25,5 +26,10 @@ export class OperationRule<RuleName extends string = string> {
     this.docsLink = config.docsLink;
     this.matches = config.matches;
     this.rule = config.rule;
+    this.type = 'operation-rule';
+  }
+
+  static isInstance(v: any): v is OperationRule {
+    return v?.type === 'operation-rule';
   }
 }
