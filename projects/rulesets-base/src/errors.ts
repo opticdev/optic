@@ -40,6 +40,6 @@ export class UserRuleError extends Error {
   }
 
   static isInstance(v: any): v is UserRuleError {
-    return v?.type === 'rule-error';
+    return v?.type === 'user-rule-error';
   }
 }
