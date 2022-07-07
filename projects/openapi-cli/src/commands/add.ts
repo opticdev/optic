@@ -13,6 +13,7 @@ import {
   SpecFiles,
   SpecFilesAsync,
   SpecFilesSourcemap,
+  SpecPatch,
   SpecPatches,
   readDeferencedSpec,
 } from '../specs';
@@ -98,9 +99,12 @@ async function addOperations(
   const specPatches = (async function* (): SpecPatches {
     let patchedSpec = spec;
     for await (let undocumentedOperation of undocumentedOperations) {
-      console.log(undocumentedOperation);
+      let patches = SpecPatches.undocumentedOperation(undocumentedOperation);
 
-      // TODO: generate patches
+      for (let patch of patches) {
+        patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
+        yield patch;
+      }
 
       updatingSpec.onNext(patchedSpec);
     }
