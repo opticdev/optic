@@ -64,12 +64,12 @@ export type UndocumentedOperation = {
 } & (
   | {
       type: UndocumentedOperationType.MissingMethod;
-      spec: OpenAPIV3.PathItemObject;
+      specPath: string;
       method: OpenAPIV3.HttpMethods;
     }
   | {
       type: UndocumentedOperationType.MissingPath;
-      spec: OpenAPIV3.PathsObject;
+      specPath: string;
       methods: OpenAPIV3.HttpMethods[];
     }
 );

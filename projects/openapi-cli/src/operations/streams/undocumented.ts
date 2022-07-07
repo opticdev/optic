@@ -30,14 +30,18 @@ export class UndocumentedOperations {
             type: UndocumentedOperationType.MissingPath,
             pathPattern: diff.subject,
             methods: operation.methods,
-            spec: spec.paths,
+            specPath: jsonPointerHelpers.compile(['paths', diff.subject]),
           };
         } else if (diff.kind === OperationDiffResultKind.UnmatchedMethod) {
           yield {
             type: UndocumentedOperationType.MissingMethod,
             pathPattern: diff.pathPattern,
             method: diff.subject,
-            spec: spec.paths[diff.pathPattern]!,
+            specPath: jsonPointerHelpers.compile([
+              'paths',
+              diff.pathPattern,
+              diff.subject,
+            ]),
           };
         }
       }
