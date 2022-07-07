@@ -4,7 +4,13 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 
 import * as AT from '../lib/async-tools';
-import { HttpMethods, HttpMethod, UndocumentedOperations } from '../operations';
+import {
+  HttpMethods,
+  HttpMethod,
+  UndocumentedOperation,
+  UndocumentedOperationType,
+  UndocumentedOperations,
+} from '../operations';
 import {
   OpenAPIV3,
   SpecFile,
@@ -51,7 +57,7 @@ export function addCommand(): Command {
         return command.error(addResult.val);
       }
 
-      let { results: addPatches, observations: updateObservations } =
+      let { results: addPatches, observations: addObservations } =
         addResult.unwrap();
 
       let { results: updatedSpecFiles, observations: fileObservations } =
@@ -65,7 +71,13 @@ export function addCommand(): Command {
         }
       })();
 
-      await writingSpecFiles;
+      let observations = AT.forkable(
+        AT.merge(addObservations, fileObservations)
+      );
+      const renderingStats = renderAddProgress(observations.fork());
+      observations.start();
+
+      await Promise.all([writingSpecFiles, renderingStats]);
     });
 
   return command;
@@ -89,6 +101,28 @@ async function addOperations(
   const specUpdates = updatingSpec.iterator;
 
   const observing = new AT.Subject<AddObservation>();
+  const observers = {
+    undocumentedOperation(op: UndocumentedOperation) {
+      if (op.type === UndocumentedOperationType.MissingPath) {
+        observing.onNext({
+          kind: AddObservationKind.UnmatchedPath,
+          requiredPath: op.pathPattern,
+        });
+      } else if (op.type === UndocumentedOperationType.MissingMethod) {
+        observing.onNext({
+          kind: AddObservationKind.UnmatchedMethod,
+          matchedPathPattern: op.pathPattern,
+          requiredMethod: op.method,
+        });
+      }
+    },
+    newOperationPatch(patch: SpecPatch) {
+      observing.onNext({
+        kind: AddObservationKind.NewOperationPatch,
+        description: patch.description,
+      });
+    },
+  };
 
   const undocumentedOperations = UndocumentedOperations.fromPairs(
     AT.from(requiredOperations),
@@ -99,11 +133,14 @@ async function addOperations(
   const specPatches = (async function* (): SpecPatches {
     let patchedSpec = spec;
     for await (let undocumentedOperation of undocumentedOperations) {
+      observers.undocumentedOperation(undocumentedOperation);
+
       let patches = SpecPatches.undocumentedOperation(undocumentedOperation);
 
       for (let patch of patches) {
         patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
         yield patch;
+        observers.newOperationPatch(patch);
       }
 
       updatingSpec.onNext(patchedSpec);
@@ -175,19 +212,34 @@ function updateSpecFiles(
 }
 
 export enum AddObservationKind {
-  MatchedPath = 'matched-path',
-  MatchedOperation = 'matched-operation',
-  OperationPatchGenerated = 'operation-patch-generated',
+  UnmatchedPath = 'unmatched-path',
+  UnmatchedMethod = 'unmatched-path',
+  NewOperationPatch = 'new-operation-patch',
   SpecFileUpdated = 'spec-file-updated',
 }
 
 export type AddObservation = {
   kind: AddObservationKind;
-} & {
-  kind: AddObservationKind.SpecFileUpdated;
-  path: string;
-  overwrittenComments: boolean;
-};
+} & (
+  | {
+      kind: AddObservationKind.UnmatchedPath;
+      requiredPath: string;
+    }
+  | {
+      kind: AddObservationKind.UnmatchedMethod;
+      matchedPathPattern: string;
+      requiredMethod: string;
+    }
+  | {
+      kind: AddObservationKind.NewOperationPatch;
+      description: string;
+    }
+  | {
+      kind: AddObservationKind.SpecFileUpdated;
+      path: string;
+      overwrittenComments: boolean;
+    }
+);
 
 export interface AddObservations extends AsyncIterable<AddObservation> {}
 
@@ -215,4 +267,28 @@ function parseOperations(
   }
 
   return Ok(pairs);
+}
+
+async function renderAddProgress(observations: AddObservations) {
+  for await (let observation of observations) {
+    console.log(observation);
+    if (observation.kind === AddObservationKind.SpecFileUpdated) {
+      console.log('Spec file update queued', observation.path);
+    } else if (observation.kind === AddObservationKind.NewOperationPatch) {
+      console.log('New operation patch generated: ', observation.description);
+    }
+
+    // if (observation.kind === AddObservationKind.UnmatchedMethod) {
+    //   // console.log(`Unmatched path: ${observation.requiredPath}`);
+    // } else if (observation.kind === AddObservationKind.UnmatchedPath) {
+    //   // let { method, pathPattern } = observation;
+    //   // reporter.matchedInteraction({ method, pathPattern });
+    // } else if (observation.kind === AddObservationKind.NewOperationPatch) {
+    //   // let { method, pathPattern, capturedPath, description } = observation;
+    //   // reporter.patch({ method, pathPattern }, capturedPath, description);
+    // } else if (observation.kind === AddObservationKind.SpecFileUpdated) {
+    //   let { path } = observation;
+    //   console.log('Spec file updated', path);
+    // }
+  }
 }

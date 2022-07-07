@@ -20,12 +20,14 @@ export class UndocumentedOperations {
 
     for await (let operation of operations) {
       // TODO: figure out whether we can create queries once and update it incrementally,
-      // recreating these facts constantly can get expensive
+      // recreating these facts constantly can get expens ive
 
       let diffs = diffOperationWithSpec(operation, spec);
+      let yieldedResult = false; // needed as we're basically filtering
 
       for (let diff of diffs) {
         if (diff.kind === OperationDiffResultKind.UnmatchedPath) {
+          yieldedResult = true;
           yield {
             type: UndocumentedOperationType.MissingPath,
             pathPattern: diff.subject,
@@ -33,6 +35,7 @@ export class UndocumentedOperations {
             specPath: jsonPointerHelpers.compile(['paths', diff.subject]),
           };
         } else if (diff.kind === OperationDiffResultKind.UnmatchedMethod) {
+          yieldedResult = true;
           yield {
             type: UndocumentedOperationType.MissingMethod,
             pathPattern: diff.pathPattern,
@@ -46,7 +49,7 @@ export class UndocumentedOperations {
         }
       }
 
-      if (specUpdatesIterator) {
+      if (specUpdatesIterator && yieldedResult) {
         let newSpec = await specUpdatesIterator.next();
         spec = newSpec.value;
       }
