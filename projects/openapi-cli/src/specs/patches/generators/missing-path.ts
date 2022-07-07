@@ -41,7 +41,9 @@ export function* missingPathPatches(
   );
 
   yield {
-    description: `add '${pathPattern}' and methods`,
+    description: `add '${pathPattern}' and method${
+      methods.length > 1 ? 's' : ''
+    } ${methods.map((m) => m.toUpperCase()).join(', ')}`,
     impact: [PatchImpact.Addition, PatchImpact.BackwardsCompatible],
     groupedOperations,
   };

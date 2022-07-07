@@ -213,7 +213,7 @@ function updateSpecFiles(
 
 export enum AddObservationKind {
   UnmatchedPath = 'unmatched-path',
-  UnmatchedMethod = 'unmatched-path',
+  UnmatchedMethod = 'unmatched-method',
   NewOperationPatch = 'new-operation-patch',
   SpecFileUpdated = 'spec-file-updated',
 }
@@ -270,25 +270,27 @@ function parseOperations(
 }
 
 async function renderAddProgress(observations: AddObservations) {
-  for await (let observation of observations) {
-    console.log(observation);
-    if (observation.kind === AddObservationKind.SpecFileUpdated) {
-      console.log('Spec file update queued', observation.path);
-    } else if (observation.kind === AddObservationKind.NewOperationPatch) {
-      console.log('New operation patch generated: ', observation.description);
-    }
+  let patchCount = 0;
 
-    // if (observation.kind === AddObservationKind.UnmatchedMethod) {
-    //   // console.log(`Unmatched path: ${observation.requiredPath}`);
-    // } else if (observation.kind === AddObservationKind.UnmatchedPath) {
-    //   // let { method, pathPattern } = observation;
-    //   // reporter.matchedInteraction({ method, pathPattern });
-    // } else if (observation.kind === AddObservationKind.NewOperationPatch) {
-    //   // let { method, pathPattern, capturedPath, description } = observation;
-    //   // reporter.patch({ method, pathPattern }, capturedPath, description);
-    // } else if (observation.kind === AddObservationKind.SpecFileUpdated) {
-    //   let { path } = observation;
-    //   console.log('Spec file updated', path);
-    // }
+  for await (let observation of observations) {
+    if (observation.kind === AddObservationKind.UnmatchedPath) {
+      console.log(`Undocumented path: ${observation.requiredPath}`);
+    } else if (observation.kind === AddObservationKind.UnmatchedMethod) {
+      console.log(
+        `Undocumented method: ${observation.requiredMethod.toUpperCase()} for existing path ${
+          observation.matchedPathPattern
+        }`
+      );
+    } else if (observation.kind === AddObservationKind.NewOperationPatch) {
+      patchCount += 1;
+      console.log(`PATCH: ${observation.description}`);
+    } else if (observation.kind === AddObservationKind.SpecFileUpdated) {
+      let { path } = observation;
+      // console.log('Spec file update queued', path);
+    }
+  }
+
+  if (patchCount === 0) {
+    console.log('All requested operations were already present in spec');
   }
 }
