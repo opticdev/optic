@@ -213,7 +213,11 @@ export async function updateByInteractions(
 
   const specPatches = (async function* (): SpecPatches {
     let patchedSpec = spec;
-    for await (let documentedInteraction of documentedInteractions) {
+    for await (let documentedInteractionOption of documentedInteractions) {
+      if (documentedInteractionOption.none) continue;
+
+      let documentedInteraction = documentedInteractionOption.unwrap();
+
       observers.documentedInteraction(documentedInteraction);
 
       // phase one: operation patches, making sure all requests / responses are documented
