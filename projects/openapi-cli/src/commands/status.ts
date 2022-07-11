@@ -229,7 +229,6 @@ async function renderStatus(observations: StatusObservations) {
   }
 
   console.log('');
-  console.log('');
   console.log('Undocumented methods');
   console.log('====================');
 
@@ -247,7 +246,6 @@ async function renderStatus(observations: StatusObservations) {
     }
   }
 
-  console.log('');
   console.log('');
   console.log('Undocumented paths');
   console.log('==================');
