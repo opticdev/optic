@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/optic-ci",
   "packageManager": "yarn@3.0.2",
-  "version": "0.26.13",
+  "version": "0.26.16",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -9,7 +9,7 @@
   ],
   "bin": "build/index.js",
   "scripts": {
-    "dev:test": "jest --colors",
+    "dev:test": "ENVIRONMENT=test jest --colors",
     "build": "yarn tsc --build --verbose && yarn babel ./src --out-dir ./build --extensions \".ts\",\".tsx\"",
     "ws:build": "yarn build",
     "ws:clean": "rm -rf build",
@@ -52,11 +52,13 @@
     "@useoptic/openapi-utilities": "workspace:*",
     "@useoptic/rulesets-base": "workspace:*",
     "ajv": "^8.11.0",
+    "bottleneck": "^2.19.5",
     "chalk": "^4.1.2",
     "commander": "^9.0.0",
     "is-url": "^1.2.4",
     "js-yaml": "^4.1.0",
     "json-stable-stringify": "^1.0.1",
+    "loglevel": "^1.8.0",
     "node-fetch": "^2.6.7",
     "picomatch": "^2.3.1",
     "url-join": "^4.0.1",

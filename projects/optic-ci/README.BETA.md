@@ -22,6 +22,20 @@ module.exports = {
 };
 ```
 
+## Running a comparison
+
+You can run a comparison between two OpenAPI specs. `from` and `to` take in a path to a file (`specs/openapi.yml`), or a git ref and path to file (`master:specs/openapi.yml`).
+
+`optic-ci compare --from <fromref> --to <toref> --upload-results`
+
+
+## Bulk comparisons
+
+If you have multiple openapi specs, you can specify glob patterns and ignore patterns (we use [picomatch](https://github.com/micromatch/picomatch) under the hood). `glob` and `ignore` take a comma separated list of globs (e.g. `--glob '**/*.yml,**/*.json'` matches any `.yml` or `.json` file).
+
+`optic-ci bulk-compare --glob <glob> --ignore <ignore> --upload-results`
+
+
 ## Standard rulesets
 
 Optic comes bundled with standard rulesets ([details here](../standard-rulesets/README.md)). You can install this by running:

@@ -8,6 +8,8 @@ import {
 import { uploadFileToS3 } from '../utils/s3';
 import { waitForSession } from './wait-for-session';
 import { NormalizedCiContext } from '@useoptic/openapi-utilities';
+import Bottleneck from 'bottleneck';
+import { logger } from '../../../logger';
 
 export type SpecInput = {
   from: SpecFromInput;
@@ -25,6 +27,7 @@ const NEEDED_SLOTS = [
 
 // 5 minutes
 const RUN_TIMEOUT = 1000 * 60 * 5;
+const MAX_CONCURRENT = 5;
 
 export async function initRun(
   client: OpticBackendClient,
@@ -32,10 +35,11 @@ export async function initRun(
   baseBranch: string,
   context: NormalizedCiContext
 ): Promise<GetSessionResponse[]> {
-  const runPromises = specs.map((spec) =>
-    runSingle(client, spec, baseBranch, context)
-  );
-
+  const limiter = new Bottleneck({ maxConcurrent: MAX_CONCURRENT });
+  const runner = (spec: SpecInput) =>
+    runSingle(client, spec, baseBranch, context);
+  const wrapped = limiter.wrap(runner);
+  const runPromises = specs.map((spec) => wrapped(spec));
   return await Promise.all(runPromises);
 }
 
@@ -45,7 +49,9 @@ async function runSingle(
   baseBranch: string,
   context: NormalizedCiContext
 ): Promise<GetSessionResponse> {
-  console.log(`Running comparison for ${specInput.path} against ${baseBranch}`);
+  logger.debug(
+    `Running comparison for ${specInput.path} against ${baseBranch}`
+  );
   const [fromResults, toResults] = await Promise.all([
     specFromInputToResults(specInput.from),
     specFromInputToResults(specInput.to),
@@ -63,16 +69,16 @@ async function runSingle(
     status: 'started',
     spec_id: specInput.id,
   });
-  console.log(
+  logger.debug(
     `Uploading input files for ${specInput.path} against ${baseBranch}`
   );
   await upload(client, sessionId, fromResults, toResults);
-  console.log(
+  logger.debug(
     `Finished uploading input files for ${specInput.path} against ${baseBranch}`
   );
   await client.startSession(sessionId);
 
-  console.log(
+  logger.debug(
     `Generating results for ${specInput.path} against ${baseBranch}...`
   );
   // loop and wait for session to complete

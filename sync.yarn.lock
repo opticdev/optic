@@ -3332,7 +3332,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@useoptic/json-pointer-helpers@workspace:*, @useoptic/json-pointer-helpers@workspace:^, @useoptic/json-pointer-helpers@workspace:projects/json-pointer-helpers":
+"@useoptic/json-pointer-helpers@workspace:*, @useoptic/json-pointer-helpers@workspace:projects/json-pointer-helpers":
   version: 0.0.0-use.local
   resolution: "@useoptic/json-pointer-helpers@workspace:projects/json-pointer-helpers"
   dependencies:
@@ -3526,7 +3526,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@useoptic/openapi-utilities@workspace:*, @useoptic/openapi-utilities@workspace:^, @useoptic/openapi-utilities@workspace:projects/openapi-utilities":
+"@useoptic/openapi-utilities@workspace:*, @useoptic/openapi-utilities@workspace:projects/openapi-utilities":
   version: 0.0.0-use.local
   resolution: "@useoptic/openapi-utilities@workspace:projects/openapi-utilities"
   dependencies:
@@ -3600,6 +3600,7 @@ __metadata:
     ajv: ^8.11.0
     babel-jest: ^27.5.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
+    bottleneck: ^2.19.5
     chalk: ^4.1.2
     commander: ^9.0.0
     dotenv: ^16.0.0
@@ -3607,6 +3608,7 @@ __metadata:
     jest: ^27.5.1
     js-yaml: ^4.1.0
     json-stable-stringify: ^1.0.1
+    loglevel: ^1.8.0
     node-fetch: ^2.6.7
     picomatch: ^2.3.1
     prettier: ^2.4.1
@@ -3619,7 +3621,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@useoptic/rulesets-base@workspace:*, @useoptic/rulesets-base@workspace:^, @useoptic/rulesets-base@workspace:projects/rulesets-base":
+"@useoptic/rulesets-base@workspace:*, @useoptic/rulesets-base@workspace:projects/rulesets-base":
   version: 0.0.0-use.local
   resolution: "@useoptic/rulesets-base@workspace:projects/rulesets-base"
   dependencies:
@@ -3636,8 +3638,8 @@ __metadata:
     "@types/json-stable-stringify": ^1.0.33
     "@types/lodash.pick": ^4
     "@types/node": ^17.0.15
-    "@useoptic/json-pointer-helpers": "workspace:^"
-    "@useoptic/openapi-utilities": "workspace:^"
+    "@useoptic/json-pointer-helpers": "workspace:*"
+    "@useoptic/openapi-utilities": "workspace:*"
     babel-jest: ^27.5.1
     jest: ^27.5.1
     lodash.pick: ^4.4.0
@@ -3664,8 +3666,8 @@ __metadata:
     "@types/json-stable-stringify": ^1.0.33
     "@types/lodash.pick": ^4
     "@types/node": ^17.0.15
-    "@useoptic/openapi-utilities": "workspace:^"
-    "@useoptic/rulesets-base": "workspace:^"
+    "@useoptic/openapi-utilities": "workspace:*"
+    "@useoptic/rulesets-base": "workspace:*"
     babel-jest: ^27.5.1
     jest: ^27.5.1
     prettier: ^2.4.1
@@ -4310,6 +4312,13 @@ __metadata:
     type-is: ~1.6.18
     unpipe: 1.0.0
   checksum: 12fffdeac82fe20dddcab7074215d5156e7d02a69ae90cbe9fee1ca3efa2f28ef52097cbea76685ee0a1509c71d85abd0056a08e612c09077cad6277a644cf88
+  languageName: node
+  linkType: hard
+
+"bottleneck@npm:^2.19.5":
+  version: 2.19.5
+  resolution: "bottleneck@npm:2.19.5"
+  checksum: c5eef1bbea12cef1f1405e7306e7d24860568b0f7ac5eeab706a86762b3fc65ef6d1c641c8a166e4db90f412fc5c948fc5ce8008a8cd3d28c7212ef9c3482bda
   languageName: node
   linkType: hard
 
@@ -7409,6 +7418,13 @@ __metadata:
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
+  languageName: node
+  linkType: hard
+
+"loglevel@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "loglevel@npm:1.8.0"
+  checksum: 41aeea17de24aba8dba68084a31fe9189648bce4f39c1277e021bb276c3c53a75b0d337395919cf271068ad40ecefabad0e4fdeb4a8f11908beee532b898f4a7
   languageName: node
   linkType: hard
 

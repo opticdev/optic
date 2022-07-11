@@ -1,8 +1,8 @@
 export class Matcher {
-  constructor(
-    private matcher: (value: any) => boolean,
-    private name?: string
-  ) {}
+  public type: 'matcher';
+  constructor(private matcher: (value: any) => boolean, private name?: string) {
+    this.type = 'matcher';
+  }
 
   match(value: any): boolean {
     return this.matcher(value);
@@ -14,6 +14,10 @@ export class Matcher {
 
   toJSON() {
     return this.toString();
+  }
+
+  static isInstance(v: any): v is Matcher {
+    return v?.type === 'matcher';
   }
 }
 
@@ -68,7 +72,7 @@ export const valuesMatcher = (
   strict: boolean = false
 ): boolean => {
   // handle null / array
-  if (reference instanceof Matcher) {
+  if (Matcher.isInstance(reference)) {
     return reference.match(objectToMatch);
   } else if (reference === null || typeof reference !== 'object') {
     return reference === objectToMatch;
