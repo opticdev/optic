@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`OperationsQueries findPathPattern can match / 1`] = `"/"`;
+
+exports[`OperationsQueries findPathPattern will match a parameterised pattern 1`] = `"/orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}"`;
+
+exports[`OperationsQueries findPathPattern will match concrete paths in set 1`] = `"/app/hook/config"`;
+
+exports[`OperationsQueries findPathPattern will match concrete paths with parameters set 1`] = `"/orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}"`;
+
 exports[`OperationsQueries findSpecPath ambigious paths will match exact matches 1`] = `
 Object {
   "method": "get",

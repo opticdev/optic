@@ -66,6 +66,14 @@ export class SpecFacts {
   }
 }
 
+export class SpecFactsIterable {
+  static *fromOpenAPISpec(spec: OpenAPIV3.Document): SpecFactsIterable {
+    const traverser = new OpenAPITraverser();
+    traverser.traverse(spec);
+    yield* traverser.facts();
+  }
+}
+
 export class BodyExampleFacts {}
 export class ComponentSchemaExampleFacts {}
 export class OperationFacts {}

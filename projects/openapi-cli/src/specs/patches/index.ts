@@ -12,6 +12,7 @@ import JsonPatch from 'fast-json-patch';
 
 export { newSpecPatches } from './generators/new-spec';
 export { templatePatches } from './generators/template';
+export { undocumentedOperationPatches } from './generators';
 export type {
   ObservedSpecPatchGenerator,
   ObservedSpecPatchGeneratorContext,

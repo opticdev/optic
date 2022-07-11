@@ -7,6 +7,7 @@ import MIMEType from 'whatwg-mimetype';
 export { DocumentedInteractions } from './streams/documented-interactions';
 export { OperationPatches } from './streams/patches';
 export { OperationPatch } from './patches';
+export { UndocumentedOperations } from './streams/undocumented';
 
 export interface Operation extends OpenAPIV3.OperationObject {
   pathPattern: string;
@@ -52,6 +53,27 @@ export class Operation {
   }
 }
 
+export enum UndocumentedOperationType {
+  MissingMethod = 'missing-method',
+  MissingPath = 'missing-path',
+}
+
+export type UndocumentedOperation = {
+  type: UndocumentedOperationType;
+  pathPattern: string;
+} & (
+  | {
+      type: UndocumentedOperationType.MissingMethod;
+      specPath: string;
+      method: OpenAPIV3.HttpMethods;
+    }
+  | {
+      type: UndocumentedOperationType.MissingPath;
+      specPath: string;
+      methods: OpenAPIV3.HttpMethods[];
+    }
+);
+
 export interface DocumentedInteraction {
   interaction: CapturedInteraction;
   operation: Operation;
@@ -84,6 +106,7 @@ export class DocumentedInteraction {
 
 const HttpMethods = OpenAPIV3.HttpMethods;
 export { HttpMethods };
+export type HttpMethod = OpenAPIV3.HttpMethods;
 
 export function findResponse(
   { responses }: Pick<Operation, 'responses'>,
