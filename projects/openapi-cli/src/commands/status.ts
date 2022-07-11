@@ -3,8 +3,15 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 
 import * as AT from '../lib/async-tools';
-import { readDeferencedSpec } from '../specs';
-import { DocumentedInteractions } from '../operations';
+import { ComponentSchemaExampleFacts, readDeferencedSpec } from '../specs';
+import {
+  DocumentedInteractions,
+  HttpMethod,
+  HttpMethods,
+  UndocumentedOperation,
+  UndocumentedOperationType,
+  UndocumentedOperations,
+} from '../operations';
 import {
   CapturedInteraction,
   CapturedInteractions,
@@ -38,7 +45,10 @@ export function statusCommand(): Command {
           return command.error('Har file could not be found at given path');
         }
         let harFile = fs.createReadStream(absoluteHarPath);
-        let harEntries = HarEntries.fromReadable(harFile);
+        let harEntries = AT.tap(
+          (entry: any) => {}
+          // console.log('har entry', entry)
+        )(HarEntries.fromReadable(harFile));
         sources.push(CapturedInteractions.fromHarEntries(harEntries));
       }
 
@@ -69,42 +79,70 @@ export function matchInteractions(
   spec: OpenAPIV3.Document,
   interactions: CapturedInteractions
 ): StatusObservations {
-  let currentInteraction: CapturedInteraction | null = null;
-
-  const trackedInteractions = AT.tap<CapturedInteraction>((interaction) => {
-    currentInteraction = interaction;
-  })(interactions);
+  const interactionsFork = AT.forkable(
+    // TODO: figure out why this prevents `forkable` from producing an empty object as the last interaction
+    AT.tap<CapturedInteraction>(() => {})(interactions)
+  );
 
   const documentedInteractions =
-    DocumentedInteractions.fromCapturedInteractions(trackedInteractions, spec);
+    DocumentedInteractions.fromCapturedInteractions(
+      interactionsFork.fork(),
+      spec
+    );
+  const undocumentedOperations =
+    UndocumentedOperations.fromCapturedInteractions(
+      interactionsFork.fork(),
+      spec
+    );
+  interactionsFork.start();
 
-  const observations = (async function* (): StatusObservations {
+  const matchingObservations = (async function* (): StatusObservations {
     for await (let documentedInteractionOption of documentedInteractions) {
-      if (documentedInteractionOption.none) {
-        yield {
-          kind: StatusObservationKind.InteractionUnmatchedOperation,
-          path: currentInteraction!.request.path,
-          method: currentInteraction!.request.method,
-        };
-      } else {
-        let documentedInteraction = documentedInteractionOption.unwrap();
+      console.log;
+      if (documentedInteractionOption.none) continue;
 
+      let documentedInteraction = documentedInteractionOption.unwrap();
+
+      yield {
+        kind: StatusObservationKind.InteractionMatchedOperation,
+        capturedPath: documentedInteraction.interaction.request.path,
+        path: documentedInteraction.operation.pathPattern,
+        method: documentedInteraction.operation.method,
+      };
+    }
+  })();
+
+  const unmatchingObservations = (async function* (): StatusObservations {
+    for await (let undocumentedOperation of undocumentedOperations) {
+      if (
+        undocumentedOperation.type === UndocumentedOperationType.MissingMethod
+      ) {
         yield {
-          kind: StatusObservationKind.InteractionMatchedOperation,
-          capturedPath: documentedInteraction.interaction.request.path,
-          path: documentedInteraction.operation.pathPattern,
-          method: documentedInteraction.operation.method,
+          kind: StatusObservationKind.InteractionUnmatchedMethod,
+          path: undocumentedOperation.pathPattern,
+          method: undocumentedOperation.method,
         };
+      } else if (
+        undocumentedOperation.type === UndocumentedOperationType.MissingPath
+      ) {
+        for (let method of undocumentedOperation.methods) {
+          yield {
+            kind: StatusObservationKind.InteractionUnmatchedPath,
+            path: undocumentedOperation.pathPattern,
+            method,
+          };
+        }
       }
     }
   })();
 
-  return observations;
+  return AT.merge(matchingObservations, unmatchingObservations);
 }
 
 export enum StatusObservationKind {
   InteractionMatchedOperation = 'interaction-matched-operation',
-  InteractionUnmatchedOperation = 'interaction-unmatched-operation',
+  InteractionUnmatchedMethod = 'interaction-unmatched-method',
+  InteractionUnmatchedPath = 'interaction-unmatched-path',
 }
 
 export type StatusObservation = {
@@ -117,7 +155,12 @@ export type StatusObservation = {
       method: string;
     }
   | {
-      kind: StatusObservationKind.InteractionUnmatchedOperation;
+      kind: StatusObservationKind.InteractionUnmatchedMethod;
+      path: string;
+      method: string;
+    }
+  | {
+      kind: StatusObservationKind.InteractionUnmatchedPath;
       path: string;
       method: string;
     }
@@ -130,7 +173,8 @@ async function renderStatus(observations: StatusObservations) {
     interationsCount: 0,
     matchedOperations: new Map<string, { path: string; method: string }>(),
     matchedInteractionCountByOperation: new Map<string, number>(),
-    unmatchedOperations: new Map<string, { path: string; method: string }>(),
+    unmatchedMethods: new Map<string, { path: string; methods: string[] }>(),
+    unmatchedPaths: new Map<string, { path: string; method: string }>(),
   };
 
   for await (let observation of observations) {
@@ -150,14 +194,27 @@ async function renderStatus(observations: StatusObservations) {
         stats.matchedInteractionCountByOperation.set(opId, interactionCount);
       }
     } else if (
-      observation.kind === StatusObservationKind.InteractionUnmatchedOperation
+      observation.kind === StatusObservationKind.InteractionUnmatchedPath
     ) {
       stats.interationsCount += 1;
       let opId = operationId(observation);
 
-      if (!stats.unmatchedOperations.has(opId)) {
+      if (!stats.unmatchedPaths.has(opId)) {
         const { path, method } = observation;
-        stats.unmatchedOperations.set(opId, { path, method });
+        stats.unmatchedPaths.set(opId, { path, method });
+      }
+    } else if (
+      observation.kind === StatusObservationKind.InteractionUnmatchedMethod
+    ) {
+      stats.interationsCount += 1;
+      let opId = operationId(observation);
+
+      if (!stats.unmatchedMethods.has(opId)) {
+        const { path, method } = observation;
+        stats.unmatchedMethods.set(opId, { path, methods: [method] });
+      } else {
+        let methods = stats.unmatchedMethods.get(opId)!.methods;
+        methods.push(observation.method);
       }
     }
   }
@@ -173,10 +230,29 @@ async function renderStatus(observations: StatusObservations) {
 
   console.log('');
   console.log('');
+  console.log('Undocumented methods');
+  console.log('====================');
+
+  const orderedMethods = [...stats.unmatchedMethods.entries()]
+    .sort((a, b) => {
+      let termA = a[1].path + a[1].methods.join(','); // path first, methods second
+      let termB = b[1].path + a[1].methods.join(',');
+
+      return termA < termB ? -1 : termA > termB ? 1 : 0;
+    })
+    .map(([_key, op]) => op);
+  for (let unmatched of orderedMethods) {
+    for (let method of unmatched.methods) {
+      console.log(`${method.toUpperCase().padEnd(6, ' ')}${unmatched.path}`);
+    }
+  }
+
+  console.log('');
+  console.log('');
   console.log('Undocumented paths');
   console.log('==================');
 
-  const orderedUnmatched = [...stats.unmatchedOperations.entries()]
+  const orderedPaths = [...stats.unmatchedPaths.entries()]
     .sort((a, b) => {
       let termA = a[1].path + a[1].method; // path first, method second
       let termB = b[1].path + a[1].method;
@@ -184,9 +260,11 @@ async function renderStatus(observations: StatusObservations) {
       return termA < termB ? -1 : termA > termB ? 1 : 0;
     })
     .map(([_key, op]) => op);
-  for (let unmatched of orderedUnmatched) {
+  for (let unmatchedPath of orderedPaths) {
     console.log(
-      `${unmatched.method.toUpperCase().padEnd(6, ' ')}${unmatched.path}`
+      `${unmatchedPath.method.toUpperCase().padEnd(6, ' ')}${
+        unmatchedPath.path
+      }`
     );
   }
 

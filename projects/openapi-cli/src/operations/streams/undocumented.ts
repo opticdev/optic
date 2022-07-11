@@ -1,17 +1,21 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 import { UndocumentedOperation, UndocumentedOperationType } from '..';
+import { CapturedInteraction, CapturedInteractions } from '../../captures';
 import { OpenAPIV3 } from '../../specs';
 import { diffOperationWithSpec, OperationDiffResultKind } from '../diffs';
+import * as AT from '../../lib/async-tools';
 
 export interface UndocumentedOperations
   extends AsyncIterable<UndocumentedOperation> {}
 
+interface OperationPair {
+  pathPattern: string;
+  methods: OpenAPIV3.HttpMethods[];
+}
+
 export class UndocumentedOperations {
   static async *fromPairs(
-    operations: AsyncIterable<{
-      pathPattern: string;
-      methods: OpenAPIV3.HttpMethods[];
-    }>,
+    operations: AsyncIterable<OperationPair>,
     spec: OpenAPIV3.Document,
     specUpdates?: AsyncIterable<OpenAPIV3.Document>
   ): UndocumentedOperations {
@@ -54,5 +58,22 @@ export class UndocumentedOperations {
         spec = newSpec.value;
       }
     }
+  }
+
+  static async *fromCapturedInteractions(
+    interactions: CapturedInteractions,
+    spec: OpenAPIV3.Document,
+    specUpdates?: AsyncIterable<OpenAPIV3.Document>
+  ): UndocumentedOperations {
+    const operations = AT.map<CapturedInteraction, OperationPair>(
+      (interaction) => {
+        return {
+          pathPattern: interaction.request.path,
+          methods: [interaction.request.method],
+        };
+      }
+    )(interactions);
+
+    yield* UndocumentedOperations.fromPairs(operations, spec, specUpdates);
   }
 }
