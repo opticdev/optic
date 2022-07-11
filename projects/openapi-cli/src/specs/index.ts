@@ -20,6 +20,7 @@ export { SpecPatches } from './streams/patches';
 export { SpecFileOperations, SpecFiles, SpecFilesAsync } from './streams/files';
 export {
   SpecFacts,
+  SpecFactsIterable,
   BodyExampleFacts,
   ComponentSchemaExampleFacts,
   OperationFacts,
@@ -28,7 +29,6 @@ export type {
   BodyExampleFact,
   ComponentSchemaExampleFact,
   OperationFact,
-  SpecFactsIterable,
 } from './streams/facts';
 
 // templates

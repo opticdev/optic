@@ -11,6 +11,7 @@ import invariant from 'ts-invariant';
 import equals from 'fast-deep-equal';
 import Url from 'url';
 import Path from 'path';
+import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
 
 export class OperationQueries {
   static fromFacts(facts: SpecFactsIterable): OperationQueries {
@@ -73,7 +74,7 @@ export class OperationQueries {
     ]);
   }
 
-  findSpecPath(
+  findOperation(
     path: string,
     method: OpenAPIV3.HttpMethods
   ): Result<
@@ -109,7 +110,36 @@ export class OperationQueries {
     return Ok(Some(operation));
   }
 
-  private matchPathPattern(path: string): Result<Option<string>, string> {
+  findPathPattern(pathPattern: string): Result<Option<string>, string> {
+    invariant(
+      pathPattern.startsWith('/'),
+      'path pattern for can not be found for paths with host and / or protocol'
+    );
+
+    // path patterns are assumed not have base paths included, but the matcher _does_
+    if (this.basePaths.length > 0) {
+      pathPattern = Path.join(this.basePaths[0], pathPattern);
+    }
+
+    const matchedPatternResult = this.matchPathPattern(pathPattern);
+    if (matchedPatternResult.err) return matchedPatternResult;
+
+    let maybeMatchedPattern = matchedPatternResult.unwrap();
+    if (maybeMatchedPattern.none) return Ok(None);
+    let matchedPattern = maybeMatchedPattern.unwrap();
+
+    const operation = this.operations.find((op) =>
+      this.basePaths.some(
+        (basePath) => Path.join(basePath, op.pathPattern) == matchedPattern
+      )
+    );
+
+    if (!operation) return Ok(None);
+
+    return Ok(Some(operation.pathPattern));
+  }
+
+  matchPathPattern(path: string): Result<Option<string>, string> {
     const componentizedPath = fragmentize(path);
 
     // start with all patterns that match by length

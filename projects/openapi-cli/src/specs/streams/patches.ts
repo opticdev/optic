@@ -7,6 +7,7 @@ import {
   OperationGroup,
   newSpecPatches,
   templatePatches,
+  undocumentedOperationPatches,
 } from '../patches';
 import { SpecTemplate } from '../templates';
 import {
@@ -18,9 +19,8 @@ import {
 import {
   DocumentedInteraction,
   OperationPatches,
-  OperationPatch,
+  UndocumentedOperation,
 } from '../../operations';
-import { CapturedInteractions } from '../../captures';
 
 export interface SpecPatches extends AsyncIterable<SpecPatch> {}
 
@@ -87,5 +87,11 @@ export class SpecPatches {
 
       yield specPatch;
     }
+  }
+
+  static *undocumentedOperation(undocumentedOperation: UndocumentedOperation) {
+    let patches = undocumentedOperationPatches(undocumentedOperation);
+
+    yield* patches;
   }
 }

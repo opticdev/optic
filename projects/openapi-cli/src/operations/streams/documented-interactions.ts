@@ -23,7 +23,7 @@ export class DocumentedInteractions {
 
     for await (let interaction of interactions) {
       // find matching interaction operation by matching path and method
-      const matchedOperationResult = queries.findSpecPath(
+      const matchedOperationResult = queries.findOperation(
         interaction.request.path,
         interaction.request.method
       );
