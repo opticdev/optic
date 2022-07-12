@@ -6,6 +6,9 @@ paths:
   /store/inventory:
     get:
       responses: {}
+  /store/order:
+    get:
+      responses: {}
 servers:
   - url: http://petstore.swagger.io/v2
   - url: https://petstore.swagger.io/v2

@@ -3,6 +3,7 @@
 import { program as cli } from 'commander';
 
 import { addCommand } from './commands/add';
+import { statusCommand } from './commands/status';
 import { updateCommand } from './commands/update';
 import { registerDebugTemplateCommand } from './commands/debug-template';
 import { debugWorkflowsCommand } from './commands/debug-workflows';
@@ -16,6 +17,7 @@ export function makeCli(config: CliConfig) {
   cli.version(packageJson.version);
 
   cli.addCommand(addCommand());
+  cli.addCommand(statusCommand());
   cli.addCommand(updateCommand());
   registerDebugTemplateCommand(cli);
 
