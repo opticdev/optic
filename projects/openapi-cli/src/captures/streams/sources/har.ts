@@ -1,7 +1,9 @@
-import { Readable } from 'stream';
+import { Readable, Writable } from 'stream';
 import invariant from 'ts-invariant';
 import { withParser as pickWithParser } from 'stream-json/filters/Pick';
 import { streamArray } from 'stream-json/streamers/StreamArray';
+import { disassembler } from 'stream-json/Disassembler';
+import { stringer } from 'stream-json/stringer';
 import { chain } from 'stream-chain'; // replace with  stream.compose once it stabilises
 import HarSchemas from 'har-schema';
 import Ajv, { SchemaObject } from 'ajv';
@@ -62,7 +64,9 @@ export class HarEntries {
     }
   }
 
-  static async *fromProxySource(interactions: ProxyInteractions): HarEntries {
+  static async *fromProxyInteractions(
+    interactions: ProxyInteractions
+  ): HarEntries {
     for await (let interaction of interactions) {
       let httpVersion = interaction.request.httpVersion || '1.1';
 
@@ -135,6 +139,43 @@ export class HarEntries {
         time: 100 + 100 + 100,
       };
     }
+  }
+
+  static toHarJSON(entries: HarEntries): Readable {
+    const har = {
+      log: {
+        version: '1.3',
+        creator: 'Optic capture command',
+        entries: null, // null will be dropped
+      },
+    };
+
+    let tokens = (async function* () {
+      let entriesTokens = chain([Readable.from(entries), disassembler()]);
+
+      let manifestTokens = chain([
+        Readable.from(
+          (async function* () {
+            yield har;
+          })()
+        ),
+        disassembler(),
+      ]);
+
+      for await (let token of manifestTokens) {
+        if (token.name === 'keyValue' && token.value === 'entries') {
+          yield { name: 'startArray' };
+
+          yield* entriesTokens;
+
+          yield { name: 'endArray' };
+        } else if (token.name !== 'nullValue') {
+          yield token;
+        }
+      }
+    })();
+
+    return Readable.from(tokens).pipe(stringer());
   }
 }
 

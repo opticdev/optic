@@ -3,6 +3,7 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 import readline from 'readline';
 import { AbortController } from 'node-abort-controller';
+import * as AT from '../lib/async-tools';
 
 import {
   CapturedInteraction,
@@ -26,7 +27,7 @@ export function captureCommand(): Command {
       const options = command.opts();
 
       let sourcesController = new AbortController();
-      const sources: CapturedInteractions[] = [];
+      const sources: HarEntries[] = [];
       let interactiveCapture = false;
 
       if (options.har) {
@@ -36,7 +37,7 @@ export function captureCommand(): Command {
         }
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntries = HarEntries.fromReadable(harFile);
-        sources.push(CapturedInteractions.fromHarEntries(harEntries));
+        sources.push(harEntries);
       }
 
       if (options.proxy) {
@@ -50,9 +51,7 @@ export function captureCommand(): Command {
           options.proxy,
           sourcesController.signal
         );
-        sources.push(
-          CapturedInteractions.fromProxyInteractions(proxyInteractions)
-        );
+        sources.push(HarEntries.fromProxyInteractions(proxyInteractions));
         console.error(
           `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
         );
@@ -80,6 +79,14 @@ export function captureCommand(): Command {
           }
         }
       })();
+
+      const harEntries = AT.merge(...sources);
+
+      const destination = process.stdout;
+
+      let harJSON = HarEntries.toHarJSON(harEntries);
+
+      harJSON.pipe(process.stdout);
 
       await Promise.all([handleUserSignals]);
     });
