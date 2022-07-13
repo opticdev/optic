@@ -15,7 +15,7 @@ Array [
           "title": "Empty",
           "version": "0.0.0",
         },
-        "openapi": "3.1.3",
+        "openapi": "3.1.0",
       },
     },
     "condition": "match expected shape",
@@ -27,7 +27,7 @@ Array [
     "isShould": false,
     "name": "operation description",
     "passed": false,
-    "received": "{\\"openapi\\":\\"3.1.3\\",\\"paths\\":{},\\"info\\":{\\"version\\":\\"0.0.0\\",\\"title\\":\\"Empty\\"}}",
+    "received": "{\\"openapi\\":\\"3.1.0\\",\\"paths\\":{},\\"info\\":{\\"version\\":\\"0.0.0\\",\\"title\\":\\"Empty\\"}}",
     "where": "requirement for specification",
   },
 ]
@@ -48,7 +48,7 @@ Array [
           "title": "Empty",
           "version": "0.0.0",
         },
-        "openapi": "3.1.3",
+        "openapi": "3.1.0",
       },
     },
     "condition": "not match expected shape",
@@ -85,7 +85,7 @@ Array [
           "title": "Empty",
           "version": "0.0.0",
         },
-        "openapi": "3.1.3",
+        "openapi": "3.1.0",
       },
     },
     "condition": "match expected shape",
@@ -118,7 +118,7 @@ Array [
           "title": "Empty",
           "version": "0.0.0",
         },
-        "openapi": "3.1.3",
+        "openapi": "3.1.0",
       },
     },
     "condition": "match expected shape",
@@ -130,7 +130,7 @@ Array [
     "isShould": false,
     "name": "operation description",
     "passed": false,
-    "received": "{\\"openapi\\":\\"3.1.3\\",\\"paths\\":{},\\"info\\":{\\"version\\":\\"0.0.0\\",\\"title\\":\\"Empty\\"}}",
+    "received": "{\\"openapi\\":\\"3.1.0\\",\\"paths\\":{},\\"info\\":{\\"version\\":\\"0.0.0\\",\\"title\\":\\"Empty\\"}}",
     "where": "requirement for specification",
   },
 ]
@@ -151,7 +151,7 @@ Array [
           "title": "Empty",
           "version": "0.0.0",
         },
-        "openapi": "3.1.3",
+        "openapi": "3.1.0",
       },
     },
     "condition": "not match expected shape",
@@ -188,7 +188,7 @@ Array [
           "title": "Empty",
           "version": "0.0.0",
         },
-        "openapi": "3.1.3",
+        "openapi": "3.1.0",
       },
     },
     "condition": "match expected shape",
@@ -221,7 +221,7 @@ Array [
           "title": "Empty",
           "version": "0.0.0",
         },
-        "openapi": "3.1.3",
+        "openapi": "3.1.0",
       },
     },
     "condition": "must contain x-stability",
@@ -254,7 +254,7 @@ Array [
           "title": "Empty",
           "version": "0.0.0",
         },
-        "openapi": "3.1.3",
+        "openapi": "3.1.0",
         "x-stability": "abc",
       },
     },
@@ -316,7 +316,7 @@ Object {
         "title": "Empty",
         "version": "0.0.0",
       },
-      "openapi": "3.1.3",
+      "openapi": "3.1.0",
       "paths": Object {},
     },
     "value": Object {
@@ -324,7 +324,7 @@ Object {
         "title": "Empty",
         "version": "0.0.0",
       },
-      "openapi": "3.1.3",
+      "openapi": "3.1.0",
     },
   },
 }
@@ -373,7 +373,7 @@ Object {
         "title": "Empty",
         "version": "0.0.0",
       },
-      "openapi": "3.1.3",
+      "openapi": "3.1.0",
       "paths": Object {
         "/api/users": Object {
           "get": Object {
@@ -393,7 +393,7 @@ Object {
         "title": "Empty",
         "version": "0.0.0",
       },
-      "openapi": "3.1.3",
+      "openapi": "3.1.0",
       "servers": Array [
         Object {
           "url": "http://optic.com",
@@ -447,7 +447,7 @@ Object {
         "title": "Empty",
         "version": "0.0.0",
       },
-      "openapi": "3.1.3",
+      "openapi": "3.1.0",
       "paths": Object {
         "/api/users": Object {
           "get": Object {
@@ -467,7 +467,7 @@ Object {
         "title": "Empty",
         "version": "0.0.0",
       },
-      "openapi": "3.1.3",
+      "openapi": "3.1.0",
       "servers": Array [
         Object {
           "url": "http://optic.com",
@@ -521,7 +521,7 @@ Object {
         "title": "Empty",
         "version": "0.0.0",
       },
-      "openapi": "3.1.3",
+      "openapi": "3.1.0",
       "paths": Object {},
       "x-optic-ci-empty-spec": true,
     },
@@ -530,7 +530,7 @@ Object {
         "title": "Empty",
         "version": "0.0.0",
       },
-      "openapi": "3.1.3",
+      "openapi": "3.1.0",
       "x-optic-ci-empty-spec": true,
     },
   },

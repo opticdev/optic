@@ -1,4 +1,5 @@
 import { RequestRule, RuleError } from '@useoptic/rulesets-base';
+import { didTypeChange } from './helpers/type-change';
 
 export const preventRequestPropertyTypeChange = new RequestRule({
   name: 'prevent request property type changes',
@@ -6,7 +7,12 @@ export const preventRequestPropertyTypeChange = new RequestRule({
     requestAssertions.body.changed(
       'not change request property type',
       (before, after) => {
-        if (before.value.flatSchema.type !== after.value.flatSchema.type) {
+        if (
+          didTypeChange(
+            before.value.flatSchema.type,
+            after.value.flatSchema.type
+          )
+        ) {
           throw new RuleError({
             message: 'expected request body property to not change type',
           });
@@ -17,7 +23,12 @@ export const preventRequestPropertyTypeChange = new RequestRule({
     requestAssertions.property.changed(
       'not change request property type',
       (before, after) => {
-        if (before.value.flatSchema.type !== after.value.flatSchema.type) {
+        if (
+          didTypeChange(
+            before.value.flatSchema.type,
+            after.value.flatSchema.type
+          )
+        ) {
           throw new RuleError({
             message: 'expected request body property to not change type',
           });

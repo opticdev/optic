@@ -744,20 +744,32 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
 
     const baseSchema = (() => {
       if (schema.type === 'array') {
-        const { items, required, properties, ...schemaFact } = schema;
+        const {
+          items,
+          required,
+          properties,
+          // @ts-ignore
+          nullable,
+          ...schemaFact
+        } = schema;
         return schemaFact;
       } else {
-        const { required, properties, ...schemaFact } = schema;
+        const {
+          required,
+          properties,
+          // @ts-ignore
+          nullable,
+          ...schemaFact
+        } = schema;
         return schemaFact;
       }
     })();
 
-    // @ts-ignore
-    delete baseSchema['nullable'];
-
     const typeOverride: OpenApi3SchemaFact['type'] = (() => {
       if (hasNullableSet && typeof baseSchema.type === 'string') {
         return [baseSchema.type, 'null'];
+      } else if (hasNullableSet && !baseSchema.type) {
+        return ['null'];
       }
       return baseSchema.type;
     })();
