@@ -4,6 +4,7 @@ import { OpenAPIV3, SpecFacts } from '../../specs';
 import { OperationQueries } from '../queries';
 import { collect } from '../../lib/async-tools';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { Option, Some, None } from 'ts-results';
 
 export interface DocumentedInteractions
   extends AsyncIterable<DocumentedInteraction> {}
@@ -13,7 +14,7 @@ export class DocumentedInteractions {
     interactions: CapturedInteractions,
     spec: OpenAPIV3.Document,
     specUpdates?: AsyncIterable<OpenAPIV3.Document>
-  ): AsyncIterable<DocumentedInteraction> {
+  ): AsyncIterable<Option<DocumentedInteraction>> {
     // assumption: no new operations will be added over the life-time of this stream
     const facts = await collect(SpecFacts.fromOpenAPISpec(spec));
     const queries = OperationQueries.fromFacts(facts);
@@ -33,8 +34,10 @@ export class DocumentedInteractions {
           'Could not conclusively match interaction to operation from spec:',
           matchedOperationResult.val
         );
+        yield None;
         continue;
       } else if (matchedOperationResult.val.none) {
+        yield None;
         continue; // no match
       }
       const matchedOperation = matchedOperationResult.unwrap().unwrap();
@@ -44,7 +47,7 @@ export class DocumentedInteractions {
         matchedOperation.specPath
       ) as OpenAPIV3.OperationObject; // given the validation we've done above, this should be safe
 
-      yield {
+      yield Some({
         interaction,
         operation: Operation.fromOperationObject(
           matchedOperation.pathPattern,
@@ -52,7 +55,7 @@ export class DocumentedInteractions {
           operationObject
         ),
         specJsonPath: matchedOperation.specPath,
-      };
+      });
 
       if (specUpdatesIterator) {
         let newSpec = await specUpdatesIterator.next();
