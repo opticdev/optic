@@ -24,7 +24,7 @@ export function captureCommand(): Command {
       '--proxy <target-url>',
       'accept traffic over a proxy targeting the actual service'
     )
-    .option('-o <output-file>', 'file name for output')
+    // .option('-o <output-file>', 'file name for output')
     .action(async () => {
       const options = command.opts();
 
