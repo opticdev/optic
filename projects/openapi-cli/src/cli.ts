@@ -3,7 +3,7 @@
 import { program as cli } from 'commander';
 
 import { addCommand } from './commands/add';
-import { captureCommand } from './commands/command';
+import { captureCommand } from './commands/capture';
 import { statusCommand } from './commands/status';
 import { updateCommand } from './commands/update';
 import { registerDebugTemplateCommand } from './commands/debug-template';

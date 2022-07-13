@@ -10,7 +10,7 @@ import {
   CapturedInteractions,
   HarEntries,
   ProxyInteractions,
-} from '../captures';
+} from '../captures/index';
 
 export function captureCommand(): Command {
   const command = new Command('capture');
