@@ -3,7 +3,7 @@ import invariant from 'ts-invariant';
 import { withParser as pickWithParser } from 'stream-json/filters/Pick';
 import { streamArray } from 'stream-json/streamers/StreamArray';
 import { disassembler } from 'stream-json/Disassembler';
-import { stringer } from 'stream-json/stringer';
+import { stringer } from 'stream-json/Stringer';
 import { chain } from 'stream-chain'; // replace with  stream.compose once it stabilises
 import HarSchemas from 'har-schema';
 import Ajv, { SchemaObject } from 'ajv';
