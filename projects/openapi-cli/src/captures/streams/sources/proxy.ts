@@ -1,5 +1,10 @@
 import * as mockttp from 'mockttp';
-import { CompletedRequest, CompletedResponse, CompletedBody } from 'mockttp';
+import {
+  CompletedRequest,
+  CompletedResponse,
+  CompletedBody,
+  TimingEvents,
+} from 'mockttp';
 import { Subject } from '../../../lib/async-tools';
 import { AbortSignal } from 'node-abort-controller'; // remove when Node v14 is out of LTS
 
@@ -48,12 +53,14 @@ export class ProxyInteractions {
         remotePort,
         tags,
         body,
+        timingEvents,
         ...rest
       } = capturedRequest;
 
       const request = {
         ...rest,
         body: { buffer: body.buffer },
+        timingEvents: timingEvents as TimingEvents,
       };
 
       requestsById.set(request.id, request);
@@ -66,11 +73,12 @@ export class ProxyInteractions {
       const request = requestsById.get(id);
       if (!request) return;
 
-      const { tags, body, ...rest } = capturedResponse;
+      const { tags, body, timingEvents, ...rest } = capturedResponse;
 
       const response = {
         ...rest,
         body: { buffer: body.buffer },
+        timingEvents: timingEvents as TimingEvents,
       };
       interactions.onNext({
         request,
@@ -112,9 +120,11 @@ export declare namespace ProxySource {
       CompletedRequest,
       'matchedRuleId' | 'remoteIpAddress' | 'remotePort' | 'tags' | 'body'
     > {
+    timingEvents: TimingEvents;
     body: Body;
   }
   interface Response extends Omit<CompletedResponse, 'tags' | 'body'> {
+    timingEvents: TimingEvents;
     body: Body;
   }
 
