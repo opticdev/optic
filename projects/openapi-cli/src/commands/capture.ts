@@ -86,7 +86,10 @@ export function captureCommand(): Command {
         }
       })();
 
-      const renderingStats = renderCaptureProgress(observations);
+      const renderingStats = renderCaptureProgress(
+        observations,
+        interactiveCapture
+      );
 
       await Promise.all([handleUserSignals, renderingStats]);
     });
@@ -155,12 +158,18 @@ export type CaptureObservation = {
 export interface CaptureObservations
   extends AsyncIterable<CaptureObservation> {}
 
-async function renderCaptureProgress(observations: CaptureObservations) {
+async function renderCaptureProgress(
+  observations: CaptureObservations,
+  interactiveCapture: boolean
+) {
   const chalk = (await import('chalk')).default;
 
   let interactionCount = 0;
 
   console.error('> Waiting for first request');
+  if (interactiveCapture) {
+    console.error('Press [ Enter ] to finish capturing requests');
+  }
 
   for await (let observation of observations) {
     if (observation.kind === CaptureObservationKind.InteractionCaptured) {
