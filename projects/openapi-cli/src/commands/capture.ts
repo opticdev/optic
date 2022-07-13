@@ -3,12 +3,14 @@ import Path from 'path';
 import * as fs from 'fs-extra';
 import readline from 'readline';
 import { AbortController } from 'node-abort-controller';
+import { Writable } from 'stream';
 import * as AT from '../lib/async-tools';
 
 import {
   CapturedInteraction,
   CapturedInteractions,
   HarEntries,
+  HttpArchive,
   ProxyInteractions,
 } from '../captures/index';
 
@@ -27,7 +29,7 @@ export function captureCommand(): Command {
       const options = command.opts();
 
       let sourcesController = new AbortController();
-      const sources: HarEntries[] = [];
+      const sources: HarEntries[] = []; // this should be CapturedInteractions, but those aren't detailed enough yet to not lose information later
       let interactiveCapture = false;
 
       if (options.har) {
@@ -65,6 +67,10 @@ export function captureCommand(): Command {
         );
       }
 
+      const harEntries = AT.merge(...sources);
+
+      const observations = writeInteractions(harEntries, process.stdout);
+
       const handleUserSignals = (async function () {
         if (interactiveCapture && process.stdin.isTTY) {
           // wait for an empty new line on input, which should indicate hitting Enter / Return
@@ -80,16 +86,96 @@ export function captureCommand(): Command {
         }
       })();
 
-      const harEntries = AT.merge(...sources);
+      const renderingStats = renderCaptureProgress(observations);
 
-      const destination = process.stdout;
-
-      let harJSON = HarEntries.toHarJSON(harEntries);
-
-      harJSON.pipe(process.stdout);
-
-      await Promise.all([handleUserSignals]);
+      await Promise.all([handleUserSignals, renderingStats]);
     });
 
   return command;
+}
+
+function writeInteractions(
+  harEntries: HarEntries,
+  destination: Writable & { fd?: number }
+): CaptureObservations {
+  const observing = new AT.Subject<CaptureObservation>();
+  const observers = {
+    captureHarEntry(entry: HttpArchive.Entry) {
+      const interaction = CapturedInteraction.fromHarEntry(entry); // inefficient, but okay until CapturedInteraction becomes the common source type
+      observing.onNext({
+        kind: CaptureObservationKind.InteractionCaptured,
+        path: interaction.request.path,
+        method: interaction.request.method,
+      });
+    },
+  };
+
+  let harJSON = HarEntries.toHarJSON(
+    AT.tap(observers.captureHarEntry)(harEntries)
+  );
+
+  function onWriteComplete() {
+    observing.onNext({
+      kind: CaptureObservationKind.CaptureWritten,
+    });
+    observing.onCompleted();
+  }
+
+  if (destination.fd == 1) {
+    // if writing to stdout
+    // stdout won't close until the process detaches, so we can't use it to measure completion
+    harJSON.once('end', onWriteComplete);
+  } else {
+    destination.once('end', onWriteComplete);
+  }
+
+  harJSON.pipe(destination);
+
+  return observing.iterator;
+}
+
+export enum CaptureObservationKind {
+  InteractionCaptured = 'interaction-captured',
+  CaptureWritten = 'capture-written',
+}
+
+export type CaptureObservation = {
+  kind: CaptureObservationKind;
+} & (
+  | {
+      kind: CaptureObservationKind.InteractionCaptured;
+      path: string;
+      method: string;
+    }
+  | {
+      kind: CaptureObservationKind.CaptureWritten;
+    }
+);
+
+export interface CaptureObservations
+  extends AsyncIterable<CaptureObservation> {}
+
+async function renderCaptureProgress(observations: CaptureObservations) {
+  const chalk = (await import('chalk')).default;
+
+  let interactionCount = 0;
+
+  console.error('> Waiting for first request');
+
+  for await (let observation of observations) {
+    if (observation.kind === CaptureObservationKind.InteractionCaptured) {
+      interactionCount += 1;
+      if (interactionCount === 1) {
+        console.error(`> First request captured`);
+      }
+    } else if (observation.kind === CaptureObservationKind.CaptureWritten) {
+      console.error('> Capture written succesfully');
+    }
+  }
+
+  if (interactionCount === 0) {
+    console.error('⚠️  No requests captured');
+  } else {
+    console.error(`✅ Captured ${interactionCount} requests`);
+  }
 }
