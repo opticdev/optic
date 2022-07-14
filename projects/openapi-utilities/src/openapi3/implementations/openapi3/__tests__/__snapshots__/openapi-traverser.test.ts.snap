@@ -5444,43 +5444,6 @@ Array [
 ]
 `;
 
-exports[`supports 3.0 and 3.1 schema fact generation produces correct fact for 3.0 nullable 1`] = `
-Object {
-  "type": Array [
-    "string",
-    "null",
-  ],
-}
-`;
-
-exports[`supports 3.0 and 3.1 schema fact generation produces correct fact for 3.0 nullable with no type 1`] = `
-Object {
-  "type": Array [
-    "null",
-  ],
-}
-`;
-
-exports[`supports 3.0 and 3.1 schema fact generation produces correct fact for 3.1 with and type array 1`] = `
-Object {
-  "type": Array [
-    "string",
-    "number",
-  ],
-}
-`;
-
-exports[`supports 3.0 and 3.1 schema fact generation produces correct fact for 3.1 with null 1`] = `
-Object {
-  "type": Array [
-    "string",
-    "null",
-  ],
-}
-`;
-
-exports[`supports 3.0 and 3.1 schema fact generation produces correct fact for any 1`] = `Object {}`;
-
 exports[`will extract facts for oneOf, allOf or anyOf schemas 1`] = `
 Array [
   Object {
