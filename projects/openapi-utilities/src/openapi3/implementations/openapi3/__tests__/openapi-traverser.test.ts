@@ -91,7 +91,7 @@ describe('supports 3.0 and 3.1 schema fact generation', () => {
         type: 'string',
         nullable: true,
       })
-    ).toMatchSnapshot();
+    ).toEqual({ type: ['string', 'null'] });
   });
 
   it('produces correct fact for 3.1 with null', () => {
@@ -99,7 +99,7 @@ describe('supports 3.0 and 3.1 schema fact generation', () => {
       traverser.getSchemaFact({
         type: ['string', 'null'],
       })
-    ).toMatchSnapshot();
+    ).toEqual({ type: ['string', 'null'] });
   });
 
   it('produces correct fact for 3.1 with and type array', () => {
@@ -107,16 +107,16 @@ describe('supports 3.0 and 3.1 schema fact generation', () => {
       traverser.getSchemaFact({
         type: ['string', 'number'],
       })
-    ).toMatchSnapshot();
+    ).toEqual({ type: ['string', 'number'] });
   });
   it('produces correct fact for 3.0 nullable with no type', () => {
     expect(
       traverser.getSchemaFact({
         nullable: true,
       })
-    ).toMatchSnapshot();
+    ).toEqual({ type: ['null'] });
   });
   it('produces correct fact for any', () => {
-    expect(traverser.getSchemaFact({})).toMatchSnapshot();
+    expect(traverser.getSchemaFact({})).toEqual({});
   });
 });
