@@ -3579,7 +3579,6 @@ __metadata:
     lodash.groupby: ^4.6.0
     lodash.isequal: ^4.5.0
     lodash.sortby: ^4.7.0
-    openapi-schema-validator: ^10.0.0
     openapi-types: ^9.3.0
     prettier: ^2.4.1
     semver: ^7.3.7
@@ -3863,7 +3862,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-formats@npm:^2.0.2, ajv-formats@npm:^2.1.1, ajv-formats@npm:~2.1.0":
+"ajv-formats@npm:^2.1.1, ajv-formats@npm:~2.1.0":
   version: 2.1.1
   resolution: "ajv-formats@npm:2.1.1"
   dependencies:
@@ -3889,7 +3888,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.0.0, ajv@npm:^8.1.0, ajv@npm:^8.6.0, ajv@npm:^8.6.3, ajv@npm:^8.8.2":
+"ajv@npm:^8.0.0, ajv@npm:^8.6.0, ajv@npm:^8.6.3, ajv@npm:^8.8.2":
   version: 8.8.2
   resolution: "ajv@npm:8.8.2"
   dependencies:
@@ -7393,13 +7392,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.merge@npm:^4.6.1":
-  version: 4.6.2
-  resolution: "lodash.merge@npm:4.6.2"
-  checksum: ad580b4bdbb7ca1f7abf7e1bce63a9a0b98e370cf40194b03380a46b4ed799c9573029599caebc1b14e3f24b111aef72b96674a56cfa105e0f5ac70546cdc005
-  languageName: node
-  linkType: hard
-
 "lodash.pick@npm:^4.4.0":
   version: 4.4.0
   resolution: "lodash.pick@npm:4.4.0"
@@ -8122,25 +8114,6 @@ __metadata:
   dependencies:
     mimic-fn: ^2.1.0
   checksum: 2478859ef817fc5d4e9c2f9e5728512ddd1dbc9fb7829ad263765bb6d3b91ce699d6e2332eef6b7dff183c2f490bd3349f1666427eaba4469fba0ac38dfd0d34
-  languageName: node
-  linkType: hard
-
-"openapi-schema-validator@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "openapi-schema-validator@npm:10.0.0"
-  dependencies:
-    ajv: ^8.1.0
-    ajv-formats: ^2.0.2
-    lodash.merge: ^4.6.1
-    openapi-types: ^10.0.0
-  checksum: b75883196d9afbb89cf98ada98aeed37207e0dfcf5191c32f59a6b8593a38fa598b625f2367e97a4968085c376a2d6684d7f2706e8a618dfd1fddf7c5a2e2c30
-  languageName: node
-  linkType: hard
-
-"openapi-types@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "openapi-types@npm:10.0.0"
-  checksum: 8cc8b5bf40ea10b1f9c56fb05aada74bfe3d9e94e141464561a5c3cd0a933906e57d9bf4e059219ec8e63a97a69e0655d21c9dd3f4de1ff4f71672d10664cfc0
   languageName: node
   linkType: hard
 

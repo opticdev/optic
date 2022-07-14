@@ -54,7 +54,6 @@
     "lodash.groupby": "^4.6.0",
     "lodash.isequal": "^4.5.0",
     "lodash.sortby": "^4.7.0",
-    "openapi-schema-validator": "^10.0.0",
     "openapi-types": "^9.3.0",
     "semver": "^7.3.7",
     "ts-invariant": "^0.9.3",
