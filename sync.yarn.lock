@@ -3561,6 +3561,7 @@ __metadata:
     "@babel/preset-react": ^7.17.0
     "@babel/preset-typescript": ^7.17.0
     "@octokit/rest": ^18.12.0
+    "@sentry/node": ^6.17.6
     "@types/ajv": ^1.0.0
     "@types/analytics-node": ^3.1.7
     "@types/babel__core": ^7
