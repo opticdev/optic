@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@octokit/rest": "^18.12.0",
+    "@sentry/node": "^6.17.6",
     "@useoptic/json-pointer-helpers": "workspace:*",
     "ajv": "^8.11.0",
     "ajv-formats": "^2.1.1",

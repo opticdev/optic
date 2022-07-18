@@ -2,7 +2,7 @@ import { program as cli } from 'commander';
 import { exec } from 'child_process';
 import { registerCompare } from './commands/compare';
 import { registerBulkCompare } from './commands/bulk-compare';
-import { initSentry } from './sentry';
+import { initSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { CliConfig } from './types';
 import {
   registerCreateContext,

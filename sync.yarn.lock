@@ -3598,7 +3598,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@useoptic/optic-ci@workspace:projects/optic-ci":
+"@useoptic/optic-ci@workspace:*, @useoptic/optic-ci@workspace:projects/optic-ci":
   version: 0.0.0-use.local
   resolution: "@useoptic/optic-ci@workspace:projects/optic-ci"
   dependencies:
@@ -3680,6 +3680,7 @@ __metadata:
     "@types/uuid": ^8.3.1
     "@useoptic/openapi-io": "workspace:*"
     "@useoptic/openapi-utilities": "workspace:*"
+    "@useoptic/optic-ci": "workspace:*"
     "@useoptic/rulesets-base": "workspace:*"
     "@useoptic/standard-rulesets": "workspace:*"
     ajv: ^8.11.0

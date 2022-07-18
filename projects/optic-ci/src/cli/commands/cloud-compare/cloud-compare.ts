@@ -14,7 +14,7 @@ import {
 } from '@useoptic/openapi-utilities';
 
 import { createOpticClient, UploadSlot } from '../../clients/optic-client';
-import { wrapActionHandlerWithSentry } from '../../sentry';
+import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { parseSpecVersion, SpecFromInput } from '../utils';
 import { getGitRootPath } from '../utils/path';
 import { initRun } from './init-run';

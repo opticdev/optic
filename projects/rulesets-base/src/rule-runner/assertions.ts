@@ -1,6 +1,11 @@
-import { ChangeType, IChange, IFact } from '@useoptic/openapi-utilities';
+import {
+  ChangeType,
+  IChange,
+  IFact,
+  UserError,
+} from '@useoptic/openapi-utilities';
 import pick from 'lodash.pick';
-import { RuleError, UserRuleError } from '../errors';
+import { RuleError } from '../errors';
 import {
   Assertion,
   ChangedAssertion,
@@ -192,7 +197,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
             });
           } else {
             const err = e as Error;
-            throw new UserRuleError(err);
+            throw new UserError(err.message);
           }
         }
       }
@@ -233,7 +238,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
             });
           } else {
             const err = e as Error;
-            throw new UserRuleError(err);
+            throw new UserError(err.message);
           }
         }
       }
@@ -268,7 +273,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
             });
           } else {
             const err = e as Error;
-            throw new UserRuleError(err);
+            throw new UserError(err.message);
           }
         }
       }
@@ -304,7 +309,7 @@ class AssertionRunner<T extends AssertionType> implements Assertions<T> {
             });
           } else {
             const err = e as Error;
-            throw new UserRuleError(err);
+            throw new UserError(err.message);
           }
         }
       }

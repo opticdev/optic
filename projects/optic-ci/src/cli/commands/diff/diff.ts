@@ -5,7 +5,7 @@ import {
   defaultEmptySpec,
   validateOpenApiV3Document,
 } from '@useoptic/openapi-utilities';
-import { wrapActionHandlerWithSentry } from '../../sentry';
+import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
   ParseResult,
   parseSpecVersion,

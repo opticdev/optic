@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { wrapActionHandlerWithSentry } from '../../sentry';
+import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { init } from './init';
 
 const initWithSentry = wrapActionHandlerWithSentry(init);

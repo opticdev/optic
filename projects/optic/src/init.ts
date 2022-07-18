@@ -1,6 +1,5 @@
 import { program as cli } from 'commander';
-import { initSentry } from './sentry';
-
+import { initSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { initSegment } from '@useoptic/openapi-utilities/build/utilities/segment';
 
 const packageJson = require('../../package.json');

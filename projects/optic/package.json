@@ -51,6 +51,7 @@
     "@stoplight/spectral-core": "^1.8.1",
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
+    "@useoptic/optic-ci": "workspace:*",
     "@useoptic/rulesets-base": "workspace:*",
     "ajv": "^8.11.0",
     "bottleneck": "^2.19.5",
