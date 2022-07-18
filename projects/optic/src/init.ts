@@ -7,7 +7,7 @@ import { registerInit } from '@useoptic/optic-ci/build/cli/commands/init/registe
 import { registerCreateGithubContext } from '@useoptic/optic-ci/build/cli/commands/create-context/create-github-context';
 import { registerDiff } from './commands/diff/diff';
 
-const packageJson = require('../../package.json');
+const packageJson = require('../package.json');
 
 export const initCli = async () => {
   initSentry(packageJson.version);
