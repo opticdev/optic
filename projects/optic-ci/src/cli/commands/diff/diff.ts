@@ -16,11 +16,15 @@ export const registerDiff = (cli: Command, hideCommand: boolean) => {
   cli
     .command(
       'diff',
-      hideCommand
-        ? {
-            hidden: true,
-          }
-        : {}
+      // TODO unhide when ready to launch
+      {
+        hidden: true,
+      }
+      // hideCommand
+      //   ? {
+      //       hidden: true,
+      //     }
+      //   : {}
     )
     // .description()
     // .summary()
@@ -31,8 +35,10 @@ export const registerDiff = (cli: Command, hideCommand: boolean) => {
     .option('--base <base>', 'the base ref to compare against')
     .action(
       wrapActionHandlerWithSentry(
-        // TODO document this well
+        // TODO document this well=
         // Either is diff <before> <after>
+        // or
+        // diff --base ref (uses optic.yml)
         // or
         // diff <filepath> --base ref
         async (
@@ -42,6 +48,12 @@ export const registerDiff = (cli: Command, hideCommand: boolean) => {
             base?: string;
           }
         ) => {
+          const webBase =
+            process.env.OPTIC_ENV === 'staging'
+              ? 'https://app.o3c.info'
+              : 'https://app.useoptic.com';
+
+          // TODO check for optic.yml and --base
           if (file2) {
             const baseFilePath = file1;
             const headFilePath = file2;
@@ -51,9 +63,7 @@ export const registerDiff = (cli: Command, hideCommand: boolean) => {
             ]);
             const compressedData = compressData(baseFile, headFile);
             console.log(compressedData.length);
-            openBrowserToPage(
-              `http://localhost:3000/organizations/046b3dd0-a1c6-4ec8-96b3-a1906164d0ec?data=${compressedData}`
-            );
+            openBrowserToPage(`${webBase}/changelog#${compressedData}`);
           } else if (options.base) {
             // TODO check if in git repo
             // TODO implement
@@ -68,6 +78,8 @@ export const registerDiff = (cli: Command, hideCommand: boolean) => {
 const getFileFromDifferentRef = (filePath: string, ref: string) => {
   // TODO implement
 };
+
+const getFilesFromOpticyml = (ref: string) => {};
 
 // filePathOrRef can be a path, or a gitref:path (delimited by `:`)
 const getFileFromFsOrGit = async (filePathOrRef: string) => {
