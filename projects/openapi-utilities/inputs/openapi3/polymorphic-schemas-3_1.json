@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.1.0",
   "info": {
     "title": "Simple",
     "termsOfService": "http://swagger.io/terms/",
@@ -45,10 +45,7 @@
                         {
                           "type": "object",
                           "properties": {
-                            "fulfillmentId": {
-                              "type": "string",
-                              "nullable": true
-                            }
+                            "fulfillmentId": { "type": ["string", "null"] }
                           }
                         }
                       ]

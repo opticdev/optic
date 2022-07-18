@@ -1,5 +1,4 @@
 import fs from 'fs-extra';
-import { OpenAPIV3 } from 'openapi-types';
 
 import { defaultEmptySpec } from '../../../constants';
 import { validateOpenApiV3Document } from '../validator';
@@ -7,7 +6,8 @@ import { validateOpenApiV3Document } from '../validator';
 test('valid open api document should not raise errors', async () => {
   validateOpenApiV3Document(defaultEmptySpec);
   validateOpenApiV3Document(
-    await fs.readJson('./inputs/openapi3/petstore0.json')
+    (await fs.readJson('./inputs/openapi3/petstore0.json.flattened.json'))
+      .jsonLike
   );
 });
 
@@ -23,7 +23,7 @@ test('open api doc with no path should throw an error', () => {
 test('open api doc with extra custom parameters', () => {
   validateOpenApiV3Document({
     ...defaultEmptySpec,
-    extra_property: {
+    'x-extra_property': {
       abc: 'asd',
     },
   });
