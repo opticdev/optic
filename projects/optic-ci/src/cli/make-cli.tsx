@@ -38,7 +38,7 @@ export async function getProjectName(): Promise<string> {
       );
     });
     const stdout = await stdoutPromise;
-    return stdout;
+    return stdout.trim();
   } catch (e) {
     return 'unknown-project';
   }
