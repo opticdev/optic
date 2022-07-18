@@ -63,7 +63,7 @@ export const registerDiff = (cli: Command, hideCommand: boolean) => {
             ]);
             const compressedData = compressData(baseFile, headFile);
             console.log(compressedData.length);
-            openBrowserToPage(`${webBase}/changelog#${compressedData}`);
+            openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
           } else if (options.base) {
             // TODO check if in git repo
             // TODO implement
