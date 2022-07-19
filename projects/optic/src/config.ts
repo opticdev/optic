@@ -6,6 +6,8 @@ import path from 'node:path';
 
 const OPTIC_YML_NAME = 'optic.yml';
 
+type ConfigRule = string | { rule: string; options?: unknown };
+
 export type OpticCliConfig = {
   // path to the loaded config, or undefined if it was the default config
   configPath?: string;
@@ -14,11 +16,14 @@ export type OpticCliConfig = {
     path: string;
     id: string;
   }[];
+
+  rules: ConfigRule[];
 };
 
 export const DefaultOpticCliConfig = {
   configPath: undefined,
   files: [],
+  rules: [],
 };
 
 const ajv = new Ajv();
@@ -43,7 +48,17 @@ const configSchema = {
     rules: {
       type: 'array',
       items: {
-        anyOf: [{ type: 'string' }, { type: 'object' }],
+        anyOf: [
+          { type: 'string' },
+          {
+            type: 'object',
+            properties: {
+              rule: { type: 'string' },
+              options: { type: 'object' },
+            },
+            required: ['rule'],
+          },
+        ],
       },
     },
   },

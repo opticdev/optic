@@ -19,8 +19,36 @@ describe('validateConfig', () => {
     expect(() => validateConfig(config, 'somePath')).not.toThrow();
   });
 
-  test('invalid files', () => {
-    const config = { files: { foo: 'bar' } };
-    expect(() => validateConfig(config, 'somePath')).toThrow(UserError);
+  describe('files', () => {
+    test('not array is invalid', () => {
+      const config = { files: { foo: 'bar' } };
+      expect(() => validateConfig(config, 'somePath')).toThrow(UserError);
+    });
+  });
+
+  describe('rules', () => {
+    test('not array is invalid', () => {
+      const config = { rules: { foo: 'bar' } };
+      expect(() => validateConfig(config, 'somePath')).toThrow(UserError);
+    });
+
+    test('string is valid', () => {
+      const config = { rules: ['foo'] };
+      expect(() => validateConfig(config, 'somePath')).not.toThrow();
+    });
+
+    test('object is valid', () => {
+      const config = {
+        rules: [{ rule: 'foo', options: { someOption: true } }],
+      };
+      expect(() => validateConfig(config, 'somePath')).not.toThrow();
+    });
+
+    test('object with invalid config', () => {
+      const config = {
+        rules: [{ rule: 'foo', options: 'yeah' }],
+      };
+      expect(() => validateConfig(config, 'somePath')).toThrow(UserError);
+    });
   });
 });
