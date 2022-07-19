@@ -17,7 +17,7 @@ export type OpticCliConfig = {
 };
 
 export const DefaultOpticCliConfig = {
-  fromFile: false,
+  configPath: undefined,
   files: [],
 };
 
@@ -69,11 +69,15 @@ export async function loadCliConfig(path: string): Promise<OpticCliConfig> {
 
   validateConfig(config, path);
 
-  return config as OpticCliConfig;
+  const cliConfig = config as OpticCliConfig;
+  cliConfig.configPath = path;
+
+  return cliConfig;
 }
 
 export const validateConfig = (config: unknown, path: string) => {
   const result = validateConfigSchema(config);
+
   if (!result) {
     throw new UserError(
       `Configuration file \`${path}\` is invalid:\n${validateConfigSchema.errors
