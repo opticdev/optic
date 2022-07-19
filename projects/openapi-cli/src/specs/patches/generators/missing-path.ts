@@ -25,8 +25,16 @@ export function* missingPathPatches(
     PatchOperationGroup.create(`add path with parameters`, {
       op: 'add',
       path: specPath,
-      value: {
-        parameters: pathParameters.map(
+      value: {},
+    })
+  );
+
+  if (pathParameters.length > 0) {
+    groupedOperations.push(
+      PatchOperationGroup.create(`add path parameters`, {
+        op: 'add',
+        path: jsonPointerHelpers.append(specPath, 'parameters'),
+        value: pathParameters.map(
           (parameterName): OpenAPIV3.ParameterObject => {
             return {
               in: 'path',
@@ -35,9 +43,9 @@ export function* missingPathPatches(
             };
           }
         ),
-      },
-    })
-  );
+      })
+    );
+  }
 
   let methodOperations: PatchOperation[] = methods.map((method) => ({
     op: 'add',
