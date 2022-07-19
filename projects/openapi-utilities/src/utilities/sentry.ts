@@ -1,6 +1,5 @@
 import * as Sentry from '@sentry/node';
-import { UserRuleError } from '@useoptic/rulesets-base';
-import { UserError } from '@useoptic/openapi-utilities';
+import { UserError } from '../errors';
 
 export let SentryClient: Sentry.NodeClient | null = null;
 
@@ -26,11 +25,7 @@ export const wrapActionHandlerWithSentry = <
     } catch (e) {
       const err = e as Error;
       console.error(err.message);
-      if (
-        SentryClient &&
-        !UserError.isInstance(e) &&
-        !UserRuleError.isInstance(e)
-      ) {
+      if (SentryClient && !UserError.isInstance(e)) {
         SentryClient.captureException(e);
       }
       if (SentryClient) {

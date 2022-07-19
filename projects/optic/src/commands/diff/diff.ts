@@ -5,27 +5,16 @@ import {
   defaultEmptySpec,
   validateOpenApiV3Document,
 } from '@useoptic/openapi-utilities';
-import { wrapActionHandlerWithSentry } from '../../sentry';
+import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
   ParseResult,
   parseSpecVersion,
   specFromInputToResults,
-} from '../utils';
+} from '@useoptic/optic-ci/build/cli/commands/utils';
 
-export const registerDiff = (cli: Command, hideCommand: boolean) => {
+export const registerDiff = (cli: Command) => {
   cli
-    .command(
-      'diff',
-      // TODO unhide when ready to launch
-      {
-        hidden: true,
-      }
-      // hideCommand
-      //   ? {
-      //       hidden: true,
-      //     }
-      //   : {}
-    )
+    .command('diff')
     // .description()
     // .summary()
     // .usage('./openapi-spec.yml master:openapi-spec/yml')

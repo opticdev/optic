@@ -15,7 +15,10 @@ import {
   flushEvents,
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
-import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
+import {
+  wrapActionHandlerWithSentry,
+  SentryClient,
+} from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
   parseSpecVersion,
   specFromInputToResults,
