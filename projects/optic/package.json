@@ -1,5 +1,5 @@
 {
-  "name": "@useoptic/optic-ci",
+  "name": "@useoptic/optic",
   "packageManager": "yarn@3.0.2",
   "version": "0.26.21",
   "main": "build/index.js",
@@ -51,6 +51,7 @@
     "@stoplight/spectral-core": "^1.8.1",
     "@useoptic/openapi-io": "workspace:*",
     "@useoptic/openapi-utilities": "workspace:*",
+    "@useoptic/optic-ci": "workspace:*",
     "@useoptic/rulesets-base": "workspace:*",
     "ajv": "^8.11.0",
     "bottleneck": "^2.19.5",

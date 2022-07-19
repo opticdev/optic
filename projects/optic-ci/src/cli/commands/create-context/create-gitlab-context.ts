@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { Command, Option } from 'commander';
 import { UserError } from '@useoptic/openapi-utilities';
-import { wrapActionHandlerWithSentry } from '../../sentry';
+import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 import {
   DEFAULT_CONTEXT_PATH,
