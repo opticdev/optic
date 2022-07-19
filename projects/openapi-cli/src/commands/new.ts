@@ -11,9 +11,16 @@ export function newCommand(): Command {
   const command = new Command('new');
 
   command
-    .argument('[file-path]', 'path of the new OpenAPI file')
     .description('create a new OpenAPI spec file')
-    .option('--oas-version <version-number>', 'OpenAPI version number', '3.0.3')
+    .argument(
+      '[file-path]',
+      'path of the new OpenAPI file (written to stdout when not provided)'
+    )
+    .option(
+      '--oas-version <version-number>',
+      'OpenAPI version number to be used',
+      '3.0.3'
+    )
     .action(async (filePath?: string) => {
       let absoluteFilePath: string;
       let destination: Writable;
