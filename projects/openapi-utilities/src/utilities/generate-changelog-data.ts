@@ -5,6 +5,9 @@ import { IChange } from '../openapi3/sdk/types';
 
 /**
  * Takes raw outputs form a run and generates the data required to display a changelog.
+ *
+ * @example
+ * generateChangelogData(compareOutput.changes, parsedTo.jsonLike);
  */
 export const generateChangelogData = ({
   changes,
