@@ -56,6 +56,13 @@ export {
 } from './utilities/shared-comment';
 export { createCommentBody } from './utilities/compare-comment';
 export { logComparison } from './utilities/comparison-render';
+export {
+  BodyChange,
+  ContentType,
+  OpenApiEndpointChange,
+  StatusCode,
+  groupChanges,
+} from './utilities/group-changes';
 
 export {
   sourcemapReader,
