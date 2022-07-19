@@ -14,10 +14,11 @@ import {
 } from '@useoptic/optic-ci/build/cli/commands/utils';
 import { BreakingChangesRuleset } from '@useoptic/standard-rulesets';
 import { RuleRunner } from '@useoptic/rulesets-base';
+import { OpticCliConfig } from '../../config';
 
 type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
 
-export const registerDiff = (cli: Command) => {
+export const registerDiff = (cli: Command, config: OpticCliConfig) => {
   cli
     .command('diff')
     // .description()
