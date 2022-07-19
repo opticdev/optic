@@ -45,7 +45,8 @@
                         {
                           "type": "object",
                           "properties": {
-                            "fulfillmentId": { "type": "string",
+                            "fulfillmentId": {
+                              "type": "string",
                               "nullable": true
                             }
                           }

@@ -2860,6 +2860,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/brotli@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "@types/brotli@npm:1.3.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 40ef51b1525f8f65e6ba7044164638d92388424ce387d5e656ef20620274f6e48826a93fd678b7cb52dc145f07d4480d6cfc4fc7a05c76aaeea3ebc8cb964ba1
+  languageName: node
+  linkType: hard
+
 "@types/connect@npm:*":
   version: 3.4.35
   resolution: "@types/connect@npm:3.4.35"
@@ -3607,6 +3616,7 @@ __metadata:
     "@stoplight/spectral-core": ^1.8.1
     "@types/babel__core": ^7
     "@types/babel__preset-env": ^7
+    "@types/brotli": ^1.3.1
     "@types/is-url": ^1.2.30
     "@types/jest": ^26.0.24
     "@types/js-yaml": ^4.0.5
@@ -3623,6 +3633,7 @@ __metadata:
     babel-jest: ^27.5.1
     babel-plugin-transform-inline-environment-variables: ^0.4.3
     bottleneck: ^2.19.5
+    brotli: ^1.3.3
     chalk: ^4.1.2
     commander: ^9.0.0
     dotenv: ^16.0.0
@@ -3632,6 +3643,7 @@ __metadata:
     json-stable-stringify: ^1.0.1
     loglevel: ^1.8.0
     node-fetch: ^2.6.7
+    open: ^8.4.0
     picomatch: ^2.3.1
     prettier: ^2.4.1
     ts-node: ^10.8.0
@@ -4267,6 +4279,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"base64-js@npm:^1.1.2":
+  version: 1.5.1
+  resolution: "base64-js@npm:1.5.1"
+  checksum: 669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
+  languageName: node
+  linkType: hard
+
 "before-after-hook@npm:^2.2.0":
   version: 2.2.2
   resolution: "before-after-hook@npm:2.2.2"
@@ -4367,6 +4386,15 @@ __metadata:
   version: 1.2.0
   resolution: "brotli-wasm@npm:1.2.0"
   checksum: 23839d1fe7e0482fed36f64710d8f3d0b56f85bbab02c34f39a788579fa123bab96109e88abf520d77659ffd61b42a264203b6f45e7f6e70d2d8719c04d962d1
+  languageName: node
+  linkType: hard
+
+"brotli@npm:^1.3.3":
+  version: 1.3.3
+  resolution: "brotli@npm:1.3.3"
+  dependencies:
+    base64-js: ^1.1.2
+  checksum: 2c97329f4ccb8e4332cedd2f63b85c2e15ffb305b1cbf046df86201434caf93cb7992ca73c0f7053b6a1417f595069ec7783c26e01510cefc10035a0f466e594
   languageName: node
   linkType: hard
 
@@ -5106,6 +5134,13 @@ __metadata:
   version: 4.2.2
   resolution: "deepmerge@npm:4.2.2"
   checksum: a8c43a1ed8d6d1ed2b5bf569fa4c8eb9f0924034baf75d5d406e47e157a451075c4db353efea7b6bcc56ec48116a8ce72fccf867b6e078e7c561904b5897530b
+  languageName: node
+  linkType: hard
+
+"define-lazy-prop@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "define-lazy-prop@npm:2.0.0"
+  checksum: 0115fdb065e0490918ba271d7339c42453d209d4cb619dfe635870d906731eff3e1ade8028bb461ea27ce8264ec5e22c6980612d332895977e89c1bbc80fcee2
   languageName: node
   linkType: hard
 
@@ -6412,6 +6447,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-docker@npm:^2.0.0, is-docker@npm:^2.1.1":
+  version: 2.2.1
+  resolution: "is-docker@npm:2.2.1"
+  bin:
+    is-docker: cli.js
+  checksum: 3fef7ddbf0be25958e8991ad941901bf5922ab2753c46980b60b05c1bf9c9c2402d35e6dc32e4380b980ef5e1970a5d9d5e5aa2e02d77727c3b6b5e918474c56
+  languageName: node
+  linkType: hard
+
 "is-extglob@npm:^2.1.1":
   version: 2.1.1
   resolution: "is-extglob@npm:2.1.1"
@@ -6509,6 +6553,15 @@ __metadata:
   version: 1.2.4
   resolution: "is-url@npm:1.2.4"
   checksum: 100e74b3b1feab87a43ef7653736e88d997eb7bd32e71fd3ebc413e58c1cbe56269699c776aaea84244b0567f2a7d68dfaa512a062293ed2f9fdecb394148432
+  languageName: node
+  linkType: hard
+
+"is-wsl@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "is-wsl@npm:2.2.0"
+  dependencies:
+    is-docker: ^2.0.0
+  checksum: 20849846ae414997d290b75e16868e5261e86ff5047f104027026fd61d8b5a9b0b3ade16239f35e1a067b3c7cc02f70183cb661010ed16f4b6c7c93dad1b19d8
   languageName: node
   linkType: hard
 
@@ -8116,6 +8169,17 @@ __metadata:
   dependencies:
     mimic-fn: ^2.1.0
   checksum: 2478859ef817fc5d4e9c2f9e5728512ddd1dbc9fb7829ad263765bb6d3b91ce699d6e2332eef6b7dff183c2f490bd3349f1666427eaba4469fba0ac38dfd0d34
+  languageName: node
+  linkType: hard
+
+"open@npm:^8.4.0":
+  version: 8.4.0
+  resolution: "open@npm:8.4.0"
+  dependencies:
+    define-lazy-prop: ^2.0.0
+    is-docker: ^2.1.1
+    is-wsl: ^2.2.0
+  checksum: e9545bec64cdbf30a0c35c1bdc310344adf8428a117f7d8df3c0af0a0a24c513b304916a6d9b11db0190ff7225c2d578885080b761ed46a3d5f6f1eebb98b63c
   languageName: node
   linkType: hard
 
