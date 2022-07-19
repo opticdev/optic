@@ -1,6 +1,7 @@
 import { JsonSchemaSourcemap, isYaml } from '@useoptic/openapi-io';
 import { PatchOperation } from '../../patches';
 import { applyPatch } from './reconcilers';
+import { Readable, Writable } from 'stream';
 
 export { JsonSchemaSourcemap as SpecFilesSourcemap };
 
@@ -36,6 +37,10 @@ export class SpecFile {
 
   static containsYamlComments(self: SpecFile): boolean {
     return SpecFile.isYaml(self) && yamlCommentsPattern.test(self.contents);
+  }
+
+  static write(self: SpecFile, destination: Writable): Writable {
+    return Readable.from(self.contents).pipe(destination);
   }
 }
 

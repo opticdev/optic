@@ -1,4 +1,4 @@
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 import {
   ILocation,
   IPathComponent,
@@ -62,9 +62,14 @@ export interface OpenApiOperationFact
   method: string;
 }
 
+export type OpenApi3SchemaFact = Omit<
+  OpenAPIV3_1.SchemaObject,
+  'item' | 'required' | 'properties'
+>;
+
 export interface OpenApiBodyFact {
   contentType: string;
-  flatSchema: Omit<OpenAPIV3.SchemaObject, 'item' | 'required' | 'properties'>;
+  flatSchema: OpenApi3SchemaFact;
 }
 
 export interface OpenApiBodyExampleFact extends OpenAPIV3.ExampleObject {
@@ -75,7 +80,7 @@ export interface OpenApiBodyExampleFact extends OpenAPIV3.ExampleObject {
 export interface OpenApiFieldFact {
   key: string;
   required: boolean;
-  flatSchema: Omit<OpenAPIV3.SchemaObject, 'item' | 'required' | 'properties'>;
+  flatSchema: OpenApi3SchemaFact;
 }
 export interface OpenApiResponseFact
   extends Omit<OpenAPIV3.ResponseObject, 'headers' | 'content'> {

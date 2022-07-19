@@ -17,6 +17,7 @@ import {
   trackEvent,
   initSegment,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
+import { registerDiff } from './commands/diff/diff';
 const packageJson = require('../../package.json');
 
 export async function getProjectName(): Promise<string> {
@@ -100,6 +101,7 @@ export async function _makeCiCliInternal(
   );
 
   registerCloudCompare(cli, shouldHideV2Commands);
+  registerDiff(cli, shouldHideV2Commands);
   registerInit(cli);
 
   return cli;
