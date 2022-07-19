@@ -94,4 +94,11 @@ export class SpecPatches {
 
     yield* patches;
   }
+
+  static *newSpec(
+    info: OpenAPIV3.InfoObject,
+    openAPIversion: string = '3.0.3'
+  ): IterableIterator<SpecPatch> {
+    yield* newSpecPatches(info, openAPIversion);
+  }
 }

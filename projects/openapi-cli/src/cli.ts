@@ -4,6 +4,7 @@ import { program as cli } from 'commander';
 
 import { addCommand } from './commands/add';
 import { captureCommand } from './commands/capture';
+import { newCommand } from './commands/new';
 import { statusCommand } from './commands/status';
 import { updateCommand } from './commands/update';
 import { registerDebugTemplateCommand } from './commands/debug-template';
@@ -19,6 +20,7 @@ export function makeCli(config: CliConfig) {
 
   cli.addCommand(addCommand());
   cli.addCommand(captureCommand());
+  cli.addCommand(newCommand());
   cli.addCommand(statusCommand());
   cli.addCommand(updateCommand());
   registerDebugTemplateCommand(cli);
