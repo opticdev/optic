@@ -3398,6 +3398,7 @@ __metadata:
     "@types/jest": ^26.0.24
     "@types/json-stable-stringify": ^1.0.33
     "@types/node": ^17.0.15
+    "@types/semver": ^7.3.10
     "@types/slice-ansi": ^4
     "@types/stream-chain": ^2
     "@types/stream-json": ^1
@@ -3422,6 +3423,7 @@ __metadata:
     node-abort-controller: ^3.0.1
     node-machine-id: ^1.1.12
     prettier: ^2.4.1
+    semver: ^7.3.7
     slice-ansi: ^4.0.0
     stream-chain: ^2.2.5
     stream-json: ^1.7.4
