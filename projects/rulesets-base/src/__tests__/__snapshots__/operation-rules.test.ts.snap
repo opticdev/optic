@@ -2897,7 +2897,7 @@ Object {
         "title": "Empty",
         "version": "0.0.0",
       },
-      "openapi": "3.1.3",
+      "openapi": "3.1.0",
       "paths": Object {
         "/api/users": Object {
           "get": Object {
@@ -2917,7 +2917,7 @@ Object {
         "title": "Empty",
         "version": "0.0.0",
       },
-      "openapi": "3.1.3",
+      "openapi": "3.1.0",
       "servers": Array [
         Object {
           "url": "http://optic.com",
@@ -2977,7 +2977,7 @@ Object {
         "title": "Empty",
         "version": "0.0.0",
       },
-      "openapi": "3.1.3",
+      "openapi": "3.1.0",
       "paths": Object {
         "/api/users": Object {
           "get": Object {
@@ -2997,7 +2997,7 @@ Object {
         "title": "Empty",
         "version": "0.0.0",
       },
-      "openapi": "3.1.3",
+      "openapi": "3.1.0",
       "servers": Array [
         Object {
           "url": "http://optic.com",

@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/optic-ci",
   "packageManager": "yarn@3.0.2",
-  "version": "0.26.19",
+  "version": "0.26.20",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -25,6 +25,7 @@
     "@babel/preset-typescript": "^7.17.0",
     "@types/babel__core": "^7",
     "@types/babel__preset-env": "^7",
+    "@types/brotli": "^1.3.1",
     "@types/is-url": "^1.2.30",
     "@types/jest": "^26.0.24",
     "@types/js-yaml": "^4.0.5",
@@ -53,6 +54,7 @@
     "@useoptic/rulesets-base": "workspace:*",
     "ajv": "^8.11.0",
     "bottleneck": "^2.19.5",
+    "brotli": "^1.3.3",
     "chalk": "^4.1.2",
     "commander": "^9.0.0",
     "is-url": "^1.2.4",
@@ -60,6 +62,7 @@
     "json-stable-stringify": "^1.0.1",
     "loglevel": "^1.8.0",
     "node-fetch": "^2.6.7",
+    "open": "^8.4.0",
     "picomatch": "^2.3.1",
     "url-join": "^4.0.1",
     "uuid": "^8.3.2"

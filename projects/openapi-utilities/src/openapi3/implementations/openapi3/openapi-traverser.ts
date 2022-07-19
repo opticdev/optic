@@ -19,11 +19,12 @@ import {
   IFact,
   OpenApiSpecificationFact,
   FactVariant,
+  OpenApi3SchemaFact,
 } from '../../sdk/types';
 import { IPathComponent } from '../../sdk/types';
 import invariant from 'ts-invariant';
 import { jsonPointerHelpers as jsonPointer } from '@useoptic/json-pointer-helpers';
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 
 export function normalizeOpenApiPath(path: string): string {
   return path
@@ -53,9 +54,9 @@ const isObject = (value: any) => {
 export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   format = 'openapi3';
 
-  input: OpenAPIV3.Document | undefined = undefined;
+  input: (OpenAPIV3.Document | OpenAPIV3_1.Document) | undefined = undefined;
 
-  traverse(input: OpenAPIV3.Document): void {
+  traverse(input: OpenAPIV3.Document | OpenAPIV3_1.Document): void {
     this.input = input;
   }
 
@@ -64,7 +65,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
 
     yield* this.onSpecification(this.input);
 
-    for (let [pathPattern, paths] of Object.entries(this.input.paths)) {
+    for (let [pathPattern, paths] of Object.entries(this.input.paths || {})) {
       const traverser = this;
 
       const traverseIfPresent = function* (
@@ -98,7 +99,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   }
 
   *traverseOperations(
-    operation: OpenAPIV3.OperationObject,
+    operation: OpenAPIV3.OperationObject | OpenAPIV3_1.OperationObject,
     method: string,
     pathPattern: string,
     location: OperationLocation
@@ -156,7 +157,9 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
       }
     }
 
-    for (let [statusCode, response] of Object.entries(operation.responses)) {
+    for (let [statusCode, response] of Object.entries(
+      operation.responses || {}
+    )) {
       const nextJsonPath = jsonPointer.append(
         jsonPath,
         'responses',
@@ -227,12 +230,14 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   }
 
   *traverseParameters(
-    operation: OpenAPIV3.OperationObject,
+    operation: OpenAPIV3.OperationObject | OpenAPIV3_1.OperationObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: OperationLocation
   ): IterableIterator<IFact> {
-    const locationForParameter = (parameter: OpenAPIV3.ParameterObject) => {
+    const locationForParameter = (
+      parameter: OpenAPIV3.ParameterObject | OpenAPIV3_1.ParameterObject
+    ) => {
       let paramLocation:
         | PathParameterLocation
         | QueryParameterLocation
@@ -301,7 +306,9 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     );
 
     if (sharedParameters.match) {
-      const shared = sharedParameters.value as OpenAPIV3.ParameterObject[];
+      const shared = sharedParameters.value as
+        | OpenAPIV3.ParameterObject[]
+        | OpenAPIV3_1.ParameterObject[];
       for (let [i, parameter] of Object.entries(shared)) {
         const location = locationForParameter(parameter);
         if (location) {
@@ -317,7 +324,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     }
   }
   onRequestParameter(
-    parameter: OpenAPIV3.ParameterObject,
+    parameter: OpenAPIV3.ParameterObject | OpenAPIV3_1.ParameterObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location:
@@ -380,7 +387,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   }
 
   *traverseResponseHeaders(
-    response: OpenAPIV3.ResponseObject,
+    response: OpenAPIV3.ResponseObject | OpenAPIV3_1.ResponsesObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ResponseLocation
@@ -421,7 +428,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
 
   onResponseHeader(
     name: string,
-    header: OpenAPIV3.HeaderObject,
+    header: OpenAPIV3.HeaderObject | OpenAPIV3_1.HeaderObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: ResponseHeaderLocation
@@ -443,7 +450,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   }
 
   *traverseBody(
-    body: OpenAPIV3.MediaTypeObject,
+    body: OpenAPIV3.MediaTypeObject | OpenAPIV3_1.MediaTypeObject,
     contentType: string,
     jsonPath: string,
     conceptualPath: IPathComponent[],
@@ -522,7 +529,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
 
   *traverseField(
     key: string,
-    schema: OpenAPIV3.SchemaObject,
+    schema: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject,
     required: boolean,
     jsonPath: string,
     conceptualPath: IPathComponent[],
@@ -542,7 +549,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
 
   // TODO discriminate between ArraySchemaObject | NonArraySchemaObject
   *traverseSchema(
-    schema: OpenAPIV3.SchemaObject,
+    schema: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: FieldLocation
@@ -664,7 +671,11 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   }
 
   *traverseComponentSchema(
-    schema: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject,
+    schema:
+      | OpenAPIV3.SchemaObject
+      | OpenAPIV3.ReferenceObject
+      | OpenAPIV3_1.SchemaObject
+      | OpenAPIV3_1.ReferenceObject,
     schemaName: string
   ): IterableIterator<IFact> {
     const jsonPath = jsonPointer.append(
@@ -706,7 +717,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   ///////////////////////////////////////////////////////////////////////////////////
 
   *onSpecification(
-    specification: OpenAPIV3.Document
+    specification: OpenAPIV3.Document | OpenAPIV3_1.Document
   ): IterableIterator<FactVariant<OpenApiKind.Specification>> {
     yield {
       location: {
@@ -720,26 +731,55 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   }
 
   getSpecificationFact(
-    specification: OpenAPIV3.Document
+    specification: OpenAPIV3.Document | OpenAPIV3_1.Document
   ): OpenApiSpecificationFact {
     const { paths, components, ...specificationFact } = specification;
     return specificationFact;
   }
 
   getSchemaFact(
-    schema: OpenAPIV3.SchemaObject
-  ): Omit<OpenAPIV3.SchemaObject, 'item' | 'required' | 'properties'> {
-    if (schema.type === 'array') {
-      const { items, required, properties, ...schemaFact } = schema;
-      return schemaFact;
-    } else {
-      const { required, properties, ...schemaFact } = schema;
-      return schemaFact;
-    }
+    schema: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject
+  ): OpenApi3SchemaFact {
+    const hasNullableSet = 'nullable' in schema && Boolean(schema.nullable);
+
+    const baseSchema = (() => {
+      if (schema.type === 'array') {
+        const {
+          items,
+          required,
+          properties,
+          // @ts-ignore
+          nullable,
+          ...schemaFact
+        } = schema;
+        return schemaFact;
+      } else {
+        const {
+          required,
+          properties,
+          // @ts-ignore
+          nullable,
+          ...schemaFact
+        } = schema;
+        return schemaFact;
+      }
+    })();
+
+    const typeOverride: OpenApi3SchemaFact['type'] = (() => {
+      if (hasNullableSet && typeof baseSchema.type === 'string') {
+        return [baseSchema.type, 'null'];
+      } else if (hasNullableSet && !baseSchema.type) {
+        return ['null'];
+      }
+      return baseSchema.type;
+    })();
+
+    if (typeOverride) return { ...baseSchema, type: typeOverride };
+    return baseSchema;
   }
 
   onContentForBody(
-    schema: OpenAPIV3.SchemaObject,
+    schema: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject,
     contentType: string,
     jsonPath: string,
     conceptualPath: IPathComponent[],
@@ -762,7 +802,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   }
 
   onBodyExample(
-    example: OpenAPIV3.ExampleObject,
+    example: OpenAPIV3.ExampleObject | OpenAPIV3_1.ExampleObject,
     contentType: string,
     jsonPath: string,
     conceptualPath: IPathComponent[],
@@ -786,7 +826,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
 
   onField(
     key: string,
-    schema: OpenAPIV3.SchemaObject,
+    schema: OpenAPIV3.SchemaObject | OpenAPIV3_1.SchemaObject,
     required: boolean,
     jsonPath: string,
     conceptualPath: IPathComponent[],
@@ -812,7 +852,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   }
 
   getOperationFact(
-    operation: OpenAPIV3.OperationObject
+    operation: OpenAPIV3.OperationObject | OpenAPIV3_1.OperationObject
   ): Omit<
     OpenAPIV3.OperationObject,
     'parameters' | 'responses' | 'requestBody'
@@ -822,7 +862,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
   }
 
   onOperation(
-    operation: OpenAPIV3.OperationObject,
+    operation: OpenAPIV3.OperationObject | OpenAPIV3_1.OperationObject,
     pathPattern: string,
     method: string,
     jsonPath: string,
@@ -847,7 +887,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     };
   }
   onRequest(
-    request: OpenAPIV3.RequestBodyObject,
+    request: OpenAPIV3.RequestBodyObject | OpenAPIV3_1.RequestBodyObject,
     jsonPath: string,
     conceptualPath: IPathComponent[],
     location: RequestLocation
@@ -868,14 +908,14 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     };
   }
   getRequestFact(
-    request: OpenAPIV3.RequestBodyObject
+    request: OpenAPIV3.RequestBodyObject | OpenAPIV3_1.RequestBodyObject
   ): Omit<OpenAPIV3.RequestBodyObject, 'content'> {
     const { content, ...requestFact } = request;
     return requestFact;
   }
 
   onResponse(
-    response: OpenAPIV3.ResponseObject,
+    response: OpenAPIV3.ResponseObject | OpenAPIV3_1.ResponseObject,
     statusCode: string,
     jsonPath: string,
     conceptualPath: IPathComponent[],
@@ -898,7 +938,7 @@ export class OpenAPITraverser implements Traverse<OpenAPIV3.Document> {
     };
   }
   getResponseFact(
-    response: OpenAPIV3.ResponseObject
+    response: OpenAPIV3.ResponseObject | OpenAPIV3_1.ResponseObject
   ): Omit<OpenAPIV3.ResponseObject, 'headers' | 'content'> {
     const { headers, content, ...responseFact } = response;
     return responseFact;

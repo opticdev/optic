@@ -22,6 +22,15 @@ it('will extract facts for oneOf, allOf or anyOf schemas', async () => {
   expect([...traverser.facts()]).toMatchSnapshot();
 });
 
+it('will work with 3.1 schemas', async () => {
+  const traverser = new OpenAPITraverser();
+  const spec = await jsonFromFile(
+    './inputs/openapi3/polymorphic-schemas-3_1.json'
+  );
+  traverser.traverse(spec);
+  expect([...traverser.facts()]).toMatchSnapshot();
+});
+
 it('can extract body example facts from specs', async () => {
   const traverser = new OpenAPITraverser();
   const spec = await jsonFromFile(
@@ -71,4 +80,43 @@ it('handles example schemas as strings', () => {
 
   traverser.traverse(spec);
   expect([...traverser.facts()]).toMatchSnapshot();
+});
+
+describe('supports 3.0 and 3.1 schema fact generation', () => {
+  const traverser = new OpenAPITraverser();
+
+  it('produces correct fact for 3.0 nullable', () => {
+    expect(
+      traverser.getSchemaFact({
+        type: 'string',
+        nullable: true,
+      })
+    ).toEqual({ type: ['string', 'null'] });
+  });
+
+  it('produces correct fact for 3.1 with null', () => {
+    expect(
+      traverser.getSchemaFact({
+        type: ['string', 'null'],
+      })
+    ).toEqual({ type: ['string', 'null'] });
+  });
+
+  it('produces correct fact for 3.1 with and type array', () => {
+    expect(
+      traverser.getSchemaFact({
+        type: ['string', 'number'],
+      })
+    ).toEqual({ type: ['string', 'number'] });
+  });
+  it('produces correct fact for 3.0 nullable with no type', () => {
+    expect(
+      traverser.getSchemaFact({
+        nullable: true,
+      })
+    ).toEqual({ type: ['null'] });
+  });
+  it('produces correct fact for any', () => {
+    expect(traverser.getSchemaFact({})).toEqual({});
+  });
 });
