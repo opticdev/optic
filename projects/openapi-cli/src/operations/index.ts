@@ -72,6 +72,13 @@ export type UndocumentedOperation = {
       type: UndocumentedOperationType.MissingPath;
       specPath: string;
       methods: OpenAPIV3.HttpMethods[];
+      pathParameters: string[];
+    }
+  | {
+      type: UndocumentedOperationType.MissingPathParameter;
+      parameters: OpenAPIV3.ParameterObject[] | null;
+      specPath: string;
+      parameterName: string;
     }
 );
 
