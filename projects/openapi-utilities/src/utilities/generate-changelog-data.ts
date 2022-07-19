@@ -1,5 +1,4 @@
 import { groupChanges } from './group-changes';
-import { compareChangesByPath } from './compare-changes-by-path';
 import { CompareFileJson } from '../ci-types';
 import { OpenAPIV3 } from 'openapi-types';
 import { traverseSpec } from './traverse-spec';
@@ -15,7 +14,6 @@ export const generateChangelogData = ({
   toFile: OpenAPIV3.Document;
 }) => {
   const { changes } = compareOutput;
-  const sortedChanges = changes.sort(compareChangesByPath);
   const toFacts = traverseSpec(toFile);
-  return groupChanges({ toFacts, changes: sortedChanges });
+  return groupChanges({ toFacts, changes });
 };

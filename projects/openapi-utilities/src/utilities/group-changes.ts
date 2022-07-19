@@ -7,6 +7,7 @@ import {
   ChangeVariant,
 } from '../openapi3/sdk/types';
 import { isChangeVariant, isFactVariant } from '../openapi3/sdk/isType';
+import { compareChangesByPath } from './compare-changes-by-path';
 
 function getEndpointId(endpoint: { pathId: string; method: string }) {
   const { pathId, method } = endpoint;
@@ -133,16 +134,20 @@ export type OpenApiEndpointChange = {
 };
 
 type GroupedChanges = Map<string, OpenApiEndpointChange>;
-export const groupChanges = (changelog: {
+export const groupChanges = ({
+  toFacts,
+  changes,
+}: {
   toFacts: IFact[];
   changes: IChange[];
 }): {
   specificationChanges: ChangeVariant<OpenApiKind.Specification>[];
   changesByEndpoint: GroupedChanges;
 } => {
+  const sortedChanges = changes.sort(compareChangesByPath);
   const specificationChanges: ChangeVariant<OpenApiKind.Specification>[] = [];
   const groupedChanges: GroupedChanges = new Map();
-  for (const change of changelog.changes) {
+  for (const change of sortedChanges) {
     if (isChangeVariant(change, OpenApiKind.Specification)) {
       specificationChanges.push(change);
       continue;
@@ -235,7 +240,7 @@ export const groupChanges = (changelog: {
         const responseBody =
           responseChange.contentTypes.get(contentType) ||
           createEmptyBodyChange(
-            findFieldBodyFact(changelog.toFacts, change.location)!.location
+            findFieldBodyFact(toFacts, change.location)!.location
           );
 
         responseBody.fieldChanges.push(change);
@@ -250,7 +255,7 @@ export const groupChanges = (changelog: {
         const requestBody =
           endpointChange.request.bodyChanges.get(contentType) ||
           createEmptyBodyChange(
-            findFieldBodyFact(changelog.toFacts, change.location)!.location
+            findFieldBodyFact(toFacts, change.location)!.location
           );
 
         requestBody.fieldChanges.push(change);
@@ -272,7 +277,7 @@ export const groupChanges = (changelog: {
         const responseBody =
           responseChange.contentTypes.get(contentType) ||
           createEmptyBodyChange(
-            findFieldBodyFact(changelog.toFacts, change.location)!.location
+            findFieldBodyFact(toFacts, change.location)!.location
           );
         responseBody.exampleChanges.push(change);
 
@@ -286,7 +291,7 @@ export const groupChanges = (changelog: {
         const requestBody =
           endpointChange.request.bodyChanges.get(contentType) ||
           createEmptyBodyChange(
-            findFieldBodyFact(changelog.toFacts, change.location)!.location
+            findFieldBodyFact(toFacts, change.location)!.location
           );
 
         requestBody.exampleChanges.push(change);
