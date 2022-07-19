@@ -47,8 +47,11 @@ export class SpecPatches {
     yield* templatePatches(spec, template, options);
   }
 
-  static async *generateForNewSpec<T>(info: OpenAPIV3.InfoObject): SpecPatches {
-    yield* newSpecPatches(info);
+  static async *generateForNewSpec<T>(
+    info: OpenAPIV3.InfoObject,
+    openAPIversion: string = '3.0.3'
+  ): SpecPatches {
+    yield* newSpecPatches(info, openAPIversion);
   }
 
   static async *shapeAdditions(
