@@ -63,6 +63,7 @@ export {
   StatusCode,
   groupChanges,
 } from './utilities/group-changes';
+export { traverseSpec } from './utilities/traverse-spec';
 
 export {
   sourcemapReader,
