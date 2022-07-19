@@ -31,6 +31,9 @@ export function newCommand(): Command {
         }
 
         destination = fs.createWriteStream(absoluteFilePath);
+        destination.once('finish', () => {
+          console.error(`New spec file created at ${absoluteFilePath}`);
+        });
       } else {
         absoluteFilePath = 'stdout.yml';
         destination = process.stdout;
