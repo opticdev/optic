@@ -23,7 +23,8 @@ export const initCli = async () => {
     .command('cloud')
     .description(
       'Commands to interact with Optic Cloud. See `optic cloud --help`'
-    );
+    )
+    .addHelpCommand(false);
   registerCloudCompare(cloudSubcommands, false);
   registerCreateGithubContext(cloudSubcommands, true);
   registerCreateManualContext(cloudSubcommands);
