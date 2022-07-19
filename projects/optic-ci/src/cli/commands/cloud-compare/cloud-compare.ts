@@ -143,7 +143,7 @@ const cloudCompare = async (token: string, base: string, verbose: boolean) => {
     await fs.access(expectedYmlPath);
   } catch (e) {
     throw new UserError(
-      'Could not find an optic.yml at the root of the repo. Create an optic.yml file with a list of files to run optic against. Run `npx @useoptic/optic-ci@latest init` to generate a file.'
+      'Could not find an optic.yml at the root of the repo. Create an optic.yml file with a list of files to run optic against. Run `npx @useoptic/optic@latest init` to generate a file.'
     );
   }
   const yml = yaml.load(await fs.readFile(expectedYmlPath, 'utf-8'));
