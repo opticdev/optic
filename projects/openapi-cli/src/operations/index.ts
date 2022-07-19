@@ -56,6 +56,7 @@ export class Operation {
 export enum UndocumentedOperationType {
   MissingMethod = 'missing-method',
   MissingPath = 'missing-path',
+  MissingPathParameter = 'missing-path-parameter',
 }
 
 export type UndocumentedOperation = {
@@ -79,10 +80,18 @@ export enum PathComponentKind {
   Template = 'template',
 }
 
-type PathComponent = {
+export interface PathComponent {
   kind: PathComponentKind;
   name: string;
-};
+}
+
+export class PathComponent {
+  static isTemplate(
+    component: PathComponent
+  ): component is PathComponent & { kind: PathComponentKind.Template } {
+    return component.kind === PathComponentKind.Template;
+  }
+}
 
 export interface PathComponents extends Array<PathComponent> {}
 
