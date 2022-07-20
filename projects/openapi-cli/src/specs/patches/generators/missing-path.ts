@@ -16,17 +16,36 @@ export function* missingPathPatches(
   if (undocumentedOperation.type !== UndocumentedOperationType.MissingPath)
     return;
 
-  const { specPath, methods, pathPattern } = undocumentedOperation;
+  const { specPath, methods, pathPattern, pathParameters } =
+    undocumentedOperation;
 
   let groupedOperations: PatchOperationGroup[] = [];
 
   groupedOperations.push(
-    PatchOperationGroup.create(`add path`, {
+    PatchOperationGroup.create(`add path with parameters`, {
       op: 'add',
       path: specPath,
       value: {},
     })
   );
+
+  if (pathParameters.length > 0) {
+    groupedOperations.push(
+      PatchOperationGroup.create(`add path parameters`, {
+        op: 'add',
+        path: jsonPointerHelpers.append(specPath, 'parameters'),
+        value: pathParameters.map(
+          (parameterName): OpenAPIV3.ParameterObject => {
+            return {
+              in: 'path',
+              name: parameterName,
+              required: true,
+            };
+          }
+        ),
+      })
+    );
+  }
 
   let methodOperations: PatchOperation[] = methods.map((method) => ({
     op: 'add',

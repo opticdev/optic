@@ -3,6 +3,7 @@ import { OpenAPIV3 } from '../../specs';
 export enum OperationDiffResultKind {
   // Operation
   UnmatchedPath = 'UnmatchedPath',
+  UnmatchedPathParameter = 'UnmatchedPathParameter',
   UnmatchedMethod = 'UnmatchedMethod',
 
   // Request Body
@@ -18,6 +19,10 @@ export enum OperationDiffResultKind {
 export type OperationDiffResult = {} & (
   | {
       kind: OperationDiffResultKind.UnmatchedPath;
+      subject: string;
+    }
+  | {
+      kind: OperationDiffResultKind.UnmatchedPathParameter;
       subject: string;
     }
   | {
