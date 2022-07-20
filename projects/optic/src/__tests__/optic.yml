@@ -1,2 +1,3 @@
 files:
-  - openapi-spec.yml
+  - id: spec
+    path: openapi-spec.yml
