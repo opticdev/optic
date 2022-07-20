@@ -19,7 +19,6 @@ import {
   SpecFilesAsync,
   SpecFilesSourcemap,
 } from '../specs';
-import { Ok, Result } from 'ts-results';
 
 import { flushEvents, trackEvent } from '../segment';
 import {
@@ -103,13 +102,8 @@ export function updateCommand(): Command {
 
       let interactions = merge(...sources);
 
-      let updateResult = await updateByInteractions(spec, interactions);
-      if (updateResult.err) {
-        return command.error(updateResult.val);
-      }
-
       let { results: updatePatches, observations: updateObservations } =
-        updateResult.unwrap();
+        updateByInteractions(spec, interactions);
 
       let { results: updatedSpecFiles, observations: fileObservations } =
         updateSpecFiles(updatePatches, sourcemap);
@@ -153,12 +147,10 @@ export function updateCommand(): Command {
   return command;
 }
 
-export async function updateByInteractions(
+export function updateByInteractions(
   spec: OpenAPIV3.Document,
   interactions: CapturedInteractions
-): Promise<
-  Result<{ results: SpecPatches; observations: UpdateObservations }, string>
-> {
+): { results: SpecPatches; observations: UpdateObservations } {
   const updatingSpec = new Subject<OpenAPIV3.Document>();
   const specUpdates = updatingSpec.iterator;
 
@@ -264,7 +256,7 @@ export async function updateByInteractions(
     observing.onCompleted();
   })();
 
-  return Ok({ results: observedResults, observations: observing.iterator });
+  return { results: observedResults, observations: observing.iterator };
 }
 
 function updateSpecFiles(
