@@ -65,9 +65,9 @@ export async function _makeCiCliInternal(
   generateContext: (details: { fileName: string }) => Object = () => ({}),
   spectralConfig?: SpectralInput
 ) {
-  initSentry(packageJson.version);
+  initSentry(process.env.SENTRY_URL, packageJson.version);
   const projectName = await getProjectName();
-  initSegment();
+  initSegment(process.env.SEGMENT_KEY);
   trackEvent('optic-ci-run', projectName);
 
   cli.version(
