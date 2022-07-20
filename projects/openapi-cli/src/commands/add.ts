@@ -11,12 +11,15 @@ import {
   ProxyInteractions,
 } from '../captures';
 import {
+  DocumentedInteractions,
+  DocumentedInteraction,
   HttpMethods,
   HttpMethod,
   UndocumentedOperation,
   UndocumentedOperationType,
   UndocumentedOperations,
 } from '../operations';
+import { DocumentedBodies } from '../shapes';
 import {
   OpenAPIV3,
   SpecFile,
@@ -102,7 +105,7 @@ export function addCommand(): Command {
       }
       const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
 
-      let addResult = await addOperations(spec, parsedOperations);
+      let addResult = await addOperations(spec, parsedOperations, interactions);
       if (addResult.err) {
         return command.error(addResult.val);
       }
@@ -148,9 +151,6 @@ async function addOperations(
     string
   >
 > {
-  const updatingSpec = new AT.Subject<OpenAPIV3.Document>();
-  const specUpdates = updatingSpec.iterator;
-
   const observing = new AT.Subject<AddObservation>();
   const observers = {
     undocumentedOperation(op: UndocumentedOperation) {
@@ -175,14 +175,16 @@ async function addOperations(
     },
   };
 
-  const undocumentedOperations = UndocumentedOperations.fromPairs(
-    AT.from(requiredOperations),
-    spec,
-    specUpdates
-  );
-
   const specPatches = (async function* (): SpecPatches {
     let patchedSpec = spec;
+
+    // phase one: documented all undocumented operations
+    let updatingSpec: AT.Subject<OpenAPIV3.Document> = new AT.Subject();
+    const undocumentedOperations = UndocumentedOperations.fromPairs(
+      AT.from(requiredOperations),
+      spec,
+      updatingSpec.iterator
+    );
     for await (let undocumentedOperation of undocumentedOperations) {
       observers.undocumentedOperation(undocumentedOperation);
 
@@ -196,7 +198,46 @@ async function addOperations(
 
       updatingSpec.onNext(patchedSpec);
     }
+    updatingSpec.onCompleted();
 
+    // phase two: patches to document requests, responses and their bodies
+    updatingSpec = new AT.Subject(); // new stream of updates for generating of documented interactions
+    const documentedInteractions =
+      DocumentedInteractions.fromCapturedInteractions(
+        interactions,
+        patchedSpec,
+        updatingSpec.iterator
+      );
+    for await (let documentedInteractionOption of documentedInteractions) {
+      if (documentedInteractionOption.none) continue;
+
+      let documentedInteraction = documentedInteractionOption.unwrap();
+
+      // phase one: operation patches, making sure all requests / responses are documented
+      let opPatches = SpecPatches.operationAdditions(documentedInteraction);
+
+      for await (let patch of opPatches) {
+        patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
+        yield patch;
+      }
+
+      // phase two: shape patches, describing request / response bodies in detail
+      documentedInteraction = DocumentedInteraction.updateOperation(
+        documentedInteraction,
+        patchedSpec
+      );
+      let documentedBodies = DocumentedBodies.fromDocumentedInteraction(
+        documentedInteraction
+      );
+      let shapePatches = SpecPatches.shapeAdditions(documentedBodies);
+
+      for await (let patch of shapePatches) {
+        patchedSpec = SpecPatch.applyPatch(patch, patchedSpec);
+        yield patch;
+      }
+
+      updatingSpec.onNext(patchedSpec);
+    }
     updatingSpec.onCompleted();
   })();
 
