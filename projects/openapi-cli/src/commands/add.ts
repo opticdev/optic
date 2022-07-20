@@ -2,8 +2,14 @@ import { Command } from 'commander';
 import { Result, Ok, Err } from 'ts-results';
 import Path from 'path';
 import * as fs from 'fs-extra';
+import { AbortController } from 'node-abort-controller';
 
 import * as AT from '../lib/async-tools';
+import {
+  CapturedInteractions,
+  HarEntries,
+  ProxyInteractions,
+} from '../captures';
 import {
   HttpMethods,
   HttpMethod,
@@ -30,7 +36,14 @@ export function addCommand(): Command {
   command
     .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
     .argument('<operations...>', 'HTTP method and path pair(s) to add')
-    .description('add an operation (path + method) to an OpenAPI specification')
+    .description(
+      'add an operation (path + method) to an OpenAPI specification. Provide a traffic source to learn request and response bodies as well.'
+    )
+    .option('--har <har-file>', 'path to HttpArchive file (v1.2, v1.3)')
+    .option(
+      '--proxy <target-url>',
+      'accept traffic over a proxy targeting the actual service'
+    )
     .action(async (specPath: string, operationComponents: string[]) => {
       const absoluteSpecPath = Path.resolve(specPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
@@ -43,6 +56,43 @@ export function addCommand(): Command {
       }
 
       let parsedOperations = parsedOperationsResult.unwrap();
+
+      let sourcesController = new AbortController();
+      const sources: CapturedInteractions[] = [];
+      let interactiveCapture = false;
+
+      const options = command.opts();
+      if (options.har) {
+        let absoluteHarPath = Path.resolve(options.har);
+        if (!(await fs.pathExists(absoluteHarPath))) {
+          return command.error('Har file could not be found at given path');
+        }
+        let harFile = fs.createReadStream(absoluteHarPath);
+        let harEntries = HarEntries.fromReadable(harFile);
+        sources.push(CapturedInteractions.fromHarEntries(harEntries));
+      }
+
+      if (options.proxy) {
+        if (!process.stdin.isTTY) {
+          return command.error(
+            'Can only use --proxy when in an interactive terminal session'
+          );
+        }
+
+        let [proxyInteractions, proxyUrl] = await ProxyInteractions.create(
+          options.proxy,
+          sourcesController.signal
+        );
+        sources.push(
+          CapturedInteractions.fromProxyInteractions(proxyInteractions)
+        );
+        console.log(
+          `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
+        );
+        interactiveCapture = true;
+      }
+
+      let interactions = AT.merge(...sources);
 
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
@@ -90,7 +140,8 @@ interface ParsedOperation {
 
 async function addOperations(
   spec: OpenAPIV3.Document,
-  requiredOperations: ParsedOperation[]
+  requiredOperations: ParsedOperation[],
+  interactions: CapturedInteractions
 ): Promise<
   Result<
     { results: SpecPatches; observations: AsyncIterable<AddObservation> },
