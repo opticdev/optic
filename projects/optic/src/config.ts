@@ -4,6 +4,10 @@ import { UserError } from '@useoptic/openapi-utilities';
 import Ajv from 'ajv';
 import path from 'node:path';
 
+export enum VCS {
+  Git = 'git',
+}
+
 const OPTIC_YML_NAME = 'optic.yml';
 
 type ConfigRule = string | { rule: string; options?: unknown };

@@ -8,6 +8,7 @@ import { registerCreateGithubContext } from '@useoptic/optic-ci/build/cli/comman
 import { registerCreateManualContext } from '@useoptic/optic-ci/build/cli/commands/create-context/create-manual-context';
 import { registerDiff } from './commands/diff/diff';
 import {
+  VCS,
   DefaultOpticCliConfig,
   detectCliConfig,
   loadCliConfig,
@@ -35,9 +36,8 @@ export const initCli = async () => {
       cliConfig = await loadCliConfig(opticYmlPath);
     }
 
-    cliConfig.vcs = 'git';
+    cliConfig.vcs = VCS.Git;
   }
-  console.log(cliConfig);
 
   cli.version(packageJson.version);
   cli.addHelpCommand(false);
