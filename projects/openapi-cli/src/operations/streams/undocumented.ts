@@ -1,5 +1,10 @@
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
-import { UndocumentedOperation, UndocumentedOperationType } from '..';
+import {
+  UndocumentedOperation,
+  UndocumentedOperationType,
+  PathComponents,
+  PathComponent,
+} from '..';
 import { CapturedInteraction, CapturedInteractions } from '../../captures';
 import { OpenAPIV3 } from '../../specs';
 import { diffOperationWithSpec, OperationDiffResultKind } from '../diffs';
@@ -36,6 +41,9 @@ export class UndocumentedOperations {
           yield {
             type: UndocumentedOperationType.MissingPath,
             pathPattern: diff.subject,
+            pathParameters: PathComponents.fromPath(diff.subject)
+              .filter(PathComponent.isTemplate)
+              .map(({ name }) => name),
             methods: operation.methods,
             specPath: jsonPointerHelpers.compile(['paths', diff.subject]),
           };

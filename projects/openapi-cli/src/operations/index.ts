@@ -56,6 +56,7 @@ export class Operation {
 export enum UndocumentedOperationType {
   MissingMethod = 'missing-method',
   MissingPath = 'missing-path',
+  MissingPathParameter = 'missing-path-parameter',
 }
 
 export type UndocumentedOperation = {
@@ -71,8 +72,73 @@ export type UndocumentedOperation = {
       type: UndocumentedOperationType.MissingPath;
       specPath: string;
       methods: OpenAPIV3.HttpMethods[];
+      pathParameters: string[];
+    }
+  | {
+      type: UndocumentedOperationType.MissingPathParameter;
+      parameters: OpenAPIV3.ParameterObject[] | null;
+      specPath: string;
+      parameterName: string;
     }
 );
+
+export enum PathComponentKind {
+  Literal = 'literal',
+  Template = 'template',
+}
+
+export interface PathComponent {
+  kind: PathComponentKind;
+  name: string;
+}
+
+export class PathComponent {
+  static isTemplate(
+    component: PathComponent
+  ): component is PathComponent & { kind: PathComponentKind.Template } {
+    return component.kind === PathComponentKind.Template;
+  }
+}
+
+export interface PathComponents extends Array<PathComponent> {}
+
+const fragmentPattern = /{(.+)}/;
+export class PathComponents {
+  static fromPath(path: string): PathComponents {
+    /*
+    Copied from https://github.com/stoplightio/prism/blob/0ad49235879ad4f7fcafa7b5badcb763b0c37a6a/packages/http/src/router/matchPath.ts
+    under https://github.com/stoplightio/prism/blob/master/LICENSE
+   */
+    if (path.length === 0 || !path.startsWith('/')) {
+      throw new Error(`Malformed path '${path}'`);
+    }
+    return path
+      .split('/')
+      .slice(1)
+      .map(decodePathFragment)
+      .map((fragment) => {
+        const templateName = fragment.match(fragmentPattern);
+
+        return templateName
+          ? {
+              kind: PathComponentKind.Template,
+              name: templateName[1],
+            }
+          : {
+              kind: PathComponentKind.Literal,
+              name: fragment,
+            };
+      });
+  }
+}
+
+function decodePathFragment(pathFragment: string) {
+  try {
+    return pathFragment && decodeURIComponent(pathFragment);
+  } catch (_) {
+    return pathFragment;
+  }
+}
 
 export interface DocumentedInteraction {
   interaction: CapturedInteraction;

@@ -12,6 +12,7 @@ import equals from 'fast-deep-equal';
 import Url from 'url';
 import Path from 'path';
 import { jsonPointerHelpers } from '@useoptic/json-pointer-helpers';
+import { PathComponents, PathComponentKind } from '.';
 
 export class OperationQueries {
   static fromFacts(facts: SpecFactsIterable): OperationQueries {
@@ -38,7 +39,7 @@ export class OperationQueries {
   }
 
   private patterns: string[];
-  private patternsAsComponents: [string, string[]][];
+  private patternsAsComponents: [string, PathComponents][];
   private basePaths: string[];
 
   constructor(
@@ -70,7 +71,7 @@ export class OperationQueries {
     ];
     this.patternsAsComponents = this.patterns.map((pattern) => [
       pattern,
-      fragmentize(pattern),
+      PathComponents.fromPath(pattern),
     ]);
   }
 
@@ -140,7 +141,7 @@ export class OperationQueries {
   }
 
   matchPathPattern(path: string): Result<Option<string>, string> {
-    const componentizedPath = fragmentize(path);
+    const componentizedPath = PathComponents.fromPath(path);
 
     // start with all patterns that match by length
     let qualifiedPatterns = this.patternsAsComponents.filter(
@@ -153,8 +154,8 @@ export class OperationQueries {
       qualifiedPatterns = qualifiedPatterns.filter(([, patternComponents]) => {
         const patternComponent = patternComponents[componentIndex];
         return (
-          pathComponent === patternComponent ||
-          isParameterTemplate(patternComponent)
+          pathComponent.name === patternComponent.name ||
+          patternComponent.kind === PathComponentKind.Template
         );
       });
     });
@@ -177,27 +178,4 @@ export class OperationQueries {
       return Ok(None);
     }
   }
-}
-
-/*
-  Copied from https://github.com/stoplightio/prism/blob/0ad49235879ad4f7fcafa7b5badcb763b0c37a6a/packages/http/src/router/matchPath.ts
-  under https://github.com/stoplightio/prism/blob/master/LICENSE
- */
-export function fragmentize(path: string): string[] {
-  if (path.length === 0 || !path.startsWith('/')) {
-    throw new Error(`Malformed path '${path}'`);
-  }
-  return path.split('/').slice(1).map(decodePathFragment);
-}
-
-function decodePathFragment(pathFragment: string) {
-  try {
-    return pathFragment && decodeURIComponent(pathFragment);
-  } catch (_) {
-    return pathFragment;
-  }
-}
-
-function isParameterTemplate(pathFragment: string) {
-  return /{(.+)}/.test(pathFragment);
 }
