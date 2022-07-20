@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/openapi-utilities",
-  "version": "0.26.20",
+  "version": "0.26.22",
   "packageManager": "yarn@3.0.2",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@octokit/rest": "^18.12.0",
+    "@sentry/node": "^6.17.6",
     "@useoptic/json-pointer-helpers": "workspace:*",
     "ajv": "^8.11.0",
     "ajv-formats": "^2.1.1",
