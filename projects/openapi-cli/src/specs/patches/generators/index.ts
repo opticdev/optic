@@ -3,6 +3,8 @@ import { UndocumentedOperation } from '../../../operations';
 import { missingMethodPatches } from './missing-method';
 import { missingPathPatches } from './missing-path';
 
+export { newSpecPatches } from './new-spec';
+
 export interface UndocumentedOperationPatchGenerator {
   (undocumentedOperation: UndocumentedOperation);
 }
