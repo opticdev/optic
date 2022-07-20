@@ -11,8 +11,9 @@ import {
   parseSpecVersion,
   specFromInputToResults,
 } from '@useoptic/optic-ci/build/cli/commands/utils';
+import { OpticCliConfig } from '../../config';
 
-export const registerDiff = (cli: Command) => {
+export const registerDiff = (cli: Command, cliConfig: OpticCliConfig) => {
   cli
     .command('diff')
     // .description()
