@@ -7,19 +7,45 @@ import {
 } from './group-changes';
 import { ChangeVariant, OpenApiKind } from '../openapi3/sdk/types';
 import { Instance as Chalk } from 'chalk';
+import isEqual from 'lodash.isequal';
 
 const chalk = new Chalk();
 
+const added = chalk.green('added');
+const removed = chalk.red('removed');
+const changed = chalk.yellow('changed');
+
+const INDENTATION = '  ';
+
 const getModificationLabel = (change: ChangeVariant<any>) =>
-  change.added
-    ? chalk.green('added')
-    : change.removed
-    ? chalk.red('removed')
-    : chalk.yellow('changed');
+  change.added ? added : change.removed ? removed : changed;
+
+const getDiff = (before: object, after: object) => {
+  const output = {
+    added: <string[]>[],
+    changed: <string[]>[],
+    removed: <string[]>[],
+  };
+
+  const beforeKeys = new Set(Object.keys(before));
+  const afterKeys = new Set(Object.keys(after));
+
+  for (const key of beforeKeys) {
+    if (!afterKeys.has(key)) output.removed.push(key);
+    else if (!isEqual((before as any)[key], (after as any)[key]))
+      output.changed.push(key);
+  }
+
+  for (const key of afterKeys) {
+    if (!beforeKeys.has(key)) output.added.push(key);
+  }
+
+  return output;
+};
 
 function* indent(generator: Generator<string>) {
   for (const y of generator) {
-    yield `  ${y}`;
+    yield `${INDENTATION}${y}`;
   }
 }
 
@@ -139,10 +165,56 @@ function* getBodyChangeLogs(
   }
 }
 
-function* getSpecificationLogs(
+const getDetailsDiff = (change: ChangeVariant<any>) => {
+  const before = change.added
+    ? {}
+    : change.removed
+    ? change.removed
+    : change.changed
+    ? change.changed.before
+    : {};
+
+  const after = change.added
+    ? change.added
+    : change.removed
+    ? {}
+    : change.changed
+    ? change.changed.after
+    : {};
+
+  return getDiff(before, after);
+};
+
+function* getDetailLogs(change: ChangeVariant<any>, label: string) {
+  const diff = getDetailsDiff(change);
+
+  const diffCount =
+    diff.changed.length + diff.removed.length + diff.added.length;
+
+  if (!diffCount) return;
+
+  yield `${label}:`;
+
+  if (diff.added.length) {
+    const keys = diff.added.join(', ');
+    yield `${INDENTATION}- ${keys} ${added}`;
+  }
+
+  if (diff.changed.length) {
+    const keys = diff.changed.join(', ');
+    yield `${INDENTATION}- ${keys} ${changed}`;
+  }
+
+  if (diff.removed.length) {
+    const keys = diff.removed.join(', ');
+    yield `${INDENTATION}- ${keys} ${removed}`;
+  }
+}
+
+function getSpecificationLogs(
   change: ChangeVariant<OpenApiKind.Specification>
 ) {
-  yield `Specification details ${getModificationLabel(change)}`;
+  return getDetailLogs(change, 'specification details');
 }
 
 function* getResponseHeaderLogs(
@@ -154,16 +226,16 @@ function* getResponseHeaderLogs(
   )}`;
 }
 
-function* getResponseLogs(change: ChangeVariant<OpenApiKind.Response>) {
-  yield `- response details ${getModificationLabel(change)}`;
+function getResponseLogs(change: ChangeVariant<OpenApiKind.Response>) {
+  return getDetailLogs(change, '- response details');
 }
 
-function* getRequestLogs(change: ChangeVariant<OpenApiKind.Request>) {
-  yield `- request details ${getModificationLabel(change)}`;
+function getRequestLogs(change: ChangeVariant<OpenApiKind.Request>) {
+  return getDetailLogs(change, '- request details');
 }
 
-function* getBodyLogs(change: ChangeVariant<OpenApiKind.Body>) {
-  yield `- body details ${getModificationLabel(change)}`;
+function getBodyLogs(change: ChangeVariant<OpenApiKind.Body>) {
+  return getDetailLogs(change, '- body details');
 }
 
 function* getFieldLogs(change: ChangeVariant<OpenApiKind.Field>) {
@@ -175,8 +247,8 @@ function* getExampleLogs(change: ChangeVariant<OpenApiKind.BodyExample>) {
   yield `- example ${getModificationLabel(change)}`;
 }
 
-function* getOperationLogs(change: ChangeVariant<OpenApiKind.Operation>) {
-  yield `- operation details ${getModificationLabel(change)}`;
+function getOperationLogs(change: ChangeVariant<OpenApiKind.Operation>) {
+  return getDetailLogs(change, '- operation details');
 }
 
 function* getParameterLogs(
