@@ -28,18 +28,3 @@ export class RuleError extends Error {
     return v?.type === 'rule-error';
   }
 }
-
-export class UserRuleError extends Error {
-  public type: 'user-rule-error';
-  constructor(error: Error) {
-    super(error.message);
-    this.type = 'user-rule-error';
-
-    // https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
-    Object.setPrototypeOf(this, UserRuleError.prototype);
-  }
-
-  static isInstance(v: any): v is UserRuleError {
-    return v?.type === 'user-rule-error';
-  }
-}

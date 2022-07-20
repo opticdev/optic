@@ -23,7 +23,10 @@ import {
   specFromInputToResults,
   validateUploadRequirements,
 } from '../utils';
-import { wrapActionHandlerWithSentry, SentryClient } from '../../sentry';
+import {
+  wrapActionHandlerWithSentry,
+  SentryClient,
+} from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { CliConfig } from '../../types';
 import { uploadCiRun } from './upload';
 import { loadCiContext } from '../utils/load-context';

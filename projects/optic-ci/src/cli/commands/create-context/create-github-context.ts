@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { Command, Option } from 'commander';
 import { UserError } from '@useoptic/openapi-utilities';
-import { wrapActionHandlerWithSentry } from '../../sentry';
+import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 import {
   DEFAULT_CONTEXT_PATH,
@@ -56,9 +56,19 @@ export const registerCreateContext = (cli: Command, hideCommand: boolean) => {
     );
 };
 
-export const registerCreateGithubContext = (cli: Command) => {
+export const registerCreateGithubContext = (
+  cli: Command,
+  hideCommand: boolean = false
+) => {
   cli
-    .command('create-github-context')
+    .command(
+      'create-github-context',
+      hideCommand
+        ? {
+            hidden: true,
+          }
+        : {}
+    )
     .addHelpText(
       'before',
       'Creates a context object used for uploading specs to Optic cloud. This is intended to be used with github.'
