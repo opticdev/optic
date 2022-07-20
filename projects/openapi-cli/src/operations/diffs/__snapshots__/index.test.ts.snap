@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`diffOperationWithSpec yields diffs for unmatched paths 1`] = `
+Object {
+  "kind": "UnmatchedPath",
+  "subject": "/orders/{orderId}/transaction",
+}
+`;
