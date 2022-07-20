@@ -57,8 +57,8 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
               getFileFromFsOrGit(headFilePath),
             ]);
 
-            const lintResult = await lint(baseFile, headFile);
-            console.log(lintResult);
+            // const lintResult = await lint(baseFile, headFile);
+            // console.log(lintResult);
 
             // const compressedData = compressData(baseFile, headFile);
             // console.log(compressedData.length);
