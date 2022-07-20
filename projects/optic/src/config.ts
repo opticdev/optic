@@ -52,11 +52,8 @@ const configSchema = {
           { type: 'string' },
           {
             type: 'object',
-            properties: {
-              rule: { type: 'string' },
-              options: { type: 'object' },
-            },
-            required: ['rule'],
+            minProperties: 1,
+            maxProperties: 1,
           },
         ],
       },
@@ -95,9 +92,9 @@ export const validateConfig = (config: unknown, path: string) => {
 
   if (!result) {
     throw new UserError(
-      `Configuration file \`${path}\` is invalid:\n${validateConfigSchema.errors
-        ?.map((e) => `\t${e.message}`)
-        .join('\n')}`
+      `Configuration file \`${path}\` is invalid:\n${ajv.errorsText(
+        validateConfigSchema.errors
+      )}`
     );
   }
 };

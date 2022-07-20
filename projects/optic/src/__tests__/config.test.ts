@@ -39,14 +39,14 @@ describe('validateConfig', () => {
 
     test('object is valid', () => {
       const config = {
-        rules: [{ rule: 'foo', options: { someOption: true } }],
+        rules: [{ foo: { someOption: true } }],
       };
       expect(() => validateConfig(config, 'somePath')).not.toThrow();
     });
 
     test('object with invalid config', () => {
       const config = {
-        rules: [{ rule: 'foo', options: 'yeah' }],
+        rules: [{ foo: 'foo', options: 'yeah' }],
       };
       expect(() => validateConfig(config, 'somePath')).toThrow(UserError);
     });
