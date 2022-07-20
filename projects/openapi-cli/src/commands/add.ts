@@ -177,6 +177,8 @@ async function addOperations(
 
   const specPatches = (async function* (): SpecPatches {
     let patchedSpec = spec;
+    let addedOperations: Array<{ pathPattern: string; method: HttpMethod }> =
+      [];
 
     // phase one: documented all undocumented operations
     let updatingSpec: AT.Subject<OpenAPIV3.Document> = new AT.Subject();
@@ -196,6 +198,24 @@ async function addOperations(
         observers.newOperationPatch(patch);
       }
 
+      if (
+        undocumentedOperation.type === UndocumentedOperationType.MissingPath
+      ) {
+        for (let method of undocumentedOperation.methods) {
+          addedOperations.push({
+            pathPattern: undocumentedOperation.pathPattern,
+            method,
+          });
+        }
+      } else if (
+        undocumentedOperation.type === UndocumentedOperationType.MissingMethod
+      ) {
+        addedOperations.push({
+          pathPattern: undocumentedOperation.pathPattern,
+          method: undocumentedOperation.method,
+        });
+      }
+
       updatingSpec.onNext(patchedSpec);
     }
     updatingSpec.onCompleted();
@@ -212,6 +232,17 @@ async function addOperations(
       if (documentedInteractionOption.none) continue;
 
       let documentedInteraction = documentedInteractionOption.unwrap();
+      let operation = documentedInteraction.operation;
+
+      if (
+        !addedOperations.find(
+          ({ pathPattern, method }) =>
+            pathPattern === operation.pathPattern && method === operation.method
+        )
+      ) {
+        updatingSpec.onNext(patchedSpec); // nothing changed, still report to keep documented interactions flowing
+        continue;
+      }
 
       // phase one: operation patches, making sure all requests / responses are documented
       let opPatches = SpecPatches.operationAdditions(documentedInteraction);
