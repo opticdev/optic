@@ -4,6 +4,7 @@ import open from 'open';
 import {
   defaultEmptySpec,
   validateOpenApiV3Document,
+  generateSpecResults,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -11,9 +12,13 @@ import {
   parseSpecVersion,
   specFromInputToResults,
 } from '@useoptic/optic-ci/build/cli/commands/utils';
+import { BreakingChangesRuleset } from '@useoptic/standard-rulesets';
+import { RuleRunner } from '@useoptic/rulesets-base';
 import { OpticCliConfig } from '../../config';
 
-export const registerDiff = (cli: Command, cliConfig: OpticCliConfig) => {
+type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
+
+export const registerDiff = (cli: Command, config: OpticCliConfig) => {
   cli
     .command('diff')
     // .description()
@@ -51,9 +56,13 @@ export const registerDiff = (cli: Command, cliConfig: OpticCliConfig) => {
               getFileFromFsOrGit(baseFilePath),
               getFileFromFsOrGit(headFilePath),
             ]);
-            const compressedData = compressData(baseFile, headFile);
-            console.log(compressedData.length);
-            openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
+
+            // const lintResult = await lint(baseFile, headFile);
+            // console.log(lintResult);
+
+            // const compressedData = compressData(baseFile, headFile);
+            // console.log(compressedData.length);
+            // openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
           } else if (options.base) {
             // TODO check if in git repo
             // TODO implement
@@ -100,4 +109,14 @@ const compressData = (baseFile: ParseResult, headFile: ParseResult): string => {
 
 const openBrowserToPage = async (url: string) => {
   await open(url, { wait: false });
+};
+
+const lint = async (
+  fromSpec: ParseResult,
+  toSpec: ParseResult
+): Promise<SpecResults> => {
+  const rules = [new BreakingChangesRuleset()];
+  const ruleRunner = new RuleRunner(rules);
+
+  return generateSpecResults(ruleRunner, fromSpec, toSpec, null);
 };

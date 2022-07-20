@@ -35,9 +35,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await resultingPatches(
-        results.expect('example spec can be updated')
-      );
+      const specPatches = await resultingPatches(results);
 
       expect(specPatches.length).toBeGreaterThan(0);
 
@@ -71,9 +69,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await resultingPatches(
-        results.expect('example spec can be updated')
-      );
+      const specPatches = await resultingPatches(results);
 
       expect(specPatches.length).toBeGreaterThan(0);
 
@@ -132,9 +128,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await resultingPatches(
-        results.expect('example spec can be updated')
-      );
+      const specPatches = await resultingPatches(results);
 
       expect(specPatches.length).toBeGreaterThan(0);
 
@@ -160,9 +154,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await resultingPatches(
-        results.expect('example spec can be updated')
-      );
+      const specPatches = await resultingPatches(results);
 
       expect(specPatches.length).toBeGreaterThan(0);
 
@@ -253,9 +245,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await resultingPatches(
-        results.expect('example spec can be updated')
-      );
+      const specPatches = await resultingPatches(results);
 
       expect(specPatches.length).toBeGreaterThan(0);
 
@@ -289,9 +279,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await resultingPatches(
-        results.expect('example spec can be updated')
-      );
+      const specPatches = await resultingPatches(results);
 
       expect(specPatches.length).toBeGreaterThan(0);
 
@@ -318,9 +306,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await resultingPatches(
-        results.expect('example spec can be updated')
-      );
+      const specPatches = await resultingPatches(results);
 
       expect(specPatches.length).toBeGreaterThan(0);
 
@@ -363,9 +349,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await resultingPatches(
-        results.expect('example spec can be updated')
-      );
+      const specPatches = await resultingPatches(results);
 
       expect(specPatches.length).toBeGreaterThan(0);
 
@@ -414,9 +398,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await resultingPatches(
-        results.expect('example spec can be updated')
-      );
+      const specPatches = await resultingPatches(results);
 
       expect(specPatches.length).toBeGreaterThan(0);
 
@@ -487,9 +469,7 @@ describe('update command', () => {
 
       const results = await updateByInteractions(spec, from(interactions));
 
-      const specPatches = await resultingPatches(
-        results.expect('example spec can be updated')
-      );
+      const specPatches = await resultingPatches(results);
 
       expect(specPatches.length).toBeGreaterThan(0);
 
@@ -543,9 +523,7 @@ describe('update command', () => {
         ),
       ];
 
-      const results = (
-        await updateByInteractions(spec, from(interactions))
-      ).expect('example spec can be updated');
+      const results = await updateByInteractions(spec, from(interactions));
 
       const [specPatches, observations] = await Promise.all([
         collect(results.results),
@@ -619,9 +597,7 @@ describe('update command', () => {
 
     const results = await updateByInteractions(spec, from(interactions));
 
-    const specPatches = await resultingPatches(
-      results.expect('example spec can be updated')
-    );
+    const specPatches = await resultingPatches(results);
 
     expect(specPatches.length).toBeGreaterThan(0);
 
