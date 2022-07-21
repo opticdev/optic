@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`add command add operations generates spec patches adding operation 1`] = `
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.3",
+  "paths": Object {
+    "/orders": Object {
+      "get": Object {
+        "responses": Object {},
+      },
+    },
+    "/orders/{orderId}/products": Object {
+      "get": Object {
+        "responses": Object {},
+      },
+      "post": Object {
+        "responses": Object {},
+      },
+    },
+    "/products": Object {
+      "get": Object {
+        "responses": Object {},
+      },
+      "post": Object {
+        "responses": Object {},
+      },
+    },
+  },
+}
+`;
