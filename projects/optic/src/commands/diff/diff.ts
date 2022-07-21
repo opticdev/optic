@@ -36,6 +36,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     .argument('<file>', 'path to file to compare')
     .argument('[compare_with_file]', 'path to file to compare with')
     .option('--base <base>', 'the base ref to compare against')
+    .option('--no-lint', 'disable linting')
     .action(
       wrapActionHandlerWithSentry(
         // TODO document this well=
@@ -49,6 +50,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           file2: string | undefined,
           options: {
             base?: string;
+            lint?: boolean;
           }
         ) => {
           const webBase =
@@ -65,8 +67,10 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
               getFileFromFsOrGit(headFilePath),
             ]);
 
-            const lintResult = await lint(config, baseFile, headFile);
-            console.log(lintResult);
+            if (options.lint) {
+              const lintResult = await lint(config, baseFile, headFile);
+              console.log(lintResult);
+            }
 
             // const compressedData = compressData(baseFile, headFile);
             // console.log(compressedData.length);
