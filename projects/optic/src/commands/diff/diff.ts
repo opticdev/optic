@@ -42,9 +42,16 @@ Example usage:
   $ optic diff openapi-spec.yml --base master
 
   Run a diff between \`openapi-spec-v0.yml\` and \`openapi-spec-v1.yml\`
-  $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml`;
+  $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml
+  
+  Run a diff and view changes in the Optic web view
+  $ optic diff --id user-api --base master --web`;
 
 type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
+const webBase =
+  process.env.OPTIC_ENV === 'staging'
+    ? 'https://app.o3c.info'
+    : 'https://app.useoptic.com';
 
 const stdRulesets = {
   'breaking-changes': BreakingChangesRuleset,
@@ -71,6 +78,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       'the id of the spec to run against in defined in the `optic.yml` file'
     )
     .option('--no-lint', 'disable linting')
+    .option('--web', 'view the diff in the optic changelog web view', false)
     .action(
       wrapActionHandlerWithSentry(
         async (
@@ -80,6 +88,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             base: string;
             id?: string;
             lint?: boolean;
+            web: boolean;
           }
         ) => {
           const webBase =
@@ -87,8 +96,8 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
               ? 'https://app.o3c.info'
               : 'https://app.useoptic.com';
 
-          let baseFile: ParseResult | undefined;
-          let headFile: ParseResult | undefined;
+          let baseFile: ParseResult;
+          let headFile: ParseResult;
 
           if (file1 && file2) {
             const baseFilePath = file1;
@@ -106,11 +115,10 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
               return;
             }
 
-            const gitRoot = config.root;
             ({ baseFile, headFile } = await parseFilesFromRef(
               file1,
               options.base,
-              gitRoot
+              config.root
             ));
           } else if (options.id) {
             const commandVariant = `optic diff --id <id> --base <ref>`;
@@ -127,8 +135,6 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
               return;
             }
 
-            const gitRoot = config.root;
-
             console.log('Running diff against files from optic.yml file');
             const files = config.files;
             const maybeMatchingFile = files.find(
@@ -139,7 +145,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
               ({ baseFile, headFile } = await parseFilesFromRef(
                 maybeMatchingFile.path,
                 options.base,
-                gitRoot
+                config.root
               ));
             } else {
               console.error(
@@ -150,6 +156,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
                   .map((file) => file.id)
                   .join(', ')}`
               );
+              return;
             }
           } else {
             console.error('Invalid combination of arguments');
@@ -157,17 +164,14 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             return;
           }
 
-          if (!baseFile || !headFile) {
-            // throw here so sentry gets it - this is unexpected
-            throw new Error('Files not loaded');
-          }
+          const lintResult = await lint(baseFile, headFile);
+          console.log(lintResult);
 
-          const compressedData = compressData(baseFile, headFile);
-          openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
-
-          if (options.lint) {
-            const lintResult = await lint(config, baseFile, headFile);
-            console.log(lintResult);
+          // TODO render here
+          if (options.web) {
+            const compressedData = compressData(baseFile, headFile);
+            console.log('Opening up diff in web view');
+            openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
           }
         }
       )
