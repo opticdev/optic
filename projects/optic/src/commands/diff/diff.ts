@@ -6,6 +6,7 @@ import {
   generateSpecResults,
   logComparison,
   generateChangelogData,
+  terminalChangelog,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -166,7 +167,19 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             null
           );
 
+          const changelogData = generateChangelogData({
+            changes: specResults.changes,
+            toFile: headFile.jsonLike,
+          });
+
+          console.log('');
+          for (const log of terminalChangelog(changelogData)) {
+            console.log(log);
+          }
+
           if (options.lint) {
+            console.log('Checks');
+            console.log('');
             logComparison(specResults, { output: 'pretty', verbose: false });
           }
 
