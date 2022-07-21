@@ -17,11 +17,6 @@ import {
   parseSpecVersion,
   specFromInputToResults,
 } from '@useoptic/optic-ci/build/cli/commands/utils';
-import {
-  hasGit,
-  isInGitRepo,
-  getRootPath,
-} from '@useoptic/optic-ci/build/cli/commands/init/git-utils';
 import { BreakingChangesRuleset } from '@useoptic/standard-rulesets';
 import { RuleRunner } from '@useoptic/rulesets-base';
 import { OpticCliConfig, VCS } from '../../config';
@@ -82,21 +77,16 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
               ? 'https://app.o3c.info'
               : 'https://app.useoptic.com';
 
+          let baseFile: ParseResult | undefined;
+          let headFile: ParseResult | undefined;
+
           if (file1 && file2) {
             const baseFilePath = file1;
             const headFilePath = file2;
-            const [baseFile, headFile] = await Promise.all([
+            [baseFile, headFile] = await Promise.all([
               getFileFromFsOrGit(baseFilePath),
               getFileFromFsOrGit(headFilePath),
             ]);
-            const compressedData = compressData(baseFile, headFile);
-            openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
-            // const lintResult = await lint(baseFile, headFile);
-            // console.log(lintResult);
-
-            // const compressedData = compressData(baseFile, headFile);
-            // console.log(compressedData.length);
-            // openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
           } else if (file1) {
             const commandVariant = `optic diff <file> --base <ref>`;
             if (config.vcs !== VCS.Git) {
@@ -107,21 +97,11 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             }
 
             const gitRoot = config.root;
-
-            const { baseFile, headFile } = await parseFilesFromRef(
+            ({ baseFile, headFile } = await parseFilesFromRef(
               file1,
               options.base,
               gitRoot
-            );
-            const compressedData = compressData(baseFile, headFile);
-            openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
-
-            // const lintResult = await lint(baseFile, headFile);
-            // console.log(lintResult);
-
-            // const compressedData = compressData(baseFile, headFile);
-            // console.log(compressedData.length);
-            // openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
+            ));
           } else if (options.id) {
             const commandVariant = `optic diff --id <id> --base <ref>`;
             if (config.vcs !== VCS.Git) {
@@ -146,13 +126,11 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             );
 
             if (maybeMatchingFile) {
-              const { baseFile, headFile } = await parseFilesFromRef(
+              ({ baseFile, headFile } = await parseFilesFromRef(
                 maybeMatchingFile.path,
                 options.base,
                 gitRoot
-              );
-              const compressedData = compressData(baseFile, headFile);
-              openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
+              ));
             } else {
               console.error(
                 `id: ${options.id} was not found in the optic.yml file`
@@ -166,6 +144,17 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           } else {
             console.error('Invalid combination of arguments');
             console.log(helpText);
+            return;
+          }
+
+          if (baseFile && headFile) {
+            const compressedData = compressData(baseFile, headFile);
+
+            openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
+            const lintResult = await lint(baseFile, headFile);
+            console.log(lintResult);
+          } else {
+            console.error('Unexpected error: files not loaded');
           }
         }
       )
