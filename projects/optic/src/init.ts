@@ -1,6 +1,10 @@
 import { program as cli } from 'commander';
 import { initSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
-import { initSegment } from '@useoptic/openapi-utilities/build/utilities/segment';
+import {
+  flushEvents,
+  initSegment,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
 
 import { registerCloudCompare } from '@useoptic/optic-ci/build/cli/commands/cloud-compare/cloud-compare';
 import { registerInit } from '@useoptic/optic-ci/build/cli/commands/init/register-init';
@@ -8,25 +12,55 @@ import { registerCreateGithubContext } from '@useoptic/optic-ci/build/cli/comman
 import { registerCreateManualContext } from '@useoptic/optic-ci/build/cli/commands/create-context/create-manual-context';
 import { registerDiff } from './commands/diff/diff';
 import {
+  VCS,
   DefaultOpticCliConfig,
   detectCliConfig,
   loadCliConfig,
   OpticCliConfig,
 } from './config';
 import path from 'path';
+import {
+  hasGit,
+  isInGitRepo,
+  getRootPath,
+} from '@useoptic/optic-ci/build/cli/commands/init/git-utils';
+import { machineId } from 'node-machine-id';
 
 const packageJson = require('../package.json');
 
 export const initCli = async () => {
-  initSentry(packageJson.version);
-  initSegment();
+  initSentry(process.env.SENTRY_URL, packageJson.version);
+  initSegment(process.env.SEGMENT_KEY);
+  cli.hook('preAction', async (command) => {
+    const subcommands = ['cloud'];
+    try {
+      let commandName: string;
+      let args: string[];
+      if (subcommands.includes(command.args[0])) {
+        commandName = command.args.slice(0, 2).join('.');
+        args = command.args.slice(2);
+      } else {
+        [commandName, ...args] = command.args;
+      }
+      const anonymousId = await machineId();
+      trackEvent(`optic.${commandName}`, anonymousId, {
+        args,
+      });
+      await flushEvents();
+      // we can ignore non-critical tracking errors
+    } catch (e) {}
+  });
 
-  let cliConfig: OpticCliConfig;
-  const opticYmlPath = await detectCliConfig(process.cwd());
-  if (!opticYmlPath) {
-    cliConfig = DefaultOpticCliConfig;
-  } else {
-    cliConfig = await loadCliConfig(path.join(process.cwd(), 'optic.yml'));
+  let cliConfig: OpticCliConfig = DefaultOpticCliConfig;
+  if ((await hasGit()) && (await isInGitRepo())) {
+    const gitRoot = await getRootPath();
+    const opticYmlPath = await detectCliConfig(gitRoot);
+
+    if (opticYmlPath) {
+      cliConfig = await loadCliConfig(opticYmlPath);
+    }
+
+    cliConfig.vcs = VCS.Git;
   }
 
   cli.version(packageJson.version);

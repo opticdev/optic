@@ -3,10 +3,10 @@ import { UserError } from '../errors';
 
 export let SentryClient: Sentry.NodeClient | null = null;
 
-export const initSentry = (version: string) => {
-  if (process.env.SENTRY_URL) {
+export const initSentry = (sentryUrl: string | undefined, version: string) => {
+  if (sentryUrl) {
     SentryClient = new Sentry.NodeClient({
-      dsn: process.env.SENTRY_URL,
+      dsn: sentryUrl,
       tracesSampleRate: 1.0,
       release: version,
     });

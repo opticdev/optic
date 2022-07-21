@@ -24,12 +24,12 @@ export type BodyChange = {
   location: ILocation;
 };
 
-type RequestChange = {
+export type RequestChange = {
   change: ChangeVariant<OpenApiKind.Request> | null;
   bodyChanges: Map<ContentType, BodyChange>;
 };
 
-type ResponseChange = {
+export type ResponseChange = {
   headers: Map<string, ChangeVariant<OpenApiKind.ResponseHeader>>;
   statusCode: string;
   change: ChangeVariant<OpenApiKind.Response> | null;
@@ -134,6 +134,7 @@ export type OpenApiEndpointChange = {
 };
 
 type GroupedChanges = Map<string, OpenApiEndpointChange>;
+
 export const groupChanges = ({
   toFacts,
   changes,

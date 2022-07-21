@@ -4,6 +4,10 @@ import { UserError } from '@useoptic/openapi-utilities';
 import Ajv from 'ajv';
 import path from 'node:path';
 
+export enum VCS {
+  Git = 'git',
+}
+
 const OPTIC_YML_NAME = 'optic.yml';
 
 type ConfigRule = string | { rule: string; options?: unknown };
@@ -11,6 +15,12 @@ type ConfigRule = string | { rule: string; options?: unknown };
 export type OpticCliConfig = {
   // path to the loaded config, or undefined if it was the default config
   configPath?: string;
+
+  // undefined if git repo root was detected, otherwise the path to the git repo root
+  root: string;
+
+  // the detected vcs
+  vcs?: string;
 
   files: {
     path: string;
@@ -21,6 +31,7 @@ export type OpticCliConfig = {
 };
 
 export const DefaultOpticCliConfig = {
+  root: process.cwd(),
   configPath: undefined,
   files: [],
   rules: [],
@@ -76,13 +87,16 @@ export async function detectCliConfig(
   return expectedYmlPath;
 }
 
-export async function loadCliConfig(path: string): Promise<OpticCliConfig> {
-  const config = yaml.load(await fs.readFile(path, 'utf-8'));
+export async function loadCliConfig(
+  configPath: string
+): Promise<OpticCliConfig> {
+  const config = yaml.load(await fs.readFile(configPath, 'utf-8'));
 
-  validateConfig(config, path);
+  validateConfig(config, configPath);
 
   const cliConfig = config as OpticCliConfig;
-  cliConfig.configPath = path;
+  cliConfig.root = path.dirname(configPath);
+  cliConfig.configPath = configPath;
 
   return cliConfig;
 }
