@@ -222,7 +222,7 @@ const generateRuleRunner = (
   const rulesets: Ruleset[] = [];
 
   if (checksEnabled) {
-    for (const rule of config.rulesets) {
+    for (const rule of config.ruleset) {
       if (typeof rule === 'string' && stdRulesets[rule]) {
         rulesets.push(new stdRulesets[rule]());
       } else {

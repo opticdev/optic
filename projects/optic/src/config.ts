@@ -27,14 +27,14 @@ export type OpticCliConfig = {
     id: string;
   }[];
 
-  rulesets: ConfigRuleset[];
+  ruleset: ConfigRuleset[];
 };
 
 export const DefaultOpticCliConfig = {
   root: process.cwd(),
   configPath: undefined,
   files: [],
-  rulesets: ['breaking-changes'],
+  ruleset: ['breaking-changes'],
 };
 
 const ajv = new Ajv();
@@ -56,7 +56,7 @@ const configSchema = {
         required: ['path', 'id'],
       },
     },
-    rulesets: {
+    ruleset: {
       type: 'array',
       items: {
         anyOf: [
