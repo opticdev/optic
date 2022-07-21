@@ -7,9 +7,14 @@ import { writeOpticConfig } from './write-optic-config';
 import { hasGit, isInGitRepo, getRootPath } from '../../utils/git-utils';
 import { configFile } from './constants';
 import { getValidSpecs } from './get-valid-specs';
+import { OpticCliConfig } from '../../config';
 
-export const init = async (): Promise<void> => {
+export const init = async (config: OpticCliConfig): Promise<void> => {
   // Sanity checks
+  if (config.configPath) {
+    console.error(`Error: config file already exists at ${config.configPath}`);
+  }
+
   if (!(await hasGit())) {
     console.error('Error: git must be available in PATH for "init" to work.');
     return;
