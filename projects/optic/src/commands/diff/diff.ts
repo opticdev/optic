@@ -72,7 +72,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       '--id <id>',
       'the id of the spec to run against in defined in the `optic.yml` file'
     )
-    .option('--no-lint', 'disable linting')
+    .option('--no-checks', 'disable checks')
     .option('--web', 'view the diff in the optic changelog web view', false)
     .action(
       wrapActionHandlerWithSentry(
@@ -82,7 +82,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           options: {
             base: string;
             id?: string;
-            lint: boolean;
+            checks: boolean;
             web: boolean;
           }
         ) => {
@@ -159,7 +159,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             return;
           }
 
-          const ruleRunner = generateRuleRunner(config, options.lint || true);
+          const ruleRunner = generateRuleRunner(config, options.checks);
           const specResults = await generateSpecResults(
             ruleRunner,
             baseFile,
@@ -177,7 +177,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             console.log(log);
           }
 
-          if (options.lint) {
+          if (options.checks) {
             if (specResults.results.length > 0) {
               console.log('Checks');
               console.log('');
@@ -217,11 +217,11 @@ const openBrowserToPage = async (url: string) => {
 
 const generateRuleRunner = (
   config: OpticCliConfig,
-  lint: boolean
+  checksEnabled: boolean
 ): RuleRunner => {
   const rulesets: Ruleset[] = [];
 
-  if (lint) {
+  if (checksEnabled) {
     for (const rule of config.rulesets) {
       if (typeof rule === 'string' && stdRulesets[rule]) {
         rulesets.push(new stdRulesets[rule]());
