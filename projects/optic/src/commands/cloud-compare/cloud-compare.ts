@@ -1,35 +1,37 @@
 import fs from 'node:fs/promises';
 import fetch from 'node-fetch';
 import path from 'path';
-import { promisify } from 'util';
-import { exec as callbackExec } from 'child_process';
 import { Command } from 'commander';
 import Ajv from 'ajv';
 import yaml from 'js-yaml';
 import {
   CompareFileJson,
-  defaultEmptySpec,
   logComparison,
   UserError,
 } from '@useoptic/openapi-utilities';
-
-import { createOpticClient, UploadSlot } from '../../clients/optic-client';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
-import { parseSpecVersion, SpecFromInput } from '../utils';
-import { getGitRootPath } from '../utils/path';
-import { initRun } from './init-run';
-import { loadCiContext } from '../utils/load-context';
 import {
   trackEvent,
   flushEvents,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
-import { logger } from '../../../logger';
 
-const exec = promisify(callbackExec);
+import {
+  createOpticClient,
+  UploadSlot,
+} from '@useoptic/optic-ci/build/cli/clients/optic-client';
+import { loadCiContext } from '@useoptic/optic-ci/build/cli/commands/utils/load-context';
 
-export const registerCloudCompare = (cli: Command, hideCommand: boolean) => {
+import { logger } from '../../logger';
+import { initRun } from './init-run';
+import { OpticCliConfig } from '../../config';
+import { parseFilesFromRef, ParseResult } from '../../utils/spec-loaders';
+
+export const registerCloudCompare = (
+  cli: Command,
+  cliConfig: OpticCliConfig
+) => {
   cli
-    .command('run', hideCommand ? { hidden: true } : {})
+    .command('run')
     .option(
       '--base <base>',
       'base to compare against, defaults to master',
@@ -46,7 +48,13 @@ export const registerCloudCompare = (cli: Command, hideCommand: boolean) => {
             );
           }
 
-          await cloudCompare(token, base, verbose);
+          if (!cliConfig.vcs) {
+            throw new UserError(
+              'optic cloud run must be run inside a git repository'
+            );
+          }
+
+          await cloudCompare(token, base, verbose, cliConfig.root);
         }
       )
     );
@@ -95,49 +103,12 @@ const validateYmlFile = (file: unknown) => {
   }
 };
 
-type ParsedInputs = {
-  from: SpecFromInput;
-  to: SpecFromInput;
-  id: string;
-  path: string;
-};
-
-const parseFileInputs = async (
+const cloudCompare = async (
+  token: string,
   base: string,
-  rootGitPath: string,
-  file: YmlConfig['files'][number]
-): Promise<ParsedInputs> => {
-  const absolutePath = path.join(rootGitPath, file.path);
-  const pathFromGitRoot = file.path.replace(/^\.(\/|\\)/, '');
-  const fileExistsOnBasePromise = exec(`git show ${base}:${pathFromGitRoot}`)
-    .then(() => true)
-    .catch(() => false);
-  const fileExistsOnHeadPromise = fs
-    .access(absolutePath)
-    .then(() => true)
-    .catch(() => false);
-
-  const [existsOnBase, existsOnHead] = await Promise.all([
-    fileExistsOnBasePromise,
-    fileExistsOnHeadPromise,
-  ]);
-
-  return {
-    from: parseSpecVersion(
-      existsOnBase ? `${base}:${pathFromGitRoot}` : undefined,
-      defaultEmptySpec
-    ),
-    to: parseSpecVersion(
-      existsOnHead ? absolutePath : undefined,
-      defaultEmptySpec
-    ),
-    id: file.id,
-    path: pathFromGitRoot,
-  };
-};
-
-const cloudCompare = async (token: string, base: string, verbose: boolean) => {
-  const gitRootPath = await getGitRootPath();
+  verbose: boolean,
+  gitRootPath: string
+) => {
   const expectedYmlPath = path.join(gitRootPath, OPTIC_YML_NAME);
   try {
     await fs.access(expectedYmlPath);
@@ -150,10 +121,26 @@ const cloudCompare = async (token: string, base: string, verbose: boolean) => {
 
   validateYmlFile(yml);
 
-  const specInputs: ParsedInputs[] = await Promise.all(
-    (yml as YmlConfig).files.map((file) =>
-      parseFileInputs(base, gitRootPath, file)
-    )
+  const specInputs: {
+    from: ParseResult;
+    to: ParseResult;
+    id: string;
+    path: string;
+  }[] = await Promise.all(
+    (yml as YmlConfig).files.map(async (file) => {
+      const { baseFile, headFile, pathFromGitRoot } = await parseFilesFromRef(
+        file.path,
+        base,
+        gitRootPath
+      );
+
+      return {
+        from: baseFile,
+        to: headFile,
+        id: file.id,
+        path: pathFromGitRoot,
+      };
+    })
   );
 
   const opticClient = createOpticClient(token);

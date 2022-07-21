@@ -1,19 +1,19 @@
-import { SpecFromInput } from '../utils/compare-input-parser';
-import { specFromInputToResults, ParseResult } from '../utils/load-spec';
 import {
   GetSessionResponse,
   OpticBackendClient,
   UploadSlot,
-} from '../../clients/optic-client';
-import { uploadFileToS3 } from '../utils/s3';
+} from '@useoptic/optic-ci/build/cli/clients/optic-client';
+import { uploadFileToS3 } from '@useoptic/optic-ci/build/cli/commands/utils/s3';
+
 import { waitForSession } from './wait-for-session';
 import { NormalizedCiContext } from '@useoptic/openapi-utilities';
 import Bottleneck from 'bottleneck';
-import { logger } from '../../../logger';
+import { logger } from '../../logger';
+import { ParseResult } from '../../utils/spec-loaders';
 
 export type SpecInput = {
-  from: SpecFromInput;
-  to: SpecFromInput;
+  from: ParseResult;
+  to: ParseResult;
   id: string;
   path: string;
 };
@@ -52,10 +52,8 @@ async function runSingle(
   logger.debug(
     `Running comparison for ${specInput.path} against ${baseBranch}`
   );
-  const [fromResults, toResults] = await Promise.all([
-    specFromInputToResults(specInput.from),
-    specFromInputToResults(specInput.to),
-  ]);
+  const fromResults = specInput.from;
+  const toResults = specInput.to;
 
   const sessionId = await client.createSession({
     owner: context.organization,

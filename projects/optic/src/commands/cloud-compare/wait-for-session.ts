@@ -1,4 +1,4 @@
-import { OpticBackendClient } from '../../clients/optic-client';
+import { OpticBackendClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
 
 const MAX_ALLOWABLE_FAILURES = 3;
 
