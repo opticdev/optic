@@ -4,7 +4,7 @@ import { dump } from 'js-yaml';
 import { findOpenAPISpecs } from './find-openapi-specs';
 import { generateOpticConfig } from './generate-optic-config';
 import { writeOpticConfig } from './write-optic-config';
-import { hasGit, isInGitRepo, getRootPath } from './git-utils';
+import { hasGit, isInGitRepo, getRootPath } from '../../utils/git-utils';
 import { configFile } from './constants';
 import { getValidSpecs } from './get-valid-specs';
 

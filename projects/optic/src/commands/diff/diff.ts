@@ -1,30 +1,20 @@
-import fs from 'node:fs/promises';
-import path from 'path';
-import { promisify } from 'util';
-import { exec as callbackExec } from 'child_process';
 import { Command } from 'commander';
 import brotli from 'brotli';
 import open from 'open';
 
-import {
-  defaultEmptySpec,
-  validateOpenApiV3Document,
-  generateSpecResults,
-} from '@useoptic/openapi-utilities';
+import { generateSpecResults } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
-import {
-  ParseResult,
-  parseSpecVersion,
-  specFromInputToResults,
-} from '@useoptic/optic-ci/build/cli/commands/utils';
 import {
   BreakingChangesRuleset,
   NamingChangesRuleset,
 } from '@useoptic/standard-rulesets';
 import { RuleRunner, Ruleset } from '@useoptic/rulesets-base';
+import {
+  parseFilesFromRef,
+  ParseResult,
+  getFileFromFsOrGit,
+} from '../../utils/spec-loaders';
 import { OpticCliConfig, VCS } from '../../config';
-
-const exec = promisify(callbackExec);
 
 const description = `run a diff between two API specs`;
 
@@ -178,68 +168,6 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
         }
       )
     );
-};
-
-// TODO consolidate this with the `cloud-compare` git parsing function `parseFileInputs`
-const parseFilesFromRef = async (
-  filePath: string,
-  base: string,
-  rootGitPath: string
-): Promise<{
-  baseFile: ParseResult;
-  headFile: ParseResult;
-}> => {
-  const absolutePath = path.join(rootGitPath, filePath);
-  const pathFromGitRoot = filePath.replace(/^\.(\/|\\)/, '');
-  const fileExistsOnBasePromise = exec(`git show ${base}:${pathFromGitRoot}`)
-    .then(() => true)
-    .catch(() => false);
-  const fileExistsOnHeadPromise = fs
-    .access(absolutePath)
-    .then(() => true)
-    .catch(() => false);
-
-  const [existsOnBase, existsOnHead] = await Promise.all([
-    fileExistsOnBasePromise,
-    fileExistsOnHeadPromise,
-  ]);
-
-  return {
-    baseFile: await specFromInputToResults(
-      parseSpecVersion(
-        existsOnBase ? `${base}:${pathFromGitRoot}` : undefined,
-        defaultEmptySpec
-      ),
-      process.cwd()
-    ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike);
-      return results;
-    }),
-    headFile: await specFromInputToResults(
-      parseSpecVersion(
-        existsOnHead ? absolutePath : undefined,
-        defaultEmptySpec
-      ),
-      process.cwd()
-    ).then((results) => {
-      validateOpenApiV3Document(results.jsonLike);
-      return results;
-    }),
-  };
-};
-
-// filePathOrRef can be a path, or a gitref:path (delimited by `:`)
-const getFileFromFsOrGit = async (
-  filePathOrRef: string
-): Promise<ParseResult> => {
-  const file = await specFromInputToResults(
-    parseSpecVersion(filePathOrRef, defaultEmptySpec),
-    process.cwd()
-  ).then((results) => {
-    validateOpenApiV3Document(results.jsonLike);
-    return results;
-  });
-  return file;
 };
 
 const compressData = (baseFile: ParseResult, headFile: ParseResult): string => {

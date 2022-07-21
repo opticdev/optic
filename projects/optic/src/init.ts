@@ -6,10 +6,10 @@ import {
   trackEvent,
 } from '@useoptic/openapi-utilities/build/utilities/segment';
 
-import { registerCloudCompare } from '@useoptic/optic-ci/build/cli/commands/cloud-compare/cloud-compare';
-import { registerInit } from '@useoptic/optic-ci/build/cli/commands/init/register-init';
 import { registerCreateGithubContext } from '@useoptic/optic-ci/build/cli/commands/create-context/create-github-context';
 import { registerCreateManualContext } from '@useoptic/optic-ci/build/cli/commands/create-context/create-manual-context';
+import { registerCloudCompare } from './commands/cloud-compare/cloud-compare';
+import { registerInit } from './commands/init/register-init';
 import { registerDiff } from './commands/diff/diff';
 import {
   VCS,
@@ -18,12 +18,7 @@ import {
   loadCliConfig,
   OpticCliConfig,
 } from './config';
-import path from 'path';
-import {
-  hasGit,
-  isInGitRepo,
-  getRootPath,
-} from '@useoptic/optic-ci/build/cli/commands/init/git-utils';
+import { hasGit, isInGitRepo, getRootPath } from './utils/git-utils';
 import { machineId } from 'node-machine-id';
 
 const packageJson = require('../package.json');
@@ -75,7 +70,7 @@ export const initCli = async () => {
       'Commands to interact with Optic Cloud. See `optic cloud --help`'
     )
     .addHelpCommand(false);
-  registerCloudCompare(cloudSubcommands, false);
+  registerCloudCompare(cloudSubcommands, cliConfig);
   registerCreateGithubContext(cloudSubcommands, true);
   registerCreateManualContext(cloudSubcommands);
 
