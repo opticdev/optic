@@ -147,15 +147,16 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             return;
           }
 
-          if (baseFile && headFile) {
-            const compressedData = compressData(baseFile, headFile);
-
-            openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
-            const lintResult = await lint(baseFile, headFile);
-            console.log(lintResult);
-          } else {
+          if (!baseFile || !headFile) {
             console.error('Unexpected error: files not loaded');
+            return;
           }
+
+          const compressedData = compressData(baseFile, headFile);
+
+          openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
+          const lintResult = await lint(baseFile, headFile);
+          console.log(lintResult);
         }
       )
     );
