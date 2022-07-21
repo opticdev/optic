@@ -12,11 +12,19 @@ import {
   parseSpecVersion,
   specFromInputToResults,
 } from '@useoptic/optic-ci/build/cli/commands/utils';
-import { BreakingChangesRuleset } from '@useoptic/standard-rulesets';
-import { RuleRunner } from '@useoptic/rulesets-base';
+import {
+  BreakingChangesRuleset,
+  NamingChangesRuleset,
+} from '@useoptic/standard-rulesets';
+import { RuleRunner, Ruleset } from '@useoptic/rulesets-base';
 import { OpticCliConfig } from '../../config';
 
 type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
+
+const stdRulesets = {
+  'breaking-changes': BreakingChangesRuleset,
+  'naming-changes': NamingChangesRuleset,
+};
 
 export const registerDiff = (cli: Command, config: OpticCliConfig) => {
   cli
@@ -57,8 +65,8 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
               getFileFromFsOrGit(headFilePath),
             ]);
 
-            // const lintResult = await lint(baseFile, headFile);
-            // console.log(lintResult);
+            const lintResult = await lint(config, baseFile, headFile);
+            console.log(lintResult);
 
             // const compressedData = compressData(baseFile, headFile);
             // console.log(compressedData.length);
@@ -112,11 +120,19 @@ const openBrowserToPage = async (url: string) => {
 };
 
 const lint = async (
+  config: OpticCliConfig,
   fromSpec: ParseResult,
   toSpec: ParseResult
 ): Promise<SpecResults> => {
-  const rules = [new BreakingChangesRuleset()];
-  const ruleRunner = new RuleRunner(rules);
+  const rulesets: Ruleset[] = [];
+
+  for (const rule of config.rulesets) {
+    if (typeof rule === 'string' && stdRulesets[rule]) {
+      rulesets.push(new stdRulesets[rule]());
+    }
+  }
+
+  const ruleRunner = new RuleRunner(rulesets);
 
   return generateSpecResults(ruleRunner, fromSpec, toSpec, null);
 };
