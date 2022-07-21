@@ -113,14 +113,3 @@ function interactionFixture(
     },
   };
 }
-
-function observationsOfKind<K extends StatusObservationKind>(
-  observations: StatusObservation[],
-  kind: K
-): Array<StatusObservation & { kind: K }> {
-  return observations.filter<StatusObservation & { kind: K }>(
-    (observation): observation is StatusObservation & { kind: K } => {
-      return observation.kind === kind;
-    }
-  );
-}
