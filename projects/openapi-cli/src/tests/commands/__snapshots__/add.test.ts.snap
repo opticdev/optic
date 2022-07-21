@@ -32,3 +32,81 @@ Object {
   },
 }
 `;
+
+exports[`add command add operations with traffic generates patches adding requests, responses and bodies for matching traffic 1`] = `
+Object {
+  "info": Object {
+    "title": "Empty",
+    "version": "0.0.0",
+  },
+  "openapi": "3.0.3",
+  "paths": Object {
+    "/orders": Object {
+      "get": Object {
+        "responses": Object {},
+      },
+    },
+    "/orders/{orderId}/products": Object {
+      "get": Object {
+        "responses": Object {},
+      },
+      "parameters": Array [
+        Object {
+          "in": "path",
+          "name": "orderId",
+          "required": true,
+        },
+      ],
+      "post": Object {
+        "requestBody": Object {
+          "content": Object {
+            "application/json": Object {
+              "schema": Object {
+                "properties": Object {
+                  "name": Object {
+                    "type": "string",
+                  },
+                  "optionalField": Object {
+                    "type": "boolean",
+                  },
+                },
+                "required": Array [
+                  "name",
+                ],
+                "type": "object",
+              },
+            },
+          },
+        },
+        "responses": Object {
+          "201": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "properties": Object {
+                    "id": Object {
+                      "type": "string",
+                    },
+                    "name": Object {
+                      "type": "string",
+                    },
+                    "optionalField": Object {
+                      "type": "boolean",
+                    },
+                  },
+                  "required": Array [
+                    "id",
+                    "name",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "automatically documented through Optic",
+          },
+        },
+      },
+    },
+  },
+}
+`;
