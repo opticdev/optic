@@ -196,7 +196,7 @@ function* getRequestChangeLogs({ change, bodyChanges }: RequestChange) {
   }
 
   if (change || bodyChanges.size) {
-    yield label;
+    yield `${label} ${change?.added ? added : ''}`;
   }
 
   if (change) {
@@ -220,7 +220,7 @@ function* getBodyChangeLogs(
   }
 
   if (bodyChange || fieldChanges.length || exampleChanges.length) {
-    yield label;
+    yield `${label} ${bodyChange?.added ? added : ''}`;
   }
 
   if (bodyChange) {
