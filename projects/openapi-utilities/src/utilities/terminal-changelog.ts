@@ -17,8 +17,8 @@ const changed = chalk.yellow('changed');
 
 const INDENTATION = '  ';
 
-const getModificationLabel = (change: ChangeVariant<any>) =>
-  change.added ? added : change.removed ? removed : changed;
+const getAddedOrRemovedLabel = (change: ChangeVariant<any>) =>
+  change.added ? added : change.removed ? removed : '';
 
 const getDiff = (before: object, after: object) => {
   const output = {
@@ -43,128 +43,6 @@ const getDiff = (before: object, after: object) => {
   return output;
 };
 
-function* indent(generator: Generator<string>) {
-  for (const y of generator) {
-    yield `${INDENTATION}${y}`;
-  }
-}
-
-export function* terminalChangelog(
-  groupedChanges: ReturnType<typeof groupChanges>
-): Generator<string> {
-  const { changesByEndpoint, specificationChanges } = groupedChanges;
-  for (const specificationChange of specificationChanges) {
-    yield* getSpecificationLogs(specificationChange);
-  }
-  if (specificationChanges.length) {
-    yield '';
-  }
-  for (const [_, openApiChange] of changesByEndpoint) {
-    yield* getOpenApiChangeLogs(openApiChange);
-  }
-}
-
-function* getOpenApiChangeLogs(
-  endpointChange: OpenApiEndpointChange
-): Generator<string> {
-  const {
-    method,
-    path,
-    request,
-    responses,
-    cookieParameters,
-    change,
-    headers,
-    pathParameters,
-    queryParameters,
-  } = endpointChange;
-
-  yield `${chalk.bold(method.toUpperCase())} ${path}:`;
-
-  if (change) {
-    yield* indent(getOperationLogs(change));
-  }
-
-  for (const [label, parameter] of queryParameters) {
-    yield* indent(getParameterLogs('query', label, parameter));
-  }
-
-  for (const [label, parameter] of cookieParameters) {
-    yield* indent(getParameterLogs('cookie', label, parameter));
-  }
-
-  for (const [label, parameter] of pathParameters) {
-    yield* indent(getParameterLogs('path', label, parameter));
-  }
-
-  for (const [label, parameter] of headers) {
-    yield* indent(getParameterLogs('header', label, parameter));
-  }
-
-  yield* indent(getRequestChangeLogs(request));
-
-  for (const [key, response] of responses) {
-    yield* indent(getResponseChangeLogs(response, key));
-  }
-
-  yield '';
-}
-
-function* getResponseChangeLogs(
-  { change, headers, contentTypes }: ResponseChange,
-  key: string
-) {
-  if (change || headers.size || contentTypes.size) {
-    yield `- response ${chalk.bold(key)}:`;
-  }
-
-  if (change) {
-    yield* indent(getResponseLogs(change));
-  }
-  for (const [key, responseHeader] of headers) {
-    yield* indent(getResponseHeaderLogs(responseHeader, key));
-  }
-
-  for (const [key, contentType] of contentTypes) {
-    yield* indent(getBodyChangeLogs(contentType, key));
-  }
-}
-
-function* getRequestChangeLogs({ change, bodyChanges }: RequestChange) {
-  if (change || bodyChanges.size) {
-    yield `- request:`;
-  }
-
-  if (change) {
-    yield* indent(getRequestLogs(change));
-  }
-
-  for (const [key, bodyChange] of bodyChanges) {
-    yield* indent(getBodyChangeLogs(bodyChange, key));
-  }
-}
-
-function* getBodyChangeLogs(
-  { bodyChange, fieldChanges, exampleChanges }: BodyChange,
-  key: string
-) {
-  if (bodyChange || fieldChanges.length || exampleChanges.length) {
-    yield `- body ${chalk.bold(key)}:`;
-  }
-
-  if (bodyChange) {
-    yield* indent(getBodyLogs(bodyChange));
-  }
-
-  for (const fieldChange of fieldChanges) {
-    yield* indent(getFieldLogs(fieldChange));
-  }
-
-  for (const exampleChange of exampleChanges) {
-    yield* indent(getExampleLogs(exampleChange));
-  }
-}
-
 const getDetailsDiff = (change: ChangeVariant<any>) => {
   const before = change.added
     ? {}
@@ -185,7 +63,7 @@ const getDetailsDiff = (change: ChangeVariant<any>) => {
   return getDiff(before, after);
 };
 
-function* getDetailLogs(change: ChangeVariant<any>, label: string) {
+function* getDetailLogs(change: ChangeVariant<any>, label?: string) {
   const diff = getDetailsDiff(change);
 
   const diffCount =
@@ -193,62 +71,197 @@ function* getDetailLogs(change: ChangeVariant<any>, label: string) {
 
   if (!diffCount) return;
 
-  yield `${label}:`;
+  if (label) yield label;
 
   if (diff.added.length) {
     const keys = diff.added.join(', ');
-    yield `${INDENTATION}- ${keys} ${added}`;
+    yield `- ${keys} ${added}`;
   }
 
   if (diff.changed.length) {
     const keys = diff.changed.join(', ');
-    yield `${INDENTATION}- ${keys} ${changed}`;
+    yield `- ${keys} ${changed}`;
   }
 
   if (diff.removed.length) {
     const keys = diff.removed.join(', ');
-    yield `${INDENTATION}- ${keys} ${removed}`;
+    yield `- ${keys} ${removed}`;
   }
 }
 
-function getSpecificationLogs(
-  change: ChangeVariant<OpenApiKind.Specification>
+function* indent(generator: Generator<string>) {
+  for (const y of generator) {
+    yield `${INDENTATION}${y}`;
+  }
+}
+
+export function* terminalChangelog(
+  groupedChanges: ReturnType<typeof groupChanges>
+): Generator<string> {
+  const { changesByEndpoint, specificationChanges } = groupedChanges;
+  for (const specificationChange of specificationChanges) {
+    yield* getDetailLogs(specificationChange, 'specification details:');
+    yield '';
+  }
+  for (const [_, endpointChange] of changesByEndpoint) {
+    yield* getEndpointLogs(endpointChange);
+  }
+}
+
+function* getEndpointLogs(
+  endpointChange: OpenApiEndpointChange
+): Generator<string> {
+  const {
+    method,
+    path,
+    request,
+    responses,
+    cookieParameters,
+    change,
+    headers,
+    pathParameters,
+    queryParameters,
+  } = endpointChange;
+
+  yield `${chalk.bold(method.toUpperCase())} ${path}: ${
+    change ? getAddedOrRemovedLabel(change) : ''
+  }`;
+
+  if (change?.removed) {
+    return;
+  }
+
+  if (change) {
+    yield* indent(getDetailLogs(change));
+  }
+
+  for (const [name, parameterChange] of queryParameters) {
+    yield* indent(getParameterLogs('query', name, parameterChange));
+  }
+
+  for (const [name, parameterChange] of cookieParameters) {
+    yield* indent(getParameterLogs('cookie', name, parameterChange));
+  }
+
+  for (const [name, parameterChange] of pathParameters) {
+    yield* indent(getParameterLogs('path', name, parameterChange));
+  }
+
+  for (const [name, parameterChange] of headers) {
+    yield* indent(getParameterLogs('header', name, parameterChange));
+  }
+
+  yield* indent(getRequestChangeLogs(request));
+
+  for (const [key, response] of responses) {
+    yield* indent(getResponseChangeLogs(response, key));
+  }
+
+  yield '';
+}
+
+function* getResponseChangeLogs(
+  { change, headers, contentTypes }: ResponseChange,
+  key: string
 ) {
-  return getDetailLogs(change, 'specification details');
+  const label = `- response ${chalk.bold(key)}:`;
+
+  if (change?.removed) {
+    yield `${label} ${removed}`;
+    return;
+  }
+
+  if (change || headers.size || contentTypes.size) {
+    yield label;
+  }
+
+  if (change) {
+    yield* indent(getDetailLogs(change));
+  }
+  for (const [key, responseHeader] of headers) {
+    yield* indent(getResponseHeaderLogs(responseHeader, key));
+  }
+
+  for (const [key, contentType] of contentTypes) {
+    yield* indent(getBodyChangeLogs(contentType, key));
+  }
+}
+
+function* getRequestChangeLogs({ change, bodyChanges }: RequestChange) {
+  const label = `- request:`;
+
+  if (change?.removed) {
+    yield `${label} ${removed}`;
+    return;
+  }
+
+  if (change || bodyChanges.size) {
+    yield label;
+  }
+
+  if (change) {
+    yield* indent(getDetailLogs(change));
+  }
+
+  for (const [key, bodyChange] of bodyChanges) {
+    yield* indent(getBodyChangeLogs(bodyChange, key));
+  }
+}
+
+function* getBodyChangeLogs(
+  { bodyChange, fieldChanges, exampleChanges }: BodyChange,
+  key: string
+) {
+  const label = `- body ${chalk.bold(key)}:`;
+
+  if (bodyChange?.removed) {
+    yield `${label} ${removed}`;
+    return;
+  }
+
+  if (bodyChange || fieldChanges.length || exampleChanges.length) {
+    yield label;
+  }
+
+  if (bodyChange) {
+    yield* indent(getDetailLogs(bodyChange));
+  }
+
+  for (const fieldChange of fieldChanges) {
+    yield* indent(getFieldLogs(fieldChange));
+  }
+
+  for (const exampleChange of exampleChanges) {
+    yield* indent(getExampleLogs(exampleChange));
+  }
 }
 
 function* getResponseHeaderLogs(
   change: ChangeVariant<OpenApiKind.ResponseHeader>,
   key: string
 ) {
-  yield `- response header ${chalk.italic(key)} ${getModificationLabel(
+  yield `- response header ${chalk.italic(key)}: ${getAddedOrRemovedLabel(
     change
   )}`;
-}
 
-function getResponseLogs(change: ChangeVariant<OpenApiKind.Response>) {
-  return getDetailLogs(change, '- response details');
+  if (!change.removed) {
+    yield* indent(getDetailLogs(change));
+  }
 }
-
-function getRequestLogs(change: ChangeVariant<OpenApiKind.Request>) {
-  return getDetailLogs(change, '- request details');
-}
-
-function getBodyLogs(change: ChangeVariant<OpenApiKind.Body>) {
-  return getDetailLogs(change, '- body details');
-}
-
 function* getFieldLogs(change: ChangeVariant<OpenApiKind.Field>) {
   const key = change.location.conceptualPath.at(-1);
-  yield `- field ${chalk.italic(key)} ${getModificationLabel(change)}`;
+  yield `- field ${chalk.italic(key)} ${getAddedOrRemovedLabel(change)}`;
+
+  if (!change.removed) {
+    yield* indent(getDetailLogs(change));
+  }
 }
 
 function* getExampleLogs(change: ChangeVariant<OpenApiKind.BodyExample>) {
-  yield `- example ${getModificationLabel(change)}`;
-}
-
-function getOperationLogs(change: ChangeVariant<OpenApiKind.Operation>) {
-  return getDetailLogs(change, '- operation details');
+  yield `- example ${getAddedOrRemovedLabel(change)}`;
+  if (!change.removed) {
+    yield* indent(getDetailLogs(change));
+  }
 }
 
 function* getParameterLogs(
@@ -263,5 +276,9 @@ function* getParameterLogs(
 ) {
   yield `- ${parameterType} parameter ${chalk.italic(
     parameterName
-  )} ${getModificationLabel(change)}`;
+  )}: ${getAddedOrRemovedLabel(change)}`;
+
+  if (!change.removed) {
+    yield* indent(getDetailLogs(change));
+  }
 }
