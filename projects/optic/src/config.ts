@@ -10,7 +10,7 @@ export enum VCS {
 
 const OPTIC_YML_NAME = 'optic.yml';
 
-type ConfigRule = string | { rule: string; options?: unknown };
+type ConfigRuleset = string | { rule: string; options?: unknown };
 
 export type OpticCliConfig = {
   // path to the loaded config, or undefined if it was the default config
@@ -27,14 +27,14 @@ export type OpticCliConfig = {
     id: string;
   }[];
 
-  rules: ConfigRule[];
+  rulesets: ConfigRuleset[];
 };
 
 export const DefaultOpticCliConfig = {
   root: process.cwd(),
   configPath: undefined,
   files: [],
-  rules: [],
+  rulesets: ['breaking-changes'],
 };
 
 const ajv = new Ajv();
@@ -56,7 +56,7 @@ const configSchema = {
         required: ['path', 'id'],
       },
     },
-    rules: {
+    rulesets: {
       type: 'array',
       items: {
         anyOf: [

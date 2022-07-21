@@ -2,11 +2,18 @@ import { Command } from 'commander';
 import brotli from 'brotli';
 import open from 'open';
 
-import { generateSpecResults } from '@useoptic/openapi-utilities';
+import {
+  generateSpecResults,
+  logComparison,
+  generateChangelogData,
+  terminalChangelog,
+} from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
-import { BreakingChangesRuleset } from '@useoptic/standard-rulesets';
-import { RuleRunner } from '@useoptic/rulesets-base';
-
+import {
+  BreakingChangesRuleset,
+  NamingChangesRuleset,
+} from '@useoptic/standard-rulesets';
+import { RuleRunner, Ruleset } from '@useoptic/rulesets-base';
 import {
   parseFilesFromRef,
   ParseResult,
@@ -41,6 +48,11 @@ const webBase =
     ? 'https://app.o3c.info'
     : 'https://app.useoptic.com';
 
+const stdRulesets = {
+  'breaking-changes': BreakingChangesRuleset,
+  'naming-changes': NamingChangesRuleset,
+};
+
 export const registerDiff = (cli: Command, config: OpticCliConfig) => {
   cli
     .command('diff')
@@ -60,6 +72,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       '--id <id>',
       'the id of the spec to run against in defined in the `optic.yml` file'
     )
+    .option('--no-checks', 'disable checks')
     .option('--web', 'view the diff in the optic changelog web view', false)
     .action(
       wrapActionHandlerWithSentry(
@@ -69,6 +82,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           options: {
             base: string;
             id?: string;
+            checks: boolean;
             web: boolean;
           }
         ) => {
@@ -145,10 +159,33 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             return;
           }
 
-          const lintResult = await lint(baseFile, headFile);
-          console.log(lintResult);
+          const ruleRunner = generateRuleRunner(config, options.checks);
+          const specResults = await generateSpecResults(
+            ruleRunner,
+            baseFile,
+            headFile,
+            null
+          );
 
-          // TODO render here
+          const changelogData = generateChangelogData({
+            changes: specResults.changes,
+            toFile: headFile.jsonLike,
+          });
+
+          console.log('');
+          for (const log of terminalChangelog(changelogData)) {
+            console.log(log);
+          }
+
+          if (options.checks) {
+            if (specResults.results.length > 0) {
+              console.log('Checks');
+              console.log('');
+            }
+
+            logComparison(specResults, { output: 'pretty', verbose: false });
+          }
+
           if (options.web) {
             const compressedData = compressData(baseFile, headFile);
             console.log('Opening up diff in web view');
@@ -178,12 +215,21 @@ const openBrowserToPage = async (url: string) => {
   await open(url, { wait: false });
 };
 
-const lint = async (
-  fromSpec: ParseResult,
-  toSpec: ParseResult
-): Promise<SpecResults> => {
-  const rules = [new BreakingChangesRuleset()];
-  const ruleRunner = new RuleRunner(rules);
+const generateRuleRunner = (
+  config: OpticCliConfig,
+  checksEnabled: boolean
+): RuleRunner => {
+  const rulesets: Ruleset[] = [];
 
-  return generateSpecResults(ruleRunner, fromSpec, toSpec, null);
+  if (checksEnabled) {
+    for (const rule of config.rulesets) {
+      if (typeof rule === 'string' && stdRulesets[rule]) {
+        rulesets.push(new stdRulesets[rule]());
+      } else {
+        console.error(`Warning: Invalid ruleset ${rule}`);
+      }
+    }
+  }
+
+  return new RuleRunner(rulesets);
 };
