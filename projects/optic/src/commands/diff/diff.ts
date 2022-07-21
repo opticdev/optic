@@ -164,8 +164,10 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             return;
           }
 
-          const lintResult = await lint(baseFile, headFile);
-          console.log(lintResult);
+          if (options.lint) {
+            const lintResult = await lint(config, baseFile, headFile);
+            console.log(lintResult);
+          }
 
           // TODO render here
           if (options.web) {
