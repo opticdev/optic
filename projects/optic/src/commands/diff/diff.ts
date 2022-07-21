@@ -148,8 +148,8 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           }
 
           if (!baseFile || !headFile) {
-            console.error('Unexpected error: files not loaded');
-            return;
+            // throw here so sentry gets it - this is unexpected
+            throw new Error('Files not loaded');
           }
 
           const compressedData = compressData(baseFile, headFile);
