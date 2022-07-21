@@ -46,6 +46,8 @@ type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
 const webBase =
   process.env.OPTIC_ENV === 'staging'
     ? 'https://app.o3c.info'
+    : process.env.OPTIC_ENV === 'local'
+    ? 'http://localhost:3000'
     : 'https://app.useoptic.com';
 
 const stdRulesets = {
@@ -86,11 +88,6 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             web: boolean;
           }
         ) => {
-          const webBase =
-            process.env.OPTIC_ENV === 'staging'
-              ? 'https://app.o3c.info'
-              : 'https://app.useoptic.com';
-
           let baseFile: ParseResult;
           let headFile: ParseResult;
 
@@ -187,7 +184,11 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           }
 
           if (options.web) {
-            const compressedData = compressData(baseFile, headFile);
+            const compressedData = compressData(
+              baseFile,
+              headFile,
+              specResults
+            );
             console.log('Opening up diff in web view');
             openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
           }
@@ -196,10 +197,16 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     );
 };
 
-const compressData = (baseFile: ParseResult, headFile: ParseResult): string => {
+const compressData = (
+  baseFile: ParseResult,
+  headFile: ParseResult,
+  specResults: SpecResults
+): string => {
   const dataToCompress = {
     base: baseFile.jsonLike,
     head: headFile.jsonLike,
+    results: specResults,
+    version: '1',
   };
   // TODO maybe strip out unnecessary things here?
   // We could strip out:
