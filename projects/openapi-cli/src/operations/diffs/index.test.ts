@@ -74,4 +74,77 @@ describe('diffOperationWithSpec', () => {
     ];
     expect(matchingResults).toHaveLength(0);
   });
+
+  it('yields diffs for unmatched methods', () => {
+    let testSpec: OpenAPIV3.Document = {
+      openapi: '3.0.3',
+      info: {
+        title: 'test spec',
+        version: '1.0.0',
+      },
+      paths: {
+        '/orders/{orderId}/products': {
+          get: {
+            responses: {},
+          },
+        },
+      },
+    };
+
+    const matchingResults = [
+      ...diffOperationWithSpec(
+        {
+          pathPattern: '/orders/{orderId}/products',
+          methods: [HttpMethods.GET],
+        },
+        testSpec
+      ),
+    ];
+    expect(matchingResults).toHaveLength(0);
+
+    const unmatchingMethod = [
+      ...diffOperationWithSpec(
+        {
+          pathPattern: '/orders/{orderId}/products',
+          methods: [HttpMethods.POST],
+        },
+        testSpec
+      ),
+    ];
+    expect(unmatchingMethod).toHaveLength(1);
+    let [unmatchingMethodResult] = unmatchingMethod;
+    expect(unmatchingMethodResult.kind).toBe(
+      OperationDiffResultKind.UnmatchedMethod
+    );
+    expect(unmatchingMethodResult).toMatchSnapshot();
+
+    const multipleUnmatchedResults = [
+      ...diffOperationWithSpec(
+        {
+          pathPattern: '/orders/{orderId}/products',
+          methods: [HttpMethods.POST, HttpMethods.PUT],
+        },
+        testSpec
+      ),
+    ];
+    expect(multipleUnmatchedResults).toHaveLength(2);
+    expect(
+      multipleUnmatchedResults.every(
+        (diff) => diff.kind === OperationDiffResultKind.UnmatchedMethod
+      )
+    ).toBe(true);
+    expect(multipleUnmatchedResults).toMatchSnapshot();
+
+    const partialUnmatchedResults = [
+      ...diffOperationWithSpec(
+        {
+          pathPattern: '/orders/{orderId}/products',
+          methods: [HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT],
+        },
+        testSpec
+      ),
+    ];
+    expect(partialUnmatchedResults).toHaveLength(2);
+    expect(partialUnmatchedResults).toEqual(multipleUnmatchedResults);
+  });
 });
