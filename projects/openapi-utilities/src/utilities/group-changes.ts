@@ -145,7 +145,7 @@ export const groupChanges = ({
   specificationChanges: ChangeVariant<OpenApiKind.Specification>[];
   changesByEndpoint: GroupedChanges;
 } => {
-  const sortedChanges = changes.sort(compareChangesByPath);
+  const sortedChanges = [...changes].sort(compareChangesByPath);
   const specificationChanges: ChangeVariant<OpenApiKind.Specification>[] = [];
   const groupedChanges: GroupedChanges = new Map();
   for (const change of sortedChanges) {
