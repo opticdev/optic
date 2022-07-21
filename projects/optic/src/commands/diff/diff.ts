@@ -226,7 +226,7 @@ const generateRuleRunner = (
       if (typeof rule === 'string' && stdRulesets[rule]) {
         rulesets.push(new stdRulesets[rule]());
       } else {
-        console.error(`Unknown ruleset ${rule}`);
+        console.error(`Warning: Invalid ruleset ${rule}`);
       }
     }
   }
