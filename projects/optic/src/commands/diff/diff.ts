@@ -225,6 +225,8 @@ const generateRuleRunner = (
     for (const rule of config.rulesets) {
       if (typeof rule === 'string' && stdRulesets[rule]) {
         rulesets.push(new stdRulesets[rule]());
+      } else {
+        console.error(`Unknown ruleset ${rule}`);
       }
     }
   }
