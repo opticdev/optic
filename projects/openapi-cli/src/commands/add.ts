@@ -105,13 +105,8 @@ export function addCommand(): Command {
       }
       const { jsonLike: spec, sourcemap } = specReadResult.unwrap();
 
-      let addResult = await addOperations(spec, parsedOperations, interactions);
-      if (addResult.err) {
-        return command.error(addResult.val);
-      }
-
       let { results: addPatches, observations: addObservations } =
-        addResult.unwrap();
+        addOperations(spec, parsedOperations, interactions);
 
       let { results: updatedSpecFiles, observations: fileObservations } =
         updateSpecFiles(addPatches, sourcemap);
@@ -141,16 +136,11 @@ interface ParsedOperation {
   pathPattern: string;
 }
 
-async function addOperations(
+export function addOperations(
   spec: OpenAPIV3.Document,
   requiredOperations: ParsedOperation[],
   interactions: CapturedInteractions
-): Promise<
-  Result<
-    { results: SpecPatches; observations: AsyncIterable<AddObservation> },
-    string
-  >
-> {
+): { results: SpecPatches; observations: AsyncIterable<AddObservation> } {
   const observing = new AT.Subject<AddObservation>();
   const observers = {
     undocumentedOperation(op: UndocumentedOperation) {
@@ -281,7 +271,7 @@ async function addOperations(
     observing.onCompleted();
   })();
 
-  return Ok({ results: observedResults, observations: observing.iterator });
+  return { results: observedResults, observations: observing.iterator };
 }
 
 function updateSpecFiles(

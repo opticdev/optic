@@ -7,9 +7,14 @@ import { writeOpticConfig } from './write-optic-config';
 import { hasGit, isInGitRepo, getRootPath } from '../../utils/git-utils';
 import { configFile } from './constants';
 import { getValidSpecs } from './get-valid-specs';
+import { OpticCliConfig } from '../../config';
 
-export const init = async (): Promise<void> => {
+export const init = async (config: OpticCliConfig): Promise<void> => {
   // Sanity checks
+  if (config.configPath) {
+    console.error(`Error: config file already exists at ${config.configPath}`);
+  }
+
   if (!(await hasGit())) {
     console.error('Error: git must be available in PATH for "init" to work.');
     return;
@@ -33,30 +38,42 @@ export const init = async (): Promise<void> => {
   console.log('Initializing Optic...');
 
   // Find valid spec files
+  console.log(`Detecting OpenAPI specs in ${configPath}...`);
   const openApiSpecPaths = await findOpenAPISpecs();
   const validSpecs = await getValidSpecs(openApiSpecPaths);
 
-  console.log(
-    `Found ${openApiSpecPaths.length} candidate OpenAPI specification files, ${validSpecs.length} of which are valid.`
-  );
-
   // Write configuration
   if (validSpecs.length) {
+    console.log();
+    console.log(
+      `Found ${validSpecs.length} valid spec${
+        validSpecs.length !== 1 ? 's' : ''
+      }`
+    );
+
     const opticConfig = generateOpticConfig(validSpecs, gitRoot);
     const opticConfigYml = dump(opticConfig);
     await writeOpticConfig(opticConfigYml, configPath);
 
-    console.log(
-      `The following specification files were identified in ${configPath}:\n`
-    );
-
+    console.log();
     for (const spec of opticConfig.files) {
-      console.log(`  path: ${spec.path}`);
-      console.log(`  id: ${spec.id}\n`);
+      console.log(`- path: ${spec.path}`);
+      console.log(`  id: ${spec.id}`);
     }
 
+    console.log();
+    console.log('Adding ruleset:');
+    console.log();
+    for (const ruleset of opticConfig.ruleset) {
+      console.log(`- ${ruleset}`);
+    }
+
+    console.log();
     console.log(
-      'These IDs are stable identifiers for your API specifications that will appear in Optic. You can change them now before you check in the optic.yml file.'
+      'File IDs are stable identifiers for your API specifications that will appear in Optic.'
+    );
+    console.log(
+      'You can change them now before you check in the optic.yml file.'
     );
   } else {
     console.error(

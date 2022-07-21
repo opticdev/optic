@@ -38,5 +38,5 @@ export const generateOpticConfig = (specs: SpecWithPath[], gitRoot: string) => {
     files.push(file);
   }
 
-  return { files };
+  return { files, ruleset: ['breaking-changes'] };
 };
