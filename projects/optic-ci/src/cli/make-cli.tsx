@@ -10,8 +10,6 @@ import {
 } from './commands/create-context/create-github-context';
 import { registerCreateManualContext } from './commands/create-context/create-manual-context';
 import { registerCreateGitlabContext } from './commands/create-context/create-gitlab-context';
-import { registerCloudCompare } from './commands/cloud-compare/cloud-compare';
-import { registerInit } from './commands/init/register-init';
 import { RuleRunner, SpectralInput } from '@useoptic/openapi-utilities';
 import {
   trackEvent,
@@ -98,9 +96,6 @@ export async function _makeCiCliInternal(
     shouldHideV1Commands,
     spectralConfig
   );
-
-  registerCloudCompare(cli, shouldHideV2Commands);
-  registerInit(cli);
 
   return cli;
 }

@@ -1,7 +1,7 @@
 import { waitForSession } from '../wait-for-session';
-import { OpticBackendClient } from '../../../clients/optic-client';
+import { OpticBackendClient } from '@useoptic/optic-ci/build/cli/clients/optic-client';
 
-jest.mock('../../../clients/optic-client');
+jest.mock('@useoptic/optic-ci/build/cli/clients/optic-client');
 
 let MockedOpticBackendClient: jest.MockedClass<typeof OpticBackendClient>;
 let client: OpticBackendClient;
