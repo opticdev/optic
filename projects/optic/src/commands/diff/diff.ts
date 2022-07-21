@@ -2,7 +2,11 @@ import { Command } from 'commander';
 import brotli from 'brotli';
 import open from 'open';
 
-import { generateSpecResults } from '@useoptic/openapi-utilities';
+import {
+  generateSpecResults,
+  logComparison,
+  generateChangelogData,
+} from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
   BreakingChangesRuleset,
@@ -77,7 +81,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           options: {
             base: string;
             id?: string;
-            lint?: boolean;
+            lint: boolean;
             web: boolean;
           }
         ) => {
@@ -154,12 +158,18 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             return;
           }
 
+          const ruleRunner = generateRuleRunner(config, options.lint || true);
+          const specResults = await generateSpecResults(
+            ruleRunner,
+            baseFile,
+            headFile,
+            null
+          );
+
           if (options.lint) {
-            const lintResult = await lint(config, baseFile, headFile);
-            console.log(lintResult);
+            logComparison(specResults, { output: 'pretty', verbose: false });
           }
 
-          // TODO render here
           if (options.web) {
             const compressedData = compressData(baseFile, headFile);
             console.log('Opening up diff in web view');
@@ -189,20 +199,19 @@ const openBrowserToPage = async (url: string) => {
   await open(url, { wait: false });
 };
 
-const lint = async (
+const generateRuleRunner = (
   config: OpticCliConfig,
-  fromSpec: ParseResult,
-  toSpec: ParseResult
-): Promise<SpecResults> => {
+  lint: boolean
+): RuleRunner => {
   const rulesets: Ruleset[] = [];
 
-  for (const rule of config.rulesets) {
-    if (typeof rule === 'string' && stdRulesets[rule]) {
-      rulesets.push(new stdRulesets[rule]());
+  if (lint) {
+    for (const rule of config.rulesets) {
+      if (typeof rule === 'string' && stdRulesets[rule]) {
+        rulesets.push(new stdRulesets[rule]());
+      }
     }
   }
 
-  const ruleRunner = new RuleRunner(rulesets);
-
-  return generateSpecResults(ruleRunner, fromSpec, toSpec, null);
+  return new RuleRunner(rulesets);
 };
