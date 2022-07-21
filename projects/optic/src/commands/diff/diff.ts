@@ -178,8 +178,11 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           }
 
           if (options.lint) {
-            console.log('Checks');
-            console.log('');
+            if (specResults.results.length > 0) {
+              console.log('Checks');
+              console.log('');
+            }
+
             logComparison(specResults, { output: 'pretty', verbose: false });
           }
 
