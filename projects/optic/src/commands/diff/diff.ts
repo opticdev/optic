@@ -163,10 +163,12 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           }
 
           const compressedData = compressData(baseFile, headFile);
-
           openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
-          const lintResult = await lint(config, baseFile, headFile);
-          console.log(lintResult);
+
+          if (options.lint) {
+            const lintResult = await lint(config, baseFile, headFile);
+            console.log(lintResult);
+          }
         }
       )
     );
