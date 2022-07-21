@@ -96,12 +96,11 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             ]);
             const compressedData = compressData(baseFile, headFile);
             openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
-            // const lintResult = await lint(baseFile, headFile);
-            // console.log(lintResult);
 
-            // const compressedData = compressData(baseFile, headFile);
-            // console.log(compressedData.length);
-            // openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
+            if (options.lint) {
+              const lintResult = await lint(config, baseFile, headFile);
+              console.log(lintResult);
+            }
           } else if (file1) {
             const commandVariant = `optic diff <file> --base <ref>`;
             if (config.vcs !== VCS.Git) {
@@ -120,11 +119,6 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             );
             const compressedData = compressData(baseFile, headFile);
             openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
-
-            if (options.lint) {
-              const lintResult = await lint(config, baseFile, headFile);
-              console.log(lintResult);
-            }
           } else if (options.id) {
             const commandVariant = `optic diff --id <id> --base <ref>`;
             if (config.vcs !== VCS.Git) {
