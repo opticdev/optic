@@ -53,7 +53,7 @@ const webBase =
 
 const stdRulesets = {
   'breaking-changes': BreakingChangesRuleset,
-  'naming-changes': NamingChangesRuleset,
+  // 'naming-changes': NamingChangesRuleset,
 };
 
 export const registerDiff = (cli: Command, config: OpticCliConfig) => {
