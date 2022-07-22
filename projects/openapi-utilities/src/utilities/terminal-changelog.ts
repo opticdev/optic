@@ -249,7 +249,8 @@ function* getResponseHeaderLogs(
   }
 }
 function* getFieldLogs(change: ChangeVariant<OpenApiKind.Field>) {
-  const key = change.location.conceptualPath.at(-1);
+  const path = change.location.conceptualPath;
+  const key = path[path.length - 1];
   yield `- field ${chalk.italic(key)} ${getAddedOrRemovedLabel(change)}`;
 
   if (!change.removed) {
