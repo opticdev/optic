@@ -19,7 +19,7 @@ import {
   OpticCliConfig,
 } from './config';
 import { hasGit, isInGitRepo, getRootPath } from './utils/git-utils';
-import { machineId } from 'node-machine-id';
+import { getAnonId } from './utils/anonymous-id';
 
 const packageJson = require('../package.json');
 
@@ -37,7 +37,7 @@ export const initCli = async () => {
       } else {
         [commandName, ...args] = command.args;
       }
-      const anonymousId = await machineId();
+      const anonymousId = await getAnonId();
       trackEvent(`optic.${commandName}`, anonymousId, {
         args,
       });

@@ -21,6 +21,11 @@ import {
 } from '../../utils/spec-loaders';
 import { OpticCliConfig, VCS } from '../../config';
 import chalk from 'chalk';
+import {
+  flushEvents,
+  trackEvent,
+} from '@useoptic/openapi-utilities/build/utilities/segment';
+import { getAnonId } from '../../utils/anonymous-id';
 
 const description = `run a diff between two API specs`;
 
@@ -191,7 +196,12 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
               specResults
             );
             console.log('Opening up diff in web view');
-            openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
+            const anonymousId = await getAnonId();
+            trackEvent('optic.diff.view_web', anonymousId, {
+              compressedDataLength: compressedData.length,
+            });
+            await flushEvents();
+            await openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
           } else {
             console.log(
               chalk.blue(
