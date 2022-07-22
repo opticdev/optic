@@ -66,6 +66,7 @@ export {
 export { traverseSpec } from './utilities/traverse-spec';
 export { terminalChangelog } from './utilities/terminal-changelog';
 export { generateChangelogData } from './utilities/generate-changelog-data';
+export { compareChangesByPath } from './utilities/compare-changes-by-path';
 
 export {
   sourcemapReader,
