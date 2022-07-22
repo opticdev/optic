@@ -20,6 +20,7 @@ import {
   getFileFromFsOrGit,
 } from '../../utils/spec-loaders';
 import { OpticCliConfig, VCS } from '../../config';
+import chalk from 'chalk';
 
 const description = `run a diff between two API specs`;
 
@@ -191,6 +192,12 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             );
             console.log('Opening up diff in web view');
             openBrowserToPage(`${webBase}/cli/diff#${compressedData}`);
+          } else {
+            console.log(
+              chalk.blue(
+                `Rerun this command with the --web flag to view these changes to view the detailed changes`
+              )
+            );
           }
         }
       )
