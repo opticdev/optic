@@ -51,11 +51,28 @@ export const init = async (config: OpticCliConfig): Promise<void> => {
       }`
     );
 
+    if (validSpecs.length < openApiSpecPaths.length) {
+      const validSpecPaths = validSpecs.map((spec) => spec.path);
+      const invalidSpecPaths = openApiSpecPaths.filter(
+        (spec) => !validSpecPaths.includes(spec)
+      );
+
+      console.log();
+      console.log(
+        `The following ${invalidSpecPaths.length} spec${
+          invalidSpecPaths.length !== 1 ? 's' : ''
+        } look like OpenAPI specs but couldn't be parsed:`
+      );
+
+      invalidSpecPaths.forEach((spec) => console.log(`- ${spec}`));
+    }
+
     const opticConfig = generateOpticConfig(validSpecs, gitRoot);
     const opticConfigYml = dump(opticConfig);
     await writeOpticConfig(opticConfigYml, configPath);
 
     console.log();
+    console.log(`Adding files:`);
     for (const spec of opticConfig.files) {
       console.log(`- path: ${spec.path}`);
       console.log(`  id: ${spec.id}`);
