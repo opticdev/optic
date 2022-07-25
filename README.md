@@ -1,62 +1,54 @@
 
-> **Announcement:** Optic is launching with native support for OpenAPI 3. [Read more and get early access here ](https://www.useoptic.com/blog/optic-for-openapi)
+![GitHub Repo stars](https://img.shields.io/github/stars/opticdev/optic?style=social)
+![GitHub contributors](https://img.shields.io/github/contributors-anon/opticdev/optic?style=social)
+![npm](https://img.shields.io/npm/dm/@useoptic/openapi-io?style=social)
 
----
 
-# Track and review API changes as a team
-<a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/44b771b178c0e6848c3064f8684f299080b20e72fbb2d2191ea42e1d099ef9cf/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f776f726b666c6f772f7374617475732f6f707469636465762f6f707469632f52656c65617365"><img src="https://camo.githubusercontent.com/44b771b178c0e6848c3064f8684f299080b20e72fbb2d2191ea42e1d099ef9cf/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f776f726b666c6f772f7374617475732f6f707469636465762f6f707469632f52656c65617365" alt="Build Status" data-canonical-src="https://img.shields.io/github/workflow/status/opticdev/optic/Release" style="max-width:100%;"></a>
-<a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/f66a8db5ca0ca0e9218434e4a00b1bb17e2c06310f6782a402181b78b45b862d/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6973737565732f6f707469636465762f6f70746963"><img src="https://camo.githubusercontent.com/f66a8db5ca0ca0e9218434e4a00b1bb17e2c06310f6782a402181b78b45b862d/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6973737565732f6f707469636465762f6f70746963" alt="issues" data-canonical-src="https://img.shields.io/github/issues/opticdev/optic" style="max-width:100%;"></a>
-<a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/cf6c3e2c15e5eaa40af4a89b6c54d5c38e7fda513826e0edf966064702e26e9d/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f727573742d76312e34392b2d626c75652e737667"><img src="https://camo.githubusercontent.com/cf6c3e2c15e5eaa40af4a89b6c54d5c38e7fda513826e0edf966064702e26e9d/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f727573742d76312e34392b2d626c75652e737667" alt="rust" data-canonical-src="https://img.shields.io/badge/rust-v1.49+-blue.svg" style="max-width:100%;"></a>
-<a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/13fefb2454d8ce93fe5956fabc5c01f5676712228a360d408e722edfc262218c/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6973737565732d70722d636c6f7365642d7261772f6f707469636465762f6f70746963"><img src="https://camo.githubusercontent.com/13fefb2454d8ce93fe5956fabc5c01f5676712228a360d408e722edfc262218c/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6973737565732d70722d636c6f7365642d7261772f6f707469636465762f6f70746963" alt="closedprs" data-canonical-src="https://img.shields.io/github/issues-pr-closed-raw/opticdev/optic" style="max-width:100%;"></a>
-<a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/2854008ab57f0339342647269cd54c0b626494ea523c7a92c015e375fdcf42e5/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f762f407573656f707469632f636c69"><img src="https://camo.githubusercontent.com/2854008ab57f0339342647269cd54c0b626494ea523c7a92c015e375fdcf42e5/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f762f407573656f707469632f636c69" alt="currentversion" data-canonical-src="https://img.shields.io/npm/v/@useoptic/cli" style="max-width:100%;"></a>
-<a href="https://opensource.org/licenses/MIT" rel="nofollow"><img src="https://camo.githubusercontent.com/83d3746e5881c1867665223424263d8e604df233d0a11aae0813e0414d433943/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d4d49542d626c75652e737667" alt="License" data-canonical-src="https://img.shields.io/badge/license-MIT-blue.svg" style="max-width:100%;"></a>
-<a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/80740ef555feafeb5b1d3da8a726bb549f12e2994c7077042a406d036de8500a/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f73746172732f6f707469636465762f6f707469633f7374796c653d736f6369616c"><img src="https://camo.githubusercontent.com/80740ef555feafeb5b1d3da8a726bb549f12e2994c7077042a406d036de8500a/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f73746172732f6f707469636465762f6f707469633f7374796c653d736f6369616c" alt="stars" data-canonical-src="https://img.shields.io/github/stars/opticdev/optic?style=social" style="max-width:100%;"></a>
-<br/>
+# Adopt OpenAPI. Start working API-first.
+> Optic's Open Source tools make OpenAPI and API-first practices easy for any team to adopt.
+> 
 
-Design better APIs · Improve quality · Ship faster. It starts with having the right conversations on your team
 
-### In this repo are the open source libraries powering Optic
-
-- `optic-ci` - the tool used to compare specs and enforce your rules for your API
-- `rulesets-base` - includes the SDKs for authoring and running your own `optic-ci` checks
-
-## Migrating from Optic 10 to Optic 11
-
-Optic 11 is in beta and nearing release. [Get early access by joining the beta here](https://www.useoptic.com/). If you are using Optic `<=10`, the first step is to migrate your spec to an OpenAPI file.
-
-### Generating an OpenAPI specification
-
-In your project's root directory, run `api generate:oas`. This exports your specification into an OpenAPI file for the Optic Toolkit, in YAML format. Copy the file in the command output into your project's root folder as `optic.openapi.yaml`.
-
+## Installation
 ```bash
-$ api generate:oas
-
-[optic] Generated OAS files
-[optic] /{project root}/.optic/generated/openapi.yaml
-
-$ cp .optic/generated/openapi.yaml optic.openapi.yaml
-$ git add optic.openapi.yaml
+npm install -g @useoptic/optic
 ```
 
-💡 **Optional** You may specify a JSON OpenAPI file with the `--json` flag and using the `.json` extension. You may also save your OpenAPI file anywhere in your project, just don't lose track of it.
+## Diff OpenAPI specifications
 
-### Cleaning up
+Understand the API changes between two versions of an OpenAPI descriptions. Optic helps teams review proposed API changes:
 
-You're ready to run the Optic Toolkit against your project. It will automatically use the OpenAPI file exported above, and update it when changes are detected. Once you're comfortable with the new toolkit, you can remove the Optic 10 files from your project with `rm -rf .optic optic.yml`. It's safe to remove these files: the only thing the new Optic Toolkit uses is your OpenAPI specification.
+*diff current branch with base branch* 
+```bash
+optic diff openapi.yaml --base main
+```
+*between two OpenAPI files*
+```bash
+optic diff openapi.yaml openapi-changed.yaml
+```
 
-You should also remove the old Optic 10 CLI, as it doesn't share any components with the Optic Toolkit and is no longer necessary. Removal depends on how you installed it in the first place. For example, to uninstall via NPM, `npm remove --global @useoptic/cli`.
+![changes](https://i.imgur.com/hpKgOha.png)
 
- If you have any problem or questions Open an Issue or reach out in [Discord](https://discord.useoptic.com).
+[Read diff documentation](https://useoptic.com/docs/openapi-diff)
+
+## Catch breaking changes
+API diffs containing breaking changes will be flagged so you do not break consumers. Optic helps you keep your promises.
+
+
+```bash
+optic diff openapi.yaml --base main --checks
+```
+
+![breaking](https://i.imgur.com/JEQL2GV.png)
+
+[Read breaking change documentation](https://useoptic.com/docs/breaking-changes)
+
 
 ## Resources
-- Read our about Aidan + Dev's vision for the space **[Read: Git for APIs](https://optic10.useoptic.com/blog/git-for-apis)**
-- Listen to **[Optic on Software Engineering Daily](https://softwareengineeringdaily.com/2020/09/02/api-change-management-with-aidan-cunniffe/)**
-- Read API Evangelist on Optic **[Automatically Generate OpenAPI For Your APIs Just By Using Them
-  ](https://apievangelist.com/2019/12/12/automatically-generate-openapi-for-your-apis-just-by-using-them/)**
 
-- **[Join Community](https://optic10.useoptic.com/docs/community)**
-
-Want to help us design the next features? [Book Maintainer Office Hours](https://calendly.com/opticlabs/maintainer-office-hours?month=2021-01)
+- [Documentation](https://useoptic.com)
+- [Beyond API Linting: How Optic is different](https://useoptic.com/blog/beyond-api-linting)
+- [Adding Optic to your CI Pipeline](https://useoptic.com/docs/optic-cloud)
 
 ## License
 MIT
