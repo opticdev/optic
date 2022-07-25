@@ -7,6 +7,8 @@ import {
   logComparison,
   generateChangelogData,
   terminalChangelog,
+  OpenAPIV3,
+  IChange,
 } from '@useoptic/openapi-utilities';
 import { wrapActionHandlerWithSentry } from '@useoptic/openapi-utilities/build/utilities/sentry';
 import {
@@ -229,6 +231,36 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
     );
 };
 
+// We can remove the components from spec since the changelog is flattened, and any valid refs will
+// already be added into endpoints they're used in
+const removeComponentsFromSpec = (
+  spec: OpenAPIV3.Document
+): OpenAPIV3.Document => {
+  const { components, ...componentlessSpec } = spec;
+  return componentlessSpec;
+};
+
+const removeSourcemapsFromResults = (specResults: SpecResults): SpecResults => {
+  const { results, changes, ...rest } = specResults;
+
+  return {
+    ...rest,
+    results: results.map((result) => {
+      const { sourcemap, ...sourcemaplessResult } = result;
+      return sourcemaplessResult;
+    }),
+    changes: changes.map((change) => {
+      const { sourcemap, ...sourcemaplessLocation } = change.location;
+      return {
+        ...change,
+        location: {
+          ...sourcemaplessLocation,
+        },
+      };
+    }) as IChange[],
+  };
+};
+
 const compressData = (
   baseFile: ParseResult,
   headFile: ParseResult,
@@ -236,15 +268,12 @@ const compressData = (
   meta: Record<string, unknown>
 ): string => {
   const dataToCompress = {
-    base: baseFile.jsonLike,
-    head: headFile.jsonLike,
-    results: specResults,
+    base: removeComponentsFromSpec(baseFile.jsonLike),
+    head: removeComponentsFromSpec(headFile.jsonLike),
+    results: removeSourcemapsFromResults(specResults),
     meta,
     version: '1',
   };
-  // TODO maybe strip out unnecessary things here?
-  // We could strip out:
-  // - components that do not have a `$ref` key - they should be flattened, except for any circular refs
   const compressed = brotli.compress(
     Buffer.from(JSON.stringify(dataToCompress))
   );
