@@ -49,6 +49,7 @@ optic diff openapi.yaml --base main --checks
 - [Documentation](https://useoptic.com)
 - [Beyond API Linting: How Optic is different](https://useoptic.com/blog/beyond-api-linting)
 - [Adding Optic to your CI Pipeline](https://useoptic.com/docs/optic-cloud)
+- [Book office hours](https://calendly.com/optic-onboarding/optic-office-hours)
 
 ## License
 MIT
