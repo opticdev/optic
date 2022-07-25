@@ -5,7 +5,7 @@ import {
   ResponseChange,
   BodyChange,
 } from './group-changes';
-import { ChangeVariant, OpenApiKind } from '../openapi3/sdk/types';
+import { ChangeVariant, OpenApiKind, OpenApiFact } from '../openapi3/sdk/types';
 import { Instance as Chalk } from 'chalk';
 import isEqual from 'lodash.isequal';
 
@@ -44,21 +44,35 @@ const getDiff = (before: object, after: object) => {
 };
 
 const getDetailsDiff = (change: ChangeVariant<any>) => {
-  const before = change.added
-    ? {}
-    : change.removed
-    ? change.removed
-    : change.changed
-    ? change.changed.before
-    : {};
+  const mergeFlatSchema = (fact: OpenApiFact) => {
+    if ('flatSchema' in fact) {
+      const { flatSchema, ...rest } = fact;
+      return {
+        ...rest,
+        ...flatSchema,
+      };
+    } else return fact;
+  };
 
-  const after = change.added
-    ? change.added
-    : change.removed
-    ? {}
-    : change.changed
-    ? change.changed.after
-    : {};
+  const before = mergeFlatSchema(
+    change.added
+      ? {}
+      : change.removed
+      ? change.removed
+      : change.changed
+      ? change.changed.before
+      : {}
+  );
+
+  const after = mergeFlatSchema(
+    change.added
+      ? change.added
+      : change.removed
+      ? {}
+      : change.changed
+      ? change.changed.after
+      : {}
+  );
 
   return getDiff(before, after);
 };
