@@ -3071,6 +3071,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.omit@npm:^4.5.7":
+  version: 4.5.7
+  resolution: "@types/lodash.omit@npm:4.5.7"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: e30600de518e648f4e9590d9238506ceab561726ec2fe56b4ff29b17aa1e47cbf9188be259b7d606dfb2040998c778533ccc0c58f065cca44ab5a6dbc8b6e518
+  languageName: node
+  linkType: hard
+
 "@types/lodash.pick@npm:^4":
   version: 4.4.7
   resolution: "@types/lodash.pick@npm:4.4.7"
@@ -3573,6 +3582,7 @@ __metadata:
     "@types/js-yaml": ^4.0.5
     "@types/json-stable-stringify": ^1.0.33
     "@types/lodash.groupby": ^4.6.6
+    "@types/lodash.omit": ^4.5.7
     "@types/lodash.sortby": ^4.7.6
     "@types/node": ^17.0.15
     "@types/semver": ^7.3.10
@@ -3590,6 +3600,7 @@ __metadata:
     json-stable-stringify: ^1.0.1
     lodash.groupby: ^4.6.0
     lodash.isequal: ^4.5.0
+    lodash.omit: ^4.5.0
     lodash.sortby: ^4.7.0
     openapi-types: ^9.3.0
     prettier: ^2.4.1
@@ -7502,6 +7513,13 @@ __metadata:
   version: 4.0.1
   resolution: "lodash.isstring@npm:4.0.1"
   checksum: eaac87ae9636848af08021083d796e2eea3d02e80082ab8a9955309569cb3a463ce97fd281d7dc119e402b2e7d8c54a23914b15d2fc7fff56461511dc8937ba0
+  languageName: node
+  linkType: hard
+
+"lodash.omit@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "lodash.omit@npm:4.5.0"
+  checksum: 434645e49fe84ab315719bd5a9a3a585a0f624aa4160bc09157dd041a414bcc287c15840365c1379476a3f3eda41fbe838976c3f7bdecbbf4c5478e86c471a30
   languageName: node
   linkType: hard
 

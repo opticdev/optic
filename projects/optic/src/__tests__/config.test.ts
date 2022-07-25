@@ -26,27 +26,27 @@ describe('validateConfig', () => {
     });
   });
 
-  describe('rules', () => {
+  describe('rulesets', () => {
     test('not array is invalid', () => {
-      const config = { rules: { foo: 'bar' } };
+      const config = { ruleset: { foo: 'bar' } };
       expect(() => validateConfig(config, 'somePath')).toThrow(UserError);
     });
 
     test('string is valid', () => {
-      const config = { rules: ['foo'] };
+      const config = { ruleset: ['foo'] };
       expect(() => validateConfig(config, 'somePath')).not.toThrow();
     });
 
     test('object is valid', () => {
       const config = {
-        rules: [{ foo: { someOption: true } }],
+        ruleset: [{ foo: { someOption: true } }],
       };
       expect(() => validateConfig(config, 'somePath')).not.toThrow();
     });
 
     test('object with invalid config', () => {
       const config = {
-        rules: [{ foo: 'foo', options: 'yeah' }],
+        ruleset: [{ foo: 'foo', options: 'yeah' }],
       };
       expect(() => validateConfig(config, 'somePath')).toThrow(UserError);
     });

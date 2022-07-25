@@ -1,7 +1,7 @@
-import { HarEntries } from './har';
+import { HarEntries, HttpArchive } from './har';
 import fs from 'fs';
 import Path from 'path';
-import { collect } from '../../../lib/async-tools';
+import { collect, take } from '../../../lib/async-tools';
 
 describe('HarEntries', () => {
   it('can be constructed from a readable', async () => {
@@ -48,5 +48,27 @@ describe('HarEntries', () => {
 
       expect(getEntries).rejects.toThrowError('could not be read as HAR');
     });
+  });
+
+  it('can be encoded as Readable JSON stream', async () => {
+    let source = fs.createReadStream(
+      Path.join(__dirname, '../../../tests/inputs/petstore.swagger.io.har')
+    );
+
+    let entries = take<HttpArchive.Entry>(2)(HarEntries.fromReadable(source));
+
+    let jsonStream = HarEntries.toHarJSON(entries);
+
+    let result = '';
+    for await (let chunk of jsonStream) {
+      result += chunk.toString('utf-8');
+    }
+
+    let parsed;
+    expect(() => {
+      parsed = JSON.parse(result);
+    }).not.toThrow();
+
+    expect(parsed).toMatchSnapshot();
   });
 });
