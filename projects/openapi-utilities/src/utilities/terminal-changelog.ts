@@ -8,6 +8,7 @@ import {
 import { ChangeVariant, OpenApiKind, OpenApiFact } from '../openapi3/sdk/types';
 import { Instance as Chalk } from 'chalk';
 import isEqual from 'lodash.isequal';
+import omit from 'lodash.omit';
 
 const chalk = new Chalk();
 
@@ -43,42 +44,55 @@ const getDiff = (before: object, after: object) => {
   return output;
 };
 
-const getDetailsDiff = (change: ChangeVariant<any>) => {
+const getDetailsDiff = (
+  change: ChangeVariant<any>,
+  excludedKeys: string[] = []
+) => {
+  const excludeKeys = (fact: OpenApiFact) => omit(fact, excludedKeys);
+
   const mergeFlatSchema = (fact: OpenApiFact) => {
     if ('flatSchema' in fact) {
-      const { flatSchema, ...rest } = fact;
+      const { flatSchema, ...factRest } = fact;
       return {
-        ...rest,
+        ...factRest,
         ...flatSchema,
       };
     } else return fact;
   };
 
-  const before = mergeFlatSchema(
-    change.added
-      ? {}
-      : change.removed
-      ? change.removed
-      : change.changed
-      ? change.changed.before
-      : {}
+  const before = excludeKeys(
+    mergeFlatSchema(
+      change.added
+        ? {}
+        : change.removed
+        ? change.removed
+        : change.changed
+        ? change.changed.before
+        : {}
+    )
   );
 
-  const after = mergeFlatSchema(
-    change.added
-      ? change.added
-      : change.removed
-      ? {}
-      : change.changed
-      ? change.changed.after
-      : {}
+  const after = excludeKeys(
+    mergeFlatSchema(
+      change.added
+        ? change.added
+        : change.removed
+        ? {}
+        : change.changed
+        ? change.changed.after
+        : {}
+    )
   );
 
   return getDiff(before, after);
 };
 
-function* getDetailLogs(change: ChangeVariant<any>, label?: string) {
-  const diff = getDetailsDiff(change);
+function* getDetailLogs(
+  change: ChangeVariant<any>,
+  options: { label?: string; excludeKeys?: string[] } = {}
+) {
+  const { label, excludeKeys } = options;
+  const diff = getDetailsDiff(change, excludeKeys);
 
   const diffCount =
     diff.changed.length + diff.removed.length + diff.added.length;
@@ -114,7 +128,9 @@ export function* terminalChangelog(
 ): Generator<string> {
   const { changesByEndpoint, specificationChanges } = groupedChanges;
   for (const specificationChange of specificationChanges) {
-    yield* getDetailLogs(specificationChange, 'specification details:');
+    yield* getDetailLogs(specificationChange, {
+      label: 'specification details:',
+    });
     yield '';
   }
   for (const [_, endpointChange] of changesByEndpoint) {
@@ -146,7 +162,9 @@ function* getEndpointLogs(
   }
 
   if (change) {
-    yield* indent(getDetailLogs(change));
+    yield* indent(
+      getDetailLogs(change, { excludeKeys: ['pathPattern', 'method'] })
+    );
   }
 
   for (const [name, parameterChange] of queryParameters) {
@@ -190,7 +208,7 @@ function* getResponseChangeLogs(
   }
 
   if (change) {
-    yield* indent(getDetailLogs(change));
+    yield* indent(getDetailLogs(change, { excludeKeys: ['statusCode'] }));
   }
   for (const [key, responseHeader] of headers) {
     yield* indent(getResponseHeaderLogs(responseHeader, key));
@@ -238,7 +256,7 @@ function* getBodyChangeLogs(
   }
 
   if (bodyChange) {
-    yield* indent(getDetailLogs(bodyChange));
+    yield* indent(getDetailLogs(bodyChange, { excludeKeys: ['contentType'] }));
   }
 
   for (const fieldChange of fieldChanges) {
@@ -259,7 +277,7 @@ function* getResponseHeaderLogs(
   )}`;
 
   if (!change.removed) {
-    yield* indent(getDetailLogs(change));
+    yield* indent(getDetailLogs(change, { excludeKeys: ['name'] }));
   }
 }
 function* getFieldLogs(change: ChangeVariant<OpenApiKind.Field>) {
@@ -268,14 +286,16 @@ function* getFieldLogs(change: ChangeVariant<OpenApiKind.Field>) {
   yield `- field ${chalk.italic(key)} ${getAddedOrRemovedLabel(change)}`;
 
   if (!change.removed) {
-    yield* indent(getDetailLogs(change));
+    yield* indent(getDetailLogs(change, { excludeKeys: ['key'] }));
   }
 }
 
 function* getExampleLogs(change: ChangeVariant<OpenApiKind.BodyExample>) {
   yield `- example ${getAddedOrRemovedLabel(change)}`;
   if (!change.removed) {
-    yield* indent(getDetailLogs(change));
+    yield* indent(
+      getDetailLogs(change, { excludeKeys: ['name', 'contentType'] })
+    );
   }
 }
 
