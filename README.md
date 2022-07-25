@@ -27,7 +27,7 @@ optic diff openapi.yaml --base main
 optic diff openapi.yaml openapi-changed.yaml
 ```
 
-![changes](https://i.imgur.com/hpKgOha.png)
+![changes](https://i.imgur.com/hpKgOha.png | width=350)
 
 [Read diff documentation](https://useoptic.com/docs/openapi-diff)
 
@@ -39,7 +39,7 @@ API diffs containing breaking changes will be flagged so you do not break consum
 optic diff openapi.yaml --base main --check
 ```
 
-![breaking](https://i.imgur.com/JEQL2GV.png)
+![breaking](https://i.imgur.com/JEQL2GV.png | width=350)
 
 [Read breaking change documentation](https://useoptic.com/docs/breaking-changes)
 
