@@ -62,6 +62,59 @@ describe('RequestRule', () => {
       );
     });
 
+    test('match operation with after context', () => {
+      const mockFn = jest.fn();
+      const ruleRunner = new RuleRunner([
+        new RequestRule({
+          name: 'request',
+          matches: (request, ruleContext) =>
+            ruleContext.operation.raw['x-published'] === true,
+          rule: (responseBodyAssertions) => {
+            responseBodyAssertions.body.removed('triggers test', mockFn);
+          },
+        }),
+      ]);
+      ruleRunner.runRulesWithFacts(
+        createRuleInputs(
+          {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  requestBody: {
+                    content: {
+                      'application/json': {
+                        schema: {},
+                      },
+                    },
+                  },
+                  responses: {},
+                },
+              },
+            },
+          },
+          {
+            ...defaultEmptySpec,
+            paths: {
+              '/api/users': {
+                get: {
+                  'x-published': true,
+                  responses: {},
+                },
+              },
+            } as any,
+          }
+        )
+      );
+
+      expect(mockFn.mock.calls.length).toBe(1);
+      const requestFromCallArg = mockFn.mock.calls[0][0];
+      expect(requestFromCallArg.contentType).toBe('application/json');
+      expect(requestFromCallArg.location.jsonPath).toBe(
+        '/paths/~1api~1users/get/requestBody/content/application~1json'
+      );
+    });
+
     test('match request with content type', () => {
       const mockFn = jest.fn();
       const ruleRunner = new RuleRunner([

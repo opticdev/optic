@@ -153,13 +153,22 @@ export const runRequestRules = ({
   // - if yes, run the user's defined `rule`. for requests, this runs against the request body and request properties
   for (const requestRule of requestRules) {
     if (beforeOperation && beforeSpecification) {
-      const ruleContext = createRuleContext({
-        operation: beforeOperation,
-        custom: customRuleContext,
-        operationChangeType: operationNode.change?.changeType || null,
-        specification: beforeSpecification,
-        specificationNode: specificationNode,
-      });
+      const ruleContext =
+        afterSpecification && afterOperation
+          ? createRuleContext({
+              operation: afterOperation,
+              custom: customRuleContext,
+              operationChangeType: operationNode.change?.changeType || null,
+              specification: afterSpecification,
+              specificationNode: specificationNode,
+            })
+          : createRuleContext({
+              operation: beforeOperation,
+              custom: customRuleContext,
+              operationChangeType: operationNode.change?.changeType || null,
+              specification: beforeSpecification,
+              specificationNode: specificationNode,
+            });
       const requestAssertions = createRequestAssertions();
       // Register the user's rule definition, this is collected in the requestAssertions object
       requestRule.rule(requestAssertions, ruleContext);
