@@ -9,12 +9,14 @@ npm i -g @useoptic/optic
 ```
 
 Initialize an `optic.yml` config file
+
 ```bash
 optic init
 # this will create an optic.yml file with references to openapi files detected in the git repo
 ```
 
 Run a diff between two OpenAPI files:
+
 ```bash
 optic diff <path_to_file_1> <path_to_file_2>
 ```
@@ -24,11 +26,13 @@ optic diff <path_to_file_1> <path_to_file_2>
 Optic helps you analyze changes in your OpenAPI spec. The diff command can be used to generate a changelog between two specs. By default, Optic checks for breaking changes. There are a few ways you can run the diff command.
 
 Running a diff between two files on your file system
+
 ```bash
 optic diff specs/openapi-spec-v0.yml specs/openapi-spec-v1.yml
 ```
 
 Running a diff against a file on the master branch
+
 ```bash
 optic diff master:specs/openapi-spec.yml specs/openapi-spec.yml
 
@@ -38,13 +42,15 @@ optic diff specs/openapi-spec.yml --base master
 ```
 
 Running a diff on a file from your `optic.yml`
+
 ```bash
 # runs a diff against the users-api id
 optic diff --id users-api --base master
 ```
 
 Additional options:
-- `--no-checks` turns off breaking change detection against the changed files
+
+- `--check` turns on breaking change detection against the changed files
 - `--web` opens a web page with the changes that ran (recommended for a more UI rich changelog experience).
 
 ## Setup Optic in CI
@@ -76,6 +82,7 @@ jobs:
 ### Other CI Providers
 
 You can manually connect up Optic using any other CI provider by calling optic directly. An example implementation in bash is listed below, where each step command can be broken out into different CI steps.
+
 ```bash
 # requires nodeJS installed
 # install optic-ci in your CI runner
