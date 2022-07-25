@@ -1,16 +1,23 @@
-import { parseOpenApiSpec } from './parse-openapi-spec';
-import { readOpenApiSpec } from './read-openapi-spec';
-import { SpecWithPath } from './types';
+import {
+  ParseOpenAPIResult,
+  parseOpenAPIWithSourcemap,
+} from '@useoptic/openapi-io';
+
+export type ValidSpec = {
+  path: string;
+  title: string | undefined;
+};
 
 export const getValidSpecs = async (filePaths: string[]) => {
-  const validSpecs: SpecWithPath[] = [];
+  const validSpecs: ValidSpec[] = [];
   for await (const filePath of filePaths) {
-    const fileString = await readOpenApiSpec(filePath);
-    const specType = filePath.match(/\.json$/) ? 'json' : 'yml';
-    const parsedResult = parseOpenApiSpec(fileString, specType);
-    if (parsedResult.ok) {
-      const specWithPath = { path: filePath, spec: parsedResult.result };
+    let spec: ParseOpenAPIResult;
+    try {
+      const spec = await parseOpenAPIWithSourcemap(filePath);
+      const specWithPath = { path: filePath, title: spec.jsonLike.info?.title };
       validSpecs.push(specWithPath);
+    } catch (e) {
+      // just ignore errors
     }
   }
   return validSpecs;

@@ -1,4 +1,5 @@
 import path from 'path';
+import { ValidSpec } from './get-valid-specs';
 import { SpecWithPath } from './types';
 
 type ConfigFile = {
@@ -8,12 +9,12 @@ type ConfigFile = {
 
 const getFileName = (filePath: string) => path.basename(filePath) || 'openapi';
 
-const getFileId = ({ spec, path }: SpecWithPath) =>
-  (spec.info.title || getFileName(path)).replace(/\s/g, '-');
+const getFileId = ({ title, path }: ValidSpec) =>
+  (title || getFileName(path)).replace(/\s/g, '-');
 
 const getIncrementalFileId = (fileId: string, i: number) => `${fileId}-${i}`;
 
-export const generateOpticConfig = (specs: SpecWithPath[], gitRoot: string) => {
+export const generateOpticConfig = (specs: ValidSpec[], gitRoot: string) => {
   let files: ConfigFile[] = [];
   const fileIds = new Set<string>();
 
