@@ -197,10 +197,20 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           }
 
           if (options.web) {
+            const meta = {
+              createdAt: new Date(),
+              command: ['optic', ...process.argv.slice(2)].join(' '),
+              file1,
+              file2,
+              base: options.base,
+              id: options.id,
+            };
+
             const compressedData = compressData(
               baseFile,
               headFile,
-              specResults
+              specResults,
+              meta
             );
             console.log('Opening up diff in web view');
             const anonymousId = await getAnonId();
@@ -254,12 +264,14 @@ const removeSourcemapsFromResults = (specResults: SpecResults): SpecResults => {
 const compressData = (
   baseFile: ParseResult,
   headFile: ParseResult,
-  specResults: SpecResults
+  specResults: SpecResults,
+  meta: Record<string, unknown>
 ): string => {
   const dataToCompress = {
     base: removeComponentsFromSpec(baseFile.jsonLike),
     head: removeComponentsFromSpec(headFile.jsonLike),
     results: removeSourcemapsFromResults(specResults),
+    meta,
     version: '1',
   };
   const compressed = brotli.compress(
