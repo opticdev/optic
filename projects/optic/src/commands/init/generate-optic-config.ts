@@ -1,6 +1,5 @@
 import path from 'path';
 import { ValidSpec } from './get-valid-specs';
-import { SpecWithPath } from './types';
 
 type ConfigFile = {
   path: string;

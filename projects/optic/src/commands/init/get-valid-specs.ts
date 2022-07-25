@@ -1,7 +1,4 @@
-import {
-  ParseOpenAPIResult,
-  parseOpenAPIWithSourcemap,
-} from '@useoptic/openapi-io';
+import { parseOpenAPIWithSourcemap } from '@useoptic/openapi-io';
 
 export type ValidSpec = {
   path: string;
@@ -11,7 +8,6 @@ export type ValidSpec = {
 export const getValidSpecs = async (filePaths: string[]) => {
   const validSpecs: ValidSpec[] = [];
   for await (const filePath of filePaths) {
-    let spec: ParseOpenAPIResult;
     try {
       const spec = await parseOpenAPIWithSourcemap(filePath);
       const specWithPath = { path: filePath, title: spec.jsonLike.info?.title };
