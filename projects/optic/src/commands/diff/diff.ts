@@ -32,7 +32,8 @@ const description = `run a diff between two API specs`;
 const usage = () => `
   optic diff --id user-api --base <base>
   optic diff <file_path> --base <base>
-  optic diff <file_path> <file_to_compare_against>`;
+  optic diff <file_path> <file_to_compare_against>
+  optic diff <file_path> <file_to_compare_against> --check`;
 
 const helpText = `
 Example usage:
@@ -46,7 +47,11 @@ Example usage:
   $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml
   
   Run a diff and view changes in the Optic web view
-  $ optic diff --id user-api --base master --web`;
+  $ optic diff --id user-api --base master --web
+  
+  Run a diff and check the changes against configured rulesets:
+  $ optic diff openapi-spec-v0.yml openapi-spec-v1.yml --check
+  `;
 
 type SpecResults = Awaited<ReturnType<typeof generateSpecResults>>;
 const webBase =
@@ -80,7 +85,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
       '--id <id>',
       'the id of the spec to run against in defined in the `optic.yml` file'
     )
-    .option('--no-checks', 'disable checks')
+    .option('--check', 'enable checks', false)
     .option('--web', 'view the diff in the optic changelog web view', false)
     .action(
       wrapActionHandlerWithSentry(
@@ -90,7 +95,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
           options: {
             base: string;
             id?: string;
-            checks: boolean;
+            check: boolean;
             web: boolean;
           }
         ) => {
@@ -162,7 +167,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             return;
           }
 
-          const ruleRunner = generateRuleRunner(config, options.checks);
+          const ruleRunner = generateRuleRunner(config, options.check);
           const specResults = await generateSpecResults(
             ruleRunner,
             baseFile,
@@ -180,7 +185,7 @@ export const registerDiff = (cli: Command, config: OpticCliConfig) => {
             console.log(log);
           }
 
-          if (options.checks) {
+          if (options.check) {
             if (specResults.results.length > 0) {
               console.log('Checks');
               console.log('');
