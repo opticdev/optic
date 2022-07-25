@@ -153,13 +153,22 @@ export const runResponseRules = ({
   // - if yes, run the user's defined `rule`. for responses, this runs against the response and response headers
   for (const responseRule of responseRules) {
     if (beforeOperation && beforeSpecification) {
-      const ruleContext = createRuleContext({
-        operation: beforeOperation,
-        custom: customRuleContext,
-        operationChangeType: operationNode.change?.changeType || null,
-        specification: beforeSpecification,
-        specificationNode: specificationNode,
-      });
+      const ruleContext =
+        afterSpecification && afterOperation
+          ? createRuleContext({
+              operation: afterOperation,
+              custom: customRuleContext,
+              operationChangeType: operationNode.change?.changeType || null,
+              specification: afterSpecification,
+              specificationNode: specificationNode,
+            })
+          : createRuleContext({
+              operation: beforeOperation,
+              custom: customRuleContext,
+              operationChangeType: operationNode.change?.changeType || null,
+              specification: beforeSpecification,
+              specificationNode: specificationNode,
+            });
       const beforeResponse = createResponse(
         responseNode,
         'before',

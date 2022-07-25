@@ -154,13 +154,23 @@ export const runResponseBodyRules = ({
   // - if yes, run the user's defined `rule`. for responses, this runs against the response body and response properties
   for (const responseRule of responseRules) {
     if (beforeOperation && beforeSpecification) {
-      const ruleContext = createRuleContext({
-        operation: beforeOperation,
-        custom: customRuleContext,
-        operationChangeType: operationNode.change?.changeType || null,
-        specification: beforeSpecification,
-        specificationNode: specificationNode,
-      });
+      // Default to after rule context if available
+      const ruleContext =
+        afterSpecification && afterOperation
+          ? createRuleContext({
+              operation: afterOperation,
+              custom: customRuleContext,
+              operationChangeType: operationNode.change?.changeType || null,
+              specification: afterSpecification,
+              specificationNode: specificationNode,
+            })
+          : createRuleContext({
+              operation: beforeOperation,
+              custom: customRuleContext,
+              operationChangeType: operationNode.change?.changeType || null,
+              specification: beforeSpecification,
+              specificationNode: specificationNode,
+            });
       const responseAssertions = createResponseBodyAssertions();
       // Register the user's rule definition, this is collected in the responseAssertions object
       responseRule.rule(responseAssertions, ruleContext);
