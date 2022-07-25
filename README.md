@@ -36,7 +36,7 @@ API diffs containing breaking changes will be flagged so you do not break consum
 
 
 ```bash
-optic diff openapi.yaml --base main --checks
+optic diff openapi.yaml --base main --check
 ```
 
 ![breaking](https://i.imgur.com/JEQL2GV.png)
