@@ -38,7 +38,7 @@ export const init = async (config: OpticCliConfig): Promise<void> => {
   console.log('Initializing Optic...');
 
   // Find valid spec files
-  console.log(`Detecting OpenAPI specs in ${configPath}...`);
+  console.log(`Detecting OpenAPI specs in ${gitRoot}...`);
   const openApiSpecPaths = await findOpenAPISpecs();
   const validSpecs = await getValidSpecs(openApiSpecPaths);
 
