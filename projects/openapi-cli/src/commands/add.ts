@@ -36,7 +36,7 @@ import {
 
 export async function addCommand(): Promise<Command> {
   const command = new Command('add');
-  const feedback = createCommandFeedback(command);
+  const feedback = await createCommandFeedback(command);
 
   command
     .argument('<openapi-file>', 'an OpenAPI spec file to add an operation to')
@@ -51,13 +51,16 @@ export async function addCommand(): Promise<Command> {
     )
     .action(async (specPath: string, operationComponents: string[]) => {
       const absoluteSpecPath = Path.resolve(specPath);
+      console.log(specPath, absoluteSpecPath);
       if (!(await fs.pathExists(absoluteSpecPath))) {
-        return command.error('OpenAPI specification file could not be found');
+        return feedback.inputError(
+          'OpenAPI specification file could not be found'
+        );
       }
 
       let parsedOperationsResult = parseOperations(operationComponents);
       if (parsedOperationsResult.err) {
-        return command.error(parsedOperationsResult.val);
+        return feedback.inputError(parsedOperationsResult.val);
       }
 
       let parsedOperations = parsedOperationsResult.unwrap();
@@ -70,7 +73,9 @@ export async function addCommand(): Promise<Command> {
       if (options.har) {
         let absoluteHarPath = Path.resolve(options.har);
         if (!(await fs.pathExists(absoluteHarPath))) {
-          return command.error('Har file could not be found at given path');
+          return feedback.inputError(
+            'HAR file could not be found at given path'
+          );
         }
         let harFile = fs.createReadStream(absoluteHarPath);
         let harEntries = HarEntries.fromReadable(harFile);
@@ -79,7 +84,7 @@ export async function addCommand(): Promise<Command> {
 
       if (options.proxy) {
         if (!process.stdin.isTTY) {
-          return command.error(
+          return feedback.inputError(
             'Can only use --proxy when in an interactive terminal session'
           );
         }
@@ -91,7 +96,7 @@ export async function addCommand(): Promise<Command> {
         sources.push(
           CapturedInteractions.fromProxyInteractions(proxyInteractions)
         );
-        console.log(
+        feedback.log(
           `Proxy created. Redirect traffic you want to capture to ${proxyUrl}`
         );
         interactiveCapture = true;
@@ -102,7 +107,7 @@ export async function addCommand(): Promise<Command> {
 
       const specReadResult = await readDeferencedSpec(absoluteSpecPath);
       if (specReadResult.err) {
-        command.error(
+        return feedback.inputError(
           `OpenAPI specification could not be fully resolved: ${specReadResult.val.message}`
         );
       }
@@ -369,11 +374,21 @@ function parseOperations(
     let rawMethods = components[i * 2];
     let pathPattern = components[i * 2 + 1];
 
+    if (!pathPattern) {
+      return Err(
+        'missing path pattern. Pairs of valid method(s) and path required to add an operation'
+      );
+    }
+
+    if (!pathPattern.startsWith('/')) pathPattern = '/' + pathPattern;
+
     let methods: Array<HttpMethod> = [];
     for (let maybeMethod of rawMethods.split(',')) {
       let method = HttpMethods[maybeMethod.toUpperCase()];
       if (!method) {
-        return Err(`Could not parse '${maybeMethod}' as a valid HTTP method`);
+        return Err(
+          `could not parse '${maybeMethod}' as a valid HTTP method. Pairs of valid method(s) and path required to add an operation`
+        );
       }
       methods.push(method as HttpMethod);
     }
