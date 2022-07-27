@@ -48,8 +48,11 @@ export function makeCli(config: CliConfig) {
     version: packageJson.version,
   });
 
-  const cli = makeCli(config);
-  const subCommandNames = cli.commands.map((cmd) => cmd.name());
+  const cli = await makeCli(config);
+  const subCommandNames = cli.commands.flatMap((cmd) => [
+    cmd.name(),
+    ...cmd.aliases(),
+  ]);
 
   const args = process.argv.slice(2);
 
